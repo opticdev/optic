@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
+import fs from 'fs-extra';
+import Path from 'path';
 
 import { addCommand } from './commands/add';
 import { captureCommand } from './commands/capture';
@@ -58,9 +60,9 @@ export function makeCli(config: CliConfig) {
 
   if (
     args[0] &&
-    args[1] &&
     !subCommandNames.includes(args[0]) &&
-    subCommandNames.includes(args[1])
+    ((args[1] && subCommandNames.includes(args[1])) ||
+      (await fs.pathExists(Path.resolve(args[0]))))
   ) {
     let subcommand = args[1];
     let specPath = args[0];
