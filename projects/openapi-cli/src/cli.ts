@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { program as cli } from 'commander';
+import { Command } from 'commander';
 
 import { addCommand } from './commands/add';
 import { captureCommand } from './commands/capture';
@@ -16,16 +16,19 @@ import { initSentry } from './sentry';
 const packageJson = require('../package.json');
 
 export function makeCli(config: CliConfig) {
+  const cli = new Command('oas');
+
   cli.version(packageJson.version);
+  cli.description('oas [openapi-file] <command> [options]');
 
   cli.addCommand(addCommand());
   cli.addCommand(captureCommand());
   cli.addCommand(newCommand());
   cli.addCommand(statusCommand());
   cli.addCommand(updateCommand());
-  registerDebugTemplateCommand(cli);
 
-  cli.addCommand(debugWorkflowsCommand());
+  // registerDebugTemplateCommand(cli);
+  // cli.addCommand(debugWorkflowsCommand());
 
   return cli;
 }
@@ -46,6 +49,22 @@ export function makeCli(config: CliConfig) {
   });
 
   const cli = makeCli(config);
+  const subCommandNames = cli.commands.map((cmd) => cmd.name());
 
-  cli.parse(process.argv);
+  const args = process.argv.slice(2);
+
+  if (
+    args[0] &&
+    args[1] &&
+    !subCommandNames.includes(args[0]) &&
+    subCommandNames.includes(args[1])
+  ) {
+    let subcommand = args[1];
+    let specPath = args[0];
+
+    args[0] = subcommand;
+    args[1] = specPath;
+  }
+
+  cli.parse(args, { from: 'user' });
 })();
