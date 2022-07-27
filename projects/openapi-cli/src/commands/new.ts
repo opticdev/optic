@@ -5,11 +5,13 @@ import { Writable } from 'stream';
 import Semver from 'semver';
 
 import * as AT from '../lib/async-tools';
-import { createCommandFeedback } from './reporters/utils';
+import { createCommandFeedback } from './reporters/feedback';
 import { SpecFile, SpecFiles, SpecFileOperations, SpecPatches } from '../specs';
 
-export function newCommand(): Command {
+export async function newCommand(): Promise<Command> {
   const command = new Command('new');
+
+  const feedback = await createCommandFeedback(command);
 
   command
     .description('create a new OpenAPI spec file')
@@ -24,7 +26,6 @@ export function newCommand(): Command {
       '3.0.3'
     )
     .action(async (filePath?: string) => {
-      const feedback = await createCommandFeedback();
       let absoluteFilePath: string;
       let destination: Writable;
 

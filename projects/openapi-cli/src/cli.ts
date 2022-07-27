@@ -3,6 +3,7 @@
 import { Command } from 'commander';
 import fs from 'fs-extra';
 import Path from 'path';
+import { createCommandFeedback } from './commands/reporters/feedback';
 
 import { addCommand } from './commands/add';
 import { captureCommand } from './commands/capture';
@@ -17,15 +18,16 @@ import { initSentry } from './sentry';
 
 const packageJson = require('../package.json');
 
-export function makeCli(config: CliConfig) {
+export async function makeCli(config: CliConfig) {
   const cli = new Command('oas');
+  await createCommandFeedback(cli);
 
   cli.version(packageJson.version);
   cli.description('oas [openapi-file] <command> [options]');
 
-  cli.addCommand(addCommand());
+  cli.addCommand(await addCommand());
   cli.addCommand(captureCommand());
-  cli.addCommand(newCommand());
+  cli.addCommand(await newCommand());
   cli.addCommand(statusCommand());
   cli.addCommand(updateCommand());
 

@@ -4,6 +4,7 @@ import Path from 'path';
 import * as fs from 'fs-extra';
 import { AbortController } from 'node-abort-controller';
 
+import { createCommandFeedback } from './reporters/feedback';
 import * as AT from '../lib/async-tools';
 import {
   CapturedInteractions,
@@ -33,8 +34,9 @@ import {
   readDeferencedSpec,
 } from '../specs';
 
-export function addCommand(): Command {
+export async function addCommand(): Promise<Command> {
   const command = new Command('add');
+  const feedback = createCommandFeedback(command);
 
   command
     .argument('<openapi-file>', 'an OpenAPI spec file to add an operation to')
