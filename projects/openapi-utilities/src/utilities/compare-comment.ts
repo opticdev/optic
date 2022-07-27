@@ -1,6 +1,6 @@
 import { CompareFileJson } from '../ci-types';
 import { OPTIC_COMMENT_SURVEY_LINK } from './shared-comment';
-import { countChangedOperations } from './count-changed-operations';
+import { getOperationsModifsLabel } from './count-changed-operations';
 
 export const createCommentBody = (
   results: CompareFileJson['results'],
@@ -20,7 +20,7 @@ export const createCommentBody = (
     else failingChecks += 1;
   }
 
-  const operationsChanged = countChangedOperations(changes);
+  const operationsModifsLabel = getOperationsModifsLabel(changes);
 
   const exemptedChunk =
     exemptedFailingChecks > 0
@@ -32,9 +32,7 @@ export const createCommentBody = (
 
   Summary of run [#${run}](${opticWebUrl}) results (${commit_hash}):
 
-  💡 **${operationsChanged}** API operation${
-    operationsChanged > 1 ? 's' : ''
-  } changed
+  💡 ${operationsModifsLabel}
 
   ${
     failingChecks > 0
