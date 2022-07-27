@@ -1,5 +1,20 @@
 import { CompareFileJson } from '../ci-types';
 import { OPTIC_COMMENT_SURVEY_LINK } from './shared-comment';
+import { isChangeVariant } from '../openapi3/sdk/isType';
+import { OpenApiKind, IChange } from '../openapi3/sdk/types';
+
+const countChangedOperations = (changes: IChange[]) => {
+  const operations = new Set();
+  for (const change of changes) {
+    if (isChangeVariant(change, OpenApiKind.Specification)) continue;
+    const path = (change.location.conceptualLocation as any).path;
+    const method = (change.location.conceptualLocation as any).method;
+    if (!path || !method) continue;
+    const operationId = `${path}.${method}`;
+    operations.add(operationId);
+  }
+  return operations.size;
+};
 
 export const createCommentBody = (
   results: CompareFileJson['results'],
@@ -19,6 +34,8 @@ export const createCommentBody = (
     else failingChecks += 1;
   }
 
+  const operationsChanged = countChangedOperations(changes);
+
   const exemptedChunk =
     exemptedFailingChecks > 0
       ? ` ${exemptedFailingChecks} would have failed but were exempted.`
@@ -29,7 +46,9 @@ export const createCommentBody = (
 
   Summary of run [#${run}](${opticWebUrl}) results (${commit_hash}):
 
-  💡 **${changes.length}** API change${changes.length > 1 ? 's' : ''}
+  💡 **${operationsChanged}** API operation${
+    operationsChanged > 1 ? 's' : ''
+  } changed
 
   ${
     failingChecks > 0
