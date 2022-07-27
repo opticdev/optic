@@ -8,6 +8,10 @@ import { createCookieParameterChecks } from './cookieParameters';
 import { createPathComponentChecks } from './pathComponents';
 
 export class NamingChangesRuleset extends Ruleset<Rule[]> {
+  static fromOpticConfig(): NamingChangesRuleset {
+    return new NamingChangesRuleset({ applies: 'always' });
+  }
+
   constructor(config: {
     applies: typeof appliesWhen[number];
     options?: NamingConfig;

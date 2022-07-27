@@ -65,7 +65,7 @@ const webBase =
 
 const stdRulesets = {
   'breaking-changes': BreakingChangesRuleset,
-  // 'naming-changes': NamingChangesRuleset,
+  'naming-changes': NamingChangesRuleset,
 };
 
 export const registerDiff = (cli: Command, config: OpticCliConfig) => {
@@ -292,11 +292,13 @@ const generateRuleRunner = (
   const rulesets: Ruleset[] = [];
 
   if (checksEnabled) {
-    for (const rule of config.ruleset) {
-      if (typeof rule === 'string' && stdRulesets[rule]) {
-        rulesets.push(new stdRulesets[rule]());
+    for (const ruleset of config.ruleset) {
+      if (stdRulesets[ruleset.name]) {
+        rulesets.push(
+          stdRulesets[ruleset.name].fromOpticConfig(ruleset.config)
+        );
       } else {
-        console.error(`Warning: Invalid ruleset ${rule}`);
+        console.error(`Warning: Invalid ruleset ${ruleset.name}`);
       }
     }
   }
