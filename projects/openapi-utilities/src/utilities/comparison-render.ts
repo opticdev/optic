@@ -3,6 +3,7 @@ import { ResultWithSourcemap, IChange, OperationLocation } from '..';
 import groupBy from 'lodash.groupby';
 import isUrl from 'is-url';
 import { Instance as Chalk } from 'chalk';
+import { countChangedOperations } from './count-changed-operations';
 
 const getIndent = (depth: number): string => ' '.repeat(depth * 2);
 
@@ -38,7 +39,7 @@ export const logComparison = (
     (result) => !result.passed && result.exempted
   ).length;
   const passedNumberOfChecks = totalNumberOfChecks - failedNumberOfChecks;
-  const numberOfChanges = comparison.changes.length;
+  const changedOperationsCount = countChangedOperations(comparison.changes);
   const groupedResults = groupBy(
     comparison.results,
     (result) =>
@@ -137,7 +138,11 @@ export const logComparison = (
     console.log('\n');
   }
 
-  console.log(`${numberOfChanges} changes detected`);
+  console.log(
+    `${changedOperationsCount} operation${
+      changedOperationsCount > 1 ? 's' : ''
+    } changed`
+  );
   console.log(chalk.green.bold(`${passedNumberOfChecks} checks passed`));
   console.log(chalk.red.bold(`${failedNumberOfChecks} checks failed`));
 
