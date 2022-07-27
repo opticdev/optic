@@ -95,7 +95,8 @@ export function addCommand(): Command {
         interactiveCapture = true;
       }
 
-      let interactions = AT.merge(...sources);
+      let interactions =
+        sources.length > 0 ? AT.merge(...sources) : AT.from([]);
 
       const specReadResult = await readDeferencedSpec(absoluteSpecPath);
       if (specReadResult.err) {
