@@ -5,6 +5,7 @@ import { Writable } from 'stream';
 import Semver from 'semver';
 
 import * as AT from '../lib/async-tools';
+import { createFormatter } from './reporters/utils';
 import { SpecFile, SpecFiles, SpecFileOperations, SpecPatches } from '../specs';
 
 export function newCommand(): Command {
@@ -12,6 +13,7 @@ export function newCommand(): Command {
 
   command
     .description('create a new OpenAPI spec file')
+    .alias('create')
     .argument(
       '[file-path]',
       'path of the new OpenAPI file (written to stdout when not provided)'
@@ -22,24 +24,36 @@ export function newCommand(): Command {
       '3.0.3'
     )
     .action(async (filePath?: string) => {
+      const outputFormatter = await createFormatter();
       let absoluteFilePath: string;
       let destination: Writable;
 
       if (filePath) {
         absoluteFilePath = Path.resolve(filePath);
         let dirPath = Path.dirname(absoluteFilePath);
+        let fileBaseName = Path.basename(filePath);
         if (await fs.pathExists(absoluteFilePath)) {
-          return command.error(`File already exists at ${filePath}`);
+          return command.error(
+            outputFormatter.error(
+              `File '${fileBaseName}' already exists at ${dirPath}`
+            )
+          );
         }
         if (!(await fs.pathExists(dirPath))) {
           return command.error(
-            `path ${dirPath} must exist to create a new spec file at ${absoluteFilePath}`
+            outputFormatter.error(
+              `to create ${fileBaseName}, dir must exist at ${dirPath}`
+            )
           );
         }
 
         destination = fs.createWriteStream(absoluteFilePath);
         destination.once('finish', () => {
-          console.error(`New spec file created at ${absoluteFilePath}`);
+          console.error(
+            outputFormatter.success(
+              `New spec file created at ${absoluteFilePath}`
+            )
+          );
         });
       } else {
         absoluteFilePath = 'stdout.yml';
@@ -56,7 +70,9 @@ export function newCommand(): Command {
         } else if (!Semver.satisfies(semver, '3.0.x || 3.1.x')) {
           // TODO: track this to get an idea of other versions we should support
           return command.error(
-            `Currently only OpenAPI v3.0.x and v3.1.x spec files can be created`
+            outputFormatter.error(
+              `currently only OpenAPI v3.0.x and v3.1.x spec files can be created`
+            )
           );
         } else {
           oasVersion = semver.version;
