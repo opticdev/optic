@@ -3,6 +3,7 @@ import { Result, Ok, Err } from 'ts-results';
 import Path from 'path';
 import * as fs from 'fs-extra';
 import { AbortController } from 'node-abort-controller';
+import readline from 'readline';
 
 import { createCommandFeedback } from './reporters/feedback';
 import * as AT from '../lib/async-tools';
@@ -96,7 +97,7 @@ export async function addCommand(): Promise<Command> {
         sources.push(
           CapturedInteractions.fromProxyInteractions(proxyInteractions)
         );
-        feedback.log(
+        feedback.notable(
           `Proxy created. Redirect traffic you want to capture to ${proxyUrl}`
         );
         interactiveCapture = true;
@@ -130,10 +131,26 @@ export async function addCommand(): Promise<Command> {
       let observations = AT.forkable(
         AT.merge(addObservations, fileObservations)
       );
+
+      const handleUserSignals = (async function () {
+        if (interactiveCapture && process.stdin.isTTY) {
+          // wait for an empty new line on input, which should indicate hitting Enter / Return
+          let lines = readline.createInterface({ input: process.stdin });
+          for await (let line of lines) {
+            if (line.trim().length === 0) {
+              lines.close();
+              readline.moveCursor(process.stdin, 0, -1);
+              readline.clearLine(process.stdin, 1);
+              sourcesController.abort();
+            }
+          }
+        }
+      })();
+
       const renderingStats = renderAddProgress(observations.fork());
       observations.start();
 
-      await Promise.all([writingSpecFiles, renderingStats]);
+      await Promise.all([handleUserSignals, writingSpecFiles, renderingStats]);
     });
 
   return command;

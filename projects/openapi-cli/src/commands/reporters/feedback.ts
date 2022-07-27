@@ -28,6 +28,10 @@ export async function createCommandFeedback(
     destination.write(chalk.bgBlue.white(' help ') + ' ' + message + '\n');
   }
 
+  function notable(message: string) {
+    destination.write(chalk.blueBright(' » ') + message + '\n');
+  }
+
   function internal(
     message: string,
     exit: boolean = false,
@@ -55,6 +59,7 @@ export async function createCommandFeedback(
     inputError,
     internal,
     instruction,
+    notable,
     log,
     success,
   };
