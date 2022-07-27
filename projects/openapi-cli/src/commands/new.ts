@@ -5,7 +5,7 @@ import { Writable } from 'stream';
 import Semver from 'semver';
 
 import * as AT from '../lib/async-tools';
-import { createFormatter } from './reporters/utils';
+import { createCommandFeedback } from './reporters/utils';
 import { SpecFile, SpecFiles, SpecFileOperations, SpecPatches } from '../specs';
 
 export function newCommand(): Command {
@@ -24,7 +24,7 @@ export function newCommand(): Command {
       '3.0.3'
     )
     .action(async (filePath?: string) => {
-      const outputFormatter = await createFormatter();
+      const feedback = await createCommandFeedback();
       let absoluteFilePath: string;
       let destination: Writable;
 
@@ -33,27 +33,19 @@ export function newCommand(): Command {
         let dirPath = Path.dirname(absoluteFilePath);
         let fileBaseName = Path.basename(filePath);
         if (await fs.pathExists(absoluteFilePath)) {
-          return command.error(
-            outputFormatter.error(
-              `File '${fileBaseName}' already exists at ${dirPath}`
-            )
+          return feedback.inputError(
+            `File '${fileBaseName}' already exists at ${dirPath}`
           );
         }
         if (!(await fs.pathExists(dirPath))) {
-          return command.error(
-            outputFormatter.error(
-              `to create ${fileBaseName}, dir must exist at ${dirPath}`
-            )
+          return feedback.inputError(
+            `to create ${fileBaseName}, dir must exist at ${dirPath}`
           );
         }
 
         destination = fs.createWriteStream(absoluteFilePath);
         destination.once('finish', () => {
-          console.error(
-            outputFormatter.success(
-              `New spec file created at ${absoluteFilePath}`
-            )
-          );
+          feedback.success(`New spec file created at ${absoluteFilePath}`);
         });
       } else {
         absoluteFilePath = 'stdout.yml';
@@ -66,13 +58,13 @@ export function newCommand(): Command {
       if (options.oasVersion) {
         let semver = Semver.coerce(options.oasVersion); // be liberal with the inputs we accept
         if (!semver || !Semver.valid(semver)) {
-          return command.error(`--oas-version must be a valid OpenAPI version`);
+          return feedback.inputError(
+            `--oas-version must be a valid OpenAPI version`
+          );
         } else if (!Semver.satisfies(semver, '3.0.x || 3.1.x')) {
           // TODO: track this to get an idea of other versions we should support
-          return command.error(
-            outputFormatter.error(
-              `currently only OpenAPI v3.0.x and v3.1.x spec files can be created`
-            )
+          return feedback.inputError(
+            `currently only OpenAPI v3.0.x and v3.1.x spec files can be created`
           );
         } else {
           oasVersion = semver.version;
