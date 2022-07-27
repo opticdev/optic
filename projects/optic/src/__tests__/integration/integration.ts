@@ -3,6 +3,8 @@ import os from 'node:os';
 import { spawn } from 'child_process';
 import path from 'node:path';
 
+const root = path.join(__dirname, '..', '..', '..');
+
 export type ProcessResult = {
   stdout: string;
   stderr: string;
@@ -57,7 +59,7 @@ export async function run(
 }
 
 export async function setupWorkspace(template: string): Promise<string> {
-  const dir = await fs.mkdtemp(os.tmpdir());
+  const dir = await fs.mkdtemp(path.join(root, 'tmp/'));
 
   const { code: cpCode } = await run(`cp -R ${template} ${dir}`, false);
   if (cpCode !== 0) {
@@ -77,16 +79,8 @@ export async function runOptic(
   cmd: string,
   print = false
 ): Promise<ProcessResult> {
-  const src = path.join(__dirname, '..', '..', 'index.ts');
-  const tsNode = path.join(
-    __dirname,
-    '..',
-    '..',
-    '..',
-    'node_modules',
-    '.bin',
-    'ts-node'
-  );
+  const src = path.join(root, 'src', 'index.ts');
+  const tsNode = path.join(root, 'node_modules', '.bin', 'ts-node');
 
   const result = await run(`${tsNode}  ${src} ${cmd}`, print, workspace);
 
