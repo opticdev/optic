@@ -8,7 +8,7 @@ const getChangeOperationId = (change: IChange) => {
   return `${path}.${method}`;
 };
 
-const countOperationsModifications = (changes: IChange[]) => {
+export const countOperationsModifications = (changes: IChange[]) => {
   const operationsChanges = changes.filter((c) =>
     isChangeVariant(c, OpenApiKind.Operation)
   );
