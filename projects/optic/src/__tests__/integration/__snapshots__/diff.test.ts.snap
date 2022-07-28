@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`diff two files, no repo or config 1`] = `
+"
+[1mGET[22m /example: 
+  - operationId [33mchanged[39m
+
+[1mPATCH[22m /example: 
+  - operationId [33mchanged[39m
+  - response [1m200[22m:
+    - description, statusCode [32madded[39m
+    - body [1mapplication/json[22m: [32madded[39m
+      - contentType, flatSchema [32madded[39m
+      - example [32madded[39m
+        - contentType, name, value [32madded[39m
+
+[1mPOST[22m /example: 
+  - operationId [33mchanged[39m
+
+[1mPUT[22m /example: 
+  - operationId [33mchanged[39m
+
+[34mRerun this command with the --web flag to view these changes to view the detailed changes[39m
+"
+`;
