@@ -168,29 +168,27 @@ async function renderCaptureProgress(
   observations: CaptureObservations,
   interactiveCapture: boolean
 ) {
-  const chalk = (await import('chalk')).default;
+  const ora = (await import('ora')).default;
 
   let interactionCount = 0;
 
-  feedback.notable('Waiting for first request');
   if (interactiveCapture) {
     feedback.instruction('Press [ Enter ] to finish capturing requests');
   }
+  let spinner = ora('0 requests captured');
+  spinner.start();
 
   for await (let observation of observations) {
     if (observation.kind === CaptureObservationKind.InteractionCaptured) {
       interactionCount += 1;
-      if (interactionCount === 1) {
-        feedback.notable(`First request captured`);
-      }
+      spinner.text = `${interactionCount} requests captured`;
     } else if (observation.kind === CaptureObservationKind.CaptureWritten) {
-      feedback.success('Capture written succesfully');
     }
   }
 
   if (interactionCount === 0) {
-    feedback.warning('No requests captured');
+    spinner.info('No requests captured');
   } else {
-    feedback.success(`Captured ${interactionCount} requests`);
+    spinner.succeed(`${interactionCount} requests written`);
   }
 }
