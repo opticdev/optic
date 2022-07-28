@@ -91,6 +91,7 @@ export async function captureCommand(): Promise<Command> {
       })();
 
       const renderingStats = renderCaptureProgress(
+        feedback,
         observations,
         interactiveCapture
       );
@@ -163,6 +164,7 @@ export interface CaptureObservations
   extends AsyncIterable<CaptureObservation> {}
 
 async function renderCaptureProgress(
+  feedback: Awaited<ReturnType<typeof createCommandFeedback>>,
   observations: CaptureObservations,
   interactiveCapture: boolean
 ) {
@@ -170,25 +172,25 @@ async function renderCaptureProgress(
 
   let interactionCount = 0;
 
-  console.error('> Waiting for first request');
+  feedback.notable('Waiting for first request');
   if (interactiveCapture) {
-    console.error('Press [ Enter ] to finish capturing requests');
+    feedback.instruction('Press [ Enter ] to finish capturing requests');
   }
 
   for await (let observation of observations) {
     if (observation.kind === CaptureObservationKind.InteractionCaptured) {
       interactionCount += 1;
       if (interactionCount === 1) {
-        console.error(`> First request captured`);
+        feedback.notable(`First request captured`);
       }
     } else if (observation.kind === CaptureObservationKind.CaptureWritten) {
-      console.error('> Capture written succesfully');
+      feedback.success('Capture written succesfully');
     }
   }
 
   if (interactionCount === 0) {
-    console.error('⚠️  No requests captured');
+    feedback.warning('No requests captured');
   } else {
-    console.error(`✅ Captured ${interactionCount} requests`);
+    feedback.success(`Captured ${interactionCount} requests`);
   }
 }
