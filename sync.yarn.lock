@@ -3781,6 +3781,7 @@ __metadata:
     "@types/node": ^17.0.15
     "@useoptic/openapi-utilities": "workspace:*"
     "@useoptic/rulesets-base": "workspace:*"
+    ajv: ^8.11.0
     babel-jest: ^27.5.1
     jest: ^27.5.1
     prettier: ^2.4.1
