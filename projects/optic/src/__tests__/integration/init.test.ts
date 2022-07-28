@@ -1,7 +1,7 @@
 import { runOptic, setupWorkspace, fileExists } from './integration';
 import path from 'node:path';
 
-jest.setTimeout(10000);
+jest.setTimeout(30000);
 
 describe('init', () => {
   test('basic init', async () => {
