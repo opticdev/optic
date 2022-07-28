@@ -1,26 +1,54 @@
 import { isChangeVariant } from '../openapi3/sdk/isType';
 import { OpenApiKind, IChange, ChangeType } from '../openapi3/sdk/types';
 
+const getChangeOperationId = (change: IChange) => {
+  const path = (change.location.conceptualLocation as any).path;
+  const method = (change.location.conceptualLocation as any).method;
+  if (!path || !method) return null;
+  return `${path}.${method}`;
+};
+
 const countOperationsModifications = (changes: IChange[]) => {
-  const operations = {
-    [ChangeType.Added]: new Set(),
-    [ChangeType.Changed]: new Set(),
-    [ChangeType.Removed]: new Set(),
+  const operationsChanges = changes.filter((c) =>
+    isChangeVariant(c, OpenApiKind.Operation)
+  );
+
+  const operationsAdded = operationsChanges.filter(
+    (c) => c.changeType === ChangeType.Added
+  );
+  const operationsRemoved = operationsChanges.filter(
+    (c) => c.changeType === ChangeType.Removed
+  );
+  const operationsChanged = operationsChanges.filter(
+    (c) => c.changeType === ChangeType.Changed
+  );
+
+  const operationsByChange = {
+    [ChangeType.Added]: new Set(
+      operationsAdded.map(getChangeOperationId).filter((id) => !!id)
+    ),
+    [ChangeType.Changed]: new Set(
+      operationsChanged.map(getChangeOperationId).filter((id) => !!id)
+    ),
+    [ChangeType.Removed]: new Set(
+      operationsRemoved.map(getChangeOperationId).filter((id) => !!id)
+    ),
   };
 
+  const operationWasAddedOrRemoved = (operationId: string) =>
+    operationsByChange.added.has(operationId) ||
+    operationsByChange.removed.has(operationId);
+
   for (const change of changes) {
-    if (isChangeVariant(change, OpenApiKind.Specification)) continue;
-    const path = (change.location.conceptualLocation as any).path;
-    const method = (change.location.conceptualLocation as any).method;
-    if (!path || !method) continue;
-    const operationId = `${path}.${method}`;
-    operations[change.changeType].add(operationId);
+    const operationId = getChangeOperationId(change);
+    if (!operationId || operationWasAddedOrRemoved(operationId)) continue;
+    operationsByChange.changed.add(operationId);
   }
 
   return {
-    [ChangeType.Added]: operations[ChangeType.Added].size,
-    [ChangeType.Changed]: operations[ChangeType.Changed].size,
-    [ChangeType.Removed]: operations[ChangeType.Removed].size,
+    [ChangeType.Added]: operationsByChange[ChangeType.Added].size,
+    [ChangeType.Changed]: operationsByChange[ChangeType.Changed].size,
+    [ChangeType.Removed]: operationsByChange[ChangeType.Removed].size,
   };
 };
 
