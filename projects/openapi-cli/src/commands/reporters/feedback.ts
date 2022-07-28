@@ -60,7 +60,6 @@ export async function createCommandFeedback(
   }
 
   return {
-    chalk,
     inputError,
     internal,
     instruction,
