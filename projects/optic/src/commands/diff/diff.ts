@@ -172,6 +172,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
           const changelogData = generateChangelogData({
             changes: specResults.changes,
             toFile: headFile.jsonLike,
+            rules: specResults.results,
           });
 
           console.log('');

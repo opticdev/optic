@@ -212,7 +212,7 @@ const runCompare = async ({
     normalizedCiContext = await loadCiContext(cliConfig.ciProvider, ciContext);
   }
 
-  if (uploadResults && changes.length === 0) {
+  if (uploadResults && changes.length === 0 && results.length === 0) {
     console.log('No changes were detected, not uploading anything');
   } else if (uploadResults && normalizedCiContext) {
     console.log('Uploading files to Optic...');
