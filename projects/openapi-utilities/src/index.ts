@@ -37,7 +37,11 @@ import {
   OpenApiKindToFact,
   OpenApiRequestFact,
 } from './openapi3/sdk/types';
-import { isFactVariant, isChangeVariant } from './openapi3/sdk/isType';
+import {
+  isFactVariant,
+  isChangeVariant,
+  isFactOrChangeVariant,
+} from './openapi3/sdk/isType';
 import { sourcemapReader } from './openapi3/implementations/openapi3/sourcemap-reader';
 
 import {
@@ -61,7 +65,7 @@ export {
   ContentType,
   OpenApiEndpointChange,
   StatusCode,
-  groupChanges,
+  groupChangesAndRules,
 } from './utilities/group-changes';
 export { traverseSpec } from './utilities/traverse-spec';
 export { terminalChangelog } from './utilities/terminal-changelog';
@@ -110,6 +114,7 @@ export {
   OpenApiKindToFact,
   isFactVariant,
   isChangeVariant,
+  isFactOrChangeVariant,
   OpenApiRequestFact,
 };
 
