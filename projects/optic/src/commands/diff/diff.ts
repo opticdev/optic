@@ -36,6 +36,9 @@ const usage = () => `
 
 const helpText = `
 Example usage:
+  Run a diff against the api spec \`user-api\` using the config from your \`optic.yml\` file against HEAD
+  $ optic diff --id user-api
+
   Run a diff against the api spec \`user-api\` using the config from your \`optic.yml\` file against master
   $ optic diff --id user-api --base master
 
@@ -44,10 +47,10 @@ Example usage:
 
   Run a diff between \`openapi-spec-v0.yml\` and \`openapi-spec-v1.yml\`
   $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml
-  
+
   Run a diff and view changes in the Optic web view
   $ optic diff --id user-api --base master --web
-  
+
   Run a diff and check the changes against configured rulesets:
   $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml --check
   `;
@@ -72,8 +75,8 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     .argument('[file_to_compare_against]', 'path to file to compare with')
     .option(
       '--base <base>',
-      'the base ref to compare against. Defaults to master',
-      'master'
+      'the base ref to compare against. Defaults to HEAD',
+      'HEAD'
     )
     .option(
       '--id <id>',
