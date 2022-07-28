@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`init basic init 1`] = `
+"Initializing Optic...
+Detecting OpenAPI specs in $workspace$...
+
+Found 1 valid spec
+
+Adding files:
+- path: init-basic/example-api-v0.json
+  id: Empty
+
+Adding ruleset:
+
+- breaking-changes
+
+File IDs are stable identifiers for your API specifications that will appear in Optic.
+You can change them now before you check in the optic.yml file.
+"
+`;
+
+exports[`init init with existing optic.yml 1`] = `
+"Initializing Optic...
+Detecting OpenAPI specs in $workspace$...
+
+Found 1 valid spec
+
+Adding files:
+- path: init-existing/example-api-v0.json
+  id: Empty
+
+Adding ruleset:
+
+- breaking-changes
+
+File IDs are stable identifiers for your API specifications that will appear in Optic.
+You can change them now before you check in the optic.yml file.
+"
+`;

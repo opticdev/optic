@@ -58,7 +58,10 @@ export async function run(
   });
 }
 
-export async function setupWorkspace(template: string): Promise<string> {
+export async function setupWorkspace(
+  template: string,
+  repo = true
+): Promise<string> {
   const dir = await fs.mkdtemp(path.join(root, 'tmp/'));
 
   const { code: cpCode } = await run(`cp -R ${template} ${dir}`, false);
@@ -66,9 +69,11 @@ export async function setupWorkspace(template: string): Promise<string> {
     throw `Failed to copy workspace template ${template}`;
   }
 
-  const { code: gitInitCode } = await run('git init', false, dir);
-  if (gitInitCode !== 0) {
-    throw `Git init failed in ${dir}`;
+  if (repo) {
+    const { code: gitInitCode } = await run('git init', false, dir);
+    if (gitInitCode !== 0) {
+      throw `Git init failed in ${dir}`;
+    }
   }
 
   return dir;
