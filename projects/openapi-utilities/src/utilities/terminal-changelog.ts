@@ -1,5 +1,5 @@
 import {
-  groupChanges,
+  groupChangesAndRules,
   OpenApiEndpointChange,
   RequestChange,
   ResponseChange,
@@ -124,10 +124,10 @@ function* indent(generator: Generator<string>) {
 }
 
 export function* terminalChangelog(
-  groupedChanges: ReturnType<typeof groupChanges>
+  groupedChanges: ReturnType<typeof groupChangesAndRules>
 ): Generator<string> {
-  const { changesByEndpoint, specificationChanges } = groupedChanges;
-  for (const specificationChange of specificationChanges) {
+  const { changesByEndpoint, specification } = groupedChanges;
+  for (const specificationChange of specification.changes) {
     yield* getDetailLogs(specificationChange, {
       label: 'specification details:',
     });
@@ -167,19 +167,19 @@ function* getEndpointLogs(
     );
   }
 
-  for (const [name, parameterChange] of queryParameters) {
+  for (const [name, parameterChange] of queryParameters.changes) {
     yield* indent(getParameterLogs('query', name, parameterChange));
   }
 
-  for (const [name, parameterChange] of cookieParameters) {
+  for (const [name, parameterChange] of cookieParameters.changes) {
     yield* indent(getParameterLogs('cookie', name, parameterChange));
   }
 
-  for (const [name, parameterChange] of pathParameters) {
+  for (const [name, parameterChange] of pathParameters.changes) {
     yield* indent(getParameterLogs('path', name, parameterChange));
   }
 
-  for (const [name, parameterChange] of headers) {
+  for (const [name, parameterChange] of headers.changes) {
     yield* indent(getParameterLogs('header', name, parameterChange));
   }
 
@@ -203,14 +203,14 @@ function* getResponseChangeLogs(
     return;
   }
 
-  if (change || headers.size || contentTypes.size) {
+  if (change || headers.changes.size || contentTypes.size) {
     yield label;
   }
 
   if (change) {
     yield* indent(getDetailLogs(change, { excludeKeys: ['statusCode'] }));
   }
-  for (const [key, responseHeader] of headers) {
+  for (const [key, responseHeader] of headers.changes) {
     yield* indent(getResponseHeaderLogs(responseHeader, key));
   }
 
