@@ -393,7 +393,7 @@ function parseOperations(
 
     if (!pathPattern) {
       return Err(
-        'missing path pattern. Pairs of valid method(s) and path required to add an operation'
+        'missing path pattern or method. Pairs of valid method(s) and path required to add an operation'
       );
     }
 
