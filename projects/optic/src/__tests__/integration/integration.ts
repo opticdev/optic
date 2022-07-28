@@ -29,6 +29,10 @@ export async function run(
       shell: true,
       stdio: ['inherit', 'pipe', 'pipe'],
       cwd,
+      env: {
+        ...process.env,
+        FORCE_COLOR: '1',
+      },
     });
 
     proc.on('close', (code) => {
@@ -88,11 +92,7 @@ export async function runOptic(
   const src = path.join(root, 'src', 'index.ts');
   const tsNode = path.join(root, 'node_modules', '.bin', 'ts-node');
 
-  const result = await run(
-    `FORCE_COLOR=1 ${tsNode}  ${src} ${cmd}`,
-    print,
-    workspace
-  );
+  const result = await run(`${tsNode}  ${src} ${cmd}`, print, workspace);
 
   return result;
 }
