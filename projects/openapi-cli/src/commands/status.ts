@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
 
+import { createCommandFeedback } from './reporters/feedback';
 import * as AT from '../lib/async-tools';
 import { ComponentSchemaExampleFacts, readDeferencedSpec } from '../specs';
 import {
@@ -19,8 +20,9 @@ import {
 } from '../captures';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 
-export function statusCommand(): Command {
+export async function statusCommand(): Promise<Command> {
   const command = new Command('status');
+  const feedback = await createCommandFeedback(command);
 
   command
     .description('match observed traffic up to an OpenAPI spec')
@@ -32,7 +34,9 @@ export function statusCommand(): Command {
     .action(async (specPath) => {
       const absoluteSpecPath = Path.resolve(specPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
-        return command.error('OpenAPI specification file could not be found');
+        return feedback.inputError(
+          'OpenAPI specification file could not be found'
+        );
       }
 
       const options = command.opts();
@@ -42,7 +46,9 @@ export function statusCommand(): Command {
       if (options.har) {
         let absoluteHarPath = Path.resolve(options.har);
         if (!(await fs.pathExists(absoluteHarPath))) {
-          return command.error('Har file could not be found at given path');
+          return feedback.inputError(
+            'HAR file could not be found at given path'
+          );
         }
         let harFile = fs.createReadStream(absoluteHarPath);
         let harEntries = AT.tap(
@@ -53,13 +59,12 @@ export function statusCommand(): Command {
       }
 
       if (sources.length < 1) {
-        command.showHelpAfterError(true);
-        return command.error('Choose a traffic source to match spec by');
+        return feedback.inputError('choose a traffic source to match spec by');
       }
 
       const specReadResult = await readDeferencedSpec(absoluteSpecPath);
       if (specReadResult.err) {
-        command.error(
+        feedback.inputError(
           `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`
         );
       }

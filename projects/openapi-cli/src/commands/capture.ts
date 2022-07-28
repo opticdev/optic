@@ -5,6 +5,7 @@ import readline from 'readline';
 import { AbortController } from 'node-abort-controller';
 import { Writable } from 'stream';
 import * as AT from '../lib/async-tools';
+import { createCommandFeedback } from './reporters/feedback';
 
 import {
   CapturedInteraction,
@@ -14,8 +15,10 @@ import {
   ProxyInteractions,
 } from '../captures/index';
 
-export function captureCommand(): Command {
+export async function captureCommand(): Promise<Command> {
   const command = new Command('capture');
+
+  const feedback = await createCommandFeedback(command);
 
   command
     .description('capture observed traffic as a HAR (HttpArchive v1.3) file')
@@ -35,7 +38,9 @@ export function captureCommand(): Command {
       if (options.har) {
         let absoluteHarPath = Path.resolve(options.har);
         if (!(await fs.pathExists(absoluteHarPath))) {
-          return command.error('Har file could not be found at given path');
+          return feedback.inputError(
+            'HAR file could not be found at given path'
+          );
         }
         let harFile = fs.createReadStream(absoluteHarPath);
         let harEntries = HarEntries.fromReadable(harFile);
@@ -44,8 +49,8 @@ export function captureCommand(): Command {
 
       if (options.proxy) {
         if (!process.stdin.isTTY) {
-          return command.error(
-            'Can only use --proxy when in an interactive terminal session'
+          return feedback.inputError(
+            'can only use --proxy when in an interactive terminal session'
           );
         }
 
@@ -54,16 +59,15 @@ export function captureCommand(): Command {
           sourcesController.signal
         );
         sources.push(HarEntries.fromProxyInteractions(proxyInteractions));
-        console.error(
+        feedback.notable(
           `Proxy created. Redirect traffic you want to capture to ${proxyUrl}`
         );
         interactiveCapture = true;
       }
 
       if (sources.length < 1) {
-        command.showHelpAfterError(true);
-        return command.error(
-          'Choose a capture method to update spec by traffic'
+        return feedback.inputError(
+          'choose a capture method to update spec by traffic'
         );
       }
 
