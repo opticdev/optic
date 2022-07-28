@@ -1,5 +1,4 @@
 import { runOptic, setupWorkspace } from './integration';
-import path from 'node:path';
 
 jest.setTimeout(30000);
 

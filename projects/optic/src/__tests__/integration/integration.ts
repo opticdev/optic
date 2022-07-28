@@ -65,7 +65,7 @@ export async function setupWorkspace(
   const templatePath = path.join(__dirname, 'workspaces', template);
   const dir = await fs.mkdtemp(path.join(root, 'tmp/'));
 
-  const { code: cpCode } = await run(`cp -R ${templatePath}/ ${dir}/`, false);
+  const { code: cpCode } = await run(`cp -R ${templatePath}/* ${dir}/`, false);
   if (cpCode !== 0) {
     throw `Failed to copy workspace template ${template}`;
   }
