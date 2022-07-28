@@ -46,10 +46,11 @@ export async function addCommand(): Promise<Command> {
       'add an operation (path + method) to an OpenAPI specification. Provide a traffic source to learn request and response bodies as well.'
     )
     .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
-    .option(
-      '--proxy <target-url>',
-      'accept traffic over a proxy targeting the actual service'
-    )
+    // TODO: re-enable direct proxy use once we can re-render updating CLI output better
+    // .option(
+    //   '--proxy <target-url>',
+    //   'accept traffic over a proxy targeting the actual service'
+    // )
     .action(async (specPath: string, operationComponents: string[]) => {
       const absoluteSpecPath = Path.resolve(specPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
