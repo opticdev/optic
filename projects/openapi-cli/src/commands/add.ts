@@ -453,6 +453,7 @@ async function renderAddProgress(
     feedback.warning(
       'No paths or methods were added to the spec. All requested operations were already present in spec'
     );
+    // TODO: give more actionable feedback. Tell the user at least which one of their inputs matched which existing operation
     feedback.instruction(
       'Compare the OpenAPI spec file with your inputs. Does not seem right? Let us know!'
     );
