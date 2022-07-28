@@ -52,7 +52,6 @@ export async function addCommand(): Promise<Command> {
     )
     .action(async (specPath: string, operationComponents: string[]) => {
       const absoluteSpecPath = Path.resolve(specPath);
-      console.log(specPath, absoluteSpecPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
         return feedback.inputError(
           'OpenAPI specification file could not be found'
@@ -147,7 +146,7 @@ export async function addCommand(): Promise<Command> {
         }
       })();
 
-      const renderingStats = renderAddProgress(observations.fork());
+      const renderingStats = renderAddProgress(feedback, observations.fork());
       observations.start();
 
       await Promise.all([handleUserSignals, writingSpecFiles, renderingStats]);
@@ -182,10 +181,11 @@ export function addOperations(
         });
       }
     },
-    newOperationPatch(patch: SpecPatch) {
+    newOperation(op: { pathPattern: string; method: HttpMethod }) {
       observing.onNext({
-        kind: AddObservationKind.NewOperationPatch,
-        description: patch.description,
+        kind: AddObservationKind.NewOperation,
+        pathPattern: op.pathPattern,
+        method: op.method,
       });
     },
   };
@@ -210,25 +210,28 @@ export function addOperations(
       for (let patch of patches) {
         patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
         yield patch;
-        observers.newOperationPatch(patch);
       }
 
       if (
         undocumentedOperation.type === UndocumentedOperationType.MissingPath
       ) {
         for (let method of undocumentedOperation.methods) {
-          addedOperations.push({
+          let addedOperation = {
             pathPattern: undocumentedOperation.pathPattern,
             method,
-          });
+          };
+          addedOperations.push(addedOperation);
+          observers.newOperation(addedOperation);
         }
       } else if (
         undocumentedOperation.type === UndocumentedOperationType.MissingMethod
       ) {
-        addedOperations.push({
+        let addedOperation = {
           pathPattern: undocumentedOperation.pathPattern,
           method: undocumentedOperation.method,
-        });
+        };
+        addedOperations.push(addedOperation);
+        observers.newOperation(addedOperation);
       }
 
       updatingSpec.onNext(patchedSpec);
@@ -352,7 +355,7 @@ function updateSpecFiles(
 export enum AddObservationKind {
   UnmatchedPath = 'unmatched-path',
   UnmatchedMethod = 'unmatched-method',
-  NewOperationPatch = 'new-operation-patch',
+  NewOperation = 'new-operation',
   SpecFileUpdated = 'spec-file-updated',
 }
 
@@ -369,8 +372,9 @@ export type AddObservation = {
       requiredMethod: string;
     }
   | {
-      kind: AddObservationKind.NewOperationPatch;
-      description: string;
+      kind: AddObservationKind.NewOperation;
+      pathPattern: string;
+      method: HttpMethod;
     }
   | {
       kind: AddObservationKind.SpecFileUpdated;
@@ -417,21 +421,27 @@ function parseOperations(
   return Ok(pairs);
 }
 
-async function renderAddProgress(observations: AddObservations) {
+async function renderAddProgress(
+  feedback: Awaited<ReturnType<typeof createCommandFeedback>>,
+  observations: AddObservations
+) {
   let patchCount = 0;
 
   for await (let observation of observations) {
     if (observation.kind === AddObservationKind.UnmatchedPath) {
-      console.log(`Undocumented path: ${observation.requiredPath}`);
+      feedback.log(`Undocumented path detected: ${observation.requiredPath}`);
     } else if (observation.kind === AddObservationKind.UnmatchedMethod) {
-      console.log(
+      feedback.log(
         `Undocumented method: ${observation.requiredMethod.toUpperCase()} for existing path ${
           observation.matchedPathPattern
         }`
       );
-    } else if (observation.kind === AddObservationKind.NewOperationPatch) {
+    } else if (observation.kind === AddObservationKind.NewOperation) {
       patchCount += 1;
-      console.log(`PATCH: ${observation.description}`);
+
+      feedback.notable(
+        `added ${observation.method.toUpperCase()} ${observation.pathPattern}`
+      );
     } else if (observation.kind === AddObservationKind.SpecFileUpdated) {
       let { path } = observation;
       // console.log('Spec file update queued', path);
@@ -439,6 +449,11 @@ async function renderAddProgress(observations: AddObservations) {
   }
 
   if (patchCount === 0) {
-    console.log('All requested operations were already present in spec');
+    feedback.warning(
+      'No paths or methods were added to the spec. All requested operations were already present in spec'
+    );
+    feedback.instruction(
+      'Compare the OpenAPI spec file with your inputs. Does not seem right? Let us know!'
+    );
   }
 }

@@ -32,6 +32,10 @@ export async function createCommandFeedback(
     destination.write(chalk.blueBright(' » ') + message + '\n');
   }
 
+  function warning(message: string) {
+    destination.write(chalk.bgYellow.black(' warning ') + ' ' + message + '\n');
+  }
+
   function internal(
     message: string,
     exit: boolean = false,
@@ -56,11 +60,13 @@ export async function createCommandFeedback(
   }
 
   return {
+    chalk,
     inputError,
     internal,
     instruction,
     notable,
     log,
     success,
+    warning,
   };
 }
