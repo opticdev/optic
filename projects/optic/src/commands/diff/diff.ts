@@ -308,8 +308,14 @@ const getDiffAction =
       await runDiff(files, parsedFiles, config, options);
       return;
     } else {
-      console.error('Invalid combination of arguments');
-      console.log(helpText);
+      for await (const configFile of config.files) {
+        const parsedFiles = await getBaseAndHeadFromFileAndBase(
+          configFile.path,
+          options.base,
+          config.root
+        );
+        await runDiff(files, parsedFiles, config, options);
+      }
       return;
     }
   };
