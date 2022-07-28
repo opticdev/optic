@@ -29,6 +29,8 @@ import { getAnonId } from '../../utils/anonymous-id';
 const description = `run a diff between two API specs`;
 
 const usage = () => `
+  optic diff
+  optic diff --base <base>
   optic diff --id user-api --base <base>
   optic diff <file_path> --base <base>
   optic diff <file_path> <file_to_compare_against>
@@ -36,22 +38,28 @@ const usage = () => `
 
 const helpText = `
 Example usage:
-  Run a diff against the api spec \`user-api\` using the config from your \`optic.yml\` file against HEAD
+  Diff all API specs files defined in your \`optic.yml\` config file against HEAD
+  $ optic diff
+
+  Diff all API specs files defined in your \`optic.yml\` config file against master
+  $ optic diff --base master
+
+  Diff a single \`user-api\` spec defined in your \`optic.yml\` config file against HEAD
   $ optic diff --id user-api
 
-  Run a diff against the api spec \`user-api\` using the config from your \`optic.yml\` file against master
+  Diff the single \`user-api\` spec from your \`optic.yml\` config file against master
   $ optic diff --id user-api --base master
 
-  Run a diff between \`master:specs/openapi-spec.yml\` and \`specs/openapi-spec.yml\`
+  Diff \`specs/openapi-spec.yml\` against master
   $ optic diff openapi-spec.yml --base master
 
-  Run a diff between \`openapi-spec-v0.yml\` and \`openapi-spec-v1.yml\`
+  Diff \`openapi-spec-v0.yml\` and \`openapi-spec-v1.yml\`
   $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml
 
   Run a diff and view changes in the Optic web view
   $ optic diff --id user-api --base master --web
 
-  Run a diff and check the changes against configured rulesets:
+  Run a diff and check the changes against the rulesets configured in your \`optic.yml\` config file:
   $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml --check
   `;
 
