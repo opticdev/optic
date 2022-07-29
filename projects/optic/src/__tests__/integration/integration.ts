@@ -82,13 +82,13 @@ export async function setupWorkspace(
       throw `Git init failed in ${dir}`;
     }
     if (options.commit) {
-      const { code: cpCode } = await run(
+      const { code, combined } = await run(
         `git add . && git commit -m 'first commit'`,
         false,
         dir
       );
-      if (cpCode !== 0) {
-        throw `Failed to commit changes`;
+      if (code !== 0) {
+        throw new Error(`Git commit failed in ${dir}: ${combined}`);
       }
     }
   }
