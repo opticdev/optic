@@ -236,12 +236,6 @@ const runDiff = async (
     });
     await flushEvents();
     await openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
-  } else {
-    console.log(
-      chalk.blue(
-        `Rerun this command with the --web flag to view these changes to view the detailed changes`
-      )
-    );
   }
 };
 
@@ -314,12 +308,21 @@ const getDiffAction =
       await runDiff(files, parsedFiles, config, options);
     } else {
       for await (const configFile of config.files) {
+        console.log(`${configFile.id}:`);
         const parsedFiles = await getBaseAndHeadFromFileAndBase(
           configFile.path,
           options.base,
           config.root
         );
         await runDiff(files, parsedFiles, config, options);
+        console.log('');
       }
+    }
+    if (!options.web) {
+      console.log(
+        chalk.blue(
+          `Rerun this command with the --web flag to view the detailed changes in your browser`
+        )
+      );
     }
   };
