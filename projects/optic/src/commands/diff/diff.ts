@@ -219,6 +219,13 @@ const runDiff = async (
   }
 
   if (options.web) {
+    if (
+      specResults.changes.length === 0 &&
+      (!options.check || specResults.results.length === 0)
+    ) {
+      console.log('Empty changelog: not opening web view');
+      return;
+    }
     const meta = {
       createdAt: new Date(),
       command: ['optic', ...process.argv.slice(2)].join(' '),
