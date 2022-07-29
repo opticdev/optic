@@ -3071,6 +3071,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.isequal@npm:^4.5.6":
+  version: 4.5.6
+  resolution: "@types/lodash.isequal@npm:4.5.6"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: 0f065989408a9e0584e6c27495be2cd4602e62650f55266aa195812582444463c0c8570c674ae84f947c11748f49ab43fd5b482fa120e08eeee4c23b162edc38
+  languageName: node
+  linkType: hard
+
 "@types/lodash.omit@npm:^4.5.7":
   version: 4.5.7
   resolution: "@types/lodash.omit@npm:4.5.7"
@@ -3583,6 +3592,7 @@ __metadata:
     "@types/js-yaml": ^4.0.5
     "@types/json-stable-stringify": ^1.0.33
     "@types/lodash.groupby": ^4.6.6
+    "@types/lodash.isequal": ^4.5.6
     "@types/lodash.omit": ^4.5.7
     "@types/lodash.sortby": ^4.7.6
     "@types/node": ^17.0.15
@@ -3772,6 +3782,7 @@ __metadata:
     "@types/node": ^17.0.15
     "@useoptic/openapi-utilities": "workspace:*"
     "@useoptic/rulesets-base": "workspace:*"
+    ajv: ^8.11.0
     babel-jest: ^27.5.1
     jest: ^27.5.1
     prettier: ^2.4.1

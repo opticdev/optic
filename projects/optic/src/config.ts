@@ -10,9 +10,9 @@ export enum VCS {
 
 const OPTIC_YML_NAME = 'optic.yml';
 
-type ConfigRuleset = string | { rule: string; options?: unknown };
+type ConfigRuleset = { name: string; config: unknown };
 
-export type OpticCliConfig = {
+export type RawYmlConfig = {
   // path to the loaded config, or undefined if it was the default config
   configPath?: string;
 
@@ -27,14 +27,18 @@ export type OpticCliConfig = {
     id: string;
   }[];
 
+  ruleset?: unknown[];
+};
+
+export type OpticCliConfig = RawYmlConfig & {
   ruleset: ConfigRuleset[];
 };
 
-export const DefaultOpticCliConfig = {
+export const DefaultOpticCliConfig: OpticCliConfig = {
   root: process.cwd(),
   configPath: undefined,
   files: [],
-  ruleset: ['breaking-changes'],
+  ruleset: [{ name: 'breaking-changes', config: {} }],
 };
 
 const ajv = new Ajv();
@@ -93,6 +97,7 @@ export async function loadCliConfig(
   const config = yaml.load(await fs.readFile(configPath, 'utf-8'));
 
   validateConfig(config, configPath);
+  formatRules(config as RawYmlConfig);
 
   const cliConfig = config as OpticCliConfig;
   cliConfig.root = path.dirname(configPath);
@@ -111,4 +116,29 @@ export const validateConfig = (config: unknown, path: string) => {
       )}`
     );
   }
+};
+
+export const formatRules = (config: RawYmlConfig) => {
+  const finalRuleset: ConfigRuleset[] = [];
+
+  const rulesets = config.ruleset || [];
+  for (const ruleset of rulesets) {
+    if (typeof ruleset === 'string') {
+      finalRuleset.push({ name: ruleset, config: {} });
+    } else if (typeof ruleset === 'object' && ruleset !== null) {
+      const keys = Object.keys(ruleset);
+      if (keys.length !== 1) {
+        throw new UserError(`Configuration error: empty ruleset configuration`);
+      } else {
+        finalRuleset.push({
+          name: keys[0],
+          config: ruleset[keys[0]] || {},
+        });
+      }
+    } else {
+      throw new UserError('Configuration error: unexpected ruleset format');
+    }
+  }
+
+  config.ruleset = finalRuleset;
 };

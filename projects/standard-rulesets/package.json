@@ -18,7 +18,8 @@
   },
   "dependencies": {
     "@useoptic/openapi-utilities": "workspace:*",
-    "@useoptic/rulesets-base": "workspace:*"
+    "@useoptic/rulesets-base": "workspace:*",
+    "ajv": "^8.11.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.0",

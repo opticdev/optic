@@ -1,6 +1,7 @@
 import {
   BulkUploadJson,
   OPTIC_COMMENT_SURVEY_LINK,
+  getOperationsModifsLabel,
 } from '@useoptic/openapi-utilities';
 
 export const createBulkCommentBody = (
@@ -22,6 +23,8 @@ export const createBulkCommentBody = (
       else failingChecks += 1;
     }
 
+    const operationsModifsLabel = getOperationsModifsLabel(changes);
+
     const comparisonDescription =
       inputs.from && inputs.to
         ? `changes to \`${inputs.from}\``
@@ -39,7 +42,7 @@ export const createBulkCommentBody = (
     const body = `
 #### Changelog for [${comparisonDescription}](${opticWebUrl})
 
-  💡 **${changes.length}** API change${changes.length > 1 ? 's' : ''}
+  💡 ${operationsModifsLabel} 
 
   ${
     failingChecks > 0

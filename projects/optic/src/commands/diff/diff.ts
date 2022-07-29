@@ -11,10 +11,7 @@ import {
   IChange,
 } from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
-import {
-  BreakingChangesRuleset,
-  NamingChangesRuleset,
-} from '@useoptic/standard-rulesets';
+import { StandardRulesets } from '@useoptic/standard-rulesets';
 import { RuleRunner, Ruleset } from '@useoptic/rulesets-base';
 import {
   parseFilesFromRef,
@@ -62,11 +59,6 @@ const webBase =
     : process.env.OPTIC_ENV === 'local'
     ? 'http://localhost:3000'
     : 'https://app.useoptic.com';
-
-const stdRulesets = {
-  'breaking-changes': BreakingChangesRuleset,
-  // 'naming-changes': NamingChangesRuleset,
-};
 
 export const registerDiff = (cli: Command, config: OpticCliConfig) => {
   cli
@@ -180,6 +172,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
           const changelogData = generateChangelogData({
             changes: specResults.changes,
             toFile: headFile.jsonLike,
+            rules: specResults.results,
           });
 
           console.log('');
@@ -292,11 +285,13 @@ const generateRuleRunner = (
   const rulesets: Ruleset[] = [];
 
   if (checksEnabled) {
-    for (const rule of config.ruleset) {
-      if (typeof rule === 'string' && stdRulesets[rule]) {
-        rulesets.push(new stdRulesets[rule]());
+    for (const ruleset of config.ruleset) {
+      if (StandardRulesets[ruleset.name]) {
+        rulesets.push(
+          StandardRulesets[ruleset.name].fromOpticConfig(ruleset.config)
+        );
       } else {
-        console.error(`Warning: Invalid ruleset ${rule}`);
+        console.error(`Warning: Invalid ruleset ${ruleset.name}`);
       }
     }
   }

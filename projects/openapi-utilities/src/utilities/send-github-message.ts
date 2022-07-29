@@ -26,7 +26,7 @@ export const sendGithubMessage = async (
     run,
   } = ciContext;
 
-  if (changes.length === 0) {
+  if (changes.length === 0 && results.length === 0) {
     console.log('No changes were found, exiting.');
     return;
   }
