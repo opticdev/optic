@@ -5,7 +5,7 @@ export const preventResponseStatusCodeRemoval = new ResponseRule({
   rule: (responseAssertions) => {
     responseAssertions.removed('not remove response status code', (value) => {
       throw new RuleError({
-        message: `must not remove response status code ${value.statusCode}`,
+        message: `must not remove response status code ${value.statusCode}. This is a breaking change.`,
       });
     });
   },

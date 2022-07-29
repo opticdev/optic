@@ -9,7 +9,7 @@ export const preventRequestPropertyRequired = new RequestRule({
         if (ruleContext.operation.change === 'added') return; // rule doesn't apply for new operations
         if (property.value.required) {
           throw new RuleError({
-            message: `cannot add a required request property '${property.value.key}' to an existing operation`,
+            message: `cannot add a required request property '${property.value.key}' to an existing operation. This is a breaking change.`,
           });
         }
       }
@@ -20,8 +20,7 @@ export const preventRequestPropertyRequired = new RequestRule({
       (before, after) => {
         if (!before.value.required && after.value.required) {
           throw new RuleError({
-            message: `cannot make a request property 
-             required`,
+            message: `cannot make a request property required. This is a breaking change.`,
           });
         }
       }

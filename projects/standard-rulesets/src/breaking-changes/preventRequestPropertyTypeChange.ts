@@ -14,7 +14,7 @@ export const preventRequestPropertyTypeChange = new RequestRule({
           )
         ) {
           throw new RuleError({
-            message: `expected request body ${after.value.contentType} root shape to not change type`,
+            message: `expected request body ${after.value.contentType} root shape to not change type. This is a breaking change.`,
           });
         }
       }
@@ -30,7 +30,7 @@ export const preventRequestPropertyTypeChange = new RequestRule({
           )
         ) {
           throw new RuleError({
-            message: `expected request body property '${after.value.key}' to not change type`,
+            message: `expected request body property '${after.value.key}' to not change type. This is a breaking change.`,
           });
         }
       }

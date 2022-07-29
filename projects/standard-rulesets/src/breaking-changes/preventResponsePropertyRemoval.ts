@@ -7,7 +7,7 @@ export const preventResponsePropertyRemoval = new ResponseBodyRule({
       'not change response body property from required to optional',
       (property) => {
         throw new RuleError({
-          message: `cannot remove response property '${property.value.key}'`,
+          message: `cannot remove response property '${property.value.key}'. This is a breaking change.`,
         });
       }
     );

@@ -8,7 +8,7 @@ export const preventResponsePropertyOptional = new ResponseBodyRule({
       (before, after) => {
         if (before.value.required && !after.value.required) {
           throw new RuleError({
-            message: `cannot make required response property '${after.value.key}' optional`,
+            message: `cannot make required response property '${after.value.key}' optional. This is a breaking change.`,
           });
         }
       }

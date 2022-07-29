@@ -5,7 +5,7 @@ export const preventOperationRemoval = new OperationRule({
   rule: (operationAssertions) => {
     operationAssertions.removed('not remove operation', () => {
       throw new RuleError({
-        message: 'cannot remove an operation',
+        message: 'cannot remove an operation. This is a breaking change.',
       });
     });
   },
