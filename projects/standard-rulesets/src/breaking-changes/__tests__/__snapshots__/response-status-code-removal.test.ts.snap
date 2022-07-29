@@ -30,9 +30,9 @@ Array [
         },
       },
     },
-    "condition": "not remove response status code",
+    "condition": undefined,
     "docsLink": undefined,
-    "error": "must not remove response status code",
+    "error": "must not remove response status code 200. This is a breaking change.",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -40,7 +40,8 @@ Array [
     "name": "prevent response status code removal",
     "passed": false,
     "received": undefined,
-    "where": "removed response status code: 200 in operation: GET /api/users",
+    "type": "removed",
+    "where": "GET /api/users response 200",
   },
 ]
 `;

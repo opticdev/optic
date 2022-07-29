@@ -29,7 +29,7 @@ Array [
         "kind": "body",
       },
     },
-    "condition": "must contain a type",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "request does not have \`type\`",
     "exempted": false,
@@ -39,7 +39,8 @@ Array [
     "name": "request type",
     "passed": false,
     "received": undefined,
-    "where": "added request with content-type: application/json in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users request body: application/json",
   },
 ]
 `;
@@ -75,7 +76,7 @@ Array [
         "kind": "body",
       },
     },
-    "condition": "must contain a type",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -85,7 +86,8 @@ Array [
     "name": "request type",
     "passed": true,
     "received": undefined,
-    "where": "added request with content-type: application/json in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users request body: application/json",
   },
 ]
 `;
@@ -129,7 +131,7 @@ Array [
         "kind": "body",
       },
     },
-    "condition": "must not change root body shape",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "request must not change type",
     "exempted": false,
@@ -139,7 +141,8 @@ Array [
     "name": "request shape",
     "passed": false,
     "received": undefined,
-    "where": "changed request with content-type: application/json in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users request body: application/json",
   },
 ]
 `;
@@ -185,7 +188,7 @@ Array [
         "kind": "body",
       },
     },
-    "condition": "must not change root body shape",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -195,7 +198,8 @@ Array [
     "name": "request shape",
     "passed": true,
     "received": undefined,
-    "where": "changed request with content-type: application/json in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users request body: application/json",
   },
 ]
 `;
@@ -231,7 +235,7 @@ Array [
         "kind": "body",
       },
     },
-    "condition": "match expected shape",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "Expected a partial match",
     "exempted": false,
@@ -241,7 +245,8 @@ Array [
     "name": "request type",
     "passed": false,
     "received": "{\\"schema\\":{\\"type\\":\\"object\\",\\"properties\\":{\\"notid\\":{\\"type\\":\\"string\\"},\\"name\\":{\\"type\\":\\"string\\"}}}}",
-    "where": "added request with content-type: application/json in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users request body: application/json",
   },
 ]
 `;
@@ -277,7 +282,7 @@ Array [
         "kind": "body",
       },
     },
-    "condition": "not match expected shape",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -287,7 +292,8 @@ Array [
     "name": "request type",
     "passed": true,
     "received": undefined,
-    "where": "added request with content-type: application/json in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users request body: application/json",
   },
 ]
 `;
@@ -323,7 +329,7 @@ Array [
         "kind": "body",
       },
     },
-    "condition": "match expected shape",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -333,7 +339,8 @@ Array [
     "name": "request type",
     "passed": true,
     "received": undefined,
-    "where": "added request with content-type: application/json in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users request body: application/json",
   },
 ]
 `;
@@ -369,7 +376,7 @@ Array [
         "kind": "body",
       },
     },
-    "condition": "match expected shape",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "Expected at least one partial match",
     "exempted": false,
@@ -379,7 +386,8 @@ Array [
     "name": "request type",
     "passed": false,
     "received": "{\\"schema\\":{\\"type\\":\\"object\\",\\"properties\\":{\\"notid\\":{\\"type\\":\\"string\\"},\\"name\\":{\\"type\\":\\"string\\"}}}}",
-    "where": "added request with content-type: application/json in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users request body: application/json",
   },
 ]
 `;
@@ -415,7 +423,7 @@ Array [
         "kind": "body",
       },
     },
-    "condition": "not match expected shape",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -425,7 +433,8 @@ Array [
     "name": "request type",
     "passed": true,
     "received": undefined,
-    "where": "added request with content-type: application/json in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users request body: application/json",
   },
 ]
 `;
@@ -461,7 +470,7 @@ Array [
         "kind": "body",
       },
     },
-    "condition": "match expected shape",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -471,7 +480,8 @@ Array [
     "name": "request type",
     "passed": true,
     "received": undefined,
-    "where": "added request with content-type: application/json in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users request body: application/json",
   },
 ]
 `;
@@ -509,7 +519,7 @@ Array [
         },
       },
     },
-    "condition": "cannot remove bodies with array schema",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "cannot remove bodies with array schema",
     "exempted": false,
@@ -519,7 +529,8 @@ Array [
     "name": "request removal",
     "passed": false,
     "received": undefined,
-    "where": "removed request with content-type: application/json in operation: GET /api/users",
+    "type": "removed",
+    "where": "GET /api/users request body: application/json",
   },
 ]
 `;
@@ -557,7 +568,7 @@ Array [
         },
       },
     },
-    "condition": "cannot remove bodies with array schema",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -567,7 +578,8 @@ Array [
     "name": "request removal",
     "passed": true,
     "received": undefined,
-    "where": "removed request with content-type: application/json in operation: GET /api/users",
+    "type": "removed",
+    "where": "GET /api/users request body: application/json",
   },
 ]
 `;
@@ -600,7 +612,7 @@ Array [
         "flatSchema": Object {},
       },
     },
-    "condition": "must contain a type",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "request body does not have \`type\`",
     "exempted": false,
@@ -610,7 +622,8 @@ Array [
     "name": "request type",
     "passed": false,
     "received": undefined,
-    "where": "requirement for request with content-type: application/json in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json",
   },
 ]
 `;
@@ -645,7 +658,7 @@ Array [
         },
       },
     },
-    "condition": "must contain a type",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -655,7 +668,8 @@ Array [
     "name": "request type",
     "passed": true,
     "received": undefined,
-    "where": "requirement for request with content-type: application/json in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json",
   },
 ]
 `;
@@ -693,7 +707,7 @@ Array [
         "required": false,
       },
     },
-    "condition": "must contain a type",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "field does not have \`type\`",
     "expected": undefined,
@@ -702,7 +716,8 @@ Array [
     "name": "request type",
     "passed": false,
     "received": undefined,
-    "where": "requirement for property: hello request body: application/json in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json property: hello",
   },
 ]
 `;
@@ -742,7 +757,7 @@ Array [
         "required": false,
       },
     },
-    "condition": "must contain a type",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "expected": undefined,
@@ -751,7 +766,8 @@ Array [
     "name": "request type",
     "passed": true,
     "received": undefined,
-    "where": "requirement for property: hello request body: application/json in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json property: hello",
   },
 ]
 `;
@@ -804,7 +820,7 @@ Array [
         "kind": "field",
       },
     },
-    "condition": "must not change property type",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "must not change type",
     "expected": undefined,
@@ -813,7 +829,8 @@ Array [
     "name": "property type",
     "passed": false,
     "received": undefined,
-    "where": "changed property: items/hello request body: application/json in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users request body: application/json property: items/hello",
   },
 ]
 `;
@@ -867,7 +884,7 @@ Array [
         "kind": "field",
       },
     },
-    "condition": "must not change property type",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "expected": undefined,
@@ -876,7 +893,8 @@ Array [
     "name": "property type",
     "passed": true,
     "received": undefined,
-    "where": "changed property: items/hello request body: application/json in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users request body: application/json property: items/hello",
   },
 ]
 `;
@@ -919,7 +937,7 @@ Array [
         },
       },
     },
-    "condition": "cannot remove bodies required property",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "cannot remove bodies with array schema",
     "expected": undefined,
@@ -928,7 +946,8 @@ Array [
     "name": "request removal",
     "passed": false,
     "received": undefined,
-    "where": "removed property: goodbye request body: application/json in operation: GET /api/users",
+    "type": "removed",
+    "where": "GET /api/users request body: application/json property: goodbye",
   },
 ]
 `;
@@ -971,7 +990,7 @@ Array [
         },
       },
     },
-    "condition": "cannot remove bodies required property",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "expected": undefined,
@@ -980,7 +999,8 @@ Array [
     "name": "request removal",
     "passed": true,
     "received": undefined,
-    "where": "removed property: goodbye request body: application/json in operation: GET /api/users",
+    "type": "removed",
+    "where": "GET /api/users request body: application/json property: goodbye",
   },
 ]
 `;
@@ -1018,7 +1038,7 @@ Array [
         "required": false,
       },
     },
-    "condition": "must contain a type",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "field does not have \`type\`",
     "expected": undefined,
@@ -1027,7 +1047,8 @@ Array [
     "name": "request type",
     "passed": false,
     "received": undefined,
-    "where": "requirement for property: hello request body: application/json in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json property: hello",
   },
 ]
 `;
@@ -1067,7 +1088,7 @@ Array [
         "required": false,
       },
     },
-    "condition": "must contain a type",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "expected": undefined,
@@ -1076,7 +1097,8 @@ Array [
     "name": "request type",
     "passed": true,
     "received": undefined,
-    "where": "requirement for property: hello request body: application/json in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json property: hello",
   },
 ]
 `;

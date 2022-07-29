@@ -42,7 +42,7 @@ Array [
         "kind": "cookie-parameter",
       },
     },
-    "condition": "not remove possible values from a cookie parameter enum",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -52,7 +52,8 @@ Array [
     "name": "prevent cookie parameters enum breaking changes",
     "passed": true,
     "received": undefined,
-    "where": "changed cookie parameter: version in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users cookie parameter: version",
   },
   Object {
     "change": Object {
@@ -94,7 +95,7 @@ Array [
         "kind": "cookie-parameter",
       },
     },
-    "condition": "not add an enum to restrict possible values for a cookie parameter",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -104,7 +105,8 @@ Array [
     "name": "prevent cookie parameters enum breaking changes",
     "passed": true,
     "received": undefined,
-    "where": "changed cookie parameter: version in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users cookie parameter: version",
   },
   Object {
     "change": Object {
@@ -146,7 +148,7 @@ Array [
         "kind": "cookie-parameter",
       },
     },
-    "condition": "not change parameter type",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -156,7 +158,8 @@ Array [
     "name": "prevent cookie parameters type changes",
     "passed": true,
     "received": undefined,
-    "where": "changed cookie parameter: version in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users cookie parameter: version",
   },
   Object {
     "change": Object {
@@ -198,9 +201,9 @@ Array [
         "kind": "cookie-parameter",
       },
     },
-    "condition": "not make an optional cookie parameter required",
+    "condition": undefined,
     "docsLink": undefined,
-    "error": "cannot make an optional cookie parameter required",
+    "error": "cannot make optional cookie parameter 'version' required. This is a breaking change.",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -208,7 +211,8 @@ Array [
     "name": "prevent requiring existing cookie parameters",
     "passed": false,
     "received": undefined,
-    "where": "changed cookie parameter: version in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users cookie parameter: version",
   },
 ]
 `;
@@ -255,7 +259,7 @@ Array [
         "kind": "header-parameter",
       },
     },
-    "condition": "not remove possible values from a header parameter enum",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -265,7 +269,8 @@ Array [
     "name": "prevent header parameters enum breaking changes",
     "passed": true,
     "received": undefined,
-    "where": "changed header parameter: version in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users header parameter: version",
   },
   Object {
     "change": Object {
@@ -307,7 +312,7 @@ Array [
         "kind": "header-parameter",
       },
     },
-    "condition": "not add an enum to restrict possible values for a header parameter",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -317,7 +322,8 @@ Array [
     "name": "prevent header parameters enum breaking changes",
     "passed": true,
     "received": undefined,
-    "where": "changed header parameter: version in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users header parameter: version",
   },
   Object {
     "change": Object {
@@ -359,7 +365,7 @@ Array [
         "kind": "header-parameter",
       },
     },
-    "condition": "not change parameter type",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -369,7 +375,8 @@ Array [
     "name": "prevent header parameters type changes",
     "passed": true,
     "received": undefined,
-    "where": "changed header parameter: version in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users header parameter: version",
   },
   Object {
     "change": Object {
@@ -411,9 +418,9 @@ Array [
         "kind": "header-parameter",
       },
     },
-    "condition": "not make an optional header parameter required",
+    "condition": undefined,
     "docsLink": undefined,
-    "error": "cannot make an optional header parameter required",
+    "error": "cannot make optional header parameter 'version' required. This is a breaking change.",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -421,7 +428,8 @@ Array [
     "name": "prevent requiring existing header parameters",
     "passed": false,
     "received": undefined,
-    "where": "changed header parameter: version in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users header parameter: version",
   },
 ]
 `;
@@ -468,7 +476,7 @@ Array [
         "kind": "query-parameter",
       },
     },
-    "condition": "not remove possible values from a query parameter enum",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -478,7 +486,8 @@ Array [
     "name": "prevent query parameters enum breaking changes",
     "passed": true,
     "received": undefined,
-    "where": "changed query parameter: version in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users query parameter: version",
   },
   Object {
     "change": Object {
@@ -520,7 +529,7 @@ Array [
         "kind": "query-parameter",
       },
     },
-    "condition": "not add an enum to restrict possible values for a query parameter",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -530,7 +539,8 @@ Array [
     "name": "prevent query parameters enum breaking changes",
     "passed": true,
     "received": undefined,
-    "where": "changed query parameter: version in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users query parameter: version",
   },
   Object {
     "change": Object {
@@ -572,7 +582,7 @@ Array [
         "kind": "query-parameter",
       },
     },
-    "condition": "not change parameter type",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -582,7 +592,8 @@ Array [
     "name": "prevent query parameters type changes",
     "passed": true,
     "received": undefined,
-    "where": "changed query parameter: version in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users query parameter: version",
   },
   Object {
     "change": Object {
@@ -624,9 +635,9 @@ Array [
         "kind": "query-parameter",
       },
     },
-    "condition": "not make an optional query parameter required",
+    "condition": undefined,
     "docsLink": undefined,
-    "error": "cannot make an optional query parameter required",
+    "error": "cannot make optional query parameter 'version' required. This is a breaking change.",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -634,7 +645,8 @@ Array [
     "name": "prevent requiring existing query parameters",
     "passed": false,
     "received": undefined,
-    "where": "changed query parameter: version in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users query parameter: version",
   },
 ]
 `;
@@ -672,9 +684,9 @@ Array [
         "kind": "cookie-parameter",
       },
     },
-    "condition": "not add required cookie parameter",
+    "condition": undefined,
     "docsLink": undefined,
-    "error": "cannot add a required cookie parameter to an existing operation",
+    "error": "cannot add required cookie parameter required to an existing operation. This is a breaking change.",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -682,7 +694,8 @@ Array [
     "name": "prevent new required cookie parameters",
     "passed": false,
     "received": undefined,
-    "where": "added cookie parameter: required in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users cookie parameter: required",
   },
 ]
 `;
@@ -720,9 +733,9 @@ Array [
         "kind": "header-parameter",
       },
     },
-    "condition": "not add required header parameter",
+    "condition": undefined,
     "docsLink": undefined,
-    "error": "cannot add a required header parameter to an existing operation",
+    "error": "cannot add required header parameter required to an existing operation. This is a breaking change.",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -730,7 +743,8 @@ Array [
     "name": "prevent new required header parameters",
     "passed": false,
     "received": undefined,
-    "where": "added header parameter: required in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users header parameter: required",
   },
 ]
 `;
@@ -768,9 +782,9 @@ Array [
         "kind": "query-parameter",
       },
     },
-    "condition": "not add required query parameter",
+    "condition": undefined,
     "docsLink": undefined,
-    "error": "cannot add a required query parameter to an existing operation",
+    "error": "cannot add required query parameter required to an existing operation. This is a breaking change.",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -778,7 +792,8 @@ Array [
     "name": "prevent new required query parameters",
     "passed": false,
     "received": undefined,
-    "where": "added query parameter: required in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users query parameter: required",
   },
 ]
 `;

@@ -22,7 +22,7 @@ Array [
         "pathPattern": "/api/usersList/{userId}",
       },
     },
-    "condition": "path component must be param-case when always",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "usersList is not param-case",
     "exempted": false,
@@ -32,7 +32,8 @@ Array [
     "name": "operation path component naming check",
     "passed": false,
     "received": undefined,
-    "where": "requirement for operation: GET /api/usersList/{userId}",
+    "type": "requirement",
+    "where": "GET /api/usersList/{userId}",
   },
 ]
 `;
@@ -60,7 +61,7 @@ Array [
         "kind": "operation",
       },
     },
-    "condition": "path component must be param-case when added",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "usersList is not param-case",
     "exempted": false,
@@ -70,7 +71,8 @@ Array [
     "name": "operation path component naming check",
     "passed": false,
     "received": undefined,
-    "where": "added operation: GET /api/usersList/{userId}",
+    "type": "added",
+    "where": "GET /api/usersList/{userId}",
   },
 ]
 `;
@@ -98,7 +100,7 @@ Array [
         "kind": "operation",
       },
     },
-    "condition": "path component must be param-case when addedOrChanged",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "usersList is not param-case",
     "exempted": false,
@@ -108,7 +110,8 @@ Array [
     "name": "operation path component naming check",
     "passed": false,
     "received": undefined,
-    "where": "added operation: GET /api/usersList/{userId}",
+    "type": "added",
+    "where": "GET /api/usersList/{userId}",
   },
 ]
 `;
@@ -135,7 +138,7 @@ Array [
         "pathPattern": "/api/users-list/{userId}",
       },
     },
-    "condition": "path component must be param-case when always",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -145,7 +148,8 @@ Array [
     "name": "operation path component naming check",
     "passed": true,
     "received": undefined,
-    "where": "requirement for operation: GET /api/users-list/{userId}",
+    "type": "requirement",
+    "where": "GET /api/users-list/{userId}",
   },
 ]
 `;
@@ -173,7 +177,7 @@ Array [
         "kind": "operation",
       },
     },
-    "condition": "path component must be param-case when added",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -183,7 +187,8 @@ Array [
     "name": "operation path component naming check",
     "passed": true,
     "received": undefined,
-    "where": "added operation: GET /api/users-list/{userId}",
+    "type": "added",
+    "where": "GET /api/users-list/{userId}",
   },
 ]
 `;
@@ -211,7 +216,7 @@ Array [
         "kind": "operation",
       },
     },
-    "condition": "path component must be param-case when addedOrChanged",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -221,7 +226,8 @@ Array [
     "name": "operation path component naming check",
     "passed": true,
     "received": undefined,
-    "where": "added operation: GET /api/users-list/{userId}",
+    "type": "added",
+    "where": "GET /api/users-list/{userId}",
   },
 ]
 `;
@@ -255,7 +261,7 @@ Array [
         "name": "snake_case",
       },
     },
-    "condition": "query parameter must be camelCase when always",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "snake_case is not camelCase",
     "exempted": false,
@@ -265,7 +271,8 @@ Array [
     "name": "query parameter naming check",
     "passed": false,
     "received": undefined,
-    "where": "requirement for query parameter: snake_case in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users query parameter: snake_case",
   },
 ]
 `;
@@ -300,7 +307,7 @@ Array [
         "kind": "query-parameter",
       },
     },
-    "condition": "query parameter must be camelCase when added",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "snake_case is not camelCase",
     "exempted": false,
@@ -310,7 +317,8 @@ Array [
     "name": "query parameter naming check",
     "passed": false,
     "received": undefined,
-    "where": "added query parameter: snake_case in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users query parameter: snake_case",
   },
 ]
 `;
@@ -351,7 +359,7 @@ Array [
         "kind": "query-parameter",
       },
     },
-    "condition": "query parameter must be camelCase when addedOrChanged",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "snake_case is not camelCase",
     "exempted": false,
@@ -361,7 +369,8 @@ Array [
     "name": "query parameter naming check",
     "passed": false,
     "received": undefined,
-    "where": "changed query parameter: snake_case in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users query parameter: snake_case",
   },
 ]
 `;
@@ -395,7 +404,7 @@ Array [
         "name": "camelCase",
       },
     },
-    "condition": "query parameter must be camelCase when always",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -405,7 +414,8 @@ Array [
     "name": "query parameter naming check",
     "passed": true,
     "received": undefined,
-    "where": "requirement for query parameter: camelCase in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users query parameter: camelCase",
   },
 ]
 `;
@@ -440,7 +450,7 @@ Array [
         "kind": "query-parameter",
       },
     },
-    "condition": "query parameter must be camelCase when added",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -450,7 +460,8 @@ Array [
     "name": "query parameter naming check",
     "passed": true,
     "received": undefined,
-    "where": "added query parameter: camelCase in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users query parameter: camelCase",
   },
 ]
 `;
@@ -491,7 +502,7 @@ Array [
         "kind": "query-parameter",
       },
     },
-    "condition": "query parameter must be camelCase when addedOrChanged",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -501,7 +512,8 @@ Array [
     "name": "query parameter naming check",
     "passed": true,
     "received": undefined,
-    "where": "changed query parameter: camelCase in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users query parameter: camelCase",
   },
 ]
 `;
@@ -535,7 +547,7 @@ Array [
         "name": "snake_case",
       },
     },
-    "condition": "request header parameter must be PascalCase when always",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "snake_case is not PascalCase",
     "exempted": false,
@@ -545,7 +557,8 @@ Array [
     "name": "header parameter naming check",
     "passed": false,
     "received": undefined,
-    "where": "requirement for header parameter: snake_case in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users header parameter: snake_case",
   },
 ]
 `;
@@ -580,7 +593,7 @@ Array [
         "kind": "header-parameter",
       },
     },
-    "condition": "request header parameter must be PascalCase when added",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "snake_case is not PascalCase",
     "exempted": false,
@@ -590,7 +603,8 @@ Array [
     "name": "header parameter naming check",
     "passed": false,
     "received": undefined,
-    "where": "added header parameter: snake_case in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users header parameter: snake_case",
   },
 ]
 `;
@@ -631,7 +645,7 @@ Array [
         "kind": "header-parameter",
       },
     },
-    "condition": "request header parameter must be PascalCase when addedOrChanged",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "snake_case is not PascalCase",
     "exempted": false,
@@ -641,7 +655,8 @@ Array [
     "name": "header parameter naming check",
     "passed": false,
     "received": undefined,
-    "where": "changed header parameter: snake_case in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users header parameter: snake_case",
   },
 ]
 `;
@@ -675,7 +690,7 @@ Array [
         "name": "PascalCase",
       },
     },
-    "condition": "request header parameter must be PascalCase when always",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -685,7 +700,8 @@ Array [
     "name": "header parameter naming check",
     "passed": true,
     "received": undefined,
-    "where": "requirement for header parameter: PascalCase in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users header parameter: PascalCase",
   },
 ]
 `;
@@ -720,7 +736,7 @@ Array [
         "kind": "header-parameter",
       },
     },
-    "condition": "request header parameter must be PascalCase when added",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -730,7 +746,8 @@ Array [
     "name": "header parameter naming check",
     "passed": true,
     "received": undefined,
-    "where": "added header parameter: PascalCase in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users header parameter: PascalCase",
   },
 ]
 `;
@@ -771,7 +788,7 @@ Array [
         "kind": "header-parameter",
       },
     },
-    "condition": "request header parameter must be PascalCase when addedOrChanged",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -781,7 +798,8 @@ Array [
     "name": "header parameter naming check",
     "passed": true,
     "received": undefined,
-    "where": "changed header parameter: PascalCase in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users header parameter: PascalCase",
   },
 ]
 `;
@@ -822,7 +840,7 @@ Array [
         "required": false,
       },
     },
-    "condition": "property must be snake_case always",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "userName is not snake_case",
     "expected": undefined,
@@ -831,7 +849,8 @@ Array [
     "name": "request property naming check",
     "passed": false,
     "received": undefined,
-    "where": "requirement for property: userName request body: application/json in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json property: userName",
   },
 ]
 `;
@@ -873,7 +892,7 @@ Array [
         "kind": "field",
       },
     },
-    "condition": "property must be snake_case when added",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "userName is not snake_case",
     "expected": undefined,
@@ -882,7 +901,8 @@ Array [
     "name": "request property naming check",
     "passed": false,
     "received": undefined,
-    "where": "added property: userName request body: application/json in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users request body: application/json property: userName",
   },
 ]
 `;
@@ -933,7 +953,7 @@ Array [
         "kind": "field",
       },
     },
-    "condition": "property must be snake_case when addedOrChanged",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "userName is not snake_case",
     "expected": undefined,
@@ -942,7 +962,8 @@ Array [
     "name": "request property naming check",
     "passed": false,
     "received": undefined,
-    "where": "changed property: userName request body: application/json in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users request body: application/json property: userName",
   },
 ]
 `;
@@ -983,7 +1004,7 @@ Array [
         "required": false,
       },
     },
-    "condition": "property must be snake_case always",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "expected": undefined,
@@ -992,7 +1013,8 @@ Array [
     "name": "request property naming check",
     "passed": true,
     "received": undefined,
-    "where": "requirement for property: user_name request body: application/json in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json property: user_name",
   },
 ]
 `;
@@ -1034,7 +1056,7 @@ Array [
         "kind": "field",
       },
     },
-    "condition": "property must be snake_case when added",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "expected": undefined,
@@ -1043,7 +1065,8 @@ Array [
     "name": "request property naming check",
     "passed": true,
     "received": undefined,
-    "where": "added property: user_name request body: application/json in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users request body: application/json property: user_name",
   },
 ]
 `;
@@ -1094,7 +1117,7 @@ Array [
         "kind": "field",
       },
     },
-    "condition": "property must be snake_case when addedOrChanged",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "expected": undefined,
@@ -1103,7 +1126,8 @@ Array [
     "name": "request property naming check",
     "passed": true,
     "received": undefined,
-    "where": "changed property: user_name request body: application/json in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users request body: application/json property: user_name",
   },
 ]
 `;
@@ -1139,7 +1163,7 @@ Array [
         "schema": Object {},
       },
     },
-    "condition": "response header parameter must be param-case when always",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "camelCase is not param-case",
     "exempted": false,
@@ -1149,7 +1173,8 @@ Array [
     "name": "header parameter naming check",
     "passed": false,
     "received": undefined,
-    "where": "requirement for response header: camelCase in response status code: 200 in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users response 200 response header: camelCase",
   },
 ]
 `;
@@ -1186,7 +1211,7 @@ Array [
         "kind": "response-header",
       },
     },
-    "condition": "response header parameter must be param-case when added",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "camelCase is not param-case",
     "exempted": false,
@@ -1196,7 +1221,8 @@ Array [
     "name": "header parameter naming check",
     "passed": false,
     "received": undefined,
-    "where": "added response header: camelCase in response status code: 200 in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users response 200 response header: camelCase",
   },
 ]
 `;
@@ -1239,7 +1265,7 @@ Array [
         "kind": "response-header",
       },
     },
-    "condition": "response header parameter must be param-case when addedOrChanged",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "camelCase is not param-case",
     "exempted": false,
@@ -1249,7 +1275,8 @@ Array [
     "name": "header parameter naming check",
     "passed": false,
     "received": undefined,
-    "where": "changed response header: camelCase in response status code: 200 in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users response 200 response header: camelCase",
   },
 ]
 `;
@@ -1285,7 +1312,7 @@ Array [
         "schema": Object {},
       },
     },
-    "condition": "response header parameter must be param-case when always",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -1295,7 +1322,8 @@ Array [
     "name": "header parameter naming check",
     "passed": true,
     "received": undefined,
-    "where": "requirement for response header: param-case in response status code: 200 in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users response 200 response header: param-case",
   },
 ]
 `;
@@ -1332,7 +1360,7 @@ Array [
         "kind": "response-header",
       },
     },
-    "condition": "response header parameter must be param-case when added",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -1342,7 +1370,8 @@ Array [
     "name": "header parameter naming check",
     "passed": true,
     "received": undefined,
-    "where": "added response header: param-case in response status code: 200 in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users response 200 response header: param-case",
   },
 ]
 `;
@@ -1385,7 +1414,7 @@ Array [
         "kind": "response-header",
       },
     },
-    "condition": "response header parameter must be param-case when addedOrChanged",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -1395,7 +1424,8 @@ Array [
     "name": "header parameter naming check",
     "passed": true,
     "received": undefined,
-    "where": "changed response header: param-case in response status code: 200 in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users response 200 response header: param-case",
   },
 ]
 `;
@@ -1439,7 +1469,7 @@ Array [
         "required": false,
       },
     },
-    "condition": "property must be snake_case always",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "userName is not snake_case",
     "exempted": false,
@@ -1449,7 +1479,8 @@ Array [
     "name": "response property naming check",
     "passed": false,
     "received": undefined,
-    "where": "requirement for property: userName in response status code: 200 with content-type: application/json in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users response 200 response body: application/json property userName",
   },
 ]
 `;
@@ -1494,7 +1525,7 @@ Array [
         "kind": "field",
       },
     },
-    "condition": "property must be snake_case when added",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "userName is not snake_case",
     "exempted": false,
@@ -1504,7 +1535,8 @@ Array [
     "name": "response property naming check",
     "passed": false,
     "received": undefined,
-    "where": "added property: userName in response status code: 200 with content-type: application/json in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users response 200 response body: application/json property userName",
   },
 ]
 `;
@@ -1558,7 +1590,7 @@ Array [
         "kind": "field",
       },
     },
-    "condition": "property must be snake_case when addedOrChanged",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "userName is not snake_case",
     "exempted": false,
@@ -1568,7 +1600,8 @@ Array [
     "name": "response property naming check",
     "passed": false,
     "received": undefined,
-    "where": "changed property: userName in response status code: 200 with content-type: application/json in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users response 200 response body: application/json property userName",
   },
 ]
 `;
@@ -1612,7 +1645,7 @@ Array [
         "required": false,
       },
     },
-    "condition": "property must be snake_case always",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -1622,7 +1655,8 @@ Array [
     "name": "response property naming check",
     "passed": true,
     "received": undefined,
-    "where": "requirement for property: user_name in response status code: 200 with content-type: application/json in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users response 200 response body: application/json property user_name",
   },
 ]
 `;
@@ -1667,7 +1701,7 @@ Array [
         "kind": "field",
       },
     },
-    "condition": "property must be snake_case when added",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -1677,7 +1711,8 @@ Array [
     "name": "response property naming check",
     "passed": true,
     "received": undefined,
-    "where": "added property: user_name in response status code: 200 with content-type: application/json in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users response 200 response body: application/json property user_name",
   },
 ]
 `;
@@ -1731,7 +1766,7 @@ Array [
         "kind": "field",
       },
     },
-    "condition": "property must be snake_case when addedOrChanged",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -1741,7 +1776,8 @@ Array [
     "name": "response property naming check",
     "passed": true,
     "received": undefined,
-    "where": "changed property: user_name in response status code: 200 with content-type: application/json in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users response 200 response body: application/json property user_name",
   },
 ]
 `;

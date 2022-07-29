@@ -27,7 +27,7 @@ Array [
         "statusCode": "200",
       },
     },
-    "condition": "have response header matching shape",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "Could not find a partial match in header parameters with name isgood. Value to match: {\\"description\\":\\"Matcher.string\\"}",
     "exempted": false,
@@ -37,7 +37,8 @@ Array [
     "name": "request",
     "passed": false,
     "received": undefined,
-    "where": "requirement for response status code: 200 in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users response 200",
   },
 ]
 `;
@@ -69,7 +70,7 @@ Array [
         "statusCode": "200",
       },
     },
-    "condition": "not have response header matching shape",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -79,7 +80,8 @@ Array [
     "name": "request",
     "passed": true,
     "received": undefined,
-    "where": "requirement for response status code: 200 in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users response 200",
   },
 ]
 `;
@@ -111,7 +113,7 @@ Array [
         "statusCode": "200",
       },
     },
-    "condition": "have response header matching shape",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -121,7 +123,8 @@ Array [
     "name": "request",
     "passed": true,
     "received": undefined,
-    "where": "requirement for response status code: 200 in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users response 200",
   },
 ]
 `;
@@ -156,7 +159,7 @@ Array [
         "kind": "response-header",
       },
     },
-    "condition": "must contain a description",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "header does not have \`description\`",
     "exempted": false,
@@ -166,7 +169,8 @@ Array [
     "name": "response header type",
     "passed": false,
     "received": undefined,
-    "where": "added response header: isnotsogood in response status code: 200 in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users response 200 response header: isnotsogood",
   },
 ]
 `;
@@ -202,7 +206,7 @@ Array [
         "kind": "response-header",
       },
     },
-    "condition": "must contain a description",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -212,7 +216,8 @@ Array [
     "name": "response header type",
     "passed": true,
     "received": undefined,
-    "where": "added response header: isgood in response status code: 200 in operation: GET /api/users",
+    "type": "added",
+    "where": "GET /api/users response 200 response header: isgood",
   },
 ]
 `;
@@ -255,7 +260,7 @@ Array [
         "kind": "response-header",
       },
     },
-    "condition": "must not make header optional -> required",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "must not make header optional -> required",
     "exempted": false,
@@ -265,7 +270,8 @@ Array [
     "name": "header required type",
     "passed": false,
     "received": undefined,
-    "where": "changed response header: isgood in response status code: 200 in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users response 200 response header: isgood",
   },
 ]
 `;
@@ -308,7 +314,7 @@ Array [
         "kind": "response-header",
       },
     },
-    "condition": "must not make header optional -> required",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -318,7 +324,8 @@ Array [
     "name": "header required type",
     "passed": true,
     "received": undefined,
-    "where": "changed response header: isgood in response status code: 200 in operation: GET /api/users",
+    "type": "changed",
+    "where": "GET /api/users response 200 response header: isgood",
   },
 ]
 `;
@@ -353,7 +360,7 @@ Array [
         "name": "isgood",
       },
     },
-    "condition": "must contain a description",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -363,7 +370,8 @@ Array [
     "name": "response header type",
     "passed": true,
     "received": undefined,
-    "where": "requirement for response header: isgood in response status code: 200 in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users response 200 response header: isgood",
   },
 ]
 `;
@@ -402,7 +410,7 @@ Array [
         },
       },
     },
-    "condition": "cannot remove required header",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "cannot remove required header",
     "exempted": false,
@@ -412,7 +420,8 @@ Array [
     "name": "response header removal",
     "passed": false,
     "received": undefined,
-    "where": "removed response header: isgood in response status code: 200 in operation: GET /api/users",
+    "type": "removed",
+    "where": "GET /api/users response 200 response header: isgood",
   },
 ]
 `;
@@ -450,7 +459,7 @@ Array [
         },
       },
     },
-    "condition": "cannot remove required header",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -460,7 +469,8 @@ Array [
     "name": "response header removal",
     "passed": true,
     "received": undefined,
-    "where": "removed response header: isgood in response status code: 200 in operation: GET /api/users",
+    "type": "removed",
+    "where": "GET /api/users response 200 response header: isgood",
   },
 ]
 `;
@@ -494,7 +504,7 @@ Array [
         "name": "isnotsogood",
       },
     },
-    "condition": "must contain a description",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "header does not have \`description\`",
     "exempted": false,
@@ -504,7 +514,8 @@ Array [
     "name": "response header type",
     "passed": false,
     "received": undefined,
-    "where": "requirement for response header: isnotsogood in response status code: 200 in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users response 200 response header: isnotsogood",
   },
 ]
 `;
@@ -539,7 +550,7 @@ Array [
         "name": "isgood",
       },
     },
-    "condition": "must contain a description",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -549,7 +560,8 @@ Array [
     "name": "response header type",
     "passed": true,
     "received": undefined,
-    "where": "requirement for response header: isgood in response status code: 200 in operation: GET /api/users",
+    "type": "requirement",
+    "where": "GET /api/users response 200 response header: isgood",
   },
 ]
 `;

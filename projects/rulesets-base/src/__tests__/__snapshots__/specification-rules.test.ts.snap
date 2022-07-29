@@ -18,7 +18,7 @@ Array [
         "openapi": "3.1.0",
       },
     },
-    "condition": "match expected shape",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "Expected a partial match",
     "exempted": false,
@@ -28,7 +28,8 @@ Array [
     "name": "operation description",
     "passed": false,
     "received": "{\\"openapi\\":\\"3.1.0\\",\\"paths\\":{},\\"info\\":{\\"version\\":\\"0.0.0\\",\\"title\\":\\"Empty\\"}}",
-    "where": "requirement for specification",
+    "type": "requirement",
+    "where": "specification",
   },
 ]
 `;
@@ -51,7 +52,7 @@ Array [
         "openapi": "3.1.0",
       },
     },
-    "condition": "not match expected shape",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -61,7 +62,8 @@ Array [
     "name": "operation description",
     "passed": true,
     "received": undefined,
-    "where": "requirement for specification",
+    "type": "requirement",
+    "where": "specification",
   },
 ]
 `;
@@ -88,7 +90,7 @@ Array [
         "openapi": "3.1.0",
       },
     },
-    "condition": "match expected shape",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -98,7 +100,8 @@ Array [
     "name": "operation description",
     "passed": true,
     "received": undefined,
-    "where": "requirement for specification",
+    "type": "requirement",
+    "where": "specification",
   },
 ]
 `;
@@ -121,7 +124,7 @@ Array [
         "openapi": "3.1.0",
       },
     },
-    "condition": "match expected shape",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "Expected at least one partial match",
     "exempted": false,
@@ -131,7 +134,8 @@ Array [
     "name": "operation description",
     "passed": false,
     "received": "{\\"openapi\\":\\"3.1.0\\",\\"paths\\":{},\\"info\\":{\\"version\\":\\"0.0.0\\",\\"title\\":\\"Empty\\"}}",
-    "where": "requirement for specification",
+    "type": "requirement",
+    "where": "specification",
   },
 ]
 `;
@@ -154,7 +158,7 @@ Array [
         "openapi": "3.1.0",
       },
     },
-    "condition": "not match expected shape",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -164,7 +168,8 @@ Array [
     "name": "operation description",
     "passed": true,
     "received": undefined,
-    "where": "requirement for specification",
+    "type": "requirement",
+    "where": "specification",
   },
 ]
 `;
@@ -191,7 +196,7 @@ Array [
         "openapi": "3.1.0",
       },
     },
-    "condition": "match expected shape",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -201,7 +206,8 @@ Array [
     "name": "operation description",
     "passed": true,
     "received": undefined,
-    "where": "requirement for specification",
+    "type": "requirement",
+    "where": "specification",
   },
 ]
 `;
@@ -224,7 +230,7 @@ Array [
         "openapi": "3.1.0",
       },
     },
-    "condition": "must contain x-stability",
+    "condition": undefined,
     "docsLink": undefined,
     "error": "spec does not have x-stability",
     "exempted": false,
@@ -234,7 +240,8 @@ Array [
     "name": "operation description",
     "passed": false,
     "received": undefined,
-    "where": "requirement for specification",
+    "type": "requirement",
+    "where": "specification",
   },
 ]
 `;
@@ -258,7 +265,7 @@ Array [
         "x-stability": "abc",
       },
     },
-    "condition": "must contain x-stability",
+    "condition": undefined,
     "docsLink": undefined,
     "error": undefined,
     "exempted": false,
@@ -268,7 +275,8 @@ Array [
     "name": "operation description",
     "passed": true,
     "received": undefined,
-    "where": "requirement for specification",
+    "type": "requirement",
+    "where": "specification",
   },
 ]
 `;
