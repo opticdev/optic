@@ -184,23 +184,29 @@ export type AssertionTypeToHelpers = {
 };
 
 export type Assertion<T extends AssertionType> = (
-  condition: string,
-  assertion: (value: AssertionTypeToValue[T]) => void
+  value: AssertionTypeToValue[T]
+) => void;
+export type RegisterAssertion<T extends AssertionType> = (
+  ...args:
+    | [condition: string, assertion: Assertion<T>]
+    | [assertion: Assertion<T>]
 ) => void;
 
 export type ChangedAssertion<T extends AssertionType> = (
-  condition: string,
-  assertion: (
-    before: AssertionTypeToValue[T],
-    after: AssertionTypeToValue[T]
-  ) => void
+  before: AssertionTypeToValue[T],
+  after: AssertionTypeToValue[T]
+) => void;
+export type RegisterChangedAssertion<T extends AssertionType> = (
+  ...args:
+    | [condition: string, assertion: ChangedAssertion<T>]
+    | [assertion: ChangedAssertion<T>]
 ) => void;
 
 export type Assertions<T extends AssertionType> = {
-  requirement: Assertion<T> & AssertionTypeToHelpers[T];
-  added: Assertion<T> & AssertionTypeToHelpers[T];
-  changed: ChangedAssertion<T> & AssertionTypeToHelpers[T];
-  removed: Assertion<T> & AssertionTypeToHelpers[T];
+  requirement: RegisterAssertion<T> & AssertionTypeToHelpers[T];
+  added: RegisterAssertion<T> & AssertionTypeToHelpers[T];
+  changed: RegisterChangedAssertion<T> & AssertionTypeToHelpers[T];
+  removed: RegisterAssertion<T> & AssertionTypeToHelpers[T];
 };
 
 export type SpecificationAssertions = Assertions<'specification'>;

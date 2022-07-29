@@ -1,12 +1,11 @@
 import { RuleError } from '../../errors';
-import { AssertionTypeToHelpers } from '../../types';
-import { CallableAssertion } from '../rule-runner-types';
+import { Assertion, AssertionTypeToHelpers } from '../../types';
 import { valuesMatcher } from './utils';
 
 export const createResponseBodyHelpers = (
   addAssertion: (
     condition: string,
-    assertion: CallableAssertion<'response-body'>
+    assertion: Assertion<'response-body'>
   ) => void
 ): AssertionTypeToHelpers['response-body'] => {
   const createAssertions = (

@@ -35,7 +35,7 @@ describe('OperationRule', () => {
         name: 'operation description',
         matches: (operation) => operation.method === 'get',
         rule: (operationAssertions) => {
-          operationAssertions.requirement('must contain a description', mockFn);
+          operationAssertions.requirement(mockFn);
         },
       }),
     ]);
@@ -269,19 +269,16 @@ describe('OperationRule', () => {
         new OperationRule({
           name: 'operation operationId',
           rule: (operationAssertions) => {
-            operationAssertions.changed(
-              'must not change an operationId',
-              (before, after) => {
-                if (
-                  before.value['operationId'] &&
-                  before.value['operationId'] !== after.value['operationId']
-                ) {
-                  throw new RuleError({
-                    message: 'cannot change operationId',
-                  });
-                }
+            operationAssertions.changed((before, after) => {
+              if (
+                before.value['operationId'] &&
+                before.value['operationId'] !== after.value['operationId']
+              ) {
+                throw new RuleError({
+                  message: 'cannot change operationId',
+                });
               }
-            );
+            });
           },
         }),
       ]);

@@ -1,13 +1,9 @@
 import { RuleError } from '../../errors';
-import { AssertionTypeToHelpers } from '../../types';
-import { CallableAssertion } from '../rule-runner-types';
+import { Assertion, AssertionTypeToHelpers } from '../../types';
 import { valuesMatcher } from './utils';
 
 export const createResponseHelpers = (
-  addAssertion: (
-    condition: string,
-    assertion: CallableAssertion<'response'>
-  ) => void
+  addAssertion: (condition: string, assertion: Assertion<'response'>) => void
 ): AssertionTypeToHelpers['response'] => {
   const createAssertions = (
     isNot: boolean

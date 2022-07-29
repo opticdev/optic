@@ -87,7 +87,6 @@ export interface EntityRule<G, ApiContext, DSLContext, OpenApiEntityType> {
 
 export interface Result {
   where: string;
-  condition: string;
   error?: string;
   passed: boolean;
   exempted?: boolean;
@@ -100,6 +99,7 @@ export interface Result {
   type?: 'requirement' | 'added' | 'changed' | 'removed';
 
   // to deprecate
+  condition?: string;
   effectiveOnDate?: Date;
   isShould: boolean;
   isMust: boolean;

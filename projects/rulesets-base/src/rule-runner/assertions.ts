@@ -7,20 +7,18 @@ import {
 import pick from 'lodash.pick';
 import { RuleError } from '../errors';
 import {
-  Assertion,
-  ChangedAssertion,
+  RegisterAssertion,
+  RegisterChangedAssertion,
   Assertions,
   AssertionType,
   AssertionTypeToValue,
   AssertionTypeToHelpers,
+  Assertion,
+  ChangedAssertion,
 } from '../types';
 import { createSpecificationHelpers } from './matchers/specification-matchers';
 import { createOperationHelpers } from './matchers/operation-matchers';
 import { createResponseHelpers } from './matchers/response-matchers';
-import {
-  CallableAssertion,
-  CallableChangedAssertion,
-} from './rule-runner-types';
 import { createRequestBodyHelpers } from './matchers/request-body-matchers';
 import { createResponseBodyHelpers } from './matchers/response-body-matchers';
 
@@ -31,7 +29,7 @@ export type AssertionResult =
       passed: true;
       exempted?: boolean;
       changeOrFact: IChange | IFact;
-      condition: string;
+      condition?: string;
       type: AssertionLifecycle;
       error?: undefined;
       received?: undefined;
@@ -41,7 +39,7 @@ export type AssertionResult =
       passed: false;
       exempted?: boolean;
       changeOrFact: IChange | IFact;
-      condition: string;
+      condition?: string;
       type: AssertionLifecycle;
       error: string;
       received?: string;
@@ -61,10 +59,10 @@ const sanitizeChange = (change: IChange): IChange =>
   ) as IChange;
 
 class AssertionRunner<T extends AssertionType> implements Assertions<T> {
-  private requirementAssertions: [string, CallableAssertion<T>][];
-  private addedAssertions: [string, CallableAssertion<T>][];
-  private changedAssertions: [string, CallableChangedAssertion<T>][];
-  private removedAssertions: [string, CallableAssertion<T>][];
+  private requirementAssertions: Assertion<T>[];
+  private addedAssertions: Assertion<T>[];
+  private changedAssertions: ChangedAssertion<T>[];
+  private removedAssertions: Assertion<T>[];
 
   constructor(private type: T) {
     this.requirementAssertions = [];
@@ -80,19 +78,14 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
       | 'changedAssertions'
       | 'removedAssertions'
   ): AssertionTypeToHelpers[T] => {
-    const registerAssertion = (
-      condition: string,
-      assertion: CallableAssertion<T>
-    ) => {
+    const registerAssertion = (...args) => {
+      const assertion = args[1] || args[0];
       if (assertionKey === 'changedAssertions') {
-        this.changedAssertions.push([
-          condition,
-          (before, after) => {
-            assertion(after);
-          },
-        ]);
+        this.changedAssertions.push((before, after) => {
+          assertion(after);
+        });
       } else {
-        this[assertionKey].push([condition, assertion]);
+        this[assertionKey].push(assertion);
       }
     };
 
@@ -115,27 +108,38 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
 
   private createAssertion = (
     key: 'requirementAssertions' | 'addedAssertions' | 'removedAssertions'
-  ): Assertion<T> & AssertionTypeToHelpers[T] => {
-    const baseAssertion: Assertion<T> = (condition, assertion) => {
-      this[key].push([condition, assertion]);
+  ): RegisterAssertion<T> & AssertionTypeToHelpers[T] => {
+    const baseAssertion: RegisterAssertion<T> = (...args) => {
+      if (args.length === 2) {
+        const [_, assertion] = args;
+        this[key].push(assertion);
+      } else {
+        this[key].push(args[0]);
+      }
     };
     for (const [k, v] of Object.entries(this.createAssertionHelpers(key))) {
       baseAssertion[k] = v;
     }
-    return baseAssertion as Assertion<T> & AssertionTypeToHelpers[T];
+    return baseAssertion as RegisterAssertion<T> & AssertionTypeToHelpers[T];
   };
 
-  private createChangedAssertion = (): ChangedAssertion<T> &
+  private createChangedAssertion = (): RegisterChangedAssertion<T> &
     AssertionTypeToHelpers[T] => {
-    const baseAssertion: ChangedAssertion<T> = (condition, assertion) => {
-      this.changedAssertions.push([condition, assertion]);
+    const baseAssertion: RegisterChangedAssertion<T> = (...args) => {
+      if (args.length === 2) {
+        const [_, assertion] = args;
+        this.changedAssertions.push(assertion);
+      } else {
+        this.changedAssertions.push(args[0]);
+      }
     };
     for (const [k, v] of Object.entries(
       this.createAssertionHelpers('changedAssertions')
     )) {
       baseAssertion[k] = v;
     }
-    return baseAssertion as ChangedAssertion<T> & AssertionTypeToHelpers[T];
+    return baseAssertion as RegisterChangedAssertion<T> &
+      AssertionTypeToHelpers[T];
   };
 
   get requirement() {
@@ -166,14 +170,13 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
       change.changeType === ChangeType.Removed &&
       this.removedAssertions.length > 0
     ) {
-      for (const [condition, assertion] of this.removedAssertions) {
+      for (const assertion of this.removedAssertions) {
         try {
           assertion(before);
           results.push({
             passed: true,
             exempted,
             changeOrFact: sanitizeChange(change),
-            condition,
             type: 'removed',
           });
         } catch (e) {
@@ -182,7 +185,6 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
               passed: false,
               exempted,
               changeOrFact: sanitizeChange(change),
-              condition,
               error: e.toString(),
               received: JSON.stringify(e.details.received),
               expected: JSON.stringify(e.details.expected),
@@ -207,14 +209,13 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
   ): AssertionResult[] {
     const results: AssertionResult[] = [];
     if (this.requirementAssertions.length > 0) {
-      for (const [condition, assertion] of this.requirementAssertions) {
+      for (const assertion of this.requirementAssertions) {
         try {
           assertion(after);
           results.push({
             passed: true,
             exempted,
             changeOrFact: sanitizeFact(after),
-            condition,
             type: 'requirement',
           });
         } catch (e) {
@@ -223,7 +224,6 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
               passed: false,
               exempted,
               changeOrFact: sanitizeFact(after),
-              condition,
               received: JSON.stringify(e.details.received),
               expected: JSON.stringify(e.details.expected),
               error: e.toString(),
@@ -242,14 +242,13 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
       change.changeType === ChangeType.Added &&
       this.addedAssertions.length > 0
     ) {
-      for (const [condition, assertion] of this.addedAssertions) {
+      for (const assertion of this.addedAssertions) {
         try {
           assertion(after);
           results.push({
             passed: true,
             exempted,
             changeOrFact: sanitizeChange(change),
-            condition,
             type: 'added',
           });
         } catch (e) {
@@ -258,7 +257,6 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
               passed: false,
               exempted,
               changeOrFact: sanitizeChange(change),
-              condition,
               received: JSON.stringify(e.details.received),
               expected: JSON.stringify(e.details.expected),
               error: e.toString(),
@@ -278,14 +276,13 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
       change.changeType === ChangeType.Changed &&
       this.changedAssertions.length > 0
     ) {
-      for (const [condition, assertion] of this.changedAssertions) {
+      for (const assertion of this.changedAssertions) {
         try {
           assertion(before, after);
           results.push({
             passed: true,
             exempted,
             changeOrFact: sanitizeChange(change),
-            condition,
             type: 'changed',
           });
         } catch (e) {
@@ -294,7 +291,6 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
               passed: false,
               exempted,
               changeOrFact: sanitizeChange(change),
-              condition,
               received: JSON.stringify(e.details.received),
               expected: JSON.stringify(e.details.expected),
               error: e.toString(),

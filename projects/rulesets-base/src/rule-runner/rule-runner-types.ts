@@ -53,10 +53,3 @@ export type OpenAPIFactNodes = {
   specification: NodeDetail<OpenApiKind.Specification>;
   endpoints: Map<string, EndpointNode>;
 };
-
-export type CallableAssertion<T extends AssertionType> = Parameters<
-  Assertion<T>
->[1];
-export type CallableChangedAssertion<T extends AssertionType> = Parameters<
-  ChangedAssertion<T>
->[1];
