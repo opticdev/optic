@@ -10,7 +10,6 @@ export const createResponseHeaderParameterChecks = (
   applies: typeof appliesWhen[number],
   format: typeof casing[number]
 ) => {
-  const caseCondition = `response header parameter must be ${format}`;
   const parameterTest = (parameter: ResponseHeader) => {
     if (!isCase(parameter.value.name, format)) {
       throw new RuleError({
@@ -23,14 +22,14 @@ export const createResponseHeaderParameterChecks = (
     name: 'header parameter naming check',
     rule: (responseAssertions) => {
       if (applies === 'always') {
-        responseAssertions.header.requirement(caseCondition, parameterTest);
+        responseAssertions.header.requirement(parameterTest);
       } else if (applies === 'addedOrChanged') {
-        responseAssertions.header.added(caseCondition, parameterTest);
-        responseAssertions.header.changed(caseCondition, (before, after) =>
+        responseAssertions.header.added(parameterTest);
+        responseAssertions.header.changed((before, after) =>
           parameterTest(after)
         );
       } else if (applies === 'added') {
-        responseAssertions.header.added(caseCondition, parameterTest);
+        responseAssertions.header.added(parameterTest);
       }
     },
   });

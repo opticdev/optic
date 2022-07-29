@@ -6,7 +6,6 @@ export const createPathComponentChecks = (
   applies: typeof appliesWhen[number],
   format: typeof casing[number]
 ) => {
-  const caseCondition = `path component must be ${format}`;
   const check = (path: string) => {
     const pathComponents = path.split('/').filter(
       (component) =>
@@ -28,20 +27,12 @@ export const createPathComponentChecks = (
     name: 'operation path component naming check',
     rule: (operationAssertions) => {
       if (applies === 'always') {
-        operationAssertions.requirement(caseCondition, (operation) =>
-          check(operation.path)
-        );
+        operationAssertions.requirement((operation) => check(operation.path));
       } else if (applies === 'addedOrChanged') {
-        operationAssertions.added(caseCondition, (operation) =>
-          check(operation.path)
-        );
-        operationAssertions.changed(caseCondition, (operation) =>
-          check(operation.path)
-        );
+        operationAssertions.added((operation) => check(operation.path));
+        operationAssertions.changed((operation) => check(operation.path));
       } else if (applies === 'added') {
-        operationAssertions.added(caseCondition, (operation) =>
-          check(operation.path)
-        );
+        operationAssertions.added((operation) => check(operation.path));
       }
     },
   });

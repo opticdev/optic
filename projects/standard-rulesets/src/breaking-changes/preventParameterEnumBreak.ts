@@ -33,36 +33,30 @@ const getPreventParameterEnumBreak = <P extends ParameterIn>(parameterIn: P) =>
         parameterIn
       );
 
-      parameter.changed(
-        `not remove possible values from a ${parameterIn} parameter enum`,
-        (before, after) => {
-          const enumNarrowed =
-            isSchemaWithEnum(before.value?.schema) &&
-            isSchemaWithEnum(after.value?.schema) &&
-            enumWasNarrowed(before.value.schema.enum, after.value.schema.enum);
+      parameter.changed((before, after) => {
+        const enumNarrowed =
+          isSchemaWithEnum(before.value?.schema) &&
+          isSchemaWithEnum(after.value?.schema) &&
+          enumWasNarrowed(before.value.schema.enum, after.value.schema.enum);
 
-          if (enumNarrowed) {
-            throw new RuleError({
-              message: `cannot remove an enum from ${parameterIn} parameter '${after.value.name}'. This is a breaking change.`,
-            });
-          }
+        if (enumNarrowed) {
+          throw new RuleError({
+            message: `cannot remove an enum from ${parameterIn} parameter '${after.value.name}'. This is a breaking change.`,
+          });
         }
-      );
+      });
 
-      parameter.changed(
-        `not add an enum to restrict possible values for a ${parameterIn} parameter`,
-        (before, after) => {
-          const enumNewlyAdded =
-            !isSchemaWithEnum(before.value?.schema) &&
-            isSchemaWithEnum(after.value?.schema);
+      parameter.changed((before, after) => {
+        const enumNewlyAdded =
+          !isSchemaWithEnum(before.value?.schema) &&
+          isSchemaWithEnum(after.value?.schema);
 
-          if (enumNewlyAdded) {
-            throw new RuleError({
-              message: `cannot add an enum to restrict possible values for ${parameterIn} parameter '${after.value.name}'. This is a breaking change.`,
-            });
-          }
+        if (enumNewlyAdded) {
+          throw new RuleError({
+            message: `cannot add an enum to restrict possible values for ${parameterIn} parameter '${after.value.name}'. This is a breaking change.`,
+          });
         }
-      );
+      });
     },
   });
 

@@ -10,7 +10,6 @@ export const createQueryParameterChecks = (
   applies: typeof appliesWhen[number],
   format: typeof casing[number]
 ) => {
-  const caseCondition = `query parameter must be ${format}`;
   const parameterTest = (parameter: QueryParameter) => {
     if (!isCase(parameter.value.name, format)) {
       throw new RuleError({
@@ -23,18 +22,14 @@ export const createQueryParameterChecks = (
     name: 'query parameter naming check',
     rule: (operationAssertions) => {
       if (applies === 'always') {
-        operationAssertions.queryParameter.requirement(
-          caseCondition,
-          parameterTest
-        );
+        operationAssertions.queryParameter.requirement(parameterTest);
       } else if (applies === 'addedOrChanged') {
-        operationAssertions.queryParameter.added(caseCondition, parameterTest);
-        operationAssertions.queryParameter.changed(
-          caseCondition,
-          (before, after) => parameterTest(after)
+        operationAssertions.queryParameter.added(parameterTest);
+        operationAssertions.queryParameter.changed((before, after) =>
+          parameterTest(after)
         );
       } else if (applies === 'added') {
-        operationAssertions.queryParameter.added(caseCondition, parameterTest);
+        operationAssertions.queryParameter.added(parameterTest);
       }
     },
   });

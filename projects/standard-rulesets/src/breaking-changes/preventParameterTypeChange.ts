@@ -17,7 +17,7 @@ const getPreventParameterTypeChange = (parameterIn: ParameterIn) =>
         parameterIn
       );
 
-      parameter.changed('not change parameter type', (before, after) => {
+      parameter.changed((before, after) => {
         // TODO: this has some possible false positives as something could change from having a type
         //  to being a oneOf, anyOf, or allOf
         if (

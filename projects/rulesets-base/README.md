@@ -53,7 +53,7 @@ const has201StatusCode = new OperationRule({
     // You can use the helper
     operationAssertions.requirement.hasResponses([{statusCode: "201"}]);
     // Or you can write this manually
-    operationAssertions.requirement('must have 201 status code', (value) => {
+    operationAssertions.requirement((value) => {
       if (!value.responses.get('201'))) {
         throw new RuleError({
           message: 'Operation did not have response with status code 201',

@@ -11,7 +11,6 @@ export const createPropertyNamingChecks = (
   applies: typeof appliesWhen[number],
   format: typeof casing[number]
 ) => {
-  const caseCondition = `property must be ${format}`;
   const propertyTest = (property: Field) => {
     if (!isCase(property.value.key, format)) {
       throw new RuleError({
@@ -24,14 +23,14 @@ export const createPropertyNamingChecks = (
     name: 'request property naming check',
     rule: (requestAssertions) => {
       if (applies === 'always') {
-        requestAssertions.property.requirement(caseCondition, propertyTest);
+        requestAssertions.property.requirement(propertyTest);
       } else if (applies === 'addedOrChanged') {
-        requestAssertions.property.added(caseCondition, propertyTest);
-        requestAssertions.property.changed(caseCondition, (before, after) =>
+        requestAssertions.property.added(propertyTest);
+        requestAssertions.property.changed((before, after) =>
           propertyTest(after)
         );
       } else if (applies === 'added') {
-        requestAssertions.property.added(caseCondition, propertyTest);
+        requestAssertions.property.added(propertyTest);
       }
     },
   });
@@ -40,14 +39,14 @@ export const createPropertyNamingChecks = (
     name: 'response property naming check',
     rule: (responseAssertions) => {
       if (applies === 'always') {
-        responseAssertions.property.requirement(caseCondition, propertyTest);
+        responseAssertions.property.requirement(propertyTest);
       } else if (applies === 'addedOrChanged') {
-        responseAssertions.property.added(caseCondition, propertyTest);
-        responseAssertions.property.changed(caseCondition, (before, after) =>
+        responseAssertions.property.added(propertyTest);
+        responseAssertions.property.changed((before, after) =>
           propertyTest(after)
         );
       } else if (applies === 'added') {
-        responseAssertions.property.added(caseCondition, propertyTest);
+        responseAssertions.property.added(propertyTest);
       }
     },
   });

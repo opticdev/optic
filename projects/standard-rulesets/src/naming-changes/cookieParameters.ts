@@ -11,7 +11,6 @@ export const createCookieParameterChecks = (
   applies: typeof appliesWhen[number],
   format: typeof casing[number]
 ) => {
-  const caseCondition = `cookie parameter must be ${format}`;
   const parameterTest = (parameter: CookieParameter) => {
     if (!isCase(parameter.value.name, format)) {
       throw new RuleError({
@@ -24,18 +23,14 @@ export const createCookieParameterChecks = (
     name: 'cookie parameter naming check',
     rule: (operationAssertions: OperationAssertions) => {
       if (applies === 'always') {
-        operationAssertions.cookieParameter.requirement(
-          caseCondition,
-          parameterTest
-        );
+        operationAssertions.cookieParameter.requirement(parameterTest);
       } else if (applies === 'addedOrChanged') {
-        operationAssertions.cookieParameter.added(caseCondition, parameterTest);
-        operationAssertions.cookieParameter.changed(
-          caseCondition,
-          (_before, after) => parameterTest(after)
+        operationAssertions.cookieParameter.added(parameterTest);
+        operationAssertions.cookieParameter.changed((_before, after) =>
+          parameterTest(after)
         );
       } else if (applies === 'added') {
-        operationAssertions.cookieParameter.added(caseCondition, parameterTest);
+        operationAssertions.cookieParameter.added(parameterTest);
       }
     },
   });
