@@ -1,4 +1,3 @@
-import { OpenApiKind } from '@useoptic/openapi-utilities';
 import {
   CookieParameter,
   OperationRule,
@@ -12,7 +11,7 @@ export const createCookieParameterChecks = (
   applies: typeof appliesWhen[number],
   format: typeof casing[number]
 ) => {
-  const caseCondition = `cookie parameter must be ${format} when ${applies}`;
+  const caseCondition = `cookie parameter must be ${format}`;
   const parameterTest = (parameter: CookieParameter) => {
     if (!isCase(parameter.value.name, format)) {
       throw new RuleError({

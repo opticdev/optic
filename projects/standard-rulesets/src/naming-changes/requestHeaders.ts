@@ -1,4 +1,3 @@
-import { OpenApiKind } from '@useoptic/openapi-utilities';
 import {
   HeaderParameter,
   OperationRule,
@@ -11,7 +10,7 @@ export const createRequestHeaderParameterChecks = (
   applies: typeof appliesWhen[number],
   format: typeof casing[number]
 ) => {
-  const caseCondition = `request header parameter must be ${format} when ${applies}`;
+  const caseCondition = `request header parameter must be ${format}`;
   const parameterTest = (parameter: HeaderParameter) => {
     if (!isCase(parameter.value.name, format)) {
       throw new RuleError({

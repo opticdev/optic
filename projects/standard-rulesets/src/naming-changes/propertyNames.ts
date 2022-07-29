@@ -1,4 +1,3 @@
-import { OpenApiKind } from '@useoptic/openapi-utilities';
 import {
   Field,
   RequestRule,
@@ -12,9 +11,7 @@ export const createPropertyNamingChecks = (
   applies: typeof appliesWhen[number],
   format: typeof casing[number]
 ) => {
-  const caseCondition = `property must be ${format} ${
-    applies === 'always' ? applies : `when ${applies}`
-  }`;
+  const caseCondition = `property must be ${format}`;
   const propertyTest = (property: Field) => {
     if (!isCase(property.value.key, format)) {
       throw new RuleError({

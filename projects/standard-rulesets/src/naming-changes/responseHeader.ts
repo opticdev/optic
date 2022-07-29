@@ -1,4 +1,3 @@
-import { OpenApiKind } from '@useoptic/openapi-utilities';
 import {
   ResponseHeader,
   ResponseRule,
@@ -11,7 +10,7 @@ export const createResponseHeaderParameterChecks = (
   applies: typeof appliesWhen[number],
   format: typeof casing[number]
 ) => {
-  const caseCondition = `response header parameter must be ${format} when ${applies}`;
+  const caseCondition = `response header parameter must be ${format}`;
   const parameterTest = (parameter: ResponseHeader) => {
     if (!isCase(parameter.value.name, format)) {
       throw new RuleError({

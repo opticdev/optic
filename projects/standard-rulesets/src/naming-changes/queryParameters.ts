@@ -1,4 +1,3 @@
-import { OpenApiKind } from '@useoptic/openapi-utilities';
 import {
   QueryParameter,
   OperationRule,
@@ -11,7 +10,7 @@ export const createQueryParameterChecks = (
   applies: typeof appliesWhen[number],
   format: typeof casing[number]
 ) => {
-  const caseCondition = `query parameter must be ${format} when ${applies}`;
+  const caseCondition = `query parameter must be ${format}`;
   const parameterTest = (parameter: QueryParameter) => {
     if (!isCase(parameter.value.name, format)) {
       throw new RuleError({

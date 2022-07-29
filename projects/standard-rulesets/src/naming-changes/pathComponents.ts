@@ -1,9 +1,4 @@
-import { OpenApiKind } from '@useoptic/openapi-utilities';
-import {
-  HeaderParameter,
-  OperationRule,
-  RuleError,
-} from '@useoptic/rulesets-base';
+import { OperationRule, RuleError } from '@useoptic/rulesets-base';
 import { casing, appliesWhen } from './constants';
 import { isCase } from './isCase';
 
@@ -11,7 +6,7 @@ export const createPathComponentChecks = (
   applies: typeof appliesWhen[number],
   format: typeof casing[number]
 ) => {
-  const caseCondition = `path component must be ${format} when ${applies}`;
+  const caseCondition = `path component must be ${format}`;
   const check = (path: string) => {
     const pathComponents = path.split('/').filter(
       (component) =>
