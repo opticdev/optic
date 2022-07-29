@@ -28,7 +28,7 @@ const getPreventParameterTypeChange = (parameterIn: ParameterIn) =>
           didTypeChange(before.value.schema.type, after.value.schema.type)
         ) {
           throw new RuleError({
-            message: `expected ${parameterIn} parameter to not change type`,
+            message: `expected ${parameterIn} parameter '${after.value.name}' to not change type`,
           });
         }
       });

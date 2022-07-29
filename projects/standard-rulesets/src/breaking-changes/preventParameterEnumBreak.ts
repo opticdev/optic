@@ -43,7 +43,7 @@ const getPreventParameterEnumBreak = <P extends ParameterIn>(parameterIn: P) =>
 
           if (enumNarrowed) {
             throw new RuleError({
-              message: `cannot remove possible values from a ${parameterIn} parameter enum`,
+              message: `cannot remove an enum from ${parameterIn} parameter '${after.value.name}'`,
             });
           }
         }
@@ -58,7 +58,7 @@ const getPreventParameterEnumBreak = <P extends ParameterIn>(parameterIn: P) =>
 
           if (enumNewlyAdded) {
             throw new RuleError({
-              message: `cannot add an enum to restrict possible values for a ${parameterIn} parameter`,
+              message: `cannot add an enum to restrict possible values for ${parameterIn} parameter '${after.value.name}'`,
             });
           }
         }

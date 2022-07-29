@@ -21,7 +21,7 @@ const getPreventNewRequiredParameter = (parameterIn: ParameterIn) =>
         (parameter) => {
           if (parameter.value.required) {
             throw new RuleError({
-              message: `cannot add a required ${parameterIn} parameter to an existing operation`,
+              message: `cannot add required ${parameterIn} parameter ${parameter.value.name} to an existing operation`,
             });
           }
         }
