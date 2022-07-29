@@ -60,13 +60,6 @@ const sanitizeChange = (change: IChange): IChange =>
     'location'
   ) as IChange;
 
-export const assertionLifecycleToText = (
-  assertionLifecycle: AssertionResult['type']
-): string =>
-  assertionLifecycle === 'requirement'
-    ? `${assertionLifecycle} for`
-    : assertionLifecycle;
-
 class AssertionRunner<T extends AssertionType> implements Assertions<T> {
   private requirementAssertions: [string, CallableAssertion<T>][];
   private addedAssertions: [string, CallableAssertion<T>][];

@@ -19,11 +19,7 @@ import {
 } from './utils';
 
 import { Rule, Ruleset, ResponseRule } from '../rules';
-import {
-  assertionLifecycleToText,
-  AssertionResult,
-  createResponseAssertions,
-} from './assertions';
+import { AssertionResult, createResponseAssertions } from './assertions';
 import { Operation, Response } from '../types';
 
 const getResponseRules = (
@@ -64,11 +60,10 @@ const createResponseResult = (
   operation: Operation,
   rule: ResponseRule
 ): Result => ({
-  where: `${assertionLifecycleToText(
-    assertionResult.type
-  )} response status code: ${
+  type: assertionResult.type,
+  where: `${operation.method.toUpperCase()} ${operation.path} response ${
     response.statusCode
-  } in operation: ${operation.method.toUpperCase()} ${operation.path}`,
+  }`,
   isMust: true,
   change: assertionResult.changeOrFact,
   name: rule.name,
@@ -89,11 +84,10 @@ const createResponseHeaderResult = (
   operation: Operation,
   rule: ResponseRule
 ): Result => ({
-  where: `${assertionLifecycleToText(
-    assertionResult.type
-  )} response header: ${header} in response status code: ${
+  type: assertionResult.type,
+  where: `${operation.method.toUpperCase()} ${operation.path} response ${
     response.statusCode
-  } in operation: ${operation.method.toUpperCase()} ${operation.path}`,
+  } response header: ${header}`,
   isMust: true,
   change: assertionResult.changeOrFact,
   name: rule.name,

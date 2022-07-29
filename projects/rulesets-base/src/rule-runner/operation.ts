@@ -9,11 +9,7 @@ import {
 } from './utils';
 
 import { Rule, Ruleset, OperationRule } from '../rules';
-import {
-  createOperationAssertions,
-  AssertionResult,
-  assertionLifecycleToText,
-} from './assertions';
+import { createOperationAssertions, AssertionResult } from './assertions';
 import { Operation } from '../types';
 
 const getOperationRules = (
@@ -53,9 +49,8 @@ const createOperationResult = (
   operation: Operation,
   rule: OperationRule
 ): Result => ({
-  where: `${assertionLifecycleToText(
-    assertionResult.type
-  )} operation: ${operation.method.toUpperCase()} ${operation.path}`,
+  type: assertionResult.type,
+  where: `${operation.method.toUpperCase()} ${operation.path}`,
   isMust: true,
   change: assertionResult.changeOrFact,
   name: rule.name,
@@ -83,11 +78,10 @@ const createParameterResult = (
   },
   rule: OperationRule
 ): Result => ({
-  where: `${assertionLifecycleToText(assertionResult.type)} ${
+  type: assertionResult.type,
+  where: `${parameter.method.toUpperCase()} ${parameter.path} ${
     parameter.type
-  }: ${parameter.name} in operation: ${parameter.method.toUpperCase()} ${
-    parameter.path
-  }`,
+  }: ${parameter.name}`,
   isMust: true,
   change: assertionResult.changeOrFact,
   name: rule.name,

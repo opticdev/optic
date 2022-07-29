@@ -19,11 +19,7 @@ import {
 } from './utils';
 
 import { Rule, Ruleset, ResponseBodyRule } from '../rules';
-import {
-  assertionLifecycleToText,
-  AssertionResult,
-  createResponseBodyAssertions,
-} from './assertions';
+import { AssertionResult, createResponseBodyAssertions } from './assertions';
 import { Field, Operation, ResponseBody } from '../types';
 
 const getResponseBodyRules = (
@@ -64,11 +60,10 @@ const createResponseBodyResult = (
   operation: Operation,
   rule: ResponseBodyRule
 ): Result => ({
-  where: `${assertionLifecycleToText(
-    assertionResult.type
-  )} response status code: ${response.statusCode} with content-type: ${
-    response.contentType
-  }  in operation: ${operation.method.toUpperCase()} ${operation.path}`,
+  type: assertionResult.type,
+  where: `${operation.method.toUpperCase()} ${operation.path} response ${
+    response.statusCode
+  } response body: ${response.contentType}`,
   isMust: true,
   change: assertionResult.changeOrFact,
   name: rule.name,
@@ -89,13 +84,12 @@ const createResponsePropertyResult = (
   operation: Operation,
   rule: ResponseBodyRule
 ): Result => ({
-  where: `${assertionLifecycleToText(
-    assertionResult.type
-  )} property: ${property.location.conceptualLocation.jsonSchemaTrail.join(
-    '/'
-  )} in response status code: ${response.statusCode} with content-type: ${
+  type: assertionResult.type,
+  where: `${operation.method.toUpperCase()} ${operation.path} response ${
+    response.statusCode
+  } response body: ${
     response.contentType
-  } in operation: ${operation.method.toUpperCase()} ${operation.path}`,
+  } property ${property.location.conceptualLocation.jsonSchemaTrail.join('/')}`,
   isMust: true,
   change: assertionResult.changeOrFact,
   name: rule.name,

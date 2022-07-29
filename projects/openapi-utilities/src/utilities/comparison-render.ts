@@ -83,21 +83,16 @@ export const logComparison = (
         : result.exempted
         ? chalk.white('✔')
         : chalk.red('x');
-      const requirement = `${result.where} ${
-        result.isMust ? 'must' : 'should'
-      } ${result.condition}`;
 
-      if (result.name) {
-        console.log(
-          `${getIndent(2)}Rule: ${result.name}${
-            result.exempted ? ' (exempted)' : ''
-          }`
-        );
-      }
-      console.log(`${getIndent(2)}${icon} ${requirement}`);
+      const rulePrefix = result.type ? `${result.type} rule` : 'rule';
+      console.log(
+        `${getIndent(2)}${rulePrefix}: ${result.name ?? ''}${
+          result.exempted ? ' (exempted)' : ''
+        }`
+      );
 
       if (!result.passed && !result.exempted) {
-        console.log(getIndent(3) + chalk.red(result.error));
+        console.log(getIndent(3) + chalk.red(`${icon} ${result.error}`));
         if (result.expected && result.received) {
           console.log(getIndent(3) + chalk.red('Expected Value:'));
           console.log(formatRawValue(result.expected, getIndent(3)));
@@ -106,7 +101,7 @@ export const logComparison = (
         }
       }
       if (!result.passed && result.exempted) {
-        console.log(getIndent(3) + result.error);
+        console.log(getIndent(3) + `${icon} ${result.error}`);
         if (result.expected && result.received) {
           console.log(getIndent(3) + 'Expected Value:');
           console.log(formatRawValue(result.expected, getIndent(3)));

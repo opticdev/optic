@@ -19,11 +19,7 @@ import {
 } from './utils';
 
 import { Rule, Ruleset, RequestRule } from '../rules';
-import {
-  assertionLifecycleToText,
-  AssertionResult,
-  createRequestAssertions,
-} from './assertions';
+import { AssertionResult, createRequestAssertions } from './assertions';
 import { Field, Operation, RequestBody } from '../types';
 
 const getRequestRules = (
@@ -64,11 +60,10 @@ const createRequestBodyResult = (
   operation: Operation,
   rule: RequestRule
 ): Result => ({
-  where: `${assertionLifecycleToText(
-    assertionResult.type
-  )} request with content-type: ${
+  type: assertionResult.type,
+  where: `${operation.method.toUpperCase()} ${operation.path} request body: ${
     request.contentType
-  } in operation: ${operation.method.toUpperCase()} ${operation.path}`,
+  }`,
   isMust: true,
   change: assertionResult.changeOrFact,
   name: rule.name,
@@ -89,13 +84,12 @@ const createRequestPropertyResult = (
   operation: Operation,
   rule: RequestRule
 ): Result => ({
-  where: `${assertionLifecycleToText(
-    assertionResult.type
-  )} property: ${property.location.conceptualLocation.jsonSchemaTrail.join(
-    '/'
-  )} request body: ${
+  type: assertionResult.type,
+  where: `${operation.method.toUpperCase()} ${operation.path} request body: ${
     request.contentType
-  } in operation: ${operation.method.toUpperCase()} ${operation.path}`,
+  } property: ${property.location.conceptualLocation.jsonSchemaTrail.join(
+    '/'
+  )}`,
   isMust: true,
   change: assertionResult.changeOrFact,
   name: rule.name,

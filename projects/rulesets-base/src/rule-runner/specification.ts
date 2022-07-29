@@ -10,11 +10,7 @@ import {
 } from './utils';
 
 import { Rule, Ruleset, SpecificationRule } from '../rules';
-import {
-  createSpecificationAssertions,
-  AssertionResult,
-  assertionLifecycleToText,
-} from './assertions';
+import { createSpecificationAssertions, AssertionResult } from './assertions';
 
 const getSpecificationRules = (
   rules: (Ruleset | Rule)[]
@@ -52,7 +48,8 @@ const createSpecificationResult = (
   assertionResult: AssertionResult,
   rule: SpecificationRule
 ): Result => ({
-  where: `${assertionLifecycleToText(assertionResult.type)} specification`,
+  type: assertionResult.type,
+  where: `specification`,
   isMust: true,
   change: assertionResult.changeOrFact,
   name: rule.name,

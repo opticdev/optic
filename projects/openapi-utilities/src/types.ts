@@ -97,6 +97,7 @@ export interface Result {
   name?: string;
   expected?: string; // JSON string values
   received?: string; // JSON string values
+  type?: 'requirement' | 'added' | 'changed' | 'removed';
 
   // to deprecate
   effectiveOnDate?: Date;
