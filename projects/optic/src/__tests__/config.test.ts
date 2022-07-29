@@ -1,5 +1,11 @@
 import { UserError } from '@useoptic/openapi-utilities';
-import { detectCliConfig, validateConfig } from '../config';
+import {
+  detectCliConfig,
+  formatRules,
+  OpticCliConfig,
+  validateConfig,
+  RawYmlConfig,
+} from '../config';
 
 describe('detectConfig', () => {
   test('finds config', async () => {
@@ -50,5 +56,40 @@ describe('validateConfig', () => {
       };
       expect(() => validateConfig(config, 'somePath')).toThrow(UserError);
     });
+  });
+});
+
+describe('formatRules', () => {
+  test('empty ruleset', () => {
+    const config: RawYmlConfig = { root: '', files: [] };
+    formatRules(config);
+
+    expect(config.ruleset).toEqual([]);
+  });
+
+  test('valid rules', () => {
+    const config: RawYmlConfig = {
+      root: '',
+      files: [],
+      ruleset: ['some-rule', { 'complex-rule': { withConfig: true } }],
+    };
+
+    formatRules(config);
+    expect(config.ruleset?.length).toBe(2);
+    expect(config.ruleset?.[0]).toEqual({ name: 'some-rule', config: {} });
+    expect(config.ruleset?.[1]).toEqual({
+      name: 'complex-rule',
+      config: { withConfig: true },
+    });
+  });
+
+  test('empty rule', () => {
+    const config: RawYmlConfig = {
+      root: '',
+      files: [],
+      ruleset: [{}],
+    };
+
+    expect(() => formatRules(config)).toThrow(UserError);
   });
 });

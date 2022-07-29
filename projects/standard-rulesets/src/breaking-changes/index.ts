@@ -56,6 +56,10 @@ const breakingChangesRules = [
 type BreakingChangesRules = typeof breakingChangesRules;
 
 export class BreakingChangesRuleset extends Ruleset<BreakingChangesRules> {
+  static fromOpticConfig(): BreakingChangesRuleset {
+    return new BreakingChangesRuleset();
+  }
+
   constructor(
     config: Omit<RulesetConfig<BreakingChangesRules>, 'name' | 'rules'> = {}
   ) {
