@@ -77,18 +77,22 @@ export async function setupWorkspace(
   }
 
   if (options.repo) {
-    const { code: gitInitCode } = await run('git init', false, dir);
+    const { code: gitInitCode, combined: gitCombined } = await run(
+      'git init && git config user.email "test@useoptic.com" && git config user.name "Optic test"',
+      false,
+      dir
+    );
     if (gitInitCode !== 0) {
-      throw `Git init failed in ${dir}`;
+      throw `Git init failed in ${dir}: ${gitCombined}`;
     }
     if (options.commit) {
-      const { code, combined } = await run(
+      const { code: commitCode, combined: commitCombined } = await run(
         `git add . && git commit -m 'first commit'`,
         false,
         dir
       );
-      if (code !== 0) {
-        throw new Error(`Git commit failed in ${dir}: ${combined}`);
+      if (commitCode !== 0) {
+        throw `Git commit failed in ${dir}: ${commitCombined}`;
       }
     }
   }
