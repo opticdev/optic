@@ -53,7 +53,7 @@ Example usage:
   Diff \`specs/openapi-spec.yml\` against master
   $ optic diff openapi-spec.yml --base master
 
-  Diff \`openapi-spec-v0.yml\` and \`openapi-spec-v1.yml\`
+  Diff \`openapi-spec-v0.yml\` against \`openapi-spec-v1.yml\`
   $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml
 
   Run a diff and view changes in the Optic web view
@@ -263,7 +263,6 @@ const getDiffAction =
     if (file1 && file2) {
       const parsedFiles = await getBaseAndHeadFromFiles(file1, file2);
       await runDiff(files, parsedFiles, config, options);
-      return;
     } else if (file1) {
       if (config.vcs !== VCS.Git) {
         const commandVariant = `optic diff <file> --base <ref>`;
@@ -278,7 +277,6 @@ const getDiffAction =
         config.root
       );
       await runDiff(files, parsedFiles, config, options);
-      return;
     } else if (options.id) {
       const commandVariant = `optic diff --id <id> --base <ref>`;
       if (config.vcs !== VCS.Git) {
@@ -314,7 +312,6 @@ const getDiffAction =
         config.root
       );
       await runDiff(files, parsedFiles, config, options);
-      return;
     } else {
       for await (const configFile of config.files) {
         const parsedFiles = await getBaseAndHeadFromFileAndBase(
@@ -324,6 +321,5 @@ const getDiffAction =
         );
         await runDiff(files, parsedFiles, config, options);
       }
-      return;
     }
   };
