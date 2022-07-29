@@ -42,9 +42,7 @@ export async function addCommand(): Promise<Command> {
   command
     .argument('<openapi-file>', 'an OpenAPI spec file to add an operation to')
     .argument('<operations...>', 'HTTP method and path pair(s) to add')
-    .description(
-      'add an operation (path + method) to an OpenAPI specification. Provide a traffic source to learn request and response bodies as well.'
-    )
+    .description('add an operation (path + method) to an OpenAPI spec')
     .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
     // TODO: re-enable direct proxy use once we can re-render updating CLI output better
     // .option(
