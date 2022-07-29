@@ -33,7 +33,7 @@
                           "name": {
                             "type": [
                               "string",
-                              null
+                              "null"
                             ]
                           },
                           "status": {

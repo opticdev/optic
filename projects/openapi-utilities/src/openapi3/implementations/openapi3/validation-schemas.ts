@@ -253,7 +253,7 @@ const openapi3_1_schema_object = {
         { type: 'string' },
         {
           type: 'array',
-          items: { oneOf: [{ type: 'string' }, { type: 'null' }] },
+          items: { oneOf: [{ type: 'string' }] },
         },
       ],
     },
