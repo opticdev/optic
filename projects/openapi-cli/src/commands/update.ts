@@ -3,7 +3,7 @@ import Path from 'path';
 import * as fs from 'fs-extra';
 import readline from 'readline';
 import { updateReporter } from './reporters/update';
-import { createCommandFeedback } from './reporters/feedback';
+import { createCommandFeedback, InputErrors } from './reporters/feedback';
 
 import { tap, forkable, merge, Subject } from '../lib/async-tools';
 import {
@@ -49,7 +49,8 @@ export async function updateCommand(): Promise<Command> {
       const absoluteSpecPath = Path.resolve(specPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
         return feedback.inputError(
-          'OpenAPI specification file could not be found'
+          'OpenAPI specification file could not be found',
+          InputErrors.SPEC_FILE_NOT_FOUND
         );
       }
 
@@ -63,7 +64,8 @@ export async function updateCommand(): Promise<Command> {
         let absoluteHarPath = Path.resolve(options.har);
         if (!(await fs.pathExists(absoluteHarPath))) {
           return feedback.inputError(
-            'HAR file could not be found at given path'
+            'HAR file could not be found at given path',
+            InputErrors.HAR_FILE_NOT_FOUND
           );
         }
         let harFile = fs.createReadStream(absoluteHarPath);
@@ -74,7 +76,8 @@ export async function updateCommand(): Promise<Command> {
       if (options.proxy) {
         if (!process.stdin.isTTY) {
           return feedback.inputError(
-            'can only use --proxy when in an interactive terminal session'
+            'can only use --proxy when in an interactive terminal session',
+            InputErrors.PROXY_IN_NON_TTY
           );
         }
 
@@ -93,14 +96,16 @@ export async function updateCommand(): Promise<Command> {
 
       if (sources.length < 1) {
         return feedback.inputError(
-          'choose a capture method to update spec by traffic'
+          'choose a capture method to update spec by traffic',
+          InputErrors.CAPTURE_METHOD_MISSING
         );
       }
 
       const specReadResult = await readDeferencedSpec(absoluteSpecPath);
       if (specReadResult.err) {
         feedback.inputError(
-          `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`
+          `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`,
+          InputErrors.SPEC_FILE_NOT_READABLE
         );
       }
       const { jsonLike: spec, sourcemap } = specReadResult.unwrap();

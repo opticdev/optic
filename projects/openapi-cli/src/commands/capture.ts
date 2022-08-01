@@ -5,7 +5,7 @@ import readline from 'readline';
 import { AbortController } from 'node-abort-controller';
 import { Writable } from 'stream';
 import * as AT from '../lib/async-tools';
-import { createCommandFeedback } from './reporters/feedback';
+import { createCommandFeedback, InputErrors } from './reporters/feedback';
 
 import {
   CapturedInteraction,
@@ -43,7 +43,8 @@ export async function captureCommand(): Promise<Command> {
         let absoluteHarPath = Path.resolve(options.har);
         if (!(await fs.pathExists(absoluteHarPath))) {
           return feedback.inputError(
-            'HAR file could not be found at given path'
+            'HAR file could not be found at given path',
+            InputErrors.HAR_FILE_NOT_FOUND
           );
         }
         let harFile = fs.createReadStream(absoluteHarPath);
@@ -54,7 +55,8 @@ export async function captureCommand(): Promise<Command> {
       if (options.proxy) {
         if (!process.stdin.isTTY) {
           return feedback.inputError(
-            'can only use --proxy when in an interactive terminal session'
+            'can only use --proxy when in an interactive terminal session',
+            InputErrors.PROXY_IN_NON_TTY
           );
         }
 
@@ -71,7 +73,8 @@ export async function captureCommand(): Promise<Command> {
 
       if (sources.length < 1) {
         return feedback.inputError(
-          'choose a capture method to update spec by traffic'
+          'choose a capture method to update spec by traffic',
+          InputErrors.CAPTURE_METHOD_MISSING
         );
       }
 
@@ -83,7 +86,8 @@ export async function captureCommand(): Promise<Command> {
 
         if (!(await fs.pathExists(dirPath))) {
           return feedback.inputError(
-            `to create ${fileBaseName}, dir must exist at ${dirPath}`
+            `to create ${fileBaseName}, dir must exist at ${dirPath}`,
+            InputErrors.DESTINATION_FILE_DIR_MISSING
           );
         }
 

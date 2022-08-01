@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
 
-import { createCommandFeedback } from './reporters/feedback';
+import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import * as AT from '../lib/async-tools';
 import { ComponentSchemaExampleFacts, readDeferencedSpec } from '../specs';
 import {
@@ -35,7 +35,8 @@ export async function statusCommand(): Promise<Command> {
       const absoluteSpecPath = Path.resolve(specPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
         return feedback.inputError(
-          'OpenAPI specification file could not be found'
+          'OpenAPI specification file could not be found',
+          InputErrors.SPEC_FILE_NOT_FOUND
         );
       }
 
@@ -47,7 +48,8 @@ export async function statusCommand(): Promise<Command> {
         let absoluteHarPath = Path.resolve(options.har);
         if (!(await fs.pathExists(absoluteHarPath))) {
           return feedback.inputError(
-            'HAR file could not be found at given path'
+            'HAR file could not be found at given path',
+            InputErrors.HAR_FILE_NOT_FOUND
           );
         }
         let harFile = fs.createReadStream(absoluteHarPath);
@@ -59,13 +61,17 @@ export async function statusCommand(): Promise<Command> {
       }
 
       if (sources.length < 1) {
-        return feedback.inputError('choose a traffic source to match spec by');
+        return feedback.inputError(
+          'choose a traffic source to match spec by',
+          InputErrors.CAPTURE_METHOD_MISSING
+        );
       }
 
       const specReadResult = await readDeferencedSpec(absoluteSpecPath);
       if (specReadResult.err) {
         feedback.inputError(
-          `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`
+          `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`,
+          InputErrors.SPEC_FILE_NOT_READABLE
         );
       }
       const { jsonLike: spec } = specReadResult.unwrap();

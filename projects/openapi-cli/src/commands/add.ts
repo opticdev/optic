@@ -5,7 +5,7 @@ import * as fs from 'fs-extra';
 import { AbortController } from 'node-abort-controller';
 import readline from 'readline';
 
-import { createCommandFeedback } from './reporters/feedback';
+import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import * as AT from '../lib/async-tools';
 import {
   CapturedInteractions,
@@ -53,13 +53,17 @@ export async function addCommand(): Promise<Command> {
       const absoluteSpecPath = Path.resolve(specPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
         return feedback.inputError(
-          'OpenAPI specification file could not be found'
+          'OpenAPI specification file could not be found',
+          InputErrors.SPEC_FILE_NOT_FOUND
         );
       }
 
       let parsedOperationsResult = parseOperations(operationComponents);
       if (parsedOperationsResult.err) {
-        return feedback.inputError(parsedOperationsResult.val);
+        return feedback.inputError(
+          parsedOperationsResult.val,
+          'new-operations-parse-error'
+        );
       }
 
       let parsedOperations = parsedOperationsResult.unwrap();
@@ -73,7 +77,8 @@ export async function addCommand(): Promise<Command> {
         let absoluteHarPath = Path.resolve(options.har);
         if (!(await fs.pathExists(absoluteHarPath))) {
           return feedback.inputError(
-            'HAR file could not be found at given path'
+            'HAR file could not be found at given path',
+            InputErrors.HAR_FILE_NOT_FOUND
           );
         }
         let harFile = fs.createReadStream(absoluteHarPath);
@@ -84,7 +89,8 @@ export async function addCommand(): Promise<Command> {
       if (options.proxy) {
         if (!process.stdin.isTTY) {
           return feedback.inputError(
-            'Can only use --proxy when in an interactive terminal session'
+            'Can only use --proxy when in an interactive terminal session',
+            InputErrors.PROXY_IN_NON_TTY
           );
         }
 
@@ -107,7 +113,8 @@ export async function addCommand(): Promise<Command> {
       const specReadResult = await readDeferencedSpec(absoluteSpecPath);
       if (specReadResult.err) {
         return feedback.inputError(
-          `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`
+          `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`,
+          InputErrors.SPEC_FILE_NOT_READABLE
         );
       }
       const { jsonLike: spec, sourcemap } = specReadResult.unwrap();

@@ -5,7 +5,7 @@ import { Writable } from 'stream';
 import Semver from 'semver';
 
 import * as AT from '../lib/async-tools';
-import { createCommandFeedback } from './reporters/feedback';
+import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { SpecFile, SpecFiles, SpecFileOperations, SpecPatches } from '../specs';
 
 export async function newCommand(): Promise<Command> {
@@ -35,12 +35,14 @@ export async function newCommand(): Promise<Command> {
         let fileBaseName = Path.basename(filePath);
         if (await fs.pathExists(absoluteFilePath)) {
           return feedback.inputError(
-            `File '${fileBaseName}' already exists at ${dirPath}`
+            `File '${fileBaseName}' already exists at ${dirPath}`,
+            InputErrors.DESTINATION_FILE_ALREADY_EXISTS
           );
         }
         if (!(await fs.pathExists(dirPath))) {
           return feedback.inputError(
-            `to create ${fileBaseName}, dir must exist at ${dirPath}`
+            `to create ${fileBaseName}, dir must exist at ${dirPath}`,
+            InputErrors.DESTINATION_FILE_DIR_MISSING
           );
         }
 
@@ -60,12 +62,16 @@ export async function newCommand(): Promise<Command> {
         let semver = Semver.coerce(options.oasVersion); // be liberal with the inputs we accept
         if (!semver || !Semver.valid(semver)) {
           return feedback.inputError(
-            `--oas-version must be a valid OpenAPI version`
+            `--oas-version must be a valid OpenAPI version`,
+            'oas-version-uninterpretable',
+            { suppliedVersion: options.oasVersion }
           );
         } else if (!Semver.satisfies(semver, '3.0.x || 3.1.x')) {
           // TODO: track this to get an idea of other versions we should support
           return feedback.inputError(
-            `currently only OpenAPI v3.0.x and v3.1.x spec files can be created`
+            `currently only OpenAPI v3.0.x and v3.1.x spec files can be created`,
+            'oas-version-unsupported',
+            { suppliedVersion: semver.version }
           );
         } else {
           oasVersion = semver.version;
