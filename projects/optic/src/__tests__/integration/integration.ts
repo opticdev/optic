@@ -17,12 +17,12 @@ export async function run(
   print = true,
   cwd = process.cwd()
 ): Promise<ProcessResult> {
-  const result = {
+  const result: ProcessResult = {
     stdout: '',
     stderr: '',
     combined: '',
     code: 0,
-  } as ProcessResult;
+  };
 
   return new Promise((resolve, reject) => {
     const proc = spawn(command, [], {
@@ -102,13 +102,12 @@ export async function setupWorkspace(
 
 export async function runOptic(
   workspace: string,
-  cmd: string,
-  print = false
+  cmd: string
 ): Promise<ProcessResult> {
   const src = path.join(root, 'src', 'index.ts');
   const tsNode = path.join(root, 'node_modules', '.bin', 'ts-node');
 
-  const result = await run(`${tsNode}  ${src} ${cmd}`, print, workspace);
+  const result = await run(`${tsNode}  ${src} ${cmd}`, false, workspace);
 
   return result;
 }

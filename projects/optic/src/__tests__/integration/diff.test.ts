@@ -7,8 +7,7 @@ describe('diff', () => {
     const workspace = await setupWorkspace('diff/files-no-repo');
     const { combined, code } = await runOptic(
       workspace,
-      'diff example-api-v0.json example-api-v1.json',
-      false
+      'diff example-api-v0.json example-api-v1.json'
     );
     expect(combined.replace(workspace, '$$workspace$$')).toMatchSnapshot();
     expect(code).toBe(0);
@@ -29,8 +28,19 @@ describe('diff', () => {
       false,
       workspace
     );
-    const { combined, code } = await runOptic(workspace, 'diff', false);
+    const { combined, code } = await runOptic(workspace, 'diff');
     expect(combined.replace(workspace, '$$workspace$$')).toMatchSnapshot();
     expect(code).toBe(0);
+  });
+
+  test('basic rules config', async () => {
+    const workspace = await setupWorkspace('diff/basic-rules');
+    const { combined, code } = await runOptic(
+      workspace,
+      'diff example-api-v0.json example-api-v1.json --check'
+    );
+
+    expect(code).toBe(0);
+    expect(combined.replace(workspace, '$$workspace$$')).toMatchSnapshot();
   });
 });
