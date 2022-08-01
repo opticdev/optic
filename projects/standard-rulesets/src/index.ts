@@ -6,5 +6,5 @@ import { NamingChangesRuleset } from './naming-changes';
 
 export const StandardRulesets = {
   'breaking-changes': BreakingChangesRuleset,
-  'naming-changes': NamingChangesRuleset,
+  naming: NamingChangesRuleset,
 };
