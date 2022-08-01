@@ -7,11 +7,11 @@ import { hasGit, isInGitRepo, getRootPath } from '../../utils/git-utils';
 import { OPTIC_YML_NAME } from '../../config';
 import { getValidSpecs } from './get-valid-specs';
 import { OpticCliConfig } from '../../config';
-import { supportedCIs } from './constants';
+import { supportedCIs, SupportedCI } from './constants';
 import { writeCIAction } from './write-ci-action';
 
 export type InitOptions = {
-  ci?: typeof supportedCIs[number];
+  ci?: SupportedCI;
 };
 
 export const getInit =
@@ -34,6 +34,16 @@ export const getInit =
 
     if (!(await isInGitRepo())) {
       console.error('Error: "init" must be called from a git repository.');
+      process.exitCode = 1;
+      return;
+    }
+
+    if (ci && !supportedCIs.includes(ci)) {
+      console.error(
+        `Error: unsupported ci: ${ci}. Supported values: ${supportedCIs.join(
+          ', '
+        )}`
+      );
       process.exitCode = 1;
       return;
     }

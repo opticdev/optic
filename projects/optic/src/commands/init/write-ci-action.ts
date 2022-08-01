@@ -1,15 +1,12 @@
 import path from 'path';
 import fs from 'fs';
-import { supportedCIs } from './constants';
+import { SupportedCI } from './constants';
 
 function unexpected(x: never) {
   throw new Error(`received unexpected value ${x}`);
 }
 
-export const writeCIAction = (
-  gitRoot: string,
-  ci: typeof supportedCIs[number]
-) => {
+export const writeCIAction = (gitRoot: string, ci: SupportedCI) => {
   switch (ci) {
     case 'github-action':
       writeGithubAction(gitRoot);
