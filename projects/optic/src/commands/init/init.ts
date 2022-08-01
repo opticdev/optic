@@ -13,6 +13,8 @@ export const getInit = (config: OpticCliConfig) => async (): Promise<void> => {
   // Sanity checks
   if (config.configPath) {
     console.error(`Error: config file already exists at ${config.configPath}`);
+    process.exitCode = 1;
+    return;
   }
 
   if (!(await hasGit())) {
