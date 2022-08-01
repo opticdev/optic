@@ -59,11 +59,6 @@ export async function makeCli(config: CliConfig) {
     });
   }
 
-  trackEvent('openapi-cli-run', {
-    runId,
-    version: packageJson.version,
-  });
-
   const cli = await makeCli(config);
   const subCommandNames = cli.commands.flatMap((cmd) => [
     cmd.name(),
@@ -84,6 +79,11 @@ export async function makeCli(config: CliConfig) {
     args[0] = subcommand;
     args[1] = specPath;
   }
+
+  trackEvent('openapi-cli-run', {
+    runId,
+    version: packageJson.version,
+  });
 
   cli.parse(args, { from: 'user' });
 })();
