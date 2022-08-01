@@ -96,7 +96,6 @@ export const getInit =
 
       console.log();
       console.log('Adding ruleset:');
-      console.log();
       for (const ruleset of opticConfig.ruleset) {
         console.log(`- ${ruleset}`);
       }
@@ -116,6 +115,7 @@ export const getInit =
 
     if (ci) {
       console.log('');
+      console.log('Setting up CI:');
       writeCIAction(gitRoot, ci);
     }
   };

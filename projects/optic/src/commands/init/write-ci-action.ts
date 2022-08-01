@@ -37,6 +37,9 @@ const writeGithubAction = (gitRoot: string) => {
   const filePath = path.join(dirPath, 'optic-ci.yml');
   fs.mkdirSync(dirPath, { recursive: true });
   fs.writeFileSync(filePath, ghActionContent);
-  console.log(`Github action file written to ${filePath}`);
-  console.log(`Dont forget to set your OPTIC_TOKEN Github secret.`);
+  console.log(`- Github action file written to ${filePath}`);
+  console.log('');
+  console.log(
+    `Set your OPTIC_TOKEN Github secret to finish configuring Optic CI.`
+  );
 };
