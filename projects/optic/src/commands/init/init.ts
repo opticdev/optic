@@ -12,7 +12,9 @@ import { OpticCliConfig } from '../../config';
 export const getInit = (config: OpticCliConfig) => async (): Promise<void> => {
   // Sanity checks
   if (config.configPath) {
-    console.error(`Error: config file already exists at ${config.configPath}`);
+    console.error(
+      `Error: a configuration file already exists at ${config.configPath}.`
+    );
     process.exitCode = 1;
     return;
   }
