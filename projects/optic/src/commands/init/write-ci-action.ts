@@ -30,6 +30,7 @@ jobs:
         uses: opticdev/github-action@v1
         with:
           token: \$\{\{ secrets.OPTIC_TOKEN \}\} # You will need to connect up your secret here
+          base: \$\{\{ github.event.pull_request.base.ref \}\} # the base git to compare against
 `;
 
 const writeGithubAction = (gitRoot: string) => {
