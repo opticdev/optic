@@ -64,8 +64,10 @@ export async function run(
 
 export async function setupWorkspace(
   template: string,
-  repo = true
+  providedOptions: { repo?: boolean; commit?: boolean } = {}
 ): Promise<string> {
+  const defaultOptions = { repo: true, commit: false };
+  const options = { ...defaultOptions, ...providedOptions };
   const templatePath = path.join(__dirname, 'workspaces', template);
   const dir = await fs.mkdtemp(path.join(root, 'tmp/'));
 
@@ -74,10 +76,24 @@ export async function setupWorkspace(
     throw `Failed to copy workspace template ${template}`;
   }
 
-  if (repo) {
-    const { code: gitInitCode } = await run('git init', false, dir);
+  if (options.repo) {
+    const { code: gitInitCode, combined: gitCombined } = await run(
+      'git init && git config user.email "test@useoptic.com" && git config user.name "Optic test"',
+      false,
+      dir
+    );
     if (gitInitCode !== 0) {
-      throw `Git init failed in ${dir}`;
+      throw `Git init failed in ${dir}: ${gitCombined}`;
+    }
+    if (options.commit) {
+      const { code: commitCode, combined: commitCombined } = await run(
+        `git add . && git commit -m 'first commit'`,
+        false,
+        dir
+      );
+      if (commitCode !== 0) {
+        throw `Git commit failed in ${dir}: ${commitCombined}`;
+      }
     }
   }
 

@@ -1,4 +1,4 @@
-import { runOptic, setupWorkspace } from './integration';
+import { runOptic, setupWorkspace, run } from './integration';
 
 jest.setTimeout(30000);
 
@@ -10,6 +10,26 @@ describe('diff', () => {
       'diff example-api-v0.json example-api-v1.json',
       false
     );
+    expect(combined.replace(workspace, '$$workspace$$')).toMatchSnapshot();
+    expect(code).toBe(0);
+  });
+
+  test('`optic diff` compares against HEAD in repo', async () => {
+    const workspace = await setupWorkspace('diff/repo', {
+      repo: true,
+      commit: true,
+    });
+    await run(
+      'mv example-api-1-updated.json example-api-1.json',
+      false,
+      workspace
+    );
+    await run(
+      'mv example-api-2-updated.json example-api-2.json',
+      false,
+      workspace
+    );
+    const { combined, code } = await runOptic(workspace, 'diff', false);
     expect(combined.replace(workspace, '$$workspace$$')).toMatchSnapshot();
     expect(code).toBe(0);
   });
