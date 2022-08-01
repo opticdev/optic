@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
-import { init } from './init';
+import { getInit } from './init';
 import { OpticCliConfig } from '../../config';
 
 const description = 'Initializes Optic. See `optic init --help`';
@@ -14,5 +14,5 @@ export const registerInit = (cli: Command, config: OpticCliConfig) => {
     .command('init')
     .description(description)
     .addHelpText('after', helpText)
-    .action(wrapActionHandlerWithSentry(async (config) => init(config)));
+    .action(wrapActionHandlerWithSentry(getInit(config)));
 };

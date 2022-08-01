@@ -8,7 +8,7 @@ export enum VCS {
   Git = 'git',
 }
 
-const OPTIC_YML_NAME = 'optic.yml';
+export const OPTIC_YML_NAME = 'optic.yml';
 
 type ConfigRuleset = { name: string; config: unknown };
 

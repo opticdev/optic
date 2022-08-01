@@ -5,14 +5,18 @@ import { findOpenAPISpecs } from './find-openapi-specs';
 import { generateOpticConfig } from './generate-optic-config';
 import { writeOpticConfig } from './write-optic-config';
 import { hasGit, isInGitRepo, getRootPath } from '../../utils/git-utils';
-import { configFile } from './constants';
+import { OPTIC_YML_NAME } from '../../config';
 import { getValidSpecs } from './get-valid-specs';
 import { OpticCliConfig } from '../../config';
 
-export const init = async (config: OpticCliConfig): Promise<void> => {
+export const getInit = (config: OpticCliConfig) => async (): Promise<void> => {
   // Sanity checks
   if (config.configPath) {
-    console.error(`Error: config file already exists at ${config.configPath}`);
+    console.error(
+      `Error: a configuration file already exists at ${config.configPath}.`
+    );
+    process.exitCode = 1;
+    return;
   }
 
   if (!(await hasGit())) {
@@ -28,15 +32,7 @@ export const init = async (config: OpticCliConfig): Promise<void> => {
   }
 
   const gitRoot = await getRootPath();
-  const configPath = path.join(gitRoot, configFile);
-
-  if (fs.existsSync(configPath)) {
-    console.error(
-      `Error: a configuration file already exists at ${configPath}.`
-    );
-    process.exitCode = 1;
-    return;
-  }
+  const configPath = path.join(gitRoot, OPTIC_YML_NAME);
 
   console.log('Initializing Optic...');
 
