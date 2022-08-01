@@ -4,9 +4,21 @@ import { machineIdSync } from 'node-machine-id';
 let analytics: {
   segment: Analytics;
   anonymousId: string;
+  app: { name: string; version: string };
+  runId: string;
 } | null = null;
 
-export const initSegment = ({ key }: { key: string }) => {
+export const initSegment = ({
+  key,
+  version,
+  name,
+  runId,
+}: {
+  key: string;
+  version: string;
+  name: string;
+  runId: string;
+}) => {
   let segment = new Analytics(key);
   let anonymousId;
   try {
@@ -16,21 +28,20 @@ export const initSegment = ({ key }: { key: string }) => {
   }
 
   if (segment && anonymousId) {
-    analytics = { segment, anonymousId };
+    analytics = { segment, anonymousId, app: { version, name }, runId };
   }
 };
 
-export const trackEvent = (
-  eventName: string,
-  userId: string,
-  properties?: any
-) => {
+export const trackEvent = (eventName: string, properties?: any) => {
   if (analytics) {
     analytics.segment.track({
       event: eventName,
       anonymousId: analytics.anonymousId,
-      userId,
       properties,
+      context: {
+        app: analytics.app,
+        runId: analytics.runId,
+      },
     });
   }
 };

@@ -426,16 +426,12 @@ async function trackStats(observations: UpdateObservations): Promise<void> {
     }
   }
 
-  trackEvent(
-    'openapi_cli.spec_updated_by_traffic',
-    'openapi_cli', // TODO: determine more useful userId
-    {
-      ...stats,
-      unsupportedContentTypes: [
-        ...Object.keys(stats.unsupportedContentTypeCounts),
-      ], // set cast as array
-    }
-  );
+  trackEvent('openapi_cli.spec_updated_by_traffic', {
+    ...stats,
+    unsupportedContentTypes: [
+      ...Object.keys(stats.unsupportedContentTypeCounts),
+    ], // set cast as array
+  });
 
   try {
     await flushEvents();
