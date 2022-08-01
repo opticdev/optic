@@ -28,6 +28,22 @@ import {
   preventPathParameterTypeChange,
   preventHeaderParameterTypeChange,
 } from './preventParameterTypeChange';
+import Ajv from 'ajv';
+
+type YamlConfig = {
+  exclude_operations_with_extension?: string;
+};
+
+const ajv = new Ajv();
+const configSchema = {
+  type: 'object',
+  properties: {
+    exclude_operations_with_extension: {
+      type: 'string',
+    },
+  },
+};
+const validateConfigSchema = ajv.compile(configSchema);
 
 const breakingChangesRules = [
   preventCookieParameterEnumBreak,
@@ -56,7 +72,15 @@ const breakingChangesRules = [
 type BreakingChangesRules = typeof breakingChangesRules;
 
 export class BreakingChangesRuleset extends Ruleset<BreakingChangesRules> {
-  static fromOpticConfig(): BreakingChangesRuleset {
+  static fromOpticConfig(config: unknown): BreakingChangesRuleset | string[] {
+    const result = validateConfigSchema(config);
+
+    if (!result) {
+      console.log(validateConfigSchema.errors!.map((error) => error.message));
+      return [];
+    }
+
+    const validatedConfig = config as YamlConfig;
     return new BreakingChangesRuleset();
   }
 
