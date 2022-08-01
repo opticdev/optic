@@ -3,7 +3,9 @@ import { Result, Ok, Err } from 'ts-results';
 import Path from 'path';
 import * as fs from 'fs-extra';
 import { AbortController } from 'node-abort-controller';
+import readline from 'readline';
 
+import { createCommandFeedback } from './reporters/feedback';
 import * as AT from '../lib/async-tools';
 import {
   CapturedInteractions,
@@ -33,29 +35,31 @@ import {
   readDeferencedSpec,
 } from '../specs';
 
-export function addCommand(): Command {
+export async function addCommand(): Promise<Command> {
   const command = new Command('add');
+  const feedback = await createCommandFeedback(command);
 
   command
     .argument('<openapi-file>', 'an OpenAPI spec file to add an operation to')
     .argument('<operations...>', 'HTTP method and path pair(s) to add')
-    .description(
-      'add an operation (path + method) to an OpenAPI specification. Provide a traffic source to learn request and response bodies as well.'
-    )
+    .description('add an operation (path + method) to an OpenAPI spec')
     .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
-    .option(
-      '--proxy <target-url>',
-      'accept traffic over a proxy targeting the actual service'
-    )
+    // TODO: re-enable direct proxy use once we can re-render updating CLI output better
+    // .option(
+    //   '--proxy <target-url>',
+    //   'accept traffic over a proxy targeting the actual service'
+    // )
     .action(async (specPath: string, operationComponents: string[]) => {
       const absoluteSpecPath = Path.resolve(specPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
-        return command.error('OpenAPI specification file could not be found');
+        return feedback.inputError(
+          'OpenAPI specification file could not be found'
+        );
       }
 
       let parsedOperationsResult = parseOperations(operationComponents);
       if (parsedOperationsResult.err) {
-        return command.error(parsedOperationsResult.val);
+        return feedback.inputError(parsedOperationsResult.val);
       }
 
       let parsedOperations = parsedOperationsResult.unwrap();
@@ -68,7 +72,9 @@ export function addCommand(): Command {
       if (options.har) {
         let absoluteHarPath = Path.resolve(options.har);
         if (!(await fs.pathExists(absoluteHarPath))) {
-          return command.error('Har file could not be found at given path');
+          return feedback.inputError(
+            'HAR file could not be found at given path'
+          );
         }
         let harFile = fs.createReadStream(absoluteHarPath);
         let harEntries = HarEntries.fromReadable(harFile);
@@ -77,7 +83,7 @@ export function addCommand(): Command {
 
       if (options.proxy) {
         if (!process.stdin.isTTY) {
-          return command.error(
+          return feedback.inputError(
             'Can only use --proxy when in an interactive terminal session'
           );
         }
@@ -89,17 +95,18 @@ export function addCommand(): Command {
         sources.push(
           CapturedInteractions.fromProxyInteractions(proxyInteractions)
         );
-        console.log(
+        feedback.notable(
           `Proxy created. Redirect traffic you want to capture to ${proxyUrl}`
         );
         interactiveCapture = true;
       }
 
-      let interactions = AT.merge(...sources);
+      let interactions =
+        sources.length > 0 ? AT.merge(...sources) : AT.from([]);
 
       const specReadResult = await readDeferencedSpec(absoluteSpecPath);
       if (specReadResult.err) {
-        command.error(
+        return feedback.inputError(
           `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`
         );
       }
@@ -122,10 +129,26 @@ export function addCommand(): Command {
       let observations = AT.forkable(
         AT.merge(addObservations, fileObservations)
       );
-      const renderingStats = renderAddProgress(observations.fork());
+
+      const handleUserSignals = (async function () {
+        if (interactiveCapture && process.stdin.isTTY) {
+          // wait for an empty new line on input, which should indicate hitting Enter / Return
+          let lines = readline.createInterface({ input: process.stdin });
+          for await (let line of lines) {
+            if (line.trim().length === 0) {
+              lines.close();
+              readline.moveCursor(process.stdin, 0, -1);
+              readline.clearLine(process.stdin, 1);
+              sourcesController.abort();
+            }
+          }
+        }
+      })();
+
+      const renderingStats = renderAddProgress(feedback, observations.fork());
       observations.start();
 
-      await Promise.all([writingSpecFiles, renderingStats]);
+      await Promise.all([handleUserSignals, writingSpecFiles, renderingStats]);
     });
 
   return command;
@@ -157,10 +180,11 @@ export function addOperations(
         });
       }
     },
-    newOperationPatch(patch: SpecPatch) {
+    newOperation(op: { pathPattern: string; method: HttpMethod }) {
       observing.onNext({
-        kind: AddObservationKind.NewOperationPatch,
-        description: patch.description,
+        kind: AddObservationKind.NewOperation,
+        pathPattern: op.pathPattern,
+        method: op.method,
       });
     },
   };
@@ -185,25 +209,28 @@ export function addOperations(
       for (let patch of patches) {
         patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
         yield patch;
-        observers.newOperationPatch(patch);
       }
 
       if (
         undocumentedOperation.type === UndocumentedOperationType.MissingPath
       ) {
         for (let method of undocumentedOperation.methods) {
-          addedOperations.push({
+          let addedOperation = {
             pathPattern: undocumentedOperation.pathPattern,
             method,
-          });
+          };
+          addedOperations.push(addedOperation);
+          observers.newOperation(addedOperation);
         }
       } else if (
         undocumentedOperation.type === UndocumentedOperationType.MissingMethod
       ) {
-        addedOperations.push({
+        let addedOperation = {
           pathPattern: undocumentedOperation.pathPattern,
           method: undocumentedOperation.method,
-        });
+        };
+        addedOperations.push(addedOperation);
+        observers.newOperation(addedOperation);
       }
 
       updatingSpec.onNext(patchedSpec);
@@ -327,7 +354,7 @@ function updateSpecFiles(
 export enum AddObservationKind {
   UnmatchedPath = 'unmatched-path',
   UnmatchedMethod = 'unmatched-method',
-  NewOperationPatch = 'new-operation-patch',
+  NewOperation = 'new-operation',
   SpecFileUpdated = 'spec-file-updated',
 }
 
@@ -344,8 +371,9 @@ export type AddObservation = {
       requiredMethod: string;
     }
   | {
-      kind: AddObservationKind.NewOperationPatch;
-      description: string;
+      kind: AddObservationKind.NewOperation;
+      pathPattern: string;
+      method: HttpMethod;
     }
   | {
       kind: AddObservationKind.SpecFileUpdated;
@@ -366,11 +394,21 @@ function parseOperations(
     let rawMethods = components[i * 2];
     let pathPattern = components[i * 2 + 1];
 
+    if (!pathPattern) {
+      return Err(
+        'missing path pattern or method. Pairs of valid method(s) and path required to add an operation'
+      );
+    }
+
+    if (!pathPattern.startsWith('/')) pathPattern = '/' + pathPattern;
+
     let methods: Array<HttpMethod> = [];
     for (let maybeMethod of rawMethods.split(',')) {
       let method = HttpMethods[maybeMethod.toUpperCase()];
       if (!method) {
-        return Err(`Could not parse '${maybeMethod}' as a valid HTTP method`);
+        return Err(
+          `could not parse '${maybeMethod}' as a valid HTTP method. Pairs of valid method(s) and path required to add an operation`
+        );
       }
       methods.push(method as HttpMethod);
     }
@@ -382,21 +420,27 @@ function parseOperations(
   return Ok(pairs);
 }
 
-async function renderAddProgress(observations: AddObservations) {
+async function renderAddProgress(
+  feedback: Awaited<ReturnType<typeof createCommandFeedback>>,
+  observations: AddObservations
+) {
   let patchCount = 0;
 
   for await (let observation of observations) {
     if (observation.kind === AddObservationKind.UnmatchedPath) {
-      console.log(`Undocumented path: ${observation.requiredPath}`);
+      feedback.log(`Undocumented path detected: ${observation.requiredPath}`);
     } else if (observation.kind === AddObservationKind.UnmatchedMethod) {
-      console.log(
+      feedback.log(
         `Undocumented method: ${observation.requiredMethod.toUpperCase()} for existing path ${
           observation.matchedPathPattern
         }`
       );
-    } else if (observation.kind === AddObservationKind.NewOperationPatch) {
+    } else if (observation.kind === AddObservationKind.NewOperation) {
       patchCount += 1;
-      console.log(`PATCH: ${observation.description}`);
+
+      feedback.notable(
+        `added ${observation.method.toUpperCase()} ${observation.pathPattern}`
+      );
     } else if (observation.kind === AddObservationKind.SpecFileUpdated) {
       let { path } = observation;
       // console.log('Spec file update queued', path);
@@ -404,6 +448,12 @@ async function renderAddProgress(observations: AddObservations) {
   }
 
   if (patchCount === 0) {
-    console.log('All requested operations were already present in spec');
+    feedback.warning(
+      'No paths or methods were added to the spec. All requested operations were already present in spec'
+    );
+    // TODO: give more actionable feedback. Tell the user at least which one of their inputs matched which existing operation
+    feedback.instruction(
+      'Compare the OpenAPI spec file with your inputs. Does not seem right? Let us know!'
+    );
   }
 }

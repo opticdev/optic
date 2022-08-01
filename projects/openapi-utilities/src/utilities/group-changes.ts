@@ -6,8 +6,13 @@ import {
   FactVariant,
   ChangeVariant,
 } from '../openapi3/sdk/types';
-import { isChangeVariant, isFactVariant } from '../openapi3/sdk/isType';
+import {
+  isChangeVariant,
+  isFactOrChangeVariant,
+  isFactVariant,
+} from '../openapi3/sdk/isType';
 import { compareChangesByPath } from './compare-changes-by-path';
+import { ResultWithSourcemap } from '../types';
 
 function getEndpointId(endpoint: { pathId: string; method: string }) {
   const { pathId, method } = endpoint;
@@ -21,18 +26,24 @@ export type BodyChange = {
   bodyChange: ChangeVariant<OpenApiKind.Body> | null;
   fieldChanges: ChangeVariant<OpenApiKind.Field>[];
   exampleChanges: ChangeVariant<OpenApiKind.BodyExample>[];
+  hasRules: boolean;
   location: ILocation;
 };
 
 export type RequestChange = {
   change: ChangeVariant<OpenApiKind.Request> | null;
+  hasRules: boolean;
   bodyChanges: Map<ContentType, BodyChange>;
 };
 
 export type ResponseChange = {
-  headers: Map<string, ChangeVariant<OpenApiKind.ResponseHeader>>;
+  headers: {
+    hasRules: boolean;
+    changes: Map<string, ChangeVariant<OpenApiKind.ResponseHeader>>;
+  };
   statusCode: string;
   change: ChangeVariant<OpenApiKind.Response> | null;
+  hasRules: boolean;
   contentTypes: Map<ContentType, BodyChange>; //content type
 };
 
@@ -40,15 +51,17 @@ const createEmptyOpenApiChange = (endpoint: {
   method: string;
   path: string;
 }): OpenApiEndpointChange => ({
-  headers: new Map(),
-  pathParameters: new Map(),
-  queryParameters: new Map(),
-  cookieParameters: new Map(),
+  headers: { hasRules: false, changes: new Map() },
+  pathParameters: { hasRules: false, changes: new Map() },
+  queryParameters: { hasRules: false, changes: new Map() },
+  cookieParameters: { hasRules: false, changes: new Map() },
   request: {
     change: null,
+    hasRules: false,
     bodyChanges: new Map(),
   },
-  responses: new Map(new Map()),
+  responses: new Map(),
+  hasRules: false,
   change: null,
   method: endpoint.method,
   path: endpoint.path,
@@ -56,13 +69,15 @@ const createEmptyOpenApiChange = (endpoint: {
 
 const createEmptyResponseChange = (statusCode: string): ResponseChange => ({
   change: null,
+  hasRules: false,
   contentTypes: new Map(),
-  headers: new Map(),
+  headers: { hasRules: false, changes: new Map() },
   statusCode,
 });
 
 const createEmptyBodyChange = (location: ILocation): BodyChange => ({
   bodyChange: null,
+  hasRules: false,
   fieldChanges: [],
   exampleChanges: [],
   location,
@@ -72,7 +87,9 @@ function findFieldBodyFact(
   facts: IFact[],
   fieldLocation: Extract<
     ILocation,
-    { kind: OpenApiKind.Field } | { kind: OpenApiKind.BodyExample }
+    | { kind: OpenApiKind.Field }
+    | { kind: OpenApiKind.BodyExample }
+    | { kind: OpenApiKind.Body }
   >
 ): FactVariant<OpenApiKind.Body> | undefined {
   const { path, method } = fieldLocation.conceptualLocation;
@@ -122,35 +139,56 @@ function findFieldBodyFact(
 }
 
 export type OpenApiEndpointChange = {
-  headers: Map<string, ChangeVariant<OpenApiKind.HeaderParameter>>;
-  pathParameters: Map<string, ChangeVariant<OpenApiKind.PathParameter>>;
-  queryParameters: Map<string, ChangeVariant<OpenApiKind.QueryParameter>>;
-  cookieParameters: Map<string, ChangeVariant<OpenApiKind.CookieParameter>>;
+  headers: {
+    hasRules: boolean;
+    changes: Map<string, ChangeVariant<OpenApiKind.HeaderParameter>>;
+  };
+  pathParameters: {
+    hasRules: boolean;
+    changes: Map<string, ChangeVariant<OpenApiKind.PathParameter>>;
+  };
+  queryParameters: {
+    hasRules: boolean;
+    changes: Map<string, ChangeVariant<OpenApiKind.QueryParameter>>;
+  };
+  cookieParameters: {
+    hasRules: boolean;
+    changes: Map<string, ChangeVariant<OpenApiKind.CookieParameter>>;
+  };
   request: RequestChange;
   responses: Map<StatusCode, ResponseChange>;
   change: ChangeVariant<OpenApiKind.Operation> | null;
+  hasRules: boolean;
   method: string;
   path: string;
 };
 
 type GroupedChanges = Map<string, OpenApiEndpointChange>;
 
-export const groupChanges = ({
+export const groupChangesAndRules = ({
   toFacts,
   changes,
+  rules,
 }: {
   toFacts: IFact[];
   changes: IChange[];
+  rules: ResultWithSourcemap[];
 }): {
-  specificationChanges: ChangeVariant<OpenApiKind.Specification>[];
+  specification: {
+    hasRules: boolean;
+    changes: ChangeVariant<OpenApiKind.Specification>[];
+  };
   changesByEndpoint: GroupedChanges;
 } => {
   const sortedChanges = [...changes].sort(compareChangesByPath);
-  const specificationChanges: ChangeVariant<OpenApiKind.Specification>[] = [];
+  const specification: {
+    hasRules: boolean;
+    changes: ChangeVariant<OpenApiKind.Specification>[];
+  } = { changes: [], hasRules: false };
   const groupedChanges: GroupedChanges = new Map();
   for (const change of sortedChanges) {
     if (isChangeVariant(change, OpenApiKind.Specification)) {
-      specificationChanges.push(change);
+      specification.changes.push(change);
       continue;
     }
 
@@ -199,16 +237,16 @@ export const groupChanges = ({
       }
     } else if (isChangeVariant(change, OpenApiKind.PathParameter)) {
       const pathKey = change.location.conceptualLocation.inRequest.path;
-      endpointChange.pathParameters.set(pathKey, change);
+      endpointChange.pathParameters.changes.set(pathKey, change);
     } else if (isChangeVariant(change, OpenApiKind.QueryParameter)) {
       const queryKey = change.location.conceptualLocation.inRequest.query;
-      endpointChange.queryParameters.set(queryKey, change);
+      endpointChange.queryParameters.changes.set(queryKey, change);
     } else if (isChangeVariant(change, OpenApiKind.CookieParameter)) {
       const cookieKey = change.location.conceptualLocation.inRequest.cookie;
-      endpointChange.cookieParameters.set(cookieKey, change);
+      endpointChange.cookieParameters.changes.set(cookieKey, change);
     } else if (isChangeVariant(change, OpenApiKind.HeaderParameter)) {
       const headerKey = change.location.conceptualLocation.inRequest.header;
-      endpointChange.headers.set(headerKey, change);
+      endpointChange.headers.changes.set(headerKey, change);
     } else if (isChangeVariant(change, OpenApiKind.ResponseHeader)) {
       const { statusCode, header } =
         change.location.conceptualLocation.inResponse;
@@ -216,7 +254,7 @@ export const groupChanges = ({
         endpointChange.responses.get(statusCode) ||
         createEmptyResponseChange(statusCode);
 
-      responseChange.headers.set(header, change);
+      responseChange.headers.changes.set(header, change);
       endpointChange.responses.set(statusCode, responseChange);
     } else if (isChangeVariant(change, OpenApiKind.Response)) {
       const { statusCode } = change.location.conceptualLocation.inResponse;
@@ -302,8 +340,101 @@ export const groupChanges = ({
     }
     groupedChanges.set(endpointId, endpointChange);
   }
+
+  for (const rule of rules) {
+    if (isFactOrChangeVariant(rule.change, OpenApiKind.Specification)) {
+      specification;
+      continue;
+    }
+
+    const path: string | undefined = (
+      rule.change.location.conceptualLocation as any
+    ).path;
+    const method: string | undefined = (
+      rule.change.location.conceptualLocation as any
+    ).method;
+    if (!path || !method) continue;
+    const endpointId = getEndpointId({ pathId: path, method });
+    const maybeEndpoint = groupedChanges.get(endpointId);
+    const endpoint =
+      maybeEndpoint || createEmptyOpenApiChange({ path, method });
+
+    if (isFactOrChangeVariant(rule.change, OpenApiKind.Operation)) {
+      endpoint.hasRules = true;
+    } else if (isFactOrChangeVariant(rule.change, OpenApiKind.PathParameter)) {
+      endpoint.pathParameters.hasRules = true;
+    } else if (isFactOrChangeVariant(rule.change, OpenApiKind.QueryParameter)) {
+      endpoint.queryParameters.hasRules = true;
+    } else if (
+      isFactOrChangeVariant(rule.change, OpenApiKind.CookieParameter)
+    ) {
+      endpoint.cookieParameters.hasRules = true;
+    } else if (
+      isFactOrChangeVariant(rule.change, OpenApiKind.HeaderParameter)
+    ) {
+      endpoint.headers.hasRules = true;
+    } else if (isFactOrChangeVariant(rule.change, OpenApiKind.Request)) {
+      endpoint.request.hasRules = true;
+    } else if (isFactOrChangeVariant(rule.change, OpenApiKind.Response)) {
+      const { statusCode } = rule.change.location.conceptualLocation.inResponse;
+      const responseChange: ResponseChange =
+        endpoint.responses.get(statusCode) ||
+        createEmptyResponseChange(statusCode);
+
+      responseChange.hasRules = true;
+
+      endpoint.responses.set(statusCode, responseChange);
+    } else if (isFactOrChangeVariant(rule.change, OpenApiKind.ResponseHeader)) {
+      const { statusCode } = rule.change.location.conceptualLocation.inResponse;
+      const responseChange: ResponseChange =
+        endpoint.responses.get(statusCode) ||
+        createEmptyResponseChange(statusCode);
+
+      responseChange.headers.hasRules = true;
+      endpoint.responses.set(statusCode, responseChange);
+    } else if (
+      isFactOrChangeVariant(rule.change, OpenApiKind.Field) ||
+      isFactOrChangeVariant(rule.change, OpenApiKind.Body) ||
+      isFactOrChangeVariant(rule.change, OpenApiKind.BodyExample)
+    ) {
+      if ('inResponse' in rule.change.location.conceptualLocation) {
+        const {
+          statusCode,
+          body: { contentType },
+        } = rule.change.location.conceptualLocation.inResponse;
+        const responseChange: ResponseChange =
+          endpoint.responses.get(statusCode) ||
+          createEmptyResponseChange(statusCode);
+
+        const responseBody =
+          responseChange.contentTypes.get(contentType) ||
+          createEmptyBodyChange(
+            findFieldBodyFact(toFacts, rule.change.location)!.location
+          );
+
+        responseBody.hasRules = true;
+        responseChange.contentTypes.set(contentType, responseBody);
+        endpoint.responses.set(statusCode, responseChange);
+      } else {
+        const {
+          body: { contentType },
+        } = rule.change.location.conceptualLocation.inRequest;
+
+        const requestBody =
+          endpoint.request.bodyChanges.get(contentType) ||
+          createEmptyBodyChange(
+            findFieldBodyFact(toFacts, rule.change.location)!.location
+          );
+
+        requestBody.hasRules = true;
+
+        endpoint.request.bodyChanges.set(contentType, requestBody);
+      }
+    }
+  }
+
   return {
-    specificationChanges,
+    specification,
     changesByEndpoint: groupedChanges,
   };
 };

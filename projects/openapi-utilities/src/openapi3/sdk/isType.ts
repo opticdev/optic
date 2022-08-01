@@ -19,3 +19,10 @@ export const isChangeVariant = <ChangeKind extends OpenApiKind>(
   kind: ChangeKind
 ): change is Extract<IChange, ChangeVariant<ChangeKind>> =>
   change.location.kind === kind;
+
+export const isFactOrChangeVariant = <Kind extends OpenApiKind>(
+  factOrChange: IFact | IChange,
+  kind: Kind
+): factOrChange is
+  | Extract<IChange, ChangeVariant<Kind>>
+  | Extract<IFact, FactVariant<Kind>> => factOrChange.location.kind === kind;

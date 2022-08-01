@@ -3,6 +3,7 @@ import Path from 'path';
 import * as fs from 'fs-extra';
 import readline from 'readline';
 import { updateReporter } from './reporters/update';
+import { createCommandFeedback } from './reporters/feedback';
 
 import { tap, forkable, merge, Subject } from '../lib/async-tools';
 import {
@@ -31,8 +32,9 @@ import { DocumentedInteraction, DocumentedInteractions } from '../operations';
 import { AbortController } from 'node-abort-controller';
 import { DocumentedBodies, DocumentedBody } from '../shapes';
 
-export function updateCommand(): Command {
+export async function updateCommand(): Promise<Command> {
   const command = new Command('update');
+  const feedback = await createCommandFeedback(command);
 
   command
     .usage('openapi.yml')
@@ -46,7 +48,9 @@ export function updateCommand(): Command {
     .action(async (specPath) => {
       const absoluteSpecPath = Path.resolve(specPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
-        return command.error('OpenAPI specification file could not be found');
+        return feedback.inputError(
+          'OpenAPI specification file could not be found'
+        );
       }
 
       const options = command.opts();
@@ -58,7 +62,9 @@ export function updateCommand(): Command {
       if (options.har) {
         let absoluteHarPath = Path.resolve(options.har);
         if (!(await fs.pathExists(absoluteHarPath))) {
-          return command.error('Har file could not be found at given path');
+          return feedback.inputError(
+            'HAR file could not be found at given path'
+          );
         }
         let harFile = fs.createReadStream(absoluteHarPath);
         let harEntries = HarEntries.fromReadable(harFile);
@@ -67,8 +73,8 @@ export function updateCommand(): Command {
 
       if (options.proxy) {
         if (!process.stdin.isTTY) {
-          return command.error(
-            'Can only use --proxy when in an interactive terminal session'
+          return feedback.inputError(
+            'can only use --proxy when in an interactive terminal session'
           );
         }
 
@@ -79,22 +85,21 @@ export function updateCommand(): Command {
         sources.push(
           CapturedInteractions.fromProxyInteractions(proxyInteractions)
         );
-        console.log(
+        feedback.notable(
           `Proxy created. Redirect traffic you want to capture to ${proxyUrl}`
         );
         interactiveCapture = true;
       }
 
       if (sources.length < 1) {
-        command.showHelpAfterError(true);
-        return command.error(
-          'Choose a capture method to update spec by traffic'
+        return feedback.inputError(
+          'choose a capture method to update spec by traffic'
         );
       }
 
       const specReadResult = await readDeferencedSpec(absoluteSpecPath);
       if (specReadResult.err) {
-        command.error(
+        feedback.inputError(
           `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`
         );
       }
