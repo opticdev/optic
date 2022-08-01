@@ -1,12 +1,16 @@
 import { Command } from 'commander';
 import Path from 'path';
 import fs from 'fs-extra';
-import { Writable } from 'stream';
+import { Writable, finished } from 'stream';
 import Semver from 'semver';
+import { promisify } from 'util';
 
 import * as AT from '../lib/async-tools';
+import { trackEvent, flushEvents } from '../segment';
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { SpecFile, SpecFiles, SpecFileOperations, SpecPatches } from '../specs';
+
+const streamFinished = promisify(finished);
 
 export async function newCommand(): Promise<Command> {
   const command = new Command('new');
@@ -81,8 +85,12 @@ export async function newCommand(): Promise<Command> {
       }
 
       let newSpecFile = await createNewSpecFile(absoluteFilePath, oasVersion);
-
+      let trackingStats = streamFinished(destination).then(() =>
+        trackStats({ oasVersion })
+      );
       SpecFile.write(newSpecFile, destination);
+
+      await trackingStats;
     });
 
   return command;
@@ -110,4 +118,16 @@ async function createNewSpecFile(
   );
 
   return updatedSpecFile;
+}
+
+async function trackStats({ oasVersion }: { oasVersion: string }) {
+  trackEvent('openapi_cli.new.completed', {
+    oasVersion,
+  });
+
+  try {
+    await flushEvents();
+  } catch (err) {
+    console.warn('Could not flush usage analytics (non-critical)');
+  }
 }
