@@ -157,10 +157,15 @@ const generateRuleRunner = (
 
   if (checksEnabled) {
     for (const ruleset of config.ruleset) {
-      if (StandardRulesets[ruleset.name]) {
-        rulesets.push(
-          StandardRulesets[ruleset.name].fromOpticConfig(ruleset.config)
-        );
+      const RulesetClass =
+        StandardRulesets[ruleset.name as keyof typeof StandardRulesets];
+      if (RulesetClass) {
+        const rulesetInstance = RulesetClass.fromOpticConfig(ruleset.config);
+        if (Ruleset.isInstance(rulesetInstance)) {
+          rulesets.push(rulesetInstance);
+        } else {
+          console.error(rulesetInstance.join(', '));
+        }
       } else {
         console.error(`Warning: Invalid ruleset ${ruleset.name}`);
       }

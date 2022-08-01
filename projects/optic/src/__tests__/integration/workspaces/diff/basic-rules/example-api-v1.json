@@ -1,0 +1,41 @@
+{
+  "openapi": "3.0.1",
+  "paths": {
+    "/example": {
+      "get": {
+        "operationId": "my-op",
+        "responses": {}
+      },
+      "put": {
+        "operationId": "putOriginalaa",
+        "responses": {}
+      },
+      "patch": {
+        "operationId": "putOriginaaal",
+        "responses": {
+          "200": {
+            "description": "hello",
+            "content": {
+              "application/json": {
+                "example": "hello",
+                "schema": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invalid_name": {
+      "get": {
+        "operationId": "getInvalidName",
+        "responses": {}
+      }
+    }
+  },
+  "info": {
+    "version": "0.0.0",
+    "title": "Empty"
+  }
+}
