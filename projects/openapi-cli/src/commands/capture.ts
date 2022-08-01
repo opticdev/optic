@@ -6,6 +6,7 @@ import { AbortController } from 'node-abort-controller';
 import { Writable } from 'stream';
 import * as AT from '../lib/async-tools';
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
+import { trackEvent, flushEvents } from '../segment';
 
 import {
   CapturedInteraction,
@@ -73,7 +74,7 @@ export async function captureCommand(): Promise<Command> {
 
       if (sources.length < 1) {
         return feedback.inputError(
-          'choose a capture method to update spec by traffic',
+          'choose a method of capturing traffic to create a capture',
           InputErrors.CAPTURE_METHOD_MISSING
         );
       }
@@ -98,8 +99,6 @@ export async function captureCommand(): Promise<Command> {
 
       const harEntries = AT.merge(...sources);
 
-      const observations = writeInteractions(harEntries, destination);
-
       const handleUserSignals = (async function () {
         if (interactiveCapture && process.stdin.isTTY) {
           // wait for an empty new line on input, which should indicate hitting Enter / Return
@@ -115,13 +114,18 @@ export async function captureCommand(): Promise<Command> {
         }
       })();
 
+      const observations = writeInteractions(harEntries, destination);
+
+      const observationsFork = AT.forkable(observations);
       const renderingStats = renderCaptureProgress(
         feedback,
-        observations,
+        observationsFork.fork(),
         interactiveCapture
       );
+      const trackingStats = trackStats(observationsFork.fork());
+      observationsFork.start();
 
-      await Promise.all([handleUserSignals, renderingStats]);
+      await Promise.all([handleUserSignals, renderingStats, trackingStats]);
     });
 
   return command;
@@ -215,5 +219,25 @@ async function renderCaptureProgress(
     spinner.info('No requests captured');
   } else {
     spinner.succeed(`${interactionCount} requests written`);
+  }
+}
+
+async function trackStats(observations: CaptureObservations) {
+  const stats = {
+    capturedInteractionsCount: 0,
+  };
+
+  for await (let observation of observations) {
+    if (observation.kind === CaptureObservationKind.InteractionCaptured) {
+      stats.capturedInteractionsCount += 1;
+    }
+  }
+
+  trackEvent(`openapi_cli.capture.completed`, stats);
+
+  try {
+    await flushEvents();
+  } catch (err) {
+    console.warn('Could not flush usage analytics (non-critical)');
   }
 }
