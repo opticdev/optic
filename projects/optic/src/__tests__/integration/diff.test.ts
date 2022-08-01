@@ -1,4 +1,9 @@
-import { runOptic, setupWorkspace, run } from './integration';
+import {
+  runOptic,
+  setupWorkspace,
+  run,
+  normalizeWorkspace,
+} from './integration';
 
 jest.setTimeout(30000);
 
@@ -9,7 +14,7 @@ describe('diff', () => {
       workspace,
       'diff example-api-v0.json example-api-v1.json'
     );
-    expect(combined.replace(workspace, '$$workspace$$')).toMatchSnapshot();
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     expect(code).toBe(0);
   });
 
@@ -29,7 +34,7 @@ describe('diff', () => {
       workspace
     );
     const { combined, code } = await runOptic(workspace, 'diff');
-    expect(combined.replace(workspace, '$$workspace$$')).toMatchSnapshot();
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     expect(code).toBe(0);
   });
 
@@ -41,6 +46,6 @@ describe('diff', () => {
     );
 
     expect(code).toBe(0);
-    expect(combined.replace(workspace, '$$workspace$$')).toMatchSnapshot();
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
   });
 });

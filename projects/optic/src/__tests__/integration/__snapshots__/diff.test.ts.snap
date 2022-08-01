@@ -91,7 +91,7 @@ Checks
     Rule: operation path component naming check
     [31mx[39m requirement for operation: GET /invalid_name must path component must be camelCase when always
       [31minvalid_name is not camelCase[39m
-      at [4m/Users/nalanj/Source/monorail/projects/openapi-workspaces/projects/optic/tmp/MpwvSG/example-api-v1.json:31:632[24m
+      at [4m$workspace$/example-api-v1.json:31:632[24m
 
 
 

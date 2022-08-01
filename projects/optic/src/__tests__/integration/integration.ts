@@ -121,3 +121,7 @@ export async function fileExists(path: string): Promise<boolean> {
 
   return true;
 }
+
+export function normalizeWorkspace(workspace: string, text: string): string {
+  return text.replace(new RegExp(workspace, 'g'), '$$workspace$$');
+}
