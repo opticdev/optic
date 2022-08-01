@@ -1,5 +1,3 @@
-files: []
-
 ruleset:
   - breaking-changes
   - naming:
