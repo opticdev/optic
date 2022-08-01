@@ -7,7 +7,6 @@ import { createResponseHeaderParameterChecks } from './responseHeader';
 import { createCookieParameterChecks } from './cookieParameters';
 import { createPathComponentChecks } from './pathComponents';
 import Ajv from 'ajv';
-import { UserError } from '@useoptic/openapi-utilities';
 
 type RulesetConfig = {
   applies?: typeof appliesWhen[number];
