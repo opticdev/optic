@@ -431,12 +431,15 @@ async function trackStats(observations: UpdateObservations): Promise<void> {
     }
   }
 
-  trackEvent('openapi_cli.spec_updated_by_traffic', {
+  const eventProperties = {
     ...stats,
     unsupportedContentTypes: [
       ...Object.keys(stats.unsupportedContentTypeCounts),
     ], // set cast as array
-  });
+  };
+
+  trackEvent('openapi_cli.update.completed', eventProperties);
+  trackEvent('openapi_cli.spec_updated_by_traffic', eventProperties); // for legacy reports
 
   try {
     await flushEvents();

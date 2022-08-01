@@ -3,6 +3,7 @@ import Path from 'path';
 import * as fs from 'fs-extra';
 
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
+import { trackEvent, flushEvents } from '../segment';
 import * as AT from '../lib/async-tools';
 import { ComponentSchemaExampleFacts, readDeferencedSpec } from '../specs';
 import {
@@ -80,7 +81,12 @@ export async function statusCommand(): Promise<Command> {
 
       let observations = matchInteractions(spec, interactions);
 
-      await renderStatus(observations);
+      let observationsFork = AT.forkable(observations);
+      const renderingStatus = renderStatus(observationsFork.fork());
+      const trackingStats = trackStats(observationsFork.fork());
+      observationsFork.start();
+
+      await Promise.all([renderingStatus, trackingStats]);
     });
 
   return command;
@@ -105,6 +111,7 @@ export function matchInteractions(
       interactionsFork.fork(),
       spec
     );
+  const capturedInteractions = interactionsFork.fork();
   interactionsFork.start();
 
   const matchingObservations = (async function* (): StatusObservations {
@@ -147,10 +154,25 @@ export function matchInteractions(
     }
   })();
 
-  return AT.merge(matchingObservations, unmatchingObservations);
+  const captureObservations = AT.map(function (
+    interaction: CapturedInteraction
+  ): StatusObservation {
+    return {
+      kind: StatusObservationKind.InteractionCaptured,
+      path: interaction.request.path,
+      method: interaction.request.method,
+    };
+  })(capturedInteractions);
+
+  return AT.merge(
+    captureObservations,
+    matchingObservations,
+    unmatchingObservations
+  );
 }
 
 export enum StatusObservationKind {
+  InteractionCaptured = 'interaction-captured',
   InteractionMatchedOperation = 'interaction-matched-operation',
   InteractionUnmatchedMethod = 'interaction-unmatched-method',
   InteractionUnmatchedPath = 'interaction-unmatched-path',
@@ -159,6 +181,11 @@ export enum StatusObservationKind {
 export type StatusObservation = {
   kind: StatusObservationKind;
 } & (
+  | {
+      kind: StatusObservationKind.InteractionCaptured;
+      path: string;
+      method: string;
+    }
   | {
       kind: StatusObservationKind.InteractionMatchedOperation;
       capturedPath: string;
@@ -279,5 +306,39 @@ async function renderStatus(observations: StatusObservations) {
 
   function operationId({ path, method }: { path: string; method: string }) {
     return `${method}${path}`;
+  }
+}
+
+async function trackStats(observations: StatusObservations) {
+  const stats = {
+    unmatchedPathsCount: 0,
+    unmatchedMethodsCount: 0,
+
+    capturedInteractionsCount: 0,
+    matchedInteractionsCount: 0,
+  };
+
+  for await (let observation of observations) {
+    if (observation.kind === StatusObservationKind.InteractionUnmatchedPath) {
+      stats.unmatchedPathsCount += 1;
+    } else if (
+      observation.kind === StatusObservationKind.InteractionUnmatchedMethod
+    ) {
+      stats.unmatchedMethodsCount += 1;
+    } else if (observation.kind === StatusObservationKind.InteractionCaptured) {
+      stats.capturedInteractionsCount += 1;
+    } else if (
+      observation.kind === StatusObservationKind.InteractionMatchedOperation
+    ) {
+      stats.matchedInteractionsCount += 1;
+    }
+  }
+
+  trackEvent(`openapi_cli.status.completed`, stats);
+
+  try {
+    await flushEvents();
+  } catch (err) {
+    console.warn('Could not flush usage analytics (non-critical)');
   }
 }
