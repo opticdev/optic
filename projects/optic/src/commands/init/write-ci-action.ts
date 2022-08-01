@@ -33,9 +33,24 @@ jobs:
           base: \$\{\{ github.event.pull_request.base.ref \}\} # the base git to compare against
 `;
 
-const writeGithubAction = (gitRoot: string) => {
+export function fileExists(path: string) {
+  try {
+    fs.statSync(path);
+  } catch {
+    return false;
+  }
+
+  return true;
+}
+
+const writeGithubAction = async (gitRoot: string) => {
   const dirPath = path.join(gitRoot, '.github', 'workflows');
   const filePath = path.join(dirPath, 'optic-ci.yml');
+  if (fileExists(filePath)) {
+    console.error(`Error: a github action file already exists at ${filePath}.`);
+    process.exitCode = 1;
+    return;
+  }
   fs.mkdirSync(dirPath, { recursive: true });
   fs.writeFileSync(filePath, ghActionContent);
   console.log(`- Github action file written to ${filePath}`);
