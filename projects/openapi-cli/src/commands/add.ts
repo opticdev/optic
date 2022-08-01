@@ -6,8 +6,10 @@ import { AbortController } from 'node-abort-controller';
 import readline from 'readline';
 
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
+import { trackEvent, flushEvents } from '../segment';
 import * as AT from '../lib/async-tools';
 import {
+  CapturedInteraction,
   CapturedInteractions,
   HarEntries,
   ProxyInteractions,
@@ -21,7 +23,7 @@ import {
   UndocumentedOperationType,
   UndocumentedOperations,
 } from '../operations';
-import { DocumentedBodies } from '../shapes';
+import { DocumentedBodies, DocumentedBody } from '../shapes';
 import {
   OpenAPIV3,
   SpecFile,
@@ -133,10 +135,6 @@ export async function addCommand(): Promise<Command> {
         }
       })();
 
-      let observations = AT.forkable(
-        AT.merge(addObservations, fileObservations)
-      );
-
       const handleUserSignals = (async function () {
         if (interactiveCapture && process.stdin.isTTY) {
           // wait for an empty new line on input, which should indicate hitting Enter / Return
@@ -152,10 +150,19 @@ export async function addCommand(): Promise<Command> {
         }
       })();
 
+      let observations = AT.forkable(
+        AT.merge(addObservations, fileObservations)
+      );
       const renderingStats = renderAddProgress(feedback, observations.fork());
+      const trackingStats = trackStats(observations.fork());
       observations.start();
 
-      await Promise.all([handleUserSignals, writingSpecFiles, renderingStats]);
+      await Promise.all([
+        handleUserSignals,
+        writingSpecFiles,
+        renderingStats,
+        trackingStats,
+      ]);
     });
 
   return command;
@@ -173,6 +180,13 @@ export function addOperations(
 ): { results: SpecPatches; observations: AsyncIterable<AddObservation> } {
   const observing = new AT.Subject<AddObservation>();
   const observers = {
+    // operations
+    requiredOperations(operations: ParsedOperation[]) {
+      observing.onNext({
+        kind: AddObservationKind.RequiredOperations,
+        operations,
+      });
+    },
     undocumentedOperation(op: UndocumentedOperation) {
       if (op.type === UndocumentedOperationType.MissingPath) {
         observing.onNext({
@@ -192,6 +206,47 @@ export function addOperations(
         kind: AddObservationKind.NewOperation,
         pathPattern: op.pathPattern,
         method: op.method,
+      });
+    },
+
+    // interactions
+
+    capturedInteraction(interaction: CapturedInteraction) {
+      observing.onNext({
+        kind: AddObservationKind.InteractionCaptured,
+        path: interaction.request.path,
+        method: interaction.request.method,
+      });
+    },
+    documentedInteraction(interaction: DocumentedInteraction) {
+      observing.onNext({
+        kind: AddObservationKind.InteractionMatchedOperation,
+        capturedPath: interaction.interaction.request.path,
+        pathPattern: interaction.operation.pathPattern,
+        method: interaction.operation.method,
+      });
+    },
+    documentedInteractionBody(
+      interaction: DocumentedInteraction,
+      body: DocumentedBody
+    ) {
+      observing.onNext({
+        kind: AddObservationKind.InteractionBodyMatched,
+        capturedPath: interaction.interaction.request.path,
+        pathPattern: interaction.operation.pathPattern,
+        method: interaction.operation.method,
+
+        decodable: body.body.some,
+        capturedContentType: body.bodySource!.contentType,
+      });
+    },
+    interactionPatch(interaction: DocumentedInteraction, patch: SpecPatch) {
+      observing.onNext({
+        kind: AddObservationKind.InteractionPatchGenerated,
+        capturedPath: interaction.interaction.request.path,
+        pathPattern: interaction.operation.pathPattern,
+        method: interaction.operation.method,
+        description: patch.description,
       });
     },
   };
@@ -248,7 +303,7 @@ export function addOperations(
     updatingSpec = new AT.Subject(); // new stream of updates for generating of documented interactions
     const documentedInteractions =
       DocumentedInteractions.fromCapturedInteractions(
-        interactions,
+        AT.tap(observers.capturedInteraction)(interactions),
         patchedSpec,
         updatingSpec.iterator
       );
@@ -268,12 +323,15 @@ export function addOperations(
         continue;
       }
 
+      observers.documentedInteraction(documentedInteraction);
+
       // phase one: operation patches, making sure all requests / responses are documented
       let opPatches = SpecPatches.operationAdditions(documentedInteraction);
 
       for await (let patch of opPatches) {
         patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
         yield patch;
+        observers.interactionPatch(documentedInteraction, patch);
       }
 
       // phase two: shape patches, describing request / response bodies in detail
@@ -284,11 +342,16 @@ export function addOperations(
       let documentedBodies = DocumentedBodies.fromDocumentedInteraction(
         documentedInteraction
       );
-      let shapePatches = SpecPatches.shapeAdditions(documentedBodies);
+      let shapePatches = SpecPatches.shapeAdditions(
+        AT.tap((body: DocumentedBody) => {
+          observers.documentedInteractionBody(documentedInteraction, body);
+        })(documentedBodies)
+      );
 
       for await (let patch of shapePatches) {
         patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
         yield patch;
+        observers.interactionPatch(documentedInteraction, patch);
       }
 
       updatingSpec.onNext(patchedSpec);
@@ -363,6 +426,14 @@ export enum AddObservationKind {
   UnmatchedMethod = 'unmatched-method',
   NewOperation = 'new-operation',
   SpecFileUpdated = 'spec-file-updated',
+  RequiredOperations = 'required-operations',
+
+  // with traffic
+  // TODO: power these from a generalised CapturedObservations, so it's consistent between commands
+  InteractionBodyMatched = 'interaction-body-matched',
+  InteractionCaptured = 'interaction-captured',
+  InteractionMatchedOperation = 'interaction-matched-operation',
+  InteractionPatchGenerated = 'interaction-patch-generated',
 }
 
 export type AddObservation = {
@@ -386,6 +457,40 @@ export type AddObservation = {
       kind: AddObservationKind.SpecFileUpdated;
       path: string;
       overwrittenComments: boolean;
+    }
+  | {
+      kind: AddObservationKind.RequiredOperations;
+      operations: ParsedOperation[];
+    }
+
+  // with traffic:
+  // TODO: power these from a generalised CapturedObservations, so it's consistent between commands
+  | {
+      kind: AddObservationKind.InteractionBodyMatched;
+      capturedPath: string;
+      pathPattern: string;
+      method: string;
+
+      capturedContentType: string | null;
+      decodable: boolean;
+    }
+  | {
+      kind: AddObservationKind.InteractionCaptured;
+      path: string;
+      method: string;
+    }
+  | {
+      kind: AddObservationKind.InteractionMatchedOperation;
+      capturedPath: string;
+      pathPattern: string;
+      method: string;
+    }
+  | {
+      kind: AddObservationKind.InteractionPatchGenerated;
+      capturedPath: string;
+      pathPattern: string;
+      method: string;
+      description: string;
     }
 );
 
@@ -462,5 +567,70 @@ async function renderAddProgress(
     feedback.instruction(
       'Compare the OpenAPI spec file with your inputs. Does not seem right? Let us know!'
     );
+  }
+}
+
+async function trackStats(observations: AddObservations) {
+  const stats = {
+    unmatchedPathsCount: 0,
+    unmatchedMethodsCount: 0,
+    newOperationsCount: 0,
+    requiredOperationsCount: 0,
+
+    capturedInteractionsCount: 0,
+    matchedInteractionsCount: 0,
+    updatePatchesCount: 0,
+
+    filesWithOverwrittenYamlCommentsCount: 0,
+    updatedFilesCount: 0,
+    unsupportedContentTypeCounts: {},
+  };
+
+  for await (let observation of observations) {
+    if (observation.kind === AddObservationKind.RequiredOperations) {
+      stats.requiredOperationsCount += 1;
+    } else if (observation.kind === AddObservationKind.UnmatchedPath) {
+      stats.unmatchedPathsCount += 1;
+    } else if (observation.kind === AddObservationKind.UnmatchedMethod) {
+      stats.unmatchedMethodsCount += 1;
+    } else if (observation.kind === AddObservationKind.NewOperation) {
+      stats.newOperationsCount += 1;
+    } else if (observation.kind === AddObservationKind.InteractionCaptured) {
+      stats.capturedInteractionsCount += 1;
+    } else if (
+      observation.kind === AddObservationKind.InteractionMatchedOperation
+    ) {
+      stats.matchedInteractionsCount += 1;
+    } else if (
+      observation.kind === AddObservationKind.InteractionPatchGenerated
+    ) {
+      stats.updatePatchesCount += 1;
+    } else if (observation.kind === AddObservationKind.SpecFileUpdated) {
+      stats.updatedFilesCount += 1;
+      if (observation.overwrittenComments) {
+        stats.filesWithOverwrittenYamlCommentsCount += 1;
+      }
+    } else if (observation.kind === AddObservationKind.InteractionBodyMatched) {
+      if (!observation.decodable && observation.capturedContentType) {
+        let count =
+          stats.unsupportedContentTypeCounts[observation.capturedContentType] ||
+          0;
+        stats.unsupportedContentTypeCounts[observation.capturedContentType] =
+          count + 1;
+      }
+    }
+  }
+
+  trackEvent(`openapi_cli.add.completed`, {
+    ...stats,
+    unsupportedContentTypes: [
+      ...Object.keys(stats.unsupportedContentTypeCounts),
+    ], // set cast as array
+  });
+
+  try {
+    await flushEvents();
+  } catch (err) {
+    console.warn('Could not flush usage analytics (non-critical)');
   }
 }
