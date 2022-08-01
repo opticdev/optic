@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 
-import { program as cli } from 'commander';
+import { Command } from 'commander';
+import fs from 'fs-extra';
+import Path from 'path';
+import { createCommandFeedback } from './commands/reporters/feedback';
 
 import { addCommand } from './commands/add';
 import { captureCommand } from './commands/capture';
@@ -15,17 +18,21 @@ import { initSentry } from './sentry';
 
 const packageJson = require('../package.json');
 
-export function makeCli(config: CliConfig) {
+export async function makeCli(config: CliConfig) {
+  const cli = new Command('oas');
+  await createCommandFeedback(cli);
+
   cli.version(packageJson.version);
+  cli.description('oas [openapi-file] <command> [options]');
 
-  cli.addCommand(addCommand());
-  cli.addCommand(captureCommand());
-  cli.addCommand(newCommand());
-  cli.addCommand(statusCommand());
-  cli.addCommand(updateCommand());
-  registerDebugTemplateCommand(cli);
+  cli.addCommand(await addCommand());
+  cli.addCommand(await captureCommand());
+  cli.addCommand(await newCommand());
+  cli.addCommand(await statusCommand());
+  cli.addCommand(await updateCommand());
 
-  cli.addCommand(debugWorkflowsCommand());
+  // registerDebugTemplateCommand(cli);
+  // cli.addCommand(debugWorkflowsCommand());
 
   return cli;
 }
@@ -45,7 +52,26 @@ export function makeCli(config: CliConfig) {
     version: packageJson.version,
   });
 
-  const cli = makeCli(config);
+  const cli = await makeCli(config);
+  const subCommandNames = cli.commands.flatMap((cmd) => [
+    cmd.name(),
+    ...cmd.aliases(),
+  ]);
 
-  cli.parse(process.argv);
+  const args = process.argv.slice(2);
+
+  if (
+    args[0] &&
+    !subCommandNames.includes(args[0]) &&
+    ((args[1] && subCommandNames.includes(args[1])) ||
+      (await fs.pathExists(Path.resolve(args[0]))))
+  ) {
+    let subcommand = args[1];
+    let specPath = args[0];
+
+    args[0] = subcommand;
+    args[1] = specPath;
+  }
+
+  cli.parse(args, { from: 'user' });
 })();

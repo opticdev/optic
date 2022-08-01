@@ -17,11 +17,13 @@ export const init = async (config: OpticCliConfig): Promise<void> => {
 
   if (!(await hasGit())) {
     console.error('Error: git must be available in PATH for "init" to work.');
+    process.exitCode = 1;
     return;
   }
 
   if (!(await isInGitRepo())) {
     console.error('Error: "init" must be called from a git repository.');
+    process.exitCode = 1;
     return;
   }
 
@@ -32,6 +34,7 @@ export const init = async (config: OpticCliConfig): Promise<void> => {
     console.error(
       `Error: a configuration file already exists at ${configPath}.`
     );
+    process.exitCode = 1;
     return;
   }
 

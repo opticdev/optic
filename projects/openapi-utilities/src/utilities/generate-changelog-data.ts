@@ -1,7 +1,8 @@
-import { groupChanges } from './group-changes';
+import { groupChangesAndRules } from './group-changes';
 import { OpenAPIV3 } from 'openapi-types';
 import { traverseSpec } from './traverse-spec';
 import { IChange } from '../openapi3/sdk/types';
+import { ResultWithSourcemap } from '../types';
 
 /**
  * Takes raw outputs form a run and generates the data required to display a changelog.
@@ -12,10 +13,12 @@ import { IChange } from '../openapi3/sdk/types';
 export const generateChangelogData = ({
   changes,
   toFile,
+  rules,
 }: {
   changes: IChange[];
   toFile: OpenAPIV3.Document;
+  rules: ResultWithSourcemap[];
 }) => {
   const toFacts = traverseSpec(toFile);
-  return groupChanges({ toFacts, changes });
+  return groupChangesAndRules({ toFacts, changes, rules });
 };

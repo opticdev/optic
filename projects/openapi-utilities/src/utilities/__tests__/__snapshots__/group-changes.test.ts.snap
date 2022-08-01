@@ -1,19 +1,33 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`groupChanges diffs and groups changes between two open api files: pet store grouped changes 1`] = `
+exports[`groupChangesAndRules diffs and groups changes between two open api files: pet store grouped changes 1`] = `
 Object {
   "changesByEndpoint": Map {
     "/example.GET" => Object {
       "change": null,
-      "cookieParameters": Map {},
-      "headers": Map {},
+      "cookieParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "hasRules": false,
+      "headers": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "method": "get",
       "path": "/example",
-      "pathParameters": Map {},
-      "queryParameters": Map {},
+      "pathParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "queryParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "request": Object {
         "bodyChanges": Map {},
         "change": null,
+        "hasRules": false,
       },
       "responses": Map {
         "200" => Object {
@@ -419,6 +433,7 @@ Object {
                   },
                 },
               ],
+              "hasRules": false,
               "location": Object {
                 "conceptualLocation": Object {
                   "inResponse": Object {
@@ -443,7 +458,11 @@ Object {
               },
             },
           },
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "200",
         },
       },
@@ -471,15 +490,29 @@ Object {
           },
         },
       },
-      "cookieParameters": Map {},
-      "headers": Map {},
+      "cookieParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "hasRules": false,
+      "headers": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "method": "get",
       "path": "/pet",
-      "pathParameters": Map {},
-      "queryParameters": Map {},
+      "pathParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "queryParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "request": Object {
         "bodyChanges": Map {},
         "change": null,
+        "hasRules": false,
       },
       "responses": Map {
         "404" => Object {
@@ -511,7 +544,11 @@ Object {
             },
           },
           "contentTypes": Map {},
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "404",
         },
         "405" => Object {
@@ -543,7 +580,11 @@ Object {
             },
           },
           "contentTypes": Map {},
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "405",
         },
       },
@@ -603,26 +644,53 @@ Object {
           "kind": "operation",
         },
       },
-      "cookieParameters": Map {},
-      "headers": Map {},
+      "cookieParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "hasRules": false,
+      "headers": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "method": "post",
       "path": "/pet",
-      "pathParameters": Map {},
-      "queryParameters": Map {},
+      "pathParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "queryParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "request": Object {
         "bodyChanges": Map {},
         "change": null,
+        "hasRules": false,
       },
       "responses": Map {},
     },
     "/pet.PUT" => Object {
       "change": null,
-      "cookieParameters": Map {},
-      "headers": Map {},
+      "cookieParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "hasRules": false,
+      "headers": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "method": "put",
       "path": "/pet",
-      "pathParameters": Map {},
-      "queryParameters": Map {},
+      "pathParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "queryParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "request": Object {
         "bodyChanges": Map {
           "application/json" => Object {
@@ -699,6 +767,7 @@ Object {
                 },
               },
             ],
+            "hasRules": false,
             "location": Object {
               "conceptualLocation": Object {
                 "inRequest": Object {
@@ -1139,6 +1208,7 @@ Object {
                 },
               },
             ],
+            "hasRules": false,
             "location": Object {
               "conceptualLocation": Object {
                 "inRequest": Object {
@@ -1161,6 +1231,7 @@ Object {
           },
         },
         "change": null,
+        "hasRules": false,
       },
       "responses": Map {
         "400" => Object {
@@ -1192,7 +1263,11 @@ Object {
             },
           },
           "contentTypes": Map {},
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "400",
         },
       },
@@ -1232,94 +1307,108 @@ Object {
           "kind": "operation",
         },
       },
-      "cookieParameters": Map {
-        "debug" => Object {
-          "added": Object {
-            "description": "A debug token",
-            "in": "cookie",
-            "name": "debug",
-            "required": false,
-            "schema": Object {
-              "enum": Array [
-                0,
-                1,
-              ],
-              "type": "integer",
-            },
-          },
-          "changeType": "added",
-          "location": Object {
-            "conceptualLocation": Object {
-              "inRequest": Object {
-                "cookie": "debug",
+      "cookieParameters": Object {
+        "changes": Map {
+          "debug" => Object {
+            "added": Object {
+              "description": "A debug token",
+              "in": "cookie",
+              "name": "debug",
+              "required": false,
+              "schema": Object {
+                "enum": Array [
+                  0,
+                  1,
+                ],
+                "type": "integer",
               },
-              "method": "get",
-              "path": "/pet/findByStatus",
             },
-            "conceptualPath": Array [
-              "operations",
-              "/pet/findByStatus",
-              "get",
-              "parameters",
-              "cookie",
-              "debug",
-            ],
-            "jsonPath": "/paths/~1pet~1findByStatus/get/parameters/1",
-            "kind": "cookie-parameter",
+            "changeType": "added",
+            "location": Object {
+              "conceptualLocation": Object {
+                "inRequest": Object {
+                  "cookie": "debug",
+                },
+                "method": "get",
+                "path": "/pet/findByStatus",
+              },
+              "conceptualPath": Array [
+                "operations",
+                "/pet/findByStatus",
+                "get",
+                "parameters",
+                "cookie",
+                "debug",
+              ],
+              "jsonPath": "/paths/~1pet~1findByStatus/get/parameters/1",
+              "kind": "cookie-parameter",
+            },
           },
         },
+        "hasRules": false,
       },
-      "headers": Map {},
+      "hasRules": false,
+      "headers": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "method": "get",
       "path": "/pet/findByStatus",
-      "pathParameters": Map {},
-      "queryParameters": Map {
-        "status" => Object {
-          "added": Object {
-            "description": "Status values that need to be considered for filter",
-            "explode": true,
-            "in": "query",
-            "name": "status",
-            "required": true,
-            "schema": Object {
-              "items": Object {
-                "default": "available",
-                "enum": Array [
-                  "available",
-                  "pending",
-                  "sold",
-                ],
-                "type": "string",
+      "pathParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "queryParameters": Object {
+        "changes": Map {
+          "status" => Object {
+            "added": Object {
+              "description": "Status values that need to be considered for filter",
+              "explode": true,
+              "in": "query",
+              "name": "status",
+              "required": true,
+              "schema": Object {
+                "items": Object {
+                  "default": "available",
+                  "enum": Array [
+                    "available",
+                    "pending",
+                    "sold",
+                  ],
+                  "type": "string",
+                },
+                "type": "array",
               },
-              "type": "array",
+              "style": "form",
             },
-            "style": "form",
-          },
-          "changeType": "added",
-          "location": Object {
-            "conceptualLocation": Object {
-              "inRequest": Object {
-                "query": "status",
+            "changeType": "added",
+            "location": Object {
+              "conceptualLocation": Object {
+                "inRequest": Object {
+                  "query": "status",
+                },
+                "method": "get",
+                "path": "/pet/findByStatus",
               },
-              "method": "get",
-              "path": "/pet/findByStatus",
+              "conceptualPath": Array [
+                "operations",
+                "/pet/findByStatus",
+                "get",
+                "parameters",
+                "query",
+                "status",
+              ],
+              "jsonPath": "/paths/~1pet~1findByStatus/get/parameters/0",
+              "kind": "query-parameter",
             },
-            "conceptualPath": Array [
-              "operations",
-              "/pet/findByStatus",
-              "get",
-              "parameters",
-              "query",
-              "status",
-            ],
-            "jsonPath": "/paths/~1pet~1findByStatus/get/parameters/0",
-            "kind": "query-parameter",
           },
         },
+        "hasRules": false,
       },
       "request": Object {
         "bodyChanges": Map {},
         "change": null,
+        "hasRules": false,
       },
       "responses": Map {
         "200" => Object {
@@ -1797,6 +1886,7 @@ Object {
                   },
                 },
               ],
+              "hasRules": false,
               "location": Object {
                 "conceptualLocation": Object {
                   "inResponse": Object {
@@ -2268,6 +2358,7 @@ Object {
                   },
                 },
               ],
+              "hasRules": false,
               "location": Object {
                 "conceptualLocation": Object {
                   "inResponse": Object {
@@ -2292,7 +2383,11 @@ Object {
               },
             },
           },
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "200",
         },
         "400" => Object {
@@ -2322,7 +2417,11 @@ Object {
             },
           },
           "contentTypes": Map {},
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "400",
         },
       },
@@ -2363,52 +2462,66 @@ Object {
           "kind": "operation",
         },
       },
-      "cookieParameters": Map {},
-      "headers": Map {},
+      "cookieParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "hasRules": false,
+      "headers": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "method": "get",
       "path": "/pet/findByTags",
-      "pathParameters": Map {},
-      "queryParameters": Map {
-        "tags" => Object {
-          "added": Object {
-            "description": "Tags to filter by",
-            "explode": true,
-            "in": "query",
-            "name": "tags",
-            "required": true,
-            "schema": Object {
-              "items": Object {
-                "type": "string",
+      "pathParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "queryParameters": Object {
+        "changes": Map {
+          "tags" => Object {
+            "added": Object {
+              "description": "Tags to filter by",
+              "explode": true,
+              "in": "query",
+              "name": "tags",
+              "required": true,
+              "schema": Object {
+                "items": Object {
+                  "type": "string",
+                },
+                "type": "array",
               },
-              "type": "array",
+              "style": "form",
             },
-            "style": "form",
-          },
-          "changeType": "added",
-          "location": Object {
-            "conceptualLocation": Object {
-              "inRequest": Object {
-                "query": "tags",
+            "changeType": "added",
+            "location": Object {
+              "conceptualLocation": Object {
+                "inRequest": Object {
+                  "query": "tags",
+                },
+                "method": "get",
+                "path": "/pet/findByTags",
               },
-              "method": "get",
-              "path": "/pet/findByTags",
+              "conceptualPath": Array [
+                "operations",
+                "/pet/findByTags",
+                "get",
+                "parameters",
+                "query",
+                "tags",
+              ],
+              "jsonPath": "/paths/~1pet~1findByTags/get/parameters/0",
+              "kind": "query-parameter",
             },
-            "conceptualPath": Array [
-              "operations",
-              "/pet/findByTags",
-              "get",
-              "parameters",
-              "query",
-              "tags",
-            ],
-            "jsonPath": "/paths/~1pet~1findByTags/get/parameters/0",
-            "kind": "query-parameter",
           },
         },
+        "hasRules": false,
       },
       "request": Object {
         "bodyChanges": Map {},
         "change": null,
+        "hasRules": false,
       },
       "responses": Map {
         "200" => Object {
@@ -2886,6 +2999,7 @@ Object {
                   },
                 },
               ],
+              "hasRules": false,
               "location": Object {
                 "conceptualLocation": Object {
                   "inResponse": Object {
@@ -3357,6 +3471,7 @@ Object {
                   },
                 },
               ],
+              "hasRules": false,
               "location": Object {
                 "conceptualLocation": Object {
                   "inResponse": Object {
@@ -3381,7 +3496,11 @@ Object {
               },
             },
           },
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "200",
         },
         "400" => Object {
@@ -3411,7 +3530,11 @@ Object {
             },
           },
           "contentTypes": Map {},
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "400",
         },
       },
@@ -3450,78 +3573,92 @@ Object {
           "kind": "operation",
         },
       },
-      "cookieParameters": Map {},
-      "headers": Map {
-        "api_key" => Object {
-          "added": Object {
-            "in": "header",
-            "name": "api_key",
-            "schema": Object {
-              "type": "string",
-            },
-          },
-          "changeType": "added",
-          "location": Object {
-            "conceptualLocation": Object {
-              "inRequest": Object {
-                "header": "api_key",
+      "cookieParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "hasRules": false,
+      "headers": Object {
+        "changes": Map {
+          "api_key" => Object {
+            "added": Object {
+              "in": "header",
+              "name": "api_key",
+              "schema": Object {
+                "type": "string",
               },
-              "method": "delete",
-              "path": "/pet/{petId}",
             },
-            "conceptualPath": Array [
-              "operations",
-              "/pet/{}",
-              "delete",
-              "parameters",
-              "header",
-              "api_key",
-            ],
-            "jsonPath": "/paths/~1pet~1{petId}/delete/parameters/0",
-            "kind": "header-parameter",
+            "changeType": "added",
+            "location": Object {
+              "conceptualLocation": Object {
+                "inRequest": Object {
+                  "header": "api_key",
+                },
+                "method": "delete",
+                "path": "/pet/{petId}",
+              },
+              "conceptualPath": Array [
+                "operations",
+                "/pet/{}",
+                "delete",
+                "parameters",
+                "header",
+                "api_key",
+              ],
+              "jsonPath": "/paths/~1pet~1{petId}/delete/parameters/0",
+              "kind": "header-parameter",
+            },
           },
         },
+        "hasRules": false,
       },
       "method": "delete",
       "path": "/pet/{petId}",
-      "pathParameters": Map {
-        "petId" => Object {
-          "added": Object {
-            "description": "Pet id to delete",
-            "in": "path",
-            "name": "petId",
-            "required": true,
-            "schema": Object {
-              "format": "int64",
-              "type": "integer",
-            },
-          },
-          "changeType": "added",
-          "location": Object {
-            "conceptualLocation": Object {
-              "inRequest": Object {
-                "path": "petId",
+      "pathParameters": Object {
+        "changes": Map {
+          "petId" => Object {
+            "added": Object {
+              "description": "Pet id to delete",
+              "in": "path",
+              "name": "petId",
+              "required": true,
+              "schema": Object {
+                "format": "int64",
+                "type": "integer",
               },
-              "method": "delete",
-              "path": "/pet/{petId}",
             },
-            "conceptualPath": Array [
-              "operations",
-              "/pet/{}",
-              "delete",
-              "parameters",
-              "path",
-              "petId",
-            ],
-            "jsonPath": "/paths/~1pet~1{petId}/delete/parameters/1",
-            "kind": "path-parameter",
+            "changeType": "added",
+            "location": Object {
+              "conceptualLocation": Object {
+                "inRequest": Object {
+                  "path": "petId",
+                },
+                "method": "delete",
+                "path": "/pet/{petId}",
+              },
+              "conceptualPath": Array [
+                "operations",
+                "/pet/{}",
+                "delete",
+                "parameters",
+                "path",
+                "petId",
+              ],
+              "jsonPath": "/paths/~1pet~1{petId}/delete/parameters/1",
+              "kind": "path-parameter",
+            },
           },
         },
+        "hasRules": false,
       },
-      "queryParameters": Map {},
+      "queryParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "request": Object {
         "bodyChanges": Map {},
         "change": null,
+        "hasRules": false,
       },
       "responses": Map {
         "400" => Object {
@@ -3551,7 +3688,11 @@ Object {
             },
           },
           "contentTypes": Map {},
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "400",
         },
         "404" => Object {
@@ -3581,7 +3722,11 @@ Object {
             },
           },
           "contentTypes": Map {},
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "404",
         },
       },
@@ -3618,48 +3763,62 @@ Object {
           "kind": "operation",
         },
       },
-      "cookieParameters": Map {},
-      "headers": Map {},
+      "cookieParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "hasRules": false,
+      "headers": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "method": "get",
       "path": "/pet/{petId}",
-      "pathParameters": Map {
-        "petId" => Object {
-          "added": Object {
-            "description": "ID of pet to return",
-            "in": "path",
-            "name": "petId",
-            "required": true,
-            "schema": Object {
-              "format": "int64",
-              "type": "integer",
-            },
-          },
-          "changeType": "added",
-          "location": Object {
-            "conceptualLocation": Object {
-              "inRequest": Object {
-                "path": "petId",
+      "pathParameters": Object {
+        "changes": Map {
+          "petId" => Object {
+            "added": Object {
+              "description": "ID of pet to return",
+              "in": "path",
+              "name": "petId",
+              "required": true,
+              "schema": Object {
+                "format": "int64",
+                "type": "integer",
               },
-              "method": "get",
-              "path": "/pet/{petId}",
             },
-            "conceptualPath": Array [
-              "operations",
-              "/pet/{}",
-              "get",
-              "parameters",
-              "path",
-              "petId",
-            ],
-            "jsonPath": "/paths/~1pet~1{petId}/get/parameters/0",
-            "kind": "path-parameter",
+            "changeType": "added",
+            "location": Object {
+              "conceptualLocation": Object {
+                "inRequest": Object {
+                  "path": "petId",
+                },
+                "method": "get",
+                "path": "/pet/{petId}",
+              },
+              "conceptualPath": Array [
+                "operations",
+                "/pet/{}",
+                "get",
+                "parameters",
+                "path",
+                "petId",
+              ],
+              "jsonPath": "/paths/~1pet~1{petId}/get/parameters/0",
+              "kind": "path-parameter",
+            },
           },
         },
+        "hasRules": false,
       },
-      "queryParameters": Map {},
+      "queryParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "request": Object {
         "bodyChanges": Map {},
         "change": null,
+        "hasRules": false,
       },
       "responses": Map {
         "200" => Object {
@@ -4120,6 +4279,7 @@ Object {
                   },
                 },
               ],
+              "hasRules": false,
               "location": Object {
                 "conceptualLocation": Object {
                   "inResponse": Object {
@@ -4574,6 +4734,7 @@ Object {
                   },
                 },
               ],
+              "hasRules": false,
               "location": Object {
                 "conceptualLocation": Object {
                   "inResponse": Object {
@@ -4598,7 +4759,11 @@ Object {
               },
             },
           },
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "200",
         },
         "400" => Object {
@@ -4628,7 +4793,11 @@ Object {
             },
           },
           "contentTypes": Map {},
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "400",
         },
         "404" => Object {
@@ -4658,7 +4827,11 @@ Object {
             },
           },
           "contentTypes": Map {},
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "404",
         },
       },
@@ -4697,45 +4870,58 @@ Object {
           "kind": "operation",
         },
       },
-      "cookieParameters": Map {},
-      "headers": Map {},
+      "cookieParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "hasRules": false,
+      "headers": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "method": "post",
       "path": "/pet/{petId}",
-      "pathParameters": Map {
-        "petId" => Object {
-          "added": Object {
-            "description": "ID of pet that needs to be updated",
-            "in": "path",
-            "name": "petId",
-            "required": true,
-            "schema": Object {
-              "format": "int64",
-              "type": "integer",
-            },
-          },
-          "changeType": "added",
-          "location": Object {
-            "conceptualLocation": Object {
-              "inRequest": Object {
-                "path": "petId",
+      "pathParameters": Object {
+        "changes": Map {
+          "petId" => Object {
+            "added": Object {
+              "description": "ID of pet that needs to be updated",
+              "in": "path",
+              "name": "petId",
+              "required": true,
+              "schema": Object {
+                "format": "int64",
+                "type": "integer",
               },
-              "method": "post",
-              "path": "/pet/{petId}",
             },
-            "conceptualPath": Array [
-              "operations",
-              "/pet/{}",
-              "post",
-              "parameters",
-              "path",
-              "petId",
-            ],
-            "jsonPath": "/paths/~1pet~1{petId}/post/parameters/0",
-            "kind": "path-parameter",
+            "changeType": "added",
+            "location": Object {
+              "conceptualLocation": Object {
+                "inRequest": Object {
+                  "path": "petId",
+                },
+                "method": "post",
+                "path": "/pet/{petId}",
+              },
+              "conceptualPath": Array [
+                "operations",
+                "/pet/{}",
+                "post",
+                "parameters",
+                "path",
+                "petId",
+              ],
+              "jsonPath": "/paths/~1pet~1{petId}/post/parameters/0",
+              "kind": "path-parameter",
+            },
           },
         },
+        "hasRules": false,
       },
-      "queryParameters": Map {},
+      "queryParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "request": Object {
         "bodyChanges": Map {
           "application/x-www-form-urlencoded" => Object {
@@ -4828,6 +5014,7 @@ Object {
               },
             ],
             "fieldChanges": Array [],
+            "hasRules": false,
             "location": Object {
               "conceptualLocation": Object {
                 "inRequest": Object {
@@ -4868,6 +5055,7 @@ Object {
             "kind": "request",
           },
         },
+        "hasRules": false,
       },
       "responses": Map {
         "405" => Object {
@@ -4897,69 +5085,87 @@ Object {
             },
           },
           "contentTypes": Map {},
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "405",
         },
       },
     },
     "/pet/{petId}/uploadImage.POST" => Object {
       "change": null,
-      "cookieParameters": Map {
-        "debug" => Object {
-          "changeType": "changed",
-          "changed": Object {
-            "after": Object {
-              "description": "A debug token",
-              "in": "cookie",
-              "name": "debug",
-              "required": false,
-              "schema": Object {
-                "enum": Array [
-                  0,
-                  1,
-                ],
-                "type": "integer",
+      "cookieParameters": Object {
+        "changes": Map {
+          "debug" => Object {
+            "changeType": "changed",
+            "changed": Object {
+              "after": Object {
+                "description": "A debug token",
+                "in": "cookie",
+                "name": "debug",
+                "required": false,
+                "schema": Object {
+                  "enum": Array [
+                    0,
+                    1,
+                  ],
+                  "type": "integer",
+                },
+              },
+              "before": Object {
+                "description": "A debug token",
+                "in": "cookie",
+                "name": "debug",
+                "required": false,
+                "schema": Object {
+                  "type": "integer",
+                },
               },
             },
-            "before": Object {
-              "description": "A debug token",
-              "in": "cookie",
-              "name": "debug",
-              "required": false,
-              "schema": Object {
-                "type": "integer",
+            "location": Object {
+              "conceptualLocation": Object {
+                "inRequest": Object {
+                  "cookie": "debug",
+                },
+                "method": "post",
+                "path": "/pet/{petId}/uploadImage",
               },
+              "conceptualPath": Array [
+                "operations",
+                "/pet/{}/uploadImage",
+                "post",
+                "parameters",
+                "cookie",
+                "debug",
+              ],
+              "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/parameters/1",
+              "kind": "cookie-parameter",
             },
-          },
-          "location": Object {
-            "conceptualLocation": Object {
-              "inRequest": Object {
-                "cookie": "debug",
-              },
-              "method": "post",
-              "path": "/pet/{petId}/uploadImage",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/pet/{}/uploadImage",
-              "post",
-              "parameters",
-              "cookie",
-              "debug",
-            ],
-            "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/parameters/1",
-            "kind": "cookie-parameter",
           },
         },
+        "hasRules": false,
       },
-      "headers": Map {},
+      "hasRules": false,
+      "headers": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "method": "post",
       "path": "/pet/{petId}/uploadImage",
-      "pathParameters": Map {},
-      "queryParameters": Map {},
+      "pathParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "queryParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "request": Object {
         "bodyChanges": Map {},
         "change": null,
+        "hasRules": false,
       },
       "responses": Map {
         "200" => Object {
@@ -5143,6 +5349,7 @@ Object {
                   },
                 },
               ],
+              "hasRules": false,
               "location": Object {
                 "conceptualLocation": Object {
                   "inResponse": Object {
@@ -5167,7 +5374,11 @@ Object {
               },
             },
           },
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "200",
         },
         "201" => Object {
@@ -5341,6 +5552,7 @@ Object {
                   },
                 },
               ],
+              "hasRules": false,
               "location": Object {
                 "conceptualLocation": Object {
                   "inResponse": Object {
@@ -5365,7 +5577,11 @@ Object {
               },
             },
           },
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "201",
         },
         "404" => Object {
@@ -5539,6 +5755,7 @@ Object {
                   },
                 },
               ],
+              "hasRules": false,
               "location": Object {
                 "conceptualLocation": Object {
                   "inResponse": Object {
@@ -5563,7 +5780,11 @@ Object {
               },
             },
           },
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "404",
         },
         "default" => Object {
@@ -5619,6 +5840,7 @@ Object {
                   },
                 },
               ],
+              "hasRules": false,
               "location": Object {
                 "conceptualLocation": Object {
                   "inResponse": Object {
@@ -5643,19 +5865,36 @@ Object {
               },
             },
           },
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "default",
         },
       },
     },
     "/store/order.POST" => Object {
       "change": null,
-      "cookieParameters": Map {},
-      "headers": Map {},
+      "cookieParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "hasRules": false,
+      "headers": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "method": "post",
       "path": "/store/order",
-      "pathParameters": Map {},
-      "queryParameters": Map {},
+      "pathParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "queryParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "request": Object {
         "bodyChanges": Map {
           "*/*" => Object {
@@ -5751,6 +5990,7 @@ Object {
                 },
               },
             ],
+            "hasRules": false,
             "location": Object {
               "conceptualLocation": Object {
                 "inRequest": Object {
@@ -5773,6 +6013,7 @@ Object {
           },
         },
         "change": null,
+        "hasRules": false,
       },
       "responses": Map {
         "200" => Object {
@@ -5918,6 +6159,7 @@ Object {
                   },
                 },
               ],
+              "hasRules": false,
               "location": Object {
                 "conceptualLocation": Object {
                   "inResponse": Object {
@@ -6040,6 +6282,7 @@ Object {
                   },
                 },
               ],
+              "hasRules": false,
               "location": Object {
                 "conceptualLocation": Object {
                   "inResponse": Object {
@@ -6064,22 +6307,40 @@ Object {
               },
             },
           },
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "200",
         },
       },
     },
     "/store/order/{orderId}.DELETE" => Object {
       "change": null,
-      "cookieParameters": Map {},
-      "headers": Map {},
+      "cookieParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "hasRules": false,
+      "headers": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "method": "delete",
       "path": "/store/order/{orderId}",
-      "pathParameters": Map {},
-      "queryParameters": Map {},
+      "pathParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "queryParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "request": Object {
         "bodyChanges": Map {},
         "change": null,
+        "hasRules": false,
       },
       "responses": Map {
         "404" => Object {
@@ -6229,6 +6490,7 @@ Object {
                   },
                 },
               ],
+              "hasRules": false,
               "location": Object {
                 "conceptualLocation": Object {
                   "inResponse": Object {
@@ -6253,22 +6515,40 @@ Object {
               },
             },
           },
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "404",
         },
       },
     },
     "/store/order/{orderId}.GET" => Object {
       "change": null,
-      "cookieParameters": Map {},
-      "headers": Map {},
+      "cookieParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "hasRules": false,
+      "headers": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "method": "get",
       "path": "/store/order/{orderId}",
-      "pathParameters": Map {},
-      "queryParameters": Map {},
+      "pathParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "queryParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "request": Object {
         "bodyChanges": Map {},
         "change": null,
+        "hasRules": false,
       },
       "responses": Map {
         "200" => Object {
@@ -6373,6 +6653,7 @@ Object {
                   },
                 },
               ],
+              "hasRules": false,
               "location": Object {
                 "conceptualLocation": Object {
                   "inResponse": Object {
@@ -6542,6 +6823,7 @@ Object {
                   },
                 },
               ],
+              "hasRules": false,
               "location": Object {
                 "conceptualLocation": Object {
                   "inResponse": Object {
@@ -6566,7 +6848,11 @@ Object {
               },
             },
           },
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "200",
         },
         "404" => Object {
@@ -6716,6 +7002,7 @@ Object {
                   },
                 },
               ],
+              "hasRules": false,
               "location": Object {
                 "conceptualLocation": Object {
                   "inResponse": Object {
@@ -6740,19 +7027,36 @@ Object {
               },
             },
           },
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "404",
         },
       },
     },
     "/user.POST" => Object {
       "change": null,
-      "cookieParameters": Map {},
-      "headers": Map {},
+      "cookieParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "hasRules": false,
+      "headers": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "method": "post",
       "path": "/user",
-      "pathParameters": Map {},
-      "queryParameters": Map {},
+      "pathParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "queryParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "request": Object {
         "bodyChanges": Map {
           "*/*" => Object {
@@ -6962,6 +7266,7 @@ Object {
                 },
               },
             ],
+            "hasRules": false,
             "location": Object {
               "conceptualLocation": Object {
                 "inRequest": Object {
@@ -6984,17 +7289,31 @@ Object {
           },
         },
         "change": null,
+        "hasRules": false,
       },
       "responses": Map {},
     },
     "/user/createWithArray.POST" => Object {
       "change": null,
-      "cookieParameters": Map {},
-      "headers": Map {},
+      "cookieParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "hasRules": false,
+      "headers": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "method": "post",
       "path": "/user/createWithArray",
-      "pathParameters": Map {},
-      "queryParameters": Map {},
+      "pathParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "queryParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "request": Object {
         "bodyChanges": Map {
           "*/*" => Object {
@@ -7214,6 +7533,7 @@ Object {
                 },
               },
             ],
+            "hasRules": false,
             "location": Object {
               "conceptualLocation": Object {
                 "inRequest": Object {
@@ -7236,17 +7556,31 @@ Object {
           },
         },
         "change": null,
+        "hasRules": false,
       },
       "responses": Map {},
     },
     "/user/createWithList.POST" => Object {
       "change": null,
-      "cookieParameters": Map {},
-      "headers": Map {},
+      "cookieParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "hasRules": false,
+      "headers": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "method": "post",
       "path": "/user/createWithList",
-      "pathParameters": Map {},
-      "queryParameters": Map {},
+      "pathParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "queryParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "request": Object {
         "bodyChanges": Map {
           "*/*" => Object {
@@ -7466,6 +7800,7 @@ Object {
                 },
               },
             ],
+            "hasRules": false,
             "location": Object {
               "conceptualLocation": Object {
                 "inRequest": Object {
@@ -7488,132 +7823,151 @@ Object {
           },
         },
         "change": null,
+        "hasRules": false,
       },
       "responses": Map {},
     },
     "/user/login.GET" => Object {
       "change": null,
-      "cookieParameters": Map {},
-      "headers": Map {},
+      "cookieParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "hasRules": false,
+      "headers": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "method": "get",
       "path": "/user/login",
-      "pathParameters": Map {},
-      "queryParameters": Map {},
+      "pathParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "queryParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "request": Object {
         "bodyChanges": Map {},
         "change": null,
+        "hasRules": false,
       },
       "responses": Map {
         "200" => Object {
           "change": null,
           "contentTypes": Map {},
-          "headers": Map {
-            "X-Expires-After" => Object {
-              "changeType": "changed",
-              "changed": Object {
-                "after": Object {
-                  "description": "date in UTC when token expires",
-                  "name": "X-Expires-After",
-                  "schema": Object {
-                    "format": "date-time",
-                    "type": "string",
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {
+              "X-Expires-After" => Object {
+                "changeType": "changed",
+                "changed": Object {
+                  "after": Object {
+                    "description": "date in UTC when token expires",
+                    "name": "X-Expires-After",
+                    "schema": Object {
+                      "format": "date-time",
+                      "type": "string",
+                    },
+                  },
+                  "before": Object {
+                    "description": "date in UTC when token expires",
+                    "name": "X-Expires-After",
+                    "schema": Object {
+                      "type": "number",
+                    },
                   },
                 },
-                "before": Object {
-                  "description": "date in UTC when token expires",
-                  "name": "X-Expires-After",
-                  "schema": Object {
-                    "type": "number",
+                "location": Object {
+                  "conceptualLocation": Object {
+                    "inResponse": Object {
+                      "header": "X-Expires-After",
+                      "statusCode": "200",
+                    },
+                    "method": "get",
+                    "path": "/user/login",
                   },
+                  "conceptualPath": Array [
+                    "operations",
+                    "/user/login",
+                    "get",
+                    "responses",
+                    "200",
+                    "headers",
+                    "X-Expires-After",
+                  ],
+                  "jsonPath": "/paths/~1user~1login/get/responses/200/headers/X-Expires-After",
+                  "kind": "response-header",
                 },
               },
-              "location": Object {
-                "conceptualLocation": Object {
-                  "inResponse": Object {
-                    "header": "X-Expires-After",
-                    "statusCode": "200",
+              "X-Rate-Limit" => Object {
+                "added": Object {
+                  "description": "calls per hour allowed by the user",
+                  "name": "X-Rate-Limit",
+                  "schema": Object {
+                    "format": "int32",
+                    "type": "integer",
                   },
-                  "method": "get",
-                  "path": "/user/login",
                 },
-                "conceptualPath": Array [
-                  "operations",
-                  "/user/login",
-                  "get",
-                  "responses",
-                  "200",
-                  "headers",
-                  "X-Expires-After",
-                ],
-                "jsonPath": "/paths/~1user~1login/get/responses/200/headers/X-Expires-After",
-                "kind": "response-header",
+                "changeType": "added",
+                "location": Object {
+                  "conceptualLocation": Object {
+                    "inResponse": Object {
+                      "header": "X-Rate-Limit",
+                      "statusCode": "200",
+                    },
+                    "method": "get",
+                    "path": "/user/login",
+                  },
+                  "conceptualPath": Array [
+                    "operations",
+                    "/user/login",
+                    "get",
+                    "responses",
+                    "200",
+                    "headers",
+                    "X-Rate-Limit",
+                  ],
+                  "jsonPath": "/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit",
+                  "kind": "response-header",
+                },
+              },
+              "content-type" => Object {
+                "changeType": "removed",
+                "location": Object {
+                  "conceptualLocation": Object {
+                    "inResponse": Object {
+                      "header": "content-type",
+                      "statusCode": "200",
+                    },
+                    "method": "get",
+                    "path": "/user/login",
+                  },
+                  "conceptualPath": Array [
+                    "operations",
+                    "/user/login",
+                    "get",
+                    "responses",
+                    "200",
+                    "headers",
+                    "content-type",
+                  ],
+                  "jsonPath": "/paths/~1user~1login/get/responses/200/headers/content-type",
+                  "kind": "response-header",
+                },
+                "removed": Object {
+                  "before": Object {
+                    "description": "the description goes here",
+                    "name": "content-type",
+                    "schema": Object {
+                      "type": "string",
+                    },
+                  },
+                },
               },
             },
-            "X-Rate-Limit" => Object {
-              "added": Object {
-                "description": "calls per hour allowed by the user",
-                "name": "X-Rate-Limit",
-                "schema": Object {
-                  "format": "int32",
-                  "type": "integer",
-                },
-              },
-              "changeType": "added",
-              "location": Object {
-                "conceptualLocation": Object {
-                  "inResponse": Object {
-                    "header": "X-Rate-Limit",
-                    "statusCode": "200",
-                  },
-                  "method": "get",
-                  "path": "/user/login",
-                },
-                "conceptualPath": Array [
-                  "operations",
-                  "/user/login",
-                  "get",
-                  "responses",
-                  "200",
-                  "headers",
-                  "X-Rate-Limit",
-                ],
-                "jsonPath": "/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit",
-                "kind": "response-header",
-              },
-            },
-            "content-type" => Object {
-              "changeType": "removed",
-              "location": Object {
-                "conceptualLocation": Object {
-                  "inResponse": Object {
-                    "header": "content-type",
-                    "statusCode": "200",
-                  },
-                  "method": "get",
-                  "path": "/user/login",
-                },
-                "conceptualPath": Array [
-                  "operations",
-                  "/user/login",
-                  "get",
-                  "responses",
-                  "200",
-                  "headers",
-                  "content-type",
-                ],
-                "jsonPath": "/paths/~1user~1login/get/responses/200/headers/content-type",
-                "kind": "response-header",
-              },
-              "removed": Object {
-                "before": Object {
-                  "description": "the description goes here",
-                  "name": "content-type",
-                  "schema": Object {
-                    "type": "string",
-                  },
-                },
-              },
-            },
+            "hasRules": false,
           },
           "statusCode": "200",
         },
@@ -7621,15 +7975,29 @@ Object {
     },
     "/user/{username}.GET" => Object {
       "change": null,
-      "cookieParameters": Map {},
-      "headers": Map {},
+      "cookieParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "hasRules": false,
+      "headers": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "method": "get",
       "path": "/user/{username}",
-      "pathParameters": Map {},
-      "queryParameters": Map {},
+      "pathParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "queryParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "request": Object {
         "bodyChanges": Map {},
         "change": null,
+        "hasRules": false,
       },
       "responses": Map {
         "200" => Object {
@@ -7857,6 +8225,7 @@ Object {
                   },
                 },
               ],
+              "hasRules": false,
               "location": Object {
                 "conceptualLocation": Object {
                   "inResponse": Object {
@@ -8102,6 +8471,7 @@ Object {
                   },
                 },
               ],
+              "hasRules": false,
               "location": Object {
                 "conceptualLocation": Object {
                   "inResponse": Object {
@@ -8126,7 +8496,11 @@ Object {
               },
             },
           },
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "200",
         },
         "404" => Object {
@@ -8276,6 +8650,7 @@ Object {
                   },
                 },
               ],
+              "hasRules": false,
               "location": Object {
                 "conceptualLocation": Object {
                   "inResponse": Object {
@@ -8300,19 +8675,36 @@ Object {
               },
             },
           },
-          "headers": Map {},
+          "hasRules": false,
+          "headers": Object {
+            "changes": Map {},
+            "hasRules": false,
+          },
           "statusCode": "404",
         },
       },
     },
     "/user/{username}.PUT" => Object {
       "change": null,
-      "cookieParameters": Map {},
-      "headers": Map {},
+      "cookieParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "hasRules": false,
+      "headers": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "method": "put",
       "path": "/user/{username}",
-      "pathParameters": Map {},
-      "queryParameters": Map {},
+      "pathParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "queryParameters": Object {
+        "changes": Map {},
+        "hasRules": false,
+      },
       "request": Object {
         "bodyChanges": Map {
           "*/*" => Object {
@@ -8522,6 +8914,7 @@ Object {
                 },
               },
             ],
+            "hasRules": false,
             "location": Object {
               "conceptualLocation": Object {
                 "inRequest": Object {
@@ -8544,125 +8937,129 @@ Object {
           },
         },
         "change": null,
+        "hasRules": false,
       },
       "responses": Map {},
     },
   },
-  "specificationChanges": Array [
-    Object {
-      "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "externalDocs": Object {
-            "description": "Find out more about Swagger",
-            "url": "http://swagger.io",
-          },
-          "info": Object {
-            "contact": Object {
-              "email": "apiteam@swagger.io",
+  "specification": Object {
+    "changes": Array [
+      Object {
+        "changeType": "changed",
+        "changed": Object {
+          "after": Object {
+            "externalDocs": Object {
+              "description": "Find out more about Swagger",
+              "url": "http://swagger.io",
             },
-            "description": "This is a sample server Petstore server.  You can find out more about     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample, you can use the api key \`special-key\` to test the authorization     filters.",
-            "license": Object {
-              "name": "Apache 2.0",
-              "url": "http://www.apache.org/licenses/LICENSE-2.0.html",
-            },
-            "termsOfService": "http://swagger.io/terms/",
-            "title": "Swagger Petstore Updated",
-            "version": "1.0.0",
-          },
-          "openapi": "3.0.1",
-          "servers": Array [
-            Object {
-              "url": "https://petstore.swagger.io/v2",
-            },
-            Object {
-              "url": "http://petstore.swagger.io/v2",
-            },
-            Object {
-              "url": "http://petstore.swagger.io/v3",
-            },
-          ],
-          "tags": Array [
-            Object {
-              "description": "Everything about your Pets",
-              "externalDocs": Object {
-                "description": "Find out more",
-                "url": "http://swagger.io",
+            "info": Object {
+              "contact": Object {
+                "email": "apiteam@swagger.io",
               },
-              "name": "pet",
-            },
-            Object {
-              "description": "Access to Petstore orders",
-              "name": "store",
-            },
-            Object {
-              "description": "Operations about user",
-              "externalDocs": Object {
-                "description": "Find out more about our store",
-                "url": "http://swagger.io",
+              "description": "This is a sample server Petstore server.  You can find out more about     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample, you can use the api key \`special-key\` to test the authorization     filters.",
+              "license": Object {
+                "name": "Apache 2.0",
+                "url": "http://www.apache.org/licenses/LICENSE-2.0.html",
               },
-              "name": "user",
+              "termsOfService": "http://swagger.io/terms/",
+              "title": "Swagger Petstore Updated",
+              "version": "1.0.0",
             },
-          ],
+            "openapi": "3.0.1",
+            "servers": Array [
+              Object {
+                "url": "https://petstore.swagger.io/v2",
+              },
+              Object {
+                "url": "http://petstore.swagger.io/v2",
+              },
+              Object {
+                "url": "http://petstore.swagger.io/v3",
+              },
+            ],
+            "tags": Array [
+              Object {
+                "description": "Everything about your Pets",
+                "externalDocs": Object {
+                  "description": "Find out more",
+                  "url": "http://swagger.io",
+                },
+                "name": "pet",
+              },
+              Object {
+                "description": "Access to Petstore orders",
+                "name": "store",
+              },
+              Object {
+                "description": "Operations about user",
+                "externalDocs": Object {
+                  "description": "Find out more about our store",
+                  "url": "http://swagger.io",
+                },
+                "name": "user",
+              },
+            ],
+          },
+          "before": Object {
+            "externalDocs": Object {
+              "description": "Find out more about Swagger",
+              "url": "http://swagger.io",
+            },
+            "info": Object {
+              "contact": Object {
+                "email": "apiteam@swagger.io",
+              },
+              "description": "This is a sample server Petstore server.  You can find out more about     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample, you can use the api key \`special-key\` to test the authorization     filters.",
+              "license": Object {
+                "name": "Apache 2.0",
+                "url": "http://www.apache.org/licenses/LICENSE-2.0.html",
+              },
+              "termsOfService": "http://swagger.io/terms/",
+              "title": "Swagger Petstore",
+              "version": "1.0.0",
+            },
+            "openapi": "3.0.1",
+            "servers": Array [
+              Object {
+                "url": "https://petstore.swagger.io/v2",
+              },
+              Object {
+                "url": "http://petstore.swagger.io/v2",
+              },
+            ],
+            "tags": Array [
+              Object {
+                "description": "Everything about your Pets",
+                "externalDocs": Object {
+                  "description": "Find out more",
+                  "url": "http://swagger.io",
+                },
+                "name": "pet",
+              },
+              Object {
+                "description": "Access to Petstore orders",
+                "name": "store",
+              },
+              Object {
+                "description": "Operations about user",
+                "externalDocs": Object {
+                  "description": "Find out more about our store",
+                  "url": "http://swagger.io",
+                },
+                "name": "user",
+              },
+            ],
+          },
         },
-        "before": Object {
-          "externalDocs": Object {
-            "description": "Find out more about Swagger",
-            "url": "http://swagger.io",
-          },
-          "info": Object {
-            "contact": Object {
-              "email": "apiteam@swagger.io",
-            },
-            "description": "This is a sample server Petstore server.  You can find out more about     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample, you can use the api key \`special-key\` to test the authorization     filters.",
-            "license": Object {
-              "name": "Apache 2.0",
-              "url": "http://www.apache.org/licenses/LICENSE-2.0.html",
-            },
-            "termsOfService": "http://swagger.io/terms/",
-            "title": "Swagger Petstore",
-            "version": "1.0.0",
-          },
-          "openapi": "3.0.1",
-          "servers": Array [
-            Object {
-              "url": "https://petstore.swagger.io/v2",
-            },
-            Object {
-              "url": "http://petstore.swagger.io/v2",
-            },
-          ],
-          "tags": Array [
-            Object {
-              "description": "Everything about your Pets",
-              "externalDocs": Object {
-                "description": "Find out more",
-                "url": "http://swagger.io",
-              },
-              "name": "pet",
-            },
-            Object {
-              "description": "Access to Petstore orders",
-              "name": "store",
-            },
-            Object {
-              "description": "Operations about user",
-              "externalDocs": Object {
-                "description": "Find out more about our store",
-                "url": "http://swagger.io",
-              },
-              "name": "user",
-            },
-          ],
+        "location": Object {
+          "conceptualLocation": Object {},
+          "conceptualPath": Array [],
+          "jsonPath": "",
+          "kind": "specification",
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {},
-        "conceptualPath": Array [],
-        "jsonPath": "",
-        "kind": "specification",
-      },
-    },
-  ],
+    ],
+    "hasRules": false,
+  },
 }
 `;

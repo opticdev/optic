@@ -1,8 +1,12 @@
-import { factsToChangelog, OpenAPITraverser, groupChanges } from '../../index';
+import {
+  factsToChangelog,
+  OpenAPITraverser,
+  groupChangesAndRules,
+} from '../../index';
 import { openAPI as petStoreBase } from '../../examples/petstore-base';
 import { openAPI as petStoreUpdated } from '../../examples/petstore-updated';
 
-test('groupChanges diffs and groups changes between two open api files', () => {
+test('groupChangesAndRules diffs and groups changes between two open api files', () => {
   const baseTraverser = new OpenAPITraverser();
   baseTraverser.traverse(petStoreBase);
 
@@ -13,9 +17,10 @@ test('groupChanges diffs and groups changes between two open api files', () => {
   const targetFacts = [...targetTraverser.facts()];
 
   expect(
-    groupChanges({
+    groupChangesAndRules({
       toFacts: targetFacts,
       changes: factsToChangelog(baseFacts, targetFacts),
+      rules: [],
     })
   ).toMatchSnapshot('pet store grouped changes');
 });
