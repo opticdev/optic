@@ -52,7 +52,11 @@ export async function makeCli(config: CliConfig) {
   }
 
   if (config.errors.sentry) {
-    initSentry({ ...config.errors.sentry, version: packageJson.version });
+    initSentry({
+      ...config.errors.sentry,
+      version: packageJson.version,
+      runId,
+    });
   }
 
   trackEvent('openapi-cli-run', {
