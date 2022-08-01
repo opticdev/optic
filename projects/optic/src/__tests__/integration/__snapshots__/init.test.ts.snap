@@ -38,6 +38,7 @@ Setting up CI:
 - Github action file written to $workspace$/.github/workflows/optic-ci.yml
 
 Set your OPTIC_TOKEN Github secret to finish configuring Optic CI.
+More details at: https://github.com/opticdev/github-action/
 "
 `;
 

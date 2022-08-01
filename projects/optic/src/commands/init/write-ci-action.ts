@@ -56,6 +56,7 @@ const writeGithubAction = async (gitRoot: string) => {
   console.log(`- Github action file written to ${filePath}`);
   console.log('');
   console.log(
-    `Set your OPTIC_TOKEN Github secret to finish configuring Optic CI.`
+    `Set your OPTIC_TOKEN Github secret to finish configuring Optic CI.
+More details at: https://github.com/opticdev/github-action/`
   );
 };
