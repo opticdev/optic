@@ -9,7 +9,7 @@ import { configFile } from './constants';
 import { getValidSpecs } from './get-valid-specs';
 import { OpticCliConfig } from '../../config';
 
-export const init = async (config: OpticCliConfig): Promise<void> => {
+export const getInit = (config: OpticCliConfig) => async (): Promise<void> => {
   // Sanity checks
   if (config.configPath) {
     console.error(`Error: config file already exists at ${config.configPath}`);
