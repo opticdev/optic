@@ -1,5 +1,6 @@
 import Analytics from 'analytics-node';
 import { machineIdSync } from 'node-machine-id';
+import exitHook from 'async-exit-hook';
 
 let analytics: {
   segment: Analytics;
@@ -45,6 +46,39 @@ export const trackEvent = (eventName: string, properties?: any) => {
     });
   }
 };
+
+export async function trackCompletion<S extends { [key: string]: any }>(
+  eventName: string,
+  initialStats: S,
+  statsUpdates: () => AsyncIterable<S>
+) {
+  let stats = initialStats;
+  let completed = false;
+
+  function finish(callback?) {
+    if (!callback) callback = () => {};
+    if (!completed) {
+      trackEvent(`${eventName}.canceled`, stats);
+    }
+
+    flushEvents().then(callback, (err) => {
+      console.warn('Could not flush usage analytics (non-critical)');
+      callback();
+    });
+  }
+
+  exitHook(finish);
+
+  for await (let newStats of statsUpdates()) {
+    stats = newStats;
+  }
+
+  completed = true;
+
+  trackEvent(`${eventName}.completed`, stats);
+
+  finish();
+}
 
 export const flushEvents = (): Promise<void> => {
   if (analytics) {

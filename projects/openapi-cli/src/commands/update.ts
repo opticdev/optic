@@ -4,7 +4,6 @@ import * as fs from 'fs-extra';
 import readline from 'readline';
 import { updateReporter } from './reporters/update';
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
-import exitHook from 'async-exit-hook';
 
 import { tap, forkable, merge, Subject } from '../lib/async-tools';
 import {
@@ -22,7 +21,7 @@ import {
   SpecFilesSourcemap,
 } from '../specs';
 
-import { flushEvents, trackEvent } from '../segment';
+import { trackCompletion, trackEvent } from '../segment';
 import {
   CapturedInteraction,
   CapturedInteractions,
@@ -395,7 +394,6 @@ async function renderUpdateStats(updateObservations: UpdateObservations) {
 
 async function trackStats(observations: UpdateObservations): Promise<void> {
   const stats = {
-    completed: false,
     capturedInteractionsCount: 0,
     matchedInteractionsCount: 0,
     filesWithOverwrittenYamlCommentsCount: 0,
@@ -413,54 +411,44 @@ async function trackStats(observations: UpdateObservations): Promise<void> {
     };
   }
 
-  exitHook((callback) => {
-    if (!stats.completed) {
-      trackEvent('openapi_cli.update.canceled', eventProperties());
-    }
+  await trackCompletion(
+    'openapi_cli.update',
+    eventProperties(),
+    async function* () {
+      for await (let observation of observations) {
+        if (observation.kind === UpdateObservationKind.InteractionCaptured) {
+          stats.capturedInteractionsCount += 1;
+        } else if (
+          observation.kind === UpdateObservationKind.InteractionMatchedOperation
+        ) {
+          stats.matchedInteractionsCount += 1;
+        } else if (
+          observation.kind === UpdateObservationKind.InteractionPatchGenerated
+        ) {
+          stats.patchesCount += 1;
+        } else if (observation.kind === UpdateObservationKind.SpecFileUpdated) {
+          stats.updatedFilesCount += 1;
+          if (observation.overwrittenComments) {
+            stats.filesWithOverwrittenYamlCommentsCount += 1;
+          }
+        } else if (
+          observation.kind === UpdateObservationKind.InteractionBodyMatched
+        ) {
+          if (!observation.decodable && observation.capturedContentType) {
+            let count =
+              stats.unsupportedContentTypeCounts[
+                observation.capturedContentType
+              ] || 0;
+            stats.unsupportedContentTypeCounts[
+              observation.capturedContentType
+            ] = count + 1;
+          }
+        }
 
-    flushEvents().then(callback, (err) => {
-      console.warn('Could not flush usage analytics (non-critical)');
-      callback();
-    });
-  });
-
-  for await (let observation of observations) {
-    if (observation.kind === UpdateObservationKind.InteractionCaptured) {
-      stats.capturedInteractionsCount += 1;
-    } else if (
-      observation.kind === UpdateObservationKind.InteractionMatchedOperation
-    ) {
-      stats.matchedInteractionsCount += 1;
-    } else if (
-      observation.kind === UpdateObservationKind.InteractionPatchGenerated
-    ) {
-      stats.patchesCount += 1;
-    } else if (observation.kind === UpdateObservationKind.SpecFileUpdated) {
-      stats.updatedFilesCount += 1;
-      if (observation.overwrittenComments) {
-        stats.filesWithOverwrittenYamlCommentsCount += 1;
+        yield eventProperties();
       }
-    } else if (
-      observation.kind === UpdateObservationKind.InteractionBodyMatched
-    ) {
-      if (!observation.decodable && observation.capturedContentType) {
-        let count =
-          stats.unsupportedContentTypeCounts[observation.capturedContentType] ||
-          0;
-        stats.unsupportedContentTypeCounts[observation.capturedContentType] =
-          count + 1;
-      }
+
+      trackEvent('openapi_cli.spec_updated_by_traffic', eventProperties()); // for legacy reports
     }
-  }
-
-  stats.completed = true;
-
-  trackEvent('openapi_cli.update.completed', eventProperties());
-  trackEvent('openapi_cli.spec_updated_by_traffic', eventProperties()); // for legacy reports
-
-  // try {
-  //   await flushEvents();
-  // } catch (err) {
-  //   console.warn('Could not flush usage analytics (non-critical)');
-  // }
+  );
 }

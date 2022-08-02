@@ -4,10 +4,9 @@ import Path from 'path';
 import * as fs from 'fs-extra';
 import { AbortController } from 'node-abort-controller';
 import readline from 'readline';
-import exitHook from 'async-exit-hook';
 
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
-import { trackEvent, flushEvents } from '../segment';
+import { trackCompletion } from '../segment';
 import * as AT from '../lib/async-tools';
 import {
   CapturedInteraction,
@@ -573,7 +572,6 @@ async function renderAddProgress(
 
 async function trackStats(observations: AddObservations) {
   const stats = {
-    completed: false,
     unmatchedPathsCount: 0,
     unmatchedMethodsCount: 0,
     newOperationsCount: 0,
@@ -597,53 +595,52 @@ async function trackStats(observations: AddObservations) {
     };
   }
 
-  exitHook((callback) => {
-    if (!stats.completed) {
-      trackEvent('openapi_cli.add.canceled', eventProperties());
-    }
+  await trackCompletion(
+    'openapi_cli.add',
+    eventProperties(),
+    async function* () {
+      for await (let observation of observations) {
+        if (observation.kind === AddObservationKind.RequiredOperations) {
+          stats.requiredOperationsCount += 1;
+        } else if (observation.kind === AddObservationKind.UnmatchedPath) {
+          stats.unmatchedPathsCount += 1;
+        } else if (observation.kind === AddObservationKind.UnmatchedMethod) {
+          stats.unmatchedMethodsCount += 1;
+        } else if (observation.kind === AddObservationKind.NewOperation) {
+          stats.newOperationsCount += 1;
+        } else if (
+          observation.kind === AddObservationKind.InteractionCaptured
+        ) {
+          stats.capturedInteractionsCount += 1;
+        } else if (
+          observation.kind === AddObservationKind.InteractionMatchedOperation
+        ) {
+          stats.matchedInteractionsCount += 1;
+        } else if (
+          observation.kind === AddObservationKind.InteractionPatchGenerated
+        ) {
+          stats.updatePatchesCount += 1;
+        } else if (observation.kind === AddObservationKind.SpecFileUpdated) {
+          stats.updatedFilesCount += 1;
+          if (observation.overwrittenComments) {
+            stats.filesWithOverwrittenYamlCommentsCount += 1;
+          }
+        } else if (
+          observation.kind === AddObservationKind.InteractionBodyMatched
+        ) {
+          if (!observation.decodable && observation.capturedContentType) {
+            let count =
+              stats.unsupportedContentTypeCounts[
+                observation.capturedContentType
+              ] || 0;
+            stats.unsupportedContentTypeCounts[
+              observation.capturedContentType
+            ] = count + 1;
+          }
+        }
 
-    flushEvents().then(callback, (err) => {
-      console.warn('Could not flush usage analytics (non-critical)');
-      callback();
-    });
-  });
-
-  for await (let observation of observations) {
-    if (observation.kind === AddObservationKind.RequiredOperations) {
-      stats.requiredOperationsCount += 1;
-    } else if (observation.kind === AddObservationKind.UnmatchedPath) {
-      stats.unmatchedPathsCount += 1;
-    } else if (observation.kind === AddObservationKind.UnmatchedMethod) {
-      stats.unmatchedMethodsCount += 1;
-    } else if (observation.kind === AddObservationKind.NewOperation) {
-      stats.newOperationsCount += 1;
-    } else if (observation.kind === AddObservationKind.InteractionCaptured) {
-      stats.capturedInteractionsCount += 1;
-    } else if (
-      observation.kind === AddObservationKind.InteractionMatchedOperation
-    ) {
-      stats.matchedInteractionsCount += 1;
-    } else if (
-      observation.kind === AddObservationKind.InteractionPatchGenerated
-    ) {
-      stats.updatePatchesCount += 1;
-    } else if (observation.kind === AddObservationKind.SpecFileUpdated) {
-      stats.updatedFilesCount += 1;
-      if (observation.overwrittenComments) {
-        stats.filesWithOverwrittenYamlCommentsCount += 1;
+        yield eventProperties();
       }
-    } else if (observation.kind === AddObservationKind.InteractionBodyMatched) {
-      if (!observation.decodable && observation.capturedContentType) {
-        let count =
-          stats.unsupportedContentTypeCounts[observation.capturedContentType] ||
-          0;
-        stats.unsupportedContentTypeCounts[observation.capturedContentType] =
-          count + 1;
-      }
     }
-  }
-
-  stats.completed = true;
-
-  trackEvent(`openapi_cli.add.completed`, eventProperties());
+  );
 }

@@ -1,10 +1,9 @@
 import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
-import exitHook from 'async-exit-hook';
 
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
-import { trackEvent, flushEvents } from '../segment';
+import { trackCompletion } from '../segment';
 import * as AT from '../lib/async-tools';
 import { ComponentSchemaExampleFacts, readDeferencedSpec } from '../specs';
 import {
@@ -312,7 +311,6 @@ async function renderStatus(observations: StatusObservations) {
 
 async function trackStats(observations: StatusObservations) {
   const stats = {
-    completed: false,
     unmatchedPathsCount: 0,
     unmatchedMethodsCount: 0,
 
@@ -320,34 +318,27 @@ async function trackStats(observations: StatusObservations) {
     matchedInteractionsCount: 0,
   };
 
-  exitHook((callback) => {
-    if (!stats.completed) {
-      trackEvent('openapi_cli.status.canceled', stats);
+  await trackCompletion('openapi_cli.status', stats, async function* () {
+    for await (let observation of observations) {
+      if (observation.kind === StatusObservationKind.InteractionUnmatchedPath) {
+        stats.unmatchedPathsCount += 1;
+        yield stats;
+      } else if (
+        observation.kind === StatusObservationKind.InteractionUnmatchedMethod
+      ) {
+        stats.unmatchedMethodsCount += 1;
+        yield stats;
+      } else if (
+        observation.kind === StatusObservationKind.InteractionCaptured
+      ) {
+        stats.capturedInteractionsCount += 1;
+        yield stats;
+      } else if (
+        observation.kind === StatusObservationKind.InteractionMatchedOperation
+      ) {
+        stats.matchedInteractionsCount += 1;
+        yield stats;
+      }
     }
-
-    flushEvents().then(callback, (err) => {
-      console.warn('Could not flush usage analytics (non-critical)');
-      callback();
-    });
   });
-
-  for await (let observation of observations) {
-    if (observation.kind === StatusObservationKind.InteractionUnmatchedPath) {
-      stats.unmatchedPathsCount += 1;
-    } else if (
-      observation.kind === StatusObservationKind.InteractionUnmatchedMethod
-    ) {
-      stats.unmatchedMethodsCount += 1;
-    } else if (observation.kind === StatusObservationKind.InteractionCaptured) {
-      stats.capturedInteractionsCount += 1;
-    } else if (
-      observation.kind === StatusObservationKind.InteractionMatchedOperation
-    ) {
-      stats.matchedInteractionsCount += 1;
-    }
-  }
-
-  stats.completed = true;
-
-  trackEvent(`openapi_cli.status.completed`, stats);
 }
