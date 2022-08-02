@@ -10,7 +10,7 @@ While you can go to [the Releases page](https://github.com/opticdev/optic/releas
 
 Prerequisites:
 
-- (GitHub CLI)[https://cli.github.com]
+- [GitHub CLI](https://cli.github.com)
 
 Publish prerelease versions:
 
