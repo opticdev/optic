@@ -4,6 +4,7 @@ import * as fs from 'fs-extra';
 import readline from 'readline';
 import { updateReporter } from './reporters/update';
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
+import exitHook from 'async-exit-hook';
 
 import { tap, forkable, merge, Subject } from '../lib/async-tools';
 import {
@@ -394,6 +395,7 @@ async function renderUpdateStats(updateObservations: UpdateObservations) {
 
 async function trackStats(observations: UpdateObservations): Promise<void> {
   const stats = {
+    completed: false,
     capturedInteractionsCount: 0,
     matchedInteractionsCount: 0,
     filesWithOverwrittenYamlCommentsCount: 0,
@@ -401,6 +403,26 @@ async function trackStats(observations: UpdateObservations): Promise<void> {
     updatedFilesCount: 0,
     unsupportedContentTypeCounts: {},
   };
+
+  function eventProperties() {
+    return {
+      ...stats,
+      unsupportedContentTypes: [
+        ...Object.keys(stats.unsupportedContentTypeCounts),
+      ], // set cast as array
+    };
+  }
+
+  exitHook((callback) => {
+    if (!stats.completed) {
+      trackEvent('openapi_cli.update.canceled', eventProperties());
+    }
+
+    flushEvents().then(callback, (err) => {
+      console.warn('Could not flush usage analytics (non-critical)');
+      callback();
+    });
+  });
 
   for await (let observation of observations) {
     if (observation.kind === UpdateObservationKind.InteractionCaptured) {
@@ -431,19 +453,14 @@ async function trackStats(observations: UpdateObservations): Promise<void> {
     }
   }
 
-  const eventProperties = {
-    ...stats,
-    unsupportedContentTypes: [
-      ...Object.keys(stats.unsupportedContentTypeCounts),
-    ], // set cast as array
-  };
+  stats.completed = true;
 
-  trackEvent('openapi_cli.update.completed', eventProperties);
-  trackEvent('openapi_cli.spec_updated_by_traffic', eventProperties); // for legacy reports
+  trackEvent('openapi_cli.update.completed', eventProperties());
+  trackEvent('openapi_cli.spec_updated_by_traffic', eventProperties()); // for legacy reports
 
-  try {
-    await flushEvents();
-  } catch (err) {
-    console.warn('Could not flush usage analytics (non-critical)');
-  }
+  // try {
+  //   await flushEvents();
+  // } catch (err) {
+  //   console.warn('Could not flush usage analytics (non-critical)');
+  // }
 }

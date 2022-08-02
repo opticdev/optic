@@ -7,6 +7,7 @@ import { Writable } from 'stream';
 import * as AT from '../lib/async-tools';
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { trackEvent, flushEvents } from '../segment';
+import exitHook from 'async-exit-hook';
 
 import {
   CapturedInteraction,
@@ -224,8 +225,19 @@ async function renderCaptureProgress(
 
 async function trackStats(observations: CaptureObservations) {
   const stats = {
+    completed: false,
     capturedInteractionsCount: 0,
   };
+
+  exitHook((callback) => {
+    if (!stats.completed) {
+      trackEvent('openapi_cli.capture.canceled', stats);
+    }
+
+    flushEvents().then(callback, (err) =>
+      console.warn('Could not flush usage analytics (non-critical)')
+    );
+  });
 
   for await (let observation of observations) {
     if (observation.kind === CaptureObservationKind.InteractionCaptured) {
@@ -233,11 +245,7 @@ async function trackStats(observations: CaptureObservations) {
     }
   }
 
-  trackEvent(`openapi_cli.capture.completed`, stats);
+  stats.completed = true;
 
-  try {
-    await flushEvents();
-  } catch (err) {
-    console.warn('Could not flush usage analytics (non-critical)');
-  }
+  trackEvent(`openapi_cli.capture.completed`, stats);
 }

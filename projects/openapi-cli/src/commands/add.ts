@@ -4,6 +4,7 @@ import Path from 'path';
 import * as fs from 'fs-extra';
 import { AbortController } from 'node-abort-controller';
 import readline from 'readline';
+import exitHook from 'async-exit-hook';
 
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { trackEvent, flushEvents } from '../segment';
@@ -572,6 +573,7 @@ async function renderAddProgress(
 
 async function trackStats(observations: AddObservations) {
   const stats = {
+    completed: false,
     unmatchedPathsCount: 0,
     unmatchedMethodsCount: 0,
     newOperationsCount: 0,
@@ -585,6 +587,26 @@ async function trackStats(observations: AddObservations) {
     updatedFilesCount: 0,
     unsupportedContentTypeCounts: {},
   };
+
+  function eventProperties() {
+    return {
+      ...stats,
+      unsupportedContentTypes: [
+        ...Object.keys(stats.unsupportedContentTypeCounts),
+      ], // set cast as array
+    };
+  }
+
+  exitHook((callback) => {
+    if (!stats.completed) {
+      trackEvent('openapi_cli.add.canceled', eventProperties());
+    }
+
+    flushEvents().then(callback, (err) => {
+      console.warn('Could not flush usage analytics (non-critical)');
+      callback();
+    });
+  });
 
   for await (let observation of observations) {
     if (observation.kind === AddObservationKind.RequiredOperations) {
@@ -621,16 +643,7 @@ async function trackStats(observations: AddObservations) {
     }
   }
 
-  trackEvent(`openapi_cli.add.completed`, {
-    ...stats,
-    unsupportedContentTypes: [
-      ...Object.keys(stats.unsupportedContentTypeCounts),
-    ], // set cast as array
-  });
+  stats.completed = true;
 
-  try {
-    await flushEvents();
-  } catch (err) {
-    console.warn('Could not flush usage analytics (non-critical)');
-  }
+  trackEvent(`openapi_cli.add.completed`, eventProperties());
 }

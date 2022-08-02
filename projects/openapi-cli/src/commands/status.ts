@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
+import exitHook from 'async-exit-hook';
 
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { trackEvent, flushEvents } from '../segment';
@@ -311,12 +312,24 @@ async function renderStatus(observations: StatusObservations) {
 
 async function trackStats(observations: StatusObservations) {
   const stats = {
+    completed: false,
     unmatchedPathsCount: 0,
     unmatchedMethodsCount: 0,
 
     capturedInteractionsCount: 0,
     matchedInteractionsCount: 0,
   };
+
+  exitHook((callback) => {
+    if (!stats.completed) {
+      trackEvent('openapi_cli.status.canceled', stats);
+    }
+
+    flushEvents().then(callback, (err) => {
+      console.warn('Could not flush usage analytics (non-critical)');
+      callback();
+    });
+  });
 
   for await (let observation of observations) {
     if (observation.kind === StatusObservationKind.InteractionUnmatchedPath) {
@@ -334,11 +347,7 @@ async function trackStats(observations: StatusObservations) {
     }
   }
 
-  trackEvent(`openapi_cli.status.completed`, stats);
+  stats.completed = true;
 
-  try {
-    await flushEvents();
-  } catch (err) {
-    console.warn('Could not flush usage analytics (non-critical)');
-  }
+  trackEvent(`openapi_cli.status.completed`, stats);
 }
