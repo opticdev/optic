@@ -2,6 +2,15 @@ import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { TestHelpers } from '@useoptic/rulesets-base';
 import { NamingChangesRuleset } from '../index';
 
+describe('fromOpticConfig', () => {
+  test('invalid configuration', () => {
+    const out = NamingChangesRuleset.fromOpticConfig({ applies: 'invalid' });
+    expect(out).toEqual(
+      '- ruleset/naming/applies must be equal to one of the allowed values'
+    );
+  });
+});
+
 describe('naming changes configuration', () => {
   test('naming change configuration validation', () => {
     // Typescript will generally catch these, but there's no guarantee a user is using TS here.
@@ -30,8 +39,6 @@ describe('naming changes configuration', () => {
       });
     }).toThrowErrorMatchingSnapshot();
   });
-
-  test('matches block', () => {});
 });
 
 describe('naming changes', () => {

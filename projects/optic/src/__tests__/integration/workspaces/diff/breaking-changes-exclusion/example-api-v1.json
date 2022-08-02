@@ -3,7 +3,19 @@
   "paths": {
     "/example": {
       "get": {
+        "x-optic-ignore-breaking-changes": true,
         "operationId": "my-op",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "userId",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "Numeric ID of the user to get"
+          }
+        ],
         "responses": {}
       },
       "post": {
@@ -34,6 +46,6 @@
   },
   "info": {
     "version": "0.0.0",
-    "title": "API 2"
+    "title": "Empty"
   }
 }
