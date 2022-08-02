@@ -106,17 +106,13 @@ export async function applyTemplate<T>(
   for await (let _writtenFilePath of SpecFiles.writeFiles(updatedSpecFiles)) {
   }
 
-  trackEvent(
-    'openapi_cli.workflows.template_applied',
-    'openapi_cli', // TODO: determine more useful userId
-    {
-      templateName: template.name,
-      patchesCount: stats.patchesCount,
-      updatedFilesCount: stats.updatedFilesCount,
-      filesWithOverwrittenYamlCommentsCount:
-        stats.filesWithOverwrittenYamlComments.size,
-    }
-  );
+  trackEvent('openapi_cli.workflows.template_applied', {
+    templateName: template.name,
+    patchesCount: stats.patchesCount,
+    updatedFilesCount: stats.updatedFilesCount,
+    filesWithOverwrittenYamlCommentsCount:
+      stats.filesWithOverwrittenYamlComments.size,
+  });
 
   try {
     await flushEvents();
