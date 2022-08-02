@@ -83,7 +83,18 @@ export class BreakingChangesRuleset extends Ruleset<BreakingChangesRules> {
     }
 
     const validatedConfig = config as YamlConfig;
-    return new BreakingChangesRuleset();
+
+    const constructorConfig: Omit<
+      RulesetConfig<BreakingChangesRules>,
+      'name' | 'rules'
+    > = {};
+    if (validatedConfig.exclude_operations_with_extension !== undefined) {
+      const extension = validatedConfig.exclude_operations_with_extension;
+      constructorConfig.matches = (context) =>
+        (context.operation.raw as any)[extension] !== true;
+    }
+
+    return new BreakingChangesRuleset(constructorConfig);
   }
 
   constructor(
