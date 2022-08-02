@@ -44,11 +44,7 @@ export async function createSpecFile<T>(
   for await (let _writtenFilePath of SpecFiles.writeFiles(updatedSpecFiles)) {
   }
 
-  trackEvent(
-    'openapi_cli.workflows.spec_file_created',
-    'openapi_cli', // TODO: determine more useful userId
-    {}
-  );
+  trackEvent('openapi_cli.workflows.spec_file_created', {});
 
   try {
     await flushEvents();
