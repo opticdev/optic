@@ -24,7 +24,7 @@ export async function createCommandFeedback(
     name: string,
     eventProperties: { [key: string]: any } = {},
     errCode: number = 1
-  ) {
+  ): Promise<void> {
     const prefix = message.indexOf('error: ') > -1 ? '' : 'error: ';
     destination.write(
       chalk.bgRed.white(' input ') + ' ' + prefix + message + '\n'
@@ -33,7 +33,7 @@ export async function createCommandFeedback(
       ...eventProperties,
       message,
     });
-    flushEvents()
+    return flushEvents()
       .catch((err) => {
         console.warn('Could not flush usage analytics (non-critical)');
       })

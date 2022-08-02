@@ -43,7 +43,7 @@ export async function captureCommand(): Promise<Command> {
       if (options.har) {
         let absoluteHarPath = Path.resolve(options.har);
         if (!(await fs.pathExists(absoluteHarPath))) {
-          return feedback.inputError(
+          return await feedback.inputError(
             'HAR file could not be found at given path',
             InputErrors.HAR_FILE_NOT_FOUND
           );
@@ -55,7 +55,7 @@ export async function captureCommand(): Promise<Command> {
 
       if (options.proxy) {
         if (!process.stdin.isTTY) {
-          return feedback.inputError(
+          return await feedback.inputError(
             'can only use --proxy when in an interactive terminal session',
             InputErrors.PROXY_IN_NON_TTY
           );
@@ -73,7 +73,7 @@ export async function captureCommand(): Promise<Command> {
       }
 
       if (sources.length < 1) {
-        return feedback.inputError(
+        return await feedback.inputError(
           'choose a method of capturing traffic to create a capture',
           InputErrors.CAPTURE_METHOD_MISSING
         );
@@ -86,7 +86,7 @@ export async function captureCommand(): Promise<Command> {
         let fileBaseName = Path.basename(filePath);
 
         if (!(await fs.pathExists(dirPath))) {
-          return feedback.inputError(
+          return await feedback.inputError(
             `to create ${fileBaseName}, dir must exist at ${dirPath}`,
             InputErrors.DESTINATION_FILE_DIR_MISSING
           );

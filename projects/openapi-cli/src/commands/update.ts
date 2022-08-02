@@ -48,7 +48,7 @@ export async function updateCommand(): Promise<Command> {
     .action(async (specPath) => {
       const absoluteSpecPath = Path.resolve(specPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
-        return feedback.inputError(
+        return await feedback.inputError(
           'OpenAPI specification file could not be found',
           InputErrors.SPEC_FILE_NOT_FOUND
         );
@@ -63,7 +63,7 @@ export async function updateCommand(): Promise<Command> {
       if (options.har) {
         let absoluteHarPath = Path.resolve(options.har);
         if (!(await fs.pathExists(absoluteHarPath))) {
-          return feedback.inputError(
+          return await feedback.inputError(
             'HAR file could not be found at given path',
             InputErrors.HAR_FILE_NOT_FOUND
           );
@@ -75,7 +75,7 @@ export async function updateCommand(): Promise<Command> {
 
       if (options.proxy) {
         if (!process.stdin.isTTY) {
-          return feedback.inputError(
+          return await feedback.inputError(
             'can only use --proxy when in an interactive terminal session',
             InputErrors.PROXY_IN_NON_TTY
           );
@@ -95,7 +95,7 @@ export async function updateCommand(): Promise<Command> {
       }
 
       if (sources.length < 1) {
-        return feedback.inputError(
+        return await feedback.inputError(
           'choose a capture method to update spec by traffic',
           InputErrors.CAPTURE_METHOD_MISSING
         );
@@ -103,7 +103,7 @@ export async function updateCommand(): Promise<Command> {
 
       const specReadResult = await readDeferencedSpec(absoluteSpecPath);
       if (specReadResult.err) {
-        feedback.inputError(
+        await feedback.inputError(
           `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`,
           InputErrors.SPEC_FILE_NOT_READABLE
         );
