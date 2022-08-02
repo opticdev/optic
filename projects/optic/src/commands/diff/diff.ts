@@ -165,7 +165,7 @@ const generateRuleRunner = (
           rulesets.push(instanceOrErrorMsg);
         } else {
           console.error(
-            'There were errors in the configuration for the ${ruleset.name} ruleset:'
+            `There were errors in the configuration for the ${ruleset.name} ruleset:`
           );
           console.error(instanceOrErrorMsg);
           console.error();
