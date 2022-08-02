@@ -72,12 +72,14 @@ const breakingChangesRules = [
 type BreakingChangesRules = typeof breakingChangesRules;
 
 export class BreakingChangesRuleset extends Ruleset<BreakingChangesRules> {
-  static fromOpticConfig(config: unknown): BreakingChangesRuleset | string[] {
+  static fromOpticConfig(config: unknown): BreakingChangesRuleset | string {
     const result = validateConfigSchema(config);
 
     if (!result) {
-      console.log(validateConfigSchema.errors!.map((error) => error.message));
-      return [];
+      return `- ${ajv.errorsText(validateConfigSchema.errors, {
+        separator: '\n- ',
+        dataVar: 'ruleset/breaking-changes',
+      })}`;
     }
 
     const validatedConfig = config as YamlConfig;

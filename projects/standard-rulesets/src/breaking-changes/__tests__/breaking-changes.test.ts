@@ -2,6 +2,17 @@ import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { TestHelpers } from '@useoptic/rulesets-base';
 import { BreakingChangesRuleset } from '../index';
 
+describe('fromOpticConfig', () => {
+  test('invalid configuration', () => {
+    const out = BreakingChangesRuleset.fromOpticConfig({
+      exclude_operations_with_extension: 12,
+    });
+    expect(out).toEqual(
+      '- ruleset/breaking-changes/exclude_operations_with_extension must be string'
+    );
+  });
+});
+
 describe('breaking changes ruleset', () => {
   test('valid changes', () => {
     const beforeJson: OpenAPIV3.Document = {
