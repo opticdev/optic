@@ -42,6 +42,17 @@ More details at: https://github.com/opticdev/github-action/
 "
 `;
 
+exports[`init init with \`--ci-only github-action\` option 1`] = `
+"Initializing Optic...
+
+Setting up CI:
+- Github action file written to $workspace$/.github/workflows/optic-ci.yml
+
+Set your OPTIC_TOKEN Github secret to finish configuring Optic CI.
+More details at: https://github.com/opticdev/github-action/
+"
+`;
+
 exports[`init init with existing optic.yml 1`] = `
 "Error: a configuration file already exists at $workspace$/optic.yml.
 "
