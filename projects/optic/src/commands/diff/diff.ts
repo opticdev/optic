@@ -213,7 +213,11 @@ const runDiff = async (
     rules: specResults.results,
   });
 
-  console.log('');
+  if (specResults.changes.length === 0) {
+    console.log('No changes were detected');
+  } else {
+    console.log('');
+  }
   for (const log of terminalChangelog(changelogData)) {
     console.log(log);
   }
@@ -279,6 +283,7 @@ const getDiffAction =
         console.error(
           `Error: ${commandVariant} must be called from a git repository.`
         );
+        process.exitCode = 1;
         return;
       }
       const parsedFiles = await getBaseAndHeadFromFileAndBase(
@@ -293,12 +298,14 @@ const getDiffAction =
         console.error(
           `Error: ${commandVariant} must be called from a git repository.`
         );
+        process.exitCode = 1;
         return;
       }
       if (!config.configPath) {
         console.error(
           `Error: no optic.yml config file was found. optic.yml must be included for ${commandVariant}`
         );
+        process.exitCode = 1;
         return;
       }
 
@@ -314,6 +321,7 @@ const getDiffAction =
             .map((file) => file.id)
             .join(', ')}`
         );
+        process.exitCode = 1;
         return;
       }
       const parsedFiles = await getBaseAndHeadFromFileAndBase(
@@ -323,6 +331,19 @@ const getDiffAction =
       );
       await runDiff(files, parsedFiles, config, options);
     } else {
+      if (!config.configPath) {
+        console.error(
+          'Error: no `optic.yml` config file was found. Run `optic init` to generate a config file.'
+        );
+        process.exitCode = 1;
+        return;
+      } else if (config.files.length === 0) {
+        console.error(
+          'No files were found in your `optic.yml` file. Ensure that your `optic.yml` contains at least one file'
+        );
+        process.exitCode = 1;
+        return;
+      }
       for await (const configFile of config.files) {
         console.log(`${configFile.id}:`);
         const parsedFiles = await getBaseAndHeadFromFileAndBase(
