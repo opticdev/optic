@@ -1,4 +1,9 @@
-import { runOptic, setupWorkspace, run } from './integration';
+import {
+  runOptic,
+  setupWorkspace,
+  run,
+  normalizeWorkspace,
+} from './integration';
 
 jest.setTimeout(30000);
 
@@ -7,10 +12,9 @@ describe('diff', () => {
     const workspace = await setupWorkspace('diff/files-no-repo');
     const { combined, code } = await runOptic(
       workspace,
-      'diff example-api-v0.json example-api-v1.json',
-      false
+      'diff example-api-v0.json example-api-v1.json'
     );
-    expect(combined.replace(workspace, '$$workspace$$')).toMatchSnapshot();
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     expect(code).toBe(0);
   });
 
@@ -29,8 +33,19 @@ describe('diff', () => {
       false,
       workspace
     );
-    const { combined, code } = await runOptic(workspace, 'diff', false);
-    expect(combined.replace(workspace, '$$workspace$$')).toMatchSnapshot();
+    const { combined, code } = await runOptic(workspace, 'diff');
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     expect(code).toBe(0);
+  });
+
+  test('basic rules config', async () => {
+    const workspace = await setupWorkspace('diff/basic-rules');
+    const { combined, code } = await runOptic(
+      workspace,
+      'diff example-api-v0.json example-api-v1.json --check'
+    );
+
+    expect(code).toBe(0);
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
   });
 });

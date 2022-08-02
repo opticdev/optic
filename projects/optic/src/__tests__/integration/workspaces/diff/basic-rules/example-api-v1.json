@@ -6,10 +6,6 @@
         "operationId": "my-op",
         "responses": {}
       },
-      "post": {
-        "operationId": "postOriginalaa",
-        "responses": {}
-      },
       "put": {
         "operationId": "putOriginalaa",
         "responses": {}
@@ -23,17 +19,23 @@
               "application/json": {
                 "example": "hello",
                 "schema": {
-                  "type": "string"
+                  "type": "number"
                 }
               }
             }
           }
         }
       }
+    },
+    "/invalid_name": {
+      "get": {
+        "operationId": "getInvalidName",
+        "responses": {}
+      }
     }
   },
   "info": {
     "version": "0.0.0",
-    "title": "API 2"
+    "title": "Empty"
   }
 }

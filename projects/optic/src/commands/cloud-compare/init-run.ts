@@ -10,6 +10,7 @@ import { NormalizedCiContext } from '@useoptic/openapi-utilities';
 import Bottleneck from 'bottleneck';
 import { logger } from '../../logger';
 import { ParseResult } from '../../utils/spec-loaders';
+import { OpticCliConfig } from '../../config';
 
 export type SpecInput = {
   from: ParseResult;
@@ -33,11 +34,12 @@ export async function initRun(
   client: OpticBackendClient,
   specs: SpecInput[],
   baseBranch: string,
-  context: NormalizedCiContext
+  context: NormalizedCiContext,
+  rules: OpticCliConfig['ruleset']
 ): Promise<GetSessionResponse[]> {
   const limiter = new Bottleneck({ maxConcurrent: MAX_CONCURRENT });
   const runner = (spec: SpecInput) =>
-    runSingle(client, spec, baseBranch, context);
+    runSingle(client, spec, baseBranch, context, rules);
   const wrapped = limiter.wrap(runner);
   const runPromises = specs.map((spec) => wrapped(spec));
   return await Promise.all(runPromises);
@@ -47,7 +49,8 @@ async function runSingle(
   client: OpticBackendClient,
   specInput: SpecInput,
   baseBranch: string,
-  context: NormalizedCiContext
+  context: NormalizedCiContext,
+  rules: OpticCliConfig['ruleset']
 ): Promise<GetSessionResponse> {
   logger.debug(
     `Running comparison for ${specInput.path} against ${baseBranch}`
@@ -66,6 +69,7 @@ async function runSingle(
     to_arg: specInput.path,
     status: 'started',
     spec_id: specInput.id,
+    ruleset: rules,
   });
   logger.debug(
     `Uploading input files for ${specInput.path} against ${baseBranch}`
