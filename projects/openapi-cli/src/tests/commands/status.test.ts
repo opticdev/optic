@@ -33,13 +33,18 @@ describe('status command', () => {
         matchInteractions(testSpec, interactions)
       );
 
-      expect(results).toHaveLength(2);
-      expect(
-        results.every(
-          ({ kind }) =>
-            kind === StatusObservationKind.InteractionMatchedOperation
-        )
+      const observedMatchingOperations = results.filter(
+        ({ kind }) => kind === StatusObservationKind.InteractionMatchedOperation
       );
+      const observedUnmatching = results.filter(
+        ({ kind }) =>
+          kind === StatusObservationKind.InteractionUnmatchedMethod ||
+          kind === StatusObservationKind.InteractionUnmatchedPath
+      );
+
+      expect(observedMatchingOperations).toHaveLength(2);
+      expect(observedUnmatching).toHaveLength(0);
+
       expect(results).toMatchSnapshot();
     });
 
@@ -54,12 +59,20 @@ describe('status command', () => {
         matchInteractions(testSpec, interactions)
       );
 
-      expect(results).toHaveLength(3);
-      expect(
-        results.every(
-          ({ kind }) => kind === StatusObservationKind.InteractionUnmatchedPath
-        )
+      const observedMatchingOperations = results.filter(
+        ({ kind }) => kind === StatusObservationKind.InteractionMatchedOperation
       );
+      const observedUnmatchingPaths = results.filter(
+        ({ kind }) => kind === StatusObservationKind.InteractionUnmatchedPath
+      );
+      const observedUnmatchingMethods = results.filter(
+        ({ kind }) => kind === StatusObservationKind.InteractionUnmatchedMethod
+      );
+
+      expect(observedMatchingOperations).toHaveLength(0);
+      expect(observedUnmatchingPaths).toHaveLength(3);
+      expect(observedUnmatchingMethods).toHaveLength(0);
+
       expect(results).toMatchSnapshot();
     });
 
@@ -73,13 +86,20 @@ describe('status command', () => {
         matchInteractions(testSpec, interactions)
       );
 
-      expect(results).toHaveLength(2);
-      expect(
-        results.every(
-          ({ kind }) =>
-            kind === StatusObservationKind.InteractionUnmatchedMethod
-        )
+      const observedMatchingOperations = results.filter(
+        ({ kind }) => kind === StatusObservationKind.InteractionMatchedOperation
       );
+      const observedUnmatchingPaths = results.filter(
+        ({ kind }) => kind === StatusObservationKind.InteractionUnmatchedPath
+      );
+      const observedUnmatchingMethods = results.filter(
+        ({ kind }) => kind === StatusObservationKind.InteractionUnmatchedMethod
+      );
+
+      expect(observedMatchingOperations).toHaveLength(0);
+      expect(observedUnmatchingPaths).toHaveLength(0);
+      expect(observedUnmatchingMethods).toHaveLength(2);
+
       expect(results).toMatchSnapshot();
     });
   });
