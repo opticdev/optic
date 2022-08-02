@@ -160,11 +160,15 @@ const generateRuleRunner = (
       const RulesetClass =
         StandardRulesets[ruleset.name as keyof typeof StandardRulesets];
       if (RulesetClass) {
-        const rulesetInstance = RulesetClass.fromOpticConfig(ruleset.config);
-        if (Ruleset.isInstance(rulesetInstance)) {
-          rulesets.push(rulesetInstance);
+        const instanceOrErrorMsg = RulesetClass.fromOpticConfig(ruleset.config);
+        if (Ruleset.isInstance(instanceOrErrorMsg)) {
+          rulesets.push(instanceOrErrorMsg);
         } else {
-          console.error(rulesetInstance.join(', '));
+          console.error(
+            'There were errors in the configuration for the ${ruleset.name} ruleset:'
+          );
+          console.error(instanceOrErrorMsg);
+          console.error();
         }
       } else {
         console.error(`Warning: Invalid ruleset ${ruleset.name}`);
