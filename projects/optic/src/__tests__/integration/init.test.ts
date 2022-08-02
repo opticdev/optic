@@ -46,4 +46,24 @@ describe('init', () => {
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     expect(code).toBe(0);
   });
+
+  test('init with `--ci-only github-action` option', async () => {
+    const workspace = await setupWorkspace('init/existing');
+
+    const actionFilePath = path.join(
+      workspace,
+      '.github',
+      'workflows',
+      'optic-ci.yml'
+    );
+
+    expect(await fileExists(actionFilePath)).toBe(false);
+    const { combined, code } = await runOptic(
+      workspace,
+      'init --ci-only github-action'
+    );
+    expect(await fileExists(actionFilePath)).toBe(true);
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(code).toBe(0);
+  });
 });

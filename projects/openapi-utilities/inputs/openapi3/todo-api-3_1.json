@@ -31,10 +31,7 @@
                         "type": "object",
                         "properties": {
                           "name": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "status": {
                             "type": "string"
@@ -48,17 +45,11 @@
                             "example": "2020-01-01T00:00:00.000Z"
                           }
                         },
-                        "required": [
-                          "name",
-                          "status",
-                          "created_at"
-                        ]
+                        "required": ["name", "status", "created_at"]
                       }
                     }
                   },
-                  "required": [
-                    "todos"
-                  ]
+                  "required": ["todos"]
                 }
               }
             }
