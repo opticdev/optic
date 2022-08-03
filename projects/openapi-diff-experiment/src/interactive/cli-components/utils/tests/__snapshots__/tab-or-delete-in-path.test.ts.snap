@@ -1,9 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`tab or delete in path will append constant 2nd component 1`] = `"/example/123"`;
-
-exports[`tab or delete in path will append last component 1`] = `"/example/{exampleId}/status"`;
-
-exports[`tab or delete in path will append last component when trailing slash 1`] = `"/example/{exampleId}/status"`;
-
-exports[`tab or delete in path will do nothing when full path 1`] = `"/example/{exampleId}/status"`;

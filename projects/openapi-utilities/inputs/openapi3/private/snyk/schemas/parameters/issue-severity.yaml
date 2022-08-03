@@ -1,7 +1,0 @@
-IssueSeverity:
-  name: severity
-  in: query
-  required: false
-  description: Severity of issues to match
-  schema: { $ref: '../shared/issue-severity.yaml#/IssueSeverity' }
-
