@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`required shape patch generator missing required fields will patch as 'make optional' or 'remove' 1`] = `
+Array [
+  Object {
+    "description": "make property f3 optional",
+    "groupedOperations": Array [
+      Object {
+        "intent": "remove f3 from parent's required array",
+        "operations": Array [
+          Object {
+            "op": "remove",
+            "path": "/properties/hello/required/2",
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+  },
+  Object {
+    "description": "remove property f3",
+    "groupedOperations": Array [
+      Object {
+        "intent": "remove f3 from parent's required array",
+        "operations": Array [
+          Object {
+            "op": "remove",
+            "path": "/properties/hello/required/2",
+          },
+        ],
+      },
+      Object {
+        "intent": "remove f3 from parent's properties object",
+        "operations": Array [
+          Object {
+            "op": "remove",
+            "path": "/properties/hello/properties/f3",
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "BackwardsCompatibilityUnknown",
+    ],
+  },
+]
+`;

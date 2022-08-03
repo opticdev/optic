@@ -1,0 +1,38 @@
+openapi: "3.0.0"
+info:
+  title: Recursive Example
+  description: >-
+    Documentation of services
+  version: '1.0'
+paths:
+  /api/example:
+    get:
+      summary: Get example
+      description: example
+      operationId: GetExample
+      responses:
+        '200':
+          description: Successful operation
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CircularExample'
+
+      deprecated: false
+components:
+  schemas:
+    CircularExample:
+      title: CircularExample
+      type: object
+      properties:
+        name:
+          type: string
+          description: name of the example
+        id:
+          type: string
+          description: identifier of the example
+        circular_property:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/CircularExample'

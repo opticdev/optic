@@ -1,0 +1,8 @@
+User:
+  type: object
+  required: [name]
+  properties:
+    name:
+      type: string
+  example:
+    name: 'Homer'

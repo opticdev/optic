@@ -1,0 +1,125 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`response differ diff for new status code 1`] = `
+Object {
+  "context": undefined,
+  "diffs": Array [
+    Object {
+      "method": "get",
+      "path": "/example",
+      "statusCode": "200",
+      "type": "UnmatchedResponse",
+    },
+  ],
+  "error": undefined,
+  "isDiff": true,
+  "isMatch": false,
+}
+`;
+
+exports[`response differ json schema diffs found in responses 1`] = `
+Object {
+  "context": undefined,
+  "diffs": Array [
+    Object {
+      "example": Object {
+        "one": 12,
+        "two": "owt",
+      },
+      "instancePath": "/two",
+      "key": "two",
+      "keyword": "additionalProperties",
+      "location": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [],
+        "method": "get",
+        "path": "/example",
+      },
+      "parentObjectPath": "/additionalProperties",
+      "propertyExamplePath": "/two",
+      "propertyPath": "/additionalProperties/two",
+      "schemaPath": "/schema",
+      "type": "BodyAdditionalProperty",
+    },
+    Object {
+      "example": 12,
+      "instancePath": "/one",
+      "key": "one",
+      "keyword": "type",
+      "location": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "one",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "propertyPath": "/properties/one",
+      "schemaPath": "/schema",
+      "type": "BodyUnmatchedType",
+    },
+  ],
+  "error": undefined,
+  "isDiff": true,
+  "isMatch": false,
+}
+`;
+
+exports[`response differ matches a known response by exact status code 1`] = `
+Object {
+  "context": Object {
+    "contentTypes": Array [],
+    "statusCodeMatcher": "200",
+  },
+  "diffs": Array [],
+  "error": undefined,
+  "isDiff": false,
+  "isMatch": true,
+}
+`;
+
+exports[`response differ matches a known response by range of status code 1`] = `
+Object {
+  "context": Object {
+    "contentTypes": Array [],
+    "statusCodeMatcher": "4xx",
+  },
+  "diffs": Array [],
+  "error": undefined,
+  "isDiff": false,
+  "isMatch": true,
+}
+`;
+
+exports[`response differ matches default response status code if not other matches 1`] = `
+Object {
+  "context": Object {
+    "contentTypes": Array [],
+    "statusCodeMatcher": "default",
+  },
+  "diffs": Array [],
+  "error": undefined,
+  "isDiff": false,
+  "isMatch": true,
+}
+`;
+
+exports[`response differ no diff for 500 range status code 1`] = `
+Object {
+  "context": undefined,
+  "diffs": Array [],
+  "error": undefined,
+  "isDiff": true,
+  "isMatch": false,
+}
+`;

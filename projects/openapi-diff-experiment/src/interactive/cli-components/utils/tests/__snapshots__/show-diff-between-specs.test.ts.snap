@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`show diff between specs in a single file, one chunk 1`] = `
+Array [
+  Object {
+    "hunk": Array [
+      "                         \\"login\\",",
+      "                         \\"id\\",",
+      "                         \\"node_id\\",",
+      "                         \\"avatar_url\\",",
+      "[31m[1m-                        \\"gravatar_id\\",[22m[39m",
+      "                         \\"url\\",",
+      "                         \\"html_url\\",",
+      "                         \\"followers_url\\",",
+      "                         \\"type\\",",
+    ],
+    "line": 51,
+    "path": "openapi.json",
+  },
+]
+`;
+
+exports[`show diff between specs in a single file, one chunk 2`] = `
+Array [
+  Object {
+    "hunk": Array [
+      " {",
+      "   \\"openapi\\": \\"3.0.1\\",",
+      "   \\"paths\\": {",
+      "     \\"/example\\": {",
+      "[31m[1m-      \\"parameters\\": [],[22m[39m",
+      "       \\"get\\": {",
+      "         \\"parameters\\": [],",
+      "         \\"responses\\": {",
+      "           \\"200\\": {",
+    ],
+    "line": 1,
+    "path": "openapi.json",
+  },
+  Object {
+    "hunk": Array [
+      "                         },",
+      "                         \\"url\\": {",
+      "                           \\"type\\": \\"string\\"",
+      "                         },",
+      "[31m[1m-                        \\"html_url\\": {[22m[39m",
+      "[31m[1m-                          \\"type\\": \\"string\\"[22m[39m",
+      "[31m[1m-                        },[22m[39m",
+      "[31m[1m-                        \\"followers_url\\": {[22m[39m",
+      "[31m[1m-                          \\"type\\": \\"string\\"[22m[39m",
+      "[31m[1m-                        },[22m[39m",
+      "                         \\"type\\": {",
+      "                           \\"type\\": \\"string\\"",
+      "                         },",
+      "                         \\"site_admin\\": {",
+    ],
+    "line": 33,
+    "path": "openapi.json",
+  },
+  Object {
+    "hunk": Array [
+      "                         \\"node_id\\",",
+      "                         \\"avatar_url\\",",
+      "                         \\"gravatar_id\\",",
+      "                         \\"url\\",",
+      "[31m[1m-                        \\"html_url\\",[22m[39m",
+      "[31m[1m-                        \\"followers_url\\",[22m[39m",
+      "                         \\"type\\",",
+      "                         \\"site_admin\\"",
+      "                       ]",
+      "                     }",
+    ],
+    "line": 53,
+    "path": "openapi.json",
+  },
+]
+`;
