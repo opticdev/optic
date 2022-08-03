@@ -77,9 +77,8 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /example
-    Rule: prevent operation removal
-    [31mx[39m removed operation: POST /example must not remove operation
-      [31mcannot remove an operation[39m
+    removed rule: prevent operation removal
+      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
       at [4m$workspace$/example-api-v0.json:9:150[24m
 
 
@@ -88,9 +87,8 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /invalid_name
-    Rule: operation path component naming check
-    [31mx[39m requirement for operation: GET /invalid_name must path component must be camelCase when always
-      [31minvalid_name is not camelCase[39m
+    requirement rule: operation path component naming check
+      [31m[31mx[39m[31m invalid_name is not camelCase[39m
       at [4m$workspace$/example-api-v1.json:31:632[24m
 
 
