@@ -8,7 +8,7 @@ on:
 
 env:
   SKIP_ANNOUNCE: "false"
-  SKIP_PUBLISH: "true"
+  SKIP_PUBLISH: "false"
 
 jobs:
   verify-prerelease-tag:
@@ -32,7 +32,7 @@ jobs:
         if: github.event_name == 'release'
         run: |
           # add a 'v' prefix to match the Git tag
-          package_version=v$(jq -r '.version' < projects/openapi-workspaces/projects/openapi-utilities/package.json)
+          package_version=v$(jq -r '.version' < package.json)
 
           if [ "${package_version}" != "${{ github.event.release.tag_name }}" ]
           then
@@ -48,7 +48,7 @@ jobs:
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v2.4.0
       - name: Confirm release version is unpublished
         run: |
-          package_version=$(jq -r '.version' < projects/openapi-workspaces/projects/openapi-utilities/package.json)
+          package_version=$(jq -r '.version' < package.json)
           is_published=$(
             yarn npm info "@useoptic/openapi-utilities" --json \
             | jq -rs '.[0]' \
@@ -87,7 +87,7 @@ jobs:
           NODE_ENV: production
         run: |
           set -a
-          source projects/openapi-workspaces/projects/optic-ci/.env.production
+          source projects/optic-ci/.env.production
           task default
 
       - name: Test
@@ -112,7 +112,7 @@ jobs:
 
       - name: Get package version
         run: |
-          v=$(cat projects/openapi-workspaces/projects/openapi-utilities/package.json | jq -r .version)
+          v=$(jq -r .version < package.json)
           echo "VERSION=$v" >> $GITHUB_ENV
 
       - name: Publish
@@ -135,7 +135,7 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
         with:
-          args: "{{ GITHUB_ACTOR }}: ✅ openapi-workspaces v{{ VERSION }} packages published to channel `{{ RELEASE_CHANNEL }}`!"
+          args: "{{ GITHUB_ACTOR }}: ✅ optic v{{ VERSION }} packages published to channel `{{ RELEASE_CHANNEL }}`!"
 
       - name: Announce failure
         uses: Ilshidur/action-slack@689ad44a9c9092315abd286d0e3a9a74d31ab78a # v2.1.0
@@ -146,4 +146,4 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
         with:
-          args: "{{ GITHUB_ACTOR }}: 🚫 openapi-workspaces v{{ VERSION }} failed to publish."
+          args: "{{ GITHUB_ACTOR }}: 🚫 optic v{{ VERSION }} failed to publish."
