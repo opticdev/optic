@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/rulesets-base",
   "packageManager": "yarn@3.0.2",
-  "version": "0.26.28-4",
+  "version": "0.26.28",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -58,6 +58,5 @@
         "<rootDir>../../../../node_modules/nimma/dist/legacy/cjs/index.js"
       ]
     }
-  },
-  "stableVersion": "0.26.27"
+  }
 }
