@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/openapi-cli",
   "packageManager": "yarn@3.0.2",
-  "version": "0.26.25",
+  "version": "0.26.28",
   "main": "build/lib.js",
   "types": "build/lib.d.ts",
   "files": [
@@ -51,6 +51,7 @@
     "@useoptic/openapi-utilities": "workspace:*",
     "ajv-formats": "^2.1.1",
     "analytics-node": "^6.0.0",
+    "async-exit-hook": "^2.0.1",
     "axax": "^0.2.2",
     "chalk": "^5.0.1",
     "commander": "^9.3.0",
@@ -61,6 +62,7 @@
     "mockttp": "^3.0.0",
     "node-abort-controller": "^3.0.1",
     "node-machine-id": "^1.1.12",
+    "ora": "^6.1.2",
     "semver": "^7.3.7",
     "slice-ansi": "^4.0.0",
     "stream-chain": "^2.2.5",

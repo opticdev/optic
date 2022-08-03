@@ -11,11 +11,45 @@ Adding files:
   id: Empty
 
 Adding ruleset:
-
 - breaking-changes
 
 File IDs are stable identifiers for your API specifications that will appear in Optic.
 You can change them now before you check in the optic.yml file.
+"
+`;
+
+exports[`init init with \`--ci github-action\` option 1`] = `
+"Initializing Optic...
+Detecting OpenAPI specs in $workspace$...
+
+Found 1 valid spec
+
+Adding files:
+- path: example-api-v0.json
+  id: Empty
+
+Adding ruleset:
+- breaking-changes
+
+File IDs are stable identifiers for your API specifications that will appear in Optic.
+You can change them now before you check in the optic.yml file.
+
+Setting up CI:
+- Github action file written to $workspace$/.github/workflows/optic-ci.yml
+
+Set your OPTIC_TOKEN Github secret to finish configuring Optic CI.
+More details at: https://github.com/opticdev/github-action/
+"
+`;
+
+exports[`init init with \`--ci-only github-action\` option 1`] = `
+"Initializing Optic...
+
+Setting up CI:
+- Github action file written to $workspace$/.github/workflows/optic-ci.yml
+
+Set your OPTIC_TOKEN Github secret to finish configuring Optic CI.
+More details at: https://github.com/opticdev/github-action/
 "
 `;
 

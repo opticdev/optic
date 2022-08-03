@@ -54,72 +54,23 @@ export const registerCloudCompare = (
             );
           }
 
-          await cloudCompare(token, base, verbose, cliConfig.root);
+          await cloudCompare(token, base, verbose, cliConfig);
         }
       )
     );
-};
-
-type YmlConfig = {
-  files: {
-    path: string;
-    id: string;
-  }[];
-};
-
-const OPTIC_YML_NAME = 'optic.yml';
-
-const validateYmlFile = (file: unknown) => {
-  if (!file) {
-    throw new UserError('optic.yml file is empty');
-  }
-
-  const ajv = new Ajv();
-  const schema = {
-    type: 'object',
-    properties: {
-      files: {
-        type: 'array',
-        items: {
-          type: 'object',
-          properties: {
-            path: {
-              type: 'string',
-            },
-            id: {
-              type: 'string',
-            },
-          },
-          required: ['path', 'id'],
-        },
-      },
-    },
-    required: ['files'],
-  };
-  try {
-    ajv.validate(schema, file);
-  } catch (e) {
-    throw new UserError((e as Error).message);
-  }
 };
 
 const cloudCompare = async (
   token: string,
   base: string,
   verbose: boolean,
-  gitRootPath: string
+  cliConfig: OpticCliConfig
 ) => {
-  const expectedYmlPath = path.join(gitRootPath, OPTIC_YML_NAME);
-  try {
-    await fs.access(expectedYmlPath);
-  } catch (e) {
+  if (!cliConfig.configPath) {
     throw new UserError(
       'Could not find an optic.yml at the root of the repo. Create an optic.yml file with a list of files to run optic against. Run `npx @useoptic/optic@latest init` to generate a file.'
     );
   }
-  const yml = yaml.load(await fs.readFile(expectedYmlPath, 'utf-8'));
-
-  validateYmlFile(yml);
 
   const specInputs: {
     from: ParseResult;
@@ -127,11 +78,11 @@ const cloudCompare = async (
     id: string;
     path: string;
   }[] = await Promise.all(
-    (yml as YmlConfig).files.map(async (file) => {
+    cliConfig.files.map(async (file) => {
       const { baseFile, headFile, pathFromGitRoot } = await parseFilesFromRef(
         file.path,
         base,
-        gitRootPath
+        cliConfig.root
       );
 
       return {
@@ -149,7 +100,13 @@ const cloudCompare = async (
 
   logger.info(`Running ${specInputs.length} comparisons...`);
 
-  const sessions = await initRun(opticClient, specInputs, base, context);
+  const sessions = await initRun(
+    opticClient,
+    specInputs,
+    base,
+    context,
+    cliConfig.ruleset
+  );
   const resultFiles: (CompareFileJson | null)[] = await Promise.all(
     sessions.map(async (session) => {
       if (session.session.status !== 'completed') {

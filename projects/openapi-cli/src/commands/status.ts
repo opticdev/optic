@@ -2,6 +2,8 @@ import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
 
+import { createCommandFeedback, InputErrors } from './reporters/feedback';
+import { trackCompletion } from '../segment';
 import * as AT from '../lib/async-tools';
 import { ComponentSchemaExampleFacts, readDeferencedSpec } from '../specs';
 import {
@@ -19,8 +21,9 @@ import {
 } from '../captures';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 
-export function statusCommand(): Command {
+export async function statusCommand(): Promise<Command> {
   const command = new Command('status');
+  const feedback = await createCommandFeedback(command);
 
   command
     .description('match observed traffic up to an OpenAPI spec')
@@ -32,7 +35,10 @@ export function statusCommand(): Command {
     .action(async (specPath) => {
       const absoluteSpecPath = Path.resolve(specPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
-        return command.error('OpenAPI specification file could not be found');
+        return await feedback.inputError(
+          'OpenAPI specification file could not be found',
+          InputErrors.SPEC_FILE_NOT_FOUND
+        );
       }
 
       const options = command.opts();
@@ -42,7 +48,10 @@ export function statusCommand(): Command {
       if (options.har) {
         let absoluteHarPath = Path.resolve(options.har);
         if (!(await fs.pathExists(absoluteHarPath))) {
-          return command.error('Har file could not be found at given path');
+          return await feedback.inputError(
+            'HAR file could not be found at given path',
+            InputErrors.HAR_FILE_NOT_FOUND
+          );
         }
         let harFile = fs.createReadStream(absoluteHarPath);
         let harEntries = AT.tap(
@@ -53,14 +62,17 @@ export function statusCommand(): Command {
       }
 
       if (sources.length < 1) {
-        command.showHelpAfterError(true);
-        return command.error('Choose a traffic source to match spec by');
+        return await feedback.inputError(
+          'choose a traffic source to match spec by',
+          InputErrors.CAPTURE_METHOD_MISSING
+        );
       }
 
       const specReadResult = await readDeferencedSpec(absoluteSpecPath);
       if (specReadResult.err) {
-        command.error(
-          `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`
+        await feedback.inputError(
+          `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`,
+          InputErrors.SPEC_FILE_NOT_READABLE
         );
       }
       const { jsonLike: spec } = specReadResult.unwrap();
@@ -69,7 +81,12 @@ export function statusCommand(): Command {
 
       let observations = matchInteractions(spec, interactions);
 
-      await renderStatus(observations);
+      let observationsFork = AT.forkable(observations);
+      const renderingStatus = renderStatus(observationsFork.fork());
+      const trackingStats = trackStats(observationsFork.fork());
+      observationsFork.start();
+
+      await Promise.all([renderingStatus, trackingStats]);
     });
 
   return command;
@@ -94,6 +111,7 @@ export function matchInteractions(
       interactionsFork.fork(),
       spec
     );
+  const capturedInteractions = interactionsFork.fork();
   interactionsFork.start();
 
   const matchingObservations = (async function* (): StatusObservations {
@@ -136,10 +154,25 @@ export function matchInteractions(
     }
   })();
 
-  return AT.merge(matchingObservations, unmatchingObservations);
+  const captureObservations = AT.map(function (
+    interaction: CapturedInteraction
+  ): StatusObservation {
+    return {
+      kind: StatusObservationKind.InteractionCaptured,
+      path: interaction.request.path,
+      method: interaction.request.method,
+    };
+  })(capturedInteractions);
+
+  return AT.merge(
+    captureObservations,
+    matchingObservations,
+    unmatchingObservations
+  );
 }
 
 export enum StatusObservationKind {
+  InteractionCaptured = 'interaction-captured',
   InteractionMatchedOperation = 'interaction-matched-operation',
   InteractionUnmatchedMethod = 'interaction-unmatched-method',
   InteractionUnmatchedPath = 'interaction-unmatched-path',
@@ -148,6 +181,11 @@ export enum StatusObservationKind {
 export type StatusObservation = {
   kind: StatusObservationKind;
 } & (
+  | {
+      kind: StatusObservationKind.InteractionCaptured;
+      path: string;
+      method: string;
+    }
   | {
       kind: StatusObservationKind.InteractionMatchedOperation;
       capturedPath: string;
@@ -269,4 +307,38 @@ async function renderStatus(observations: StatusObservations) {
   function operationId({ path, method }: { path: string; method: string }) {
     return `${method}${path}`;
   }
+}
+
+async function trackStats(observations: StatusObservations) {
+  const stats = {
+    unmatchedPathsCount: 0,
+    unmatchedMethodsCount: 0,
+
+    capturedInteractionsCount: 0,
+    matchedInteractionsCount: 0,
+  };
+
+  await trackCompletion('openapi_cli.status', stats, async function* () {
+    for await (let observation of observations) {
+      if (observation.kind === StatusObservationKind.InteractionUnmatchedPath) {
+        stats.unmatchedPathsCount += 1;
+        yield stats;
+      } else if (
+        observation.kind === StatusObservationKind.InteractionUnmatchedMethod
+      ) {
+        stats.unmatchedMethodsCount += 1;
+        yield stats;
+      } else if (
+        observation.kind === StatusObservationKind.InteractionCaptured
+      ) {
+        stats.capturedInteractionsCount += 1;
+        yield stats;
+      } else if (
+        observation.kind === StatusObservationKind.InteractionMatchedOperation
+      ) {
+        stats.matchedInteractionsCount += 1;
+        yield stats;
+      }
+    }
+  });
 }

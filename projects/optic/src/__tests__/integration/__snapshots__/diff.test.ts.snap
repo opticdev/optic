@@ -1,5 +1,137 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`diff \`optic diff\` compares against HEAD in repo 1`] = `
+"example-api-1:
+
+[1mGET[22m /example: 
+  - operationId [33mchanged[39m
+
+[1mPATCH[22m /example: 
+  - operationId [33mchanged[39m
+  - response [1m200[22m:
+    - description [32madded[39m
+    - body [1mapplication/json[22m: [32madded[39m
+      - type [32madded[39m
+      - example [32madded[39m
+        - value [32madded[39m
+
+[1mPOST[22m /example: 
+  - operationId [33mchanged[39m
+
+[1mPUT[22m /example: 
+  - operationId [33mchanged[39m
+
+
+example-api-2:
+
+[1mGET[22m /example: 
+  - operationId [33mchanged[39m
+
+[1mPATCH[22m /example: 
+  - operationId [33mchanged[39m
+  - response [1m200[22m:
+    - description [32madded[39m
+    - body [1mapplication/json[22m: [32madded[39m
+      - type [32madded[39m
+      - example [32madded[39m
+        - value [32madded[39m
+
+[1mPOST[22m /example: 
+  - operationId [33mchanged[39m
+
+[1mPUT[22m /example: 
+  - operationId [33mchanged[39m
+
+
+[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
+"
+`;
+
+exports[`diff basic rules config 1`] = `
+"
+[1mGET[22m /example: 
+  - operationId [33mchanged[39m
+
+[1mPATCH[22m /example: 
+  - operationId [33mchanged[39m
+  - response [1m200[22m:
+    - description [32madded[39m
+    - body [1mapplication/json[22m: [32madded[39m
+      - type [32madded[39m
+      - example [32madded[39m
+        - value [32madded[39m
+
+[1mPOST[22m /example: [31mremoved[39m
+[1mPUT[22m /example: 
+  - operationId [33mchanged[39m
+
+[1mGET[22m /invalid_name: [32madded[39m
+  - operationId [32madded[39m
+
+Checks
+
+  [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /example
+
+
+  [1m[42m[37m PASS [39m[49m[22m [1mPATCH[22m /example
+
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /example
+    Rule: prevent operation removal
+    [31mx[39m removed operation: POST /example must not remove operation
+      [31mcannot remove an operation[39m
+      at [4m$workspace$/example-api-v0.json:9:150[24m
+
+
+
+  [1m[42m[37m PASS [39m[49m[22m [1mPUT[22m /example
+
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /invalid_name
+    Rule: operation path component naming check
+    [31mx[39m requirement for operation: GET /invalid_name must path component must be camelCase when always
+      [31minvalid_name is not camelCase[39m
+      at [4m$workspace$/example-api-v1.json:31:632[24m
+
+
+
+1 operation added, 3 changed, 1 removed
+[32m[1m3 checks passed[22m[39m
+[31m[1m2 checks failed[22m[39m
+[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
+"
+`;
+
+exports[`diff breaking changes exclusion 1`] = `
+"
+[1mGET[22m /example: 
+  - x-optic-ignore-breaking-changes [32madded[39m
+  - operationId [33mchanged[39m
+  - query parameter [3muserId[23m: [32madded[39m
+    - in, name, schema, required, description [32madded[39m
+
+[1mPATCH[22m /example: 
+  - operationId [33mchanged[39m
+  - response [1m200[22m:
+    - description [32madded[39m
+    - body [1mapplication/json[22m: [32madded[39m
+      - type [32madded[39m
+      - example [32madded[39m
+        - value [32madded[39m
+
+[1mPOST[22m /example: 
+  - operationId [33mchanged[39m
+
+[1mPUT[22m /example: 
+  - operationId [33mchanged[39m
+
+4 operations changed
+[32m[1m0 checks passed[22m[39m
+[31m[1m0 checks failed[22m[39m
+[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
+"
+`;
+
 exports[`diff two files, no repo or config 1`] = `
 "
 [1mGET[22m /example: 
@@ -20,6 +152,6 @@ exports[`diff two files, no repo or config 1`] = `
 [1mPUT[22m /example: 
   - operationId [33mchanged[39m
 
-[34mRerun this command with the --web flag to view these changes to view the detailed changes[39m
+[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;

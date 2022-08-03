@@ -11,6 +11,13 @@ test('valid open api document should not raise errors', async () => {
   );
 });
 
+test('valid open 3.1 api document should not raise errors', async () => {
+  validateOpenApiV3Document(defaultEmptySpec);
+  validateOpenApiV3Document(
+    await fs.readJson('./inputs/openapi3/todo-api-3_1.json')
+  );
+});
+
 test('open api doc with no path should throw an error', () => {
   expect(() => {
     validateOpenApiV3Document({

@@ -150,6 +150,7 @@ const openapi3_0_schema_object = {
     },
   },
 };
+
 const openapi3_1_schema_object = {
   type: 'object',
   description:
@@ -248,7 +249,13 @@ const openapi3_1_schema_object = {
       $ref: 'http://json-schema.org/draft-07/schema#/properties/enum',
     },
     type: {
-      type: 'string',
+      oneOf: [
+        { type: 'string' },
+        {
+          type: 'array',
+          items: { oneOf: [{ type: 'string' }] },
+        },
+      ],
     },
     allOf: {
       type: 'array',
@@ -313,6 +320,7 @@ const openapi3_1_schema_object = {
     format: {
       type: 'string',
     },
+    example: {},
   },
 };
 

@@ -5,6 +5,8 @@ import readline from 'readline';
 import { AbortController } from 'node-abort-controller';
 import { Writable } from 'stream';
 import * as AT from '../lib/async-tools';
+import { createCommandFeedback, InputErrors } from './reporters/feedback';
+import { trackCompletion } from '../segment';
 
 import {
   CapturedInteraction,
@@ -14,18 +16,24 @@ import {
   ProxyInteractions,
 } from '../captures/index';
 
-export function captureCommand(): Command {
+export async function captureCommand(): Promise<Command> {
   const command = new Command('capture');
+
+  const feedback = await createCommandFeedback(command);
 
   command
     .description('capture observed traffic as a HAR (HttpArchive v1.3) file')
+    .argument(
+      '[file-path]',
+      'path of the new capture file (written to stdout when not provided)'
+    )
     .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
     .option(
       '--proxy <target-url>',
       'accept traffic over a proxy targeting the actual service'
     )
-    // .option('-o <output-file>', 'file name for output')
-    .action(async () => {
+    .option('-o <output-file>', 'file name for output')
+    .action(async (filePath?: string) => {
       const options = command.opts();
 
       let sourcesController = new AbortController();
@@ -35,7 +43,10 @@ export function captureCommand(): Command {
       if (options.har) {
         let absoluteHarPath = Path.resolve(options.har);
         if (!(await fs.pathExists(absoluteHarPath))) {
-          return command.error('Har file could not be found at given path');
+          return await feedback.inputError(
+            'HAR file could not be found at given path',
+            InputErrors.HAR_FILE_NOT_FOUND
+          );
         }
         let harFile = fs.createReadStream(absoluteHarPath);
         let harEntries = HarEntries.fromReadable(harFile);
@@ -44,8 +55,9 @@ export function captureCommand(): Command {
 
       if (options.proxy) {
         if (!process.stdin.isTTY) {
-          return command.error(
-            'Can only use --proxy when in an interactive terminal session'
+          return await feedback.inputError(
+            'can only use --proxy when in an interactive terminal session',
+            InputErrors.PROXY_IN_NON_TTY
           );
         }
 
@@ -54,22 +66,38 @@ export function captureCommand(): Command {
           sourcesController.signal
         );
         sources.push(HarEntries.fromProxyInteractions(proxyInteractions));
-        console.error(
+        feedback.notable(
           `Proxy created. Redirect traffic you want to capture to ${proxyUrl}`
         );
         interactiveCapture = true;
       }
 
       if (sources.length < 1) {
-        command.showHelpAfterError(true);
-        return command.error(
-          'Choose a capture method to update spec by traffic'
+        return await feedback.inputError(
+          'choose a method of capturing traffic to create a capture',
+          InputErrors.CAPTURE_METHOD_MISSING
         );
       }
 
-      const harEntries = AT.merge(...sources);
+      let destination: Writable;
+      if (filePath) {
+        let absoluteFilePath = Path.resolve(filePath);
+        let dirPath = Path.dirname(absoluteFilePath);
+        let fileBaseName = Path.basename(filePath);
 
-      const observations = writeInteractions(harEntries, process.stdout);
+        if (!(await fs.pathExists(dirPath))) {
+          return await feedback.inputError(
+            `to create ${fileBaseName}, dir must exist at ${dirPath}`,
+            InputErrors.DESTINATION_FILE_DIR_MISSING
+          );
+        }
+
+        destination = fs.createWriteStream(absoluteFilePath);
+      } else {
+        destination = process.stdout;
+      }
+
+      const harEntries = AT.merge(...sources);
 
       const handleUserSignals = (async function () {
         if (interactiveCapture && process.stdin.isTTY) {
@@ -86,12 +114,18 @@ export function captureCommand(): Command {
         }
       })();
 
+      const observations = writeInteractions(harEntries, destination);
+
+      const observationsFork = AT.forkable(observations);
       const renderingStats = renderCaptureProgress(
-        observations,
+        feedback,
+        observationsFork.fork(),
         interactiveCapture
       );
+      const trackingStats = trackStats(observationsFork.fork());
+      observationsFork.start();
 
-      await Promise.all([handleUserSignals, renderingStats]);
+      await Promise.all([handleUserSignals, renderingStats, trackingStats]);
     });
 
   return command;
@@ -124,13 +158,13 @@ function writeInteractions(
     observing.onCompleted();
   }
 
-  if (destination.fd == 1) {
-    // if writing to stdout
-    // stdout won't close until the process detaches, so we can't use it to measure completion
-    harJSON.once('end', onWriteComplete);
-  } else {
-    destination.once('end', onWriteComplete);
-  }
+  // if (destination.fd == 1) {
+  //   // if writing to stdout
+  //   // stdout won't close until the process detaches, so we can't use it to measure completion
+  harJSON.once('end', onWriteComplete);
+  // } else {
+  //   destination.once('end', onWriteComplete);
+  // }
 
   harJSON.pipe(destination);
 
@@ -159,32 +193,46 @@ export interface CaptureObservations
   extends AsyncIterable<CaptureObservation> {}
 
 async function renderCaptureProgress(
+  feedback: Awaited<ReturnType<typeof createCommandFeedback>>,
   observations: CaptureObservations,
   interactiveCapture: boolean
 ) {
-  const chalk = (await import('chalk')).default;
+  const ora = (await import('ora')).default;
 
   let interactionCount = 0;
 
-  console.error('> Waiting for first request');
   if (interactiveCapture) {
-    console.error('Press [ Enter ] to finish capturing requests');
+    feedback.instruction('Press [ Enter ] to finish capturing requests');
   }
+  let spinner = ora('0 requests captured');
+  spinner.start();
 
   for await (let observation of observations) {
     if (observation.kind === CaptureObservationKind.InteractionCaptured) {
       interactionCount += 1;
-      if (interactionCount === 1) {
-        console.error(`> First request captured`);
-      }
+      spinner.text = `${interactionCount} requests captured`;
     } else if (observation.kind === CaptureObservationKind.CaptureWritten) {
-      console.error('> Capture written succesfully');
     }
   }
 
   if (interactionCount === 0) {
-    console.error('⚠️  No requests captured');
+    spinner.info('No requests captured');
   } else {
-    console.error(`✅ Captured ${interactionCount} requests`);
+    spinner.succeed(`${interactionCount} requests written`);
   }
+}
+
+async function trackStats(observations: CaptureObservations) {
+  const stats = {
+    capturedInteractionsCount: 0,
+  };
+
+  await trackCompletion('openapi_cli.capture', stats, async function* () {
+    for await (let observation of observations) {
+      if (observation.kind === CaptureObservationKind.InteractionCaptured) {
+        stats.capturedInteractionsCount += 1;
+        yield stats;
+      }
+    }
+  });
 }

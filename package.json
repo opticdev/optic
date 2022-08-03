@@ -1,7 +1,7 @@
 {
   "name": "openapi-workspaces",
   "private": true,
-  "version": "0.26.25",
+  "version": "0.26.28",
   "workspaces": [
     "projects/json-pointer-helpers",
     "projects/openapi-io",
@@ -12,5 +12,9 @@
     "projects/optic-ci",
     "projects/openapi-cli",
     "projects/standard-rulesets"
-  ]
+  ],
+  "scripts": {
+    "release": "gh release create --target=$(git branch --show-current) v$(node -e \"process.stdout.write(require('./package.json').version)\")",
+    "version": "yarn workspaces foreach -v version"
+  }
 }

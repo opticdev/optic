@@ -3,10 +3,20 @@
 exports[`status command matching interactions observes matching operations 1`] = `
 Array [
   Object {
+    "kind": "interaction-captured",
+    "method": "get",
+    "path": "/orders/3/products",
+  },
+  Object {
     "capturedPath": "/orders/3/products",
     "kind": "interaction-matched-operation",
     "method": "get",
     "path": "/orders/{orderId}/products",
+  },
+  Object {
+    "kind": "interaction-captured",
+    "method": "post",
+    "path": "/orders",
   },
   Object {
     "capturedPath": "/orders",
@@ -20,9 +30,19 @@ Array [
 exports[`status command matching interactions observes unmatching methods 1`] = `
 Array [
   Object {
+    "kind": "interaction-captured",
+    "method": "patch",
+    "path": "/orders/3/products",
+  },
+  Object {
     "kind": "interaction-unmatched-method",
     "method": "patch",
     "path": "/orders/{orderId}/products",
+  },
+  Object {
+    "kind": "interaction-captured",
+    "method": "get",
+    "path": "/orders",
   },
   Object {
     "kind": "interaction-unmatched-method",
@@ -35,14 +55,29 @@ Array [
 exports[`status command matching interactions observes unmatching paths 1`] = `
 Array [
   Object {
-    "kind": "interaction-unmatched-path",
+    "kind": "interaction-captured",
     "method": "get",
     "path": "/orders/3",
   },
   Object {
     "kind": "interaction-unmatched-path",
     "method": "get",
+    "path": "/orders/3",
+  },
+  Object {
+    "kind": "interaction-captured",
+    "method": "get",
     "path": "/orders/4/details",
+  },
+  Object {
+    "kind": "interaction-unmatched-path",
+    "method": "get",
+    "path": "/orders/4/details",
+  },
+  Object {
+    "kind": "interaction-captured",
+    "method": "post",
+    "path": "/products",
   },
   Object {
     "kind": "interaction-unmatched-path",

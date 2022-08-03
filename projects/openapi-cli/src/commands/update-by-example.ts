@@ -54,18 +54,14 @@ export function updateByExampleCommand(): Command {
         }`
       );
 
-      trackEvent(
-        'openapi_cli.spec_updated_by_example',
-        'openapi_cli', // TODO: determine more useful userId
-        {
-          examplesCount: stats.examplesCount,
-          externalExamplesCount: stats.externalExamplesCount,
-          patchesCount: stats.patchesCount,
-          updatedFilesCount: stats.updatedFilesCount,
-          filesWithOverwrittenYamlCommentsCount:
-            stats.filesWithOverwrittenYamlComments.size,
-        }
-      );
+      trackEvent('openapi_cli.spec_updated_by_example', {
+        examplesCount: stats.examplesCount,
+        externalExamplesCount: stats.externalExamplesCount,
+        patchesCount: stats.patchesCount,
+        updatedFilesCount: stats.updatedFilesCount,
+        filesWithOverwrittenYamlCommentsCount:
+          stats.filesWithOverwrittenYamlComments.size,
+      });
 
       try {
         await flushEvents();

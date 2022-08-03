@@ -8,7 +8,7 @@ export enum VCS {
   Git = 'git',
 }
 
-const OPTIC_YML_NAME = 'optic.yml';
+export const OPTIC_YML_NAME = 'optic.yml';
 
 type ConfigRuleset = { name: string; config: unknown };
 
@@ -98,6 +98,9 @@ export async function loadCliConfig(
 
   validateConfig(config, configPath);
   formatRules(config as RawYmlConfig);
+
+  // force files to be an empty array if it's not in the yaml
+  (config as RawYmlConfig).files ||= [];
 
   const cliConfig = config as OpticCliConfig;
   cliConfig.root = path.dirname(configPath);
