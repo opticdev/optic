@@ -44,11 +44,7 @@ export async function createSpecFile<T>(
   for await (let _writtenFilePath of SpecFiles.writeFiles(updatedSpecFiles)) {
   }
 
-  trackEvent(
-    'openapi_cli.workflows.spec_file_created',
-    'openapi_cli', // TODO: determine more useful userId
-    {}
-  );
+  trackEvent('openapi_cli.workflows.spec_file_created', {});
 
   try {
     await flushEvents();
@@ -106,17 +102,13 @@ export async function applyTemplate<T>(
   for await (let _writtenFilePath of SpecFiles.writeFiles(updatedSpecFiles)) {
   }
 
-  trackEvent(
-    'openapi_cli.workflows.template_applied',
-    'openapi_cli', // TODO: determine more useful userId
-    {
-      templateName: template.name,
-      patchesCount: stats.patchesCount,
-      updatedFilesCount: stats.updatedFilesCount,
-      filesWithOverwrittenYamlCommentsCount:
-        stats.filesWithOverwrittenYamlComments.size,
-    }
-  );
+  trackEvent('openapi_cli.workflows.template_applied', {
+    templateName: template.name,
+    patchesCount: stats.patchesCount,
+    updatedFilesCount: stats.updatedFilesCount,
+    filesWithOverwrittenYamlCommentsCount:
+      stats.filesWithOverwrittenYamlComments.size,
+  });
 
   try {
     await flushEvents();

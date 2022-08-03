@@ -3,6 +3,7 @@
 import { Command } from 'commander';
 import fs from 'fs-extra';
 import Path from 'path';
+import { randomUUID } from 'crypto';
 import { createCommandFeedback } from './commands/reporters/feedback';
 
 import { addCommand } from './commands/add';
@@ -40,17 +41,23 @@ export async function makeCli(config: CliConfig) {
 (async () => {
   const config = readConfig();
 
+  const runId = randomUUID();
   if (config.analytics.segment) {
-    initSegment(config.analytics.segment);
+    initSegment({
+      ...config.analytics.segment,
+      version: packageJson.version,
+      name: packageJson.name,
+      runId,
+    });
   }
 
   if (config.errors.sentry) {
-    initSentry({ ...config.errors.sentry, version: packageJson.version });
+    initSentry({
+      ...config.errors.sentry,
+      version: packageJson.version,
+      runId,
+    });
   }
-
-  trackEvent('openapi-cli-run', 'openapi-cli', {
-    version: packageJson.version,
-  });
 
   const cli = await makeCli(config);
   const subCommandNames = cli.commands.flatMap((cmd) => [
@@ -72,6 +79,11 @@ export async function makeCli(config: CliConfig) {
     args[0] = subcommand;
     args[1] = specPath;
   }
+
+  trackEvent('openapi-cli-run', {
+    runId,
+    version: packageJson.version,
+  });
 
   cli.parse(args, { from: 'user' });
 })();

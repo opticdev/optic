@@ -1,5 +1,6 @@
 import { Command } from 'commander';
 import { Writable } from 'stream';
+import { trackEvent, flushEvents } from '../../segment';
 
 export async function createCommandFeedback(
   command: Command,
@@ -10,18 +11,35 @@ export async function createCommandFeedback(
   const chalk = (await import('chalk')).default;
   if (!options) options = {};
 
+  let commandName = command.name();
+
   const destination: Writable = options.destination || process.stderr;
 
   command.configureOutput({
-    writeErr: inputError,
+    writeErr: (message) => inputError(message, 'command.error'),
   });
 
-  function inputError(message: string, errCode: number = 1) {
+  function inputError(
+    message: string,
+    name: string,
+    eventProperties: { [key: string]: any } = {},
+    errCode: number = 1
+  ): Promise<void> {
     const prefix = message.indexOf('error: ') > -1 ? '' : 'error: ';
     destination.write(
       chalk.bgRed.white(' input ') + ' ' + prefix + message + '\n'
     );
-    process.exit(errCode);
+    trackEvent(`openapi_cli.${commandName}.input-error.${name}`, {
+      ...eventProperties,
+      message,
+    });
+    return flushEvents()
+      .catch((err) => {
+        console.warn('Could not flush usage analytics (non-critical)');
+      })
+      .finally(() => {
+        process.exit(errCode);
+      });
   }
 
   function instruction(message: string, errCode: number = 1) {
@@ -68,4 +86,14 @@ export async function createCommandFeedback(
     success,
     warning,
   };
+}
+
+export enum InputErrors {
+  CAPTURE_METHOD_MISSING = 'capture-method-missing',
+  DESTINATION_FILE_DIR_MISSING = 'destination-file-dir-missing',
+  DESTINATION_FILE_ALREADY_EXISTS = ' destination-file-already-exists',
+  HAR_FILE_NOT_FOUND = 'har-file-not-found',
+  PROXY_IN_NON_TTY = 'proxy-in-non-tty',
+  SPEC_FILE_NOT_FOUND = 'spec-file-not-found',
+  SPEC_FILE_NOT_READABLE = 'spec-file-not-readable',
 }
