@@ -1,5 +1,0 @@
-files:
-  - id: example-api-1
-    path: ./example-api-1.json
-  - id: example-api-2
-    path: ./example-api-2.json
