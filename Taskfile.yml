@@ -46,3 +46,8 @@ tasks:
       TAG: '{{default "local" .TAG}}'
     cmds:
       - docker build {{.CLI_ARGS}} optic-baseline:$TAG .
+
+  publish:
+    desc: "Publish built artifacts. Passes CLI_ARGS to 'npm publish'"
+    cmds:
+      - yarn workspaces foreach -v --no-private npm publish --access public {{.CLI_ARGS}}
