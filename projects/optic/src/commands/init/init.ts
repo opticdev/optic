@@ -12,15 +12,26 @@ import { writeCIAction } from './write-ci-action';
 
 export type InitOptions = {
   ci?: SupportedCI;
+  ciOnly?: SupportedCI;
 };
 
 export const getInit =
   (config: OpticCliConfig) =>
-  async ({ ci }: InitOptions): Promise<void> => {
+  async ({ ci, ciOnly }: InitOptions): Promise<void> => {
+    const ciCombined = ciOnly || ci;
+
     // Sanity checks
-    if (config.configPath) {
+    if (!ciOnly && config.configPath) {
       console.error(
         `Error: a configuration file already exists at ${config.configPath}.`
+      );
+      process.exitCode = 1;
+      return;
+    }
+
+    if (ciOnly && !config.configPath) {
+      console.error(
+        `Error: no configuration file found. Run \`init\` with \`--ci\` option to init optic and setup CI in one run.`
       );
       process.exitCode = 1;
       return;
@@ -38,9 +49,9 @@ export const getInit =
       return;
     }
 
-    if (ci && !supportedCIs.includes(ci)) {
+    if (ciCombined && !supportedCIs.includes(ciCombined)) {
       console.error(
-        `Error: unsupported ci: ${ci}. Supported values: ${supportedCIs.join(
+        `Error: unsupported ci: ${ciCombined}. Supported values: ${supportedCIs.join(
           ', '
         )}`
       );
@@ -53,69 +64,71 @@ export const getInit =
 
     console.log('Initializing Optic...');
 
-    // Find valid spec files
-    console.log(`Detecting OpenAPI specs in ${gitRoot}...`);
-    const openApiSpecPaths = await findOpenAPISpecs();
-    const validSpecs = await getValidSpecs(openApiSpecPaths);
+    if (!ciOnly) {
+      // Find valid spec files
+      console.log(`Detecting OpenAPI specs in ${gitRoot}...`);
+      const openApiSpecPaths = await findOpenAPISpecs();
+      const validSpecs = await getValidSpecs(openApiSpecPaths);
 
-    // Write configuration
-    if (validSpecs.length) {
-      console.log();
-      console.log(
-        `Found ${validSpecs.length} valid spec${
-          validSpecs.length !== 1 ? 's' : ''
-        }`
-      );
-
-      if (validSpecs.length < openApiSpecPaths.length) {
-        const validSpecPaths = validSpecs.map((spec) => spec.path);
-        const invalidSpecPaths = openApiSpecPaths.filter(
-          (spec) => !validSpecPaths.includes(spec)
+      // Write configuration
+      if (validSpecs.length) {
+        console.log();
+        console.log(
+          `Found ${validSpecs.length} valid spec${
+            validSpecs.length !== 1 ? 's' : ''
+          }`
         );
+
+        if (validSpecs.length < openApiSpecPaths.length) {
+          const validSpecPaths = validSpecs.map((spec) => spec.path);
+          const invalidSpecPaths = openApiSpecPaths.filter(
+            (spec) => !validSpecPaths.includes(spec)
+          );
+
+          console.log();
+          console.log(
+            `The following ${invalidSpecPaths.length} spec${
+              invalidSpecPaths.length !== 1 ? 's' : ''
+            } look like OpenAPI specs but couldn't be parsed:`
+          );
+
+          invalidSpecPaths.forEach((spec) => console.log(`- ${spec}`));
+        }
+
+        const opticConfig = generateOpticConfig(validSpecs, gitRoot);
+        const opticConfigYml = dump(opticConfig);
+        await writeOpticConfig(opticConfigYml, configPath);
+
+        console.log();
+        console.log(`Adding files:`);
+        for (const spec of opticConfig.files) {
+          console.log(`- path: ${spec.path}`);
+          console.log(`  id: ${spec.id}`);
+        }
+
+        console.log();
+        console.log('Adding ruleset:');
+        for (const ruleset of opticConfig.ruleset) {
+          console.log(`- ${ruleset}`);
+        }
 
         console.log();
         console.log(
-          `The following ${invalidSpecPaths.length} spec${
-            invalidSpecPaths.length !== 1 ? 's' : ''
-          } look like OpenAPI specs but couldn't be parsed:`
+          'File IDs are stable identifiers for your API specifications that will appear in Optic.'
         );
-
-        invalidSpecPaths.forEach((spec) => console.log(`- ${spec}`));
+        console.log(
+          'You can change them now before you check in the optic.yml file.'
+        );
+      } else {
+        console.error(
+          'No valid specification files were found: not writing Optic configuration file.'
+        );
       }
-
-      const opticConfig = generateOpticConfig(validSpecs, gitRoot);
-      const opticConfigYml = dump(opticConfig);
-      await writeOpticConfig(opticConfigYml, configPath);
-
-      console.log();
-      console.log(`Adding files:`);
-      for (const spec of opticConfig.files) {
-        console.log(`- path: ${spec.path}`);
-        console.log(`  id: ${spec.id}`);
-      }
-
-      console.log();
-      console.log('Adding ruleset:');
-      for (const ruleset of opticConfig.ruleset) {
-        console.log(`- ${ruleset}`);
-      }
-
-      console.log();
-      console.log(
-        'File IDs are stable identifiers for your API specifications that will appear in Optic.'
-      );
-      console.log(
-        'You can change them now before you check in the optic.yml file.'
-      );
-    } else {
-      console.error(
-        'No valid specification files were found: not writing Optic configuration file.'
-      );
     }
 
-    if (ci) {
+    if (ciCombined) {
       console.log('');
       console.log('Setting up CI:');
-      writeCIAction(gitRoot, ci);
+      writeCIAction(gitRoot, ciCombined);
     }
   };

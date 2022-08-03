@@ -28,6 +28,22 @@ import {
   preventPathParameterTypeChange,
   preventHeaderParameterTypeChange,
 } from './preventParameterTypeChange';
+import Ajv from 'ajv';
+
+type YamlConfig = {
+  exclude_operations_with_extension?: string;
+};
+
+const ajv = new Ajv();
+const configSchema = {
+  type: 'object',
+  properties: {
+    exclude_operations_with_extension: {
+      type: 'string',
+    },
+  },
+};
+const validateConfigSchema = ajv.compile(configSchema);
 
 const breakingChangesRules = [
   preventCookieParameterEnumBreak,
@@ -56,8 +72,29 @@ const breakingChangesRules = [
 type BreakingChangesRules = typeof breakingChangesRules;
 
 export class BreakingChangesRuleset extends Ruleset<BreakingChangesRules> {
-  static fromOpticConfig(): BreakingChangesRuleset {
-    return new BreakingChangesRuleset();
+  static fromOpticConfig(config: unknown): BreakingChangesRuleset | string {
+    const result = validateConfigSchema(config);
+
+    if (!result) {
+      return `- ${ajv.errorsText(validateConfigSchema.errors, {
+        separator: '\n- ',
+        dataVar: 'ruleset/breaking-changes',
+      })}`;
+    }
+
+    const validatedConfig = config as YamlConfig;
+
+    const constructorConfig: Omit<
+      RulesetConfig<BreakingChangesRules>,
+      'name' | 'rules'
+    > = {};
+    if (validatedConfig.exclude_operations_with_extension !== undefined) {
+      const extension = validatedConfig.exclude_operations_with_extension;
+      constructorConfig.matches = (context) =>
+        (context.operation.raw as any)[extension] !== true;
+    }
+
+    return new BreakingChangesRuleset(constructorConfig);
   }
 
   constructor(

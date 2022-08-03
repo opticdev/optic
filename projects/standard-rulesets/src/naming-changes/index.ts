@@ -55,12 +55,14 @@ const configSchema = {
 const validateConfigSchema = ajv.compile(configSchema);
 
 export class NamingChangesRuleset extends Ruleset<Rule[]> {
-  static fromOpticConfig(config: unknown): NamingChangesRuleset | string[] {
+  static fromOpticConfig(config: unknown): NamingChangesRuleset | string {
     const result = validateConfigSchema(config);
 
     if (!result) {
-      console.log(validateConfigSchema.errors!.map((error) => error.message));
-      return [];
+      return `- ${ajv.errorsText(validateConfigSchema.errors, {
+        separator: '\n- ',
+        dataVar: 'ruleset/naming',
+      })}`;
     }
 
     const validatedConfig = config as RulesetConfig;
