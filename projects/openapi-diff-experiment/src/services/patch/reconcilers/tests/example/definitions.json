@@ -1,0 +1,15 @@
+{
+  "components": {
+    "ExampleBody": {
+      "type": "object",
+      "properties": {
+        "hello": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "hello"
+      ]
+    }
+  }
+}

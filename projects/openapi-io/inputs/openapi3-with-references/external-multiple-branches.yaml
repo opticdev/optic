@@ -1,0 +1,8 @@
+type: object
+required: []
+properties: {}
+example:
+  user:
+    $ref: 'definitions.yaml#/User/example'
+  user2:
+    $ref: 'definitions.yaml#/User/example'

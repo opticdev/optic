@@ -1,0 +1,8 @@
+IssueType:
+  type: string
+  description: >
+    Issue type. Implies the existence of a resource
+    /issues/detail/{issue-type}/{id}.
+  enum:
+    - code
+    # more to come...

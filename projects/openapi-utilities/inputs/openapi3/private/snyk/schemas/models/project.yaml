@@ -1,0 +1,61 @@
+Project:
+  type: object
+  properties:
+    type:
+      type: string
+      description: Content type.
+      example: 'projects'
+    id:
+      type: string
+      description: The ID.
+      format: uuid
+      example: '331ede0a-de94-456f-b788-166caeca58bf'
+    attributes:
+      type: object
+      properties:
+        name:
+          type: string
+        created:
+          type: string
+          format: date-time
+          description: The date that the project was created on
+          example: '2021-05-29T09:50:54.014Z'
+        origin:
+          type: string
+          description: The origin the project was added from
+          example: github
+        type:
+          type: string
+          description: The package manager of the project
+          example: maven
+        status:
+          type: string
+          description: Describes if a project is currently monitored or it is de-activated
+          example: active
+        hostname:
+          type: string
+          nullable: true
+          description: The hostname for a CLI project, null if not set
+        targetReference:
+          type: string
+          nullable: true
+        businessCriticality:
+          type: array
+          items:
+            type: string
+        lifecycle:
+          type: array
+          items:
+            type: string
+        environment:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items: { $ref: '../shared/tag.yaml#/Tag' }
+      required: [name, created, origin, type, status]
+      additionalProperties: false
+    relationships: { $ref: '../common.yaml#/Relationships' }
+  required: ['type', 'id', 'attributes']
+  additionalProperties: false

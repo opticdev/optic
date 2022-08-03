@@ -1,0 +1,256 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`multi file read patch can group json patches by their respective files 1`] = `
+Array [
+  Object {
+    "newContents": "{
+  \\"components\\": {
+    \\"ExampleBody\\": {
+      \\"type\\": \\"object\\",
+      \\"properties\\": {
+        \\"hello\\": {
+          \\"type\\": \\"string\\"
+        },
+        \\"newOne\\": {
+          \\"type\\": \\"string\\"
+        }
+      },
+      \\"required\\": [
+        \\"hello\\",
+        \\"newOne\\"
+      ]
+    }
+  }
+}",
+    "path": "definitions.json",
+    "previousContents": "{
+  \\"components\\": {
+    \\"ExampleBody\\": {
+      \\"type\\": \\"object\\",
+      \\"properties\\": {
+        \\"hello\\": {
+          \\"type\\": \\"string\\"
+        }
+      },
+      \\"required\\": [
+        \\"hello\\"
+      ]
+    }
+  }
+}
+",
+  },
+  Object {
+    "newContents": "{
+  \\"openapi\\": \\"3.0.1\\",
+  \\"paths\\": {
+    \\"/example\\": {
+      \\"parameters\\": [],
+      \\"get\\": {
+        \\"parameters\\": [],
+        \\"responses\\": {
+          \\"200\\": {
+            \\"description\\": \\"HELLO WORLD\\",
+            \\"content\\": {
+              \\"application/json\\": {
+                \\"schema\\": {
+                  \\"$ref\\": \\"./definitions.json#/components/ExampleBody\\"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  \\"info\\": {
+    \\"version\\": \\"0.0.0\\",
+    \\"title\\": \\"Empty\\"
+  }
+}",
+    "path": "with-body-ref.json",
+    "previousContents": "{
+  \\"openapi\\": \\"3.0.1\\",
+  \\"paths\\": {
+    \\"/example\\": {
+      \\"parameters\\": [],
+      \\"get\\": {
+        \\"parameters\\": [],
+        \\"responses\\": {
+          \\"200\\": {
+            \\"description\\": \\"\\",
+            \\"content\\": {
+              \\"application/json\\": {
+                \\"schema\\": {\\"$ref\\":  \\"./definitions.json#/components/ExampleBody\\"}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  \\"info\\": {
+    \\"version\\": \\"0.0.0\\",
+    \\"title\\": \\"Empty\\"
+  }
+}
+",
+  },
+]
+`;
+
+exports[`multi file read patch can group json patches by their respective files across YAML & JSON dependencies 1`] = `
+Array [
+  Object {
+    "newContents": "{
+  \\"components\\": {
+    \\"ExampleBody\\": {
+      \\"type\\": \\"object\\",
+      \\"properties\\": {
+        \\"hello\\": {
+          \\"type\\": \\"string\\"
+        },
+        \\"newOne\\": {
+          \\"type\\": \\"string\\"
+        }
+      },
+      \\"required\\": [
+        \\"hello\\",
+        \\"newOne\\"
+      ]
+    }
+  }
+}",
+    "path": "definitions.json",
+    "previousContents": "{
+  \\"components\\": {
+    \\"ExampleBody\\": {
+      \\"type\\": \\"object\\",
+      \\"properties\\": {
+        \\"hello\\": {
+          \\"type\\": \\"string\\"
+        }
+      },
+      \\"required\\": [
+        \\"hello\\"
+      ]
+    }
+  }
+}
+",
+  },
+  Object {
+    "newContents": "info:
+  version: 0.0.0
+  title: Empty
+openapi: 3.0.1
+paths:
+  /example:
+    parameters: []
+    get:
+      parameters: []
+      responses:
+        '200':
+          description: HELLO WORLD
+          content:
+            application/json:
+              schema:
+                $ref: ./definitions.json#/components/ExampleBody
+",
+    "path": "with-body-ref.yaml",
+    "previousContents": "info:
+  version: 0.0.0
+  title: Empty
+openapi: 3.0.1
+paths:
+  \\"/example\\":
+    parameters: []
+    get:
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                \\"$ref\\": \\"./definitions.json#/components/ExampleBody\\"
+",
+  },
+]
+`;
+
+exports[`multi file read patch can parse an OpenAPI across file system from root 1`] = `
+Object {
+  "info": Object {
+    "title": "Empty",
+    "version": "0.0.0",
+  },
+  "openapi": "3.0.1",
+  "paths": Object {
+    "/example": Object {
+      "get": Object {
+        "parameters": Array [],
+        "responses": Object {
+          "200": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "hello": Object {
+                      "type": "string",
+                    },
+                  },
+                  "required": Array [
+                    "hello",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "",
+          },
+        },
+      },
+      "parameters": Array [],
+    },
+  },
+}
+`;
+
+exports[`multi file read patch can parse an OpenAPI from both yaml and json 1`] = `
+Object {
+  "info": Object {
+    "title": "Empty",
+    "version": "0.0.0",
+  },
+  "openapi": "3.0.1",
+  "paths": Object {
+    "/example": Object {
+      "get": Object {
+        "parameters": Array [],
+        "responses": Object {
+          "200": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "hello": Object {
+                      "type": "string",
+                    },
+                  },
+                  "required": Array [
+                    "hello",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "",
+          },
+        },
+      },
+      "parameters": Array [],
+    },
+  },
+}
+`;

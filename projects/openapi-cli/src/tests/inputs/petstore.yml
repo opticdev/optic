@@ -1,0 +1,14 @@
+openapi: 3.0.1
+info:
+  title: Swagger Petstore
+  version: 1.0.0
+paths:
+  /store/inventory:
+    get:
+      responses: {}
+  /store/order:
+    get:
+      responses: {}
+servers:
+  - url: http://petstore.swagger.io/v2
+  - url: https://petstore.swagger.io/v2

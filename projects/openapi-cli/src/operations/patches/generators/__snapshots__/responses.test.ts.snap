@@ -1,0 +1,116 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`responsesPatches generates a patch for a missing response body 1`] = `
+Array [
+  Object {
+    "description": "remove response content for 200",
+    "groupedOperations": Array [
+      Object {
+        "intent": "remove response content (1 bodies)",
+        "operations": Array [
+          Object {
+            "op": "remove",
+            "path": "/responses/200/content",
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "BackwardsIncompatible",
+    ],
+  },
+]
+`;
+
+exports[`responsesPatches generates a patch for a missing response body 2`] = `
+Object {
+  "method": "post",
+  "pathPattern": "/some-path",
+  "responses": Object {
+    "200": Object {
+      "description": "success",
+    },
+  },
+}
+`;
+
+exports[`responsesPatches generates a patch for an unspecified response body 1`] = `
+Array [
+  Object {
+    "description": "add text/plain response for 200",
+    "groupedOperations": Array [
+      Object {
+        "intent": "add response body for content type 'text/plain'",
+        "operations": Array [
+          Object {
+            "op": "add",
+            "path": "/responses/200/content/text~1plain",
+            "value": Object {},
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+  },
+]
+`;
+
+exports[`responsesPatches generates a patch for an unspecified response body 2`] = `
+Object {
+  "method": "post",
+  "pathPattern": "/some-path",
+  "responses": Object {
+    "200": Object {
+      "content": Object {
+        "application/json": Object {},
+        "text/plain": Object {},
+      },
+      "description": "success",
+    },
+  },
+}
+`;
+
+exports[`responsesPatches generates a patch for an unspecified response status code 1`] = `
+Array [
+  Object {
+    "description": "add 400 response",
+    "groupedOperations": Array [
+      Object {
+        "intent": "add response status code",
+        "operations": Array [
+          Object {
+            "op": "add",
+            "path": "/responses/400",
+            "value": Object {
+              "description": "automatically documented through Optic",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+  },
+]
+`;
+
+exports[`responsesPatches generates a patch for an unspecified response status code 2`] = `
+Object {
+  "method": "post",
+  "pathPattern": "/some-path",
+  "responses": Object {
+    "200": Object {
+      "description": "success",
+    },
+    "400": Object {
+      "description": "automatically documented through Optic",
+    },
+  },
+}
+`;
