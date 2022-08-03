@@ -1,0 +1,70 @@
+JsonApi:
+  type: object
+  properties:
+    version:
+      type: string
+  required: ['version']
+  additionalProperties: false
+
+Links:
+  type: object
+  properties:
+    self: { $ref: '#/LinkProperty' }
+    related: { $ref: '#/LinkProperty' }
+    first: { $ref: '#/LinkProperty' }
+    last: { $ref: '#/LinkProperty' }
+    prev: { $ref: '#/LinkProperty' }
+    next: { $ref: '#/LinkProperty' }
+  additionalProperties: false
+
+SelfLink:
+  type: object
+  properties:
+    self: { $ref: '#/LinkProperty' }
+  additionalProperties: false
+
+RelatedLink:
+  type: object
+  properties:
+    related: { $ref: '#/LinkProperty' }
+  additionalProperties: false
+
+PaginatedLinks:
+  type: object
+  properties:
+    first: { $ref: '#/LinkProperty' }
+    last: { $ref: '#/LinkProperty' }
+    prev: { $ref: '#/LinkProperty' }
+    next: { $ref: '#/LinkProperty' }
+  additionalProperties: false
+
+LinkProperty:
+  oneOf:
+    - type: string
+    - type: object
+      properties:
+        href:
+          type: string
+        meta: { $ref: '#/Meta' }
+      required: [ 'href' ]
+      additionalProperties: false
+
+Meta:
+  type: object
+  additionalProperties: true
+
+Relationship:
+  type: object
+  properties:
+    data:
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+          format: uuid
+      required: ['type', 'id']
+      additionalProperties: false
+    links: { $ref: '#/RelatedLink' }
+    meta: { $ref: '#/Meta' }
+  required: [data, links]

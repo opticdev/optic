@@ -1,0 +1,24 @@
+parameters:
+  StartingAfter:
+    name: starting_after
+    in: query
+    description: Return the page of results immediately after this cursor
+    schema:
+      type: string
+  EndingBefore:
+    name: ending_before
+    in: query
+    description: Return the page of results immediately before this cursor
+    schema:
+      type: string
+  Limit:
+    name: limit
+    in: query
+    description: Number of results to return per page
+    schema:
+      type: integer
+      minimum: 10
+      maximum: 100
+      default: 10
+      multipleOf: 10
+      format: int32

@@ -1,0 +1,1417 @@
+{
+    "components": {
+      "headers": {
+        "DeprecationHeader": {
+          "description": "A header containing the deprecation date of the underlying endpoint. For more information, please refer to the deprecation header RFC:\nhttps://tools.ietf.org/id/draft-dalal-deprecation-header-01.html\n",
+          "schema": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "InternalGlooNormalizedPathHeader": {
+          "description": "An internal header used by Snyk's API-Gateway for analytics.\n",
+          "schema": {
+            "type": "string"
+          }
+        },
+        "InternalGlooOrgIdHeader": {
+          "description": "An internal header used by Snyk's API-Gateway for analytics.\n",
+          "schema": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "RequestIdResponseHeader": {
+          "description": "A header containing a unique id used for tracking this request. If you are reporting an issue to Snyk it's very helpful to provide this ID.\n",
+          "schema": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "SunsetHeader": {
+          "description": "A header containing the date of when the underlying endpoint will be removed. This header is only present if the endpoint has been deprecated. Please refer to the RFC for more information:\nhttps://datatracker.ietf.org/doc/html/rfc8594\n",
+          "schema": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "VersionRequestedResponseHeader": {
+          "description": "A header containing the version of the endpoint requested by the caller.",
+          "schema": {
+            "$ref": "#/components/schemas/Version"
+          }
+        },
+        "VersionServedResponseHeader": {
+          "description": "A header containing the version of the endpoint that was served by the API.",
+          "schema": {
+            "$ref": "#/components/schemas/Version"
+          }
+        },
+        "VersionStageResponseHeader": {
+          "description": "A header containing the version stage of the endpoint. This stage describes the guarantees snyk provides surrounding stability of the endpoint.\n",
+          "schema": {
+            "enum": [
+              "wip",
+              "experimental",
+              "beta",
+              "ga",
+              "deprecated",
+              "sunset"
+            ],
+            "type": "string"
+          }
+        }
+      },
+      "parameters": {
+        "EndingBefore": {
+          "description": "Return the page of results immediately before this cursor",
+          "in": "query",
+          "name": "ending_before",
+          "schema": {
+            "type": "string"
+          }
+        },
+        "Limit": {
+          "description": "Number of results to return per page",
+          "in": "query",
+          "name": "limit",
+          "schema": {
+            "default": 10,
+            "format": "int32",
+            "maximum": 100,
+            "minimum": 10,
+            "multipleOf": 10,
+            "type": "integer"
+          }
+        },
+        "StartingAfter": {
+          "description": "Return the page of results immediately after this cursor",
+          "in": "query",
+          "name": "starting_after",
+          "schema": {
+            "type": "string"
+          }
+        },
+        "Version": {
+          "description": "The requested version of the endpoint to process the request",
+          "in": "query",
+          "name": "version",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      },
+      "responses": {
+        "400": {
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorDocument"
+              }
+            }
+          },
+          "description": "Bad Request: A parameter provided as a part of the request was invalid.",
+          "headers": {
+            "deprecation": {
+              "$ref": "#/components/headers/DeprecationHeader"
+            },
+            "snyk-request-id": {
+              "$ref": "#/components/headers/RequestIdResponseHeader"
+            },
+            "snyk-version-lifecycle-stage": {
+              "$ref": "#/components/headers/VersionStageResponseHeader"
+            },
+            "snyk-version-requested": {
+              "$ref": "#/components/headers/VersionRequestedResponseHeader"
+            },
+            "snyk-version-served": {
+              "$ref": "#/components/headers/VersionServedResponseHeader"
+            },
+            "sunset": {
+              "$ref": "#/components/headers/SunsetHeader"
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorDocument"
+              }
+            }
+          },
+          "description": "Unauthorized: the request requires an authentication token or a token with more permissions.",
+          "headers": {
+            "deprecation": {
+              "$ref": "#/components/headers/DeprecationHeader"
+            },
+            "snyk-request-id": {
+              "$ref": "#/components/headers/RequestIdResponseHeader"
+            },
+            "snyk-version-lifecycle-stage": {
+              "$ref": "#/components/headers/VersionStageResponseHeader"
+            },
+            "snyk-version-requested": {
+              "$ref": "#/components/headers/VersionRequestedResponseHeader"
+            },
+            "snyk-version-served": {
+              "$ref": "#/components/headers/VersionServedResponseHeader"
+            },
+            "sunset": {
+              "$ref": "#/components/headers/SunsetHeader"
+            }
+          }
+        },
+        "403": {
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorDocument"
+              }
+            }
+          },
+          "description": "Forbidden: The client does not have access rights to the content.",
+          "headers": {
+            "deprecation": {
+              "$ref": "#/components/headers/DeprecationHeader"
+            },
+            "snyk-request-id": {
+              "$ref": "#/components/headers/RequestIdResponseHeader"
+            },
+            "snyk-version-lifecycle-stage": {
+              "$ref": "#/components/headers/VersionStageResponseHeader"
+            },
+            "snyk-version-requested": {
+              "$ref": "#/components/headers/VersionRequestedResponseHeader"
+            },
+            "snyk-version-served": {
+              "$ref": "#/components/headers/VersionServedResponseHeader"
+            },
+            "sunset": {
+              "$ref": "#/components/headers/SunsetHeader"
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorDocument"
+              }
+            }
+          },
+          "description": "Not Found: The resource being operated on could not be found.",
+          "headers": {
+            "deprecation": {
+              "$ref": "#/components/headers/DeprecationHeader"
+            },
+            "snyk-request-id": {
+              "$ref": "#/components/headers/RequestIdResponseHeader"
+            },
+            "snyk-version-lifecycle-stage": {
+              "$ref": "#/components/headers/VersionStageResponseHeader"
+            },
+            "snyk-version-requested": {
+              "$ref": "#/components/headers/VersionRequestedResponseHeader"
+            },
+            "snyk-version-served": {
+              "$ref": "#/components/headers/VersionServedResponseHeader"
+            },
+            "sunset": {
+              "$ref": "#/components/headers/SunsetHeader"
+            }
+          }
+        },
+        "500": {
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorDocument"
+              }
+            }
+          },
+          "description": "Internal Server Error: An error was encountered while attempting to process the request.",
+          "headers": {
+            "deprecation": {
+              "$ref": "#/components/headers/DeprecationHeader"
+            },
+            "snyk-request-id": {
+              "$ref": "#/components/headers/RequestIdResponseHeader"
+            },
+            "snyk-version-lifecycle-stage": {
+              "$ref": "#/components/headers/VersionStageResponseHeader"
+            },
+            "snyk-version-requested": {
+              "$ref": "#/components/headers/VersionRequestedResponseHeader"
+            },
+            "snyk-version-served": {
+              "$ref": "#/components/headers/VersionServedResponseHeader"
+            },
+            "sunset": {
+              "$ref": "#/components/headers/SunsetHeader"
+            }
+          }
+        }
+      },
+      "schemas": {
+        "Error": {
+          "additionalProperties": false,
+          "properties": {
+            "detail": {
+              "type": "string"
+            },
+            "id": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "meta": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "source": {
+              "additionalProperties": false,
+              "properties": {
+                "parameter": {
+                  "type": "string"
+                },
+                "pointer": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "status": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "detail"
+          ],
+          "type": "object"
+        },
+        "ErrorDocument": {
+          "additionalProperties": false,
+          "properties": {
+            "errors": {
+              "items": {
+                "$ref": "#/components/schemas/Error"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            "jsonapi": {
+              "$ref": "#/components/schemas/JsonApi"
+            }
+          },
+          "required": [
+            "jsonapi",
+            "errors"
+          ],
+          "type": "object"
+        },
+        "HelloWorld": {
+          "additionalProperties": false,
+          "properties": {
+            "attributes": {
+              "additionalProperties": false,
+              "properties": {
+                "betaField": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "requestSubject": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "clientId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "publicId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "publicId",
+                    "type"
+                  ],
+                  "type": "object"
+                }
+              },
+              "required": [
+                "message",
+                "betaField",
+                "requestSubject"
+              ],
+              "type": "object"
+            },
+            "id": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "attributes"
+          ],
+          "type": "object"
+        },
+        "JsonApi": {
+          "additionalProperties": false,
+          "properties": {
+            "version": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "version"
+          ],
+          "type": "object"
+        },
+        "LinkProperty": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "meta": {
+                  "additionalProperties": true,
+                  "type": "object"
+                }
+              },
+              "required": [
+                "href",
+                "meta"
+              ],
+              "type": "object"
+            }
+          ]
+        },
+        "Links": {
+          "additionalProperties": false,
+          "properties": {
+            "first": {
+              "$ref": "#/components/schemas/LinkProperty"
+            },
+            "last": {
+              "$ref": "#/components/schemas/LinkProperty"
+            },
+            "next": {
+              "$ref": "#/components/schemas/LinkProperty"
+            },
+            "prev": {
+              "$ref": "#/components/schemas/LinkProperty"
+            },
+            "related": {
+              "$ref": "#/components/schemas/LinkProperty"
+            },
+            "self": {
+              "$ref": "#/components/schemas/LinkProperty"
+            }
+          },
+          "type": "object"
+        },
+        "Project": {
+          "additionalProperties": false,
+          "properties": {
+            "attributes": {
+              "additionalProperties": false,
+              "properties": {
+                "businessCriticality": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "created": {
+                  "description": "The date that the project was created on",
+                  "example": "2021-05-29T09:50:54.014Z",
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "environment": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "hostname": {
+                  "description": "The hostname for a CLI project, null if not set",
+                  "nullable": true,
+                  "type": "string"
+                },
+                "lifecycle": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "origin": {
+                  "description": "The origin the project was added from",
+                  "example": "github",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "Describes if a project is currently monitored or it is de-activated",
+                  "example": "active",
+                  "type": "string"
+                },
+                "tags": {
+                  "items": {
+                    "$ref": "#/components/schemas/Tag"
+                  },
+                  "type": "array"
+                },
+                "targetReference": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "type": {
+                  "description": "The package manager of the project",
+                  "example": "maven",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "created",
+                "origin",
+                "type",
+                "status"
+              ],
+              "type": "object"
+            },
+            "id": {
+              "description": "The ID.",
+              "example": "331ede0a-de94-456f-b788-166caeca58bf",
+              "format": "uuid",
+              "type": "string"
+            },
+            "relationships": {
+              "$ref": "#/components/schemas/Relationships"
+            },
+            "type": {
+              "description": "Content type.",
+              "example": "projects",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "attributes"
+          ],
+          "type": "object"
+        },
+        "Relationships": {
+          "additionalProperties": {
+            "properties": {
+              "data": {
+                "properties": {
+                  "id": {
+                    "format": "uuid",
+                    "type": "string"
+                  },
+                  "links": {
+                    "$ref": "#/components/schemas/Links"
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type",
+                  "id"
+                ]
+              }
+            },
+            "required": [
+              "data"
+            ],
+            "type": "object"
+          },
+          "type": "object"
+        },
+        "Tag": {
+          "additionalProperties": false,
+          "properties": {
+            "key": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "key",
+            "value"
+          ],
+          "type": "object"
+        },
+        "User": {
+          "additionalProperties": false,
+          "properties": {
+            "attributes": {
+              "additionalProperties": false,
+              "properties": {
+                "email": {
+                  "description": "The email of the user.",
+                  "example": "user@someorg.com",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "The name of the user.",
+                  "example": "user",
+                  "type": "string"
+                },
+                "username": {
+                  "description": "The username of the user.",
+                  "example": "username",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "id": {
+              "description": "The Snyk ID corresponding to this user",
+              "example": "55a348e2-c3ad-4bbc-b40e-9b232d1f4121",
+              "format": "uuid",
+              "type": "string"
+            },
+            "type": {
+              "description": "Content type.",
+              "example": "user",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "attributes"
+          ],
+          "type": "object"
+        },
+        "Version": {
+          "pattern": "^(wip|work-in-progress|experimental|beta|(([0-9]{4})-([0-1][0-9]))-((3[01])|(0[1-9])|([12][0-9])))$",
+          "type": "string"
+        }
+      }
+    },
+    "info": {
+      "title": "Snyk API",
+      "version": "v3"
+    },
+    "openapi": "3.0.3",
+    "paths": {
+      "/examples/hello_world": {
+        "post": {
+          "description": "Create a single result from the hello_world example",
+          "operationId": "helloWorldCreate",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/Version"
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attributes": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "betaField": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message",
+                        "betaField"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "attributes"
+                  ],
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "data": {
+                        "$ref": "#/components/schemas/HelloWorld"
+                      },
+                      "jsonapi": {
+                        "$ref": "#/components/schemas/JsonApi"
+                      },
+                      "links": {
+                        "$ref": "#/components/schemas/Links"
+                      }
+                    },
+                    "required": [
+                      "jsonapi",
+                      "data",
+                      "links"
+                    ],
+                    "type": "object"
+                  }
+                }
+              },
+              "description": "A hello world entity being requested is returned",
+              "headers": {
+                "deprecation": {
+                  "$ref": "#/components/headers/DeprecationHeader"
+                },
+                "snyk-request-id": {
+                  "$ref": "#/components/headers/RequestIdResponseHeader"
+                },
+                "snyk-version-lifecycle-stage": {
+                  "$ref": "#/components/headers/VersionStageResponseHeader"
+                },
+                "snyk-version-requested": {
+                  "$ref": "#/components/headers/VersionRequestedResponseHeader"
+                },
+                "snyk-version-served": {
+                  "$ref": "#/components/headers/VersionServedResponseHeader"
+                },
+                "sunset": {
+                  "$ref": "#/components/headers/SunsetHeader"
+                },
+                "x-envoy-to-remove-normalized-request-path": {
+                  "$ref": "#/components/headers/InternalGlooNormalizedPathHeader"
+                }
+              }
+            },
+            "400": {
+              "$ref": "#/components/responses/400"
+            },
+            "401": {
+              "$ref": "#/components/responses/401"
+            },
+            "404": {
+              "$ref": "#/components/responses/404"
+            },
+            "500": {
+              "$ref": "#/components/responses/500"
+            }
+          },
+          "tags": [
+            "Examples"
+          ]
+        },
+        "x-snyk-api-version": "2021-06-13~beta"
+      },
+      "/examples/hello_world/{id}": {
+        "get": {
+          "description": "Get a single result from the hello_world example",
+          "operationId": "helloWorldGetOne",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/Version"
+            },
+            {
+              "$ref": "#/components/parameters/StartingAfter"
+            },
+            {
+              "$ref": "#/components/parameters/EndingBefore"
+            },
+            {
+              "$ref": "#/components/parameters/Limit"
+            },
+            {
+              "description": "The id of the hello_world example entity to be retrieved.",
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "data": {
+                        "$ref": "#/components/schemas/HelloWorld"
+                      },
+                      "jsonapi": {
+                        "$ref": "#/components/schemas/JsonApi"
+                      },
+                      "links": {
+                        "$ref": "#/components/schemas/Links"
+                      }
+                    },
+                    "required": [
+                      "jsonapi",
+                      "data",
+                      "links"
+                    ],
+                    "type": "object"
+                  }
+                }
+              },
+              "description": "A hello world entity being requested is returned",
+              "headers": {
+                "deprecation": {
+                  "$ref": "#/components/headers/DeprecationHeader"
+                },
+                "snyk-request-id": {
+                  "$ref": "#/components/headers/RequestIdResponseHeader"
+                },
+                "snyk-version-lifecycle-stage": {
+                  "$ref": "#/components/headers/VersionStageResponseHeader"
+                },
+                "snyk-version-requested": {
+                  "$ref": "#/components/headers/VersionRequestedResponseHeader"
+                },
+                "snyk-version-served": {
+                  "$ref": "#/components/headers/VersionServedResponseHeader"
+                },
+                "sunset": {
+                  "$ref": "#/components/headers/SunsetHeader"
+                },
+                "x-envoy-to-remove-normalized-request-path": {
+                  "$ref": "#/components/headers/InternalGlooNormalizedPathHeader"
+                }
+              }
+            },
+            "400": {
+              "$ref": "#/components/responses/400"
+            },
+            "401": {
+              "$ref": "#/components/responses/401"
+            },
+            "404": {
+              "$ref": "#/components/responses/404"
+            },
+            "500": {
+              "$ref": "#/components/responses/500"
+            }
+          },
+          "tags": [
+            "Examples"
+          ]
+        },
+        "x-snyk-api-version": "2021-06-13~beta"
+      },
+      "/openapi": {
+        "get": {
+          "description": "List available versions of OpenAPI specification",
+          "operationId": "listAPIVersions",
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                }
+              },
+              "description": "List of available versions is returned",
+              "headers": {
+                "snyk-request-id": {
+                  "$ref": "#/components/headers/RequestIdResponseHeader"
+                }
+              }
+            },
+            "400": {
+              "$ref": "#/components/responses/400"
+            },
+            "401": {
+              "$ref": "#/components/responses/401"
+            },
+            "404": {
+              "$ref": "#/components/responses/404"
+            },
+            "500": {
+              "$ref": "#/components/responses/500"
+            }
+          },
+          "tags": [
+            "OpenAPI"
+          ]
+        }
+      },
+      "/openapi/{version}": {
+        "get": {
+          "description": "Get OpenAPI specification effective at version.",
+          "operationId": "getAPIVersion",
+          "parameters": [
+            {
+              "description": "The requested version of the API",
+              "in": "path",
+              "name": "version",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object"
+                  }
+                }
+              },
+              "description": "OpenAPI specification matching requested version is returned",
+              "headers": {
+                "snyk-request-id": {
+                  "$ref": "#/components/headers/RequestIdResponseHeader"
+                },
+                "snyk-version-requested": {
+                  "$ref": "#/components/headers/VersionRequestedResponseHeader"
+                },
+                "snyk-version-served": {
+                  "$ref": "#/components/headers/VersionServedResponseHeader"
+                }
+              }
+            },
+            "400": {
+              "$ref": "#/components/responses/400"
+            },
+            "401": {
+              "$ref": "#/components/responses/401"
+            },
+            "404": {
+              "$ref": "#/components/responses/404"
+            },
+            "500": {
+              "$ref": "#/components/responses/500"
+            }
+          },
+          "tags": [
+            "OpenAPI"
+          ]
+        }
+      },
+      "/orgs/{org_id}/projects": {
+        "get": {
+          "description": "Get a list of an organization's projects.",
+          "operationId": "getOrgsProjects",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/Version"
+            },
+            {
+              "$ref": "#/components/parameters/StartingAfter"
+            },
+            {
+              "$ref": "#/components/parameters/EndingBefore"
+            },
+            {
+              "$ref": "#/components/parameters/Limit"
+            },
+            {
+              "description": "The id of the org to return a list of projects",
+              "in": "path",
+              "name": "org_id",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "description": "Return projects that prefix-match the provided name",
+              "in": "query",
+              "name": "name",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "description": "Return projects that match the provided origin",
+              "in": "query",
+              "name": "origin",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "description": "Return projects that match the provided type",
+              "in": "query",
+              "name": "type",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "description": "Return projects that match the provided status",
+              "in": "query",
+              "name": "status",
+              "schema": {
+                "enum": [
+                  "active",
+                  "inactive"
+                ],
+                "type": "string"
+              }
+            },
+            {
+              "description": "Return projects that match all provided tags",
+              "explode": false,
+              "in": "query",
+              "name": "tags",
+              "schema": {
+                "items": {
+                  "pattern": "^[a-zA-Z0-9_-]+:[a-zA-Z0-9_-]+$",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "style": "form"
+            },
+            {
+              "description": "Return projects that have at least 1 option",
+              "explode": false,
+              "in": "query",
+              "name": "businessCriticality",
+              "schema": {
+                "items": {
+                  "enum": [
+                    "critical",
+                    "high",
+                    "medium",
+                    "low"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "style": "form"
+            },
+            {
+              "description": "Return projects that have at least 1 option",
+              "explode": false,
+              "in": "query",
+              "name": "environment",
+              "schema": {
+                "items": {
+                  "enum": [
+                    "frontend",
+                    "backend",
+                    "internal",
+                    "external",
+                    "mobile",
+                    "saas",
+                    "onprem",
+                    "hosted",
+                    "distributed"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "style": "form"
+            },
+            {
+              "description": "Return projects that have at least 1 option",
+              "explode": false,
+              "in": "query",
+              "name": "lifecycle",
+              "schema": {
+                "items": {
+                  "enum": [
+                    "production",
+                    "development",
+                    "sandbox"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "style": "form"
+            },
+            {
+              "description": "Return projects that belong to the provided target",
+              "in": "query",
+              "name": "targetId",
+              "schema": {
+                "format": "uuid",
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "data": {
+                        "items": {
+                          "$ref": "#/components/schemas/Project"
+                        },
+                        "type": "array"
+                      },
+                      "jsonapi": {
+                        "$ref": "#/components/schemas/JsonApi"
+                      },
+                      "links": {
+                        "$ref": "#/components/schemas/Links"
+                      }
+                    },
+                    "required": [
+                      "jsonapi",
+                      "data",
+                      "links"
+                    ],
+                    "type": "object"
+                  }
+                }
+              },
+              "description": "A list of projects is returned for the targeted org",
+              "headers": {
+                "deprecation": {
+                  "$ref": "#/components/headers/DeprecationHeader"
+                },
+                "snyk-request-id": {
+                  "$ref": "#/components/headers/RequestIdResponseHeader"
+                },
+                "snyk-version-lifecycle-stage": {
+                  "$ref": "#/components/headers/VersionStageResponseHeader"
+                },
+                "snyk-version-requested": {
+                  "$ref": "#/components/headers/VersionRequestedResponseHeader"
+                },
+                "snyk-version-served": {
+                  "$ref": "#/components/headers/VersionServedResponseHeader"
+                },
+                "sunset": {
+                  "$ref": "#/components/headers/SunsetHeader"
+                },
+                "x-envoy-to-remove-normalized-request-path": {
+                  "$ref": "#/components/headers/InternalGlooNormalizedPathHeader"
+                },
+                "x-envoy-to-remove-org-public-id": {
+                  "$ref": "#/components/headers/InternalGlooOrgIdHeader"
+                }
+              }
+            },
+            "400": {
+              "$ref": "#/components/responses/400"
+            },
+            "401": {
+              "$ref": "#/components/responses/401"
+            },
+            "403": {
+              "$ref": "#/components/responses/403"
+            },
+            "404": {
+              "$ref": "#/components/responses/404"
+            },
+            "500": {
+              "$ref": "#/components/responses/500"
+            }
+          },
+          "tags": [
+            "Projects"
+          ]
+        },
+        "x-snyk-api-version": "2021-06-04~beta"
+      },
+      "/orgs/{org_id}/targets/{target_id}": {
+        "delete": {
+          "description": "Delete the specified target. Will fail if the target has any projects.",
+          "operationId": "deleteOrgsTarget",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/Version"
+            },
+            {
+              "description": "The id of the org to return the target from",
+              "in": "path",
+              "name": "org_id",
+              "required": true,
+              "schema": {
+                "format": "uuid",
+                "type": "string"
+              }
+            },
+            {
+              "description": "The id of the target to return",
+              "in": "path",
+              "name": "target_id",
+              "required": true,
+              "schema": {
+                "format": "uuid",
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "jsonapi": {
+                        "$ref": "#/components/schemas/JsonApi"
+                      }
+                    },
+                    "required": [
+                      "jsonapi"
+                    ],
+                    "type": "object"
+                  }
+                }
+              },
+              "description": "The target is deleted if it is found in the specified org and has no projects",
+              "headers": {
+                "deprecation": {
+                  "$ref": "#/components/headers/DeprecationHeader"
+                },
+                "snyk-request-id": {
+                  "$ref": "#/components/headers/RequestIdResponseHeader"
+                },
+                "snyk-version-lifecycle-stage": {
+                  "$ref": "#/components/headers/VersionStageResponseHeader"
+                },
+                "snyk-version-requested": {
+                  "$ref": "#/components/headers/VersionRequestedResponseHeader"
+                },
+                "snyk-version-served": {
+                  "$ref": "#/components/headers/VersionServedResponseHeader"
+                },
+                "sunset": {
+                  "$ref": "#/components/headers/SunsetHeader"
+                },
+                "x-envoy-to-remove-normalized-request-path": {
+                  "$ref": "#/components/headers/InternalGlooNormalizedPathHeader"
+                },
+                "x-envoy-to-remove-org-public-id": {
+                  "$ref": "#/components/headers/InternalGlooOrgIdHeader"
+                }
+              }
+            },
+            "400": {
+              "$ref": "#/components/responses/400"
+            },
+            "401": {
+              "$ref": "#/components/responses/401"
+            },
+            "404": {
+              "$ref": "#/components/responses/404"
+            },
+            "409": {
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorDocument"
+                  }
+                }
+              },
+              "description": "Unprocessable Entity: The target cannot be deleted as it has projects.",
+              "headers": {
+                "deprecation": {
+                  "$ref": "#/components/headers/DeprecationHeader"
+                },
+                "snyk-request-id": {
+                  "$ref": "#/components/headers/RequestIdResponseHeader"
+                },
+                "snyk-version-lifecycle-stage": {
+                  "$ref": "#/components/headers/VersionStageResponseHeader"
+                },
+                "snyk-version-requested": {
+                  "$ref": "#/components/headers/VersionRequestedResponseHeader"
+                },
+                "snyk-version-served": {
+                  "$ref": "#/components/headers/VersionServedResponseHeader"
+                },
+                "sunset": {
+                  "$ref": "#/components/headers/SunsetHeader"
+                },
+                "x-envoy-to-remove-normalized-request-path": {
+                  "$ref": "#/components/headers/InternalGlooNormalizedPathHeader"
+                },
+                "x-envoy-to-remove-org-public-id": {
+                  "$ref": "#/components/headers/InternalGlooOrgIdHeader"
+                }
+              }
+            },
+            "500": {
+              "$ref": "#/components/responses/500"
+            }
+          },
+          "tags": [
+            "Targets"
+          ]
+        },
+        "x-snyk-api-version": "2021-09-29~beta"
+      },
+      "/orgs/{org_id}/users/{id}": {
+        "get": {
+          "description": "Get a summary of user.\n",
+          "operationId": "getUser",
+          "parameters": [
+            {
+              "description": "The id of the org",
+              "in": "path",
+              "name": "org_id",
+              "required": true,
+              "schema": {
+                "format": "uuid",
+                "type": "string"
+              }
+            },
+            {
+              "description": "The id of the user",
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "schema": {
+                "format": "uuid",
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "#/components/parameters/Version"
+            }
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "properties": {
+                      "data": {
+                        "$ref": "#/components/schemas/User"
+                      },
+                      "jsonapi": {
+                        "$ref": "#/components/schemas/JsonApi"
+                      }
+                    },
+                    "required": [
+                      "jsonapi",
+                      "data"
+                    ],
+                    "type": "object"
+                  }
+                }
+              },
+              "description": "User details",
+              "headers": {
+                "deprecation": {
+                  "$ref": "#/components/headers/DeprecationHeader"
+                },
+                "snyk-request-id": {
+                  "$ref": "#/components/headers/RequestIdResponseHeader"
+                },
+                "snyk-version-lifecycle-stage": {
+                  "$ref": "#/components/headers/VersionStageResponseHeader"
+                },
+                "snyk-version-requested": {
+                  "$ref": "#/components/headers/VersionRequestedResponseHeader"
+                },
+                "snyk-version-served": {
+                  "$ref": "#/components/headers/VersionServedResponseHeader"
+                },
+                "sunset": {
+                  "$ref": "#/components/headers/SunsetHeader"
+                },
+                "x-envoy-to-remove-normalized-request-path": {
+                  "$ref": "#/components/headers/InternalGlooNormalizedPathHeader"
+                },
+                "x-envoy-to-remove-org-public-id": {
+                  "$ref": "#/components/headers/InternalGlooOrgIdHeader"
+                }
+              }
+            },
+            "400": {
+              "$ref": "#/components/responses/400"
+            },
+            "401": {
+              "$ref": "#/components/responses/401"
+            },
+            "403": {
+              "$ref": "#/components/responses/403"
+            },
+            "404": {
+              "$ref": "#/components/responses/404"
+            },
+            "500": {
+              "$ref": "#/components/responses/500"
+            }
+          },
+          "tags": [
+            "Users"
+          ]
+        },
+        "x-snyk-api-version": "2021-09-13~beta"
+      }
+    },
+    "servers": [
+      {
+        "description": "Public Snyk API",
+        "url": "http://api.snyk.local/v3"
+      },
+      {
+        "description": "ExpressJS validation routes",
+        "url": "/api/v3"
+      }
+    ],
+    "tags": [
+      {
+        "description": "An example of a v3 API resource",
+        "name": "Examples"
+      },
+      {
+        "description": "The OpenAPI specification for this service.",
+        "name": "OpenAPI"
+      },
+      {
+        "description": "Projects scanned by Snyk.",
+        "name": "Projects"
+      },
+      {
+        "description": "Targets are the resources tested by Snyk",
+        "name": "Targets"
+      },
+      {
+        "description": "Snyk Users",
+        "name": "Users"
+      }
+    ]
+  }

@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`format can format JSON 1`] = `
+"{
+	\\"hello\\": \\"world\\",
+	\\"array\\": [1, 2, [[]]]
+}
+"
+`;
