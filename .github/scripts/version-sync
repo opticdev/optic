@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -eu
+
+#
+# Inspect all packages versions and verify the package.jsons are in sync.
+#
+
+version=$(jq -r '.version' <package.json)
+
+# extract the bits we care about, into a json array:
+#  [{name: blah, version: blah}, ...]
+packages=$(cat projects/*/package.json | jq '{name: .name, version: .version}' | jq -rs)
+
+# "true" is all versions match, "false" if any do not match
+packages_in_sync=$(echo "$packages" | jq -r "[.[].version == (\"$version\")] | all")
+
+if [ "$packages_in_sync" != "true" ]; then
+    echo "We expected each package's version to be \"$version\". Here's what we're working with,"
+    echo "$packages" | jq -r
+    echo "All the package.json files must be the same version. See 'task openapi-ws:version --summary' for help versioning."
+    exit 1
+else
+    echo "The versions in package.json are in sync."
+fi
