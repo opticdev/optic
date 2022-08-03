@@ -3,7 +3,7 @@ import Path from 'path';
 import * as fs from 'fs-extra';
 import readline from 'readline';
 import { updateReporter } from './reporters/update';
-import { createCommandFeedback } from './reporters/feedback';
+import { createCommandFeedback, InputErrors } from './reporters/feedback';
 
 import { tap, forkable, merge, Subject } from '../lib/async-tools';
 import {
@@ -21,7 +21,7 @@ import {
   SpecFilesSourcemap,
 } from '../specs';
 
-import { flushEvents, trackEvent } from '../segment';
+import { trackCompletion, trackEvent } from '../segment';
 import {
   CapturedInteraction,
   CapturedInteractions,
@@ -48,8 +48,9 @@ export async function updateCommand(): Promise<Command> {
     .action(async (specPath) => {
       const absoluteSpecPath = Path.resolve(specPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
-        return feedback.inputError(
-          'OpenAPI specification file could not be found'
+        return await feedback.inputError(
+          'OpenAPI specification file could not be found',
+          InputErrors.SPEC_FILE_NOT_FOUND
         );
       }
 
@@ -62,8 +63,9 @@ export async function updateCommand(): Promise<Command> {
       if (options.har) {
         let absoluteHarPath = Path.resolve(options.har);
         if (!(await fs.pathExists(absoluteHarPath))) {
-          return feedback.inputError(
-            'HAR file could not be found at given path'
+          return await feedback.inputError(
+            'HAR file could not be found at given path',
+            InputErrors.HAR_FILE_NOT_FOUND
           );
         }
         let harFile = fs.createReadStream(absoluteHarPath);
@@ -73,8 +75,9 @@ export async function updateCommand(): Promise<Command> {
 
       if (options.proxy) {
         if (!process.stdin.isTTY) {
-          return feedback.inputError(
-            'can only use --proxy when in an interactive terminal session'
+          return await feedback.inputError(
+            'can only use --proxy when in an interactive terminal session',
+            InputErrors.PROXY_IN_NON_TTY
           );
         }
 
@@ -92,15 +95,17 @@ export async function updateCommand(): Promise<Command> {
       }
 
       if (sources.length < 1) {
-        return feedback.inputError(
-          'choose a capture method to update spec by traffic'
+        return await feedback.inputError(
+          'choose a capture method to update spec by traffic',
+          InputErrors.CAPTURE_METHOD_MISSING
         );
       }
 
       const specReadResult = await readDeferencedSpec(absoluteSpecPath);
       if (specReadResult.err) {
-        feedback.inputError(
-          `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`
+        await feedback.inputError(
+          `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`,
+          InputErrors.SPEC_FILE_NOT_READABLE
         );
       }
       const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
@@ -397,49 +402,53 @@ async function trackStats(observations: UpdateObservations): Promise<void> {
     unsupportedContentTypeCounts: {},
   };
 
-  for await (let observation of observations) {
-    if (observation.kind === UpdateObservationKind.InteractionCaptured) {
-      stats.capturedInteractionsCount += 1;
-    } else if (
-      observation.kind === UpdateObservationKind.InteractionMatchedOperation
-    ) {
-      stats.matchedInteractionsCount += 1;
-    } else if (
-      observation.kind === UpdateObservationKind.InteractionPatchGenerated
-    ) {
-      stats.patchesCount += 1;
-    } else if (observation.kind === UpdateObservationKind.SpecFileUpdated) {
-      stats.updatedFilesCount += 1;
-      if (observation.overwrittenComments) {
-        stats.filesWithOverwrittenYamlCommentsCount += 1;
-      }
-    } else if (
-      observation.kind === UpdateObservationKind.InteractionBodyMatched
-    ) {
-      if (!observation.decodable && observation.capturedContentType) {
-        let count =
-          stats.unsupportedContentTypeCounts[observation.capturedContentType] ||
-          0;
-        stats.unsupportedContentTypeCounts[observation.capturedContentType] =
-          count + 1;
-      }
-    }
-  }
-
-  trackEvent(
-    'openapi_cli.spec_updated_by_traffic',
-    'openapi_cli', // TODO: determine more useful userId
-    {
+  function eventProperties() {
+    return {
       ...stats,
       unsupportedContentTypes: [
         ...Object.keys(stats.unsupportedContentTypeCounts),
       ], // set cast as array
+    };
+  }
+
+  await trackCompletion(
+    'openapi_cli.update',
+    eventProperties(),
+    async function* () {
+      for await (let observation of observations) {
+        if (observation.kind === UpdateObservationKind.InteractionCaptured) {
+          stats.capturedInteractionsCount += 1;
+        } else if (
+          observation.kind === UpdateObservationKind.InteractionMatchedOperation
+        ) {
+          stats.matchedInteractionsCount += 1;
+        } else if (
+          observation.kind === UpdateObservationKind.InteractionPatchGenerated
+        ) {
+          stats.patchesCount += 1;
+        } else if (observation.kind === UpdateObservationKind.SpecFileUpdated) {
+          stats.updatedFilesCount += 1;
+          if (observation.overwrittenComments) {
+            stats.filesWithOverwrittenYamlCommentsCount += 1;
+          }
+        } else if (
+          observation.kind === UpdateObservationKind.InteractionBodyMatched
+        ) {
+          if (!observation.decodable && observation.capturedContentType) {
+            let count =
+              stats.unsupportedContentTypeCounts[
+                observation.capturedContentType
+              ] || 0;
+            stats.unsupportedContentTypeCounts[
+              observation.capturedContentType
+            ] = count + 1;
+          }
+        }
+
+        yield eventProperties();
+      }
+
+      trackEvent('openapi_cli.spec_updated_by_traffic', eventProperties()); // for legacy reports
     }
   );
-
-  try {
-    await flushEvents();
-  } catch (err) {
-    console.warn('Could not flush usage analytics (non-critical)');
-  }
 }

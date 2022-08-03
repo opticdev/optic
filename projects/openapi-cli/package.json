@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/openapi-cli",
   "packageManager": "yarn@3.0.2",
-  "version": "0.26.28-3",
+  "version": "0.26.28",
   "main": "build/lib.js",
   "types": "build/lib.d.ts",
   "files": [
@@ -51,6 +51,7 @@
     "@useoptic/openapi-utilities": "workspace:*",
     "ajv-formats": "^2.1.1",
     "analytics-node": "^6.0.0",
+    "async-exit-hook": "^2.0.1",
     "axax": "^0.2.2",
     "chalk": "^5.0.1",
     "commander": "^9.3.0",
@@ -89,6 +90,5 @@
         "<rootDir>../../../../node_modules/csv-parse/dist/cjs/sync.cjs"
       ]
     }
-  },
-  "stableVersion": "0.26.27"
+  }
 }

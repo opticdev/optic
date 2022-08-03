@@ -5,7 +5,8 @@ import readline from 'readline';
 import { AbortController } from 'node-abort-controller';
 import { Writable } from 'stream';
 import * as AT from '../lib/async-tools';
-import { createCommandFeedback } from './reporters/feedback';
+import { createCommandFeedback, InputErrors } from './reporters/feedback';
+import { trackCompletion } from '../segment';
 
 import {
   CapturedInteraction,
@@ -42,8 +43,9 @@ export async function captureCommand(): Promise<Command> {
       if (options.har) {
         let absoluteHarPath = Path.resolve(options.har);
         if (!(await fs.pathExists(absoluteHarPath))) {
-          return feedback.inputError(
-            'HAR file could not be found at given path'
+          return await feedback.inputError(
+            'HAR file could not be found at given path',
+            InputErrors.HAR_FILE_NOT_FOUND
           );
         }
         let harFile = fs.createReadStream(absoluteHarPath);
@@ -53,8 +55,9 @@ export async function captureCommand(): Promise<Command> {
 
       if (options.proxy) {
         if (!process.stdin.isTTY) {
-          return feedback.inputError(
-            'can only use --proxy when in an interactive terminal session'
+          return await feedback.inputError(
+            'can only use --proxy when in an interactive terminal session',
+            InputErrors.PROXY_IN_NON_TTY
           );
         }
 
@@ -70,8 +73,9 @@ export async function captureCommand(): Promise<Command> {
       }
 
       if (sources.length < 1) {
-        return feedback.inputError(
-          'choose a capture method to update spec by traffic'
+        return await feedback.inputError(
+          'choose a method of capturing traffic to create a capture',
+          InputErrors.CAPTURE_METHOD_MISSING
         );
       }
 
@@ -82,8 +86,9 @@ export async function captureCommand(): Promise<Command> {
         let fileBaseName = Path.basename(filePath);
 
         if (!(await fs.pathExists(dirPath))) {
-          return feedback.inputError(
-            `to create ${fileBaseName}, dir must exist at ${dirPath}`
+          return await feedback.inputError(
+            `to create ${fileBaseName}, dir must exist at ${dirPath}`,
+            InputErrors.DESTINATION_FILE_DIR_MISSING
           );
         }
 
@@ -93,8 +98,6 @@ export async function captureCommand(): Promise<Command> {
       }
 
       const harEntries = AT.merge(...sources);
-
-      const observations = writeInteractions(harEntries, destination);
 
       const handleUserSignals = (async function () {
         if (interactiveCapture && process.stdin.isTTY) {
@@ -111,13 +114,18 @@ export async function captureCommand(): Promise<Command> {
         }
       })();
 
+      const observations = writeInteractions(harEntries, destination);
+
+      const observationsFork = AT.forkable(observations);
       const renderingStats = renderCaptureProgress(
         feedback,
-        observations,
+        observationsFork.fork(),
         interactiveCapture
       );
+      const trackingStats = trackStats(observationsFork.fork());
+      observationsFork.start();
 
-      await Promise.all([handleUserSignals, renderingStats]);
+      await Promise.all([handleUserSignals, renderingStats, trackingStats]);
     });
 
   return command;
@@ -212,4 +220,19 @@ async function renderCaptureProgress(
   } else {
     spinner.succeed(`${interactionCount} requests written`);
   }
+}
+
+async function trackStats(observations: CaptureObservations) {
+  const stats = {
+    capturedInteractionsCount: 0,
+  };
+
+  await trackCompletion('openapi_cli.capture', stats, async function* () {
+    for await (let observation of observations) {
+      if (observation.kind === CaptureObservationKind.InteractionCaptured) {
+        stats.capturedInteractionsCount += 1;
+        yield stats;
+      }
+    }
+  });
 }

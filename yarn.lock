@@ -3426,6 +3426,7 @@ __metadata:
     "@useoptic/openapi-utilities": "workspace:*"
     ajv-formats: ^2.1.1
     analytics-node: ^6.0.0
+    async-exit-hook: ^2.0.1
     axax: ^0.2.2
     babel-jest: ^27.5.1
     babel-plugin-inline-dotenv: ^1.7.0
@@ -4152,6 +4153,13 @@ __metadata:
   bin:
     astring: bin/astring
   checksum: 2a86ff8cc0c8f25694865cb8b22cdff784b8a0b115bd970c3def864618f22fe6ea78c3bef3ecdc359b2e5eb254a16d408ab06fa52a44e887b298cbf980a8083c
+  languageName: node
+  linkType: hard
+
+"async-exit-hook@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "async-exit-hook@npm:2.0.1"
+  checksum: b72cbdd19ea90fa33a3a57b0dbff83e4bf2f4e4acd70b2b3847a588f9f16a45d38590ee13f285375dd919c224f60fa58dc3d315a87678d3aa24ff686d1c0200a
   languageName: node
   linkType: hard
 

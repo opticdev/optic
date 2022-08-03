@@ -1,12 +1,16 @@
 import { Command } from 'commander';
 import Path from 'path';
 import fs from 'fs-extra';
-import { Writable } from 'stream';
+import { Writable, finished } from 'stream';
 import Semver from 'semver';
+import { promisify } from 'util';
 
 import * as AT from '../lib/async-tools';
-import { createCommandFeedback } from './reporters/feedback';
+import { trackEvent, flushEvents } from '../segment';
+import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { SpecFile, SpecFiles, SpecFileOperations, SpecPatches } from '../specs';
+
+const streamFinished = promisify(finished);
 
 export async function newCommand(): Promise<Command> {
   const command = new Command('new');
@@ -34,13 +38,15 @@ export async function newCommand(): Promise<Command> {
         let dirPath = Path.dirname(absoluteFilePath);
         let fileBaseName = Path.basename(filePath);
         if (await fs.pathExists(absoluteFilePath)) {
-          return feedback.inputError(
-            `File '${fileBaseName}' already exists at ${dirPath}`
+          return await feedback.inputError(
+            `File '${fileBaseName}' already exists at ${dirPath}`,
+            InputErrors.DESTINATION_FILE_ALREADY_EXISTS
           );
         }
         if (!(await fs.pathExists(dirPath))) {
-          return feedback.inputError(
-            `to create ${fileBaseName}, dir must exist at ${dirPath}`
+          return await feedback.inputError(
+            `to create ${fileBaseName}, dir must exist at ${dirPath}`,
+            InputErrors.DESTINATION_FILE_DIR_MISSING
           );
         }
 
@@ -59,13 +65,17 @@ export async function newCommand(): Promise<Command> {
       if (options.oasVersion) {
         let semver = Semver.coerce(options.oasVersion); // be liberal with the inputs we accept
         if (!semver || !Semver.valid(semver)) {
-          return feedback.inputError(
-            `--oas-version must be a valid OpenAPI version`
+          return await feedback.inputError(
+            `--oas-version must be a valid OpenAPI version`,
+            'oas-version-uninterpretable',
+            { suppliedVersion: options.oasVersion }
           );
         } else if (!Semver.satisfies(semver, '3.0.x || 3.1.x')) {
           // TODO: track this to get an idea of other versions we should support
-          return feedback.inputError(
-            `currently only OpenAPI v3.0.x and v3.1.x spec files can be created`
+          return await feedback.inputError(
+            `currently only OpenAPI v3.0.x and v3.1.x spec files can be created`,
+            'oas-version-unsupported',
+            { suppliedVersion: semver.version }
           );
         } else {
           oasVersion = semver.version;
@@ -75,8 +85,12 @@ export async function newCommand(): Promise<Command> {
       }
 
       let newSpecFile = await createNewSpecFile(absoluteFilePath, oasVersion);
-
+      let trackingStats = streamFinished(destination).then(() =>
+        trackStats({ oasVersion })
+      );
       SpecFile.write(newSpecFile, destination);
+
+      await trackingStats;
     });
 
   return command;
@@ -104,4 +118,16 @@ async function createNewSpecFile(
   );
 
   return updatedSpecFile;
+}
+
+async function trackStats({ oasVersion }: { oasVersion: string }) {
+  trackEvent('openapi_cli.new.completed', {
+    oasVersion,
+  });
+
+  try {
+    await flushEvents();
+  } catch (err) {
+    console.warn('Could not flush usage analytics (non-critical)');
+  }
 }
