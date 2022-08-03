@@ -26,6 +26,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@asyncapi/specs@npm:^2.14.0":
+  version: 2.14.0
+  resolution: "@asyncapi/specs@npm:2.14.0"
+  checksum: 066c23c493df54c44c319433bdcf8482a3acd584e32c0073e6a9f5b167d61bde23a252621be2b28bbaf1466636f6cafaab570795de403f0c671358784d4b12ed
+  languageName: node
+  linkType: hard
+
 "@babel/cli@npm:^7.17.0":
   version: 7.17.10
   resolution: "@babel/cli@npm:7.17.10"
@@ -2322,19 +2329,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:6.19.7":
-  version: 6.19.7
-  resolution: "@sentry/core@npm:6.19.7"
-  dependencies:
-    "@sentry/hub": 6.19.7
-    "@sentry/minimal": 6.19.7
-    "@sentry/types": 6.19.7
-    "@sentry/utils": 6.19.7
-    tslib: ^1.9.3
-  checksum: d212e8ef07114549de4a93b81f8bfa217ca1550ca7a5eeaa611e5629faef78ff72663ce561ffa2cff48f3dc556745ef65177044f9965cdd3cbccf617cf3bf675
-  languageName: node
-  linkType: hard
-
 "@sentry/core@npm:7.3.1":
   version: 7.3.1
   resolution: "@sentry/core@npm:7.3.1"
@@ -2347,17 +2341,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/hub@npm:6.19.7":
-  version: 6.19.7
-  resolution: "@sentry/hub@npm:6.19.7"
-  dependencies:
-    "@sentry/types": 6.19.7
-    "@sentry/utils": 6.19.7
-    tslib: ^1.9.3
-  checksum: 10bb1c5cba1b0f1e27a3dd0a186c22f94aeaf11c4662890ab07b2774f46f46af78d61e3ba71d76edc750a7b45af86edd032f35efecdb4efa2eaf551080ccdcb1
-  languageName: node
-  linkType: hard
-
 "@sentry/hub@npm:7.3.1":
   version: 7.3.1
   resolution: "@sentry/hub@npm:7.3.1"
@@ -2366,33 +2349,6 @@ __metadata:
     "@sentry/utils": 7.3.1
     tslib: ^1.9.3
   checksum: aa4e4dd149ce2a3b2293d0727a99a2bbb0d16ddac07cec9365085d17fc37e5da385ab066a57a25c61cebd582504505041435293f3e1b9711ebaa094a3a25be7c
-  languageName: node
-  linkType: hard
-
-"@sentry/minimal@npm:6.19.7":
-  version: 6.19.7
-  resolution: "@sentry/minimal@npm:6.19.7"
-  dependencies:
-    "@sentry/hub": 6.19.7
-    "@sentry/types": 6.19.7
-    tslib: ^1.9.3
-  checksum: 9153ac426ee056fc34c5be898f83d74ec08f559d69f544c5944ec05e584b62ed356b92d1a9b08993a7022ad42b5661c3d72881221adc19bee5fc1af3ad3864a8
-  languageName: node
-  linkType: hard
-
-"@sentry/node@npm:^6.17.6":
-  version: 6.19.7
-  resolution: "@sentry/node@npm:6.19.7"
-  dependencies:
-    "@sentry/core": 6.19.7
-    "@sentry/hub": 6.19.7
-    "@sentry/types": 6.19.7
-    "@sentry/utils": 6.19.7
-    cookie: ^0.4.1
-    https-proxy-agent: ^5.0.0
-    lru_map: ^0.3.3
-    tslib: ^1.9.3
-  checksum: 2293b0d1d1f9fac3a451eb94f820bc27721c8edddd1f373064666ddd6272f0a4c70dbe58c6c4b3d3ccaf4578aab8f466d71ee69f6f6ff93521bbb02dfe829ce5
   languageName: node
   linkType: hard
 
@@ -2412,27 +2368,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/types@npm:6.19.7":
-  version: 6.19.7
-  resolution: "@sentry/types@npm:6.19.7"
-  checksum: f46ef74a33376ad6ea9b128115515c58eb9369d89293c60aa67abca26b5d5d519aa4d0a736db56ae0d75ffd816643d62187018298523cbc2e6c2fb3a6b2a9035
-  languageName: node
-  linkType: hard
-
 "@sentry/types@npm:7.3.1":
   version: 7.3.1
   resolution: "@sentry/types@npm:7.3.1"
   checksum: b75919d5b6490215ad1d15735342d0f60e5044c5de162fe47af704f14a27f458dd8b7b37484f9b0fc9749fa8c34aa90feaff7abdb4f8cbb92a4b9139860f6bd2
-  languageName: node
-  linkType: hard
-
-"@sentry/utils@npm:6.19.7":
-  version: 6.19.7
-  resolution: "@sentry/utils@npm:6.19.7"
-  dependencies:
-    "@sentry/types": 6.19.7
-    tslib: ^1.9.3
-  checksum: a000223b9c646c64e3565e79cace1eeb75114342b768367c4dddd646476c215eb1bddfb70c63f05e2352d3bce2d7d415344e4757a001605d0e01ac74da5dd306
   languageName: node
   linkType: hard
 
@@ -2610,7 +2549,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stoplight/spectral-formats@npm:^1.0.0, @stoplight/spectral-formats@npm:^1.0.2":
+"@stoplight/spectral-formats@npm:^1.0.0":
   version: 1.0.2
   resolution: "@stoplight/spectral-formats@npm:1.0.2"
   dependencies:
@@ -2619,6 +2558,18 @@ __metadata:
     "@types/json-schema": ^7.0.7
     tslib: ^2.3.1
   checksum: d1a8b1db0ca102022b0c7ac0c288b21d6e3a028a52f4b2e96c3077a0f55d9e7a01e2363cb22ed409a2d0e479e6d891a6aa1a9959d0a6ca47b5027521748ff3e6
+  languageName: node
+  linkType: hard
+
+"@stoplight/spectral-formats@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@stoplight/spectral-formats@npm:1.2.0"
+  dependencies:
+    "@stoplight/json": ^3.17.0
+    "@stoplight/spectral-core": ^1.8.0
+    "@types/json-schema": ^7.0.7
+    tslib: ^2.3.1
+  checksum: cf4a80d5fb29a0bb11b5f4a88c218af6643df28a908e63765746eb4e5d2e7157ec0e287a6daee0a013ab7573c5618ffeb65bb4f8293c409dee927fba605fae37
   languageName: node
   linkType: hard
 
@@ -2667,24 +2618,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stoplight/spectral-rulesets@npm:^1.3.2":
-  version: 1.3.2
-  resolution: "@stoplight/spectral-rulesets@npm:1.3.2"
+"@stoplight/spectral-rulesets@npm:^1.11.1":
+  version: 1.11.1
+  resolution: "@stoplight/spectral-rulesets@npm:1.11.1"
   dependencies:
+    "@asyncapi/specs": ^2.14.0
     "@stoplight/better-ajv-errors": 1.0.1
     "@stoplight/json": ^3.17.0
     "@stoplight/spectral-core": ^1.8.1
-    "@stoplight/spectral-formats": ^1.0.2
+    "@stoplight/spectral-formats": ^1.2.0
     "@stoplight/spectral-functions": ^1.5.1
     "@stoplight/spectral-runtime": ^1.1.1
-    "@stoplight/types": ^12.3.0
+    "@stoplight/types": ^12.5.0
     "@types/json-schema": ^7.0.7
     ajv: ^8.8.2
     ajv-formats: ~2.1.0
     json-schema-traverse: ^1.0.0
     lodash: ~4.17.21
     tslib: ^2.3.0
-  checksum: 041d3e14242205b61597d42e337e75ffeb825a1ad54ef2fb2f136b6419a260bde1c5c6bca78ea9d9604f33377548775ad84b0216ebb79fcf02d3cd18f1b52014
+  checksum: e13345b29b51b68539ca621a24f6cc1a8c0d6904066104e5ac23b7a67636de5c86a270f4209c8666af5a4203fefae02113b0163c3c1e6c1e6cd85caa53214791
   languageName: node
   linkType: hard
 
@@ -2713,7 +2665,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stoplight/types@npm:^12.0.0, @stoplight/types@npm:^12.3.0":
+"@stoplight/types@npm:^12.0.0, @stoplight/types@npm:^12.3.0, @stoplight/types@npm:^12.5.0":
   version: 12.5.0
   resolution: "@stoplight/types@npm:12.5.0"
   dependencies:
@@ -3389,7 +3341,7 @@ __metadata:
     "@types/node": ^17.0.15
     babel-jest: ^27.5.1
     jest: ^27.5.1
-    jsonpointer: ^5.0.0
+    jsonpointer: ^5.0.1
     prettier: ^2.4.1
     ts-node: ^10.3.1
     typescript: ^4.4.4
@@ -3583,7 +3535,7 @@ __metadata:
     "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
     "@octokit/rest": ^18.12.0
-    "@sentry/node": ^6.17.6
+    "@sentry/node": ^7.3.1
     "@types/ajv": ^1.0.0
     "@types/analytics-node": ^3.1.7
     "@types/babel__core": ^7
@@ -3636,7 +3588,7 @@ __metadata:
     "@babel/preset-typescript": ^7.17.0
     "@babel/runtime": ^7.17.2
     "@octokit/rest": ^18.12.0
-    "@sentry/node": ^6.17.6
+    "@sentry/node": ^7.3.1
     "@stoplight/spectral-core": ^1.8.1
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
@@ -3691,7 +3643,7 @@ __metadata:
     "@babel/preset-typescript": ^7.17.0
     "@babel/runtime": ^7.17.2
     "@octokit/rest": ^18.12.0
-    "@sentry/node": ^6.17.6
+    "@sentry/node": ^7.3.1
     "@stoplight/spectral-core": ^1.8.1
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
@@ -3746,7 +3698,7 @@ __metadata:
     "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
     "@stoplight/spectral-core": ^1.8.1
-    "@stoplight/spectral-rulesets": ^1.3.2
+    "@stoplight/spectral-rulesets": ^1.11.1
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
     "@types/jest": ^26.0.24
@@ -7525,6 +7477,13 @@ __metadata:
   version: 5.0.0
   resolution: "jsonpointer@npm:5.0.0"
   checksum: c7ec0b6bb596b81de687bc12945586bbcdc80dfb54919656d2690d76334f796a936270067ee9f1b5bbc2d9ecc551afb366ac35e6685aa61f07b5b68d1e5e857d
+  languageName: node
+  linkType: hard
+
+"jsonpointer@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "jsonpointer@npm:5.0.1"
+  checksum: 0b40f712900ad0c846681ea2db23b6684b9d5eedf55807b4708c656f5894b63507d0e28ae10aa1bddbea551241035afe62b6df0800fc94c2e2806a7f3adecd7c
   languageName: node
   linkType: hard
 

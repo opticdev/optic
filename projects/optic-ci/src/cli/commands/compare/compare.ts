@@ -273,7 +273,7 @@ const runCompare = async ({
             );
             console.error(e);
             if (!UserError.isInstance(e)) {
-              SentryClient?.captureException(e);
+              SentryClient.captureException(e);
             }
           }
         } else if (git_provider === 'gitlab') {
@@ -291,7 +291,7 @@ const runCompare = async ({
             );
             console.error(e);
             if (!UserError.isInstance(e)) {
-              SentryClient?.captureException(e);
+              SentryClient.captureException(e);
             }
           }
         }
@@ -303,7 +303,7 @@ const runCompare = async ({
       console.error(e);
 
       if (!UserError.isInstance(e)) {
-        SentryClient?.captureException(e);
+        SentryClient.captureException(e);
       }
     }
   }

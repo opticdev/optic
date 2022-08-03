@@ -1,14 +1,15 @@
 import * as Sentry from '@sentry/node';
 import { UserError } from '../errors';
 
-export let SentryClient: Sentry.NodeClient | null = null;
+export  { Sentry as SentryClient};
 
 export const initSentry = (sentryUrl: string | undefined, version: string) => {
   if (sentryUrl) {
-    SentryClient = new Sentry.NodeClient({
+    Sentry.init({
       dsn: sentryUrl,
       tracesSampleRate: 1.0,
       release: version,
+      
     });
   }
 };
@@ -25,12 +26,10 @@ export const wrapActionHandlerWithSentry = <
     } catch (e) {
       const err = e as Error;
       console.error(err.message);
-      if (SentryClient && !UserError.isInstance(e)) {
-        SentryClient.captureException(e);
+      if (!UserError.isInstance(e)) {
+        Sentry.captureException(e);
       }
-      if (SentryClient) {
-        await SentryClient.flush();
-      }
+      await Sentry.flush();
       process.exit(1);
     }
   };

@@ -35,6 +35,6 @@
     ]
   },
   "dependencies": {
-    "jsonpointer": "^5.0.0"
+    "jsonpointer": "^5.0.1"
   }
 }
