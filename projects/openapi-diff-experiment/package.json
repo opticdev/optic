@@ -77,7 +77,7 @@
     "react": "^17.0.2",
     "ts-invariant": "^0.9.3",
     "uuid": "^8.3.2",
-    "xstate": "^4.26.0"
+    "xstate": "^4.32.1"
   },
   "jest": {
     "testPathIgnorePatterns": [
