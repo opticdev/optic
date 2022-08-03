@@ -8,7 +8,7 @@ on:
 
 env:
   SKIP_ANNOUNCE: "false"
-  SKIP_PUBLISH: "true"
+  SKIP_PUBLISH: "false"
 
 jobs:
   verify-prerelease-tag:
