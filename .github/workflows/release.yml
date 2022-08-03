@@ -1,0 +1,149 @@
+name: "openapi-ws release-v2"
+
+on:
+  workflow_dispatch: {}
+  release:
+    types:
+      - published
+
+env:
+  SKIP_ANNOUNCE: "false"
+  SKIP_PUBLISH: "true"
+
+jobs:
+  verify-prerelease-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v2.4.0
+      - name: Verify prerelease has a prerelease tag
+        if: github.event.release.prerelease
+        run: |
+          if ! [[ "${{ github.event.release.tag_name }}" =~ ^v[0-9]+.[0-9]+.[0-9]+\-.+ ]]
+          then
+            echo "ERROR: '${{ github.event.release.tag_name }}' is not a valid prerelease tag"
+            exit 1
+          fi
+
+  verify-versions-agree:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v2.4.0
+      - name: Confirm GH release and package.json agree on version
+        if: github.event_name == 'release'
+        run: |
+          # add a 'v' prefix to match the Git tag
+          package_version=v$(jq -r '.version' < projects/openapi-workspaces/projects/openapi-utilities/package.json)
+
+          if [ "${package_version}" != "${{ github.event.release.tag_name }}" ]
+          then
+            echo "ERROR: package.json version (${package_version}) does not match GitHub release tag (${{ github.event.release.tag_name }})"
+            exit 1
+          fi
+      - name: Confirm all package.json files have the same version
+        run: .github/scripts/version-sync
+
+  verify-version-unpublished:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v2.4.0
+      - name: Confirm release version is unpublished
+        run: |
+          package_version=$(jq -r '.version' < projects/openapi-workspaces/projects/openapi-utilities/package.json)
+          is_published=$(
+            yarn npm info "@useoptic/openapi-utilities" --json \
+            | jq -rs '.[0]' \
+            | jq ".versions // []" \
+            | jq -r "any(.[]; . == \"$package_version\")"
+          )
+
+          if [ "${is_published}" == "true" ]
+          then
+            echo "ERROR: @useoptic/openapi-utilities@$package_version is already published"
+            exit 1
+          fi
+
+  release:
+    runs-on: ubuntu-latest
+    needs:
+      - verify-prerelease-tag
+      - verify-versions-agree
+      - verify-version-unpublished
+    steps:
+      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v2.4.0
+
+      - uses: actions/setup-node@eeb10cff27034e7acf239c5d29f62154018672fd
+        with:
+          node-version: 16
+          cache: yarn
+
+      - name: Install libpcap
+        run: sudo apt-get update -y && sudo apt-get install -y libpcap-dev
+
+      - name: Install Task
+        run: curl -sL https://taskfile.dev/install.sh | sudo bash -s -- -b /usr/local/bin/
+
+      - name: Build
+        env:
+          NODE_ENV: production
+        run: |
+          set -a
+          source projects/openapi-workspaces/projects/optic-ci/.env.production
+          task default
+
+      - name: Test
+        run: task test
+
+      - name: Set NPM credentials
+        run: yarn config set 'npmScopes.useoptic.npmAuthToken' "${{ secrets.PUBLISH_NPM_OPTIC_BOT }}"
+
+      - name: Set release channel to 'prerelease'
+        run: echo "RELEASE_CHANNEL=prerelease" >> $GITHUB_ENV
+
+      - name: Set release channel to 'latest'
+        if: github.event_name == 'release'
+        run: |
+          if [[ "${{ github.event.release.prerelease }}" == "false" ]]
+          then
+            echo "Setting RELEASE_CHANNEL to 'latest'"
+            echo "RELEASE_CHANNEL=latest" >> $GITHUB_ENV
+          else
+            echo "Leaving RELEASE_CHANNEL as '$RELEASE_CHANNEL'"
+          fi
+
+      - name: Get package version
+        run: |
+          v=$(cat projects/openapi-workspaces/projects/openapi-utilities/package.json | jq -r .version)
+          echo "VERSION=$v" >> $GITHUB_ENV
+
+      - name: Publish
+        run: |
+          if [ "$SKIP_PUBLISH" = "false"]
+          then
+            echo "Publishing $VERSION to the "$RELEASE_CHANNEL" channel"
+            task publish -- --tag $RELEASE_CHANNEL
+          else
+            echo "SKIP_PUBLISH=$SKIP_PUBLISH"
+            echo "Would publish $VERSION to the "$RELEASE_CHANNEL" channel"
+          fi
+
+      - name: Announce success
+        uses: Ilshidur/action-slack@689ad44a9c9092315abd286d0e3a9a74d31ab78a # v2.1.0
+        if: >
+          success()
+          && env.SKIP_ANNOUNCE == 'false'
+          && env.SKIP_PUBLISH == 'false'
+        env:
+          SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
+        with:
+          args: "{{ GITHUB_ACTOR }}: ✅ openapi-workspaces v{{ VERSION }} packages published to channel `{{ RELEASE_CHANNEL }}`!"
+
+      - name: Announce failure
+        uses: Ilshidur/action-slack@689ad44a9c9092315abd286d0e3a9a74d31ab78a # v2.1.0
+        if: >
+          failure()
+          && env.SKIP_ANNOUCE == 'false'
+          && env.SKIP_PUBLISH == 'false'
+        env:
+          SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
+        with:
+          args: "{{ GITHUB_ACTOR }}: 🚫 openapi-workspaces v{{ VERSION }} failed to publish."
