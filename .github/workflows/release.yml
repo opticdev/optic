@@ -117,7 +117,7 @@ jobs:
 
       - name: Publish
         run: |
-          if [ "$SKIP_PUBLISH" = "false"]
+          if [ "$SKIP_PUBLISH" = "false" ]
           then
             echo "Publishing $VERSION to the "$RELEASE_CHANNEL" channel"
             task publish -- --tag $RELEASE_CHANNEL
