@@ -39,7 +39,13 @@ export async function makeCli(config: CliConfig) {
 }
 
 (async () => {
+  const updateNotifier = (await import('update-notifier')).default;
   const config = readConfig();
+
+  updateNotifier({
+    pkg: config.package,
+    distTag: config.updateNotifier.distTag,
+  }).notify();
 
   const runId = randomUUID();
   if (config.analytics.segment) {
@@ -54,7 +60,7 @@ export async function makeCli(config: CliConfig) {
   if (config.errors.sentry) {
     initSentry({
       ...config.errors.sentry,
-      version: packageJson.version,
+      version: config.package.version,
       runId,
     });
   }
@@ -82,7 +88,7 @@ export async function makeCli(config: CliConfig) {
 
   trackEvent('openapi-cli-run', {
     runId,
-    version: packageJson.version,
+    version: config.package.version,
   });
 
   cli.parse(args, { from: 'user' });

@@ -34,6 +34,7 @@
     "@types/slice-ansi": "^4",
     "@types/stream-chain": "^2",
     "@types/stream-json": "^1",
+    "@types/update-notifier": "^6",
     "@types/whatwg-mimetype": "^2.1.1",
     "babel-jest": "^27.5.1",
     "babel-plugin-inline-dotenv": "^1.7.0",
@@ -70,6 +71,7 @@
     "strip-ansi": "^6.0.1",
     "ts-invariant": "^0.9.4",
     "ts-results": "^3.3.0",
+    "update-notifier": "^6.0.2",
     "whatwg-mimetype": "^3.0.0"
   },
   "jest": {
