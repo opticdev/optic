@@ -1,14 +1,16 @@
 import { inGit, loadSpecFromBranch } from './loaders/file-on-branch';
 import { loadSpecFromFile, loadSpecFromUrl } from './loaders/file';
 import {
-  JsonPath,
-  JsonSchemaSourcemap,
   JSONParserError,
-  dereferenceOpenAPI,
   parseOpenAPIFromRepoWithSourcemap,
   ParseOpenAPIResult,
   parseOpenAPIWithSourcemap,
 } from './parser/openapi-sourcemap-parser';
+import {
+  JsonPath,
+  JsonSchemaSourcemap,
+  resolveJsonPointerInYamlAst,
+} from './parser/sourcemap';
 import { loadYaml, isYaml, isJson, writeYaml } from './write/index';
 import {
   watchDependencies,
@@ -23,7 +25,7 @@ export {
   loadSpecFromBranch,
   parseOpenAPIWithSourcemap,
   parseOpenAPIFromRepoWithSourcemap,
-  dereferenceOpenAPI,
+  resolveJsonPointerInYamlAst,
   JsonSchemaSourcemap,
   JSONParserError,
   loadYaml,

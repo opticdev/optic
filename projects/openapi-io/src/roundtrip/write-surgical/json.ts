@@ -6,10 +6,9 @@ import {
 } from '../roundtrip-provider';
 import jsonpatch, { AddOperation, Operation } from 'fast-json-patch';
 import { lines, replaceRange, startsWithWhitespace } from '../helpers/lines';
-import fs from 'fs-extra';
 import { safeLoad, YamlMap, YAMLSequence } from 'yaml-ast-parser';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { resolveJsonPointerInYamlAst } from '../../parser/openapi-sourcemap-parser';
+import { resolveJsonPointerInYamlAst } from '../../parser/sourcemap';
 import invariant from 'ts-invariant';
 import ast from '../helpers/ast';
 import jsonLike from '../helpers/json-like';

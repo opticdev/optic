@@ -1,9 +1,8 @@
 import { SpecLoaderResult } from './types';
-import * as path from 'path';
 import {
-  JsonSchemaSourcemap,
   parseOpenAPIFromRepoWithSourcemap,
 } from '../parser/openapi-sourcemap-parser';
+import { JsonSchemaSourcemap } from '../parser/sourcemap';
 
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);

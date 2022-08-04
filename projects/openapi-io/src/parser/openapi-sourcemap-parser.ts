@@ -1,18 +1,19 @@
 import $RefParser from '@apidevtools/json-schema-ref-parser';
 // @ts-ignore
 import * as $RefParserOptions from '@apidevtools/json-schema-ref-parser/lib/options';
-import { YAMLMapping, YAMLNode, YAMLSequence } from 'yaml-ast-parser';
-import * as fs from 'fs-extra';
 // @ts-ignore
 import { dereference } from './insourced-dereference';
 import path from 'path';
-import sha256 from 'crypto-js/sha256';
-import Hex from 'crypto-js/enc-hex';
 
 import fetch from 'node-fetch';
 import { OpenAPIV3 } from 'openapi-types';
-import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import isUrl from 'is-url';
+import { Octokit } from '@octokit/rest';
+
+import { JsonSchemaSourcemap } from './sourcemap';
+import { gitBranchResolver } from './resolvers/git-branch-file-resolver';
+import { createGithubFileResolver } from './resolvers/github-file-resolver';
+import { ExternalRefHandler } from './types';
 
 export { JSONParserError } from '@apidevtools/json-schema-ref-parser';
 
@@ -21,124 +22,53 @@ export type ParseOpenAPIResult = {
   sourcemap: JsonSchemaSourcemap;
 };
 
-export async function parseOpenAPIWithSourcemap(
-  path: string
+export async function dereferenceOpenApi(
+  path: string,
+  options: {
+    externalRefHandler?: ExternalRefHandler;
+  } = {}
 ): Promise<ParseOpenAPIResult> {
   const resolver = new $RefParser();
 
   const sourcemap = new JsonSchemaSourcemap(path);
-  const resolverResults: $RefParser.$Refs = await resolver.resolve(path, {
-    resolve: {
-      http: {
-        headers: {
-          accept: '*/*',
-        },
-      },
-    },
-  });
-
-  // parse all asts
-  await Promise.all(
-    resolverResults
-      .paths()
-      .map(async (filePath, index) =>
-        sourcemap.addFileIfMissing(filePath, index)
-      )
-  );
-
-  dereference(
-    resolver,
-    {
-      ...$RefParserOptions.defaults,
-      path: path,
-      dereference: { circular: 'ignore' },
-    },
-    sourcemap
-  );
-
-  return { jsonLike: resolver.schema as any, sourcemap: sourcemap };
-}
-
-export async function dereferenceOpenAPI(
-  openapi: OpenAPIV3.Document,
-  rootPath: string = 'openapi.yaml'
-): Promise<ParseOpenAPIResult> {
-  const resolver = new $RefParser();
-
-  const sourcemap = new JsonSchemaSourcemap(rootPath);
-
-  await resolver.resolve(openapi, {
-    resolve: {
-      http: {
-        headers: {
-          accept: '*/*',
-        },
-      },
-    },
-  });
-
-  dereference(
-    resolver,
-    {
-      ...$RefParserOptions.defaults,
-      path: path,
-      dereference: { circular: 'ignore' },
-    },
-    sourcemap
-  );
-
-  return { jsonLike: resolver.schema as any, sourcemap };
-}
-
-export async function parseOpenAPIFromRepoWithSourcemap(
-  name: string,
-  repoPath: string,
-  branch: string
-): Promise<ParseOpenAPIResult> {
-  const newGitBranchResolver = require('./git-branch-file-resolver.js');
-
-  const inGitResolver = newGitBranchResolver(repoPath, branch);
-  const resolver = new $RefParser();
-  const fileName = path.join(repoPath, name);
-
-  const sourcemap = new JsonSchemaSourcemap(fileName);
   const resolve = {
-    file: inGitResolver,
+    file: options.externalRefHandler,
     http: {
       headers: {
         accept: '*/*',
       },
     },
-    external: true,
+    external: true
   };
-  const resolverResults: $RefParser.$Refs = await resolver.resolve(fileName, {
+  // Resolve all references
+  const resolverResults: $RefParser.$Refs = await resolver.resolve(path, {
     resolve,
   });
 
-  // parse all asts
+  // parse all asts and add to sourcemap
   await Promise.all(
     resolverResults.paths().map(async (filePath, index) => {
-      const loadUrl = async (filePath: string) => {
+      if (isUrl(filePath)) {
         const response = await fetch(filePath);
-        const asText = await response.text();
-        return asText;
-      };
-
-      return await sourcemap.addFileIfMissingFromContents(
-        filePath,
-        isUrl(filePath)
-          ? await loadUrl(filePath)
-          : await inGitResolver.read({ url: filePath }),
-        index
-      );
+        const contents = await response.text();
+        sourcemap.addFileIfMissingFromContents(filePath, contents, index);
+      } else if (options.externalRefHandler) {
+        const contents = await options.externalRefHandler.read({
+          url: filePath,
+        });
+        sourcemap.addFileIfMissingFromContents(filePath, contents, index);
+      } else {
+        await sourcemap.addFileIfMissing(filePath, index);
+      }
     })
   );
 
+  // Dereference all references
   dereference(
     resolver,
     {
       ...$RefParserOptions.defaults,
-      path: fileName,
+      path: path,
       dereference: { circular: 'ignore' },
       resolve,
     },
@@ -148,108 +78,33 @@ export async function parseOpenAPIFromRepoWithSourcemap(
   return { jsonLike: resolver.schema as any, sourcemap: sourcemap };
 }
 
-export type JsonPath = string;
-export type FileReference = number;
-
-export type ToSource = [FileReference, JsonPath];
-
-export class JsonSchemaSourcemap {
-  constructor(public rootFilePath: string) {}
-
-  public files: Array<{
-    path: string;
-    index: number;
-    contents: string;
-    sha256: string;
-  }> = [];
-
-  public refMappings: { [key: JsonPath]: ToSource } = {};
-
-  async addFileIfMissing(filePath: string, fileIndex: number) {
-    if (isUrl(filePath)) {
-      const response = await fetch(filePath);
-      const asText = await response.text();
-
-      this.files.push({
-        path: filePath,
-        contents: asText,
-        sha256: Hex.stringify(sha256(asText)),
-        index: fileIndex,
-      });
-    } else {
-      if (!this.files.find((i) => i.path === filePath)) {
-        const contents = (await fs.readFile(filePath)).toString();
-
-        this.files.push({
-          path: filePath,
-          sha256: Hex.stringify(sha256(contents)),
-          contents,
-          index: fileIndex,
-        });
-      }
-    }
-  }
-
-  addFileIfMissingFromContents(
-    filePath: string,
-    contents: string,
-    fileIndex: number
-  ) {
-    if (!this.files.find((i) => i.path === filePath)) {
-      this.files.push({
-        path: filePath,
-        index: fileIndex,
-        contents,
-        sha256: Hex.stringify(sha256(contents)),
-      });
-    }
-  }
-
-  logPointer(pathRelativeToFile: string, pathRelativeToRoot: string) {
-    const thisFile = this.files.find((i) =>
-      pathRelativeToFile.startsWith(i.path)
-    );
-
-    if (thisFile) {
-      const rootKey = jsonPointerHelpers.unescapeUriSafePointer(
-        pathRelativeToRoot.substring(1)
-      );
-
-      const jsonPointer = jsonPointerHelpers.unescapeUriSafePointer(
-        pathRelativeToFile.split(thisFile.path)[1].substring(1) || '/'
-      );
-
-      if (rootKey === jsonPointer) return;
-
-      this.refMappings[rootKey] = [thisFile.index, jsonPointer];
-    }
-  }
+export async function parseOpenAPIWithSourcemap(
+  path: string
+): Promise<ParseOpenAPIResult> {
+  return dereferenceOpenApi(path);
 }
-export function resolveJsonPointerInYamlAst(
-  node: YAMLNode, // root ast
-  pointer: string
-): YAMLNode | undefined {
-  const decoded = jsonPointerHelpers.decode(pointer);
-  const isEmpty =
-    decoded.length === 0 || (decoded.length === 1 && decoded[0] === '');
 
-  if (isEmpty) return node;
+export async function parseOpenAPIFromRepoWithSourcemap(
+  name: string,
+  repoPath: string,
+  branch: string
+): Promise<ParseOpenAPIResult> {
+  const inGitResolver = gitBranchResolver(repoPath, branch);
+  const fileName = path.join(repoPath, name);
+  return dereferenceOpenApi(fileName, { externalRefHandler: inGitResolver });
+}
 
-  const found: YAMLNode | undefined = decoded.reduce((current, path) => {
-    if (!current) return undefined;
-    const node: YAMLNode = current.key ? current.value : current;
-    const isNumericalKey =
-      !isNaN(Number(path)) && (node as any).hasOwnProperty('items');
-
-    if (isNumericalKey) {
-      return (node as YAMLSequence).items[Number(path)];
-    } else {
-      const field = node.mappings.find(
-        (i: YAMLMapping) => i.key.value === path
-      );
-      return field;
-    }
-  }, node as YAMLNode | undefined);
-
-  return found;
+export async function parseOpenAPIFromGithub(
+  fileName: string,
+  gitDetails: {
+    owner: string;
+    repo: string;
+    sha: string;
+  },
+  octokit: Octokit
+): Promise<ParseOpenAPIResult> {
+  const githubFileResolver = createGithubFileResolver(gitDetails, octokit);
+  return dereferenceOpenApi(fileName, {
+    externalRefHandler: githubFileResolver,
+  });
 }

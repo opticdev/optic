@@ -1,5 +1,5 @@
-import { JsonSchemaSourcemap } from '../../parser/openapi-sourcemap-parser';
-import jsonpatch, { Operation } from 'fast-json-patch';
+import { JsonSchemaSourcemap } from '../../parser/sourcemap';
+import jsonpatch from 'fast-json-patch';
 import { groupPatchesWithSourcemap } from './group-patches-with-sourcemap';
 import { StringifyPatchesAcrossFileSystem } from '../write-stringify/stringify-patches-across-file-system';
 import { PatchApplyResult } from '../roundtrip-provider';

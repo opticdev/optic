@@ -14,7 +14,6 @@ import {
   startsWithWhitespace,
   yamlSpacer,
 } from '../helpers/lines';
-import fs from 'fs-extra';
 import {
   Kind,
   safeLoad,
@@ -23,7 +22,7 @@ import {
   YAMLSequence,
 } from 'yaml-ast-parser';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { resolveJsonPointerInYamlAst } from '../../parser/openapi-sourcemap-parser';
+import { resolveJsonPointerInYamlAst } from '../../parser/sourcemap';
 import invariant from 'ts-invariant';
 import ast from '../helpers/ast';
 import jsonLike from '../helpers/json-like';

@@ -1,5 +1,5 @@
 import { OpenAPIV3 } from "openapi-types";
-import { JsonSchemaSourcemap } from "../parser/openapi-sourcemap-parser";
+import { JsonSchemaSourcemap } from "../parser/sourcemap";
 
 interface SpecLoaded {
   success: boolean;
