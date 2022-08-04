@@ -2,7 +2,7 @@
   "name": "@useoptic/openapi-diff-experiment",
   "private": true,
   "packageManager": "yarn@3.0.2",
-  "version": "0.26.28",
+  "version": "0.27.0-0",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -84,5 +84,6 @@
       "/build/",
       "/node_modules/"
     ]
-  }
+  },
+  "stableVersion": "0.26.28"
 }
