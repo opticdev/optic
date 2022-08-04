@@ -1,7 +1,7 @@
 import {
   ParseOpenAPIResult,
   parseOpenAPIWithSourcemap,
-} from './openapi-sourcemap-parser';
+} from '../openapi-sourcemap-parser';
 import path from 'path';
 import sortBy from 'lodash.sortby';
 
@@ -28,7 +28,7 @@ it('can parse a json schema spec with external references', async () => {
     path.resolve(
       path.join(
         __dirname,
-        '../../inputs/openapi3-with-references/external-multiple.yaml'
+        '../../../inputs/openapi3-with-references/external-multiple.yaml'
       )
     )
   );
@@ -41,7 +41,7 @@ it('can parse a json schema spec with internal references to external references
     path.resolve(
       path.join(
         __dirname,
-        '../../inputs/openapi3-with-references/internal-multiple.yaml'
+        '../../../inputs/openapi3-with-references/internal-multiple.yaml'
       )
     )
   );
@@ -54,7 +54,7 @@ it('can parse a json schema spec with external references to the same file', asy
     path.resolve(
       path.join(
         __dirname,
-        '../../inputs/openapi3-with-references/external-multiple-branches.yaml'
+        '../../../inputs/openapi3-with-references/external-multiple-branches.yaml'
       )
     )
   );
@@ -63,7 +63,7 @@ it('can parse a json schema spec with external references to the same file', asy
 
 it('can parse an OpenAPI file and have valid sourcemap', async () => {
   const results = await parseOpenAPIWithSourcemap(
-    path.resolve(path.join(__dirname, '../../inputs/openapi3/petstore0.json'))
+    path.resolve(path.join(__dirname, '../../../inputs/openapi3/petstore0.json'))
   );
   expect(prepSnapshot(results)).toMatchSnapshot();
 });
@@ -71,7 +71,7 @@ it('can parse an OpenAPI file and have valid sourcemap', async () => {
 it('can parse an OpenAPI file with nested URLs from file or git', async () => {
   const fileResults = await parseOpenAPIWithSourcemap(
     path.resolve(
-      path.join(__dirname, '../../inputs/openapi3/000-baseline.yaml')
+      path.join(__dirname, '../../../inputs/openapi3/000-baseline.yaml')
     )
   );
 
@@ -81,7 +81,7 @@ it('can parse an OpenAPI file with nested URLs from file or git', async () => {
 it('can parse an OpenAPI file with nested URLs from file or git', async () => {
   const fileResults = await parseOpenAPIWithSourcemap(
     path.resolve(
-      path.join(__dirname, '../../inputs/openapi3/empty-with-url-ref.json')
+      path.join(__dirname, '../../../inputs/openapi3/empty-with-url-ref.json')
     )
   );
 
@@ -91,7 +91,7 @@ it('can parse an OpenAPI file with nested URLs from file or git', async () => {
 it('can generate a sourcemap and jsonLike that is serializable', async () => {
   const fileResults = await parseOpenAPIWithSourcemap(
     path.resolve(
-      path.join(__dirname, '../../inputs/openapi3/empty-with-url-ref.json')
+      path.join(__dirname, '../../../inputs/openapi3/empty-with-url-ref.json')
     )
   );
 
@@ -104,7 +104,7 @@ describe('circular references', () => {
       path.resolve(
         path.join(
           __dirname,
-          '../../inputs/openapi3-with-references/circular-references.yaml'
+          '../../../inputs/openapi3-with-references/circular-references.yaml'
         )
       )
     );
@@ -118,7 +118,7 @@ describe('circular references', () => {
       path.resolve(
         path.join(
           __dirname,
-          '../../inputs/openapi3-with-references/circular-references-multiple-chain.yaml'
+          '../../../inputs/openapi3-with-references/circular-references-multiple-chain.yaml'
         )
       )
     );
@@ -133,7 +133,7 @@ describe('circular references', () => {
       path.resolve(
         path.join(
           __dirname,
-          '../../inputs/openapi3-with-references/circular-references-with-expanded-refs.yaml'
+          '../../../inputs/openapi3-with-references/circular-references-with-expanded-refs.yaml'
         )
       )
     );
@@ -147,7 +147,7 @@ describe('circular references', () => {
       path.resolve(
         path.join(
           __dirname,
-          '../../inputs/openapi3-with-references/circular-references-multiple-refs.yaml'
+          '../../../inputs/openapi3-with-references/circular-references-multiple-refs.yaml'
         )
       )
     );
