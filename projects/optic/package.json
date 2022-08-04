@@ -1,13 +1,16 @@
 {
   "name": "@useoptic/optic",
   "packageManager": "yarn@3.0.2",
-  "version": "0.26.28",
+  "version": "0.27.0",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
     "/build"
   ],
-  "bin": "build/index.js",
+  "bin": {
+    "oas": "build/oas.js",
+    "optic": "build/index.js"
+  },
   "scripts": {
     "dev:test": "ENVIRONMENT=test jest --colors",
     "build": "yarn tsc --build --verbose && yarn babel ./src --out-dir ./build --extensions \".ts\",\".tsx\"",
@@ -46,6 +49,7 @@
     "@octokit/rest": "^18.12.0",
     "@sentry/node": "^7.3.1",
     "@stoplight/spectral-core": "^1.8.1",
+    "@useoptic/openapi-cli": "workspace:*",
     "@useoptic/openapi-io": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
     "@useoptic/optic-ci": "workspace:*",
@@ -85,5 +89,6 @@
         "<rootDir>../../../../node_modules/nimma/dist/legacy/cjs/index.js"
       ]
     }
-  }
+  },
+  "stableVersion": "0.26.28"
 }

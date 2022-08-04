@@ -3444,7 +3444,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@useoptic/openapi-cli@workspace:projects/openapi-cli":
+"@useoptic/openapi-cli@workspace:*, @useoptic/openapi-cli@workspace:projects/openapi-cli":
   version: 0.0.0-use.local
   resolution: "@useoptic/openapi-cli@workspace:projects/openapi-cli"
   dependencies:
@@ -3504,7 +3504,7 @@ __metadata:
     update-notifier: ^6.0.2
     whatwg-mimetype: ^3.0.0
   bin:
-    openapi-cli: build/index.js
+    oas: build/index.js
   languageName: unknown
   linkType: soft
 
@@ -3754,6 +3754,7 @@ __metadata:
     "@types/picomatch": ^2.3.0
     "@types/url-join": ^4.0.1
     "@types/uuid": ^8.3.1
+    "@useoptic/openapi-cli": "workspace:*"
     "@useoptic/openapi-io": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"
     "@useoptic/optic-ci": "workspace:*"
@@ -3782,6 +3783,7 @@ __metadata:
     url-join: ^4.0.1
     uuid: ^8.3.2
   bin:
+    oas: build/oas.js
     optic: build/index.js
   languageName: unknown
   linkType: soft

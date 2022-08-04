@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import { Command } from 'commander';
 import fs from 'fs-extra';
 import Path from 'path';
@@ -36,7 +34,10 @@ export async function makeCli(config: CliConfig) {
   return cli;
 }
 
-export async function runCli(packageManifest?: { name: string; version: string }) {
+export async function runCli(packageManifest?: {
+  name: string;
+  version: string;
+}) {
   const updateNotifier = (await import('update-notifier')).default;
   const config = readConfig(packageManifest);
 
