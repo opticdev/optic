@@ -3,7 +3,7 @@ import sha256 from 'crypto-js/sha256';
 import Hex from 'crypto-js/enc-hex';
 import fsExtra from 'fs-extra';
 import path from 'path';
-import { JsonSchemaSourcemap } from '../parser/openapi-sourcemap-parser';
+import { JsonSchemaSourcemap } from '../parser/sourcemap';
 
 export type WatchDependenciesHandler = { stopWatching: () => void };
 

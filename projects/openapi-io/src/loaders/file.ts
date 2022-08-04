@@ -1,9 +1,9 @@
 import { SpecLoaderResult } from "./types";
 import {
-  JsonSchemaSourcemap,
   parseOpenAPIWithSourcemap,
 } from "../parser/openapi-sourcemap-parser";
 import * as path from "path";
+import { JsonSchemaSourcemap } from "../parser/sourcemap";
 
 export async function loadSpecFromFile(
   specFilePath: string,
