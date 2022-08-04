@@ -8,8 +8,11 @@ import path from 'path';
 import fetch from 'node-fetch';
 import { OpenAPIV3 } from 'openapi-types';
 import isUrl from 'is-url';
+import { Octokit } from '@octokit/rest';
+
 import { JsonSchemaSourcemap } from './sourcemap';
 import { gitBranchResolver } from './resolvers/git-branch-file-resolver';
+import { createGithubFileResolver } from './resolvers/github-file-resolver';
 import { ExternalRefHandler } from './types';
 
 export { JSONParserError } from '@apidevtools/json-schema-ref-parser';
@@ -88,4 +91,19 @@ export async function parseOpenAPIFromRepoWithSourcemap(
   const inGitResolver = gitBranchResolver(repoPath, branch);
   const fileName = path.join(repoPath, name);
   return dereferenceOpenApi(fileName, { externalRefHandler: inGitResolver });
+}
+
+export async function parseOpenAPIFromGithub(
+  fileName: string,
+  gitDetails: {
+    owner: string;
+    repo: string;
+    sha: string;
+  },
+  octokit: Octokit
+): Promise<ParseOpenAPIResult> {
+  const githubFileResolver = createGithubFileResolver(gitDetails, octokit);
+  return dereferenceOpenApi(fileName, {
+    externalRefHandler: githubFileResolver,
+  });
 }
