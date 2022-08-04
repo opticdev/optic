@@ -22,7 +22,7 @@ export type ParseOpenAPIResult = {
   sourcemap: JsonSchemaSourcemap;
 };
 
-async function dereferenceOpenApi(
+export async function dereferenceOpenApi(
   path: string,
   options: {
     externalRefHandler?: ExternalRefHandler;
@@ -38,6 +38,7 @@ async function dereferenceOpenApi(
         accept: '*/*',
       },
     },
+    external: true
   };
   // Resolve all references
   const resolverResults: $RefParser.$Refs = await resolver.resolve(path, {
@@ -69,7 +70,7 @@ async function dereferenceOpenApi(
       ...$RefParserOptions.defaults,
       path: path,
       dereference: { circular: 'ignore' },
-      ...(options.externalRefHandler ? {resolve,} : {})
+      resolve,
     },
     sourcemap
   );
