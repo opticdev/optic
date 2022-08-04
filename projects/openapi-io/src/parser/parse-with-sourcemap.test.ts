@@ -1,5 +1,4 @@
 import {
-  dereferenceOpenAPI,
   ParseOpenAPIResult,
   parseOpenAPIWithSourcemap,
 } from './openapi-sourcemap-parser';
@@ -23,29 +22,6 @@ function prepSnapshot(result: ParseOpenAPIResult) {
 
   return result;
 }
-
-it('can deference a json schema spec with references', async () => {
-  const results = await dereferenceOpenAPI({
-    openapi: '3.0.1',
-    paths: {
-      '/abc': {
-        get: {
-          responses: {
-            '400': {
-              $ref: 'https://raw.githubusercontent.com/snyk/sweater-comb/v1.2.0/components/responses/400.yaml#/400',
-            },
-          },
-        },
-      },
-    },
-    info: {
-      version: '0.0.0',
-      title: 'Empty',
-    },
-  });
-
-  expect(results.jsonLike).toMatchSnapshot();
-});
 
 it('can parse a json schema spec with external references', async () => {
   const results = await parseOpenAPIWithSourcemap(
