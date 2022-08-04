@@ -21,7 +21,6 @@
     "@babel/preset-env": "^7.17.0",
     "@babel/preset-react": "^7.17.0",
     "@babel/preset-typescript": "^7.17.0",
-    "@types/ajv": "^1.0.0",
     "@types/analytics-node": "^3.1.7",
     "@types/babel__core": "^7",
     "@types/babel__preset-env": "^7",
