@@ -9,18 +9,14 @@ import fetch from 'node-fetch';
 import { OpenAPIV3 } from 'openapi-types';
 import isUrl from 'is-url';
 import { JsonSchemaSourcemap } from './sourcemap';
+import { gitBranchResolver } from './resolvers/git-branch-file-resolver';
+import { ExternalRefHandler } from './types';
 
 export { JSONParserError } from '@apidevtools/json-schema-ref-parser';
 
 export type ParseOpenAPIResult = {
   jsonLike: OpenAPIV3.Document;
   sourcemap: JsonSchemaSourcemap;
-};
-
-type ExternalRefHandler = {
-  order: number;
-  canRead: (file: { url: string }) => boolean;
-  read: (file: { url: string }) => Promise<string>;
 };
 
 async function dereferenceOpenApi(
@@ -89,9 +85,7 @@ export async function parseOpenAPIFromRepoWithSourcemap(
   repoPath: string,
   branch: string
 ): Promise<ParseOpenAPIResult> {
-  const newGitBranchResolver = require('./git-branch-file-resolver.js');
-
-  const inGitResolver = newGitBranchResolver(repoPath, branch);
+  const inGitResolver = gitBranchResolver(repoPath, branch);
   const fileName = path.join(repoPath, name);
   return dereferenceOpenApi(fileName, { externalRefHandler: inGitResolver });
 }
