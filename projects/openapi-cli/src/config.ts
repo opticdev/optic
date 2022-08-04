@@ -22,10 +22,13 @@ export interface CliConfig {
   };
 }
 
-export function readConfig(): CliConfig {
-  let packageManifest = {
-    name: process.env.OPTIC_OPENCLI_PACKAGE_NAME || packageJson.name,
-    version: process.env.OPTIC_OPENCLI_PACKAGE_VERSION || packageJson.version,
+export function readConfig(packageManifestOption?: {
+  name: string;
+  version: string;
+}): CliConfig {
+  let packageManifest = packageManifestOption || {
+    name: packageJson.name as string,
+    version: packageJson.version as string,
   };
 
   return {
