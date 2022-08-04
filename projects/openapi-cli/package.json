@@ -1,13 +1,15 @@
 {
   "name": "@useoptic/openapi-cli",
   "packageManager": "yarn@3.0.2",
-  "version": "0.26.28",
+  "version": "0.27.0",
   "main": "build/lib.js",
   "types": "build/lib.d.ts",
   "files": [
     "/build"
   ],
-  "bin": "build/index.js",
+  "bin": {
+    "oas": "build/index.js"
+  },
   "scripts": {
     "dev:test": "jest --colors",
     "build": "yarn tsc --build --verbose && yarn babel ./build/config.js --out-dir ./build --extensions \".js\"",
@@ -92,5 +94,6 @@
         "<rootDir>../../../../node_modules/csv-parse/dist/cjs/sync.cjs"
       ]
     }
-  }
+  },
+  "stableVersion": "0.26.28"
 }
