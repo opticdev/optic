@@ -3504,7 +3504,7 @@ __metadata:
     update-notifier: ^6.0.2
     whatwg-mimetype: ^3.0.0
   bin:
-    openapi-cli: build/index.js
+    oas: build/index.js
   languageName: unknown
   linkType: soft
 

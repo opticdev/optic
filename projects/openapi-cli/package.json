@@ -7,7 +7,9 @@
   "files": [
     "/build"
   ],
-  "bin": "build/index.js",
+  "bin": {
+    "oas": "build/index.js"
+  },
   "scripts": {
     "dev:test": "jest --colors",
     "build": "yarn tsc --build --verbose && yarn babel ./build/config.js --out-dir ./build --extensions \".js\"",
