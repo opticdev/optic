@@ -17,13 +17,11 @@ import { CliConfig, readConfig } from './config';
 import { initSegment, trackEvent } from './segment';
 import { initSentry } from './sentry';
 
-const packageJson = require('../package.json');
-
 export async function makeCli(config: CliConfig) {
   const cli = new Command('oas');
   await createCommandFeedback(cli);
 
-  cli.version(packageJson.version);
+  cli.version(config.package.version);
   cli.description('oas [openapi-file] <command> [options]');
 
   cli.addCommand(await addCommand());
@@ -38,15 +36,21 @@ export async function makeCli(config: CliConfig) {
   return cli;
 }
 
-(async () => {
-  const config = readConfig();
+export async function runCli(packageManifest?: { name: string; version: string }) {
+  const updateNotifier = (await import('update-notifier')).default;
+  const config = readConfig(packageManifest);
+
+  updateNotifier({
+    pkg: config.package,
+    distTag: config.updateNotifier.distTag,
+  }).notify();
 
   const runId = randomUUID();
   if (config.analytics.segment) {
     initSegment({
       ...config.analytics.segment,
-      version: packageJson.version,
-      name: packageJson.name,
+      version: config.package.version,
+      name: config.package.name,
       runId,
     });
   }
@@ -54,7 +58,7 @@ export async function makeCli(config: CliConfig) {
   if (config.errors.sentry) {
     initSentry({
       ...config.errors.sentry,
-      version: packageJson.version,
+      version: config.package.version,
       runId,
     });
   }
@@ -82,8 +86,8 @@ export async function makeCli(config: CliConfig) {
 
   trackEvent('openapi-cli-run', {
     runId,
-    version: packageJson.version,
+    version: config.package.version,
   });
 
   cli.parse(args, { from: 'user' });
-})();
+}

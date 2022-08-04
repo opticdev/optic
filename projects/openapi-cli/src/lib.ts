@@ -8,14 +8,13 @@ export { OpenAPIV3 } from './specs';
 
 function initAnalytics(runId: string) {
   const config = readConfig();
-  const packageJson = require('../package.json');
 
   if (config.analytics.segment) {
     initSegment({
       key: config.analytics.segment.key,
       runId,
-      version: packageJson.version,
-      name: packageJson.name,
+      version: config.package.version,
+      name: config.package.name,
     });
   }
 }

@@ -1,3 +1,7 @@
+import Semver from 'semver';
+
+const packageJson = require('../package.json');
+
 export interface CliConfig {
   analytics: {
     segment: null | {
@@ -9,9 +13,24 @@ export interface CliConfig {
       dsn: string;
     };
   };
+  package: {
+    name: string;
+    version: string;
+  };
+  updateNotifier: {
+    distTag: string;
+  };
 }
 
-export function readConfig(): CliConfig {
+export function readConfig(packageManifestOption?: {
+  name: string;
+  version: string;
+}): CliConfig {
+  let packageManifest = packageManifestOption || {
+    name: packageJson.name as string,
+    version: packageJson.version as string,
+  };
+
   return {
     analytics: {
       segment: process.env.OPTIC_OPENCLI_SEGMENT_KEY
@@ -26,6 +45,13 @@ export function readConfig(): CliConfig {
             dsn: process.env.OPTIC_OPENCLI_SENTRY_DSN,
           }
         : null,
+    },
+    package: packageManifest,
+    updateNotifier: {
+      distTag:
+        Semver.parse(packageManifest.version)!.prerelease.length > 0
+          ? 'prerelease'
+          : 'latest',
     },
   };
 }
