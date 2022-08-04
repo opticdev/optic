@@ -69,7 +69,7 @@ async function dereferenceOpenApi(
       ...$RefParserOptions.defaults,
       path: path,
       dereference: { circular: 'ignore' },
-      resolve,
+      ...(options.externalRefHandler ? {resolve,} : {})
     },
     sourcemap
   );
