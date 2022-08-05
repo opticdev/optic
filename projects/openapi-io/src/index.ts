@@ -4,6 +4,7 @@ import {
   JSONParserError,
   parseOpenAPIFromRepoWithSourcemap,
   ParseOpenAPIResult,
+  parseOpenAPIFromGithub,
   parseOpenAPIWithSourcemap,
 } from './parser/openapi-sourcemap-parser';
 import {
@@ -25,6 +26,7 @@ export {
   loadSpecFromBranch,
   parseOpenAPIWithSourcemap,
   parseOpenAPIFromRepoWithSourcemap,
+  parseOpenAPIFromGithub,
   resolveJsonPointerInYamlAst,
   JsonSchemaSourcemap,
   JSONParserError,
