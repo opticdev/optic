@@ -48,6 +48,7 @@ import {
   LookupLineResult,
   LookupLineResultWithFilepath,
 } from './render/ast-helpers';
+import { checkOpenAPIVersion } from './openapi3/implementations/openapi3/openapi-versions';
 export { defaultEmptySpec } from './openapi3/constants';
 export * from './ci-types';
 export { generateSpecResults } from './openapi3/implementations/openapi3/generate-spec-results';
@@ -74,6 +75,7 @@ export { compareChangesByPath } from './utilities/compare-changes-by-path';
 export { getOperationsModifsLabel } from './utilities/count-changed-operations';
 
 export {
+  checkOpenAPIVersion,
   sourcemapReader,
   validateOpenApiV3Document,
   OpenApiFact,
