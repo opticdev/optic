@@ -48,7 +48,10 @@ export type ParseResult =
 
 function parse(filePath: string, fileContents: string): ParseResult {
   if (isJson(filePath)) {
-    return { success: true, value: JSON.parse(fileContents) };
+    return {
+      success: true,
+      value: (fileContents && JSON.parse(fileContents)) || {},
+    };
   } else if (isYaml(filePath)) {
     return { success: true, value: loadYaml(fileContents) };
   } else {
