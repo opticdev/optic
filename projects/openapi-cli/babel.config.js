@@ -11,7 +11,7 @@ module.exports = {
       {
         path:
           process.env.NODE_ENV === 'production'
-            ? '../../../../etc/openapi-cli/.env.build.production'
+            ? '../../etc/openapi-cli/.env.build.production'
             : './.env.build',
         systemVar: 'disable', // only replace values from dotenv file, not process.env
       },
