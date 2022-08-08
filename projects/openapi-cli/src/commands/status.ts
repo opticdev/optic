@@ -21,7 +21,11 @@ import {
 } from '../captures';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 
-export async function statusCommand(): Promise<Command> {
+export async function statusCommand({
+  addUsage,
+}: {
+  addUsage: string;
+}): Promise<Command> {
   const command = new Command('status');
   const feedback = await createCommandFeedback(command);
 
@@ -82,7 +86,9 @@ export async function statusCommand(): Promise<Command> {
       let observations = matchInteractions(spec, interactions);
 
       let observationsFork = AT.forkable(observations);
-      const renderingStatus = renderStatus(observationsFork.fork());
+      const renderingStatus = renderStatus(observationsFork.fork(), feedback, {
+        addUsage,
+      });
       const trackingStats = trackStats(observationsFork.fork());
       observationsFork.start();
 
@@ -206,7 +212,11 @@ export type StatusObservation = {
 
 export interface StatusObservations extends AsyncIterable<StatusObservation> {}
 
-async function renderStatus(observations: StatusObservations) {
+async function renderStatus(
+  observations: StatusObservations,
+  feedback: Awaited<ReturnType<typeof createCommandFeedback>>,
+  { addUsage }: { addUsage: string }
+) {
   let stats = {
     interationsCount: 0,
     matchedOperations: new Map<string, { path: string; method: string }>(),
@@ -303,6 +313,11 @@ async function renderStatus(observations: StatusObservations) {
       }`
     );
   }
+
+  console.log('');
+  await feedback.instruction(
+    `use "${addUsage}" to document new operations (path + method)`
+  );
 
   function operationId({ path, method }: { path: string; method: string }) {
     return `${method}${path}`;

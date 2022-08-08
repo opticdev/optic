@@ -21,10 +21,13 @@ export async function makeCli(config: CliConfig) {
   cli.version(config.package.version);
   cli.description('oas [openapi-file] <command> [options]');
 
-  cli.addCommand(await addCommand());
+  let add = await addCommand();
+  cli.addCommand(add);
   cli.addCommand(await captureCommand());
   cli.addCommand(await newCommand());
-  cli.addCommand(await statusCommand());
+  cli.addCommand(
+    await statusCommand({ addUsage: `${add.name()} ${add.usage()}` })
+  );
   cli.addCommand(await updateCommand());
 
   // registerDebugTemplateCommand(cli);
