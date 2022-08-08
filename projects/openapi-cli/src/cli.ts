@@ -17,7 +17,6 @@ import { initSentry } from './sentry';
 
 export async function makeCli(config: CliConfig) {
   const cli = new Command('oas');
-  await createCommandFeedback(cli);
 
   cli.version(config.package.version);
   cli.description('oas [openapi-file] <command> [options]');
@@ -65,6 +64,7 @@ export async function runCli(packageManifest?: {
   }
 
   const cli = await makeCli(config);
+  const feedback = await createCommandFeedback(cli);
   const subCommandNames = cli.commands.flatMap((cmd) => [
     cmd.name(),
     ...cmd.aliases(),
@@ -80,6 +80,13 @@ export async function runCli(packageManifest?: {
   ) {
     let subcommand = args[1];
     let specPath = args[0];
+
+    if (!subcommand) {
+      feedback.instruction(
+        'provide a command to use with the provided spec file\n'
+      );
+      subcommand = '--help';
+    }
 
     args[0] = subcommand;
     args[1] = specPath;
