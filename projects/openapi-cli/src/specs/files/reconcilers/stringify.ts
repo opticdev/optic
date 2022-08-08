@@ -3,6 +3,7 @@ import { PatchApplyResult, SpecFileReconciler } from '.';
 import jsonpatch, { Operation } from 'fast-json-patch';
 import isUrl from 'is-url';
 import invariant from 'ts-invariant';
+import { Result, Ok, Err } from 'ts-results';
 
 export const applyPatch: SpecFileReconciler<Config> = async function applyPatch<
   Config
@@ -19,12 +20,12 @@ export const applyPatch: SpecFileReconciler<Config> = async function applyPatch<
   const parsed = parse(filePath, fileContents);
 
   invariant(
-    parsed.success,
-    `Patch not possible because ${filePath} could not be parsed.`
+    parsed.ok,
+    `Patch not possible because ${filePath} could not be parsed: ${parsed.val}`
   );
 
   const newDocument = jsonpatch.applyPatch(
-    parsed.value || {},
+    parsed.val || {},
     operations
   ).newDocument;
 
@@ -42,20 +43,15 @@ export const fileExtensions = ['.json', '.yaml', '.yml'];
 export type name = 'stringify';
 export type Config = undefined;
 
-export type ParseResult =
-  | { value: any; success: true }
-  | { error: string; success: false };
-
-function parse(filePath: string, fileContents: string): ParseResult {
+function parse(filePath: string, fileContents: string): Result<any, string> {
   if (isJson(filePath)) {
-    return { success: true, value: JSON.parse(fileContents) };
+    return Ok((fileContents && JSON.parse(fileContents)) || {});
   } else if (isYaml(filePath)) {
-    return { success: true, value: loadYaml(fileContents) };
+    return Ok(loadYaml(fileContents));
   } else {
-    return {
-      success: false,
-      error: `${filePath} is not .json or .yaml file. Unsure how to parse and apply patches`,
-    };
+    return Err(
+      `${filePath} is not .json or .yaml file. Unsure how to parse and apply patches`
+    );
   }
 }
 

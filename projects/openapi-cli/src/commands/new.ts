@@ -4,6 +4,7 @@ import fs from 'fs-extra';
 import { Writable, finished } from 'stream';
 import Semver from 'semver';
 import { promisify } from 'util';
+import { isJson, isYaml } from '@useoptic/openapi-io';
 
 import * as AT from '../lib/async-tools';
 import { trackEvent, flushEvents } from '../segment';
@@ -47,6 +48,12 @@ export async function newCommand(): Promise<Command> {
           return await feedback.inputError(
             `to create ${fileBaseName}, dir must exist at ${dirPath}`,
             InputErrors.DESTINATION_FILE_DIR_MISSING
+          );
+        }
+        if (!isJson(filePath) && !isYaml(filePath)) {
+          return await feedback.inputError(
+            `to create a new spec file by filename, either a .yml, .yaml or .json extension is required`,
+            'spec-file-extension-unsupported'
           );
         }
 
