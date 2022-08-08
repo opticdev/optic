@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/json-pointer-helpers",
-  "version": "0.27.0",
+  "version": "0.27.1",
   "packageManager": "yarn@3.0.2",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -36,6 +36,5 @@
   },
   "dependencies": {
     "jsonpointer": "^5.0.1"
-  },
-  "stableVersion": "0.26.28"
+  }
 }
