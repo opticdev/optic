@@ -80,7 +80,7 @@ oas openapi.yaml update --har traffic.har
 
 > ### A collaborator, not a generator
 >
-> Using the CLI to update your spec is like working with a collaborator. It helps you write all the boilerplate OpenAPI and keep your spec in sync with the actual API's behavior.
+> Using `oas` to update your spec is like working with a collaborator. It helps you write all the boilerplate OpenAPI and keep your spec in sync with the actual API's behavior.
 >
 > ✅ **Never overwrites changes developers make to the same OpenAPI file**
 >
