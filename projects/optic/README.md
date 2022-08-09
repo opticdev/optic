@@ -2,7 +2,7 @@
 
 ### Quick start guide
 
-Install optic
+Install `optic` and `oas`:
 
 ```bash
 npm i -g @useoptic/optic
