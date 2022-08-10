@@ -1,15 +1,13 @@
-
 ![GitHub Repo stars](https://img.shields.io/github/stars/opticdev/optic?style=social)
 ![GitHub contributors](https://img.shields.io/github/contributors-anon/opticdev/optic?style=social)
 ![npm](https://img.shields.io/npm/dm/@useoptic/openapi-io?style=social)
 
-
 # Adopt OpenAPI. Start working API-first.
-> Optic's Open Source tools make OpenAPI and API-first practices easy for any team to adopt.
-> 
 
+> Optic's Open Source tools make OpenAPI and API-first practices easy for any team to adopt.
 
 ## Installation
+
 ```bash
 npm install -g @useoptic/optic
 ```
@@ -18,11 +16,14 @@ npm install -g @useoptic/optic
 
 Understand the API changes between two versions of an OpenAPI descriptions. Optic helps teams review proposed API changes:
 
-*diff current branch with base branch* 
+_diff current branch with base branch_
+
 ```bash
 optic diff openapi.yaml --base main
 ```
-*between two OpenAPI files*
+
+_between two OpenAPI files_
+
 ```bash
 optic diff openapi.yaml openapi-changed.yaml
 ```
@@ -32,8 +33,8 @@ optic diff openapi.yaml openapi-changed.yaml
 [Read diff documentation](https://useoptic.com/docs/openapi-diff)
 
 ## Catch breaking changes
-API diffs containing breaking changes will be flagged so you do not break consumers. Optic helps you keep your promises.
 
+API diffs containing breaking changes will be flagged so you do not break consumers. Optic helps you keep your promises.
 
 ```bash
 optic diff openapi.yaml --base main --check
@@ -43,15 +44,63 @@ optic diff openapi.yaml --base main --check
 
 [Read breaking change documentation](https://useoptic.com/docs/breaking-changes)
 
+## Easily adopt OpenAPI
+
+Create new and update existing OpenAPI specifications straight from your services' traffic. Optic makes it easy to adopt OpenAPI in a day, without changing how you work.
+
+### Tracking changes with Optic:
+
+Show Optic real API traffic using the `oas capture` commands. Traffic can come from your development environment, tests, or the browser.
+
+```bash
+oas capture --proxy localhost:3000 traffic.har
+```
+
+Captured traffic is like working copy in Git. Use `oas status` to see the difference between how your OpenAPI specification says your API works, and how it actually works.
+
+```bash
+oas openapi.yaml status --har traffic.har
+```
+
+<img src="https://user-images.githubusercontent.com/857549/183688912-f8c8c486-01f0-40d6-832d-a2895bead18e.png" width="400" />
+
+Run `oas add` and `oas update` to update the spec. Optic precision patches your OpenAPI file with the same additions, updates, and removals you would manually write. This is faster and much less error-prone than writing OpenAPI by hand.
+
+```bash
+oas openapi.yaml add --har traffic.har  GET /lists
+```
+
+<img src="https://user-images.githubusercontent.com/857549/183689051-7599a5d1-8098-4613-981b-cd463951b492.png" width="400" />
+
+```bash
+oas openapi.yaml update --har traffic.har
+```
+
+<img src="https://user-images.githubusercontent.com/857549/183689232-878d6a7b-557f-4f74-a6d2-84258531e18b.png" width="400" />
+
+> ### A collaborator, not a generator
+>
+> Using `oas` to update your spec is like working with a collaborator. It helps you write all the boilerplate OpenAPI and keep your spec in sync with the actual API's behavior.
+>
+> ✅ **Never overwrites changes developers make to the same OpenAPI file**
+>
+> ✅ **Respects $refs across multiple files**
+>
+> ✅ **Improves accuracy of your specification**
+>
+> ✅ **Speeds up your team**
+
+[Read Adopting OpenAPI documentation](https://www.useoptic.com/docs/track-changes)
 
 ## Resources
 
-- [Documentation](https://useoptic.com)
+- [Documentation](https://useoptic.com/docs)
 - [Beyond API Linting: How Optic is different](https://useoptic.com/blog/beyond-api-linting)
 - [Adding Optic to your CI Pipeline](https://useoptic.com/docs/optic-cloud)
 - [Book office hours](https://calendly.com/optic-onboarding/optic-office-hours)
 
 ## License
+
 MIT
 
 ## Contributors ✨
@@ -59,7 +108,9 @@ MIT
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-34-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
