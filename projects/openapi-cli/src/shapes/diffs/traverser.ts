@@ -47,6 +47,7 @@ export class ShapeDiffTraverser {
   }
 
   *results(): IterableIterator<ShapeDiffResult> {
+    console.log(this.validate);
     if (!this.validate || !this.validate.errors) return;
     let validationErrors = this.validate.errors;
 

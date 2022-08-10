@@ -60,4 +60,38 @@ describe('type json schema diff visitor', () => {
     const diffs = diffValueBySchema(input, jsonSchema);
     expect([...diffs]).toMatchSnapshot();
   });
+
+  it.only('when provided with an array for array without items', () => {
+    const jsonSchema: SchemaObject = {
+      type: 'object',
+      properties: {
+        integrations: {
+          type: 'array',
+          items: {},
+        },
+      },
+    };
+
+    const input = {
+      integrations: [
+        {
+          id: '123456',
+          type: 'github',
+          data: {
+            repositories: ['opticdev/hello'],
+          },
+        },
+        {
+          id: '654321',
+          type: 'github',
+          data: {
+            repositories: ['opticdev/hello', 'opticdev/more-things'],
+          },
+        },
+      ],
+    };
+
+    const diffs = [...diffValueBySchema(input, jsonSchema)];
+    expect(diffs.length).toBeGreaterThan(0);
+  });
 });
