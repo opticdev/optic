@@ -29,6 +29,14 @@ import {
   preventHeaderParameterTypeChange,
 } from './preventParameterTypeChange';
 import Ajv from 'ajv';
+import {
+  preventRequestPropertyRangeChanges,
+  preventResponsePropertyRangeChanges,
+} from './preventNumberPropertyRangeChanges';
+import {
+  preventRequestArrayLengthChanges,
+  preventResponseArrayLengthChanges,
+} from './preventArrayItemLengthChanges';
 
 type YamlConfig = {
   exclude_operations_with_extension?: string;
@@ -67,6 +75,10 @@ const breakingChangesRules = [
   preventResponsePropertyRemoval,
   preventResponsePropertyTypeChange,
   preventResponseStatusCodeRemoval,
+  preventRequestPropertyRangeChanges,
+  preventResponsePropertyRangeChanges,
+  preventRequestArrayLengthChanges,
+  preventResponseArrayLengthChanges,
 ];
 
 type BreakingChangesRules = typeof breakingChangesRules;

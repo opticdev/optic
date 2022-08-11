@@ -1,0 +1,670 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`range changes array length decreased 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "contentType": "application/json",
+          "flatSchema": Object {
+            "minItems": 3,
+            "type": "array",
+          },
+        },
+        "before": Object {
+          "contentType": "application/json",
+          "flatSchema": Object {
+            "minItems": 10,
+            "type": "array",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent request property type changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users request body: application/json",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "contentType": "application/json",
+          "flatSchema": Object {
+            "minItems": 3,
+            "type": "array",
+          },
+        },
+        "before": Object {
+          "contentType": "application/json",
+          "flatSchema": Object {
+            "minItems": 10,
+            "type": "array",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent request array length changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users request body: application/json",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "contentType": "application/json",
+          "flatSchema": Object {
+            "minItems": 3,
+            "type": "array",
+          },
+        },
+        "before": Object {
+          "contentType": "application/json",
+          "flatSchema": Object {
+            "minItems": 10,
+            "type": "array",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "array minItems decreased: 10 -> 3",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent request array length changes",
+    "passed": false,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users request body: application/json",
+  },
+]
+`;
+
+exports[`range changes array length increased 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "contentType": "application/json",
+          "flatSchema": Object {
+            "maxItems": 16,
+            "type": "array",
+          },
+        },
+        "before": Object {
+          "contentType": "application/json",
+          "flatSchema": Object {
+            "maxItems": 10,
+            "type": "array",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent request property type changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users request body: application/json",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "contentType": "application/json",
+          "flatSchema": Object {
+            "maxItems": 16,
+            "type": "array",
+          },
+        },
+        "before": Object {
+          "contentType": "application/json",
+          "flatSchema": Object {
+            "maxItems": 10,
+            "type": "array",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "array maxItems  increased: 10 -> 16",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent request array length changes",
+    "passed": false,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users request body: application/json",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "contentType": "application/json",
+          "flatSchema": Object {
+            "maxItems": 16,
+            "type": "array",
+          },
+        },
+        "before": Object {
+          "contentType": "application/json",
+          "flatSchema": Object {
+            "maxItems": 10,
+            "type": "array",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent request array length changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users request body: application/json",
+  },
+]
+`;
+
+exports[`range changes numeric range expanded 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "flatSchema": Object {
+            "maximum": 130,
+            "type": "number",
+          },
+          "key": "price",
+          "required": false,
+        },
+        "before": Object {
+          "flatSchema": Object {
+            "maximum": 100,
+            "type": "number",
+          },
+          "key": "price",
+          "required": false,
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": Array [
+            "price",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+          "price",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/price",
+        "kind": "field",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent changing request property to required",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users request body: application/json property: price",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "flatSchema": Object {
+            "maximum": 130,
+            "type": "number",
+          },
+          "key": "price",
+          "required": false,
+        },
+        "before": Object {
+          "flatSchema": Object {
+            "maximum": 100,
+            "type": "number",
+          },
+          "key": "price",
+          "required": false,
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": Array [
+            "price",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+          "price",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/price",
+        "kind": "field",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent request property type changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users request body: application/json property: price",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "flatSchema": Object {
+            "maximum": 130,
+            "type": "number",
+          },
+          "key": "price",
+          "required": false,
+        },
+        "before": Object {
+          "flatSchema": Object {
+            "maximum": 100,
+            "type": "number",
+          },
+          "key": "price",
+          "required": false,
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": Array [
+            "price",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+          "price",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/price",
+        "kind": "field",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "range maximum increased: 100 -> 130",
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent request property breaking range changes",
+    "passed": false,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users request body: application/json property: price",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "flatSchema": Object {
+            "maximum": 130,
+            "type": "number",
+          },
+          "key": "price",
+          "required": false,
+        },
+        "before": Object {
+          "flatSchema": Object {
+            "maximum": 100,
+            "type": "number",
+          },
+          "key": "price",
+          "required": false,
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": Array [
+            "price",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+          "price",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/price",
+        "kind": "field",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent request property breaking range changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users request body: application/json property: price",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "flatSchema": Object {
+            "maximum": 130,
+            "type": "number",
+          },
+          "key": "price",
+          "required": false,
+        },
+        "before": Object {
+          "flatSchema": Object {
+            "maximum": 100,
+            "type": "number",
+          },
+          "key": "price",
+          "required": false,
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": Array [
+            "price",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+          "price",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/price",
+        "kind": "field",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent request array length changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users request body: application/json property: price",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "flatSchema": Object {
+            "maximum": 130,
+            "type": "number",
+          },
+          "key": "price",
+          "required": false,
+        },
+        "before": Object {
+          "flatSchema": Object {
+            "maximum": 100,
+            "type": "number",
+          },
+          "key": "price",
+          "required": false,
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": Array [
+            "price",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+          "price",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/price",
+        "kind": "field",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent request array length changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users request body: application/json property: price",
+  },
+]
+`;

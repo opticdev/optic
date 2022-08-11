@@ -1,5 +1,5 @@
 import { ResponseBodyRule, RuleError } from '@useoptic/rulesets-base';
-import { didTypeChange } from './helpers/type-change';
+import { didTypeChange } from './helpers/typeChange';
 
 export const preventResponsePropertyTypeChange = new ResponseBodyRule({
   name: 'prevent response property type changes',

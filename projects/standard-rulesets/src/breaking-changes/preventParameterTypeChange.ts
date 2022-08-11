@@ -1,7 +1,7 @@
 import { OperationRule, RuleError } from '@useoptic/rulesets-base';
 import { getOperationAssertionsParameter } from './helpers/getOperationAssertionsParameter';
 import { ParameterIn } from './helpers/types';
-import { didTypeChange } from './helpers/type-change';
+import { didTypeChange } from './helpers/typeChange';
 
 const getName = <P extends ParameterIn>(parameterIn: P) =>
   `prevent ${parameterIn} parameters type changes` as const;

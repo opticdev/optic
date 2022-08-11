@@ -1,5 +1,5 @@
 import { RequestRule, RuleError } from '@useoptic/rulesets-base';
-import { didTypeChange } from './helpers/type-change';
+import { didTypeChange } from './helpers/typeChange';
 
 export const preventRequestPropertyTypeChange = new RequestRule({
   name: 'prevent request property type changes',
