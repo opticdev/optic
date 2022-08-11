@@ -3,12 +3,7 @@ import {
   ResponseBodyRule,
   RuleError,
 } from '@useoptic/rulesets-base';
-import {
-  arrayMaxItemsShouldNotIncrease,
-  arrayMinItemsShouldNotDecrease,
-  numericMaximumRangeShouldNotExpand,
-  numericMinimumRangeShouldNotExpand,
-} from './helpers/rangeChange';
+import { OpenApi3SchemaFact } from '@useoptic/openapi-utilities';
 
 export const preventRequestArrayLengthChanges = new RequestRule({
   name: 'prevent request array length changes',
@@ -75,3 +70,52 @@ export const preventResponseArrayLengthChanges = new ResponseBodyRule({
     });
   },
 });
+
+export function isArrayProperty(
+  before: OpenApi3SchemaFact,
+  after: OpenApi3SchemaFact
+) {
+  const numericTypes = ['array'];
+  if (typeof before.type === 'string' && typeof after.type === 'string') {
+    return (
+      numericTypes.includes(before.type) && numericTypes.includes(before.type)
+    );
+  }
+  return false;
+}
+
+export function arrayMaxItemsShouldNotIncrease(
+  before: OpenApi3SchemaFact,
+  after: OpenApi3SchemaFact
+) {
+  if (isArrayProperty(before, after)) {
+    if (
+      typeof before.maxItems !== 'undefined' &&
+      typeof after.maxItems !== 'undefined'
+    ) {
+      if (before.maxItems < after.maxItems) {
+        throw new RuleError({
+          message: `array maxItems  increased: ${before.maxItems} -> ${after.maxItems}`,
+        });
+      }
+    }
+  }
+}
+
+export function arrayMinItemsShouldNotDecrease(
+  before: OpenApi3SchemaFact,
+  after: OpenApi3SchemaFact
+) {
+  if (isArrayProperty(before, after)) {
+    if (
+      typeof before.minItems !== 'undefined' &&
+      typeof after.minItems !== 'undefined'
+    ) {
+      if (before.minItems > after.minItems) {
+        throw new RuleError({
+          message: `array minItems decreased: ${before.minItems} -> ${after.minItems}`,
+        });
+      }
+    }
+  }
+}

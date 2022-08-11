@@ -3,7 +3,7 @@ import { TestHelpers } from '@useoptic/rulesets-base';
 import { BreakingChangesRuleset } from '../index';
 
 describe('range changes', () => {
-  test('numeric range expanded', () => {
+  test('numeric range max increased', () => {
     const beforeJson: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -43,6 +43,67 @@ describe('range changes', () => {
                       price: {
                         type: 'number',
                         maximum: 130, // change
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            responses: {},
+          },
+        },
+      },
+    };
+    const results = TestHelpers.runRulesWithInputs(
+      [new BreakingChangesRuleset()],
+      beforeJson,
+      afterJson
+    );
+    expect(results.length > 0).toBe(true);
+
+    expect(results).toMatchSnapshot();
+    expect(results.some((result) => !result.passed)).toBe(true);
+  });
+  test('numeric range min decreased', () => {
+    const beforeJson: OpenAPIV3.Document = {
+      ...TestHelpers.createEmptySpec(),
+      paths: {
+        '/api/users': {
+          get: {
+            requestBody: {
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      price: {
+                        type: 'number',
+                        minimum: 100,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            responses: {},
+          },
+        },
+      },
+    };
+    const afterJson: OpenAPIV3.Document = {
+      ...TestHelpers.createEmptySpec(),
+      paths: {
+        '/api/users': {
+          get: {
+            requestBody: {
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      price: {
+                        type: 'number',
+                        minimum: 80, // change
                       },
                     },
                   },
