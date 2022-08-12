@@ -9,6 +9,7 @@ import {
   terminalChangelog,
   OpenAPIV3,
   IChange,
+  UserError,
 } from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import { StandardRulesets } from '@useoptic/standard-rulesets';
@@ -181,16 +182,27 @@ const generateRuleRunner = (
 const getBaseAndHeadFromFiles = async (
   file1: string,
   file2: string
-): Promise<[ParseResult, ParseResult]> =>
-  Promise.all([getFileFromFsOrGit(file1), getFileFromFsOrGit(file2)]);
+): Promise<[ParseResult, ParseResult]> => {
+  try {
+    return Promise.all([getFileFromFsOrGit(file1), getFileFromFsOrGit(file2)]);
+  } catch (e) {
+    console.error(e)
+    throw new UserError();
+  }
+}
 
 const getBaseAndHeadFromFileAndBase = async (
   file1: string,
   base: string,
   root: string
 ): Promise<[ParseResult, ParseResult]> => {
-  const { baseFile, headFile } = await parseFilesFromRef(file1, base, root);
-  return [baseFile, headFile];
+  try {
+    const { baseFile, headFile } = await parseFilesFromRef(file1, base, root);
+    return [baseFile, headFile];
+  } catch (e) {
+    console.error(e)
+    throw new UserError();
+  }
 };
 
 const runDiff = async (
