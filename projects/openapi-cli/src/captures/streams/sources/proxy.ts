@@ -7,6 +7,9 @@ import {
 } from 'mockttp';
 import { Subject } from '../../../lib/async-tools';
 import { AbortSignal } from 'node-abort-controller'; // remove when Node v14 is out of LTS
+import Path from 'path';
+import forge from 'node-forge';
+import fs from 'fs/promises';
 
 export interface ProxyInteractions
   extends AsyncIterable<ProxySource.Interaction> {}
@@ -18,10 +21,24 @@ export class ProxyInteractions {
   ): Promise<[ProxyInteractions, string]> {
     const interactions = new Subject<ProxySource.Interaction>();
 
+    const [rootCa, privateKey] = await Promise.all([
+      fs.readFile(Path.join(__dirname, '../../../../root-ca.pem')),
+      fs.readFile(Path.join(__dirname, '../../../../key.pem')),
+    ]);
+    const decryptedPrivateKey = forge.pki.decryptRsaPrivateKey(
+      privateKey,
+      'test'
+    );
+    const decryptedPem = forge.pki.privateKeyToPem(decryptedPrivateKey);
+
     const proxy = mockttp.getLocal({
       cors: false,
       debug: false,
       recordTraffic: false,
+      https: {
+        cert: rootCa.toString('utf-8'),
+        key: decryptedPem,
+      },
     });
 
     proxy
