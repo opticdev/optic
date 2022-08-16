@@ -16,37 +16,34 @@ export class ProxyInteractions {
     targetHost: string,
     abort: AbortSignal // required, we don't want to ever let a proxy run indefinitely
   ): Promise<[ProxyInteractions, string]> {
+    const interactions = new Subject<ProxySource.Interaction>();
+
     const proxy = mockttp.getLocal({
       cors: false,
       debug: false,
       recordTraffic: false,
     });
 
-    proxy.addRequestRules({
-      matchers: [new mockttp.matchers.WildcardMatcher()],
-      handler: new mockttp.requestHandlers.PassThroughHandler({
+    proxy
+      .forAnyRequest()
+      .forHost(targetHost)
+      .always()
+      .thenPassThrough({
+        beforeRequest: onRequest,
+        beforeResponse: onResponse,
         forwarding: {
           targetHost,
           updateHostHeader: true,
         },
-      }),
-    });
+      });
 
-    proxy.addWebSocketRules({
-      matchers: [new mockttp.matchers.WildcardMatcher()],
-      handler: new mockttp.webSocketHandlers.PassThroughWebSocketHandler({
-        forwarding: {
-          targetHost,
-        },
-      }),
-    });
-
-    const interactions = new Subject<ProxySource.Interaction>();
+    proxy.forUnmatchedRequest().thenPassThrough();
+    proxy.forAnyWebSocket().thenPassThrough();
 
     const requestsById = new Map<string, ProxySource.Request>();
     // TODO: figure out if we can use OngoingRequest instead of captured, at which body
     // hasn't been parsed yet and is available as stream
-    await proxy.on('request', (capturedRequest) => {
+    function onRequest(capturedRequest: CompletedRequest) {
       const {
         matchedRuleId,
         remoteIpAddress,
@@ -64,21 +61,23 @@ export class ProxyInteractions {
       };
 
       requestsById.set(request.id, request);
-    });
+    }
 
     // TODO: figure out if we can use OngoingRequest instead of captured, at which body
     // hasn't been parsed yet and is available as stream
-    await proxy.on('response', (capturedResponse) => {
+    function onResponse(
+      capturedResponse: mockttp.requestHandlers.PassThroughResponse
+    ) {
       const { id } = capturedResponse;
       const request = requestsById.get(id);
       if (!request) return;
 
-      const { tags, body, timingEvents, ...rest } = capturedResponse;
+      const { body, ...rest } = capturedResponse;
 
       const response = {
         ...rest,
         body: { buffer: body.buffer },
-        timingEvents: timingEvents as TimingEvents,
+        // timingEvents: timingEvents as TimingEvents,
       };
       interactions.onNext({
         request,
@@ -86,7 +85,7 @@ export class ProxyInteractions {
       });
 
       requestsById.delete(id);
-    });
+    }
 
     abort.addEventListener('abort', onAbort);
 
@@ -123,8 +122,8 @@ export declare namespace ProxySource {
     timingEvents: TimingEvents;
     body: Body;
   }
-  interface Response extends Omit<CompletedResponse, 'tags' | 'body'> {
-    timingEvents: TimingEvents;
+  interface Response
+    extends Omit<mockttp.requestHandlers.PassThroughResponse, 'body'> {
     body: Body;
   }
 

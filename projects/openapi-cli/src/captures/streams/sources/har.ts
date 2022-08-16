@@ -101,7 +101,7 @@ export class HarEntries {
 
       let response: HttpArchive.Response = {
         status: interaction.response.statusCode,
-        statusText: interaction.response.statusMessage,
+        statusText: interaction.response.statusMessage || '',
         httpVersion,
         headers: interaction.request.rawHeaders.map(([key, value]) => ({
           name: key,
