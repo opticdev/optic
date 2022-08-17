@@ -1,4 +1,5 @@
 import * as mockttp from 'mockttp';
+import Net from 'net';
 import {
   CompletedRequest,
   CompletedResponse,
@@ -10,6 +11,8 @@ import { AbortSignal } from 'node-abort-controller'; // remove when Node v14 is 
 import Path from 'path';
 import forge from 'node-forge';
 import fs from 'fs/promises';
+import { createServer } from '@httptoolkit/httpolyglot';
+import { URL } from 'url';
 
 export interface ProxyInteractions
   extends AsyncIterable<ProxySource.Interaction> {}
@@ -31,17 +34,50 @@ export class ProxyInteractions {
     );
     const decryptedPem = forge.pki.privateKeyToPem(decryptedPrivateKey);
 
-    const proxy = mockttp.getLocal({
+    const capturingProxy = mockttp.getLocal({
       cors: false,
-      debug: false,
+      debug: true,
       recordTraffic: false,
-      https: {
-        cert: rootCa.toString('utf-8'),
-        key: decryptedPem,
-      },
+      // https: {
+      //   cert: rootCa.toString('utf-8'),
+      //   key: decryptedPem,
+      // },
     });
 
-    proxy
+    const proxy = createServer((req, res) => {
+      // @ts-ignore
+      const capturingProxyServer = capturingProxy.server as Net.Server;
+      capturingProxyServer.emit('request', req, res);
+    }).listen(8000);
+
+    proxy.on('connect', (connectReq, clientSocket, head) => {
+      const { hostname, port, host } = new URL(`http://${connectReq.url}`);
+
+      console.log('CONNECT!', host);
+
+      if (host === targetHost || hostname === targetHost) {
+        console.log('TARGET!');
+        // @ts-ignore
+        const capturingProxyServer = capturingProxy.server as Net.Server;
+        capturingProxyServer.emit('connection', clientSocket);
+      } else {
+        const originSocket = Net.connect(
+          (port && parseInt(port)) || 80,
+          hostname,
+          () => {
+            clientSocket.write(
+              'HTTP/1.1 200 OK\r\nProxy-agent: OAS-capture-proxy\r\n\r\n'
+            );
+
+            originSocket.write(head);
+            originSocket.pipe(clientSocket);
+            clientSocket.pipe(originSocket);
+          }
+        );
+      }
+    });
+
+    capturingProxy
       .forAnyRequest()
       .forHost(targetHost)
       .always()
@@ -54,8 +90,8 @@ export class ProxyInteractions {
         },
       });
 
-    proxy.forUnmatchedRequest().thenPassThrough();
-    proxy.forAnyWebSocket().thenPassThrough();
+    capturingProxy.forUnmatchedRequest().thenPassThrough();
+    capturingProxy.forAnyWebSocket().thenPassThrough();
 
     const requestsById = new Map<string, ProxySource.Request>();
     // TODO: figure out if we can use OngoingRequest instead of captured, at which body
@@ -114,14 +150,14 @@ export class ProxyInteractions {
       interactions.onCompleted();
     }
 
-    await proxy.start();
+    await capturingProxy.start();
 
     const stream = (async function* () {
       yield* interactions.iterator;
-      await proxy.stop(); // clean up
+      await capturingProxy.stop(); // clean up
     })();
 
-    return [stream, proxy.url];
+    return [stream, capturingProxy.url];
   }
 }
 
