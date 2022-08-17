@@ -30,8 +30,6 @@ optic diff openapi.yaml openapi-changed.yaml
 
 <img src="https://i.imgur.com/hpKgOha.png" width="400" />
 
-[Read diff documentation](https://useoptic.com/docs/openapi-diff)
-
 ## Catch breaking changes
 
 API diffs containing breaking changes will be flagged so you do not break consumers. Optic helps you keep your promises.
