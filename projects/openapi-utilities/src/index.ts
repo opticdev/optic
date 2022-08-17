@@ -60,7 +60,10 @@ export {
   OPTIC_COMMENT_SURVEY_LINK,
 } from './utilities/shared-comment';
 export { createCommentBody } from './utilities/compare-comment';
-export { logComparison } from './utilities/comparison-render';
+export {
+  logComparison,
+  getComparisonLogs,
+} from './utilities/comparison-render';
 export {
   BodyChange,
   ContentType,
