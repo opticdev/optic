@@ -68,8 +68,7 @@ function* generateComparisonLogs(
       yield `${getIndent(1)}${resultNode} ${chalk.bold('Specification')}`;
     } else {
       const { method, path } = conceptualLocation;
-      yield;
-      `${getIndent(1)}${resultNode} ${chalk.bold(
+      yield `${getIndent(1)}${resultNode} ${chalk.bold(
         method.toUpperCase()
       )} ${path}`;
     }
