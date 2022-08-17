@@ -1,4 +1,5 @@
 import { OpenAPITraverser } from './openapi3/implementations/openapi3/openapi-traverser';
+import { checkOpenAPIVersion } from './openapi3/implementations/openapi3/openapi-versions';
 import { validateOpenApiV3Document } from './openapi3/implementations/openapi3/validator';
 import { OpenAPIV3 } from 'openapi-types';
 import { factsToChangelog } from './openapi3/sdk/facts-to-changelog';
@@ -117,6 +118,7 @@ export {
   isChangeVariant,
   isFactOrChangeVariant,
   OpenApiRequestFact,
+  checkOpenAPIVersion,
 };
 
 export * from './types';
