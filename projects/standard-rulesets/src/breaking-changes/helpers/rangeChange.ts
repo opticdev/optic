@@ -14,7 +14,7 @@ export function isNumericProperty(
   return false;
 }
 
-export function numericMaximumRangeShouldNotExpand(
+export function numericMaximumRangeShouldNotIncrease(
   before: OpenApi3SchemaFact,
   after: OpenApi3SchemaFact
 ) {
@@ -32,7 +32,7 @@ export function numericMaximumRangeShouldNotExpand(
   }
 }
 
-export function numericMinimumRangeShouldNotExpand(
+export function numericMinimumRangeShouldNotDecrease(
   before: OpenApi3SchemaFact,
   after: OpenApi3SchemaFact
 ) {

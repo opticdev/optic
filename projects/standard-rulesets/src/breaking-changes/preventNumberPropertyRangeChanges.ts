@@ -4,22 +4,22 @@ import {
   RuleError,
 } from '@useoptic/rulesets-base';
 import {
-  numericMaximumRangeShouldNotExpand,
-  numericMinimumRangeShouldNotExpand,
+  numericMaximumRangeShouldNotIncrease,
+  numericMinimumRangeShouldNotDecrease,
 } from './helpers/rangeChange';
 
 export const preventRequestPropertyRangeChanges = new RequestRule({
-  name: 'prevent request property breaking range changes',
+  name: 'prevent request property numeric range changes',
   rule: (requestAssertions) => {
     requestAssertions.property.changed((before, after) => {
-      numericMaximumRangeShouldNotExpand(
+      numericMaximumRangeShouldNotIncrease(
         before.value.flatSchema,
         after.value.flatSchema
       );
     });
 
     requestAssertions.property.changed((before, after) => {
-      numericMinimumRangeShouldNotExpand(
+      numericMinimumRangeShouldNotDecrease(
         before.value.flatSchema,
         after.value.flatSchema
       );
@@ -28,17 +28,17 @@ export const preventRequestPropertyRangeChanges = new RequestRule({
 });
 
 export const preventResponsePropertyRangeChanges = new ResponseBodyRule({
-  name: 'prevent response property breaking range changes',
+  name: 'prevent response property numeric range changes',
   rule: (responseAssertions) => {
     responseAssertions.property.changed((before, after) => {
-      numericMaximumRangeShouldNotExpand(
+      numericMaximumRangeShouldNotIncrease(
         before.value.flatSchema,
         after.value.flatSchema
       );
     });
 
     responseAssertions.property.changed((before, after) => {
-      numericMinimumRangeShouldNotExpand(
+      numericMinimumRangeShouldNotDecrease(
         before.value.flatSchema,
         after.value.flatSchema
       );
