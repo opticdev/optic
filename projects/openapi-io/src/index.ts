@@ -5,6 +5,7 @@ import {
   parseOpenAPIFromRepoWithSourcemap,
   ParseOpenAPIResult,
   parseOpenAPIWithSourcemap,
+  parseOpenAPIFromGithub,
 } from './parser/openapi-sourcemap-parser';
 import {
   JsonPath,
@@ -24,6 +25,7 @@ export {
   loadSpecFromUrl,
   loadSpecFromBranch,
   parseOpenAPIWithSourcemap,
+  parseOpenAPIFromGithub,
   parseOpenAPIFromRepoWithSourcemap,
   resolveJsonPointerInYamlAst,
   JsonSchemaSourcemap,

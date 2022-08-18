@@ -1,4 +1,5 @@
 import { OpenAPITraverser } from './openapi3/implementations/openapi3/openapi-traverser';
+import { checkOpenAPIVersion } from './openapi3/implementations/openapi3/openapi-versions';
 import { validateOpenApiV3Document } from './openapi3/implementations/openapi3/validator';
 import { OpenAPIV3 } from 'openapi-types';
 import { factsToChangelog } from './openapi3/sdk/facts-to-changelog';
@@ -59,7 +60,10 @@ export {
   OPTIC_COMMENT_SURVEY_LINK,
 } from './utilities/shared-comment';
 export { createCommentBody } from './utilities/compare-comment';
-export { logComparison } from './utilities/comparison-render';
+export {
+  logComparison,
+  getComparisonLogs,
+} from './utilities/comparison-render';
 export {
   BodyChange,
   ContentType,
@@ -117,6 +121,7 @@ export {
   isChangeVariant,
   isFactOrChangeVariant,
   OpenApiRequestFact,
+  checkOpenAPIVersion,
 };
 
 export * from './types';
