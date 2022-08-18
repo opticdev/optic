@@ -1,8 +1,4 @@
-import {
-  RequestRule,
-  ResponseBodyRule,
-  RuleError,
-} from '@useoptic/rulesets-base';
+import { RequestRule, ResponseBodyRule } from '@useoptic/rulesets-base';
 import {
   numericMaximumRangeShouldNotIncrease,
   numericMinimumRangeShouldNotDecrease,
