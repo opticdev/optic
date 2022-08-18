@@ -39,14 +39,6 @@ tasks:
     cmds:
       - yarn workspaces foreach -pv --no-private run ws:test -u
 
-  openapi-diff:docker:build:
-    desc: Build the interactive baseline image used to generate OpenAPI specs
-    dir: projects/openapi-diff
-    env:
-      TAG: '{{default "local" .TAG}}'
-    cmds:
-      - docker build {{.CLI_ARGS}} optic-baseline:$TAG .
-
   publish:
     desc: "Publish built artifacts. Passes CLI_ARGS to 'npm publish'"
     cmds:
