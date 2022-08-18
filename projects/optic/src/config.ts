@@ -9,6 +9,7 @@ export enum VCS {
 }
 
 export const OPTIC_YML_NAME = 'optic.yml';
+const OPTIC_DEV_YML_NAME = 'optic.dev.yml';
 
 type ConfigRuleset = { name: string; config: unknown };
 
@@ -81,7 +82,14 @@ const validateConfigSchema = ajv.compile(configSchema);
 export async function detectCliConfig(
   dir: string
 ): Promise<string | undefined> {
+  const expectedDevYmlPath = path.join(dir, OPTIC_DEV_YML_NAME);
   const expectedYmlPath = path.join(dir, OPTIC_YML_NAME);
+  // test out the dev path first
+  try {
+    await fs.access(expectedDevYmlPath);
+    return expectedDevYmlPath
+  } catch(e) {}
+
   try {
     await fs.access(expectedYmlPath);
   } catch (e) {
