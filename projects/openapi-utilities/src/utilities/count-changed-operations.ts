@@ -52,7 +52,7 @@ export const countOperationsModifications = (changes: IChange[]) => {
   };
 };
 
-const getLabel = (
+export const getLabel = (
   operationsModifsCount: ReturnType<typeof countOperationsModifications>
 ) =>
   Object.keys(operationsModifsCount)
