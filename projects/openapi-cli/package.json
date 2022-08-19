@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/openapi-cli",
   "packageManager": "yarn@3.0.2",
-  "version": "0.28.1-0",
+  "version": "0.28.1-1",
   "main": "build/lib.js",
   "types": "build/lib.d.ts",
   "files": [
@@ -94,6 +94,5 @@
         "<rootDir>../../../../node_modules/csv-parse/dist/cjs/sync.cjs"
       ]
     }
-  },
-  "stableVersion": "0.28.0"
+  }
 }
