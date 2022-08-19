@@ -4,33 +4,15 @@ import { findOpticCommentId } from './shared-comment';
 import { CompareFileJson, UploadJson } from '../ci-types';
 import { createCommentBody } from './compare-comment';
 
-export const sendGithubMessage = async (
+export const publishGithubMessage = async (
   octokit: Octokit,
-  compareHash: string,
-  {
-    compareOutput,
-    uploadOutput,
-  }: {
-    compareOutput: CompareFileJson;
-    uploadOutput: UploadJson;
-  },
+  body: string,
+  hash: string,
+  owner: string,
+  repo: string,
+  pull_number: number,
   handleError: (e: any) => void
 ) => {
-  const { results, changes } = compareOutput;
-  const { opticWebUrl, ciContext } = uploadOutput;
-  const {
-    organization: owner,
-    repo,
-    pull_request: pull_number,
-    commit_hash,
-    run,
-  } = ciContext;
-
-  if (changes.length === 0 && results.length === 0) {
-    console.log('No changes were found, exiting.');
-    return;
-  }
-
   try {
     const { data: requestedReviewers } =
       await octokit.pulls.listRequestedReviewers({
@@ -57,7 +39,7 @@ export const sendGithubMessage = async (
   try {
     maybeOpticCommentId = await findOpticCommentId(
       octokit,
-      compareHash,
+      hash,
       owner,
       repo,
       pull_number
@@ -65,15 +47,6 @@ export const sendGithubMessage = async (
   } catch (e) {
     return handleError(e);
   }
-  const body = createCommentBody(
-    results,
-    changes,
-    compareHash,
-    commit_hash,
-    run,
-    opticWebUrl
-  );
-
   try {
     if (maybeOpticCommentId) {
       await octokit.rest.issues.updateComment({
@@ -93,4 +66,44 @@ export const sendGithubMessage = async (
   } catch (e) {
     return handleError(e);
   }
+};
+
+export const sendGithubMessage = async (
+  octokit: Octokit,
+  compareHash: string,
+  {
+    compareOutput,
+    uploadOutput,
+  }: {
+    compareOutput: CompareFileJson;
+    uploadOutput: UploadJson;
+  },
+  handleError: (e: any) => void
+) => {
+  const { results, changes } = compareOutput;
+  const { opticWebUrl, ciContext } = uploadOutput;
+  const {
+    organization: owner,
+    repo,
+    pull_request: pull_number,
+    commit_hash,
+    run,
+  } = ciContext;
+  const body = createCommentBody(
+    results,
+    changes,
+    compareHash,
+    commit_hash,
+    run,
+    opticWebUrl
+  );
+  await publishGithubMessage(
+    octokit,
+    body,
+    compareHash,
+    owner,
+    repo,
+    pull_number,
+    handleError
+  );
 };
