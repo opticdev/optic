@@ -59,7 +59,10 @@ export {
   findOpticCommentId,
   OPTIC_COMMENT_SURVEY_LINK,
 } from './utilities/shared-comment';
-export { createCommentBody } from './utilities/compare-comment';
+export {
+  createCommentBody,
+  createMultiSessionsCommentBody,
+} from './utilities/compare-comment';
 export {
   logComparison,
   getComparisonLogs,
