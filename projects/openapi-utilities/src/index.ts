@@ -75,7 +75,7 @@ export { traverseSpec } from './utilities/traverse-spec';
 export { terminalChangelog } from './utilities/terminal-changelog';
 export { generateChangelogData } from './utilities/generate-changelog-data';
 export { compareChangesByPath } from './utilities/compare-changes-by-path';
-export { getOperationsModifsLabel } from './utilities/count-changed-operations';
+export { getOperationsModifsLabel, countOperationsModifications, getLabel } from './utilities/count-changed-operations';
 
 export {
   sourcemapReader,
