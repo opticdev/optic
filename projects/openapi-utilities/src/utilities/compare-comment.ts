@@ -2,10 +2,16 @@ import { CompareFileJson } from '../ci-types';
 import { OPTIC_COMMENT_SURVEY_LINK } from './shared-comment';
 import { getOperationsModifsLabel } from './count-changed-operations';
 
-export const createCommentBody = (
+const footer = `------
+  How can Optic be improved? Leave your feedback [here](${OPTIC_COMMENT_SURVEY_LINK})`;
+
+const getCommentHeader = (hash: string) =>
+  `<!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${hash} -->`;
+
+const getCommentBodyInner = (
+  name: string,
   results: CompareFileJson['results'],
   changes: CompareFileJson['changes'],
-  compareHash: string,
   commit_hash: string,
   run: number,
   opticWebUrl: string
@@ -27,8 +33,7 @@ export const createCommentBody = (
       ? ` ${exemptedFailingChecks} would have failed but were exempted.`
       : '';
 
-  const body = `<!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${compareHash} -->
-  ### New changes to your OpenAPI spec
+  const bodyInner = `### New changes to your OpenAPI spec ${name}
 
   Summary of run [#${run}](${opticWebUrl}) results (${commit_hash}):
 
@@ -42,11 +47,52 @@ export const createCommentBody = (
       : `ℹ️ No automated checks have run.`
   }
 
-  For details, see [the Optic API Changelog](${opticWebUrl})
+  For details, see [the Optic API Changelog](${opticWebUrl})`;
 
-  ------
-  How can Optic be improved? Leave your feedback [here](${OPTIC_COMMENT_SURVEY_LINK})
+  return bodyInner;
+};
+
+export const createMultiSessionsCommentBody = (
+  commit_hash: string,
+  compareHash: string,
+  sessions: {
+    apiName: string;
+    compareFile: CompareFileJson;
+    opticWebUrl: string;
+    run: number;
+  }[]
+) => {
+  const sessionBodies = sessions
+    .map((session) =>
+      getCommentBodyInner(
+        session.apiName,
+        session.compareFile.results,
+        session.compareFile.changes,
+        commit_hash,
+        session.run,
+        session.opticWebUrl
+      )
+    )
+    .join('\n\n');
+  const body = `${getCommentHeader(compareHash)}
+${sessionBodies}
+
+${footer}
 `;
-
   return body;
+};
+
+export const createCommentBody = (
+  results: CompareFileJson['results'],
+  changes: CompareFileJson['changes'],
+  compareHash: string,
+  commit_hash: string,
+  run: number,
+  opticWebUrl: string
+) => {
+  return `${getCommentHeader(compareHash)}
+${getCommentBodyInner('', results, changes, commit_hash, run, opticWebUrl)}
+
+${footer}
+`;
 };
