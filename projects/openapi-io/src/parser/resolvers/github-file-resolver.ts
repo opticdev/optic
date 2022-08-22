@@ -18,20 +18,23 @@ export const createGithubFileResolver = (
     const { owner, repo, sha } = gitDetails;
     const gitPath = path.relative(process.cwd(), file.url);
     try {
-      const { data } = await octokit.request(
+      const response = await octokit.request(
         'GET /repos/{owner}/{repo}/contents/{path}',
         {
           owner,
           repo,
           path: gitPath,
           ref: sha,
+          headers: {
+            accept: 'application/vnd.github.VERSION.raw'
+          }
         }
       );
-      if ('content' in data) {
-        return Buffer.from(data.content, 'base64').toString();
+      if (typeof response.data === 'string') {
+        return response.data as string // octokit typing doesn't recognize header accept changes
       } else {
         throw new ResolverError(
-          ono(new Error('No content key from github response')),
+          ono(new Error('Expected a text response')),
           gitPath
         );
       }
