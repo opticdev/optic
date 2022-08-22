@@ -8,7 +8,7 @@ const footer = `------
 const getCommentHeader = (hash: string) =>
   `<!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${hash} -->`;
 
-const getCommendBodyInner = (
+const getCommentBodyInner = (
   name: string,
   results: CompareFileJson['results'],
   changes: CompareFileJson['changes'],
@@ -64,7 +64,7 @@ export const createMultiSessionsCommentBody = (
 ) => {
   const sessionBodies = sessions
     .map((session) =>
-      getCommendBodyInner(
+      getCommentBodyInner(
         session.apiName,
         session.compareFile.results,
         session.compareFile.changes,
@@ -91,7 +91,7 @@ export const createCommentBody = (
   opticWebUrl: string
 ) => {
   return `${getCommentHeader(compareHash)}
-${getCommendBodyInner('', results, changes, commit_hash, run, opticWebUrl)}
+${getCommentBodyInner('', results, changes, commit_hash, run, opticWebUrl)}
 
 ${footer}
 `;
