@@ -54,13 +54,6 @@ export async function captureCommand(): Promise<Command> {
       }
 
       if (options.proxy) {
-        if (!process.stdin.isTTY) {
-          return await feedback.inputError(
-            'can only use --proxy when in an interactive terminal session',
-            InputErrors.PROXY_IN_NON_TTY
-          );
-        }
-
         let [proxyInteractions, proxyUrl] = await ProxyInteractions.create(
           options.proxy,
           sourcesController.signal
@@ -100,14 +93,17 @@ export async function captureCommand(): Promise<Command> {
       const harEntries = AT.merge(...sources);
 
       const handleUserSignals = (async function () {
-        if (interactiveCapture && process.stdin.isTTY) {
-          // wait for an empty new line on input, which should indicate hitting Enter / Return
+        if (interactiveCapture) {
+          // wait for an empty new line on input, which should indicate hitting Enter / Return (or signal of other process)
           let lines = readline.createInterface({ input: process.stdin });
           for await (let line of lines) {
             if (line.trim().length === 0) {
               lines.close();
-              readline.moveCursor(process.stdin, 0, -1);
-              readline.clearLine(process.stdin, 1);
+
+              if (process.stdin.isTTY) {
+                readline.moveCursor(process.stdin, 0, -1);
+                readline.clearLine(process.stdin, 1);
+              }
               sourcesController.abort();
             }
           }
