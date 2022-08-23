@@ -1,7 +1,7 @@
 import { HarEntries, HttpArchive } from './har';
 import fs from 'fs';
 import Path from 'path';
-import { collect, take } from '../../../lib/async-tools';
+import { collect, take, unwrap } from '../../../lib/async-tools';
 
 describe('HarEntries', () => {
   it('can be constructed from a readable', async () => {
@@ -55,7 +55,9 @@ describe('HarEntries', () => {
       Path.join(__dirname, '../../../tests/inputs/petstore.swagger.io.har')
     );
 
-    let entries = take<HttpArchive.Entry>(2)(HarEntries.fromReadable(source));
+    let entries = take<HttpArchive.Entry>(2)(
+      unwrap(HarEntries.fromReadable(source))
+    );
 
     let jsonStream = HarEntries.toHarJSON(entries);
 

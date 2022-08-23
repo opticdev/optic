@@ -10,11 +10,14 @@ import Ajv, { SchemaObject, ErrorObject } from 'ajv';
 import ajvFormats from 'ajv-formats';
 import { ProxyInteractions } from './proxy';
 import isUrl from 'is-url';
+import { Result, Ok, Err } from 'ts-results';
 
 export interface HarEntries extends AsyncIterable<HttpArchive.Entry> {}
+export interface TryHarEntries
+  extends AsyncIterable<Result<HttpArchive.Entry, HarEntryValidationError>> {}
 
 export class HarEntries {
-  static async *fromReadable(source: Readable): HarEntries {
+  static async *fromReadable(source: Readable): TryHarEntries {
     invariant(
       !source.readableObjectMode,
       'Expecting raw bytes to parse har entries'
@@ -51,7 +54,7 @@ export class HarEntries {
       for await (let { value } of rawEntries) {
         entryCount++;
         if (validate(value)) {
-          yield value;
+          yield Ok(value);
         } else {
           // TODO: yield a Result, so we can propagate this error rather than deciding on skip here
           let validationError = new HarEntryValidationError(
@@ -59,7 +62,7 @@ export class HarEntries {
             entryCount,
             validate.errors!
           );
-          console.warn(validationError);
+          yield Err(validationError);
         }
       }
     } catch (err) {

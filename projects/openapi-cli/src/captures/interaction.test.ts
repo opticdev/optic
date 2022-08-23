@@ -2,7 +2,7 @@ import { CapturedInteraction } from './interaction';
 import { CapturedBody } from './body';
 import { HarEntries, HttpArchive } from './streams/sources/har';
 import { ProxyInteractions, ProxySource } from './streams/sources/proxy';
-import { collect } from '../lib/async-tools';
+import { collect, unwrap } from '../lib/async-tools';
 import fs from 'fs';
 import Path from 'path';
 import { Readable } from 'stream';
@@ -15,7 +15,7 @@ describe('CapturedIntearction.fromHarEntry', () => {
       Path.join(__dirname, '../tests/inputs/petstore.swagger.io.har')
     );
 
-    testEntries = await collect(HarEntries.fromReadable(source));
+    testEntries = await collect(unwrap(HarEntries.fromReadable(source)));
   });
 
   it('can create a CapturedInteraction from a HttpArchive.Entry', () => {

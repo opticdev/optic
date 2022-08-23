@@ -84,7 +84,10 @@ export async function addCommand(): Promise<Command> {
           );
         }
         let harFile = fs.createReadStream(absoluteHarPath);
-        let harEntries = HarEntries.fromReadable(harFile);
+        let harEntryResults = HarEntries.fromReadable(harFile);
+        let harEntries = AT.unwrapOr(harEntryResults, (err) => {
+          console.warn(err.message); // just warn , skip and keep going
+        });
         sources.push(CapturedInteractions.fromHarEntries(harEntries));
       }
 

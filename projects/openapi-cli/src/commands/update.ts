@@ -6,6 +6,7 @@ import { updateReporter } from './reporters/update';
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
 
 import { tap, forkable, merge, Subject } from '../lib/async-tools';
+import * as AT from '../lib/async-tools';
 import {
   SpecFile,
   SpecFileOperation,
@@ -69,7 +70,10 @@ export async function updateCommand(): Promise<Command> {
           );
         }
         let harFile = fs.createReadStream(absoluteHarPath);
-        let harEntries = HarEntries.fromReadable(harFile);
+        let harEntryResults = HarEntries.fromReadable(harFile);
+        let harEntries = AT.unwrapOr(harEntryResults, (err) => {
+          console.warn(err.message); // just warn , skip and keep going
+        });
         sources.push(CapturedInteractions.fromHarEntries(harEntries));
       }
 
