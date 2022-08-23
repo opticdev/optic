@@ -9,6 +9,7 @@ import HarSchemas from 'har-schema';
 import Ajv, { SchemaObject } from 'ajv';
 import ajvFormats from 'ajv-formats';
 import { ProxyInteractions } from './proxy';
+import isUrl from 'is-url';
 
 export interface HarEntries extends AsyncIterable<HttpArchive.Entry> {}
 
@@ -45,13 +46,27 @@ export class HarEntries {
 
     const validate = validator.getSchema<HttpArchive.Entry>('entry.json')!;
 
+    let entryCount = 0;
     try {
       for await (let { value } of rawEntries) {
+        entryCount++;
         if (validate(value)) {
           yield value;
         } else {
           // TODO: yield a Result, so we can propagate this error rather than deciding on skip here
-          console.warn('HAR entry not valid', validate.errors);
+          let request = value && value.request;
+          let url =
+            request && request.url && isUrl(request.url) ? request.url : null;
+
+          let descriptions = validate.errors!.map(
+            (error) => `${error.instancePath} ${error.message}`
+          );
+
+          let warning = `HAR entry #${entryCount} not valid.\n${descriptions.map(
+            (description) => `  - ${description}\n`
+          )}`;
+
+          console.warn(warning);
         }
       }
     } catch (err) {
