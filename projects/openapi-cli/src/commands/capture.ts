@@ -2,8 +2,9 @@ import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
 import readline from 'readline';
-import { AbortController } from 'node-abort-controller';
+import { AbortController, AbortSignal } from 'node-abort-controller';
 import { Writable } from 'stream';
+import exitHook from 'async-exit-hook';
 import * as AT from '../lib/async-tools';
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { trackCompletion } from '../segment';
@@ -96,10 +97,13 @@ export async function captureCommand(): Promise<Command> {
         if (interactiveCapture) {
           // wait for an empty new line on input, which should indicate hitting Enter / Return (or signal of other process)
           let lines = readline.createInterface({ input: process.stdin });
+          let onAbort = () => {
+            lines.close();
+          };
+          sourcesController.signal.addEventListener('abort', onAbort);
+
           for await (let line of lines) {
             if (line.trim().length === 0) {
-              lines.close();
-
               if (process.stdin.isTTY) {
                 readline.moveCursor(process.stdin, 0, -1);
                 readline.clearLine(process.stdin, 1);
@@ -118,10 +122,29 @@ export async function captureCommand(): Promise<Command> {
         observationsFork.fork(),
         interactiveCapture
       );
-      const trackingStats = trackStats(observationsFork.fork());
+      const trackingStats = trackStats(
+        observationsFork.fork(),
+        sourcesController.signal
+      );
       observationsFork.start();
 
-      await Promise.all([handleUserSignals, renderingStats, trackingStats]);
+      const completing = Promise.all([
+        handleUserSignals,
+        renderingStats,
+        trackingStats,
+      ]);
+
+      exitHook((callback) => {
+        sourcesController.abort();
+        completing.then(
+          () => {
+            callback();
+          },
+          (err) => callback(err)
+        );
+      });
+
+      await completing;
     });
 
   return command;
@@ -218,17 +241,25 @@ async function renderCaptureProgress(
   }
 }
 
-async function trackStats(observations: CaptureObservations) {
+async function trackStats(
+  observations: CaptureObservations,
+  abort: AbortSignal
+) {
   const stats = {
     capturedInteractionsCount: 0,
   };
 
-  await trackCompletion('openapi_cli.capture', stats, async function* () {
-    for await (let observation of observations) {
-      if (observation.kind === CaptureObservationKind.InteractionCaptured) {
-        stats.capturedInteractionsCount += 1;
-        yield stats;
+  await trackCompletion(
+    'openapi_cli.capture',
+    stats,
+    async function* () {
+      for await (let observation of observations) {
+        if (observation.kind === CaptureObservationKind.InteractionCaptured) {
+          stats.capturedInteractionsCount += 1;
+          yield stats;
+        }
       }
-    }
-  });
+    },
+    { abort }
+  );
 }
