@@ -6,7 +6,7 @@ import { disassembler } from 'stream-json/Disassembler';
 import { stringer } from 'stream-json/Stringer';
 import { chain } from 'stream-chain'; // replace with  stream.compose once it stabilises
 import HarSchemas from 'har-schema';
-import Ajv, { SchemaObject } from 'ajv';
+import Ajv, { SchemaObject, ErrorObject } from 'ajv';
 import ajvFormats from 'ajv-formats';
 import { ProxyInteractions } from './proxy';
 import isUrl from 'is-url';
@@ -54,19 +54,12 @@ export class HarEntries {
           yield value;
         } else {
           // TODO: yield a Result, so we can propagate this error rather than deciding on skip here
-          let request = value && value.request;
-          let url =
-            request && request.url && isUrl(request.url) ? request.url : null;
-
-          let descriptions = validate.errors!.map(
-            (error) => `${error.instancePath} ${error.message}`
+          let validationError = new HarEntryValidationError(
+            value,
+            entryCount,
+            validate.errors!
           );
-
-          let warning = `HAR entry #${entryCount} not valid.\n${descriptions.map(
-            (description) => `  - ${description}\n`
-          )}`;
-
-          console.warn(warning);
+          console.warn(validationError);
         }
       }
     } catch (err) {
@@ -191,6 +184,33 @@ export class HarEntries {
     })();
 
     return Readable.from(tokens).pipe(stringer());
+  }
+}
+
+export class HarEntryValidationError extends Error {
+  errors: ErrorObject[];
+
+  constructor(
+    invalidEntry: any,
+    entryIndex: number,
+    validationErrors: ErrorObject[]
+  ) {
+    const request = invalidEntry && invalidEntry.request;
+    const url =
+      request && request.url && isUrl(request.url) ? request.url : null;
+    const descriptions = validationErrors.map(
+      (error) => `${error.instancePath} ${error.message}`
+    );
+
+    let message = `HAR entry #${entryIndex} not valid.\n${descriptions.map(
+      (description) => `  - ${description}\n`
+    )}`;
+    if (url) {
+      message += `\n Request url: ${url}`;
+    }
+
+    super(message);
+    this.errors = validationErrors;
   }
 }
 
