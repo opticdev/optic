@@ -50,7 +50,7 @@ optic diff --id users-api --base master
 
 Additional options:
 
-- `--check` turns on breaking change detection against the changed files
+- `--check` turns on breaking change detection against the changed files as specified in your `optic.dev.yml` rulesets config.
 - `--web` opens a web page with the changes that ran (recommended for a more UI rich changelog experience).
 
 ## Setup Optic in CI
