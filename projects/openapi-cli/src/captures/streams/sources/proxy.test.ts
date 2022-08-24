@@ -1,4 +1,4 @@
-import { ProxyInteractions } from './proxy';
+import { ProxyCertAuthority, ProxyInteractions } from './proxy';
 import * as mockttp from 'mockttp';
 import bent from 'bent';
 import { collect } from '../../../lib/async-tools';
@@ -88,3 +88,9 @@ function matchProxyInteraction() {
     },
   };
 }
+
+describe('ProxyCertAuthority', () => {
+  it('can generate a self-signed CA certificate', async () => {
+    const ca = await ProxyCertAuthority.generate();
+  });
+});
