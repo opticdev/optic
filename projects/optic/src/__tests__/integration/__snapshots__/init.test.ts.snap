@@ -43,7 +43,8 @@ More details at: https://github.com/opticdev/github-action/
 `;
 
 exports[`init init with \`--ci-only github-action\` option 1`] = `
-"Initializing Optic...
+"Deprecation warning: optic.yml file is deprecated. Please rename your file to optic.dev.yml
+Initializing Optic...
 
 Setting up CI:
 - Github action file written to $workspace$/.github/workflows/optic-ci.yml
@@ -54,6 +55,7 @@ More details at: https://github.com/opticdev/github-action/
 `;
 
 exports[`init init with existing optic.init.yml 1`] = `
-"Error: a configuration file already exists at $workspace$/optic.yml.
+"Deprecation warning: optic.yml file is deprecated. Please rename your file to optic.dev.yml
+Error: a configuration file already exists at $workspace$/optic.yml.
 "
 `;
