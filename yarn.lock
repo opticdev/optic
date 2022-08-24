@@ -3322,6 +3322,7 @@ __metadata:
     json-schema-traverse: ^1.0.0
     mockttp: ^3.0.0
     node-abort-controller: ^3.0.1
+    node-forge: ^1.2.1
     node-machine-id: ^1.1.12
     ora: ^6.1.2
     prettier: ^2.4.1
