@@ -96,6 +96,9 @@ export async function detectCliConfig(
     return undefined;
   }
 
+  console.warn(
+    'Deprecation warning: optic.yml file is deprecated. Please rename your file to optic.dev.yml'
+  );
   return expectedYmlPath;
 }
 

@@ -7,7 +7,7 @@ import { supportedCIs } from './constants';
 const description = 'Initializes Optic. See `optic init --help`';
 
 const helpText = `
-Initializes Optic. The command searches for valid OpenAPI specification files in your project, generates a unique ID per file and stores the result in an optic.yml configuration file.
+Initializes Optic. The command searches for valid OpenAPI specification files in your project, generates a unique ID per file and stores the result in an optic.dev.yml configuration file.
 These IDs are meant to be stable, but you can change them before committing the configuration file.
 
 Use the \`--ci <ci>\` or \`--ci-only <ci>\` options to automatically setup your CI to use Optic cloud. Supported values: ${supportedCIs.join(

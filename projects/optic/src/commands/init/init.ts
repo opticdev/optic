@@ -117,7 +117,7 @@ export const getInit =
           'File IDs are stable identifiers for your API specifications that will appear in Optic.'
         );
         console.log(
-          'You can change them now before you check in the optic.yml file.'
+          'You can change them now before you check in the optic.dev.yml file.'
         );
       } else {
         console.error(

@@ -45,7 +45,7 @@ Example usage:
   Run a diff and view changes in the Optic web view
   $ optic diff --id user-api --base master --web
 
-  Run a diff and check the changes against the rulesets configured in your \`optic.yml\` config file:
+  Run a diff and check the changes against the rulesets configured in your \`optic.dev.yml\` config file:
   $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml --check
   `;
 
@@ -74,7 +74,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     )
     .option(
       '--id <id>',
-      'the id of the spec to run against in defined in the `optic.yml` file'
+      'the id of the spec to run against in defined in the `optic.dev.yml` file'
     )
     .option('--check', 'enable checks', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
@@ -304,19 +304,21 @@ const getDiffAction =
       }
       if (!config.configPath) {
         console.error(
-          `Error: no optic.yml config file was found. optic.yml must be included for ${commandVariant}`
+          `Error: no optic.dev.yml config file was found. optic.dev.yml must be included for ${commandVariant}`
         );
         process.exitCode = 1;
         return;
       }
 
-      console.log('Running diff against files from optic.yml file');
+      console.log('Running diff against files from optic.dev.yml file');
       const configFiles = config.files;
       const maybeMatchingFile = configFiles.find(
         (file) => file.id === options.id
       );
       if (!maybeMatchingFile) {
-        console.error(`id: ${options.id} was not found in the optic.yml file`);
+        console.error(
+          `id: ${options.id} was not found in the optic.dev.yml file`
+        );
         console.log(
           `valid list of file names: ${configFiles
             .map((file) => file.id)
@@ -335,13 +337,13 @@ const getDiffAction =
       console.warn('Deprecation warning: optic diff is deprecated, please use optic diff <file_path> --base <base> instead');
       if (!config.configPath) {
         console.error(
-          'Error: no `optic.yml` config file was found. Run `optic init` to generate a config file.'
+          'Error: no `optic.dev.yml` config file was found. Run `optic init` to generate a config file.'
         );
         process.exitCode = 1;
         return;
       } else if (config.files.length === 0) {
         console.error(
-          'No files were found in your `optic.yml` file. Ensure that your `optic.yml` contains at least one file'
+          'No files were found in your `optic.dev.yml` file. Ensure that your `optic.dev.yml` contains at least one file'
         );
         process.exitCode = 1;
         return;

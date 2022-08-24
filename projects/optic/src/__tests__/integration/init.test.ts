@@ -24,7 +24,7 @@ describe('init', () => {
     expect(code).toBe(0);
   });
 
-  test('init with existing optic.yml', async () => {
+  test('init with existing optic.init.yml', async () => {
     const workspace = await setupWorkspace('init/existing');
 
     const { combined, code } = await runOptic(workspace, 'init');

@@ -8,11 +8,11 @@ Install `optic` and `oas`:
 npm i -g @useoptic/optic
 ```
 
-Initialize an `optic.yml` config file
+Initialize an `optic.dev.yml` config file
 
 ```bash
 optic init
-# this will create an optic.yml file with references to openapi files detected in the git repo
+# this will create an optic.dev.yml file with references to openapi files detected in the git repo
 ```
 
 Run a diff between two OpenAPI files:
@@ -41,7 +41,7 @@ optic diff master:specs/openapi-spec.yml specs/openapi-spec.yml
 optic diff specs/openapi-spec.yml --base master
 ```
 
-Running a diff on a file from your `optic.yml`
+Running a diff on a file from your `optic.dev.yml`
 
 ```bash
 # runs a diff against the users-api id
