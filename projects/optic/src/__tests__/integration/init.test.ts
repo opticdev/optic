@@ -5,6 +5,7 @@ import {
   normalizeWorkspace,
 } from './integration';
 import path from 'node:path';
+import { OPTIC_DEV_YML_NAME } from '../../config';
 
 jest.setTimeout(30000);
 
@@ -12,9 +13,13 @@ describe('init', () => {
   test('basic init', async () => {
     const workspace = await setupWorkspace('init/basic');
 
-    expect(await fileExists(path.join(workspace, 'optic.yml'))).toBe(false);
+    expect(await fileExists(path.join(workspace, OPTIC_DEV_YML_NAME))).toBe(
+      false
+    );
     const { combined, code } = await runOptic(workspace, 'init');
-    expect(await fileExists(path.join(workspace, 'optic.yml'))).toBe(true);
+    expect(await fileExists(path.join(workspace, OPTIC_DEV_YML_NAME))).toBe(
+      true
+    );
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     expect(code).toBe(0);
   });
