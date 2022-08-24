@@ -23,6 +23,7 @@ import {
 } from '../specs';
 
 import { trackCompletion, trackEvent } from '../segment';
+import { trackWarning } from '../sentry';
 import {
   CapturedInteraction,
   CapturedInteractions,
@@ -72,7 +73,9 @@ export async function updateCommand(): Promise<Command> {
         let harFile = fs.createReadStream(absoluteHarPath);
         let harEntryResults = HarEntries.fromReadable(harFile);
         let harEntries = AT.unwrapOr(harEntryResults, (err) => {
-          console.warn(err.message); // just warn , skip and keep going
+          let message = `HAR entry skipped: ${err.message}`;
+          console.warn(message); // warn, skip and keep going
+          trackWarning(message, err);
         });
         sources.push(CapturedInteractions.fromHarEntries(harEntries));
       }

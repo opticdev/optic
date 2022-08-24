@@ -209,7 +209,7 @@ export class HarEntryValidationError extends Error {
       (description) => `  - ${description}\n`
     )}`;
     if (url) {
-      message += `\n Request url: ${url}`;
+      message += `\nRequest url: ${url}`;
     }
 
     super(message);

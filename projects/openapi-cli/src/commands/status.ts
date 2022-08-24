@@ -4,6 +4,7 @@ import * as fs from 'fs-extra';
 
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { trackCompletion } from '../segment';
+import { trackWarning } from '../sentry';
 import * as AT from '../lib/async-tools';
 import { ComponentSchemaExampleFacts, readDeferencedSpec } from '../specs';
 import {
@@ -60,7 +61,9 @@ export async function statusCommand({
         let harFile = fs.createReadStream(absoluteHarPath);
         let harEntryResults = HarEntries.fromReadable(harFile);
         let harEntries = AT.unwrapOr(harEntryResults, (err) => {
-          console.warn(err.message); // just warn , skip and keep going
+          let message = `HAR entry skipped: ${err.message}`;
+          console.warn(message); // warn, skip and keep going
+          trackWarning(message, err);
         });
         sources.push(CapturedInteractions.fromHarEntries(harEntries));
       }

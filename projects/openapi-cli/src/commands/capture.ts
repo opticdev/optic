@@ -8,6 +8,7 @@ import exitHook from 'async-exit-hook';
 import * as AT from '../lib/async-tools';
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { trackCompletion } from '../segment';
+import { trackWarning } from '../sentry';
 
 import {
   CapturedInteraction,
@@ -52,7 +53,9 @@ export async function captureCommand(): Promise<Command> {
         let harFile = fs.createReadStream(absoluteHarPath);
         let harEntryResults = HarEntries.fromReadable(harFile);
         let harEntries = AT.unwrapOr(harEntryResults, (err) => {
-          console.warn(err.message); // just warn , skip and keep going
+          let message = `HAR entry skipped: ${err.message}`;
+          console.warn(message); // warn, skip and keep going
+          trackWarning(message, err);
         });
         sources.push(harEntries);
       }
