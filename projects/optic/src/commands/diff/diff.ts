@@ -243,7 +243,7 @@ const runDiff = async (
     logComparison(specResults, { output: 'pretty', verbose: false });
 
     console.log('');
-    console.log(`Configure check rulesets in your local optic[.dev].yml file.`);
+    console.log(`Configure check rulesets in your local optic.dev.yml file.`);
   }
 
   if (options.web) {
