@@ -17,12 +17,17 @@ export interface ProxyInteractions
 export class ProxyInteractions {
   static async create(
     targetHost: string,
-    abort: AbortSignal // required, we don't want to ever let a proxy run indefinitely
+    abort: AbortSignal, // required, we don't want to ever let a proxy run indefinitely
+    ca?: ProxyCertAuthority
   ): Promise<[ProxyInteractions, string]> {
     const proxy = mockttp.getLocal({
       cors: false,
       debug: false,
       recordTraffic: false,
+      https: ca && {
+        cert: ca.cert.toString(),
+        key: ca.key.toString(),
+      },
     });
 
     proxy.addRequestRules({
