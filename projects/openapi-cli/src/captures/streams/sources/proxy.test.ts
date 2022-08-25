@@ -71,33 +71,33 @@ describe('ProxyCertAuthority', () => {
 });
 
 describe('ProxyInteractions with tls', () => {
-  // let target: mockttp.Mockttp;
-  // beforeAll(async () => {
-  //   let targetCA = await mockttp.generateCACertificate();
+  let target: mockttp.Mockttp;
+  let targetCA: { cert: string; key: string };
+  beforeAll(async () => {
+    targetCA = await mockttp.generateCACertificate();
+    target = mockttp.getLocal({
+      https: targetCA,
+    });
+    await target.forGet('/some-path').thenReply(200, 'Test response');
+    await target.start();
+  });
+  afterAll(async () => {
+    await target.stop();
+  });
 
-  //   target = mockttp.getLocal({
-  //     https: targetCA,
-  //   });
-  //   await target.forGet('/some-path').thenReply(200, 'Test response');
-  //   await target.start();
-  // });
-  // afterAll(async () => {
-  //   await target.stop();
-  // });
-
-  it('will accept a self-signed CA certificate', async () => {
+  it('will generate domain certificates given a ProxyCertAuthority and capture requests', async () => {
     const ca = await ProxyCertAuthority.generate();
     const abortController = new AbortController();
     const [interactions, proxyUrl] = await ProxyInteractions.create(
-      'https://ergast.com',
+      target.url,
       abortController.signal,
-      ca
+      { ca, targetCA: [targetCA] }
     );
 
     let httpsAgent = new https.Agent({
       ca: ca.cert, // except the CA of the proxy
     });
-    let requestUrl = UrlJoin(proxyUrl, '/api/f1/2021/constructors.json');
+    let requestUrl = UrlJoin(proxyUrl, '/some-path');
 
     const response = await fetch(requestUrl, {
       agent: httpsAgent,
@@ -105,7 +105,7 @@ describe('ProxyInteractions with tls', () => {
     abortController.abort();
 
     expect(response.ok).toBe(true);
-    expect(await response.json()).toMatchObject({});
+    expect(await response.text()).toBe('Test response');
 
     let capturedInteractions = await collect(interactions);
 

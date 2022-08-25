@@ -18,21 +18,25 @@ export class ProxyInteractions {
   static async create(
     targetHost: string,
     abort: AbortSignal, // required, we don't want to ever let a proxy run indefinitely
-    ca?: ProxyCertAuthority
+    options: {
+      ca?: ProxyCertAuthority;
+      targetCA?: Array<{ cert: Buffer | string }>;
+    } = {}
   ): Promise<[ProxyInteractions, string]> {
     const proxy = mockttp.getLocal({
       cors: false,
       debug: false,
       recordTraffic: false,
-      https: ca && {
-        cert: ca.cert.toString(),
-        key: ca.key.toString(),
+      https: options.ca && {
+        cert: options.ca.cert.toString(),
+        key: options.ca.key.toString(),
       },
     });
 
     proxy.addRequestRules({
       matchers: [new mockttp.matchers.WildcardMatcher()],
       handler: new mockttp.requestHandlers.PassThroughHandler({
+        trustAdditionalCAs: options.targetCA || [],
         forwarding: {
           targetHost,
           updateHostHeader: true,
@@ -43,6 +47,7 @@ export class ProxyInteractions {
     proxy.addWebSocketRules({
       matchers: [new mockttp.matchers.WildcardMatcher()],
       handler: new mockttp.webSocketHandlers.PassThroughWebSocketHandler({
+        trustAdditionalCAs: options.targetCA || [],
         forwarding: {
           targetHost,
         },
