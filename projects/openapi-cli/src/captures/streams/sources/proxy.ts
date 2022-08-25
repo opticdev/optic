@@ -145,8 +145,8 @@ export declare namespace ProxySource {
 }
 
 export interface ProxyCertAuthority {
-  cert: Buffer;
-  key: Buffer;
+  cert: string;
+  key: string;
   keyLength?: number;
 }
 
@@ -207,8 +207,8 @@ export class ProxyCertAuthority {
     cert.sign(keyPair.privateKey, md.sha256.create());
 
     return {
-      cert: Buffer.from(pki.certificateToPem(cert)),
-      key: Buffer.from(pki.privateKeyToPem(keyPair.privateKey)),
+      cert: pki.certificateToPem(cert),
+      key: pki.privateKeyToPem(keyPair.privateKey),
     };
   }
 
@@ -217,6 +217,18 @@ export class ProxyCertAuthority {
     keySource
   ): Result<ProxyCertAuthority, string> {
     return Err('not yet implemented');
+  }
+
+  static hasExpired(self: ProxyCertAuthority, dateTime: Date): boolean {
+    const cert = pki.certificateFromPem(self.cert);
+    console.log(
+      dateTime > cert.validity.notBefore,
+      dateTime < cert.validity.notAfter
+    );
+
+    return (
+      dateTime < cert.validity.notBefore || dateTime > cert.validity.notAfter
+    );
   }
 }
 
