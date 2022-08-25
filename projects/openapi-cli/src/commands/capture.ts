@@ -113,7 +113,8 @@ export async function captureCommand(): Promise<Command> {
 
         let [proxyInteractions, proxyUrl] = await ProxyInteractions.create(
           options.proxy,
-          sourcesController.signal
+          sourcesController.signal,
+          { ca }
         );
         sources.push(HarEntries.fromProxyInteractions(proxyInteractions));
         feedback.notable(
