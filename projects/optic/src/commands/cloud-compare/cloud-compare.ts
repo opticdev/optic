@@ -41,6 +41,7 @@ export const registerCloudCompare = (
     .action(
       wrapActionHandlerWithSentry(
         async ({ base, verbose }: { base: string; verbose: boolean }) => {
+          console.warn('optic cloud run is deprecated, please migrate to our new flow by installing our github application. Follow the instructions at https://app.useoptic.com.')
           const token = process.env.OPTIC_TOKEN;
           if (!token) {
             throw new UserError(
