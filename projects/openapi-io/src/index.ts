@@ -15,11 +15,6 @@ import {
   resolveJsonPointerInYamlAst,
 } from './parser/sourcemap';
 import { loadYaml, isYaml, isJson, writeYaml } from './write/index';
-import {
-  watchDependencies,
-  WatchDependenciesHandler,
-} from './loaders/watch-dependencies';
-import { collectFilePatchesFromInMemoryUpdates } from './roundtrip/reconciler';
 
 
 export {
@@ -36,9 +31,6 @@ export {
   isYaml,
   isJson,
   writeYaml,
-  watchDependencies,
-  WatchDependenciesHandler,
-  collectFilePatchesFromInMemoryUpdates,
   dereferenceOpenApi,
   ResolverError,
 };
