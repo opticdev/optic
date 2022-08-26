@@ -6,6 +6,7 @@ import { updateReporter } from './reporters/update';
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
 
 import { tap, forkable, merge, Subject } from '../lib/async-tools';
+import * as AT from '../lib/async-tools';
 import {
   SpecFile,
   SpecFileOperation,
@@ -22,6 +23,7 @@ import {
 } from '../specs';
 
 import { trackCompletion, trackEvent } from '../segment';
+import { trackWarning } from '../sentry';
 import {
   CapturedInteraction,
   CapturedInteractions,
@@ -69,7 +71,12 @@ export async function updateCommand(): Promise<Command> {
           );
         }
         let harFile = fs.createReadStream(absoluteHarPath);
-        let harEntries = HarEntries.fromReadable(harFile);
+        let harEntryResults = HarEntries.fromReadable(harFile);
+        let harEntries = AT.unwrapOr(harEntryResults, (err) => {
+          let message = `HAR entry skipped: ${err.message}`;
+          console.warn(message); // warn, skip and keep going
+          trackWarning(message, err);
+        });
         sources.push(CapturedInteractions.fromHarEntries(harEntries));
       }
 

@@ -17,3 +17,15 @@ export const initSentry = ({
 
   Sentry.setTag('runId', runId);
 };
+
+export function trackWarning(
+  message: string,
+  context?: { [key: string]: any }
+) {
+  Sentry.withScope(function (scope) {
+    if (context) {
+      scope.setContext('warning context', context);
+    }
+    Sentry.captureMessage(message, 'warning');
+  });
+}

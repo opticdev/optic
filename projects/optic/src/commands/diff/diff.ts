@@ -186,10 +186,10 @@ const getBaseAndHeadFromFiles = async (
   try {
     return Promise.all([getFileFromFsOrGit(file1), getFileFromFsOrGit(file2)]);
   } catch (e) {
-    console.error(e)
+    console.error(e);
     throw new UserError();
   }
-}
+};
 
 const getBaseAndHeadFromFileAndBase = async (
   file1: string,
@@ -200,7 +200,7 @@ const getBaseAndHeadFromFileAndBase = async (
     const { baseFile, headFile } = await parseFilesFromRef(file1, base, root);
     return [baseFile, headFile];
   } catch (e) {
-    console.error(e)
+    console.error(e);
     throw new UserError();
   }
 };
@@ -241,6 +241,9 @@ const runDiff = async (
     }
 
     logComparison(specResults, { output: 'pretty', verbose: false });
+
+    console.log('');
+    console.log(`Configure check rulesets in your local optic.dev.yml file.`);
   }
 
   if (options.web) {

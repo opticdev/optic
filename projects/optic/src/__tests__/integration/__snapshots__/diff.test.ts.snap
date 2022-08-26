@@ -96,6 +96,8 @@ Checks
 1 operation added, 3 changed, 1 removed
 [32m[1m3 checks passed[22m[39m
 [31m[1m2 checks failed[22m[39m
+
+Configure check rulesets in your local optic.dev.yml file.
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
@@ -149,6 +151,8 @@ Checks
 1 operation added, 3 changed, 1 removed
 [32m[1m3 checks passed[22m[39m
 [31m[1m2 checks failed[22m[39m
+
+Configure check rulesets in your local optic.dev.yml file.
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
@@ -179,6 +183,8 @@ exports[`diff breaking changes exclusion 1`] = `
 4 operations changed
 [32m[1m0 checks passed[22m[39m
 [31m[1m0 checks failed[22m[39m
+
+Configure check rulesets in your local optic.dev.yml file.
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
@@ -209,6 +215,8 @@ exports[`diff breaking changes exclusion 2`] = `
 4 operations changed
 [32m[1m0 checks passed[22m[39m
 [31m[1m0 checks failed[22m[39m
+
+Configure check rulesets in your local optic.dev.yml file.
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;

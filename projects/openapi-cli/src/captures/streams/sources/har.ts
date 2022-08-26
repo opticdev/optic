@@ -6,14 +6,18 @@ import { disassembler } from 'stream-json/Disassembler';
 import { stringer } from 'stream-json/Stringer';
 import { chain } from 'stream-chain'; // replace with  stream.compose once it stabilises
 import HarSchemas from 'har-schema';
-import Ajv, { SchemaObject } from 'ajv';
+import Ajv, { SchemaObject, ErrorObject } from 'ajv';
 import ajvFormats from 'ajv-formats';
 import { ProxyInteractions } from './proxy';
+import isUrl from 'is-url';
+import { Result, Ok, Err } from 'ts-results';
 
 export interface HarEntries extends AsyncIterable<HttpArchive.Entry> {}
+export interface TryHarEntries
+  extends AsyncIterable<Result<HttpArchive.Entry, HarEntryValidationError>> {}
 
 export class HarEntries {
-  static async *fromReadable(source: Readable): HarEntries {
+  static async *fromReadable(source: Readable): TryHarEntries {
     invariant(
       !source.readableObjectMode,
       'Expecting raw bytes to parse har entries'
@@ -45,13 +49,20 @@ export class HarEntries {
 
     const validate = validator.getSchema<HttpArchive.Entry>('entry.json')!;
 
+    let entryCount = 0;
     try {
       for await (let { value } of rawEntries) {
+        entryCount++;
         if (validate(value)) {
-          yield value;
+          yield Ok(value);
         } else {
           // TODO: yield a Result, so we can propagate this error rather than deciding on skip here
-          console.warn('HAR entry not valid', validate.errors);
+          let validationError = new HarEntryValidationError(
+            value,
+            entryCount,
+            validate.errors!
+          );
+          yield Err(validationError);
         }
       }
     } catch (err) {
@@ -176,6 +187,33 @@ export class HarEntries {
     })();
 
     return Readable.from(tokens).pipe(stringer());
+  }
+}
+
+export class HarEntryValidationError extends Error {
+  errors: ErrorObject[];
+
+  constructor(
+    invalidEntry: any,
+    entryIndex: number,
+    validationErrors: ErrorObject[]
+  ) {
+    const request = invalidEntry && invalidEntry.request;
+    const url =
+      request && request.url && isUrl(request.url) ? request.url : null;
+    const descriptions = validationErrors.map(
+      (error) => `${error.instancePath} ${error.message}`
+    );
+
+    let message = `HAR entry #${entryIndex} not valid.\n${descriptions.map(
+      (description) => `  - ${description}\n`
+    )}`;
+    if (url) {
+      message += `\nRequest url: ${url}`;
+    }
+
+    super(message);
+    this.errors = validationErrors;
   }
 }
 

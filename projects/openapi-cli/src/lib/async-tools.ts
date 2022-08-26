@@ -1,5 +1,7 @@
 export * from 'axax/esnext';
 
+import { Result } from 'ts-results';
+
 // Fork an async iterable and share the backpressure (preventing memory bloat, but
 // reading at rate of slowest consumer).
 // Won't allow new forks once consumption has started through `forkable.start()`.
@@ -137,4 +139,25 @@ export async function collect<T>(source: AsyncIterable<T>): Promise<T[]> {
     results.push(item);
   }
   return results;
+}
+
+export async function* unwrap<T, E>(
+  source: AsyncIterable<Result<T, E>>
+): AsyncIterable<T> {
+  for await (let result of source) {
+    yield result.unwrap();
+  }
+}
+
+export async function* unwrapOr<T, E>(
+  source: AsyncIterable<Result<T, E>>,
+  handler: (error: E) => void | Promise<void>
+): AsyncIterable<T> {
+  for await (let result of source) {
+    if (result.ok) {
+      yield result.val;
+    } else {
+      await handler(result.val);
+    }
+  }
 }

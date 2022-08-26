@@ -1,6 +1,7 @@
 import Analytics from 'analytics-node';
 import { machineIdSync } from 'node-machine-id';
 import exitHook from 'async-exit-hook';
+import { AbortSignal } from 'node-abort-controller';
 
 let analytics: {
   segment: Analytics;
@@ -50,7 +51,8 @@ export const trackEvent = (eventName: string, properties?: any) => {
 export async function trackCompletion<S extends { [key: string]: any }>(
   eventName: string,
   initialStats: S,
-  statsUpdates: () => AsyncIterable<S>
+  statsUpdates: () => AsyncIterable<S>,
+  options: { abort?: AbortSignal } = {}
 ) {
   let stats = initialStats;
   let completed = false;
@@ -67,7 +69,10 @@ export async function trackCompletion<S extends { [key: string]: any }>(
     });
   }
 
-  exitHook(finish);
+  if (!options.abort) {
+    // without abort control, register our own exit hook
+    exitHook(finish);
+  }
 
   for await (let newStats of statsUpdates()) {
     stats = newStats;
