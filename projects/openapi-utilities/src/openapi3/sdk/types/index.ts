@@ -1,4 +1,5 @@
 import { OpenAPIV3, OpenAPIV3_1 } from 'openapi-types';
+import { LookupLineResultWithFilepath } from '../../../types';
 import {
   ILocation,
   IPathComponent,
@@ -16,7 +17,6 @@ import {
   ComponentSchemaLocation,
 } from './location';
 import { OpenApiKind, OpenApiParameterKind } from './openApiKinds';
-import { LookupLineResultWithFilepath } from '../../../render/ast-helpers';
 
 export {
   ILocation,
