@@ -222,6 +222,111 @@ Array [
 ]
 `;
 
+exports[`ResponseRule header assertions addedOrChanged failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "name": "isnotsogood",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "header": "isnotsogood",
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "isnotsogood",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/headers/isnotsogood",
+        "kind": "response-header",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "header does not have \`description\`",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "response header type",
+    "passed": false,
+    "received": undefined,
+    "type": "added",
+    "where": "GET /api/users response 200 response header: isnotsogood",
+  },
+]
+`;
+
+exports[`ResponseRule header assertions addedOrChanged passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "description": "yes",
+          "name": "isgood",
+          "schema": Object {
+            "type": "number",
+          },
+        },
+        "before": Object {
+          "description": "yes",
+          "name": "isgood",
+          "schema": Object {
+            "type": "string",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "header": "isgood",
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "isgood",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/headers/isgood",
+        "kind": "response-header",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "response header type",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users response 200 response header: isgood",
+  },
+]
+`;
+
 exports[`ResponseRule header assertions changed failing assertion 1`] = `
 Array [
   Object {

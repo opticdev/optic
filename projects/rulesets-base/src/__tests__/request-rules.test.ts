@@ -322,6 +322,102 @@ describe('RequestRule', () => {
       });
     });
 
+    describe('addedOrChanged', () => {
+      const ruleRunner = new RuleRunner([
+        new RequestRule({
+          name: 'request type',
+          rule: (requestAssertions) => {
+            requestAssertions.body.addedOrChanged('must contain a type', (request) => {
+              if (!request.value.flatSchema.type) {
+                throw new RuleError({
+                  message: 'request does not have `type`',
+                });
+              }
+            });
+          },
+        }),
+      ]);
+
+      test('passing assertion', () => {
+        const json: OpenAPIV3.Document = {
+          ...defaultEmptySpec,
+          paths: {
+            '/api/users': {
+              get: {
+                requestBody: {
+                  content: {
+                    'application/json': {
+                      schema: {
+                        type: 'string',
+                      },
+                    },
+                  },
+                },
+                responses: {},
+              },
+            },
+          },
+        };
+        const results = ruleRunner.runRulesWithFacts(
+          createRuleInputs(defaultEmptySpec, json)
+        );
+        expect(results.length > 0).toBe(true);
+
+        expect(results).toMatchSnapshot();
+        for (const result of results) {
+          expect(result.passed).toBe(true);
+        }
+      });
+
+      test('failing assertion', () => {
+        const beforeJson: OpenAPIV3.Document = {
+          ...defaultEmptySpec,
+          paths: {
+            '/api/users': {
+              get: {
+                requestBody: {
+                  content: {
+                    'application/json': {
+                      schema: {},
+                    },
+                  },
+                },
+                responses: {},
+              },
+            },
+          },
+        };
+        const afterJson: OpenAPIV3.Document = {
+          ...defaultEmptySpec,
+          paths: {
+            '/api/users': {
+              get: {
+                requestBody: {
+                  content: {
+                    'application/json': {
+                      schema: {
+                        description: "empty"
+                      },
+                    },
+                  },
+                },
+                responses: {},
+              },
+            },
+          },
+        };
+        const results = ruleRunner.runRulesWithFacts(
+          createRuleInputs(beforeJson, afterJson)
+        );
+        expect(results.length > 0).toBe(true);
+
+        expect(results).toMatchSnapshot();
+        for (const result of results) {
+          expect(result.passed).toBe(false);
+        }
+      });
+    });
+
     describe('changed', () => {
       const ruleRunner = new RuleRunner([
         new RequestRule({
@@ -1066,6 +1162,121 @@ describe('RequestRule', () => {
         };
         const results = ruleRunner.runRulesWithFacts(
           createRuleInputs(defaultEmptySpec, json)
+        );
+        expect(results.length > 0).toBe(true);
+
+        expect(results).toMatchSnapshot();
+        for (const result of results) {
+          expect(result.passed).toBe(false);
+        }
+      });
+    });
+
+    describe('addedOrChanged', () => {
+      const ruleRunner = new RuleRunner([
+        new RequestRule({
+          name: 'request type',
+          rule: (requestAssertions) => {
+            requestAssertions.property.requirement(
+              'must contain a type',
+              (property) => {
+                if (!property.value.flatSchema.type) {
+                  throw new RuleError({
+                    message: 'field does not have `type`',
+                  });
+                }
+              }
+            );
+          },
+        }),
+      ]);
+
+      test('passing assertion', () => {
+        const json: OpenAPIV3.Document = {
+          ...defaultEmptySpec,
+          paths: {
+            '/api/users': {
+              get: {
+                requestBody: {
+                  content: {
+                    'application/json': {
+                      schema: {
+                        type: 'object',
+                        properties: {
+                          hello: {
+                            type: 'string',
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                responses: {},
+              },
+            },
+          },
+        };
+        const results = ruleRunner.runRulesWithFacts(
+          createRuleInputs(defaultEmptySpec, json)
+        );
+        expect(results.length > 0).toBe(true);
+
+        expect(results).toMatchSnapshot();
+        for (const result of results) {
+          expect(result.passed).toBe(true);
+        }
+      });
+
+      test('failing assertion', () => {
+        const beforeJson: OpenAPIV3.Document = {
+          ...defaultEmptySpec,
+          paths: {
+            '/api/users': {
+              get: {
+                requestBody: {
+                  content: {
+                    'application/json': {
+                      schema: {
+                        type: 'object',
+                        properties: {
+                          hello: {},
+                        },
+                      },
+                    },
+                  },
+                },
+                responses: {},
+              },
+            },
+          },
+        };
+
+        const afterJson: OpenAPIV3.Document = {
+          ...defaultEmptySpec,
+          paths: {
+            '/api/users': {
+              get: {
+                requestBody: {
+                  content: {
+                    'application/json': {
+                      schema: {
+                        type: 'object',
+                        properties: {
+                          hello: {
+                            description: "asd"
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                responses: {},
+              },
+            },
+          },
+        };
+        const results = ruleRunner.runRulesWithFacts(
+          createRuleInputs(beforeJson, afterJson)
         );
         expect(results.length > 0).toBe(true);
 

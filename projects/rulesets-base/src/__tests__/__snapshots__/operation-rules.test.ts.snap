@@ -79,6 +79,169 @@ Array [
 ]
 `;
 
+exports[`OperationRule assertions addedOrChanged failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "method": "post",
+          "pathPattern": "/api/users",
+          "summary": "hello",
+        },
+        "before": Object {
+          "method": "post",
+          "pathPattern": "/api/users",
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "post",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "post",
+        ],
+        "jsonPath": "/paths/~1api~1users/post",
+        "kind": "operation",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "operation does not have \`description\`",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": false,
+    "received": undefined,
+    "type": "changed",
+    "where": "POST /api/users",
+  },
+  Object {
+    "change": Object {
+      "added": Object {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "operation does not have \`description\`",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": false,
+    "received": undefined,
+    "type": "added",
+    "where": "GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions addedOrChanged passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "description": "hello",
+          "method": "get",
+          "pathPattern": "/api/users",
+          "summary": "this is a summary",
+        },
+        "before": Object {
+          "description": "hello",
+          "method": "get",
+          "pathPattern": "/api/users",
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users",
+  },
+  Object {
+    "change": Object {
+      "added": Object {
+        "description": "hello",
+        "method": "post",
+        "pathPattern": "/api/users",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "post",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "post",
+        ],
+        "jsonPath": "/paths/~1api~1users/post",
+        "kind": "operation",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": true,
+    "received": undefined,
+    "type": "added",
+    "where": "POST /api/users",
+  },
+]
+`;
+
 exports[`OperationRule assertions changed failing assertion 1`] = `
 Array [
   Object {

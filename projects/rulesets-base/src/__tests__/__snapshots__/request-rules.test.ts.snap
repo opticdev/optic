@@ -92,6 +92,106 @@ Array [
 ]
 `;
 
+exports[`RequestRule body assertions addedOrChanged failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "contentType": "application/json",
+          "flatSchema": Object {
+            "description": "empty",
+          },
+        },
+        "before": Object {
+          "contentType": "application/json",
+          "flatSchema": Object {},
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "request does not have \`type\`",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": false,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users request body: application/json",
+  },
+]
+`;
+
+exports[`RequestRule body assertions addedOrChanged passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "contentType": "application/json",
+        "flatSchema": Object {
+          "type": "string",
+        },
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": true,
+    "received": undefined,
+    "type": "added",
+    "where": "GET /api/users request body: application/json",
+  },
+]
+`;
+
 exports[`RequestRule body assertions changed failing assertion 1`] = `
 Array [
   Object {
@@ -723,6 +823,106 @@ Array [
 `;
 
 exports[`RequestRule property assertions added passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": Array [
+            "hello",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/hello",
+        "kind": "field",
+      },
+      "value": Object {
+        "flatSchema": Object {
+          "type": "string",
+        },
+        "key": "hello",
+        "required": false,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": true,
+    "received": undefined,
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json property: hello",
+  },
+]
+`;
+
+exports[`RequestRule property assertions addedOrChanged failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": Array [
+            "hello",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/hello",
+        "kind": "field",
+      },
+      "value": Object {
+        "flatSchema": Object {
+          "description": "asd",
+        },
+        "key": "hello",
+        "required": false,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "field does not have \`type\`",
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": false,
+    "received": undefined,
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json property: hello",
+  },
+]
+`;
+
+exports[`RequestRule property assertions addedOrChanged passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
