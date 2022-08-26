@@ -51,7 +51,7 @@ requestAssertions.body is used to define request rules. There are [4 lifecycle t
 new RequestRule({
   ...,
   rule: (requestAssertions) => {
-    // lifecycle rules that are available are added, changed, requirement and removed
+    // lifecycle rules that are available are added, changed, addedOrChanged, requirement and removed
     requestAssertions.body.added('contain description', (request) => {
       if (!request.value.description) {
         throw new RuleError({
@@ -123,7 +123,7 @@ requestAssertions.property is used to define request body property rules. There 
 new RequestRule({
   ...,
   rule: (requestAssertions) => {
-    // lifecycle rules that are available are added, changed, requirement and removed
+    // lifecycle rules that are available are added, changed, addedOrChanged, requirement and removed
     requestAssertions.property.added('contains a type', (property) => {
       if (!property.value.type) {
         throw new RuleError({

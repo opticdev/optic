@@ -55,7 +55,7 @@ responseBodyAssertions.body is used to define response rules. There are [4 lifec
 new ResponseBodyRule({
   ...,
   rule: (responseBodyAssertions) => {
-    // lifecycle rules that are available are added, changed, requirement and removed
+    // lifecycle rules that are available are added, changed, addedOrChanged, requirement and removed
     responseBodyAssertions.body.added('contain description', (response) => {
       if (!response.value.description) {
         throw new RuleError({
@@ -127,7 +127,7 @@ responseBodyAssertions.property is used to define response body property rules. 
 new ResponseBodyRule({
   ...,
   rule: (responseBodyAssertions) => {
-    // lifecycle rules that are available are added, changed, requirement and removed
+    // lifecycle rules that are available are added, changed, addedOrChanged, requirement and removed
     responseBodyAssertions.property.added('contains a type', (property) => {
       if (!property.value.type) {
         throw new RuleError({

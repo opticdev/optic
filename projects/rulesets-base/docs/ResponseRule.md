@@ -54,7 +54,7 @@ responseAssertions is used to define response rules. There are [4 lifecycle trig
 new ResponseRule({
   ...,
   rule: (responseAssertions) => {
-    // lifecycle rules that are available are added, changed, requirement and removed
+    // lifecycle rules that are available are added, changed, addedOrChanged, requirement and removed
     responseAssertions.added('contain description', (response) => {
       if (!response.value.description) {
         throw new RuleError({
@@ -105,7 +105,7 @@ responseAssertions.header is used to define response header rules. There are [4 
 new ResponseRule({
   ...,
   rule: (responseAssertions) => {
-    // lifecycle rules that are available are added, changed, requirement and removed
+    // lifecycle rules that are available are added, changed, addedOrChanged, requirement and removed
     responseAssertions.header.added('contains a description', (header) => {
       if (!header.value.description) {
         throw new RuleError({
