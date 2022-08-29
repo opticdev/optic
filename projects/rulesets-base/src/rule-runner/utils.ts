@@ -21,11 +21,13 @@ export const createRuleContextWithoutOperation = (
   ),
   custom: any
 ): RuleContext => {
+  const specificationChange = getSpecificationChange(specification.node)
+
   return {
     custom,
     specification: {
-      ...(specification.after ? specification.after : specification.before),
-      change: getSpecificationChange(specification.node),
+      ...(specificationChange === 'removed' ? specification.before! : specification.after!),
+      change: specificationChange,
     },
     operation: {
       location: {
@@ -66,11 +68,6 @@ export const createRuleContextWithOperation = (
         | { before: Operation | null; after: Operation }
         | { before: Operation; after: null }
       ),
-  // inputs: {
-  //   specificationNode: ;
-  //   operationNode: NodeDetail<OpenApiKind.Operation>;
-  // }
-  // ),
   custom: any
 ): RuleContext => {
   return {
