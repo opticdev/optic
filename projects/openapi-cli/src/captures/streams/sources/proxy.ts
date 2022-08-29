@@ -9,6 +9,7 @@ import { Subject } from '../../../lib/async-tools';
 import { AbortSignal } from 'node-abort-controller'; // remove when Node v14 is out of LTS
 import { pki, md } from 'node-forge';
 import { randomBytes } from 'crypto';
+import { Readable } from 'stream';
 
 export interface ProxyInteractions
   extends AsyncIterable<ProxySource.Interaction> {}
@@ -217,6 +218,10 @@ export class ProxyCertAuthority {
     return (
       dateTime < cert.validity.notBefore || dateTime > cert.validity.notAfter
     );
+  }
+
+  static readableCert(self: ProxyCertAuthority): Readable {
+    return Readable.from(Buffer.from(self.cert));
   }
 }
 

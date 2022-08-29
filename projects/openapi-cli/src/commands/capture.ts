@@ -11,19 +11,22 @@ import { trackCompletion } from '../segment';
 import { trackWarning } from '../sentry';
 import Conf from 'conf';
 
+import { captureCertCommand, getCertStore } from './capture-cert';
 import {
   CapturedInteraction,
   CapturedInteractions,
   HarEntries,
   HttpArchive,
+  ProxyCertAuthority,
   ProxyInteractions,
-} from '../captures/index';
-import { ProxyCertAuthority } from '../captures/streams/sources/proxy';
+} from '../captures';
 
 export async function captureCommand(): Promise<Command> {
   const command = new Command('capture');
 
   const feedback = await createCommandFeedback(command);
+
+  let certCommand = await captureCertCommand();
 
   command
     .description('capture observed traffic as a HAR (HttpArchive v1.3) file')
@@ -37,7 +40,7 @@ export async function captureCommand(): Promise<Command> {
       'accept traffic over a proxy targeting the actual service'
     )
     .option('-o <output-file>', 'file name for output')
-    .option('--ca <output-file>', 'file name to write CA certificate to')
+    .addCommand(certCommand)
     .action(async (filePath?: string) => {
       const options = command.opts();
 
@@ -64,50 +67,21 @@ export async function captureCommand(): Promise<Command> {
       }
 
       if (options.proxy) {
-        let configStore = new Conf({
-          projectName: '@useoptic/openapi-cli',
-          schema: {
-            'capture-proxy-ca': {
-              type: 'object',
-              properties: {
-                cert: {
-                  type: 'string',
-                },
-                key: {
-                  type: 'string',
-                },
-              },
-            },
-          },
-        });
+        const certStore = getCertStore();
 
-        let maybeCa = configStore.get('capture-proxy-ca');
+        let maybeCa = certStore.get();
         let ca: ProxyCertAuthority;
         if (
-          !maybeCa ||
-          ProxyCertAuthority.hasExpired(
-            maybeCa as ProxyCertAuthority,
-            new Date()
-          )
+          maybeCa.none ||
+          ProxyCertAuthority.hasExpired(maybeCa.val, new Date())
         ) {
           ca = await ProxyCertAuthority.generate();
-          configStore.set('capture-proxy-ca', ca);
+          certStore.set(ca);
           await feedback.instruction(
-            `Generated a CA certificate for HTTPS requests.${
-              (!options.ca &&
-                ` Run ${command.name()} with --ca <filename> to save it as a file.`) ||
-              ''
-            }`
+            `Generated a CA certificate for HTTPS requests. Run '${command.name()} ${certCommand.name()}' to save it as a file.`
           );
         } else {
-          ca = maybeCa as ProxyCertAuthority;
-        }
-        // TODO: consider moving the writing of the cert to its own command (allowing write through stdout and -o)
-        if (options.ca) {
-          let absoluteCertPath = Path.resolve(options.ca);
-          // TODO: validate path before writing to it
-          await fs.writeFile(absoluteCertPath, ca.cert);
-          await feedback.notable(`CA certificate written to file`);
+          ca = maybeCa.val;
         }
 
         let [proxyInteractions, proxyUrl] = await ProxyInteractions.create(
