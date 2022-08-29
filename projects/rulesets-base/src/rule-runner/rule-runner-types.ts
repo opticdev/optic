@@ -3,11 +3,6 @@ import {
   FactVariant,
   OpenApiKind,
 } from '@useoptic/openapi-utilities';
-import { Assertion, ChangedAssertion, AssertionType } from '../types';
-
-export type RulesetData = {
-  aliases: string[];
-};
 
 export type NodeDetail<T extends OpenApiKind> = {
   before: FactVariant<T> | null;

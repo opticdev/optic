@@ -1,29 +1,6 @@
-import { OpenApiKind, OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { OpenApiKind } from '@useoptic/openapi-utilities';
 import { Operation, RuleContext, Specification } from '../types';
 import { NodeDetail } from './rule-runner-types';
-
-export const getRulesetRuleId = (rulesetName: string, ruleName: string) =>
-  `${rulesetName}:${ruleName}`;
-
-export const createRulesetMatcher =
-  <T>({
-    ruleMatcher: maybeRuleMatcher,
-    rulesetMatcher: maybeRulesetMatcher,
-  }: {
-    ruleMatcher?: (item: T, ruleContext: RuleContext) => boolean;
-    rulesetMatcher?: (ruleContext: RuleContext) => boolean;
-  }) =>
-  (item: T, ruleContext: RuleContext): boolean => {
-    const ruleMatcher = maybeRuleMatcher || (() => true);
-    const rulesetMatcher = maybeRulesetMatcher || (() => true);
-
-    return ruleMatcher(item, ruleContext) && rulesetMatcher(ruleContext);
-  };
-
-export const getRuleAliases = (
-  rulesetName: string,
-  ruleName: string
-): string[] => [getRulesetRuleId(rulesetName, ruleName), rulesetName];
 
 const getSpecificationChange = (
   specificationNode: NodeDetail<OpenApiKind.Specification>
@@ -95,6 +72,7 @@ export const createRuleContext = ({
     };
   }
 };
+
 
 export const isExempted = (raw: object, ruleName: string) => {
   const exemptions = raw['x-optic-exemptions'];

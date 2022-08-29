@@ -6,53 +6,19 @@ import {
   createSpecification,
 } from './data-constructors';
 import {
-  RulesetData,
   EndpointNode,
   ResponseNode,
   NodeDetail,
 } from './rule-runner-types';
 import {
   createRuleContext,
-  createRulesetMatcher,
-  getRuleAliases,
   isExempted,
 } from './utils';
 
 import { Rule, Ruleset, ResponseRule } from '../rules';
 import { AssertionResult, createResponseAssertions } from './assertions';
 import { Operation, Response } from '../types';
-
-const getResponseRules = (
-  rules: (Ruleset | Rule)[]
-): (ResponseRule & RulesetData)[] => {
-  const responseRule: (ResponseRule & RulesetData)[] = [];
-  for (const ruleOrRuleset of rules) {
-    if (ResponseRule.isInstance(ruleOrRuleset)) {
-      responseRule.push({
-        ...ruleOrRuleset,
-        aliases: [],
-      });
-    }
-
-    if (Ruleset.isInstance(ruleOrRuleset)) {
-      for (const rule of ruleOrRuleset.rules) {
-        if (ResponseRule.isInstance(rule)) {
-          responseRule.push({
-            ...rule,
-            matches: createRulesetMatcher({
-              ruleMatcher: rule.matches,
-              rulesetMatcher: ruleOrRuleset.matches,
-            }),
-            aliases: getRuleAliases(ruleOrRuleset.name, rule.name),
-            docsLink: rule.docsLink || ruleOrRuleset.docsLink,
-          });
-        }
-      }
-    }
-  }
-
-  return responseRule;
-};
+import { getResponseRules } from './rule-filters';
 
 const createResponseResult = (
   assertionResult: AssertionResult,

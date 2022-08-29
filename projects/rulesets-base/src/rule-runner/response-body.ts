@@ -6,53 +6,19 @@ import {
   createSpecification,
 } from './data-constructors';
 import {
-  RulesetData,
   EndpointNode,
   ResponseNode,
   NodeDetail,
 } from './rule-runner-types';
 import {
   createRuleContext,
-  createRulesetMatcher,
-  getRuleAliases,
   isExempted,
 } from './utils';
 
 import { Rule, Ruleset, ResponseBodyRule } from '../rules';
 import { AssertionResult, createResponseBodyAssertions } from './assertions';
 import { Field, Operation, ResponseBody } from '../types';
-
-const getResponseBodyRules = (
-  rules: (Ruleset | Rule)[]
-): (ResponseBodyRule & RulesetData)[] => {
-  const responseRule: (ResponseBodyRule & RulesetData)[] = [];
-  for (const ruleOrRuleset of rules) {
-    if (ResponseBodyRule.isInstance(ruleOrRuleset)) {
-      responseRule.push({
-        ...ruleOrRuleset,
-        aliases: [],
-      });
-    }
-
-    if (Ruleset.isInstance(ruleOrRuleset)) {
-      for (const rule of ruleOrRuleset.rules) {
-        if (ResponseBodyRule.isInstance(rule)) {
-          responseRule.push({
-            ...rule,
-            matches: createRulesetMatcher({
-              ruleMatcher: rule.matches,
-              rulesetMatcher: ruleOrRuleset.matches,
-            }),
-            aliases: getRuleAliases(ruleOrRuleset.name, rule.name),
-            docsLink: rule.docsLink || ruleOrRuleset.docsLink,
-          });
-        }
-      }
-    }
-  }
-
-  return responseRule;
-};
+import { getPropertyRules, getResponseBodyRules } from './rule-filters';
 
 const createResponseBodyResult = (
   assertionResult: AssertionResult,
@@ -122,6 +88,7 @@ export const runResponseBodyRules = ({
 }) => {
   const results: Result[] = [];
   const responseRules = getResponseBodyRules(rules);
+  const propertyRules = getPropertyRules(rules)
   const beforeSpecification = createSpecification(
     specificationNode,
     'before',
@@ -310,6 +277,10 @@ export const runResponseBodyRules = ({
         }
       }
     }
+  }
+
+  for (const propertyRule of propertyRules) {
+
   }
 
   return results;

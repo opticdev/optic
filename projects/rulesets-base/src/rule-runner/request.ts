@@ -6,14 +6,11 @@ import {
   createSpecification,
 } from './data-constructors';
 import {
-  RulesetData,
   EndpointNode,
   RequestNode,
   NodeDetail,
 } from './rule-runner-types';
 import {
-  createRulesetMatcher,
-  getRuleAliases,
   createRuleContext,
   isExempted,
 } from './utils';
@@ -21,38 +18,7 @@ import {
 import { Rule, Ruleset, RequestRule } from '../rules';
 import { AssertionResult, createRequestAssertions } from './assertions';
 import { Field, Operation, RequestBody } from '../types';
-
-const getRequestRules = (
-  rules: (Ruleset | Rule)[]
-): (RequestRule & RulesetData)[] => {
-  const requestRules: (RequestRule & RulesetData)[] = [];
-  for (const ruleOrRuleset of rules) {
-    if (RequestRule.isInstance(ruleOrRuleset)) {
-      requestRules.push({
-        ...ruleOrRuleset,
-        aliases: [],
-      });
-    }
-
-    if (Ruleset.isInstance(ruleOrRuleset)) {
-      for (const rule of ruleOrRuleset.rules) {
-        if (RequestRule.isInstance(rule)) {
-          requestRules.push({
-            ...rule,
-            matches: createRulesetMatcher({
-              ruleMatcher: rule.matches,
-              rulesetMatcher: ruleOrRuleset.matches,
-            }),
-            aliases: getRuleAliases(ruleOrRuleset.name, rule.name),
-            docsLink: rule.docsLink || ruleOrRuleset.docsLink,
-          });
-        }
-      }
-    }
-  }
-
-  return requestRules;
-};
+import { getRequestRules } from './rule-filters';
 
 const createRequestBodyResult = (
   assertionResult: AssertionResult,

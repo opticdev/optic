@@ -1,9 +1,7 @@
 import { OpenApiKind, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
 import { createOperation, createSpecification } from './data-constructors';
-import { RulesetData, EndpointNode, NodeDetail } from './rule-runner-types';
+import { EndpointNode, NodeDetail } from './rule-runner-types';
 import {
-  createRulesetMatcher,
-  getRuleAliases,
   createRuleContext,
   isExempted,
 } from './utils';
@@ -11,38 +9,7 @@ import {
 import { Rule, Ruleset, OperationRule } from '../rules';
 import { createOperationAssertions, AssertionResult } from './assertions';
 import { Operation } from '../types';
-
-const getOperationRules = (
-  rules: (Ruleset | Rule)[]
-): (OperationRule & RulesetData)[] => {
-  const operationRules: (OperationRule & RulesetData)[] = [];
-  for (const ruleOrRuleset of rules) {
-    if (OperationRule.isInstance(ruleOrRuleset)) {
-      operationRules.push({
-        ...ruleOrRuleset,
-        aliases: [],
-      });
-    }
-
-    if (Ruleset.isInstance(ruleOrRuleset)) {
-      for (const rule of ruleOrRuleset.rules) {
-        if (OperationRule.isInstance(rule)) {
-          operationRules.push({
-            ...rule,
-            matches: createRulesetMatcher({
-              ruleMatcher: rule.matches,
-              rulesetMatcher: ruleOrRuleset.matches,
-            }),
-            aliases: getRuleAliases(ruleOrRuleset.name, rule.name),
-            docsLink: rule.docsLink || ruleOrRuleset.docsLink,
-          });
-        }
-      }
-    }
-  }
-
-  return operationRules;
-};
+import { getOperationRules } from './rule-filters';
 
 const createOperationResult = (
   assertionResult: AssertionResult,
