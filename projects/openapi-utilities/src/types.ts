@@ -1,5 +1,16 @@
 import { IChange, IFact } from './openapi3/sdk/types';
-import { LookupLineResultWithFilepath } from './render/ast-helpers';
+
+export type LookupLineResult = {
+  endLine: number;
+  endPosition: number;
+  startLine: number;
+  startPosition: number;
+};
+
+export type LookupLineResultWithFilepath = LookupLineResult & {
+  filePath: string;
+};
+
 
 export interface ShouldOrMust<G> {
   must: (statement: string, handler: G) => void;

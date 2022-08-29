@@ -1,7 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`diff \`optic diff\` compares against HEAD in repo 1`] = `
-"example-api-1:
+"Deprecation warning: optic diff is deprecated, please use optic diff <file_path> --base <base> instead
+example-api-1:
 
 [1mGET[22m /example: 
   - operationId [33mchanged[39m
