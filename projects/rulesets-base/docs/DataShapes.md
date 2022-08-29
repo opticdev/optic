@@ -123,14 +123,14 @@ type ResponseBody = {
 };
 ```
 
-## Field
+## Property
 
-The field object describes a [body property](https://swagger.io/specification/#schema-object) and has the following data structure
+The property object describes a [body property](https://swagger.io/specification/#schema-object) and has the following data structure
 
-[OpenApiFieldFact details can be found here](../../openapi-utilities/src/openapi3/sdk/types/index.ts)
+[PropertyFact details can be found here](../../openapi-utilities/src/openapi3/sdk/types/index.ts)
 
 ```javascript
-type Field = {
+type Property = {
   value: OpenApiFieldFact,
   raw: any, // The original operation object from the OpenAPI Spec
 };

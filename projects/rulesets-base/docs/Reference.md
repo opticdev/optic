@@ -1,11 +1,12 @@
 # Rules
 
-There are 5 different rules you can use to enforce API Changes. These are:
+There are 6 different rules you can use to enforce API Changes. These are:
 
 - [OperationRule](./OperationRule.md)
 - [RequestRule]('./RequestRule.md')
 - [ResponseRule]('./ResponseRule.md)
 - [ResponseBodyRule]('./ResponseBodyRule.md)
+- [PropertyRule]('./PropertyRule.md)
 - [SpecificationRule]('./SpecificationRule.md')
 
 Rules can be grouped together into a [Ruleset](./Ruleset.md).
