@@ -43,9 +43,9 @@ new RequestRule({
 
 ## requestAssertions.body
 
-requestAssertions.body is used to define request rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in a condition (`string`), and an assertion, which is a function that receives a [`RequestBody` object](./DataShapes.md#requestbody). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
+requestAssertions.body is used to define request rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in an assertion, which is a function that receives a [`RequestBody` object](./DataShapes.md#requestbody). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
 
-`requestAssertions.body[lifecycle](condition, assertion)`
+`requestAssertions.body[lifecycle](assertion)`
 
 ```javascript
 new RequestRule({
@@ -115,9 +115,9 @@ new RequestRule({
 
 ## requestAssertions.property
 
-requestAssertions.property is used to define request body property rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in a condition (`string`), and an assertion, which is a function that receives a [`Field` object](./DataShapes.md#field). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
+requestAssertions.property is used to define request body property rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in an assertion, which is a function that receives a [`Field` object](./DataShapes.md#field). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
 
-`requestAssertions.property[lifecycle](condition, assertion)`
+`requestAssertions.property[lifecycle](assertion)`
 
 ```javascript
 new RequestRule({
