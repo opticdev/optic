@@ -30,27 +30,12 @@ import { getAnonId } from '../../utils/anonymous-id';
 const description = `run a diff between two API specs`;
 
 const usage = () => `
-  optic diff
-  optic diff --base <base>
-  optic diff --id user-api --base <base>
   optic diff <file_path> --base <base>
   optic diff <file_path> <file_to_compare_against>
   optic diff <file_path> <file_to_compare_against> --check`;
 
 const helpText = `
 Example usage:
-  Diff all API specs files defined in your \`optic.yml\` config file against HEAD
-  $ optic diff
-
-  Diff all API specs files defined in your \`optic.yml\` config file against master
-  $ optic diff --base master
-
-  Diff a single \`user-api\` spec defined in your \`optic.yml\` config file against HEAD
-  $ optic diff --id user-api
-
-  Diff the single \`user-api\` spec from your \`optic.yml\` config file against master
-  $ optic diff --id user-api --base master
-
   Diff \`specs/openapi-spec.yml\` against master
   $ optic diff openapi-spec.yml --base master
 
@@ -186,10 +171,10 @@ const getBaseAndHeadFromFiles = async (
   try {
     return Promise.all([getFileFromFsOrGit(file1), getFileFromFsOrGit(file2)]);
   } catch (e) {
-    console.error(e)
+    console.error(e);
     throw new UserError();
   }
-}
+};
 
 const getBaseAndHeadFromFileAndBase = async (
   file1: string,
@@ -200,7 +185,7 @@ const getBaseAndHeadFromFileAndBase = async (
     const { baseFile, headFile } = await parseFilesFromRef(file1, base, root);
     return [baseFile, headFile];
   } catch (e) {
-    console.error(e)
+    console.error(e);
     throw new UserError();
   }
 };
@@ -241,6 +226,9 @@ const runDiff = async (
     }
 
     logComparison(specResults, { output: 'pretty', verbose: false });
+
+    console.log('');
+    console.log(`Configure check rulesets in your local optic.dev.yml file.`);
   }
 
   if (options.web) {
@@ -305,6 +293,7 @@ const getDiffAction =
       );
       await runDiff(files, parsedFiles, config, options);
     } else if (options.id) {
+      console.warn('Deprecation warning: optic diff --id <id> is deprecated, please use optic diff <file_path> --base <base> instead');
       const commandVariant = `optic diff --id <id> --base <ref>`;
       if (config.vcs !== VCS.Git) {
         console.error(
@@ -343,6 +332,7 @@ const getDiffAction =
       );
       await runDiff(files, parsedFiles, config, options);
     } else {
+      console.warn('Deprecation warning: optic diff is deprecated, please use optic diff <file_path> --base <base> instead');
       if (!config.configPath) {
         console.error(
           'Error: no `optic.yml` config file was found. Run `optic init` to generate a config file.'
