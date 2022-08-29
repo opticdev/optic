@@ -45,10 +45,6 @@ import {
 } from './openapi3/sdk/isType';
 import { sourcemapReader } from './openapi3/implementations/openapi3/sourcemap-reader';
 
-import {
-  LookupLineResult,
-  LookupLineResultWithFilepath,
-} from './render/ast-helpers';
 export { defaultEmptySpec } from './openapi3/constants';
 export * from './ci-types';
 export { generateSpecResults } from './openapi3/implementations/openapi3/generate-spec-results';
@@ -115,8 +111,6 @@ export {
   ComponentSchemaLocation,
   FieldLocation,
   ChangeType,
-  LookupLineResult,
-  LookupLineResultWithFilepath,
   FactVariant,
   ChangeVariant,
   OpenApiKindToFact,
