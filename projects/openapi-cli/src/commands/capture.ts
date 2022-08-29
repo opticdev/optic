@@ -39,6 +39,10 @@ export async function captureCommand(): Promise<Command> {
       '--proxy <target-url>',
       'accept traffic over a proxy targeting the actual service'
     )
+    .option(
+      '--no-tls',
+      'disable TLS support for --proxy and prevent generation of new CA certificates'
+    )
     .option('-o <output-file>', 'file name for output')
     .addCommand(certCommand)
     .action(async (filePath?: string) => {
@@ -67,21 +71,24 @@ export async function captureCommand(): Promise<Command> {
       }
 
       if (options.proxy) {
-        const certStore = getCertStore();
+        let ca: ProxyCertAuthority | undefined;
 
-        let maybeCa = certStore.get();
-        let ca: ProxyCertAuthority;
-        if (
-          maybeCa.none ||
-          ProxyCertAuthority.hasExpired(maybeCa.val, new Date())
-        ) {
-          ca = await ProxyCertAuthority.generate();
-          certStore.set(ca);
-          await feedback.instruction(
-            `Generated a CA certificate for HTTPS requests. Run '${command.name()} ${certCommand.name()}' to save it as a file.`
-          );
-        } else {
-          ca = maybeCa.val;
+        if (options.tls) {
+          const certStore = getCertStore();
+
+          let maybeCa = certStore.get();
+          if (
+            maybeCa.none ||
+            ProxyCertAuthority.hasExpired(maybeCa.val, new Date())
+          ) {
+            ca = await ProxyCertAuthority.generate();
+            certStore.set(ca);
+            await feedback.instruction(
+              `Generated a CA certificate for HTTPS requests. Run '${command.name()} ${certCommand.name()}' to save it as a file.`
+            );
+          } else {
+            ca = maybeCa.val;
+          }
         }
 
         let [proxyInteractions, proxyUrl] = await ProxyInteractions.create(

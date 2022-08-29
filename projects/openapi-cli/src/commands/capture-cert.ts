@@ -24,7 +24,9 @@ export async function captureCertCommand(): Promise<Command> {
 
       if (options.del) {
         certStore.delete();
-        return await feedback.notable('CA certificate deleted for use');
+        return await feedback.notable(
+          'CA certificate deleted for use by proxy'
+        );
       }
 
       let maybeCa = certStore.get();
