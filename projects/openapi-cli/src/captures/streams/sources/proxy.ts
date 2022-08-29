@@ -7,7 +7,6 @@ import {
 } from 'mockttp';
 import { Subject } from '../../../lib/async-tools';
 import { AbortSignal } from 'node-abort-controller'; // remove when Node v14 is out of LTS
-import { Result, Ok, Err } from 'ts-results';
 import { pki, md } from 'node-forge';
 import { randomBytes } from 'crypto';
 
@@ -212,19 +211,8 @@ export class ProxyCertAuthority {
     };
   }
 
-  static fromReadables(
-    certSource,
-    keySource
-  ): Result<ProxyCertAuthority, string> {
-    return Err('not yet implemented');
-  }
-
   static hasExpired(self: ProxyCertAuthority, dateTime: Date): boolean {
     const cert = pki.certificateFromPem(self.cert);
-    console.log(
-      dateTime > cert.validity.notBefore,
-      dateTime < cert.validity.notAfter
-    );
 
     return (
       dateTime < cert.validity.notBefore || dateTime > cert.validity.notAfter

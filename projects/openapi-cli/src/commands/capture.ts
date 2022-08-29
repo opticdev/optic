@@ -19,7 +19,6 @@ import {
   ProxyInteractions,
 } from '../captures/index';
 import { ProxyCertAuthority } from '../captures/streams/sources/proxy';
-import { config } from 'process';
 
 export async function captureCommand(): Promise<Command> {
   const command = new Command('capture');
