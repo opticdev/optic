@@ -1,48 +1,12 @@
 import { OpenApiKind, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
 
 import { createSpecification } from './data-constructors';
-import { RulesetData, NodeDetail } from './rule-runner-types';
-import {
-  createRulesetMatcher,
-  getRuleAliases,
-  createRuleContext,
-  isExempted,
-} from './utils';
+import { NodeDetail } from './rule-runner-types';
+import { createRuleContextWithoutOperation, isExempted } from './utils';
 
 import { Rule, Ruleset, SpecificationRule } from '../rules';
 import { createSpecificationAssertions, AssertionResult } from './assertions';
-
-const getSpecificationRules = (
-  rules: (Ruleset | Rule)[]
-): (SpecificationRule & RulesetData)[] => {
-  const specificationRules: (SpecificationRule & RulesetData)[] = [];
-  for (const ruleOrRuleset of rules) {
-    if (SpecificationRule.isInstance(ruleOrRuleset)) {
-      specificationRules.push({
-        ...ruleOrRuleset,
-        aliases: [],
-      });
-    }
-
-    if (Ruleset.isInstance(ruleOrRuleset)) {
-      for (const rule of ruleOrRuleset.rules) {
-        if (SpecificationRule.isInstance(rule)) {
-          specificationRules.push({
-            ...rule,
-            matches: createRulesetMatcher({
-              ruleMatcher: rule.matches,
-              rulesetMatcher: ruleOrRuleset.matches,
-            }),
-            aliases: getRuleAliases(ruleOrRuleset.name, rule.name),
-            docsLink: rule.docsLink || ruleOrRuleset.docsLink,
-          });
-        }
-      }
-    }
-  }
-
-  return specificationRules;
-};
+import { getSpecificationRules } from './rule-filters';
 
 const createSpecificationResult = (
   assertionResult: AssertionResult,
@@ -93,11 +57,14 @@ export const runSpecificationRules = ({
   for (const specificationRule of specificationRules) {
     // rules that are triggered and use the data from the `before` specification are: `removed`
     if (beforeSpecification) {
-      const rulesContext = createRuleContext({
-        specification: beforeSpecification,
-        specificationNode: specificationNode,
-        custom: customRuleContext,
-      });
+      const rulesContext = createRuleContextWithoutOperation(
+        {
+          before: beforeSpecification,
+          after: afterSpecification,
+          node: specificationNode,
+        },
+        customRuleContext
+      );
 
       const matches =
         !specificationRule.matches ||
@@ -125,11 +92,14 @@ export const runSpecificationRules = ({
     }
 
     if (afterSpecification) {
-      const rulesContext = createRuleContext({
-        specification: afterSpecification,
-        specificationNode: specificationNode,
-        custom: customRuleContext,
-      });
+      const rulesContext = createRuleContextWithoutOperation(
+        {
+          before: beforeSpecification,
+          after: afterSpecification,
+          node: specificationNode,
+        },
+        customRuleContext
+      );
 
       const matches =
         !specificationRule.matches ||

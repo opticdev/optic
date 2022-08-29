@@ -5,54 +5,17 @@ import {
   createRequest,
   createSpecification,
 } from './data-constructors';
-import {
-  RulesetData,
-  EndpointNode,
-  RequestNode,
-  NodeDetail,
-} from './rule-runner-types';
-import {
-  createRulesetMatcher,
-  getRuleAliases,
-  createRuleContext,
-  isExempted,
-} from './utils';
+import { EndpointNode, RequestNode, NodeDetail } from './rule-runner-types';
+import { createRuleContextWithOperation, isExempted } from './utils';
 
-import { Rule, Ruleset, RequestRule } from '../rules';
-import { AssertionResult, createRequestAssertions } from './assertions';
+import { Rule, Ruleset, RequestRule, PropertyRule } from '../rules';
+import {
+  AssertionResult,
+  createPropertyAssertions,
+  createRequestAssertions,
+} from './assertions';
 import { Field, Operation, RequestBody } from '../types';
-
-const getRequestRules = (
-  rules: (Ruleset | Rule)[]
-): (RequestRule & RulesetData)[] => {
-  const requestRules: (RequestRule & RulesetData)[] = [];
-  for (const ruleOrRuleset of rules) {
-    if (RequestRule.isInstance(ruleOrRuleset)) {
-      requestRules.push({
-        ...ruleOrRuleset,
-        aliases: [],
-      });
-    }
-
-    if (Ruleset.isInstance(ruleOrRuleset)) {
-      for (const rule of ruleOrRuleset.rules) {
-        if (RequestRule.isInstance(rule)) {
-          requestRules.push({
-            ...rule,
-            matches: createRulesetMatcher({
-              ruleMatcher: rule.matches,
-              rulesetMatcher: ruleOrRuleset.matches,
-            }),
-            aliases: getRuleAliases(ruleOrRuleset.name, rule.name),
-            docsLink: rule.docsLink || ruleOrRuleset.docsLink,
-          });
-        }
-      }
-    }
-  }
-
-  return requestRules;
-};
+import { getPropertyRules, getRequestRules } from './rule-filters';
 
 const createRequestBodyResult = (
   assertionResult: AssertionResult,
@@ -82,7 +45,7 @@ const createRequestPropertyResult = (
   property: Field,
   request: RequestBody,
   operation: Operation,
-  rule: RequestRule
+  rule: RequestRule | PropertyRule
 ): Result => ({
   type: assertionResult.type,
   where: `${operation.method.toUpperCase()} ${operation.path} request body: ${
@@ -121,6 +84,7 @@ export const runRequestRules = ({
 }) => {
   const results: Result[] = [];
   const requestRules = getRequestRules(rules);
+  const propertyRules = getPropertyRules(rules);
   const beforeSpecification = createSpecification(
     specificationNode,
     'before',
@@ -147,22 +111,19 @@ export const runRequestRules = ({
   // - if yes, run the user's defined `rule`. for requests, this runs against the request body and request properties
   for (const requestRule of requestRules) {
     if (beforeOperation && beforeSpecification) {
-      const ruleContext =
-        afterSpecification && afterOperation
-          ? createRuleContext({
-              operation: afterOperation,
-              custom: customRuleContext,
-              operationChangeType: operationNode.change?.changeType || null,
-              specification: afterSpecification,
-              specificationNode: specificationNode,
-            })
-          : createRuleContext({
-              operation: beforeOperation,
-              custom: customRuleContext,
-              operationChangeType: operationNode.change?.changeType || null,
-              specification: beforeSpecification,
-              specificationNode: specificationNode,
-            });
+      const ruleContext = createRuleContextWithOperation(
+        {
+          node: specificationNode,
+          before: beforeSpecification,
+          after: afterSpecification,
+        },
+        {
+          node: operationNode,
+          before: beforeOperation,
+          after: afterOperation,
+        },
+        customRuleContext
+      );
       const requestAssertions = createRequestAssertions();
       // Register the user's rule definition, this is collected in the requestAssertions object
       requestRule.rule(requestAssertions, ruleContext);
@@ -226,13 +187,19 @@ export const runRequestRules = ({
     }
 
     if (afterOperation && afterSpecification) {
-      const ruleContext = createRuleContext({
-        operation: afterOperation,
-        custom: customRuleContext,
-        operationChangeType: operationNode.change?.changeType || null,
-        specification: afterSpecification,
-        specificationNode: specificationNode,
-      });
+      const ruleContext = createRuleContextWithOperation(
+        {
+          node: specificationNode,
+          before: beforeSpecification,
+          after: afterSpecification,
+        },
+        {
+          node: operationNode,
+          before: beforeOperation,
+          after: afterOperation,
+        },
+        customRuleContext
+      );
       const requestAssertions = createRequestAssertions();
       // Register the user's rule definition, this is collected in the requestAssertions object
       requestRule.rule(requestAssertions, ruleContext);
@@ -299,6 +266,133 @@ export const runRequestRules = ({
                       afterRequest,
                       afterOperation,
                       requestRule
+                    )
+                  )
+              );
+            }
+          }
+        }
+      }
+    }
+  }
+
+  for (const propertyRule of propertyRules) {
+    if (beforeOperation && beforeSpecification) {
+      const ruleContext = createRuleContextWithOperation(
+        {
+          node: specificationNode,
+          before: beforeSpecification,
+          after: afterSpecification,
+        },
+        {
+          node: operationNode,
+          before: beforeOperation,
+          after: afterOperation,
+        },
+        customRuleContext
+      );
+      const propertyAssertions = createPropertyAssertions();
+      // // Register the user's rule definition, this is collected in the propertyAssertions object
+      propertyRule.rule(propertyAssertions, ruleContext);
+
+      for (const contentType of requestNode.bodies.keys()) {
+        const beforeRequest = createRequest(
+          requestNode,
+          contentType,
+          'before',
+          beforeApiSpec
+        );
+        if (beforeRequest) {
+          for (const [key, property] of beforeRequest.properties.entries()) {
+            const propertyChange =
+              requestNode.bodies.get(contentType)?.fields.get(key)?.change ||
+              null;
+            const matches =
+              !propertyRule.matches ||
+              propertyRule.matches(property, ruleContext);
+
+            const exempted = isExempted(property.raw, propertyRule.name);
+            if (matches) {
+              results.push(
+                ...propertyAssertions
+                  .runBefore(property, propertyChange, exempted)
+                  .map((assertionResult) =>
+                    createRequestPropertyResult(
+                      assertionResult,
+                      property,
+                      beforeRequest,
+                      beforeOperation,
+                      propertyRule
+                    )
+                  )
+              );
+            }
+          }
+        }
+      }
+    }
+
+    if (afterOperation && afterSpecification) {
+      const ruleContext = createRuleContextWithOperation(
+        {
+          node: specificationNode,
+          before: beforeSpecification,
+          after: afterSpecification,
+        },
+        {
+          node: operationNode,
+          before: beforeOperation,
+          after: afterOperation,
+        },
+        customRuleContext
+      );
+      // Register the user's rule definition, this is collected in the propertyAssertions object
+      const propertyAssertions = createPropertyAssertions();
+      // Run the user's rules that have been stored in propertyAssertions
+      propertyRule.rule(propertyAssertions, ruleContext);
+      for (const contentType of requestNode.bodies.keys()) {
+        const maybeBeforeRequest = createRequest(
+          requestNode,
+          contentType,
+          'before',
+          beforeApiSpec
+        );
+        const afterRequest = createRequest(
+          requestNode,
+          contentType,
+          'after',
+          afterApiSpec
+        );
+        if (afterRequest) {
+          for (const [key, property] of afterRequest.properties.entries()) {
+            const maybeBeforeProperty =
+              maybeBeforeRequest?.properties.get(key) || null;
+
+            const propertyChange =
+              requestNode.bodies.get(afterRequest.contentType)?.fields.get(key)
+                ?.change || null;
+            const matches =
+              !propertyRule.matches ||
+              propertyRule.matches(property, ruleContext);
+
+            const exempted = isExempted(property.raw, propertyRule.name);
+            if (matches) {
+              // Run the user's rules that have been stored in propertyAssertions for property
+              results.push(
+                ...propertyAssertions
+                  .runAfter(
+                    maybeBeforeProperty,
+                    property,
+                    propertyChange,
+                    exempted
+                  )
+                  .map((assertionResult) =>
+                    createRequestPropertyResult(
+                      assertionResult,
+                      property,
+                      afterRequest,
+                      afterOperation,
+                      propertyRule
                     )
                   )
               );

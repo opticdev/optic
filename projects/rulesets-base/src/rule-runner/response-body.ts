@@ -5,54 +5,17 @@ import {
   createResponse,
   createSpecification,
 } from './data-constructors';
-import {
-  RulesetData,
-  EndpointNode,
-  ResponseNode,
-  NodeDetail,
-} from './rule-runner-types';
-import {
-  createRuleContext,
-  createRulesetMatcher,
-  getRuleAliases,
-  isExempted,
-} from './utils';
+import { EndpointNode, ResponseNode, NodeDetail } from './rule-runner-types';
+import { createRuleContextWithOperation, isExempted } from './utils';
 
-import { Rule, Ruleset, ResponseBodyRule } from '../rules';
-import { AssertionResult, createResponseBodyAssertions } from './assertions';
+import { Rule, Ruleset, ResponseBodyRule, PropertyRule } from '../rules';
+import {
+  AssertionResult,
+  createPropertyAssertions,
+  createResponseBodyAssertions,
+} from './assertions';
 import { Field, Operation, ResponseBody } from '../types';
-
-const getResponseBodyRules = (
-  rules: (Ruleset | Rule)[]
-): (ResponseBodyRule & RulesetData)[] => {
-  const responseRule: (ResponseBodyRule & RulesetData)[] = [];
-  for (const ruleOrRuleset of rules) {
-    if (ResponseBodyRule.isInstance(ruleOrRuleset)) {
-      responseRule.push({
-        ...ruleOrRuleset,
-        aliases: [],
-      });
-    }
-
-    if (Ruleset.isInstance(ruleOrRuleset)) {
-      for (const rule of ruleOrRuleset.rules) {
-        if (ResponseBodyRule.isInstance(rule)) {
-          responseRule.push({
-            ...rule,
-            matches: createRulesetMatcher({
-              ruleMatcher: rule.matches,
-              rulesetMatcher: ruleOrRuleset.matches,
-            }),
-            aliases: getRuleAliases(ruleOrRuleset.name, rule.name),
-            docsLink: rule.docsLink || ruleOrRuleset.docsLink,
-          });
-        }
-      }
-    }
-  }
-
-  return responseRule;
-};
+import { getPropertyRules, getResponseBodyRules } from './rule-filters';
 
 const createResponseBodyResult = (
   assertionResult: AssertionResult,
@@ -82,7 +45,7 @@ const createResponsePropertyResult = (
   property: Field,
   response: ResponseBody,
   operation: Operation,
-  rule: ResponseBodyRule
+  rule: ResponseBodyRule | PropertyRule
 ): Result => ({
   type: assertionResult.type,
   where: `${operation.method.toUpperCase()} ${operation.path} response ${
@@ -122,6 +85,7 @@ export const runResponseBodyRules = ({
 }) => {
   const results: Result[] = [];
   const responseRules = getResponseBodyRules(rules);
+  const propertyRules = getPropertyRules(rules);
   const beforeSpecification = createSpecification(
     specificationNode,
     'before',
@@ -149,22 +113,20 @@ export const runResponseBodyRules = ({
   for (const responseRule of responseRules) {
     if (beforeOperation && beforeSpecification) {
       // Default to after rule context if available
-      const ruleContext =
-        afterSpecification && afterOperation
-          ? createRuleContext({
-              operation: afterOperation,
-              custom: customRuleContext,
-              operationChangeType: operationNode.change?.changeType || null,
-              specification: afterSpecification,
-              specificationNode: specificationNode,
-            })
-          : createRuleContext({
-              operation: beforeOperation,
-              custom: customRuleContext,
-              operationChangeType: operationNode.change?.changeType || null,
-              specification: beforeSpecification,
-              specificationNode: specificationNode,
-            });
+      const ruleContext = createRuleContextWithOperation(
+        {
+          node: specificationNode,
+          before: beforeSpecification,
+          after: afterSpecification,
+        },
+        {
+          node: operationNode,
+          before: beforeOperation,
+          after: afterOperation,
+        },
+        customRuleContext
+      );
+
       const responseAssertions = createResponseBodyAssertions();
       // Register the user's rule definition, this is collected in the responseAssertions object
       responseRule.rule(responseAssertions, ruleContext);
@@ -226,13 +188,19 @@ export const runResponseBodyRules = ({
     }
 
     if (afterOperation && afterSpecification) {
-      const ruleContext = createRuleContext({
-        operation: afterOperation,
-        custom: customRuleContext,
-        operationChangeType: operationNode.change?.changeType || null,
-        specification: afterSpecification,
-        specificationNode: specificationNode,
-      });
+      const ruleContext = createRuleContextWithOperation(
+        {
+          node: specificationNode,
+          before: beforeSpecification,
+          after: afterSpecification,
+        },
+        {
+          node: operationNode,
+          before: beforeOperation,
+          after: afterOperation,
+        },
+        customRuleContext
+      );
       // Register the user's rule definition, this is collected in the responseAssertions object
       const responseAssertions = createResponseBodyAssertions();
       // Run the user's rules that have been stored in responseAssertions
@@ -302,6 +270,131 @@ export const runResponseBodyRules = ({
                       afterBody,
                       afterOperation,
                       responseRule
+                    )
+                  )
+              );
+            }
+          }
+        }
+      }
+    }
+  }
+
+  for (const propertyRule of propertyRules) {
+    if (beforeOperation && beforeSpecification) {
+      const ruleContext = createRuleContextWithOperation(
+        {
+          node: specificationNode,
+          before: beforeSpecification,
+          after: afterSpecification,
+        },
+        {
+          node: operationNode,
+          before: beforeOperation,
+          after: afterOperation,
+        },
+        customRuleContext
+      );
+      const propertyAssertions = createPropertyAssertions();
+      // // Register the user's rule definition, this is collected in the propertyAssertions object
+      propertyRule.rule(propertyAssertions, ruleContext);
+      const beforeResponse = createResponse(
+        responseNode,
+        'before',
+        beforeApiSpec
+      );
+      if (beforeResponse) {
+        for (const beforeBody of beforeResponse.bodies) {
+          for (const [key, property] of beforeBody.properties.entries()) {
+            const matches =
+              !propertyRule.matches ||
+              propertyRule.matches(property, ruleContext);
+
+            const exempted = isExempted(property.raw, propertyRule.name);
+            const propertyChange =
+              responseNode.bodies.get(beforeBody.contentType)?.fields.get(key)
+                ?.change || null;
+            if (matches) {
+              results.push(
+                ...propertyAssertions
+                  .runBefore(property, propertyChange, exempted)
+                  .map((assertionResult) =>
+                    createResponsePropertyResult(
+                      assertionResult,
+                      property,
+                      beforeBody,
+                      beforeOperation,
+                      propertyRule
+                    )
+                  )
+              );
+            }
+          }
+        }
+      }
+    }
+
+    if (afterOperation && afterSpecification) {
+      const ruleContext = createRuleContextWithOperation(
+        {
+          node: specificationNode,
+          before: beforeSpecification,
+          after: afterSpecification,
+        },
+        {
+          node: operationNode,
+          before: beforeOperation,
+          after: afterOperation,
+        },
+        customRuleContext
+      );
+      // Register the user's rule definition, this is collected in the propertyAssertions object
+      const propertyAssertions = createPropertyAssertions();
+      // Run the user's rules that have been stored in propertyAssertions
+      propertyRule.rule(propertyAssertions, ruleContext);
+
+      const maybeBeforeResponse = createResponse(
+        responseNode,
+        'before',
+        beforeApiSpec
+      );
+      const afterResponse = createResponse(responseNode, 'after', afterApiSpec);
+      if (afterResponse) {
+        for (const afterBody of afterResponse.bodies) {
+          const maybeBeforeBody =
+            maybeBeforeResponse?.bodies.find(
+              (body) => body.contentType === afterBody.contentType
+            ) || null;
+
+          for (const [key, property] of afterBody.properties.entries()) {
+            const maybeBeforeProperty =
+              maybeBeforeBody?.properties.get(key) || null;
+
+            const propertyChange =
+              responseNode.bodies.get(afterBody.contentType)?.fields.get(key)
+                ?.change || null;
+            const matches =
+              !propertyRule.matches ||
+              propertyRule.matches(property, ruleContext);
+
+            const exempted = isExempted(property.raw, propertyRule.name);
+            if (matches) {
+              // Run the user's rules that have been stored in propertyAssertions for property
+              results.push(
+                ...propertyAssertions
+                  .runAfter(
+                    maybeBeforeProperty,
+                    property,
+                    propertyChange,
+                    exempted
+                  )
+                  .map((assertionResult) =>
+                    createResponsePropertyResult(
+                      assertionResult,
+                      property,
+                      afterBody,
+                      afterOperation,
+                      propertyRule
                     )
                   )
               );

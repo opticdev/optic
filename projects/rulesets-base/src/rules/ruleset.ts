@@ -3,6 +3,7 @@ import { RequestRule } from './request-rule';
 import { ResponseRule } from './response-rule';
 import { ResponseBodyRule } from './response-body-rule';
 import { SpecificationRule } from './specification-rule';
+import { PropertyRule } from './property-rule';
 import { RuleContext } from '../types';
 
 export type Rule =
@@ -10,7 +11,8 @@ export type Rule =
   | OperationRule
   | RequestRule
   | ResponseRule
-  | ResponseBodyRule;
+  | ResponseBodyRule
+  | PropertyRule;
 
 export type RuleNames<R extends Rule[]> = R[number]['name'];
 

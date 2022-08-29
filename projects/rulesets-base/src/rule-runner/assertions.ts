@@ -406,3 +406,8 @@ export const createResponseBodyAssertions =
 
     return responseBodyAssertions as ResponseBodyAssertionsRunner;
   };
+
+export const createPropertyAssertions =
+  (): AssertionRunner<'property'> => {
+    return new AssertionRunner('property');
+  };

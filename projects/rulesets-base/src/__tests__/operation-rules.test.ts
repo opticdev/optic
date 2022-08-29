@@ -52,6 +52,10 @@ describe('OperationRule', () => {
   });
 
   describe('rulesContext', () => {
+    const emptySpec = {
+      ...defaultEmptySpec,
+      ['x-optic-ci-empty-spec']: true
+    } as any
     const json: OpenAPIV3.Document = {
       ...defaultEmptySpec,
       servers: [{ url: 'http://optic.com' }],
@@ -73,7 +77,7 @@ describe('OperationRule', () => {
         }),
       ]);
 
-      ruleRunner.runRulesWithFacts(createRuleInputs(json, defaultEmptySpec));
+      ruleRunner.runRulesWithFacts(createRuleInputs(json, emptySpec));
 
       expect(mockFn.mock.calls.length > 0).toBe(true);
       const ruleContext = mockFn.mock.calls[0][1];

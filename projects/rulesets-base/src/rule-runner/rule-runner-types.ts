@@ -4,10 +4,6 @@ import {
   OpenApiKind,
 } from '@useoptic/openapi-utilities';
 
-export type RulesetData = {
-  aliases: string[];
-};
-
 export type NodeDetail<T extends OpenApiKind> = {
   before: FactVariant<T> | null;
   after: FactVariant<T> | null;

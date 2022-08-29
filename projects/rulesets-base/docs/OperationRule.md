@@ -45,9 +45,9 @@ const has201StatusCode = new OperationRule({
 
 ## operationAssertions
 
-operationAssertions is used to define operation rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in a condition (`string`), and an assertion, which is a function that receives an [`Operation` object](./DataShapes.md#operation). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
+operationAssertions is used to define operation rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in an assertion, which is a function that receives an [`Operation` object](./DataShapes.md#operation). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
 
-`operationAssertions[lifecycle](condition, assertion)`
+`operationAssertions[lifecycle](assertion)`
 
 ```javascript
 new OperationRule({
@@ -242,9 +242,9 @@ new OperationRule({
 
 ## operationAssertions.queryParameter
 
-operationAssertions.queryParameter is used to define query parameter rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in a condition (`string`), and an assertion, which is a function that receives an [`QueryParameter` object](./DataShapes.md#queryparameter--pathparameter--headerparameter--cookieparameter). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
+operationAssertions.queryParameter is used to define query parameter rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in an assertion, which is a function that receives an [`QueryParameter` object](./DataShapes.md#queryparameter--pathparameter--headerparameter--cookieparameter). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
 
-`operationAssertions.queryParameter[lifecycle](condition, assertion)`
+`operationAssertions.queryParameter[lifecycle](assertion)`
 
 ```javascript
 new OperationRule({
@@ -264,9 +264,9 @@ new OperationRule({
 
 ## operationAssertions.pathParameter
 
-operationAssertions.pathParameter is used to define path parameter rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in a condition (`string`), and an assertion, which is a function that receives an [`PathParameter` object](./DataShapes.md#queryparameter--pathparameter--headerparameter--cookieparameter). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
+operationAssertions.pathParameter is used to define path parameter rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in an assertion, which is a function that receives an [`PathParameter` object](./DataShapes.md#queryparameter--pathparameter--headerparameter--cookieparameter). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
 
-`operationAssertions.pathParameter[lifecycle](condition, assertion)`
+`operationAssertions.pathParameter[lifecycle](assertion)`
 
 ```javascript
 new OperationRule({
@@ -286,9 +286,9 @@ new OperationRule({
 
 ## operationAssertions.headerParameter
 
-operationAssertions.headerParameter is used to define header parameter rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in a condition (`string`), and an assertion, which is a function that receives an [`HeaderParameter` object](./DataShapes.md#queryparameter--pathparameter--headerparameter--cookieparameter). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
+operationAssertions.headerParameter is used to define header parameter rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in an assertion, which is a function that receives an [`HeaderParameter` object](./DataShapes.md#queryparameter--pathparameter--headerparameter--cookieparameter). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
 
-`operationAssertions.headerParameter[lifecycle](condition, assertion)`
+`operationAssertions.headerParameter[lifecycle](assertion)`
 
 ```javascript
 new OperationRule({
@@ -308,9 +308,9 @@ new OperationRule({
 
 ## operationAssertions.cookieParameter
 
-operationAssertions.cookieParameter is used to define cookie parameter rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in a condition (`string`), and an assertion, which is a function that receives an [`CookieParameter` object](./DataShapes.md#queryparameter--pathparameter--headerparameter--cookieparameter). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
+operationAssertions.cookieParameter is used to define cookie parameter rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in an assertion, which is a function that receives an [`CookieParameter` object](./DataShapes.md#queryparameter--pathparameter--headerparameter--cookieparameter). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
 
-`operationAssertions.cookieParameter[lifecycle](condition, assertion)`
+`operationAssertions.cookieParameter[lifecycle](assertion)`
 
 ```javascript
 new OperationRule({

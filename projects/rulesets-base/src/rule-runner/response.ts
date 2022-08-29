@@ -6,53 +6,19 @@ import {
   createSpecification,
 } from './data-constructors';
 import {
-  RulesetData,
   EndpointNode,
   ResponseNode,
   NodeDetail,
 } from './rule-runner-types';
 import {
-  createRuleContext,
-  createRulesetMatcher,
-  getRuleAliases,
+  createRuleContextWithOperation,
   isExempted,
 } from './utils';
 
 import { Rule, Ruleset, ResponseRule } from '../rules';
 import { AssertionResult, createResponseAssertions } from './assertions';
 import { Operation, Response } from '../types';
-
-const getResponseRules = (
-  rules: (Ruleset | Rule)[]
-): (ResponseRule & RulesetData)[] => {
-  const responseRule: (ResponseRule & RulesetData)[] = [];
-  for (const ruleOrRuleset of rules) {
-    if (ResponseRule.isInstance(ruleOrRuleset)) {
-      responseRule.push({
-        ...ruleOrRuleset,
-        aliases: [],
-      });
-    }
-
-    if (Ruleset.isInstance(ruleOrRuleset)) {
-      for (const rule of ruleOrRuleset.rules) {
-        if (ResponseRule.isInstance(rule)) {
-          responseRule.push({
-            ...rule,
-            matches: createRulesetMatcher({
-              ruleMatcher: rule.matches,
-              rulesetMatcher: ruleOrRuleset.matches,
-            }),
-            aliases: getRuleAliases(ruleOrRuleset.name, rule.name),
-            docsLink: rule.docsLink || ruleOrRuleset.docsLink,
-          });
-        }
-      }
-    }
-  }
-
-  return responseRule;
-};
+import { getResponseRules } from './rule-filters';
 
 const createResponseResult = (
   assertionResult: AssertionResult,
@@ -147,22 +113,19 @@ export const runResponseRules = ({
   // - if yes, run the user's defined `rule`. for responses, this runs against the response and response headers
   for (const responseRule of responseRules) {
     if (beforeOperation && beforeSpecification) {
-      const ruleContext =
-        afterSpecification && afterOperation
-          ? createRuleContext({
-              operation: afterOperation,
-              custom: customRuleContext,
-              operationChangeType: operationNode.change?.changeType || null,
-              specification: afterSpecification,
-              specificationNode: specificationNode,
-            })
-          : createRuleContext({
-              operation: beforeOperation,
-              custom: customRuleContext,
-              operationChangeType: operationNode.change?.changeType || null,
-              specification: beforeSpecification,
-              specificationNode: specificationNode,
-            });
+      const ruleContext =createRuleContextWithOperation(
+        {
+          node: specificationNode,
+          before: beforeSpecification,
+          after: afterSpecification,
+        },
+        {
+          node: operationNode,
+          before: beforeOperation,
+          after: afterOperation,
+        },
+        customRuleContext
+      );
       const beforeResponse = createResponse(
         responseNode,
         'before',
@@ -216,13 +179,19 @@ export const runResponseRules = ({
     }
 
     if (afterOperation && afterSpecification) {
-      const ruleContext = createRuleContext({
-        operation: afterOperation,
-        custom: customRuleContext,
-        operationChangeType: operationNode.change?.changeType || null,
-        specification: afterSpecification,
-        specificationNode: specificationNode,
-      });
+      const ruleContext = createRuleContextWithOperation(
+        {
+          node: specificationNode,
+          before: beforeSpecification,
+          after: afterSpecification,
+        },
+        {
+          node: operationNode,
+          before: beforeOperation,
+          after: afterOperation,
+        },
+        customRuleContext
+      );
       const maybeBeforeResponse = createResponse(
         responseNode,
         'before',

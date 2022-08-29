@@ -47,9 +47,9 @@ new ResponseBodyRule({
 
 ## responseBodyAssertions.body
 
-responseBodyAssertions.body is used to define response rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in a condition (`string`), and an assertion, which is a function that receives a [`ResponseBody` object](./DataShapes.md#responsebody). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
+responseBodyAssertions.body is used to define response rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in an assertion, which is a function that receives a [`ResponseBody` object](./DataShapes.md#responsebody). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
 
-`responseBodyAssertions.body[lifecycle](condition, assertion)`
+`responseBodyAssertions.body[lifecycle](assertion)`
 
 ```javascript
 new ResponseBodyRule({
@@ -119,9 +119,9 @@ new ResponseBodyRule({
 
 ## responseBodyAssertions.property
 
-responseBodyAssertions.property is used to define response body property rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in a condition (`string`), and an assertion, which is a function that receives a [`Field` object](./DataShapes.md#field). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
+responseBodyAssertions.property is used to define response body property rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in an assertion, which is a function that receives a [`Field` object](./DataShapes.md#field). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
 
-`responseBodyAssertions.property[lifecycle](condition, assertion)`
+`responseBodyAssertions.property[lifecycle](assertion)`
 
 ```javascript
 new ResponseBodyRule({
