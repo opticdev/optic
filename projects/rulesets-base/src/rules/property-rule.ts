@@ -11,8 +11,8 @@ export class PropertyRule<RuleName extends string = string> {
   public type: 'property-rule';
   public name: RuleName;
   public docsLink?: string;
-  public matches?: (operation: Property, context: RuleContext) => boolean;
-  public rule: (operation: PropertyAssertions, context: RuleContext) => void;
+  public matches?: (property: Property, context: RuleContext) => boolean;
+  public rule: (property: PropertyAssertions, context: RuleContext) => void;
 
   constructor(config: PropertyRuleConfig<RuleName>) {
     // this could be invoked via javascript so we still to check

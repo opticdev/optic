@@ -6,13 +6,14 @@ import {
   createSpecification,
 } from './data-constructors';
 import { EndpointNode, ResponseNode, NodeDetail } from './rule-runner-types';
-import {
-  createRuleContextWithOperation,
-  isExempted,
-} from './utils';
+import { createRuleContextWithOperation, isExempted } from './utils';
 
-import { Rule, Ruleset, ResponseBodyRule } from '../rules';
-import { AssertionResult, createResponseBodyAssertions } from './assertions';
+import { Rule, Ruleset, ResponseBodyRule, PropertyRule } from '../rules';
+import {
+  AssertionResult,
+  createPropertyAssertions,
+  createResponseBodyAssertions,
+} from './assertions';
 import { Field, Operation, ResponseBody } from '../types';
 import { getPropertyRules, getResponseBodyRules } from './rule-filters';
 
@@ -44,7 +45,7 @@ const createResponsePropertyResult = (
   property: Field,
   response: ResponseBody,
   operation: Operation,
-  rule: ResponseBodyRule
+  rule: ResponseBodyRule | PropertyRule
 ): Result => ({
   type: assertionResult.type,
   where: `${operation.method.toUpperCase()} ${operation.path} response ${
@@ -281,31 +282,126 @@ export const runResponseBodyRules = ({
 
   for (const propertyRule of propertyRules) {
     if (beforeOperation && beforeSpecification) {
-      // Default to after rule context if available
-      // const ruleContext =createRuleContextWithOperation(
-      //   {
-      //     node: specificationNode,
-      //     before: beforeSpecification,
-      //     after: afterSpecification,
-      //   },
-      //   {
-      //     node: operationNode,
-      //     before: beforeOperation,
-      //     after: afterOperation,
-      //   },
-      //   customRuleContext
-      // );
-      // const responseAssertions = createResponseBodyAssertions();
-      // // Register the user's rule definition, this is collected in the responseAssertions object
-      // responseRule.rule(responseAssertions, ruleContext);
-      // const beforeResponse = createResponse(
-      //   responseNode,
-      //   'before',
-      //   beforeApiSpec
-      // );
+      const ruleContext = createRuleContextWithOperation(
+        {
+          node: specificationNode,
+          before: beforeSpecification,
+          after: afterSpecification,
+        },
+        {
+          node: operationNode,
+          before: beforeOperation,
+          after: afterOperation,
+        },
+        customRuleContext
+      );
+      const propertyAssertions = createPropertyAssertions();
+      // // Register the user's rule definition, this is collected in the propertyAssertions object
+      propertyRule.rule(propertyAssertions, ruleContext);
+      const beforeResponse = createResponse(
+        responseNode,
+        'before',
+        beforeApiSpec
+      );
+      if (beforeResponse) {
+        for (const beforeBody of beforeResponse.bodies) {
+          for (const [key, property] of beforeBody.properties.entries()) {
+            const matches =
+              !propertyRule.matches ||
+              propertyRule.matches(property, ruleContext);
+
+            const exempted = isExempted(property.raw, propertyRule.name);
+            const propertyChange =
+              responseNode.bodies.get(beforeBody.contentType)?.fields.get(key)
+                ?.change || null;
+            if (matches) {
+              results.push(
+                ...propertyAssertions
+                  .runBefore(property, propertyChange, exempted)
+                  .map((assertionResult) =>
+                    createResponsePropertyResult(
+                      assertionResult,
+                      property,
+                      beforeBody,
+                      beforeOperation,
+                      propertyRule
+                    )
+                  )
+              );
+            }
+          }
+        }
+      }
     }
 
     if (afterOperation && afterSpecification) {
+      const ruleContext = createRuleContextWithOperation(
+        {
+          node: specificationNode,
+          before: beforeSpecification,
+          after: afterSpecification,
+        },
+        {
+          node: operationNode,
+          before: beforeOperation,
+          after: afterOperation,
+        },
+        customRuleContext
+      );
+      // Register the user's rule definition, this is collected in the propertyAssertions object
+      const propertyAssertions = createPropertyAssertions();
+      // Run the user's rules that have been stored in propertyAssertions
+      propertyRule.rule(propertyAssertions, ruleContext);
+
+      const maybeBeforeResponse = createResponse(
+        responseNode,
+        'before',
+        beforeApiSpec
+      );
+      const afterResponse = createResponse(responseNode, 'after', afterApiSpec);
+      if (afterResponse) {
+        for (const afterBody of afterResponse.bodies) {
+          const maybeBeforeBody =
+            maybeBeforeResponse?.bodies.find(
+              (body) => body.contentType === afterBody.contentType
+            ) || null;
+
+          for (const [key, property] of afterBody.properties.entries()) {
+            const maybeBeforeProperty =
+              maybeBeforeBody?.properties.get(key) || null;
+
+            const propertyChange =
+              responseNode.bodies.get(afterBody.contentType)?.fields.get(key)
+                ?.change || null;
+            const matches =
+              !propertyRule.matches ||
+              propertyRule.matches(property, ruleContext);
+
+            const exempted = isExempted(property.raw, propertyRule.name);
+            if (matches) {
+              // Run the user's rules that have been stored in propertyAssertions for property
+              results.push(
+                ...propertyAssertions
+                  .runAfter(
+                    maybeBeforeProperty,
+                    property,
+                    propertyChange,
+                    exempted
+                  )
+                  .map((assertionResult) =>
+                    createResponsePropertyResult(
+                      assertionResult,
+                      property,
+                      afterBody,
+                      afterOperation,
+                      propertyRule
+                    )
+                  )
+              );
+            }
+          }
+        }
+      }
     }
   }
 
