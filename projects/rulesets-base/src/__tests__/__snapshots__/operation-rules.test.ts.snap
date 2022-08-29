@@ -3032,7 +3032,7 @@ Object {
     },
   },
   "specification": Object {
-    "change": "changed",
+    "change": "removed",
     "location": Object {
       "conceptualLocation": Object {},
       "conceptualPath": Array [],

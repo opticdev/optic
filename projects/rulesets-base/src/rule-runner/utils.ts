@@ -70,17 +70,33 @@ export const createRuleContextWithOperation = (
       ),
   custom: any
 ): RuleContext => {
-  return {
-    custom,
-    specification: {
-      ...(specification.after ? specification.after : specification.before),
-      change: getSpecificationChange(specification.node),
-    },
-    operation: {
-      ...(operation.after ? operation.after : operation.before),
-      change:operation.node.change?.changeType || null
-    },
-  };
+  const specificationChange = getSpecificationChange(specification.node)
+
+  if (specificationChange === 'removed') {
+    return {
+      custom,
+      specification: {
+        ...specification.before!,
+        change: specificationChange,
+      },
+      operation: {
+        ...operation.before!,
+        change: specificationChange
+      },
+    }
+  } else {
+    return {
+      custom,
+      specification: {
+        ...specification.after!,
+        change: specificationChange
+      },
+      operation: {
+        ...(operation.after ? operation.after : operation.before),
+        change:operation.node.change?.changeType || null
+      },
+    };
+  }
 };
 
 export const isExempted = (raw: object, ruleName: string) => {
