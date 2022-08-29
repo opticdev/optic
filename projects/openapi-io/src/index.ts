@@ -5,19 +5,17 @@ import {
   parseOpenAPIFromRepoWithSourcemap,
   ParseOpenAPIResult,
   parseOpenAPIWithSourcemap,
-  parseOpenAPIFromGithub,
+  dereferenceOpenApi,
+  ResolverError
 } from './parser/openapi-sourcemap-parser';
+import { ExternalRefHandler } from './parser/types';
 import {
   JsonPath,
   JsonSchemaSourcemap,
   resolveJsonPointerInYamlAst,
 } from './parser/sourcemap';
 import { loadYaml, isYaml, isJson, writeYaml } from './write/index';
-import {
-  watchDependencies,
-  WatchDependenciesHandler,
-} from './loaders/watch-dependencies';
-import { collectFilePatchesFromInMemoryUpdates } from './roundtrip/reconciler';
+
 
 export {
   loadSpecFromFile,
@@ -25,7 +23,6 @@ export {
   loadSpecFromUrl,
   loadSpecFromBranch,
   parseOpenAPIWithSourcemap,
-  parseOpenAPIFromGithub,
   parseOpenAPIFromRepoWithSourcemap,
   resolveJsonPointerInYamlAst,
   JsonSchemaSourcemap,
@@ -34,9 +31,8 @@ export {
   isYaml,
   isJson,
   writeYaml,
-  watchDependencies,
-  WatchDependenciesHandler,
-  collectFilePatchesFromInMemoryUpdates,
+  dereferenceOpenApi,
+  ResolverError,
 };
 
-export type { JsonPath, ParseOpenAPIResult };
+export type { JsonPath, ParseOpenAPIResult, ExternalRefHandler };
