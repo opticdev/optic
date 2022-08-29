@@ -207,6 +207,7 @@ export type RegisterChangedAssertion<T extends AssertionType> = (
 export type Assertions<T extends AssertionType> = {
   requirement: RegisterAssertion<T> & AssertionTypeToHelpers[T];
   added: RegisterAssertion<T> & AssertionTypeToHelpers[T];
+  addedOrChanged: RegisterAssertion<T> & AssertionTypeToHelpers[T];
   changed: RegisterChangedAssertion<T> & AssertionTypeToHelpers[T];
   removed: RegisterAssertion<T> & AssertionTypeToHelpers[T];
 };

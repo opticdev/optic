@@ -12,10 +12,11 @@ Rules can be grouped together into a [Ruleset](./Ruleset.md).
 
 ## Assertions
 
-There are 4 different lifecycles you can attach a rule onto. These lifecycles determine when a rule should be run. The 4 lifecycles are: `added`, `changed`, `removed` and `requirement`.
+There are 5 different lifecycles you can attach a rule onto. These lifecycles determine when a rule should be run. The 5 lifecycles are: `added`, `changed`, `addedOrChanged`, `removed` and `requirement`.
 
 - `added` - runs when added
 - `changed` - runs when changed
+- `addedOrChanged` - runs when added or changed
 - `removed` - runs when removed
 - `requirement` - always runs
 

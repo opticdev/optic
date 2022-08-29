@@ -77,10 +77,16 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
       | 'addedAssertions'
       | 'changedAssertions'
       | 'removedAssertions'
+      | 'addedAndChangedAssertions'
   ): AssertionTypeToHelpers[T] => {
     const registerAssertion = (...args) => {
       const assertion = args[1] || args[0];
       if (assertionKey === 'changedAssertions') {
+        this.changedAssertions.push((before, after) => {
+          assertion(after);
+        });
+      } else if (assertionKey === 'addedAndChangedAssertions') {
+        this.addedAssertions.push(assertion);
         this.changedAssertions.push((before, after) => {
           assertion(after);
         });
@@ -156,6 +162,25 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
 
   get removed() {
     return this.createAssertion('removedAssertions');
+  }
+
+  get addedOrChanged() {
+    const baseAssertion: RegisterAssertion<T> = (...args) => {
+      // normalize the assertion
+      const normalizedAssertion = args.length === 2 ? args[1] : args[0];
+      // push to both added and changed
+      this.addedAssertions.push(normalizedAssertion);
+      this.changedAssertions.push((_, ...args) => normalizedAssertion(...args));
+    };
+
+    // apply assertion helpers
+    for (const [k, v] of Object.entries(
+      this.createAssertionHelpers('addedAndChangedAssertions')
+    )) {
+      baseAssertion[k] = v;
+    }
+
+    return baseAssertion as RegisterAssertion<T> & AssertionTypeToHelpers[T];
   }
 
   runBefore(
