@@ -5,13 +5,9 @@ import {
   createResponse,
   createSpecification,
 } from './data-constructors';
+import { EndpointNode, ResponseNode, NodeDetail } from './rule-runner-types';
 import {
-  EndpointNode,
-  ResponseNode,
-  NodeDetail,
-} from './rule-runner-types';
-import {
-  createRuleContext,
+  createRuleContextWithOperation,
   isExempted,
 } from './utils';
 
@@ -88,7 +84,7 @@ export const runResponseBodyRules = ({
 }) => {
   const results: Result[] = [];
   const responseRules = getResponseBodyRules(rules);
-  const propertyRules = getPropertyRules(rules)
+  const propertyRules = getPropertyRules(rules);
   const beforeSpecification = createSpecification(
     specificationNode,
     'before',
@@ -116,22 +112,20 @@ export const runResponseBodyRules = ({
   for (const responseRule of responseRules) {
     if (beforeOperation && beforeSpecification) {
       // Default to after rule context if available
-      const ruleContext =
-        afterSpecification && afterOperation
-          ? createRuleContext({
-              operation: afterOperation,
-              custom: customRuleContext,
-              operationChangeType: operationNode.change?.changeType || null,
-              specification: afterSpecification,
-              specificationNode: specificationNode,
-            })
-          : createRuleContext({
-              operation: beforeOperation,
-              custom: customRuleContext,
-              operationChangeType: operationNode.change?.changeType || null,
-              specification: beforeSpecification,
-              specificationNode: specificationNode,
-            });
+      const ruleContext = createRuleContextWithOperation(
+        {
+          node: specificationNode,
+          before: beforeSpecification,
+          after: afterSpecification,
+        },
+        {
+          node: operationNode,
+          before: beforeOperation,
+          after: afterOperation,
+        },
+        customRuleContext
+      );
+
       const responseAssertions = createResponseBodyAssertions();
       // Register the user's rule definition, this is collected in the responseAssertions object
       responseRule.rule(responseAssertions, ruleContext);
@@ -193,13 +187,19 @@ export const runResponseBodyRules = ({
     }
 
     if (afterOperation && afterSpecification) {
-      const ruleContext = createRuleContext({
-        operation: afterOperation,
-        custom: customRuleContext,
-        operationChangeType: operationNode.change?.changeType || null,
-        specification: afterSpecification,
-        specificationNode: specificationNode,
-      });
+      const ruleContext = createRuleContextWithOperation(
+        {
+          node: specificationNode,
+          before: beforeSpecification,
+          after: afterSpecification,
+        },
+        {
+          node: operationNode,
+          before: beforeOperation,
+          after: afterOperation,
+        },
+        customRuleContext
+      );
       // Register the user's rule definition, this is collected in the responseAssertions object
       const responseAssertions = createResponseBodyAssertions();
       // Run the user's rules that have been stored in responseAssertions
@@ -280,7 +280,33 @@ export const runResponseBodyRules = ({
   }
 
   for (const propertyRule of propertyRules) {
+    if (beforeOperation && beforeSpecification) {
+      // Default to after rule context if available
+      // const ruleContext =createRuleContextWithOperation(
+      //   {
+      //     node: specificationNode,
+      //     before: beforeSpecification,
+      //     after: afterSpecification,
+      //   },
+      //   {
+      //     node: operationNode,
+      //     before: beforeOperation,
+      //     after: afterOperation,
+      //   },
+      //   customRuleContext
+      // );
+      // const responseAssertions = createResponseBodyAssertions();
+      // // Register the user's rule definition, this is collected in the responseAssertions object
+      // responseRule.rule(responseAssertions, ruleContext);
+      // const beforeResponse = createResponse(
+      //   responseNode,
+      //   'before',
+      //   beforeApiSpec
+      // );
+    }
 
+    if (afterOperation && afterSpecification) {
+    }
   }
 
   return results;

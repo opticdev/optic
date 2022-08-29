@@ -2,7 +2,7 @@ import { OpenApiKind, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
 import { createOperation, createSpecification } from './data-constructors';
 import { EndpointNode, NodeDetail } from './rule-runner-types';
 import {
-  createRuleContext,
+  createRuleContextWithOperation,
   isExempted,
 } from './utils';
 
@@ -105,13 +105,19 @@ export const runOperationRules = ({
   // - if yes, run the user's defined `rule`. for operations, this runs against the operation, headerParameters, queryParameters, pathParameters and cookie parameters
   for (const operationRule of operationRules) {
     if (beforeOperation && beforeSpecification) {
-      const ruleContext = createRuleContext({
-        operation: beforeOperation,
-        custom: customRuleContext,
-        operationChangeType: operationNode.change?.changeType || null,
-        specification: beforeSpecification,
-        specificationNode: specificationNode,
-      });
+      const ruleContext = createRuleContextWithOperation(
+        {
+          node: specificationNode,
+          before: beforeSpecification,
+          after: afterSpecification,
+        },
+        {
+          node: operationNode,
+          before: beforeOperation,
+          after: afterOperation,
+        },
+        customRuleContext
+      );
 
       const matches =
         !operationRule.matches ||
@@ -244,13 +250,19 @@ export const runOperationRules = ({
     }
 
     if (afterOperation && afterSpecification) {
-      const ruleContext = createRuleContext({
-        operation: afterOperation,
-        custom: customRuleContext,
-        operationChangeType: operationNode.change?.changeType || null,
-        specification: afterSpecification,
-        specificationNode: specificationNode,
-      });
+      const ruleContext = createRuleContextWithOperation(
+        {
+          node: specificationNode,
+          before: beforeSpecification,
+          after: afterSpecification,
+        },
+        {
+          node: operationNode,
+          before: beforeOperation,
+          after: afterOperation,
+        },
+        customRuleContext
+      );
 
       const matches =
         !operationRule.matches ||

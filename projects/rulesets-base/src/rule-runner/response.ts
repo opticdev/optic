@@ -11,7 +11,7 @@ import {
   NodeDetail,
 } from './rule-runner-types';
 import {
-  createRuleContext,
+  createRuleContextWithOperation,
   isExempted,
 } from './utils';
 
@@ -113,22 +113,19 @@ export const runResponseRules = ({
   // - if yes, run the user's defined `rule`. for responses, this runs against the response and response headers
   for (const responseRule of responseRules) {
     if (beforeOperation && beforeSpecification) {
-      const ruleContext =
-        afterSpecification && afterOperation
-          ? createRuleContext({
-              operation: afterOperation,
-              custom: customRuleContext,
-              operationChangeType: operationNode.change?.changeType || null,
-              specification: afterSpecification,
-              specificationNode: specificationNode,
-            })
-          : createRuleContext({
-              operation: beforeOperation,
-              custom: customRuleContext,
-              operationChangeType: operationNode.change?.changeType || null,
-              specification: beforeSpecification,
-              specificationNode: specificationNode,
-            });
+      const ruleContext =createRuleContextWithOperation(
+        {
+          node: specificationNode,
+          before: beforeSpecification,
+          after: afterSpecification,
+        },
+        {
+          node: operationNode,
+          before: beforeOperation,
+          after: afterOperation,
+        },
+        customRuleContext
+      );
       const beforeResponse = createResponse(
         responseNode,
         'before',
@@ -182,13 +179,19 @@ export const runResponseRules = ({
     }
 
     if (afterOperation && afterSpecification) {
-      const ruleContext = createRuleContext({
-        operation: afterOperation,
-        custom: customRuleContext,
-        operationChangeType: operationNode.change?.changeType || null,
-        specification: afterSpecification,
-        specificationNode: specificationNode,
-      });
+      const ruleContext = createRuleContextWithOperation(
+        {
+          node: specificationNode,
+          before: beforeSpecification,
+          after: afterSpecification,
+        },
+        {
+          node: operationNode,
+          before: beforeOperation,
+          after: afterOperation,
+        },
+        customRuleContext
+      );
       const maybeBeforeResponse = createResponse(
         responseNode,
         'before',

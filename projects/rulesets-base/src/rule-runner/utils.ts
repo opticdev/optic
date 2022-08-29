@@ -12,67 +12,79 @@ const getSpecificationChange = (
     : specificationNode.change?.changeType || null;
 };
 
-export const createRuleContext = ({
-  specification,
-  specificationNode,
-  custom,
-  operation,
-  operationChangeType,
-}: {
-  specification: Specification;
-  specificationNode: NodeDetail<OpenApiKind.Specification>;
-  custom: any;
-} & (
-  | { operation?: undefined; operationChangeType?: undefined }
-  | {
-      operation: Operation;
-      operationChangeType: RuleContext['operation']['change'];
-    }
-)): RuleContext => {
-  if (operation && operationChangeType !== undefined) {
-    return {
-      custom,
-      specification: {
-        ...specification,
-        change: getSpecificationChange(specificationNode),
+export const createRuleContextWithoutOperation = (
+  specification: {
+    node: NodeDetail<OpenApiKind.Specification>;
+  } & (
+    | { before: Specification | null; after: Specification }
+    | { before: Specification; after: null }
+  ),
+  custom: any
+): RuleContext => {
+  return {
+    custom,
+    specification: {
+      ...(specification.after ? specification.after : specification.before),
+      change: getSpecificationChange(specification.node),
+    },
+    operation: {
+      location: {
+        jsonPath: '',
+        conceptualLocation: { path: '', method: '' },
+        conceptualPath: [],
+        kind: OpenApiKind.Operation,
       },
-      operation: {
-        ...operation,
-        change: operationChangeType,
+      value: { pathPattern: '', method: '' },
+      path: '',
+      method: '',
+      raw: {
+        responses: {},
       },
-    };
-  } else {
-    return {
-      custom,
-      specification: {
-        ...specification,
-        change: getSpecificationChange(specificationNode),
-      },
-      operation: {
-        location: {
-          jsonPath: '',
-          conceptualLocation: { path: '', method: '' },
-          conceptualPath: [],
-          kind: OpenApiKind.Operation,
-        },
-        value: { pathPattern: '', method: '' },
-        path: '',
-        method: '',
-        raw: {
-          responses: {},
-        },
-        change: null,
-        queryParameters: new Map(),
-        pathParameters: new Map(),
-        headerParameters: new Map(),
-        cookieParameters: new Map(),
-        requests: [],
-        responses: new Map(),
-      },
-    };
-  }
+      change: null,
+      queryParameters: new Map(),
+      pathParameters: new Map(),
+      headerParameters: new Map(),
+      cookieParameters: new Map(),
+      requests: [],
+      responses: new Map(),
+    },
+  };
 };
 
+export const createRuleContextWithOperation = (
+  specification: {
+    node: NodeDetail<OpenApiKind.Specification>
+  }
+    & (
+      | { before: Specification | null; after: Specification }
+      | { before: Specification; after: null }
+    ),
+    operation: {
+      node: NodeDetail<OpenApiKind.Operation>
+    }
+      & (
+        | { before: Operation | null; after: Operation }
+        | { before: Operation; after: null }
+      ),
+  // inputs: {
+  //   specificationNode: ;
+  //   operationNode: NodeDetail<OpenApiKind.Operation>;
+  // }
+  // ),
+  custom: any
+): RuleContext => {
+  return {
+    custom,
+    specification: {
+      ...(specification.after ? specification.after : specification.before),
+      change: getSpecificationChange(specification.node),
+    },
+    operation: {
+      ...(operation.after ? operation.after : operation.before),
+      change:operation.node.change?.changeType || null
+    },
+  };
+};
 
 export const isExempted = (raw: object, ruleName: string) => {
   const exemptions = raw['x-optic-exemptions'];

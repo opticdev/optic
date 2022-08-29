@@ -2,7 +2,7 @@ import { OpenApiKind, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
 
 import { createSpecification } from './data-constructors';
 import { NodeDetail } from './rule-runner-types';
-import { createRuleContext, isExempted } from './utils';
+import { createRuleContextWithoutOperation, isExempted } from './utils';
 
 import { Rule, Ruleset, SpecificationRule } from '../rules';
 import { createSpecificationAssertions, AssertionResult } from './assertions';
@@ -57,11 +57,14 @@ export const runSpecificationRules = ({
   for (const specificationRule of specificationRules) {
     // rules that are triggered and use the data from the `before` specification are: `removed`
     if (beforeSpecification) {
-      const rulesContext = createRuleContext({
-        specification: beforeSpecification,
-        specificationNode: specificationNode,
-        custom: customRuleContext,
-      });
+      const rulesContext = createRuleContextWithoutOperation(
+        {
+          before: beforeSpecification,
+          after: afterSpecification,
+          node: specificationNode,
+        },
+        customRuleContext
+      );
 
       const matches =
         !specificationRule.matches ||
@@ -89,11 +92,14 @@ export const runSpecificationRules = ({
     }
 
     if (afterSpecification) {
-      const rulesContext = createRuleContext({
-        specification: afterSpecification,
-        specificationNode: specificationNode,
-        custom: customRuleContext,
-      });
+      const rulesContext = createRuleContextWithoutOperation(
+        {
+          before: beforeSpecification,
+          after: afterSpecification,
+          node: specificationNode,
+        },
+        customRuleContext
+      );
 
       const matches =
         !specificationRule.matches ||

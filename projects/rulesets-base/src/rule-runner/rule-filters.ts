@@ -6,6 +6,7 @@ import {
   RequestRule,
   ResponseBodyRule,
   ResponseRule,
+  PropertyRule,
 } from '../rules';
 import { RuleContext } from '../types';
 
@@ -198,11 +199,11 @@ export const getResponseBodyRules = (
 
 export const getPropertyRules = (
   rules: (Ruleset | Rule)[]
-): (ResponseBodyRule & RulesetData)[] => {
-  const responseRule: (ResponseBodyRule & RulesetData)[] = [];
+): (PropertyRule & RulesetData)[] => {
+  const propertyRules: (PropertyRule & RulesetData)[] = [];
   for (const ruleOrRuleset of rules) {
-    if (ResponseBodyRule.isInstance(ruleOrRuleset)) {
-      responseRule.push({
+    if (PropertyRule.isInstance(ruleOrRuleset)) {
+      propertyRules.push({
         ...ruleOrRuleset,
         aliases: [],
       });
@@ -210,8 +211,8 @@ export const getPropertyRules = (
 
     if (Ruleset.isInstance(ruleOrRuleset)) {
       for (const rule of ruleOrRuleset.rules) {
-        if (ResponseBodyRule.isInstance(rule)) {
-          responseRule.push({
+        if (PropertyRule.isInstance(rule)) {
+          propertyRules.push({
             ...rule,
             matches: createRulesetMatcher({
               ruleMatcher: rule.matches,
@@ -225,5 +226,5 @@ export const getPropertyRules = (
     }
   }
 
-  return responseRule;
+  return propertyRules;
 };
