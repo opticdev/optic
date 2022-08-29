@@ -51,7 +51,7 @@ specificationAssertions is used to define specification rules. There are [4 life
 new SpecificationRule({
   ...,
   rule: (specificationAssertions) => {
-    // lifecycle rules that are available are added, changed, requirement and removed
+    // lifecycle rules that are available are added, changed, addedOrChanged, requirement and removed
     specificationAssertions.added('contains a description', (specification) => {
       if (!specification.value.description) {
         throw new RuleError({

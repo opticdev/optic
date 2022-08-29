@@ -605,7 +605,7 @@ describe('ResponseBodyRule', () => {
           new ResponseBodyRule({
             name: 'request type',
             rule: (responseAssertions) => {
-              responseAssertions.body.added.matches({
+              responseAssertions.body.addedOrChanged.matches({
                 schema: {
                   type: 'object',
                   properties: {

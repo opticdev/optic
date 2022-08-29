@@ -53,7 +53,7 @@ operationAssertions is used to define operation rules. There are [4 lifecycle tr
 new OperationRule({
   ...,
   rule: (operationAssertions) => {
-    // lifecycle rules that are available are added, changed, requirement and removed
+    // lifecycle rules that are available are added, changed, addedOrChanged, requirement and removed
     operationAssertions.added('contain summary', (operation) => {
       if (!operation.value.summary) {
         throw new RuleError({
@@ -250,7 +250,7 @@ operationAssertions.queryParameter is used to define query parameter rules. Ther
 new OperationRule({
   ...,
   rule: (operationAssertions) => {
-    // lifecycle rules that are available are added, changed, requirement and removed
+    // lifecycle rules that are available are added, changed, addedOrChanged, requirement and removed
     operationAssertions.queryParameter.added('not add required query parameter', (queryParameter) => {
       if (queryParameter.value.required) {
         throw new RuleError({
@@ -272,7 +272,7 @@ operationAssertions.pathParameter is used to define path parameter rules. There 
 new OperationRule({
   ...,
   rule: (operationAssertions) => {
-    // lifecycle rules that are available are added, changed, requirement and removed
+    // lifecycle rules that are available are added, changed, addedOrChanged, requirement and removed
     operationAssertions.pathParameter.requirement('be snake_case', (pathParameter) => {
       if (!isSnakeCase(pathParameter.value.name)) {
         throw new RuleError({
@@ -294,7 +294,7 @@ operationAssertions.headerParameter is used to define header parameter rules. Th
 new OperationRule({
   ...,
   rule: (operationAssertions) => {
-    // lifecycle rules that are available are added, changed, requirement and removed
+    // lifecycle rules that are available are added, changed, addedOrChanged, requirement and removed
     operationAssertions.headerParameter.added('not add required header parameter', (headerParameter) => {
       if (headerParameter.value.required) {
         throw new RuleError({
@@ -316,7 +316,7 @@ operationAssertions.cookieParameter is used to define cookie parameter rules. Th
 new OperationRule({
   ...,
   rule: (operationAssertions) => {
-    // lifecycle rules that are available are added, changed, requirement and removed
+    // lifecycle rules that are available are added, changed, addedOrChanged, requirement and removed
     operationAssertions.cookieParameter.added('not add required cookie parameter', (cookieParameter) => {
       if (cookieParameter.value.required) {
         throw new RuleError({
