@@ -16,10 +16,16 @@ export async function captureCertCommand(): Promise<Command> {
   command
     .description('manage the CA certificate used to capture TLS traffic')
     .option('-o <output-file>', 'to write CA certificate to in PEM format')
+    .option('--del', 'delete the current CA certificate for use')
     .action(async () => {
       const options = command.optsWithGlobals();
 
       const certStore = getCertStore();
+
+      if (options.del) {
+        certStore.delete();
+        return await feedback.notable('CA certificate deleted for use');
+      }
 
       let maybeCa = certStore.get();
       let ca: ProxyCertAuthority;
@@ -30,11 +36,7 @@ export async function captureCertCommand(): Promise<Command> {
         ca = await ProxyCertAuthority.generate();
         certStore.set(ca);
         await feedback.instruction(
-          `Generated a CA certificate for HTTPS requests.${
-            (!options.ca &&
-              ` Run ${command.name()} with --ca <filename> to save it as a file.`) ||
-            ''
-          }`
+          `Generated a CA certificate for HTTPS requests`
         );
       } else {
         ca = maybeCa.val;
@@ -108,6 +110,9 @@ export function getCertStore() {
     },
     set: (ca: ProxyCertAuthority): void => {
       configStore.set('capture-proxy-ca', ca);
+    },
+    delete(): void {
+      return configStore.delete('capture-proxy-ca');
     },
   };
 }
