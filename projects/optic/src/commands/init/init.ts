@@ -4,7 +4,7 @@ import { findOpenAPISpecs } from './find-openapi-specs';
 import { generateOpticConfig } from './generate-optic-config';
 import { writeOpticConfig } from './write-optic-config';
 import { hasGit, isInGitRepo, getRootPath } from '../../utils/git-utils';
-import { OPTIC_YML_NAME } from '../../config';
+import { OPTIC_DEV_YML_NAME } from '../../config';
 import { getValidSpecs } from './get-valid-specs';
 import { OpticCliConfig } from '../../config';
 import { supportedCIs, SupportedCI } from './constants';
@@ -60,7 +60,7 @@ export const getInit =
     }
 
     const gitRoot = await getRootPath();
-    const configPath = path.join(gitRoot, OPTIC_YML_NAME);
+    const configPath = path.join(gitRoot, OPTIC_DEV_YML_NAME);
 
     console.log('Initializing Optic...');
 
@@ -117,7 +117,7 @@ export const getInit =
           'File IDs are stable identifiers for your API specifications that will appear in Optic.'
         );
         console.log(
-          'You can change them now before you check in the optic.yml file.'
+          'You can change them now before you check in the optic.dev.yml file.'
         );
       } else {
         console.error(

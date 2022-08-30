@@ -9,7 +9,7 @@ export enum VCS {
 }
 
 export const OPTIC_YML_NAME = 'optic.yml';
-const OPTIC_DEV_YML_NAME = 'optic.dev.yml';
+export const OPTIC_DEV_YML_NAME = 'optic.dev.yml';
 
 type ConfigRuleset = { name: string; config: unknown };
 
@@ -87,8 +87,8 @@ export async function detectCliConfig(
   // test out the dev path first
   try {
     await fs.access(expectedDevYmlPath);
-    return expectedDevYmlPath
-  } catch(e) {}
+    return expectedDevYmlPath;
+  } catch (e) {}
 
   try {
     await fs.access(expectedYmlPath);
@@ -96,6 +96,9 @@ export async function detectCliConfig(
     return undefined;
   }
 
+  console.warn(
+    'Deprecation warning: optic.yml file is deprecated. Please rename your file to optic.dev.yml'
+  );
   return expectedYmlPath;
 }
 

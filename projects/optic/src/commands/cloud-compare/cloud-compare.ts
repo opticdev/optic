@@ -69,7 +69,7 @@ const cloudCompare = async (
 ) => {
   if (!cliConfig.configPath) {
     throw new UserError(
-      'Could not find an optic.yml at the root of the repo. Create an optic.yml file with a list of files to run optic against. Run `npx @useoptic/optic@latest init` to generate a file.'
+      'Could not find an optic.dev.yml at the root of the repo. Create an optic.dev.yml file with a list of files to run optic against. Run `npx @useoptic/optic@latest init` to generate a file.'
     );
   }
 

@@ -2,15 +2,25 @@ import { UserError } from '@useoptic/openapi-utilities';
 import {
   detectCliConfig,
   formatRules,
-  OpticCliConfig,
   validateConfig,
   RawYmlConfig,
 } from '../config';
 
 describe('detectConfig', () => {
+  beforeEach(() => {
+    console.warn = jest.fn();
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   test('finds config', async () => {
     const path = await detectCliConfig('src/__tests__/');
     expect(path).toBe('src/__tests__/optic.yml');
+
+    // Expecting deprecation warning
+    expect(console.warn).toHaveBeenCalled();
   });
 
   test("doesn't find config", async () => {
