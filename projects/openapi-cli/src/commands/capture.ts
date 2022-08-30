@@ -9,19 +9,24 @@ import * as AT from '../lib/async-tools';
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { trackCompletion } from '../segment';
 import { trackWarning } from '../sentry';
+import Conf from 'conf';
 
+import { captureCertCommand, getCertStore } from './capture-cert';
 import {
   CapturedInteraction,
   CapturedInteractions,
   HarEntries,
   HttpArchive,
+  ProxyCertAuthority,
   ProxyInteractions,
-} from '../captures/index';
+} from '../captures';
 
 export async function captureCommand(): Promise<Command> {
   const command = new Command('capture');
 
   const feedback = await createCommandFeedback(command);
+
+  let certCommand = await captureCertCommand();
 
   command
     .description('capture observed traffic as a HAR (HttpArchive v1.3) file')
@@ -34,7 +39,12 @@ export async function captureCommand(): Promise<Command> {
       '--proxy <target-url>',
       'accept traffic over a proxy targeting the actual service'
     )
+    .option(
+      '--no-tls',
+      'disable TLS support for --proxy and prevent generation of new CA certificates'
+    )
     .option('-o <output-file>', 'file name for output')
+    .addCommand(certCommand)
     .action(async (filePath?: string) => {
       const options = command.opts();
 
@@ -61,9 +71,30 @@ export async function captureCommand(): Promise<Command> {
       }
 
       if (options.proxy) {
+        let ca: ProxyCertAuthority | undefined;
+
+        if (options.tls) {
+          const certStore = getCertStore();
+
+          let maybeCa = certStore.get();
+          if (
+            maybeCa.none ||
+            ProxyCertAuthority.hasExpired(maybeCa.val, new Date())
+          ) {
+            ca = await ProxyCertAuthority.generate();
+            certStore.set(ca);
+            await feedback.instruction(
+              `Generated a CA certificate for HTTPS requests. Run '${command.name()} ${certCommand.name()}' to save it as a file.`
+            );
+          } else {
+            ca = maybeCa.val;
+          }
+        }
+
         let [proxyInteractions, proxyUrl] = await ProxyInteractions.create(
           options.proxy,
-          sourcesController.signal
+          sourcesController.signal,
+          { ca }
         );
         sources.push(HarEntries.fromProxyInteractions(proxyInteractions));
         feedback.notable(

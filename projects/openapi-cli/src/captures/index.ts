@@ -10,4 +10,4 @@ export type { CapturedRequest, CapturedResponse } from './interaction';
 export { HarEntries } from './streams/sources/har';
 export type { HttpArchive } from './streams/sources/har';
 
-export { ProxyInteractions } from './streams/sources/proxy';
+export { ProxyInteractions, ProxyCertAuthority } from './streams/sources/proxy';

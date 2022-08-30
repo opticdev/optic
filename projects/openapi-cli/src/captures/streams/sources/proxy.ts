@@ -7,6 +7,9 @@ import {
 } from 'mockttp';
 import { Subject } from '../../../lib/async-tools';
 import { AbortSignal } from 'node-abort-controller'; // remove when Node v14 is out of LTS
+import { pki, md } from 'node-forge';
+import { randomBytes } from 'crypto';
+import { Readable } from 'stream';
 
 export interface ProxyInteractions
   extends AsyncIterable<ProxySource.Interaction> {}
@@ -14,17 +17,26 @@ export interface ProxyInteractions
 export class ProxyInteractions {
   static async create(
     targetHost: string,
-    abort: AbortSignal // required, we don't want to ever let a proxy run indefinitely
+    abort: AbortSignal, // required, we don't want to ever let a proxy run indefinitely
+    options: {
+      ca?: ProxyCertAuthority;
+      targetCA?: Array<{ cert: Buffer | string }>;
+    } = {}
   ): Promise<[ProxyInteractions, string]> {
     const proxy = mockttp.getLocal({
       cors: false,
       debug: false,
       recordTraffic: false,
+      https: options.ca && {
+        cert: options.ca.cert.toString(),
+        key: options.ca.key.toString(),
+      },
     });
 
     proxy.addRequestRules({
       matchers: [new mockttp.matchers.WildcardMatcher()],
       handler: new mockttp.requestHandlers.PassThroughHandler({
+        trustAdditionalCAs: options.targetCA || [],
         forwarding: {
           targetHost,
           updateHostHeader: true,
@@ -35,6 +47,7 @@ export class ProxyInteractions {
     proxy.addWebSocketRules({
       matchers: [new mockttp.matchers.WildcardMatcher()],
       handler: new mockttp.webSocketHandlers.PassThroughWebSocketHandler({
+        trustAdditionalCAs: options.targetCA || [],
         forwarding: {
           targetHost,
         },
@@ -129,4 +142,91 @@ export declare namespace ProxySource {
   }
 
   type Body = Pick<CompletedBody, 'buffer'>;
+}
+
+export interface ProxyCertAuthority {
+  cert: string;
+  key: string;
+  keyLength?: number;
+}
+
+export class ProxyCertAuthority {
+  static async generate(): Promise<ProxyCertAuthority> {
+    const keyPair = await new Promise<pki.rsa.KeyPair>((resolve, reject) => {
+      pki.rsa.generateKeyPair({ bits: 2048 }, (err, keypair) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(keypair);
+        }
+      });
+    });
+
+    const cert = pki.createCertificate();
+    cert.publicKey = keyPair.publicKey;
+    cert.serialNumber = generateSerialNumber();
+
+    cert.validity.notBefore = new Date();
+    cert.validity.notBefore.setDate(cert.validity.notBefore.getDate() - 1); // account for wonky time keeping
+    cert.validity.notAfter = new Date();
+    cert.validity.notAfter.setDate(cert.validity.notAfter.getDate() + 30);
+
+    cert.setSubject([
+      {
+        name: 'commonName',
+        value: `Optic CLI CA (locally generated ${new Date().toISOString()})`,
+      },
+      { name: 'countryName', value: 'US' },
+      { name: 'stateOrProvinceName', value: 'NY' },
+      { name: 'localityName', value: 'New York City' },
+      { name: 'organizationName', value: 'Optic Labs Corporation' },
+      { name: 'organizationalUnitName', value: 'https://useoptic.com' },
+    ]);
+    cert.setIssuer(cert.subject.attributes); // self-signed
+
+    cert.setExtensions([
+      { name: 'basicConstraints', cA: true, critical: true },
+      {
+        name: 'keyUsage',
+        keyCertSign: true,
+        digitalSignature: true,
+        nonRepudiation: true,
+        cRLSign: true,
+        critical: true,
+      },
+      {
+        name: 'extKeyUsage',
+        serverAuth: true,
+        clientAuth: true,
+      },
+      {
+        name: 'subjectKeyIdentifier',
+      },
+    ]);
+
+    cert.sign(keyPair.privateKey, md.sha256.create());
+
+    return {
+      cert: pki.certificateToPem(cert),
+      key: pki.privateKeyToPem(keyPair.privateKey),
+    };
+  }
+
+  static hasExpired(self: ProxyCertAuthority, dateTime: Date): boolean {
+    const cert = pki.certificateFromPem(self.cert);
+
+    return (
+      dateTime < cert.validity.notBefore || dateTime > cert.validity.notAfter
+    );
+  }
+
+  static readableCert(self: ProxyCertAuthority): Readable {
+    return Readable.from(Buffer.from(self.cert));
+  }
+}
+
+function generateSerialNumber(): string {
+  // hexadecimal serial number of at most 20 octets, and preferably positive.
+  // starting with A should get a positive number
+  return 'A' + randomBytes(18).toString('hex').toUpperCase();
 }
