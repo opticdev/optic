@@ -31,7 +31,7 @@ describe('SpecificationRule', () => {
         }),
       ]);
 
-      ruleRunner.runRulesWithFacts(createRuleInputs(json, defaultEmptySpec));
+      ruleRunner.runRulesWithFacts(createRuleInputs(json, emptySpec));
 
       expect(mockFn.mock.calls.length > 0).toBe(true);
       const ruleContext = mockFn.mock.calls[0][1];

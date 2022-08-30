@@ -46,15 +46,15 @@ new ResponseRule({
 
 ## responseAssertions
 
-responseAssertions is used to define response rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in a condition (`string`), and an assertion, which is a function that receives a [`Response` object](./DataShapes.md#response). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
+responseAssertions is used to define response rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in an assertion, which is a function that receives a [`Response` object](./DataShapes.md#response). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
 
-`responseAssertions[lifecycle](condition, assertion)`
+`responseAssertions[lifecycle](assertion)`
 
 ```javascript
 new ResponseRule({
   ...,
   rule: (responseAssertions) => {
-    // lifecycle rules that are available are added, changed, requirement and removed
+    // lifecycle rules that are available are added, changed, addedOrChanged, requirement and removed
     responseAssertions.added('contain description', (response) => {
       if (!response.value.description) {
         throw new RuleError({
@@ -97,15 +97,15 @@ new ResponseRule({
 
 ## responseAssertions.header
 
-responseAssertions.header is used to define response header rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in a condition (`string`), and an assertion, which is a function that receives a [`Response Header` object](./DataShapes.md#responseheader). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
+responseAssertions.header is used to define response header rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in an assertion, which is a function that receives a [`Response Header` object](./DataShapes.md#responseheader). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
 
-`responseAssertions.header[lifecycle](condition, assertion)`
+`responseAssertions.header[lifecycle](assertion)`
 
 ```javascript
 new ResponseRule({
   ...,
   rule: (responseAssertions) => {
-    // lifecycle rules that are available are added, changed, requirement and removed
+    // lifecycle rules that are available are added, changed, addedOrChanged, requirement and removed
     responseAssertions.header.added('contains a description', (header) => {
       if (!header.value.description) {
         throw new RuleError({

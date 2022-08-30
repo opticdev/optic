@@ -43,15 +43,15 @@ new SpecificationRule({
 
 ## specificationAssertions
 
-specificationAssertions is used to define specification rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in a condition (`string`), and an assertion, which is a function that receives a [`Specification` object](./DataShapes.md#specification). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
+specificationAssertions is used to define specification rules. There are [4 lifecycle triggers](./Reference.md#assertions) for registering rules which defines when they are triggered. A rule can be defined by passing in an assertion, which is a function that receives a [`Specification` object](./DataShapes.md#specification). Throwing a `RuleError` represents a failure, RuleError [details below](./Reference.md#rule-error).
 
-`specificationAssertions[lifecycle](condition, assertion)`
+`specificationAssertions[lifecycle](assertion)`
 
 ```javascript
 new SpecificationRule({
   ...,
   rule: (specificationAssertions) => {
-    // lifecycle rules that are available are added, changed, requirement and removed
+    // lifecycle rules that are available are added, changed, addedOrChanged, requirement and removed
     specificationAssertions.added('contains a description', (specification) => {
       if (!specification.value.description) {
         throw new RuleError({

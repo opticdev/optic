@@ -50,12 +50,14 @@ export type CookieParameter = FactVariant<OpenApiKind.CookieParameter> & {
 export type RequestBody = FactVariant<OpenApiKind.Body> & {
   raw: OpenAPIV3.RequestBodyObject;
   contentType: string;
-  properties: Map<string, Field>;
+  properties: Map<string, Property>;
 };
 
-export type Field = FactVariant<OpenApiKind.Field> & {
+export type Property = FactVariant<OpenApiKind.Field> & {
   raw: OpenAPIV3.SchemaObject;
 };
+
+export type Field = Property;
 
 export type ResponseHeader = FactVariant<OpenApiKind.ResponseHeader> & {
   raw: OpenAPIV3.HeaderObject;
@@ -205,6 +207,7 @@ export type RegisterChangedAssertion<T extends AssertionType> = (
 export type Assertions<T extends AssertionType> = {
   requirement: RegisterAssertion<T> & AssertionTypeToHelpers[T];
   added: RegisterAssertion<T> & AssertionTypeToHelpers[T];
+  addedOrChanged: RegisterAssertion<T> & AssertionTypeToHelpers[T];
   changed: RegisterChangedAssertion<T> & AssertionTypeToHelpers[T];
   removed: RegisterAssertion<T> & AssertionTypeToHelpers[T];
 };
@@ -231,3 +234,5 @@ export type ResponseBodyAssertions = {
   body: Assertions<'response-body'>;
   property: Assertions<'property'>;
 };
+
+export type PropertyAssertions = Assertions<'property'>

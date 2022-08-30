@@ -466,6 +466,111 @@ describe('ResponseRule', () => {
         }
       });
     });
+    describe('addedOrChanged', () => {
+      const ruleRunner = new RuleRunner([
+        new ResponseRule({
+          name: 'response header type',
+          rule: (responseAssertions) => {
+            responseAssertions.header.addedOrChanged(
+              'must contain a description',
+              (property) => {
+                if (!property.value.description) {
+                  throw new RuleError({
+                    message: 'header does not have `description`',
+                  });
+                }
+              }
+            );
+          },
+        }),
+      ]);
+      test('passing assertion', () => {
+        const beforeJson: OpenAPIV3.Document = {
+          ...defaultEmptySpec,
+          paths: {
+            '/api/users': {
+              get: {
+                responses: {
+                  '200': {
+                    description: 'hello',
+                    headers: {
+                      isgood: { description: 'yes', schema: {type: 'string'} },
+                    },
+                    content: {
+                      'application/json': {
+                        schema: {},
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        };
+        const afterJson: OpenAPIV3.Document = {
+          ...defaultEmptySpec,
+          paths: {
+            '/api/users': {
+              get: {
+                responses: {
+                  '200': {
+                    description: 'hello',
+                    headers: {
+                      isgood: { description: 'yes', schema: { type: 'number'} },
+                    },
+                    content: {
+                      'application/json': {
+                        schema: {},
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        };
+        const results = ruleRunner.runRulesWithFacts(
+          createRuleInputs(beforeJson, afterJson)
+        );
+        expect(results.length > 0).toBe(true);
+        expect(results).toMatchSnapshot();
+        for (const result of results) {
+          expect(result.passed).toBe(true);
+        }
+      });
+      test('failing assertion', () => {
+        const json: OpenAPIV3.Document = {
+          ...defaultEmptySpec,
+          paths: {
+            '/api/users': {
+              get: {
+                responses: {
+                  '200': {
+                    description: 'hello',
+                    headers: {
+                      isnotsogood: {},
+                    },
+                    content: {
+                      'application/json': {
+                        schema: {},
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        };
+        const results = ruleRunner.runRulesWithFacts(
+          createRuleInputs(defaultEmptySpec, json)
+        );
+        expect(results.length > 0).toBe(true);
+        expect(results).toMatchSnapshot();
+        for (const result of results) {
+          expect(result.passed).toBe(false);
+        }
+      });
+    });
     describe('changed', () => {
       const ruleRunner = new RuleRunner([
         new ResponseRule({

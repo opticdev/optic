@@ -1,48 +1,15 @@
 import { OpenApiKind, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
 import { createOperation, createSpecification } from './data-constructors';
-import { RulesetData, EndpointNode, NodeDetail } from './rule-runner-types';
+import { EndpointNode, NodeDetail } from './rule-runner-types';
 import {
-  createRulesetMatcher,
-  getRuleAliases,
-  createRuleContext,
+  createRuleContextWithOperation,
   isExempted,
 } from './utils';
 
 import { Rule, Ruleset, OperationRule } from '../rules';
 import { createOperationAssertions, AssertionResult } from './assertions';
 import { Operation } from '../types';
-
-const getOperationRules = (
-  rules: (Ruleset | Rule)[]
-): (OperationRule & RulesetData)[] => {
-  const operationRules: (OperationRule & RulesetData)[] = [];
-  for (const ruleOrRuleset of rules) {
-    if (OperationRule.isInstance(ruleOrRuleset)) {
-      operationRules.push({
-        ...ruleOrRuleset,
-        aliases: [],
-      });
-    }
-
-    if (Ruleset.isInstance(ruleOrRuleset)) {
-      for (const rule of ruleOrRuleset.rules) {
-        if (OperationRule.isInstance(rule)) {
-          operationRules.push({
-            ...rule,
-            matches: createRulesetMatcher({
-              ruleMatcher: rule.matches,
-              rulesetMatcher: ruleOrRuleset.matches,
-            }),
-            aliases: getRuleAliases(ruleOrRuleset.name, rule.name),
-            docsLink: rule.docsLink || ruleOrRuleset.docsLink,
-          });
-        }
-      }
-    }
-  }
-
-  return operationRules;
-};
+import { getOperationRules } from './rule-filters';
 
 const createOperationResult = (
   assertionResult: AssertionResult,
@@ -138,13 +105,19 @@ export const runOperationRules = ({
   // - if yes, run the user's defined `rule`. for operations, this runs against the operation, headerParameters, queryParameters, pathParameters and cookie parameters
   for (const operationRule of operationRules) {
     if (beforeOperation && beforeSpecification) {
-      const ruleContext = createRuleContext({
-        operation: beforeOperation,
-        custom: customRuleContext,
-        operationChangeType: operationNode.change?.changeType || null,
-        specification: beforeSpecification,
-        specificationNode: specificationNode,
-      });
+      const ruleContext = createRuleContextWithOperation(
+        {
+          node: specificationNode,
+          before: beforeSpecification,
+          after: afterSpecification,
+        },
+        {
+          node: operationNode,
+          before: beforeOperation,
+          after: afterOperation,
+        },
+        customRuleContext
+      );
 
       const matches =
         !operationRule.matches ||
@@ -277,13 +250,19 @@ export const runOperationRules = ({
     }
 
     if (afterOperation && afterSpecification) {
-      const ruleContext = createRuleContext({
-        operation: afterOperation,
-        custom: customRuleContext,
-        operationChangeType: operationNode.change?.changeType || null,
-        specification: afterSpecification,
-        specificationNode: specificationNode,
-      });
+      const ruleContext = createRuleContextWithOperation(
+        {
+          node: specificationNode,
+          before: beforeSpecification,
+          after: afterSpecification,
+        },
+        {
+          node: operationNode,
+          before: beforeOperation,
+          after: afterOperation,
+        },
+        customRuleContext
+      );
 
       const matches =
         !operationRule.matches ||
