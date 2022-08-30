@@ -190,7 +190,9 @@ export class ProxyInteractions {
             // tunnel target traffic to the capturing proxy
             // @ts-ignore
             let capturingServer = capturingProxy.server as net.Server;
-            clientSocket.write(`HTTP/${req.httpVersion}`);
+            clientSocket.write(
+              `HTTP/${req.httpVersion} 200 Connection Established\r\nProxy-agent: Optic Transparent proxy\r\n\r\n`
+            );
             capturingServer.emit('connection', clientSocket);
           }
         } else {
