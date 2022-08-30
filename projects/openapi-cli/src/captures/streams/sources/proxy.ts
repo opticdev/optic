@@ -10,6 +10,11 @@ import { AbortSignal } from 'node-abort-controller'; // remove when Node v14 is 
 import { pki, md } from 'node-forge';
 import { randomBytes } from 'crypto';
 import { Readable } from 'stream';
+import http from 'http';
+import http2 from 'http2';
+import net from 'net';
+import * as httpolyglot from '@httptoolkit/httpolyglot';
+import { URL } from 'url';
 
 export interface ProxyInteractions
   extends AsyncIterable<ProxySource.Interaction> {}
@@ -23,7 +28,7 @@ export class ProxyInteractions {
       targetCA?: Array<{ cert: Buffer | string }>;
     } = {}
   ): Promise<[ProxyInteractions, string]> {
-    const proxy = mockttp.getLocal({
+    const capturingProxy = mockttp.getLocal({
       cors: false,
       debug: false,
       recordTraffic: false,
@@ -33,7 +38,7 @@ export class ProxyInteractions {
       },
     });
 
-    proxy.addRequestRules({
+    capturingProxy.addRequestRules({
       matchers: [new mockttp.matchers.WildcardMatcher()],
       handler: new mockttp.requestHandlers.PassThroughHandler({
         trustAdditionalCAs: options.targetCA || [],
@@ -44,7 +49,7 @@ export class ProxyInteractions {
       }),
     });
 
-    proxy.addWebSocketRules({
+    capturingProxy.addWebSocketRules({
       matchers: [new mockttp.matchers.WildcardMatcher()],
       handler: new mockttp.webSocketHandlers.PassThroughWebSocketHandler({
         trustAdditionalCAs: options.targetCA || [],
@@ -59,7 +64,7 @@ export class ProxyInteractions {
     const requestsById = new Map<string, ProxySource.Request>();
     // TODO: figure out if we can use OngoingRequest instead of captured, at which body
     // hasn't been parsed yet and is available as stream
-    await proxy.on('request', (capturedRequest) => {
+    await capturingProxy.on('request', (capturedRequest) => {
       const {
         matchedRuleId,
         remoteIpAddress,
@@ -81,7 +86,7 @@ export class ProxyInteractions {
 
     // TODO: figure out if we can use OngoingRequest instead of captured, at which body
     // hasn't been parsed yet and is available as stream
-    await proxy.on('response', (capturedResponse) => {
+    await capturingProxy.on('response', (capturedResponse) => {
       const { id } = capturedResponse;
       const request = requestsById.get(id);
       if (!request) return;
@@ -111,14 +116,101 @@ export class ProxyInteractions {
       interactions.onCompleted();
     }
 
-    await proxy.start();
+    await capturingProxy.start();
+
+    // sits in front of the capturing proxy to only direct target host traffic
+    // and transparently forward the rest
+    const transparentProxy = httpolyglot.createServer((req, res) => {
+      // TODO: figure out if we can forward direct requests somewhere, somehow
+      res.writeHead(400, 'Bad request');
+      res.end();
+    });
+
+    let [targetHostname, targetPort] = targetHost.split(':');
+
+    transparentProxy.on(
+      'connect',
+      (
+        req: http.IncomingMessage | http2.Http2ServerRequest,
+        resOrSocket: net.Socket | http2.Http2ServerResponse,
+        reqHead: Buffer
+      ) => {
+        if (resOrSocket instanceof net.Socket) {
+          let clientSocket = resOrSocket;
+          // clients disconnecting causes errors, but there's not much to do for us
+          // than the default behaviour of stopping the tunnel
+          clientSocket.once('error', (err) => {
+            console.error('Error on client socket', err); // TODO: don't yell out this error.
+          });
+
+          if (!req.url) {
+            // TODO: see if we could go just of the `host` header
+            clientSocket.write(
+              `HTTP/${req.httpVersion} 400 Bad Request\r\n\r\n`,
+              'utf-8'
+            );
+            return;
+          }
+
+          const { port, host, hostname } = new URL(`http://${req.url}`);
+          if (
+            host !== targetHost &&
+            !(
+              targetHostname === hostname &&
+              (port === targetPort ||
+                (!targetPort && port === '80') ||
+                (!targetPort && port === '443'))
+            )
+          ) {
+            // transparently tunnel all non-target traffic directly through TCP sockets
+            console.log('transparently tunneling connection to', host);
+            const serverSocket = net.connect(
+              (port && parseInt(port)) || 80,
+              hostname,
+              () => {
+                clientSocket.once('error', () => {
+                  serverSocket.destroy();
+                });
+                clientSocket.write(
+                  `HTTP/${req.httpVersion} 200 Connection Established\r\nProxy-agent: Optic Transparent proxy\r\n\r\n`
+                );
+                serverSocket.write(reqHead);
+                clientSocket.pipe(serverSocket);
+                serverSocket.pipe(clientSocket);
+              }
+            );
+
+            serverSocket.once('error', (err) => {
+              // TODO: figure out if this is right
+              console.error('Error on server socket', err);
+              clientSocket.destroy();
+            });
+          } else {
+            console.log('capturing connection to', host);
+            // tunnel target traffic to the capturing proxy
+            // @ts-ignore
+            let capturingServer = capturingProxy.server as net.Server;
+            clientSocket.write(`HTTP/${req.httpVersion}`);
+            capturingServer.emit('connection', clientSocket);
+          }
+        } else {
+          throw new Error('HTTP/2 CONNECT unimplemented');
+        }
+      }
+    );
+
+    let transparentPort = capturingProxy.port + 1; // TODO: look for available port more resiliently
+    transparentProxy.listen(transparentPort, () => {
+      console.log('Transparent proxy running on ' + transparentPort);
+    });
+    let transparentProxyUrl = `http://localhost:${transparentPort}`;
 
     const stream = (async function* () {
       yield* interactions.iterator;
-      await proxy.stop(); // clean up
+      await capturingProxy.stop(); // clean up
     })();
 
-    return [stream, proxy.url];
+    return [stream, capturingProxy.url];
   }
 }
 
