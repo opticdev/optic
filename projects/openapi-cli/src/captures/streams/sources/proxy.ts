@@ -6,15 +6,16 @@ import {
   TimingEvents,
 } from 'mockttp';
 import { Subject } from '../../../lib/async-tools';
-import { AbortSignal } from 'node-abort-controller'; // remove when Node v14 is out of LTS
+import { AbortSignal, AbortController } from 'node-abort-controller'; // remove when Node v14 is out of LTS
 import { pki, md } from 'node-forge';
 import { randomBytes } from 'crypto';
 import { Readable } from 'stream';
+import EventEmitter from 'events';
 import http from 'http';
 import http2 from 'http2';
 import net from 'net';
-import * as httpolyglot from '@httptoolkit/httpolyglot';
 import { URL } from 'url';
+import * as httpolyglot from '@httptoolkit/httpolyglot';
 
 export interface ProxyInteractions
   extends AsyncIterable<ProxySource.Interaction> {}
@@ -126,6 +127,16 @@ export class ProxyInteractions {
       res.end();
     });
 
+    const tunnelAbort = new AbortController(); // control aborting of tunnels separately
+    // small hack to prevent warnings, because the AbortController polyfill doesn't setup EventEmitter according to spec
+    // @ts-ignore
+    if (tunnelAbort.signal.eventEmitter) {
+      // @ts-ignore
+      (tunnelAbort.signal.eventEmitter as EventEmitter).setMaxListeners(
+        Infinity
+      );
+    }
+
     let [targetHostname, targetPort] = targetHost.split(':');
 
     transparentProxy.on(
@@ -142,6 +153,7 @@ export class ProxyInteractions {
           clientSocket.once('error', (err) => {
             console.error('Error on client socket', err); // TODO: don't yell out this error.
           });
+          destroySocketOnAbort(clientSocket, tunnelAbort.signal);
 
           if (!req.url) {
             // TODO: see if we could go just of the `host` header
@@ -149,6 +161,7 @@ export class ProxyInteractions {
               `HTTP/${req.httpVersion} 400 Bad Request\r\n\r\n`,
               'utf-8'
             );
+            clientSocket.end();
             return;
           }
 
@@ -171,6 +184,7 @@ export class ProxyInteractions {
                 clientSocket.once('error', () => {
                   serverSocket.destroy();
                 });
+
                 clientSocket.write(
                   `HTTP/${req.httpVersion} 200 Connection Established\r\nProxy-agent: Optic Transparent proxy\r\n\r\n`
                 );
@@ -185,6 +199,7 @@ export class ProxyInteractions {
               console.error('Error on server socket', err);
               clientSocket.destroy();
             });
+            destroySocketOnAbort(serverSocket, tunnelAbort.signal);
           } else {
             console.log('capturing connection to', host);
             // tunnel target traffic to the capturing proxy
@@ -210,6 +225,17 @@ export class ProxyInteractions {
     const stream = (async function* () {
       yield* interactions.iterator;
       await capturingProxy.stop(); // clean up
+      await new Promise<void>((resolve, reject) => {
+        transparentProxy.close((err) => {
+          // stops accepting new connections, waits for tunnels to finish
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+        tunnelAbort.abort(); // abort all open tunnels so tunneling proxy can close
+      });
     })();
 
     return [stream, capturingProxy.url];
@@ -323,4 +349,16 @@ function generateSerialNumber(): string {
   // hexadecimal serial number of at most 20 octets, and preferably positive.
   // starting with A should get a positive number
   return 'A' + randomBytes(18).toString('hex').toUpperCase();
+}
+
+function destroySocketOnAbort(socket: net.Socket, abort: AbortSignal) {
+  socket.once('close', (err) => {
+    abort.removeEventListener('abort', onAbort);
+  });
+
+  abort.addEventListener('abort', onAbort);
+
+  function onAbort() {
+    if (!socket.destroyed) socket.destroy();
+  }
 }
