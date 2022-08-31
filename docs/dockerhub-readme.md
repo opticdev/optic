@@ -3,10 +3,10 @@
 # Quick Reference
 
 Maintained by:
-[The Optic team](https://github.com/useoptic/optic)
+[The Optic team](https://github.com/opticdev/optic)
 
 Where to file issues:
-[github.com/useoptic/optic/issues](https://github.com/useoptic/optic/issues)
+[github.com/useoptic/optic/issues](https://github.com/opticdev/optic/issues)
 
 # What is Optic?
 
