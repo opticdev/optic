@@ -1,4 +1,4 @@
-name: "openapi-ws release-v2"
+name: 'openapi-ws release-v2'
 
 on:
   workflow_dispatch: {}
@@ -7,8 +7,8 @@ on:
       - published
 
 env:
-  SKIP_ANNOUNCE: "false"
-  SKIP_PUBLISH: "false"
+  SKIP_ANNOUNCE: 'false'
+  SKIP_PUBLISH: 'false'
 
 jobs:
   verify-prerelease-tag:
@@ -135,7 +135,7 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
         with:
-          args: "{{ GITHUB_ACTOR }}: ✅ optic v{{ VERSION }} packages published to channel `{{ RELEASE_CHANNEL }}`!"
+          args: '{{ GITHUB_ACTOR }}: ✅ optic v{{ VERSION }} packages published to channel `{{ RELEASE_CHANNEL }}`!'
 
       - name: Announce failure
         uses: Ilshidur/action-slack@689ad44a9c9092315abd286d0e3a9a74d31ab78a # v2.1.0
@@ -146,4 +146,4 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
         with:
-          args: "{{ GITHUB_ACTOR }}: 🚫 optic v{{ VERSION }} failed to publish."
+          args: '{{ GITHUB_ACTOR }}: 🚫 optic v{{ VERSION }} failed to publish.'
