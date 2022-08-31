@@ -6,4 +6,6 @@ RUN apk add git
 RUN echo "optic-docker" > /etc/machine-id
 RUN npm install -g @useoptic/optic@$OPTIC_CLI_VERSION
 
+RUN mkdir -p /usr/local/sbin && ln -s /usr/local/bin/node /usr/local/sbin/node
+
 ENTRYPOINT ["/usr/local/bin/optic"]
