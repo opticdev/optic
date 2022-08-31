@@ -22,6 +22,6 @@ For example, to run `optic diff` your command would look something like this:
 docker run --rm -it \
   --volume=$HOME/code/optic-test:/repo \
   --workdir /repo \
-  docker.io/useoptic/optic:0.29.1 \
+  docker.io/useoptic/optic:<optic-version> \
   diff ./petstore.yml
 ```
