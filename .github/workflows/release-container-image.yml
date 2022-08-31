@@ -42,7 +42,7 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
         with:
-          args: '{{ GITHUB_ACTOR }}: ✅ useoptic/optic:{{ VERSION }} published to DockerHub!'
+          args: '{{ GITHUB_ACTOR }}: ✅ useoptic/optic:{{ VERSION }} published to Docker Hub!'
 
       - name: Announce failure
         uses: Ilshidur/action-slack@689ad44a9c9092315abd286d0e3a9a74d31ab78a # v2.1.0
@@ -50,4 +50,4 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
         with:
-          args: '{{ GITHUB_ACTOR }}: 🚫 useoptic/optic:{{ VERSION }} failed to publish to DockerHub.'
+          args: '{{ GITHUB_ACTOR }}: 🚫 useoptic/optic:{{ VERSION }} failed to publish to Docker Hub.'
