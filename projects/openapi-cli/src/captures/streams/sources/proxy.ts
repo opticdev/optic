@@ -400,4 +400,8 @@ function isTransitiveSocketError(err: Error) {
   return isCodedError(err) && transitiveSocketErrors.includes(err.code);
 }
 
-const transitiveSocketErrors = Object.freeze(['ECONNRESET', 'EPIPE']);
+const transitiveSocketErrors = Object.freeze([
+  'ECONNRESET',
+  'EPIPE',
+  'ETIMEDOUT',
+]);
