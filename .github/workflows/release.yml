@@ -152,9 +152,9 @@ jobs:
         with:
           args: '{{ GITHUB_ACTOR }}: 🚫 optic v{{ VERSION }} failed to publish.'
 
-  publish-container-image:
-    needs: release
-    if: github.event.release.prerelease == 'false'
-    uses: opticdev/optic/.github/workflows/release-container-image.yml@main
-    with:
-      optic_version: ${{ needs.release.outputs.optic_version }}
+#  publish-container-image:
+#    needs: release
+#    if: github.event.release.prerelease == 'false'
+#    uses: opticdev/optic/.github/workflows/release-container-image.yml@main
+#    with:
+#      optic_version: ${{ needs.release.outputs.optic_version }}
