@@ -80,7 +80,7 @@ tasks:
       Example:
         $ task docker:build:release OPTIC_CLI_VERSION=0.28.1 -- --push
     deps:
-      - setup
+      - docker:setup
     vars:
       OPTIC_CLI_VERSION: '{{.OPTIC_CLI_VERSION | default "latest"}}'
     cmds:
