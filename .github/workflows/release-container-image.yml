@@ -34,7 +34,7 @@ jobs:
       # TODO: log into Docker Hub
 
       - name: Build and publish
-        run: task docker:build:release OPTIC_CLI_VERSION="${{ inputs.optic_version }}"  -- --push
+        run: task docker:build:release OPTIC_CLI_VERSION="${{ inputs.optic_version }}" -- --push
 
       - name: Announce success
         uses: Ilshidur/action-slack@689ad44a9c9092315abd286d0e3a9a74d31ab78a # v2.1.0
