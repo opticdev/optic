@@ -31,7 +31,11 @@ jobs:
       - name: Install Task
         run: curl -sL https://taskfile.dev/install.sh | sudo bash -s -- -b /usr/local/bin/
 
-      # TODO: log into Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Build and publish
         run: task docker:build:release OPTIC_CLI_VERSION="${{ inputs.optic_version }}" -- --push
