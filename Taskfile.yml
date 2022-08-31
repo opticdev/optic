@@ -87,6 +87,7 @@ tasks:
       - >
         docker buildx build {{.CLI_ARGS}}
         --tag useoptic/optic:{{.OPTIC_CLI_VERSION}}
+        --tag useoptic/optic:latest
         --platform linux/amd64,linux/arm64
         --builder optic-multiplatform-builder
         --build-arg OPTIC_CLI_VERSION={{.OPTIC_CLI_VERSION}}
