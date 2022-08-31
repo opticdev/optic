@@ -123,7 +123,10 @@ export class ProxyInteractions {
     // and transparently forward the rest
     // @ts-ignore
     let capturingApp = capturingProxy.app as ConnectServer;
-    const transparentProxy = httpolyglot.createServer(capturingApp);
+    const transparentProxy = httpolyglot.createServer(
+      { ALPNProtocols: ['h2', 'http/1.1'] },
+      capturingApp
+    );
 
     const tunnelAbort = new AbortController(); // control aborting of tunnels separately
     // small hack to prevent warnings, because the AbortController polyfill doesn't setup EventEmitter according to spec
@@ -179,12 +182,13 @@ export class ProxyInteractions {
               (port && parseInt(port)) || 80,
               hostname,
               () => {
-                clientSocket.once('error', () => {
+                console.log('tunnel succeeded to', host);
+                clientSocket.once('error', (err) => {
                   serverSocket.destroy();
                 });
 
                 clientSocket.write(
-                  `HTTP/${req.httpVersion} 200 Connection Established\r\nProxy-agent: Optic Transparent proxy\r\n\r\n`
+                  `HTTP/${req.httpVersion} 200 Connection Establishe d\r\nProxy-agent: Optic Transparent proxy\r\n\r\n`
                 );
                 serverSocket.write(reqHead);
                 clientSocket.pipe(serverSocket);
@@ -193,9 +197,29 @@ export class ProxyInteractions {
             );
 
             serverSocket.once('error', (err) => {
-              // TODO: figure out if this is right
-              console.error('Error on server socket', err);
-              clientSocket.destroy();
+              let errorCode = isCodedError(err) ? err.code : null;
+
+              if (
+                (errorCode === 'ENOTFOUND' || errorCode === 'ECONNREFUSED') &&
+                serverSocket.connecting
+              ) {
+                clientSocket.write(
+                  `HTTP/${req.httpVersion} 502 Bad Gateway\r\nProxy-agent: Optic Transparent proxy\r\n\r\n`
+                );
+                return;
+              } else if (errorCode === 'ETIMEDOUT' && serverSocket.connecting) {
+                clientSocket.write(
+                  `HTTP/${req.httpVersion} 504 Gateway Timeout\r\nProxy-agent: Optic Transparent proxy\r\n\r\n`
+                );
+                return;
+              }
+              if (errorCode && transitiveSocketErrors.includes(errorCode)) {
+                // connections get broken sometimes, nothing special
+                clientSocket.destroy();
+                return;
+              }
+
+              transparentProxy.emit('error', err); // forward error to transparentProxy server, give downstream a chance to handle it
             });
             destroySocketOnAbort(serverSocket, tunnelAbort.signal);
           } else {
@@ -360,3 +384,11 @@ function destroySocketOnAbort(socket: net.Socket, abort: AbortSignal) {
     if (!socket.destroyed) socket.destroy();
   }
 }
+
+function isCodedError(
+  error: Error & { code?: string }
+): error is Error & { code: string } {
+  return typeof error.code === 'string';
+}
+
+const transitiveSocketErrors = Object.freeze(['ECONNRESET', 'EPIPE']);
