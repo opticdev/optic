@@ -16,6 +16,7 @@ import http2 from 'http2';
 import net from 'net';
 import { URL } from 'url';
 import * as httpolyglot from '@httptoolkit/httpolyglot';
+import { Server as ConnectServer } from 'connect';
 
 export interface ProxyInteractions
   extends AsyncIterable<ProxySource.Interaction> {}
@@ -39,33 +40,32 @@ export class ProxyInteractions {
       },
     });
 
-    capturingProxy.addRequestRules({
-      matchers: [new mockttp.matchers.WildcardMatcher()],
-      handler: new mockttp.requestHandlers.PassThroughHandler({
-        trustAdditionalCAs: options.targetCA || [],
+    capturingProxy
+      .forAnyRequest()
+      .forHost(targetHost)
+      .always()
+      .thenPassThrough({
+        beforeRequest: onRequest,
+        beforeResponse: onResponse,
         forwarding: {
           targetHost,
           updateHostHeader: true,
         },
-      }),
-    });
+      });
 
-    capturingProxy.addWebSocketRules({
-      matchers: [new mockttp.matchers.WildcardMatcher()],
-      handler: new mockttp.webSocketHandlers.PassThroughWebSocketHandler({
-        trustAdditionalCAs: options.targetCA || [],
-        forwarding: {
-          targetHost,
-        },
-      }),
+    capturingProxy.forUnmatchedRequest().thenPassThrough({
+      beforeRequest(capturedRequest) {
+        console.log('proxying request to ' + capturedRequest.url);
+      },
     });
+    capturingProxy.forAnyWebSocket().thenPassThrough();
 
     const interactions = new Subject<ProxySource.Interaction>();
 
     const requestsById = new Map<string, ProxySource.Request>();
     // TODO: figure out if we can use OngoingRequest instead of captured, at which body
     // hasn't been parsed yet and is available as stream
-    await capturingProxy.on('request', (capturedRequest) => {
+    function onRequest(capturedRequest) {
       const {
         matchedRuleId,
         remoteIpAddress,
@@ -83,11 +83,11 @@ export class ProxyInteractions {
       };
 
       requestsById.set(request.id, request);
-    });
+    }
 
     // TODO: figure out if we can use OngoingRequest instead of captured, at which body
     // hasn't been parsed yet and is available as stream
-    await capturingProxy.on('response', (capturedResponse) => {
+    function onResponse(capturedResponse) {
       const { id } = capturedResponse;
       const request = requestsById.get(id);
       if (!request) return;
@@ -105,7 +105,7 @@ export class ProxyInteractions {
       });
 
       requestsById.delete(id);
-    });
+    }
 
     abort.addEventListener('abort', onAbort);
 
@@ -121,11 +121,9 @@ export class ProxyInteractions {
 
     // sits in front of the capturing proxy to only direct target host traffic
     // and transparently forward the rest
-    const transparentProxy = httpolyglot.createServer((req, res) => {
-      // TODO: figure out if we can forward direct requests somewhere, somehow
-      res.writeHead(400, 'Bad request');
-      res.end();
-    });
+    // @ts-ignore
+    let capturingApp = capturingProxy.app as ConnectServer;
+    const transparentProxy = httpolyglot.createServer(capturingApp);
 
     const tunnelAbort = new AbortController(); // control aborting of tunnels separately
     // small hack to prevent warnings, because the AbortController polyfill doesn't setup EventEmitter according to spec
