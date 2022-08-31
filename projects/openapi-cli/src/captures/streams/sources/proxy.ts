@@ -152,6 +152,12 @@ export class ProxyInteractions {
           // clients disconnecting causes errors, but there's not much to do for us
           // than the default behaviour of stopping the tunnel
           clientSocket.once('error', (err) => {
+            if (isTransitiveSocketError(err)) {
+              // connections get broken sometimes, nothing special
+              clientSocket.destroy();
+              return;
+            }
+
             console.error('Error on client socket', err); // TODO: don't yell out this error.
           });
           destroySocketOnAbort(clientSocket, tunnelAbort.signal);
@@ -212,8 +218,7 @@ export class ProxyInteractions {
                   `HTTP/${req.httpVersion} 504 Gateway Timeout\r\nProxy-agent: Optic Transparent proxy\r\n\r\n`
                 );
                 return;
-              }
-              if (errorCode && transitiveSocketErrors.includes(errorCode)) {
+              } else if (isTransitiveSocketError(err)) {
                 // connections get broken sometimes, nothing special
                 clientSocket.destroy();
                 return;
@@ -389,6 +394,10 @@ function isCodedError(
   error: Error & { code?: string }
 ): error is Error & { code: string } {
   return typeof error.code === 'string';
+}
+
+function isTransitiveSocketError(err: Error) {
+  return isCodedError(err) && transitiveSocketErrors.includes(err.code);
 }
 
 const transitiveSocketErrors = Object.freeze(['ECONNRESET', 'EPIPE']);
