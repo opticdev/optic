@@ -17,6 +17,7 @@ import net from 'net';
 import { URL } from 'url';
 import * as httpolyglot from '@httptoolkit/httpolyglot';
 import { Server as ConnectServer } from 'connect';
+import portfinder from 'portfinder';
 
 export interface ProxyInteractions
   extends AsyncIterable<ProxySource.Interaction> {}
@@ -117,7 +118,14 @@ export class ProxyInteractions {
       interactions.onCompleted();
     }
 
-    await capturingProxy.start();
+    let transparentPort = await portfinder.getPortPromise({
+      port: 8000,
+      stopPort: 8999,
+    });
+    await capturingProxy.start({
+      startPort: transparentPort + 1,
+      endPort: transparentPort + 999,
+    });
 
     // sits in front of the capturing proxy to only direct target host traffic
     // and transparently forward the rest
@@ -243,7 +251,6 @@ export class ProxyInteractions {
       }
     );
 
-    let transparentPort = capturingProxy.port + 1; // TODO: look for available port more resiliently
     transparentProxy.listen(transparentPort, () => {
       console.log('Transparent proxy running on ' + transparentPort);
     });

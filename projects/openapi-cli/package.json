@@ -72,6 +72,7 @@
     "node-forge": "^1.2.1",
     "node-machine-id": "^1.1.12",
     "ora": "^6.1.2",
+    "portfinder": "^1.0.28",
     "semver": "^7.3.7",
     "slice-ansi": "^4.0.0",
     "stream-chain": "^2.2.5",
