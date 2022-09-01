@@ -251,10 +251,46 @@ export class ProxyInteractions {
       }
     );
 
-    transparentProxy.listen(transparentPort, () => {
-      console.log('Transparent proxy running on ' + transparentPort);
+    await new Promise<void>((resolve, reject) => {
+      transparentProxy.on('listening', onListening);
+      transparentProxy.on('error', onListenError);
+
+      function onListening() {
+        cleanup();
+        resolve();
+      }
+
+      function onListenError(err: Error) {
+        let errorCode = isCodedError(err) && err.code;
+        if (errorCode && errorCode === 'EADDRINUSE') {
+          // port got taken since we last found it as un-used, try again
+          console.log('attempting another port for transparentProxy');
+          portfinder
+            .getPortPromise({
+              port: 8000,
+              stopPort: 8999,
+            })
+            .then((availablePort) => {
+              transparentPort = availablePort;
+              transparentProxy.close();
+              transparentProxy.listen(transparentPort);
+            });
+        } else {
+          cleanup();
+          reject(err);
+        }
+      }
+
+      function cleanup() {
+        transparentProxy.removeListener('listening', onListening);
+        transparentProxy.removeListener('error', onListenError);
+      }
+
+      transparentProxy.listen(transparentPort);
     });
+
     let transparentProxyUrl = `http://localhost:${transparentPort}`;
+    console.log('Transparent proxy running at', transparentProxyUrl);
 
     const stream = (async function* () {
       yield* interactions.iterator;
