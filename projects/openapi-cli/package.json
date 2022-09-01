@@ -56,7 +56,7 @@
     "@useoptic/openapi-io": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
     "ajv-formats": "^2.1.1",
-    "analytics-node": "^6.0.0",
+    "analytics-node": "^6.2.0",
     "async-exit-hook": "^2.0.1",
     "axax": "^0.2.2",
     "chalk": "^5.0.1",
