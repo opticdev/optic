@@ -2,25 +2,12 @@
 
 exports[`compareComment  1`] = `
 "<!-- DO NOT MODIFY - OPTIC IDENTIFIER: compare_hash -->
-### New changes to your OpenAPI spec test
+### APIs Changed
 
-  Summary of run [#1](opticWebUrl) results (commit_hash):
+- test [(view changelog)](opticWebUrl) 1 operation added ✅ all checks passed (**1**).
+- test2 [(view changelog)](opticWebUrl2) 1 operation added ✅ all checks passed (**1**).
 
-  💡 1 operation added
-
-  ✅ all checks passed (**1**).
-
-  For details, see [the Optic API Changelog](opticWebUrl)
-
-### New changes to your OpenAPI spec test2
-
-  Summary of run [#2](opticWebUrl2) results (commit_hash):
-
-  💡 1 operation added
-
-  ✅ all checks passed (**1**).
-
-  For details, see [the Optic API Changelog](opticWebUrl2)
+Summary of check results (commit_hash).
 
 ------
   How can Optic be improved? Leave your feedback [here](https://forms.gle/9CgSy6ytjeLasnfWA)
