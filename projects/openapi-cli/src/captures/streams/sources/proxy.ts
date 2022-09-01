@@ -132,7 +132,7 @@ export class ProxyInteractions {
     // @ts-ignore
     let capturingApp = capturingProxy.app as ConnectServer;
     const transparentProxy = httpolyglot.createServer(
-      { ALPNProtocols: ['h2', 'http/1.1'] },
+      { ALPNProtocols: ['http/1.1'] },
       capturingApp
     );
 
