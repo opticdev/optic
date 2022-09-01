@@ -1,4 +1,4 @@
-name: "openapi-ws release-v2"
+name: 'openapi-ws release-v2'
 
 on:
   workflow_dispatch: {}
@@ -7,8 +7,8 @@ on:
       - published
 
 env:
-  SKIP_ANNOUNCE: "false"
-  SKIP_PUBLISH: "false"
+  SKIP_ANNOUNCE: 'false'
+  SKIP_PUBLISH: 'false'
 
 jobs:
   verify-prerelease-tag:
@@ -68,6 +68,8 @@ jobs:
       - verify-prerelease-tag
       - verify-versions-agree
       - verify-version-unpublished
+    outputs:
+      optic_version: ${{ steps.version.outputs.optic_version }}
     steps:
       - uses: actions/checkout@v3
 
@@ -111,9 +113,11 @@ jobs:
           fi
 
       - name: Get package version
+        id: version
         run: |
           v=$(jq -r .version < package.json)
           echo "VERSION=$v" >> $GITHUB_ENV
+          echo "::set-output name=optic_version::$v"
 
       - name: Publish
         run: |
@@ -135,7 +139,7 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
         with:
-          args: "{{ GITHUB_ACTOR }}: ✅ optic v{{ VERSION }} packages published to channel `{{ RELEASE_CHANNEL }}`!"
+          args: '{{ GITHUB_ACTOR }}: ✅ optic v{{ VERSION }} packages published to channel `{{ RELEASE_CHANNEL }}`!'
 
       - name: Announce failure
         uses: Ilshidur/action-slack@689ad44a9c9092315abd286d0e3a9a74d31ab78a # v2.1.0
@@ -146,4 +150,11 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
         with:
-          args: "{{ GITHUB_ACTOR }}: 🚫 optic v{{ VERSION }} failed to publish."
+          args: '{{ GITHUB_ACTOR }}: 🚫 optic v{{ VERSION }} failed to publish.'
+
+  publish-container-image:
+    needs: release
+    if: github.event.release.prerelease == 'false'
+    uses: opticdev/optic/.github/workflows/release-container-image.yml@main
+    with:
+      optic_version: ${{ needs.release.outputs.optic_version }}
