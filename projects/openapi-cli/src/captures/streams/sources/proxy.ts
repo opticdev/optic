@@ -18,6 +18,10 @@ import { URL } from 'url';
 import * as httpolyglot from '@httptoolkit/httpolyglot';
 import { Server as ConnectServer } from 'connect';
 import portfinder from 'portfinder';
+import globalLog from 'log';
+type Logger = typeof globalLog;
+
+export const log: Logger = globalLog.get('captures:streams:sources:proxy'); // export so it can be enabled in testing
 
 export interface ProxyInteractions
   extends AsyncIterable<ProxySource.Interaction> {}
@@ -56,7 +60,7 @@ export class ProxyInteractions {
 
     capturingProxy.forUnmatchedRequest().thenPassThrough({
       beforeRequest(capturedRequest) {
-        console.log('proxying request to ' + capturedRequest.url);
+        log.info('proxying request to ' + capturedRequest.url);
       },
     });
     capturingProxy.forAnyWebSocket().thenPassThrough();
@@ -163,10 +167,14 @@ export class ProxyInteractions {
             if (isTransitiveSocketError(err)) {
               // connections get broken sometimes, nothing special
               clientSocket.destroy();
+              log.info(
+                'Handled error on client socket by destroying it: %s',
+                err
+              );
               return;
             }
 
-            console.error('Error on client socket', err); // TODO: don't yell out this error.
+            transparentProxy.emit('error', err); // forward any errors we can't handle
           });
           destroySocketOnAbort(clientSocket, tunnelAbort.signal);
 
@@ -191,12 +199,12 @@ export class ProxyInteractions {
             )
           ) {
             // transparently tunnel all non-target traffic directly through TCP sockets
-            console.log('transparently tunneling connection to', host);
+            log.info('transparently tunneling connection to %s', host);
             const serverSocket = net.connect(
               (port && parseInt(port)) || 80,
               hostname,
               () => {
-                console.log('tunnel succeeded to', host);
+                log.info('tunnel to %s established', host);
                 clientSocket.once('error', (err) => {
                   serverSocket.destroy();
                 });
@@ -220,15 +228,26 @@ export class ProxyInteractions {
                 clientSocket.write(
                   `HTTP/${req.httpVersion} 502 Bad Gateway\r\nProxy-agent: Optic Transparent proxy\r\n\r\n`
                 );
+                log.notice(
+                  'tunnel to %s could not be established: %s',
+                  host,
+                  errorCode
+                );
                 return;
               } else if (errorCode === 'ETIMEDOUT' && serverSocket.connecting) {
                 clientSocket.write(
                   `HTTP/${req.httpVersion} 504 Gateway Timeout\r\nProxy-agent: Optic Transparent proxy\r\n\r\n`
                 );
+                log.notice(
+                  'tunnel to %s could not be established: %s',
+                  host,
+                  errorCode
+                );
                 return;
               } else if (isTransitiveSocketError(err)) {
                 // connections get broken sometimes, nothing special
                 clientSocket.destroy();
+                log.info('tunnel to %s interrupted: %s', host, errorCode);
                 return;
               }
 
@@ -236,7 +255,7 @@ export class ProxyInteractions {
             });
             destroySocketOnAbort(serverSocket, tunnelAbort.signal);
           } else {
-            console.log('capturing connection to', host);
+            log.notice('capturing connection to target (%s)', host);
             // tunnel target traffic to the capturing proxy
             // @ts-ignore
             let capturingServer = capturingProxy.server as net.Server;
