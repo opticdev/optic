@@ -75,7 +75,7 @@
     "slice-ansi": "^4.0.0",
     "stream-chain": "^2.2.5",
     "stream-json": "^1.7.4",
-    "strip-ansi": "^6.0.1",
+    "strip-ansi": "^7.0.1",
     "ts-invariant": "^0.9.4",
     "ts-results": "^3.3.0",
     "update-notifier": "^6.0.2",
