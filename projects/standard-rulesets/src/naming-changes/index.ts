@@ -105,12 +105,6 @@ export class NamingChangesRuleset extends Ruleset<Rule[]> {
         )}`
       );
     }
-    if (Object.keys(options).length === 0) {
-      // TODO silence this from sentry
-      throw new Error(
-        `Expected config.options in NamingChangesRuleset to have at least one value specified`
-      );
-    }
     for (const [key, value] of Object.entries(options)) {
       if (!casing.includes(value)) {
         // TODO silence this from sentry
