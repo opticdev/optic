@@ -6,17 +6,20 @@ import { dereference } from './insourced-dereference';
 import path from 'path';
 
 import fetch from 'node-fetch';
-import { OpenAPIV3 } from 'openapi-types';
+import { OpenAPI, OpenAPIV3 } from 'openapi-types';
 import isUrl from 'is-url';
 
 import { JsonSchemaSourcemap } from './sourcemap';
 import { gitBranchResolver } from './resolvers/git-branch-file-resolver';
 import { ExternalRefHandler } from './types';
 
-export { JSONParserError, ResolverError } from '@apidevtools/json-schema-ref-parser';
+export {
+  JSONParserError,
+  ResolverError,
+} from '@apidevtools/json-schema-ref-parser';
 
 export type ParseOpenAPIResult = {
-  jsonLike: OpenAPIV3.Document;
+  jsonLike: OpenAPI.Document;
   sourcemap: JsonSchemaSourcemap;
 };
 
@@ -36,7 +39,7 @@ export async function dereferenceOpenApi(
         accept: '*/*',
       },
     },
-    external: true
+    external: true,
   };
   // Resolve all references
   const resolverResults: $RefParser.$Refs = await resolver.resolve(path, {

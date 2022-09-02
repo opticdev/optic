@@ -1,10 +1,10 @@
 import {
   OpenAPIV3,
-  OpenAPITraverser,
   IFact,
   OpenApiKind,
   FactVariant,
   isFactVariant,
+  OpenAPI3Traverser,
 } from '@useoptic/openapi-utilities';
 
 export interface SpecFacts extends AsyncIterable<IFact> {}
@@ -26,7 +26,7 @@ export type SpecFact = FactVariant<OpenApiKind.Specification>;
 
 export class SpecFacts {
   static async *fromOpenAPISpec(spec: OpenAPIV3.Document): SpecFacts {
-    const traverser = new OpenAPITraverser();
+    const traverser = new OpenAPI3Traverser();
     traverser.traverse(spec);
     yield* traverser.facts();
   }
@@ -68,7 +68,7 @@ export class SpecFacts {
 
 export class SpecFactsIterable {
   static *fromOpenAPISpec(spec: OpenAPIV3.Document): SpecFactsIterable {
-    const traverser = new OpenAPITraverser();
+    const traverser = new OpenAPI3Traverser();
     traverser.traverse(spec);
     yield* traverser.facts();
   }

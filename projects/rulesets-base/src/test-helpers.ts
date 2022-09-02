@@ -1,9 +1,9 @@
 import {
   OpenAPIV3,
-  OpenAPITraverser,
   factsToChangelog,
   Result,
   defaultEmptySpec,
+  OpenAPI3Traverser,
 } from '@useoptic/openapi-utilities';
 import { RuleRunner } from './rule-runner';
 import { Rule, Ruleset } from './rules';
@@ -12,8 +12,8 @@ export const createRuleInputs = (
   beforeJson: OpenAPIV3.Document,
   afterJson: OpenAPIV3.Document
 ): Parameters<RuleRunner['runRulesWithFacts']>[0] => {
-  const currentTraverser = new OpenAPITraverser();
-  const nextTraverser = new OpenAPITraverser();
+  const currentTraverser = new OpenAPI3Traverser();
+  const nextTraverser = new OpenAPI3Traverser();
 
   currentTraverser.traverse(beforeJson);
   const currentFacts = [...currentTraverser.facts()];

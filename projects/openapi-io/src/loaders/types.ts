@@ -1,16 +1,16 @@
-import { OpenAPIV3 } from "openapi-types";
-import { JsonSchemaSourcemap } from "../parser/sourcemap";
+import { OpenAPI } from 'openapi-types';
+import { JsonSchemaSourcemap } from '../parser/sourcemap';
 
 interface SpecLoaded {
   success: boolean;
-  flattened?: OpenAPIV3.Document;
+  flattened?: OpenAPI.Document;
   sourcemap?: JsonSchemaSourcemap;
   error?: string;
 }
 
 interface SpecLoadedSuccess extends SpecLoaded {
   success: true;
-  flattened: OpenAPIV3.Document;
+  flattened: OpenAPI.Document;
   sourcemap: JsonSchemaSourcemap;
 }
 interface SpecLoadedError extends SpecLoaded {

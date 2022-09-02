@@ -64,7 +64,7 @@ export interface OpenApiOperationFact
 
 export type OpenApi3SchemaFact = Omit<
   OpenAPIV3_1.SchemaObject,
-  'item' | 'required' | 'properties'
+  'items' | 'required' | 'properties'
 >;
 
 export interface OpenApiBodyFact {
