@@ -3503,7 +3503,7 @@ __metadata:
     brotli: ^1.3.3
     chalk: ^4.1.2
     commander: ^9.0.0
-    dotenv: ^16.0.0
+    dotenv: ^16.0.2
     is-url: ^1.2.4
     jest: ^27.5.1
     js-yaml: ^4.1.0
@@ -3560,7 +3560,7 @@ __metadata:
     brotli: ^1.3.3
     chalk: ^4.1.2
     commander: ^9.0.0
-    dotenv: ^16.0.0
+    dotenv: ^16.0.2
     is-url: ^1.2.4
     jest: ^27.5.1
     js-yaml: ^4.1.0
@@ -5299,6 +5299,13 @@ __metadata:
   version: 16.0.0
   resolution: "dotenv@npm:16.0.0"
   checksum: 664cebb51f0a9a1d1b930f51f0271e72e26d62feaecc9dc03df39453dd494b4e724809ca480fb3ec3213382b1ed3f791aaeb83569a137f9329ce58efd4853dbf
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.0.2":
+  version: 16.0.2
+  resolution: "dotenv@npm:16.0.2"
+  checksum: ca8f9ca2d67929c7771069f4c31b4e46b9932621009e658e5afd655dde2d69b77642bf36dbc9e72bc170523dfd908a9ee41c26f034c1fdc605ace3b1b4b10faf
   languageName: node
   linkType: hard
 
