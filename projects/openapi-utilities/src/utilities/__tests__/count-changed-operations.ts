@@ -3,7 +3,7 @@ import {
   OpenApiKind,
   ChangeType,
   ChangeVariant,
-} from '../../openapi3/sdk/types';
+} from '../../openapi/sdk/types';
 
 const postAddition: ChangeVariant<OpenApiKind.Operation> = {
   location: {

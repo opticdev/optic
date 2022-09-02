@@ -1,8 +1,8 @@
-import { OpenAPITraverser } from './openapi3/implementations/openapi3/openapi-traverser';
-import { checkOpenAPIVersion } from './openapi3/implementations/openapi3/openapi-versions';
-import { validateOpenApiV3Document } from './openapi3/implementations/openapi3/validator';
+import { OpenAPI3Traverser } from './openapi/openapi3/openapi-3-traverser';
+import { checkOpenAPIVersion } from './openapi/openapi-versions';
+import { validateOpenApiV3Document } from './openapi/validator';
 import { OpenAPIV3 } from 'openapi-types';
-import { factsToChangelog } from './openapi3/sdk/facts-to-changelog';
+import { factsToChangelog } from './openapi/sdk/facts-to-changelog';
 import {
   ConceptualLocation,
   IChange,
@@ -37,18 +37,18 @@ import {
   ChangeVariant,
   OpenApiKindToFact,
   OpenApiRequestFact,
-} from './openapi3/sdk/types';
+} from './openapi/sdk/types';
 import {
   isFactVariant,
   isChangeVariant,
   isFactOrChangeVariant,
-} from './openapi3/sdk/isType';
-import { sourcemapReader } from './openapi3/implementations/openapi3/sourcemap-reader';
+} from './openapi/sdk/isType';
+import { sourcemapReader } from './openapi/sourcemap-reader';
 
-export { defaultEmptySpec } from './openapi3/constants';
+export { defaultEmptySpec } from './openapi/constants';
 export * from './ci-types';
-export { generateSpecResults } from './openapi3/implementations/openapi3/generate-spec-results';
-export * from './openapi3/implementations/openapi3/types';
+export { generateSpecResults } from './openapi/generate-spec-results';
+export * from './openapi/types';
 
 export { UserError } from './errors';
 export {
@@ -74,13 +74,17 @@ export { traverseSpec } from './utilities/traverse-spec';
 export { terminalChangelog } from './utilities/terminal-changelog';
 export { generateChangelogData } from './utilities/generate-changelog-data';
 export { compareChangesByPath } from './utilities/compare-changes-by-path';
-export { getOperationsModifsLabel, countOperationsModifications, getLabel } from './utilities/count-changed-operations';
+export {
+  getOperationsModifsLabel,
+  countOperationsModifications,
+  getLabel,
+} from './utilities/count-changed-operations';
 
 export {
   sourcemapReader,
   validateOpenApiV3Document,
   OpenApiFact,
-  OpenAPITraverser,
+  OpenAPI3Traverser,
   factsToChangelog,
   ConceptualLocation,
   IChange,

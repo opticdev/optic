@@ -1,4 +1,4 @@
-import { IChange } from '../openapi3/sdk/types';
+import { IChange } from '../openapi/sdk/types';
 
 /**
  * Sort changes by conceptual path, lexicographically, ancestors first

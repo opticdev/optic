@@ -5,7 +5,7 @@ import {
   ResponseChange,
   BodyChange,
 } from './group-changes';
-import { ChangeVariant, OpenApiKind, OpenApiFact } from '../openapi3/sdk/types';
+import { ChangeVariant, OpenApiKind, OpenApiFact } from '../openapi/sdk/types';
 import { Instance as Chalk } from 'chalk';
 import isEqual from 'lodash.isequal';
 import omit from 'lodash.omit';

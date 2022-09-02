@@ -5,12 +5,12 @@ import {
   OpenApiKind,
   FactVariant,
   ChangeVariant,
-} from '../openapi3/sdk/types';
+} from '../openapi/sdk/types';
 import {
   isChangeVariant,
   isFactOrChangeVariant,
   isFactVariant,
-} from '../openapi3/sdk/isType';
+} from '../openapi/sdk/isType';
 import { compareChangesByPath } from './compare-changes-by-path';
 import { ResultWithSourcemap } from '../types';
 

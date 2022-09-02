@@ -49,6 +49,55 @@ example-api-2:
 "
 `;
 
+exports[`diff \`optic diff\` compares against HEAD in repo 2`] = `
+"Deprecation warning: optic.yml file is deprecated. Please rename your file to optic.dev.yml
+Deprecation warning: optic diff is deprecated, please use optic diff <file_path> --base <base> instead
+example-api-1:
+
+[1mGET[22m /example: 
+  - operationId [33mchanged[39m
+
+[1mPATCH[22m /example: 
+  - operationId [33mchanged[39m
+  - response [1m200[22m:
+    - description [32madded[39m
+    - body [1mapplication/json[22m: [32madded[39m
+      - type [32madded[39m
+      - example [32madded[39m
+        - value [32madded[39m
+
+[1mPOST[22m /example: 
+  - operationId [33mchanged[39m
+
+[1mPUT[22m /example: 
+  - operationId [33mchanged[39m
+
+
+example-api-2:
+
+[1mGET[22m /example: 
+  - operationId [33mchanged[39m
+
+[1mPATCH[22m /example: 
+  - operationId [33mchanged[39m
+  - response [1m200[22m:
+    - description [32madded[39m
+    - body [1mapplication/json[22m: [32madded[39m
+      - type [32madded[39m
+      - example [32madded[39m
+        - value [32madded[39m
+
+[1mPOST[22m /example: 
+  - operationId [33mchanged[39m
+
+[1mPUT[22m /example: 
+  - operationId [33mchanged[39m
+
+
+[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
+"
+`;
+
 exports[`diff basic rules config 1`] = `
 "Deprecation warning: optic.yml file is deprecated. Please rename your file to optic.dev.yml
 

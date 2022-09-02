@@ -18,7 +18,7 @@ The specification object describes the root document object of the OpenAPI file.
 
 The specification object has the following data structure
 
-[OpenApiSpecificationFact details can be found here](../../openapi-utilities/src/openapi3/sdk/types/index.ts)
+[OpenApiSpecificationFact details can be found here](../../openapi-utilities/src/openapi/sdk/types/index.ts)
 
 ```javascript
 type Specification = {
@@ -31,7 +31,7 @@ type Specification = {
 
 The operation object describes an [operation](https://swagger.io/specification/#operation-object) and has the following data structure.
 
-[OpenApiOperationFact details can be found here](../../openapi-utilities/src/openapi3/sdk/types/index.ts)
+[OpenApiOperationFact details can be found here](../../openapi-utilities/src/openapi/sdk/types/index.ts)
 
 ```javascript
 type Operation = {
@@ -52,7 +52,7 @@ type Operation = {
 
 The request parameter objects describe a [parameter object](https://swagger.io/specification/#parameter-object) and has the following data structure
 
-[OpenApiRequestParameterFact details can be found here](../../openapi-utilities/src/openapi3/sdk/types/index.ts)
+[OpenApiRequestParameterFact details can be found here](../../openapi-utilities/src/openapi/sdk/types/index.ts)
 
 ```javascript
 // QueryParameter, PathParameter, HeaderParameter, CookieParameter all have the same shape
@@ -66,7 +66,7 @@ type QueryParameter = {
 
 The request body object describes a [media type object](https://swagger.io/specification/#media-type-object) in a request body and has the following data structure
 
-[OpenApiBodyFact details can be found here](../../openapi-utilities/src/openapi3/sdk/types/index.ts)
+[OpenApiBodyFact details can be found here](../../openapi-utilities/src/openapi/sdk/types/index.ts)
 
 ```javascript
 type RequestBody = {
@@ -81,7 +81,7 @@ type RequestBody = {
 
 The response object describes a [response object](https://swagger.io/specification/#responses-object) and has the following data structure
 
-[OpenApiResponseFact details can be found here](../../openapi-utilities/src/openapi3/sdk/types/index.ts)
+[OpenApiResponseFact details can be found here](../../openapi-utilities/src/openapi/sdk/types/index.ts)
 
 ```javascript
 type Response = {
@@ -97,7 +97,7 @@ type Response = {
 
 The response header object describes a [response header object](https://swagger.io/specification/#header-object) and has the following data structure
 
-[OpenApiHeaderFact details can be found here](../../openapi-utilities/src/openapi3/sdk/types/index.ts)
+[OpenApiHeaderFact details can be found here](../../openapi-utilities/src/openapi/sdk/types/index.ts)
 
 ```javascript
 type ResponseHeader = {
@@ -110,7 +110,7 @@ type ResponseHeader = {
 
 The response body object describes a [media type object](https://swagger.io/specification/#media-type-object) in a response and has the following data structure
 
-[OpenApiBodyFact details can be found here](../../openapi-utilities/src/openapi3/sdk/types/index.ts)
+[OpenApiBodyFact details can be found here](../../openapi-utilities/src/openapi/sdk/types/index.ts)
 
 ```javascript
 type ResponseBody = {
@@ -127,7 +127,7 @@ type ResponseBody = {
 
 The property object describes a [body property](https://swagger.io/specification/#schema-object) and has the following data structure
 
-[PropertyFact details can be found here](../../openapi-utilities/src/openapi3/sdk/types/index.ts)
+[PropertyFact details can be found here](../../openapi-utilities/src/openapi/sdk/types/index.ts)
 
 ```javascript
 type Property = {

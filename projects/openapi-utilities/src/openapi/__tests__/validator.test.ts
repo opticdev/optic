@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 
-import { defaultEmptySpec } from '../../../constants';
+import { defaultEmptySpec } from '../constants';
 import { validateOpenApiV3Document } from '../validator';
 
 test('valid open api document should not raise errors', async () => {

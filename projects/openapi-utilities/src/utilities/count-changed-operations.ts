@@ -1,5 +1,5 @@
-import { isChangeVariant } from '../openapi3/sdk/isType';
-import { OpenApiKind, IChange, ChangeType } from '../openapi3/sdk/types';
+import { isChangeVariant } from '../openapi/sdk/isType';
+import { OpenApiKind, IChange, ChangeType } from '../openapi/sdk/types';
 
 const getChangeOperationId = (change: IChange) => {
   const path = (change.location.conceptualLocation as any).path;

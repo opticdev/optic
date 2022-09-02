@@ -1,5 +1,5 @@
 import { ResultWithSourcemap } from './types';
-import { IChange } from './openapi3/sdk/types';
+import { IChange } from './openapi/sdk/types';
 
 export type CompareFileJson = {
   results: ResultWithSourcemap[];

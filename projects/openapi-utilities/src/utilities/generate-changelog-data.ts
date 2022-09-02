@@ -1,7 +1,7 @@
 import { groupChangesAndRules } from './group-changes';
 import { OpenAPIV3 } from 'openapi-types';
 import { traverseSpec } from './traverse-spec';
-import { IChange } from '../openapi3/sdk/types';
+import { IChange } from '../openapi/sdk/types';
 import { ResultWithSourcemap } from '../types';
 
 /**

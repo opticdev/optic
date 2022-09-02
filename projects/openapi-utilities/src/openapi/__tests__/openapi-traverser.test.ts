@@ -1,4 +1,4 @@
-import { OpenAPITraverser } from '../openapi-traverser';
+import { OpenAPI3Traverser } from '../openapi3/openapi-3-traverser';
 import fs from 'fs-extra';
 
 const jsonFromFile = async (path: string) => {
@@ -7,7 +7,7 @@ const jsonFromFile = async (path: string) => {
 };
 
 it('can extract facts from specs', async () => {
-  const traverser = new OpenAPITraverser();
+  const traverser = new OpenAPI3Traverser();
   const spec = await jsonFromFile(
     './inputs/openapi3/petstore0.json.flattened-without-sourcemap.json'
   );
@@ -16,14 +16,14 @@ it('can extract facts from specs', async () => {
 });
 
 it('will extract facts for oneOf, allOf or anyOf schemas', async () => {
-  const traverser = new OpenAPITraverser();
+  const traverser = new OpenAPI3Traverser();
   const spec = await jsonFromFile('./inputs/openapi3/polymorphic-schemas.json');
   traverser.traverse(spec);
   expect([...traverser.facts()]).toMatchSnapshot();
 });
 
 it('will work with 3.1 schemas', async () => {
-  const traverser = new OpenAPITraverser();
+  const traverser = new OpenAPI3Traverser();
   const spec = await jsonFromFile(
     './inputs/openapi3/polymorphic-schemas-3_1.json'
   );
@@ -32,7 +32,7 @@ it('will work with 3.1 schemas', async () => {
 });
 
 it('can extract body example facts from specs', async () => {
-  const traverser = new OpenAPITraverser();
+  const traverser = new OpenAPI3Traverser();
   const spec = await jsonFromFile(
     './inputs/openapi3/operation-examples-without-schemas.json'
   );
@@ -41,7 +41,7 @@ it('can extract body example facts from specs', async () => {
 });
 
 it('can extract component schema example facts from specs', async () => {
-  const traverser = new OpenAPITraverser();
+  const traverser = new OpenAPI3Traverser();
   const spec = await jsonFromFile(
     './inputs/openapi3/component-schema-examples.json'
   );
@@ -50,7 +50,7 @@ it('can extract component schema example facts from specs', async () => {
 });
 
 it('handles example schemas as strings', () => {
-  const traverser = new OpenAPITraverser();
+  const traverser = new OpenAPI3Traverser();
   const spec: any = {
     openapi: '3.0.1',
     paths: {
@@ -83,7 +83,7 @@ it('handles example schemas as strings', () => {
 });
 
 describe('supports 3.0 and 3.1 schema fact generation', () => {
-  const traverser = new OpenAPITraverser();
+  const traverser = new OpenAPI3Traverser();
 
   it('produces correct fact for 3.0 nullable', () => {
     expect(

@@ -1,8 +1,8 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { factsToChangelog } from '../../sdk/facts-to-changelog';
-import { IChange, ChangeType, IFact } from '../../sdk/types';
-import { OpenAPITraverser } from './openapi-traverser';
-import { ResultWithSourcemap } from '../../../types';
+import { factsToChangelog } from './sdk/facts-to-changelog';
+import { IChange, ChangeType, IFact } from './sdk/types';
+import { OpenAPI3Traverser } from './openapi3/openapi-3-traverser';
+import { ResultWithSourcemap } from '../types';
 import {
   FileWithSerializedSourcemap,
   RuleRunner,
@@ -10,10 +10,10 @@ import {
 } from './types';
 import { sourcemapReader } from './sourcemap-reader';
 
-const packageJson = require('../../../../package.json');
+const packageJson = require('../../package.json');
 
 const traverseSpec = (jsonSpec: OpenAPIV3.Document): IFact[] => {
-  const currentTraverser = new OpenAPITraverser();
+  const currentTraverser = new OpenAPI3Traverser();
 
   currentTraverser.traverse(jsonSpec);
 

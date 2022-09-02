@@ -1,8 +1,8 @@
 import { RulesetDefinition as SpectralRulesetDefinition } from '@stoplight/spectral-core';
 import { OpenAPIV3 } from 'openapi-types';
 import { YAMLNode } from 'yaml-ast-parser';
-import { IChange, IFact } from '../../sdk/types';
-import { Result } from '../../../types';
+import { IChange, IFact } from './sdk/types';
+import { Result } from '../types';
 
 export type SpectralInput = Extract<
   SpectralRulesetDefinition,

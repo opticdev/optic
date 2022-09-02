@@ -20,8 +20,8 @@ import {
   OpenApiSpecificationFact,
   FactVariant,
   OpenApi3SchemaFact,
-} from '../../sdk/types';
-import { IPathComponent } from '../../sdk/types';
+} from '../sdk/types';
+import { IPathComponent } from '../sdk/types';
 import invariant from 'ts-invariant';
 import { jsonPointerHelpers as jsonPointer } from '@useoptic/json-pointer-helpers';
 import { OpenAPIV3, OpenAPIV3_1 } from 'openapi-types';
@@ -51,7 +51,7 @@ const isObject = (value: any) => {
   return typeof value === 'object' && !Array.isArray(value) && value !== null;
 };
 
-export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
+export class OpenAPI3Traverser implements Traverse<OpenAPIV3.Document> {
   format = 'openapi3';
 
   input: (OpenAPIV3.Document | OpenAPIV3_1.Document) | undefined = undefined;

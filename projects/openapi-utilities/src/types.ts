@@ -1,4 +1,4 @@
-import { IChange, IFact } from './openapi3/sdk/types';
+import { IChange, IFact } from './openapi/sdk/types';
 
 export type LookupLineResult = {
   endLine: number;
@@ -10,7 +10,6 @@ export type LookupLineResult = {
 export type LookupLineResultWithFilepath = LookupLineResult & {
   filePath: string;
 };
-
 
 export interface ShouldOrMust<G> {
   must: (statement: string, handler: G) => void;

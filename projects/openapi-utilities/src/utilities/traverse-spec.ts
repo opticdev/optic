@@ -1,9 +1,9 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { OpenAPITraverser } from '../openapi3/implementations/openapi3/openapi-traverser';
-import { IFact } from '../openapi3/sdk/types';
+import { OpenAPI3Traverser } from '../openapi/openapi3/openapi-3-traverser';
+import { IFact } from '../openapi/sdk/types';
 
 export const traverseSpec = (spec: OpenAPIV3.Document): IFact[] => {
-  const traverser = new OpenAPITraverser();
+  const traverser = new OpenAPI3Traverser();
   traverser.traverse(spec);
   return [...traverser.facts()];
 };
