@@ -19,7 +19,7 @@ export {
 } from '@apidevtools/json-schema-ref-parser';
 
 export type ParseOpenAPIResult = {
-  jsonLike: OpenAPI.Document;
+  jsonLike: OpenAPIV3.Document;
   sourcemap: JsonSchemaSourcemap;
 };
 
