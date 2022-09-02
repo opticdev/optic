@@ -2452,6 +2452,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@stoplight/better-ajv-errors@npm:1.0.3":
+  version: 1.0.3
+  resolution: "@stoplight/better-ajv-errors@npm:1.0.3"
+  dependencies:
+    jsonpointer: ^5.0.0
+    leven: ^3.1.0
+  peerDependencies:
+    ajv: ">=8"
+  checksum: 642fe5636a72a86de72e4ffc7bbf07499fc09d8446b386f31d3667b07dd1849d921c38a74c109a9e2554d405b6e90dc150728a0c455bf93f158ff139e0538ddd
+  languageName: node
+  linkType: hard
+
 "@stoplight/json-ref-readers@npm:1.2.2":
   version: 1.2.2
   resolution: "@stoplight/json-ref-readers@npm:1.2.2"
@@ -2655,25 +2667,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stoplight/spectral-rulesets@npm:^1.11.1":
-  version: 1.11.1
-  resolution: "@stoplight/spectral-rulesets@npm:1.11.1"
+"@stoplight/spectral-rulesets@npm:^1.12.0":
+  version: 1.12.0
+  resolution: "@stoplight/spectral-rulesets@npm:1.12.0"
   dependencies:
     "@asyncapi/specs": ^2.14.0
-    "@stoplight/better-ajv-errors": 1.0.1
+    "@stoplight/better-ajv-errors": 1.0.3
     "@stoplight/json": ^3.17.0
     "@stoplight/spectral-core": ^1.8.1
     "@stoplight/spectral-formats": ^1.2.0
     "@stoplight/spectral-functions": ^1.5.1
     "@stoplight/spectral-runtime": ^1.1.1
-    "@stoplight/types": ^12.5.0
+    "@stoplight/types": ^13.6.0
     "@types/json-schema": ^7.0.7
     ajv: ^8.8.2
     ajv-formats: ~2.1.0
     json-schema-traverse: ^1.0.0
     lodash: ~4.17.21
     tslib: ^2.3.0
-  checksum: e13345b29b51b68539ca621a24f6cc1a8c0d6904066104e5ac23b7a67636de5c86a270f4209c8666af5a4203fefae02113b0163c3c1e6c1e6cd85caa53214791
+  checksum: 07fc2b2cfa72e2b0ffeecfc72b51279806977e681386dff1d76e40f3270694ae84fb7af2372001ae055070f1a4eef6300a9dfe559597f1258e312e66b4422c92
   languageName: node
   linkType: hard
 
@@ -2702,13 +2714,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stoplight/types@npm:^12.0.0, @stoplight/types@npm:^12.3.0, @stoplight/types@npm:^12.5.0":
+"@stoplight/types@npm:^12.0.0, @stoplight/types@npm:^12.3.0":
   version: 12.5.0
   resolution: "@stoplight/types@npm:12.5.0"
   dependencies:
     "@types/json-schema": ^7.0.4
     utility-types: ^3.10.0
   checksum: fe4a09df6e1c2f0cdb53f474b180cc7b8184e814e1ac4427d199642f10958335f597060530a908c0e5800ba2569d077afe124a51deaee466255ce942e1e03941
+  languageName: node
+  linkType: hard
+
+"@stoplight/types@npm:^13.6.0":
+  version: 13.6.0
+  resolution: "@stoplight/types@npm:13.6.0"
+  dependencies:
+    "@types/json-schema": ^7.0.4
+    utility-types: ^3.10.0
+  checksum: 4cc81cf29decc0392f15c71b21fd11cd806bcf99168ae4509ed41c2b7dbcfbd5a83c7f9f320edb5a518cc483fd18dd8794c54b232fb6a6f2a7b6e9fb6ca20269
   languageName: node
   linkType: hard
 
@@ -3591,7 +3613,7 @@ __metadata:
     "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
     "@stoplight/spectral-core": ^1.8.1
-    "@stoplight/spectral-rulesets": ^1.11.1
+    "@stoplight/spectral-rulesets": ^1.12.0
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
     "@types/jest": ^26.0.24
