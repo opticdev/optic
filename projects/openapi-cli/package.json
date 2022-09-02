@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/openapi-cli",
   "packageManager": "yarn@3.0.2",
-  "version": "0.29.1",
+  "version": "0.30.0",
   "main": "build/lib.js",
   "types": "build/lib.d.ts",
   "files": [
@@ -66,7 +66,7 @@
     "har-schema": "^2.0.0",
     "is-url": "^1.2.4",
     "json-schema-traverse": "^1.0.0",
-    "mockttp": "^3.0.0",
+    "mockttp": "^3.3.1",
     "node-abort-controller": "^3.0.1",
     "node-forge": "^1.2.1",
     "node-machine-id": "^1.1.12",
