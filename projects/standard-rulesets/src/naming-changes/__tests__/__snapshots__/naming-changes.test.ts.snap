@@ -1788,6 +1788,4 @@ exports[`naming changes configuration naming change configuration validation 2`]
 
 exports[`naming changes configuration naming change configuration validation 3`] = `"Expected config.applies in NamingChangesRuleset to be specified and be one of added, addedOrChanged, always"`;
 
-exports[`naming changes configuration naming change configuration validation 4`] = `"Expected config.options in NamingChangesRuleset to have at least one value specified"`;
-
-exports[`naming changes configuration naming change configuration validation 5`] = `"Expected casing option to be one of snake_case, camelCase, Capital-Param-Case, param-case, PascalCase, received not a valid format for queryParameters"`;
+exports[`naming changes configuration naming change configuration validation 4`] = `"Expected casing option to be one of snake_case, camelCase, Capital-Param-Case, param-case, PascalCase, received not a valid format for queryParameters"`;
