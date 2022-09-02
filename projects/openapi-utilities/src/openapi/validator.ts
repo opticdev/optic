@@ -120,7 +120,7 @@ export const validateOpenApiV3Document = (
 
   if (version === '3.0.x') results = validator.validate3_0(spec);
   if (version === '3.1.x') results = validator.validate3_1(spec);
-  if (version === '2.0.x') results = validator.validate2_0(spec);
+  // if (version === '2.0.x') results = validator.validate2_0(spec);
 
   if (results && results.errors.length > 0) {
     const processedErrors = processValidatorErrors(spec, results.errors);
