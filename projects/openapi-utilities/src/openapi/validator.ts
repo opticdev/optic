@@ -6,12 +6,14 @@ import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import {
   openapi3_1_json_schema,
   openapi3_0_json_schema,
+  openapi2_0_schema_object,
 } from './validation-schemas';
 import { checkOpenAPIVersion } from './openapi-versions';
 
 export default class OpenAPISchemaValidator {
   private v3_0Validator: ValidateFunction | undefined;
   private v3_1Validator: ValidateFunction | undefined;
+  private v2_0Validator: ValidateFunction | undefined;
 
   public validate3_0(openapiDoc: OpenAPI.Document): {
     errors: ErrorObject[];
@@ -41,6 +43,23 @@ export default class OpenAPISchemaValidator {
 
     if (!this.v3_1Validator(openapiDoc) && this.v3_1Validator.errors) {
       return { errors: this.v3_1Validator.errors };
+    } else {
+      return { errors: [] };
+    }
+  }
+
+  public validate2_0(openapiDoc: OpenAPI.Document): {
+    errors: ErrorObject[];
+  } {
+    if (!this.v2_0Validator) {
+      const v = new ajv({ allErrors: true, strict: false });
+      addFormats(v);
+      v.addSchema(openapi2_0_schema_object);
+      this.v2_0Validator = v.compile(openapi2_0_schema_object);
+    }
+
+    if (!this.v2_0Validator(openapiDoc) && this.v2_0Validator.errors) {
+      return { errors: this.v2_0Validator.errors };
     } else {
       return { errors: [] };
     }
@@ -101,6 +120,7 @@ export const validateOpenApiV3Document = (
 
   if (version === '3.0.x') results = validator.validate3_0(spec);
   if (version === '3.1.x') results = validator.validate3_1(spec);
+  if (version === '2.0.x') results = validator.validate2_0(spec);
 
   if (results && results.errors.length > 0) {
     const processedErrors = processValidatorErrors(spec, results.errors);
