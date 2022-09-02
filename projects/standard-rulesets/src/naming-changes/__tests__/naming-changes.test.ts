@@ -27,10 +27,6 @@ describe('naming changes configuration', () => {
     }).toThrowErrorMatchingSnapshot();
 
     expect(() => {
-      new NamingChangesRuleset({ applies: 'always', options: {} });
-    }).toThrowErrorMatchingSnapshot();
-
-    expect(() => {
       new NamingChangesRuleset({
         applies: 'always',
         options: {
