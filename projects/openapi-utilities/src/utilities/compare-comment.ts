@@ -32,7 +32,7 @@ const getChecksLabel = (results: CompareFileJson['results']) => {
       : '';
 
   return failingChecks > 0
-    ? `⚠️ **${failingChecks}** / **${totalChecks}** checks failed.${exemptedChunk}`
+    ? `⚠️ **${failingChecks}** / **${totalChecks}** checks failed${exemptedChunk}`
     : totalChecks > 0
     ? `✅ all checks passed (**${totalChecks}**)${exemptedChunk}`
     : `ℹ️ No automated checks have run`;
@@ -47,7 +47,7 @@ const getSessionBody = (
   const operationsModifsLabel = getOperationsModifsLabel(changes);
   return `- ${name} [(view changelog)](${opticWebUrl}) ${operationsModifsLabel} ${getChecksLabel(
     results
-  )}.`;
+  )}`;
 };
 
 export const createMultiSessionsCommentBody = (
@@ -68,7 +68,7 @@ ${sessions
   )
   .join('\n')}
 
-Summary of check results (${commit_hash}).
+Summary of check results (${commit_hash})
 
 ${footer}
 `;
