@@ -1,4 +1,4 @@
-import { OpenAPITraverser, OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { OpenAPI3Traverser, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { RuleRunner } from '../rule-runner';
 
 describe('spectral rules', () => {
@@ -12,7 +12,7 @@ describe('spectral rules', () => {
       },
       paths: {},
     };
-    const traverser = new OpenAPITraverser();
+    const traverser = new OpenAPI3Traverser();
 
     traverser.traverse(nextJson);
     const nextFacts = [...traverser.facts()];
@@ -44,7 +44,7 @@ describe('spectral rules', () => {
       },
       paths: {},
     } as OpenAPIV3.Document;
-    const traverser = new OpenAPITraverser();
+    const traverser = new OpenAPI3Traverser();
 
     traverser.traverse(nextJson);
     const nextFacts = [...traverser.facts()];
