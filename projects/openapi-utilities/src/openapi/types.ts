@@ -1,5 +1,5 @@
 import { RulesetDefinition as SpectralRulesetDefinition } from '@stoplight/spectral-core';
-import { OpenAPIV3 } from 'openapi-types';
+import { OpenAPI } from 'openapi-types';
 import { YAMLNode } from 'yaml-ast-parser';
 import { IChange, IFact } from './sdk/types';
 import { Result } from '../types';
@@ -13,7 +13,7 @@ export type RuleRunner = {
   runSpectralRules?: (inputs: {
     ruleset: SpectralInput;
     nextFacts: IFact[];
-    nextJsonLike: OpenAPIV3.Document;
+    nextJsonLike: OpenAPI.Document;
   }) => Promise<Result[]>;
 
   runRulesWithFacts: (inputs: {
@@ -21,8 +21,8 @@ export type RuleRunner = {
     nextFacts: IFact[];
     currentFacts: IFact[];
     changelog: IChange[];
-    nextJsonLike: OpenAPIV3.Document;
-    currentJsonLike: OpenAPIV3.Document;
+    nextJsonLike: OpenAPI.Document;
+    currentJsonLike: OpenAPI.Document;
   }) => Result[];
 };
 
@@ -52,6 +52,6 @@ export type SerializedSourcemap = {
 };
 
 export type FileWithSerializedSourcemap = {
-  jsonLike: OpenAPIV3.Document;
+  jsonLike: any;
   sourcemap: SerializedSourcemap;
 };

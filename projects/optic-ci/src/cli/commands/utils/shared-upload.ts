@@ -1,6 +1,6 @@
 import {
   defaultEmptySpec,
-  validateOpenApiV3Document,
+  validateOpenApiDocument,
   NormalizedCiContext,
   UserError,
 } from '@useoptic/openapi-utilities';
@@ -111,8 +111,8 @@ export const loadAndValidateSpecFiles = async (from?: string, to?: string) => {
   ]);
 
   try {
-    validateOpenApiV3Document(JSON.parse(fromFileS3Buffer.toString()));
-    validateOpenApiV3Document(JSON.parse(toFileS3Buffer.toString()));
+    validateOpenApiDocument(JSON.parse(fromFileS3Buffer.toString()));
+    validateOpenApiDocument(JSON.parse(toFileS3Buffer.toString()));
   } catch (e) {
     throw new UserError((e as Error).message);
   }

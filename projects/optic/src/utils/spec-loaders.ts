@@ -4,7 +4,7 @@ import { promisify } from 'util';
 import { exec as callbackExec } from 'child_process';
 import {
   defaultEmptySpec,
-  validateOpenApiV3Document,
+  validateOpenApiDocument,
 } from '@useoptic/openapi-utilities';
 
 import {
@@ -25,7 +25,7 @@ export const getFileFromFsOrGit = async (
     parseSpecVersion(filePathOrRef, defaultEmptySpec),
     process.cwd()
   ).then((results) => {
-    validateOpenApiV3Document(results.jsonLike);
+    validateOpenApiDocument(results.jsonLike);
     return results;
   });
   return file;
@@ -63,7 +63,7 @@ export const parseFilesFromRef = async (
       ),
       process.cwd()
     ).then((results) => {
-      validateOpenApiV3Document(results.jsonLike);
+      validateOpenApiDocument(results.jsonLike);
       return results;
     }),
     headFile: await specFromInputToResults(
@@ -73,7 +73,7 @@ export const parseFilesFromRef = async (
       ),
       process.cwd()
     ).then((results) => {
-      validateOpenApiV3Document(results.jsonLike);
+      validateOpenApiDocument(results.jsonLike);
       return results;
     }),
     pathFromGitRoot,

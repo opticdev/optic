@@ -1,5 +1,6 @@
 import {
   FactVariant,
+  OpenAPI,
   OpenApiKind,
   OpenAPIV3,
 } from '@useoptic/openapi-utilities';
@@ -16,7 +17,7 @@ export type RuleContext = {
 };
 
 export type Specification = FactVariant<OpenApiKind.Specification> & {
-  raw: OpenAPIV3.Document;
+  raw: OpenAPI.Document;
 };
 
 export type Operation = FactVariant<OpenApiKind.Operation> & {
@@ -235,4 +236,4 @@ export type ResponseBodyAssertions = {
   property: Assertions<'property'>;
 };
 
-export type PropertyAssertions = Assertions<'property'>
+export type PropertyAssertions = Assertions<'property'>;

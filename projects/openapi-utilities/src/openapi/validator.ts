@@ -1,4 +1,4 @@
-import { OpenAPIV3, OpenAPI } from 'openapi-types';
+import { OpenAPIV3, OpenAPI, OpenAPIV2, OpenAPIV3_1 } from 'openapi-types';
 import ajv, { ValidateFunction, ErrorObject } from 'ajv';
 import addFormats from 'ajv-formats';
 
@@ -8,7 +8,10 @@ import {
   openapi3_0_json_schema,
   openapi2_0_schema_object,
 } from './validation-schemas';
-import { checkOpenAPIVersion } from './openapi-versions';
+import {
+  checkOpenAPIVersion,
+  SupportedOpenAPIVersions,
+} from './openapi-versions';
 
 export default class OpenAPISchemaValidator {
   private v3_0Validator: ValidateFunction | undefined;
@@ -31,6 +34,7 @@ export default class OpenAPISchemaValidator {
       return { errors: [] };
     }
   }
+
   public validate3_1(openapiDoc: OpenAPI.Document): {
     errors: ErrorObject[];
   } {
@@ -105,11 +109,19 @@ export const processValidatorErrors = (
   return processedErrors;
 };
 
-export const validateOpenApiV3Document = (
+type OpenAPIDocumentUnwrap = {
+  version: SupportedOpenAPIVersions;
+  v3_1?: OpenAPIV3_1.Document;
+  v3_0?: OpenAPIV3.Document;
+  v2_0?: OpenAPIV2.Document;
+  document: OpenAPI.Document;
+};
+
+export const validateOpenApiDocument = (
   spec: any,
   // these validators aren't cheap. if we're validating a lot in sequence we should inject a shared instance
   validator: OpenAPISchemaValidator = new OpenAPISchemaValidator()
-): OpenAPIV3.Document => {
+): OpenAPIDocumentUnwrap => {
   let results:
     | {
         errors: ErrorObject[];
@@ -120,7 +132,7 @@ export const validateOpenApiV3Document = (
 
   if (version === '3.0.x') results = validator.validate3_0(spec);
   if (version === '3.1.x') results = validator.validate3_1(spec);
-  // if (version === '2.0.x') results = validator.validate2_0(spec);
+  if (version === '2.0.x') results = validator.validate2_0(spec);
 
   if (results && results.errors.length > 0) {
     const processedErrors = processValidatorErrors(spec, results.errors);
@@ -128,5 +140,24 @@ export const validateOpenApiV3Document = (
     throw new Error(JSON.stringify(processedErrors, null, 2));
   }
 
-  return spec as OpenAPIV3.Document;
+  switch (version) {
+    case '2.0.x':
+      return {
+        v2_0: spec as OpenAPIV2.Document,
+        version: '2.0.x',
+        document: spec,
+      };
+    case '3.0.x':
+      return {
+        v3_0: spec as OpenAPIV3.Document,
+        version: '3.0.x',
+        document: spec,
+      };
+    case '3.1.x':
+      return {
+        v3_1: spec as OpenAPIV3_1.Document,
+        version: '3.1.x',
+        document: spec,
+      };
+  }
 };

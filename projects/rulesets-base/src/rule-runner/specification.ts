@@ -1,4 +1,4 @@
-import { OpenApiKind, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
+import { OpenApiKind, OpenAPI, Result } from '@useoptic/openapi-utilities';
 
 import { createSpecification } from './data-constructors';
 import { NodeDetail } from './rule-runner-types';
@@ -37,8 +37,8 @@ export const runSpecificationRules = ({
   specificationNode: NodeDetail<OpenApiKind.Specification>;
   rules: (Ruleset | Rule)[];
   customRuleContext: any;
-  beforeApiSpec: OpenAPIV3.Document;
-  afterApiSpec: OpenAPIV3.Document;
+  beforeApiSpec: OpenAPI.Document;
+  afterApiSpec: OpenAPI.Document;
 }) => {
   const results: Result[] = [];
   const specificationRules = getSpecificationRules(rules);

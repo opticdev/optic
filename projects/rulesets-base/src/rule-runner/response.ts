@@ -1,19 +1,12 @@
-import { OpenApiKind, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
+import { OpenApiKind, OpenAPI, Result } from '@useoptic/openapi-utilities';
 
 import {
   createOperation,
   createResponse,
   createSpecification,
 } from './data-constructors';
-import {
-  EndpointNode,
-  ResponseNode,
-  NodeDetail,
-} from './rule-runner-types';
-import {
-  createRuleContextWithOperation,
-  isExempted,
-} from './utils';
+import { EndpointNode, ResponseNode, NodeDetail } from './rule-runner-types';
+import { createRuleContextWithOperation, isExempted } from './utils';
 
 import { Rule, Ruleset, ResponseRule } from '../rules';
 import { AssertionResult, createResponseAssertions } from './assertions';
@@ -82,8 +75,8 @@ export const runResponseRules = ({
   rules: (Ruleset | Rule)[];
 
   customRuleContext: any;
-  beforeApiSpec: OpenAPIV3.Document;
-  afterApiSpec: OpenAPIV3.Document;
+  beforeApiSpec: OpenAPI.Document;
+  afterApiSpec: OpenAPI.Document;
 }) => {
   const results: Result[] = [];
   const responseRules = getResponseRules(rules);
@@ -113,7 +106,7 @@ export const runResponseRules = ({
   // - if yes, run the user's defined `rule`. for responses, this runs against the response and response headers
   for (const responseRule of responseRules) {
     if (beforeOperation && beforeSpecification) {
-      const ruleContext =createRuleContextWithOperation(
+      const ruleContext = createRuleContextWithOperation(
         {
           node: specificationNode,
           before: beforeSpecification,

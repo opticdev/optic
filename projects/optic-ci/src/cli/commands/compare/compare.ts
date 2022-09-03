@@ -14,7 +14,7 @@ import {
   SpectralInput,
   defaultEmptySpec,
   generateSpecResults,
-  validateOpenApiV3Document,
+  validateOpenApiDocument,
   logComparison,
   UserError,
 } from '@useoptic/openapi-utilities';
@@ -152,14 +152,14 @@ const runCompare = async ({
       parseSpecVersion(from, defaultEmptySpec),
       process.cwd()
     ).then((results) => {
-      validateOpenApiV3Document(results.jsonLike);
+      validateOpenApiDocument(results.jsonLike);
       return results;
     }),
     specFromInputToResults(
       parseSpecVersion(to, defaultEmptySpec),
       process.cwd()
     ).then((results) => {
-      validateOpenApiV3Document(results.jsonLike);
+      validateOpenApiDocument(results.jsonLike);
       return results;
     }),
   ]).catch((e) => {

@@ -1,14 +1,11 @@
 import { load } from 'js-yaml';
-import {
-  OpenAPIV3,
-  validateOpenApiV3Document,
-} from '@useoptic/openapi-utilities';
+import { OpenAPI, validateOpenApiDocument } from '@useoptic/openapi-utilities';
 
 const parseOpenApiJSONSpec = (fileString: string) => JSON.parse(fileString);
 const parseOpenApiYmlSpec = (fileString: string) => load(fileString);
 
 export type ParseOpenApiSpecResult =
-  | { ok: true; result: OpenAPIV3.Document }
+  | { ok: true; result: OpenAPI.Document }
   | { ok: false };
 
 export const parseOpenApiSpec = (
@@ -21,8 +18,8 @@ export const parseOpenApiSpec = (
         ? parseOpenApiJSONSpec(fileString)
         : parseOpenApiYmlSpec(fileString);
 
-    const valid = validateOpenApiV3Document(parsed);
-    return { ok: true, result: valid };
+    const valid = validateOpenApiDocument(parsed);
+    return { ok: true, result: valid.document };
   } catch (err) {
     return { ok: false };
   }

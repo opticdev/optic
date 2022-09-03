@@ -1,10 +1,7 @@
-import { OpenApiKind, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
+import { OpenApiKind, OpenAPI, Result } from '@useoptic/openapi-utilities';
 import { createOperation, createSpecification } from './data-constructors';
 import { EndpointNode, NodeDetail } from './rule-runner-types';
-import {
-  createRuleContextWithOperation,
-  isExempted,
-} from './utils';
+import { createRuleContextWithOperation, isExempted } from './utils';
 
 import { Rule, Ruleset, OperationRule } from '../rules';
 import { createOperationAssertions, AssertionResult } from './assertions';
@@ -74,8 +71,8 @@ export const runOperationRules = ({
   operationNode: EndpointNode;
   rules: (Ruleset | Rule)[];
   customRuleContext: any;
-  beforeApiSpec: OpenAPIV3.Document;
-  afterApiSpec: OpenAPIV3.Document;
+  beforeApiSpec: OpenAPI.Document;
+  afterApiSpec: OpenAPI.Document;
 }): Result[] => {
   const operationRules = getOperationRules(rules);
   const beforeSpecification = createSpecification(

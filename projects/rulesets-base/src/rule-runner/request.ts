@@ -1,4 +1,4 @@
-import { OpenApiKind, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
+import { OpenApiKind, OpenAPI, Result } from '@useoptic/openapi-utilities';
 
 import {
   createOperation,
@@ -79,8 +79,8 @@ export const runRequestRules = ({
   requestNode: RequestNode;
   rules: (Ruleset | Rule)[];
   customRuleContext: any;
-  beforeApiSpec: OpenAPIV3.Document;
-  afterApiSpec: OpenAPIV3.Document;
+  beforeApiSpec: OpenAPI.Document;
+  afterApiSpec: OpenAPI.Document;
 }) => {
   const results: Result[] = [];
   const requestRules = getRequestRules(rules);

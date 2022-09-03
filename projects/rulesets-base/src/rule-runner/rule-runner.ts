@@ -1,11 +1,11 @@
 import {
   IFact,
   IChange,
-  OpenAPIV3,
   Result,
   OperationLocation,
   ILocation,
   OpenApiKind,
+  OpenAPI,
 } from '@useoptic/openapi-utilities';
 import {
   ISpectralDiagnostic,
@@ -40,7 +40,7 @@ export class RuleRunner {
   }: {
     ruleset: SpectralRules;
     nextFacts: IFact[];
-    nextJsonLike: OpenAPIV3.Document;
+    nextJsonLike: OpenAPI.Document;
   }): Promise<Result[]> {
     if ((nextJsonLike as any)['x-optic-ci-empty-spec'] === true) {
       return [];
@@ -102,8 +102,8 @@ export class RuleRunner {
     nextFacts: IFact[];
     currentFacts: IFact[];
     changelog: IChange[];
-    nextJsonLike: OpenAPIV3.Document;
-    currentJsonLike: OpenAPIV3.Document;
+    nextJsonLike: OpenAPI.Document;
+    currentJsonLike: OpenAPI.Document;
   }): Result[] {
     // Groups the flat list of beforefacts, afterfacts and changes by location (e.g. operation, query parameter, response, response property, etc).
     // A node can contain a before fact, after fact and or change.

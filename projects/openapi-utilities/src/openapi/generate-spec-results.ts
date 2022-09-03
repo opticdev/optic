@@ -1,4 +1,4 @@
-import { OpenAPIV3 } from 'openapi-types';
+import { OpenAPI, OpenAPIV2, OpenAPIV3, OpenAPIV3_1 } from 'openapi-types';
 import { factsToChangelog } from './sdk/facts-to-changelog';
 import { IChange, ChangeType, IFact } from './sdk/types';
 import { OpenAPI3Traverser } from './openapi3/openapi-3-traverser';
@@ -9,15 +9,26 @@ import {
   SpectralInput,
 } from './types';
 import { sourcemapReader } from './sourcemap-reader';
+import { checkOpenAPIVersion } from './openapi-versions';
+import { OpenAPI2Traverser } from './openapi2/openapi-2-traverser';
 
 const packageJson = require('../../package.json');
 
-const traverseSpec = (jsonSpec: OpenAPIV3.Document): IFact[] => {
-  const currentTraverser = new OpenAPI3Traverser();
+const traverseSpec = (jsonSpec: OpenAPI.Document): IFact[] => {
 
-  currentTraverser.traverse(jsonSpec);
+  const version = checkOpenAPIVersion(jsonSpec)
 
-  return [...currentTraverser.facts()];
+  switch (version) {
+    case '3.0.x':
+    case '3.1.x':
+      const traverser = new OpenAPI3Traverser();
+      traverser.traverse(jsonSpec as OpenAPIV3.Document);
+      return [...traverser.facts()];
+    case '2.0.x':
+      const currentTraverser = new OpenAPI2Traverser();
+      currentTraverser.traverse(jsonSpec as OpenAPIV2.Document);
+      return [...currentTraverser.facts()];
+  }
 };
 
 export const generateSpecResults = async (

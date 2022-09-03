@@ -1,6 +1,6 @@
-import { OpenAPIV3, IFact, IChange } from '@useoptic/openapi-utilities';
+import { OpenAPI, IFact, IChange } from '@useoptic/openapi-utilities';
 
-export const beforeOpenApiJson: OpenAPIV3.Document = {
+export const beforeOpenApiJson: OpenAPI.Document = {
   openapi: '3.0.1',
   info: {
     title: 'Swagger Petstore',
@@ -476,9 +476,9 @@ export const beforeOpenApiJson: OpenAPIV3.Document = {
       },
     },
   },
-} as OpenAPIV3.Document;
+} as OpenAPI.Document;
 
-export const afterOpenApiJson: OpenAPIV3.Document = {
+export const afterOpenApiJson: OpenAPI.Document = {
   openapi: '3.0.1',
   info: {
     title: 'Swagger Petstore Updated',
@@ -1310,7 +1310,7 @@ export const afterOpenApiJson: OpenAPIV3.Document = {
       },
     },
   },
-} as OpenAPIV3.Document;
+} as OpenAPI.Document;
 
 export const before = [
   {

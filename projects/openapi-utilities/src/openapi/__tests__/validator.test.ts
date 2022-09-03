@@ -1,26 +1,26 @@
 import fs from 'fs-extra';
 
 import { defaultEmptySpec } from '../constants';
-import { validateOpenApiV3Document } from '../validator';
+import { validateOpenApiDocument } from '../validator';
 
 test('valid open api document should not raise errors', async () => {
-  validateOpenApiV3Document(defaultEmptySpec);
-  validateOpenApiV3Document(
+  validateOpenApiDocument(defaultEmptySpec);
+  validateOpenApiDocument(
     (await fs.readJson('./inputs/openapi3/petstore0.json.flattened.json'))
       .jsonLike
   );
 });
 
 test('valid open 3.1 api document should not raise errors', async () => {
-  validateOpenApiV3Document(defaultEmptySpec);
-  validateOpenApiV3Document(
+  validateOpenApiDocument(defaultEmptySpec);
+  validateOpenApiDocument(
     await fs.readJson('./inputs/openapi3/todo-api-3_1.json')
   );
 });
 
 test('open api doc with no path should throw an error', () => {
   expect(() => {
-    validateOpenApiV3Document({
+    validateOpenApiDocument({
       openapi: '3.1.3',
       info: { version: '0.0.0', title: 'Empty' },
     });
@@ -28,14 +28,14 @@ test('open api doc with no path should throw an error', () => {
 });
 
 test('open api doc with extra custom parameters', () => {
-  validateOpenApiV3Document({
+  validateOpenApiDocument({
     ...defaultEmptySpec,
     'x-extra_property': {
       abc: 'asd',
     },
   });
 
-  validateOpenApiV3Document({
+  validateOpenApiDocument({
     ...defaultEmptySpec,
     paths: {
       '/user/login': {
@@ -146,6 +146,6 @@ test('processValidatorErrors', () => {
     },
   };
   expect(() => {
-    validateOpenApiV3Document(json);
+    validateOpenApiDocument(json);
   }).toThrowErrorMatchingSnapshot();
 });

@@ -2,7 +2,7 @@ import { Command, Option } from 'commander';
 
 import {
   defaultEmptySpec,
-  validateOpenApiV3Document,
+  validateOpenApiDocument,
   generateSpecResults,
   RuleRunner,
   SpectralInput,
@@ -197,8 +197,8 @@ const compareSpecs = async ({
             loadSpecFile(comparison.toFileName),
           ]);
 
-          validateOpenApiV3Document(from.jsonLike);
-          validateOpenApiV3Document(to.jsonLike);
+          validateOpenApiDocument(from.jsonLike);
+          validateOpenApiDocument(to.jsonLike);
 
           const { results, changes } = await generateSpecResults(
             checkService,

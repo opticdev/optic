@@ -6,7 +6,6 @@ import { dereference } from './insourced-dereference';
 import path from 'path';
 
 import fetch from 'node-fetch';
-import { OpenAPI, OpenAPIV3 } from 'openapi-types';
 import isUrl from 'is-url';
 
 import { JsonSchemaSourcemap } from './sourcemap';
@@ -19,7 +18,7 @@ export {
 } from '@apidevtools/json-schema-ref-parser';
 
 export type ParseOpenAPIResult = {
-  jsonLike: OpenAPIV3.Document;
+  jsonLike: any;
   sourcemap: JsonSchemaSourcemap;
 };
 

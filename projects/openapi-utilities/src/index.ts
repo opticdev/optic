@@ -1,7 +1,7 @@
 import { OpenAPI3Traverser } from './openapi/openapi3/openapi-3-traverser';
 import { checkOpenAPIVersion } from './openapi/openapi-versions';
-import { validateOpenApiV3Document } from './openapi/validator';
-import { OpenAPIV3 } from 'openapi-types';
+import { validateOpenApiDocument } from './openapi/validator';
+import { OpenAPIV3, OpenAPIV2, OpenAPI } from 'openapi-types';
 import { factsToChangelog } from './openapi/sdk/facts-to-changelog';
 import {
   ConceptualLocation,
@@ -82,7 +82,7 @@ export {
 
 export {
   sourcemapReader,
-  validateOpenApiV3Document,
+  validateOpenApiDocument,
   OpenApiFact,
   OpenAPI3Traverser,
   factsToChangelog,
@@ -92,6 +92,8 @@ export {
   OpenApiBodyFact,
   OpenApiBodyExampleFact,
   OpenAPIV3,
+  OpenAPIV2,
+  OpenAPI,
   OpenApiKind,
   OpenApiParameterKind,
   OpenApiOperationFact,
