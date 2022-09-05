@@ -5,6 +5,11 @@ test('detects a 3.1.x openapi', async () => {
   expect(checkOpenAPIVersion({ openapi: '3.1.1' })).toBe('3.1.x');
 });
 
+test('detects a 2.0.x openapi', async () => {
+  expect(checkOpenAPIVersion({ swagger: '2.0' })).toBe('2.0.x');
+  expect(checkOpenAPIVersion({ swagger: '2.0.0' })).toBe('2.0.x');
+});
+
 test('detects a 3.0.x openapi', async () => {
   expect(checkOpenAPIVersion({ openapi: '3.0.3' })).toBe('3.0.x');
   expect(checkOpenAPIVersion({ openapi: '3.0.2' })).toBe('3.0.x');
