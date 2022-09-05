@@ -1,7 +1,6 @@
 import { Command } from 'commander';
 import brotli from 'brotli';
 import open from 'open';
-
 import {
   generateSpecResults,
   logComparison,

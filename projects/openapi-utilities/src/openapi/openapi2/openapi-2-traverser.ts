@@ -665,7 +665,7 @@ export class OpenAPI2Traverser implements Traverse<OpenAPIV2.Document> {
   getSpecificationFact(
     specification: OpenAPIV2.Document
   ): OpenApiSpecificationFact {
-    const { paths, schemes, security, ...specificationFact } = specification;
+    const { paths, schemes, definitions, securityDefinitions, security, ...specificationFact } = specification;
     return { ...specificationFact, openapi: this.input?.swagger || '2.0' };
   }
 
