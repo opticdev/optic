@@ -135,196 +135,23 @@ export class ProxyInteractions {
     // and transparently forward the rest
     // @ts-ignore
     let capturingApp = capturingProxy.app as ConnectServer;
-    const transparentProxy = httpolyglot.createServer(
-      { ALPNProtocols: ['http/1.1'] },
-      capturingApp
-    );
-
-    const tunnelAbort = new AbortController(); // control aborting of tunnels separately
-    // small hack to prevent warnings, because the AbortController polyfill doesn't setup EventEmitter according to spec
     // @ts-ignore
-    if (tunnelAbort.signal.eventEmitter) {
-      // @ts-ignore
-      (tunnelAbort.signal.eventEmitter as EventEmitter).setMaxListeners(
-        Infinity
-      );
-    }
+    let capturingServer = capturingProxy.server as net.Server;
 
-    let [targetHostname, targetPort] = targetHost.split(':');
-
-    transparentProxy.on(
-      'connect',
-      (
-        req: http.IncomingMessage | http2.Http2ServerRequest,
-        resOrSocket: net.Socket | http2.Http2ServerResponse,
-        reqHead: Buffer
-      ) => {
-        if (resOrSocket instanceof net.Socket) {
-          let clientSocket = resOrSocket;
-          // clients disconnecting causes errors, but there's not much to do for us
-          // than the default behaviour of stopping the tunnel
-          clientSocket.once('error', (err) => {
-            if (isTransitiveSocketError(err)) {
-              // connections get broken sometimes, nothing special
-              clientSocket.destroy();
-              log.info(
-                'Handled error on client socket by destroying it: %s',
-                err
-              );
-              return;
-            }
-
-            transparentProxy.emit('error', err); // forward any errors we can't handle
-          });
-          destroySocketOnAbort(clientSocket, tunnelAbort.signal);
-
-          if (!req.url) {
-            // TODO: see if we could go just of the `host` header
-            clientSocket.write(
-              `HTTP/${req.httpVersion} 400 Bad Request\r\n\r\n`,
-              'utf-8'
-            );
-            clientSocket.end();
-            return;
-          }
-
-          const { port, host, hostname } = new URL(`http://${req.url}`);
-          if (
-            host !== targetHost &&
-            !(
-              targetHostname === hostname &&
-              (port === targetPort ||
-                (!targetPort && port === '80') ||
-                (!targetPort && port === '443'))
-            )
-          ) {
-            // transparently tunnel all non-target traffic directly through TCP sockets
-            log.info('transparently tunneling connection to %s', host);
-            const serverSocket = net.connect(
-              (port && parseInt(port)) || 80,
-              hostname,
-              () => {
-                log.info('tunnel to %s established', host);
-                clientSocket.once('error', (err) => {
-                  serverSocket.destroy();
-                });
-
-                clientSocket.write(
-                  `HTTP/${req.httpVersion} 200 Connection Establishe d\r\nProxy-agent: Optic Transparent proxy\r\n\r\n`
-                );
-                serverSocket.write(reqHead);
-                clientSocket.pipe(serverSocket);
-                serverSocket.pipe(clientSocket);
-              }
-            );
-
-            serverSocket.once('error', (err) => {
-              let errorCode = isCodedError(err) ? err.code : null;
-
-              if (
-                (errorCode === 'ENOTFOUND' || errorCode === 'ECONNREFUSED') &&
-                serverSocket.connecting
-              ) {
-                clientSocket.write(
-                  `HTTP/${req.httpVersion} 502 Bad Gateway\r\nProxy-agent: Optic Transparent proxy\r\n\r\n`
-                );
-                log.notice(
-                  'tunnel to %s could not be established: %s',
-                  host,
-                  errorCode
-                );
-                return;
-              } else if (errorCode === 'ETIMEDOUT' && serverSocket.connecting) {
-                clientSocket.write(
-                  `HTTP/${req.httpVersion} 504 Gateway Timeout\r\nProxy-agent: Optic Transparent proxy\r\n\r\n`
-                );
-                log.notice(
-                  'tunnel to %s could not be established: %s',
-                  host,
-                  errorCode
-                );
-                return;
-              } else if (isTransitiveSocketError(err)) {
-                // connections get broken sometimes, nothing special
-                clientSocket.destroy();
-                log.info('tunnel to %s interrupted: %s', host, errorCode);
-                return;
-              }
-
-              transparentProxy.emit('error', err); // forward error to transparentProxy server, give downstream a chance to handle it
-            });
-            destroySocketOnAbort(serverSocket, tunnelAbort.signal);
-          } else {
-            log.notice('capturing connection to target (%s)', host);
-            // tunnel target traffic to the capturing proxy
-            // @ts-ignore
-            let capturingServer = capturingProxy.server as net.Server;
-            clientSocket.write(
-              `HTTP/${req.httpVersion} 200 Connection Established\r\nProxy-agent: Optic Transparent proxy\r\n\r\n`
-            );
-            capturingServer.emit('connection', clientSocket);
-          }
-        } else {
-          throw new Error('HTTP/2 CONNECT unimplemented');
-        }
-      }
+    const transparentProxy = new TransparentProxy(
+      targetHost,
+      capturingApp,
+      capturingServer
     );
 
-    await new Promise<void>((resolve, reject) => {
-      transparentProxy.on('listening', onListening);
-      transparentProxy.on('error', onListenError);
+    await transparentProxy.start(transparentPort);
 
-      function onListening() {
-        cleanup();
-        resolve();
-      }
-
-      function onListenError(err: Error) {
-        let errorCode = isCodedError(err) && err.code;
-        if (errorCode && errorCode === 'EADDRINUSE') {
-          // port got taken since we last found it as un-used, try again
-          console.log('attempting another port for transparentProxy');
-          portfinder
-            .getPortPromise({
-              port: 8000,
-              stopPort: 8999,
-            })
-            .then((availablePort) => {
-              transparentPort = availablePort;
-              transparentProxy.close();
-              transparentProxy.listen(transparentPort);
-            });
-        } else {
-          cleanup();
-          reject(err);
-        }
-      }
-
-      function cleanup() {
-        transparentProxy.removeListener('listening', onListening);
-        transparentProxy.removeListener('error', onListenError);
-      }
-
-      transparentProxy.listen(transparentPort);
-    });
-
-    let transparentProxyUrl = `http://localhost:${transparentPort}`;
-    console.log('Transparent proxy running at', transparentProxyUrl);
+    console.log('Transparent proxy running at', transparentProxy.url);
 
     const stream = (async function* () {
       yield* interactions.iterator;
-      await capturingProxy.stop(); // clean up
-      await new Promise<void>((resolve, reject) => {
-        transparentProxy.close((err) => {
-          // stops accepting new connections, waits for tunnels to finish
-          if (err) {
-            reject(err);
-          } else {
-            resolve();
-          }
-        });
-        tunnelAbort.abort(); // abort all open tunnels so tunneling proxy can close
-      });
+      await capturingProxy.stop();
+      await transparentProxy.stop();
     })();
 
     return [stream, capturingProxy.url];
@@ -438,6 +265,210 @@ function generateSerialNumber(): string {
   // hexadecimal serial number of at most 20 octets, and preferably positive.
   // starting with A should get a positive number
   return 'A' + randomBytes(18).toString('hex').toUpperCase();
+}
+
+class TransparentProxy {
+  server: httpolyglot.Server;
+  port?: number;
+  url?: string;
+  tunnelAbort: AbortController;
+
+  constructor(
+    targetHost: string,
+    captureRequest: http.RequestListener,
+    capturingServer: net.Server
+  ) {
+    this.server = httpolyglot.createServer(
+      { ALPNProtocols: ['http/1.1'] },
+      captureRequest
+    );
+
+    const tunnelAbort = (this.tunnelAbort = new AbortController()); // control aborting of tunnels separately
+    // small hack to prevent warnings, because the AbortController polyfill doesn't setup EventEmitter according to spec
+    // @ts-ignore
+    if (tunnelAbort.signal.eventEmitter) {
+      // @ts-ignore
+      (tunnelAbort.signal.eventEmitter as EventEmitter).setMaxListeners(
+        Infinity
+      );
+    }
+
+    let [targetHostname, targetPort] = targetHost.split(':');
+
+    this.server.on(
+      'connect',
+      (
+        req: http.IncomingMessage | http2.Http2ServerRequest,
+        resOrSocket: net.Socket | http2.Http2ServerResponse,
+        reqHead: Buffer
+      ) => {
+        if (resOrSocket instanceof net.Socket) {
+          let clientSocket = resOrSocket;
+          // clients disconnecting causes errors, but there's not much to do for us
+          // than the default behaviour of stopping the tunnel
+          clientSocket.once('error', (err) => {
+            if (isTransitiveSocketError(err)) {
+              // connections get broken sometimes, nothing special
+              clientSocket.destroy();
+              log.info(
+                'Handled error on client socket by destroying it: %s',
+                err
+              );
+              return;
+            }
+
+            this.server.emit('error', err); // forward any errors we can't handle
+          });
+          destroySocketOnAbort(clientSocket, tunnelAbort.signal);
+
+          if (!req.url) {
+            // TODO: see if we could go just of the `host` header
+            clientSocket.write(
+              `HTTP/${req.httpVersion} 400 Bad Request\r\n\r\n`,
+              'utf-8'
+            );
+            clientSocket.end();
+            return;
+          }
+
+          const { port, host, hostname } = new URL(`http://${req.url}`);
+          if (
+            host !== targetHost &&
+            !(
+              targetHostname === hostname &&
+              (port === targetPort ||
+                (!targetPort && port === '80') ||
+                (!targetPort && port === '443'))
+            )
+          ) {
+            // transparently tunnel all non-target traffic directly through TCP sockets
+            log.info('transparently tunneling connection to %s', host);
+            const serverSocket = net.connect(
+              (port && parseInt(port)) || 80,
+              hostname,
+              () => {
+                log.info('tunnel to %s established', host);
+                clientSocket.once('error', (err) => {
+                  serverSocket.destroy();
+                });
+
+                clientSocket.write(
+                  `HTTP/${req.httpVersion} 200 Connection Establishe d\r\nProxy-agent: Optic Transparent proxy\r\n\r\n`
+                );
+                serverSocket.write(reqHead);
+                clientSocket.pipe(serverSocket);
+                serverSocket.pipe(clientSocket);
+              }
+            );
+
+            serverSocket.once('error', (err) => {
+              let errorCode = isCodedError(err) ? err.code : null;
+
+              if (
+                (errorCode === 'ENOTFOUND' || errorCode === 'ECONNREFUSED') &&
+                serverSocket.connecting
+              ) {
+                clientSocket.write(
+                  `HTTP/${req.httpVersion} 502 Bad Gateway\r\nProxy-agent: Optic Transparent proxy\r\n\r\n`
+                );
+                log.notice(
+                  'tunnel to %s could not be established: %s',
+                  host,
+                  errorCode
+                );
+                return;
+              } else if (errorCode === 'ETIMEDOUT' && serverSocket.connecting) {
+                clientSocket.write(
+                  `HTTP/${req.httpVersion} 504 Gateway Timeout\r\nProxy-agent: Optic Transparent proxy\r\n\r\n`
+                );
+                log.notice(
+                  'tunnel to %s could not be established: %s',
+                  host,
+                  errorCode
+                );
+                return;
+              } else if (isTransitiveSocketError(err)) {
+                // connections get broken sometimes, nothing special
+                clientSocket.destroy();
+                log.info('tunnel to %s interrupted: %s', host, errorCode);
+                return;
+              }
+
+              this.server.emit('error', err); // forward error to transparentProxy server, give downstream a chance to handle it
+            });
+            destroySocketOnAbort(serverSocket, tunnelAbort.signal);
+          } else {
+            log.notice('capturing connection to target (%s)', host);
+            // tunnel target traffic to the capturing proxy
+            // @ts-ignore
+            clientSocket.write(
+              `HTTP/${req.httpVersion} 200 Connection Established\r\nProxy-agent: Optic Transparent proxy\r\n\r\n`
+            );
+            capturingServer.emit('connection', clientSocket);
+          }
+        } else {
+          throw new Error('HTTP/2 CONNECT unimplemented');
+        }
+      }
+    );
+  }
+
+  start(port: number): Promise<void> {
+    const server = this.server;
+
+    return new Promise<void>((resolve, reject) => {
+      const onListening = () => {
+        cleanup();
+        this.port = port;
+        this.url = `http://localhost:${port}`;
+        resolve();
+      };
+
+      const onListenError = (err: Error) => {
+        let errorCode = isCodedError(err) && err.code;
+        if (errorCode && errorCode === 'EADDRINUSE') {
+          // port got taken since we last found it as un-used, try again
+          console.log('attempting another port for transparentProxy');
+          portfinder
+            .getPortPromise({
+              port: 8000,
+              stopPort: 8999,
+            })
+            .then((availablePort) => {
+              port = availablePort;
+              server.close();
+              server.listen(port);
+            });
+        } else {
+          cleanup();
+          reject(err);
+        }
+      };
+
+      const cleanup = () => {
+        this.server.removeListener('listening', onListening);
+        this.server.removeListener('error', onListenError);
+      };
+
+      server.on('listening', onListening);
+      server.on('error', onListenError);
+      server.listen(port);
+    });
+  }
+
+  stop(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.server.close((err) => {
+        // stops accepting new connections, waits for tunnels to finish
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+      this.tunnelAbort.abort(); // abort all open tunnels so tunneling proxy can close
+    });
+  }
 }
 
 function destroySocketOnAbort(socket: net.Socket, abort: AbortSignal) {

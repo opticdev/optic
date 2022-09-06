@@ -20,7 +20,6 @@ import {
   ProxyCertAuthority,
   ProxyInteractions,
 } from '../captures';
-import { OPTIC_COMMENT_SURVEY_LINK } from '@useoptic/openapi-utilities';
 
 export async function captureCommand(): Promise<Command> {
   const command = new Command('capture');
