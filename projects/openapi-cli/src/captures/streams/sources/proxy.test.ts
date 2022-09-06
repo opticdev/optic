@@ -23,7 +23,7 @@ describe('ProxyInteractions', () => {
 
   it('captures requests and responses, proxied to a target server', async () => {
     const abortController = new AbortController();
-    const [interactions, , proxyUrl] = await ProxyInteractions.create(
+    const [interactions, proxyUrl] = await ProxyInteractions.create(
       target.url,
       abortController.signal
     );
@@ -89,16 +89,16 @@ describe('ProxyInteractions with tls', () => {
   it('will generate domain certificates given a ProxyCertAuthority and capture requests', async () => {
     const proxyCa = await ProxyCertAuthority.generate();
     const abortController = new AbortController();
-    const [interactions, proxyUrl] = await ProxyInteractions.create(
-      target.url,
-      abortController.signal,
-      { ca: proxyCa, targetCA: [targetCA] }
-    );
+    const [interactions, proxyUrl, captureProxyUrl] =
+      await ProxyInteractions.create(target.url, abortController.signal, {
+        ca: proxyCa,
+        targetCA: [targetCA],
+      });
 
     let httpsAgent = new https.Agent({
       ca: proxyCa.cert, // except the CA of the proxy
     });
-    let requestUrl = UrlJoin(proxyUrl, '/some-path');
+    let requestUrl = UrlJoin(captureProxyUrl, '/some-path');
 
     const response = await fetch(requestUrl, {
       agent: httpsAgent,
@@ -128,12 +128,15 @@ describe('ProxyInteractions with tls', () => {
     // setup proxy
     const ca = await ProxyCertAuthority.generate();
     const abortController = new AbortController();
-    const [interactions, proxyUrl, transparentUrl] =
-      await ProxyInteractions.create(target.url, abortController.signal, {
+    const [interactions, proxyUrl] = await ProxyInteractions.create(
+      target.url,
+      abortController.signal,
+      {
         ca,
         targetCA: [targetCA],
-      });
-    let transparentPort = parseInt(new URL(transparentUrl).port);
+      }
+    );
+    let transparentPort = parseInt(new URL(proxyUrl).port);
 
     // make call using http CONNECT
     const tunnelAgent = httpsOverHttp({

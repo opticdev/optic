@@ -204,7 +204,7 @@ export class ProxyInteractions {
       await transparentProxy.stop();
     })();
 
-    return [stream, capturingProxy.url, transparentProxy.url!];
+    return [stream, transparentProxy.url!, capturingProxy.url];
   }
 }
 
