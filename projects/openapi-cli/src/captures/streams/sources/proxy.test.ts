@@ -23,7 +23,7 @@ describe('ProxyInteractions', () => {
 
   it('captures requests and responses, proxied to a target server', async () => {
     const abortController = new AbortController();
-    const [interactions, proxyUrl] = await ProxyInteractions.create(
+    const [interactions, , proxyUrl] = await ProxyInteractions.create(
       target.url,
       abortController.signal
     );
@@ -167,6 +167,8 @@ function matchProxyInteraction() {
         startTime: expect.any(Number),
         startTimestamp: expect.any(Number),
         bodyReceivedTimestamp: expect.any(Number),
+        headersSentTimestamp: expect.any(Number),
+        responseSentTimestamp: expect.any(Number),
       },
     },
     response: {

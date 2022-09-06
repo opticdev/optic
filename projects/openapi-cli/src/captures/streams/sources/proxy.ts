@@ -90,8 +90,7 @@ export class ProxyInteractions {
         return result;
       })
       .thenPassThrough({
-        beforeRequest: onRequest,
-        beforeResponse: onResponse,
+        beforeRequest: onTargetedRequest,
         forwarding: {
           targetHost,
           updateHostHeader: true,
@@ -111,7 +110,7 @@ export class ProxyInteractions {
     const requestsById = new Map<string, ProxySource.Request>();
     // TODO: figure out if we can use OngoingRequest instead of captured, at which body
     // hasn't been parsed yet and is available as stream
-    function onRequest(capturedRequest) {
+    function onTargetedRequest(capturedRequest: CompletedRequest) {
       const {
         matchedRuleId,
         remoteIpAddress,
@@ -133,7 +132,7 @@ export class ProxyInteractions {
 
     // TODO: figure out if we can use OngoingRequest instead of captured, at which body
     // hasn't been parsed yet and is available as stream
-    function onResponse(capturedResponse) {
+    function onResponse(capturedResponse: CompletedResponse) {
       const { id } = capturedResponse;
       const request = requestsById.get(id);
       if (!request) return;
@@ -152,6 +151,8 @@ export class ProxyInteractions {
 
       requestsById.delete(id);
     }
+
+    await capturingProxy.on('response', onResponse);
 
     abort.addEventListener('abort', onAbort);
 
@@ -477,7 +478,7 @@ class TransparentProxy {
         let errorCode = isCodedError(err) && err.code;
         if (errorCode && errorCode === 'EADDRINUSE') {
           // port got taken since we last found it as un-used, try again
-          console.log('attempting another port for transparentProxy');
+          log.notice('attempting another port for transparentProxy');
           portfinder
             .getPortPromise({
               port: 8000,

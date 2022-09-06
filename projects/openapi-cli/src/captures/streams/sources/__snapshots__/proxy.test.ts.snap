@@ -30,6 +30,8 @@ Object {
     "rawHeaders": Any<Array>,
     "timingEvents": Object {
       "bodyReceivedTimestamp": Any<Number>,
+      "headersSentTimestamp": Any<Number>,
+      "responseSentTimestamp": Any<Number>,
       "startTime": Any<Number>,
       "startTimestamp": Any<Number>,
     },
