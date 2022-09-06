@@ -35,7 +35,7 @@ export class ProxyInteractions {
       ca?: ProxyCertAuthority;
       targetCA?: Array<{ cert: Buffer | string }>;
     } = {}
-  ): Promise<[ProxyInteractions, string]> {
+  ): Promise<[ProxyInteractions, string, string]> {
     if (targetHost.includes('/')) {
       // accept urls to be passed in rather than pure hosts
       let { host } = new URL(targetHost);
@@ -96,6 +96,7 @@ export class ProxyInteractions {
           targetHost,
           updateHostHeader: true,
         },
+        trustAdditionalCAs: options.targetCA || [],
       });
 
     await capturingProxy.forUnmatchedRequest().thenPassThrough({
@@ -202,51 +203,8 @@ export class ProxyInteractions {
       await transparentProxy.stop();
     })();
 
-    return [stream, transparentProxy.url!];
+    return [stream, capturingProxy.url, transparentProxy.url!];
   }
-}
-
-// adapted from mockttp so we can define multiple hosts (target + proxy itself) to forward to target
-// https://github.com/httptoolkit/mockttp/blob/dace5682625c86666a6a570dbefbb4e96c2fc21e/src/rules/matchers.ts#L92
-function createHostsMatcher(hosts: string[]) {
-  // Validate the hostname. Goal here isn't to catch every bad hostname, but allow
-  // every good hostname, and provide friendly errors for obviously bad hostnames.
-  for (let host of hosts) {
-    if (host.includes('/')) {
-      throw new Error("Invalid hostname: hostnames can't contain slashes");
-    } else if (host.includes('?')) {
-      throw new Error(
-        "Invalid hostname: hostnames can't contain query strings"
-      );
-    } else if (!host.match(/^([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9\-]+(:\d+)?$/)) {
-      // Port optional
-      throw new Error('Hostname is invalid');
-    }
-  }
-
-  return (request: CompletedRequest) => {
-    const parsedUrl = new URL(request.url);
-
-    let result: boolean = false;
-    for (let host of hosts) {
-      if (
-        (host.endsWith(':80') && request.protocol === 'http') ||
-        (host.endsWith(':443') && request.protocol === 'https')
-      ) {
-        // On default ports, our URL normalization erases an explicit port, so that a
-        // :80 here will never match anything. This handles that case: if you send HTTP
-        // traffic on port 80 then the port is blank, but it should match for 'hostname:80'.
-        result =
-          result ||
-          (parsedUrl.hostname === host.split(':')[0] && parsedUrl.port === '');
-      } else {
-        result = result || parsedUrl.host === host;
-      }
-      if (result) break;
-    }
-
-    return result;
-  };
 }
 
 export declare namespace ProxySource {
