@@ -19,6 +19,7 @@ import * as httpolyglot from '@httptoolkit/httpolyglot';
 import { Server as ConnectServer } from 'connect';
 import portfinder from 'portfinder';
 import globalLog from 'log';
+import invariant from 'ts-invariant';
 type Logger = typeof globalLog;
 
 export const log: Logger = globalLog.get('captures:streams:sources:proxy'); // export so it can be enabled in testing
@@ -35,6 +36,17 @@ export class ProxyInteractions {
       targetCA?: Array<{ cert: Buffer | string }>;
     } = {}
   ): Promise<[ProxyInteractions, string]> {
+    if (targetHost.includes('/')) {
+      // accept urls to be passed in rather than pure hosts
+      let { host } = new URL(targetHost);
+      targetHost = host;
+    }
+
+    invariant(
+      targetHost.match(/^([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9\-]+(:\d+)?$/),
+      'targetHost must be a valid host (hostname:port)'
+    ); // port optional
+
     const capturingProxy = mockttp.getLocal({
       cors: false,
       debug: false,
