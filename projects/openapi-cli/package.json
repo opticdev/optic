@@ -37,6 +37,7 @@
     "@types/slice-ansi": "^4",
     "@types/stream-chain": "^2",
     "@types/stream-json": "^1",
+    "@types/tunnel": "^0",
     "@types/update-notifier": "^6",
     "@types/whatwg-mimetype": "^2.1.1",
     "babel-jest": "^27.5.1",
@@ -46,6 +47,7 @@
     "node-fetch": "^2.6.7",
     "prettier": "^2.4.1",
     "ts-node": "^10.8.1",
+    "tunnel": "^0.0.6",
     "typescript": "^4.7.3",
     "url-join": "^4.0.1"
   },

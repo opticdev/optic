@@ -3233,6 +3233,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/tunnel@npm:^0":
+  version: 0.0.3
+  resolution: "@types/tunnel@npm:0.0.3"
+  dependencies:
+    "@types/node": "*"
+  checksum: 53e23a1f9fb14a491c00425b2a4fc443817564d77be5e1b95fcbeb6d009551b62ea82ffc3e5ca0c6b9f6b186824ca6ec46e7450c1bcd6674a46d1325f0116e24
+  languageName: node
+  linkType: hard
+
 "@types/update-notifier@npm:^6":
   version: 6.0.1
   resolution: "@types/update-notifier@npm:6.0.1"
@@ -3353,6 +3362,7 @@ __metadata:
     "@types/slice-ansi": ^4
     "@types/stream-chain": ^2
     "@types/stream-json": ^1
+    "@types/tunnel": ^0
     "@types/update-notifier": ^6
     "@types/whatwg-mimetype": ^2.1.1
     "@useoptic/json-pointer-helpers": "workspace:*"
@@ -3391,6 +3401,7 @@ __metadata:
     ts-invariant: ^0.9.4
     ts-node: ^10.8.1
     ts-results: ^3.3.0
+    tunnel: ^0.0.6
     typescript: ^4.7.3
     update-notifier: ^6.0.2
     url-join: ^4.0.1
@@ -10127,6 +10138,13 @@ __metadata:
   version: 2.3.1
   resolution: "tslib@npm:2.3.1"
   checksum: de17a98d4614481f7fcb5cd53ffc1aaf8654313be0291e1bfaee4b4bb31a20494b7d218ff2e15017883e8ea9626599b3b0e0229c18383ba9dce89da2adf15cb9
+  languageName: node
+  linkType: hard
+
+"tunnel@npm:^0.0.6":
+  version: 0.0.6
+  resolution: "tunnel@npm:0.0.6"
+  checksum: c362948df9ad34b649b5585e54ce2838fa583aa3037091aaed66793c65b423a264e5229f0d7e9a95513a795ac2bd4cb72cda7e89a74313f182c1e9ae0b0994fa
   languageName: node
   linkType: hard
 

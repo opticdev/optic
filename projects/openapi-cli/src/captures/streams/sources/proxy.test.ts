@@ -6,6 +6,7 @@ import { AbortController } from 'node-abort-controller'; // remove when Node v14
 import fetch from 'node-fetch';
 import https from 'https';
 import UrlJoin from 'url-join';
+import { httpsOverHttp } from 'tunnel';
 
 describe('ProxyInteractions', () => {
   let target: mockttp.Mockttp;
@@ -110,6 +111,50 @@ describe('ProxyInteractions with tls', () => {
     let capturedInteractions = await collect(interactions);
 
     expect(capturedInteractions).toHaveLength(1);
+  });
+
+  it('will transparently tunnel requests to non-target hosts through HTTP CONNECT', async () => {
+    // non-target server with a different CA (as it would out in the wild)
+    let nonTargetCA = await mockttp.generateCACertificate();
+    let nonTargetServer = mockttp.getLocal({
+      https: nonTargetCA,
+    });
+    await nonTargetServer
+      .forGet('/another-path')
+      .always()
+      .thenReply(200, 'Other server response');
+    await nonTargetServer.start();
+
+    // setup proxy
+    const ca = await ProxyCertAuthority.generate();
+    const abortController = new AbortController();
+    const [interactions, proxyUrl, transparentUrl] =
+      await ProxyInteractions.create(target.url, abortController.signal, {
+        ca,
+        targetCA: [targetCA],
+      });
+    let transparentPort = parseInt(new URL(transparentUrl).port);
+
+    // make call using http CONNECT
+    const tunnelAgent = httpsOverHttp({
+      proxy: {
+        host: 'localhost',
+        port: transparentPort,
+      },
+      ca: [Buffer.from(nonTargetCA.cert)],
+    });
+    const requestUrl = UrlJoin(nonTargetServer.url, '/another-path');
+    const response = await fetch(requestUrl, { agent: tunnelAgent });
+    expect(response.ok).toBe(true);
+    expect(await response.text()).toBe('Other server response');
+
+    // collections interactions
+    abortController.abort();
+    let capturedInteractions = await collect(interactions);
+    expect(capturedInteractions).toHaveLength(0);
+
+    // teardown
+    await nonTargetServer.stop();
   });
 });
 
