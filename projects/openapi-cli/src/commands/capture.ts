@@ -9,7 +9,7 @@ import * as AT from '../lib/async-tools';
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { trackCompletion } from '../segment';
 import { trackWarning } from '../sentry';
-import Conf from 'conf';
+import logNode from 'log-node';
 
 import { captureCertCommand, getCertStore } from './capture-cert';
 import {
@@ -43,10 +43,18 @@ export async function captureCommand(): Promise<Command> {
       '--no-tls',
       'disable TLS support for --proxy and prevent generation of new CA certificates'
     )
+    .option(
+      '-d, --debug',
+      `output debug information (on stderr). Use LOG_LEVEL env with 'debug', 'info' to increase verbosity`
+    )
     .option('-o <output-file>', 'file name for output')
     .addCommand(certCommand)
     .action(async (filePath?: string) => {
       const options = command.opts();
+
+      if (options.debug) {
+        logNode();
+      }
 
       let sourcesController = new AbortController();
       const sources: HarEntries[] = []; // this should be CapturedInteractions, but those aren't detailed enough yet to not lose information later
@@ -157,7 +165,7 @@ export async function captureCommand(): Promise<Command> {
       const renderingStats = renderCaptureProgress(
         feedback,
         observationsFork.fork(),
-        interactiveCapture
+        { interactiveCapture, debug: options.debug }
       );
       const trackingStats = trackStats(
         observationsFork.fork(),
@@ -251,16 +259,19 @@ export interface CaptureObservations
 async function renderCaptureProgress(
   feedback: Awaited<ReturnType<typeof createCommandFeedback>>,
   observations: CaptureObservations,
-  interactiveCapture: boolean
+  config: { interactiveCapture: boolean; debug: boolean }
 ) {
   const ora = (await import('ora')).default;
 
   let interactionCount = 0;
 
-  if (interactiveCapture) {
+  if (config.interactiveCapture) {
     feedback.instruction('Press [ Enter ] to finish capturing requests');
   }
-  let spinner = ora('0 requests captured');
+  let spinner = ora({
+    text: '0 requests captured',
+    isEnabled: !config.debug,
+  });
   spinner.start();
 
   for await (let observation of observations) {
