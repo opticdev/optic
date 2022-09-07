@@ -5,6 +5,7 @@ import {
   CompletedBody,
   TimingEvents,
 } from 'mockttp';
+// import { getCA, CAOptions } from 'mockttp/dist/util/tls';
 import { Subject } from '../../../lib/async-tools';
 import { AbortSignal, AbortController } from 'node-abort-controller'; // remove when Node v14 is out of LTS
 import { pki, md } from 'node-forge';
@@ -13,6 +14,7 @@ import { Readable } from 'stream';
 import EventEmitter from 'events';
 import http from 'http';
 import http2 from 'http2';
+import tls from 'tls';
 import net from 'net';
 import { URL } from 'url';
 import * as httpolyglot from '@httptoolkit/httpolyglot';
@@ -56,8 +58,6 @@ export class ProxyInteractions {
         key: options.ca.key.toString(),
       },
     });
-
-    await capturingProxy.forAnyRequest().forHost(targetHost).always();
 
     let forwardedHosts = [targetHost];
     await capturingProxy
@@ -108,8 +108,6 @@ export class ProxyInteractions {
     const interactions = new Subject<ProxySource.Interaction>();
 
     const requestsById = new Map<string, ProxySource.Request>();
-    // TODO: figure out if we can use OngoingRequest instead of captured, at which body
-    // hasn't been parsed yet and is available as stream
     function onTargetedRequest(capturedRequest: CompletedRequest) {
       const {
         matchedRuleId,
@@ -130,8 +128,6 @@ export class ProxyInteractions {
       requestsById.set(request.id, request);
     }
 
-    // TODO: figure out if we can use OngoingRequest instead of captured, at which body
-    // hasn't been parsed yet and is available as stream
     function onResponse(capturedResponse: CompletedResponse) {
       const { id } = capturedResponse;
       const request = requestsById.get(id);
@@ -180,11 +176,21 @@ export class ProxyInteractions {
     let capturingApp = capturingProxy.app as ConnectServer;
     // @ts-ignore
     let capturingServer = capturingProxy.server as net.Server;
+    // @ts-ignore
+    const tlsServer = capturingServer._tlsServer as tls.Server &
+      tls.SecureContextOptions;
 
     const transparentProxy = new TransparentProxy(
       targetHost,
       capturingApp,
-      capturingServer
+      capturingServer,
+      {
+        https: options.ca && {
+          ca: [options.ca.cert],
+          cert: tlsServer.cert,
+          key: tlsServer.key,
+        },
+      }
     );
 
     await transparentProxy.start(transparentPort);
@@ -196,7 +202,6 @@ export class ProxyInteractions {
       'capturing',
       capturingProxy.url
     );
-    // console.log('Transparent proxy running at', transparentProxy.url);
 
     const stream = (async function* () {
       yield* interactions.iterator;
@@ -322,16 +327,25 @@ class TransparentProxy {
   port?: number;
   url?: string;
   tunnelAbort: AbortController;
+  tlsEnabled: boolean;
 
   constructor(
     targetHost: string,
     captureRequest: http.RequestListener,
-    capturingServer: net.Server
+    capturingServer: net.Server,
+    options: {
+      https?: tls.SecureContextOptions;
+    } = {}
   ) {
     this.server = httpolyglot.createServer(
-      { ALPNProtocols: ['http/1.1'] },
+      {
+        ALPNProtocols: ['http/1.1'],
+        ...(options.https ? options.https : {}),
+      },
       captureRequest
     );
+
+    this.tlsEnabled = !!options.https;
 
     const tunnelAbort = (this.tunnelAbort = new AbortController()); // control aborting of tunnels separately
     // small hack to prevent warnings, because the AbortController polyfill doesn't setup EventEmitter according to spec
@@ -470,7 +484,7 @@ class TransparentProxy {
       const onListening = () => {
         cleanup();
         this.port = port;
-        this.url = `http://localhost:${port}`;
+        this.url = `${this.tlsEnabled ? 'https' : 'http'}://localhost:${port}`;
         resolve();
       };
 

@@ -89,16 +89,19 @@ describe('ProxyInteractions with tls', () => {
   it('will generate domain certificates given a ProxyCertAuthority and capture requests', async () => {
     const proxyCa = await ProxyCertAuthority.generate();
     const abortController = new AbortController();
-    const [interactions, proxyUrl, captureProxyUrl] =
-      await ProxyInteractions.create(target.url, abortController.signal, {
+    const [interactions, proxyUrl] = await ProxyInteractions.create(
+      target.url,
+      abortController.signal,
+      {
         ca: proxyCa,
         targetCA: [targetCA],
-      });
+      }
+    );
 
     let httpsAgent = new https.Agent({
       ca: proxyCa.cert, // except the CA of the proxy
     });
-    let requestUrl = UrlJoin(captureProxyUrl, '/some-path');
+    let requestUrl = UrlJoin(proxyUrl, '/some-path');
 
     const response = await fetch(requestUrl, {
       agent: httpsAgent,
