@@ -158,3 +158,7 @@ jobs:
     uses: opticdev/optic/.github/workflows/release-container-image.yml@main
     with:
       optic_version: ${{ needs.release.outputs.optic_version }}
+    secrets:
+      BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
