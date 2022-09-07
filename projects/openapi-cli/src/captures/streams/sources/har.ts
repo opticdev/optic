@@ -53,6 +53,7 @@ export class HarEntries {
     try {
       for await (let { value } of rawEntries) {
         entryCount++;
+        coerceBracketedIpAddress(value); // workaround Chrome writing IPv6 addresses with brackets around them (parsed from URI)
         if (validate(value)) {
           yield Ok(value);
         } else {
@@ -187,6 +188,19 @@ export class HarEntries {
     })();
 
     return Readable.from(tokens).pipe(stringer());
+  }
+}
+
+// Mutate value by removing square brackets from IPv6 serverIpAddress entries.
+// Square brackets are used to allow IPv6 to be used in URIs with (to distinguish
+// from the delimeter for port). Chrome must have parsed them from the URI,
+// not cleaning them up properly before including them in the HAR?
+const ipv6BracketsPattern = /^\[(?<ip>.+)\]$/;
+function coerceBracketedIpAddress(value: any) {
+  if (value && typeof value.serverIPAddress === 'string') {
+    value.serverIPAddress =
+      value.serverIPAddress.match(ipv6BracketsPattern)?.groups.ip ||
+      value.serverIPAddress;
   }
 }
 
