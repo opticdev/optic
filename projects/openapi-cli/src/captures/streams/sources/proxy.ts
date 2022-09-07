@@ -169,6 +169,7 @@ export class ProxyInteractions {
       endPort: transparentPort + 999,
     });
     forwardedHosts.push(`localhost:${capturingProxy.port}`);
+    log.info('capturing proxy started at %s', capturingProxy.url);
 
     // sits in front of the capturing proxy to only direct target host traffic
     // and transparently forward the rest
@@ -195,13 +196,7 @@ export class ProxyInteractions {
 
     await transparentProxy.start(transparentPort);
     forwardedHosts.push(`localhost:${transparentProxy.port}`);
-
-    console.log(
-      'proxies running. transparent',
-      transparentProxy.url,
-      'capturing',
-      capturingProxy.url
-    );
+    log.info('transparent proxy started at %s', transparentProxy.url);
 
     const stream = (async function* () {
       yield* interactions.iterator;
