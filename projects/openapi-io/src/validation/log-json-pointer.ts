@@ -6,10 +6,10 @@ export function jsonPointerLogger(sourceMap: JsonSchemaSourcemap) {
   const reader = sourcemapReader(sourceMap);
 
   return {
-    log: (pointer: string): string | undefined => {
+    log: (pointer: string): string => {
       const lookupPosition = reader.findFileAndLines(pointer);
       if (lookupPosition) {
-        const [start, end] = rangeFromLine(lookupPosition.startLine);
+        const [start, end] = getDisplayedLineNumbers(lookupPosition.startLine);
         const source = sourceMap.files.find(
           (file) => file.path === lookupPosition.filePath
         );
@@ -27,11 +27,12 @@ export function jsonPointerLogger(sourceMap: JsonSchemaSourcemap) {
           lookupPosition.startLine
         );
       }
+      return '';
     },
   };
 }
 
-function rangeFromLine(
+function getDisplayedLineNumbers(
   line: number,
   before: number = 4,
   after: number = 3

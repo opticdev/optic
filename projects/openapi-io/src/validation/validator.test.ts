@@ -111,6 +111,49 @@ test('open api doc with extra custom parameters', () => {
   });
 });
 
+test('processValidatorErrors', () => {
+  const json: any = {
+    ...defaultEmptySpec,
+    paths: {
+      '/api/users/{userId}': {
+        get: {
+          responses: {
+            '200': {
+              description: 'hello',
+              headers: { isgood: { schema: {} } },
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      hello: {
+                        type: 'array',
+                        items: 'no',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            '400': {
+              description: 'hello',
+              headers: { isgood: { schema: {} } },
+              content: {
+                'application/json': {
+                  schema: {},
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+  expect(() => {
+    validateOpenApiV3Document(json);
+  }).toThrowErrorMatchingSnapshot();
+});
+
 test('processValidatorErrors with sourcemap', async () => {
   const spec = await parseOpenAPIWithSourcemap(
     path.join(__dirname, '../../../../../inputs/openapi3/broken-open-api.json')
@@ -118,8 +161,8 @@ test('processValidatorErrors with sourcemap', async () => {
   expect(() => {
     validateOpenApiV3Document(
       spec.jsonLike,
-      spec.sourcemap,
-      new OpenAPISchemaValidator()
+      new OpenAPISchemaValidator(),
+      spec.sourcemap
     );
   }).toThrowErrorMatchingSnapshot();
 });
