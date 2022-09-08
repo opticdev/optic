@@ -2,16 +2,14 @@ import fs from 'node:fs/promises';
 import path from 'path';
 import { promisify } from 'util';
 import { exec as callbackExec } from 'child_process';
-import {
-  defaultEmptySpec,
-  validateOpenApiV3Document,
-} from '@useoptic/openapi-utilities';
+import { defaultEmptySpec } from '@useoptic/openapi-utilities';
 
 import {
   ParseResult,
   parseSpecVersion,
   specFromInputToResults,
 } from '@useoptic/optic-ci/build/cli/commands/utils';
+import { validateOpenApiV3Document } from '@useoptic/openapi-io';
 
 const exec = promisify(callbackExec);
 
