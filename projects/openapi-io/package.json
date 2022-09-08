@@ -37,7 +37,6 @@
     "@types/semver": "^7.3.10",
     "babel-jest": "^27.5.1",
     "chai": "^4.3.4",
-    "chalk": "^4.1.2",
     "copyfiles": "^2.4.1",
     "jest": "^27.5.1",
     "micro": "^9.3.4",
@@ -65,7 +64,9 @@
     "node-fetch": "^2.6.7",
     "openapi-types": "^12.0.0",
     "ts-invariant": "^0.9.3",
-    "yaml-ast-parser": "^0.0.43"
+    "yaml-ast-parser": "^0.0.43",
+    "semver": "^7.3.7",
+    "chalk": "^4.1.2"
   },
   "jest": {
     "testPathIgnorePatterns": [
