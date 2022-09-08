@@ -8,10 +8,10 @@ import {
   openapi3_0_json_schema,
 } from './validation-schemas';
 import { checkOpenAPIVersion } from './openapi-versions';
-import { JsonSchemaSourcemap } from '@useoptic/openapi-io';
 import ajvErrors from 'ajv-errors';
 import chalk from 'chalk';
 import { jsonPointerLogger } from './log-json-pointer';
+import { JsonSchemaSourcemap } from '../parser/sourcemap';
 
 export default class OpenAPISchemaValidator {
   private v3_0Validator: ValidateFunction | undefined;
