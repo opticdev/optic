@@ -17,6 +17,13 @@ on:
         description: >
           The Optic version to package in the image. Any NPM dist tag or published semver version is technically
           supported, but this value is also used as the image tag, so avoid using 'latest'.
+    secrets:
+      BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES:
+        required: true
+      DOCKER_HUB_USERNAME:
+        required: true
+      DOCKER_HUB_TOKEN:
+        required: true
 
 env:
   SKIP_ANNOUNCE: 'false'
