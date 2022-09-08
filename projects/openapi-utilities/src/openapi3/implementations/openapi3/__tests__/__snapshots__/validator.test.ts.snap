@@ -1,8 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`processValidatorErrors with sourcemap 1`] = `
-"[
-  \\"\\\\u001b[31minvalid openapi: \\\\u001b[39m\\\\u001b[1m\\\\u001b[31mmust be object\\\\u001b[39m\\\\u001b[22m\\\\n\\\\u001b[90m18 |\\\\u001b[39m   \\\\\\"properties\\\\\\": {\\\\n\\\\u001b[90m19 |\\\\u001b[39m     \\\\\\"hello\\\\\\": {\\\\n\\\\u001b[90m20 |\\\\u001b[39m       \\\\\\"type\\\\\\": \\\\\\"array\\\\\\",\\\\n\\\\u001b[90m21 |\\\\u001b[39m \\\\u001b[1m\\\\u001b[31m      \\\\\\"items\\\\\\": \\\\\\"no\\\\\\"\\\\u001b[39m\\\\u001b[22m\\\\n\\\\u001b[90m22 |\\\\u001b[39m     }\\\\n\\\\u001b[90m23 |\\\\u001b[39m   }\\\\n\\\\u001b[90m24 |\\\\u001b[39m }\\\\n\\\\u001b[90m/Users/aidancunniffe/Developer/optic/projects/openapi-utilities/inputs/openapi3/broken-open-api.json\\\\u001b[39m\\",
-  \\"\\\\u001b[31minvalid openapi: \\\\u001b[39m\\\\u001b[1m\\\\u001b[31mmust be equal to one of the allowed values\\\\u001b[39m\\\\u001b[22m\\\\n\\\\u001b[90m35 |\\\\u001b[39m \\\\\\"content\\\\\\": {\\\\n\\\\u001b[90m36 |\\\\u001b[39m   \\\\\\"application/json\\\\\\": {\\\\n\\\\u001b[90m37 |\\\\u001b[39m     \\\\\\"schema\\\\\\": {\\\\n\\\\u001b[90m38 |\\\\u001b[39m \\\\u001b[1m\\\\u001b[31m      \\\\\\"type\\\\\\": \\\\\\"not-real\\\\\\"\\\\u001b[39m\\\\u001b[22m\\\\n\\\\u001b[90m39 |\\\\u001b[39m     }\\\\n\\\\u001b[90m40 |\\\\u001b[39m   }\\\\n\\\\u001b[90m41 |\\\\u001b[39m }\\\\n\\\\u001b[90m/Users/aidancunniffe/Developer/optic/projects/openapi-utilities/inputs/openapi3/broken-open-api.json\\\\u001b[39m\\"
-]"
-`;

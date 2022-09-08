@@ -14,7 +14,6 @@ import {
   SpectralInput,
   defaultEmptySpec,
   generateSpecResults,
-  validateOpenApiV3Document,
   logComparison,
   UserError,
 } from '@useoptic/openapi-utilities';
@@ -32,7 +31,7 @@ import { uploadCiRun } from './upload';
 import { loadCiContext } from '../utils/load-context';
 import { sendGitlabMessage } from './gitlab-comment';
 import { getRelativeRepoPath } from '../utils/path';
-import { inGit } from '@useoptic/openapi-io';
+import { inGit, validateOpenApiV3Document } from '@useoptic/openapi-io';
 import { newExemptionsCount } from '../utils/count-exemptions';
 
 const parseContextObject = (context?: string): any => {

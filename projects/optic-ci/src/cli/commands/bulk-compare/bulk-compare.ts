@@ -2,7 +2,6 @@ import { Command, Option } from 'commander';
 
 import {
   defaultEmptySpec,
-  validateOpenApiV3Document,
   generateSpecResults,
   RuleRunner,
   SpectralInput,
@@ -37,7 +36,7 @@ import {
   parseJsonComparisonInput,
 } from './input-generators';
 import { Comparison, ComparisonData } from './types';
-import OpenAPISchemaValidator from '@useoptic/openapi-utilities/build/openapi/validator';
+import { validateOpenApiV3Document } from '@useoptic/openapi-io';
 
 const packageJson = require('../../../../package.json');
 

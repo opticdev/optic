@@ -1,11 +1,9 @@
 import fs from 'fs-extra';
 
-import { defaultEmptySpec } from '../../../constants';
-import OpenAPISchemaValidator, {
-  validateOpenApiV3Document,
-} from '../validator';
+import OpenAPISchemaValidator, { validateOpenApiV3Document } from './validator';
 import { parseOpenAPIWithSourcemap } from '@useoptic/openapi-io';
 import path from 'path';
+import { defaultEmptySpec } from '@useoptic/openapi-utilities';
 
 test('valid open api document should not raise errors', async () => {
   validateOpenApiV3Document(defaultEmptySpec);
@@ -156,7 +154,7 @@ test('processValidatorErrors', () => {
 
 test('processValidatorErrors with sourcemap', async () => {
   const spec = await parseOpenAPIWithSourcemap(
-    path.join(__dirname, '../../../../../inputs/openapi3/broken-open-api.json')
+    path.join(__dirname, '../../inputs/openapi3/broken-open-api.json')
   );
   expect(() => {
     validateOpenApiV3Document(
