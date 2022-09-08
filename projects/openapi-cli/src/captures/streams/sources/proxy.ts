@@ -22,6 +22,7 @@ import { Server as ConnectServer } from 'connect';
 import portfinder from 'portfinder';
 import globalLog from 'log';
 import invariant from 'ts-invariant';
+import UrlJoin from 'url-join';
 type Logger = typeof globalLog;
 
 export const log: Logger = globalLog.get('captures:streams:sources:proxy'); // export so it can be enabled in testing
@@ -44,6 +45,8 @@ export class ProxyInteractions {
       targetHost = host;
     }
 
+    let proxyUrl = ''; // define now so we can use it in request handlers and set it once we know the port
+
     invariant(
       targetHost.match(/^([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9\-]+(:\d+)?$/),
       'targetHost must be a valid host (hostname:port)'
@@ -59,36 +62,42 @@ export class ProxyInteractions {
       },
     });
 
-    let forwardedHosts = [targetHost];
     await capturingProxy
       .forAnyRequest()
       .always()
-      .matching((request: CompletedRequest) => {
-        // our own matching, adapted from mockttp's HostMatcher, so we can forward
-        // direct requests to the proxy to the target as well
-        const parsedUrl = new URL(request.url);
+      .forHost(targetHost)
 
-        let result = false;
-        for (let host of forwardedHosts) {
-          if (
-            (host.endsWith(':80') && request.protocol === 'http') ||
-            (host.endsWith(':443') && request.protocol === 'https')
-          ) {
-            // On default ports, our URL normalization erases an explicit port, so that a
-            // :80 here will never match anything. This handles that case: if you send HTTP
-            // traffic on port 80 then the port is blank, but it should match for 'hostname:80'.
-            result =
-              result ||
-              (parsedUrl.hostname === host.split(':')[0] &&
-                parsedUrl.port === '');
-          } else {
-            result = result || parsedUrl.host === host;
-          }
-          if (result) break;
-        }
+      .thenPassThrough({
+        beforeRequest: onTargetedRequest,
+        forwarding: {
+          targetHost,
+          updateHostHeader: true,
+        },
+        trustAdditionalCAs: options.targetCA || [],
+      });
 
-        return result;
-      })
+    // forward direct proxy requests to the target, except for our own endpoints
+    let forwardedHosts = [targetHost];
+    await capturingProxy
+      .forGet('/__optic-proxy-config.pac')
+      .always()
+      .matching((request) => matchesHosts(forwardedHosts, request))
+      .thenCallback((_request) => {
+        if (!proxyUrl) return { statusCode: 500 };
+
+        return {
+          statusCode: 200,
+          body: generateProxyPac(targetHost, proxyUrl),
+          headers: {
+            'content-type': 'application/x-ns-proxy-autoconfig',
+          },
+        };
+      });
+
+    await capturingProxy
+      .forAnyRequest()
+      .always()
+      .matching((request) => matchesHosts(forwardedHosts, request))
       .thenPassThrough({
         beforeRequest: onTargetedRequest,
         forwarding: {
@@ -196,6 +205,7 @@ export class ProxyInteractions {
 
     await transparentProxy.start(transparentPort);
     forwardedHosts.push(`localhost:${transparentProxy.port}`);
+    proxyUrl = transparentProxy.url!;
     log.info('transparent proxy started at %s', transparentProxy.url);
 
     const stream = (async function* () {
@@ -204,7 +214,7 @@ export class ProxyInteractions {
       await transparentProxy.stop();
     })();
 
-    return [stream, transparentProxy.url!, capturingProxy.url];
+    return [stream, proxyUrl, capturingProxy.url];
   }
 }
 
@@ -315,6 +325,30 @@ function generateSerialNumber(): string {
   // hexadecimal serial number of at most 20 octets, and preferably positive.
   // starting with A should get a positive number
   return 'A' + randomBytes(18).toString('hex').toUpperCase();
+}
+
+function matchesHosts(hosts: string[], request: CompletedRequest): boolean {
+  let parsedUrl = new URL(request.url);
+
+  let result = false;
+  for (let host of hosts) {
+    if (
+      (host.endsWith(':80') && request.protocol === 'http') ||
+      (host.endsWith(':443') && request.protocol === 'https')
+    ) {
+      // On default ports, our URL normalization erases an explicit port, so that a
+      // :80 here will never match anything. This handles that case: if you send HTTP
+      // traffic on port 80 then the port is blank, but it should match for 'hostname:80'.
+      result =
+        result ||
+        (parsedUrl.hostname === host.split(':')[0] && parsedUrl.port === '');
+    } else {
+      result = result || parsedUrl.host === host;
+    }
+    if (result) break;
+  }
+
+  return result;
 }
 
 class TransparentProxy {
@@ -557,3 +591,27 @@ const transitiveSocketErrors = Object.freeze([
   'EPIPE',
   'ETIMEDOUT',
 ]);
+
+function generateProxyPac(targetHost: string, proxyHost: string): string {
+  if (targetHost.includes('/')) {
+    // accept urls to be passed in rather than pure hosts
+    let { host } = new URL(targetHost);
+    targetHost = host;
+  }
+
+  if (proxyHost.includes('/')) {
+    // accept urls to be passed in rather than pure hosts
+    let { host } = new URL(proxyHost);
+    proxyHost = host;
+  }
+
+  return `
+function FindProxyForURL(url, host) {
+  if (dnsDomainIs(host, '${targetHost}')) {
+    return 'PROXY ${[proxyHost]}, DIRECT';
+  } else {
+    return 'DIRECT'
+  }
+}
+`.trimStart();
+}
