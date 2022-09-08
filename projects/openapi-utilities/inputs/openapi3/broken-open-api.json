@@ -34,7 +34,9 @@
             },
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "type": "not-real"
+                }
               }
             }
           }

@@ -84,6 +84,7 @@ const openapi3_0_schema_object = {
     },
     type: {
       type: 'string',
+      enum: ['string', 'number', 'integer', 'object', 'array', 'boolean'],
     },
     allOf: {
       type: 'array',
@@ -250,10 +251,36 @@ const openapi3_1_schema_object = {
     },
     type: {
       oneOf: [
-        { type: 'string' },
+        {
+          type: 'string',
+          enum: [
+            'string',
+            'number',
+            'integer',
+            'object',
+            'array',
+            'boolean',
+            'null',
+          ],
+        },
         {
           type: 'array',
-          items: { oneOf: [{ type: 'string' }] },
+          items: {
+            oneOf: [
+              {
+                type: 'string',
+                enum: [
+                  'string',
+                  'number',
+                  'integer',
+                  'object',
+                  'array',
+                  'boolean',
+                  'null',
+                ],
+              },
+            ],
+          },
         },
       ],
     },
