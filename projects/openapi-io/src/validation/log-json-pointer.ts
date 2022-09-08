@@ -1,6 +1,6 @@
-import { JsonSchemaSourcemap } from '@useoptic/openapi-io';
 import chalk from 'chalk';
 import { sourcemapReader } from '@useoptic/openapi-utilities';
+import { JsonSchemaSourcemap } from '../parser/sourcemap';
 
 export function jsonPointerLogger(sourceMap: JsonSchemaSourcemap) {
   const reader = sourcemapReader(sourceMap);
