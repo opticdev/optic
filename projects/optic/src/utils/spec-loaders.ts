@@ -25,7 +25,7 @@ export const getFileFromFsOrGit = async (
     parseSpecVersion(filePathOrRef, defaultEmptySpec),
     process.cwd()
   ).then((results) => {
-    validateOpenApiV3Document(results.jsonLike);
+    validateOpenApiV3Document(results.jsonLike, results.sourcemap);
     return results;
   });
   return file;
@@ -63,7 +63,7 @@ export const parseFilesFromRef = async (
       ),
       process.cwd()
     ).then((results) => {
-      validateOpenApiV3Document(results.jsonLike);
+      validateOpenApiV3Document(results.jsonLike, results.sourcemap);
       return results;
     }),
     headFile: await specFromInputToResults(
@@ -73,7 +73,7 @@ export const parseFilesFromRef = async (
       ),
       process.cwd()
     ).then((results) => {
-      validateOpenApiV3Document(results.jsonLike);
+      validateOpenApiV3Document(results.jsonLike, results.sourcemap);
       return results;
     }),
     pathFromGitRoot,

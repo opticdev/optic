@@ -1,11 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`processValidatorErrors 1`] = `
+exports[`processValidatorErrors with sourcemap 1`] = `
 "[
-  {
-    \\"message\\": \\"Invalid value at instancePath\\",
-    \\"instancePath\\": \\"/paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/properties/hello/items\\",
-    \\"value\\": \\"no\\"
-  }
+  \\"\\\\u001b[31minvalid openapi: \\\\u001b[39m\\\\u001b[1m\\\\u001b[31mmust be object\\\\u001b[39m\\\\u001b[22m\\\\n\\\\u001b[90m18 |\\\\u001b[39m   \\\\\\"properties\\\\\\": {\\\\n\\\\u001b[90m19 |\\\\u001b[39m     \\\\\\"hello\\\\\\": {\\\\n\\\\u001b[90m20 |\\\\u001b[39m       \\\\\\"type\\\\\\": \\\\\\"array\\\\\\",\\\\n\\\\u001b[90m21 |\\\\u001b[39m \\\\u001b[1m\\\\u001b[31m      \\\\\\"items\\\\\\": \\\\\\"no\\\\\\"\\\\u001b[39m\\\\u001b[22m\\\\n\\\\u001b[90m22 |\\\\u001b[39m     }\\\\n\\\\u001b[90m23 |\\\\u001b[39m   }\\\\n\\\\u001b[90m24 |\\\\u001b[39m }\\\\n\\\\u001b[90m/Users/aidancunniffe/Developer/optic/projects/openapi-utilities/inputs/openapi3/broken-open-api.json\\\\u001b[39m\\"
 ]"
 `;

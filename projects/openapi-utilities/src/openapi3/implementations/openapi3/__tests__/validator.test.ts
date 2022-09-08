@@ -1,7 +1,11 @@
 import fs from 'fs-extra';
 
 import { defaultEmptySpec } from '../../../constants';
-import { validateOpenApiV3Document } from '../validator';
+import OpenAPISchemaValidator, {
+  validateOpenApiV3Document,
+} from '../validator';
+import { parseOpenAPIWithSourcemap } from '@useoptic/openapi-io';
+import path from 'path';
 
 test('valid open api document should not raise errors', async () => {
   validateOpenApiV3Document(defaultEmptySpec);
@@ -107,45 +111,15 @@ test('open api doc with extra custom parameters', () => {
   });
 });
 
-test('processValidatorErrors', () => {
-  const json: any = {
-    ...defaultEmptySpec,
-    paths: {
-      '/api/users/{userId}': {
-        get: {
-          responses: {
-            '200': {
-              description: 'hello',
-              headers: { isgood: { schema: {} } },
-              content: {
-                'application/json': {
-                  schema: {
-                    type: 'object',
-                    properties: {
-                      hello: {
-                        type: 'array',
-                        items: 'no',
-                      },
-                    },
-                  },
-                },
-              },
-            },
-            '400': {
-              description: 'hello',
-              headers: { isgood: { schema: {} } },
-              content: {
-                'application/json': {
-                  schema: {},
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  };
+test('processValidatorErrors with sourcemap', async () => {
+  const spec = await parseOpenAPIWithSourcemap(
+    path.join(__dirname, '../../../../../inputs/openapi3/broken-open-api.json')
+  );
   expect(() => {
-    validateOpenApiV3Document(json);
+    validateOpenApiV3Document(
+      spec.jsonLike,
+      spec.sourcemap,
+      new OpenAPISchemaValidator()
+    );
   }).toThrowErrorMatchingSnapshot();
 });

@@ -3487,7 +3487,8 @@ __metadata:
     "@types/node": ^17.0.15
     "@types/semver": ^7.3.10
     "@useoptic/json-pointer-helpers": "workspace:*"
-    ajv: ^8.11.0
+    ajv: 8.11.0
+    ajv-errors: ^3.0.0
     ajv-formats: ^2.1.1
     analytics-node: ^6.2.0
     babel-jest: ^27.5.1
@@ -3810,7 +3811,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv-errors@npm:~3.0.0":
+"ajv-errors@npm:^3.0.0, ajv-errors@npm:~3.0.0":
   version: 3.0.0
   resolution: "ajv-errors@npm:3.0.0"
   peerDependencies:
@@ -3833,7 +3834,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^8.0.0, ajv@npm:^8.11.0, ajv@npm:^8.6.0, ajv@npm:^8.6.3, ajv@npm:^8.8.2":
+"ajv@npm:8.11.0, ajv@npm:^8.0.0, ajv@npm:^8.11.0, ajv@npm:^8.6.0, ajv@npm:^8.6.3, ajv@npm:^8.8.2":
   version: 8.11.0
   resolution: "ajv@npm:8.11.0"
   dependencies:

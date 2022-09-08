@@ -152,14 +152,14 @@ const runCompare = async ({
       parseSpecVersion(from, defaultEmptySpec),
       process.cwd()
     ).then((results) => {
-      validateOpenApiV3Document(results.jsonLike);
+      validateOpenApiV3Document(results.jsonLike, results.sourcemap);
       return results;
     }),
     specFromInputToResults(
       parseSpecVersion(to, defaultEmptySpec),
       process.cwd()
     ).then((results) => {
-      validateOpenApiV3Document(results.jsonLike);
+      validateOpenApiV3Document(results.jsonLike, results.sourcemap);
       return results;
     }),
   ]).catch((e) => {
