@@ -1,9 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`processValidatorErrors 1`] = `
-"[
-  \\"\\\\u001b[31minvalid openapi: \\\\u001b[39m\\\\u001b[1m\\\\u001b[31mmust be object\\\\u001b[39m\\\\u001b[22m\\\\n/paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/properties/hello/items\\"
-]"
+"[31minvalid openapi: [39m[1m[31mmust be object[39m[22m
+/paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/properties/hello/items"
 `;
 
 exports[`processValidatorErrors with sourcemap 1`] = `"validator.validate3_0 is not a function"`;
