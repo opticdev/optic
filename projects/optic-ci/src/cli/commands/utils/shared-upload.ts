@@ -1,6 +1,5 @@
 import {
   defaultEmptySpec,
-  validateOpenApiV3Document,
   NormalizedCiContext,
   UserError,
 } from '@useoptic/openapi-utilities';
@@ -18,6 +17,7 @@ import {
 import { specFromInputToResults } from './load-spec';
 import { CliConfig } from '../../types';
 import { SUPPORTED_GITHUB_CI_PROVIDERS } from '../constants';
+import { validateOpenApiV3Document } from '@useoptic/openapi-io';
 
 export const validateUploadRequirements = (
   uploadResults: boolean,

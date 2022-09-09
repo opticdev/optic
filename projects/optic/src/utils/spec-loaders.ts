@@ -2,16 +2,14 @@ import fs from 'node:fs/promises';
 import path from 'path';
 import { promisify } from 'util';
 import { exec as callbackExec } from 'child_process';
-import {
-  defaultEmptySpec,
-  validateOpenApiV3Document,
-} from '@useoptic/openapi-utilities';
+import { defaultEmptySpec } from '@useoptic/openapi-utilities';
 
 import {
   ParseResult,
   parseSpecVersion,
   specFromInputToResults,
 } from '@useoptic/optic-ci/build/cli/commands/utils';
+import { validateOpenApiV3Document } from '@useoptic/openapi-io';
 
 const exec = promisify(callbackExec);
 
@@ -25,7 +23,7 @@ export const getFileFromFsOrGit = async (
     parseSpecVersion(filePathOrRef, defaultEmptySpec),
     process.cwd()
   ).then((results) => {
-    validateOpenApiV3Document(results.jsonLike);
+    validateOpenApiV3Document(results.jsonLike, results.sourcemap);
     return results;
   });
   return file;
@@ -63,7 +61,7 @@ export const parseFilesFromRef = async (
       ),
       process.cwd()
     ).then((results) => {
-      validateOpenApiV3Document(results.jsonLike);
+      validateOpenApiV3Document(results.jsonLike, results.sourcemap);
       return results;
     }),
     headFile: await specFromInputToResults(
@@ -73,7 +71,7 @@ export const parseFilesFromRef = async (
       ),
       process.cwd()
     ).then((results) => {
-      validateOpenApiV3Document(results.jsonLike);
+      validateOpenApiV3Document(results.jsonLike, results.sourcemap);
       return results;
     }),
     pathFromGitRoot,

@@ -1,0 +1,51 @@
+{
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/users/{userId}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "hello",
+            "headers": {
+              "isgood": {
+                "schema": {}
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "hello": {
+                      "type": "array",
+                      "items": "no"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "hello",
+            "headers": {
+              "isgood": {
+                "schema": {}
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "not-real"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "info": {
+    "version": "0.0.0",
+    "title": "Empty"
+  }
+}

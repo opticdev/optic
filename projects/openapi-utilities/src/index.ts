@@ -1,6 +1,4 @@
 import { OpenAPITraverser } from './openapi3/implementations/openapi3/openapi-traverser';
-import { checkOpenAPIVersion } from './openapi3/implementations/openapi3/openapi-versions';
-import { validateOpenApiV3Document } from './openapi3/implementations/openapi3/validator';
 import { OpenAPIV3 } from 'openapi-types';
 import { factsToChangelog } from './openapi3/sdk/facts-to-changelog';
 import {
@@ -74,11 +72,14 @@ export { traverseSpec } from './utilities/traverse-spec';
 export { terminalChangelog } from './utilities/terminal-changelog';
 export { generateChangelogData } from './utilities/generate-changelog-data';
 export { compareChangesByPath } from './utilities/compare-changes-by-path';
-export { getOperationsModifsLabel, countOperationsModifications, getLabel } from './utilities/count-changed-operations';
+export {
+  getOperationsModifsLabel,
+  countOperationsModifications,
+  getLabel,
+} from './utilities/count-changed-operations';
 
 export {
   sourcemapReader,
-  validateOpenApiV3Document,
   OpenApiFact,
   OpenAPITraverser,
   factsToChangelog,
@@ -118,7 +119,6 @@ export {
   isChangeVariant,
   isFactOrChangeVariant,
   OpenApiRequestFact,
-  checkOpenAPIVersion,
 };
 
 export * from './types';

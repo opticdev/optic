@@ -1,13 +1,17 @@
 import { OpenAPIV3, OpenAPI } from 'openapi-types';
 import ajv, { ValidateFunction, ErrorObject } from 'ajv';
+
 import addFormats from 'ajv-formats';
 
-import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import {
   openapi3_1_json_schema,
   openapi3_0_json_schema,
 } from './validation-schemas';
 import { checkOpenAPIVersion } from './openapi-versions';
+import ajvErrors from 'ajv-errors';
+import chalk from 'chalk';
+import { jsonPointerLogger } from './log-json-pointer';
+import { JsonSchemaSourcemap } from '../parser/sourcemap';
 
 export default class OpenAPISchemaValidator {
   private v3_0Validator: ValidateFunction | undefined;
@@ -18,6 +22,7 @@ export default class OpenAPISchemaValidator {
   } {
     if (!this.v3_0Validator) {
       const v = new ajv({ allErrors: true, strict: false });
+      ajvErrors(v);
       addFormats(v);
       v.addSchema(openapi3_0_json_schema);
       this.v3_0Validator = v.compile(openapi3_0_json_schema);
@@ -34,6 +39,7 @@ export default class OpenAPISchemaValidator {
   } {
     if (!this.v3_1Validator) {
       const v = new ajv({ allErrors: true, strict: false });
+      ajvErrors(v);
       addFormats(v);
       v.addSchema(openapi3_1_json_schema);
       this.v3_1Validator = v.compile(openapi3_1_json_schema);
@@ -49,47 +55,50 @@ export default class OpenAPISchemaValidator {
 
 export const processValidatorErrors = (
   spec: any,
-  errors: ErrorObject[]
-): { message: string; instancePath: string; value: any }[] => {
+  errors: ErrorObject[],
+  sourcemap?: JsonSchemaSourcemap
+): string[] => {
   const sortedErrorsByLength = errors.sort(
     (a, b) => b.instancePath.length - a.instancePath.length
   );
-  const pathsWithErrors: string[] = [];
+  const pathsWithErrors: ErrorObject[] = [];
+
   for (const error of sortedErrorsByLength) {
     // We want to only render the root of the error message
     if (
       pathsWithErrors.every(
-        (addedError) => !addedError.startsWith(error.instancePath)
+        (addedError) => !addedError.instancePath.startsWith(error.instancePath)
       )
     ) {
-      pathsWithErrors.push(error.instancePath);
+      pathsWithErrors.push(error);
     }
   }
 
-  const processedErrors = [];
-  for (const path of pathsWithErrors) {
-    try {
-      processedErrors.push({
-        message: 'Invalid value at instancePath',
-        instancePath: path,
-        value: jsonPointerHelpers.get(spec, path),
-      });
-    } catch (e) {
-      processedErrors.push({
-        message: 'Invalid value at instancePath',
-        instancePath: path,
-        value: 'could not get value at path',
-      });
-    }
-  }
+  const logger = sourcemap && jsonPointerLogger(sourcemap);
 
-  return processedErrors;
+  return pathsWithErrors.map((error) => {
+    const preview = logger
+      ? logger.log(error.instancePath)
+      : `${error.instancePath}`;
+
+    return `${chalk.red('invalid openapi: ')}${chalk.bold.red(
+      error.message
+    )}\n${preview}`;
+  });
+};
+
+let validator: OpenAPISchemaValidator | undefined;
+const getValidator = () => {
+  if (!validator) {
+    validator = new OpenAPISchemaValidator();
+  }
+  return validator;
 };
 
 export const validateOpenApiV3Document = (
   spec: any,
-  // these validators aren't cheap. if we're validating a lot in sequence we should inject a shared instance
-  validator: OpenAPISchemaValidator = new OpenAPISchemaValidator()
+  sourcemap?: JsonSchemaSourcemap,
+  validator: OpenAPISchemaValidator = getValidator()
 ): OpenAPIV3.Document => {
   let results:
     | {
@@ -103,9 +112,13 @@ export const validateOpenApiV3Document = (
   if (version === '3.1.x') results = validator.validate3_1(spec);
 
   if (results && results.errors.length > 0) {
-    const processedErrors = processValidatorErrors(spec, results.errors);
+    const processedErrors = processValidatorErrors(
+      spec,
+      results.errors,
+      sourcemap
+    );
 
-    throw new Error(JSON.stringify(processedErrors, null, 2));
+    throw new Error(processedErrors.join('\n'));
   }
 
   return spec as OpenAPIV3.Document;

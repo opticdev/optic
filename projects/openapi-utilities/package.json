@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/openapi-utilities",
-  "version": "0.31.0",
+  "version": "0.31.1-0",
   "packageManager": "yarn@3.0.2",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -45,7 +45,8 @@
     "@octokit/rest": "^18.12.0",
     "@sentry/node": "^7.10.0",
     "@useoptic/json-pointer-helpers": "workspace:*",
-    "ajv": "^8.11.0",
+    "ajv": "8.11.0",
+    "ajv-errors": "^3.0.0",
     "ajv-formats": "^2.1.1",
     "analytics-node": "^6.2.0",
     "chalk": "^4.1.2",
@@ -58,7 +59,6 @@
     "lodash.omit": "^4.5.0",
     "lodash.sortby": "^4.7.0",
     "openapi-types": "^12.0.0",
-    "semver": "^7.3.7",
     "ts-invariant": "^0.9.3",
     "yaml-ast-parser": "^0.0.43"
   },
@@ -66,5 +66,6 @@
     "testPathIgnorePatterns": [
       "build"
     ]
-  }
+  },
+  "stableVersion": "0.31.0"
 }

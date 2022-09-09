@@ -2,7 +2,6 @@ import { Command, Option } from 'commander';
 
 import {
   defaultEmptySpec,
-  validateOpenApiV3Document,
   generateSpecResults,
   RuleRunner,
   SpectralInput,
@@ -37,6 +36,7 @@ import {
   parseJsonComparisonInput,
 } from './input-generators';
 import { Comparison, ComparisonData } from './types';
+import { validateOpenApiV3Document } from '@useoptic/openapi-io';
 
 const packageJson = require('../../../../package.json');
 
@@ -197,8 +197,8 @@ const compareSpecs = async ({
             loadSpecFile(comparison.toFileName),
           ]);
 
-          validateOpenApiV3Document(from.jsonLike);
-          validateOpenApiV3Document(to.jsonLike);
+          validateOpenApiV3Document(from.jsonLike, from.sourcemap);
+          validateOpenApiV3Document(to.jsonLike, to.sourcemap);
 
           const { results, changes } = await generateSpecResults(
             checkService,

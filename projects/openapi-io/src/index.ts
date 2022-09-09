@@ -6,7 +6,7 @@ import {
   ParseOpenAPIResult,
   parseOpenAPIWithSourcemap,
   dereferenceOpenApi,
-  ResolverError
+  ResolverError,
 } from './parser/openapi-sourcemap-parser';
 import { ExternalRefHandler } from './parser/types';
 import {
@@ -15,7 +15,7 @@ import {
   resolveJsonPointerInYamlAst,
 } from './parser/sourcemap';
 import { loadYaml, isYaml, isJson, writeYaml } from './write/index';
-
+import { validateOpenApiV3Document } from './validation/validator';
 
 export {
   loadSpecFromFile,
@@ -33,6 +33,7 @@ export {
   writeYaml,
   dereferenceOpenApi,
   ResolverError,
+  validateOpenApiV3Document,
 };
 
 export type { JsonPath, ParseOpenAPIResult, ExternalRefHandler };

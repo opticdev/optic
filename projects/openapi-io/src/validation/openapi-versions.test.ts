@@ -1,4 +1,4 @@
-import { checkOpenAPIVersion } from '../openapi-versions';
+import { checkOpenAPIVersion } from './openapi-versions';
 
 test('detects a 3.1.x openapi', async () => {
   expect(checkOpenAPIVersion({ openapi: '3.1.0' })).toBe('3.1.x');

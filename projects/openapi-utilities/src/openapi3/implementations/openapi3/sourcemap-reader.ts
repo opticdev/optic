@@ -125,7 +125,7 @@ export function sourcemapReader(sourcemap: SerializedSourcemap) {
     };
   };
 
-  const findFileAndLines = async (jsonPathFromRoot: JsonPath) => {
+  const findFileAndLines = (jsonPathFromRoot: JsonPath) => {
     const lookupResult = findFile(jsonPathFromRoot);
     if (lookupResult) {
       const astNode = lookupResult.astNode;
