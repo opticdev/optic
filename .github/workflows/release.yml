@@ -160,5 +160,5 @@ jobs:
       optic_version: ${{ needs.release.outputs.optic_version }}
     secrets:
       BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
