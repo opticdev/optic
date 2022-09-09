@@ -118,7 +118,7 @@ export const validateOpenApiV3Document = (
       sourcemap
     );
 
-    throw new Error(JSON.stringify(processedErrors, null, 2));
+    throw new Error(processedErrors.join('\n'));
   }
 
   return spec as OpenAPIV3.Document;
