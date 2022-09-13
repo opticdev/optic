@@ -34,7 +34,7 @@ function* generateComparisonLogs(
 ) {
   const mdOutput = options.output === 'md';
   const chalk = new Chalk({
-    level: ['plain', 'md'].indexOf(options.output) > -1 ? 0 : 1,
+    level: options.output === 'pretty' ? 1 : 0,
   });
   const getIndent = (depth: number): string =>
     mdOutput ? '' : ' '.repeat(depth * 2);
