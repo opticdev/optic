@@ -16,6 +16,7 @@ import {
 } from './parser/sourcemap';
 import { loadYaml, isYaml, isJson, writeYaml } from './write/index';
 import { validateOpenApiV3Document } from './validation/validator';
+import { checkOpenAPIVersion } from './validation/openapi-versions';
 
 export {
   loadSpecFromFile,
@@ -34,6 +35,7 @@ export {
   dereferenceOpenApi,
   ResolverError,
   validateOpenApiV3Document,
+  checkOpenAPIVersion,
 };
 
 export type { JsonPath, ParseOpenAPIResult, ExternalRefHandler };
