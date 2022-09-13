@@ -5,8 +5,6 @@ import isUrl from 'is-url';
 import { Instance as Chalk } from 'chalk';
 import { getOperationsModifsLabel } from './count-changed-operations';
 
-const getIndent = (depth: number): string => ' '.repeat(depth * 2);
-
 // raw string value
 const formatRawValue = (value: string, indent: string): string => {
   try {
@@ -20,17 +18,37 @@ const formatRawValue = (value: string, indent: string): string => {
   }
 };
 
+const md = {
+  bold: (s: string) => `**${s}**`,
+};
+
 function* generateComparisonLogs(
   comparison: {
     results: ResultWithSourcemap[];
     changes: IChange[];
   },
   options: {
-    output: 'pretty' | 'plain';
+    output: 'pretty' | 'plain' | 'md';
     verbose: boolean;
   }
 ) {
-  const chalk = new Chalk({ level: options.output === 'plain' ? 0 : 1 });
+  const mdOutput = options.output === 'md';
+  const chalk = new Chalk({
+    level: options.output === 'pretty' ? 1 : 0,
+  });
+  const getIndent = (depth: number): string =>
+    mdOutput ? '' : ' '.repeat(depth * 2);
+  const getItem = () => (mdOutput ? '- ' : '');
+
+  const identity = (s: string) => s;
+  const bold = mdOutput ? md.bold : chalk.bold;
+  const green = mdOutput ? identity : chalk.green;
+  const white = mdOutput ? identity : chalk.white;
+  const red = mdOutput ? identity : chalk.red;
+  const bgRed = mdOutput ? identity : chalk.bgRed;
+  const bgGreen = mdOutput ? identity : chalk.bgGreen;
+  const underline = mdOutput ? identity : chalk.underline;
+
   const totalNumberOfChecks = comparison.results.length;
   const failedNumberOfChecks = comparison.results.filter(
     (result) => !result.passed && !result.exempted
@@ -61,36 +79,42 @@ function* generateComparisonLogs(
       (result) => options.verbose || (!result.passed && !result.exempted)
     );
     const resultNode = allPassed
-      ? chalk.bold.bgGreen.white(' PASS ')
-      : chalk.bold.bgRed.white(' FAIL ');
+      ? bold(bgGreen(white(mdOutput ? 'PASS' : ' PASS ')))
+      : bold(bgRed(white(mdOutput ? 'FAIL' : ' FAIL ')));
 
     if (!('path' in conceptualLocation)) {
-      yield `${getIndent(1)}${resultNode} ${chalk.bold('Specification')}`;
+      yield `${getIndent(1)}${resultNode} ${bold('Specification')}`;
     } else {
       const { method, path } = conceptualLocation;
-      yield `${getIndent(1)}${resultNode} ${chalk.bold(
+      yield `${getIndent(1)}${resultNode} ${bold(
         method.toUpperCase()
       )} ${path}`;
     }
 
     for (const result of renderedResults) {
       const icon = result.passed
-        ? chalk.green('✔')
+        ? mdOutput
+          ? ':heavy_check_mark:'
+          : green('✔')
         : result.exempted
-        ? chalk.white('✔')
-        : chalk.red('x');
+        ? mdOutput
+          ? ':heavy_minus_sign:'
+          : white('✔')
+        : mdOutput
+        ? ':x:'
+        : red('x');
 
       const rulePrefix = result.type ? `${result.type} rule` : 'rule';
-      yield `${getIndent(2)}${rulePrefix}: ${result.name ?? ''}${
+      yield `${getItem()}${getIndent(2)}${rulePrefix}: ${result.name ?? ''}${
         result.exempted ? ' (exempted)' : ''
       }`;
 
       if (!result.passed && !result.exempted) {
-        yield getIndent(3) + chalk.red(`${icon} ${result.error}`);
+        yield getIndent(3) + red(`${icon} ${result.error}`);
         if (result.expected && result.received) {
-          yield getIndent(3) + chalk.red('Expected Value:');
+          yield getIndent(3) + red('Expected Value:');
           yield formatRawValue(result.expected, getIndent(3));
-          yield getIndent(3) + chalk.red('Received Value:');
+          yield getIndent(3) + red('Received Value:');
           yield formatRawValue(result.received, getIndent(3));
         }
       }
@@ -110,10 +134,10 @@ function* generateComparisonLogs(
       if (result.sourcemap) {
         yield `${getIndent(3)}at ${
           isUrl(result.sourcemap.filePath)
-            ? `${chalk.underline(result.sourcemap.filePath)} line ${
+            ? `${underline(result.sourcemap.filePath)} line ${
                 result.sourcemap.startLine
               }`
-            : chalk.underline(
+            : underline(
                 `${result.sourcemap.filePath}:${result.sourcemap.startLine}:${result.sourcemap.startPosition}`
               )
         }`;
@@ -124,11 +148,11 @@ function* generateComparisonLogs(
   }
 
   yield operationsModifsLabel;
-  yield chalk.green.bold(`${passedNumberOfChecks} checks passed`);
-  yield chalk.red.bold(`${failedNumberOfChecks} checks failed`);
+  yield green(bold(`${passedNumberOfChecks} checks passed`));
+  yield red(bold(`${failedNumberOfChecks} checks failed`));
 
   if (exemptedFailedNumberOfChecks > 0) {
-    yield chalk.bold(`${exemptedFailedNumberOfChecks} checks exempted`);
+    yield bold(`${exemptedFailedNumberOfChecks} checks exempted`);
   }
 }
 
@@ -138,7 +162,7 @@ export const getComparisonLogs = (
     changes: IChange[];
   },
   options: {
-    output: 'pretty' | 'plain';
+    output: 'pretty' | 'plain' | 'md';
     verbose: boolean;
   }
 ) => [...generateComparisonLogs(comparison, options)];
