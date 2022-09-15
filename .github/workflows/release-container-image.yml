@@ -51,9 +51,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.OPTIC_REPO_AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@9149ade017c57f86dea2f76a01f8b2d5bd06b10f #v1.5.1
+      - name: Login to Amazon ECR Public
+        id: login-ecr-public
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
 
       - name: Build and publish
         run: task docker:build:release OPTIC_CLI_VERSION="${{ inputs.optic_version }}" -- --push
