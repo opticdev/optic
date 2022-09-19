@@ -5,7 +5,8 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
-    "/build"
+    "/build",
+    "/src"
   ],
   "bin": {
     "oas": "build/oas.js",
