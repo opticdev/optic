@@ -99,10 +99,11 @@ export class HarEntries {
         bodySize: interaction.request.body.buffer.length,
         cookies: [], // not available from proxy, but could parse from header
         queryString: [], // not available from proxy, but could parse from url
-        postData: requestContentType
+        postData: requestContentType && requestBodyEncoded
           ? {
               mimeType: requestContentType,
-              text: requestBodyEncoded!,
+              text: requestBodyEncoded,
+              encoding: 'base64',
               params: [], // not supporting posted formdata
             }
           : undefined,
