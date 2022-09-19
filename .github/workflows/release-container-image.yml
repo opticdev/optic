@@ -24,6 +24,12 @@ on:
         required: true
       DOCKER_HUB_TOKEN:
         required: true
+      OPTIC_REPO_AWS_ACCESS_KEY_ID:
+        required: true
+      OPTIC_REPO_AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_REGION:
+        required: true
 
 env:
   SKIP_ANNOUNCE: 'false'
