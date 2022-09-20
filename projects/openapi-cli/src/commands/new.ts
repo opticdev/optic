@@ -13,6 +13,8 @@ import { SpecFile, SpecFiles, SpecFileOperations, SpecPatches } from '../specs';
 
 const streamFinished = promisify(finished);
 
+const defaultOpenAPIVersion = '3.1.0';
+
 export async function newCommand(): Promise<Command> {
   const command = new Command('new');
 
@@ -28,7 +30,7 @@ export async function newCommand(): Promise<Command> {
     .option(
       '--oas-version <version-number>',
       'OpenAPI version number to be used',
-      '3.0.3'
+      defaultOpenAPIVersion
     )
     .action(async (filePath?: string) => {
       let absoluteFilePath: string;
@@ -88,7 +90,7 @@ export async function newCommand(): Promise<Command> {
           oasVersion = semver.version;
         }
       } else {
-        oasVersion = '3.0.3';
+        oasVersion = defaultOpenAPIVersion;
       }
 
       let newSpecFile = await createNewSpecFile(absoluteFilePath, oasVersion);
@@ -105,7 +107,7 @@ export async function newCommand(): Promise<Command> {
 
 async function createNewSpecFile(
   absoluteFilePath: string,
-  oasVersion: string = '3.0.3'
+  oasVersion: string = defaultOpenAPIVersion
 ): Promise<SpecFile> {
   let info = {
     title: 'Untitled service',
