@@ -72,10 +72,6 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
       'the base ref to compare against. Defaults to HEAD',
       'HEAD'
     )
-    .option(
-      '--id <id>',
-      'the id of the spec to run against in defined in the `optic.dev.yml` file'
-    )
     .option('--check', 'enable checks', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
     .action(wrapActionHandlerWithSentry(getDiffAction(config)));
@@ -245,7 +241,6 @@ const runDiff = async (
       file1,
       file2,
       base: options.base,
-      id: options.id,
     };
 
     const compressedData = compressData(baseFile, headFile, specResults, meta);
@@ -261,7 +256,6 @@ const runDiff = async (
 
 type DiffActionOptions = {
   base: string;
-  id?: string;
   check: boolean;
   web: boolean;
 };
@@ -292,72 +286,10 @@ const getDiffAction =
         config.root
       );
       await runDiff(files, parsedFiles, config, options);
-    } else if (options.id) {
-      console.warn('Deprecation warning: optic diff --id <id> is deprecated, please use optic diff <file_path> --base <base> instead');
-      const commandVariant = `optic diff --id <id> --base <ref>`;
-      if (config.vcs !== VCS.Git) {
-        console.error(
-          `Error: ${commandVariant} must be called from a git repository.`
-        );
-        process.exitCode = 1;
-        return;
-      }
-      if (!config.configPath) {
-        console.error(
-          `Error: no optic.dev.yml config file was found. optic.dev.yml must be included for ${commandVariant}`
-        );
-        process.exitCode = 1;
-        return;
-      }
-
-      console.log('Running diff against files from optic.dev.yml file');
-      const configFiles = config.files;
-      const maybeMatchingFile = configFiles.find(
-        (file) => file.id === options.id
-      );
-      if (!maybeMatchingFile) {
-        console.error(
-          `id: ${options.id} was not found in the optic.dev.yml file`
-        );
-        console.log(
-          `valid list of file names: ${configFiles
-            .map((file) => file.id)
-            .join(', ')}`
-        );
-        process.exitCode = 1;
-        return;
-      }
-      const parsedFiles = await getBaseAndHeadFromFileAndBase(
-        maybeMatchingFile.path,
-        options.base,
-        config.root
-      );
-      await runDiff(files, parsedFiles, config, options);
     } else {
-      console.warn('Deprecation warning: optic diff is deprecated, please use optic diff <file_path> --base <base> instead');
-      if (!config.configPath) {
-        console.error(
-          'Error: no `optic.dev.yml` config file was found. Run `optic init` to generate a config file.'
-        );
-        process.exitCode = 1;
-        return;
-      } else if (config.files.length === 0) {
-        console.error(
-          'No files were found in your `optic.dev.yml` file. Ensure that your `optic.dev.yml` contains at least one file'
-        );
-        process.exitCode = 1;
-        return;
-      }
-      for await (const configFile of config.files) {
-        console.log(`${configFile.id}:`);
-        const parsedFiles = await getBaseAndHeadFromFileAndBase(
-          configFile.path,
-          options.base,
-          config.root
-        );
-        await runDiff(files, parsedFiles, config, options);
-        console.log('');
-      }
+      console.error('Command removed: optic diff (no args) has been removed, please use optic diff <file_path> --base <base> instead');
+      process.exitCode = 1;
+      return 
     }
     if (!options.web) {
       console.log(
