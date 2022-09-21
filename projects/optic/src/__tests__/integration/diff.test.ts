@@ -18,26 +18,6 @@ describe('diff', () => {
     expect(code).toBe(0);
   });
 
-  test('`optic diff` compares against HEAD in repo', async () => {
-    const workspace = await setupWorkspace('diff/repo', {
-      repo: true,
-      commit: true,
-    });
-    await run(
-      'mv example-api-1-updated.json example-api-1.json',
-      false,
-      workspace
-    );
-    await run(
-      'mv example-api-2-updated.json example-api-2.json',
-      false,
-      workspace
-    );
-    const { combined, code } = await runOptic(workspace, 'diff');
-    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
-    expect(code).toBe(0);
-  });
-
   test('basic rules config', async () => {
     const workspace = await setupWorkspace('diff/basic-rules');
     const { combined, code } = await runOptic(
