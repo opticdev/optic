@@ -1,11 +1,12 @@
 {
   "name": "@useoptic/json-pointer-helpers",
-  "version": "0.32.2",
+  "version": "0.32.3-0",
   "packageManager": "yarn@3.0.2",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
-    "/build"
+    "/build",
+    "/src"
   ],
   "scripts": {
     "dev:test": "jest --colors",
@@ -36,5 +37,6 @@
   },
   "dependencies": {
     "jsonpointer": "^5.0.1"
-  }
+  },
+  "stableVersion": "0.32.2"
 }
