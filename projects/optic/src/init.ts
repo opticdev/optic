@@ -8,7 +8,6 @@ import {
 
 import { registerCreateGithubContext } from '@useoptic/optic-ci/build/cli/commands/create-context/create-github-context';
 import { registerCreateManualContext } from '@useoptic/optic-ci/build/cli/commands/create-context/create-manual-context';
-import { registerCloudCompare } from './commands/cloud-compare/cloud-compare';
 import { registerInit } from './commands/init/register-init';
 import { registerDiff } from './commands/diff/diff';
 import {
@@ -70,7 +69,6 @@ export const initCli = async () => {
       'Commands to interact with Optic Cloud. See `optic cloud --help`'
     )
     .addHelpCommand(false);
-  registerCloudCompare(cloudSubcommands, cliConfig);
   registerCreateGithubContext(cloudSubcommands, true);
   registerCreateManualContext(cloudSubcommands);
 
