@@ -161,7 +161,7 @@ Array [
     },
     "condition": undefined,
     "docsLink": undefined,
-    "error": "a valid example is required for every documented query parameter",
+    "error": "a valid example is required for every query parameter",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
