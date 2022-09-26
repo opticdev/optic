@@ -85,52 +85,28 @@ export const requireParameterExamples = (applies: typeof appliesWhen[number]) =>
   new OperationRule({
     name: 'require parameter examples',
     rule: (operation) => {
-      if (applies === 'always') {
-        operation.headerParameter.requirement((header) => {
-          if (!header.raw.example) {
-            throw new RuleError({
-              message: `a valid example is required for every documented header`,
-            });
-          }
-        });
-        operation.queryParameter.requirement((header) => {
-          if (!header.raw.example) {
-            throw new RuleError({
-              message: `a valid example is required for every documented query parameter`,
-            });
-          }
-        });
-        operation.cookieParameter.requirement((header) => {
-          if (!header.raw.example) {
-            throw new RuleError({
-              message: `a valid example is required for every documented cookie parameter`,
-            });
-          }
-        });
-      }
-
-      if (applies === 'addedOrChanged') {
-        operation.headerParameter.addedOrChanged((header) => {
-          if (!header.raw.example) {
-            throw new RuleError({
-              message: `a valid example is required for added header`,
-            });
-          }
-        });
-        operation.queryParameter.addedOrChanged((header) => {
-          if (!header.raw.example) {
-            throw new RuleError({
-              message: `a valid example is required for added query parameter`,
-            });
-          }
-        });
-        operation.cookieParameter.addedOrChanged((header) => {
-          if (!header.raw.example) {
-            throw new RuleError({
-              message: `a valid example is required for added cookie parameter`,
-            });
-          }
-        });
-      }
+      const lifecycle = applies === 'always' ? 'requirement' : 'addedOrChanged';
+      const errorMessageType = applies === 'always' ? 'every' : 'added';
+      operation.headerParameter[lifecycle]((header) => {
+        if (!header.raw.example) {
+          throw new RuleError({
+            message: `a valid example is required for ${errorMessageType} header`,
+          });
+        }
+      });
+      operation.queryParameter[lifecycle]((header) => {
+        if (!header.raw.example) {
+          throw new RuleError({
+            message: `a valid example is required for ${errorMessageType} query parameter`,
+          });
+        }
+      });
+      operation.cookieParameter[lifecycle]((header) => {
+        if (!header.raw.example) {
+          throw new RuleError({
+            message: `a valid example is required for ${errorMessageType} cookie parameter`,
+          });
+        }
+      });
     },
   });
