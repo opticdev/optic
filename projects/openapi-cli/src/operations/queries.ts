@@ -1,18 +1,16 @@
 import {
-  OperationFacts,
-  OperationFact,
-  isFactVariant,
   FactVariants,
+  isFactVariant,
   OpenAPIV3,
   SpecFactsIterable,
 } from '../specs';
-import { Option, Some, None, Result, Ok, Err } from 'ts-results';
+import { Err, None, Ok, Option, Result, Some } from 'ts-results';
 import invariant from 'ts-invariant';
 import equals from 'fast-deep-equal';
 import Url from 'url';
-import Path from 'path';
-import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { PathComponents, PathComponentKind } from '.';
+
+import { PathComponentKind, PathComponents } from '.';
+import UrlJoin from 'url-join';
 
 export class OperationQueries {
   static fromFacts(facts: SpecFactsIterable): OperationQueries {
@@ -64,7 +62,7 @@ export class OperationQueries {
       ...new Set(
         this.basePaths.flatMap((basePath) => {
           return this.operations.map(({ pathPattern }) =>
-            Path.join(basePath, pathPattern)
+            UrlJoin(basePath, pathPattern)
           );
         })
       ),
@@ -101,7 +99,7 @@ export class OperationQueries {
     const operation = this.operations.find((op) =>
       this.basePaths.some(
         (basePath) =>
-          Path.join(basePath, op.pathPattern) == matchedPattern &&
+          UrlJoin(basePath, op.pathPattern) == matchedPattern &&
           op.method == method
       )
     );
@@ -119,7 +117,7 @@ export class OperationQueries {
 
     // path patterns are assumed not have base paths included, but the matcher _does_
     if (this.basePaths.length > 0) {
-      pathPattern = Path.join(this.basePaths[0], pathPattern);
+      pathPattern = UrlJoin(this.basePaths[0], pathPattern);
     }
 
     const matchedPatternResult = this.matchPathPattern(pathPattern);
@@ -131,7 +129,7 @@ export class OperationQueries {
 
     const operation = this.operations.find((op) =>
       this.basePaths.some(
-        (basePath) => Path.join(basePath, op.pathPattern) == matchedPattern
+        (basePath) => UrlJoin(basePath, op.pathPattern) == matchedPattern
       )
     );
 
