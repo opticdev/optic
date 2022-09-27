@@ -7,9 +7,11 @@ import {
 } from '@useoptic/rulesets-base';
 import { OpenAPIV3 } from 'openapi-types';
 import Ajv, { SchemaObject } from 'ajv';
+import addFormats from 'ajv-formats';
 
 const ajv = (() => {
   const validator = new Ajv({ strict: false });
+  addFormats(validator);
   // override pattern keyword when invalid regex
   validator.removeKeyword('pattern');
   validator.addKeyword({
