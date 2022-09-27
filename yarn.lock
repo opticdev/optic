@@ -3677,6 +3677,7 @@ __metadata:
     "@useoptic/openapi-utilities": "workspace:*"
     "@useoptic/rulesets-base": "workspace:*"
     ajv: ^8.11.0
+    ajv-formats: 2.1.1
     babel-jest: ^27.5.1
     jest: ^27.5.1
     prettier: ^2.4.1
@@ -3822,7 +3823,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv-formats@npm:^2.1.1, ajv-formats@npm:~2.1.0":
+"ajv-formats@npm:2.1.1, ajv-formats@npm:^2.1.1, ajv-formats@npm:~2.1.0":
   version: 2.1.1
   resolution: "ajv-formats@npm:2.1.1"
   dependencies:

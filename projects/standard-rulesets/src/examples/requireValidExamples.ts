@@ -7,10 +7,36 @@ import {
 } from '@useoptic/rulesets-base';
 import { OpenAPIV3 } from 'openapi-types';
 import Ajv, { SchemaObject } from 'ajv';
+import addFormats from 'ajv-formats';
 
-const ajv = new Ajv({ strict: false });
+const ajv = (() => {
+  const validator = new Ajv({ strict: false });
+  addFormats(validator);
+  // override pattern keyword when invalid regex
+  validator.removeKeyword('pattern');
+  validator.addKeyword({
+    keyword: 'pattern',
+    type: 'string',
+    schemaType: 'string',
+    error: {
+      message: (cxt) => {
+        return `pattern not matched ${cxt.schema}`;
+      },
+    },
+    compile: (pattern) => {
+      let regex;
+      try {
+        regex = new RegExp(pattern);
+      } catch (e) {
+        return (data) => true;
+      }
+      return (data) => regex.test(data);
+    },
+  });
+  return validator;
+})();
 
-function validateSchema(
+export function validateSchema(
   schema: SchemaObject,
   example: unknown
 ): { pass: true } | { pass: false; error: string } {
