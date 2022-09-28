@@ -1,5 +1,5 @@
 import { OpenAPITraverser } from './openapi3/implementations/openapi3/openapi-traverser';
-import { OpenAPIV3 } from 'openapi-types';
+import { OpenAPIV3, OpenAPIV3_1 } from 'openapi-types';
 import { factsToChangelog } from './openapi3/sdk/facts-to-changelog';
 import {
   ConceptualLocation,

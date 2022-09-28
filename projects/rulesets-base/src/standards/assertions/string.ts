@@ -8,6 +8,7 @@ export type StringAssertion<Context> =
 
 type StringAssertionValidator = {
   throwIfInvalid: (input: string) => void;
+  standardName: string;
 };
 
 export function AssertString(
@@ -22,8 +23,22 @@ export function AssertString(
   errorMessage: ErrorMessageInput<string> = 'did not match string assertions'
 ): StringAssertionValidator {
   return {
+    standardName,
     throwIfInvalid: (input: string) => {
       // use AJV
     },
   };
+}
+
+export function StringAssertionMarkdown(
+  name: string,
+  input: StringAssertion<any> | undefined
+) {
+  if (!input) return undefined;
+  if (typeof input === 'string') {
+    return `\`${name}\` equals \`${input}\``;
+  } else if ('standardName' in input) {
+    return `\`${name}\` ${input.standardName}`;
+  } else if (`\`${name}\` passes function`) {
+  }
 }
