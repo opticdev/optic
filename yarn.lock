@@ -3438,6 +3438,7 @@ __metadata:
     "@types/semver": ^7.3.10
     "@useoptic/json-pointer-helpers": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"
+    ajv-formats: ^2.1.1
     babel-jest: ^27.5.1
     chai: ^4.3.4
     chalk: ^4.1.2
