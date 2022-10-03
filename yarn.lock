@@ -3458,7 +3458,7 @@ __metadata:
     micro: ^9.3.4
     micro-cors: ^0.1.1
     node-fetch: ^2.6.7
-    openapi-types: ^12.0.0
+    openapi-types: ^12.0.2
     prettier: ^2.4.1
     semver: ^7.3.7
     ts-invariant: ^0.9.3
@@ -3509,7 +3509,7 @@ __metadata:
     lodash.isequal: ^4.5.0
     lodash.omit: ^4.5.0
     lodash.sortby: ^4.7.0
-    openapi-types: ^12.0.0
+    openapi-types: ^12.0.2
     prettier: ^2.4.1
     ts-invariant: ^0.9.3
     ts-node: ^10.3.1
@@ -3567,7 +3567,7 @@ __metadata:
     ts-node: ^10.8.0
     typescript: ^4.7.2
     url-join: ^4.0.1
-    uuid: ^8.3.2
+    uuid: ^9.0.0
   bin:
     optic-ci: build/index.js
   languageName: unknown
@@ -3625,7 +3625,7 @@ __metadata:
     ts-node: ^10.8.0
     typescript: ^4.7.2
     url-join: ^4.0.1
-    uuid: ^8.3.2
+    uuid: ^9.0.0
   bin:
     oas: build/oas.js
     optic: build/index.js
@@ -8503,10 +8503,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openapi-types@npm:^12.0.0":
-  version: 12.0.0
-  resolution: "openapi-types@npm:12.0.0"
-  checksum: 8d22cb3727e892ad8f9782210360627f6cde92a53c229407d897f0252543a937aed59bfd7a4bee291b50547d7a4e836290ee35eaebc3978c873c601de9ace5b6
+"openapi-types@npm:^12.0.2":
+  version: 12.0.2
+  resolution: "openapi-types@npm:12.0.2"
+  checksum: 097edc46adb5a8fc2a3419e2e0adbb5516737fd83b4041ec62ee28427e85d9f18c6ead9231b9d1c8f718d86eeccf3c0997437414011d8bb1597387a047493fea
   languageName: node
   linkType: hard
 
@@ -10466,6 +10466,15 @@ __metadata:
   bin:
     uuid: dist/bin/uuid
   checksum: 5575a8a75c13120e2f10e6ddc801b2c7ed7d8f3c8ac22c7ed0c7b2ba6383ec0abda88c905085d630e251719e0777045ae3236f04c812184b7c765f63a70e58df
+  languageName: node
+  linkType: hard
+
+"uuid@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "uuid@npm:9.0.0"
+  bin:
+    uuid: dist/bin/uuid
+  checksum: 8dd2c83c43ddc7e1c71e36b60aea40030a6505139af6bee0f382ebcd1a56f6cd3028f7f06ffb07f8cf6ced320b76aea275284b224b002b289f89fe89c389b028
   languageName: node
   linkType: hard
 
