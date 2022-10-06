@@ -59,9 +59,3 @@ exports[`init init with existing optic.init.yml 1`] = `
 Error: a configuration file already exists at $workspace$/optic.yml.
 "
 `;
-
-exports[`init init with existing optic.init.yml 2`] = `
-"Deprecation warning: optic.yml file is deprecated. Please rename your file to optic.dev.yml
-Error: a configuration file already exists at $workspace$/optic.yml.
-"
-`;
