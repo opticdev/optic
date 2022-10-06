@@ -191,7 +191,7 @@ const runDiff = async (
   [baseFile, headFile]: [ParseResult, ParseResult],
   config: OpticCliConfig,
   options: DiffActionOptions
-) => {
+): Promise<{ checks: { passed: number; failed: number; total: number } }> => {
   const ruleRunner = generateRuleRunner(config, options.check);
   const specResults = await generateSpecResults(
     ruleRunner,
@@ -215,6 +215,16 @@ const runDiff = async (
     console.log(log);
   }
 
+  const diffResults = {
+    checks: {
+      total: specResults.results.length,
+      passed: specResults.results.filter((check) => check.passed).length,
+      failed: specResults.results.filter(
+        (check) => !check.passed && !check.exempted
+      ).length,
+    },
+  };
+
   if (options.check) {
     if (specResults.results.length > 0) {
       console.log('Checks');
@@ -233,7 +243,7 @@ const runDiff = async (
       (!options.check || specResults.results.length === 0)
     ) {
       console.log('Empty changelog: not opening web view');
-      return;
+      return diffResults;
     }
     const meta = {
       createdAt: new Date(),
@@ -252,6 +262,8 @@ const runDiff = async (
     await flushEvents();
     await openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
   }
+
+  return diffResults;
 };
 
 type DiffActionOptions = {
@@ -268,9 +280,11 @@ const getDiffAction =
     options: DiffActionOptions
   ) => {
     const files: [string | undefined, string | undefined] = [file1, file2];
+    let shouldExit1 = false;
     if (file1 && file2) {
       const parsedFiles = await getBaseAndHeadFromFiles(file1, file2);
-      await runDiff(files, parsedFiles, config, options);
+      const diffResult = await runDiff(files, parsedFiles, config, options);
+      shouldExit1 = diffResult.checks.failed > 0 && options.check;
     } else if (file1) {
       if (config.vcs !== VCS.Git) {
         const commandVariant = `optic diff <file> --base <ref>`;
@@ -285,11 +299,14 @@ const getDiffAction =
         options.base,
         config.root
       );
-      await runDiff(files, parsedFiles, config, options);
+      const diffResult = await runDiff(files, parsedFiles, config, options);
+      shouldExit1 = diffResult.checks.failed > 0 && options.check;
     } else {
-      console.error('Command removed: optic diff (no args) has been removed, please use optic diff <file_path> --base <base> instead');
+      console.error(
+        'Command removed: optic diff (no args) has been removed, please use optic diff <file_path> --base <base> instead'
+      );
       process.exitCode = 1;
-      return 
+      return;
     }
     if (!options.web) {
       console.log(
@@ -298,4 +315,6 @@ const getDiffAction =
         )
       );
     }
+
+    if (shouldExit1) process.exitCode = 1;
   };
