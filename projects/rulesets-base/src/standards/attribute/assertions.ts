@@ -1,80 +1,92 @@
-export enum Applies {
-  'requirement',
-  'changed',
-  'added',
-  'removed',
-}
+import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 
-export interface AttributeRule<T, Context> {
-  apply: Applies;
+type AttributeRuleDefinition<T, Context> = {
+  ruleName: string;
   implemented: boolean;
-  ruleName: string;
-}
-
-export interface AttributeRequirement<T, Context>
-  extends AttributeRule<T, Context> {
-  ruleName: string;
-  apply: Applies.requirement;
-  assertion: (value: T, context: Context) => void;
-}
+} & (
+  | {
+      changed: {
+        assertion: (before: T, after: T, context: Context) => void;
+      };
+    }
+  | {
+      always: {
+        assertion: (value: T, context: Context) => void;
+        extendSchema?: OpenAPIV3.SchemaObject;
+      };
+    }
+);
 
 export function requirement<T, Context>(
   must: string,
   assertion?: (value: T, context: Context) => void
-): AttributeRequirement<T, Context> {
+): AttributeRuleDefinition<T, Context> {
   return {
     ruleName: must,
     implemented: !!assertion,
-    assertion: assertion ? assertion : () => {},
-    apply: Applies.requirement,
+    always: {
+      assertion: assertion ? assertion : () => {},
+    },
   };
 }
 
-export interface AttributeChanged<T, Context>
-  extends AttributeRule<T, Context> {
-  ruleName: string;
-  apply: Applies.changed;
-  assertion: (before: T, after: T, context: Context) => void;
+export function schemaRequirement<T, Context>(
+  must: string,
+  extendSchema?: OpenAPIV3.SchemaObject,
+  additionalAssertion?: (value: T, context: Context) => void
+): AttributeRuleDefinition<T, Context> {
+  return {
+    ruleName: must,
+    implemented: Boolean(extendSchema || additionalAssertion),
+    always: {
+      extendSchema,
+      assertion: () => {
+        // logic to match extended schema
+        // logic to run additional assertion
+      },
+    },
+  };
 }
 
 export function changed<T, Context>(
   must: string,
   assertion?: (before: T, after: T, context: Context) => void
-): AttributeChanged<T, Context> {
+): AttributeRuleDefinition<T, Context> {
   return {
     ruleName: must,
     implemented: !!assertion,
-    assertion: assertion ? assertion : () => {},
-    apply: Applies.changed,
+    changed: {
+      assertion: assertion ? assertion : () => {},
+    },
   };
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
 export type AttributeAssertions<T, Context> =
-  | AttributeRule<T, Context>
-  | AttributeRule<T, Context>[];
+  | AttributeRuleDefinition<T, Context>
+  | Array<AttributeRuleDefinition<T, Context>>;
 
-export function getAddedRules<T, Context>(
-  assertions: AttributeAssertions<T, Context>
-) {
-  const asArray = Array.isArray(assertions) ? assertions : [assertions];
-  return asArray.filter((i) => i.apply === Applies.added && i.implemented);
-}
-
-export function getChangedRules<T, Context>(
-  assertions: AttributeAssertions<T, Context>
-) {
-  const asArray = Array.isArray(assertions) ? assertions : [assertions];
-  return asArray.filter(
-    (i) => i.apply === Applies.changed && i.implemented
-  ) as AttributeChanged<T, Context>[];
-}
-export function getRequirements<T, Context>(
-  assertions: AttributeAssertions<T, Context>
-) {
-  const asArray = Array.isArray(assertions) ? assertions : [assertions];
-  return asArray.filter(
-    (i) => i.apply === Applies.requirement && i.implemented
-  ) as (AttributeRequirement<T, Context> & { implemented: true })[];
-}
+// export function getAddedRules<T, Context>(
+//   assertions: AttributeAssertions<T, Context>
+// ) {
+//   const asArray = Array.isArray(assertions) ? assertions : [assertions];
+//   return asArray.filter((i) => i.apply === Applies.added && i.implemented);
+// }
+//
+// export function getChangedRules<T, Context>(
+//   assertions: AttributeAssertions<T, Context>
+// ) {
+//   const asArray = Array.isArray(assertions) ? assertions : [assertions];
+//   return asArray.filter(
+//     (i) => i.apply === Applies.changed && i.implemented
+//   ) as (AttributeChanged<T, Context> & { implemented: true })[];
+// }
+// export function getRequirements<T, Context>(
+//   assertions: AttributeAssertions<T, Context>
+// ) {
+//   const asArray = Array.isArray(assertions) ? assertions : [assertions];
+//   return asArray.filter(
+//     (i) => i.apply === Applies.requirement && i.implemented
+//   ) as (AttributeRequirement<T, Context> & { implemented: true })[];
+// }
