@@ -219,7 +219,9 @@ const runDiff = async (
     checks: {
       total: specResults.results.length,
       passed: specResults.results.filter((check) => check.passed).length,
-      failed: specResults.results.filter((check) => !check.passed).length,
+      failed: specResults.results.filter(
+        (check) => !check.passed && !check.exempted
+      ).length,
     },
   };
 
