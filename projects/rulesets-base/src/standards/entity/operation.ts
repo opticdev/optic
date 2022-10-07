@@ -1,5 +1,9 @@
 import { AttributeAssertions } from '../attribute/assertions';
-import { OpenApiKind, OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  FactVariant,
+  OpenApiKind,
+  OpenAPIV3,
+} from '@useoptic/openapi-utilities';
 import { Matcher } from '../runner/matcher';
 import { ParameterStandard, ParameterStandardRunner } from './parameter';
 import { ResponseStandardRunner } from './response';
@@ -41,7 +45,11 @@ export function Operation<OpenAPIType>(
   const matcher =
     'filter' in operation
       ? operation.filter
-      : { matchesName: 'Applies to All Operations', predicate: () => true };
+      : {
+          matchesName: 'Applies to All Operations',
+          predicate: (_, context) =>
+            context.lifecycle === 'added' || context.lifecycle === 'continuous',
+        };
 
   return new OperationStandardRunner(standard, matcher);
 }
@@ -58,23 +66,17 @@ export class OperationStandardRunner<OpenAPIType> extends EntityBase<
     super();
   }
 
-  // override createContext(
-  //   fact: FactVariant<OpenApiKind.Operation>,
-  //   lifecycle: 'added' | 'removed' | 'continuous',
-  //   inputs: RunnerEntityInputs
-  // ): OperationContext {
-  //   const operation = this.getFromSpec(
-  //     fact,
-  //     lifecycle === 'removed' ? 'before' : 'after',
-  //     inputs
-  //   );
-  //
-  //   return {
-  //     lifecycle,
-  //     pathPattern: fact.value.pathPattern,
-  //     method: fact.value.method as OpenAPIV3.HttpMethods,
-  //   };
-  // }
+  override createContext(
+    fact: FactVariant<OpenApiKind.Operation>,
+    lifecycle: 'added' | 'removed' | 'continuous',
+    inputs: RunnerEntityInputs
+  ): OperationContext {
+    return {
+      lifecycle,
+      pathPattern: fact.value.pathPattern,
+      method: fact.value.method as OpenAPIV3.HttpMethods,
+    };
+  }
   override run(input: RunnerEntityInputs) {
     runner<OpenAPIType, OperationContext>(
       input,

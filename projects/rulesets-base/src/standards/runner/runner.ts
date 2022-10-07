@@ -20,10 +20,59 @@ export function runner<OpenAPI, Context>(
 
   const allIdsOfKind = Object.keys(lifecycle);
 
-  allIdsOfKind.filter((i) => {
-    matcher();
+  const qualified = allIdsOfKind.filter((pathKey) => {
+    const fact =
+      lifecycle[pathKey] === 'removed'
+        ? before.find(
+            (i) =>
+              JsonPointerHelpers.compile(i.location.conceptualPath) === pathKey
+          )!
+        : after.find((i) =>
+            JsonPointerHelpers.compile(i.location.conceptualPath)
+          )!;
 
-    return false;
+    const context = standard.createContext(
+      fact,
+      lifecycle[pathKey],
+      specInputs
+    );
+
+    return matcher.predicate(
+      getFromSpec(
+        fact,
+        lifecycle[pathKey] === 'removed' ? 'before' : 'after',
+        specInputs
+      ),
+      context
+    );
+  });
+
+  qualified.forEach((qualifiedPath) => {
+    const nodeLifecycle = lifecycle[qualifiedPath];
+
+    if (nodeLifecycle === 'added') {
+      const fact = after.find(
+        (i) =>
+          JsonPointerHelpers.compile(i.location.conceptualPath) ===
+          qualifiedPath
+      );
+      /// run the rules
+    } else if (nodeLifecycle === 'continuous') {
+      const fact = after.find(
+        (i) =>
+          JsonPointerHelpers.compile(i.location.conceptualPath) ===
+          qualifiedPath
+      );
+      /// run the rules
+    } else if (nodeLifecycle === 'removed') {
+      const fact = before.find(
+        (i) =>
+          JsonPointerHelpers.compile(i.location.conceptualPath) ===
+          qualifiedPath
+      );
+
+      /// run the rules
+    }
   });
 
   return [];

@@ -62,7 +62,10 @@ const x404NotFoundResponse = Standard.Response('404', {
 
 export const GetOperations = Standard.Operation({
   filter: matches('applies to all GET operations', (operation, context) => {
-    return context.method === 'get';
+    return (
+      context.method === 'get' &&
+      (context.lifecycle === 'added' || context.lifecycle === 'continuous')
+    );
   }),
   standard: {
     parameters: [LimitQuery, RequestIdHeader],

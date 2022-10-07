@@ -15,54 +15,55 @@ it('can markdownify post operations', () => {
   console.log(abc);
 });
 
-// it('can run operation rules', () => {
-//   const spec: OpenAPIV3.Document = {
-//     openapi: '3.0.0',
-//     info: {
-//       title: '',
-//       version: '',
-//     },
-//     paths: {
-//       '/legacy/example': {
-//         get: {
-//           responses: {},
-//         },
-//       },
-//       '/example': {
-//         get: {
-//           operationId: 'getExample',
-//           responses: {},
-//         },
-//       },
-//     },
-//   };
-//   const spec1: OpenAPIV3.Document = {
-//     openapi: '3.0.0',
-//     info: {
-//       title: '',
-//       version: '',
-//     },
-//     paths: {
-//       '/example': {
-//         get: {
-//           operationId: 'getExampleSingle',
-//           description: '',
-//           responses: {},
-//         },
-//       },
-//       '/example/{id}': {
-//         get: {
-//           operationId: 'getExampleById',
-//           description: '',
-//           responses: {},
-//         },
-//       },
-//     },
-//   };
-//   const inputs = prepareInputs(spec, spec1);
-//
-//   AllOperations.run(inputs);
-// });
+it('can run operation rules', () => {
+  const spec: OpenAPIV3.Document = {
+    openapi: '3.0.0',
+    info: {
+      title: '',
+      version: '',
+    },
+    paths: {
+      '/legacy/example': {
+        get: {
+          responses: {},
+        },
+      },
+      '/example': {
+        get: {
+          operationId: 'getExample',
+          responses: {},
+        },
+      },
+    },
+  };
+  const spec1: OpenAPIV3.Document = {
+    openapi: '3.0.0',
+    info: {
+      title: '',
+      version: '',
+    },
+    paths: {
+      '/example': {
+        get: {
+          operationId: 'getExampleSingle',
+          description: '',
+          responses: {},
+        },
+      },
+      '/example/{id}': {
+        post: {
+          operationId: 'getExampleById',
+          description: '',
+          responses: {},
+        },
+      },
+    },
+  };
+  const inputs = prepareInputs(spec, spec1);
+
+  GetOperations.run(inputs);
+  AllOperations.run(inputs);
+});
 
 function prepareInputs(
   beforeSpec: OpenAPIV3.Document,
