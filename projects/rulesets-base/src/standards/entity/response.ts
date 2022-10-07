@@ -92,8 +92,9 @@ export class ResponseStandardRunner<OpenAPIType> extends EntityBase<
       ...contentTypes.map((contentType) => {
         const { schema } = content?.[contentType];
         return [
-          Markdown.bold(`content-type: ${contentType}`),
           '\n',
+          Markdown.bold(`content-type: ${contentType}`),
+          '\n\n',
           schema ? renderAttributes({ schema }) : '\n',
         ].join('');
       }),

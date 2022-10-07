@@ -54,9 +54,9 @@ export function AttributeMustBlock(
     : '';
 
   if (musts.length === 1) {
-    return `\`${key}\` - ${musts[0]}` + extendsSchemaText + '\n';
+    return `\`${key}\` - ${musts[0]}` + extendsSchemaText;
   } else {
-    return `\`${key}\`\n${indent(bullets(...musts), 2)}\n` + extendsSchemaText;
+    return `\`${key}\`\n${indent(bullets(...musts), 2)}` + extendsSchemaText;
   }
 }
 
@@ -77,10 +77,12 @@ export function renderAttributes(input: {
         }
       });
 
-      return AttributeMustBlock(
-        key,
-        rules.map((i) => i.ruleName),
-        extendSchema
+      return (
+        AttributeMustBlock(
+          key,
+          rules.map((i) => i.ruleName),
+          extendSchema
+        ) + '\n\n'
       );
     } else {
       if (!rules.ruleName) return '';
@@ -88,7 +90,7 @@ export function renderAttributes(input: {
         extendSchema = rules.always.extendSchema;
       }
 
-      return AttributeMustBlock(key, [rules.ruleName], extendSchema);
+      return AttributeMustBlock(key, [rules.ruleName], extendSchema) + '\n\n';
     }
   });
 }

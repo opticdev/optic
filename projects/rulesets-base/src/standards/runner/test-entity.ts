@@ -1,8 +1,4 @@
-import {
-  AttributeAssertions,
-  getChangedRules,
-  getRequirements,
-} from '../attribute/assertions';
+import { AttributeAssertions } from '../attribute/assertions';
 import { Result } from '@useoptic/openapi-utilities';
 
 export function testEntityAttributes<T, Context, Standard>(
@@ -89,7 +85,7 @@ export function testEntityAttributes<T, Context, Standard>(
   return tester;
 }
 
-function wrapTest(
+export function wrapTest(
   run: () => void,
   result: Omit<Result, 'passed' | 'error'>
 ): Result {
