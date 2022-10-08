@@ -29,6 +29,7 @@ export const Markdown = {
   h1: (heading: string) => `# ${heading}\n`,
   h2: (heading: string) => `## ${heading}\n`,
   h3: (heading: string) => `### ${heading}\n`,
+  underlineBreak: `---\n`,
   p: (inline: string) => `\n${inline}\n`,
   bold: (inline: string) => `**${inline}**`,
   indent: (sequence: MarkdownSequence, amount: number = 2) =>

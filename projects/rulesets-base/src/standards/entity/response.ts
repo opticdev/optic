@@ -4,15 +4,8 @@ import {
   OpenApiKind,
   OpenAPIV3,
 } from '@useoptic/openapi-utilities';
-import { Matcher } from '../runner/matcher';
-import { stat } from 'fs';
 import { EntityBase } from './base';
-import {
-  AttributeMustBlock,
-  Markdown,
-  MarkdownSequence,
-  renderAttributes,
-} from '../markdown/util';
+import { Markdown, MarkdownSequence, renderAttributes } from '../markdown/util';
 
 export type ResponseContext = {
   lifecycle: 'added' | 'removed' | 'continuous';
@@ -45,39 +38,29 @@ export interface ResponseStandard {
   // headers: []
 }
 
-export function Response<OpenAPIType>(
+export const ResponseV3 = (
   statusCodeMatcher: string,
-  response:
-    | ResponseStandard
-    | {
-        filter: Matcher<OpenAPIType, ResponseContext>;
-        standard: ResponseStandard;
-      }
-) {
-  const standard = 'filter' in response ? response.standard : response;
-  const matcher =
-    'filter' in response
-      ? response.filter
-      : {
-          matchesName: `\`${statusCodeMatcher}\` Response`,
-          predicate: (x, context) => context.statusCode === statusCodeMatcher,
-        };
-
-  return new ResponseStandardRunner(statusCodeMatcher, standard, matcher);
-}
+  standard: ResponseStandard
+) => {
+  const responseRunner = new ResponseStandardRunner<OpenAPIV3.ResponseObject>(
+    standard
+  );
+  responseRunner.applyWhen(`${statusCodeMatcher} responses`, (_, context) => {
+    return statusCodeMatcher === context.statusCode;
+  });
+  return responseRunner;
+};
 
 export class ResponseStandardRunner<OpenAPIType> extends EntityBase<
   OpenAPIV3.ResponseObject,
   ResponseContext,
-  FactVariant<OpenApiKind.Response>
+  OpenApiKind.Response
 > {
-  constructor(
-    private statusCodeMatcher: string,
-    private standard: ResponseStandard,
-    private matches: Matcher<OpenAPIType, ResponseContext>
-  ) {
+  constructor(private standard: ResponseStandard) {
     super();
   }
+
+  override kind: OpenApiKind = OpenApiKind.Response;
 
   override toMarkdown(): MarkdownSequence {
     const { content, ...other } = this.standard;
@@ -86,7 +69,8 @@ export class ResponseStandardRunner<OpenAPIType> extends EntityBase<
 
     return [
       '\n',
-      Markdown.h3(`${this.matches.matchesName}`),
+      Markdown.h3(`${this.applyWhenPredicate.matchesName}`),
+      this.standardExplained ? `\n${this.standardExplained}\n` : '',
       ...renderAttributes(other as any),
       '\n',
       ...contentTypes.map((contentType) => {

@@ -4,7 +4,7 @@ import {
   OpenApiKind,
   OpenAPIV3,
 } from '@useoptic/openapi-utilities';
-import { Matcher } from '../runner/matcher';
+import { Matcher, matches } from '../runner/matcher';
 import { ResponseContext } from './response';
 import { EntityBase } from './base';
 import { Markdown, MarkdownSequence, renderAttributes } from '../markdown/util';
@@ -47,57 +47,44 @@ export interface ParameterStandard {
   >;
 }
 
-export function Parameter<OpenAPIType>(
-  parameter:
-    | ParameterStandard
-    | {
-        filter: Matcher<OpenAPIType, ParameterContext>;
-        standard: ParameterStandard;
-      }
-) {
-  const standard = 'filter' in parameter ? parameter.standard : parameter;
-  const matcher =
-    'filter' in parameter
-      ? parameter.filter
-      : { matchesName: 'Applies to All Operations', predicate: () => true };
-
-  return new ParameterStandardRunner(standard, matcher);
-}
+export const ParameterV3 = (standard: ParameterStandard) =>
+  new ParameterStandardRunner<OpenAPIV3.ParameterObject>(standard);
 
 export class ParameterStandardRunner<OpenAPIType> extends EntityBase<
-  OpenAPIType,
+  OpenAPIV3.ParameterObject,
   ParameterContext,
-  | FactVariant<OpenApiKind.PathParameter>
-  | FactVariant<OpenApiKind.CookieParameter>
-  | FactVariant<OpenApiKind.HeaderParameter>
-  | FactVariant<OpenApiKind.QueryParameter>
+  | OpenApiKind.PathParameter
+  | OpenApiKind.CookieParameter
+  | OpenApiKind.HeaderParameter
+  | OpenApiKind.QueryParameter
 > {
-  private matchName: string;
+  override kind: OpenApiKind = OpenApiKind.PathParameter;
 
-  constructor(
-    private standard: ParameterStandard,
-    private matches: Matcher<OpenAPIType, ParameterContext>
-  ) {
+  constructor(private standard: ParameterStandard) {
     super();
 
-    this.matchName = (() => {
-      if (standard.name) {
-        return `\`${standard.name}\` ${
-          standard.in ? `in ${standard.in}` : ''
-        }  `;
-      }
-      if (standard.in) {
-        return `all \`${standard.in}\` parameters`;
-      }
-      return matches.matchesName;
-    })();
+    if (this.standard.in && this.standard.name) {
+      this.applyWhen(
+        `${this.standard.in} parameter named \`${this.standard.name}\``,
+        (param) => {
+          return (
+            param.name === this.standard.name && param.in === this.standard.in
+          );
+        }
+      );
+    } else if (this.standard.in) {
+      this.applyWhen(`${this.standard.in} parameters`, (param) => {
+        return param.in === this.standard.in;
+      });
+    }
   }
 
   override toMarkdown(): MarkdownSequence {
     const { in: __, name, ...other } = this.standard;
 
     return [
-      Markdown.p(this.matchName),
+      Markdown.p(this.applyWhenPredicate.matchesName),
+      this.standardExplained ? `\n${this.standardExplained}\n` : '',
       Markdown.bullets(...renderAttributes(other as any)),
     ];
   }

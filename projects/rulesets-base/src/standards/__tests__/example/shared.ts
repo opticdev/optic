@@ -1,10 +1,9 @@
-import { Standard } from '../../entity/versions/v3';
 import {
   changed,
   requirement,
   schemaRequirement,
 } from '../../attribute/assertions';
-import { matches } from '../../runner/matcher';
+import Standard from '../../entity/versions/v3';
 
 // Parameters
 const LimitQuery = Standard.Parameter({
@@ -50,7 +49,7 @@ const x200PaginatedListResponse = Standard.Response('204', {
   },
 });
 
-const x404NotFoundResponse = Standard.Response('404', {
+export const x404NotFoundResponse = Standard.Response('404', {
   content: {
     'application/json': {
       schema: requirement('standard 404 schema used'),
@@ -61,16 +60,35 @@ const x404NotFoundResponse = Standard.Response('404', {
 // Operations
 
 export const GetOperations = Standard.Operation({
-  filter: matches('applies to all GET operations', (operation, context) => {
-    return (
-      context.method === 'get' &&
-      (context.lifecycle === 'added' || context.lifecycle === 'continuous')
-    );
+  parameters: [LimitQuery, RequestIdHeader],
+  responses: [x200PaginatedListResponse, x404NotFoundResponse],
+}).applyWhen('applies to all GET operations', (operation, context) => {
+  return (
+    context.method === 'get' &&
+    (context.lifecycle === 'added' || context.lifecycle === 'continuous')
+  );
+});
+
+export const PostOperations = Standard.Operation({
+  parameters: [LimitQuery, RequestIdHeader],
+  requestBody: Standard.Request({
+    content: {
+      'application/json': {
+        schema: schemaRequirement('sends a json:api request', {
+          type: 'object',
+          properties: { data: {}, id: { type: 'string' } },
+          required: ['properties'],
+        }),
+      },
+    },
   }),
-  standard: {
-    parameters: [LimitQuery, RequestIdHeader],
-    responses: [x200PaginatedListResponse, x404NotFoundResponse],
-  },
+
+  responses: [x200PaginatedListResponse, x404NotFoundResponse],
+}).applyWhen('applies to all GET operations', (operation, context) => {
+  return (
+    context.method === 'post' &&
+    (context.lifecycle === 'added' || context.lifecycle === 'continuous')
+  );
 });
 
 export const AllOperations = Standard.Operation({

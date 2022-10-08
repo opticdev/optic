@@ -1,7 +1,9 @@
 import { AttributeAssertions } from '../attribute/assertions';
-import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { OpenApiKind, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { Matcher } from '../runner/matcher';
 import { stat } from 'fs';
+import { EntityBase } from './base';
+import { Markdown, MarkdownSequence, renderAttributes } from '../markdown/util';
 
 export type RequestContext = {
   lifecycle: 'added' | 'removed' | 'continuous';
@@ -33,26 +35,37 @@ export interface RequestStandard {
   };
 }
 
-export function Request<OpenAPIType>(
-  request:
-    | RequestStandard
-    | {
-        filter: Matcher<OpenAPIType, RequestContext>;
-        standard: RequestStandard;
-      }
-) {
-  const standard = 'filter' in request ? request.standard : request;
-  const matcher =
-    'filter' in request
-      ? request.filter
-      : { matchesName: 'Applies to All Requests', predicate: () => true };
+export const RequestV3 = (request: RequestStandard) =>
+  new RequestStandardRunner<OpenAPIV3.RequestBodyObject>(request);
 
-  return new RequestStandardRunner(standard, matcher);
-}
+export class RequestStandardRunner<OpenAPIType> extends EntityBase<
+  OpenAPIV3.RequestBodyObject,
+  RequestContext,
+  OpenApiKind.Request
+> {
+  constructor(private standard: RequestStandard) {
+    super();
+  }
+  override kind: OpenApiKind = OpenApiKind.Request;
 
-export class RequestStandardRunner<OpenAPIType> {
-  constructor(
-    private standard: RequestStandard,
-    private matches: Matcher<OpenAPIType, RequestContext>
-  ) {}
+  override toMarkdown(): MarkdownSequence {
+    const { content, ...other } = this.standard;
+
+    const contentTypes = Object.keys(content || {});
+
+    return [
+      this.standardExplained ? `\n${this.standardExplained}\n` : '',
+      ...renderAttributes(other as any),
+      '\n',
+      ...contentTypes.map((contentType) => {
+        const { schema } = content?.[contentType];
+        return [
+          '\n',
+          Markdown.bold(`content-type: ${contentType}`),
+          '\n\n',
+          schema ? renderAttributes({ schema }) : '\n',
+        ].join('');
+      }),
+    ];
+  }
 }
