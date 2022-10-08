@@ -79,7 +79,7 @@ export class SchemaStandardRunner<OpenAPIType> extends EntityBase<
 
   override toMarkdown(): MarkdownSequence {
     return [
-      Markdown.h3(`Schema Standard: ${this.applyWhenPredicate.matchesName}`),
+      Markdown.h3(`${this.applyWhenPredicate.matchesName}`),
       this.standardExplained ? `\n${this.standardExplained}\n` : '',
       ...renderAttributes(this.standard as any),
     ];

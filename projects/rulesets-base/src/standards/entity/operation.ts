@@ -50,7 +50,7 @@ export class OperationStandardRunner<OpenAPIType> extends EntityBase<
     const { parameters, requestBody, responses, ...other } = this.standard;
 
     return [
-      Markdown.h1(`Operation Standard: ${this.applyWhenPredicate.matchesName}`),
+      Markdown.h1(`${this.applyWhenPredicate.matchesName}`),
       this.standardExplained ? `\n${this.standardExplained}\n` : '',
       ...renderAttributes(other as any),
       ...(parameters?.length
