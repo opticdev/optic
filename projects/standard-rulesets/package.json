@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/standard-rulesets",
   "packageManager": "yarn@3.0.2",
-  "version": "0.33.1-0",
+  "version": "0.33.1-2",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
