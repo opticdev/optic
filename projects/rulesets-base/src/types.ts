@@ -21,6 +21,7 @@ export type Specification = FactVariant<OpenApiKind.Specification> & {
 
 export type Operation = FactVariant<OpenApiKind.Operation> & {
   raw: OpenAPIV3.OperationObject;
+  security: OpenAPIV3.OperationObject['security'] | undefined;
   path: string;
   method: string;
   queryParameters: Map<string, QueryParameter>;
@@ -235,4 +236,4 @@ export type ResponseBodyAssertions = {
   property: Assertions<'property'>;
 };
 
-export type PropertyAssertions = Assertions<'property'>
+export type PropertyAssertions = Assertions<'property'>;
