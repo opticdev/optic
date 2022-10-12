@@ -164,7 +164,7 @@ export const createOperation = (
     }
   }
 
-  const security: OpenAPIV3.OperationObject['security'] | undefined = (() => {
+  const security: OpenAPIV3.OperationObject['security'] | null = (() => {
     const operationOverride = jsonPointerHelpers.tryGet(
       openApiSpec,
       jsonPointerHelpers.join(operationFact.location.jsonPath, 'security')
@@ -181,7 +181,7 @@ export const createOperation = (
     if (specLevel.match)
       return specLevel.value as OpenAPIV3.OperationObject['security'];
 
-    return undefined;
+    return null;
   })();
 
   return {
