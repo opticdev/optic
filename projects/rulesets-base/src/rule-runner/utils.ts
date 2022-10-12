@@ -21,12 +21,14 @@ export const createRuleContextWithoutOperation = (
   ),
   custom: any
 ): RuleContext => {
-  const specificationChange = getSpecificationChange(specification.node)
+  const specificationChange = getSpecificationChange(specification.node);
 
   return {
     custom,
     specification: {
-      ...(specificationChange === 'removed' ? specification.before! : specification.after!),
+      ...(specificationChange === 'removed'
+        ? specification.before!
+        : specification.after!),
       change: specificationChange,
     },
     operation: {
@@ -42,6 +44,7 @@ export const createRuleContextWithoutOperation = (
       raw: {
         responses: {},
       },
+      security: null,
       change: null,
       queryParameters: new Map(),
       pathParameters: new Map(),
@@ -55,22 +58,20 @@ export const createRuleContextWithoutOperation = (
 
 export const createRuleContextWithOperation = (
   specification: {
-    node: NodeDetail<OpenApiKind.Specification>
-  }
-    & (
-      | { before: Specification | null; after: Specification }
-      | { before: Specification; after: null }
-    ),
-    operation: {
-      node: NodeDetail<OpenApiKind.Operation>
-    }
-      & (
-        | { before: Operation | null; after: Operation }
-        | { before: Operation; after: null }
-      ),
+    node: NodeDetail<OpenApiKind.Specification>;
+  } & (
+    | { before: Specification | null; after: Specification }
+    | { before: Specification; after: null }
+  ),
+  operation: {
+    node: NodeDetail<OpenApiKind.Operation>;
+  } & (
+    | { before: Operation | null; after: Operation }
+    | { before: Operation; after: null }
+  ),
   custom: any
 ): RuleContext => {
-  const specificationChange = getSpecificationChange(specification.node)
+  const specificationChange = getSpecificationChange(specification.node);
 
   if (specificationChange === 'removed') {
     return {
@@ -81,19 +82,19 @@ export const createRuleContextWithOperation = (
       },
       operation: {
         ...operation.before!,
-        change: specificationChange
+        change: specificationChange,
       },
-    }
+    };
   } else {
     return {
       custom,
       specification: {
         ...specification.after!,
-        change: specificationChange
+        change: specificationChange,
       },
       operation: {
         ...(operation.after ? operation.after : operation.before),
-        change:operation.node.change?.changeType || null
+        change: operation.node.change?.changeType || null,
       },
     };
   }

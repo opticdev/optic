@@ -1327,6 +1327,13 @@ Object {
       },
     },
   },
+  "security": Array [
+    Object {
+      "AuthScope": Array [
+        "admin",
+      ],
+    },
+  ],
   "value": Object {
     "description": "For valid response try integer IDs with value >= 1 and <= 10.         Other values will generated exceptions",
     "method": "get",
@@ -2362,6 +2369,7 @@ Object {
       },
     },
   },
+  "security": null,
   "value": Object {
     "description": "For valid response try integer IDs with value >= 1 and <= 10.         Other values will generated exceptions",
     "method": "get",
@@ -5747,6 +5755,13 @@ Object {
         },
       },
     },
+    "security": Array [
+      Object {
+        "AuthScope": Array [
+          "admin",
+        ],
+      },
+    ],
     "servers": Array [
       Object {
         "url": "https://petstore.swagger.io/v2",
