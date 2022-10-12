@@ -540,6 +540,11 @@ export const afterOpenApiJson: OpenAPIV3.Document = {
     '/example': {
       get: {
         operationId: 'getExamples',
+        security: [
+          {
+            LocalAuthScope: ['admin'],
+          },
+        ],
         responses: {
           '200': {
             description: 'succesful',

@@ -4962,6 +4962,13 @@ Object {
               "description": "succesful",
             },
           },
+          "security": Array [
+            Object {
+              "LocalAuthScope": Array [
+                "admin",
+              ],
+            },
+          ],
         },
       },
       "/pet": Object {
