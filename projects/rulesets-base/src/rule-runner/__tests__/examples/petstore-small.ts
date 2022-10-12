@@ -498,6 +498,11 @@ export const afterOpenApiJson: OpenAPIV3.Document = {
     description: 'Find out more about Swagger',
     url: 'http://swagger.io',
   },
+  security: [
+    {
+      AuthScope: ['admin'],
+    },
+  ],
   servers: [
     {
       url: 'https://petstore.swagger.io/v2',

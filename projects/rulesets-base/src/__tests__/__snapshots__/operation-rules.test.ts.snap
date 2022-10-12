@@ -3108,6 +3108,7 @@ Object {
     },
     "requests": Array [],
     "responses": Map {},
+    "security": null,
     "value": Object {
       "description": "hello",
       "method": "get",
@@ -3188,6 +3189,7 @@ Object {
     },
     "requests": Array [],
     "responses": Map {},
+    "security": null,
     "value": Object {
       "description": "hello",
       "method": "get",
