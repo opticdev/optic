@@ -1329,7 +1329,7 @@ Object {
   },
   "security": Array [
     Object {
-      "api": Array [
+      "AuthScope": Array [
         "admin",
       ],
     },
@@ -5757,7 +5757,7 @@ Object {
     },
     "security": Array [
       Object {
-        "api": Array [
+        "AuthScope": Array [
           "admin",
         ],
       },
