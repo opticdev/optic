@@ -167,7 +167,7 @@ export const createOperation = (
   const security: OpenAPIV3.OperationObject['security'] | null = (() => {
     const operationOverride = jsonPointerHelpers.tryGet(
       openApiSpec,
-      jsonPointerHelpers.join(operationFact.location.jsonPath, '/security')
+      jsonPointerHelpers.append(operationFact.location.jsonPath, 'security')
     );
 
     if (operationOverride.match)
