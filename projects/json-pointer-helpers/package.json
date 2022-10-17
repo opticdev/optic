@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/json-pointer-helpers",
-  "version": "0.34.1",
+  "version": "0.34.2",
   "packageManager": "yarn@3.0.2",
   "main": "build/index.js",
   "types": "build/index.d.ts",
