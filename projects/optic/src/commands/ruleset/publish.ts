@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import path from 'path';
 import { Command } from 'commander';
 import fetch from 'node-fetch';
 import Ajv from 'ajv';
@@ -47,8 +48,9 @@ export const registerRulesetPublish = (
 
 const getPublishAction =
   () =>
-  async ({ path, token }: { path: string; token: string }) => {
-    const userRuleFile = await import(path).catch((e) => {
+  async (filePath: string, { token }: { token: string }) => {
+    const absolutePath = path.join(process.cwd(), filePath);
+    const userRuleFile = await import(absolutePath).catch((e) => {
       console.error(e);
       throw new UserError();
     });
@@ -61,14 +63,14 @@ const getPublishAction =
 
     const name = userRuleFile.default.name;
 
-    const fileBuffer = await fs.readFile(path);
+    const fileBuffer = await fs.readFile(absolutePath);
     const rulesetUpload: {
       id: string;
       uploadUrl: string;
-    } = await (async (name: any, token: string) => ({ id: '', uploadUrl: '' }))(
-      name,
-      token
-    ); // TODO connect up to BWTS
+    } = await (async (name: any, token: string) => ({
+      id: '',
+      uploadUrl: 'https://example.com/placeholder',
+    }))(name, token); // TODO connect up to BWTS
     await uploadFileToS3(rulesetUpload.uploadUrl, fileBuffer);
     await (async (id: string) => {})(rulesetUpload.id); // TODO connect up to BWTS
 
@@ -90,6 +92,7 @@ const configSchema = {
         },
         name: {
           type: 'string',
+          pattern: '^[a-zA-Z-]+$',
         },
       },
       required: ['rules', 'name'],
