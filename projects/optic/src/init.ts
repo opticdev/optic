@@ -26,7 +26,7 @@ export const initCli = async () => {
   initSentry(process.env.SENTRY_URL, packageJson.version);
   initSegment(process.env.SEGMENT_KEY);
   cli.hook('preAction', async (command) => {
-    const subcommands = ['cloud'];
+    const subcommands = ['ruleset'];
     try {
       let commandName: string;
       let args: string[];
