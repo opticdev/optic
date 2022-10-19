@@ -120,10 +120,13 @@ const compressData = (
     meta,
     version: '1',
   };
-  const compressed = brotli.compress(
+  // brotli.compress returns null if the data is uncompressable. This is not something we need to worry about since
+  // we should _always_ be able to compress something in this massive blob
+  // If we optimize the data structure we send, we may need to handle the null case.
+  const compressed: Uint8Array | null = brotli.compress(
     Buffer.from(JSON.stringify(dataToCompress))
   );
-  const urlSafeString = Buffer.from(compressed).toString('base64');
+  const urlSafeString = Buffer.from(compressed!).toString('base64');
   return urlSafeString;
 };
 
