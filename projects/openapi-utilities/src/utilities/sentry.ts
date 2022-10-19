@@ -4,12 +4,12 @@ import { UserError } from '../errors';
 export  { Sentry as SentryClient};
 
 export const initSentry = (sentryUrl: string | undefined, version: string) => {
-  if (sentryUrl) {
+  const isSentryDisabled = process.env.TELEMETRY_LEVEL === 'off';
+  if (sentryUrl && !isSentryDisabled) {
     Sentry.init({
       dsn: sentryUrl,
       tracesSampleRate: 1.0,
       release: version,
-      
     });
   }
 };
