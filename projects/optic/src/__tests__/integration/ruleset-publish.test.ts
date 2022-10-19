@@ -13,7 +13,7 @@ describe('optic ruleset publish', () => {
     const workspace = await setupWorkspace('ruleset-publish/valid-js-file');
     const { combined, code } = await runOptic(
       workspace,
-      'ruleset publish ./rules.js --token atoken'
+      'OPTIC_TOKEN=atoken ruleset publish ./rules.js'
     );
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     expect(code).toBe(0);
@@ -23,7 +23,7 @@ describe('optic ruleset publish', () => {
     const workspace = await setupWorkspace('ruleset-publish/invalid-js-file');
     const { combined, code } = await runOptic(
       workspace,
-      'ruleset publish ./rules.js --token atoken'
+      'OPTIC_TOKEN=atoken ruleset publish ./rules.js'
     );
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     expect(code).toBe(1);
