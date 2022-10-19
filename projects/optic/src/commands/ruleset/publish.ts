@@ -3,6 +3,7 @@ import path from 'path';
 import { Command } from 'commander';
 import fetch from 'node-fetch';
 import Ajv from 'ajv';
+import brotli from 'brotli';
 
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import { UserError } from '@useoptic/openapi-utilities';
@@ -71,6 +72,7 @@ const getPublishAction = () => async (filePath: string) => {
   const name = userRuleFile.default.name;
 
   const fileBuffer = await fs.readFile(absolutePath);
+  const compressedFileBuffer = Buffer.from(brotli.compress(fileBuffer));
   const rulesetUpload: {
     id: string;
     upload_url: string;
@@ -78,7 +80,7 @@ const getPublishAction = () => async (filePath: string) => {
     id: '',
     upload_url: 'https://example.com/placeholder',
   }))(name, maybeToken); // TODO connect up to BWTS
-  await uploadFileToS3(rulesetUpload.upload_url, fileBuffer);
+  await uploadFileToS3(rulesetUpload.upload_url, compressedFileBuffer);
   await (async (id: string) => {})(rulesetUpload.id); // TODO connect up to BWTS
 
   console.log('Successfully published the ruleset');
