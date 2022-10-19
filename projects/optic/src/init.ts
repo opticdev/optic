@@ -6,10 +6,10 @@ import {
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 
-import { registerCreateGithubContext } from '@useoptic/optic-ci/build/cli/commands/create-context/create-github-context';
-import { registerCreateManualContext } from '@useoptic/optic-ci/build/cli/commands/create-context/create-manual-context';
 import { registerInit } from './commands/init/register-init';
 import { registerDiff } from './commands/diff/diff';
+import { registerRulesetPublish } from './commands/ruleset/publish';
+
 import {
   VCS,
   DefaultOpticCliConfig,
@@ -26,7 +26,7 @@ export const initCli = async () => {
   initSentry(process.env.SENTRY_URL, packageJson.version);
   initSegment(process.env.SEGMENT_KEY);
   cli.hook('preAction', async (command) => {
-    const subcommands = ['cloud'];
+    const subcommands = ['ruleset'];
     try {
       let commandName: string;
       let args: string[];
@@ -63,14 +63,13 @@ export const initCli = async () => {
   registerInit(cli, cliConfig);
   registerDiff(cli, cliConfig);
 
-  const cloudSubcommands = cli
-    .command('cloud')
+  const rulesetSubcommands = cli
+    .command('ruleset')
     .description(
-      'Commands to interact with Optic Cloud. See `optic cloud --help`'
+      'Commands to build your own optic rulesets. See `optic ruleset --help`'
     )
     .addHelpCommand(false);
-  registerCreateGithubContext(cloudSubcommands, true);
-  registerCreateManualContext(cloudSubcommands);
+  registerRulesetPublish(rulesetSubcommands, cliConfig);
 
   return cli;
 };
