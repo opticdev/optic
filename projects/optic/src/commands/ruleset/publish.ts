@@ -1,9 +1,9 @@
+import brotli from 'brotli';
 import fs from 'node:fs/promises';
 import path from 'path';
 import { Command } from 'commander';
 import fetch from 'node-fetch';
 import Ajv from 'ajv';
-import brotli from 'brotli';
 
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import { UserError } from '@useoptic/openapi-utilities';
@@ -72,7 +72,9 @@ const getPublishAction = () => async (filePath: string) => {
   const name = userRuleFile.default.name;
 
   const fileBuffer = await fs.readFile(absolutePath);
-  const compressedFileBuffer = Buffer.from(brotli.compress(fileBuffer));
+  const compressed = brotli.compress(fileBuffer);
+
+  const compressedFileBuffer = Buffer.from(compressed);
   const rulesetUpload: {
     id: string;
     upload_url: string;

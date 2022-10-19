@@ -5,15 +5,22 @@ jest.setTimeout(30000);
 jest.mock('node-fetch');
 
 describe('optic ruleset publish', () => {
+  let oldEnv: any;
+  beforeEach(() => {
+    oldEnv = {...process.env}
+  })
+
   afterEach(() => {
     jest.resetAllMocks();
+    process.env = {...oldEnv}
   });
 
   test('can publish a ruleset', async () => {
     const workspace = await setupWorkspace('ruleset-publish/valid-js-file');
+    process.env.OPTIC_TOKEN = '123'
     const { combined, code } = await runOptic(
       workspace,
-      'OPTIC_TOKEN=atoken ruleset publish ./rules.js'
+      'ruleset publish ./rules.js'
     );
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     expect(code).toBe(0);
@@ -21,9 +28,10 @@ describe('optic ruleset publish', () => {
 
   test('exits if ruleset file shape is not valid', async () => {
     const workspace = await setupWorkspace('ruleset-publish/invalid-js-file');
+    process.env.OPTIC_TOKEN = '123'
     const { combined, code } = await runOptic(
       workspace,
-      'OPTIC_TOKEN=atoken ruleset publish ./rules.js'
+      'ruleset publish ./rules.js'
     );
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     expect(code).toBe(1);
