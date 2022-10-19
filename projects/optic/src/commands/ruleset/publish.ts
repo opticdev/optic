@@ -35,47 +35,54 @@ export const registerRulesetPublish = (
     })
     .configureHelp({
       commandUsage: () =>
-        `optic ruleset publish <path_to_ruleset> --token <token>`,
+        `OPTIC_TOKEN=your_token_here optic ruleset publish <path_to_ruleset>`,
     })
     .description('Publish a custom ruleset to optic cloud')
-    .argument('<path_to_ruleset>', 'the path to the ruleset to publish')
-    .requiredOption(
-      '--token <token>',
-      'the optic token used to authenticate uploading a ruleset. generate an optic token at https://app.useoptic.com'
+    .addHelpText(
+      'after',
+      `
+This command also requires a token to be provided via the environment variable OPTIC_TOKEN. Generate an optic token at https://app.useoptic.com.`
     )
+    .argument('<path_to_ruleset>', 'the path to the ruleset to publish')
     .action(wrapActionHandlerWithSentry(getPublishAction()));
 };
 
-const getPublishAction =
-  () =>
-  async (filePath: string, { token }: { token: string }) => {
-    const absolutePath = path.join(process.cwd(), filePath);
-    const userRuleFile = await import(absolutePath).catch((e) => {
-      console.error(e);
-      throw new UserError();
-    });
+const getPublishAction = () => async (filePath: string) => {
+  const maybeToken = process.env.OPTIC_TOKEN;
 
-    if (!fileIsValid(userRuleFile)) {
-      throw new UserError(
-        `Rules file does not match expected format. ${expectedFileShape}`
-      );
-    }
+  if (!maybeToken) {
+    throw new UserError(
+      'No optic token was provided (set the environment variable `OPTIC_TOKEN` with your optic token). Generate an optic token at https://app.useoptic.com.'
+    );
+  }
 
-    const name = userRuleFile.default.name;
+  const absolutePath = path.join(process.cwd(), filePath);
+  const userRuleFile = await import(absolutePath).catch((e) => {
+    console.error(e);
+    throw new UserError();
+  });
 
-    const fileBuffer = await fs.readFile(absolutePath);
-    const rulesetUpload: {
-      id: string;
-      uploadUrl: string;
-    } = await (async (name: any, token: string) => ({
-      id: '',
-      uploadUrl: 'https://example.com/placeholder',
-    }))(name, token); // TODO connect up to BWTS
-    await uploadFileToS3(rulesetUpload.uploadUrl, fileBuffer);
-    await (async (id: string) => {})(rulesetUpload.id); // TODO connect up to BWTS
+  if (!fileIsValid(userRuleFile)) {
+    throw new UserError(
+      `Rules file does not match expected format. ${expectedFileShape}`
+    );
+  }
 
-    console.log('Successfully published the ruleset');
-  };
+  const name = userRuleFile.default.name;
+
+  const fileBuffer = await fs.readFile(absolutePath);
+  const rulesetUpload: {
+    id: string;
+    upload_url: string;
+  } = await (async (name: any, token: string) => ({
+    id: '',
+    upload_url: 'https://example.com/placeholder',
+  }))(name, maybeToken); // TODO connect up to BWTS
+  await uploadFileToS3(rulesetUpload.upload_url, fileBuffer);
+  await (async (id: string) => {})(rulesetUpload.id); // TODO connect up to BWTS
+
+  console.log('Successfully published the ruleset');
+};
 
 const ajv = new Ajv();
 const configSchema = {
