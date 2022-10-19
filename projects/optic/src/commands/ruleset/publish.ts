@@ -10,6 +10,11 @@ import { UserError } from '@useoptic/openapi-utilities';
 
 import { OpticCliConfig } from '../../config';
 
+type UploadedRules = {
+  isCompressed: boolean;
+  rules: string
+}
+
 const uploadFileToS3 = async (signedUrl: string, file: Buffer) => {
   await fetch(signedUrl, {
     method: 'PUT',
@@ -71,10 +76,19 @@ const getPublishAction = () => async (filePath: string) => {
 
   const name = userRuleFile.default.name;
 
-  const fileBuffer = await fs.readFile(absolutePath);
-  const compressed = brotli.compress(fileBuffer);
+  const rulesFile = await fs.readFile(absolutePath);
+  const compressed: Uint8Array | null = brotli.compress(rulesFile);
 
-  const compressedFileBuffer = Buffer.from(compressed);
+  const fileToUpload: UploadedRules = compressed === null ? {
+    isCompressed: false,
+    rules: rulesFile.toString('base64')
+  } : {
+    isCompressed: true,
+    rules: Buffer.from(compressed).toString('base64')
+  }
+
+  const fileBuffer = Buffer.from(JSON.stringify(fileToUpload));
+
   const rulesetUpload: {
     id: string;
     upload_url: string;
@@ -82,7 +96,7 @@ const getPublishAction = () => async (filePath: string) => {
     id: '',
     upload_url: 'https://example.com/placeholder',
   }))(name, maybeToken); // TODO connect up to BWTS
-  await uploadFileToS3(rulesetUpload.upload_url, compressedFileBuffer);
+  await uploadFileToS3(rulesetUpload.upload_url, fileBuffer);
   await (async (id: string) => {})(rulesetUpload.id); // TODO connect up to BWTS
 
   console.log('Successfully published the ruleset');

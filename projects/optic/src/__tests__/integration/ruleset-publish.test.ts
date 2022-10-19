@@ -26,6 +26,17 @@ describe('optic ruleset publish', () => {
     expect(code).toBe(0);
   });
 
+  test('can publish uncompressable ruleset', async () => {
+    const workspace = await setupWorkspace('ruleset-publish/uncompressed-file');
+    process.env.OPTIC_TOKEN = '123'
+    const { combined, code } = await runOptic(
+      workspace,
+      'ruleset publish ./rules.js'
+    );
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(code).toBe(0);
+  });
+
   test('exits if ruleset file shape is not valid', async () => {
     const workspace = await setupWorkspace('ruleset-publish/invalid-js-file');
     process.env.OPTIC_TOKEN = '123'

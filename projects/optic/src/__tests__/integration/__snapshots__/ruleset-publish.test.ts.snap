@@ -5,6 +5,11 @@ exports[`optic ruleset publish can publish a ruleset 1`] = `
 "
 `;
 
+exports[`optic ruleset publish can publish uncompressable ruleset 1`] = `
+"Successfully published the ruleset
+"
+`;
+
 exports[`optic ruleset publish exits if ruleset file shape is not valid 1`] = `
 "Rule file is invalid:
 data/default must have required property 'rules'
