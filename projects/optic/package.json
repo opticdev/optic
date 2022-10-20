@@ -1,5 +1,6 @@
 {
   "name": "@useoptic/optic",
+  "license": "MIT",
   "packageManager": "yarn@3.0.2",
   "version": "0.34.2",
   "main": "build/index.js",
@@ -29,7 +30,6 @@
     "@babel/preset-typescript": "^7.17.0",
     "@types/babel__core": "^7",
     "@types/babel__preset-env": "^7",
-    "@types/brotli": "^1.3.1",
     "@types/is-url": "^1.2.30",
     "@types/jest": "^26.0.24",
     "@types/js-yaml": "^4.0.5",
@@ -58,7 +58,6 @@
     "@useoptic/standard-rulesets": "workspace:*",
     "ajv": "^8.11.0",
     "bottleneck": "^2.19.5",
-    "brotli": "^1.3.3",
     "chalk": "^4.1.2",
     "commander": "^9.0.0",
     "dotenv": "^16.0.2",

@@ -1,4 +1,4 @@
-import brotli from 'brotli';
+import zlib from 'node:zlib'
 import fs from 'node:fs/promises';
 import path from 'path';
 import { Command } from 'commander';
@@ -72,7 +72,7 @@ const getPublishAction = () => async (filePath: string) => {
   const name = userRuleFile.default.name;
 
   const fileBuffer = await fs.readFile(absolutePath);
-  const compressed = brotli.compress(fileBuffer);
+  const compressed = zlib.brotliCompressSync(fileBuffer);
 
   const compressedFileBuffer = Buffer.from(compressed);
   const rulesetUpload: {
