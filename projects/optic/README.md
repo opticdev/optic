@@ -61,5 +61,5 @@ Optic helps you review OpenAPI specs and enforce API standards. Sign up on [app.
 
 Optic collects telemetry which is used to help understand how to improve the product. For example, this usage data helps to debug issues and to prioritize features and improvements based on usage. While this information does help us build a great product, we understand that not everyone wants to share their usage data. If you would like to disable telemetry you can add an environment variable that will opt out of sending usage data:
 
-- `TELEMETRY_LEVEL=off` - disables telemetry (both usage, and error reporting)
-- `TELEMETRY_LEVEL=error` - disables telemetry (only usage data is sent)
+- `OPTIC_TELEMETRY_LEVEL=off` - disables telemetry (both usage, and error reporting)
+- `OPTIC_TELEMETRY_LEVEL=error` - disables telemetry (only usage data is sent)

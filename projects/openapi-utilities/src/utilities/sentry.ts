@@ -4,7 +4,7 @@ import { UserError } from '../errors';
 export  { Sentry as SentryClient};
 
 export const initSentry = (sentryUrl: string | undefined, version: string) => {
-  const isSentryDisabled = process.env.TELEMETRY_LEVEL === 'off';
+  const isSentryDisabled = process.env.OPTIC_TELEMETRY_LEVEL === 'off';
   if (sentryUrl && !isSentryDisabled) {
     Sentry.init({
       dsn: sentryUrl,
