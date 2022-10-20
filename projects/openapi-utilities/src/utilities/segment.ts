@@ -4,7 +4,8 @@ const packageJson = require('../../package.json');
 let analytics: Analytics | null = null;
 
 export const initSegment = (key: string | undefined) => {
-  if (key) {
+  const isSegmentDisabled = process.env.OPTIC_TELEMETRY_LEVEL === 'off' || process.env.OPTIC_TELEMETRY_LEVEL === 'error';
+  if (key && !isSegmentDisabled) {
     analytics = new Analytics(key);
   }
 };
