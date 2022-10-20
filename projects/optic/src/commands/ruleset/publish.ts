@@ -1,24 +1,16 @@
-import zlib from 'node:zlib'
+import zlib from 'node:zlib';
 import fs from 'node:fs/promises';
 import path from 'path';
 import { Command } from 'commander';
-import fetch from 'node-fetch';
 import Ajv from 'ajv';
 
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import { UserError } from '@useoptic/openapi-utilities';
 
 import { OpticCliConfig } from '../../config';
+import { createOpticClient } from '@useoptic/optic-ci/build/cli/clients/optic-client';
+import { uploadFileToS3 } from './s3'
 
-const uploadFileToS3 = async (signedUrl: string, file: Buffer) => {
-  await fetch(signedUrl, {
-    method: 'PUT',
-    headers: {
-      'x-amz-server-side-encryption': 'AES256',
-    },
-    body: file,
-  });
-};
 
 const expectedFileShape = `Expected ruleset file to have a default export with the shape
 {
@@ -75,17 +67,13 @@ const getPublishAction = () => async (filePath: string) => {
   const compressed = zlib.brotliCompressSync(fileBuffer);
 
   const compressedFileBuffer = Buffer.from(compressed);
-  const rulesetUpload: {
-    id: string;
-    upload_url: string;
-  } = await (async (name: any, token: string) => ({
-    id: '',
-    upload_url: 'https://example.com/placeholder',
-  }))(name, maybeToken); // TODO connect up to BWTS
-  await uploadFileToS3(rulesetUpload.upload_url, compressedFileBuffer);
-  await (async (id: string) => {})(rulesetUpload.id); // TODO connect up to BWTS
+  const opticClient = createOpticClient(maybeToken);
+  const ruleset = await opticClient.createRuleset(name);
+  await uploadFileToS3(ruleset.upload_url, compressedFileBuffer);
+  await opticClient.patchRuleset(ruleset.id, true);
 
   console.log('Successfully published the ruleset');
+  console.log(`View this ruleset at ${ruleset.ruleset_url}`);
 };
 
 const ajv = new Ajv();
