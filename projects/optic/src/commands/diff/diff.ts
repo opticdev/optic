@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import brotli from 'brotli';
+import zlib from 'node:zlib'
 import open from 'open';
 
 import {
@@ -120,7 +120,7 @@ const compressData = (
     meta,
     version: '1',
   };
-  const compressed = brotli.compress(
+  const compressed = zlib.brotliCompressSync(
     Buffer.from(JSON.stringify(dataToCompress))
   );
   const urlSafeString = Buffer.from(compressed).toString('base64');

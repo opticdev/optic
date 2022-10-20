@@ -1,5 +1,6 @@
 {
   "name": "openapi-workspaces",
+  "license": "MIT",
   "private": true,
   "version": "0.34.2",
   "workspaces": [

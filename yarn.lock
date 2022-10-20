@@ -2861,15 +2861,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/brotli@npm:^1.3.1":
-  version: 1.3.1
-  resolution: "@types/brotli@npm:1.3.1"
-  dependencies:
-    "@types/node": "*"
-  checksum: 40ef51b1525f8f65e6ba7044164638d92388424ce387d5e656ef20620274f6e48826a93fd678b7cb52dc145f07d4480d6cfc4fc7a05c76aaeea3ebc8cb964ba1
-  languageName: node
-  linkType: hard
-
 "@types/cacheable-request@npm:^6.0.2":
   version: 6.0.2
   resolution: "@types/cacheable-request@npm:6.0.2"
@@ -3534,7 +3525,6 @@ __metadata:
     "@stoplight/spectral-core": ^1.8.1
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
-    "@types/brotli": ^1.3.1
     "@types/is-url": ^1.2.30
     "@types/jest": ^26.0.24
     "@types/js-yaml": ^4.0.5
@@ -3551,7 +3541,6 @@ __metadata:
     babel-jest: ^27.5.1
     babel-plugin-transform-inline-environment-variables: ^0.4.3
     bottleneck: ^2.19.5
-    brotli: ^1.3.3
     chalk: ^4.1.2
     commander: ^9.0.0
     dotenv: ^16.0.2
@@ -3589,7 +3578,6 @@ __metadata:
     "@stoplight/spectral-core": ^1.8.1
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
-    "@types/brotli": ^1.3.1
     "@types/is-url": ^1.2.30
     "@types/jest": ^26.0.24
     "@types/js-yaml": ^4.0.5
@@ -3608,7 +3596,6 @@ __metadata:
     babel-jest: ^27.5.1
     babel-plugin-transform-inline-environment-variables: ^0.4.3
     bottleneck: ^2.19.5
-    brotli: ^1.3.3
     chalk: ^4.1.2
     commander: ^9.0.0
     dotenv: ^16.0.2
@@ -4248,7 +4235,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"base64-js@npm:^1.1.2, base64-js@npm:^1.3.1":
+"base64-js@npm:^1.3.1":
   version: 1.5.1
   resolution: "base64-js@npm:1.5.1"
   checksum: 669632eb3745404c2f822a18fc3a0122d2f9a7a13f7fb8b5823ee19d1d2ff9ee5b52c53367176ea4ad093c332fd5ab4bd0ebae5a8e27917a4105a4cfc86b1005
@@ -4364,15 +4351,6 @@ __metadata:
   version: 1.2.0
   resolution: "brotli-wasm@npm:1.2.0"
   checksum: 23839d1fe7e0482fed36f64710d8f3d0b56f85bbab02c34f39a788579fa123bab96109e88abf520d77659ffd61b42a264203b6f45e7f6e70d2d8719c04d962d1
-  languageName: node
-  linkType: hard
-
-"brotli@npm:^1.3.3":
-  version: 1.3.3
-  resolution: "brotli@npm:1.3.3"
-  dependencies:
-    base64-js: ^1.1.2
-  checksum: 2c97329f4ccb8e4332cedd2f63b85c2e15ffb305b1cbf046df86201434caf93cb7992ca73c0f7053b6a1417f595069ec7783c26e01510cefc10035a0f466e594
   languageName: node
   linkType: hard
 
