@@ -1,5 +1,21 @@
-import { runOptic, setupWorkspace, normalizeWorkspace } from './integration';
+import {
+  runOptic,
+  setupWorkspace,
+  normalizeWorkspace,
+  setupTestServer,
+} from './integration';
 jest.setTimeout(30000);
+
+setupTestServer(({ url, method }) => {
+  if (method === 'POST' && /\/api\/rulesets$/.test(url)) {
+    return {
+      id: '123',
+      upload_url: 'http://localhost:8888/upload_url',
+      ruleset_url: 'http://app.useoptic.com/ruleset_url',
+    };
+  }
+  return {}
+});
 
 describe('optic ruleset publish', () => {
   let oldEnv: any;

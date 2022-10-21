@@ -159,22 +159,27 @@ export class OpticBackendClient extends JsonHttpClient {
     ruleset_url: string;
   }> {
     return this.postJson(`/api/rulesets`, {
-      name
-    })
+      name,
+    });
   }
 
-  public async patchRuleset(rulesetId: string, uploaded: boolean): Promise<void> {
+  public async patchRuleset(
+    rulesetId: string,
+    uploaded: boolean
+  ): Promise<void> {
     return this.patchJson(`/api/rulesets/${rulesetId}`, {
-      uploaded
-    })
+      uploaded,
+    });
   }
 }
 
 export const createOpticClient = (opticToken: string) => {
-  const backendWebBase =
-    process.env.OPTIC_ENV === 'staging'
-      ? 'https://api.o3c.info'
-      : 'https://api.useoptic.com';
+  const hostOverride = process.env.BWTS_HOST_OVERRIDE;
+  const backendWebBase = hostOverride
+    ? hostOverride
+    : process.env.OPTIC_ENV === 'staging'
+    ? 'https://api.o3c.info'
+    : 'https://api.useoptic.com';
 
   const opticClient = new OpticBackendClient(backendWebBase, () =>
     Promise.resolve(opticToken)

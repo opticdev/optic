@@ -2,6 +2,7 @@
 
 exports[`optic ruleset publish can publish a ruleset 1`] = `
 "Successfully published the ruleset
+View this ruleset at http://app.useoptic.com/ruleset_url
 "
 `;
 
