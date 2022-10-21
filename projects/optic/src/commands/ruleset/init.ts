@@ -9,7 +9,7 @@ import chalk from 'chalk';
 
 const DEFAULT_INIT_FOLDER = 'optic-ruleset';
 const owner = 'opticdev';
-const repo = 'optic-ci-custom-rules-starter'; // TODO update this to point at a
+const repo = 'optic-custom-rules-starter';
 const ref = 'main';
 
 export const registerRulesetInit = (cli: Command, config: OpticCliConfig) => {
