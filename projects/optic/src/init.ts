@@ -19,6 +19,7 @@ import {
 } from './config';
 import { hasGit, isInGitRepo, getRootPath } from './utils/git-utils';
 import { getAnonId } from './utils/anonymous-id';
+import { registerRulesetInit } from './commands/ruleset/init';
 
 const packageJson = require('../package.json');
 
@@ -70,6 +71,7 @@ export const initCli = async () => {
     )
     .addHelpCommand(false);
   registerRulesetPublish(rulesetSubcommands, cliConfig);
+  registerRulesetInit(rulesetSubcommands, cliConfig);
 
   return cli;
 };
