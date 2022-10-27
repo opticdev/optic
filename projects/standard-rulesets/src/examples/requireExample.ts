@@ -87,22 +87,32 @@ export const requireParameterExamples = (applies: typeof appliesWhen[number]) =>
     rule: (operation) => {
       const lifecycle = applies === 'always' ? 'requirement' : 'addedOrChanged';
       const errorMessageType = applies === 'always' ? 'every' : 'added';
+
+      function schemaHasExample(schema: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject | undefined) {
+        if (schema) {
+          if ('example' in schema) {
+            return typeof schema.example !== 'undefined'
+          }
+        }
+        return false
+      }
+
       operation.headerParameter[lifecycle]((header) => {
-        if (!header.raw.example) {
+        if (!header.raw.example && !schemaHasExample(header.raw.schema)) {
           throw new RuleError({
             message: `a valid example is required for ${errorMessageType} header`,
           });
         }
       });
       operation.queryParameter[lifecycle]((header) => {
-        if (!header.raw.example) {
+        if (!header.raw.example && !schemaHasExample(header.raw.schema)) {
           throw new RuleError({
             message: `a valid example is required for ${errorMessageType} query parameter`,
           });
         }
       });
       operation.cookieParameter[lifecycle]((header) => {
-        if (!header.raw.example) {
+        if (!header.raw.example && !schemaHasExample(header.raw.schema)) {
           throw new RuleError({
             message: `a valid example is required for ${errorMessageType} cookie parameter`,
           });
