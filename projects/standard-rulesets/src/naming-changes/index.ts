@@ -9,7 +9,7 @@ import { createPathComponentChecks } from './pathComponents';
 import Ajv from 'ajv';
 
 type RulesetConfig = {
-  applies?: typeof appliesWhen[number];
+  required_on?: typeof appliesWhen[number];
   requestHeaders?: typeof casing[number];
   queryParameters?: typeof casing[number];
   responseHeaders?: typeof casing[number];
@@ -22,7 +22,7 @@ const ajv = new Ajv();
 const configSchema = {
   type: 'object',
   properties: {
-    applies: {
+    required_on: {
       type: 'string',
       enum: appliesWhen,
     },
@@ -81,13 +81,13 @@ export class NamingChangesRuleset extends Ruleset<Rule[]> {
     }
 
     return new NamingChangesRuleset({
-      applies: validatedConfig.applies || 'always',
+      required_on: validatedConfig.required_on || 'always',
       options: namingConfig,
     });
   }
 
   constructor(config: {
-    applies: typeof appliesWhen[number];
+    required_on: typeof appliesWhen[number];
     options?: NamingConfig;
     matches?: Ruleset['matches'];
   }) {
@@ -96,8 +96,8 @@ export class NamingChangesRuleset extends Ruleset<Rule[]> {
       throw new Error('Expected config object in NamingChangesRuleset');
     }
 
-    const { applies, matches, options = {} } = config;
-    if (!applies || !appliesWhen.includes(applies)) {
+    const { required_on, matches, options = {} } = config;
+    if (!required_on || !appliesWhen.includes(required_on)) {
       // TODO silence this from sentry
       throw new Error(
         `Expected config.applies in NamingChangesRuleset to be specified and be one of ${appliesWhen.join(
@@ -120,32 +120,32 @@ export class NamingChangesRuleset extends Ruleset<Rule[]> {
     const namingChangeRules: Rule[] = [];
     if (options.properties) {
       namingChangeRules.push(
-        ...createPropertyNamingChecks(applies, options.properties)
+        ...createPropertyNamingChecks(required_on, options.properties)
       );
     }
     if (options.queryParameters) {
       namingChangeRules.push(
-        createQueryParameterChecks(applies, options.queryParameters)
+        createQueryParameterChecks(required_on, options.queryParameters)
       );
     }
     if (options.requestHeaders) {
       namingChangeRules.push(
-        createRequestHeaderParameterChecks(applies, options.requestHeaders)
+        createRequestHeaderParameterChecks(required_on, options.requestHeaders)
       );
     }
     if (options.cookieParameters) {
       namingChangeRules.push(
-        createCookieParameterChecks(applies, options.cookieParameters)
+        createCookieParameterChecks(required_on, options.cookieParameters)
       );
     }
     if (options.responseHeaders) {
       namingChangeRules.push(
-        createResponseHeaderParameterChecks(applies, options.responseHeaders)
+        createResponseHeaderParameterChecks(required_on, options.responseHeaders)
       );
     }
     if (options.pathComponents) {
       namingChangeRules.push(
-        createPathComponentChecks(applies, options.pathComponents)
+        createPathComponentChecks(required_on, options.pathComponents)
       );
     }
 
