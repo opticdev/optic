@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can normalize an openapi operation 1`] = `
+Array [
+  Object {
+    "coordinates": Object {
+      "apiId": "path/id",
+      "jsonPath": "/paths/~1example/get/parameters/1",
+    },
+    "diff": "node-removed",
+    "kind": "path-parameter",
+  },
+  Object {
+    "after": undefined,
+    "attribute": "explode",
+    "before": Array [
+      "explode",
+      true,
+    ],
+    "coordinates": Object {
+      "apiId": "query/example",
+      "jsonPath": "/paths/~1example/get/parameters/1/explode",
+    },
+    "diff": "node-updated",
+    "kind": "query-parameter",
+  },
+  Object {
+    "after": Array [
+      "required",
+      false,
+    ],
+    "attribute": "required",
+    "before": Array [
+      "required",
+      true,
+    ],
+    "coordinates": Object {
+      "apiId": "query/example",
+      "jsonPath": "/paths/~1example/get/parameters/1/required",
+    },
+    "diff": "node-updated",
+    "kind": "query-parameter",
+  },
+]
+`;

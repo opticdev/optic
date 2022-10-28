@@ -1,0 +1,120 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can normalize an openapi operation 1`] = `
+Object {
+  "context": Object {
+    "environments": Array [
+      Object {
+        "url": "https://petstore.swagger.io/v2",
+      },
+      Object {
+        "url": "http://petstore.swagger.io/v2",
+      },
+    ],
+    "securitySchemas": Object {
+      "api_key": Object {
+        "in": "header",
+        "name": "api_key",
+        "type": "apiKey",
+      },
+      "petstore_auth": Object {
+        "flows": Object {
+          "implicit": Object {
+            "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
+            "scopes": Object {
+              "read:pets": "read your pets",
+              "write:pets": "modify pets in your account",
+            },
+          },
+        },
+        "type": "oauth2",
+      },
+    },
+    "sharedParameters": Array [],
+  },
+  "coordinateAliases": Object {},
+  "coordinates": Object {
+    "absoluteJsonPath": "/paths/~1pet~1{petId}~1uploadImage/post",
+  },
+  "method": "post",
+  "operation": Object {
+    "operationId": "uploadFile",
+    "parameters": Array [
+      Object {
+        "description": "ID of pet to update",
+        "in": "path",
+        "name": "petId",
+        "required": true,
+        "schema": Object {
+          "format": "int64",
+          "type": "integer",
+        },
+      },
+      Object {
+        "description": "A debug token",
+        "in": "cookie",
+        "name": "debug",
+        "schema": Object {
+          "type": "integer",
+        },
+      },
+    ],
+    "requestBody": Object {
+      "content": Object {
+        "multipart/form-data": Object {
+          "schema": Object {
+            "properties": Object {
+              "additionalMetadata": Object {
+                "description": "Additional data to pass to server",
+                "type": "string",
+              },
+              "file": Object {
+                "description": "file to upload",
+                "format": "binary",
+                "type": "string",
+              },
+            },
+          },
+        },
+      },
+    },
+    "responses": Object {
+      "200": Object {
+        "content": Object {
+          "application/json": Object {
+            "schema": Object {
+              "properties": Object {
+                "code": Object {
+                  "format": "int32",
+                  "type": "integer",
+                },
+                "message": Object {
+                  "type": "string",
+                },
+                "type": Object {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+          },
+        },
+        "description": "successful operation",
+      },
+    },
+    "security": Array [
+      Object {
+        "petstore_auth": Array [
+          "write:pets",
+          "read:pets",
+        ],
+      },
+    ],
+    "summary": "uploads an image",
+    "tags": Array [
+      "pet",
+    ],
+  },
+  "path": "/pet/{petId}/uploadImage",
+}
+`;
