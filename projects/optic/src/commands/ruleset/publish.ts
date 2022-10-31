@@ -9,13 +9,14 @@ import { UserError } from '@useoptic/openapi-utilities';
 
 import { OpticCliConfig } from '../../config';
 import { createOpticClient } from '@useoptic/optic-ci/build/cli/clients/optic-client';
-import { uploadFileToS3 } from './s3'
-
+import { uploadFileToS3 } from './s3';
 
 const expectedFileShape = `Expected ruleset file to have a default export with the shape
 {
   name: string;
-  rules: (Ruleset | Rule)[]
+  description: string;
+  configSchema?: any;
+  rulesConstructor: (config: ConfigSchema) => Ruleset;
 }`;
 
 export const registerRulesetPublish = (
@@ -62,13 +63,15 @@ const getPublishAction = () => async (filePath: string) => {
   }
 
   const name = userRuleFile.default.name;
+  const configSchema = userRuleFile.default.configSchema ?? {};
+  const description = userRuleFile.default.description;
 
   const fileBuffer = await fs.readFile(absolutePath);
   const compressed = zlib.brotliCompressSync(fileBuffer);
 
   const compressedFileBuffer = Buffer.from(compressed);
   const opticClient = createOpticClient(maybeToken);
-  const ruleset = await opticClient.createRuleset(name);
+  const ruleset = await opticClient.createRuleset(name, description, configSchema);
   await uploadFileToS3(ruleset.upload_url, compressedFileBuffer);
   await opticClient.patchRuleset(ruleset.id, true);
 
@@ -83,18 +86,19 @@ const configSchema = {
     default: {
       type: 'object',
       properties: {
-        rules: {
-          type: 'array',
-          items: {
-            type: 'object',
-          },
-        },
         name: {
           type: 'string',
           pattern: '^[a-zA-Z-]+$',
         },
+        description: {
+          type: 'string',
+          maxLength: 1024,
+        },
+        configSchema: {
+          type: 'object',
+        },
       },
-      required: ['rules', 'name'],
+      required: ['description', 'name'],
     },
   },
   required: ['default'],
@@ -106,7 +110,9 @@ const fileIsValid = (
 ): file is {
   default: {
     name: string;
-    rules: any[];
+    description: string;
+    configSchema?: any;
+    rulesConstructor: () => any;
   };
 } => {
   const result = validateRulesFile(file);
@@ -114,6 +120,15 @@ const fileIsValid = (
   if (!result) {
     console.error(
       `Rule file is invalid:\n${ajv.errorsText(validateRulesFile.errors)}`
+    );
+    return false;
+  }
+
+  // manually validate that rulesConstructor is a function
+  const rulesConstructor = (file.default as any)?.rulesConstructor;
+  if (typeof rulesConstructor !== 'function') {
+    console.error(
+      'Rules file does not export a rulesConstructor that is a function'
     );
     return false;
   }

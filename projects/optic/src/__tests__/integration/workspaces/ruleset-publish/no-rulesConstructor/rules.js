@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'the-best-ruleset',
+  name: 'no-rules',
   description: 'hello',
   configSchema: {
     type: 'object',
@@ -9,7 +9,4 @@ module.exports = {
       },
     },
   },
-  rulesConstructor: () => {
-    return {};
-  },
-};
+}

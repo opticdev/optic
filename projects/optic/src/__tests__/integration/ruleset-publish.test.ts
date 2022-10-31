@@ -39,6 +39,17 @@ describe('optic ruleset publish', () => {
     expect(code).toBe(0);
   });
 
+  test('exits if ruleset file does not have rulesConstructor', async () => {
+    const workspace = await setupWorkspace('ruleset-publish/no-rulesConstructor');
+    process.env.OPTIC_TOKEN = '123';
+    const { combined, code } = await runOptic(
+      workspace,
+      'ruleset publish ./rules.js'
+    );
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(code).toBe(1);
+  });
+
   test('exits if ruleset file shape is not valid', async () => {
     const workspace = await setupWorkspace('ruleset-publish/invalid-js-file');
     process.env.OPTIC_TOKEN = '123';
