@@ -151,15 +151,15 @@ function diffAttributes(before: object, after: object, exclude: string[]) {
   const results: { attribute: string; before: any; after: any }[] = [];
 
   attributeDiff.addedNodes().forEach(([id, addedValue]) => {
-    results.push({ attribute: id, before: undefined, after: addedValue });
+    results.push({ attribute: id, before: undefined, after: addedValue[1] });
   });
 
   attributeDiff.removedNodes().forEach(([id, removedValue]) => {
-    results.push({ attribute: id, before: removedValue, after: undefined });
+    results.push({ attribute: id, before: removedValue[1], after: undefined });
   });
 
   attributeDiff.continuousNodes().forEach(([id, before, after]) => {
-    results.push({ attribute: id, before, after });
+    results.push({ attribute: id, before: before[1], after: after[1] });
   });
 
   return results;

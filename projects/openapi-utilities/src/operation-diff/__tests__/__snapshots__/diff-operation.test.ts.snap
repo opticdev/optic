@@ -4,6 +4,14 @@ exports[`can normalize an openapi operation 1`] = `
 Array [
   Object {
     "coordinates": Object {
+      "apiId": "query/other-query",
+      "jsonPath": "/paths/~1example/get/parameters/1",
+    },
+    "diff": "node-added",
+    "kind": "query-parameter",
+  },
+  Object {
+    "coordinates": Object {
       "apiId": "path/id",
       "jsonPath": "/paths/~1example/get/parameters/1",
     },
@@ -11,32 +19,34 @@ Array [
     "kind": "path-parameter",
   },
   Object {
-    "after": undefined,
-    "attribute": "explode",
-    "before": Array [
-      "explode",
-      true,
-    ],
+    "after": "this one",
+    "attribute": "description",
+    "before": undefined,
     "coordinates": Object {
       "apiId": "query/example",
-      "jsonPath": "/paths/~1example/get/parameters/1/explode",
+      "jsonPath": "/paths/~1example/get/parameters/0/description",
     },
     "diff": "node-updated",
     "kind": "query-parameter",
   },
   Object {
-    "after": Array [
-      "required",
-      false,
-    ],
-    "attribute": "required",
-    "before": Array [
-      "required",
-      true,
-    ],
+    "after": undefined,
+    "attribute": "explode",
+    "before": true,
     "coordinates": Object {
       "apiId": "query/example",
-      "jsonPath": "/paths/~1example/get/parameters/1/required",
+      "jsonPath": "/paths/~1example/get/parameters/0/explode",
+    },
+    "diff": "node-updated",
+    "kind": "query-parameter",
+  },
+  Object {
+    "after": false,
+    "attribute": "required",
+    "before": true,
+    "coordinates": Object {
+      "apiId": "query/example",
+      "jsonPath": "/paths/~1example/get/parameters/0/required",
     },
     "diff": "node-updated",
     "kind": "query-parameter",
