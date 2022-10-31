@@ -160,6 +160,8 @@ export class OpticBackendClient extends JsonHttpClient {
   }> {
     return this.postJson(`/api/rulesets`, {
       name,
+      description,
+      configSchema
     });
   }
 
