@@ -26,11 +26,6 @@ const configSchema = {
       type: 'string',
       enum: appliesWhen,
     },
-    // TODO deprecate applies in naming config
-    applies: {
-      type: 'string',
-      enum: appliesWhen,
-    },
     requestHeaders: {
       type: 'string',
       enum: casing,
@@ -69,13 +64,7 @@ export class NamingChangesRuleset extends Ruleset<Rule[]> {
         dataVar: 'ruleset/naming',
       })}`;
     }
-    const required_on =
-      (config as any).required_on || (config as any).applies || 'always';
-    if ('applies' in (config as any)) {
-      console.warn(
-        '`applies` is deprecated in the naming changes config. Use `required_on` instead.'
-      );
-    }
+
     const validatedConfig = config as RulesetConfig;
     const namingConfig: NamingConfig = {};
     for (const key of [
@@ -92,7 +81,7 @@ export class NamingChangesRuleset extends Ruleset<Rule[]> {
     }
 
     return new NamingChangesRuleset({
-      required_on: required_on,
+      required_on: validatedConfig.required_on || 'always',
       options: namingConfig,
     });
   }
@@ -151,10 +140,7 @@ export class NamingChangesRuleset extends Ruleset<Rule[]> {
     }
     if (options.responseHeaders) {
       namingChangeRules.push(
-        createResponseHeaderParameterChecks(
-          required_on,
-          options.responseHeaders
-        )
+        createResponseHeaderParameterChecks(required_on, options.responseHeaders)
       );
     }
     if (options.pathComponents) {
