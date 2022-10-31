@@ -16,7 +16,7 @@ const expectedFileShape = `Expected ruleset file to have a default export with t
   name: string;
   description: string;
   configSchema?: any;
-  rulesConstructor: (config: ConfigSchema) => Ruleset;
+  rulesetConstructor: (config: ConfigSchema) => Ruleset;
 }`;
 
 export const registerRulesetPublish = (
@@ -112,7 +112,7 @@ const fileIsValid = (
     name: string;
     description: string;
     configSchema?: any;
-    rulesConstructor: () => any;
+    rulesetConstructor: () => any;
   };
 } => {
   const result = validateRulesFile(file);
@@ -124,11 +124,11 @@ const fileIsValid = (
     return false;
   }
 
-  // manually validate that rulesConstructor is a function
-  const rulesConstructor = (file.default as any)?.rulesConstructor;
-  if (typeof rulesConstructor !== 'function') {
+  // manually validate that rulesetConstructor is a function
+  const rulesetConstructor = (file.default as any)?.rulesetConstructor;
+  if (typeof rulesetConstructor !== 'function') {
     console.error(
-      'Rules file does not export a rulesConstructor that is a function'
+      'Rules file does not export a rulesetConstructor that is a function'
     );
     return false;
   }

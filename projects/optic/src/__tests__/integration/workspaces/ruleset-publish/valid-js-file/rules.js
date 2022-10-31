@@ -9,7 +9,7 @@ module.exports = {
       },
     },
   },
-  rulesConstructor: () => {
+  rulesetConstructor: () => {
     return {};
   },
 };

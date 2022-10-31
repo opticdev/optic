@@ -1,6 +1,6 @@
 module.exports = {
   name: 'no-description',
-  rulesConstructor: () => {
+  rulesetConstructor: () => {
     return {};
   },
 }
