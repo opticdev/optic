@@ -9,6 +9,14 @@ describe('fromOpticConfig', () => {
       '- ruleset/naming/required_on must be equal to one of the allowed values'
     );
   });
+
+  test('with valid config', () => {
+    expect(NamingChangesRuleset.fromOpticConfig({ required_on: 'always' })).toBeInstanceOf(NamingChangesRuleset)
+  })
+
+  test('with legacy valid config', () => {
+    expect(NamingChangesRuleset.fromOpticConfig({ applies: 'always' })).toBeInstanceOf(NamingChangesRuleset)
+  })
 });
 
 describe('naming changes configuration', () => {
