@@ -2,12 +2,24 @@ import { OpticCliConfig } from '../../config';
 import { StandardRulesets } from '@useoptic/standard-rulesets';
 import { RuleRunner, Ruleset, CustomRuleset } from '@useoptic/rulesets-base';
 
+function isHttpUrl(urlString: string) {
+  let url;
+  try {
+    url = new URL(urlString);
+  } catch (_) {
+    return false;
+  }
+  return url.protocol === 'http:' || url.protocol === 'https:';
+}
 export const generateRuleRunner = async (
   config: OpticCliConfig,
-  rulesetMapping: Record<string, {
-    url: string,
-    uploaded_at: string
-  }>,
+  rulesetMapping: Record<
+    string,
+    {
+      url: string;
+      uploaded_at: string;
+    }
+  >,
   checksEnabled: boolean
 ): Promise<RuleRunner> => {
   const rulesets: Ruleset[] = [];
@@ -21,17 +33,22 @@ export const generateRuleRunner = async (
           StandardRulesets[ruleset.name as keyof typeof StandardRulesets];
         instanceOrErrorMsg = RulesetClass.fromOpticConfig(ruleset.config);
       } else if (rulesetMapping[ruleset.name]) {
+        const url = rulesetMapping[ruleset.name].url;
         let rulesetPath: string;
-        // TODO handle case where rulesetMapping url is a local FS path
-        try {
-          rulesetPath = await CustomRuleset.downloadRuleset(
-            ruleset.name,
-            rulesetMapping[ruleset.name].url,
-            rulesetMapping[ruleset.name].uploaded_at,
-          );
-        } catch (e) {
-          warnings.push(`Loading ruleset ${ruleset.name} failed`);
-          continue;
+
+        if (isHttpUrl(url)) {
+          try {
+            rulesetPath = await CustomRuleset.downloadRuleset(
+              ruleset.name,
+              url,
+              rulesetMapping[ruleset.name].uploaded_at
+            );
+          } catch (e) {
+            warnings.push(`Loading ruleset ${ruleset.name} failed`);
+            continue;
+          }
+        } else {
+          rulesetPath = url;
         }
 
         try {
