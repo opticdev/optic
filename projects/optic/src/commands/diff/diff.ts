@@ -164,7 +164,6 @@ const runDiff = async (
 ): Promise<{ checks: { passed: number; failed: number; total: number } }> => {
   const ruleRunner = await generateRuleRunner(
     config,
-    {}, // TODO fetch
     options.check
   );
   const specResults = await generateSpecResults(
