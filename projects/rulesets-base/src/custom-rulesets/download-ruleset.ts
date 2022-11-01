@@ -6,8 +6,16 @@ import path from 'node:path';
 
 export async function downloadRuleset(
   name: string,
-  url: string
+  url: string,
+  uploaded_at: string
 ): Promise<string> {
+  const filepath = path.join(os.tmpdir(), name, `${uploaded_at}.js`);
+  try {
+    await fs.access(filepath);
+    // If the file exists, we have this file in the cache and can return filepath
+    return filepath;
+  } catch (e) {}
+
   const resp = await fetch(url);
   if (!resp.ok) {
     throw new Error(
@@ -16,13 +24,11 @@ export async function downloadRuleset(
   }
 
   const compressed = await resp.buffer();
-  const decompressed = await zlib.brotliDecompressSync(compressed);
+  const decompressed = zlib.brotliDecompressSync(compressed);
 
-  const filepath = path.join(os.tmpdir(), `${name}.js`);
   const filefolder = path.dirname(filepath);
   // Does not error if folder exists when recursive = true
   await fs.mkdir(filefolder, { recursive: true });
-  // TODO handle caching for local instance
   await fs.writeFile(filepath, decompressed);
 
   return filepath;

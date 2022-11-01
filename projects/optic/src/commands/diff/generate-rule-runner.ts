@@ -4,7 +4,10 @@ import { RuleRunner, Ruleset, CustomRuleset } from '@useoptic/rulesets-base';
 
 export const generateRuleRunner = async (
   config: OpticCliConfig,
-  rulesetMapping: Record<string, string>,
+  rulesetMapping: Record<string, {
+    url: string,
+    uploaded_at: string
+  }>,
   checksEnabled: boolean
 ): Promise<RuleRunner> => {
   const rulesets: Ruleset[] = [];
@@ -23,7 +26,8 @@ export const generateRuleRunner = async (
         try {
           rulesetPath = await CustomRuleset.downloadRuleset(
             ruleset.name,
-            rulesetMapping[ruleset.name]
+            rulesetMapping[ruleset.name].url,
+            rulesetMapping[ruleset.name].uploaded_at,
           );
         } catch (e) {
           warnings.push(`Loading ruleset ${ruleset.name} failed`);
