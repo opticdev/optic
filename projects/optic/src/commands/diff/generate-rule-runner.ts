@@ -15,6 +15,11 @@ export const generateRuleRunner = async (
 
   if (checksEnabled) {
     const client = createOpticClient('');
+
+    const rulesToFetch = config.ruleset.filter((ruleset) => !(ruleset.name in StandardRulesets) && !isLocalJsFile(ruleset.name));
+    // TODO connect this up
+    const hostedRulesets = await (client as any).getManyRulesetsByName(rulesToFetch);    
+
     for (const ruleset of config.ruleset) {
       let instanceOrErrorMsg: Ruleset | string
       if (StandardRulesets[ruleset.name as keyof typeof StandardRulesets]) {
@@ -31,8 +36,7 @@ export const generateRuleRunner = async (
           continue;
         }
       } else {
-        // TODO connnect up
-        const hostedRuleset = await (client as any).getRulesetByName(ruleset.name);
+        const hostedRuleset = hostedRulesets.find(hostedRuleset => ruleset.name === hostedRuleset.name);
         if (!hostedRuleset) {
           warnings.push(`Ruleset ${ruleset.name} does not exist`);
           continue;
