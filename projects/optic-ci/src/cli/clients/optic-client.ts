@@ -153,13 +153,19 @@ export class OpticBackendClient extends JsonHttpClient {
     return this.getJson<GetMyOrganizationResponse>(`/api/my-organization`);
   }
 
-  public async createRuleset(name: string): Promise<{
+  public async createRuleset(
+    name: string,
+    description: string,
+    config_schema: any
+  ): Promise<{
     id: string;
     upload_url: string;
     ruleset_url: string;
   }> {
     return this.postJson(`/api/rulesets`, {
       name,
+      description,
+      config_schema,
     });
   }
 
