@@ -4,11 +4,19 @@ import { NamingChangesRuleset } from '../index';
 
 describe('fromOpticConfig', () => {
   test('invalid configuration', () => {
-    const out = NamingChangesRuleset.fromOpticConfig({ applies: 'invalid' });
+    const out = NamingChangesRuleset.fromOpticConfig({ required_on: 'invalid' });
     expect(out).toEqual(
-      '- ruleset/naming/applies must be equal to one of the allowed values'
+      '- ruleset/naming/required_on must be equal to one of the allowed values'
     );
   });
+
+  test('with valid config', () => {
+    expect(NamingChangesRuleset.fromOpticConfig({ required_on: 'always' })).toBeInstanceOf(NamingChangesRuleset)
+  })
+
+  test('with legacy valid config', () => {
+    expect(NamingChangesRuleset.fromOpticConfig({ applies: 'always' })).toBeInstanceOf(NamingChangesRuleset)
+  })
 });
 
 describe('naming changes configuration', () => {
@@ -23,12 +31,12 @@ describe('naming changes configuration', () => {
     }).toThrowErrorMatchingSnapshot();
 
     expect(() => {
-      new NamingChangesRuleset({ applies: 'not valid' } as any);
+      new NamingChangesRuleset({ required_on: 'not valid' } as any);
     }).toThrowErrorMatchingSnapshot();
 
     expect(() => {
       new NamingChangesRuleset({
-        applies: 'always',
+        required_on: 'always',
         options: {
           queryParameters: 'not a valid format' as any,
         },
@@ -42,7 +50,7 @@ describe('naming changes', () => {
     'always',
     (applies) => {
       const namingChangeRuleset = new NamingChangesRuleset({
-        applies: applies as any,
+        required_on: applies as any,
         options: {
           queryParameters: 'camelCase',
           requestHeaders: 'PascalCase',
@@ -704,7 +712,7 @@ describe('naming changes', () => {
 
       describe('pathComponents', () => {
         const namingChangeRuleset = new NamingChangesRuleset({
-          applies: applies as any,
+          required_on: applies as any,
           options: {
             pathComponents: 'param-case',
           },
