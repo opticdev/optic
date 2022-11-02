@@ -1,100 +1,54 @@
 import { OpticCliConfig } from '../../config';
 import { StandardRulesets } from '@useoptic/standard-rulesets';
-import { RuleRunner, Ruleset, CustomRuleset } from '@useoptic/rulesets-base';
+import { RuleRunner, Ruleset, RulesetConfig } from '@useoptic/rulesets-base';
 import { createOpticClient } from '@useoptic/optic-ci/build/cli/clients/optic-client';
 
-// TODO do we need a better qualifier here to avoid false positive local runs?
 const isLocalJsFile = (name: string) => name.endsWith('.js');
+
+type InputPayload = Parameters<typeof RulesetConfig.prepareRulesets>[0];
 
 export const generateRuleRunner = async (
   config: OpticCliConfig,
   checksEnabled: boolean
 ): Promise<RuleRunner> => {
-  const rulesets: Ruleset[] = [];
-  const warnings: string[] = [];
+  let rulesets: Ruleset[] = [];
 
   if (checksEnabled) {
     const client = createOpticClient('');
 
-    const rulesToFetch = config.ruleset.filter(
-      (ruleset) =>
-        !(ruleset.name in StandardRulesets) && !isLocalJsFile(ruleset.name)
-    );
-    const { rulesets: hostedRulesets } = await client.getManyRulesetsByName(
-      rulesToFetch.map((r) => r.name)
-    );
-    const rulesetMap: Record<
-      string,
-      {
-        uploaded_at: string;
-        url: string;
+    const rulesToFetch: string[] = [];
+    const localRules: InputPayload['localRules'] = {};
+    const hostedRulesets: InputPayload['hostedRulesets'] = {};
+    for (const rule of config.ruleset) {
+      if (rule.name in StandardRulesets) {
+        continue;
+      } else if (isLocalJsFile(rule.name)) {
+        localRules[rule.name] = rule.name; // the path is the name
+      } else {
+        rulesToFetch.push(rule.name);
       }
-    > = {};
-    for (const hostedRuleset of hostedRulesets) {
+    }
+    const response = await client.getManyRulesetsByName(rulesToFetch);
+    for (const hostedRuleset of response.rulesets) {
       if (hostedRuleset) {
-        rulesetMap[hostedRuleset.name] = {
+        hostedRulesets[hostedRuleset.name] = {
           uploaded_at: hostedRuleset.uploaded_at,
           url: hostedRuleset.url,
         };
       }
     }
 
-    for (const ruleset of config.ruleset) {
-      let instanceOrErrorMsg: Ruleset | string;
-      if (StandardRulesets[ruleset.name as keyof typeof StandardRulesets]) {
-        const RulesetClass =
-          StandardRulesets[ruleset.name as keyof typeof StandardRulesets];
-        instanceOrErrorMsg = RulesetClass.fromOpticConfig(ruleset.config);
-      } else if (isLocalJsFile(ruleset.name)) {
-        try {
-          instanceOrErrorMsg = await CustomRuleset.resolveRuleset(
-            ruleset,
-            ruleset.name
-          );
-        } catch (e) {
-          console.error(e);
-          warnings.push(`Constructing ruleset ${ruleset.name} failed`);
-          continue;
-        }
-      } else {
-        const hostedRuleset = hostedRulesets[ruleset.name];
-        if (!hostedRuleset) {
-          warnings.push(`Ruleset ${ruleset.name} does not exist`);
-          continue;
-        }
-        let rulesetPath: string;
+    const results = await RulesetConfig.prepareRulesets({
+      ruleset: config.ruleset,
+      localRules,
+      standardRulesets: StandardRulesets,
+      hostedRulesets,
+    });
 
-        try {
-          rulesetPath = await CustomRuleset.downloadRuleset(
-            ruleset.name,
-            hostedRuleset.url,
-            hostedRuleset.uploaded_at
-          );
-        } catch (e) {
-          warnings.push(`Loading ruleset ${ruleset.name} failed`);
-          continue;
-        }
-        try {
-          instanceOrErrorMsg = await CustomRuleset.resolveRuleset(
-            ruleset,
-            rulesetPath
-          );
-        } catch (e) {
-          console.error(e);
-          warnings.push(`Constructing ruleset ${ruleset.name} failed`);
-          continue;
-        }
-      }
-      if (Ruleset.isInstance(instanceOrErrorMsg)) {
-        rulesets.push(instanceOrErrorMsg);
-      } else {
-        warnings.push(instanceOrErrorMsg);
-      }
+    rulesets = results.rulesets;
+    for (const warning of results.warnings) {
+      console.error(warning);
     }
-  }
-
-  for (const warning of warnings) {
-    console.error(warning);
   }
 
   return new RuleRunner(rulesets);
