@@ -17,13 +17,13 @@ export const generateRuleRunner = async (
     const client = createOpticClient('');
 
     const rulesToFetch: string[] = [];
-    const localRules: InputPayload['localRules'] = {};
+    const localRulesets: InputPayload['localRulesets'] = {};
     const hostedRulesets: InputPayload['hostedRulesets'] = {};
     for (const rule of config.ruleset) {
       if (rule.name in StandardRulesets) {
         continue;
       } else if (isLocalJsFile(rule.name)) {
-        localRules[rule.name] = rule.name; // the path is the name
+        localRulesets[rule.name] = rule.name; // the path is the name
       } else {
         rulesToFetch.push(rule.name);
       }
@@ -40,7 +40,7 @@ export const generateRuleRunner = async (
 
     const results = await RulesetConfig.prepareRulesets({
       ruleset: config.ruleset,
-      localRules,
+      localRulesets,
       standardRulesets: StandardRulesets,
       hostedRulesets,
     });

@@ -9,7 +9,7 @@ export type RulesetDef = {
 
 export type RulesetPayload = {
   ruleset: RulesetDef[];
-  localRules: Record<string, string>;
+  localRulesets: Record<string, string>;
   hostedRulesets: Record<
     string,
     {
@@ -41,7 +41,7 @@ export async function prepareRulesets(
       const RulesetClass =
         StandardRulesets[ruleset.name as keyof typeof StandardRulesets];
       instanceOrErrorMsg = RulesetClass.fromOpticConfig(ruleset.config);
-    } else if (payload.localRules[ruleset.name]) {
+    } else if (payload.localRulesets[ruleset.name]) {
       try {
         instanceOrErrorMsg = await resolveRuleset(ruleset, ruleset.name);
       } catch (e) {
