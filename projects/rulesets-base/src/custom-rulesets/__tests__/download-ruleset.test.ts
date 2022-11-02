@@ -7,6 +7,10 @@ jest.mock('node-fetch');
 jest.mock('node:fs/promises');
 
 describe('downloadRuleset', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
   test('throws on load error', async () => {
     (fs.access as any).mockRejectedValue(new Error('file does not exist'));
     (fetch as any).mockResolvedValue({
@@ -38,7 +42,7 @@ describe('downloadRuleset', () => {
     );
     expect(fs.mkdir).toBeCalled();
     expect(fs.writeFile).toHaveBeenCalledWith(
-      expect.stringMatching(/test-ruleset.js$/),
+      expect.stringMatching(/test-ruleset\/2022-11-01T19:32:22\.148Z\.js$/),
       Buffer.from('Some ruleset data')
     );
   });
