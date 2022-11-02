@@ -43,7 +43,10 @@ export async function prepareRulesets(
       instanceOrErrorMsg = RulesetClass.fromOpticConfig(ruleset.config);
     } else if (payload.localRulesets[ruleset.name]) {
       try {
-        instanceOrErrorMsg = await resolveRuleset(ruleset, ruleset.name);
+        instanceOrErrorMsg = await resolveRuleset(
+          ruleset,
+          payload.localRulesets[ruleset.name]
+        );
       } catch (e) {
         console.error(e);
         warnings.push(`Constructing ruleset ${ruleset.name} failed`);

@@ -1,4 +1,11 @@
-import { runOptic, setupWorkspace, normalizeWorkspace } from './integration';
+import fs from 'node:fs/promises';
+import path from 'path';
+import {
+  runOptic,
+  setupWorkspace,
+  normalizeWorkspace,
+  setupTestServer,
+} from './integration';
 
 jest.setTimeout(30000);
 
@@ -22,6 +29,36 @@ describe('diff', () => {
 
     expect(code).toBe(1);
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+  });
+
+  describe('with mock server', () => {
+    setupTestServer(async ({ url, method }) => {
+      if (method === 'GET' && /\/api\/rulesets/.test(url)) {
+        return JSON.stringify({
+          rulesets: [
+            {
+              name: '@org/custom-ruleset',
+              url: 'http://localhost:8888/download-url',
+              uploaded_at: '2022-11-02T17:55:48.078Z',
+            },
+          ],
+        });
+      } else if (method === 'GET' && /download-url/.test(url)) {
+        return fs.readFile(path.resolve(__dirname, './workspaces/diff/custom-rules/rules/cloud-mock.js'));
+      }
+      return JSON.stringify({});
+    });
+
+    test.only('custom rules', async () => {
+      const workspace = await setupWorkspace('diff/custom-rules');
+      const { combined, code } = await runOptic(
+        workspace,
+        'diff example-api-v0.json example-api-v1.json --check'
+      );
+
+      expect(code).toBe(1);
+      expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    });
   });
 
   test('breaking changes exclusion', async () => {

@@ -1,16 +1,23 @@
 import path from 'path';
 import { downloadRuleset } from '../download-ruleset';
 import { prepareRulesets } from '../prepare-rulesets';
-import { Ruleset } from '../../index'
+import { Ruleset } from '../../index';
 
 jest.mock('../download-ruleset');
-const downloadRulesetMock = downloadRuleset as jest.MockedFunction<typeof downloadRuleset>
+const downloadRulesetMock = downloadRuleset as jest.MockedFunction<
+  typeof downloadRuleset
+>;
 
 describe('prepareRulesets', () => {
   test('basic usage', async () => {
-    downloadRulesetMock
-      .mockResolvedValue(path.join(__dirname, 'mocks', 'fake-custom-ruleset'));
-    const localRulesetPath = path.join(__dirname, 'mocks', 'local-fake-custom-ruleset.ts');
+    downloadRulesetMock.mockResolvedValue(
+      path.join(__dirname, 'mocks', 'fake-custom-ruleset')
+    );
+    const localRulesetPath = path.join(
+      __dirname,
+      'mocks',
+      'local-fake-custom-ruleset.ts'
+    );
 
     const result = await prepareRulesets({
       ruleset: [
@@ -22,20 +29,21 @@ describe('prepareRulesets', () => {
       hostedRulesets: {
         '@team/custom-ruleset': {
           url: 'https://some-url.com',
-          uploaded_at: '123'
+          uploaded_at: '123',
         },
       },
       standardRulesets: {
         'breaking-changes': {
-          fromOpticConfig: (() => new Ruleset({
-            name: 'asd',
-            rules: []
-          })) as any
-        }
+          fromOpticConfig: (() =>
+            new Ruleset({
+              name: 'asd',
+              rules: [],
+            })) as any,
+        },
       },
       localRulesets: {
-        [localRulesetPath]: localRulesetPath
-      }
+        [localRulesetPath]: localRulesetPath,
+      },
     });
 
     expect(result.rulesets.length).toBe(3);
@@ -44,8 +52,9 @@ describe('prepareRulesets', () => {
   });
 
   test('invalid config', async () => {
-    downloadRulesetMock
-      .mockResolvedValue(path.join(__dirname, 'mocks', 'fake-custom-ruleset'));
+    downloadRulesetMock.mockResolvedValue(
+      path.join(__dirname, 'mocks', 'fake-custom-ruleset')
+    );
 
     const payload = {
       ruleset: [
@@ -59,18 +68,19 @@ describe('prepareRulesets', () => {
       hostedRulesets: {
         '@team/custom-ruleset': {
           url: 'https://some-url.com',
-          uploaded_at: '123'
+          uploaded_at: '123',
         },
       },
       standardRulesets: {
         'breaking-changes': {
-          fromOpticConfig: (() => new Ruleset({
-            name: 'asd',
-            rules: []
-          })) as any
-        }
+          fromOpticConfig: (() =>
+            new Ruleset({
+              name: 'asd',
+              rules: [],
+            })) as any,
+        },
       },
-      localRulesets: {}
+      localRulesets: {},
     };
 
     const result = await prepareRulesets(payload);

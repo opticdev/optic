@@ -1,3 +1,4 @@
+import path from 'path';
 import { OpticCliConfig } from '../../config';
 import { StandardRulesets } from '@useoptic/standard-rulesets';
 import { RuleRunner, Ruleset, RulesetConfig } from '@useoptic/rulesets-base';
@@ -23,12 +24,18 @@ export const generateRuleRunner = async (
       if (rule.name in StandardRulesets) {
         continue;
       } else if (isLocalJsFile(rule.name)) {
-        localRulesets[rule.name] = rule.name; // the path is the name
+        const rootPath = config.configPath
+          ? path.dirname(config.configPath)
+          : process.cwd();
+        localRulesets[rule.name] = path.resolve(rootPath, rule.name); // the path is the name
       } else {
         rulesToFetch.push(rule.name);
       }
     }
-    const response = await client.getManyRulesetsByName(rulesToFetch);
+    const response =
+      rulesToFetch.length > 0
+        ? await client.getManyRulesetsByName(rulesToFetch)
+        : { rulesets: [] };
     for (const hostedRuleset of response.rulesets) {
       if (hostedRuleset) {
         hostedRulesets[hostedRuleset.name] = {
