@@ -49,7 +49,7 @@ describe('diff', () => {
       return JSON.stringify({});
     });
 
-    test.only('custom rules', async () => {
+    test('custom rules', async () => {
       const workspace = await setupWorkspace('diff/custom-rules');
       const { combined, code } = await runOptic(
         workspace,
