@@ -16,27 +16,48 @@ export const generateRuleRunner = async (
   if (checksEnabled) {
     const client = createOpticClient('');
 
-    const rulesToFetch = config.ruleset.filter((ruleset) => !(ruleset.name in StandardRulesets) && !isLocalJsFile(ruleset.name));
-    // TODO connect this up
-    const hostedRulesets = await (client as any).getManyRulesetsByName(rulesToFetch);    
+    const rulesToFetch = config.ruleset.filter(
+      (ruleset) =>
+        !(ruleset.name in StandardRulesets) && !isLocalJsFile(ruleset.name)
+    );
+    const { rulesets: hostedRulesets } = await client.getManyRulesetsByName(
+      rulesToFetch.map((r) => r.name)
+    );
+    const rulesetMap: Record<
+      string,
+      {
+        uploaded_at: string;
+        url: string;
+      }
+    > = {};
+    for (const hostedRuleset of hostedRulesets) {
+      if (hostedRuleset) {
+        rulesetMap[hostedRuleset.name] = {
+          uploaded_at: hostedRuleset.uploaded_at,
+          url: hostedRuleset.url,
+        };
+      }
+    }
 
     for (const ruleset of config.ruleset) {
-      let instanceOrErrorMsg: Ruleset | string
+      let instanceOrErrorMsg: Ruleset | string;
       if (StandardRulesets[ruleset.name as keyof typeof StandardRulesets]) {
         const RulesetClass =
           StandardRulesets[ruleset.name as keyof typeof StandardRulesets];
         instanceOrErrorMsg = RulesetClass.fromOpticConfig(ruleset.config);
       } else if (isLocalJsFile(ruleset.name)) {
         try {
-          instanceOrErrorMsg = await CustomRuleset.resolveRuleset(ruleset, ruleset.name);
-        }
-        catch (e) {
+          instanceOrErrorMsg = await CustomRuleset.resolveRuleset(
+            ruleset,
+            ruleset.name
+          );
+        } catch (e) {
           console.error(e);
           warnings.push(`Constructing ruleset ${ruleset.name} failed`);
           continue;
         }
       } else {
-        const hostedRuleset = hostedRulesets.find(hostedRuleset => ruleset.name === hostedRuleset.name);
+        const hostedRuleset = hostedRulesets[ruleset.name];
         if (!hostedRuleset) {
           warnings.push(`Ruleset ${ruleset.name} does not exist`);
           continue;
@@ -51,10 +72,13 @@ export const generateRuleRunner = async (
           );
         } catch (e) {
           warnings.push(`Loading ruleset ${ruleset.name} failed`);
-          continue;  
+          continue;
         }
         try {
-          instanceOrErrorMsg = await CustomRuleset.resolveRuleset(ruleset, rulesetPath);
+          instanceOrErrorMsg = await CustomRuleset.resolveRuleset(
+            ruleset,
+            rulesetPath
+          );
         } catch (e) {
           console.error(e);
           warnings.push(`Constructing ruleset ${ruleset.name} failed`);
