@@ -76,7 +76,7 @@ module.exports = {
   ...
   rules: [
     new NamingChangesRuleset({
-      applies: 'always', // also available: 'added' | 'addedOrChanged'
+      required_on: 'always', // also available: 'added' | 'addedOrChanged'
       options: { // valid formats are: 'camelCase' | 'Capital-Param-Case' | 'param-case' | 'PascalCase' | 'snake_case'
         properties: 'camelCase',
         queryParameters: 'camelCase',

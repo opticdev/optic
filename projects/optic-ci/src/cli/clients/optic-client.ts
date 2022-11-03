@@ -152,13 +152,51 @@ export class OpticBackendClient extends JsonHttpClient {
   public async getMyOrganization(): Promise<GetMyOrganizationResponse> {
     return this.getJson<GetMyOrganizationResponse>(`/api/my-organization`);
   }
+
+  public async createRuleset(
+    name: string,
+    description: string,
+    config_schema: any
+  ): Promise<{
+    id: string;
+    upload_url: string;
+    ruleset_url: string;
+  }> {
+    return this.postJson(`/api/rulesets`, {
+      name,
+      description,
+      config_schema,
+    });
+  }
+
+  public async patchRuleset(
+    rulesetId: string,
+    uploaded: boolean
+  ): Promise<void> {
+    return this.patchJson(`/api/rulesets/${rulesetId}`, {
+      uploaded,
+    });
+  }
+
+  public async getManyRulesetsByName(rulesets: string[]): Promise<{
+    rulesets: ({
+      name: string
+      url: string
+      uploaded_at: string
+    } | null)[]
+  }> {
+    const encodedRulesets = rulesets.map(r => encodeURIComponent(r)).join(',')
+    return this.getJson(`/api/rulesets?rulesets=${encodedRulesets}`);
+  }
 }
 
 export const createOpticClient = (opticToken: string) => {
-  const backendWebBase =
-    process.env.OPTIC_ENV === 'staging'
-      ? 'https://api.o3c.info'
-      : 'https://api.useoptic.com';
+  const hostOverride = process.env.BWTS_HOST_OVERRIDE;
+  const backendWebBase = hostOverride
+    ? hostOverride
+    : process.env.OPTIC_ENV === 'staging'
+    ? 'https://api.o3c.info'
+    : 'https://api.useoptic.com';
 
   const opticClient = new OpticBackendClient(backendWebBase, () =>
     Promise.resolve(opticToken)

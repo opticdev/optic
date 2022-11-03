@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import zlib from 'node:zlib'
+import zlib from 'node:zlib';
 import open from 'open';
 
 import {
@@ -12,8 +12,6 @@ import {
   UserError,
 } from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
-import { StandardRulesets } from '@useoptic/standard-rulesets';
-import { RuleRunner, Ruleset } from '@useoptic/rulesets-base';
 import {
   parseFilesFromRef,
   ParseResult,
@@ -21,6 +19,7 @@ import {
 } from '../../utils/spec-loaders';
 import { OpticCliConfig, VCS } from '../../config';
 import chalk from 'chalk';
+import { generateRuleRunner } from './generate-rule-runner';
 import {
   flushEvents,
   trackEvent,
@@ -131,35 +130,6 @@ const openBrowserToPage = async (url: string) => {
   await open(url, { wait: false });
 };
 
-const generateRuleRunner = (
-  config: OpticCliConfig,
-  checksEnabled: boolean
-): RuleRunner => {
-  const rulesets: Ruleset[] = [];
-
-  if (checksEnabled) {
-    for (const ruleset of config.ruleset) {
-      const RulesetClass =
-        StandardRulesets[ruleset.name as keyof typeof StandardRulesets];
-      if (RulesetClass) {
-        const instanceOrErrorMsg = RulesetClass.fromOpticConfig(ruleset.config);
-        if (Ruleset.isInstance(instanceOrErrorMsg)) {
-          rulesets.push(instanceOrErrorMsg);
-        } else {
-          console.error(
-            `There were errors in the configuration for the ${ruleset.name} ruleset:`
-          );
-          console.error(instanceOrErrorMsg);
-          console.error();
-        }
-      } else {
-        console.error(`Warning: Invalid ruleset ${ruleset.name}`);
-      }
-    }
-  }
-  return new RuleRunner(rulesets);
-};
-
 const getBaseAndHeadFromFiles = async (
   file1: string,
   file2: string
@@ -192,7 +162,10 @@ const runDiff = async (
   config: OpticCliConfig,
   options: DiffActionOptions
 ): Promise<{ checks: { passed: number; failed: number; total: number } }> => {
-  const ruleRunner = generateRuleRunner(config, options.check);
+  const ruleRunner = await generateRuleRunner(
+    config,
+    options.check
+  );
   const specResults = await generateSpecResults(
     ruleRunner,
     baseFile,

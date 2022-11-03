@@ -31,7 +31,7 @@ export type RawYmlConfig = {
   ruleset?: unknown[];
 };
 
-export type OpticCliConfig = RawYmlConfig & {
+export type OpticCliConfig = Omit<RawYmlConfig, 'ruleset'> & {
   ruleset: ConfigRuleset[];
 };
 

@@ -6,7 +6,7 @@ export const hasGit = async (): Promise<boolean> =>
       if (err || stderr || !stdout) resolve(false);
       resolve(true);
     };
-    const command = `which git`;
+    const command = `git --version`;
     exec(command, cb);
   });
 
