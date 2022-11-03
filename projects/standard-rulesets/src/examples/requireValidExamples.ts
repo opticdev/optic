@@ -143,6 +143,17 @@ export const requireValidParameterExamples = new OperationRule({
           });
         }
       }
+      if (header.raw.schema && 'example' in header.raw.schema) {
+        const result = validateSchema(
+          header.raw.schema || {},
+          header.raw.schema.example
+        );
+        if (!result.pass) {
+          throw new RuleError({
+            message: `header '${header.value.name}' example does not match the schema. \n${result.error} `,
+          });
+        }
+      }
     });
     operation.queryParameter.requirement((query) => {
       if (query.raw.example) {
@@ -156,12 +167,34 @@ export const requireValidParameterExamples = new OperationRule({
           });
         }
       }
+      if (query.raw.schema && 'example' in query.raw.schema) {
+        const result = validateSchema(
+          query.raw.schema || {},
+          query.raw.schema.example
+        );
+        if (!result.pass) {
+          throw new RuleError({
+            message: `query parameter '${query.value.name}' example does not match the schema. \n${result.error} `,
+          });
+        }
+      }
     });
     operation.cookieParameter.requirement((cookie) => {
       if (cookie.raw.example) {
         const result = validateSchema(
           cookie.raw.schema || {},
           cookie.raw.example
+        );
+        if (!result.pass) {
+          throw new RuleError({
+            message: `cookie '${cookie.value.name}' example does not match the schema. \n${result.error} `,
+          });
+        }
+      }
+      if (cookie.raw.schema && 'example' in cookie.raw.schema) {
+        const result = validateSchema(
+          cookie.raw.schema || {},
+          cookie.raw.schema.example
         );
         if (!result.pass) {
           throw new RuleError({

@@ -1,3 +1,5 @@
+import { beforeEach, afterEach } from '@jest/globals';
+import http from 'http';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import { spawn } from 'child_process';
@@ -124,4 +126,41 @@ export async function fileExists(path: string): Promise<boolean> {
 
 export function normalizeWorkspace(workspace: string, text: string): string {
   return text.replace(new RegExp(workspace, 'g'), '$$workspace$$');
+}
+
+let server: http.Server;
+
+type MockHttpHandler = (req: { url: string; method: string }) => any;
+
+export let reqs: http.IncomingMessage[] = [];
+const createListener =  (handler?: MockHttpHandler) => {
+  return async function listener(
+    req: http.IncomingMessage,
+    resp: http.ServerResponse
+  ) {
+    reqs.push(req);
+
+    resp.writeHead(200);
+    const body =
+      req.url && req.method && handler
+        ? await handler({ url: req.url, method: req.method })
+        : undefined;
+    resp.end(body);
+  };
+};
+
+export function setupTestServer(maybeHandler?: MockHttpHandler) {
+  let originalBwtsHostOverride = process.env.BWTS_HOST_OVERRIDE;
+  beforeEach(() => {
+    reqs = [];
+    server = http.createServer(createListener(maybeHandler));
+    server.listen(8888);
+    originalBwtsHostOverride = process.env.BWTS_HOST_OVERRIDE;
+    process.env.BWTS_HOST_OVERRIDE = 'http://localhost:8888';
+  });
+
+  afterEach(() => {
+    server.close();
+    process.env.BWTS_HOST_OVERRIDE = originalBwtsHostOverride;
+  });
 }

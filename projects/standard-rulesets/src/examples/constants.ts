@@ -1,1 +1,1 @@
-export const appliesWhen = ['addedOrChanged', 'always'] as const;
+export const appliesWhen = ['added', 'addedOrChanged', 'always'] as const;

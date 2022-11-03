@@ -498,6 +498,11 @@ export const afterOpenApiJson: OpenAPIV3.Document = {
     description: 'Find out more about Swagger',
     url: 'http://swagger.io',
   },
+  security: [
+    {
+      AuthScope: ['admin'],
+    },
+  ],
   servers: [
     {
       url: 'https://petstore.swagger.io/v2',
@@ -535,6 +540,11 @@ export const afterOpenApiJson: OpenAPIV3.Document = {
     '/example': {
       get: {
         operationId: 'getExamples',
+        security: [
+          {
+            LocalAuthScope: ['admin'],
+          },
+        ],
         responses: {
           '200': {
             description: 'succesful',

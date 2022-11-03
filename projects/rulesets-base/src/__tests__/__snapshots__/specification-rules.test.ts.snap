@@ -306,6 +306,7 @@ Object {
     },
     "requests": Array [],
     "responses": Map {},
+    "security": null,
     "value": Object {
       "method": "",
       "pathPattern": "",
@@ -380,6 +381,7 @@ Object {
     },
     "requests": Array [],
     "responses": Map {},
+    "security": null,
     "value": Object {
       "method": "",
       "pathPattern": "",
@@ -454,6 +456,7 @@ Object {
     },
     "requests": Array [],
     "responses": Map {},
+    "security": null,
     "value": Object {
       "method": "",
       "pathPattern": "",
@@ -528,6 +531,7 @@ Object {
     },
     "requests": Array [],
     "responses": Map {},
+    "security": null,
     "value": Object {
       "method": "",
       "pathPattern": "",

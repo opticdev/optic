@@ -164,11 +164,29 @@ export const createOperation = (
     }
   }
 
+  const security: OpenAPIV3.OperationObject['security'] | null = (() => {
+    const operationOverride = jsonPointerHelpers.tryGet(
+      openApiSpec,
+      jsonPointerHelpers.append(operationFact.location.jsonPath, 'security')
+    );
+
+    if (operationOverride.match)
+      return operationOverride.value as OpenAPIV3.OperationObject['security'];
+
+    const specLevel = jsonPointerHelpers.tryGet(openApiSpec, '/security');
+
+    if (specLevel.match)
+      return specLevel.value as OpenAPIV3.OperationObject['security'];
+
+    return null;
+  })();
+
   return {
     ...operationFact,
     raw: jsonPointerHelpers.get(openApiSpec, operationFact.location.jsonPath),
     path: endpoint.path,
     method: endpoint.method,
+    security,
     headerParameters: createFactsWithRaw(
       endpoint.headerParameters,
       key,
