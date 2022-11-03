@@ -19,29 +19,29 @@ const expectedFileShape = `Expected ruleset file to have a default export with t
   rulesetConstructor: (config: ConfigSchema) => Ruleset;
 }`;
 
-export const registerRulesetPublish = (
+export const registerRulesetUpload = (
   cli: Command,
   config: OpticCliConfig
 ) => {
   cli
-    .command('publish', {
+    .command('upload', {
       hidden: true, // TODO unhide this
     })
     .configureHelp({
       commandUsage: () =>
-        `OPTIC_TOKEN=your_token_here optic ruleset publish <path_to_ruleset>`,
+        `OPTIC_TOKEN=your_token_here optic ruleset upload <path_to_ruleset>`,
     })
-    .description('Publish a custom ruleset to optic cloud')
+    .description('Upload a custom ruleset to optic cloud')
     .addHelpText(
       'after',
       `
 This command also requires a token to be provided via the environment variable OPTIC_TOKEN. Generate an optic token at https://app.useoptic.com.`
     )
-    .argument('<path_to_ruleset>', 'the path to the ruleset to publish')
-    .action(wrapActionHandlerWithSentry(getPublishAction()));
+    .argument('<path_to_ruleset>', 'the path to the ruleset to upload')
+    .action(wrapActionHandlerWithSentry(getUploadAction()));
 };
 
-const getPublishAction = () => async (filePath: string) => {
+const getUploadAction = () => async (filePath: string) => {
   const maybeToken = process.env.OPTIC_TOKEN;
 
   if (!maybeToken) {
@@ -75,7 +75,7 @@ const getPublishAction = () => async (filePath: string) => {
   await uploadFileToS3(ruleset.upload_url, compressedFileBuffer);
   await opticClient.patchRuleset(ruleset.id, true);
 
-  console.log('Successfully published the ruleset');
+  console.log('Successfully uploaded the ruleset');
   console.log(`View this ruleset at ${ruleset.ruleset_url}`);
 };
 
