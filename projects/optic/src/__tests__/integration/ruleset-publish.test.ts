@@ -8,13 +8,13 @@ jest.setTimeout(30000);
 
 setupTestServer(({ url, method }) => {
   if (method === 'POST' && /\/api\/rulesets$/.test(url)) {
-    return {
+    return JSON.stringify({
       id: '123',
       upload_url: 'http://localhost:8888/upload_url',
       ruleset_url: 'http://app.useoptic.com/ruleset_url',
-    };
+    });
   }
-  return {}
+  return JSON.stringify({})
 });
 
 describe('optic ruleset upload', () => {

@@ -177,6 +177,17 @@ export class OpticBackendClient extends JsonHttpClient {
       uploaded,
     });
   }
+
+  public async getManyRulesetsByName(rulesets: string[]): Promise<{
+    rulesets: ({
+      name: string
+      url: string
+      uploaded_at: string
+    } | null)[]
+  }> {
+    const encodedRulesets = rulesets.map(r => encodeURIComponent(r)).join(',')
+    return this.getJson(`/api/rulesets?rulesets=${encodedRulesets}`);
+  }
 }
 
 export const createOpticClient = (opticToken: string) => {
