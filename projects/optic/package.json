@@ -2,7 +2,7 @@
   "name": "@useoptic/optic",
   "license": "MIT",
   "packageManager": "yarn@3.0.2",
-  "version": "0.34.4",
+  "version": "0.34.6-1",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -60,7 +60,7 @@
     "ajv": "^8.11.0",
     "bottleneck": "^2.19.5",
     "chalk": "^4.1.2",
-    "commander": "^9.0.0",
+    "commander": "^9.4.1",
     "dotenv": "^16.0.2",
     "is-url": "^1.2.4",
     "js-yaml": "^4.1.0",
@@ -72,7 +72,7 @@
     "picomatch": "^2.3.1",
     "tar": "^6.1.11",
     "url-join": "^4.0.1",
-    "uuid": "^8.3.2"
+    "uuid": "^9.0.0"
   },
   "jest": {
     "testPathIgnorePatterns": [
@@ -91,5 +91,6 @@
         "<rootDir>../../../../node_modules/nimma/dist/legacy/cjs/index.js"
       ]
     }
-  }
+  },
+  "stableVersion": "0.34.5"
 }

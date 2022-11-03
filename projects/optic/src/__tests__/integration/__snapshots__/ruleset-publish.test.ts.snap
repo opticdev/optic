@@ -1,18 +1,32 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`optic ruleset publish can publish a ruleset 1`] = `
-"Successfully published the ruleset
+exports[`optic ruleset upload can publish a ruleset 1`] = `
+"Successfully uploaded the ruleset
 View this ruleset at http://app.useoptic.com/ruleset_url
 "
 `;
 
-exports[`optic ruleset publish exits if ruleset file shape is not valid 1`] = `
-"Rule file is invalid:
-data/default must have required property 'rules'
+exports[`optic ruleset upload exits if ruleset file does not have rulesConstructor 1`] = `
+"Rules file does not export a rulesetConstructor that is a function
 Rules file does not match expected format. Expected ruleset file to have a default export with the shape
 {
   name: string;
-  rules: (Ruleset | Rule)[]
+  description: string;
+  configSchema?: any;
+  rulesetConstructor: (config: ConfigSchema) => Ruleset;
+}
+"
+`;
+
+exports[`optic ruleset upload exits if ruleset file shape is not valid 1`] = `
+"Rule file is invalid:
+data/default must have required property 'description'
+Rules file does not match expected format. Expected ruleset file to have a default export with the shape
+{
+  name: string;
+  description: string;
+  configSchema?: any;
+  rulesetConstructor: (config: ConfigSchema) => Ruleset;
 }
 "
 `;
