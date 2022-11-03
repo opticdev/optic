@@ -3377,7 +3377,7 @@ __metadata:
     babel-plugin-inline-dotenv: ^1.7.0
     bent: ^7.3.12
     chalk: ^5.0.1
-    commander: ^9.3.0
+    commander: ^9.4.1
     conf: ^10.2.0
     fast-deep-equal: ^3.1.3
     har-schema: ^2.0.0
@@ -3552,7 +3552,7 @@ __metadata:
     babel-plugin-transform-inline-environment-variables: ^0.4.3
     bottleneck: ^2.19.5
     chalk: ^4.1.2
-    commander: ^9.0.0
+    commander: ^9.4.1
     dotenv: ^16.0.2
     is-url: ^1.2.4
     jest: ^27.5.1
@@ -3608,7 +3608,7 @@ __metadata:
     babel-plugin-transform-inline-environment-variables: ^0.4.3
     bottleneck: ^2.19.5
     chalk: ^4.1.2
-    commander: ^9.0.0
+    commander: ^9.4.1
     dotenv: ^16.0.2
     is-url: ^1.2.4
     jest: ^27.5.1
@@ -4821,17 +4821,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "commander@npm:9.0.0"
-  checksum: 15066e433d528315ded8261d16bc600d1f3c5671c75021e685ae67e4d62f7551243ff28411b28dc0a6f8b23c2a0f033550ec6f3e66bdf9d11a4fdc2d33dd9802
-  languageName: node
-  linkType: hard
-
-"commander@npm:^9.3.0":
-  version: 9.3.0
-  resolution: "commander@npm:9.3.0"
-  checksum: d421ce66fee25792a1470c69aa8d1b86434bf873a96483aa92c8267f81a6f20c6f7c426f5e82f88ac50a8ec4855d3f2787aebcdef8aa559e1080a2337a95a217
+"commander@npm:^9.4.1":
+  version: 9.4.1
+  resolution: "commander@npm:9.4.1"
+  checksum: bfb18e325a5bdf772763c2213d5c7d9e77144d944124e988bcd8e5e65fb6d45d5d4e86b09155d0f2556c9a59c31e428720e57968bcd050b2306e910a0bf3cf13
   languageName: node
   linkType: hard
 
