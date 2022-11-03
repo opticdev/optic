@@ -133,8 +133,8 @@ let server: http.Server;
 type MockHttpHandler = (req: { url: string; method: string }) => any;
 
 export let reqs: http.IncomingMessage[] = [];
-const createListener = (handler?: MockHttpHandler) => {
-  return function listener(
+const createListener =  (handler?: MockHttpHandler) => {
+  return async function listener(
     req: http.IncomingMessage,
     resp: http.ServerResponse
   ) {
@@ -143,7 +143,7 @@ const createListener = (handler?: MockHttpHandler) => {
     resp.writeHead(200);
     const body =
       req.url && req.method && handler
-        ? JSON.stringify(handler({ url: req.url, method: req.method }))
+        ? await handler({ url: req.url, method: req.method })
         : undefined;
     resp.end(body);
   };

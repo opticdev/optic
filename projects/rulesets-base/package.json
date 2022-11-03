@@ -2,7 +2,7 @@
   "name": "@useoptic/rulesets-base",
   "license": "MIT",
   "packageManager": "yarn@3.0.2",
-  "version": "0.34.4",
+  "version": "0.34.6-1",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -23,7 +23,8 @@
     "@stoplight/spectral-rulesets": "^1.12.0",
     "@useoptic/json-pointer-helpers": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
-    "lodash.pick": "^4.4.0"
+    "lodash.pick": "^4.4.0",
+    "node-fetch": "^2.6.7"
   },
   "devDependencies": {
     "@babel/core": "^7.17.0",
@@ -60,5 +61,6 @@
         "<rootDir>../../../../node_modules/nimma/dist/legacy/cjs/index.js"
       ]
     }
-  }
+  },
+  "stableVersion": "0.34.5"
 }

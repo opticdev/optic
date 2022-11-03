@@ -1,0 +1,6 @@
+ruleset:
+  - breaking-changes
+  - naming:
+      pathComponents: camelCase
+  - '@org/custom-ruleset'
+  - ./rules/local.js
