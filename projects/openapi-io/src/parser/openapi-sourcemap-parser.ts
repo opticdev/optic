@@ -12,8 +12,12 @@ import isUrl from 'is-url';
 import { JsonSchemaSourcemap } from './sourcemap';
 import { gitBranchResolver } from './resolvers/git-branch-file-resolver';
 import { ExternalRefHandler } from './types';
+import Bottleneck from 'bottleneck';
 
-export { JSONParserError, ResolverError } from '@apidevtools/json-schema-ref-parser';
+export {
+  JSONParserError,
+  ResolverError,
+} from '@apidevtools/json-schema-ref-parser';
 
 export type ParseOpenAPIResult = {
   jsonLike: OpenAPIV3.Document;
@@ -36,29 +40,41 @@ export async function dereferenceOpenApi(
         accept: '*/*',
       },
     },
-    external: true
+    external: true,
   };
   // Resolve all references
   const resolverResults: $RefParser.$Refs = await resolver.resolve(path, {
     resolve,
   });
 
+  const limiter = new Bottleneck({
+    maxConcurrent: 20,
+  });
+
   // parse all asts and add to sourcemap
+  const cachedUrls = new Set<string>([]);
+
   await Promise.all(
-    resolverResults.paths().map(async (filePath, index) => {
-      if (isUrl(filePath)) {
-        const response = await fetch(filePath);
-        const contents = await response.text();
-        sourcemap.addFileIfMissingFromContents(filePath, contents, index);
-      } else if (options.externalRefHandler) {
-        const contents = await options.externalRefHandler.read({
-          url: filePath,
-        });
-        sourcemap.addFileIfMissingFromContents(filePath, contents, index);
-      } else {
-        await sourcemap.addFileIfMissing(filePath, index);
-      }
-    })
+    resolverResults.paths().map((filePath, index) =>
+      limiter.schedule(async () => {
+        if (isUrl(filePath)) {
+          const inCache = cachedUrls.has(filePath);
+          if (!inCache) {
+            const response = await fetch(filePath);
+            const contents = await response.text();
+            cachedUrls.add(filePath);
+            sourcemap.addFileIfMissingFromContents(filePath, contents, index);
+          }
+        } else if (options.externalRefHandler) {
+          const contents = await options.externalRefHandler.read({
+            url: filePath,
+          });
+          sourcemap.addFileIfMissingFromContents(filePath, contents, index);
+        } else {
+          await sourcemap.addFileIfMissing(filePath, index);
+        }
+      })
+    )
   );
 
   // Dereference all references
