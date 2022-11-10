@@ -22,7 +22,8 @@
     "@useoptic/openapi-utilities": "workspace:*",
     "@useoptic/rulesets-base": "workspace:*",
     "ajv": "^8.11.0",
-    "ajv-formats": "2.1.1"
+    "ajv-formats": "2.1.1",
+    "whatwg-mimetype": "^3.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.0",

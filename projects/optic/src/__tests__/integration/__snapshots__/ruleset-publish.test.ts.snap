@@ -30,3 +30,25 @@ Rules file does not match expected format. Expected ruleset file to have a defau
 }
 "
 `;
+
+exports[`optic ruleset upload exits if ruleset file shape is not valid 2`] = `
+"/Users/aidancunniffe/Developer/optic/projects/optic/node_modules/ts-node/src/index.ts:843
+    return new TSError(diagnosticText, diagnosticCodes, diagnostics);
+           ^
+TSError: ⨯ Unable to compile TypeScript:
+../../src/commands/diff/generate-rule-runner.ts(37,24): error TS2339: Property 'getManyRulesetsByName' does not exist on type 'OpticBackendClient'.
+
+    at createTSError (/Users/aidancunniffe/Developer/optic/projects/optic/node_modules/ts-node/src/index.ts:843:12)
+    at reportTSError (/Users/aidancunniffe/Developer/optic/projects/optic/node_modules/ts-node/src/index.ts:847:19)
+    at getOutput (/Users/aidancunniffe/Developer/optic/projects/optic/node_modules/ts-node/src/index.ts:1057:36)
+    at Object.compile (/Users/aidancunniffe/Developer/optic/projects/optic/node_modules/ts-node/src/index.ts:1411:41)
+    at Module.m._compile (/Users/aidancunniffe/Developer/optic/projects/optic/node_modules/ts-node/src/index.ts:1596:30)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1159:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/aidancunniffe/Developer/optic/projects/optic/node_modules/ts-node/src/index.ts:1600:12)
+    at Module.load (node:internal/modules/cjs/loader:981:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
+    at Module.require (node:internal/modules/cjs/loader:1005:19) {
+  diagnosticCodes: [ 2339 ]
+}
+"
+`;
