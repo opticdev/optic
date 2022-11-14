@@ -7,8 +7,7 @@ export function qualifiedContentType(contentType: string): boolean {
       parsedType.essence === 'application/json' ||
       parsedType.essence === 'application/xml' ||
       parsedType.essence === 'text/json' ||
-      parsedType.essence === 'text/plan' ||
-      parsedType.essence === 'text/plan' ||
+      parsedType.essence === 'text/plain' ||
       parsedType.subtype.endsWith('+json') ||
       parsedType.subtype.endsWith('+xml')
     ) {

@@ -2,6 +2,7 @@ import {
   OperationRule,
   RequestRule,
   ResponseBody,
+  ResponseBodyRule,
   ResponseRule,
   RuleError,
 } from '@useoptic/rulesets-base';
@@ -10,9 +11,10 @@ import { OpenAPIV3 } from 'openapi-types';
 import { qualifiedContentType } from './qualifiedContentType';
 
 export const requireResponseExamples = (applies: typeof appliesWhen[number]) =>
-  new ResponseRule({
+  new ResponseBodyRule({
     name: 'require response body examples',
-    rule: (responseAssertions) => {
+    matches: (body) => qualifiedContentType(body.contentType),
+    rule: (responseBodyAssertions) => {
       function responseToNumberOfExamples(body: ResponseBody) {
         const numberOfExamples =
           (body.raw.example ? 1 : 0) +
@@ -21,30 +23,22 @@ export const requireResponseExamples = (applies: typeof appliesWhen[number]) =>
       }
 
       if (applies === 'always') {
-        responseAssertions.requirement((value) => {
-          value.bodies
-            .filter((body) => qualifiedContentType(body.contentType))
-            .forEach((body) => {
-              if (responseToNumberOfExamples(body) < 1) {
-                throw new RuleError({
-                  message: `a valid example is required for every documented response body`,
-                });
-              }
+        responseBodyAssertions.body.requirement((body) => {
+          if (responseToNumberOfExamples(body) < 1) {
+            throw new RuleError({
+              message: `a valid example is required for every documented response body`,
             });
+          }
         });
       }
 
       if (applies === 'addedOrChanged') {
-        responseAssertions.addedOrChanged((value) => {
-          value.bodies
-            .filter((body) => qualifiedContentType(body.contentType))
-            .forEach((body) => {
-              if (responseToNumberOfExamples(body) < 1) {
-                throw new RuleError({
-                  message: `a valid example is required for added response bodies`,
-                });
-              }
+        responseBodyAssertions.body.addedOrChanged((body) => {
+          if (responseToNumberOfExamples(body) < 1) {
+            throw new RuleError({
+              message: `a valid example is required for added response bodies`,
             });
+          }
         });
       }
     },
