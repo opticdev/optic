@@ -3687,6 +3687,7 @@ __metadata:
     prettier: ^2.4.1
     ts-node: ^10.4.0
     typescript: ^4.4.4
+    whatwg-mimetype: ^3.0.0
   bin:
     standard-rulesets: build/index.js
   languageName: unknown

@@ -364,6 +364,50 @@ Array [
             },
             "statusCode": "200",
           },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
+        "kind": "body",
+      },
+      "value": Object {
+        "contentType": "application/json",
+        "flatSchema": Object {
+          "type": "object",
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "a valid example is required for every documented response body",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require response body examples",
+    "passed": false,
+    "received": undefined,
+    "type": "requirement",
+    "where": "GET /api/users response 200 response body: application/json",
+  },
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
           "jsonSchemaTrail": Array [
             "hello",
           ],
@@ -486,44 +530,6 @@ Array [
     "isShould": false,
     "name": "response body examples must match schemas",
     "passed": true,
-    "received": undefined,
-    "type": "requirement",
-    "where": "GET /api/users response 200",
-  },
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "statusCode": "200",
-          },
-          "method": "get",
-          "path": "/api/users",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/api/users",
-          "get",
-          "responses",
-          "200",
-        ],
-        "jsonPath": "/paths/~1api~1users/get/responses/200",
-        "kind": "response",
-      },
-      "value": Object {
-        "description": "ok",
-        "statusCode": "200",
-      },
-    },
-    "condition": undefined,
-    "docsLink": undefined,
-    "error": "a valid example is required for every documented response body",
-    "exempted": false,
-    "expected": undefined,
-    "isMust": true,
-    "isShould": false,
-    "name": "require response body examples",
-    "passed": false,
     "received": undefined,
     "type": "requirement",
     "where": "GET /api/users response 200",
