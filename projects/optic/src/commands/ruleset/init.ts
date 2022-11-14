@@ -15,9 +15,7 @@ const NAME_PLACEHOLDER = 'name-of-custom-rules-package';
 
 export const registerRulesetInit = (cli: Command, config: OpticCliConfig) => {
   cli
-    .command('init', {
-      hidden: true, // TODO unhide this
-    })
+    .command('init')
     .description('Initializes a new ruleset project')
     .argument('[name]', 'the name of the new ruleset project')
     .action(wrapActionHandlerWithSentry(getInitAction()));

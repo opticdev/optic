@@ -19,14 +19,9 @@ const expectedFileShape = `Expected ruleset file to have a default export with t
   rulesetConstructor: (config: ConfigSchema) => Ruleset;
 }`;
 
-export const registerRulesetUpload = (
-  cli: Command,
-  config: OpticCliConfig
-) => {
+export const registerRulesetUpload = (cli: Command, config: OpticCliConfig) => {
   cli
-    .command('upload', {
-      hidden: true, // TODO unhide this
-    })
+    .command('upload')
     .configureHelp({
       commandUsage: () =>
         `OPTIC_TOKEN=your_token_here optic ruleset upload <path_to_ruleset>`,
@@ -71,7 +66,11 @@ const getUploadAction = () => async (filePath: string) => {
 
   const compressedFileBuffer = Buffer.from(compressed);
   const opticClient = createOpticClient(maybeToken);
-  const ruleset = await opticClient.createRuleset(name, description, configSchema);
+  const ruleset = await opticClient.createRuleset(
+    name,
+    description,
+    configSchema
+  );
   await uploadFileToS3(ruleset.upload_url, compressedFileBuffer);
   await opticClient.patchRuleset(ruleset.id, true);
 
