@@ -31,8 +31,7 @@ export const requireResponseExamples = (applies: typeof appliesWhen[number]) =>
           }
         });
       }
-
-      if (applies === 'addedOrChanged') {
+      if (applies === 'addedOrChanged' || applies === 'added') {
         responseBodyAssertions.body.addedOrChanged((body) => {
           if (responseToNumberOfExamples(body) < 1) {
             throw new RuleError({
@@ -68,7 +67,7 @@ export const requireRequestExamples = (applies: typeof appliesWhen[number]) =>
         });
       }
 
-      if (applies === 'addedOrChanged') {
+      if (applies === 'addedOrChanged' || applies === 'added') {
         requestAssertions.body.addedOrChanged((value) => {
           const body = value.raw as unknown as OpenAPIV3.MediaTypeObject;
 
