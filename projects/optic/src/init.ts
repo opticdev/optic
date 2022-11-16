@@ -61,6 +61,7 @@ export const initCli = async () => {
   cli.version(packageJson.version);
   cli.addHelpCommand(false);
 
+  registerInit(cli, cliConfig);
   registerDiff(cli, cliConfig);
 
   const rulesetSubcommands = cli
