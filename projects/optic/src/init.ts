@@ -6,7 +6,6 @@ import {
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 
-import { registerInit } from './commands/init/register-init';
 import { registerDiff } from './commands/diff/diff';
 import { registerRulesetUpload } from './commands/ruleset/upload';
 
