@@ -164,3 +164,40 @@ test('processValidatorErrors with sourcemap', async () => {
     );
   }).toThrowErrorMatchingSnapshot();
 });
+
+test('advanced validators run and append their results', () => {
+  const json: any = {
+    ...defaultEmptySpec,
+    paths: {
+      '/api/users/{userId}': {
+        get: {
+          responses: {
+            '200': {
+              description: 'hello',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    oneOf: [],
+                    anyOf: [],
+                    items: [],
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+
+  try {
+    validateOpenApiV3Document(json);
+  } catch (e) {
+    console.log(e);
+  }
+
+  expect(() => {
+    validateOpenApiV3Document(json);
+  }).toThrowErrorMatchingSnapshot();
+});
