@@ -6,7 +6,6 @@ import {
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 
-import { registerInit } from './commands/init/register-init';
 import { registerDiff } from './commands/diff/diff';
 import { registerRulesetUpload } from './commands/ruleset/upload';
 
@@ -61,7 +60,6 @@ export const initCli = async () => {
   cli.version(packageJson.version);
   cli.addHelpCommand(false);
 
-  registerInit(cli, cliConfig);
   registerDiff(cli, cliConfig);
 
   const rulesetSubcommands = cli
