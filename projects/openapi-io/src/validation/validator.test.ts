@@ -191,12 +191,6 @@ test('advanced validators run and append their results', () => {
     },
   };
 
-  try {
-    validateOpenApiV3Document(json);
-  } catch (e) {
-    console.log(e);
-  }
-
   expect(() => {
     validateOpenApiV3Document(json);
   }).toThrowErrorMatchingSnapshot();

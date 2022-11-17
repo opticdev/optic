@@ -115,7 +115,6 @@ export const validateOpenApiV3Document = (
   if (version === '3.0.x') results = validator.validate3_0(spec);
   if (version === '3.1.x') results = validator.validate3_1(spec);
 
-  console.log(results.errors);
   if (results && results.errors.length > 0) {
     const processedErrors = processValidatorErrors(
       spec,
