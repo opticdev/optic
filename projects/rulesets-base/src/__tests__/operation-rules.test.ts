@@ -191,7 +191,7 @@ describe('OperationRule', () => {
       });
     });
 
-    describe('addedOrChanged', async () => {
+    describe('addedOrChanged', () => {
       const ruleRunner = new RuleRunner([
         new OperationRule({
           name: 'operation description',
