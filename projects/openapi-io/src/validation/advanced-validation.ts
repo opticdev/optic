@@ -21,11 +21,9 @@ export function attachAdvancedValidators(ajv: Ajv) {
           message: e.message,
           params: {
             keyword: 'customValidator',
-          } /*,
-      dataPath: '.maxPoints',
-      schemaPath: '#/validateMaxPoints',
-      schema: true*/,
+          },
         });
+        return false;
       }
       return true;
     },
