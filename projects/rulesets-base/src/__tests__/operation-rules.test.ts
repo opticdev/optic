@@ -5,7 +5,7 @@ import { OperationRule } from '../rules';
 import { createRuleInputs } from '../test-helpers';
 
 describe('OperationRule', () => {
-  test('matches', () => {
+  test('matches', async () => {
     const json: OpenAPIV3.Document = {
       ...defaultEmptySpec,
       paths: {
@@ -39,7 +39,7 @@ describe('OperationRule', () => {
         },
       }),
     ]);
-    ruleRunner.runRulesWithFacts(createRuleInputs(json, json));
+    await ruleRunner.runRulesWithFacts(createRuleInputs(json, json));
 
     expect(mockFn.mock.calls.length).toBe(2);
     const operationCalled = mockFn.mock.calls.map(
@@ -54,8 +54,8 @@ describe('OperationRule', () => {
   describe('rulesContext', () => {
     const emptySpec = {
       ...defaultEmptySpec,
-      ['x-optic-ci-empty-spec']: true
-    } as any
+      ['x-optic-ci-empty-spec']: true,
+    } as any;
     const json: OpenAPIV3.Document = {
       ...defaultEmptySpec,
       servers: [{ url: 'http://optic.com' }],
@@ -68,7 +68,7 @@ describe('OperationRule', () => {
         },
       },
     };
-    test('before', () => {
+    test('before', async () => {
       const mockFn = jest.fn();
       const ruleRunner = new RuleRunner([
         new OperationRule({
@@ -77,14 +77,14 @@ describe('OperationRule', () => {
         }),
       ]);
 
-      ruleRunner.runRulesWithFacts(createRuleInputs(json, emptySpec));
+      await ruleRunner.runRulesWithFacts(createRuleInputs(json, emptySpec));
 
       expect(mockFn.mock.calls.length > 0).toBe(true);
       const ruleContext = mockFn.mock.calls[0][1];
       expect(ruleContext).toMatchSnapshot();
     });
 
-    test('after', () => {
+    test('after', async () => {
       const mockFn = jest.fn();
       const ruleRunner = new RuleRunner([
         new OperationRule({
@@ -93,7 +93,9 @@ describe('OperationRule', () => {
         }),
       ]);
 
-      ruleRunner.runRulesWithFacts(createRuleInputs(defaultEmptySpec, json));
+      await ruleRunner.runRulesWithFacts(
+        createRuleInputs(defaultEmptySpec, json)
+      );
 
       expect(mockFn.mock.calls.length > 0).toBe(true);
       const ruleContext = mockFn.mock.calls[0][1];
@@ -122,7 +124,7 @@ describe('OperationRule', () => {
         }),
       ]);
 
-      test('passing assertion', () => {
+      test('passing assertion', async () => {
         const json: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -134,7 +136,7 @@ describe('OperationRule', () => {
             },
           },
         };
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(json, json)
         );
         expect(results.length > 0).toBe(true);
@@ -144,7 +146,7 @@ describe('OperationRule', () => {
         }
       });
 
-      test('failing assertion', () => {
+      test('failing assertion', async () => {
         const json: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -156,7 +158,7 @@ describe('OperationRule', () => {
           },
         };
 
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(json, json)
         );
         expect(results.length > 0).toBe(true);
@@ -166,7 +168,7 @@ describe('OperationRule', () => {
         }
       });
 
-      test('exemption', () => {
+      test('exemption', async () => {
         const json: any = {
           ...defaultEmptySpec,
           paths: {
@@ -179,7 +181,7 @@ describe('OperationRule', () => {
           },
         };
 
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(json, json)
         );
         expect(results.length).toBe(1);
@@ -189,7 +191,7 @@ describe('OperationRule', () => {
       });
     });
 
-    describe('addedOrChanged', () => {
+    describe('addedOrChanged', async () => {
       const ruleRunner = new RuleRunner([
         new OperationRule({
           name: 'operation description',
@@ -208,7 +210,7 @@ describe('OperationRule', () => {
         }),
       ]);
 
-      test('passing assertion', () => {
+      test('passing assertion', async () => {
         const beforeJson: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -236,7 +238,7 @@ describe('OperationRule', () => {
             },
           },
         };
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(beforeJson, afterJson)
         );
         expect(results.length > 0).toBe(true);
@@ -246,7 +248,7 @@ describe('OperationRule', () => {
         }
       });
 
-      test('failing assertion', () => {
+      test('failing assertion', async () => {
         const beforeJson: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -271,7 +273,7 @@ describe('OperationRule', () => {
             },
           },
         };
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(beforeJson, afterJson)
         );
         expect(results.length > 0).toBe(true);
@@ -280,7 +282,7 @@ describe('OperationRule', () => {
           expect(result.passed).toBe(false);
         }
       });
-    })
+    });
 
     describe('added', () => {
       const ruleRunner = new RuleRunner([
@@ -300,7 +302,7 @@ describe('OperationRule', () => {
           },
         }),
       ]);
-      test('passing assertion', () => {
+      test('passing assertion', async () => {
         const beforeJson: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -325,7 +327,7 @@ describe('OperationRule', () => {
             },
           },
         };
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(beforeJson, afterJson)
         );
         expect(results.length > 0).toBe(true);
@@ -335,7 +337,7 @@ describe('OperationRule', () => {
         }
       });
 
-      test('failing assertion', () => {
+      test('failing assertion', async () => {
         const beforeJson: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {},
@@ -350,7 +352,7 @@ describe('OperationRule', () => {
             },
           },
         };
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(beforeJson, afterJson)
         );
         expect(results.length > 0).toBe(true);
@@ -380,7 +382,7 @@ describe('OperationRule', () => {
         }),
       ]);
 
-      test('passing assertion', () => {
+      test('passing assertion', async () => {
         const before: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -402,7 +404,7 @@ describe('OperationRule', () => {
             },
           },
         };
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(before, after)
         );
         expect(results.length > 0).toBe(true);
@@ -412,7 +414,7 @@ describe('OperationRule', () => {
         }
       });
 
-      test('failing assertion', () => {
+      test('failing assertion', async () => {
         const before: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -435,7 +437,7 @@ describe('OperationRule', () => {
             },
           },
         };
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(before, after)
         );
         expect(results.length > 0).toBe(true);
@@ -465,7 +467,7 @@ describe('OperationRule', () => {
         }),
       ]);
 
-      test('passing assertion', () => {
+      test('passing assertion', async () => {
         const before: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -481,7 +483,7 @@ describe('OperationRule', () => {
           ...defaultEmptySpec,
           paths: {},
         };
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(before, after)
         );
         expect(results.length > 0).toBe(true);
@@ -491,7 +493,7 @@ describe('OperationRule', () => {
         }
       });
 
-      test('failing assertion', () => {
+      test('failing assertion', async () => {
         const before: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -506,7 +508,7 @@ describe('OperationRule', () => {
           ...defaultEmptySpec,
           paths: {},
         };
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(before, after)
         );
         expect(results.length > 0).toBe(true);
@@ -519,7 +521,7 @@ describe('OperationRule', () => {
 
     describe('custom matchers', () => {
       describe('not', () => {
-        test('does not bleed into different assertions', () => {
+        test('does not bleed into different assertions', async () => {
           const ruleRunner = new RuleRunner([
             new OperationRule({
               name: 'operation description',
@@ -545,7 +547,7 @@ describe('OperationRule', () => {
               },
             },
           };
-          const results = ruleRunner.runRulesWithFacts(
+          const results = await ruleRunner.runRulesWithFacts(
             createRuleInputs(defaultEmptySpec, json)
           );
           expect(results.length > 0).toBe(true);
@@ -566,7 +568,7 @@ describe('OperationRule', () => {
           }),
         ]);
 
-        test('passing assertion', () => {
+        test('passing assertion', async () => {
           const json: OpenAPIV3.Document = {
             ...defaultEmptySpec,
             paths: {
@@ -578,7 +580,7 @@ describe('OperationRule', () => {
               },
             },
           };
-          const results = ruleRunner.runRulesWithFacts(
+          const results = await ruleRunner.runRulesWithFacts(
             createRuleInputs(defaultEmptySpec, json)
           );
           expect(results.length > 0).toBe(true);
@@ -588,7 +590,7 @@ describe('OperationRule', () => {
           }
         });
 
-        test('failing assertion', () => {
+        test('failing assertion', async () => {
           const json: OpenAPIV3.Document = {
             ...defaultEmptySpec,
             paths: {
@@ -599,7 +601,7 @@ describe('OperationRule', () => {
               },
             },
           };
-          const results = ruleRunner.runRulesWithFacts(
+          const results = await ruleRunner.runRulesWithFacts(
             createRuleInputs(defaultEmptySpec, json)
           );
           expect(results.length > 0).toBe(true);
@@ -609,7 +611,7 @@ describe('OperationRule', () => {
           }
         });
 
-        test('inverted assertion', () => {
+        test('inverted assertion', async () => {
           const ruleRunner = new RuleRunner([
             new OperationRule({
               name: 'operation description',
@@ -630,7 +632,7 @@ describe('OperationRule', () => {
               },
             },
           };
-          const results = ruleRunner.runRulesWithFacts(
+          const results = await ruleRunner.runRulesWithFacts(
             createRuleInputs(defaultEmptySpec, json)
           );
           expect(results.length > 0).toBe(true);
@@ -640,7 +642,7 @@ describe('OperationRule', () => {
           }
         });
 
-        test('with custom message', () => {
+        test('with custom message', async () => {
           const ruleRunner = new RuleRunner([
             new OperationRule({
               name: 'operation description',
@@ -666,7 +668,7 @@ describe('OperationRule', () => {
               },
             },
           };
-          const results = ruleRunner.runRulesWithFacts(
+          const results = await ruleRunner.runRulesWithFacts(
             createRuleInputs(defaultEmptySpec, json)
           );
           expect(results.length > 0).toBe(true);
@@ -693,7 +695,7 @@ describe('OperationRule', () => {
             },
           }),
         ]);
-        test('passing assertion', () => {
+        test('passing assertion', async () => {
           const json: OpenAPIV3.Document = {
             ...defaultEmptySpec,
             paths: {
@@ -705,7 +707,7 @@ describe('OperationRule', () => {
               },
             },
           };
-          const results = ruleRunner.runRulesWithFacts(
+          const results = await ruleRunner.runRulesWithFacts(
             createRuleInputs(defaultEmptySpec, json)
           );
           expect(results.length > 0).toBe(true);
@@ -715,7 +717,7 @@ describe('OperationRule', () => {
           }
         });
 
-        test('failing assertion', () => {
+        test('failing assertion', async () => {
           const json: OpenAPIV3.Document = {
             ...defaultEmptySpec,
             paths: {
@@ -726,7 +728,7 @@ describe('OperationRule', () => {
               },
             },
           };
-          const results = ruleRunner.runRulesWithFacts(
+          const results = await ruleRunner.runRulesWithFacts(
             createRuleInputs(defaultEmptySpec, json)
           );
           expect(results.length > 0).toBe(true);
@@ -736,7 +738,7 @@ describe('OperationRule', () => {
           }
         });
 
-        test('inverted assertion', () => {
+        test('inverted assertion', async () => {
           const ruleRunner = new RuleRunner([
             new OperationRule({
               name: 'operation description',
@@ -762,7 +764,7 @@ describe('OperationRule', () => {
               },
             },
           };
-          const results = ruleRunner.runRulesWithFacts(
+          const results = await ruleRunner.runRulesWithFacts(
             createRuleInputs(defaultEmptySpec, json)
           );
           expect(results.length > 0).toBe(true);
@@ -785,7 +787,7 @@ describe('OperationRule', () => {
           }),
         ]);
 
-        test('passing assertion', () => {
+        test('passing assertion', async () => {
           const before: OpenAPIV3.Document = {
             ...defaultEmptySpec,
             paths: {
@@ -814,7 +816,7 @@ describe('OperationRule', () => {
               },
             },
           };
-          const results = ruleRunner.runRulesWithFacts(
+          const results = await ruleRunner.runRulesWithFacts(
             createRuleInputs(before, after)
           );
           expect(results.length > 0).toBe(true);
@@ -824,7 +826,7 @@ describe('OperationRule', () => {
           }
         });
 
-        test('failing assertion', () => {
+        test('failing assertion', async () => {
           const before: OpenAPIV3.Document = {
             ...defaultEmptySpec,
             paths: {
@@ -853,7 +855,7 @@ describe('OperationRule', () => {
               },
             },
           };
-          const results = ruleRunner.runRulesWithFacts(
+          const results = await ruleRunner.runRulesWithFacts(
             createRuleInputs(before, after)
           );
           expect(results.length > 0).toBe(true);
@@ -863,7 +865,7 @@ describe('OperationRule', () => {
           }
         });
 
-        test('inverted assertion', () => {
+        test('inverted assertion', async () => {
           const ruleRunner = new RuleRunner([
             new OperationRule({
               name: 'operation description',
@@ -902,7 +904,7 @@ describe('OperationRule', () => {
               },
             },
           };
-          const results = ruleRunner.runRulesWithFacts(
+          const results = await ruleRunner.runRulesWithFacts(
             createRuleInputs(before, after)
           );
           expect(results.length > 0).toBe(true);
@@ -926,7 +928,7 @@ describe('OperationRule', () => {
           }),
         ]);
 
-        test('passing assertion', () => {
+        test('passing assertion', async () => {
           const before: OpenAPIV3.Document = {
             ...defaultEmptySpec,
             paths: {
@@ -955,7 +957,7 @@ describe('OperationRule', () => {
             },
           };
 
-          const results = ruleRunner.runRulesWithFacts(
+          const results = await ruleRunner.runRulesWithFacts(
             createRuleInputs(before, defaultEmptySpec)
           );
           expect(results.length > 0).toBe(true);
@@ -965,7 +967,7 @@ describe('OperationRule', () => {
           }
         });
 
-        test('failing assertion', () => {
+        test('failing assertion', async () => {
           const before: OpenAPIV3.Document = {
             ...defaultEmptySpec,
             paths: {
@@ -994,7 +996,7 @@ describe('OperationRule', () => {
             },
           };
 
-          const results = ruleRunner.runRulesWithFacts(
+          const results = await ruleRunner.runRulesWithFacts(
             createRuleInputs(before, defaultEmptySpec)
           );
           expect(results.length > 0).toBe(true);
@@ -1004,7 +1006,7 @@ describe('OperationRule', () => {
           }
         });
 
-        test('inverted assertion', () => {
+        test('inverted assertion', async () => {
           const ruleRunner = new RuleRunner([
             new OperationRule({
               name: 'operation description',
@@ -1036,7 +1038,7 @@ describe('OperationRule', () => {
             },
           };
 
-          const results = ruleRunner.runRulesWithFacts(
+          const results = await ruleRunner.runRulesWithFacts(
             createRuleInputs(before, defaultEmptySpec)
           );
           expect(results.length > 0).toBe(true);
@@ -1063,7 +1065,7 @@ describe('OperationRule', () => {
             },
           }),
         ]);
-        test('passing assertion', () => {
+        test('passing assertion', async () => {
           const json: OpenAPIV3.Document = {
             ...defaultEmptySpec,
             paths: {
@@ -1082,7 +1084,7 @@ describe('OperationRule', () => {
             },
           };
 
-          const results = ruleRunner.runRulesWithFacts(
+          const results = await ruleRunner.runRulesWithFacts(
             createRuleInputs(json, json)
           );
           expect(results.length > 0).toBe(true);
@@ -1092,7 +1094,7 @@ describe('OperationRule', () => {
           }
         });
 
-        test('failing assertion', () => {
+        test('failing assertion', async () => {
           const json: OpenAPIV3.Document = {
             ...defaultEmptySpec,
             paths: {
@@ -1110,7 +1112,7 @@ describe('OperationRule', () => {
             },
           };
 
-          const results = ruleRunner.runRulesWithFacts(
+          const results = await ruleRunner.runRulesWithFacts(
             createRuleInputs(json, json)
           );
           expect(results.length > 0).toBe(true);
@@ -1120,7 +1122,7 @@ describe('OperationRule', () => {
           }
         });
 
-        test('inverted assertion', () => {
+        test('inverted assertion', async () => {
           const ruleRunner = new RuleRunner([
             new OperationRule({
               name: 'parameter description',
@@ -1148,7 +1150,7 @@ describe('OperationRule', () => {
             },
           };
 
-          const results = ruleRunner.runRulesWithFacts(
+          const results = await ruleRunner.runRulesWithFacts(
             createRuleInputs(json, json)
           );
           expect(results.length > 0).toBe(true);
@@ -1186,7 +1188,7 @@ describe('OperationRule', () => {
         }),
       ]);
 
-      test('passing assertion', () => {
+      test('passing assertion', async () => {
         const json: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -1205,7 +1207,7 @@ describe('OperationRule', () => {
           },
         };
 
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(json, json)
         );
         expect(results.length > 0).toBe(true);
@@ -1215,7 +1217,7 @@ describe('OperationRule', () => {
         }
       });
 
-      test('failing assertion', () => {
+      test('failing assertion', async () => {
         const json: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -1233,7 +1235,7 @@ describe('OperationRule', () => {
           },
         };
 
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(json, json)
         );
         expect(results.length > 0).toBe(true);
@@ -1263,7 +1265,7 @@ describe('OperationRule', () => {
         }),
       ]);
 
-      test('passing assertion', () => {
+      test('passing assertion', async () => {
         const before: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -1292,7 +1294,7 @@ describe('OperationRule', () => {
           },
         };
 
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(before, after)
         );
         expect(results.length > 0).toBe(true);
@@ -1302,7 +1304,7 @@ describe('OperationRule', () => {
         }
       });
 
-      test('failing assertion', () => {
+      test('failing assertion', async () => {
         const before: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -1330,7 +1332,7 @@ describe('OperationRule', () => {
           },
         };
 
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(before, after)
         );
         expect(results.length > 0).toBe(true);
@@ -1360,7 +1362,7 @@ describe('OperationRule', () => {
         }),
       ]);
 
-      test('passing assertion', () => {
+      test('passing assertion', async () => {
         const before: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -1395,7 +1397,7 @@ describe('OperationRule', () => {
           },
         };
 
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(before, after)
         );
         expect(results.length > 0).toBe(true);
@@ -1405,7 +1407,7 @@ describe('OperationRule', () => {
         }
       });
 
-      test('failing assertion', () => {
+      test('failing assertion', async () => {
         const before: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -1440,7 +1442,7 @@ describe('OperationRule', () => {
           },
         };
 
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(before, after)
         );
         expect(results.length > 0).toBe(true);
@@ -1470,7 +1472,7 @@ describe('OperationRule', () => {
         }),
       ]);
 
-      test('passing assertion', () => {
+      test('passing assertion', async () => {
         const before: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -1498,7 +1500,7 @@ describe('OperationRule', () => {
           },
         };
 
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(before, after)
         );
         expect(results.length > 0).toBe(true);
@@ -1508,7 +1510,7 @@ describe('OperationRule', () => {
         }
       });
 
-      test('failing assertion', () => {
+      test('failing assertion', async () => {
         const before: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -1537,7 +1539,7 @@ describe('OperationRule', () => {
           },
         };
 
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(before, after)
         );
         expect(results.length > 0).toBe(true);

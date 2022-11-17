@@ -35,7 +35,7 @@ export const runRulesWithInputs = (
   rules: (Rule | Ruleset)[],
   beforeJson: OpenAPIV3.Document,
   afterJson: OpenAPIV3.Document
-): Result[] => {
+): Promise<Result[]> => {
   const ruleRunner = new RuleRunner(rules);
   return ruleRunner.runRulesWithFacts(createRuleInputs(beforeJson, afterJson));
 };

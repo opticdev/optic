@@ -70,7 +70,7 @@ export const generateSpecResults = async (
         })
       : [];
 
-  const ruleResults = checkService.runRulesWithFacts({
+  const ruleResults = await checkService.runRulesWithFacts({
     currentJsonLike: fromJsonLike,
     nextJsonLike: toJsonLike,
     currentFacts: currentFacts,
