@@ -52,7 +52,7 @@ export {
   getFactForJsonPath,
   constructFactTree,
   FactTree,
-} from './openapi3/json-path-utilities';
+} from './openapi3/json-path-interpreters';
 
 export { UserError } from './errors';
 export {

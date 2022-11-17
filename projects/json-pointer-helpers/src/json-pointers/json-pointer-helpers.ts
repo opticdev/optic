@@ -73,6 +73,8 @@ function join(leading: string, trailing: string): string {
 
 export default {
   append,
+  escape,
+  unescape,
   pop,
   decode: parse,
   join,
