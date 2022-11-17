@@ -248,7 +248,7 @@ const { TestHelpers } = require('@useoptic/rulesets-base')
 ...
 const RuleToTest = new OperationRule(...);
 
-test('test that my rule works', () => {
+test('test that my rule works', async () => {
   // Create some mocked data
   const beforeApiSpec = {
     ...TestHelpers.createEmptySpec(),
@@ -270,7 +270,7 @@ test('test that my rule works', () => {
       }
     }
   };
-  const ruleResults = TestHelpers.runRulesWithInputs(
+  const ruleResults = await TestHelpers.runRulesWithInputs(
     [RuleToTest],
     beforeApiSpec,
     afterApiSpec
