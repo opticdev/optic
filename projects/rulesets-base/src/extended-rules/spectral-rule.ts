@@ -19,7 +19,7 @@ export interface SpectralResult {
 }
 
 export interface Spectral {
-  run: (jsonSpec: OpenAPIV3.Document) => Promise<SpectralResult[]>;
+  run: (jsonSpec: any) => Promise<SpectralResult[]>;
 }
 
 function toOpticResult(
