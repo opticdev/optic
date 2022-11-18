@@ -1,5 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`advanced validators run and append their results 1`] = `
+"[31minvalid openapi: [39m[1m[31mmust NOT have fewer than 1 items[39m[22m
+/paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/oneOf
+[31minvalid openapi: [39m[1m[31mmust NOT have fewer than 1 items[39m[22m
+/paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/anyOf
+[31minvalid openapi: [39m[1m[31mmust be object[39m[22m
+/paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/items
+[31minvalid openapi: [39m[1m[31mschema with type \\"object\\" cannot also include keywords: anyOf, items, oneOf[39m[22m
+/paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema"
+`;
+
 exports[`processValidatorErrors 1`] = `
 "[31minvalid openapi: [39m[1m[31mmust be object[39m[22m
 /paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/properties/hello/items"
