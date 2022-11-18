@@ -47,19 +47,20 @@ function toOpticResult(
 
 export class SpectralRule extends ExternalRuleBase {
   private lifecycle: Lifecycle;
+  private spectral: Spectral;
   public name: string;
   public docsLink?: string;
-  constructor(
-    private spectral: Spectral,
-    options?: {
-      applies?: Lifecycle;
-      docsLink?: string;
-    }
-  ) {
+  constructor(options: {
+    spectral: Spectral;
+    name: string;
+    applies?: Lifecycle;
+    docsLink?: string;
+  }) {
     super();
-    this.lifecycle = options?.applies ?? 'always';
-    this.name = 'spectral';
-    this.docsLink = options?.docsLink;
+    this.name = options.name;
+    this.spectral = options.spectral;
+    this.lifecycle = options.applies ?? 'always';
+    this.docsLink = options.docsLink;
   }
 
   async runRules(inputs: {

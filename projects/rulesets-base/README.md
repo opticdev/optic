@@ -121,6 +121,7 @@ const namingRuleset = new Ruleset({
 In other cases, breaking change rules, versioning standards, and deprecation policies are triggered from changes between two versions of OpenAPI specifications. The lifecycle rules that are available are:
 
 - `added`
+- `addedOrChanged`
 - `changed`
 - `removed`
 
@@ -279,6 +280,49 @@ test('test that my rule works', async () => {
   // e.g. with jest
   expect(ruleResults).toMatchSnapshot();
 })
+```
+
+## Connecting Spectral to Optic
+
+With Optic, you can connect your Spectral rules and extend them using Optic's lifecycle (added, changed, addedOrChanged, always) and exemption features. 
+
+To start:
+```bash
+# Create a new custom repo
+optic ruleset init spectral-rules
+cd ./spectral-rules
+npm install
+
+# install the spectral packages
+npm i @stoplight/spectral-core
+
+# install spectral rulesets / custom rulesets to configure
+npm i @stoplight/spectral-rulesets # or your own custom spectral ruleset
+```
+
+Then in the `src/main.ts` file you can connect up Spectral to Optic.
+```typescript
+import { SpectralRule } from "@useoptic/rulesets-base";
+import { Spectral } from "@stoplight/spectral-core";
+// Use the spectral built in ruleset, or import your own!
+import { oas } from '@stoplight/spectral-rulesets';
+
+const spectral = new Spectral();
+spectral.setRuleset(oas);
+
+const name = "spectral-rules";
+export default {
+  name,
+  description: "A Spectral ruleset in Optic",
+  configSchema: {},
+  rulesetConstructor: () => {
+    return new SpectralRule({
+      spectral,
+      name,
+      applies: 'added' // will only trigger on nodes that were added
+    });
+  },
+};
 ```
 
 ## Reference details
