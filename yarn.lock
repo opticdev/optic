@@ -3548,7 +3548,7 @@ __metadata:
     "@useoptic/openapi-utilities": "workspace:*"
     "@useoptic/rulesets-base": "workspace:*"
     "@useoptic/standard-rulesets": "workspace:*"
-    ajv: ^8.11.0
+    ajv: 8.11.0
     babel-jest: ^27.5.1
     babel-plugin-transform-inline-environment-variables: ^0.4.3
     bottleneck: ^2.19.5
@@ -3604,7 +3604,7 @@ __metadata:
     "@useoptic/optic-ci": "workspace:*"
     "@useoptic/rulesets-base": "workspace:*"
     "@useoptic/standard-rulesets": "workspace:*"
-    ajv: ^8.11.0
+    ajv: 8.11.0
     babel-jest: ^27.5.1
     babel-plugin-transform-inline-environment-variables: ^0.4.3
     bottleneck: ^2.19.5
@@ -3680,7 +3680,7 @@ __metadata:
     "@types/node": ^17.0.15
     "@useoptic/openapi-utilities": "workspace:*"
     "@useoptic/rulesets-base": "workspace:*"
-    ajv: ^8.11.0
+    ajv: 8.11.0
     ajv-formats: 2.1.1
     babel-jest: ^27.5.1
     jest: ^27.5.1
@@ -3842,7 +3842,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:8.11.0, ajv@npm:^8.0.0, ajv@npm:^8.11.0, ajv@npm:^8.6.0, ajv@npm:^8.6.3, ajv@npm:^8.8.2":
+"ajv@npm:8.11.0, ajv@npm:^8.0.0, ajv@npm:^8.6.0, ajv@npm:^8.6.3, ajv@npm:^8.8.2":
   version: 8.11.0
   resolution: "ajv@npm:8.11.0"
   dependencies:
