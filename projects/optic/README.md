@@ -12,13 +12,31 @@ Initialize an `optic.dev.yml` config file
 
 ```bash
 optic init
-# this will create an optic.dev.yml file with references to openapi files detected in the git repo
+# this will create an optic.dev.yml file 
 ```
 
-Run a diff between two OpenAPI files:
+Configure your ruleset, see our [build in rules](../standard-rulesets/README.md) or start building your own [custom rules](../rulesets-base/README.md) by running `optic ruleset init`. 
+
+```yml
+ruleset:
+  - breaking-changes # built in rulesets
+  - naming:
+      # pass in configuration to rulesets
+      properties: snake_case
+      required_on: added
+      pathComponents: snake_case
+      requestHeaders: snake_case
+      queryParameters: snake_case
+      responseHeaders: snake_case
+      cookieParameters: snake_case
+  - '@org/custom-ruleset' # a custom ruleset hosted on Optic cloud
+  - ./rules/local.js # path to a built local ruleset js file
+```
+
+Run a diff between two OpenAPI files and check results:
 
 ```bash
-optic diff <path_to_file_1> <path_to_file_2>
+optic diff <path_to_file_1> <path_to_file_2> --check
 ```
 
 ## Analyzing changes between OpenAPI specs

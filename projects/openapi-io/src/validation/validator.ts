@@ -12,6 +12,7 @@ import ajvErrors from 'ajv-errors';
 import chalk from 'chalk';
 import { jsonPointerLogger } from './log-json-pointer';
 import { JsonSchemaSourcemap } from '../parser/sourcemap';
+import { attachAdvancedValidators } from './advanced-validation';
 
 export default class OpenAPISchemaValidator {
   private v3_0Validator: ValidateFunction | undefined;
@@ -24,6 +25,7 @@ export default class OpenAPISchemaValidator {
       const v = new ajv({ allErrors: true, strict: false });
       ajvErrors(v);
       addFormats(v);
+      attachAdvancedValidators(v);
       v.addSchema(openapi3_0_json_schema);
       this.v3_0Validator = v.compile(openapi3_0_json_schema);
     }
@@ -41,6 +43,7 @@ export default class OpenAPISchemaValidator {
       const v = new ajv({ allErrors: true, strict: false });
       ajvErrors(v);
       addFormats(v);
+      attachAdvancedValidators(v);
       v.addSchema(openapi3_1_json_schema);
       this.v3_1Validator = v.compile(openapi3_1_json_schema);
     }
@@ -68,7 +71,8 @@ export const processValidatorErrors = (
     if (
       pathsWithErrors.every(
         (addedError) => !addedError.instancePath.startsWith(error.instancePath)
-      )
+      ) ||
+      error.keyword === 'x-custom-validator'
     ) {
       pathsWithErrors.push(error);
     }

@@ -6,9 +6,8 @@ import {
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 
-import { registerInit } from './commands/init/register-init';
 import { registerDiff } from './commands/diff/diff';
-import { registerRulesetPublish } from './commands/ruleset/publish';
+import { registerRulesetUpload } from './commands/ruleset/upload';
 
 import {
   VCS,
@@ -61,7 +60,6 @@ export const initCli = async () => {
   cli.version(packageJson.version);
   cli.addHelpCommand(false);
 
-  registerInit(cli, cliConfig);
   registerDiff(cli, cliConfig);
 
   const rulesetSubcommands = cli
@@ -70,7 +68,7 @@ export const initCli = async () => {
       'Commands to build your own optic rulesets. See `optic ruleset --help`'
     )
     .addHelpCommand(false);
-  registerRulesetPublish(rulesetSubcommands, cliConfig);
+  registerRulesetUpload(rulesetSubcommands, cliConfig);
   registerRulesetInit(rulesetSubcommands, cliConfig);
 
   return cli;

@@ -8,16 +8,16 @@ jest.setTimeout(30000);
 
 setupTestServer(({ url, method }) => {
   if (method === 'POST' && /\/api\/rulesets$/.test(url)) {
-    return {
+    return JSON.stringify({
       id: '123',
       upload_url: 'http://localhost:8888/upload_url',
       ruleset_url: 'http://app.useoptic.com/ruleset_url',
-    };
+    });
   }
-  return {}
+  return JSON.stringify({})
 });
 
-describe('optic ruleset publish', () => {
+describe('optic ruleset upload', () => {
   let oldEnv: any;
   beforeEach(() => {
     oldEnv = { ...process.env };
@@ -33,7 +33,7 @@ describe('optic ruleset publish', () => {
     process.env.OPTIC_TOKEN = '123';
     const { combined, code } = await runOptic(
       workspace,
-      'ruleset publish ./rules.js'
+      'ruleset upload ./rules.js'
     );
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     expect(code).toBe(0);
@@ -44,7 +44,7 @@ describe('optic ruleset publish', () => {
     process.env.OPTIC_TOKEN = '123';
     const { combined, code } = await runOptic(
       workspace,
-      'ruleset publish ./rules.js'
+      'ruleset upload ./rules.js'
     );
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     expect(code).toBe(1);
@@ -55,7 +55,7 @@ describe('optic ruleset publish', () => {
     process.env.OPTIC_TOKEN = '123';
     const { combined, code } = await runOptic(
       workspace,
-      'ruleset publish ./rules.js'
+      'ruleset upload ./rules.js'
     );
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     expect(code).toBe(1);

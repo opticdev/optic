@@ -2,7 +2,7 @@
   "name": "@useoptic/optic-ci",
   "license": "MIT",
   "packageManager": "yarn@3.0.2",
-  "version": "0.34.5",
+  "version": "0.35.3",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -53,10 +53,10 @@
     "@useoptic/openapi-io": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
     "@useoptic/rulesets-base": "workspace:*",
-    "ajv": "^8.11.0",
+    "ajv": "8.11.0",
     "bottleneck": "^2.19.5",
     "chalk": "^4.1.2",
-    "commander": "^9.0.0",
+    "commander": "^9.4.1",
     "is-url": "^1.2.4",
     "js-yaml": "^4.1.0",
     "json-stable-stringify": "^1.0.1",
@@ -65,7 +65,7 @@
     "open": "^8.4.0",
     "picomatch": "^2.3.1",
     "url-join": "^4.0.1",
-    "uuid": "^8.3.2"
+    "uuid": "^9.0.0"
   },
   "jest": {
     "testPathIgnorePatterns": [
