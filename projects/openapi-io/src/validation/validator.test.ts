@@ -157,11 +157,7 @@ test('processValidatorErrors with sourcemap', async () => {
     path.join(__dirname, '../../inputs/openapi3/broken-open-api.json')
   );
   expect(() => {
-    validateOpenApiV3Document(
-      spec.jsonLike,
-      new OpenAPISchemaValidator(),
-      spec.sourcemap
-    );
+    validateOpenApiV3Document(spec.jsonLike, spec.sourcemap);
   }).toThrowErrorMatchingSnapshot();
 });
 
