@@ -152,14 +152,22 @@ test('processValidatorErrors', () => {
   }).toThrowErrorMatchingSnapshot();
 });
 
-// test('processValidatorErrors attaches the sourcemap', async () => {
-//   const spec = await parseOpenAPIWithSourcemap(
-//     path.join(__dirname, '../../inputs/openapi3/broken-open-api.json')
-//   );
-//   expect(() => {
-//     validateOpenApiV3Document(spec.jsonLike, spec.sourcemap);
-//   }).toThrowErrorMatchingSnapshot();
-// });
+test('processValidatorErrors attaches the sourcemap', async () => {
+  const spec = await parseOpenAPIWithSourcemap(
+    path.join(__dirname, '../../inputs/openapi3/broken-open-api.json')
+  );
+
+  try {
+    validateOpenApiV3Document(spec.jsonLike, spec.sourcemap);
+  } catch (error) {
+    const filterOutFileNames = error.message
+      .split('\n')
+      .filter((i) => !i.startsWith('[90m/'))
+      .join('\n');
+
+    expect(filterOutFileNames).toMatchSnapshot();
+  }
+});
 
 test('advanced validators run and append their results', () => {
   const json: any = {

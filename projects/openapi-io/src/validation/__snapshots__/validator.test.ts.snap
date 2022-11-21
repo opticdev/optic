@@ -25,7 +25,6 @@ exports[`processValidatorErrors attaches the sourcemap 1`] = `
 [90m22 |[39m     }
 [90m23 |[39m   }
 [90m24 |[39m }
-[90m/Users/aidancunniffe/Developer/optic/projects/openapi-io/inputs/openapi3/broken-open-api.json[39m
 [31minvalid openapi: [39m[1m[31mmust be equal to one of the allowed values[39m[22m
 [90m35 |[39m \\"content\\": {
 [90m36 |[39m   \\"application/json\\": {
@@ -33,6 +32,5 @@ exports[`processValidatorErrors attaches the sourcemap 1`] = `
 [90m38 |[39m [1m[31m      \\"type\\": \\"not-real\\"[39m[22m
 [90m39 |[39m     }
 [90m40 |[39m   }
-[90m41 |[39m }
-[90m/Users/aidancunniffe/Developer/optic/projects/openapi-io/inputs/openapi3/broken-open-api.json[39m"
+[90m41 |[39m }"
 `;
