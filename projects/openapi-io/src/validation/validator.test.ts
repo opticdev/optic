@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 
-import OpenAPISchemaValidator, { validateOpenApiV3Document } from './validator';
+import { validateOpenApiV3Document } from './validator';
 import { parseOpenAPIWithSourcemap } from '@useoptic/openapi-io';
 import path from 'path';
 import { defaultEmptySpec } from '@useoptic/openapi-utilities';
@@ -152,17 +152,21 @@ test('processValidatorErrors', () => {
   }).toThrowErrorMatchingSnapshot();
 });
 
-test('processValidatorErrors with sourcemap', async () => {
+test('processValidatorErrors attaches the sourcemap', async () => {
   const spec = await parseOpenAPIWithSourcemap(
     path.join(__dirname, '../../inputs/openapi3/broken-open-api.json')
   );
-  expect(() => {
-    validateOpenApiV3Document(
-      spec.jsonLike,
-      new OpenAPISchemaValidator(),
-      spec.sourcemap
-    );
-  }).toThrowErrorMatchingSnapshot();
+
+  try {
+    validateOpenApiV3Document(spec.jsonLike, spec.sourcemap);
+  } catch (error) {
+    const filterOutFileNames = error.message
+      .split('\n')
+      .filter((i) => !i.startsWith('[90m/'))
+      .join('\n');
+
+    expect(filterOutFileNames).toMatchSnapshot();
+  }
 });
 
 test('advanced validators run and append their results', () => {
