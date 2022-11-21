@@ -15,7 +15,7 @@ import {
   resolveJsonPointerInYamlAst,
 } from './parser/sourcemap';
 import { loadYaml, isYaml, isJson, writeYaml } from './write/index';
-import { validateOpenApiV3Document } from './validation/validator';
+import { ValidationError, validateOpenApiV3Document } from './validation/validator';
 import { checkOpenAPIVersion } from './validation/openapi-versions';
 
 export {
@@ -35,6 +35,7 @@ export {
   dereferenceOpenApi,
   ResolverError,
   validateOpenApiV3Document,
+  ValidationError,
   checkOpenAPIVersion,
 };
 

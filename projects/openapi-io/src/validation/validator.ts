@@ -14,6 +14,8 @@ import { jsonPointerLogger } from './log-json-pointer';
 import { JsonSchemaSourcemap } from '../parser/sourcemap';
 import { attachAdvancedValidators } from './advanced-validation';
 
+export class ValidationError extends Error {}
+
 type Options = {
   strictOpenAPI: boolean;
 };
@@ -122,7 +124,7 @@ export const validateOpenApiV3Document = (
       sourcemap
     );
 
-    throw new Error(processedErrors.join('\n'));
+    throw new ValidationError(processedErrors.join('\n'));
   }
 
   return spec as OpenAPIV3.Document;
