@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 
-import OpenAPISchemaValidator, { validateOpenApiV3Document } from './validator';
+import { validateOpenApiV3Document } from './validator';
 import { parseOpenAPIWithSourcemap } from '@useoptic/openapi-io';
 import path from 'path';
 import { defaultEmptySpec } from '@useoptic/openapi-utilities';
