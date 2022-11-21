@@ -2,7 +2,7 @@
   "name": "@useoptic/optic-ci",
   "license": "MIT",
   "packageManager": "yarn@3.0.2",
-  "version": "0.35.4",
+  "version": "0.35.5-0",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -84,5 +84,6 @@
         "<rootDir>../../../../node_modules/nimma/dist/legacy/cjs/index.js"
       ]
     }
-  }
+  },
+  "stableVersion": "0.35.4"
 }
