@@ -37,6 +37,7 @@ import {
 } from './input-generators';
 import { Comparison, ComparisonData } from './types';
 import { validateOpenApiV3Document } from '@useoptic/openapi-io';
+import OpenAPISchemaValidator from '@useoptic/openapi-io/build/validation/validator';
 
 const packageJson = require('../../../../package.json');
 
@@ -197,7 +198,11 @@ const compareSpecs = async ({
             loadSpecFile(comparison.toFileName),
           ]);
 
-          validateOpenApiV3Document(from.jsonLike, from.sourcemap);
+          validateOpenApiV3Document(
+            from.jsonLike,
+            from.sourcemap,
+            new OpenAPISchemaValidator(false)
+          );
           validateOpenApiV3Document(to.jsonLike, to.sourcemap);
 
           const { results, changes } = await generateSpecResults(

@@ -18,6 +18,8 @@ export default class OpenAPISchemaValidator {
   private v3_0Validator: ValidateFunction | undefined;
   private v3_1Validator: ValidateFunction | undefined;
 
+  constructor(private checkForOpenAPIUsageErrors: boolean = true) {}
+
   public validate3_0(openapiDoc: OpenAPI.Document): {
     errors: ErrorObject[];
   } {
@@ -25,7 +27,7 @@ export default class OpenAPISchemaValidator {
       const v = new ajv({ allErrors: true, strict: false });
       ajvErrors(v);
       addFormats(v);
-      attachAdvancedValidators(v);
+      if (this.checkForOpenAPIUsageErrors) attachAdvancedValidators(v);
       v.addSchema(openapi3_0_json_schema);
       this.v3_0Validator = v.compile(openapi3_0_json_schema);
     }
@@ -43,7 +45,7 @@ export default class OpenAPISchemaValidator {
       const v = new ajv({ allErrors: true, strict: false });
       ajvErrors(v);
       addFormats(v);
-      attachAdvancedValidators(v);
+      if (this.checkForOpenAPIUsageErrors) attachAdvancedValidators(v);
       v.addSchema(openapi3_1_json_schema);
       this.v3_1Validator = v.compile(openapi3_1_json_schema);
     }
