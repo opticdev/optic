@@ -33,6 +33,7 @@ import { sendGitlabMessage } from './gitlab-comment';
 import { getRelativeRepoPath } from '../utils/path';
 import { inGit, validateOpenApiV3Document } from '@useoptic/openapi-io';
 import { newExemptionsCount } from '../utils/count-exemptions';
+import OpenAPISchemaValidator from '@useoptic/openapi-io/build/validation/validator';
 
 const parseContextObject = (context?: string): any => {
   try {
@@ -151,7 +152,9 @@ const runCompare = async ({
       parseSpecVersion(from, defaultEmptySpec),
       process.cwd()
     ).then((results) => {
-      validateOpenApiV3Document(results.jsonLike, results.sourcemap);
+      validateOpenApiV3Document(results.jsonLike, results.sourcemap, {
+        strictOpenAPI: false,
+      });
       return results;
     }),
     specFromInputToResults(
