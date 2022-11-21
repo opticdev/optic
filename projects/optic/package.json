@@ -2,7 +2,7 @@
   "name": "@useoptic/optic",
   "license": "MIT",
   "packageManager": "yarn@3.0.2",
-  "version": "0.35.3",
+  "version": "0.35.4",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -57,7 +57,7 @@
     "@useoptic/optic-ci": "workspace:*",
     "@useoptic/rulesets-base": "workspace:*",
     "@useoptic/standard-rulesets": "workspace:*",
-    "ajv": "8.11.0",
+    "ajv": "^8.6.0",
     "bottleneck": "^2.19.5",
     "chalk": "^4.1.2",
     "commander": "^9.4.1",
