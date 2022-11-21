@@ -198,11 +198,9 @@ const compareSpecs = async ({
             loadSpecFile(comparison.toFileName),
           ]);
 
-          validateOpenApiV3Document(
-            from.jsonLike,
-            from.sourcemap,
-            new OpenAPISchemaValidator(false)
-          );
+          validateOpenApiV3Document(from.jsonLike, from.sourcemap, {
+            strictOpenAPI: false,
+          });
           validateOpenApiV3Document(to.jsonLike, to.sourcemap);
 
           const { results, changes } = await generateSpecResults(

@@ -152,11 +152,9 @@ const runCompare = async ({
       parseSpecVersion(from, defaultEmptySpec),
       process.cwd()
     ).then((results) => {
-      validateOpenApiV3Document(
-        results.jsonLike,
-        results.sourcemap,
-        new OpenAPISchemaValidator(false)
-      );
+      validateOpenApiV3Document(results.jsonLike, results.sourcemap, {
+        strictOpenAPI: false,
+      });
       return results;
     }),
     specFromInputToResults(

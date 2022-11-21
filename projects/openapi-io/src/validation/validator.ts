@@ -14,11 +14,15 @@ import { jsonPointerLogger } from './log-json-pointer';
 import { JsonSchemaSourcemap } from '../parser/sourcemap';
 import { attachAdvancedValidators } from './advanced-validation';
 
+type Options = {
+  strictOpenAPI: boolean;
+};
+
 export default class OpenAPISchemaValidator {
   private v3_0Validator: ValidateFunction | undefined;
   private v3_1Validator: ValidateFunction | undefined;
 
-  constructor(private checkForOpenAPIUsageErrors: boolean = true) {}
+  constructor(private options: Options) {}
 
   public validate3_0(openapiDoc: OpenAPI.Document): {
     errors: ErrorObject[];
@@ -27,7 +31,7 @@ export default class OpenAPISchemaValidator {
       const v = new ajv({ allErrors: true, strict: false });
       ajvErrors(v);
       addFormats(v);
-      if (this.checkForOpenAPIUsageErrors) attachAdvancedValidators(v);
+      if (this.options.strictOpenAPI) attachAdvancedValidators(v);
       v.addSchema(openapi3_0_json_schema);
       this.v3_0Validator = v.compile(openapi3_0_json_schema);
     }
@@ -45,7 +49,7 @@ export default class OpenAPISchemaValidator {
       const v = new ajv({ allErrors: true, strict: false });
       ajvErrors(v);
       addFormats(v);
-      if (this.checkForOpenAPIUsageErrors) attachAdvancedValidators(v);
+      if (this.options.strictOpenAPI) attachAdvancedValidators(v);
       v.addSchema(openapi3_1_json_schema);
       this.v3_1Validator = v.compile(openapi3_1_json_schema);
     }
@@ -93,19 +97,13 @@ export const processValidatorErrors = (
   });
 };
 
-let validator: OpenAPISchemaValidator | undefined;
-const getValidator = () => {
-  if (!validator) {
-    validator = new OpenAPISchemaValidator();
-  }
-  return validator;
-};
-
 export const validateOpenApiV3Document = (
   spec: any,
   sourcemap?: JsonSchemaSourcemap,
-  validator: OpenAPISchemaValidator = getValidator()
+  validatorOptions: Options = { strictOpenAPI: true }
 ): OpenAPIV3.Document => {
+  const validator = new OpenAPISchemaValidator(validatorOptions);
+
   let results:
     | {
         errors: ErrorObject[];
