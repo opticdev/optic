@@ -16,7 +16,7 @@ exports[`processValidatorErrors 1`] = `
 /paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/properties/hello/items"
 `;
 
-exports[`processValidatorErrors with sourcemap 1`] = `
+exports[`processValidatorErrors attaches the sourcemap 1`] = `
 "[31minvalid openapi: [39m[1m[31mmust be object[39m[22m
 [90m18 |[39m   \\"properties\\": {
 [90m19 |[39m     \\"hello\\": {

@@ -152,14 +152,12 @@ test('processValidatorErrors', () => {
   }).toThrowErrorMatchingSnapshot();
 });
 
-test('processValidatorErrors with sourcemap', async () => {
+test('processValidatorErrors attaches the sourcemap', async () => {
   const spec = await parseOpenAPIWithSourcemap(
     path.join(__dirname, '../../inputs/openapi3/broken-open-api.json')
   );
   expect(() => {
-    validateOpenApiV3Document(spec.jsonLike, spec.sourcemap, {
-      strictOpenAPI: false,
-    });
+    validateOpenApiV3Document(spec.jsonLike, spec.sourcemap);
   }).toThrowErrorMatchingSnapshot();
 });
 
