@@ -2,13 +2,12 @@
 
 ## RuleContext
 
-RuleContext contains the specification and operation as well as custom context data. Details on how to pass in custom context [here](./Reference.md#custom-context).
+RuleContext contains the specification and operation as well as custom context data.
 
 ```javascript
 type RuleContext = {
   specification: Specification & {},
   operation: Operation & {},
-  custom: any,
 };
 ```
 
