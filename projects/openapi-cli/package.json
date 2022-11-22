@@ -2,7 +2,7 @@
   "name": "@useoptic/openapi-cli",
   "license": "MIT",
   "packageManager": "yarn@3.0.2",
-  "version": "0.35.3",
+  "version": "0.35.4",
   "main": "build/lib.js",
   "types": "build/lib.d.ts",
   "files": [
@@ -61,7 +61,7 @@
     "@useoptic/json-pointer-helpers": "workspace:*",
     "@useoptic/openapi-io": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
-    "ajv-formats": "^2.1.1",
+    "ajv-formats": "~2.1.0",
     "analytics-node": "^6.2.0",
     "async-exit-hook": "^2.0.1",
     "axax": "^0.2.2",

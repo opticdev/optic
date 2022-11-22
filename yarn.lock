@@ -3369,7 +3369,7 @@ __metadata:
     "@useoptic/json-pointer-helpers": "workspace:*"
     "@useoptic/openapi-io": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"
-    ajv-formats: ^2.1.1
+    ajv-formats: ~2.1.0
     analytics-node: ^6.2.0
     async-exit-hook: ^2.0.1
     axax: ^0.2.2
@@ -3439,9 +3439,9 @@ __metadata:
     "@types/semver": ^7.3.10
     "@useoptic/json-pointer-helpers": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"
-    ajv: 8.11.0
-    ajv-errors: ^3.0.0
-    ajv-formats: ^2.1.1
+    ajv: ^8.6.0
+    ajv-errors: ~3.0.0
+    ajv-formats: ~2.1.0
     babel-jest: ^27.5.1
     bottleneck: ^2.19.5
     chai: ^4.3.4
@@ -3495,9 +3495,9 @@ __metadata:
     "@types/node": ^17.0.15
     "@types/semver": ^7.3.10
     "@useoptic/json-pointer-helpers": "workspace:*"
-    ajv: 8.11.0
-    ajv-errors: ^3.0.0
-    ajv-formats: ^2.1.1
+    ajv: ^8.6.0
+    ajv-errors: ~3.0.0
+    ajv-formats: ~2.1.0
     analytics-node: ^6.2.0
     babel-jest: ^27.5.1
     chalk: ^4.1.2
@@ -3548,7 +3548,7 @@ __metadata:
     "@useoptic/openapi-utilities": "workspace:*"
     "@useoptic/rulesets-base": "workspace:*"
     "@useoptic/standard-rulesets": "workspace:*"
-    ajv: 8.11.0
+    ajv: ^8.6.0
     babel-jest: ^27.5.1
     babel-plugin-transform-inline-environment-variables: ^0.4.3
     bottleneck: ^2.19.5
@@ -3604,7 +3604,7 @@ __metadata:
     "@useoptic/optic-ci": "workspace:*"
     "@useoptic/rulesets-base": "workspace:*"
     "@useoptic/standard-rulesets": "workspace:*"
-    ajv: 8.11.0
+    ajv: ^8.6.0
     babel-jest: ^27.5.1
     babel-plugin-transform-inline-environment-variables: ^0.4.3
     bottleneck: ^2.19.5
@@ -3680,8 +3680,8 @@ __metadata:
     "@types/node": ^17.0.15
     "@useoptic/openapi-utilities": "workspace:*"
     "@useoptic/rulesets-base": "workspace:*"
-    ajv: 8.11.0
-    ajv-formats: 2.1.1
+    ajv: ^8.6.0
+    ajv-formats: ~2.1.0
     babel-jest: ^27.5.1
     jest: ^27.5.1
     prettier: ^2.4.1
@@ -3819,7 +3819,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv-errors@npm:^3.0.0, ajv-errors@npm:~3.0.0":
+"ajv-errors@npm:~3.0.0":
   version: 3.0.0
   resolution: "ajv-errors@npm:3.0.0"
   peerDependencies:
@@ -3828,7 +3828,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv-formats@npm:2.1.1, ajv-formats@npm:^2.1.1, ajv-formats@npm:~2.1.0":
+"ajv-formats@npm:^2.1.1, ajv-formats@npm:~2.1.0":
   version: 2.1.1
   resolution: "ajv-formats@npm:2.1.1"
   dependencies:
@@ -3842,7 +3842,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:8.11.0, ajv@npm:^8.0.0, ajv@npm:^8.6.0, ajv@npm:^8.6.3, ajv@npm:^8.8.2":
+"ajv@npm:^8.0.0, ajv@npm:^8.6.0, ajv@npm:^8.6.3, ajv@npm:^8.8.2":
   version: 8.11.0
   resolution: "ajv@npm:8.11.0"
   dependencies:
