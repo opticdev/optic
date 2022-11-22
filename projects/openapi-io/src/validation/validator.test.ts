@@ -20,14 +20,53 @@ test('valid open 3.1 api document should not raise errors', async () => {
   );
 });
 
-test('open api doc with no path should throw an error', () => {
-  expect(() => {
-    validateOpenApiV3Document({
-      openapi: '3.1.3',
-      info: { version: '0.0.0', title: 'Empty' },
-    });
-  }).toThrowError();
-});
+
+describe('error cases with messages', () => {
+  test('open api doc with no path should throw an error', () => {
+    expect(() => {
+      validateOpenApiV3Document({
+        openapi: '3.1.3',
+        info: { version: '0.0.0', title: 'Empty' },
+      });
+    }).toThrowErrorMatchingSnapshot();
+  });
+  
+  test('open api doc with no description in response', () => {
+    expect(() => {
+      validateOpenApiV3Document({
+        openapi: '3.1.3',
+        info: { version: '0.0.0', title: 'Empty' },
+        paths: {
+          '/example': {
+            get: {
+              response: {
+                '200': {}
+              }
+            }
+          }
+        }
+      });
+    }).toThrowErrorMatchingSnapshot();
+  })
+
+  test('additional properties in invalid place', () => {
+    expect(() => {
+      validateOpenApiV3Document({
+        openapi: '3.1.3',
+        info: { version: '0.0.0', title: 'Empty', badproperty: ':('},
+        paths: {
+          '/example': {
+            get: {
+              response: {
+                '200': {}
+              }
+            }
+          }
+        }
+      });
+    }).toThrowErrorMatchingSnapshot();
+  })
+})
 
 test('open api doc with extra custom parameters', () => {
   validateOpenApiV3Document({
