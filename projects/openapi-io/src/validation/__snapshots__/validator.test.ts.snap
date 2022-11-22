@@ -11,6 +11,23 @@ exports[`advanced validators run and append their results 1`] = `
 /paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema"
 `;
 
+exports[`error cases with messages additional properties in invalid place 1`] = `
+"[31minvalid openapi: [39m[1m[31mmust have required property 'responses'[39m[22m
+/paths/~1example/get
+[31minvalid openapi: [39m[1m[31mmust NOT have additional properties[39m[22m
+/info"
+`;
+
+exports[`error cases with messages open api doc with no description in response 1`] = `
+"[31minvalid openapi: [39m[1m[31mmust have required property 'responses'[39m[22m
+/paths/~1example/get"
+`;
+
+exports[`error cases with messages open api doc with no path should throw an error 1`] = `
+"[31minvalid openapi: [39m[1m[31mmust have required property 'paths'[39m[22m
+"
+`;
+
 exports[`processValidatorErrors 1`] = `
 "[31minvalid openapi: [39m[1m[31mmust be object[39m[22m
 /paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/properties/hello/items"
