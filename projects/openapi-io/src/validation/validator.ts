@@ -13,8 +13,7 @@ import chalk from 'chalk';
 import { jsonPointerLogger } from './log-json-pointer';
 import { JsonSchemaSourcemap } from '../parser/sourcemap';
 import { attachAdvancedValidators } from './advanced-validation';
-
-export class ValidationError extends Error {}
+import { ValidationError } from './errors';
 
 type Options = {
   strictOpenAPI: boolean;
