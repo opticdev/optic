@@ -1,7 +1,8 @@
 import { ono } from '@jsdevtools/ono';
 import { ResolverError } from '@apidevtools/json-schema-ref-parser';
-const url = require('@apidevtools/json-schema-ref-parser/lib/util/url')
-import path from 'path';
+const url = require('@apidevtools/json-schema-ref-parser/lib/util/url');
+
+import path from 'upath';
 import { exec } from 'child_process';
 
 import { ExternalRefHandler } from '../types';
@@ -17,7 +18,7 @@ export const gitBranchResolver = (
   read(file) {
     return new Promise((resolve, reject) => {
       const toGit = path.relative(gitBaseRepo, file.url);
-      const command = `git show ${branch}:${toGit}`;
+      const command = `git show ${branch}:${path.toUnix(toGit)}`;
       try {
         exec(
           command,
@@ -35,7 +36,10 @@ export const gitBranchResolver = (
         );
       } catch (err) {
         reject(
-          new ResolverError(ono(err as any, `Error opening file "${toGit}"`), toGit)
+          new ResolverError(
+            ono(err as any, `Error opening file "${toGit}"`),
+            toGit
+          )
         );
       }
     });
