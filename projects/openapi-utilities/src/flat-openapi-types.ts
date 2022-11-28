@@ -11,24 +11,23 @@ export enum HttpMethods {
   TRACE = 'trace',
 }
 
-
-export namespace DereferencedOpenAPI {
+export namespace FlatOpenAPI {
   export type Document<T extends {} = {}> =
-    | DereferencedOpenAPIV2.Document<T>
-    | DereferencedOpenAPIV3.Document<T>
-    | DereferencedOpenAPIV3_1.Document<T>;
+    | FlatOpenAPIV2.Document<T>
+    | FlatOpenAPIV3.Document<T>
+    | FlatOpenAPIV3_1.Document<T>;
   export type Operation<T extends {} = {}> =
-    | DereferencedOpenAPIV2.OperationObject<T>
-    | DereferencedOpenAPIV3.OperationObject<T>
-    | DereferencedOpenAPIV3_1.OperationObject<T>;
+    | FlatOpenAPIV2.OperationObject<T>
+    | FlatOpenAPIV3.OperationObject<T>
+    | FlatOpenAPIV3_1.OperationObject<T>;
   export type Parameter =
-    | DereferencedOpenAPIV3_1.ParameterObject
-    | DereferencedOpenAPIV3.ParameterObject
-    | DereferencedOpenAPIV2.Parameter;
+    | FlatOpenAPIV3_1.ParameterObject
+    | FlatOpenAPIV3.ParameterObject
+    | FlatOpenAPIV2.Parameter;
   export type Parameters =
-    | (DereferencedOpenAPIV3_1.ParameterObject)[]
-    | (DereferencedOpenAPIV3.ParameterObject)[]
-    | (DereferencedOpenAPIV2.Parameter)[];
+    | FlatOpenAPIV3_1.ParameterObject[]
+    | FlatOpenAPIV3.ParameterObject[]
+    | FlatOpenAPIV2.Parameter[];
 
   export interface Request {
     body?: any;
@@ -38,106 +37,105 @@ export namespace DereferencedOpenAPI {
   }
 }
 
-export namespace DereferencedOpenAPIV3_1 {
+export namespace FlatOpenAPIV3_1 {
   type Modify<T, R> = Omit<T, keyof R> & R;
 
   type PathsWebhooksComponents<T extends {} = {}> = {
     paths: PathsObject<T>;
-    webhooks: Record<string, PathItemObject >;
+    webhooks: Record<string, PathItemObject>;
     components: ComponentsObject;
   };
 
   export type Document<T extends {} = {}> = Modify<
-    Omit<DereferencedOpenAPIV3.Document<T>, 'paths' | 'components'>,
+    Omit<FlatOpenAPIV3.Document<T>, 'paths' | 'components'>,
     {
       info: InfoObject;
       jsonSchemaDialect?: string;
       servers?: ServerObject[];
     } & (
-    | (Pick<PathsWebhooksComponents<T>, 'paths'> &
-    Omit<Partial<PathsWebhooksComponents<T>>, 'paths'>)
-    | (Pick<PathsWebhooksComponents<T>, 'webhooks'> &
-    Omit<Partial<PathsWebhooksComponents<T>>, 'webhooks'>)
-    | (Pick<PathsWebhooksComponents<T>, 'components'> &
-    Omit<Partial<PathsWebhooksComponents<T>>, 'components'>)
+      | (Pick<PathsWebhooksComponents<T>, 'paths'> &
+          Omit<Partial<PathsWebhooksComponents<T>>, 'paths'>)
+      | (Pick<PathsWebhooksComponents<T>, 'webhooks'> &
+          Omit<Partial<PathsWebhooksComponents<T>>, 'webhooks'>)
+      | (Pick<PathsWebhooksComponents<T>, 'components'> &
+          Omit<Partial<PathsWebhooksComponents<T>>, 'components'>)
     )
-    >;
+  >;
 
   export type InfoObject = Modify<
-    DereferencedOpenAPIV3.InfoObject,
+    FlatOpenAPIV3.InfoObject,
     {
       summary?: string;
       license?: LicenseObject;
     }
-    >;
+  >;
 
-  export type ContactObject = DereferencedOpenAPIV3.ContactObject;
+  export type ContactObject = FlatOpenAPIV3.ContactObject;
 
   export type LicenseObject = Modify<
-    DereferencedOpenAPIV3.LicenseObject,
+    FlatOpenAPIV3.LicenseObject,
     {
       identifier?: string;
     }
-    >;
+  >;
 
   export type ServerObject = Modify<
-    DereferencedOpenAPIV3.ServerObject,
+    FlatOpenAPIV3.ServerObject,
     {
       url: string;
       description?: string;
       variables?: Record<string, ServerVariableObject>;
     }
-    >;
+  >;
 
   export type ServerVariableObject = Modify<
-    DereferencedOpenAPIV3.ServerVariableObject,
+    FlatOpenAPIV3.ServerVariableObject,
     {
       enum?: [string, ...string[]];
     }
-    >;
+  >;
 
   export type PathsObject<T extends {} = {}, P extends {} = {}> = Record<
     string,
     (PathItemObject<T> & P) | undefined
-    >;
-
+  >;
 
   export type PathItemObject<T extends {} = {}> = Modify<
-    DereferencedOpenAPIV3.PathItemObject<T>,
+    FlatOpenAPIV3.PathItemObject<T>,
     {
       servers?: ServerObject[];
-      parameters?: ( ParameterObject)[];
+      parameters?: ParameterObject[];
     }
-    > &
-    {
-      [method in HttpMethods]?: OperationObject<T>;
-    };
+  > & {
+    [method in HttpMethods]?: OperationObject<T>;
+  };
 
   export type OperationObject<T extends {} = {}> = Modify<
-    DereferencedOpenAPIV3.OperationObject<T>,
+    FlatOpenAPIV3.OperationObject<T>,
     {
-      parameters?: ( ParameterObject)[];
-      requestBody?:  RequestBodyObject;
+      parameters?: ParameterObject[];
+      requestBody?: RequestBodyObject;
       responses?: ResponsesObject;
-      callbacks?: Record<string,  CallbackObject>;
+      callbacks?: Record<string, CallbackObject>;
       servers?: ServerObject[];
     }
-    > &
+  > &
     T;
 
-  export type ExternalDocumentationObject = DereferencedOpenAPIV3.ExternalDocumentationObject;
+  export type ExternalDocumentationObject =
+    FlatOpenAPIV3.ExternalDocumentationObject;
 
-  export type ParameterObject = DereferencedOpenAPIV3.ParameterObject;
+  export type ParameterObject = FlatOpenAPIV3.ParameterObject;
 
-  export type HeaderObject = DereferencedOpenAPIV3.HeaderObject;
+  export type HeaderObject = FlatOpenAPIV3.HeaderObject;
 
-  export type ParameterBaseObject = DereferencedOpenAPIV3.ParameterBaseObject;
+  export type ParameterBaseObject = FlatOpenAPIV3.ParameterBaseObject;
 
   export type NonArraySchemaObjectType =
-    | DereferencedOpenAPIV3.NonArraySchemaObjectType
+    | FlatOpenAPIV3.NonArraySchemaObjectType
     | 'null';
 
-  export type ArraySchemaObjectType = DereferencedOpenAPIV3.ArraySchemaObjectType;
+  export type ArraySchemaObjectType = FlatOpenAPIV3.ArraySchemaObjectType;
 
   /**
    * There is no way to tell typescript to require items when type is either 'array' or array containing 'array' type
@@ -151,7 +149,7 @@ export namespace DereferencedOpenAPIV3_1 {
 
   export interface ArraySchemaObject extends BaseSchemaObject {
     type: ArraySchemaObjectType;
-    items:  SchemaObject;
+    items: SchemaObject;
   }
 
   export interface NonArraySchemaObject extends BaseSchemaObject {
@@ -160,110 +158,108 @@ export namespace DereferencedOpenAPIV3_1 {
 
   interface MixedSchemaObject extends BaseSchemaObject {
     type?: (ArraySchemaObjectType | NonArraySchemaObjectType)[];
-    items?:  SchemaObject;
+    items?: SchemaObject;
   }
 
   export type BaseSchemaObject = Modify<
-    Omit<DereferencedOpenAPIV3.BaseSchemaObject, 'nullable'>,
+    Omit<FlatOpenAPIV3.BaseSchemaObject, 'nullable'>,
     {
-      examples?: DereferencedOpenAPIV3.BaseSchemaObject['example'][];
+      examples?: FlatOpenAPIV3.BaseSchemaObject['example'][];
       exclusiveMinimum?: boolean | number;
       exclusiveMaximum?: boolean | number;
       contentMediaType?: string;
       $schema?: string;
-      additionalProperties?: boolean  | SchemaObject;
+      additionalProperties?: boolean | SchemaObject;
       properties?: {
-        [name: string]:  SchemaObject;
+        [name: string]: SchemaObject;
       };
-      allOf?: ( SchemaObject)[];
-      oneOf?: ( SchemaObject)[];
-      anyOf?: ( SchemaObject)[];
-      not?:  SchemaObject;
+      allOf?: SchemaObject[];
+      oneOf?: SchemaObject[];
+      anyOf?: SchemaObject[];
+      not?: SchemaObject;
       discriminator?: DiscriminatorObject;
       externalDocs?: ExternalDocumentationObject;
       xml?: XMLObject;
       const?: any;
     }
-    >;
+  >;
 
-  export type DiscriminatorObject = DereferencedOpenAPIV3.DiscriminatorObject;
+  export type DiscriminatorObject = FlatOpenAPIV3.DiscriminatorObject;
 
-  export type XMLObject = DereferencedOpenAPIV3.XMLObject;
+  export type XMLObject = FlatOpenAPIV3.XMLObject;
 
-  export type ExampleObject = DereferencedOpenAPIV3.ExampleObject;
+  export type ExampleObject = FlatOpenAPIV3.ExampleObject;
 
   export type MediaTypeObject = Modify<
-    DereferencedOpenAPIV3.MediaTypeObject,
+    FlatOpenAPIV3.MediaTypeObject,
     {
-      schema?: SchemaObject ;
-      examples?: Record<string,  ExampleObject>;
+      schema?: SchemaObject;
+      examples?: Record<string, ExampleObject>;
     }
-    >;
+  >;
 
-  export type EncodingObject = DereferencedOpenAPIV3.EncodingObject;
+  export type EncodingObject = FlatOpenAPIV3.EncodingObject;
 
   export type RequestBodyObject = Modify<
-    DereferencedOpenAPIV3.RequestBodyObject,
+    FlatOpenAPIV3.RequestBodyObject,
     {
       content: { [media: string]: MediaTypeObject };
     }
-    >;
+  >;
 
-  export type ResponsesObject = Record<
-    string,
-     ResponseObject
-    >;
+  export type ResponsesObject = Record<string, ResponseObject>;
 
   export type ResponseObject = Modify<
-    DereferencedOpenAPIV3.ResponseObject,
+    FlatOpenAPIV3.ResponseObject,
     {
-      headers?: { [header: string]:  HeaderObject };
+      headers?: { [header: string]: HeaderObject };
       content?: { [media: string]: MediaTypeObject };
-      links?: { [link: string]:  LinkObject };
+      links?: { [link: string]: LinkObject };
     }
-    >;
+  >;
 
   export type LinkObject = Modify<
-    DereferencedOpenAPIV3.LinkObject,
+    FlatOpenAPIV3.LinkObject,
     {
       server?: ServerObject;
     }
-    >;
+  >;
 
-  export type CallbackObject = Record<string, PathItemObject >;
+  export type CallbackObject = Record<string, PathItemObject>;
 
-  export type SecurityRequirementObject = DereferencedOpenAPIV3.SecurityRequirementObject;
+  export type SecurityRequirementObject =
+    FlatOpenAPIV3.SecurityRequirementObject;
 
   export type ComponentsObject = Modify<
-    DereferencedOpenAPIV3.ComponentsObject,
+    FlatOpenAPIV3.ComponentsObject,
     {
       schemas?: Record<string, SchemaObject>;
-      responses?: Record<string,  ResponseObject>;
-      parameters?: Record<string,  ParameterObject>;
-      examples?: Record<string,  ExampleObject>;
-      requestBodies?: Record<string,  RequestBodyObject>;
-      headers?: Record<string,  HeaderObject>;
-      securitySchemes?: Record<string,  SecuritySchemeObject>;
-      links?: Record<string,  LinkObject>;
-      callbacks?: Record<string,  CallbackObject>;
-      pathItems?: Record<string,  PathItemObject>;
+      responses?: Record<string, ResponseObject>;
+      parameters?: Record<string, ParameterObject>;
+      examples?: Record<string, ExampleObject>;
+      requestBodies?: Record<string, RequestBodyObject>;
+      headers?: Record<string, HeaderObject>;
+      securitySchemes?: Record<string, SecuritySchemeObject>;
+      links?: Record<string, LinkObject>;
+      callbacks?: Record<string, CallbackObject>;
+      pathItems?: Record<string, PathItemObject>;
     }
-    >;
+  >;
 
-  export type SecuritySchemeObject = DereferencedOpenAPIV3.SecuritySchemeObject;
+  export type SecuritySchemeObject = FlatOpenAPIV3.SecuritySchemeObject;
 
-  export type HttpSecurityScheme = DereferencedOpenAPIV3.HttpSecurityScheme;
+  export type HttpSecurityScheme = FlatOpenAPIV3.HttpSecurityScheme;
 
-  export type ApiKeySecurityScheme = DereferencedOpenAPIV3.ApiKeySecurityScheme;
+  export type ApiKeySecurityScheme = FlatOpenAPIV3.ApiKeySecurityScheme;
 
-  export type OAuth2SecurityScheme = DereferencedOpenAPIV3.OAuth2SecurityScheme;
+  export type OAuth2SecurityScheme = FlatOpenAPIV3.OAuth2SecurityScheme;
 
-  export type OpenIdSecurityScheme = DereferencedOpenAPIV3.OpenIdSecurityScheme;
+  export type OpenIdSecurityScheme = FlatOpenAPIV3.OpenIdSecurityScheme;
 
-  export type TagObject = DereferencedOpenAPIV3.TagObject;
+  export type TagObject = FlatOpenAPIV3.TagObject;
 }
 
-export namespace DereferencedOpenAPIV3 {
+export namespace FlatOpenAPIV3 {
   export interface Document<T extends {} = {}> {
     openapi: string;
     info: InfoObject;
@@ -276,7 +272,7 @@ export namespace DereferencedOpenAPIV3 {
     'x-express-openapi-additional-middleware'?: (
       | ((request: any, response: any, next: any) => Promise<void>)
       | ((request: any, response: any, next: any) => void)
-      )[];
+    )[];
     'x-express-openapi-validation-strict'?: boolean;
   }
 
@@ -324,7 +320,7 @@ export namespace DereferencedOpenAPIV3 {
     summary?: string;
     description?: string;
     servers?: ServerObject[];
-    parameters?: ( ParameterObject)[];
+    parameters?: ParameterObject[];
   } & {
     [method in HttpMethods]?: OperationObject<T>;
   };
@@ -335,10 +331,10 @@ export namespace DereferencedOpenAPIV3 {
     description?: string;
     externalDocs?: ExternalDocumentationObject;
     operationId?: string;
-    parameters?: ( ParameterObject)[];
-    requestBody?:  RequestBodyObject;
+    parameters?: ParameterObject[];
+    requestBody?: RequestBodyObject;
     responses: ResponsesObject;
-    callbacks?: { [callback: string]:  CallbackObject };
+    callbacks?: { [callback: string]: CallbackObject };
     deprecated?: boolean;
     security?: SecurityRequirementObject[];
     servers?: ServerObject[];
@@ -364,9 +360,9 @@ export namespace DereferencedOpenAPIV3 {
     style?: string;
     explode?: boolean;
     allowReserved?: boolean;
-    schema?:  SchemaObject;
+    schema?: SchemaObject;
     example?: any;
-    examples?: { [media: string]:  ExampleObject };
+    examples?: { [media: string]: ExampleObject };
     content?: { [media: string]: MediaTypeObject };
   }
   export type NonArraySchemaObjectType =
@@ -380,7 +376,7 @@ export namespace DereferencedOpenAPIV3 {
 
   export interface ArraySchemaObject extends BaseSchemaObject {
     type: ArraySchemaObjectType;
-    items:  SchemaObject;
+    items: SchemaObject;
   }
 
   export interface NonArraySchemaObject extends BaseSchemaObject {
@@ -401,7 +397,7 @@ export namespace DereferencedOpenAPIV3 {
     maxLength?: number;
     minLength?: number;
     pattern?: string;
-    additionalProperties?: boolean  | SchemaObject;
+    additionalProperties?: boolean | SchemaObject;
     maxItems?: number;
     minItems?: number;
     uniqueItems?: boolean;
@@ -410,12 +406,12 @@ export namespace DereferencedOpenAPIV3 {
     required?: string[];
     enum?: any[];
     properties?: {
-      [name: string]:  SchemaObject;
+      [name: string]: SchemaObject;
     };
-    allOf?: ( SchemaObject)[];
-    oneOf?: ( SchemaObject)[];
-    anyOf?: ( SchemaObject)[];
-    not?:  SchemaObject;
+    allOf?: SchemaObject[];
+    oneOf?: SchemaObject[];
+    anyOf?: SchemaObject[];
+    not?: SchemaObject;
 
     // OpenAPI-specific properties
     nullable?: boolean;
@@ -449,15 +445,15 @@ export namespace DereferencedOpenAPIV3 {
   }
 
   export interface MediaTypeObject {
-    schema?:  SchemaObject;
+    schema?: SchemaObject;
     example?: any;
-    examples?: { [media: string]:  ExampleObject };
+    examples?: { [media: string]: ExampleObject };
     encoding?: { [media: string]: EncodingObject };
   }
 
   export interface EncodingObject {
     contentType?: string;
-    headers?: { [header: string]:  HeaderObject };
+    headers?: { [header: string]: HeaderObject };
     style?: string;
     explode?: boolean;
     allowReserved?: boolean;
@@ -470,14 +466,14 @@ export namespace DereferencedOpenAPIV3 {
   }
 
   export interface ResponsesObject {
-    [code: string]:  ResponseObject;
+    [code: string]: ResponseObject;
   }
 
   export interface ResponseObject {
     description: string;
-    headers?: { [header: string]:  HeaderObject };
+    headers?: { [header: string]: HeaderObject };
     content?: { [media: string]: MediaTypeObject };
-    links?: { [link: string]:  LinkObject };
+    links?: { [link: string]: LinkObject };
   }
 
   export interface LinkObject {
@@ -498,15 +494,15 @@ export namespace DereferencedOpenAPIV3 {
   }
 
   export interface ComponentsObject {
-    schemas?: { [key: string]:  SchemaObject };
-    responses?: { [key: string]:  ResponseObject };
-    parameters?: { [key: string]:  ParameterObject };
-    examples?: { [key: string]:  ExampleObject };
-    requestBodies?: { [key: string]:  RequestBodyObject };
-    headers?: { [key: string]:  HeaderObject };
-    securitySchemes?: { [key: string]:  SecuritySchemeObject };
-    links?: { [key: string]:  LinkObject };
-    callbacks?: { [key: string]:  CallbackObject };
+    schemas?: { [key: string]: SchemaObject };
+    responses?: { [key: string]: ResponseObject };
+    parameters?: { [key: string]: ParameterObject };
+    examples?: { [key: string]: ExampleObject };
+    requestBodies?: { [key: string]: RequestBodyObject };
+    headers?: { [key: string]: HeaderObject };
+    securitySchemes?: { [key: string]: SecuritySchemeObject };
+    links?: { [key: string]: LinkObject };
+    callbacks?: { [key: string]: CallbackObject };
   }
 
   export type SecuritySchemeObject =
@@ -570,7 +566,7 @@ export namespace DereferencedOpenAPIV3 {
   }
 }
 
-export namespace DereferencedOpenAPIV2 {
+export namespace FlatOpenAPIV2 {
   export interface Document<T extends {} = {}> {
     basePath?: string;
     consumes?: MimeTypes;
@@ -590,7 +586,7 @@ export namespace DereferencedOpenAPIV2 {
     'x-express-openapi-additional-middleware'?: (
       | ((request: any, response: any, next: any) => Promise<void>)
       | ((request: any, response: any, next: any) => void)
-      )[];
+    )[];
     'x-express-openapi-validation-strict'?: boolean;
   }
 
@@ -669,13 +665,13 @@ export namespace DereferencedOpenAPIV2 {
     [index: string]: string[];
   }
 
-  export type Response = ResponseObject ;
+  export type Response = ResponseObject;
 
   export interface ResponsesDefinitionsObject {
     [index: string]: ResponseObject;
   }
 
-  export type Schema = SchemaObject ;
+  export type Schema = SchemaObject;
 
   export interface ResponseObject {
     description: string;
@@ -721,7 +717,7 @@ export namespace DereferencedOpenAPIV2 {
     default?: Response;
   }
 
-  export type Parameters = ( Parameter)[];
+  export type Parameters = Parameter[];
 
   export type Parameter = InBodyParameterObject | GeneralParameterObject;
 
@@ -783,7 +779,7 @@ export namespace DereferencedOpenAPIV2 {
     externalDocs?: ExternalDocumentationObject;
     example?: any;
     default?: any;
-    items?: ItemsObject ;
+    items?: ItemsObject;
     properties?: {
       [name: string]: SchemaObject;
     };
@@ -798,7 +794,7 @@ export namespace DereferencedOpenAPIV2 {
   export interface ItemsObject {
     type: string;
     format?: string;
-    items?: ItemsObject ;
+    items?: ItemsObject;
     collectionFormat?: string;
     default?: any;
     maximum?: number;
