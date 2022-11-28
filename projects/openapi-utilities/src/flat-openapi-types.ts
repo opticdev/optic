@@ -14,21 +14,21 @@ export enum HttpMethods {
 
 export namespace DereferencedOpenAPI {
   export type Document<T extends {} = {}> =
-    | OpenAPIV2.Document<T>
-    | OpenAPIV3.Document<T>
-    | OpenAPIV3_1.Document<T>;
+    | DereferencedOpenAPIV2.Document<T>
+    | DereferencedOpenAPIV3.Document<T>
+    | DereferencedOpenAPIV3_1.Document<T>;
   export type Operation<T extends {} = {}> =
-    | OpenAPIV2.OperationObject<T>
-    | OpenAPIV3.OperationObject<T>
-    | OpenAPIV3_1.OperationObject<T>;
+    | DereferencedOpenAPIV2.OperationObject<T>
+    | DereferencedOpenAPIV3.OperationObject<T>
+    | DereferencedOpenAPIV3_1.OperationObject<T>;
   export type Parameter =
-    | OpenAPIV3_1.ParameterObject
-    | OpenAPIV3.ParameterObject
-    | OpenAPIV2.Parameter;
+    | DereferencedOpenAPIV3_1.ParameterObject
+    | DereferencedOpenAPIV3.ParameterObject
+    | DereferencedOpenAPIV2.Parameter;
   export type Parameters =
-    | (OpenAPIV3_1.ParameterObject)[]
-    | (OpenAPIV3.ParameterObject)[]
-    | (OpenAPIV2.Parameter)[];
+    | (DereferencedOpenAPIV3_1.ParameterObject)[]
+    | (DereferencedOpenAPIV3.ParameterObject)[]
+    | (DereferencedOpenAPIV2.Parameter)[];
 
   export interface Request {
     body?: any;
@@ -38,7 +38,7 @@ export namespace DereferencedOpenAPI {
   }
 }
 
-export namespace OpenAPIV3_1 {
+export namespace DereferencedOpenAPIV3_1 {
   type Modify<T, R> = Omit<T, keyof R> & R;
 
   type PathsWebhooksComponents<T extends {} = {}> = {
@@ -48,7 +48,7 @@ export namespace OpenAPIV3_1 {
   };
 
   export type Document<T extends {} = {}> = Modify<
-    Omit<OpenAPIV3.Document<T>, 'paths' | 'components'>,
+    Omit<DereferencedOpenAPIV3.Document<T>, 'paths' | 'components'>,
     {
       info: InfoObject;
       jsonSchemaDialect?: string;
@@ -64,24 +64,24 @@ export namespace OpenAPIV3_1 {
     >;
 
   export type InfoObject = Modify<
-    OpenAPIV3.InfoObject,
+    DereferencedOpenAPIV3.InfoObject,
     {
       summary?: string;
       license?: LicenseObject;
     }
     >;
 
-  export type ContactObject = OpenAPIV3.ContactObject;
+  export type ContactObject = DereferencedOpenAPIV3.ContactObject;
 
   export type LicenseObject = Modify<
-    OpenAPIV3.LicenseObject,
+    DereferencedOpenAPIV3.LicenseObject,
     {
       identifier?: string;
     }
     >;
 
   export type ServerObject = Modify<
-    OpenAPIV3.ServerObject,
+    DereferencedOpenAPIV3.ServerObject,
     {
       url: string;
       description?: string;
@@ -90,7 +90,7 @@ export namespace OpenAPIV3_1 {
     >;
 
   export type ServerVariableObject = Modify<
-    OpenAPIV3.ServerVariableObject,
+    DereferencedOpenAPIV3.ServerVariableObject,
     {
       enum?: [string, ...string[]];
     }
@@ -103,7 +103,7 @@ export namespace OpenAPIV3_1 {
 
 
   export type PathItemObject<T extends {} = {}> = Modify<
-    OpenAPIV3.PathItemObject<T>,
+    DereferencedOpenAPIV3.PathItemObject<T>,
     {
       servers?: ServerObject[];
       parameters?: ( ParameterObject)[];
@@ -114,7 +114,7 @@ export namespace OpenAPIV3_1 {
     };
 
   export type OperationObject<T extends {} = {}> = Modify<
-    OpenAPIV3.OperationObject<T>,
+    DereferencedOpenAPIV3.OperationObject<T>,
     {
       parameters?: ( ParameterObject)[];
       requestBody?:  RequestBodyObject;
@@ -125,19 +125,19 @@ export namespace OpenAPIV3_1 {
     > &
     T;
 
-  export type ExternalDocumentationObject = OpenAPIV3.ExternalDocumentationObject;
+  export type ExternalDocumentationObject = DereferencedOpenAPIV3.ExternalDocumentationObject;
 
-  export type ParameterObject = OpenAPIV3.ParameterObject;
+  export type ParameterObject = DereferencedOpenAPIV3.ParameterObject;
 
-  export type HeaderObject = OpenAPIV3.HeaderObject;
+  export type HeaderObject = DereferencedOpenAPIV3.HeaderObject;
 
-  export type ParameterBaseObject = OpenAPIV3.ParameterBaseObject;
+  export type ParameterBaseObject = DereferencedOpenAPIV3.ParameterBaseObject;
 
   export type NonArraySchemaObjectType =
-    | OpenAPIV3.NonArraySchemaObjectType
+    | DereferencedOpenAPIV3.NonArraySchemaObjectType
     | 'null';
 
-  export type ArraySchemaObjectType = OpenAPIV3.ArraySchemaObjectType;
+  export type ArraySchemaObjectType = DereferencedOpenAPIV3.ArraySchemaObjectType;
 
   /**
    * There is no way to tell typescript to require items when type is either 'array' or array containing 'array' type
@@ -164,9 +164,9 @@ export namespace OpenAPIV3_1 {
   }
 
   export type BaseSchemaObject = Modify<
-    Omit<OpenAPIV3.BaseSchemaObject, 'nullable'>,
+    Omit<DereferencedOpenAPIV3.BaseSchemaObject, 'nullable'>,
     {
-      examples?: OpenAPIV3.BaseSchemaObject['example'][];
+      examples?: DereferencedOpenAPIV3.BaseSchemaObject['example'][];
       exclusiveMinimum?: boolean | number;
       exclusiveMaximum?: boolean | number;
       contentMediaType?: string;
@@ -186,24 +186,24 @@ export namespace OpenAPIV3_1 {
     }
     >;
 
-  export type DiscriminatorObject = OpenAPIV3.DiscriminatorObject;
+  export type DiscriminatorObject = DereferencedOpenAPIV3.DiscriminatorObject;
 
-  export type XMLObject = OpenAPIV3.XMLObject;
+  export type XMLObject = DereferencedOpenAPIV3.XMLObject;
 
-  export type ExampleObject = OpenAPIV3.ExampleObject;
+  export type ExampleObject = DereferencedOpenAPIV3.ExampleObject;
 
   export type MediaTypeObject = Modify<
-    OpenAPIV3.MediaTypeObject,
+    DereferencedOpenAPIV3.MediaTypeObject,
     {
       schema?: SchemaObject ;
       examples?: Record<string,  ExampleObject>;
     }
     >;
 
-  export type EncodingObject = OpenAPIV3.EncodingObject;
+  export type EncodingObject = DereferencedOpenAPIV3.EncodingObject;
 
   export type RequestBodyObject = Modify<
-    OpenAPIV3.RequestBodyObject,
+    DereferencedOpenAPIV3.RequestBodyObject,
     {
       content: { [media: string]: MediaTypeObject };
     }
@@ -215,7 +215,7 @@ export namespace OpenAPIV3_1 {
     >;
 
   export type ResponseObject = Modify<
-    OpenAPIV3.ResponseObject,
+    DereferencedOpenAPIV3.ResponseObject,
     {
       headers?: { [header: string]:  HeaderObject };
       content?: { [media: string]: MediaTypeObject };
@@ -224,7 +224,7 @@ export namespace OpenAPIV3_1 {
     >;
 
   export type LinkObject = Modify<
-    OpenAPIV3.LinkObject,
+    DereferencedOpenAPIV3.LinkObject,
     {
       server?: ServerObject;
     }
@@ -232,10 +232,10 @@ export namespace OpenAPIV3_1 {
 
   export type CallbackObject = Record<string, PathItemObject >;
 
-  export type SecurityRequirementObject = OpenAPIV3.SecurityRequirementObject;
+  export type SecurityRequirementObject = DereferencedOpenAPIV3.SecurityRequirementObject;
 
   export type ComponentsObject = Modify<
-    OpenAPIV3.ComponentsObject,
+    DereferencedOpenAPIV3.ComponentsObject,
     {
       schemas?: Record<string, SchemaObject>;
       responses?: Record<string,  ResponseObject>;
@@ -250,20 +250,20 @@ export namespace OpenAPIV3_1 {
     }
     >;
 
-  export type SecuritySchemeObject = OpenAPIV3.SecuritySchemeObject;
+  export type SecuritySchemeObject = DereferencedOpenAPIV3.SecuritySchemeObject;
 
-  export type HttpSecurityScheme = OpenAPIV3.HttpSecurityScheme;
+  export type HttpSecurityScheme = DereferencedOpenAPIV3.HttpSecurityScheme;
 
-  export type ApiKeySecurityScheme = OpenAPIV3.ApiKeySecurityScheme;
+  export type ApiKeySecurityScheme = DereferencedOpenAPIV3.ApiKeySecurityScheme;
 
-  export type OAuth2SecurityScheme = OpenAPIV3.OAuth2SecurityScheme;
+  export type OAuth2SecurityScheme = DereferencedOpenAPIV3.OAuth2SecurityScheme;
 
-  export type OpenIdSecurityScheme = OpenAPIV3.OpenIdSecurityScheme;
+  export type OpenIdSecurityScheme = DereferencedOpenAPIV3.OpenIdSecurityScheme;
 
-  export type TagObject = OpenAPIV3.TagObject;
+  export type TagObject = DereferencedOpenAPIV3.TagObject;
 }
 
-export namespace OpenAPIV3 {
+export namespace DereferencedOpenAPIV3 {
   export interface Document<T extends {} = {}> {
     openapi: string;
     info: InfoObject;
@@ -570,7 +570,7 @@ export namespace OpenAPIV3 {
   }
 }
 
-export namespace OpenAPIV2 {
+export namespace DereferencedOpenAPIV2 {
   export interface Document<T extends {} = {}> {
     basePath?: string;
     consumes?: MimeTypes;

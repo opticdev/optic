@@ -1,7 +1,8 @@
 import { OpenAPITraverser } from './openapi3/implementations/openapi3/openapi-traverser';
 import { OpenAPIV3 } from 'openapi-types';
 import { factsToChangelog } from './openapi3/sdk/facts-to-changelog';
-export { DereferencedOpenAPI } from './flat-openapi-types'
+export { DereferencedOpenAPIV2, DereferencedOpenAPIV3, DereferencedOpenAPIV3_1 } from './flat-openapi-types'
+
 import {
   ConceptualLocation,
   IChange,
@@ -43,6 +44,7 @@ import {
   isFactOrChangeVariant,
 } from './openapi3/sdk/isType';
 import { sourcemapReader } from './openapi3/implementations/openapi3/sourcemap-reader';
+import { DereferencedOpenAPIV3 } from './flat-openapi-types';
 
 export { defaultEmptySpec } from './openapi3/constants';
 export * from './ci-types';
