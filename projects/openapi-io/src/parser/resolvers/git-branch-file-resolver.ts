@@ -1,7 +1,8 @@
 import { ono } from '@jsdevtools/ono';
 import { ResolverError } from '@apidevtools/json-schema-ref-parser';
-const url = require('@apidevtools/json-schema-ref-parser/lib/util/url')
-import path from 'path';
+const url = require('@apidevtools/json-schema-ref-parser/lib/util/url');
+// need to work with posix versions for git
+import { posix as path } from 'path';
 import { exec } from 'child_process';
 
 import { ExternalRefHandler } from '../types';
@@ -35,7 +36,10 @@ export const gitBranchResolver = (
         );
       } catch (err) {
         reject(
-          new ResolverError(ono(err as any, `Error opening file "${toGit}"`), toGit)
+          new ResolverError(
+            ono(err as any, `Error opening file "${toGit}"`),
+            toGit
+          )
         );
       }
     });
