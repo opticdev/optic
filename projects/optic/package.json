@@ -61,7 +61,7 @@
     "bottleneck": "^2.19.5",
     "chalk": "^4.1.2",
     "commander": "^9.4.1",
-    "dotenv": "^16.0.2",
+    "dotenv": "^16.0.3",
     "is-url": "^1.2.4",
     "js-yaml": "^4.1.0",
     "json-stable-stringify": "^1.0.1",
