@@ -16,3 +16,11 @@ it('can relativize a deep windows path', () => {
     )
   ).toMatchInlineSnapshot(`"todo/specs/a-service.yaml"`);
 });
+it(' windows path', () => {
+  expect(
+    filePathToGitPath(
+      'C:Users/aidancunniffe/Desktop/openapi-demo',
+      'C:Users/aidancunniffe/Desktop/openapi-demo/todo-api.yaml'
+    )
+  ).toMatchInlineSnapshot(`"todo-api.yaml"`);
+});

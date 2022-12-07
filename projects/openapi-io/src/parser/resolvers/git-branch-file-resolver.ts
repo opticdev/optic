@@ -18,7 +18,12 @@ export const gitBranchResolver = (
   },
   read(file) {
     return new Promise((resolve, reject) => {
+      console.log('file url', file.url);
+      console.log('git base', gitBaseRepo);
+      console.log('branch', branch);
+
       const toGit = filePathToGitPath(gitBaseRepo, file.url);
+      console.log('to git computed', toGit);
       const command = `git show ${branch}:${toGit}`;
       try {
         exec(
