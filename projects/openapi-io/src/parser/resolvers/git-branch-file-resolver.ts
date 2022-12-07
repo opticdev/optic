@@ -6,7 +6,6 @@ import path from 'upath';
 import { exec } from 'child_process';
 
 import { ExternalRefHandler } from '../types';
-import exp from 'constants';
 
 export const gitBranchResolver = (
   gitBaseRepo: string,
