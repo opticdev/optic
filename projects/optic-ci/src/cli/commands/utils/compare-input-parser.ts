@@ -32,7 +32,7 @@ export function parseSpecVersion(
     if (raw.includes(':') && !(raw.startsWith('C:') || raw.startsWith('D:'))) {
       const index = raw.indexOf(':');
       const rev = raw.substring(0, index);
-      const name = raw.substring(index);
+      const name = raw.substring(index + 1);
 
       // if (!rev || !name) throw new Error("invalid git rev:name input " + raw);
       return {
