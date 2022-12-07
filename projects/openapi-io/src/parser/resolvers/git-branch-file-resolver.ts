@@ -6,6 +6,7 @@ import path from 'upath';
 import { exec } from 'child_process';
 
 import { ExternalRefHandler } from '../types';
+import exp from 'constants';
 
 export const gitBranchResolver = (
   gitBaseRepo: string,
@@ -17,8 +18,8 @@ export const gitBranchResolver = (
   },
   read(file) {
     return new Promise((resolve, reject) => {
-      const toGit = path.relative(gitBaseRepo, file.url);
-      const command = `git show ${branch}:${path.toUnix(toGit)}`;
+      const toGit = filePathToGitPath(gitBaseRepo, file.url);
+      const command = `git show ${branch}:${toGit}`;
       try {
         exec(
           command,
@@ -45,3 +46,11 @@ export const gitBranchResolver = (
     });
   },
 });
+
+export function filePathToGitPath(
+  gitBaseRepo: string,
+  filePath: string
+): string {
+  const toGit = path.relative(gitBaseRepo, filePath);
+  return path.toUnix(toGit);
+}
