@@ -29,8 +29,11 @@ export function parseSpecVersion(
   defaultSpec: OpenAPIV3.Document
 ): SpecFromInput {
   if (raw) {
-    if (raw.includes(':')) {
-      const [rev, name] = raw.split(':');
+    if (raw.includes(':') && !(raw.startsWith('C:') || raw.startsWith('D:'))) {
+      const index = raw.indexOf(':');
+      const rev = raw.substring(0, index);
+      const name = raw.substring(index);
+
       // if (!rev || !name) throw new Error("invalid git rev:name input " + raw);
       return {
         from: SpecVersionFrom.git,
