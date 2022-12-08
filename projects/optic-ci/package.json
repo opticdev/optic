@@ -2,7 +2,7 @@
   "name": "@useoptic/optic-ci",
   "license": "MIT",
   "packageManager": "yarn@3.0.2",
-  "version": "0.35.6",
+  "version": "0.35.7",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -39,7 +39,7 @@
     "@useoptic/standard-rulesets": "workspace:*",
     "babel-jest": "^27.5.1",
     "babel-plugin-transform-inline-environment-variables": "^0.4.3",
-    "dotenv": "^16.0.2",
+    "dotenv": "^16.0.3",
     "jest": "^27.5.1",
     "prettier": "^2.4.1",
     "ts-node": "^10.8.0",
