@@ -10,6 +10,7 @@ import {
   specFromInputToResults,
 } from '@useoptic/optic-ci/build/cli/commands/utils';
 import { validateOpenApiV3Document } from '@useoptic/openapi-io';
+import { filePathToGitPath } from '@useoptic/openapi-io';
 
 const exec = promisify(callbackExec);
 
@@ -39,8 +40,8 @@ export const parseFilesFromRef = async (
   pathFromGitRoot: string;
 }> => {
   const absolutePath = path.join(rootGitPath, filePath);
-  const pathFromGitRoot = filePath.replace(/^\.(\/|\\)/, '');
-  const fileExistsOnBasePromise = exec(`git show ${base}:${pathFromGitRoot}`)
+  const gitFileName = filePathToGitPath(rootGitPath, filePath);
+  const fileExistsOnBasePromise = exec(`git show ${base}:${gitFileName}`)
     .then(() => true)
     .catch(() => false);
   const fileExistsOnHeadPromise = fs
@@ -56,7 +57,7 @@ export const parseFilesFromRef = async (
   return {
     baseFile: await specFromInputToResults(
       parseSpecVersion(
-        existsOnBase ? `${base}:${pathFromGitRoot}` : undefined,
+        existsOnBase ? `${base}:${gitFileName}` : undefined,
         defaultEmptySpec
       ),
       process.cwd()
@@ -74,6 +75,6 @@ export const parseFilesFromRef = async (
       validateOpenApiV3Document(results.jsonLike, results.sourcemap);
       return results;
     }),
-    pathFromGitRoot,
+    pathFromGitRoot: gitFileName,
   };
 };
