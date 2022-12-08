@@ -1584,12 +1584,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.17.2":
-  version: 7.17.2
-  resolution: "@babel/runtime@npm:7.17.2"
+"@babel/runtime@npm:^7.20.6":
+  version: 7.20.6
+  resolution: "@babel/runtime@npm:7.20.6"
   dependencies:
-    regenerator-runtime: ^0.13.4
-  checksum: a48702d271ecc59c09c397856407afa29ff980ab537b3da58eeee1aeaa0f545402d340a1680c9af58aec94dfdcbccfb6abb211991b74686a86d03d3f6956cacd
+    regenerator-runtime: ^0.13.11
+  checksum: 42a8504db21031b1859fbc0f52d698a3d2f5ada9519eb76c6f96a7e657d8d555732a18fe71ef428a67cc9fc81ca0d3562fb7afdc70549c5fec343190cbaa9b03
   languageName: node
   linkType: hard
 
@@ -3531,7 +3531,7 @@ __metadata:
     "@babel/preset-env": ^7.17.0
     "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
-    "@babel/runtime": ^7.17.2
+    "@babel/runtime": ^7.20.6
     "@octokit/rest": ^18.12.0
     "@sentry/node": ^7.10.0
     "@stoplight/spectral-core": ^1.8.1
@@ -3584,7 +3584,7 @@ __metadata:
     "@babel/preset-env": ^7.17.0
     "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
-    "@babel/runtime": ^7.17.2
+    "@babel/runtime": ^7.20.6
     "@octokit/rest": ^18.12.0
     "@sentry/node": ^7.10.0
     "@stoplight/spectral-core": ^1.8.1
@@ -9076,6 +9076,13 @@ __metadata:
   version: 1.4.2
   resolution: "regenerate@npm:1.4.2"
   checksum: 3317a09b2f802da8db09aa276e469b57a6c0dd818347e05b8862959c6193408242f150db5de83c12c3fa99091ad95fb42a6db2c3329bfaa12a0ea4cbbeb30cb0
+  languageName: node
+  linkType: hard
+
+"regenerator-runtime@npm:^0.13.11":
+  version: 0.13.11
+  resolution: "regenerator-runtime@npm:0.13.11"
+  checksum: 27481628d22a1c4e3ff551096a683b424242a216fee44685467307f14d58020af1e19660bf2e26064de946bad7eff28950eae9f8209d55723e2d9351e632bbb4
   languageName: node
   linkType: hard
 

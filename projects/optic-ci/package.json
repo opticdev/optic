@@ -46,7 +46,7 @@
     "typescript": "^4.7.2"
   },
   "dependencies": {
-    "@babel/runtime": "^7.17.2",
+    "@babel/runtime": "^7.20.6",
     "@octokit/rest": "^18.12.0",
     "@sentry/node": "^7.10.0",
     "@stoplight/spectral-core": "^1.8.1",
