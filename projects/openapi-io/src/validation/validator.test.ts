@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 
-import OpenAPISchemaValidator, { validateOpenApiV3Document } from './validator';
+import { validateOpenApiV3Document } from './validator';
 import { parseOpenAPIWithSourcemap } from '@useoptic/openapi-io';
 import path from 'path';
 import { defaultEmptySpec } from '@useoptic/openapi-utilities';
@@ -20,14 +20,53 @@ test('valid open 3.1 api document should not raise errors', async () => {
   );
 });
 
-test('open api doc with no path should throw an error', () => {
-  expect(() => {
-    validateOpenApiV3Document({
-      openapi: '3.1.3',
-      info: { version: '0.0.0', title: 'Empty' },
-    });
-  }).toThrowError();
-});
+
+describe('error cases with messages', () => {
+  test('open api doc with no path should throw an error', () => {
+    expect(() => {
+      validateOpenApiV3Document({
+        openapi: '3.1.3',
+        info: { version: '0.0.0', title: 'Empty' },
+      });
+    }).toThrowErrorMatchingSnapshot();
+  });
+  
+  test('open api doc with no description in response', () => {
+    expect(() => {
+      validateOpenApiV3Document({
+        openapi: '3.1.3',
+        info: { version: '0.0.0', title: 'Empty' },
+        paths: {
+          '/example': {
+            get: {
+              response: {
+                '200': {}
+              }
+            }
+          }
+        }
+      });
+    }).toThrowErrorMatchingSnapshot();
+  })
+
+  test('additional properties in invalid place', () => {
+    expect(() => {
+      validateOpenApiV3Document({
+        openapi: '3.1.3',
+        info: { version: '0.0.0', title: 'Empty', badproperty: ':('},
+        paths: {
+          '/example': {
+            get: {
+              response: {
+                '200': {}
+              }
+            }
+          }
+        }
+      });
+    }).toThrowErrorMatchingSnapshot();
+  })
+})
 
 test('open api doc with extra custom parameters', () => {
   validateOpenApiV3Document({
@@ -152,15 +191,50 @@ test('processValidatorErrors', () => {
   }).toThrowErrorMatchingSnapshot();
 });
 
-test('processValidatorErrors with sourcemap', async () => {
+test('processValidatorErrors attaches the sourcemap', async () => {
   const spec = await parseOpenAPIWithSourcemap(
     path.join(__dirname, '../../inputs/openapi3/broken-open-api.json')
   );
+
+  try {
+    validateOpenApiV3Document(spec.jsonLike, spec.sourcemap);
+  } catch (error) {
+    const filterOutFileNames = error.message
+      .split('\n')
+      .filter((i) => !i.startsWith('[90m/'))
+      .join('\n');
+
+    expect(filterOutFileNames).toMatchSnapshot();
+  }
+});
+
+test('advanced validators run and append their results', () => {
+  const json: any = {
+    ...defaultEmptySpec,
+    paths: {
+      '/api/users/{userId}': {
+        get: {
+          responses: {
+            '200': {
+              description: 'hello',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    oneOf: [],
+                    anyOf: [],
+                    items: [],
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+
   expect(() => {
-    validateOpenApiV3Document(
-      spec.jsonLike,
-      new OpenAPISchemaValidator(),
-      spec.sourcemap
-    );
+    validateOpenApiV3Document(json);
   }).toThrowErrorMatchingSnapshot();
 });

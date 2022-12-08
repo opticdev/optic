@@ -1584,12 +1584,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.17.2":
-  version: 7.17.2
-  resolution: "@babel/runtime@npm:7.17.2"
+"@babel/runtime@npm:^7.20.6":
+  version: 7.20.6
+  resolution: "@babel/runtime@npm:7.20.6"
   dependencies:
-    regenerator-runtime: ^0.13.4
-  checksum: a48702d271ecc59c09c397856407afa29ff980ab537b3da58eeee1aeaa0f545402d340a1680c9af58aec94dfdcbccfb6abb211991b74686a86d03d3f6956cacd
+    regenerator-runtime: ^0.13.11
+  checksum: 42a8504db21031b1859fbc0f52d698a3d2f5ada9519eb76c6f96a7e657d8d555732a18fe71ef428a67cc9fc81ca0d3562fb7afdc70549c5fec343190cbaa9b03
   languageName: node
   linkType: hard
 
@@ -3369,7 +3369,7 @@ __metadata:
     "@useoptic/json-pointer-helpers": "workspace:*"
     "@useoptic/openapi-io": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"
-    ajv-formats: ^2.1.1
+    ajv-formats: ~2.1.0
     analytics-node: ^6.2.0
     async-exit-hook: ^2.0.1
     axax: ^0.2.2
@@ -3439,9 +3439,9 @@ __metadata:
     "@types/semver": ^7.3.10
     "@useoptic/json-pointer-helpers": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"
-    ajv: 8.11.0
-    ajv-errors: ^3.0.0
-    ajv-formats: ^2.1.1
+    ajv: ^8.6.0
+    ajv-errors: ~3.0.0
+    ajv-formats: ~2.1.0
     babel-jest: ^27.5.1
     bottleneck: ^2.19.5
     chai: ^4.3.4
@@ -3449,7 +3449,7 @@ __metadata:
     copyfiles: ^2.4.1
     crypto-js: ^4.1.1
     fast-deep-equal: ^3.1.3
-    fast-json-patch: ^3.1.0
+    fast-json-patch: ^3.1.1
     fs-extra: ^10.1.0
     is-url: ^1.2.4
     jest: ^27.5.1
@@ -3466,6 +3466,7 @@ __metadata:
     ts-invariant: ^0.9.3
     ts-node: ^10.3.1
     typescript: ^4.4.4
+    upath: ^2.0.1
     yaml-ast-parser: ^0.0.43
   languageName: unknown
   linkType: soft
@@ -3495,9 +3496,9 @@ __metadata:
     "@types/node": ^17.0.15
     "@types/semver": ^7.3.10
     "@useoptic/json-pointer-helpers": "workspace:*"
-    ajv: 8.11.0
-    ajv-errors: ^3.0.0
-    ajv-formats: ^2.1.1
+    ajv: ^8.6.0
+    ajv-errors: ~3.0.0
+    ajv-formats: ~2.1.0
     analytics-node: ^6.2.0
     babel-jest: ^27.5.1
     chalk: ^4.1.2
@@ -3530,7 +3531,7 @@ __metadata:
     "@babel/preset-env": ^7.17.0
     "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
-    "@babel/runtime": ^7.17.2
+    "@babel/runtime": ^7.20.6
     "@octokit/rest": ^18.12.0
     "@sentry/node": ^7.10.0
     "@stoplight/spectral-core": ^1.8.1
@@ -3548,13 +3549,13 @@ __metadata:
     "@useoptic/openapi-utilities": "workspace:*"
     "@useoptic/rulesets-base": "workspace:*"
     "@useoptic/standard-rulesets": "workspace:*"
-    ajv: ^8.11.0
+    ajv: ^8.6.0
     babel-jest: ^27.5.1
     babel-plugin-transform-inline-environment-variables: ^0.4.3
     bottleneck: ^2.19.5
     chalk: ^4.1.2
     commander: ^9.4.1
-    dotenv: ^16.0.2
+    dotenv: ^16.0.3
     is-url: ^1.2.4
     jest: ^27.5.1
     js-yaml: ^4.1.0
@@ -3583,7 +3584,7 @@ __metadata:
     "@babel/preset-env": ^7.17.0
     "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
-    "@babel/runtime": ^7.17.2
+    "@babel/runtime": ^7.20.6
     "@octokit/rest": ^18.12.0
     "@sentry/node": ^7.10.0
     "@stoplight/spectral-core": ^1.8.1
@@ -3604,13 +3605,13 @@ __metadata:
     "@useoptic/optic-ci": "workspace:*"
     "@useoptic/rulesets-base": "workspace:*"
     "@useoptic/standard-rulesets": "workspace:*"
-    ajv: ^8.11.0
+    ajv: ^8.6.0
     babel-jest: ^27.5.1
     babel-plugin-transform-inline-environment-variables: ^0.4.3
     bottleneck: ^2.19.5
     chalk: ^4.1.2
     commander: ^9.4.1
-    dotenv: ^16.0.2
+    dotenv: ^16.0.3
     is-url: ^1.2.4
     jest: ^27.5.1
     js-yaml: ^4.1.0
@@ -3680,8 +3681,8 @@ __metadata:
     "@types/node": ^17.0.15
     "@useoptic/openapi-utilities": "workspace:*"
     "@useoptic/rulesets-base": "workspace:*"
-    ajv: ^8.11.0
-    ajv-formats: 2.1.1
+    ajv: ^8.6.0
+    ajv-formats: ~2.1.0
     babel-jest: ^27.5.1
     jest: ^27.5.1
     prettier: ^2.4.1
@@ -3819,7 +3820,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv-errors@npm:^3.0.0, ajv-errors@npm:~3.0.0":
+"ajv-errors@npm:~3.0.0":
   version: 3.0.0
   resolution: "ajv-errors@npm:3.0.0"
   peerDependencies:
@@ -3828,7 +3829,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv-formats@npm:2.1.1, ajv-formats@npm:^2.1.1, ajv-formats@npm:~2.1.0":
+"ajv-formats@npm:^2.1.1, ajv-formats@npm:~2.1.0":
   version: 2.1.1
   resolution: "ajv-formats@npm:2.1.1"
   dependencies:
@@ -3842,7 +3843,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:8.11.0, ajv@npm:^8.0.0, ajv@npm:^8.11.0, ajv@npm:^8.6.0, ajv@npm:^8.6.3, ajv@npm:^8.8.2":
+"ajv@npm:^8.0.0, ajv@npm:^8.6.0, ajv@npm:^8.6.3, ajv@npm:^8.8.2":
   version: 8.11.0
   resolution: "ajv@npm:8.11.0"
   dependencies:
@@ -5375,10 +5376,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.0.2":
-  version: 16.0.2
-  resolution: "dotenv@npm:16.0.2"
-  checksum: ca8f9ca2d67929c7771069f4c31b4e46b9932621009e658e5afd655dde2d69b77642bf36dbc9e72bc170523dfd908a9ee41c26f034c1fdc605ace3b1b4b10faf
+"dotenv@npm:^16.0.3":
+  version: 16.0.3
+  resolution: "dotenv@npm:16.0.3"
+  checksum: afcf03f373d7a6d62c7e9afea6328e62851d627a4e73f2e12d0a8deae1cd375892004f3021883f8aec85932cd2834b091f568ced92b4774625b321db83b827f8
   languageName: node
   linkType: hard
 
@@ -5785,10 +5786,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-json-patch@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "fast-json-patch@npm:3.1.0"
-  checksum: bad25a6121650d5e138fba787f8e8c6c738779a9a84a978513261110632b1450d96b92a7fedd17188ae847cd5a2b0560725b400a0214aefd3c6506e1be36c66e
+"fast-json-patch@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "fast-json-patch@npm:3.1.1"
+  checksum: c4525b61b2471df60d4b025b4118b036d99778a93431aa44d1084218182841d82ce93056f0f3bbd731a24e6a8e69820128adf1873eb2199a26c62ef58d137833
   languageName: node
   linkType: hard
 
@@ -9078,6 +9079,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"regenerator-runtime@npm:^0.13.11":
+  version: 0.13.11
+  resolution: "regenerator-runtime@npm:0.13.11"
+  checksum: 27481628d22a1c4e3ff551096a683b424242a216fee44685467307f14d58020af1e19660bf2e26064de946bad7eff28950eae9f8209d55723e2d9351e632bbb4
+  languageName: node
+  linkType: hard
+
 "regenerator-runtime@npm:^0.13.4":
   version: 0.13.9
   resolution: "regenerator-runtime@npm:0.13.9"
@@ -10386,6 +10394,13 @@ __metadata:
   version: 4.0.0
   resolution: "untildify@npm:4.0.0"
   checksum: 39ced9c418a74f73f0a56e1ba4634b4d959422dff61f4c72a8e39f60b99380c1b45ed776fbaa0a4101b157e4310d873ad7d114e8534ca02609b4916bb4187fb9
+  languageName: node
+  linkType: hard
+
+"upath@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "upath@npm:2.0.1"
+  checksum: 2db04f24a03ef72204c7b969d6991abec9e2cb06fb4c13a1fd1c59bc33b46526b16c3325e55930a11ff86a77a8cbbcda8f6399bf914087028c5beae21ecdb33c
   languageName: node
   linkType: hard
 
