@@ -3,7 +3,7 @@ import { TestHelpers } from '@useoptic/rulesets-base';
 import { BreakingChangesRuleset } from '../index';
 
 describe('breaking changes ruleset - response status code removal', () => {
-  test('status code removal', () => {
+  test('status code removal', async () => {
     const beforeJson: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -28,7 +28,7 @@ describe('breaking changes ruleset - response status code removal', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs(
+    const results = await TestHelpers.runRulesWithInputs(
       [new BreakingChangesRuleset()],
       beforeJson,
       afterJson

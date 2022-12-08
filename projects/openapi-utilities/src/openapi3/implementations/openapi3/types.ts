@@ -23,7 +23,7 @@ export type RuleRunner = {
     changelog: IChange[];
     nextJsonLike: OpenAPIV3.Document;
     currentJsonLike: OpenAPIV3.Document;
-  }) => Result[];
+  }) => Promise<Result[]>;
 };
 
 export type JsonPath = string;

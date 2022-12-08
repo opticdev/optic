@@ -4,7 +4,7 @@ import { OperationRule, Ruleset } from '../rules';
 import { createRuleInputs } from '../test-helpers';
 
 describe('ruleset', () => {
-  test('matches rules based on a combination of ruleset and rule', () => {
+  test('matches rules based on a combination of ruleset and rule', async () => {
     const json: OpenAPIV3.Document = {
       ...defaultEmptySpec,
       paths: {
@@ -47,7 +47,7 @@ describe('ruleset', () => {
       ],
     });
     const ruleRunner = new RuleRunner([ruleset]);
-    ruleRunner.runRulesWithFacts(createRuleInputs(json, json));
+    await ruleRunner.runRulesWithFacts(createRuleInputs(json, json));
 
     expect(mockFn.mock.calls.length).toBe(1);
     expect(mockFn.mock.calls[0][0].method).toBe('get');
@@ -66,7 +66,7 @@ describe('ruleset', () => {
       },
     };
 
-    test('ruleset doclink without rule doclink', () => {
+    test('ruleset doclink without rule doclink', async () => {
       const expectedDoclink = 'hello';
       const ruleset = new Ruleset({
         name: 'ruleset for get',
@@ -84,13 +84,13 @@ describe('ruleset', () => {
         ],
       });
       const ruleRunner = new RuleRunner([ruleset]);
-      const results = ruleRunner.runRulesWithFacts(
+      const results = await ruleRunner.runRulesWithFacts(
         createRuleInputs(json, json)
       );
       expect(results[0].docsLink).toBe(expectedDoclink);
     });
 
-    test('ruleset doclink with rule doclink', () => {
+    test('ruleset doclink with rule doclink', async () => {
       const expectedDoclink = 'hello';
       const ruleset = new Ruleset({
         name: 'ruleset for get',
@@ -109,7 +109,7 @@ describe('ruleset', () => {
         ],
       });
       const ruleRunner = new RuleRunner([ruleset]);
-      const results = ruleRunner.runRulesWithFacts(
+      const results = await ruleRunner.runRulesWithFacts(
         createRuleInputs(json, json)
       );
       expect(results[0].docsLink).toBe(expectedDoclink);

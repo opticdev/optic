@@ -5,6 +5,7 @@ import { ResponseBodyRule } from './response-body-rule';
 import { SpecificationRule } from './specification-rule';
 import { PropertyRule } from './property-rule';
 import { RuleContext } from '../types';
+import { ExternalRuleBase } from './external-rule-base';
 
 export type Rule =
   | SpecificationRule
@@ -13,6 +14,8 @@ export type Rule =
   | ResponseRule
   | ResponseBodyRule
   | PropertyRule;
+
+export type ExternalRule = ExternalRuleBase;
 
 export type RuleNames<R extends Rule[]> = R[number]['name'];
 

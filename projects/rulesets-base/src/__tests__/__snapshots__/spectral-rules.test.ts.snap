@@ -1,0 +1,256 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SpectralRule lifecycle rules can be applied to spectral rules 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "description": "hello",
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+    },
+    "condition": "operation-operationId",
+    "docsLink": undefined,
+    "error": "Operation must have \\"operationId\\".",
+    "exempted": false,
+    "isMust": true,
+    "isShould": false,
+    "passed": false,
+    "where": "added ",
+  },
+  Object {
+    "change": Object {
+      "added": Object {
+        "description": "hello",
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+    },
+    "condition": "operation-tags",
+    "docsLink": undefined,
+    "error": "Operation must have non-empty \\"tags\\" array.",
+    "exempted": false,
+    "isMust": true,
+    "isShould": false,
+    "passed": false,
+    "where": "added ",
+  },
+  Object {
+    "change": Object {
+      "added": Object {
+        "description": "hello",
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+    },
+    "condition": "operation-success-response",
+    "docsLink": undefined,
+    "error": "Operation must have at least one \\"2xx\\" or \\"3xx\\" response.",
+    "exempted": false,
+    "isMust": true,
+    "isShould": false,
+    "passed": false,
+    "where": "added ",
+  },
+]
+`;
+
+exports[`SpectralRule lifecycle rules can be applied to spectral rules 2`] = `Array []`;
+
+exports[`SpectralRule spectral rules run 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "value": Object {
+        "description": "hello",
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": "operation-operationId",
+    "docsLink": undefined,
+    "error": "Operation must have \\"operationId\\".",
+    "exempted": false,
+    "isMust": true,
+    "isShould": false,
+    "passed": false,
+    "where": "always ",
+  },
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "value": Object {
+        "description": "hello",
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": "operation-tags",
+    "docsLink": undefined,
+    "error": "Operation must have non-empty \\"tags\\" array.",
+    "exempted": false,
+    "isMust": true,
+    "isShould": false,
+    "passed": false,
+    "where": "always ",
+  },
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "value": Object {
+        "description": "hello",
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": "operation-success-response",
+    "docsLink": undefined,
+    "error": "Operation must have at least one \\"2xx\\" or \\"3xx\\" response.",
+    "exempted": false,
+    "isMust": true,
+    "isShould": false,
+    "passed": false,
+    "where": "always ",
+  },
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {},
+        "conceptualPath": Array [],
+        "jsonPath": "",
+        "kind": "specification",
+      },
+      "value": Object {
+        "info": Object {
+          "title": "Empty",
+          "version": "0.0.0",
+        },
+        "openapi": "3.1.0",
+        "servers": Array [
+          Object {
+            "url": "http://optic.com",
+          },
+        ],
+      },
+    },
+    "condition": "info-contact",
+    "docsLink": undefined,
+    "error": "Info object must have \\"contact\\" object.",
+    "exempted": false,
+    "isMust": true,
+    "isShould": false,
+    "passed": false,
+    "where": "always ",
+  },
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {},
+        "conceptualPath": Array [],
+        "jsonPath": "",
+        "kind": "specification",
+      },
+      "value": Object {
+        "info": Object {
+          "title": "Empty",
+          "version": "0.0.0",
+        },
+        "openapi": "3.1.0",
+        "servers": Array [
+          Object {
+            "url": "http://optic.com",
+          },
+        ],
+      },
+    },
+    "condition": "info-description",
+    "docsLink": undefined,
+    "error": "Info \\"description\\" must be present and non-empty string.",
+    "exempted": false,
+    "isMust": true,
+    "isShould": false,
+    "passed": false,
+    "where": "always ",
+  },
+]
+`;
