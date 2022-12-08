@@ -46,7 +46,9 @@ describe('SpectralRule', () => {
     const spectral = new Spectral();
     spectral.setRuleset(oas as SpectralRulesetDefinition);
 
-    const ruleRunner = new RuleRunner([new SpectralRule(spectral)]);
+    const ruleRunner = new RuleRunner([
+      new SpectralRule({ spectral, name: 'spectral' }),
+    ]);
 
     const results = await ruleRunner.runRulesWithFacts(
       createRuleInputs(specWithLintIssues, specWithLintIssues)
@@ -60,7 +62,7 @@ describe('SpectralRule', () => {
     spectral.setRuleset(oas as SpectralRulesetDefinition);
 
     const ruleRunner = new RuleRunner([
-      new SpectralRule(spectral, { applies: 'added' }),
+      new SpectralRule({ spectral, name: 'spectral', applies: 'added' }),
     ]);
     const resultsAdded = await ruleRunner.runRulesWithFacts(
       createRuleInputs(emptySpec, specWithLintIssues)
@@ -78,7 +80,9 @@ describe('SpectralRule', () => {
     const spectral = new Spectral();
     spectral.setRuleset(oas as SpectralRulesetDefinition);
 
-    const ruleRunner = new RuleRunner([new SpectralRule(spectral)]);
+    const ruleRunner = new RuleRunner([
+      new SpectralRule({ spectral, name: 'spectral' }),
+    ]);
     const results = await ruleRunner.runRulesWithFacts(
       createRuleInputs(specWithExemptions, specWithExemptions)
     );
