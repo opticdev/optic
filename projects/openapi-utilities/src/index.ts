@@ -54,6 +54,12 @@ export * from './ci-types';
 export { generateSpecResults } from './openapi3/implementations/openapi3/generate-spec-results';
 export * from './openapi3/implementations/openapi3/types';
 
+export {
+  getFactForJsonPath,
+  constructFactTree,
+  FactTree,
+} from './openapi3/json-path-interpreters';
+
 export { UserError } from './errors';
 export {
   findOpticCommentId,
