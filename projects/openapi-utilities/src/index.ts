@@ -1,6 +1,12 @@
 import { OpenAPITraverser } from './openapi3/implementations/openapi3/openapi-traverser';
 import { OpenAPIV3 } from 'openapi-types';
 import { factsToChangelog } from './openapi3/sdk/facts-to-changelog';
+export {
+  FlatOpenAPIV2,
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
+} from './flat-openapi-types';
+
 import {
   ConceptualLocation,
   IChange,
