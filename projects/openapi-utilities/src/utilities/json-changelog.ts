@@ -135,7 +135,7 @@ type ChangedNode = {
 
 type OperationChangelog = ChangedNode & {
   parameters: ChangedNode[];
-  requestBody: ChangedNode;
+  requestBody?: ChangedNode;
   responses: ChangedNode[];
 };
 
@@ -149,12 +149,6 @@ export function jsonChangelog(
   const results: JsonChangelog = { operations: [] };
 
   const { changesByEndpoint, specification } = groupedChanges;
-  // for (const specificationChange of specification.changes) {
-  //   // yield* getDetailLogs(specificationChange, {
-  //   //   label: 'specification details:',
-  //   // });
-  //   // yield '';
-  // }
   for (const [_, endpointChange] of changesByEndpoint) {
     results.operations.push(getEndpointLogs(endpointChange));
   }
@@ -208,7 +202,12 @@ function getEndpointLogs(
         })
       : [],
     parameters: parameterChanges,
-    requestBody: getRequestChangeLogs(request),
+    requestBody:
+      request.change?.added ||
+      request.change?.removed ||
+      request.change?.changed
+        ? getRequestChangeLogs(request)
+        : undefined,
     responses: responseChanges,
   };
 
