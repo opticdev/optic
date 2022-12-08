@@ -1,8 +1,53 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`advanced validators run and append their results 1`] = `
+"[31minvalid openapi: [39m[1m[31mmust NOT have fewer than 1 items[39m[22m
+/paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/oneOf
+[31minvalid openapi: [39m[1m[31mmust NOT have fewer than 1 items[39m[22m
+/paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/anyOf
+[31minvalid openapi: [39m[1m[31mmust be object[39m[22m
+/paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/items
+[31minvalid openapi: [39m[1m[31mschema with type \\"object\\" cannot also include keywords: anyOf, items, oneOf[39m[22m
+/paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema"
+`;
+
+exports[`error cases with messages additional properties in invalid place 1`] = `
+"[31minvalid openapi: [39m[1m[31mmust have required property 'responses'[39m[22m
+/paths/~1example/get
+[31minvalid openapi: [39m[1m[31mmust NOT have additional properties[39m[22m
+/info"
+`;
+
+exports[`error cases with messages open api doc with no description in response 1`] = `
+"[31minvalid openapi: [39m[1m[31mmust have required property 'responses'[39m[22m
+/paths/~1example/get"
+`;
+
+exports[`error cases with messages open api doc with no path should throw an error 1`] = `
+"[31minvalid openapi: [39m[1m[31mmust have required property 'paths'[39m[22m
+"
+`;
+
 exports[`processValidatorErrors 1`] = `
 "[31minvalid openapi: [39m[1m[31mmust be object[39m[22m
 /paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/properties/hello/items"
 `;
 
-exports[`processValidatorErrors with sourcemap 1`] = `"validator.validate3_0 is not a function"`;
+exports[`processValidatorErrors attaches the sourcemap 1`] = `
+"[31minvalid openapi: [39m[1m[31mmust be object[39m[22m
+[90m18 |[39m   \\"properties\\": {
+[90m19 |[39m     \\"hello\\": {
+[90m20 |[39m       \\"type\\": \\"array\\",
+[90m21 |[39m [1m[31m      \\"items\\": \\"no\\"[39m[22m
+[90m22 |[39m     }
+[90m23 |[39m   }
+[90m24 |[39m }
+[31minvalid openapi: [39m[1m[31mmust be equal to one of the allowed values[39m[22m
+[90m35 |[39m \\"content\\": {
+[90m36 |[39m   \\"application/json\\": {
+[90m37 |[39m     \\"schema\\": {
+[90m38 |[39m [1m[31m      \\"type\\": \\"not-real\\"[39m[22m
+[90m39 |[39m     }
+[90m40 |[39m   }
+[90m41 |[39m }"
+`;

@@ -16,9 +16,12 @@ import {
 } from './parser/sourcemap';
 import { loadYaml, isYaml, isJson, writeYaml } from './write/index';
 import { validateOpenApiV3Document } from './validation/validator';
+import { ValidationError } from './validation/errors';
 import { checkOpenAPIVersion } from './validation/openapi-versions';
+import { filePathToGitPath } from './parser/resolvers/git-branch-file-resolver';
 
 export {
+  filePathToGitPath,
   loadSpecFromFile,
   inGit,
   loadSpecFromUrl,
@@ -35,6 +38,7 @@ export {
   dereferenceOpenApi,
   ResolverError,
   validateOpenApiV3Document,
+  ValidationError,
   checkOpenAPIVersion,
 };
 

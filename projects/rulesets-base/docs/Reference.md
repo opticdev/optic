@@ -80,22 +80,6 @@ const urlMatcher = new Matcher(
 );
 ```
 
-## Custom context
-
-Custom context can be generated from passing in a function to `optic.config.js`.
-
-```javascript
-// optic.config.js
-module.exports = {
-  generateContext: (details: {fileName: string}) => {
-    value: 123,
-    date: new Date()
-  }
-}
-```
-
-This context will then be accessible under `RuleContext.custom` - [see details](./DataShapes.md#rulecontext)
-
 ## Rule error
 
 The RuleError is used to indicate there was a failed rule in the test runner. RuleError has the options:
