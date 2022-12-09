@@ -1,0 +1,4 @@
+extends: '@test-org/ruleset-id'
+ruleset:
+  - naming:
+      pathComponents: camelCase
