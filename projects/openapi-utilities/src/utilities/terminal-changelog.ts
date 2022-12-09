@@ -204,7 +204,7 @@ function* getResponseChangeLogs(
   }
 
   if (change || headers.changes.size || contentTypes.size) {
-    yield label;
+    yield `${label} ${change?.added ? added : ''}`;
   }
 
   if (change) {
