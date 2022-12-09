@@ -3,7 +3,7 @@ import { TestHelpers } from '@useoptic/rulesets-base';
 import { ExamplesRuleset } from '../index';
 
 describe('fromOpticConfig', () => {
-  test('invalid configuration', () => {
+  test('invalid configuration', async () => {
     const out = ExamplesRuleset.fromOpticConfig({
       require_parameter_examples: 123,
     });
@@ -20,7 +20,7 @@ const requireAll = new ExamplesRuleset({
 });
 
 describe('examples are required ruleset', () => {
-  test('parameters need examples', () => {
+  test('parameters need examples', async () => {
     const input: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -44,7 +44,7 @@ describe('examples are required ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs([requireAll], input, input);
+    const results = await TestHelpers.runRulesWithInputs([requireAll], input, input);
     expect(results.length > 0).toBe(true);
 
     expect(results).toMatchSnapshot();
@@ -69,7 +69,7 @@ describe('examples are required ruleset', () => {
     world: 123,
   };
 
-  test('responses with example top level pass', () => {
+  test('responses with example top level pass', async () => {
     const input: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -90,10 +90,10 @@ describe('examples are required ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs([requireAll], input, input);
+    const results = await TestHelpers.runRulesWithInputs([requireAll], input, input);
     expect(results.filter((i) => !i.passed).length === 0).toBe(true);
   });
-  test('responses without examples error', () => {
+  test('responses without examples error', async () => {
     const input: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -113,13 +113,13 @@ describe('examples are required ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs([requireAll], input, input);
+    const results = await TestHelpers.runRulesWithInputs([requireAll], input, input);
     expect(results.length > 0).toBe(true);
 
     expect(results).toMatchSnapshot();
     expect(results.some((result) => !result.passed)).toBe(true);
   });
-  test('response with examples named pass', () => {
+  test('response with examples named pass', async () => {
     const input: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -144,11 +144,11 @@ describe('examples are required ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs([requireAll], input, input);
+    const results = await TestHelpers.runRulesWithInputs([requireAll], input, input);
     expect(results.filter((i) => !i.passed).length === 0).toBe(true);
   });
 
-  test('request without example errors', () => {
+  test('request without example errors', async () => {
     const input: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -167,14 +167,14 @@ describe('examples are required ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs([requireAll], input, input);
+    const results = await TestHelpers.runRulesWithInputs([requireAll], input, input);
     expect(results.length > 0).toBe(true);
 
     expect(results).toMatchSnapshot();
     expect(results.some((result) => !result.passed)).toBe(true);
   });
 
-  test('request with top level example passes', () => {
+  test('request with top level example passes', async () => {
     const input: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -194,11 +194,11 @@ describe('examples are required ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs([requireAll], input, input);
+    const results = await TestHelpers.runRulesWithInputs([requireAll], input, input);
     expect(results.filter((i) => !i.passed).length === 0).toBe(true);
   });
 
-  test('request with named examples passes', () => {
+  test('request with named examples passes', async () => {
     const input: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -222,7 +222,7 @@ describe('examples are required ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs([requireAll], input, input);
+    const results = await TestHelpers.runRulesWithInputs([requireAll], input, input);
     expect(results.filter((i) => !i.passed).length === 0).toBe(true);
   });
 });

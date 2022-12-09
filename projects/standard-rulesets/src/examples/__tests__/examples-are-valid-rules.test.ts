@@ -3,7 +3,7 @@ import { TestHelpers } from '@useoptic/rulesets-base';
 import { ExamplesRuleset } from '../index';
 
 describe('fromOpticConfig', () => {
-  test('invalid configuration', () => {
+  test('invalid configuration', async () => {
     const out = ExamplesRuleset.fromOpticConfig({
       require_parameter_examples: 123,
     });
@@ -14,7 +14,7 @@ describe('fromOpticConfig', () => {
 });
 
 describe('examples ruleset', () => {
-  test('invalid property example errors', () => {
+  test('invalid property example errors', async () => {
     const input: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -49,7 +49,7 @@ describe('examples ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs(
+    const results = await TestHelpers.runRulesWithInputs(
       [new ExamplesRuleset({})],
       input,
       input
@@ -59,7 +59,7 @@ describe('examples ruleset', () => {
     expect(results).toMatchSnapshot();
     expect(results.some((result) => !result.passed)).toBe(true);
   });
-  test('invalid parameter example errors', () => {
+  test('invalid parameter example errors', async () => {
     const input: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -89,7 +89,7 @@ describe('examples ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs(
+    const results = await TestHelpers.runRulesWithInputs(
       [new ExamplesRuleset({})],
       input,
       input
@@ -118,7 +118,7 @@ describe('examples ruleset', () => {
     world: 123,
   };
 
-  test('invalid response top level example errors', () => {
+  test('invalid response top level example errors', async () => {
     const input: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -139,7 +139,7 @@ describe('examples ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs(
+    const results = await TestHelpers.runRulesWithInputs(
       [new ExamplesRuleset({})],
       input,
       input
@@ -149,7 +149,7 @@ describe('examples ruleset', () => {
     expect(results).toMatchSnapshot();
     expect(results.some((result) => !result.passed)).toBe(true);
   });
-  test('invalid response named example errors', () => {
+  test('invalid response named example errors', async () => {
     const input: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -177,7 +177,7 @@ describe('examples ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs(
+    const results = await TestHelpers.runRulesWithInputs(
       [new ExamplesRuleset({})],
       input,
       input
@@ -188,7 +188,7 @@ describe('examples ruleset', () => {
     expect(results.some((result) => !result.passed)).toBe(true);
   });
 
-  test('invalid request top level example errors', () => {
+  test('invalid request top level example errors', async () => {
     const input: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -208,7 +208,7 @@ describe('examples ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs(
+    const results = await TestHelpers.runRulesWithInputs(
       [new ExamplesRuleset({})],
       input,
       input
@@ -218,7 +218,7 @@ describe('examples ruleset', () => {
     expect(results).toMatchSnapshot();
     expect(results.some((result) => !result.passed)).toBe(true);
   });
-  test('invalid request named example errors', () => {
+  test('invalid request named example errors', async () => {
     const input: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -245,7 +245,7 @@ describe('examples ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs(
+    const results = await TestHelpers.runRulesWithInputs(
       [new ExamplesRuleset({})],
       input,
       input

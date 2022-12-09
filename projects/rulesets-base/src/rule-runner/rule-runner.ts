@@ -23,7 +23,8 @@ import { runOperationRules } from './operation';
 import { runRequestRules } from './request';
 import { runResponseBodyRules } from './response-body';
 import { runResponseRules } from './response';
-import { Rule, Ruleset } from '../rules';
+import { ExternalRule, Rule, Ruleset } from '../rules';
+import { ExternalRuleBase } from '../rules/external-rule-base';
 
 type SpectralRules = Extract<
   SpectralRulesetDefinition,
@@ -31,8 +32,9 @@ type SpectralRules = Extract<
 >['rules'];
 
 export class RuleRunner {
-  constructor(private rules: (Ruleset | Rule)[]) {}
+  constructor(private rules: (Ruleset | Rule | ExternalRule)[]) {}
 
+  // TODO deprecate this once spectral rules are natively supported
   async runSpectralRules({
     ruleset,
     nextFacts,
@@ -90,21 +92,35 @@ export class RuleRunner {
     return opticResult;
   }
 
-  runRulesWithFacts({
-    context,
-    currentFacts,
-    nextFacts,
-    changelog,
-    currentJsonLike: beforeApiSpec,
-    nextJsonLike: afterApiSpec,
-  }: {
+  async runRulesWithFacts(inputs: {
     context: any;
     nextFacts: IFact[];
     currentFacts: IFact[];
     changelog: IChange[];
     nextJsonLike: OpenAPIV3.Document;
     currentJsonLike: OpenAPIV3.Document;
-  }): Result[] {
+  }): Promise<Result[]> {
+    const {
+      context,
+      currentFacts,
+      nextFacts,
+      changelog,
+      currentJsonLike: beforeApiSpec,
+      nextJsonLike: afterApiSpec,
+    } = inputs;
+    const externalRules = this.rules.filter((rule) =>
+      ExternalRuleBase.isInstance(rule)
+    ) as ExternalRule[];
+    const rulesOrRulesets = this.rules.filter(
+      (rule) => !ExternalRuleBase.isInstance(rule)
+    ) as (Ruleset | Rule)[];
+
+    const externalResults: Result[] = []
+    for( const externalRule of externalRules) {
+      const results = await externalRule.runRules(inputs);
+      externalResults.push(...results)
+    }
+
     // Groups the flat list of beforefacts, afterfacts and changes by location (e.g. operation, query parameter, response, response property, etc).
     // A node can contain a before fact, after fact and or change.
     const openApiFactNodes = groupFacts({
@@ -116,7 +132,7 @@ export class RuleRunner {
     // Run rules on specifications and collect the results
     const specificationResults = runSpecificationRules({
       specificationNode: openApiFactNodes.specification,
-      rules: this.rules,
+      rules: rulesOrRulesets,
       customRuleContext: context,
       beforeApiSpec,
       afterApiSpec,
@@ -129,7 +145,7 @@ export class RuleRunner {
       const operationResults = runOperationRules({
         specificationNode: openApiFactNodes.specification,
         operationNode: endpointNode,
-        rules: this.rules,
+        rules: rulesOrRulesets,
         customRuleContext: context,
         beforeApiSpec,
         afterApiSpec,
@@ -140,7 +156,7 @@ export class RuleRunner {
         specificationNode: openApiFactNodes.specification,
         operationNode: endpointNode,
         requestNode: endpointNode.request,
-        rules: this.rules,
+        rules: rulesOrRulesets,
         customRuleContext: context,
         beforeApiSpec,
         afterApiSpec,
@@ -152,7 +168,7 @@ export class RuleRunner {
           specificationNode: openApiFactNodes.specification,
           operationNode: endpointNode,
           responseNode: responseNode,
-          rules: this.rules,
+          rules: rulesOrRulesets,
           customRuleContext: context,
           beforeApiSpec,
           afterApiSpec,
@@ -162,7 +178,7 @@ export class RuleRunner {
           specificationNode: openApiFactNodes.specification,
           operationNode: endpointNode,
           responseNode: responseNode,
-          rules: this.rules,
+          rules: rulesOrRulesets,
           customRuleContext: context,
           beforeApiSpec,
           afterApiSpec,
@@ -171,6 +187,6 @@ export class RuleRunner {
       }
     }
 
-    return [...specificationResults, ...endpointResults];
+    return [...externalResults, ...specificationResults, ...endpointResults];
   }
 }

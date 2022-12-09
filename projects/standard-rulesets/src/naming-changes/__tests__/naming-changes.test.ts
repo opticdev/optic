@@ -59,7 +59,7 @@ describe('naming changes', () => {
         },
       });
       describe('queryParameters', () => {
-        test('passing assertion', () => {
+        test('passing assertion', async () => {
           const before: OpenAPIV3.Document = {
             ...TestHelpers.createEmptySpec(),
             paths: {
@@ -100,7 +100,7 @@ describe('naming changes', () => {
               ? TestHelpers.createEmptySpec()
               : before;
           const afterJson = after;
-          const results = TestHelpers.runRulesWithInputs(
+          const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
             beforeJson,
             afterJson
@@ -113,7 +113,7 @@ describe('naming changes', () => {
           }
         });
 
-        test('failing assertion', () => {
+        test('failing assertion', async () => {
           const before: OpenAPIV3.Document = {
             ...TestHelpers.createEmptySpec(),
             paths: {
@@ -154,7 +154,7 @@ describe('naming changes', () => {
               ? TestHelpers.createEmptySpec()
               : before;
           const afterJson = after;
-          const results = TestHelpers.runRulesWithInputs(
+          const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
             beforeJson,
             afterJson
@@ -169,7 +169,7 @@ describe('naming changes', () => {
       });
 
       describe('request property', () => {
-        test('passing assertion', () => {
+        test('passing assertion', async () => {
           const before: OpenAPIV3.Document = {
             ...TestHelpers.createEmptySpec(),
             paths: {
@@ -226,7 +226,7 @@ describe('naming changes', () => {
               ? TestHelpers.createEmptySpec()
               : before;
           const afterJson = after;
-          const results = TestHelpers.runRulesWithInputs(
+          const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
             beforeJson,
             afterJson
@@ -239,7 +239,7 @@ describe('naming changes', () => {
           }
         });
 
-        test('failing assertion', () => {
+        test('failing assertion', async () => {
           const before: OpenAPIV3.Document = {
             ...TestHelpers.createEmptySpec(),
             paths: {
@@ -296,7 +296,7 @@ describe('naming changes', () => {
               ? TestHelpers.createEmptySpec()
               : before;
           const afterJson = after;
-          const results = TestHelpers.runRulesWithInputs(
+          const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
             beforeJson,
             afterJson
@@ -311,7 +311,7 @@ describe('naming changes', () => {
       });
 
       describe('response property', () => {
-        test('passing assertion', () => {
+        test('passing assertion', async () => {
           const before: OpenAPIV3.Document = {
             ...TestHelpers.createEmptySpec(),
             paths: {
@@ -372,7 +372,7 @@ describe('naming changes', () => {
               ? TestHelpers.createEmptySpec()
               : before;
           const afterJson = after;
-          const results = TestHelpers.runRulesWithInputs(
+          const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
             beforeJson,
             afterJson
@@ -385,7 +385,7 @@ describe('naming changes', () => {
           }
         });
 
-        test('failing assertion', () => {
+        test('failing assertion', async () => {
           const before: OpenAPIV3.Document = {
             ...TestHelpers.createEmptySpec(),
             paths: {
@@ -446,7 +446,7 @@ describe('naming changes', () => {
               ? TestHelpers.createEmptySpec()
               : before;
           const afterJson = after;
-          const results = TestHelpers.runRulesWithInputs(
+          const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
             beforeJson,
             afterJson
@@ -461,7 +461,7 @@ describe('naming changes', () => {
       });
 
       describe('request header', () => {
-        test('passing assertion', () => {
+        test('passing assertion', async () => {
           const before: OpenAPIV3.Document = {
             ...TestHelpers.createEmptySpec(),
             paths: {
@@ -502,7 +502,7 @@ describe('naming changes', () => {
               ? TestHelpers.createEmptySpec()
               : before;
           const afterJson = after;
-          const results = TestHelpers.runRulesWithInputs(
+          const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
             beforeJson,
             afterJson
@@ -515,7 +515,7 @@ describe('naming changes', () => {
           }
         });
 
-        test('failing assertion', () => {
+        test('failing assertion', async () => {
           const before: OpenAPIV3.Document = {
             ...TestHelpers.createEmptySpec(),
             paths: {
@@ -556,7 +556,7 @@ describe('naming changes', () => {
               ? TestHelpers.createEmptySpec()
               : before;
           const afterJson = after;
-          const results = TestHelpers.runRulesWithInputs(
+          const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
             beforeJson,
             afterJson
@@ -571,7 +571,7 @@ describe('naming changes', () => {
       });
 
       describe('response header', () => {
-        test('passing assertion', () => {
+        test('passing assertion', async () => {
           const before: OpenAPIV3.Document = {
             ...TestHelpers.createEmptySpec(),
             paths: {
@@ -626,7 +626,7 @@ describe('naming changes', () => {
               ? TestHelpers.createEmptySpec()
               : before;
           const afterJson = after;
-          const results = TestHelpers.runRulesWithInputs(
+          const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
             beforeJson,
             afterJson
@@ -639,7 +639,7 @@ describe('naming changes', () => {
           }
         });
 
-        test('failing assertion', () => {
+        test('failing assertion', async () => {
           const before: OpenAPIV3.Document = {
             ...TestHelpers.createEmptySpec(),
             paths: {
@@ -696,7 +696,7 @@ describe('naming changes', () => {
               ? TestHelpers.createEmptySpec()
               : before;
           const afterJson = after;
-          const results = TestHelpers.runRulesWithInputs(
+          const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
             beforeJson,
             afterJson
@@ -717,7 +717,7 @@ describe('naming changes', () => {
             pathComponents: 'param-case',
           },
         });
-        test('passing assertion', () => {
+        test('passing assertion', async () => {
           const before: OpenAPIV3.Document = {
             ...TestHelpers.createEmptySpec(),
             paths: {
@@ -741,7 +741,7 @@ describe('naming changes', () => {
               ? TestHelpers.createEmptySpec()
               : before;
           const afterJson = after;
-          const results = TestHelpers.runRulesWithInputs(
+          const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
             beforeJson,
             afterJson
@@ -754,7 +754,7 @@ describe('naming changes', () => {
           }
         });
 
-        test('failing assertion', () => {
+        test('failing assertion', async () => {
           const before: OpenAPIV3.Document = {
             ...TestHelpers.createEmptySpec(),
             paths: {},
@@ -774,7 +774,7 @@ describe('naming changes', () => {
               ? TestHelpers.createEmptySpec()
               : before;
           const afterJson = after;
-          const results = TestHelpers.runRulesWithInputs(
+          const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
             beforeJson,
             afterJson

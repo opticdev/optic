@@ -5,7 +5,7 @@ import { BreakingChangesRuleset } from '../index';
 describe('breaking changes ruleset - parameter enum change', () => {
   test.each(['query', 'cookie', 'path', 'header'])(
     'enum added to %p parameter',
-    (location: string) => {
+    async (location: string) => {
       const beforeJson: OpenAPIV3.Document = {
         ...TestHelpers.createEmptySpec(),
         paths: {
@@ -45,7 +45,7 @@ describe('breaking changes ruleset - parameter enum change', () => {
           },
         },
       };
-      const results = TestHelpers.runRulesWithInputs(
+      const results = await TestHelpers.runRulesWithInputs(
         [new BreakingChangesRuleset()],
         beforeJson,
         afterJson
@@ -59,7 +59,7 @@ describe('breaking changes ruleset - parameter enum change', () => {
 
   test.each(['query', 'cookie', 'path', 'header'])(
     '%p parameter enum narrowing',
-    (location: string) => {
+    async (location: string) => {
       const beforeJson: OpenAPIV3.Document = {
         ...TestHelpers.createEmptySpec(),
         paths: {
@@ -100,7 +100,7 @@ describe('breaking changes ruleset - parameter enum change', () => {
           },
         },
       };
-      const results = TestHelpers.runRulesWithInputs(
+      const results = await TestHelpers.runRulesWithInputs(
         [new BreakingChangesRuleset()],
         beforeJson,
         afterJson

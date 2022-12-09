@@ -67,6 +67,9 @@
   "jest": {
     "testPathIgnorePatterns": [
       "build"
+    ],
+    "testMatch": [
+      "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
     ]
   },
   "stableVersion": "0.35.7"

@@ -5,7 +5,7 @@ import { BreakingChangesRuleset } from '../index';
 describe('breaking changes ruleset - parameter type change', () => {
   test.each(['query', 'cookie', 'path', 'header'])(
     '%p parameter type change',
-    (location: string) => {
+    async (location: string) => {
       const beforeJson: OpenAPIV3.Document = {
         ...TestHelpers.createEmptySpec(),
         paths: {
@@ -44,7 +44,7 @@ describe('breaking changes ruleset - parameter type change', () => {
           },
         },
       };
-      const results = TestHelpers.runRulesWithInputs(
+      const results = await TestHelpers.runRulesWithInputs(
         [new BreakingChangesRuleset()],
         beforeJson,
         afterJson
