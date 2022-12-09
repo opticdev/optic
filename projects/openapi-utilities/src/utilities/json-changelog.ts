@@ -193,6 +193,7 @@ function getEndpointLogs(
     responseChanges.push(getResponseChangeLogs(response, key));
   }
 
+  const requestChangelogs = getRequestChangeLogs(request);
   return {
     name: `${method} ${path}`,
     change: getChange(change),
@@ -203,46 +204,12 @@ function getEndpointLogs(
       : [],
     parameters: parameterChanges,
     requestBody:
-      request.change?.added ||
-      request.change?.removed ||
-      request.change?.changed
-        ? getRequestChangeLogs(request)
+      requestChangelogs.attributes.length ||
+      requestChangelogs.contentTypes.length
+        ? requestChangelogs
         : undefined,
     responses: responseChanges,
   };
-
-  // yield`${chalk.bold(method.toUpperCase())} ${path}: ${
-  //   change ? getAddedOrRemovedLabel(change) : ''
-  // }`;
-  //
-  // if (change?.removed) {
-  //   return;
-  // }
-  //
-  // if (change) {
-  //   yield *
-  //     indent(getDetailLogs(change, { excludeKeys: ['pathPattern', 'method'] }));
-  // }
-  //
-  // for (const [name, parameterChange] of queryParameters.changes) {
-  //   yield * indent(getParameterLogs('query', name, parameterChange));
-  // }
-  //
-  // for (const [name, parameterChange] of cookieParameters.changes) {
-  //   yield * indent(getParameterLogs('cookie', name, parameterChange));
-  // }
-  //
-  // for (const [name, parameterChange] of pathParameters.changes) {
-  //   yield * indent(getParameterLogs('path', name, parameterChange));
-  // }
-  //
-  // for (const [name, parameterChange] of headers.changes) {
-  //   yield * indent(getParameterLogs('header', name, parameterChange));
-  // }
-  //
-  //
-  //
-  // yield '';
 }
 
 function getResponseChangeLogs(

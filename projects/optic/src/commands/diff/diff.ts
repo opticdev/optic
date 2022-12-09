@@ -188,16 +188,15 @@ const runDiff = async (
     },
   };
 
-  if (specResults.changes.length === 0) {
-    console.log('No changes were detected');
-  } else {
-    console.log('');
-  }
-
   if (options.json) {
     console.log(JSON.stringify(jsonChangelog(changelogData)));
     return diffResults;
   } else {
+    if (specResults.changes.length === 0) {
+      console.log('No changes were detected');
+    } else {
+      console.log('');
+    }
     for (const log of terminalChangelog(changelogData)) {
       console.log(log);
     }
