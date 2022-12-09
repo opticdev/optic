@@ -56,7 +56,7 @@ export const openAPI: OpenAPIV3.Document = {
   paths: {
     '/example': {
       get: {
-        operationId: 'getExamples',
+        operationId: 'get_examples',
         responses: {
           '200': {
             description: 'succesful',
@@ -126,6 +126,9 @@ export const openAPI: OpenAPIV3.Document = {
                   id: {
                     type: 'integer',
                     format: 'int64',
+                  },
+                  example: {
+                    type: 'string',
                   },
                   number: {
                     type: 'string',
@@ -221,6 +224,9 @@ export const openAPI: OpenAPIV3.Document = {
                   category: {
                     type: 'object',
                     properties: {
+                      other: {
+                        type: 'string',
+                      },
                       id: {
                         type: 'integer',
                         format: 'int64',

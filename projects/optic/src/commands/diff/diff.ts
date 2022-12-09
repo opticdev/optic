@@ -10,6 +10,7 @@ import {
   OpenAPIV3,
   IChange,
   UserError,
+  jsonChangelog,
 } from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import {
@@ -73,6 +74,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     )
     .option('--check', 'enable checks', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
+    .option('--json', 'output as json', false)
     .action(wrapActionHandlerWithSentry(getDiffAction(config)));
 };
 
@@ -162,10 +164,7 @@ const runDiff = async (
   config: OpticCliConfig,
   options: DiffActionOptions
 ): Promise<{ checks: { passed: number; failed: number; total: number } }> => {
-  const ruleRunner = await generateRuleRunner(
-    config,
-    options.check
-  );
+  const ruleRunner = await generateRuleRunner(config, options.check);
   const specResults = await generateSpecResults(
     ruleRunner,
     baseFile,
@@ -179,15 +178,6 @@ const runDiff = async (
     rules: specResults.results,
   });
 
-  if (specResults.changes.length === 0) {
-    console.log('No changes were detected');
-  } else {
-    console.log('');
-  }
-  for (const log of terminalChangelog(changelogData)) {
-    console.log(log);
-  }
-
   const diffResults = {
     checks: {
       total: specResults.results.length,
@@ -197,6 +187,20 @@ const runDiff = async (
       ).length,
     },
   };
+
+  if (options.json) {
+    console.log(JSON.stringify(jsonChangelog(changelogData)));
+    return diffResults;
+  } else {
+    if (specResults.changes.length === 0) {
+      console.log('No changes were detected');
+    } else {
+      console.log('');
+    }
+    for (const log of terminalChangelog(changelogData)) {
+      console.log(log);
+    }
+  }
 
   if (options.check) {
     if (specResults.results.length > 0) {
@@ -243,6 +247,7 @@ type DiffActionOptions = {
   base: string;
   check: boolean;
   web: boolean;
+  json: boolean;
 };
 
 const getDiffAction =
@@ -281,7 +286,7 @@ const getDiffAction =
       process.exitCode = 1;
       return;
     }
-    if (!options.web) {
+    if (!options.web && !options.json) {
       console.log(
         chalk.blue(
           `Rerun this command with the --web flag to view the detailed changes in your browser`

@@ -4,7 +4,34 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
 Object {
   "changesByEndpoint": Map {
     "/example.GET" => Object {
-      "change": null,
+      "change": Object {
+        "changeType": "changed",
+        "changed": Object {
+          "after": Object {
+            "method": "get",
+            "operationId": "get_examples",
+            "pathPattern": "/example",
+          },
+          "before": Object {
+            "method": "get",
+            "operationId": "getExamples",
+            "pathPattern": "/example",
+          },
+        },
+        "location": Object {
+          "conceptualLocation": Object {
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+          ],
+          "jsonPath": "/paths/~1example/get",
+          "kind": "operation",
+        },
+      },
       "cookieParameters": Object {
         "changes": Map {},
         "hasRules": false,
@@ -664,7 +691,69 @@ Object {
         "hasRules": false,
       },
       "request": Object {
-        "bodyChanges": Map {},
+        "bodyChanges": Map {
+          "application/json" => Object {
+            "bodyChange": null,
+            "exampleChanges": Array [],
+            "fieldChanges": Array [
+              Object {
+                "added": Object {
+                  "flatSchema": Object {
+                    "type": "string",
+                  },
+                  "key": "other",
+                  "required": false,
+                },
+                "changeType": "added",
+                "location": Object {
+                  "conceptualLocation": Object {
+                    "inRequest": Object {
+                      "body": Object {
+                        "contentType": "application/json",
+                      },
+                    },
+                    "jsonSchemaTrail": Array [
+                      "category",
+                      "other",
+                    ],
+                    "method": "post",
+                    "path": "/pet",
+                  },
+                  "conceptualPath": Array [
+                    "operations",
+                    "/pet",
+                    "post",
+                    "application/json",
+                    "category",
+                    "other",
+                  ],
+                  "jsonPath": "/paths/~1pet/post/requestBody/content/application~1json/schema/properties/category/properties/other",
+                  "kind": "field",
+                },
+              },
+            ],
+            "hasRules": false,
+            "location": Object {
+              "conceptualLocation": Object {
+                "inRequest": Object {
+                  "body": Object {
+                    "contentType": "application/json",
+                  },
+                },
+                "method": "post",
+                "path": "/pet",
+              },
+              "conceptualPath": Array [
+                "operations",
+                "/pet",
+                "post",
+                "application/json",
+              ],
+              "jsonPath": "/paths/~1pet/post/requestBody/content/application~1json",
+              "kind": "body",
+            },
+          },
+        },
         "change": null,
         "hasRules": false,
       },
@@ -697,6 +786,39 @@ Object {
             "bodyChange": null,
             "exampleChanges": Array [],
             "fieldChanges": Array [
+              Object {
+                "added": Object {
+                  "flatSchema": Object {
+                    "type": "string",
+                  },
+                  "key": "example",
+                  "required": false,
+                },
+                "changeType": "added",
+                "location": Object {
+                  "conceptualLocation": Object {
+                    "inRequest": Object {
+                      "body": Object {
+                        "contentType": "application/json",
+                      },
+                    },
+                    "jsonSchemaTrail": Array [
+                      "example",
+                    ],
+                    "method": "put",
+                    "path": "/pet",
+                  },
+                  "conceptualPath": Array [
+                    "operations",
+                    "/pet",
+                    "put",
+                    "application/json",
+                    "example",
+                  ],
+                  "jsonPath": "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/example",
+                  "kind": "field",
+                },
+              },
               Object {
                 "changeType": "removed",
                 "location": Object {
