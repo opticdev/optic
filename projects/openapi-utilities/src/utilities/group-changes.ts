@@ -343,7 +343,7 @@ export const groupChangesAndRules = ({
 
   for (const rule of rules) {
     if (isFactOrChangeVariant(rule.change, OpenApiKind.Specification)) {
-      specification;
+      specification.hasRules = true;
       continue;
     }
 
