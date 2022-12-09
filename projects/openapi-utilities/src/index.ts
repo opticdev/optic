@@ -54,6 +54,12 @@ export * from './ci-types';
 export { generateSpecResults } from './openapi3/implementations/openapi3/generate-spec-results';
 export * from './openapi3/implementations/openapi3/types';
 
+export {
+  getFactForJsonPath,
+  constructFactTree,
+  FactTree,
+} from './openapi3/json-path-interpreters';
+
 export { UserError } from './errors';
 export {
   findOpticCommentId,
@@ -76,6 +82,7 @@ export {
 } from './utilities/group-changes';
 export { traverseSpec } from './utilities/traverse-spec';
 export { terminalChangelog } from './utilities/terminal-changelog';
+export { jsonChangelog } from './utilities/json-changelog';
 export { generateChangelogData } from './utilities/generate-changelog-data';
 export { compareChangesByPath } from './utilities/compare-changes-by-path';
 export {

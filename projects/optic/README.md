@@ -8,13 +8,6 @@ Install `optic` and `oas`:
 npm i -g @useoptic/optic
 ```
 
-Initialize an `optic.dev.yml` config file
-
-```bash
-optic init
-# this will create an optic.dev.yml file 
-```
-
 Configure your ruleset, see our [build in rules](../standard-rulesets/README.md) or start building your own [custom rules](../rulesets-base/README.md) by running `optic ruleset init`. 
 
 ```yml

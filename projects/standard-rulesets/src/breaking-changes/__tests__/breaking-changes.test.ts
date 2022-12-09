@@ -3,7 +3,7 @@ import { TestHelpers } from '@useoptic/rulesets-base';
 import { BreakingChangesRuleset } from '../index';
 
 describe('fromOpticConfig', () => {
-  test('invalid configuration', () => {
+  test('invalid configuration', async () => {
     const out = BreakingChangesRuleset.fromOpticConfig({
       exclude_operations_with_extension: 12,
     });
@@ -14,7 +14,7 @@ describe('fromOpticConfig', () => {
 });
 
 describe('breaking changes ruleset', () => {
-  test('valid changes', () => {
+  test('valid changes', async () => {
     const beforeJson: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -183,7 +183,7 @@ describe('breaking changes ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs(
+    const results = await TestHelpers.runRulesWithInputs(
       [new BreakingChangesRuleset()],
       beforeJson,
       afterJson
@@ -196,7 +196,7 @@ describe('breaking changes ruleset', () => {
     }
   });
 
-  test('operation removal', () => {
+  test('operation removal', async () => {
     const beforeJson: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -207,7 +207,7 @@ describe('breaking changes ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs(
+    const results = await TestHelpers.runRulesWithInputs(
       [new BreakingChangesRuleset()],
       beforeJson,
       TestHelpers.createEmptySpec()
@@ -218,7 +218,7 @@ describe('breaking changes ruleset', () => {
     expect(results.some((result) => !result.passed)).toBe(true);
   });
 
-  test('required request property added', () => {
+  test('required request property added', async () => {
     const beforeJson: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -272,7 +272,7 @@ describe('breaking changes ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs(
+    const results = await TestHelpers.runRulesWithInputs(
       [new BreakingChangesRuleset()],
       beforeJson,
       afterJson
@@ -283,7 +283,7 @@ describe('breaking changes ruleset', () => {
     expect(results.some((result) => !result.passed)).toBe(true);
   });
 
-  test('request property optional to required', () => {
+  test('request property optional to required', async () => {
     const beforeJson: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -333,7 +333,7 @@ describe('breaking changes ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs(
+    const results = await TestHelpers.runRulesWithInputs(
       [new BreakingChangesRuleset()],
       beforeJson,
       afterJson
@@ -344,7 +344,7 @@ describe('breaking changes ruleset', () => {
     expect(results.some((result) => !result.passed)).toBe(true);
   });
 
-  test('request property type change', () => {
+  test('request property type change', async () => {
     const beforeJson: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -395,7 +395,7 @@ describe('breaking changes ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs(
+    const results = await TestHelpers.runRulesWithInputs(
       [new BreakingChangesRuleset()],
       beforeJson,
       afterJson
@@ -406,7 +406,7 @@ describe('breaking changes ruleset', () => {
     expect(results.some((result) => !result.passed)).toBe(true);
   });
 
-  test('root request body type change', () => {
+  test('root request body type change', async () => {
     const beforeJson: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -450,7 +450,7 @@ describe('breaking changes ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs(
+    const results = await TestHelpers.runRulesWithInputs(
       [new BreakingChangesRuleset()],
       beforeJson,
       afterJson
@@ -461,7 +461,7 @@ describe('breaking changes ruleset', () => {
     expect(results.some((result) => !result.passed)).toBe(true);
   });
 
-  test('response property removed', () => {
+  test('response property removed', async () => {
     const beforeJson: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -519,7 +519,7 @@ describe('breaking changes ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs(
+    const results = await TestHelpers.runRulesWithInputs(
       [new BreakingChangesRuleset()],
       beforeJson,
       afterJson
@@ -530,7 +530,7 @@ describe('breaking changes ruleset', () => {
     expect(results.some((result) => !result.passed)).toBe(true);
   });
 
-  test('response property required to optional', () => {
+  test('response property required to optional', async () => {
     const beforeJson: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -584,7 +584,7 @@ describe('breaking changes ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs(
+    const results = await TestHelpers.runRulesWithInputs(
       [new BreakingChangesRuleset()],
       beforeJson,
       afterJson
@@ -595,7 +595,7 @@ describe('breaking changes ruleset', () => {
     expect(results.some((result) => !result.passed)).toBe(true);
   });
 
-  test('response property type change', () => {
+  test('response property type change', async () => {
     const beforeJson: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -648,7 +648,7 @@ describe('breaking changes ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs(
+    const results = await TestHelpers.runRulesWithInputs(
       [new BreakingChangesRuleset()],
       beforeJson,
       afterJson
@@ -659,7 +659,7 @@ describe('breaking changes ruleset', () => {
     expect(results.some((result) => !result.passed)).toBe(true);
   });
 
-  test('root response body type change', () => {
+  test('root response body type change', async () => {
     const beforeJson: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -702,7 +702,7 @@ describe('breaking changes ruleset', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs(
+    const results = await TestHelpers.runRulesWithInputs(
       [new BreakingChangesRuleset()],
       beforeJson,
       afterJson
@@ -715,7 +715,7 @@ describe('breaking changes ruleset', () => {
 });
 
 describe('breaking change ruleset configuration', () => {
-  test('breaking changes applies a matches function', () => {
+  test('breaking changes applies a matches function', async () => {
     const beforeJson: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -739,7 +739,7 @@ describe('breaking change ruleset configuration', () => {
         },
       },
     };
-    const results = TestHelpers.runRulesWithInputs(
+    const results = await TestHelpers.runRulesWithInputs(
       [
         new BreakingChangesRuleset({
           matches: (context) => context.operation.method !== 'post',

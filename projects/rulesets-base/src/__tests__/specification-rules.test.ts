@@ -22,7 +22,7 @@ describe('SpecificationRule', () => {
         },
       },
     };
-    test('before', () => {
+    test('before', async () => {
       const mockFn = jest.fn();
       const ruleRunner = new RuleRunner([
         new SpecificationRule({
@@ -31,14 +31,14 @@ describe('SpecificationRule', () => {
         }),
       ]);
 
-      ruleRunner.runRulesWithFacts(createRuleInputs(json, emptySpec));
+      await ruleRunner.runRulesWithFacts(createRuleInputs(json, emptySpec));
 
       expect(mockFn.mock.calls.length > 0).toBe(true);
       const ruleContext = mockFn.mock.calls[0][1];
       expect(ruleContext).toMatchSnapshot();
     });
 
-    test('after', () => {
+    test('after', async () => {
       const mockFn = jest.fn();
       const ruleRunner = new RuleRunner([
         new SpecificationRule({
@@ -47,14 +47,14 @@ describe('SpecificationRule', () => {
         }),
       ]);
 
-      ruleRunner.runRulesWithFacts(createRuleInputs(defaultEmptySpec, json));
+      await ruleRunner.runRulesWithFacts(createRuleInputs(defaultEmptySpec, json));
 
       expect(mockFn.mock.calls.length > 0).toBe(true);
       const ruleContext = mockFn.mock.calls[0][1];
       expect(ruleContext).toMatchSnapshot();
     });
 
-    test('before is empty spec', () => {
+    test('before is empty spec', async () => {
       const mockFn = jest.fn();
       const ruleRunner = new RuleRunner([
         new SpecificationRule({
@@ -63,7 +63,7 @@ describe('SpecificationRule', () => {
         }),
       ]);
 
-      ruleRunner.runRulesWithFacts(createRuleInputs(emptySpec, json));
+      await ruleRunner.runRulesWithFacts(createRuleInputs(emptySpec, json));
 
       expect(mockFn.mock.calls.length > 0).toBe(true);
       const ruleContext = mockFn.mock.calls[0][1];
@@ -71,7 +71,7 @@ describe('SpecificationRule', () => {
       expect(ruleContext).toMatchSnapshot();
     });
 
-    test('after is empty spec', () => {
+    test('after is empty spec', async () => {
       const mockFn = jest.fn();
       const ruleRunner = new RuleRunner([
         new SpecificationRule({
@@ -80,7 +80,7 @@ describe('SpecificationRule', () => {
         }),
       ]);
 
-      ruleRunner.runRulesWithFacts(createRuleInputs(json, emptySpec));
+      await ruleRunner.runRulesWithFacts(createRuleInputs(json, emptySpec));
 
       expect(mockFn.mock.calls.length > 0).toBe(true);
       const ruleContext = mockFn.mock.calls[0][1];
@@ -109,13 +109,13 @@ describe('SpecificationRule', () => {
       }),
     ]);
 
-    test('passing assertion', () => {
+    test('passing assertion', async () => {
       const json = {
         ...defaultEmptySpec,
         ['x-stability']: 'abc',
       };
 
-      const results = ruleRunner.runRulesWithFacts(
+      const results = await ruleRunner.runRulesWithFacts(
         createRuleInputs(json, json)
       );
       expect(results.length > 0).toBe(true);
@@ -125,12 +125,12 @@ describe('SpecificationRule', () => {
       }
     });
 
-    test('failing assertion', () => {
+    test('failing assertion', async () => {
       const json = {
         ...defaultEmptySpec,
       };
 
-      const results = ruleRunner.runRulesWithFacts(
+      const results = await ruleRunner.runRulesWithFacts(
         createRuleInputs(json, json)
       );
       expect(results.length > 0).toBe(true);
@@ -140,13 +140,13 @@ describe('SpecificationRule', () => {
       }
     });
 
-    test('exemption', () => {
+    test('exemption', async () => {
       const json = {
         ...defaultEmptySpec,
         'x-optic-exemptions': [ruleName],
       };
 
-      const results = ruleRunner.runRulesWithFacts(
+      const results = await ruleRunner.runRulesWithFacts(
         createRuleInputs(json, json)
       );
       expect(results.length).toBe(1);
@@ -171,7 +171,7 @@ describe('SpecificationRule', () => {
         }),
       ]);
 
-      test('passing assertion', () => {
+      test('passing assertion', async () => {
         const json = {
           ...defaultEmptySpec,
           info: {
@@ -183,7 +183,7 @@ describe('SpecificationRule', () => {
           },
         };
 
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(json, json)
         );
         expect(results.length > 0).toBe(true);
@@ -193,12 +193,12 @@ describe('SpecificationRule', () => {
         }
       });
 
-      test('failing assertion', () => {
+      test('failing assertion', async () => {
         const json = {
           ...defaultEmptySpec,
         };
 
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(json, json)
         );
         expect(results.length > 0).toBe(true);
@@ -208,7 +208,7 @@ describe('SpecificationRule', () => {
         }
       });
 
-      test('inverted assertion', () => {
+      test('inverted assertion', async () => {
         const ruleRunner = new RuleRunner([
           new SpecificationRule({
             name: 'operation description',
@@ -225,7 +225,7 @@ describe('SpecificationRule', () => {
           ...defaultEmptySpec,
         };
 
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(json, json)
         );
         expect(results.length > 0).toBe(true);
@@ -255,7 +255,7 @@ describe('SpecificationRule', () => {
         }),
       ]);
 
-      test('passing assertion', () => {
+      test('passing assertion', async () => {
         const json = {
           ...defaultEmptySpec,
           info: {
@@ -267,7 +267,7 @@ describe('SpecificationRule', () => {
           },
         };
 
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(json, json)
         );
         expect(results.length > 0).toBe(true);
@@ -277,12 +277,12 @@ describe('SpecificationRule', () => {
         }
       });
 
-      test('failing assertion', () => {
+      test('failing assertion', async () => {
         const json = {
           ...defaultEmptySpec,
         };
 
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(json, json)
         );
         expect(results.length > 0).toBe(true);
@@ -292,7 +292,7 @@ describe('SpecificationRule', () => {
         }
       });
 
-      test('inverted assertion', () => {
+      test('inverted assertion', async () => {
         const ruleRunner = new RuleRunner([
           new SpecificationRule({
             name: 'operation description',
@@ -314,7 +314,7 @@ describe('SpecificationRule', () => {
           ...defaultEmptySpec,
         };
 
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(json, json)
         );
         expect(results.length > 0).toBe(true);

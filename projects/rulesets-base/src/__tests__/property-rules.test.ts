@@ -50,7 +50,7 @@ describe('PropertyRule', () => {
       },
     };
 
-    test('matches property', () => {
+    test('matches property', async () => {
       const mockFn = jest.fn();
       const ruleRunner = new RuleRunner([
         new PropertyRule({
@@ -63,7 +63,7 @@ describe('PropertyRule', () => {
           },
         }),
       ]);
-      ruleRunner.runRulesWithFacts(createRuleInputs(json, json));
+      await ruleRunner.runRulesWithFacts(createRuleInputs(json, json));
 
       expect(mockFn.mock.calls.length).toBe(1);
       const propertyFromCallArg = mockFn.mock.calls[0][0];
@@ -88,7 +88,7 @@ describe('PropertyRule', () => {
         }),
       ]);
 
-      test('passing assertion', () => {
+      test('passing assertion', async () => {
         const json: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -129,7 +129,7 @@ describe('PropertyRule', () => {
             },
           },
         };
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(json, json)
         );
         expect(results).toMatchSnapshot();
@@ -139,7 +139,7 @@ describe('PropertyRule', () => {
         }
       });
 
-      test('failing assertion', () => {
+      test('failing assertion', async () => {
         const json: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -176,7 +176,7 @@ describe('PropertyRule', () => {
             },
           },
         };
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(json, json)
         );
         expect(results).toMatchSnapshot();
@@ -203,7 +203,7 @@ describe('PropertyRule', () => {
         }),
       ]);
 
-      test('passing assertion', () => {
+      test('passing assertion', async () => {
         const json: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -244,7 +244,7 @@ describe('PropertyRule', () => {
             },
           },
         };
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(defaultEmptySpec, json)
         );
         expect(results).toMatchSnapshot();
@@ -254,7 +254,7 @@ describe('PropertyRule', () => {
         }
       });
 
-      test('failing assertion', () => {
+      test('failing assertion', async () => {
         const json: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -291,7 +291,7 @@ describe('PropertyRule', () => {
             },
           },
         };
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(defaultEmptySpec, json)
         );
         expect(results).toMatchSnapshot();
@@ -318,7 +318,7 @@ describe('PropertyRule', () => {
         }),
       ]);
 
-      test('passing assertion', () => {
+      test('passing assertion', async () => {
         const beforeJson: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -386,7 +386,7 @@ describe('PropertyRule', () => {
             },
           },
         };
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(beforeJson, afterJson)
         );
         expect(results).toMatchSnapshot();
@@ -396,7 +396,7 @@ describe('PropertyRule', () => {
         }
       });
 
-      test('failing assertion', () => {
+      test('failing assertion', async () => {
         const beforeJson: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -459,7 +459,7 @@ describe('PropertyRule', () => {
             },
           },
         };
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(beforeJson, afterJson)
         );
         expect(results).toMatchSnapshot();
@@ -491,7 +491,7 @@ describe('PropertyRule', () => {
         }),
       ]);
 
-      test('passing assertion', () => {
+      test('passing assertion', async () => {
         const beforeJson: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -545,7 +545,7 @@ describe('PropertyRule', () => {
             },
           },
         };
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(beforeJson, afterJson)
         );
         expect(results).toMatchSnapshot();
@@ -555,7 +555,7 @@ describe('PropertyRule', () => {
         }
       });
 
-      test('failing assertion', () => {
+      test('failing assertion', async () => {
         const beforeJson: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -609,7 +609,7 @@ describe('PropertyRule', () => {
             },
           },
         };
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(beforeJson, afterJson)
         );
         expect(results).toMatchSnapshot();
@@ -636,7 +636,7 @@ describe('PropertyRule', () => {
         }),
       ]);
 
-      test('passing assertion', () => {
+      test('passing assertion', async () => {
         const json: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -663,7 +663,7 @@ describe('PropertyRule', () => {
             },
           },
         };
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(json, defaultEmptySpec)
         );
         expect(results).toMatchSnapshot();
@@ -673,7 +673,7 @@ describe('PropertyRule', () => {
         }
       });
 
-      test('failing assertion', () => {
+      test('failing assertion', async () => {
         const json: OpenAPIV3.Document = {
           ...defaultEmptySpec,
           paths: {
@@ -700,7 +700,7 @@ describe('PropertyRule', () => {
             },
           },
         };
-        const results = ruleRunner.runRulesWithFacts(
+        const results = await ruleRunner.runRulesWithFacts(
           createRuleInputs(json, defaultEmptySpec)
         );
         expect(results).toMatchSnapshot();

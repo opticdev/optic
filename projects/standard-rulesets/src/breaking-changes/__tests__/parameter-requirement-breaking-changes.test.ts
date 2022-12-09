@@ -5,7 +5,7 @@ import { BreakingChangesRuleset } from '../index';
 describe('breaking changes ruleset - parameter requirement change', () => {
   test.each(['query', 'cookie', 'header'])(
     'required %p parameter added',
-    (location: string) => {
+    async (location: string) => {
       const beforeJson: OpenAPIV3.Document = {
         ...TestHelpers.createEmptySpec(),
         paths: {
@@ -36,7 +36,7 @@ describe('breaking changes ruleset - parameter requirement change', () => {
           },
         },
       };
-      const results = TestHelpers.runRulesWithInputs(
+      const results = await TestHelpers.runRulesWithInputs(
         [new BreakingChangesRuleset()],
         beforeJson,
         afterJson
@@ -50,7 +50,7 @@ describe('breaking changes ruleset - parameter requirement change', () => {
 
   test.each(['query', 'cookie', 'header'])(
     '%p parameter optional to required',
-    (location: string) => {
+    async (location: string) => {
       const beforeJson: OpenAPIV3.Document = {
         ...TestHelpers.createEmptySpec(),
         paths: {
@@ -90,7 +90,7 @@ describe('breaking changes ruleset - parameter requirement change', () => {
           },
         },
       };
-      const results = TestHelpers.runRulesWithInputs(
+      const results = await TestHelpers.runRulesWithInputs(
         [new BreakingChangesRuleset()],
         beforeJson,
         afterJson

@@ -8,7 +8,7 @@ exports[`diff basic rules config 1`] = `
 
 [1mPATCH[22m /example: 
   - operationId [33mchanged[39m
-  - response [1m200[22m:
+  - response [1m200[22m: [32madded[39m
     - description [32madded[39m
     - body [1mapplication/json[22m: [32madded[39m
       - type [32madded[39m
@@ -63,7 +63,7 @@ exports[`diff basic rules config 2`] = `
 
 [1mPATCH[22m /example: 
   - operationId [33mchanged[39m
-  - response [1m200[22m:
+  - response [1m200[22m: [32madded[39m
     - description [32madded[39m
     - body [1mapplication/json[22m: [32madded[39m
       - type [32madded[39m
@@ -122,7 +122,7 @@ exports[`diff breaking changes exclusion 1`] = `
 
 [1mPATCH[22m /example: 
   - operationId [33mchanged[39m
-  - response [1m200[22m:
+  - response [1m200[22m: [32madded[39m
     - description [32madded[39m
     - body [1mapplication/json[22m: [32madded[39m
       - type [32madded[39m
@@ -154,7 +154,7 @@ exports[`diff breaking changes exclusion 2`] = `
 
 [1mPATCH[22m /example: 
   - operationId [33mchanged[39m
-  - response [1m200[22m:
+  - response [1m200[22m: [32madded[39m
     - description [32madded[39m
     - body [1mapplication/json[22m: [32madded[39m
       - type [32madded[39m
@@ -183,7 +183,7 @@ exports[`diff two files, no repo or config 1`] = `
 
 [1mPATCH[22m /example: 
   - operationId [33mchanged[39m
-  - response [1m200[22m:
+  - response [1m200[22m: [32madded[39m
     - description [32madded[39m
     - body [1mapplication/json[22m: [32madded[39m
       - type [32madded[39m
@@ -207,7 +207,7 @@ exports[`diff with mock server custom rules 1`] = `
 
 [1mPATCH[22m /example: 
   - operationId [33mchanged[39m
-  - response [1m200[22m:
+  - response [1m200[22m: [32madded[39m
     - description [32madded[39m
     - body [1mapplication/json[22m: [32madded[39m
       - type [32madded[39m
