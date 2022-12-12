@@ -21,6 +21,7 @@ import {
 } from '../captures';
 import { SystemProxy } from '../captures/system-proxy';
 import { captureStorage } from '../captures/capture-storage';
+import path from 'path';
 
 export async function captureCommand(): Promise<Command> {
   const command = new Command('capture');
@@ -34,7 +35,6 @@ export async function captureCommand(): Promise<Command> {
     .argument('<target-url>', 'the url to capture...')
 
     .description('capture observed traffic as a HAR (HttpArchive v1.3) file')
-    .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
     // .option(
     //   '--proxy <target-url>',
     //   'accept traffic over a proxy targeting the actual service'
@@ -47,7 +47,7 @@ export async function captureCommand(): Promise<Command> {
       '-d, --debug',
       `output debug information (on stderr). Use LOG_LEVEL env with 'debug', 'info' to increase verbosity`
     )
-    // .option('-o <output-file>', 'file name for output')
+    .option('-o, --output <output>', 'file name for output')
     .addCommand(certCommand)
     .action(async (filePath: string, targetUrl: string) => {
       const [openApiExists, trafficDirectory] = await captureStorage(filePath);
@@ -187,7 +187,14 @@ export async function captureCommand(): Promise<Command> {
           .then(() =>
             Promise.all([
               systemProxy.stop(),
-              fs.move(inProgressName, completedName),
+              (async () => {
+                if (options.output) {
+                  const outputPath = path.resolve(options.output);
+                  feedback.success(`Wrote har to ${outputPath}`);
+                  return fs.move(inProgressName, outputPath);
+                }
+                return fs.move(inProgressName, completedName);
+              })(),
             ])
           )
           .then(

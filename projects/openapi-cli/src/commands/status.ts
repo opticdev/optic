@@ -1,19 +1,17 @@
 import { Command } from 'commander';
 import Path from 'path';
+import path from 'path';
 import * as fs from 'fs-extra';
 
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { trackCompletion } from '../segment';
 import { trackWarning } from '../sentry';
 import * as AT from '../lib/async-tools';
-import { ComponentSchemaExampleFacts, readDeferencedSpec } from '../specs';
+import { readDeferencedSpec } from '../specs';
 import {
   DocumentedInteractions,
-  HttpMethod,
-  HttpMethods,
-  UndocumentedOperation,
-  UndocumentedOperationType,
   UndocumentedOperations,
+  UndocumentedOperationType,
 } from '../operations';
 import {
   CapturedInteraction,
@@ -22,7 +20,6 @@ import {
 } from '../captures';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { captureStorage } from '../captures/capture-storage';
-import path from 'path';
 
 export async function statusCommand({
   addUsage,
@@ -38,6 +35,7 @@ export async function statusCommand({
       '<openapi-file>',
       'an OpenAPI spec to match up to observed traffic'
     )
+    .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
     .action(async (specPath) => {
       const absoluteSpecPath = Path.resolve(specPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
@@ -57,40 +55,42 @@ export async function statusCommand({
         await fs.readdir(captureStorageDirectory)
       ).sort();
 
-      captureDirectoryContents.forEach((potentialCapture) => {
-        // completed captures only
-        if (potentialCapture.endsWith('.har')) {
-          let harFile = fs.createReadStream(
-            path.join(captureStorageDirectory, potentialCapture)
+      if (options.har) {
+        // override with a har
+        let absoluteHarPath = Path.resolve(options.har);
+        if (!(await fs.pathExists(absoluteHarPath))) {
+          return await feedback.inputError(
+            'HAR file could not be found at given path',
+            InputErrors.HAR_FILE_NOT_FOUND
           );
-          let harEntryResults = HarEntries.fromReadable(harFile);
-          let harEntries = AT.unwrapOr(harEntryResults, (err) => {
-            let message = `HAR entry skipped: ${err.message}`;
-            console.warn(message); // warn, skip and keep going
-            trackWarning(message, err);
-          });
-
-          sources.push(CapturedInteractions.fromHarEntries(harEntries));
         }
-      });
+        let harFile = fs.createReadStream(absoluteHarPath);
+        let harEntryResults = HarEntries.fromReadable(harFile);
+        let harEntries = AT.unwrapOr(harEntryResults, (err) => {
+          let message = `HAR entry skipped: ${err.message}`;
+          console.warn(message); // warn, skip and keep going
+          trackWarning(message, err);
+        });
+        sources.push(CapturedInteractions.fromHarEntries(harEntries));
+      } else {
+        // default is capture directory
+        captureDirectoryContents.forEach((potentialCapture) => {
+          // completed captures only
+          if (potentialCapture.endsWith('.har')) {
+            let harFile = fs.createReadStream(
+              path.join(captureStorageDirectory, potentialCapture)
+            );
+            let harEntryResults = HarEntries.fromReadable(harFile);
+            let harEntries = AT.unwrapOr(harEntryResults, (err) => {
+              let message = `HAR entry skipped: ${err.message}`;
+              console.warn(message); // warn, skip and keep going
+              trackWarning(message, err);
+            });
 
-      // if (options.har) {
-      //   let absoluteHarPath = Path.resolve(options.har);
-      //   if (!(await fs.pathExists(absoluteHarPath))) {
-      //     return await feedback.inputError(
-      //       'HAR file could not be found at given path',
-      //       InputErrors.HAR_FILE_NOT_FOUND
-      //     );
-      //   }
-      //   let harFile = fs.createReadStream(absoluteHarPath);
-      //   let harEntryResults = HarEntries.fromReadable(harFile);
-      //   let harEntries = AT.unwrapOr(harEntryResults, (err) => {
-      //     let message = `HAR entry skipped: ${err.message}`;
-      //     console.warn(message); // warn, skip and keep going
-      //     trackWarning(message, err);
-      //   });
-      //   sources.push(CapturedInteractions.fromHarEntries(harEntries));
-      // }
+            sources.push(CapturedInteractions.fromHarEntries(harEntries));
+          }
+        });
+      }
 
       if (sources.length < 1) {
         return await feedback.inputError(

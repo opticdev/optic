@@ -14,6 +14,7 @@ import { debugWorkflowsCommand } from './commands/debug-workflows';
 import { CliConfig, readConfig } from './config';
 import { initSegment, trackEvent } from './segment';
 import { initSentry } from './sentry';
+import { clearCommand } from './commands/clear';
 
 export async function makeCli(config: CliConfig) {
   const cli = new Command('oas');
@@ -25,6 +26,9 @@ export async function makeCli(config: CliConfig) {
   cli.addCommand(add);
   cli.addCommand(await captureCommand());
   cli.addCommand(await newCommand());
+  cli.addCommand(
+    await clearCommand({ addUsage: `${add.name()} ${add.usage()}` })
+  );
   cli.addCommand(
     await statusCommand({ addUsage: `${add.name()} ${add.usage()}` })
   );
