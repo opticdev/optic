@@ -323,6 +323,7 @@ class TransparentProxy {
   url?: string;
   tunnelAbort: AbortController;
   tlsEnabled: boolean;
+  serverDestroy: (cb: (err?: Error) => void) => void;
 
   constructor(
     targetHost: string,
@@ -339,6 +340,8 @@ class TransparentProxy {
       },
       captureRequest
     );
+
+    this.serverDestroy = enableDestroy(this.server);
 
     this.tlsEnabled = !!options.https;
 
@@ -517,7 +520,7 @@ class TransparentProxy {
 
   stop(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      this.server.close((err) => {
+      this.serverDestroy((err) => {
         // stops accepting new connections, waits for tunnels to finish
         if (err) {
           reject(err);
@@ -554,6 +557,24 @@ function isTransitiveSocketError(err: Error) {
 
 const transitiveSocketErrors = Object.freeze([
   'ECONNRESET',
+  'ENOTFOUND',
   'EPIPE',
   'ETIMEDOUT',
 ]);
+
+function enableDestroy(server: httpolyglot.Server) {
+  let connections = {};
+
+  server.on('connection', function (conn) {
+    var key = conn.remoteAddress + ':' + conn.remotePort;
+    connections[key] = conn;
+    conn.on('close', function () {
+      delete connections[key];
+    });
+  });
+
+  return function (cb: (err?: Error) => void) {
+    server.close(cb);
+    for (var key in connections) connections[key].destroy();
+  };
+}

@@ -8,7 +8,6 @@ import exitHook from 'async-exit-hook';
 import * as AT from '../lib/async-tools';
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { trackCompletion } from '../segment';
-import { trackWarning } from '../sentry';
 import logNode from 'log-node';
 
 import { captureCertCommand, getCertStore } from './capture-cert';
@@ -20,6 +19,8 @@ import {
   ProxyCertAuthority,
   ProxyInteractions,
 } from '../captures';
+import { SystemProxy } from '../captures/system-proxy';
+import { captureStorage } from '../captures/capture-storage';
 
 export async function captureCommand(): Promise<Command> {
   const command = new Command('capture');
@@ -29,16 +30,15 @@ export async function captureCommand(): Promise<Command> {
   let certCommand = await captureCertCommand();
 
   command
+    .argument('<openapi-file>', 'an OpenAPI spec file to add an operation to')
+    .argument('<target-url>', 'the url to capture...')
+
     .description('capture observed traffic as a HAR (HttpArchive v1.3) file')
-    .argument(
-      '[file-path]',
-      'path of the new capture file (written to stdout when not provided)'
-    )
     .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
-    .option(
-      '--proxy <target-url>',
-      'accept traffic over a proxy targeting the actual service'
-    )
+    // .option(
+    //   '--proxy <target-url>',
+    //   'accept traffic over a proxy targeting the actual service'
+    // )
     .option(
       '--no-tls',
       'disable TLS support for --proxy and prevent generation of new CA certificates'
@@ -47,9 +47,26 @@ export async function captureCommand(): Promise<Command> {
       '-d, --debug',
       `output debug information (on stderr). Use LOG_LEVEL env with 'debug', 'info' to increase verbosity`
     )
-    .option('-o <output-file>', 'file name for output')
+    // .option('-o <output-file>', 'file name for output')
     .addCommand(certCommand)
-    .action(async (filePath?: string) => {
+    .action(async (filePath: string, targetUrl: string) => {
+      const [openApiExists, trafficDirectory] = await captureStorage(filePath);
+
+      if (!openApiExists) {
+        return await feedback.inputError(
+          'OpenAPI file not found',
+          InputErrors.SPEC_FILE_NOT_FOUND
+        );
+      }
+
+      const timestamp = Date.now().toString();
+
+      const inProgressName = Path.join(
+        trafficDirectory,
+        `${timestamp}.incomplete`
+      );
+      const completedName = Path.join(trafficDirectory, `${timestamp}.har`);
+
       const options = command.opts();
 
       if (options.debug) {
@@ -60,56 +77,56 @@ export async function captureCommand(): Promise<Command> {
       const sources: HarEntries[] = []; // this should be CapturedInteractions, but those aren't detailed enough yet to not lose information later
       let interactiveCapture = false;
 
-      if (options.har) {
-        let absoluteHarPath = Path.resolve(options.har);
-        if (!(await fs.pathExists(absoluteHarPath))) {
-          return await feedback.inputError(
-            'HAR file could not be found at given path',
-            InputErrors.HAR_FILE_NOT_FOUND
+      // if (options.har) {
+      //   let absoluteHarPath = Path.resolve(options.har);
+      //   if (!(await fs.pathExists(absoluteHarPath))) {
+      //     return await feedback.inputError(
+      //       'HAR file could not be found at given path',
+      //       InputErrors.HAR_FILE_NOT_FOUND
+      //     );
+      //   }
+      //   let harFile = fs.createReadStream(absoluteHarPath);
+      //   let harEntryResults = HarEntries.fromReadable(harFile);
+      //   let harEntries = AT.unwrapOr(harEntryResults, (err) => {
+      //     let message = `HAR entry skipped: ${err.message}`;
+      //     console.warn(message); // warn, skip and keep going
+      //     trackWarning(message, err);
+      //   });
+      //   sources.push(harEntries);
+      // }
+
+      let ca: ProxyCertAuthority | undefined;
+
+      if (options.tls) {
+        const certStore = getCertStore();
+
+        let maybeCa = certStore.get();
+        if (
+          maybeCa.none ||
+          ProxyCertAuthority.hasExpired(maybeCa.val, new Date())
+        ) {
+          ca = await ProxyCertAuthority.generate();
+          certStore.set(ca);
+          await feedback.instruction(
+            `Generated a CA certificate for HTTPS requests. Run '${command.name()} ${certCommand.name()}' to save it as a file.`
           );
+        } else {
+          ca = maybeCa.val;
         }
-        let harFile = fs.createReadStream(absoluteHarPath);
-        let harEntryResults = HarEntries.fromReadable(harFile);
-        let harEntries = AT.unwrapOr(harEntryResults, (err) => {
-          let message = `HAR entry skipped: ${err.message}`;
-          console.warn(message); // warn, skip and keep going
-          trackWarning(message, err);
-        });
-        sources.push(harEntries);
       }
 
-      if (options.proxy) {
-        let ca: ProxyCertAuthority | undefined;
+      let [proxyInteractions, proxyUrl] = await ProxyInteractions.create(
+        targetUrl,
+        sourcesController.signal,
+        { ca }
+      );
 
-        if (options.tls) {
-          const certStore = getCertStore();
+      const systemProxy = new SystemProxy(proxyUrl, feedback);
+      await systemProxy.start(undefined);
 
-          let maybeCa = certStore.get();
-          if (
-            maybeCa.none ||
-            ProxyCertAuthority.hasExpired(maybeCa.val, new Date())
-          ) {
-            ca = await ProxyCertAuthority.generate();
-            certStore.set(ca);
-            await feedback.instruction(
-              `Generated a CA certificate for HTTPS requests. Run '${command.name()} ${certCommand.name()}' to save it as a file.`
-            );
-          } else {
-            ca = maybeCa.val;
-          }
-        }
+      sources.push(HarEntries.fromProxyInteractions(proxyInteractions));
 
-        let [proxyInteractions, proxyUrl] = await ProxyInteractions.create(
-          options.proxy,
-          sourcesController.signal,
-          { ca }
-        );
-        sources.push(HarEntries.fromProxyInteractions(proxyInteractions));
-        feedback.notable(
-          `Proxy created. Redirect traffic you want to capture to ${proxyUrl}`
-        );
-        interactiveCapture = true;
-      }
+      interactiveCapture = true;
 
       if (sources.length < 1) {
         return await feedback.inputError(
@@ -118,23 +135,7 @@ export async function captureCommand(): Promise<Command> {
         );
       }
 
-      let destination: Writable;
-      if (filePath) {
-        let absoluteFilePath = Path.resolve(filePath);
-        let dirPath = Path.dirname(absoluteFilePath);
-        let fileBaseName = Path.basename(filePath);
-
-        if (!(await fs.pathExists(dirPath))) {
-          return await feedback.inputError(
-            `to create ${fileBaseName}, dir must exist at ${dirPath}`,
-            InputErrors.DESTINATION_FILE_DIR_MISSING
-          );
-        }
-
-        destination = fs.createWriteStream(absoluteFilePath);
-      } else {
-        destination = process.stdout;
-      }
+      let destination: Writable = fs.createWriteStream(inProgressName);
 
       const harEntries = AT.merge(...sources);
 
@@ -181,12 +182,20 @@ export async function captureCommand(): Promise<Command> {
 
       exitHook((callback) => {
         sourcesController.abort();
-        completing.then(
-          () => {
-            callback();
-          },
-          (err) => callback(err)
-        );
+
+        completing
+          .then(() =>
+            Promise.all([
+              systemProxy.stop(),
+              fs.move(inProgressName, completedName),
+            ])
+          )
+          .then(
+            () => {
+              callback();
+            },
+            (err) => callback(err)
+          );
       });
 
       await completing;
