@@ -53,24 +53,26 @@ export async function statusCommand({
 
       const [, captureStorageDirectory] = await captureStorage(specPath);
 
-      (await fs.readdir(captureStorageDirectory)).forEach(
-        (potentialCapture) => {
-          // completed captures only
-          if (potentialCapture.endsWith('.har')) {
-            let harFile = fs.createReadStream(
-              path.join(captureStorageDirectory, potentialCapture)
-            );
-            let harEntryResults = HarEntries.fromReadable(harFile);
-            let harEntries = AT.unwrapOr(harEntryResults, (err) => {
-              let message = `HAR entry skipped: ${err.message}`;
-              console.warn(message); // warn, skip and keep going
-              trackWarning(message, err);
-            });
-            console.log('adding source.... ', potentialCapture);
-            sources.push(CapturedInteractions.fromHarEntries(harEntries));
-          }
+      const captureDirectoryContents = (
+        await fs.readdir(captureStorageDirectory)
+      ).sort();
+
+      captureDirectoryContents.forEach((potentialCapture) => {
+        // completed captures only
+        if (potentialCapture.endsWith('.har')) {
+          let harFile = fs.createReadStream(
+            path.join(captureStorageDirectory, potentialCapture)
+          );
+          let harEntryResults = HarEntries.fromReadable(harFile);
+          let harEntries = AT.unwrapOr(harEntryResults, (err) => {
+            let message = `HAR entry skipped: ${err.message}`;
+            console.warn(message); // warn, skip and keep going
+            trackWarning(message, err);
+          });
+
+          sources.push(CapturedInteractions.fromHarEntries(harEntries));
         }
-      );
+      });
 
       // if (options.har) {
       //   let absoluteHarPath = Path.resolve(options.har);
@@ -92,7 +94,7 @@ export async function statusCommand({
 
       if (sources.length < 1) {
         return await feedback.inputError(
-          'choose a traffic source to match spec by',
+          'no traffic captured for this OpenAPI spec. Run "oas capture" command',
           InputErrors.CAPTURE_METHOD_MISSING
         );
       }

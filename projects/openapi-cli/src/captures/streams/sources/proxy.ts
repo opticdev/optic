@@ -341,7 +341,7 @@ class TransparentProxy {
       captureRequest
     );
 
-    this.serverDestroy = enableDestroy(this.server);
+    this.serverDestroy = destroyCommandForServer(this.server);
 
     this.tlsEnabled = !!options.https;
 
@@ -562,7 +562,7 @@ const transitiveSocketErrors = Object.freeze([
   'ETIMEDOUT',
 ]);
 
-function enableDestroy(server: httpolyglot.Server) {
+function destroyCommandForServer(server: httpolyglot.Server) {
   let connections = {};
 
   server.on('connection', function (conn) {
