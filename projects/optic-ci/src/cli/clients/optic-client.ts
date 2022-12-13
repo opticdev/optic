@@ -15,6 +15,16 @@ type Session = {
   metadata?: any;
 };
 
+export type RulesetConfig = {
+  config: {
+    ruleset: { name: string; config: unknown }[];
+  };
+  organization_id: string;
+  ruleset_id: string;
+  created_at: string;
+  updated_at: string;
+};
+
 export enum UploadSlot {
   FromFile = 'FromFile',
   ToFile = 'ToFile',
@@ -180,13 +190,24 @@ export class OpticBackendClient extends JsonHttpClient {
 
   public async getManyRulesetsByName(rulesets: string[]): Promise<{
     rulesets: ({
-      name: string
-      url: string
-      uploaded_at: string
-    } | null)[]
+      name: string;
+      url: string;
+      uploaded_at: string;
+    } | null)[];
   }> {
-    const encodedRulesets = rulesets.map(r => encodeURIComponent(r)).join(',')
+    const encodedRulesets = rulesets
+      .map((r) => encodeURIComponent(r))
+      .join(',');
     return this.getJson(`/api/rulesets?rulesets=${encodedRulesets}`);
+  }
+
+  public async getRuleConfig(
+    rulesetConfigIdentifier: string
+  ): Promise<RulesetConfig> {
+    const encodedIdentifier = encodeURIComponent(rulesetConfigIdentifier)
+    return this.getJson(
+      `/api/ruleset-configs/${encodedIdentifier}`
+    );
   }
 }
 
