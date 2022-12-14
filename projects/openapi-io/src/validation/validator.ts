@@ -14,6 +14,7 @@ import { jsonPointerLogger } from './log-json-pointer';
 import { JsonSchemaSourcemap } from '../parser/sourcemap';
 import { attachAdvancedValidators } from './advanced-validation';
 import { ValidationError } from './errors';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 type Options = {
   strictOpenAPI: boolean;
@@ -63,6 +64,17 @@ export default class OpenAPISchemaValidator {
   }
 }
 
+const getReadableError = (error: ErrorObject): string => {
+  if (error.keyword === 'enum') {
+    const paths = error.instancePath.split('/')
+    const key = paths[paths.length - 1]
+    return `${key} ${error.message} ${error.params.allowedValues.join(',')}`
+  } else {
+    const readableJsonPath = jsonPointerHelpers.decode(error.instancePath).join(' > ')
+    return `${readableJsonPath} ${error.message}` ?? ''
+  }
+}
+
 export const processValidatorErrors = (
   spec: any,
   errors: ErrorObject[],
@@ -93,7 +105,7 @@ export const processValidatorErrors = (
       : `${error.instancePath}`;
 
     return `${chalk.red('invalid openapi: ')}${chalk.bold.red(
-      error.message
+      getReadableError(error)
     )}\n${preview}`;
   });
 };
