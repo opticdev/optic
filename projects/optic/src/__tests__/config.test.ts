@@ -1,10 +1,13 @@
 import { UserError } from '@useoptic/openapi-utilities';
+import { createOpticClient } from '@useoptic/optic-ci/build/cli/clients/optic-client';
 import {
   detectCliConfig,
-  formatRules,
+  initializeRules,
   validateConfig,
   RawYmlConfig,
 } from '../config';
+
+jest.mock('@useoptic/optic-ci/build/cli/clients/optic-client');
 
 describe('detectConfig', () => {
   beforeEach(() => {
@@ -69,22 +72,22 @@ describe('validateConfig', () => {
   });
 });
 
-describe('formatRules', () => {
-  test('empty ruleset', () => {
+describe('initializeRules', () => {
+  test('empty ruleset', async () => {
     const config: RawYmlConfig = { root: '', files: [] };
-    formatRules(config);
+    await initializeRules(config);
 
     expect(config.ruleset).toEqual([]);
   });
 
-  test('valid rules', () => {
+  test('valid rules', async () => {
     const config: RawYmlConfig = {
       root: '',
       files: [],
       ruleset: ['some-rule', { 'complex-rule': { withConfig: true } }],
     };
 
-    formatRules(config);
+    await initializeRules(config);
     expect(config.ruleset?.length).toBe(2);
     expect(config.ruleset?.[0]).toEqual({ name: 'some-rule', config: {} });
     expect(config.ruleset?.[1]).toEqual({
@@ -93,13 +96,42 @@ describe('formatRules', () => {
     });
   });
 
-  test('empty rule', () => {
+  test('empty rule', async () => {
     const config: RawYmlConfig = {
       root: '',
       files: [],
       ruleset: [{}],
     };
 
-    expect(() => formatRules(config)).toThrow(UserError);
+    await expect(() => initializeRules(config)).rejects.toThrow(UserError);
+  });
+
+  test('extends ruleset from cloud', async () => {
+    const mockClient = {
+      getRuleConfig: jest.fn(),
+    };
+    mockClient.getRuleConfig.mockResolvedValue({
+      config: {
+        ruleset: [
+          { name: 'from-cloud-ruleset', config: {} },
+          { name: 'should-be-overwritten', config: { hello: true } },
+        ],
+      },
+    });
+    (createOpticClient as jest.MockedFunction<any>).mockImplementation(
+      () => mockClient
+    );
+
+    const config: RawYmlConfig = {
+      root: '',
+      ruleset: [{ 'should-be-overwritten': { goodbye: false } }],
+      files: [],
+      extends: '@orgslug/rulesetconfigid',
+    };
+    await initializeRules(config);
+    expect(config.ruleset).toEqual([
+      { name: 'from-cloud-ruleset', config: {} },
+      { name: 'should-be-overwritten', config: { goodbye: false } },
+    ]);
   });
 });

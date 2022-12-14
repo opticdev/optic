@@ -44,13 +44,39 @@ describe('diff', () => {
           ],
         });
       } else if (method === 'GET' && /download-url/.test(url)) {
-        return fs.readFile(path.resolve(__dirname, './workspaces/diff/custom-rules/rules/cloud-mock.js'));
+        return fs.readFile(
+          path.resolve(
+            __dirname,
+            './workspaces/diff/custom-rules/rules/cloud-mock.js'
+          )
+        );
+      } else if (method === 'GET' && /\/api\/ruleset-configs\//) {
+        return JSON.stringify({
+          organization_id: 'abc',
+          config: {
+            ruleset: [{ name: 'breaking-changes', config: {} }],
+          },
+          ruleset_id: 'abc',
+          created_at: '2022-11-02T17:55:48.078Z',
+          updated_at: '2022-11-02T17:55:48.078Z',
+        });
       }
       return JSON.stringify({});
     });
 
     test('custom rules', async () => {
       const workspace = await setupWorkspace('diff/custom-rules');
+      const { combined, code } = await runOptic(
+        workspace,
+        'diff example-api-v0.json example-api-v1.json --check'
+      );
+
+      expect(code).toBe(1);
+      expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    });
+
+    test('extends', async () => {
+      const workspace = await setupWorkspace('diff/extends');
       const { combined, code } = await runOptic(
         workspace,
         'diff example-api-v0.json example-api-v1.json --check'
