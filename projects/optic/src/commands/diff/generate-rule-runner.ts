@@ -1,7 +1,7 @@
 import path from 'path';
 import { OpticCliConfig } from '../../config';
 import { StandardRulesets } from '@useoptic/standard-rulesets';
-import { RuleRunner, Ruleset, prepareRulesets } from '@useoptic/rulesets-base';
+import { RuleRunner, Ruleset, prepareRulesets, ExternalRule } from '@useoptic/rulesets-base';
 import { createOpticClient } from '@useoptic/optic-ci/build/cli/clients/optic-client';
 
 const isLocalJsFile = (name: string) => name.endsWith('.js');
@@ -12,7 +12,7 @@ export const generateRuleRunner = async (
   config: OpticCliConfig,
   checksEnabled: boolean
 ): Promise<RuleRunner> => {
-  let rulesets: Ruleset[] = [];
+  let rulesets: (Ruleset | ExternalRule)[] = [];
 
   if (checksEnabled) {
     const client = createOpticClient('');
