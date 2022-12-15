@@ -49,7 +49,6 @@ export class SpectralOasV6Ruleset extends SpectralRule {
     const applies = configValidated.applies ?? 'always';
     const rules = configValidated.rules ?? {};
 
-    // TODO write documentation + based off the oas 6 version stuff
     const spectral = new Spectral();
     try {
       spectral.setRuleset({

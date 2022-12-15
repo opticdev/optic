@@ -235,7 +235,7 @@ new ResponseBodyRule({
 
 ## Examples
 
-[Breaking Changes](../standard-rulesets//src/breaking-changes/) and [Naming rules](../standard-rulesets//src/naming-changes/) are examples of rulesets implemented using rulesets-base.
+[Breaking Changes](../standard-rulesets/src/breaking-changes/) and [Naming rules](../standard-rulesets/src/naming-changes/) are examples of rulesets implemented using rulesets-base.
 
 ## Testing rulesets
 
@@ -284,9 +284,12 @@ test('test that my rule works', async () => {
 
 ## Connecting Spectral to Optic
 
-With Optic, you can connect your Spectral rules and extend them using Optic's lifecycle (added, changed, addedOrChanged, always) and exemption features. 
+> ℹ️ If you just want to use the basic Spectral OAS rulesets, take a look at our [spectral-oas-v6 standard ruleset](../standard-rulesets/README.md#spectral)
+
+With Optic, you can connect your Spectral rules and extend them using Optic's lifecycle (added, changed, addedOrChanged, always) and exemption features.
 
 To start:
+
 ```bash
 # Create a new custom repo
 optic ruleset init spectral-rules
@@ -301,9 +304,10 @@ npm i @stoplight/spectral-rulesets # or your own custom spectral ruleset
 ```
 
 Then in the `src/main.ts` file you can connect up Spectral to Optic.
+
 ```typescript
-import { SpectralRule } from "@useoptic/rulesets-base";
-import { Spectral } from "@stoplight/spectral-core";
+import { SpectralRule } from '@useoptic/rulesets-base';
+import { Spectral } from '@stoplight/spectral-core';
 // Use the spectral built in ruleset, or import your own!
 import { oas } from '@stoplight/spectral-rulesets';
 
@@ -312,30 +316,30 @@ import { oas } from '@stoplight/spectral-rulesets';
 const spectral = new Spectral();
 spectral.setRuleset(oas);
 
-const name = "spectral-rules";
+const name = 'spectral-rules';
 export default {
   name,
-  description: "A Spectral ruleset in Optic",
+  description: 'A Spectral ruleset in Optic',
   configSchema: {},
   rulesetConstructor: () => {
     return new SpectralRule({
       spectral,
       name,
-      applies: 'added' // will only trigger on nodes that were added
+      applies: 'added', // will only trigger on nodes that were added
     });
   },
 };
 ```
 
 After setting up this file, you can build the package and start using Spectral in Optic:
+
 - `yarn run build`
 - (optional) Upload your spectral rule to Optic
   - `OPTIC_TOKEN=<token> yarn run upload`
   - (get an OPTIC_TOKEN at [app.useoptic.com](app.useoptic.com))
-- Run checks with this ruleset by adding rulesets into your [`optic.dev.yml`](../optic/README.md#quick-start-guide) file at the root of your project. 
+- Run checks with this ruleset by adding rulesets into your [`optic.dev.yml`](../optic/README.md#quick-start-guide) file at the root of your project.
   - you can refer to the uploaded ruleset (`@organization/ruleset-name`)
   - or you can use a local path `./<path_to_ruleset_project>/build/main.js`
-
 
 ## Reference details
 
