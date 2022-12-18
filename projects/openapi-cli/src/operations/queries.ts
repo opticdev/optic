@@ -53,8 +53,12 @@ export class OperationQueries {
         ? baseUrls.map((url) => {
             // add absolute in case url is relative (valid in OpenAPI, ignored when absolute)
             const parsed = new Url.URL(url, 'https://example.org');
-
-            return parsed.pathname;
+            const pathName = parsed.pathname;
+            if (pathName.endsWith('/') && pathName.length > 1) {
+              return pathName.substring(0, pathName.length - 1)
+            } else {
+              return pathName
+            }
           })
         : ['/'];
 
@@ -67,6 +71,9 @@ export class OperationQueries {
         })
       ),
     ];
+
+    console.log(this.patterns)
+
     this.patternsAsComponents = this.patterns.map((pattern) => [
       pattern,
       PathComponents.fromPath(pattern),
