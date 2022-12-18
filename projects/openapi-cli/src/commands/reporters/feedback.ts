@@ -71,6 +71,12 @@ export async function createCommandFeedback(
     return destination.write(message + '\n');
   }
 
+  function logChild(child: string, message: string) {
+    return destination.write(
+      chalk.magenta(`[${child}]`) + ' ' + message + '\n'
+    );
+  }
+
   function success(message: string) {
     return destination.write(
       ' ' + chalk.greenBright('✓') + ' ' + message + '\n'
@@ -83,6 +89,7 @@ export async function createCommandFeedback(
     instruction,
     notable,
     log,
+    logChild,
     success,
     warning,
   };

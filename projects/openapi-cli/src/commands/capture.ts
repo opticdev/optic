@@ -22,6 +22,7 @@ import {
 import { SystemProxy } from '../captures/system-proxy';
 import { captureStorage } from '../captures/capture-storage';
 import path from 'path';
+import { RunCommand } from '../captures/run-command';
 
 export async function captureCommand(): Promise<Command> {
   const command = new Command('capture');
@@ -42,6 +43,10 @@ export async function captureCommand(): Promise<Command> {
     .option(
       '--no-tls',
       'disable TLS support for --proxy and prevent generation of new CA certificates'
+    )
+    .option(
+      '--command <command>',
+      'command to run with the http_proxy and http_proxy configured'
     )
     .option(
       '-d, --debug',
@@ -121,12 +126,14 @@ export async function captureCommand(): Promise<Command> {
         { ca }
       );
 
+      const runningCommand = Boolean(options.command);
+
       const systemProxy = new SystemProxy(proxyUrl, feedback);
-      await systemProxy.start(undefined);
+      if (!runningCommand) await systemProxy.start(undefined);
 
       sources.push(HarEntries.fromProxyInteractions(proxyInteractions));
 
-      interactiveCapture = true;
+      if (!runningCommand) interactiveCapture = true;
 
       if (sources.length < 1) {
         return await feedback.inputError(
@@ -137,6 +144,15 @@ export async function captureCommand(): Promise<Command> {
 
       let destination: Writable = fs.createWriteStream(inProgressName);
 
+      const commandRunner = new RunCommand(proxyUrl, feedback);
+
+      let exitCode: number | undefined = undefined;
+      if (options.command) {
+        const runningCommand = await commandRunner.run(options.command);
+        exitCode = runningCommand.exitCode;
+        sourcesController.abort();
+      }
+
       const harEntries = AT.merge(...sources);
 
       const handleUserSignals = (async function () {
@@ -146,6 +162,7 @@ export async function captureCommand(): Promise<Command> {
           let onAbort = () => {
             lines.close();
           };
+          if (runningCommand) await commandRunner.kill();
           sourcesController.signal.addEventListener('abort', onAbort);
 
           for await (let line of lines) {
@@ -186,7 +203,7 @@ export async function captureCommand(): Promise<Command> {
         completing
           .then(() =>
             Promise.all([
-              systemProxy.stop(),
+              !runningCommand ? systemProxy.stop() : Promise.resolve(),
               (async () => {
                 if (options.output) {
                   const outputPath = path.resolve(options.output);
@@ -206,6 +223,7 @@ export async function captureCommand(): Promise<Command> {
       });
 
       await completing;
+      if (exitCode) process.exit(exitCode);
     });
 
   return command;
