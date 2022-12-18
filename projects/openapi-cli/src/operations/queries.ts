@@ -71,9 +71,7 @@ export class OperationQueries {
         })
       ),
     ];
-
-    console.log(this.patterns)
-
+    
     this.patternsAsComponents = this.patterns.map((pattern) => [
       pattern,
       PathComponents.fromPath(pattern),
