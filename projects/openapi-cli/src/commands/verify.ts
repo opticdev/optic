@@ -20,13 +20,16 @@ import {
 } from '../captures';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { captureStorage } from '../captures/capture-storage';
+import chalk from 'chalk';
+import { InferPathStructure } from '../operations/infer-path-structure';
+import { updateByInteractions } from './update';
 
-export async function statusCommand({
+export async function verifyCommand({
   addUsage,
 }: {
   addUsage: string;
 }): Promise<Command> {
-  const command = new Command('status');
+  const command = new Command('verify');
   const feedback = await createCommandFeedback(command);
 
   command
@@ -99,6 +102,11 @@ export async function statusCommand({
         );
       }
 
+      /// Add if --add options passed
+
+      /// Update if --update options passed in
+
+      /// Run the verify with the latest specification
       const specReadResult = await readDeferencedSpec(absoluteSpecPath);
       if (specReadResult.err) {
         await feedback.inputError(
@@ -113,9 +121,20 @@ export async function statusCommand({
       let observations = matchInteractions(spec, interactions);
 
       let observationsFork = AT.forkable(observations);
-      const renderingStatus = renderStatus(observationsFork.fork(), feedback, {
-        addUsage,
-      });
+
+      const renderingStatus = renderOperationStatus(
+        observationsFork.fork(),
+        feedback,
+        {
+          addUsage,
+        }
+      );
+
+      // let { results: updatePatches, observations: updateObservations } =
+      //   updateByInteractions(spec, interactions);
+
+      // console.log(updateObservations, updatePatches);
+
       const trackingStats = trackStats(observationsFork.fork());
       observationsFork.start();
 
@@ -239,7 +258,7 @@ export type StatusObservation = {
 
 export interface StatusObservations extends AsyncIterable<StatusObservation> {}
 
-async function renderStatus(
+async function renderOperationStatus(
   observations: StatusObservations,
   feedback: Awaited<ReturnType<typeof createCommandFeedback>>,
   { addUsage }: { addUsage: string }
@@ -294,57 +313,26 @@ async function renderStatus(
     }
   }
 
-  console.log('');
-  console.log('Matched Operations');
-  console.log('==================');
-  for (let matched of stats.matchedOperations.values()) {
-    console.log(
-      `${matched.method.toUpperCase().padEnd(6, ' ')} ${matched.path}`
-    );
-  }
-
-  console.log('');
-  console.log('Undocumented methods');
-  console.log('====================');
-
-  const orderedMethods = [...stats.unmatchedMethods.entries()]
-    .sort((a, b) => {
-      let termA = a[1].path + a[1].methods.join(','); // path first, methods second
-      let termB = b[1].path + a[1].methods.join(',');
-
-      return termA < termB ? -1 : termA > termB ? 1 : 0;
-    })
-    .map(([_key, op]) => op);
-  for (let unmatched of orderedMethods) {
-    for (let method of unmatched.methods) {
-      console.log(`${method.toUpperCase().padEnd(6, ' ')}${unmatched.path}`);
-    }
-  }
-
-  console.log('');
-  console.log('Undocumented paths');
-  console.log('==================');
-
-  const orderedPaths = [...stats.unmatchedPaths.entries()]
-    .sort((a, b) => {
-      let termA = a[1].path + a[1].method; // path first, method second
-      let termB = b[1].path + a[1].method;
-
-      return termA < termB ? -1 : termA > termB ? 1 : 0;
-    })
-    .map(([_key, op]) => op);
-  for (let unmatchedPath of orderedPaths) {
-    console.log(
-      `${unmatchedPath.method.toUpperCase().padEnd(6, ' ')}${
-        unmatchedPath.path
-      }`
-    );
-  }
-
-  console.log('');
-  await feedback.instruction(
-    `use "${addUsage}" to document new operations (path + method)`
+  const inferredPathStructure = new InferPathStructure([]);
+  [...stats.unmatchedPaths.values()].forEach((observed) =>
+    inferredPathStructure.includeObservedUrlPath(observed.method, observed.path)
   );
+  inferredPathStructure.replaceConstantsWithVariables();
+  const pathsToAdd = inferredPathStructure.undocumentedPaths();
+
+  if (pathsToAdd.length) {
+    feedback.title('Operation Diffs');
+    for (let unmatchedPath of pathsToAdd) {
+      unmatchedPath.methods.forEach((method) =>
+        renderUndocumentedPath(method.toUpperCase(), unmatchedPath.pathPattern)
+      );
+    }
+    feedback.commandInstruction('--add *', 'to document these paths');
+    feedback.commandInstruction(
+      `--add "[method path], ..."`,
+      'to document or more paths'
+    );
+  }
 
   function operationId({ path, method }: { path: string; method: string }) {
     return `${method}${path}`;
@@ -383,4 +371,12 @@ async function trackStats(observations: StatusObservations) {
       }
     }
   });
+}
+
+function renderUndocumentedPath(method: string, pathPattern: string) {
+  console.log(
+    `${chalk.bgYellow('Undocumented')} ${method
+      .toUpperCase()
+      .padStart(6, ' ')} ${pathPattern}`
+  );
 }

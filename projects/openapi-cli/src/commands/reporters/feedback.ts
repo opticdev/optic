@@ -1,14 +1,13 @@
 import { Command } from 'commander';
 import { Writable } from 'stream';
 import { trackEvent, flushEvents } from '../../segment';
-
+import chalk from 'chalk';
 export async function createCommandFeedback(
   command: Command,
   options?: {
     destination?: Writable;
   }
 ) {
-  const chalk = (await import('chalk')).default;
   if (!options) options = {};
 
   let commandName = command.name();
@@ -45,6 +44,9 @@ export async function createCommandFeedback(
   function instruction(message: string, errCode: number = 1) {
     destination.write(chalk.bgBlue.white(' help ') + ' ' + message + '\n');
   }
+  function commandInstruction(command: string, action: string) {
+    destination.write(chalk.gray(` (use "${command}" to ${action})`) + '\n');
+  }
 
   function notable(message: string) {
     destination.write(chalk.blueBright(' » ') + message + '\n');
@@ -76,6 +78,9 @@ export async function createCommandFeedback(
       chalk.magenta(`[${child}]`) + ' ' + message + '\n'
     );
   }
+  function title(title: string) {
+    return destination.write('\n' + chalk.bold.underline(title + '\n'));
+  }
 
   function success(message: string) {
     return destination.write(
@@ -86,10 +91,12 @@ export async function createCommandFeedback(
   return {
     inputError,
     internal,
+    commandInstruction,
     instruction,
     notable,
     log,
     logChild,
+    title,
     success,
     warning,
   };

@@ -2,7 +2,7 @@ import {
   matchInteractions,
   StatusObservation,
   StatusObservationKind,
-} from '../../commands/status';
+} from '../../commands/verify';
 import { CapturedInteraction, CapturedBody } from '../../captures';
 import { OpenAPIV3 } from '../../specs';
 import { HttpMethods } from '../../operations';

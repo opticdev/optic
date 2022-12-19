@@ -10,6 +10,7 @@ import { OpenAPIV3 } from '../../specs';
 import { diffOperationWithSpec, OperationDiffResultKind } from '../diffs';
 import * as AT from '../../lib/async-tools';
 import Url from 'url';
+import minimatch from 'minimatch';
 
 export interface UndocumentedOperations
   extends AsyncIterable<UndocumentedOperation> {}
@@ -28,6 +29,13 @@ export class UndocumentedOperations {
     const specUpdatesIterator =
       specUpdates && specUpdates[Symbol.asyncIterator]();
 
+    const ignorePatterns: string[] = Array.isArray(spec['x-optic-path-ignore'])
+      ? spec['x-optic-path-ignore'].map((i) => i.toString())
+      : []; // default ignore patterns
+
+    const shouldBeIgnored = (path: string) =>
+      ignorePatterns.some((ignore) => minimatch(path, ignore));
+
     for await (let operation of operations) {
       // TODO: figure out whether we can create queries once and update it incrementally,
       // recreating these facts constantly can get expens ive
@@ -37,7 +45,8 @@ export class UndocumentedOperations {
 
       for (let diff of diffs) {
         if (diff.kind === OperationDiffResultKind.UnmatchedPath) {
-          yieldedResult = true;
+          if (shouldBeIgnored(diff.subject)) continue;
+          if (diff.subject) yieldedResult = true;
           yield {
             type: UndocumentedOperationType.MissingPath,
             pathPattern: diff.subject,
@@ -48,6 +57,7 @@ export class UndocumentedOperations {
             specPath: jsonPointerHelpers.compile(['paths', diff.subject]),
           };
         } else if (diff.kind === OperationDiffResultKind.UnmatchedMethod) {
+          if (shouldBeIgnored(diff.subject)) continue;
           yieldedResult = true;
           yield {
             type: UndocumentedOperationType.MissingMethod,

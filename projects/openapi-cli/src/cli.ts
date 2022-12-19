@@ -7,7 +7,7 @@ import { createCommandFeedback } from './commands/reporters/feedback';
 import { addCommand } from './commands/add';
 import { captureCommand } from './commands/capture';
 import { newCommand } from './commands/new';
-import { statusCommand } from './commands/status';
+import { verifyCommand } from './commands/verify';
 import { updateCommand } from './commands/update';
 import { registerDebugTemplateCommand } from './commands/debug-template';
 import { debugWorkflowsCommand } from './commands/debug-workflows';
@@ -30,7 +30,7 @@ export async function makeCli(config: CliConfig) {
     await clearCommand({ addUsage: `${add.name()} ${add.usage()}` })
   );
   cli.addCommand(
-    await statusCommand({ addUsage: `${add.name()} ${add.usage()}` })
+    await verifyCommand({ addUsage: `${add.name()} ${add.usage()}` })
   );
   cli.addCommand(await updateCommand());
 

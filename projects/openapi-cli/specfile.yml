@@ -1,4 +1,5 @@
 openapi: 3.0.3
+'x-optic-path-ignore': ['**/**.ico']
 info:
   title: Untitled service
   version: 1.0.0
