@@ -67,8 +67,9 @@ export function diff(before: any, after: any): ObjectDiff[] {
 
     // TODO in the future, skip adding comparisons based on diff preprocessing step
 
-    // Start by matching up values to compare
-    // for arrays, we need to match up
+    // Start by matching up values to compare - match up the before and after values by id
+    // for arrays, we look at some known OpenAPI identifiers (such as parameters, or primitives) and fallback to using positional identity
+    // for objects, we just use the key
     if (Array.isArray(before.value) && Array.isArray(after.value)) {
       const allValues = [...before.value, ...after.value];
       const arrayIdFn: (v: any, i: number) => string = allValues.every((v) =>
@@ -133,6 +134,8 @@ export function diff(before: any, after: any): ObjectDiff[] {
       );
     }
 
+    // Once we've matched up comparisons to make, we can determine if a key is added, removed or changed
+    // If both are objects / arrays, we continue the diff
     for (const {
       beforeValue,
       beforePath,
@@ -140,11 +143,12 @@ export function diff(before: any, after: any): ObjectDiff[] {
       afterPath,
     } of comparisons) {
       if (beforeValue && afterValue === undefined) {
-        // We don't need to look at the last key to see path differences
-        const beforeParts = jsonPointerHelpers.decode(beforePath).slice(0, -1)
-        const afterParts = jsonPointerHelpers.decode(afterPath).slice(0, -1)
+        // Because before + after paths can change diverge due to array rearrangement, we need to track this to determine from where something was removed in an after spec
+        // We don't need to look at the last key to see path differences since
+        const beforeParts = jsonPointerHelpers.decode(beforePath).slice(0, -1);
+        const afterParts = jsonPointerHelpers.decode(afterPath).slice(0, -1);
         const pathReconciliation: [number, string][] = [];
-        for( let i = 0; i < beforeParts.length; i++) {
+        for (let i = 0; i < beforeParts.length; i++) {
           const before = beforeParts[i];
           const after = afterParts[i];
           if (before !== after) {
@@ -154,7 +158,7 @@ export function diff(before: any, after: any): ObjectDiff[] {
         // generate path reconciliation
         diffResults.push({
           before: beforePath,
-          pathReconciliation
+          pathReconciliation,
         });
       } else if (beforeValue === undefined && afterValue) {
         diffResults.push({
