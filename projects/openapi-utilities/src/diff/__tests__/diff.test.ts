@@ -19,6 +19,35 @@ describe('diff openapi', () => {
       expect(diffResults).toMatchSnapshot();
     });
 
+    test('removing a key with path reconciliation', () => {
+      const diffResults = diff(
+        {
+          parameters: [
+            {
+              name: 'changeme',
+              in: 'query',
+              nested: { schema: { removeme: true, stillhere: 's' } },
+            },
+            { name: 'unchanged', in: 'query' },
+            { name: 'unchanged2', in: 'query' },
+          ],
+        },
+        {
+          parameters: [
+            { name: 'unchanged', in: 'query' },
+            { name: 'unchanged2', in: 'query' },
+            {
+              name: 'changeme',
+              in: 'query',
+              nested: { schema: { stillhere: 's' } },
+            },
+          ],
+        }
+      );
+      expect(diffResults.length).toBe(1);
+      expect(diffResults).toMatchSnapshot();
+    });
+
     test('changing a key value', () => {
       const diffResults = diff(
         { changed: 'one value' },

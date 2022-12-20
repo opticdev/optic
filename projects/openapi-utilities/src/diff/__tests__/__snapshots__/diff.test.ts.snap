@@ -15,12 +15,15 @@ Array [
   },
   Object {
     "before": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/nullableToNonNullable/nullable",
+    "pathReconciliation": Array [],
   },
   Object {
     "before": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/requiredKeys/required/0",
+    "pathReconciliation": Array [],
   },
   Object {
     "before": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/requiredKeys/required/1",
+    "pathReconciliation": Array [],
   },
   Object {
     "after": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/requiredKeys/required/0",
@@ -30,6 +33,7 @@ Array [
   },
   Object {
     "before": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/requiredKeys/properties/deletedRequiredKey",
+    "pathReconciliation": Array [],
   },
   Object {
     "after": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/requiredKeys/properties/addedRequiredKey",
@@ -43,27 +47,33 @@ Array [
   },
   Object {
     "before": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject/oneOf/2",
+    "pathReconciliation": Array [],
   },
   Object {
     "before": "/paths/~1example/get/parameters/2",
+    "pathReconciliation": Array [],
   },
   Object {
     "after": "/paths/~1example/get/parameters/2",
   },
   Object {
     "before": "/paths/~1example/get/parameters/1/required",
+    "pathReconciliation": Array [],
   },
   Object {
     "after": "/paths/~1example/get/parameters/0/required",
   },
   Object {
     "before": "/paths/~1api~1users/post",
+    "pathReconciliation": Array [],
   },
   Object {
     "before": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/required",
+    "pathReconciliation": Array [],
   },
   Object {
     "before": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/photoUrls",
+    "pathReconciliation": Array [],
   },
   Object {
     "after": "/info/title",
@@ -120,6 +130,21 @@ exports[`diff openapi diff behavior removing a key 1`] = `
 Array [
   Object {
     "before": "/removed",
+    "pathReconciliation": Array [],
+  },
+]
+`;
+
+exports[`diff openapi diff behavior removing a key with path reconciliation 1`] = `
+Array [
+  Object {
+    "before": "/parameters/0/nested/schema/removeme",
+    "pathReconciliation": Array [
+      Array [
+        1,
+        "2",
+      ],
+    ],
   },
 ]
 `;
@@ -128,6 +153,7 @@ exports[`diff openapi diff with array values diffs for parameters 1`] = `
 Array [
   Object {
     "before": "/1",
+    "pathReconciliation": Array [],
   },
 ]
 `;
@@ -140,6 +166,7 @@ Array [
   },
   Object {
     "before": "/2",
+    "pathReconciliation": Array [],
   },
 ]
 `;
@@ -148,6 +175,7 @@ exports[`diff openapi diff with array values diffs for primitive values 1`] = `
 Array [
   Object {
     "before": "/1",
+    "pathReconciliation": Array [],
   },
 ]
 `;

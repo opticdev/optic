@@ -20,18 +20,20 @@ export type ObjectDiff =
       // Added
       before?: undefined;
       after: string;
+      pathReconciliation?: undefined;
     }
   | {
       // Changed
       before: string;
       after: string;
+      pathReconciliation?: undefined;
     }
   | {
       // Removed
       before: string;
       after?: undefined;
       // Required to maintain pointers from reordering array keys
-      pathReconciliation?: [number, number][];
+      pathReconciliation: [number, string][];
     };
 
 type StackItem<T extends JSONObject | JSONArray = JSONObject | JSONArray> = [
@@ -138,8 +140,21 @@ export function diff(before: any, after: any): ObjectDiff[] {
       afterPath,
     } of comparisons) {
       if (beforeValue && afterValue === undefined) {
+        // We don't need to look at the last key to see path differences
+        const beforeParts = jsonPointerHelpers.decode(beforePath).slice(0, -1)
+        const afterParts = jsonPointerHelpers.decode(afterPath).slice(0, -1)
+        const pathReconciliation: [number, string][] = [];
+        for( let i = 0; i < beforeParts.length; i++) {
+          const before = beforeParts[i];
+          const after = afterParts[i];
+          if (before !== after) {
+            pathReconciliation.push([i, after]);
+          }
+        }
+        // generate path reconciliation
         diffResults.push({
           before: beforePath,
+          pathReconciliation
         });
       } else if (beforeValue === undefined && afterValue) {
         diffResults.push({
