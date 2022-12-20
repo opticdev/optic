@@ -8,12 +8,3 @@ export const isParameterObject = (value: any): value is { name: string; in: stri
 export const getParameterIdentity = <T extends { name: string; in: string }>(
   obj: T
 ): string => `name${obj.name}:in${obj.in}`;
-
-
-export function getArrayValueId(value: unknown, index: number): string {
-  if (isParameterObject(value)) {
-    return getParameterIdentity(value)
-  } else {
-    return String(index)
-  }
-}

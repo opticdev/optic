@@ -1,5 +1,5 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { getArrayValueId } from './array-identifiers';
+import { getParameterIdentity, isParameterObject } from './array-identifiers';
 
 export type JSONValue =
   | null
@@ -46,10 +46,7 @@ type StackItem<T extends JSONObject | JSONArray = JSONObject | JSONArray> = [
 ];
 
 // Diffs two objects, generating the leaf nodes that have changes
-export function diff<T extends JSONObject | JSONArray = JSONObject | JSONArray>(
-  before: T,
-  after: T
-): ObjectDiff[] {
+export function diff(before: any, after: any): ObjectDiff[] {
   const diffResults: ObjectDiff[] = [];
   const stack: StackItem[] = [
     [
@@ -71,11 +68,20 @@ export function diff<T extends JSONObject | JSONArray = JSONObject | JSONArray>(
     // Start by matching up values to compare
     // for arrays, we need to match up
     if (Array.isArray(before.value) && Array.isArray(after.value)) {
-      const beforeValuesById = new Map(
-        before.value.map((v, i) => [getArrayValueId(v, i), v])
+      const allValues = [...before.value, ...after.value];
+      const arrayIdFn: (v: any, i: number) => string = allValues.every((v) =>
+        isParameterObject(v)
+      )
+        ? getParameterIdentity
+        : allValues.every((v) => typeof v !== 'object')
+        ? (v: any) => String(v)
+        : (_, i: number) => String(i);
+
+      const beforeValuesById: Map<string, [JSONValue, number]> = new Map(
+        before.value.map((v, i) => [arrayIdFn(v, i), [v, i]])
       );
-      const afterValuesById = new Map(
-        after.value.map((v, i) => [getArrayValueId(v, i), v])
+      const afterValuesById: Map<string, [JSONValue, number]> = new Map(
+        after.value.map((v, i) => [arrayIdFn(v, i), [v, i]])
       );
 
       const keys = new Set([
@@ -83,10 +89,17 @@ export function diff<T extends JSONObject | JSONArray = JSONObject | JSONArray>(
         ...afterValuesById.keys(),
       ]);
       for (const key of keys) {
-        const beforeValue = beforeValuesById.get(key);
-        const beforePath = jsonPointerHelpers.append(before.path, key);
-        const afterValue = afterValuesById.get(key);
-        const afterPath = jsonPointerHelpers.append(after.path, key);
+        const [beforeValue, beforeIdx] = beforeValuesById.get(key) ?? [];
+        const [afterValue, afterIdx] = afterValuesById.get(key) ?? [];
+        const beforePath = jsonPointerHelpers.append(
+          before.path,
+          String(beforeIdx)
+        );
+        const afterPath = jsonPointerHelpers.append(
+          after.path,
+          String(afterIdx)
+        );
+
         comparisons.push({
           beforeValue,
           beforePath,
@@ -124,11 +137,11 @@ export function diff<T extends JSONObject | JSONArray = JSONObject | JSONArray>(
       afterValue,
       afterPath,
     } of comparisons) {
-      if (beforeValue && !afterValue) {
+      if (beforeValue && afterValue === undefined) {
         diffResults.push({
           before: beforePath,
         });
-      } else if (!beforeValue && afterValue) {
+      } else if (beforeValue === undefined && afterValue) {
         diffResults.push({
           after: afterPath,
         });

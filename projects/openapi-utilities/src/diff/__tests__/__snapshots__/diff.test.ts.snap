@@ -1,0 +1,167 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`diff openapi can diff an openapi spec 1`] = `
+Array [
+  Object {
+    "after": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/toTypeArrays/type",
+    "before": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/toTypeArrays/type",
+  },
+  Object {
+    "after": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/fromTypeArrays/type",
+    "before": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/fromTypeArrays/type",
+  },
+  Object {
+    "after": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/nonNullableToNullable/nullable",
+  },
+  Object {
+    "before": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/nullableToNonNullable/nullable",
+  },
+  Object {
+    "before": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/requiredKeys/required/0",
+  },
+  Object {
+    "before": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/requiredKeys/required/1",
+  },
+  Object {
+    "after": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/requiredKeys/required/0",
+  },
+  Object {
+    "after": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/requiredKeys/required/1",
+  },
+  Object {
+    "before": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/requiredKeys/properties/deletedRequiredKey",
+  },
+  Object {
+    "after": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/requiredKeys/properties/addedRequiredKey",
+  },
+  Object {
+    "after": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/1",
+  },
+  Object {
+    "after": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject/allOf/0/properties/orderId/type",
+    "before": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject/allOf/0/properties/orderId/type",
+  },
+  Object {
+    "before": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject/oneOf/2",
+  },
+  Object {
+    "before": "/paths/~1example/get/parameters/2",
+  },
+  Object {
+    "after": "/paths/~1example/get/parameters/2",
+  },
+  Object {
+    "before": "/paths/~1example/get/parameters/1/required",
+  },
+  Object {
+    "after": "/paths/~1example/get/parameters/0/required",
+  },
+  Object {
+    "before": "/paths/~1api~1users/post",
+  },
+  Object {
+    "before": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/required",
+  },
+  Object {
+    "before": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/photoUrls",
+  },
+  Object {
+    "after": "/info/title",
+    "before": "/info/title",
+  },
+]
+`;
+
+exports[`diff openapi diff behavior adding a key 1`] = `
+Array [
+  Object {
+    "after": "/added",
+  },
+]
+`;
+
+exports[`diff openapi diff behavior changing a key type (false) 1`] = `
+Array [
+  Object {
+    "after": "/changed",
+    "before": "/changed",
+  },
+]
+`;
+
+exports[`diff openapi diff behavior changing a key type (objects) 1`] = `
+Array [
+  Object {
+    "after": "/changed",
+    "before": "/changed",
+  },
+]
+`;
+
+exports[`diff openapi diff behavior changing a key type (primitives) 1`] = `
+Array [
+  Object {
+    "after": "/changed",
+    "before": "/changed",
+  },
+]
+`;
+
+exports[`diff openapi diff behavior changing a key value 1`] = `
+Array [
+  Object {
+    "after": "/changed",
+    "before": "/changed",
+  },
+]
+`;
+
+exports[`diff openapi diff behavior removing a key 1`] = `
+Array [
+  Object {
+    "before": "/removed",
+  },
+]
+`;
+
+exports[`diff openapi diff with array values diffs for parameters 1`] = `
+Array [
+  Object {
+    "before": "/1",
+  },
+]
+`;
+
+exports[`diff openapi diff with array values diffs for positional values (fallback case) 1`] = `
+Array [
+  Object {
+    "after": "/1",
+    "before": "/1",
+  },
+  Object {
+    "before": "/2",
+  },
+]
+`;
+
+exports[`diff openapi diff with array values diffs for primitive values 1`] = `
+Array [
+  Object {
+    "before": "/1",
+  },
+]
+`;
+
+exports[`diff openapi diff with empty array 1`] = `
+Array [
+  Object {
+    "after": "/info",
+  },
+  Object {
+    "after": "/openapi",
+  },
+  Object {
+    "after": "/paths",
+  },
+]
+`;
