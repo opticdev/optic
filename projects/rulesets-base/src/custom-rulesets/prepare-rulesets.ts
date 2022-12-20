@@ -1,4 +1,4 @@
-import { Ruleset } from '../rules/ruleset';
+import { Ruleset, ExternalRule } from '../rules/ruleset';
 import { downloadRuleset } from './download-ruleset';
 import { resolveRuleset } from './resolve-ruleset';
 
@@ -19,12 +19,12 @@ export type RulesetPayload = {
   >;
   standardRulesets: Record<
     string,
-    { fromOpticConfig: (config: unknown) => Ruleset | string }
+    { fromOpticConfig: (config: unknown) => Ruleset | ExternalRule | string }
   >;
 };
 
 export type PrepareRulesetsResult = {
-  rulesets: Ruleset[];
+  rulesets: (Ruleset | ExternalRule)[];
   warnings: string[];
 };
 
@@ -32,11 +32,11 @@ export async function prepareRulesets(
   payload: RulesetPayload
 ): Promise<PrepareRulesetsResult> {
   const StandardRulesets = payload.standardRulesets;
-  const rulesets: Ruleset[] = [];
+  const rulesets: (Ruleset | ExternalRule)[] = [];
   const warnings: string[] = [];
 
   for (const ruleset of payload.ruleset) {
-    let instanceOrErrorMsg: Ruleset | string;
+    let instanceOrErrorMsg: Ruleset | ExternalRule | string;
     if (StandardRulesets[ruleset.name as keyof typeof StandardRulesets]) {
       const RulesetClass =
         StandardRulesets[ruleset.name as keyof typeof StandardRulesets];
@@ -77,10 +77,10 @@ export async function prepareRulesets(
       warnings.push(`Ruleset ${ruleset.name} does not exist`);
       continue;
     }
-    if (Ruleset.isInstance(instanceOrErrorMsg)) {
-      rulesets.push(instanceOrErrorMsg);
-    } else {
+    if (typeof instanceOrErrorMsg === 'string') {
       warnings.push(instanceOrErrorMsg);
+    } else {
+      rulesets.push(instanceOrErrorMsg);
     }
   }
 
