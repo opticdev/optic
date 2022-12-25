@@ -19,6 +19,7 @@ export function* additionalProperties(
   const propertyPath = jsonPointerHelpers.append(parentObjectPath, key);
 
   yield {
+    description: `'${key}' is not documented`,
     kind: ShapeDiffResultKind.AdditionalProperty,
     keyword: JsonSchemaKnownKeyword.additionalProperties,
     example,

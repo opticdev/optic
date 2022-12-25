@@ -37,7 +37,7 @@ export function* typePatches(
         )
       ) {
         groupedOperations.push(
-          OperationGroup.create(`add new oneOf type to ${diff.key}`, {
+          OperationGroup.create(`add new oneOf type to ${diff.key}`, diff, {
             op: 'add',
             path: jsonPointerHelpers.append(diff.propertyPath, 'oneOf', '-'), // "-" indicates append to array
             value: baseSchema,
@@ -57,6 +57,7 @@ export function* typePatches(
       groupedOperations.push(
         OperationGroup.create(
           `replace ${diff.key} with a one of containing both types`,
+          diff,
           ...mergeOperations.map((op) => ({
             ...op,
             path: jsonPointerHelpers.join(diff.propertyPath, op.path),
@@ -70,7 +71,7 @@ export function* typePatches(
 
   function changeTypeOperations() {
     return [
-      OperationGroup.create(`change ${diff.key} type`, {
+      OperationGroup.create(`change ${diff.key} type`, diff, {
         op: 'replace',
         path: jsonPointerHelpers.append(diff.propertyPath),
         // handles removal of keys that are no longer allowed

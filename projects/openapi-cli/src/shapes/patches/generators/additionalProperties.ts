@@ -27,7 +27,7 @@ export function* additionalPropertiesPatches(
   let groupedOperations: OperationGroup[] = [];
   if (!parent.properties) {
     groupedOperations.push(
-      OperationGroup.create(`add properties {} to parent object`, {
+      OperationGroup.create(`add properties {} to parent object`, diff, {
         op: 'add',
         path: propertiesPath,
         value: {},
@@ -39,6 +39,7 @@ export function* additionalPropertiesPatches(
     groupedOperations.push(
       OperationGroup.create(
         `add required [] to parent object and make ${diff.key} required`,
+        diff,
         {
           op: 'add',
           path: requiredPath,
@@ -50,7 +51,7 @@ export function* additionalPropertiesPatches(
     );
   } else if (!parent.required.includes(diff.key)) {
     groupedOperations.push(
-      OperationGroup.create(`make new property ${diff.key} required`, {
+      OperationGroup.create(`make new property ${diff.key} required`, diff, {
         op: 'add',
         path: requiredPath + '/-', // append
         value: diff.key,
@@ -61,13 +62,17 @@ export function* additionalPropertiesPatches(
   // ok now we're ready for the property
   if (!(parent.properties || {}).hasOwnProperty(diff.key)) {
     groupedOperations.push(
-      OperationGroup.create(`add property ${diff.key} schema to properties`, {
-        op: 'add',
-        path: newPropertyPath,
-        value: Schema.baseFromValue(
-          jsonPointerHelpers.get(diff.example, diff.propertyExamplePath)
-        ),
-      })
+      OperationGroup.create(
+        `add property ${diff.key} schema to properties`,
+        diff,
+        {
+          op: 'add',
+          path: newPropertyPath,
+          value: Schema.baseFromValue(
+            jsonPointerHelpers.get(diff.example, diff.propertyExamplePath)
+          ),
+        }
+      )
     );
   }
 

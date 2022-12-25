@@ -7,8 +7,11 @@ import {
   UndocumentedOperations,
   UndocumentedOperationType,
 } from '../operations';
-import { StatusObservationKind, StatusObservations } from '../commands/verify';
 import { collect, forkable, tap } from '../lib/async-tools';
+import {
+  StatusObservationKind,
+  StatusObservations,
+} from '../commands/diffing/document';
 
 const COLLAPSE_CONSTANTS_N = 2;
 

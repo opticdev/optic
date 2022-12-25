@@ -10,72 +10,10 @@ Object {
   "paths": Object {
     "/examples/{exampleId}": Object {
       "delete": Object {
-        "responses": Object {
-          "204": Object {
-            "description": "automatically documented through Optic",
-          },
-        },
+        "responses": Object {},
       },
       "post": Object {
-        "responses": Object {
-          "201": Object {
-            "content": Object {
-              "application/vnd.api+json": Object {
-                "schema": Object {
-                  "properties": Object {
-                    "id": Object {
-                      "type": "string",
-                    },
-                    "optionalField": Object {
-                      "type": "number",
-                    },
-                  },
-                  "required": Array [
-                    "id",
-                    "optionalField",
-                  ],
-                  "type": "object",
-                },
-              },
-              "application/vnd.optic+json": Object {
-                "schema": Object {
-                  "properties": Object {
-                    "id": Object {
-                      "type": "string",
-                    },
-                    "opticField": Object {
-                      "type": "string",
-                    },
-                  },
-                  "required": Array [
-                    "id",
-                    "opticField",
-                  ],
-                  "type": "object",
-                },
-              },
-            },
-            "description": "automatically documented through Optic",
-          },
-          "400": Object {
-            "content": Object {
-              "text/json": Object {
-                "schema": Object {
-                  "properties": Object {
-                    "error": Object {
-                      "type": "string",
-                    },
-                  },
-                  "required": Array [
-                    "error",
-                  ],
-                  "type": "object",
-                },
-              },
-            },
-            "description": "automatically documented through Optic",
-          },
-        },
+        "responses": Object {},
       },
     },
   },
@@ -94,27 +32,7 @@ Object {
       "post": Object {
         "responses": Object {
           "201": Object {
-            "content": Object {
-              "application/json": Object {
-                "schema": Object {
-                  "properties": Object {
-                    "id": Object {
-                      "type": "string",
-                    },
-                    "name": Object {
-                      "type": "string",
-                    },
-                  },
-                  "required": Array [
-                    "id",
-                    "name",
-                  ],
-                  "type": "object",
-                },
-              },
-              "application/xml": Object {},
-              "text/csv": Object {},
-            },
+            "content": Object {},
             "description": "created response",
           },
         },
@@ -191,31 +109,7 @@ Object {
   "paths": Object {
     "/examples/{exampleId}": Object {
       "post": Object {
-        "requestBody": Object {
-          "content": Object {
-            "application/json": Object {
-              "schema": Object {
-                "properties": Object {
-                  "id": Object {
-                    "type": "string",
-                  },
-                  "optionalField": Object {
-                    "type": "number",
-                  },
-                },
-                "required": Array [
-                  "id",
-                ],
-                "type": "object",
-              },
-            },
-          },
-        },
-        "responses": Object {
-          "200": Object {
-            "description": "automatically documented through Optic",
-          },
-        },
+        "responses": Object {},
       },
     },
   },
@@ -253,11 +147,7 @@ Object {
             },
           },
         },
-        "responses": Object {
-          "200": Object {
-            "description": "automatically documented through Optic",
-          },
-        },
+        "responses": Object {},
       },
     },
   },
@@ -314,54 +204,10 @@ Object {
   "paths": Object {
     "/examples/{exampleId}": Object {
       "delete": Object {
-        "responses": Object {
-          "204": Object {
-            "description": "automatically documented through Optic",
-          },
-        },
+        "responses": Object {},
       },
       "post": Object {
-        "responses": Object {
-          "201": Object {
-            "content": Object {
-              "application/json": Object {
-                "schema": Object {
-                  "properties": Object {
-                    "id": Object {
-                      "type": "string",
-                    },
-                    "optionalField": Object {
-                      "type": "number",
-                    },
-                  },
-                  "required": Array [
-                    "id",
-                  ],
-                  "type": "object",
-                },
-              },
-            },
-            "description": "automatically documented through Optic",
-          },
-          "400": Object {
-            "content": Object {
-              "application/json": Object {
-                "schema": Object {
-                  "properties": Object {
-                    "error": Object {
-                      "type": "string",
-                    },
-                  },
-                  "required": Array [
-                    "error",
-                  ],
-                  "type": "object",
-                },
-              },
-            },
-            "description": "automatically documented through Optic",
-          },
-        },
+        "responses": Object {},
       },
     },
   },
@@ -446,28 +292,7 @@ Object {
   "paths": Object {
     "/examples/{exampleId}": Object {
       "post": Object {
-        "requestBody": Object {
-          "content": Object {
-            "application/json": Object {
-              "schema": Object {
-                "properties": Object {
-                  "id": Object {
-                    "type": "string",
-                  },
-                },
-                "required": Array [
-                  "id",
-                ],
-                "type": "object",
-              },
-            },
-          },
-        },
-        "responses": Object {
-          "200": Object {
-            "description": "automatically documented through Optic",
-          },
-        },
+        "responses": Object {},
       },
     },
   },
@@ -484,11 +309,7 @@ Object {
   "paths": Object {
     "/examples/{exampleId}": Object {
       "post": Object {
-        "responses": Object {
-          "200": Object {
-            "description": "automatically documented through Optic",
-          },
-        },
+        "responses": Object {},
       },
     },
   },
@@ -505,17 +326,7 @@ Object {
   "paths": Object {
     "/examples/{exampleId}": Object {
       "post": Object {
-        "responses": Object {
-          "201": Object {
-            "description": "automatically documented through Optic",
-          },
-          "302": Object {
-            "description": "automatically documented through Optic",
-          },
-          "400": Object {
-            "description": "automatically documented through Optic",
-          },
-        },
+        "responses": Object {},
       },
     },
   },
@@ -532,11 +343,7 @@ Object {
   "paths": Object {
     "/examples/{exampleId}": Object {
       "post": Object {
-        "responses": Object {
-          "400": Object {
-            "description": "automatically documented through Optic",
-          },
-        },
+        "responses": Object {},
       },
     },
   },

@@ -15,11 +15,15 @@ export function* newSpecPatches<T>(
     impact: [PatchImpact.BackwardsCompatibilityUnknown],
     description: `create a new spec`,
     groupedOperations: [
-      OperationGroup.create(`setup minimal viable OpenAPI spec file`, {
-        op: 'add',
-        path: '',
-        value: newSpec,
-      }),
+      OperationGroup.create(
+        `setup minimal viable OpenAPI spec file`,
+        undefined,
+        {
+          op: 'add',
+          path: '',
+          value: newSpec,
+        }
+      ),
     ],
   };
 }

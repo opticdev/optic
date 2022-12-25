@@ -6,6 +6,21 @@ Array [
     "description": "make property f3 optional",
     "groupedOperations": Array [
       Object {
+        "diff": Object {
+          "description": "required property 'f3' was missing",
+          "example": Object {
+            "hello": Object {
+              "f1": "value",
+              "f2": 122,
+            },
+          },
+          "instancePath": "/hello/f3",
+          "key": "f3",
+          "keyword": "required",
+          "kind": "MissingRequiredProperty",
+          "parentObjectPath": "/properties/hello",
+          "propertyPath": "/properties/hello/f3",
+        },
         "intent": "remove f3 from parent's required array",
         "operations": Array [
           Object {
@@ -24,6 +39,21 @@ Array [
     "description": "remove property f3",
     "groupedOperations": Array [
       Object {
+        "diff": Object {
+          "description": "required property 'f3' was missing",
+          "example": Object {
+            "hello": Object {
+              "f1": "value",
+              "f2": 122,
+            },
+          },
+          "instancePath": "/hello/f3",
+          "key": "f3",
+          "keyword": "required",
+          "kind": "MissingRequiredProperty",
+          "parentObjectPath": "/properties/hello",
+          "propertyPath": "/properties/hello/f3",
+        },
         "intent": "remove f3 from parent's required array",
         "operations": Array [
           Object {
@@ -33,6 +63,21 @@ Array [
         ],
       },
       Object {
+        "diff": Object {
+          "description": "required property 'f3' was missing",
+          "example": Object {
+            "hello": Object {
+              "f1": "value",
+              "f2": 122,
+            },
+          },
+          "instancePath": "/hello/f3",
+          "key": "f3",
+          "keyword": "required",
+          "kind": "MissingRequiredProperty",
+          "parentObjectPath": "/properties/hello",
+          "propertyPath": "/properties/hello/f3",
+        },
         "intent": "remove f3 from parent's properties object",
         "operations": Array [
           Object {

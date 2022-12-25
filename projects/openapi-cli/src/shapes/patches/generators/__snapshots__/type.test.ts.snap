@@ -6,6 +6,20 @@ Array [
     "description": "make stringField oneOf",
     "groupedOperations": Array [
       Object {
+        "diff": Object {
+          "description": "'stringField' did not match schema",
+          "example": Array [
+            "1",
+            "2",
+            "3",
+            true,
+          ],
+          "instancePath": "/stringField",
+          "key": "stringField",
+          "keyword": "type",
+          "kind": "UnmatchedType",
+          "propertyPath": "/properties/stringField",
+        },
         "intent": "replace stringField with a one of containing both types",
         "operations": Array [
           Object {
@@ -39,6 +53,20 @@ Array [
     "description": "change type of stringField",
     "groupedOperations": Array [
       Object {
+        "diff": Object {
+          "description": "'stringField' did not match schema",
+          "example": Array [
+            "1",
+            "2",
+            "3",
+            true,
+          ],
+          "instancePath": "/stringField",
+          "key": "stringField",
+          "keyword": "type",
+          "kind": "UnmatchedType",
+          "propertyPath": "/properties/stringField",
+        },
         "intent": "change stringField type",
         "operations": Array [
           Object {
@@ -67,6 +95,17 @@ Array [
     "description": "make stringField oneOf",
     "groupedOperations": Array [
       Object {
+        "diff": Object {
+          "description": "'stringField' did not match schema",
+          "example": Object {
+            "field": "string",
+          },
+          "instancePath": "/stringField",
+          "key": "stringField",
+          "keyword": "type",
+          "kind": "UnmatchedType",
+          "propertyPath": "/properties/stringField",
+        },
         "intent": "replace stringField with a one of containing both types",
         "operations": Array [
           Object {
@@ -97,6 +136,17 @@ Array [
     "description": "change type of stringField",
     "groupedOperations": Array [
       Object {
+        "diff": Object {
+          "description": "'stringField' did not match schema",
+          "example": Object {
+            "field": "string",
+          },
+          "instancePath": "/stringField",
+          "key": "stringField",
+          "keyword": "type",
+          "kind": "UnmatchedType",
+          "propertyPath": "/properties/stringField",
+        },
         "intent": "change stringField type",
         "operations": Array [
           Object {
@@ -122,6 +172,15 @@ Array [
     "description": "make stringField oneOf",
     "groupedOperations": Array [
       Object {
+        "diff": Object {
+          "description": "'stringField' did not match schema",
+          "example": 123,
+          "instancePath": "/stringField",
+          "key": "stringField",
+          "keyword": "type",
+          "kind": "UnmatchedType",
+          "propertyPath": "/properties/stringField",
+        },
         "intent": "replace stringField with a one of containing both types",
         "operations": Array [
           Object {
@@ -152,6 +211,15 @@ Array [
     "description": "change type of stringField",
     "groupedOperations": Array [
       Object {
+        "diff": Object {
+          "description": "'stringField' did not match schema",
+          "example": 123,
+          "instancePath": "/stringField",
+          "key": "stringField",
+          "keyword": "type",
+          "kind": "UnmatchedType",
+          "propertyPath": "/properties/stringField",
+        },
         "intent": "change stringField type",
         "operations": Array [
           Object {
@@ -177,6 +245,15 @@ Array [
     "description": "make stringField oneOf",
     "groupedOperations": Array [
       Object {
+        "diff": Object {
+          "description": "'stringField' did not match schema",
+          "example": null,
+          "instancePath": "/stringField",
+          "key": "stringField",
+          "keyword": "type",
+          "kind": "UnmatchedType",
+          "propertyPath": "/properties/stringField",
+        },
         "intent": "replace stringField with a one of containing both types",
         "operations": Array [
           Object {
@@ -207,6 +284,15 @@ Array [
     "description": "change type of stringField",
     "groupedOperations": Array [
       Object {
+        "diff": Object {
+          "description": "'stringField' did not match schema",
+          "example": null,
+          "instancePath": "/stringField",
+          "key": "stringField",
+          "keyword": "type",
+          "kind": "UnmatchedType",
+          "propertyPath": "/properties/stringField",
+        },
         "intent": "change stringField type",
         "operations": Array [
           Object {

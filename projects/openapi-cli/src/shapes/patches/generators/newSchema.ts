@@ -10,6 +10,7 @@ export function newSchemaPatch(
   let groupedOperations = [
     OperationGroup.create(
       'add schema object',
+      undefined,
       ...Schema.mergeOperations(typelessSchema, schema)
     ),
   ];

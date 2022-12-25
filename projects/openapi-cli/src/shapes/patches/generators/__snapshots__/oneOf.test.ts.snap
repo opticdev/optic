@@ -6,6 +6,19 @@ Array [
     "description": "expand one of for oneOf",
     "groupedOperations": Array [
       Object {
+        "diff": Object {
+          "description": "'oneOf' did not match schema",
+          "example": Array [
+            1,
+            2,
+            3,
+          ],
+          "instancePath": "/location/principality/coordinates",
+          "key": "oneOf",
+          "keyword": "oneOf",
+          "kind": "UnmatchedType",
+          "propertyPath": "/properties/location/properties/principality/properties/coordinates/oneOf",
+        },
         "intent": "add new oneOf branch to oneOf",
         "operations": Array [
           Object {
@@ -35,6 +48,21 @@ Array [
     "description": "add property hello",
     "groupedOperations": Array [
       Object {
+        "diff": Object {
+          "description": "'hello' is not documented",
+          "example": Object {
+            "polyProp": Object {
+              "hello": "world",
+            },
+          },
+          "instancePath": "/polyProp/hello",
+          "key": "hello",
+          "keyword": "additionalProperties",
+          "kind": "AdditionalProperty",
+          "parentObjectPath": "/properties/polyProp/oneOf/0/additionalProperties",
+          "propertyExamplePath": "/polyProp/hello",
+          "propertyPath": "/properties/polyProp/oneOf/0/additionalProperties/hello",
+        },
         "intent": "add required [] to parent object and make hello required",
         "operations": Array [
           Object {
@@ -48,6 +76,21 @@ Array [
         ],
       },
       Object {
+        "diff": Object {
+          "description": "'hello' is not documented",
+          "example": Object {
+            "polyProp": Object {
+              "hello": "world",
+            },
+          },
+          "instancePath": "/polyProp/hello",
+          "key": "hello",
+          "keyword": "additionalProperties",
+          "kind": "AdditionalProperty",
+          "parentObjectPath": "/properties/polyProp/oneOf/0/additionalProperties",
+          "propertyExamplePath": "/polyProp/hello",
+          "propertyPath": "/properties/polyProp/oneOf/0/additionalProperties/hello",
+        },
         "intent": "add property hello schema to properties",
         "operations": Array [
           Object {
@@ -74,6 +117,15 @@ Array [
     "description": "expand one of for oneOf",
     "groupedOperations": Array [
       Object {
+        "diff": Object {
+          "description": "'oneOf' did not match schema",
+          "example": true,
+          "instancePath": "/polyProp",
+          "key": "oneOf",
+          "keyword": "oneOf",
+          "kind": "UnmatchedType",
+          "propertyPath": "/properties/polyProp/oneOf",
+        },
         "intent": "add new oneOf branch to oneOf",
         "operations": Array [
           Object {
@@ -100,6 +152,15 @@ Array [
     "description": "make  oneOf",
     "groupedOperations": Array [
       Object {
+        "diff": Object {
+          "description": "'' did not match schema",
+          "example": Array [],
+          "instancePath": "",
+          "key": "",
+          "keyword": "type",
+          "kind": "UnmatchedType",
+          "propertyPath": "",
+        },
         "intent": "replace  with a one of containing both types",
         "operations": Array [
           Object {
@@ -140,6 +201,15 @@ Array [
     "description": "change type of ",
     "groupedOperations": Array [
       Object {
+        "diff": Object {
+          "description": "'' did not match schema",
+          "example": Array [],
+          "instancePath": "",
+          "key": "",
+          "keyword": "type",
+          "kind": "UnmatchedType",
+          "propertyPath": "",
+        },
         "intent": "change  type",
         "operations": Array [
           Object {

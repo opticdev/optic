@@ -12,6 +12,7 @@ export function* requiredKeyword(
   );
   const key = validationError.params.missingProperty;
   yield {
+    description: `required property '${validationError.params.missingProperty}' was missing`,
     instancePath: jsonPointerHelpers.append(
       validationError.instancePath,
       validationError.params.missingProperty

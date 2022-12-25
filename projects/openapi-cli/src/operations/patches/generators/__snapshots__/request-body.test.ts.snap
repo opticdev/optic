@@ -6,14 +6,13 @@ Array [
     "description": "make request body optional",
     "groupedOperations": Array [
       Object {
+        "diff": Object {
+          "op": "replace",
+          "path": "/requestBody/required",
+          "value": false,
+        },
         "intent": "make request body optional",
-        "operations": Array [
-          Object {
-            "op": "replace",
-            "path": "/requestBody/required",
-            "value": false,
-          },
-        ],
+        "operations": Array [],
       },
     ],
     "impact": Array [
@@ -32,7 +31,7 @@ Object {
     "content": Object {
       "application/json": Object {},
     },
-    "required": false,
+    "required": true,
   },
   "responses": Object {
     "200": Object {
@@ -48,14 +47,13 @@ Array [
     "description": "add 'text/csv' body as a valid request body type",
     "groupedOperations": Array [
       Object {
+        "diff": Object {
+          "op": "add",
+          "path": "/requestBody/content/text~1csv",
+          "value": Object {},
+        },
         "intent": "add text/csv as content type",
-        "operations": Array [
-          Object {
-            "op": "add",
-            "path": "/requestBody/content/text~1csv",
-            "value": Object {},
-          },
-        ],
+        "operations": Array [],
       },
     ],
     "impact": Array [
@@ -73,7 +71,6 @@ Object {
   "requestBody": Object {
     "content": Object {
       "application/json": Object {},
-      "text/csv": Object {},
     },
     "required": true,
   },
@@ -91,26 +88,24 @@ Array [
     "description": "add 'application/json' body as a valid request body type",
     "groupedOperations": Array [
       Object {
-        "intent": "add request body to operation",
-        "operations": Array [
-          Object {
-            "op": "add",
-            "path": "/requestBody",
-            "value": Object {
-              "content": Object {},
-            },
+        "diff": Object {
+          "op": "add",
+          "path": "/requestBody",
+          "value": Object {
+            "content": Object {},
           },
-        ],
+        },
+        "intent": "add request body to operation",
+        "operations": Array [],
       },
       Object {
+        "diff": Object {
+          "op": "add",
+          "path": "/requestBody/content/application~1json",
+          "value": Object {},
+        },
         "intent": "add application/json as content type",
-        "operations": Array [
-          Object {
-            "op": "add",
-            "path": "/requestBody/content/application~1json",
-            "value": Object {},
-          },
-        ],
+        "operations": Array [],
       },
     ],
     "impact": Array [
@@ -125,11 +120,7 @@ exports[`requestBodyPatches generates a patch for an unspecified request body 2`
 Object {
   "method": "post",
   "pathPattern": "/some-path",
-  "requestBody": Object {
-    "content": Object {
-      "application/json": Object {},
-    },
-  },
+  "requestBody": null,
   "responses": Object {
     "200": Object {
       "description": "success",

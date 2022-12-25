@@ -30,12 +30,16 @@ function* unmatchedStatusCode(
   const { statusCode, contentType } = diff;
 
   const numericalStatusCode = parseInt(statusCode, 10);
-  if (numericalStatusCode < 200 || numericalStatusCode >= 500) {
-    return; // only document 2xx, 3xx and 4xx
+  if (
+    numericalStatusCode < 200 ||
+    numericalStatusCode >= 500 ||
+    (numericalStatusCode >= 300 && numericalStatusCode < 400)
+  ) {
+    return; // only document 2xx and 4xx
   }
 
   const responseObject: OpenAPIV3.ResponseObject = {
-    description: 'automatically documented through Optic', // required, no longer in v3.1
+    description: `${statusCode} response`, // required, no longer in v3.1
   };
   groupedOperations.push(
     PatchOperationGroup.create('add response status code', {

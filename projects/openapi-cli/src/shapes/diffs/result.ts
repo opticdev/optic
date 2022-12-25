@@ -18,6 +18,7 @@ export type ShapeDiffResult = {
   key: string;
   example: any;
   instancePath: JsonPath;
+  description: string;
 } & (
   | {
       kind: ShapeDiffResultKind.AdditionalProperty;

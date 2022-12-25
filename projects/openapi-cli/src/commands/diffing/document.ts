@@ -1,32 +1,18 @@
-import { Command } from 'commander';
-import { Result, Ok, Err } from 'ts-results';
-import Path from 'path';
-import * as fs from 'fs-extra';
-import { AbortController } from 'node-abort-controller';
-import readline from 'readline';
-
-import { createCommandFeedback, InputErrors } from './reporters/feedback';
-import { trackCompletion } from '../segment';
-import { trackWarning } from '../sentry';
-import * as AT from '../lib/async-tools';
+import { Err, Ok, Result } from 'ts-results';
 import {
-  CapturedInteraction,
-  CapturedInteractions,
-  HarEntries,
-  ProxyInteractions,
-} from '../captures';
-import {
-  DocumentedInteractions,
   DocumentedInteraction,
-  HttpMethods,
+  DocumentedInteractions,
   HttpMethod,
+  HttpMethods,
   UndocumentedOperation,
-  UndocumentedOperationType,
   UndocumentedOperations,
-} from '../operations';
-import { DocumentedBodies, DocumentedBody } from '../shapes';
+  UndocumentedOperationType,
+} from '../../operations';
+import { InferPathStructure } from '../../operations/infer-path-structure';
+import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { CapturedInteraction, CapturedInteractions } from '../../captures';
+import * as AT from '../../lib/async-tools';
 import {
-  OpenAPIV3,
   SpecFile,
   SpecFileOperation,
   SpecFileOperations,
@@ -35,100 +21,28 @@ import {
   SpecFilesSourcemap,
   SpecPatch,
   SpecPatches,
-  readDeferencedSpec,
-} from '../specs';
+} from '../../specs';
+import { DocumentedBodies, DocumentedBody } from '../../shapes';
+import { trackCompletion } from '../../segment';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
-export async function addCommand(): Promise<Command> {
-  const command = new Command('add');
-  const feedback = await createCommandFeedback(command);
+export async function addIfUndocumented(
+  input: string,
+  statusObservations: StatusObservations,
+  interactions: CapturedInteractions,
+  spec: OpenAPIV3.Document,
+  sourcemap: SpecFilesSourcemap
+): Promise<Result<RecentlyDocumented, string>> {
+  const operationsOption = await computeOperationsToAdd(
+    input,
+    statusObservations
+  );
 
-  command
-    .argument('<openapi-file>', 'an OpenAPI spec file to add an operation to')
-    .argument('<operations...>', 'HTTP method and path pair(s) to add')
-    .description('add an operation (path + method) to an OpenAPI spec')
-    .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
-    // TODO: re-enable direct proxy use once we can re-render updating CLI output better
-    // .option(
-    //   '--proxy <target-url>',
-    //   'accept traffic over a proxy targeting the actual service'
-    // )
-    .action(async (specPath: string, operationComponents: string[]) => {
-      const absoluteSpecPath = Path.resolve(specPath);
-      if (!(await fs.pathExists(absoluteSpecPath))) {
-        return await feedback.inputError(
-          'OpenAPI specification file could not be found',
-          InputErrors.SPEC_FILE_NOT_FOUND
-        );
-      }
-
-      let parsedOperationsResult = parseOperations(operationComponents);
-      if (parsedOperationsResult.err) {
-        return await feedback.inputError(
-          parsedOperationsResult.val,
-          'new-operations-parse-error'
-        );
-      }
-
-      let parsedOperations = parsedOperationsResult.unwrap();
-
-      let sourcesController = new AbortController();
-      const sources: CapturedInteractions[] = [];
-      let interactiveCapture = false;
-
-      const options = command.opts();
-      if (options.har) {
-        let absoluteHarPath = Path.resolve(options.har);
-        if (!(await fs.pathExists(absoluteHarPath))) {
-          return await feedback.inputError(
-            'HAR file could not be found at given path',
-            InputErrors.HAR_FILE_NOT_FOUND
-          );
-        }
-        let harFile = fs.createReadStream(absoluteHarPath);
-        let harEntryResults = HarEntries.fromReadable(harFile);
-        let harEntries = AT.unwrapOr(harEntryResults, (err) => {
-          let message = `HAR entry skipped: ${err.message}`;
-          console.warn(message); // warn, skip and keep going
-          trackWarning(message, err);
-        });
-        sources.push(CapturedInteractions.fromHarEntries(harEntries));
-      }
-
-      if (options.proxy) {
-        if (!process.stdin.isTTY) {
-          return await feedback.inputError(
-            'Can only use --proxy when in an interactive terminal session',
-            InputErrors.PROXY_IN_NON_TTY
-          );
-        }
-
-        let [proxyInteractions, proxyUrl] = await ProxyInteractions.create(
-          options.proxy,
-          sourcesController.signal
-        );
-        sources.push(
-          CapturedInteractions.fromProxyInteractions(proxyInteractions)
-        );
-        feedback.notable(
-          `Proxy created. Redirect traffic you want to capture to ${proxyUrl}`
-        );
-        interactiveCapture = true;
-      }
-
-      let interactions =
-        sources.length > 0 ? AT.merge(...sources) : AT.from([]);
-
-      const specReadResult = await readDeferencedSpec(absoluteSpecPath);
-      if (specReadResult.err) {
-        return await feedback.inputError(
-          `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`,
-          InputErrors.SPEC_FILE_NOT_READABLE
-        );
-      }
-      const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
-
+  if (operationsOption.ok) {
+    try {
+      const operations = operationsOption.unwrap();
       let { results: addPatches, observations: addObservations } =
-        addOperations(spec, parsedOperations, interactions);
+        addOperations(spec, operations, interactions);
 
       let { results: updatedSpecFiles, observations: fileObservations } =
         updateSpecFiles(addPatches, sourcemap);
@@ -141,43 +55,261 @@ export async function addCommand(): Promise<Command> {
         }
       })();
 
-      const handleUserSignals = (async function () {
-        if (interactiveCapture && process.stdin.isTTY) {
-          // wait for an empty new line on input, which should indicate hitting Enter / Return
-          let lines = readline.createInterface({ input: process.stdin });
-          for await (let line of lines) {
-            if (line.trim().length === 0) {
-              lines.close();
-              readline.moveCursor(process.stdin, 0, -1);
-              readline.clearLine(process.stdin, 1);
-              sourcesController.abort();
-            }
-          }
-        }
-      })();
-
       let observations = AT.forkable(
         AT.merge(addObservations, fileObservations)
       );
-      const renderingStats = renderAddProgress(feedback, observations.fork());
-      const trackingStats = trackStats(observations.fork());
+      const stats = collectStats(observations.fork());
+
       observations.start();
+      await Promise.all([writingSpecFiles]);
+      return Ok(await stats);
+    } catch (error: any) {
+      return Err(error.message);
+    }
+  } else {
+    return Err(operationsOption.val);
+  }
+}
 
-      await Promise.all([
-        handleUserSignals,
-        writingSpecFiles,
-        renderingStats,
-        trackingStats,
-      ]);
-    });
-
-  return command;
+async function computeOperationsToAdd(
+  input: string,
+  statusObservations: StatusObservations
+): Promise<Result<ParsedOperation[], string>> {
+  if (input.trim() === 'all') {
+    const undocumented = await observationToUndocumented(statusObservations);
+    return Ok(undocumented.pathsToAdd);
+  } else {
+    return parseAddOperations(input);
+  }
 }
 
 interface ParsedOperation {
   methods: Array<HttpMethod>;
   pathPattern: string;
 }
+
+export function parseAddOperations(
+  input: string
+): Result<ParsedOperation[], string> {
+  const rawComponents = input.split(',').map((i) => i.trim());
+
+  const components = rawComponents.filter((s) => s.length > 0);
+  const pairs: ParsedOperation[] = [];
+
+  const regex = /(get|post|put|delete|patch|options|head)( +)(\/.*)/;
+
+  components.forEach((comp) => {
+    const groups = regex.exec(comp);
+    if (groups !== null) {
+      const method = groups[1];
+      const pathPattern = groups[3];
+
+      pairs.push({
+        methods: [HttpMethods[method.toUpperCase()]!],
+        pathPattern:
+          pathPattern.length > 1 && pathPattern.endsWith('/')
+            ? pathPattern.substring(0, pathPattern.length - 1)
+            : pathPattern,
+      });
+    }
+  });
+
+  if (pairs.length === 0) {
+    return Err(
+      'Invalid input to --document. example: "get /todos, post /todos/{todoId}"'
+    );
+  }
+
+  return Ok(pairs);
+}
+
+// observations to diffs
+
+export async function observationToUndocumented(
+  observations: StatusObservations
+) {
+  let pathDiffs = {
+    interactionsCount: 0,
+    matchedOperations: new Map<string, { path: string; method: string }>(),
+    matchedInteractionCountByOperation: new Map<string, number>(),
+    unmatchedMethods: new Map<string, { path: string; methods: string[] }>(),
+    unmatchedPaths: new Map<string, { path: string; method: string }>(),
+  };
+
+  for await (let observation of observations) {
+    if (
+      observation.kind === StatusObservationKind.InteractionMatchedOperation
+    ) {
+      pathDiffs.interactionsCount += 1;
+      let opId = operationId(observation);
+
+      if (!pathDiffs.matchedOperations.has(opId)) {
+        let { path, method } = observation;
+        pathDiffs.matchedOperations.set(opId, { path, method });
+        pathDiffs.matchedInteractionCountByOperation.set(opId, 1);
+      } else {
+        let interactionCount =
+          pathDiffs.matchedInteractionCountByOperation.get(opId)! + 1;
+        pathDiffs.matchedInteractionCountByOperation.set(
+          opId,
+          interactionCount
+        );
+      }
+    } else if (
+      observation.kind === StatusObservationKind.InteractionUnmatchedPath
+    ) {
+      pathDiffs.interactionsCount += 1;
+      let opId = operationId(observation);
+
+      if (!pathDiffs.unmatchedPaths.has(opId)) {
+        const { path, method } = observation;
+        pathDiffs.unmatchedPaths.set(opId, { path, method });
+      }
+    } else if (
+      observation.kind === StatusObservationKind.InteractionUnmatchedMethod
+    ) {
+      pathDiffs.interactionsCount += 1;
+      let opId = operationId(observation);
+
+      if (!pathDiffs.unmatchedMethods.has(opId)) {
+        const { path, method } = observation;
+        pathDiffs.unmatchedMethods.set(opId, { path, methods: [method] });
+      } else {
+        let methods = pathDiffs.unmatchedMethods.get(opId)!.methods;
+        methods.push(observation.method);
+      }
+    }
+  }
+
+  const inferredPathStructure = new InferPathStructure([]);
+  [...pathDiffs.unmatchedPaths.values()].forEach((observed) =>
+    inferredPathStructure.includeObservedUrlPath(observed.method, observed.path)
+  );
+  inferredPathStructure.replaceConstantsWithVariables();
+  const pathsToAdd = inferredPathStructure.undocumentedPaths();
+
+  return {
+    pathDiffs,
+    pathsToAdd,
+  };
+
+  function operationId({ path, method }: { path: string; method: string }) {
+    return `${method}${path}`;
+  }
+}
+
+export function matchInteractions(
+  spec: OpenAPIV3.Document,
+  interactions: CapturedInteractions
+): StatusObservations {
+  const interactionsFork = AT.forkable(
+    // TODO: figure out why this prevents `forkable` from producing an empty object as the last interaction
+    AT.tap<CapturedInteraction>(() => {})(interactions)
+  );
+
+  const documentedInteractions =
+    DocumentedInteractions.fromCapturedInteractions(
+      interactionsFork.fork(),
+      spec
+    );
+  const undocumentedOperations =
+    UndocumentedOperations.fromCapturedInteractions(
+      interactionsFork.fork(),
+      spec
+    );
+  const capturedInteractions = interactionsFork.fork();
+  interactionsFork.start();
+
+  const matchingObservations = (async function* (): StatusObservations {
+    for await (let documentedInteractionOption of documentedInteractions) {
+      if (documentedInteractionOption.none) continue;
+
+      let documentedInteraction = documentedInteractionOption.unwrap();
+
+      yield {
+        kind: StatusObservationKind.InteractionMatchedOperation,
+        capturedPath: documentedInteraction.interaction.request.path,
+        path: documentedInteraction.operation.pathPattern,
+        method: documentedInteraction.operation.method,
+      };
+    }
+  })();
+
+  const unmatchingObservations = (async function* (): StatusObservations {
+    for await (let undocumentedOperation of undocumentedOperations) {
+      if (
+        undocumentedOperation.type === UndocumentedOperationType.MissingMethod
+      ) {
+        yield {
+          kind: StatusObservationKind.InteractionUnmatchedMethod,
+          path: undocumentedOperation.pathPattern,
+          method: undocumentedOperation.method,
+        };
+      } else if (
+        undocumentedOperation.type === UndocumentedOperationType.MissingPath
+      ) {
+        for (let method of undocumentedOperation.methods) {
+          yield {
+            kind: StatusObservationKind.InteractionUnmatchedPath,
+            path: undocumentedOperation.pathPattern,
+            method,
+          };
+        }
+      }
+    }
+  })();
+
+  const captureObservations = AT.map(function (
+    interaction: CapturedInteraction
+  ): StatusObservation {
+    return {
+      kind: StatusObservationKind.InteractionCaptured,
+      path: interaction.request.path,
+      method: interaction.request.method,
+    };
+  })(capturedInteractions);
+
+  return AT.merge(
+    captureObservations,
+    matchingObservations,
+    unmatchingObservations
+  );
+}
+
+export enum StatusObservationKind {
+  InteractionCaptured = 'interaction-captured',
+  InteractionMatchedOperation = 'interaction-matched-operation',
+  InteractionUnmatchedMethod = 'interaction-unmatched-method',
+  InteractionUnmatchedPath = 'interaction-unmatched-path',
+}
+
+export type StatusObservation = {
+  kind: StatusObservationKind;
+} & (
+  | {
+      kind: StatusObservationKind.InteractionCaptured;
+      path: string;
+      method: string;
+    }
+  | {
+      kind: StatusObservationKind.InteractionMatchedOperation;
+      capturedPath: string;
+      path: string;
+      method: string;
+    }
+  | {
+      kind: StatusObservationKind.InteractionUnmatchedMethod;
+      path: string;
+      method: string;
+    }
+  | {
+      kind: StatusObservationKind.InteractionUnmatchedPath;
+      path: string;
+      method: string;
+    }
+);
+
+export interface StatusObservations extends AsyncIterable<StatusObservation> {}
 
 export function addOperations(
   spec: OpenAPIV3.Document,
@@ -503,151 +635,34 @@ export type AddObservation = {
 
 export interface AddObservations extends AsyncIterable<AddObservation> {}
 
-function parseOperations(
-  rawComponents: string[]
-): Result<ParsedOperation[], string> {
-  const components = rawComponents.filter((s) => s.length > 0);
-  const pairs: ParsedOperation[] = [];
+type RecentlyDocumented = {
+  method: string;
+  pathPattern: string;
+  jsonPointer: string;
+}[];
 
-  for (let i = 0; i < Math.ceil(components.length / 2); i++) {
-    let rawMethods = components[i * 2];
-    let pathPattern = components[i * 2 + 1];
-
-    if (!pathPattern) {
-      return Err(
-        'missing path pattern or method. Pairs of valid method(s) and path required to add an operation'
-      );
-    }
-
-    if (!pathPattern.startsWith('/')) pathPattern = '/' + pathPattern;
-
-    let methods: Array<HttpMethod> = [];
-    for (let maybeMethod of rawMethods.split(',')) {
-      let method = HttpMethods[maybeMethod.toUpperCase()];
-      if (!method) {
-        return Err(
-          `could not parse '${maybeMethod}' as a valid HTTP method. Pairs of valid method(s) and path required to add an operation`
-        );
-      }
-      methods.push(method as HttpMethod);
-    }
-
-    let pair = { methods, pathPattern };
-    pairs.push(pair);
-  }
-
-  return Ok(pairs);
-}
-
-async function renderAddProgress(
-  feedback: Awaited<ReturnType<typeof createCommandFeedback>>,
+async function collectStats(
   observations: AddObservations
-) {
-  let patchCount = 0;
+): Promise<RecentlyDocumented> {
+  const newOperations: {
+    method: string;
+    pathPattern: string;
+    jsonPointer: string;
+  }[] = [];
 
   for await (let observation of observations) {
-    if (observation.kind === AddObservationKind.UnmatchedPath) {
-      feedback.log(`Undocumented path detected: ${observation.requiredPath}`);
-    } else if (observation.kind === AddObservationKind.UnmatchedMethod) {
-      feedback.log(
-        `Undocumented method: ${observation.requiredMethod.toUpperCase()} for existing path ${
-          observation.matchedPathPattern
-        }`
-      );
-    } else if (observation.kind === AddObservationKind.NewOperation) {
-      patchCount += 1;
-
-      feedback.notable(
-        `added ${observation.method.toUpperCase()} ${observation.pathPattern}`
-      );
-    } else if (observation.kind === AddObservationKind.SpecFileUpdated) {
-      let { path } = observation;
-      // console.log('Spec file update queued', path);
+    if (observation.kind === AddObservationKind.NewOperation) {
+      newOperations.push({
+        method: observation.method,
+        pathPattern: observation.pathPattern,
+        jsonPointer: jsonPointerHelpers.compile([
+          'paths',
+          observation.pathPattern,
+          observation.method,
+        ]),
+      });
     }
   }
 
-  if (patchCount === 0) {
-    feedback.warning(
-      'No paths or methods were added to the spec. All requested operations were already present in spec'
-    );
-    // TODO: give more actionable feedback. Tell the user at least which one of their inputs matched which existing operation
-    feedback.instruction(
-      'Compare the OpenAPI spec file with your inputs. Does not seem right? Let us know!'
-    );
-  }
-}
-
-async function trackStats(observations: AddObservations) {
-  const stats = {
-    unmatchedPathsCount: 0,
-    unmatchedMethodsCount: 0,
-    newOperationsCount: 0,
-    requiredOperationsCount: 0,
-
-    capturedInteractionsCount: 0,
-    matchedInteractionsCount: 0,
-    updatePatchesCount: 0,
-
-    filesWithOverwrittenYamlCommentsCount: 0,
-    updatedFilesCount: 0,
-    unsupportedContentTypeCounts: {},
-  };
-
-  function eventProperties() {
-    return {
-      ...stats,
-      unsupportedContentTypes: [
-        ...Object.keys(stats.unsupportedContentTypeCounts),
-      ], // set cast as array
-    };
-  }
-
-  await trackCompletion(
-    'openapi_cli.add',
-    eventProperties(),
-    async function* () {
-      for await (let observation of observations) {
-        if (observation.kind === AddObservationKind.RequiredOperations) {
-          stats.requiredOperationsCount += 1;
-        } else if (observation.kind === AddObservationKind.UnmatchedPath) {
-          stats.unmatchedPathsCount += 1;
-        } else if (observation.kind === AddObservationKind.UnmatchedMethod) {
-          stats.unmatchedMethodsCount += 1;
-        } else if (observation.kind === AddObservationKind.NewOperation) {
-          stats.newOperationsCount += 1;
-        } else if (
-          observation.kind === AddObservationKind.InteractionCaptured
-        ) {
-          stats.capturedInteractionsCount += 1;
-        } else if (
-          observation.kind === AddObservationKind.InteractionMatchedOperation
-        ) {
-          stats.matchedInteractionsCount += 1;
-        } else if (
-          observation.kind === AddObservationKind.InteractionPatchGenerated
-        ) {
-          stats.updatePatchesCount += 1;
-        } else if (observation.kind === AddObservationKind.SpecFileUpdated) {
-          stats.updatedFilesCount += 1;
-          if (observation.overwrittenComments) {
-            stats.filesWithOverwrittenYamlCommentsCount += 1;
-          }
-        } else if (
-          observation.kind === AddObservationKind.InteractionBodyMatched
-        ) {
-          if (!observation.decodable && observation.capturedContentType) {
-            let count =
-              stats.unsupportedContentTypeCounts[
-                observation.capturedContentType
-              ] || 0;
-            stats.unsupportedContentTypeCounts[
-              observation.capturedContentType
-            ] = count + 1;
-          }
-        }
-
-        yield eventProperties();
-      }
-    }
-  );
+  return newOperations;
 }

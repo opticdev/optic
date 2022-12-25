@@ -26,6 +26,7 @@ export function* requiredPatches(
     if (indexOfRequired > -1)
       yield OperationGroup.create(
         `remove ${diff.key} from parent's required array`,
+        diff,
         {
           op: 'remove',
           path: jsonPointerHelpers.append(
@@ -45,6 +46,7 @@ export function* requiredPatches(
 
     yield OperationGroup.create(
       `remove ${key} from parent's properties object`,
+      diff,
       {
         op: 'remove',
         path: propertyPath,
