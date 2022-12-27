@@ -77,6 +77,8 @@ export async function verifyCommand({
             spec,
             sourcemap
           );
+
+          return;
         }
 
         if (options.update) {

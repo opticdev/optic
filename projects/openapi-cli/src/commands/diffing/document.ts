@@ -39,34 +39,30 @@ export async function addIfUndocumented(
   );
 
   if (operationsOption.ok) {
-    try {
-      const operations = operationsOption.unwrap();
+    const operations = operationsOption.unwrap();
+    let { results: addPatches, observations: addObservations } = addOperations(
+      spec,
+      operations,
+      interactions
+    );
 
-      let { results: addPatches, observations: addObservations } =
-        addOperations(spec, operations, interactions);
+    let { results: updatedSpecFiles, observations: fileObservations } =
+      updateSpecFiles(addPatches, sourcemap);
 
-      let { results: updatedSpecFiles, observations: fileObservations } =
-        updateSpecFiles(addPatches, sourcemap);
+    const writingSpecFiles = (async function () {
+      for await (let writtenFilePath of SpecFiles.writeFiles(
+        updatedSpecFiles
+      )) {
+        // console.log(`Updated ${writtenFilePath}`);
+      }
+    })();
 
-      const writingSpecFiles = (async function () {
-        for await (let writtenFilePath of SpecFiles.writeFiles(
-          updatedSpecFiles
-        )) {
-          // console.log(`Updated ${writtenFilePath}`);
-        }
-      })();
+    let observations = AT.forkable(AT.merge(addObservations, fileObservations));
+    const stats = collectStats(observations.fork());
+    observations.start();
 
-      let observations = AT.forkable(
-        AT.merge(addObservations, fileObservations)
-      );
-      const stats = collectStats(observations.fork());
-      observations.start();
-
-      await Promise.all([writingSpecFiles]);
-      return Ok(await stats);
-    } catch (error: any) {
-      return Err(error.message);
-    }
+    await Promise.all([writingSpecFiles]);
+    return Ok(await stats);
   } else {
     return Err(operationsOption.val);
   }

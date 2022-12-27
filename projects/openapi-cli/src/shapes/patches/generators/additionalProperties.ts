@@ -14,7 +14,11 @@ export function* additionalPropertiesPatches(
 
   const parentPath = jsonPointerHelpers.pop(diff.parentObjectPath);
 
-  const parent = jsonPointerHelpers.get(schema, parentPath);
+  const parentOption = jsonPointerHelpers.tryGet(schema, parentPath);
+
+  if (!parentOption.match) return;
+
+  const parent = parentOption.value;
 
   const propertiesPath = jsonPointerHelpers.append(parentPath, 'properties');
   const requiredPath = jsonPointerHelpers.append(parentPath, 'required');
