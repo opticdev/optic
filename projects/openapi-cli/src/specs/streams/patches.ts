@@ -55,7 +55,8 @@ export class SpecPatches {
   }
 
   static async *shapeAdditions(
-    documentedBodies: DocumentedBodies
+    documentedBodies: DocumentedBodies,
+    max?: number
   ): SpecPatches {
     const updatedSchemasByPath: Map<string, SchemaObject> = new Map();
 
@@ -66,7 +67,10 @@ export class SpecPatches {
         documentedBody.schema = updatedSchemasByPath.get(specJsonPath)!;
       }
 
-      for (let patch of ShapePatches.generateBodyAdditions(documentedBody)) {
+      for (let patch of ShapePatches.generateBodyAdditions(
+        documentedBody,
+        max
+      )) {
         documentedBody = DocumentedBody.applyShapePatch(documentedBody, patch);
         yield SpecPatch.fromShapePatch(patch, specJsonPath, shapeLocation!);
       }

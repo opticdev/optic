@@ -15,17 +15,34 @@ export function* additionalProperties(
     key
   );
 
-  const parentObjectPath = validationError.schemaPath.substring(1);
+  const parentObjectPath = (() => {
+    const parentObjectPath = jsonPointerHelpers.decode(
+      validationError.schemaPath.substring(1)
+    );
+
+    if (
+      parentObjectPath[parentObjectPath.length - 1] === 'additionalProperties'
+    ) {
+      parentObjectPath.pop();
+      return jsonPointerHelpers.compile([...parentObjectPath, 'properties']);
+    }
+    return jsonPointerHelpers.compile(parentObjectPath);
+  })();
+
   const propertyPath = jsonPointerHelpers.append(parentObjectPath, key);
+  const instancePath = jsonPointerHelpers.append(
+    validationError.instancePath,
+    key
+  );
 
   yield {
     description: `'${key}' is not documented`,
     kind: ShapeDiffResultKind.AdditionalProperty,
     keyword: JsonSchemaKnownKeyword.additionalProperties,
-    example,
+    example: jsonPointerHelpers.get(example, instancePath),
 
     propertyPath,
-    instancePath: jsonPointerHelpers.append(validationError.instancePath, key),
+    instancePath,
     parentObjectPath,
     propertyExamplePath,
     key,

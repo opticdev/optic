@@ -26,7 +26,6 @@ export function* requiredPatches(
     if (indexOfRequired > -1)
       yield OperationGroup.create(
         `remove ${diff.key} from parent's required array`,
-        diff,
         {
           op: 'remove',
           path: jsonPointerHelpers.append(
@@ -46,14 +45,12 @@ export function* requiredPatches(
 
     yield OperationGroup.create(
       `remove ${key} from parent's properties object`,
-      diff,
       {
         op: 'remove',
         path: propertyPath,
       }
     );
   }
-
   // patch one: make required field optional
   let makeOptionalPatch = {
     impact: [
@@ -64,6 +61,7 @@ export function* requiredPatches(
         ? PatchImpact.BackwardsCompatible
         : PatchImpact.BackwardsIncompatible,
     ],
+    diff,
     description: `make property ${diff.key} optional`,
     groupedOperations: [
       ...makeOptionalOperations(requiredArray.indexOf(diff.key)),
@@ -76,6 +74,7 @@ export function* requiredPatches(
   // patch two: remove property
   yield {
     description: `remove property ${diff.key}`,
+    diff,
     impact: [
       !shapeContext.location
         ? PatchImpact.BackwardsCompatibilityUnknown

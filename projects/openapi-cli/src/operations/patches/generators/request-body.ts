@@ -18,13 +18,15 @@ export function* requestBodyPatches(
   }
 
   if (diff.kind === OperationDiffResultKind.MissingRequestBody) {
-    yield* missingRequestBodyPatches();
+    yield* missingRequestBodyPatches(diff);
   } else if (diff.kind === OperationDiffResultKind.UnmatchedRequestBody) {
     yield* unmatchedRequestBodyPatches(diff, operation);
   }
 }
 
-function* missingRequestBodyPatches(): IterableIterator<OperationPatch> {
+function* missingRequestBodyPatches(
+  diff: OperationDiffResult
+): IterableIterator<OperationPatch> {
   const operationGroup = PatchOperationGroup.create(
     'make request body optional',
     {
@@ -37,6 +39,7 @@ function* missingRequestBodyPatches(): IterableIterator<OperationPatch> {
   yield {
     description: 'make request body optional',
     impact: [PatchImpact.Addition, PatchImpact.BackwardsCompatible],
+    diff,
     groupedOperations: [operationGroup],
   };
 }
@@ -76,6 +79,7 @@ function* unmatchedRequestBodyPatches(
   yield {
     description: `add '${contentType}' body as a valid request body type`,
     impact: [PatchImpact.Addition, PatchImpact.BackwardsCompatible],
+    diff,
     groupedOperations,
   };
 }

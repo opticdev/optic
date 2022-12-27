@@ -17,11 +17,15 @@ export function* requiredKeyword(
       validationError.instancePath,
       validationError.params.missingProperty
     ),
-    propertyPath: jsonPointerHelpers.append(parentObjectPath, key),
+    propertyPath: jsonPointerHelpers.append(
+      parentObjectPath,
+      'properties',
+      key
+    ),
     kind: ShapeDiffResultKind.MissingRequiredProperty,
     keyword: JsonSchemaKnownKeyword.required,
     parentObjectPath,
     key,
-    example,
+    example: undefined,
   };
 }

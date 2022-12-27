@@ -37,7 +37,7 @@ export function* typePatches(
         )
       ) {
         groupedOperations.push(
-          OperationGroup.create(`add new oneOf type to ${diff.key}`, diff, {
+          OperationGroup.create(`add new oneOf type to ${diff.key}`, {
             op: 'add',
             path: jsonPointerHelpers.append(diff.propertyPath, 'oneOf', '-'), // "-" indicates append to array
             value: baseSchema,
@@ -57,7 +57,6 @@ export function* typePatches(
       groupedOperations.push(
         OperationGroup.create(
           `replace ${diff.key} with a one of containing both types`,
-          diff,
           ...mergeOperations.map((op) => ({
             ...op,
             path: jsonPointerHelpers.join(diff.propertyPath, op.path),
@@ -71,7 +70,7 @@ export function* typePatches(
 
   function changeTypeOperations() {
     return [
-      OperationGroup.create(`change ${diff.key} type`, diff, {
+      OperationGroup.create(`change ${diff.key} type`, {
         op: 'replace',
         path: jsonPointerHelpers.append(diff.propertyPath),
         // handles removal of keys that are no longer allowed
@@ -86,6 +85,7 @@ export function* typePatches(
   // option one: convert to a one-off
   yield {
     description: `make ${diff.key} oneOf`,
+    diff,
     impact: [
       PatchImpact.Addition,
       !shapeContext.location
@@ -99,6 +99,7 @@ export function* typePatches(
 
   // option two: change the type
   yield {
+    diff,
     description: `change type of ${diff.key}`,
     impact: [PatchImpact.BackwardsIncompatible],
     groupedOperations: changeTypeOperations(),

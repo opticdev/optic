@@ -81,6 +81,7 @@
     "node-abort-controller": "^3.0.1",
     "node-forge": "^1.2.1",
     "node-machine-id": "^1.1.12",
+    "object-hash": "^3.0.0",
     "ora": "^6.1.2",
     "pluralize": "8.0.0",
     "portfinder": "^1.0.28",

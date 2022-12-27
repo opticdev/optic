@@ -9,7 +9,10 @@ export interface ShapePatches extends Iterable<ShapePatch> {}
 const MAX_ITERATIONS = 100;
 
 export class ShapePatches {
-  static *generateBodyAdditions(documentedBody: DocumentedBody): ShapePatches {
+  static *generateBodyAdditions(
+    documentedBody: DocumentedBody,
+    max: number = MAX_ITERATIONS
+  ): ShapePatches {
     let { body: optionalBody, schema, shapeLocation } = documentedBody;
 
     if (optionalBody.none) return; // no patches if there is no body
@@ -17,7 +20,7 @@ export class ShapePatches {
 
     let patchesExhausted = false;
     let i = 0;
-    while (!patchesExhausted && i < MAX_ITERATIONS) {
+    while (!patchesExhausted && i < max) {
       i++;
       if (!schema || (!schema.type && !Schema.isPolymorphic(schema))) {
         let newSchema = Schema.baseFromValue(body.value);

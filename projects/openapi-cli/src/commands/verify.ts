@@ -19,6 +19,7 @@ import {
   StatusObservations,
 } from './diffing/document';
 import { updateByInteractions } from './update';
+import { renderDiffs } from './diffing/update';
 
 export async function verifyCommand({
   addUsage,
@@ -81,7 +82,7 @@ export async function verifyCommand({
         }
       }
 
-      /// Run the verify with the latest specification
+      /// Run to verify with the latest specification
       const specReadResult = await readDeferencedSpec(absoluteSpecPath);
       if (specReadResult.err) {
         await feedback.inputError(
@@ -90,7 +91,7 @@ export async function verifyCommand({
         );
       }
 
-      const { jsonLike: spec } = specReadResult.unwrap();
+      const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
 
       const interactions = await makeInteractionsIterator();
       let observations = matchInteractions(spec, interactions);
@@ -106,16 +107,14 @@ export async function verifyCommand({
       );
 
       let { results: updatePatches, observations: updateObservations } =
-        updateByInteractions(spec, interactions);
+        updateByInteractions(spec, interactions, 1);
 
       const trackingStats = trackStats(observationsFork.fork());
       observationsFork.start();
 
-      (async () => {
-        for await (const response of updatePatches) {
-          console.log(JSON.stringify(response, null, 2));
-        }
-      })();
+      const results = await renderDiffs(sourcemap, updatePatches);
+
+      console.log(results);
 
       await Promise.all([renderingStatus, trackingStats]);
     });

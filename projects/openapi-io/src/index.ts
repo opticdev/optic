@@ -19,6 +19,7 @@ import { validateOpenApiV3Document } from './validation/validator';
 import { ValidationError } from './validation/errors';
 import { checkOpenAPIVersion } from './validation/openapi-versions';
 import { filePathToGitPath } from './parser/resolvers/git-branch-file-resolver';
+import { jsonPointerLogger } from './validation/log-json-pointer';
 
 export {
   filePathToGitPath,
@@ -32,6 +33,7 @@ export {
   JsonSchemaSourcemap,
   JSONParserError,
   loadYaml,
+  jsonPointerLogger,
   isYaml,
   isJson,
   writeYaml,

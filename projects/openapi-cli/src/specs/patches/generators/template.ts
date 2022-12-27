@@ -26,6 +26,8 @@ export function* templatePatches<T>(
 
   yield {
     impact: [PatchImpact.BackwardsCompatibilityUnknown],
+    diff: undefined,
+    path: '/',
     description: `changes made through applying '${template.name}' template`, // TODO: allow template control more specifically
     groupedOperations: [
       OperationGroup.create(

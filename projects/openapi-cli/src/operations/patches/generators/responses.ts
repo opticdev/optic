@@ -72,6 +72,7 @@ function* unmatchedStatusCode(
   yield {
     description: `add ${statusCode} response`,
     impact: [PatchImpact.Addition, PatchImpact.BackwardsCompatible],
+    diff,
     groupedOperations,
   };
 }
@@ -125,6 +126,7 @@ function* unmatchedResponseBody(
   yield {
     description: `add ${contentType} response for ${statusCode}`,
     impact: [PatchImpact.Addition, PatchImpact.BackwardsCompatible],
+    diff,
     groupedOperations,
   };
 }
@@ -157,6 +159,7 @@ function* missingResponseBody(
         ? PatchImpact.BackwardsIncompatible
         : PatchImpact.BackwardsCompatible,
     ],
+    diff,
     groupedOperations: [operationGroup],
   };
 }

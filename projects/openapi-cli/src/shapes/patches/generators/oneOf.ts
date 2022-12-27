@@ -23,7 +23,7 @@ export function* oneOfPatches(
   let groupedOperations: OperationGroup[] = [];
 
   groupedOperations.push(
-    OperationGroup.create(`add new oneOf branch to ${diff.key}`, diff, {
+    OperationGroup.create(`add new oneOf branch to ${diff.key}`, {
       op: 'add',
       path: jsonPointerHelpers.append(diff.propertyPath, '-'), // "-" indicates append to array
       value: Schema.baseFromValue(diff.example),
@@ -34,6 +34,7 @@ export function* oneOfPatches(
 
   yield {
     description: `expand one of for ${diff.key}`,
+    diff,
     impact: [
       PatchImpact.Addition,
       !shapeContext.location

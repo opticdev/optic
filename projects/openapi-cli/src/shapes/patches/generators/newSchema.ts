@@ -10,13 +10,13 @@ export function newSchemaPatch(
   let groupedOperations = [
     OperationGroup.create(
       'add schema object',
-      undefined,
       ...Schema.mergeOperations(typelessSchema, schema)
     ),
   ];
 
   return {
     description: 'add schema object',
+    diff: undefined,
     impact: [
       PatchImpact.Addition,
       !shapeContext.location

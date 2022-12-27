@@ -11,6 +11,7 @@ import { Result, Ok, Err } from 'ts-results';
 export type { PatchOperation };
 export { PatchOperationGroup, PatchImpact };
 import { diffOperationPatchGenerators } from './generators';
+import { ShapeDiffResult } from '../../shapes/diffs';
 
 export function* generateOperationPatchesByDiff(
   diff: OperationDiffResult,
@@ -27,6 +28,7 @@ export function* generateOperationPatchesByDiff(
 export interface OperationPatch {
   description: string;
   impact: PatchImpact[];
+  diff: ShapeDiffResult | OperationDiffResult | undefined;
   groupedOperations: PatchOperationGroup[];
 }
 

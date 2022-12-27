@@ -15,6 +15,7 @@ export function* additionalPropertiesPatches(
   const parentPath = jsonPointerHelpers.pop(diff.parentObjectPath);
 
   const parent = jsonPointerHelpers.get(schema, parentPath);
+
   const propertiesPath = jsonPointerHelpers.append(parentPath, 'properties');
   const requiredPath = jsonPointerHelpers.append(parentPath, 'required');
   const newPropertyPath = jsonPointerHelpers.append(
@@ -27,7 +28,7 @@ export function* additionalPropertiesPatches(
   let groupedOperations: OperationGroup[] = [];
   if (!parent.properties) {
     groupedOperations.push(
-      OperationGroup.create(`add properties {} to parent object`, diff, {
+      OperationGroup.create(`add properties {} to parent object`, {
         op: 'add',
         path: propertiesPath,
         value: {},
@@ -39,7 +40,6 @@ export function* additionalPropertiesPatches(
     groupedOperations.push(
       OperationGroup.create(
         `add required [] to parent object and make ${diff.key} required`,
-        diff,
         {
           op: 'add',
           path: requiredPath,
@@ -51,7 +51,7 @@ export function* additionalPropertiesPatches(
     );
   } else if (!parent.required.includes(diff.key)) {
     groupedOperations.push(
-      OperationGroup.create(`make new property ${diff.key} required`, diff, {
+      OperationGroup.create(`make new property ${diff.key} required`, {
         op: 'add',
         path: requiredPath + '/-', // append
         value: diff.key,
@@ -64,13 +64,11 @@ export function* additionalPropertiesPatches(
     groupedOperations.push(
       OperationGroup.create(
         `add property ${diff.key} schema to properties`,
-        diff,
+
         {
           op: 'add',
           path: newPropertyPath,
-          value: Schema.baseFromValue(
-            jsonPointerHelpers.get(diff.example, diff.propertyExamplePath)
-          ),
+          value: Schema.baseFromValue(diff.example),
         }
       )
     );
@@ -80,6 +78,7 @@ export function* additionalPropertiesPatches(
 
   yield {
     description: `add property ${diff.key}`,
+    diff,
     impact: [
       PatchImpact.Addition,
       !shapeContext.location

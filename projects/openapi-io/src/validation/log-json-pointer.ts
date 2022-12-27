@@ -2,11 +2,16 @@ import chalk from 'chalk';
 import { sourcemapReader } from '@useoptic/openapi-utilities';
 import { JsonSchemaSourcemap } from '../parser/sourcemap';
 
+type LogOptions = {
+  highlightColor: 'red' | 'yellow' | 'green';
+  observation: string;
+};
+
 export function jsonPointerLogger(sourceMap: JsonSchemaSourcemap) {
   const reader = sourcemapReader(sourceMap);
 
   return {
-    log: (pointer: string): string => {
+    log: (pointer: string, options?: LogOptions): string => {
       const lookupPosition = reader.findFileAndLines(pointer);
       if (lookupPosition) {
         const [start, end] = getDisplayedLineNumbers(lookupPosition.startLine);
@@ -24,7 +29,8 @@ export function jsonPointerLogger(sourceMap: JsonSchemaSourcemap) {
           end,
           previewLines,
           lookupPosition.filePath,
-          lookupPosition.startLine
+          lookupPosition.startLine,
+          options
         );
       }
       return '';
@@ -48,8 +54,14 @@ function renderCodeFrame(
   end: number,
   lines: string[],
   fileName: string,
-  focus?: number
+  focus?: number,
+  options?: LogOptions
 ): string {
+  const optionsOrDefault = options || {
+    highlightColor: 'red',
+    observation: '',
+  };
+
   const maxLineWidth = end.toString().length + 1;
 
   const smallestLeadingWhiteSpace = Math.min(
@@ -62,12 +74,38 @@ function renderCodeFrame(
 
     const line = lineContents.substring(smallestLeadingWhiteSpace);
 
-    const isRed = typeof focus === 'number' && focus - 1 === lineNumber;
+    const shouldHighlight =
+      typeof focus === 'number' && focus - 1 === lineNumber;
+
+    const observation = splitObservationLine(options?.observation || '');
+
+    const lineWithObservation = observation
+      ? `${line}  ${chalk.bgRed(observation)}`
+      : line;
 
     return `${chalk.grey(lineNumber + 1 + ' |')} ${
-      isRed ? chalk.bold.red(line) : line
+      !shouldHighlight
+        ? line
+        : optionsOrDefault.highlightColor === 'red'
+        ? chalk.bold.red(lineWithObservation)
+        : optionsOrDefault.highlightColor === 'green'
+        ? chalk.bold.green(lineWithObservation)
+        : optionsOrDefault.highlightColor === 'yellow'
+        ? chalk.bold.yellow(lineWithObservation)
+        : line
     }`;
   });
 
   return `${formattedLines.join('\n')}\n${chalk.grey(fileName)}`;
+}
+
+function splitObservationLine(observation: string) {
+  const lines = observation.split('\n');
+  const firstLine = lines[0];
+
+  if (firstLine.length > 40) {
+    return firstLine.substring(0, 25) + '...';
+  } else {
+    return firstLine + (lines.length > 1 ? '...' : '');
+  }
 }

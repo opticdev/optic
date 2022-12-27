@@ -11,6 +11,7 @@ import {
 export { PatchImpact, PatchOperationGroup as OperationGroup };
 
 import { diffShapePatchGenerators, newSchemaPatch } from './generators';
+import { OperationDiffResult } from '../../operations/diffs';
 
 export function* generateShapePatchesByDiff(
   diff: ShapeDiffResult,
@@ -26,6 +27,7 @@ export { newSchemaPatch };
 
 export interface ShapePatch {
   description: string;
+  diff: ShapeDiffResult | OperationDiffResult | undefined;
   impact: PatchImpact[];
   groupedOperations: PatchOperationGroup[];
 }
