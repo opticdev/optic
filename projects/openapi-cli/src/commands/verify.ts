@@ -36,6 +36,7 @@ export async function verifyCommand({
       'an OpenAPI spec to match up to observed traffic'
     )
     .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
+    .option('--exit0', 'always exit 0')
     .option('--document <operations>', 'HTTP method and path pair(s) to add')
     .action(async (specPath) => {
       const absoluteSpecPath = Path.resolve(specPath);
@@ -46,6 +47,7 @@ export async function verifyCommand({
         );
       }
 
+      console.log('');
       const options = command.opts();
 
       const makeInteractionsIterator = async () =>
@@ -94,29 +96,39 @@ export async function verifyCommand({
       const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
 
       const interactions = await makeInteractionsIterator();
-      let observations = matchInteractions(spec, interactions);
 
-      let observationsFork = AT.forkable(observations);
+      let { results: updatePatches, observations: updateObservations } =
+        updateByInteractions(spec, interactions);
 
-      const renderingStatus = renderOperationStatus(
-        observationsFork.fork(),
+      const diffResults = await renderDiffs(sourcemap, spec, updatePatches);
+
+      let observations = matchInteractions(
+        spec,
+        await makeInteractionsIterator()
+      );
+
+      const renderingStatus = await renderOperationStatus(
+        observations,
         feedback,
         {
           addUsage,
         }
       );
 
-      let { results: updatePatches, observations: updateObservations } =
-        updateByInteractions(spec, interactions, 1);
+      console.log(`
+ Diffs                   : ${diffResults.shapeDiff}
+ Undocumented operations : ${renderingStatus.undocumentedPaths}
+ Undocumented bodies     : ${renderingStatus.undocumentedPaths}\n`);
 
-      const trackingStats = trackStats(observationsFork.fork());
-      observationsFork.start();
-
-      const results = await renderDiffs(sourcemap, updatePatches);
-
-      console.log(results);
-
-      await Promise.all([renderingStatus, trackingStats]);
+      if (
+        !options.exit0 &&
+        diffResults.totalDiffCount + renderingStatus.undocumentedPaths > 0
+      ) {
+        console.log(
+          chalk.red('OpenAPI and API implementation are out of sync. Exiting 1')
+        );
+        process.exit(1);
+      }
     });
 
   return command;
@@ -127,24 +139,25 @@ async function renderOperationStatus(
   feedback: Awaited<ReturnType<typeof createCommandFeedback>>,
   { addUsage }: { addUsage: string }
 ) {
-  const { pathsToAdd, pathDiffs } = await observationToUndocumented(
-    observations
-  );
+  const { pathsToAdd } = await observationToUndocumented(observations);
+
+  let undocumentedPaths: number = 0;
 
   if (pathsToAdd.length) {
-    feedback.title('Operation Diffs');
     for (let unmatchedPath of pathsToAdd) {
+      undocumentedPaths++;
       unmatchedPath.methods.forEach((method) =>
         renderUndocumentedPath(method.toUpperCase(), unmatchedPath.pathPattern)
       );
     }
-    feedback.commandInstruction('--add *', 'to document these paths');
+    feedback.commandInstruction('--document *', 'to document these paths');
     feedback.commandInstruction(
-      `--add "[method path], ..."`,
+      `--document "[method path], ..."`,
       'to document or more paths'
     );
   }
 
+  return { undocumentedPaths };
   function operationId({ path, method }: { path: string; method: string }) {
     return `${method}${path}`;
   }
@@ -249,6 +262,6 @@ function renderUndocumentedPath(method: string, pathPattern: string) {
   console.log(
     `${chalk.bgYellow('Undocumented')} ${method
       .toUpperCase()
-      .padStart(6, ' ')} ${pathPattern}`
+      .padStart(6, ' ')}   ${pathPattern}`
   );
 }

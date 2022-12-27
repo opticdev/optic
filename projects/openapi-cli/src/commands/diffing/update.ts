@@ -3,9 +3,12 @@ import { jsonPointerLogger, JsonSchemaSourcemap } from '@useoptic/openapi-io';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import chalk from 'chalk';
 import { ShapeDiffResult } from '../../shapes/diffs';
+import { patchHash } from '../../lib/patch-hash';
+import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 
 export async function renderDiffs(
   sourcemap: JsonSchemaSourcemap,
+  spec: OpenAPIV3.Document,
   patches: SpecPatches
 ) {
   const logger = jsonPointerLogger(sourcemap);
@@ -21,7 +24,7 @@ export async function renderDiffs(
 
     const [_, pathPattern, method] = jsonPointerHelpers.decode(path);
 
-    if (!diff) continue;
+    if (!diff || groupedOperations.length === 0) continue;
 
     stats.totalDiffCount++;
 
@@ -43,6 +46,15 @@ export async function renderDiffs(
 
       renderBodyDiff(description, method, pathPattern);
     } else if (diff.kind === 'AdditionalProperty') {
+      // filter out dependent diffs
+      if (
+        !jsonPointerHelpers.tryGet(
+          spec,
+          jsonPointerHelpers.join(path, diff.parentObjectPath)
+        ).match
+      )
+        continue;
+
       stats.shapeDiff++;
       renderShapeDiff(
         diff,
@@ -53,6 +65,15 @@ export async function renderDiffs(
         pathPattern
       );
     } else if (diff.kind === 'UnmatchedType') {
+      // filter out dependent diffs
+      if (
+        !jsonPointerHelpers.tryGet(
+          spec,
+          jsonPointerHelpers.join(path, diff.propertyPath)
+        ).match
+      )
+        continue;
+
       stats.shapeDiff++;
       renderShapeDiff(
         diff,
@@ -63,6 +84,15 @@ export async function renderDiffs(
         pathPattern
       );
     } else if (diff.kind === 'MissingRequiredProperty') {
+      // filter out dependent diffs
+      if (
+        !jsonPointerHelpers.tryGet(
+          spec,
+          jsonPointerHelpers.join(path, diff.propertyPath)
+        ).match
+      )
+        continue;
+
       stats.shapeDiff++;
       renderShapeDiff(
         diff,
@@ -110,14 +140,4 @@ function renderBodyDiff(
     `use (--update "${method} ${pathPattern}") to patch \n\n`
   )}`;
   console.log(lines);
-}
-
-function isUndocumentedBody(diff: SpecPatch['diff']) {
-  if (diff) {
-    if (diff.kind === 'UnmatchdResponseBody') return true;
-    if (diff.kind === 'UnmatchedRequestBody') return true;
-    if (diff.kind === 'UnmatchedResponseStatusCode') return true;
-  }
-
-  return false;
 }

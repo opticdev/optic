@@ -8,5 +8,7 @@ export function patchHash(specPatch: SpecPatch): string {
 }
 
 function excludeKeys(key) {
-  return key === 'example' || key === 'instancePath';
+  return (
+    key === 'example' || key === 'instancePath' || key === 'propertyExamplePath'
+  );
 }

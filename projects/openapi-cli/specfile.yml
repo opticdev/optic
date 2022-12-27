@@ -21,7 +21,7 @@ paths:
                       type: object
                       properties:
                         name:
-                          type: number
+                          type: string
                         completed_at:
                           type: string
                         color:

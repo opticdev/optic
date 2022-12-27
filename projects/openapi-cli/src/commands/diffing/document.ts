@@ -41,6 +41,7 @@ export async function addIfUndocumented(
   if (operationsOption.ok) {
     try {
       const operations = operationsOption.unwrap();
+
       let { results: addPatches, observations: addObservations } =
         addOperations(spec, operations, interactions);
 
@@ -59,8 +60,8 @@ export async function addIfUndocumented(
         AT.merge(addObservations, fileObservations)
       );
       const stats = collectStats(observations.fork());
-
       observations.start();
+
       await Promise.all([writingSpecFiles]);
       return Ok(await stats);
     } catch (error: any) {

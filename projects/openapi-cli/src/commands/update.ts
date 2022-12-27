@@ -167,8 +167,7 @@ export async function updateCommand(): Promise<Command> {
 
 export function updateByInteractions(
   spec: OpenAPIV3.Document,
-  interactions: CapturedInteractions,
-  max?: number
+  interactions: CapturedInteractions
 ): { results: SpecPatches; observations: UpdateObservations } {
   const updatingSpec = new Subject<OpenAPIV3.Document>();
   const specUpdates = updatingSpec.iterator;
@@ -251,22 +250,10 @@ export function updateByInteractions(
       let shapePatches = SpecPatches.shapeAdditions(
         tap((body: DocumentedBody) => {
           observers.documentedInteractionBody(documentedInteraction, body);
-        })(documentedBodies),
-        max
+        })(documentedBodies)
       );
 
-      // duplicate diffs (from later requests) excluded
-      const patchHashes: { [key: string]: number } = {};
-
       for await (let patch of shapePatches) {
-        const hash = patchHash(patch);
-        if (patchHashes.hasOwnProperty(hash)) {
-          patchHashes[hash] = patchHashes[hash] + 1;
-          continue;
-        } else {
-          patchHashes[hash] = 1;
-        }
-
         patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
         yield patch;
         observers.interactionPatch(documentedInteraction, patch);
