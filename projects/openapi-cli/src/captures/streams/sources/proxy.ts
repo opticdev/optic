@@ -22,6 +22,7 @@ import { Server as ConnectServer } from 'connect';
 import portfinder from 'portfinder';
 import globalLog from 'log';
 import invariant from 'ts-invariant';
+import chalk from 'chalk';
 type Logger = typeof globalLog;
 
 export const log: Logger = globalLog.get('captures:streams:sources:proxy'); // export so it can be enabled in testing
@@ -38,16 +39,25 @@ export class ProxyInteractions {
       targetCA?: Array<{ cert: Buffer | string }>;
     } = {}
   ): Promise<[ProxyInteractions, string, string]> {
+    let { host, protocol } = new URL(targetHost);
     if (targetHost.includes('/')) {
       // accept urls to be passed in rather than pure hosts
-      let { host } = new URL(targetHost);
       targetHost = host;
     }
 
-    invariant(
-      targetHost.match(/^([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9\-]+(:\d+)?$/),
-      'targetHost must be a valid host (hostname:port)'
-    ); // port optional
+    if (protocol)
+      invariant(
+        targetHost.match(/^([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9\-]+(:\d+)?$/),
+        'targetHost must be a valid host (hostname:port)'
+      ); // port optional
+
+    if (protocol === 'https:') {
+      console.log(
+        chalk.gray(
+          'Target uses TLS. If traffic is not being captured run "oas setup-tls"'
+        )
+      );
+    }
 
     const capturingProxy = mockttp.getLocal({
       cors: false,

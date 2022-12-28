@@ -13,7 +13,6 @@ import logNode from 'log-node';
 import { captureCertCommand, getCertStore } from './capture-cert';
 import {
   CapturedInteraction,
-  CapturedInteractions,
   HarEntries,
   HttpArchive,
   ProxyCertAuthority,
@@ -23,6 +22,7 @@ import { SystemProxy } from '../captures/system-proxy';
 import { captureStorage } from '../captures/capture-storage';
 import path from 'path';
 import { RunCommand } from '../captures/run-command';
+import url from 'url';
 
 export async function captureCommand(): Promise<Command> {
   const command = new Command('capture');
@@ -82,24 +82,6 @@ export async function captureCommand(): Promise<Command> {
       const sources: HarEntries[] = []; // this should be CapturedInteractions, but those aren't detailed enough yet to not lose information later
       let interactiveCapture = false;
 
-      // if (options.har) {
-      //   let absoluteHarPath = Path.resolve(options.har);
-      //   if (!(await fs.pathExists(absoluteHarPath))) {
-      //     return await feedback.inputError(
-      //       'HAR file could not be found at given path',
-      //       InputErrors.HAR_FILE_NOT_FOUND
-      //     );
-      //   }
-      //   let harFile = fs.createReadStream(absoluteHarPath);
-      //   let harEntryResults = HarEntries.fromReadable(harFile);
-      //   let harEntries = AT.unwrapOr(harEntryResults, (err) => {
-      //     let message = `HAR entry skipped: ${err.message}`;
-      //     console.warn(message); // warn, skip and keep going
-      //     trackWarning(message, err);
-      //   });
-      //   sources.push(harEntries);
-      // }
-
       let ca: ProxyCertAuthority | undefined;
 
       if (options.tls) {
@@ -112,9 +94,6 @@ export async function captureCommand(): Promise<Command> {
         ) {
           ca = await ProxyCertAuthority.generate();
           certStore.set(ca);
-          await feedback.instruction(
-            `Generated a CA certificate for HTTPS requests. Run '${command.name()} ${certCommand.name()}' to save it as a file.`
-          );
         } else {
           ca = maybeCa.val;
         }

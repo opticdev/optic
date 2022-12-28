@@ -13,6 +13,7 @@ import { CliConfig, readConfig } from './config';
 import { initSegment, trackEvent } from './segment';
 import { initSentry } from './sentry';
 import { clearCommand } from './commands/clear';
+import { captureCertCommand } from './commands/capture-cert';
 
 export async function makeCli(config: CliConfig) {
   const cli = new Command('oas');
@@ -22,12 +23,9 @@ export async function makeCli(config: CliConfig) {
 
   cli.addCommand(await captureCommand());
   cli.addCommand(await newCommand());
-  cli.addCommand(
-    await clearCommand({ addUsage: ` ` })
-  );
-  cli.addCommand(
-    await verifyCommand({ addUsage: ` ` })
-  );
+  cli.addCommand(await captureCertCommand());
+  cli.addCommand(await clearCommand({ addUsage: ` ` }));
+  cli.addCommand(await verifyCommand({ addUsage: ` ` }));
   // registerDebugTemplateCommand(cli);
   // cli.addCommand(debugWorkflowsCommand());
 

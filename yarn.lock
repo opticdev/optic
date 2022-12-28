@@ -3413,6 +3413,7 @@ __metadata:
     stream-chain: ^2.2.5
     stream-json: ^1.7.4
     strip-ansi: ^6.0.1
+    sudo-prompt: 9.2.1
     ts-invariant: ^0.9.4
     ts-node: ^10.8.1
     ts-results: ^3.3.0
@@ -9864,6 +9865,13 @@ __metadata:
   version: 2.0.1
   resolution: "strip-json-comments@npm:2.0.1"
   checksum: 1074ccb63270d32ca28edfb0a281c96b94dc679077828135141f27d52a5a398ef5e78bcf22809d23cadc2b81dfbe345eb5fd8699b385c8b1128907dec4a7d1e1
+  languageName: node
+  linkType: hard
+
+"sudo-prompt@npm:9.2.1":
+  version: 9.2.1
+  resolution: "sudo-prompt@npm:9.2.1"
+  checksum: 50a29eec2f264f2b78d891452a64112d839a30bffbff4ec065dba4af691a35b23cdb8f9107d413e25c1a9f1925644a19994c00602495cab033d53f585fdfd665
   languageName: node
   linkType: hard
 

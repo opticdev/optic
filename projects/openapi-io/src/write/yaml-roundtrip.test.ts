@@ -282,4 +282,147 @@ paths:
     );
     expect(result).toMatchSnapshot();
   });
+  it('works with a real world patch with correct number keys (status codes)', () => {
+    const result = applyOperationsToYamlString(
+      `
+openapi: 3.0.3
+# Optic stuff...
+x-optic-path-ignore:
+  - '**/**.ico'
+info:
+  title: Untitled service
+  version: 1.0.0
+
+# Aidan Added a comment here
+paths:
+  /todos:
+    get:
+      responses:
+        '200':
+          description: 200 response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  todos:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        completed_at:
+                          type: string
+                        color:
+                          type: string
+                      required:
+                        - name
+                        - color
+                required:
+                  - todos
+
+`,
+      [
+        { op: 'add', path: '/paths/~1users', value: {} },
+        { op: 'add', path: '/paths/~1users/get', value: { responses: {} } },
+        { op: 'add', path: '/paths/~1_private~1browser~1stats', value: {} },
+        {
+          op: 'add',
+          path: '/paths/~1_private~1browser~1stats/post',
+          value: { responses: {} },
+        },
+        { op: 'add', path: '/paths/~1orgs~1easystats', value: {} },
+        {
+          op: 'add',
+          path: '/paths/~1orgs~1easystats/get',
+          value: { responses: {} },
+        },
+        { op: 'add', path: '/paths/~1orgs~1easystats~1hooks', value: {} },
+        {
+          op: 'add',
+          path: '/paths/~1orgs~1easystats~1hooks/get',
+          value: { responses: {} },
+        },
+        { op: 'add', path: '/paths/~1users~1{user}~1followers', value: {} },
+        {
+          op: 'add',
+          path: '/paths/~1users~1{user}~1followers/parameters',
+          value: [{ in: 'path', name: 'user', required: true }],
+        },
+        {
+          op: 'add',
+          path: '/paths/~1users~1{user}~1followers/get',
+          value: { responses: {} },
+        },
+        { op: 'add', path: '/paths/~1users~1{user}~1orgs', value: {} },
+        {
+          op: 'add',
+          path: '/paths/~1users~1{user}~1orgs/parameters',
+          value: [{ in: 'path', name: 'user', required: true }],
+        },
+        {
+          op: 'add',
+          path: '/paths/~1users~1{user}~1orgs/get',
+          value: { responses: {} },
+        },
+        {
+          op: 'add',
+          path: '/paths/~1_private~1browser~1stats/post/requestBody',
+          value: { content: {} },
+        },
+        {
+          op: 'add',
+          path: '/paths/~1_private~1browser~1stats/post/requestBody/content/text~1plain;charset=UTF-8',
+          value: {},
+        },
+        {
+          op: 'add',
+          path: '/paths/~1_private~1browser~1stats/post/responses/200',
+          value: { description: '200 response' },
+        },
+        {
+          op: 'add',
+          path: '/paths/~1users~1{user}~1followers/get/responses/200',
+          value: { description: '200 response' },
+        },
+        {
+          op: 'add',
+          path: '/paths/~1users~1{user}~1followers/get/responses/200/content',
+          value: { 'application/json; charset=utf-8': {} },
+        },
+        {
+          op: 'add',
+          path: '/paths/~1users~1{user}~1orgs/get/responses/200',
+          value: { description: '200 response' },
+        },
+        {
+          op: 'add',
+          path: '/paths/~1users~1{user}~1orgs/get/responses/200/content',
+          value: { 'application/json; charset=utf-8': {} },
+        },
+        {
+          op: 'add',
+          path: '/paths/~1orgs~1easystats/get/responses/200',
+          value: { description: '200 response' },
+        },
+        {
+          op: 'add',
+          path: '/paths/~1orgs~1easystats/get/responses/200/content',
+          value: { 'application/json; charset=utf-8': {} },
+        },
+        {
+          op: 'add',
+          path: '/paths/~1orgs~1easystats~1hooks/get/responses/404',
+          value: { description: '404 response' },
+        },
+        {
+          op: 'add',
+          path: '/paths/~1orgs~1easystats~1hooks/get/responses/404/content',
+          value: { 'application/json; charset=utf-8': {} },
+        },
+      ]
+    );
+    expect(result).toMatchSnapshot();
+  });
 });

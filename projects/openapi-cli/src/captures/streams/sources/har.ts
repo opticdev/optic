@@ -11,6 +11,7 @@ import ajvFormats from 'ajv-formats';
 import { ProxyInteractions } from './proxy';
 import isUrl from 'is-url';
 import { Result, Ok, Err } from 'ts-results';
+import zlib from 'node:zlib';
 
 export interface HarEntries extends AsyncIterable<HttpArchive.Entry> {}
 export interface TryHarEntries
@@ -84,8 +85,15 @@ export class HarEntries {
 
       let requestBodyBuffer = interaction.request.body.buffer;
       let requestContentType = interaction.request.headers['content-type'];
-      let requestBodyEncoded =
-        requestContentType && requestBodyBuffer.toString('base64');
+
+      const requestBodyEncoded =
+        requestContentType &&
+        (await toBase64(
+          requestBodyBuffer,
+          (interaction.response.headers['content-encoding'] as
+            | string
+            | undefined) || undefined
+        ));
 
       let request: HttpArchive.Request = {
         method: interaction.request.method,
@@ -99,18 +107,25 @@ export class HarEntries {
         bodySize: interaction.request.body.buffer.length,
         cookies: [], // not available from proxy, but could parse from header
         queryString: [], // not available from proxy, but could parse from url
-        postData: requestContentType && requestBodyEncoded
-          ? {
-              mimeType: requestContentType,
-              text: requestBodyEncoded,
-              encoding: 'base64',
-              params: [], // not supporting posted formdata
-            }
-          : undefined,
+        postData:
+          requestContentType && requestBodyEncoded
+            ? {
+                mimeType: requestContentType,
+                text: requestBodyEncoded,
+                encoding: 'base64',
+                params: [], // not supporting posted formdata
+              }
+            : undefined,
       };
 
       let responseBodyBuffer = interaction.response.body.buffer;
-      let responseBodyText = responseBodyBuffer.toString('base64');
+
+      const responseBodyText = await toBase64(
+        responseBodyBuffer,
+        (interaction.response.headers['content-encoding'] as
+          | string
+          | undefined) || undefined
+      );
 
       let response: HttpArchive.Response = {
         status: interaction.response.statusCode,
@@ -189,6 +204,33 @@ export class HarEntries {
     })();
 
     return Readable.from(tokens).pipe(stringer());
+  }
+}
+
+// strip original encoding and base64 it for the HAR
+async function toBase64(
+  buffer: Buffer,
+  encoding: string | undefined
+): Promise<string> {
+  try {
+    switch (encoding) {
+      case undefined:
+        return buffer.toString('base64');
+      case 'gzip':
+        return await new Promise((resolve, reject) => {
+          zlib.unzip(buffer, (error, result) => {
+            if (error) {
+              reject('could not decode ' + error.message);
+            } else {
+              resolve(result.toString('base64'));
+            }
+          });
+        });
+      default:
+        throw new Error('unsupported encoding ' + encoding);
+    }
+  } catch (e) {
+    return Buffer.from('').toString('base64');
   }
 }
 

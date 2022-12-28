@@ -1,4 +1,4 @@
-import YAML from 'yaml';
+import YAML, { YAMLMap } from 'yaml';
 import { Operation } from 'fast-json-patch';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { YAMLSequence } from 'yaml-ast-parser';
@@ -17,15 +17,22 @@ export function applyOperationsToYamlString(
         const collectionPath = [...path];
         const lastPathItem = collectionPath.pop();
 
+        const collection = doc.getIn(collectionPath) as YAMLMap | undefined;
+
+        const isArray = Array.isArray(collection?.toJSON());
         // we are adding to an array collection
-        if (!isNaN(Number(lastPathItem)) || lastPathItem === '-') {
+        if (isArray) {
           const arrayCollection = doc.getIn(collectionPath) as YAMLSequence;
 
           const lastIndex = Number(lastPathItem);
 
           arrayCollection.items = insert(
             arrayCollection.items,
-            !isNaN(lastIndex) ? lastIndex : arrayCollection.items.length,
+            !isNaN(Number(lastIndex))
+              ? lastIndex
+              : lastPathItem === '-'
+              ? arrayCollection.items.length
+              : 0,
             node
           );
 

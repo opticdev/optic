@@ -79,3 +79,235 @@ exports[`applying non destructive patches to yaml replacing root object key 1`] 
   - yellow
 "
 `;
+
+exports[`applying non destructive patches to yaml works with a real world patch 1`] = `
+"openapi: 3.0.3
+# Optic stuff...
+x-optic-path-ignore:
+  - '**/**.ico'
+info:
+  title: Untitled service
+  version: 1.0.0
+
+# Aidan Added a comment here
+paths:
+  /todos:
+    get:
+      responses:
+        '200':
+          description: 200 response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  todos:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        completed_at:
+                          type: string
+                        color:
+                          type: string
+                        status:
+                          type: string
+                        created_at:
+                          type: string
+                        due_at:
+                          type: string
+                      required:
+                        - name
+                        - status
+                        - created_at
+                  links:
+                    type: object
+                    properties:
+                      completed_todos:
+                        type: string
+                      archived_todos:
+                        type: string
+                    required:
+                      - completed_todos
+                      - archived_todos
+                required:
+                  - todos
+                  - links
+"
+`;
+
+exports[`applying non destructive patches to yaml works with a real world patch 2 1`] = `
+"openapi: 3.0.3
+# Optic stuff...
+x-optic-path-ignore:
+  - '**/**.ico'
+info:
+  title: Untitled service
+  version: 1.0.0
+
+# Aidan Added a comment here
+paths:
+  /todos:
+    get:
+      responses:
+        '200':
+          description: 200 response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  todos:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        completed_at:
+                          type: string
+                        color:
+                          type: string
+                      required:
+                        - name
+                        - color
+                required:
+                  - todos
+  /users:
+    get:
+      responses: {}
+  /_private/browser/stats:
+    post:
+      responses:
+        \\"200\\":
+          description: 200 response
+      requestBody:
+        content:
+          text/plain;charset=UTF-8: {}
+  /orgs/easystats:
+    get:
+      responses:
+        \\"200\\":
+          description: 200 response
+          content:
+            application/json; charset=utf-8: {}
+  /orgs/easystats/hooks:
+    get:
+      responses:
+        \\"404\\":
+          description: 404 response
+          content:
+            application/json; charset=utf-8: {}
+  \\"/users/{user}/followers\\":
+    parameters:
+      - in: path
+        name: user
+        required: true
+    get:
+      responses:
+        \\"200\\":
+          description: 200 response
+          content:
+            application/json; charset=utf-8: {}
+  \\"/users/{user}/orgs\\":
+    parameters:
+      - in: path
+        name: user
+        required: true
+    get:
+      responses:
+        \\"200\\":
+          description: 200 response
+          content:
+            application/json; charset=utf-8: {}
+"
+`;
+
+exports[`applying non destructive patches to yaml works with a real world patch with correct number keys (status codes) 1`] = `
+"openapi: 3.0.3
+# Optic stuff...
+x-optic-path-ignore:
+  - '**/**.ico'
+info:
+  title: Untitled service
+  version: 1.0.0
+
+# Aidan Added a comment here
+paths:
+  /todos:
+    get:
+      responses:
+        '200':
+          description: 200 response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  todos:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        completed_at:
+                          type: string
+                        color:
+                          type: string
+                      required:
+                        - name
+                        - color
+                required:
+                  - todos
+  /users:
+    get:
+      responses: {}
+  /_private/browser/stats:
+    post:
+      responses:
+        \\"200\\":
+          description: 200 response
+      requestBody:
+        content:
+          text/plain;charset=UTF-8: {}
+  /orgs/easystats:
+    get:
+      responses:
+        \\"200\\":
+          description: 200 response
+          content:
+            application/json; charset=utf-8: {}
+  /orgs/easystats/hooks:
+    get:
+      responses:
+        \\"404\\":
+          description: 404 response
+          content:
+            application/json; charset=utf-8: {}
+  \\"/users/{user}/followers\\":
+    parameters:
+      - in: path
+        name: user
+        required: true
+    get:
+      responses:
+        \\"200\\":
+          description: 200 response
+          content:
+            application/json; charset=utf-8: {}
+  \\"/users/{user}/orgs\\":
+    parameters:
+      - in: path
+        name: user
+        required: true
+    get:
+      responses:
+        \\"200\\":
+          description: 200 response
+          content:
+            application/json; charset=utf-8: {}
+"
+`;
