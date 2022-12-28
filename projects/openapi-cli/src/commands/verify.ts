@@ -16,10 +16,9 @@ import {
   matchInteractions,
   observationToUndocumented,
   StatusObservationKind,
-  StatusObservations,
+  StatusObservations
 } from './diffing/document';
-import { updateByInteractions } from './update';
-import { renderDiffs } from './diffing/update';
+import { patchOperationsAsNeeded, renderDiffs, updateByInteractions } from './diffing/patch';
 
 export async function verifyCommand({
   addUsage,
@@ -38,6 +37,7 @@ export async function verifyCommand({
     .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
     .option('--exit0', 'always exit 0')
     .option('--document <operations>', 'HTTP method and path pair(s) to add')
+    .option('--patch', 'Patch existing operations to resolve diffs')
     .action(async (specPath) => {
       const absoluteSpecPath = Path.resolve(specPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
@@ -54,7 +54,7 @@ export async function verifyCommand({
         getInteractions(options, specPath, feedback);
 
       /// Add if --document or --update options passed
-      if (options.document || options.update) {
+      if (options.document || options.patch) {
         const specReadResult = await readDeferencedSpec(absoluteSpecPath);
         if (specReadResult.err) {
           await feedback.inputError(
@@ -65,6 +65,8 @@ export async function verifyCommand({
         const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
 
         if (options.document) {
+          feedback.notable('Documenting operations...')
+
           let observations: StatusObservations = matchInteractions(
             spec,
             await makeInteractionsIterator()
@@ -78,12 +80,21 @@ export async function verifyCommand({
             sourcemap
           );
 
-          return;
+          if (result.ok) {
+            result.val.map(operation => {
+              console.log(`${chalk.green('added')}  ${operation.method} ${operation.pathPattern}`)
+            })
+          }
+
         }
 
-        if (options.update) {
-          console.log('UPDATE NOT IMPLEMENTED YET!!!');
+        if (options.patch) {
+          feedback.notable('Patching operations...')
+          const patchInteractions = await makeInteractionsIterator()
+          await patchOperationsAsNeeded(patchInteractions, spec, sourcemap)
         }
+
+        console.log(chalk.gray('-'.repeat(process.stdout.columns)+"\n"))
       }
 
       /// Run to verify with the latest specification
@@ -98,6 +109,8 @@ export async function verifyCommand({
       const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
 
       const interactions = await makeInteractionsIterator();
+
+      feedback.notable('Verifying API behavior...')
 
       let { results: updatePatches, observations: updateObservations } =
         updateByInteractions(spec, interactions);
@@ -122,14 +135,18 @@ export async function verifyCommand({
  Undocumented operations : ${renderingStatus.undocumentedPaths}
  Undocumented bodies     : ${renderingStatus.undocumentedPaths}\n`);
 
+      const hasDiff = diffResults.totalDiffCount + renderingStatus.undocumentedPaths > 0
       if (
         !options.exit0 &&
-        diffResults.totalDiffCount + renderingStatus.undocumentedPaths > 0
+        hasDiff
       ) {
         console.log(
-          chalk.red('OpenAPI and API implementation are out of sync. Exiting 1')
+          chalk.red('OpenAPI and implementation are out of sync. Exiting 1')
         );
         process.exit(1);
+      }
+      if (!hasDiff) {
+        console.log(chalk.green.bold("No diffs detected. OpenAPI and implementation appear to be in sync."))
       }
     });
 

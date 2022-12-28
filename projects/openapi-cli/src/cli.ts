@@ -4,11 +4,9 @@ import Path from 'path';
 import { randomUUID } from 'crypto';
 import { createCommandFeedback } from './commands/reporters/feedback';
 
-import { addCommand } from './commands/add';
 import { captureCommand } from './commands/capture';
 import { newCommand } from './commands/new';
 import { verifyCommand } from './commands/verify';
-import { updateCommand } from './commands/update';
 import { registerDebugTemplateCommand } from './commands/debug-template';
 import { debugWorkflowsCommand } from './commands/debug-workflows';
 import { CliConfig, readConfig } from './config';
@@ -22,18 +20,14 @@ export async function makeCli(config: CliConfig) {
   cli.version(config.package.version);
   cli.description('oas [openapi-file] <command> [options]');
 
-  let add = await addCommand();
-  cli.addCommand(add);
   cli.addCommand(await captureCommand());
   cli.addCommand(await newCommand());
   cli.addCommand(
-    await clearCommand({ addUsage: `${add.name()} ${add.usage()}` })
+    await clearCommand({ addUsage: ` ` })
   );
   cli.addCommand(
-    await verifyCommand({ addUsage: `${add.name()} ${add.usage()}` })
+    await verifyCommand({ addUsage: ` ` })
   );
-  cli.addCommand(await updateCommand());
-
   // registerDebugTemplateCommand(cli);
   // cli.addCommand(debugWorkflowsCommand());
 
