@@ -2910,6 +2910,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/fast-json-patch@npm:^1.1.5":
+  version: 1.1.5
+  resolution: "@types/fast-json-patch@npm:1.1.5"
+  dependencies:
+    fast-json-patch: "*"
+  checksum: 4b883a67cd02fdcc6ada3b8d4ae668427ee252ecdd9d192ef9d473fce25470e68d6899d5a24cc3c34aaa8e5276e2e6cd08572818abb51fc8fc572c8863f06f2b
+  languageName: node
+  linkType: hard
+
 "@types/fs-extra@npm:^9.0.13":
   version: 9.0.13
   resolution: "@types/fs-extra@npm:9.0.13"
@@ -3432,6 +3441,7 @@ __metadata:
     "@types/babel__preset-env": ^7
     "@types/copyfiles": ^2
     "@types/crypto-js": ^4.0.2
+    "@types/fast-json-patch": ^1.1.5
     "@types/fs-extra": ^9.0.13
     "@types/is-url": ^1.2.30
     "@types/jest": ^26.0.24
@@ -3458,7 +3468,6 @@ __metadata:
     fs-extra: ^10.1.0
     is-url: ^1.2.4
     jest: ^27.5.1
-    js-yaml: ^4.1.0
     json-stable-stringify: ^1.0.1
     lodash.clonedeep: ^4.5.0
     lodash.sortby: ^4.7.0
@@ -3472,6 +3481,7 @@ __metadata:
     ts-node: ^10.3.1
     typescript: ^4.4.4
     upath: ^2.0.1
+    yaml: ^2.2.0
     yaml-ast-parser: ^0.0.43
   languageName: unknown
   linkType: soft
@@ -5800,7 +5810,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-json-patch@npm:^3.1.1":
+"fast-json-patch@npm:*, fast-json-patch@npm:^3.1.1":
   version: 3.1.1
   resolution: "fast-json-patch@npm:3.1.1"
   checksum: c4525b61b2471df60d4b025b4118b036d99778a93431aa44d1084218182841d82ce93056f0f3bbd731a24e6a8e69820128adf1873eb2199a26c62ef58d137833
@@ -10870,6 +10880,13 @@ __metadata:
   version: 0.0.43
   resolution: "yaml-ast-parser@npm:0.0.43"
   checksum: fb5df4c067b6ccbd00953a46faf6ff27f0e290d623c712dc41f330251118f110e22cfd184bbff498bd969cbcda3cd27e0f9d0adb9e6d90eb60ccafc0d8e28077
+  languageName: node
+  linkType: hard
+
+"yaml@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "yaml@npm:2.2.0"
+  checksum: 6c89da40c3c553648595a476f23f7082c17e51b268ecce7ee0464302cbc1ffc20ba86f1b876688eb9c7d8f4b71dc28efbd7b3b86bf414a959ce5150831a9233f
   languageName: node
   linkType: hard
 

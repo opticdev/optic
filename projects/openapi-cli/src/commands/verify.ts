@@ -16,9 +16,13 @@ import {
   matchInteractions,
   observationToUndocumented,
   StatusObservationKind,
-  StatusObservations
+  StatusObservations,
 } from './diffing/document';
-import { patchOperationsAsNeeded, renderDiffs, updateByInteractions } from './diffing/patch';
+import {
+  patchOperationsAsNeeded,
+  renderDiffs,
+  updateByInteractions,
+} from './diffing/patch';
 
 export async function verifyCommand({
   addUsage,
@@ -55,17 +59,17 @@ export async function verifyCommand({
 
       /// Add if --document or --update options passed
       if (options.document || options.patch) {
-        const specReadResult = await readDeferencedSpec(absoluteSpecPath);
-        if (specReadResult.err) {
-          await feedback.inputError(
-            `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`,
-            InputErrors.SPEC_FILE_NOT_READABLE
-          );
-        }
-        const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
-
         if (options.document) {
-          feedback.notable('Documenting operations...')
+          const specReadResult = await readDeferencedSpec(absoluteSpecPath);
+          if (specReadResult.err) {
+            await feedback.inputError(
+              `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`,
+              InputErrors.SPEC_FILE_NOT_READABLE
+            );
+          }
+          const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
+
+          feedback.notable('Documenting operations...');
 
           let observations: StatusObservations = matchInteractions(
             spec,
@@ -81,20 +85,31 @@ export async function verifyCommand({
           );
 
           if (result.ok) {
-            result.val.map(operation => {
-              console.log(`${chalk.green('added')}  ${operation.method} ${operation.pathPattern}`)
-            })
+            result.val.map((operation) => {
+              console.log(
+                `${chalk.green('added')}  ${operation.method} ${
+                  operation.pathPattern
+                }`
+              );
+            });
           }
-
         }
 
         if (options.patch) {
-          feedback.notable('Patching operations...')
-          const patchInteractions = await makeInteractionsIterator()
-          await patchOperationsAsNeeded(patchInteractions, spec, sourcemap)
+          feedback.notable('Patching operations...');
+          const specReadResult = await readDeferencedSpec(absoluteSpecPath);
+          if (specReadResult.err) {
+            await feedback.inputError(
+              `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`,
+              InputErrors.SPEC_FILE_NOT_READABLE
+            );
+          }
+          const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
+          const patchInteractions = await makeInteractionsIterator();
+          await patchOperationsAsNeeded(patchInteractions, spec, sourcemap);
         }
 
-        console.log(chalk.gray('-'.repeat(process.stdout.columns)+"\n"))
+        console.log(chalk.gray('-'.repeat(process.stdout.columns) + '\n'));
       }
 
       /// Run to verify with the latest specification
@@ -110,7 +125,7 @@ export async function verifyCommand({
 
       const interactions = await makeInteractionsIterator();
 
-      feedback.notable('Verifying API behavior...')
+      feedback.notable('Verifying API behavior...');
 
       let { results: updatePatches, observations: updateObservations } =
         updateByInteractions(spec, interactions);
@@ -135,18 +150,20 @@ export async function verifyCommand({
  Undocumented operations : ${renderingStatus.undocumentedPaths}
  Undocumented bodies     : ${renderingStatus.undocumentedPaths}\n`);
 
-      const hasDiff = diffResults.totalDiffCount + renderingStatus.undocumentedPaths > 0
-      if (
-        !options.exit0 &&
-        hasDiff
-      ) {
+      const hasDiff =
+        diffResults.totalDiffCount + renderingStatus.undocumentedPaths > 0;
+      if (!options.exit0 && hasDiff) {
         console.log(
           chalk.red('OpenAPI and implementation are out of sync. Exiting 1')
         );
         process.exit(1);
       }
       if (!hasDiff) {
-        console.log(chalk.green.bold("No diffs detected. OpenAPI and implementation appear to be in sync."))
+        console.log(
+          chalk.green.bold(
+            'No diffs detected. OpenAPI and implementation appear to be in sync.'
+          )
+        );
       }
     });
 

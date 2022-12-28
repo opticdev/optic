@@ -1,11 +1,12 @@
 import {
   SpecFile,
-  SpecFileOperation, SpecFileOperations,
+  SpecFileOperation,
+  SpecFileOperations,
   SpecFiles,
   SpecFilesAsync,
   SpecFilesSourcemap,
   SpecPatch,
-  SpecPatches
+  SpecPatches,
 } from '../../specs';
 import { jsonPointerLogger, JsonSchemaSourcemap } from '@useoptic/openapi-io';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
@@ -14,7 +15,10 @@ import { ShapeDiffResult } from '../../shapes/diffs';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { CapturedInteraction, CapturedInteractions } from '../../captures';
 import { Subject, tap } from '../../lib/async-tools';
-import { DocumentedInteraction, DocumentedInteractions } from '../../operations';
+import {
+  DocumentedInteraction,
+  DocumentedInteractions,
+} from '../../operations';
 import { DocumentedBodies, DocumentedBody } from '../../shapes';
 import { updateReporter } from '../reporters/update';
 
@@ -23,27 +27,23 @@ export async function patchOperationsAsNeeded(
   spec: OpenAPIV3.Document,
   sourcemap: JsonSchemaSourcemap
 ) {
-
   let { results: updatePatches, observations: updateObservations } =
     updateByInteractions(spec, patchInteractions);
 
   let { results: updatedSpecFiles, observations: fileObservations } =
     updateSpecFiles(updatePatches, sourcemap);
 
-  const stats = renderUpdateStats(updateObservations)
+  const stats = renderUpdateStats(updateObservations);
 
   const writingSpecFiles = (async function () {
-    for await (let writtenFilePath of SpecFiles.writeFiles(
-      updatedSpecFiles
-    )) {
+    for await (let writtenFilePath of SpecFiles.writeFiles(updatedSpecFiles)) {
       // console.log(`Updated ${writtenFilePath}`);
     }
   })();
 
+  await Promise.all([writingSpecFiles, stats]);
 
-  await Promise.all([writingSpecFiles, stats])
-
-  return await stats
+  return await stats;
 }
 
 export async function renderDiffs(
@@ -163,9 +163,7 @@ ${logger.log(pathToHighlight, {
   highlightColor: 'yellow',
   observation: error,
 })}
-  ${chalk.gray.bold(
-    `use (--patch) to update \n\n`
-  )}`;
+  ${chalk.gray.bold(`use (--patch) to update \n\n`)}`;
   console.log(lines);
 }
 
@@ -176,12 +174,9 @@ function renderBodyDiff(
 ) {
   const lines = `${chalk.bgYellow('  Undocumented  ')} ${description}
   ${method} ${pathPattern}
-  ${chalk.gray.bold(
-    `use (--patch) to update \n\n`
-  )}`;
+  ${chalk.gray.bold(`use (--patch) to update \n\n`)}`;
   console.log(lines);
 }
-
 
 export function updateByInteractions(
   spec: OpenAPIV3.Document,
@@ -307,11 +302,7 @@ export function updateSpecFiles(
   };
   const observing = new Subject<UpdateObservation>();
   const observers = {
-    fileOperation(op: SpecFileOperation) {
-      const file = specFiles.find(({ path }) => path === op.filePath);
-      if (file && SpecFile.containsYamlComments(file))
-        stats.filesWithOverwrittenYamlComments.add(file.path);
-    },
+    fileOperation(op: SpecFileOperation) {},
     updatedFile(file: SpecFile) {
       observing.onNext({
         kind: UpdateObservationKind.SpecFileUpdated,
@@ -357,42 +348,44 @@ export type UpdateObservation = {
   kind: UpdateObservationKind;
 } & (
   | {
-  kind: UpdateObservationKind.InteractionBodyMatched;
-  capturedPath: string;
-  pathPattern: string;
-  method: string;
+      kind: UpdateObservationKind.InteractionBodyMatched;
+      capturedPath: string;
+      pathPattern: string;
+      method: string;
 
-  capturedContentType: string | null;
-  decodable: boolean;
-}
+      capturedContentType: string | null;
+      decodable: boolean;
+    }
   | {
-  kind: UpdateObservationKind.InteractionMatchedOperation;
-  capturedPath: string;
-  pathPattern: string;
-  method: string;
-}
+      kind: UpdateObservationKind.InteractionMatchedOperation;
+      capturedPath: string;
+      pathPattern: string;
+      method: string;
+    }
   | {
-  kind: UpdateObservationKind.InteractionPatchGenerated;
-  capturedPath: string;
-  pathPattern: string;
-  method: string;
-  description: string;
-}
+      kind: UpdateObservationKind.InteractionPatchGenerated;
+      capturedPath: string;
+      pathPattern: string;
+      method: string;
+      description: string;
+    }
   | {
-  kind: UpdateObservationKind.InteractionCaptured;
-  path: string;
-  method: string;
-}
+      kind: UpdateObservationKind.InteractionCaptured;
+      path: string;
+      method: string;
+    }
   | {
-  kind: UpdateObservationKind.SpecFileUpdated;
-  path: string;
-  overwrittenComments: boolean;
-}
-  );
+      kind: UpdateObservationKind.SpecFileUpdated;
+      path: string;
+      overwrittenComments: boolean;
+    }
+);
 
 export interface UpdateObservations extends AsyncIterable<UpdateObservation> {}
 
-export async function renderUpdateStats(updateObservations: UpdateObservations) {
+export async function renderUpdateStats(
+  updateObservations: UpdateObservations
+) {
   const reporter = await updateReporter(process.stderr, process.cwd());
 
   for await (let observation of updateObservations) {

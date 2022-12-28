@@ -91,7 +91,7 @@ export class SpecPatch {
   static applyPatch(patch: SpecPatch, spec: OpenAPIV3.Document) {
     const result = JsonPatch.applyPatch(
       spec,
-      [...SpecPatch.operations(patch)],
+      JsonPatch.deepClone([...SpecPatch.operations(patch)]),
       undefined,
       false // don't mutate the original spec
     );

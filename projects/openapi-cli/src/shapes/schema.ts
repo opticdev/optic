@@ -3,6 +3,7 @@ import { ShapePatch } from './patches';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { PatchOperation } from '../patches';
 import JsonPatch from 'fast-json-patch';
+import { OperationPatch } from '../operations';
 
 export type SchemaObject = OpenAPIV3.SchemaObject;
 
@@ -100,7 +101,7 @@ export class Schema {
   ): SchemaObject {
     const result = JsonPatch.applyPatch(
       schema,
-      [...ShapePatch.operations(patch)],
+      JsonPatch.deepClone([...OperationPatch.operations(patch)]),
       undefined,
       false // don't mutate the original schema
     );

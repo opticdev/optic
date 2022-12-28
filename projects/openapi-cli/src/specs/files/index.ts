@@ -35,10 +35,6 @@ export class SpecFile {
     return isYaml(self.path);
   }
 
-  static containsYamlComments(self: SpecFile): boolean {
-    return SpecFile.isYaml(self) && yamlCommentsPattern.test(self.contents);
-  }
-
   static write(self: SpecFile, destination: Writable): Writable {
     return Readable.from(self.contents).pipe(destination);
   }

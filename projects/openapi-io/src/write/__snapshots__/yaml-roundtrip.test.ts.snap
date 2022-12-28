@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`applying non destructive patches to yaml adding to an array collection 1`] = `
+"# This is YAML.
+---
+\\"items\\":
+
+  - HELLO:
+      name: WORLD
+      in: query
+  - an array
+
+  - 'of values'
+"
+`;
+
+exports[`applying non destructive patches to yaml adding to an object collection 1`] = `
+"# This is YAML.
+---
+\\"items\\":
+
+  - an array
+
+  - 'of values'
+cursor:
+  offset: 0
+  items: 2
+  totalCount: 14
+  nextPageUrl: https://api.example.com/items/2
+"
+`;
+
+exports[`applying non destructive patches to yaml removing from an array collection 1`] = `
+"# This is YAML.
+---
+\\"items\\":
+
+  - an array
+"
+`;
+
+exports[`applying non destructive patches to yaml removing key from root object 1`] = `
+"# This is YAML.
+---
+hello: WORLD
+"
+`;
+
+exports[`applying non destructive patches to yaml replacing a string with a string 1`] = `
+"# This is YAML.
+---
+\\"items\\":
+
+  - true
+
+  - 'of values'
+"
+`;
+
+exports[`applying non destructive patches to yaml replacing a string with an array 1`] = `
+"# This is YAML.
+---
+\\"items\\":
+
+  - - red
+    - blue
+    - yellow
+
+  - 'of values'
+"
+`;
+
+exports[`applying non destructive patches to yaml replacing root object key 1`] = `
+"# This is YAML.
+---
+\\"items\\":
+  - red
+  - blue
+  - yellow
+"
+`;

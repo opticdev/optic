@@ -519,11 +519,7 @@ export function updateSpecFiles(
   };
   const observing = new AT.Subject<AddObservation>();
   const observers = {
-    fileOperation(op: SpecFileOperation) {
-      const file = specFiles.find(({ path }) => path === op.filePath);
-      if (file && SpecFile.containsYamlComments(file))
-        stats.filesWithOverwrittenYamlComments.add(file.path);
-    },
+    fileOperation(op: SpecFileOperation) {},
     updatedFile(file: SpecFile) {
       observing.onNext({
         kind: AddObservationKind.SpecFileUpdated,

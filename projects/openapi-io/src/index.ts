@@ -14,14 +14,16 @@ import {
   JsonSchemaSourcemap,
   resolveJsonPointerInYamlAst,
 } from './parser/sourcemap';
-import { loadYaml, isYaml, isJson, writeYaml } from './write/index';
+import { loadYaml, isYaml, isJson, writeYaml } from './write';
 import { validateOpenApiV3Document } from './validation/validator';
 import { ValidationError } from './validation/errors';
 import { checkOpenAPIVersion } from './validation/openapi-versions';
 import { filePathToGitPath } from './parser/resolvers/git-branch-file-resolver';
 import { jsonPointerLogger } from './validation/log-json-pointer';
+import { applyOperationsToYamlString } from './write/yaml-roundtrip';
 
 export {
+  applyOperationsToYamlString,
   filePathToGitPath,
   loadSpecFromFile,
   inGit,

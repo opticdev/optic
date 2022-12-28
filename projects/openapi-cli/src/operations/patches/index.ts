@@ -50,7 +50,7 @@ export class OperationPatch {
     try {
       const result = JsonPatch.applyPatch(
         operation,
-        [...OperationPatch.operations(patch)],
+        JsonPatch.deepClone([...OperationPatch.operations(patch)]),
         true, // validate ops so we get useful error messages
         false // don't mutate the original schema
       );
