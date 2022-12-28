@@ -71,7 +71,7 @@ export async function verifyCommand({
 
           feedback.notable('Documenting operations...');
 
-          let observations: StatusObservations = matchInteractions(
+          let { observations } = matchInteractions(
             spec,
             await makeInteractionsIterator()
           );
@@ -132,7 +132,7 @@ export async function verifyCommand({
 
       const diffResults = await renderDiffs(sourcemap, spec, updatePatches);
 
-      let observations = matchInteractions(
+      let { observations, coverage } = matchInteractions(
         spec,
         await makeInteractionsIterator()
       );
@@ -145,10 +145,16 @@ export async function verifyCommand({
         }
       );
 
+      const coverageStats = coverage.calculateCoverage();
+
+      console.log('\n ' + chalk.bold.underline(`API Behavior Report`));
       console.log(`
+ Total Requests          : ${coverageStats.totalRequests}
  Diffs                   : ${diffResults.shapeDiff}
  Undocumented operations : ${renderingStatus.undocumentedPaths}
  Undocumented bodies     : ${renderingStatus.undocumentedPaths}\n`);
+
+      coverage.renderCoverage();
 
       const hasDiff =
         diffResults.totalDiffCount + renderingStatus.undocumentedPaths > 0;

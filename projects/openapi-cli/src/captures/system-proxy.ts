@@ -20,7 +20,7 @@ export class SystemProxy {
     const { port } = url.parse(this.proxyUrl);
 
     if (platform === 'mac') {
-      const name = await chooseInterfaceMac(device);
+      const name = await chooseInterfaceMac();
 
       await Promise.all([
         runCommand(`networksetup -setwebproxy "${name}" 127.0.0.1 ${port}`),
@@ -54,8 +54,14 @@ export class SystemProxy {
   }
 }
 
-export async function chooseInterfaceMac(device: string | undefined) {
-  let devicePreference = device || 'en0';
+export async function chooseInterfaceMac() {
+  const network = await runCommand('scutil --nwi');
+  const device = new RegExp(/Network interfaces: (en[0-9])/);
+
+  const result = network.match(device);
+
+  let devicePreference = result ? result[1] : 'en0';
+
   const hardware = await runCommand('networksetup -listallhardwareports');
   const regex = new RegExp(/(Hardware Port: (.*)\nDevice: (.*)\n)/);
 

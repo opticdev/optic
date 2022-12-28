@@ -25,6 +25,7 @@ import {
 import { DocumentedBodies, DocumentedBody } from '../../shapes';
 import { trackCompletion } from '../../segment';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { ApiCoverageCounter } from '../../coverage/api-coverage';
 
 export async function addIfUndocumented(
   input: string,
@@ -197,8 +198,9 @@ export async function observationToUndocumented(
 
 export function matchInteractions(
   spec: OpenAPIV3.Document,
-  interactions: CapturedInteractions
-): StatusObservations {
+  interactions: CapturedInteractions,
+  coverage: ApiCoverageCounter = new ApiCoverageCounter(spec)
+): { observations: StatusObservations; coverage: ApiCoverageCounter } {
   const interactionsFork = AT.forkable(
     // TODO: figure out why this prevents `forkable` from producing an empty object as the last interaction
     AT.tap<CapturedInteraction>(() => {})(interactions)
@@ -223,6 +225,13 @@ export function matchInteractions(
 
       let documentedInteraction = documentedInteractionOption.unwrap();
 
+      coverage.operationInteraction(
+        documentedInteraction.operation.pathPattern,
+        documentedInteraction.operation.method,
+        Boolean(documentedInteraction.interaction.request.body),
+        documentedInteraction.interaction.response.statusCode
+      );
+
       yield {
         kind: StatusObservationKind.InteractionMatchedOperation,
         capturedPath: documentedInteraction.interaction.request.path,
@@ -237,6 +246,7 @@ export function matchInteractions(
       if (
         undocumentedOperation.type === UndocumentedOperationType.MissingMethod
       ) {
+        coverage.unmatched();
         yield {
           kind: StatusObservationKind.InteractionUnmatchedMethod,
           path: undocumentedOperation.pathPattern,
@@ -245,6 +255,7 @@ export function matchInteractions(
       } else if (
         undocumentedOperation.type === UndocumentedOperationType.MissingPath
       ) {
+        coverage.unmatched();
         for (let method of undocumentedOperation.methods) {
           yield {
             kind: StatusObservationKind.InteractionUnmatchedPath,
@@ -266,11 +277,14 @@ export function matchInteractions(
     };
   })(capturedInteractions);
 
-  return AT.merge(
-    captureObservations,
-    matchingObservations,
-    unmatchingObservations
-  );
+  return {
+    observations: AT.merge(
+      captureObservations,
+      matchingObservations,
+      unmatchingObservations
+    ),
+    coverage,
+  };
 }
 
 export enum StatusObservationKind {
