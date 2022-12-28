@@ -192,7 +192,7 @@ async function renderOperationStatus(
         renderUndocumentedPath(method.toUpperCase(), unmatchedPath.pathPattern)
       );
     }
-    feedback.commandInstruction('--document *', 'to document these paths');
+    feedback.commandInstruction('--document all', 'to document these paths');
     feedback.commandInstruction(
       `--document "[method path], ..."`,
       'to document or more paths'

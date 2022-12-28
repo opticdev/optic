@@ -258,7 +258,7 @@ export function findBody(
   return exactMatch || essenceMatch || typeRangeMatch || rangeMatch;
 }
 
-const statusRangePattern = /[245]xx/;
+export const statusRangePattern = /[245]xx/;
 
 const isNotReferenceObject = <T extends {}>(
   maybeReference: T | OpenAPIV3.ReferenceObject

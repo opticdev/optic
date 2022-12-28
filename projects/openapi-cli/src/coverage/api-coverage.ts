@@ -1,5 +1,6 @@
 import { FlatOpenAPIV3, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import chalk from 'chalk';
+import { findResponse, statusRangePattern } from '../operations';
 
 export type ApiCoverage = {
   paths: {
@@ -87,8 +88,20 @@ export class ApiCoverageCounter {
       const item = this.coverage.paths[pathPattern][method]!;
       item.count++;
       if (hasRequestBody) item.requestBody.count++;
+
+      let partialMatch;
+      // exact match
       if (item.responses[responseStatusCodeMatcher]) {
         item.responses[responseStatusCodeMatcher].count++;
+      } else if (
+        (partialMatch = partialMatches(
+          Object.keys(item.responses),
+          responseStatusCodeMatcher
+        ))
+      ) {
+        item.responses[partialMatch].count++;
+      } else if (item.responses['default']) {
+        item.responses['default'].count++;
       }
     }
   };
@@ -178,4 +191,18 @@ export class ApiCoverageCounter {
 
     console.log('');
   };
+}
+
+function partialMatches(
+  statusCodes: string[],
+  current: string
+): string | undefined {
+  return statusCodes.find((code) => {
+    if (
+      statusRangePattern.test(code) &&
+      code.substring(0, 1) === current.substring(0, 1)
+    ) {
+      return true;
+    }
+  });
 }
