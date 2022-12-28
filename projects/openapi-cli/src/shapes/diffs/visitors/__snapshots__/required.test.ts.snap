@@ -4,18 +4,13 @@ exports[`required json schema diff visitor missing required fields' 1`] = `
 Array [
   Object {
     "description": "required property 'f3' was missing",
-    "example": Object {
-      "hello": Object {
-        "f1": "value",
-        "f2": 122,
-      },
-    },
+    "example": undefined,
     "instancePath": "/hello/f3",
     "key": "f3",
     "keyword": "required",
     "kind": "MissingRequiredProperty",
     "parentObjectPath": "/properties/hello",
-    "propertyPath": "/properties/hello/f3",
+    "propertyPath": "/properties/hello/properties/f3",
   },
 ]
 `;

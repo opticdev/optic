@@ -4,14 +4,19 @@ exports[`responsesPatches generates a patch for a missing response body 1`] = `
 Array [
   Object {
     "description": "remove response content for 200",
+    "diff": Object {
+      "kind": "MissingResponseBody",
+      "statusCode": "200",
+    },
     "groupedOperations": Array [
       Object {
-        "diff": Object {
-          "op": "remove",
-          "path": "/responses/200/content",
-        },
         "intent": "remove response content (1 bodies)",
-        "operations": Array [],
+        "operations": Array [
+          Object {
+            "op": "remove",
+            "path": "/responses/200/content",
+          },
+        ],
       },
     ],
     "impact": Array [
@@ -27,9 +32,6 @@ Object {
   "pathPattern": "/some-path",
   "responses": Object {
     "200": Object {
-      "content": Object {
-        "application/json": Object {},
-      },
       "description": "success",
     },
   },
@@ -40,15 +42,21 @@ exports[`responsesPatches generates a patch for an unspecified response body 1`]
 Array [
   Object {
     "description": "add text/plain response for 200",
+    "diff": Object {
+      "contentType": "text/plain",
+      "kind": "UnmatchdResponseBody",
+      "statusCode": "200",
+    },
     "groupedOperations": Array [
       Object {
-        "diff": Object {
-          "op": "add",
-          "path": "/responses/200/content/text~1plain",
-          "value": Object {},
-        },
         "intent": "add response body for content type 'text/plain'",
-        "operations": Array [],
+        "operations": Array [
+          Object {
+            "op": "add",
+            "path": "/responses/200/content/text~1plain",
+            "value": Object {},
+          },
+        ],
       },
     ],
     "impact": Array [
@@ -67,6 +75,7 @@ Object {
     "200": Object {
       "content": Object {
         "application/json": Object {},
+        "text/plain": Object {},
       },
       "description": "success",
     },
@@ -78,17 +87,23 @@ exports[`responsesPatches generates a patch for an unspecified response status c
 Array [
   Object {
     "description": "add 400 response",
+    "diff": Object {
+      "contentType": null,
+      "kind": "UnmatchedResponseStatusCode",
+      "statusCode": "400",
+    },
     "groupedOperations": Array [
       Object {
-        "diff": Object {
-          "op": "add",
-          "path": "/responses/400",
-          "value": Object {
-            "description": "400 response",
-          },
-        },
         "intent": "add response status code",
-        "operations": Array [],
+        "operations": Array [
+          Object {
+            "op": "add",
+            "path": "/responses/400",
+            "value": Object {
+              "description": "400 response",
+            },
+          },
+        ],
       },
     ],
     "impact": Array [
@@ -106,6 +121,9 @@ Object {
   "responses": Object {
     "200": Object {
       "description": "success",
+    },
+    "400": Object {
+      "description": "400 response",
     },
   },
 }

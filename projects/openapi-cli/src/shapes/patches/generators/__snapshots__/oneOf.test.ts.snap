@@ -4,21 +4,21 @@ exports[`one of shape patch generator can add an additional branch to a complex 
 Array [
   Object {
     "description": "expand one of for oneOf",
+    "diff": Object {
+      "description": "'oneOf' did not match schema",
+      "example": Array [
+        1,
+        2,
+        3,
+      ],
+      "instancePath": "/location/principality/coordinates",
+      "key": "oneOf",
+      "keyword": "oneOf",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/location/properties/principality/properties/coordinates/oneOf",
+    },
     "groupedOperations": Array [
       Object {
-        "diff": Object {
-          "description": "'oneOf' did not match schema",
-          "example": Array [
-            1,
-            2,
-            3,
-          ],
-          "instancePath": "/location/principality/coordinates",
-          "key": "oneOf",
-          "keyword": "oneOf",
-          "kind": "UnmatchedType",
-          "propertyPath": "/properties/location/properties/principality/properties/coordinates/oneOf",
-        },
         "intent": "add new oneOf branch to oneOf",
         "operations": Array [
           Object {
@@ -46,23 +46,19 @@ exports[`one of shape patch generator when new field in one of object variant of
 Array [
   Object {
     "description": "add property hello",
+    "diff": Object {
+      "description": "'hello' is not documented",
+      "example": "world",
+      "instancePath": "/polyProp/hello",
+      "key": "hello",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/polyProp/oneOf/0/properties",
+      "propertyExamplePath": "/polyProp/hello",
+      "propertyPath": "/properties/polyProp/oneOf/0/properties/hello",
+    },
     "groupedOperations": Array [
       Object {
-        "diff": Object {
-          "description": "'hello' is not documented",
-          "example": Object {
-            "polyProp": Object {
-              "hello": "world",
-            },
-          },
-          "instancePath": "/polyProp/hello",
-          "key": "hello",
-          "keyword": "additionalProperties",
-          "kind": "AdditionalProperty",
-          "parentObjectPath": "/properties/polyProp/oneOf/0/additionalProperties",
-          "propertyExamplePath": "/polyProp/hello",
-          "propertyPath": "/properties/polyProp/oneOf/0/additionalProperties/hello",
-        },
         "intent": "add required [] to parent object and make hello required",
         "operations": Array [
           Object {
@@ -76,21 +72,6 @@ Array [
         ],
       },
       Object {
-        "diff": Object {
-          "description": "'hello' is not documented",
-          "example": Object {
-            "polyProp": Object {
-              "hello": "world",
-            },
-          },
-          "instancePath": "/polyProp/hello",
-          "key": "hello",
-          "keyword": "additionalProperties",
-          "kind": "AdditionalProperty",
-          "parentObjectPath": "/properties/polyProp/oneOf/0/additionalProperties",
-          "propertyExamplePath": "/polyProp/hello",
-          "propertyPath": "/properties/polyProp/oneOf/0/additionalProperties/hello",
-        },
         "intent": "add property hello schema to properties",
         "operations": Array [
           Object {
@@ -115,17 +96,17 @@ exports[`one of shape patch generator when new primitive types provided to exist
 Array [
   Object {
     "description": "expand one of for oneOf",
+    "diff": Object {
+      "description": "'oneOf' did not match schema",
+      "example": true,
+      "instancePath": "/polyProp",
+      "key": "oneOf",
+      "keyword": "oneOf",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/polyProp/oneOf",
+    },
     "groupedOperations": Array [
       Object {
-        "diff": Object {
-          "description": "'oneOf' did not match schema",
-          "example": true,
-          "instancePath": "/polyProp",
-          "key": "oneOf",
-          "keyword": "oneOf",
-          "kind": "UnmatchedType",
-          "propertyPath": "/properties/polyProp/oneOf",
-        },
         "intent": "add new oneOf branch to oneOf",
         "operations": Array [
           Object {
@@ -150,17 +131,17 @@ exports[`one of shape patch generator when root schema is obejct and is shown an
 Array [
   Object {
     "description": "make  oneOf",
+    "diff": Object {
+      "description": "'' did not match schema",
+      "example": Array [],
+      "instancePath": "",
+      "key": "",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "",
+    },
     "groupedOperations": Array [
       Object {
-        "diff": Object {
-          "description": "'' did not match schema",
-          "example": Array [],
-          "instancePath": "",
-          "key": "",
-          "keyword": "type",
-          "kind": "UnmatchedType",
-          "propertyPath": "",
-        },
         "intent": "replace  with a one of containing both types",
         "operations": Array [
           Object {
@@ -199,17 +180,17 @@ Array [
   },
   Object {
     "description": "change type of ",
+    "diff": Object {
+      "description": "'' did not match schema",
+      "example": Array [],
+      "instancePath": "",
+      "key": "",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "",
+    },
     "groupedOperations": Array [
       Object {
-        "diff": Object {
-          "description": "'' did not match schema",
-          "example": Array [],
-          "instancePath": "",
-          "key": "",
-          "keyword": "type",
-          "kind": "UnmatchedType",
-          "propertyPath": "",
-        },
         "intent": "change  type",
         "operations": Array [
           Object {

@@ -22,18 +22,14 @@ exports[`one of json schema diff visitor when new field in one of object variant
 Array [
   Object {
     "description": "'hello' is not documented",
-    "example": Object {
-      "polyProp": Object {
-        "hello": "world",
-      },
-    },
+    "example": "world",
     "instancePath": "/polyProp/hello",
     "key": "hello",
     "keyword": "additionalProperties",
     "kind": "AdditionalProperty",
-    "parentObjectPath": "/properties/polyProp/oneOf/0/additionalProperties",
+    "parentObjectPath": "/properties/polyProp/oneOf/0/properties",
     "propertyExamplePath": "/polyProp/hello",
-    "propertyPath": "/properties/polyProp/oneOf/0/additionalProperties/hello",
+    "propertyPath": "/properties/polyProp/oneOf/0/properties/hello",
   },
 ]
 `;

@@ -4,15 +4,19 @@ exports[`requestBodyPatches generates a patch for a missing request body 1`] = `
 Array [
   Object {
     "description": "make request body optional",
+    "diff": Object {
+      "kind": "MissingRequestBody",
+    },
     "groupedOperations": Array [
       Object {
-        "diff": Object {
-          "op": "replace",
-          "path": "/requestBody/required",
-          "value": false,
-        },
         "intent": "make request body optional",
-        "operations": Array [],
+        "operations": Array [
+          Object {
+            "op": "replace",
+            "path": "/requestBody/required",
+            "value": false,
+          },
+        ],
       },
     ],
     "impact": Array [
@@ -31,7 +35,7 @@ Object {
     "content": Object {
       "application/json": Object {},
     },
-    "required": true,
+    "required": false,
   },
   "responses": Object {
     "200": Object {
@@ -45,15 +49,20 @@ exports[`requestBodyPatches generates a patch for a unmatched request body conte
 Array [
   Object {
     "description": "add 'text/csv' body as a valid request body type",
+    "diff": Object {
+      "contentType": "text/csv",
+      "kind": "UnmatchedRequestBody",
+    },
     "groupedOperations": Array [
       Object {
-        "diff": Object {
-          "op": "add",
-          "path": "/requestBody/content/text~1csv",
-          "value": Object {},
-        },
         "intent": "add text/csv as content type",
-        "operations": Array [],
+        "operations": Array [
+          Object {
+            "op": "add",
+            "path": "/requestBody/content/text~1csv",
+            "value": Object {},
+          },
+        ],
       },
     ],
     "impact": Array [
@@ -71,6 +80,7 @@ Object {
   "requestBody": Object {
     "content": Object {
       "application/json": Object {},
+      "text/csv": Object {},
     },
     "required": true,
   },
@@ -86,26 +96,32 @@ exports[`requestBodyPatches generates a patch for an unspecified request body 1`
 Array [
   Object {
     "description": "add 'application/json' body as a valid request body type",
+    "diff": Object {
+      "contentType": "application/json",
+      "kind": "UnmatchedRequestBody",
+    },
     "groupedOperations": Array [
       Object {
-        "diff": Object {
-          "op": "add",
-          "path": "/requestBody",
-          "value": Object {
-            "content": Object {},
-          },
-        },
         "intent": "add request body to operation",
-        "operations": Array [],
+        "operations": Array [
+          Object {
+            "op": "add",
+            "path": "/requestBody",
+            "value": Object {
+              "content": Object {},
+            },
+          },
+        ],
       },
       Object {
-        "diff": Object {
-          "op": "add",
-          "path": "/requestBody/content/application~1json",
-          "value": Object {},
-        },
         "intent": "add application/json as content type",
-        "operations": Array [],
+        "operations": Array [
+          Object {
+            "op": "add",
+            "path": "/requestBody/content/application~1json",
+            "value": Object {},
+          },
+        ],
       },
     ],
     "impact": Array [
@@ -120,7 +136,11 @@ exports[`requestBodyPatches generates a patch for an unspecified request body 2`
 Object {
   "method": "post",
   "pathPattern": "/some-path",
-  "requestBody": null,
+  "requestBody": Object {
+    "content": Object {
+      "application/json": Object {},
+    },
+  },
   "responses": Object {
     "200": Object {
       "description": "success",
