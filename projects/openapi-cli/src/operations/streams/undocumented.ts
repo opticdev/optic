@@ -93,26 +93,25 @@ export class UndocumentedOperations {
     spec: OpenAPIV3.Document,
     specUpdates?: AsyncIterable<OpenAPIV3.Document>
   ): UndocumentedOperations {
-    const basePaths =
-      spec.servers?.map((server) => {
-        // add absolute in case url is relative (valid in OpenAPI, ignored when absolute)
-        const parsed = new Url.URL(server.url, 'https://example.org');
+    const hostBaseMap: { [key: string]: string } = {};
 
-        const pathName = parsed.pathname;
-        if (pathName.endsWith('/') && pathName.length > 1) {
-          return pathName.substring(0, pathName.length - 1);
-        } else {
-          return pathName;
-        }
-      }) || [];
+    spec.servers?.forEach((server) => {
+      // add absolute in case url is relative (valid in OpenAPI, ignored when absolute)
+      const parsed = new Url.URL(server.url, 'https://example.org');
+
+      const pathName = parsed.pathname;
+      if (pathName.endsWith('/') && pathName.length > 1) {
+        hostBaseMap[parsed.host] = pathName.substring(0, pathName.length - 1);
+      } else {
+        hostBaseMap[parsed.host] = pathName;
+      }
+    });
 
     const operations = AT.map<CapturedInteraction, OperationPair>(
       (interaction) => {
-        const basePath = basePaths.find((basePath) =>
-          interaction.request.path.startsWith(basePath)
-        );
+        const basePath: string = hostBaseMap[interaction.request.host] || '/';
 
-        const offset = basePath ? basePath.length : 0;
+        const offset = basePath !== '/' ? basePath.length : 0;
 
         return {
           pathPattern: interaction.request.path.substring(offset),
