@@ -3,6 +3,7 @@ import yaml from 'js-yaml';
 import { UserError } from '@useoptic/openapi-utilities';
 import Ajv from 'ajv';
 import path from 'node:path';
+import { createOpticClient } from '@useoptic/optic-ci/build/cli/clients/optic-client';
 
 export enum VCS {
   Git = 'git',
@@ -29,9 +30,10 @@ export type RawYmlConfig = {
   }[];
 
   ruleset?: unknown[];
+  extends?: string;
 };
 
-export type OpticCliConfig = Omit<RawYmlConfig, 'ruleset'> & {
+export type OpticCliConfig = Omit<RawYmlConfig, 'ruleset' | 'extends'> & {
   ruleset: ConfigRuleset[];
 };
 
@@ -60,6 +62,9 @@ const configSchema = {
         },
         required: ['path', 'id'],
       },
+    },
+    extends: {
+      type: 'string',
     },
     ruleset: {
       type: 'array',
@@ -106,12 +111,12 @@ export async function loadCliConfig(
   configPath: string
 ): Promise<OpticCliConfig> {
   const config = yaml.load(await fs.readFile(configPath, 'utf-8'));
-
   validateConfig(config, configPath);
-  formatRules(config as RawYmlConfig);
+  const rawConfig = config as RawYmlConfig;
+  await initializeRules(rawConfig);
 
   // force files to be an empty array if it's not in the yaml
-  (config as RawYmlConfig).files ||= [];
+  rawConfig.files ||= [];
 
   const cliConfig = config as OpticCliConfig;
   cliConfig.root = path.dirname(configPath);
@@ -132,27 +137,43 @@ export const validateConfig = (config: unknown, path: string) => {
   }
 };
 
-export const formatRules = (config: RawYmlConfig) => {
-  const finalRuleset: ConfigRuleset[] = [];
+export const initializeRules = async (config: RawYmlConfig) => {
+  let rulesetMap: Map<string, ConfigRuleset> = new Map();
+  if (config.extends) {
+    // TODO in the future add in login flow to set token
+    const client = createOpticClient('no_token');
+    console.log(`Extending ruleset from ${config.extends}`);
+
+    try {
+      const response = await client.getRuleConfig(config.extends);
+      rulesetMap = new Map(
+        response.config.ruleset.map((conf) => [conf.name, conf])
+      );
+    } catch (e) {
+      console.error(e);
+      console.log(
+        `Failed to download the ruleset from ${config.extends}. Not using extended ruleset`
+      );
+    }
+  }
 
   const rulesets = config.ruleset || [];
   for (const ruleset of rulesets) {
     if (typeof ruleset === 'string') {
-      finalRuleset.push({ name: ruleset, config: {} });
+      rulesetMap.set(ruleset, { name: ruleset, config: {} });
     } else if (typeof ruleset === 'object' && ruleset !== null) {
       const keys = Object.keys(ruleset);
       if (keys.length !== 1) {
         throw new UserError(`Configuration error: empty ruleset configuration`);
       } else {
-        finalRuleset.push({
-          name: keys[0],
-          config: ruleset[keys[0]] || {},
-        });
+        const name = keys[0];
+        const config = ruleset[name] || {};
+        rulesetMap.set(name, { name, config });
       }
     } else {
       throw new UserError('Configuration error: unexpected ruleset format');
     }
   }
 
-  config.ruleset = finalRuleset;
+  config.ruleset = [...rulesetMap.values()];
 };

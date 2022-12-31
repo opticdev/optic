@@ -84,12 +84,18 @@ export class UndocumentedOperations {
     spec: OpenAPIV3.Document,
     specUpdates?: AsyncIterable<OpenAPIV3.Document>
   ): UndocumentedOperations {
+
     const basePaths =
       spec.servers?.map((server) => {
         // add absolute in case url is relative (valid in OpenAPI, ignored when absolute)
         const parsed = new Url.URL(server.url, 'https://example.org');
 
-        return parsed.pathname;
+        const pathName = parsed.pathname;
+        if (pathName.endsWith('/') && pathName.length > 1) {
+          return pathName.substring(0, pathName.length - 1)
+        } else {
+          return pathName
+        }
       }) || [];
 
     const operations = AT.map<CapturedInteraction, OperationPair>(
