@@ -1,10 +1,4 @@
-import {
-  applyOperationsToYamlString,
-  isJson,
-  isYaml,
-  loadYaml,
-  writeYaml,
-} from '@useoptic/openapi-io';
+import { isJson, isYaml, loadYaml, writeYaml } from '@useoptic/openapi-io';
 import { PatchApplyResult, SpecFileReconciler } from '.';
 import jsonpatch, { Operation } from 'fast-json-patch';
 import isUrl from 'is-url';
@@ -30,28 +24,18 @@ export const applyPatch: SpecFileReconciler<Config> = async function applyPatch<
     `Patch not possible because ${filePath} could not be parsed: ${parsed.val}`
   );
 
-  if (isYaml(filePath)) {
-    // use the roundtripper to preserve comments
-    const updatedString = applyOperationsToYamlString(fileContents, operations);
-    return {
-      success: true,
-      filePath,
-      contents: updatedString,
-    };
-  } else {
-    const newDocument = jsonpatch.applyPatch(
-      parsed.val || {},
-      operations
-    ).newDocument;
+  const newDocument = jsonpatch.applyPatch(
+    parsed.val || {},
+    operations
+  ).newDocument;
 
-    const updatedString = stringifyDocument(filePath, newDocument);
+  const updatedString = stringifyDocument(filePath, newDocument);
 
-    return {
-      success: true,
-      filePath,
-      contents: updatedString,
-    };
-  }
+  return {
+    success: true,
+    filePath,
+    contents: updatedString,
+  };
 };
 
 export const fileExtensions = ['.json', '.yaml', '.yml'];

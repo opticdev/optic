@@ -36,6 +36,10 @@ export class UndocumentedOperations {
     const shouldBeIgnored = (path: string) =>
       ignorePatterns.some((ignore) => minimatch(path, ignore));
 
+    const filterMethods = (methods: OpenAPIV3.HttpMethods[]) => {
+      return methods.filter((i) => i !== 'options' && i !== 'head');
+    };
+
     for await (let operation of operations) {
       // TODO: figure out whether we can create queries once and update it incrementally,
       // recreating these facts constantly can get expens ive
@@ -45,7 +49,10 @@ export class UndocumentedOperations {
 
       for (let diff of diffs) {
         if (diff.kind === OperationDiffResultKind.UnmatchedPath) {
+          const methodsFiltered = filterMethods(operation.methods);
           if (shouldBeIgnored(diff.subject)) continue;
+          if (methodsFiltered.length === 0) continue;
+
           if (diff.subject) yieldedResult = true;
           yield {
             type: UndocumentedOperationType.MissingPath,
@@ -53,11 +60,13 @@ export class UndocumentedOperations {
             pathParameters: PathComponents.fromPath(diff.subject)
               .filter(PathComponent.isTemplate)
               .map(({ name }) => name),
-            methods: operation.methods,
+            methods: methodsFiltered,
             specPath: jsonPointerHelpers.compile(['paths', diff.subject]),
           };
         } else if (diff.kind === OperationDiffResultKind.UnmatchedMethod) {
           if (shouldBeIgnored(diff.subject)) continue;
+          if (filterMethods([diff.subject]).length === 0) continue;
+
           yieldedResult = true;
           yield {
             type: UndocumentedOperationType.MissingMethod,
@@ -84,7 +93,6 @@ export class UndocumentedOperations {
     spec: OpenAPIV3.Document,
     specUpdates?: AsyncIterable<OpenAPIV3.Document>
   ): UndocumentedOperations {
-
     const basePaths =
       spec.servers?.map((server) => {
         // add absolute in case url is relative (valid in OpenAPI, ignored when absolute)
@@ -92,9 +100,9 @@ export class UndocumentedOperations {
 
         const pathName = parsed.pathname;
         if (pathName.endsWith('/') && pathName.length > 1) {
-          return pathName.substring(0, pathName.length - 1)
+          return pathName.substring(0, pathName.length - 1);
         } else {
-          return pathName
+          return pathName;
         }
       }) || [];
 
