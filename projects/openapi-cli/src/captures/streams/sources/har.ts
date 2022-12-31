@@ -207,7 +207,12 @@ export class HarEntries {
   }
 }
 
-// strip original encoding and base64 it for the HAR
+/*
+  Optic was originally written to support base64 only in these fields. TBD why.
+  If we want to work with HARs from other tools we should handle encoding at read-time, not write time
+
+  Currently ok to continue this direction.
+ */
 async function toBase64(
   buffer: Buffer,
   encoding: string | undefined
