@@ -3077,6 +3077,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.sortby@npm:^4.7.7":
+  version: 4.7.7
+  resolution: "@types/lodash.sortby@npm:4.7.7"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: 94164b49810e37cc3795c133a6375245cdfc0e6804680e34d7039889954e7201c820d658fff89fcda0a1ce68774286f49ce95f83004d8188c4434cdfc2ca55c4
+  languageName: node
+  linkType: hard
+
 "@types/lodash@npm:*":
   version: 4.14.178
   resolution: "@types/lodash@npm:4.14.178"
@@ -3366,6 +3375,7 @@ __metadata:
     "@types/is-url": ^1.2.30
     "@types/jest": ^26.0.24
     "@types/json-stable-stringify": ^1.0.33
+    "@types/lodash.sortby": ^4.7.7
     "@types/log": ^6.3.0
     "@types/node": ^17.0.15
     "@types/node-forge": ^1.0.4
@@ -3395,6 +3405,7 @@ __metadata:
     is-url: ^1.2.4
     jest: ^27.5.1
     json-schema-traverse: ^1.0.0
+    lodash.sortby: ^4.7.0
     log: ^6.3.1
     log-node: ^8.0.3
     minimatch: 5.1.1

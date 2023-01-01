@@ -159,11 +159,12 @@ function renderShapeDiff(
   pathPattern: string
 ) {
   const lines = `${chalk.bgRed('  Diff  ')} ${diff.description}
+operation: ${chalk.bold(`${method} ${pathPattern}`)}  
 ${logger.log(pathToHighlight, {
   highlightColor: 'yellow',
   observation: error,
 })}
-  ${chalk.gray.bold(`use (--patch) to update \n\n`)}`;
+  ${chalk.blue.bold(`(use "--patch" to update) \n\n`)}`;
   console.log(lines);
 }
 
@@ -173,8 +174,8 @@ function renderBodyDiff(
   pathPattern: string
 ) {
   const lines = `${chalk.bgYellow('  Undocumented  ')} ${description}
-  ${method} ${pathPattern}
-  ${chalk.gray.bold(`use (--patch) to update \n\n`)}`;
+  operation: ${chalk.bold(`${method} ${pathPattern}`)}  
+  ${chalk.blue.bold(`(use "--patch" to update) \n\n`)}`;
   console.log(lines);
 }
 

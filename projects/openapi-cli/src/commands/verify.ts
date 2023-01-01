@@ -302,7 +302,7 @@ async function getInteractions(
 
 function renderUndocumentedPath(method: string, pathPattern: string) {
   console.log(
-    `${chalk.bgYellow('Undocumented')} ${method
+    `${chalk.bgYellow('  Undocumented  ')} ${method
       .toUpperCase()
       .padStart(6, ' ')}   ${pathPattern}`
   );

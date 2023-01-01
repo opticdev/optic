@@ -1,7 +1,7 @@
 import { FlatOpenAPIV3, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import chalk from 'chalk';
 import { findResponse, statusRangePattern } from '../operations';
-
+import sortby from 'lodash.sortby';
 export type ApiCoverage = {
   paths: {
     [pathPattern: string]: {
@@ -148,6 +148,8 @@ export class ApiCoverageCounter {
 
     console.log(' ' + chalk.bold.underline(`Coverage Report ${percent}%`));
 
+    const toPrint: [number, string][] = [];
+
     Object.entries(this.coverage.paths).forEach(([path, methods]) => {
       Object.entries(methods).forEach(([method, operation]) => {
         const percentOfLargest = (operation.count / max) * 100;
@@ -184,10 +186,11 @@ export class ApiCoverageCounter {
           }
         );
 
-        console.log(line1);
-        console.log(line2Items.join(' '));
+        toPrint.push([operation.count, `${line1}\n${line2Items.join(' ')}`]);
       });
     });
+
+    sortby(toPrint, (cov) => 1 - cov[0]).forEach((cov) => console.log(cov[1]));
 
     console.log('');
   };

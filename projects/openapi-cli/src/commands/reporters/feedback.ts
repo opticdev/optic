@@ -45,7 +45,9 @@ export async function createCommandFeedback(
     destination.write(chalk.bgBlue.white(' help ') + ' ' + message + '\n');
   }
   function commandInstruction(command: string, action: string) {
-    destination.write(chalk.gray(` (use "${command}" to ${action})`) + '\n');
+    destination.write(
+      chalk.blue.bold(` (use "${command}" to ${action})`) + '\n'
+    );
   }
 
   function notable(message: string) {
