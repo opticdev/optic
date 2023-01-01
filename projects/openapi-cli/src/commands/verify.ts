@@ -4,7 +4,7 @@ import path from 'path';
 import * as fs from 'fs-extra';
 
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
-import { trackCompletion } from '../segment';
+import { trackCompletion, trackEvent } from '../segment';
 import { trackWarning } from '../sentry';
 import * as AT from '../lib/async-tools';
 import { readDeferencedSpec } from '../specs';
@@ -43,6 +43,8 @@ export async function verifyCommand({
     .option('--document <operations>', 'HTTP method and path pair(s) to add')
     .option('--patch', 'Patch existing operations to resolve diffs')
     .action(async (specPath) => {
+      const analytics: { event: string; properties: any }[] = [];
+
       const absoluteSpecPath = Path.resolve(specPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
         return await feedback.inputError(
@@ -85,6 +87,13 @@ export async function verifyCommand({
           );
 
           if (result.ok) {
+            analytics.push({
+              event: 'openapi-document',
+              properties: {
+                allFlag: options.document === 'all',
+                numberDocumented: result.val.length,
+              },
+            });
             result.val.map((operation) => {
               console.log(
                 `${chalk.green('added')}  ${operation.method} ${
@@ -106,7 +115,15 @@ export async function verifyCommand({
           }
           const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
           const patchInteractions = await makeInteractionsIterator();
-          await patchOperationsAsNeeded(patchInteractions, spec, sourcemap);
+          const patchStats = await patchOperationsAsNeeded(
+            patchInteractions,
+            spec,
+            sourcemap
+          );
+          analytics.push({
+            event: 'openapi-patch',
+            properties: patchStats,
+          });
         }
 
         console.log(chalk.gray('-'.repeat(process.stdout.columns) + '\n'));
@@ -152,12 +169,29 @@ export async function verifyCommand({
  Total Requests          : ${coverageStats.totalRequests}
  Diffs                   : ${diffResults.shapeDiff}
  Undocumented operations : ${renderingStatus.undocumentedPaths}
- Undocumented bodies     : ${renderingStatus.undocumentedPaths}\n`);
+ Undocumented bodies     : ${diffResults.undocumentedBody}\n`);
 
       coverage.renderCoverage();
 
       const hasDiff =
         diffResults.totalDiffCount + renderingStatus.undocumentedPaths > 0;
+
+      analytics.push({
+        event: 'openapi-verify',
+        properties: {
+          totalInteractions: coverageStats.totalRequests,
+          coverage: coverageStats.percent,
+          diffs: diffResults.totalDiffCount,
+          shapeDiffs: diffResults.shapeDiff,
+          undocumentedOperations: renderingStatus.undocumentedPaths,
+          undocumentedBodies: renderingStatus.undocumentedPaths,
+        },
+      });
+
+      await Promise.all(
+        analytics.map((event) => trackEvent(event.event, event.properties))
+      );
+
       if (!options.exit0 && hasDiff) {
         console.log(
           chalk.red('OpenAPI and implementation are out of sync. Exiting 1')

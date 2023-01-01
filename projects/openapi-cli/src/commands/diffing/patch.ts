@@ -386,8 +386,12 @@ export interface UpdateObservations extends AsyncIterable<UpdateObservation> {}
 
 export async function renderUpdateStats(
   updateObservations: UpdateObservations
-) {
+): Promise<{ interactions: number; patched: number; fileUpdates: number }> {
   const reporter = await updateReporter(process.stderr, process.cwd());
+
+  let interactions = 0,
+    patched = 0,
+    fileUpdates = 0;
 
   for await (let observation of updateObservations) {
     if (observation.kind === UpdateObservationKind.InteractionCaptured) {
@@ -396,18 +400,24 @@ export async function renderUpdateStats(
     } else if (
       observation.kind === UpdateObservationKind.InteractionMatchedOperation
     ) {
+      interactions++;
       let { method, pathPattern } = observation;
       reporter.matchedInteraction({ method, pathPattern });
     } else if (
       observation.kind === UpdateObservationKind.InteractionPatchGenerated
     ) {
+      patched++;
+
       let { method, pathPattern, capturedPath, description } = observation;
       reporter.patch({ method, pathPattern }, capturedPath, description);
     } else if (observation.kind === UpdateObservationKind.SpecFileUpdated) {
+      fileUpdates++;
       let { path } = observation;
       reporter.fileUpdated(path);
     }
   }
 
   reporter.finish();
+
+  return { interactions, patched, fileUpdates };
 }
