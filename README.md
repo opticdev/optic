@@ -46,7 +46,7 @@ optic diff openapi.yaml --base main --check
 
 With Optic it is easy to document an existing API with OpenAPI. Just show Optic traffic and it will write all the boilerplate OpenAPI for you. 
 
-### Capturing traffic
+#### Capturing traffic
 
 Show Optic real API traffic using the `optic capture` command. Traffic can come from: 
 - local development environment ie `localhost:4000`
@@ -56,7 +56,7 @@ Show Optic real API traffic using the `optic capture` command. Traffic can come 
 optic capture openapi.yml localhost:4000
 ```
 
-### Quickly documenting an existing API
+#### Quickly documenting an existing API
 
 Capture a lot of traffic then run `optic verify` with the `--document all` flag: 
 
@@ -64,11 +64,11 @@ Capture a lot of traffic then run `optic verify` with the `--document all` flag:
 optic verify openapi.yml --document all
 ```
 
-### Track API changes with OpenAPI
+#### Track API changes with OpenAPI
 
 Captured traffic is like working copy in Git. Use `optic verify` to see the difference between how your OpenAPI specification says your API works, and how it actually works.
 
-
+https://user-images.githubusercontent.com/5900338/210244068-22540288-1f6d-46a7-a2e9-5b3d19a00f31.mp4
 
 The `verify` command detects drift between your OpenAPI spec and the actual API:
 - If Optic detects planned changes made code-first, you can quickly and accurately document them by passing the `--patch` flag. 
