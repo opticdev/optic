@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import Path from 'path';
+import path from 'path';
 import * as fs from 'fs-extra';
 import readline from 'readline';
 import { AbortController, AbortSignal } from 'node-abort-controller';
@@ -20,9 +20,7 @@ import {
 } from '../captures';
 import { SystemProxy } from '../captures/system-proxy';
 import { captureStorage } from '../captures/capture-storage';
-import path from 'path';
 import { RunCommand } from '../captures/run-command';
-import url from 'url';
 
 export async function captureCommand(): Promise<Command> {
   const command = new Command('capture');
@@ -66,11 +64,11 @@ export async function captureCommand(): Promise<Command> {
 
       const timestamp = Date.now().toString();
 
-      const inProgressName = Path.join(
+      const inProgressName = path.join(
         trafficDirectory,
         `${timestamp}.incomplete`
       );
-      const completedName = Path.join(trafficDirectory, `${timestamp}.har`);
+      const completedName = path.join(trafficDirectory, `${timestamp}.har`);
 
       const options = command.opts();
 

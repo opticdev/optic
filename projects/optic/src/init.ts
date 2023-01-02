@@ -19,6 +19,11 @@ import {
 import { hasGit, isInGitRepo, getRootPath } from './utils/git-utils';
 import { getAnonId } from './utils/anonymous-id';
 import { registerRulesetInit } from './commands/ruleset/init';
+import { captureCommand } from '@useoptic/openapi-cli/build/commands/capture';
+import { newCommand } from '@useoptic/openapi-cli/build/commands/new';
+import { captureCertCommand } from '@useoptic/openapi-cli/build/commands/capture-cert';
+import { clearCommand } from '@useoptic/openapi-cli/build/commands/clear';
+import { verifyCommand } from '@useoptic/openapi-cli/build/commands/verify';
 
 const packageJson = require('../package.json');
 
@@ -70,6 +75,13 @@ export const initCli = async () => {
     .addHelpCommand(false);
   registerRulesetUpload(rulesetSubcommands, cliConfig);
   registerRulesetInit(rulesetSubcommands, cliConfig);
+
+  // commands for tracking changes with openapi
+  cli.addCommand(await captureCommand());
+  cli.addCommand(await newCommand());
+  cli.addCommand(await captureCertCommand());
+  cli.addCommand(await clearCommand());
+  cli.addCommand(await verifyCommand());
 
   return cli;
 };

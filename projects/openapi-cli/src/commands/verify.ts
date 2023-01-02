@@ -24,11 +24,7 @@ import {
   updateByInteractions,
 } from './diffing/patch';
 
-export async function verifyCommand({
-  addUsage,
-}: {
-  addUsage: string;
-}): Promise<Command> {
+export async function verifyCommand(): Promise<Command> {
   const command = new Command('verify');
   const feedback = await createCommandFeedback(command);
 
@@ -88,7 +84,7 @@ export async function verifyCommand({
 
           if (result.ok) {
             analytics.push({
-              event: 'openapi-document',
+              event: 'openapi.verify.document',
               properties: {
                 allFlag: options.document === 'all',
                 numberDocumented: result.val.length,
@@ -121,7 +117,7 @@ export async function verifyCommand({
             sourcemap
           );
           analytics.push({
-            event: 'openapi-patch',
+            event: 'openapi.verify.patch',
             properties: patchStats,
           });
         }
@@ -156,10 +152,7 @@ export async function verifyCommand({
 
       const renderingStatus = await renderOperationStatus(
         observations,
-        feedback,
-        {
-          addUsage,
-        }
+        feedback
       );
 
       const coverageStats = coverage.calculateCoverage();
@@ -177,7 +170,7 @@ export async function verifyCommand({
         diffResults.totalDiffCount + renderingStatus.undocumentedPaths > 0;
 
       analytics.push({
-        event: 'openapi-verify',
+        event: 'openapi.verify',
         properties: {
           totalInteractions: coverageStats.totalRequests,
           coverage: coverageStats.percent,
@@ -212,8 +205,7 @@ export async function verifyCommand({
 
 async function renderOperationStatus(
   observations: StatusObservations,
-  feedback: Awaited<ReturnType<typeof createCommandFeedback>>,
-  { addUsage }: { addUsage: string }
+  feedback: Awaited<ReturnType<typeof createCommandFeedback>>
 ) {
   const { pathsToAdd } = await observationToUndocumented(observations);
 
@@ -237,40 +229,6 @@ async function renderOperationStatus(
   function operationId({ path, method }: { path: string; method: string }) {
     return `${method}${path}`;
   }
-}
-
-async function trackStats(observations: StatusObservations) {
-  const stats = {
-    unmatchedPathsCount: 0,
-    unmatchedMethodsCount: 0,
-
-    capturedInteractionsCount: 0,
-    matchedInteractionsCount: 0,
-  };
-
-  await trackCompletion('openapi_cli.status', stats, async function* () {
-    for await (let observation of observations) {
-      if (observation.kind === StatusObservationKind.InteractionUnmatchedPath) {
-        stats.unmatchedPathsCount += 1;
-        yield stats;
-      } else if (
-        observation.kind === StatusObservationKind.InteractionUnmatchedMethod
-      ) {
-        stats.unmatchedMethodsCount += 1;
-        yield stats;
-      } else if (
-        observation.kind === StatusObservationKind.InteractionCaptured
-      ) {
-        stats.capturedInteractionsCount += 1;
-        yield stats;
-      } else if (
-        observation.kind === StatusObservationKind.InteractionMatchedOperation
-      ) {
-        stats.matchedInteractionsCount += 1;
-        yield stats;
-      }
-    }
-  });
 }
 
 async function getInteractions(

@@ -6,11 +6,7 @@ import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { captureStorage } from '../captures/capture-storage';
 import path from 'path';
 
-export async function clearCommand({
-  addUsage,
-}: {
-  addUsage: string;
-}): Promise<Command> {
+export async function clearCommand(): Promise<Command> {
   const command = new Command('clear');
   const feedback = await createCommandFeedback(command);
 
