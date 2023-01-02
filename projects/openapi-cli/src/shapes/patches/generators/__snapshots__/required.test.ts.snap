@@ -4,6 +4,16 @@ exports[`required shape patch generator missing required fields will patch as 'm
 Array [
   Object {
     "description": "make property f3 optional",
+    "diff": Object {
+      "description": "required property 'f3' was missing",
+      "example": undefined,
+      "instancePath": "/hello/f3",
+      "key": "f3",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "/properties/hello",
+      "propertyPath": "/properties/hello/properties/f3",
+    },
     "groupedOperations": Array [
       Object {
         "intent": "remove f3 from parent's required array",
@@ -22,6 +32,16 @@ Array [
   },
   Object {
     "description": "remove property f3",
+    "diff": Object {
+      "description": "required property 'f3' was missing",
+      "example": undefined,
+      "instancePath": "/hello/f3",
+      "key": "f3",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "/properties/hello",
+      "propertyPath": "/properties/hello/properties/f3",
+    },
     "groupedOperations": Array [
       Object {
         "intent": "remove f3 from parent's required array",

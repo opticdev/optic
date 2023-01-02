@@ -14,6 +14,8 @@ export function* newSpecPatches<T>(
   yield {
     impact: [PatchImpact.BackwardsCompatibilityUnknown],
     description: `create a new spec`,
+    path: '/',
+    diff: undefined,
     groupedOperations: [
       OperationGroup.create(`setup minimal viable OpenAPI spec file`, {
         op: 'add',

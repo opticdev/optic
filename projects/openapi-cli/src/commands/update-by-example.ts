@@ -118,11 +118,7 @@ export async function updateByExample(specPath: string): Promise<
     observePatches: tap<SpecPatch>((_patch) => {
       stats.patchesCount++;
     }),
-    observeFileOperations: tap<SpecFileOperation>((op) => {
-      const file = specFiles.find(({ path }) => path === op.filePath);
-      if (file && SpecFile.containsYamlComments(file))
-        stats.filesWithOverwrittenYamlComments.add(file.path);
-    }),
+    observeFileOperations: tap<SpecFileOperation>((op) => {}),
     observeUpdatedFiles: tap<SpecFile>((_file) => {
       stats.updatedFilesCount++;
     }),

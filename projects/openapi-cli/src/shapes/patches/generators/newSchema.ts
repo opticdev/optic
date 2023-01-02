@@ -16,6 +16,7 @@ export function newSchemaPatch(
 
   return {
     description: 'add schema object',
+    diff: undefined,
     impact: [
       PatchImpact.Addition,
       !shapeContext.location

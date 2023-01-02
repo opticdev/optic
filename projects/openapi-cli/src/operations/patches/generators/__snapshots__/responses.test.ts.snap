@@ -4,6 +4,10 @@ exports[`responsesPatches generates a patch for a missing response body 1`] = `
 Array [
   Object {
     "description": "remove response content for 200",
+    "diff": Object {
+      "kind": "MissingResponseBody",
+      "statusCode": "200",
+    },
     "groupedOperations": Array [
       Object {
         "intent": "remove response content (1 bodies)",
@@ -38,6 +42,11 @@ exports[`responsesPatches generates a patch for an unspecified response body 1`]
 Array [
   Object {
     "description": "add text/plain response for 200",
+    "diff": Object {
+      "contentType": "text/plain",
+      "kind": "UnmatchdResponseBody",
+      "statusCode": "200",
+    },
     "groupedOperations": Array [
       Object {
         "intent": "add response body for content type 'text/plain'",
@@ -78,6 +87,11 @@ exports[`responsesPatches generates a patch for an unspecified response status c
 Array [
   Object {
     "description": "add 400 response",
+    "diff": Object {
+      "contentType": null,
+      "kind": "UnmatchedResponseStatusCode",
+      "statusCode": "400",
+    },
     "groupedOperations": Array [
       Object {
         "intent": "add response status code",
@@ -86,7 +100,7 @@ Array [
             "op": "add",
             "path": "/responses/400",
             "value": Object {
-              "description": "automatically documented through Optic",
+              "description": "400 response",
             },
           },
         ],
@@ -109,7 +123,7 @@ Object {
       "description": "success",
     },
     "400": Object {
-      "description": "automatically documented through Optic",
+      "description": "400 response",
     },
   },
 }

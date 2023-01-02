@@ -4,16 +4,14 @@ import Path from 'path';
 import { randomUUID } from 'crypto';
 import { createCommandFeedback } from './commands/reporters/feedback';
 
-import { addCommand } from './commands/add';
 import { captureCommand } from './commands/capture';
 import { newCommand } from './commands/new';
-import { statusCommand } from './commands/status';
-import { updateCommand } from './commands/update';
-import { registerDebugTemplateCommand } from './commands/debug-template';
-import { debugWorkflowsCommand } from './commands/debug-workflows';
+import { verifyCommand } from './commands/verify';
 import { CliConfig, readConfig } from './config';
 import { initSegment, trackEvent } from './segment';
 import { initSentry } from './sentry';
+import { clearCommand } from './commands/clear';
+import { captureCertCommand } from './commands/capture-cert';
 
 export async function makeCli(config: CliConfig) {
   const cli = new Command('oas');
@@ -21,15 +19,11 @@ export async function makeCli(config: CliConfig) {
   cli.version(config.package.version);
   cli.description('oas [openapi-file] <command> [options]');
 
-  let add = await addCommand();
-  cli.addCommand(add);
   cli.addCommand(await captureCommand());
   cli.addCommand(await newCommand());
-  cli.addCommand(
-    await statusCommand({ addUsage: `${add.name()} ${add.usage()}` })
-  );
-  cli.addCommand(await updateCommand());
-
+  cli.addCommand(await captureCertCommand());
+  cli.addCommand(await clearCommand());
+  cli.addCommand(await verifyCommand());
   // registerDebugTemplateCommand(cli);
   // cli.addCommand(debugWorkflowsCommand());
 

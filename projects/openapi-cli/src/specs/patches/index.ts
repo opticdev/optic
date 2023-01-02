@@ -9,6 +9,8 @@ import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { OperationPatch } from '../../operations';
 import { OpenAPIV3 } from '..';
 import JsonPatch from 'fast-json-patch';
+import { ShapeDiffResult } from '../../shapes/diffs';
+import { OperationDiffResult } from '../../operations/diffs';
 
 export { newSpecPatches } from './generators/new-spec';
 export { templatePatches } from './generators/template';
@@ -20,6 +22,8 @@ export type {
 
 export interface SpecPatch {
   description: string;
+  path: string;
+  diff: ShapeDiffResult | OperationDiffResult | undefined;
   impact: PatchImpact[];
   groupedOperations: PatchOperationGroup[];
 }
@@ -49,6 +53,8 @@ export class SpecPatch {
           : 'request body'
       }: ${shapePatch.description}`,
       impact: shapePatch.impact,
+      diff: shapePatch.diff,
+      path: schemaPath,
       groupedOperations: shapePatch.groupedOperations.map((group) => {
         return {
           ...group,
@@ -68,6 +74,8 @@ export class SpecPatch {
     return {
       description: `operation: ${operationPatch.description}`,
       impact: operationPatch.impact,
+      diff: operationPatch.diff,
+      path: operationSpecPath,
       groupedOperations: operationPatch.groupedOperations.map((group) => {
         return {
           ...group,
@@ -83,7 +91,7 @@ export class SpecPatch {
   static applyPatch(patch: SpecPatch, spec: OpenAPIV3.Document) {
     const result = JsonPatch.applyPatch(
       spec,
-      [...SpecPatch.operations(patch)],
+      JsonPatch.deepClone([...SpecPatch.operations(patch)]),
       undefined,
       false // don't mutate the original spec
     );

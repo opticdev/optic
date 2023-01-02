@@ -14,7 +14,12 @@ export function* additionalPropertiesPatches(
 
   const parentPath = jsonPointerHelpers.pop(diff.parentObjectPath);
 
-  const parent = jsonPointerHelpers.get(schema, parentPath);
+  const parentOption = jsonPointerHelpers.tryGet(schema, parentPath);
+
+  if (!parentOption.match) return;
+
+  const parent = parentOption.value;
+
   const propertiesPath = jsonPointerHelpers.append(parentPath, 'properties');
   const requiredPath = jsonPointerHelpers.append(parentPath, 'required');
   const newPropertyPath = jsonPointerHelpers.append(
@@ -61,13 +66,15 @@ export function* additionalPropertiesPatches(
   // ok now we're ready for the property
   if (!(parent.properties || {}).hasOwnProperty(diff.key)) {
     groupedOperations.push(
-      OperationGroup.create(`add property ${diff.key} schema to properties`, {
-        op: 'add',
-        path: newPropertyPath,
-        value: Schema.baseFromValue(
-          jsonPointerHelpers.get(diff.example, diff.propertyExamplePath)
-        ),
-      })
+      OperationGroup.create(
+        `add property ${diff.key} schema to properties`,
+
+        {
+          op: 'add',
+          path: newPropertyPath,
+          value: Schema.baseFromValue(diff.example),
+        }
+      )
     );
   }
 
@@ -75,6 +82,7 @@ export function* additionalPropertiesPatches(
 
   yield {
     description: `add property ${diff.key}`,
+    diff,
     impact: [
       PatchImpact.Addition,
       !shapeContext.location

@@ -22,7 +22,6 @@ export async function newCommand(): Promise<Command> {
 
   command
     .description('create a new OpenAPI spec file')
-    .alias('create')
     .argument(
       '[file-path]',
       'path of the new OpenAPI file (written to stdout when not provided)'

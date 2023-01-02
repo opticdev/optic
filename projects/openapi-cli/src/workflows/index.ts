@@ -75,11 +75,7 @@ export async function applyTemplate<T>(
     observePatchces: tap<SpecPatch>((specPatch) => {
       stats.patchesCount++;
     }),
-    observeFileOperations: tap<SpecFileOperation>((op) => {
-      const file = specFiles.find(({ path }) => path === op.filePath);
-      if (file && SpecFile.containsYamlComments(file))
-        stats.filesWithOverwrittenYamlComments.add(file.path);
-    }),
+    observeFileOperations: tap<SpecFileOperation>((op) => {}),
     observeUpdatedFiles: tap<SpecFile>((_file) => {
       stats.updatedFilesCount++;
     }),

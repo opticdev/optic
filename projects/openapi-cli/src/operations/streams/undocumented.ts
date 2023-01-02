@@ -10,6 +10,7 @@ import { OpenAPIV3 } from '../../specs';
 import { diffOperationWithSpec, OperationDiffResultKind } from '../diffs';
 import * as AT from '../../lib/async-tools';
 import Url from 'url';
+import minimatch from 'minimatch';
 
 export interface UndocumentedOperations
   extends AsyncIterable<UndocumentedOperation> {}
@@ -28,6 +29,17 @@ export class UndocumentedOperations {
     const specUpdatesIterator =
       specUpdates && specUpdates[Symbol.asyncIterator]();
 
+    const ignorePatterns: string[] = Array.isArray(spec['x-optic-path-ignore'])
+      ? spec['x-optic-path-ignore'].map((i) => i.toString())
+      : []; // default ignore patterns
+
+    const shouldBeIgnored = (path: string) =>
+      ignorePatterns.some((ignore) => minimatch(path, ignore));
+
+    const filterMethods = (methods: OpenAPIV3.HttpMethods[]) => {
+      return methods.filter((i) => i !== 'options' && i !== 'head');
+    };
+
     for await (let operation of operations) {
       // TODO: figure out whether we can create queries once and update it incrementally,
       // recreating these facts constantly can get expens ive
@@ -37,17 +49,24 @@ export class UndocumentedOperations {
 
       for (let diff of diffs) {
         if (diff.kind === OperationDiffResultKind.UnmatchedPath) {
-          yieldedResult = true;
+          const methodsFiltered = filterMethods(operation.methods);
+          if (shouldBeIgnored(diff.subject)) continue;
+          if (methodsFiltered.length === 0) continue;
+
+          if (diff.subject) yieldedResult = true;
           yield {
             type: UndocumentedOperationType.MissingPath,
             pathPattern: diff.subject,
             pathParameters: PathComponents.fromPath(diff.subject)
               .filter(PathComponent.isTemplate)
               .map(({ name }) => name),
-            methods: operation.methods,
+            methods: methodsFiltered,
             specPath: jsonPointerHelpers.compile(['paths', diff.subject]),
           };
         } else if (diff.kind === OperationDiffResultKind.UnmatchedMethod) {
+          if (shouldBeIgnored(diff.subject)) continue;
+          if (filterMethods([diff.subject]).length === 0) continue;
+
           yieldedResult = true;
           yield {
             type: UndocumentedOperationType.MissingMethod,
@@ -74,27 +93,25 @@ export class UndocumentedOperations {
     spec: OpenAPIV3.Document,
     specUpdates?: AsyncIterable<OpenAPIV3.Document>
   ): UndocumentedOperations {
+    const hostBaseMap: { [key: string]: string } = {};
 
-    const basePaths =
-      spec.servers?.map((server) => {
-        // add absolute in case url is relative (valid in OpenAPI, ignored when absolute)
-        const parsed = new Url.URL(server.url, 'https://example.org');
+    spec.servers?.forEach((server) => {
+      // add absolute in case url is relative (valid in OpenAPI, ignored when absolute)
+      const parsed = new Url.URL(server.url, 'https://example.org');
 
-        const pathName = parsed.pathname;
-        if (pathName.endsWith('/') && pathName.length > 1) {
-          return pathName.substring(0, pathName.length - 1)
-        } else {
-          return pathName
-        }
-      }) || [];
+      const pathName = parsed.pathname;
+      if (pathName.endsWith('/') && pathName.length > 1) {
+        hostBaseMap[parsed.host] = pathName.substring(0, pathName.length - 1);
+      } else {
+        hostBaseMap[parsed.host] = pathName;
+      }
+    });
 
     const operations = AT.map<CapturedInteraction, OperationPair>(
       (interaction) => {
-        const basePath = basePaths.find((basePath) =>
-          interaction.request.path.startsWith(basePath)
-        );
+        const basePath: string = hostBaseMap[interaction.request.host] || '/';
 
-        const offset = basePath ? basePath.length : 0;
+        const offset = basePath !== '/' ? basePath.length : 0;
 
         return {
           pathPattern: interaction.request.path.substring(offset),
