@@ -8,6 +8,8 @@ export function* newSpecPatches<T>(
   const newSpec: OpenAPIV3.Document = {
     openapi: openAPIversion,
     info,
+    // @ts-ignore
+    'x-optic-path-ignore': ['**/*.+(ico|png|jpeg|jpg|gif)'],
     paths: {},
   };
 
