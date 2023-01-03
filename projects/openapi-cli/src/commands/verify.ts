@@ -220,8 +220,8 @@ async function renderOperationStatus(
     }
     feedback.commandInstruction('--document all', 'to document these paths');
     feedback.commandInstruction(
-      `--document "[method path], ..."`,
-      'to document or more paths'
+      `--document "[method] [/path], ..."`,
+      'to document one or more operations'
     );
   }
 
