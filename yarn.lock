@@ -1793,6 +1793,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@httptoolkit/httpolyglot@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@httptoolkit/httpolyglot@npm:2.1.0"
+  dependencies:
+    "@types/node": ^16.7.10
+  checksum: b2471d15a2df9511b92a5c84513115898c811cb74056a93e281b4434f38f25c05ee20d81e3fc15ce57c285edf0a29304c1306644da3a2e94fefdcd3046c53562
+  languageName: node
+  linkType: hard
+
 "@httptoolkit/proxy-agent@npm:^5.0.1-socks-lookup-fix.0":
   version: 5.0.1-socks-lookup-fix.0
   resolution: "@httptoolkit/proxy-agent@npm:5.0.1-socks-lookup-fix.0"
@@ -3346,7 +3355,7 @@ __metadata:
     "@babel/preset-env": ^7.17.0
     "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
-    "@httptoolkit/httpolyglot": ^2.0.1
+    "@httptoolkit/httpolyglot": ^2.1.0
     "@jsdevtools/ono": ^7.1.3
     "@sentry/node": ^7.10.0
     "@types/analytics-node": ^3.1.7
