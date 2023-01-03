@@ -40,7 +40,7 @@ optic diff openapi.yaml --base main --check
 
 <img src="https://i.imgur.com/JEQL2GV.png" width="400" />
 
-[Read breaking change documentation](https://useoptic.com/docs/breaking-changes)
+[Read breaking change documentation](https://useoptic.com/docs)
 
 ## Easily adopt OpenAPI and keep your specs up-to-date
 
@@ -78,7 +78,7 @@ The `verify` command detects drift between your OpenAPI spec and the actual API:
 
 - [Documentation](https://useoptic.com/docs)
 - [Beyond API Linting: How Optic is different](https://useoptic.com/blog/beyond-api-linting)
-- [Adding Optic to your CI Pipeline](https://useoptic.com/docs/optic-cloud)
+- [Adding Optic to your CI Pipeline](https://useoptic.com/docs/running-in-ci)
 - [Book office hours](https://calendly.com/optic-onboarding/optic-office-hours)
 
 ## License
