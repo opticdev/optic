@@ -90,9 +90,7 @@ export class HarEntries {
         requestContentType &&
         (await toBase64(
           requestBodyBuffer,
-          (interaction.response.headers['content-encoding'] as
-            | string
-            | undefined) || undefined
+          interaction.response.headers['content-encoding']
         ));
 
       let request: HttpArchive.Request = {
@@ -122,9 +120,7 @@ export class HarEntries {
 
       const responseBodyText = await toBase64(
         responseBodyBuffer,
-        (interaction.response.headers['content-encoding'] as
-          | string
-          | undefined) || undefined
+        interaction.response.headers['content-encoding']
       );
 
       let response: HttpArchive.Response = {
@@ -215,10 +211,15 @@ export class HarEntries {
  */
 async function toBase64(
   buffer: Buffer,
-  encoding: string | undefined
+  encoding: string | string[] | undefined
 ): Promise<string> {
   try {
-    switch (encoding) {
+    const firstEncoding = Array.isArray(encoding) ? encoding[0] : encoding;
+
+    if (Array.isArray(encoding) && encoding.length > 1)
+      throw new Error('multiple content-encodinings are not supported');
+
+    switch (firstEncoding) {
       case undefined:
         return buffer.toString('base64');
       case 'gzip':
@@ -232,7 +233,7 @@ async function toBase64(
           });
         });
       default:
-        throw new Error('unsupported encoding ' + encoding);
+        throw new Error('unsupported encoding ' + firstEncoding);
     }
   } catch (e) {
     return Buffer.from('').toString('base64');
