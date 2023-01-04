@@ -1,10 +1,2 @@
-.github/scripts               @notnmeyer
-.github/workflows             @notnmeyer
-projects/json-pointer-helpers @niclim
-projects/openapi-cli          @jaaprood
-projects/openapi-io           @niclim @jaaprood
-projects/openapi-utilities    @niclim @jaaprood
-projects/optic                @niclim
-projects/optic-ci             @niclim
-projects/rulesets-base        @niclim
-projects/standard-rulesets    @niclim
+.github/  @notnmeyer
+projects/ @niclim
