@@ -1,3 +1,4 @@
+import { test, expect } from '@jest/globals';
 import { checkOpenAPIVersion } from './openapi-versions';
 
 test('detects a 3.1.x openapi', async () => {

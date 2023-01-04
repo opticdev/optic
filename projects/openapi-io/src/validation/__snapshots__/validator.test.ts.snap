@@ -7,7 +7,7 @@ exports[`advanced validators run and append their results 1`] = `
 /paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/anyOf
 [31minvalid openapi: [39m[1m[31mpaths > /api/users/{userId} > get > responses > 200 > content > application/json > schema > items must be object[39m[22m
 /paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/items
-[31minvalid openapi: [39m[1m[31mpaths > /api/users/{userId} > get > responses > 200 > content > application/json > schema schema with type \\"object\\" cannot also include keywords: anyOf, items, oneOf[39m[22m
+[31minvalid openapi: [39m[1m[31mpaths > /api/users/{userId} > get > responses > 200 > content > application/json > schema schema with type "object" cannot also include keywords: anyOf, items, oneOf[39m[22m
 /paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema"
 `;
 
@@ -35,18 +35,18 @@ exports[`processValidatorErrors 1`] = `
 
 exports[`processValidatorErrors attaches the sourcemap 1`] = `
 "[31minvalid openapi: [39m[1m[31mpaths > /api/users/{userId} > get > responses > 200 > content > application/json > schema > properties > hello > items must be object[39m[22m
-[90m18 |[39m   \\"properties\\": {
-[90m19 |[39m     \\"hello\\": {
-[90m20 |[39m       \\"type\\": \\"array\\",
-[90m21 |[39m [1m[31m      \\"items\\": \\"no\\"[39m[22m
+[90m18 |[39m   "properties": {
+[90m19 |[39m     "hello": {
+[90m20 |[39m       "type": "array",
+[90m21 |[39m [1m[31m      "items": "no"[39m[22m
 [90m22 |[39m     }
 [90m23 |[39m   }
 [90m24 |[39m }
 [31minvalid openapi: [39m[1m[31mtype must be equal to one of the allowed values string,number,integer,object,array,boolean[39m[22m
-[90m35 |[39m \\"content\\": {
-[90m36 |[39m   \\"application/json\\": {
-[90m37 |[39m     \\"schema\\": {
-[90m38 |[39m [1m[31m      \\"type\\": \\"not-real\\"[39m[22m
+[90m35 |[39m "content": {
+[90m36 |[39m   "application/json": {
+[90m37 |[39m     "schema": {
+[90m38 |[39m [1m[31m      "type": "not-real"[39m[22m
 [90m39 |[39m     }
 [90m40 |[39m   }
 [90m41 |[39m }"
