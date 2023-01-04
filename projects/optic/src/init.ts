@@ -78,8 +78,9 @@ export const initCli = async () => {
   registerRulesetInit(rulesetSubcommands, cliConfig);
 
   const oas = new Commander.Command('oas');
+  cli.addCommand(oas);
   oas.description(
-    'generate OpenAPI operations and patches based on API traffic'
+    'generate OpenAPI operations and patches based on API traffic. See `optic oas --help`'
   );
   // commands for tracking changes with openapi
   oas.addCommand(await captureCommand());
