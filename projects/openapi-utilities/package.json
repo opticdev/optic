@@ -61,7 +61,7 @@
     "lodash.omit": "^4.5.0",
     "lodash.sortby": "^4.7.0",
     "openapi-types": "^12.0.2",
-    "ts-invariant": "^0.9.3",
+    "ts-invariant": "^0.10.3",
     "yaml-ast-parser": "^0.0.43"
   },
   "jest": {

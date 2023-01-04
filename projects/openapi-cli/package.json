@@ -92,7 +92,7 @@
     "stream-chain": "^2.2.5",
     "stream-json": "^1.7.4",
     "strip-ansi": "^6.0.1",
-    "ts-invariant": "^0.9.4",
+    "ts-invariant": "^0.10.3",
     "ts-results": "^3.3.0",
     "update-notifier": "^6.0.2",
     "whatwg-mimetype": "^3.0.0"

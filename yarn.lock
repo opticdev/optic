@@ -3424,7 +3424,7 @@ __metadata:
     stream-chain: ^2.2.5
     stream-json: ^1.7.4
     strip-ansi: ^6.0.1
-    ts-invariant: ^0.9.4
+    ts-invariant: ^0.10.3
     ts-node: ^10.8.1
     ts-results: ^3.3.0
     tunnel: ^0.0.6
@@ -3488,7 +3488,7 @@ __metadata:
     openapi-types: ^12.0.2
     prettier: ^2.4.1
     semver: ^7.3.7
-    ts-invariant: ^0.9.3
+    ts-invariant: ^0.10.3
     ts-node: ^10.3.1
     typescript: ^4.4.4
     upath: ^2.0.1
@@ -3540,7 +3540,7 @@ __metadata:
     lodash.sortby: ^4.7.0
     openapi-types: ^12.0.2
     prettier: ^2.4.1
-    ts-invariant: ^0.9.3
+    ts-invariant: ^0.10.3
     ts-node: ^10.3.1
     typescript: ^4.4.4
     yaml-ast-parser: ^0.0.43
@@ -10073,12 +10073,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-invariant@npm:^0.9.3, ts-invariant@npm:^0.9.4":
-  version: 0.9.4
-  resolution: "ts-invariant@npm:0.9.4"
+"ts-invariant@npm:^0.10.3":
+  version: 0.10.3
+  resolution: "ts-invariant@npm:0.10.3"
   dependencies:
     tslib: ^2.1.0
-  checksum: c9e5726361fa266916966b2070605f8664b6dd1d8b0ef7565dbf056abb6a87be26195985ef62dd97aeb0894cf2f4ad5b7f0d89dadadc197eaa38e99222afa29c
+  checksum: bb07d56fe4aae69d8860e0301dfdee2d375281159054bc24bf1e49e513fb0835bf7f70a11351344d213a79199c5e695f37ebbf5a447188a377ce0cd81d91ddb5
   languageName: node
   linkType: hard
 
