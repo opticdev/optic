@@ -6,6 +6,7 @@ import {
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 
+import Commander from 'commander';
 import { registerDiff } from './commands/diff/diff';
 import { registerRulesetUpload } from './commands/ruleset/upload';
 
@@ -76,12 +77,16 @@ export const initCli = async () => {
   registerRulesetUpload(rulesetSubcommands, cliConfig);
   registerRulesetInit(rulesetSubcommands, cliConfig);
 
+  const oas = new Commander.Command('oas');
+  oas.description(
+    'generate OpenAPI operations and patches based on API traffic'
+  );
   // commands for tracking changes with openapi
-  cli.addCommand(await captureCommand());
-  cli.addCommand(await newCommand());
-  cli.addCommand(await captureCertCommand());
-  cli.addCommand(await clearCommand());
-  cli.addCommand(await verifyCommand());
+  oas.addCommand(await captureCommand());
+  oas.addCommand(await newCommand());
+  oas.addCommand(await captureCertCommand());
+  oas.addCommand(await clearCommand());
+  oas.addCommand(await verifyCommand());
 
   return cli;
 };
