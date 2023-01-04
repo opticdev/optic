@@ -49,7 +49,7 @@
     "@babel/runtime": "^7.20.6",
     "@octokit/rest": "^18.12.0",
     "@sentry/node": "^7.10.0",
-    "@stoplight/spectral-core": "^1.8.1",
+    "@stoplight/spectral-core": "^1.16.0",
     "@useoptic/openapi-io": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
     "@useoptic/rulesets-base": "workspace:*",
