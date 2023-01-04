@@ -26,6 +26,7 @@ import {
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { getAnonId } from '../../utils/anonymous-id';
+import { OPTIC_RULESET_KEY } from '../../constants';
 
 const description = `run a diff between two API specs`;
 
@@ -42,11 +43,11 @@ Example usage:
   Diff \`openapi-spec-v0.yml\` against \`openapi-spec-v1.yml\`
   $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml
 
-  Run a diff and view changes in the Optic web view
-  $ optic diff --id user-api --base master --web
-
-  Run a diff and check the changes against the rulesets configured in your \`optic.dev.yml\` config file:
+  Run a diff and check the changes against the detected ruleset (looks at --ruleset, then 'x-optic-ruleset' in the spec, then the optic.dev.yml file)):
   $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml --check
+
+  Specify a different ruleset config to run against
+  $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml --check --ruleset ./other_config.yml
   `;
 
 type SpecResults = Awaited<ReturnType<typeof generateSpecResults>>;
@@ -71,6 +72,10 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
       '--base <base>',
       'the base ref to compare against. Defaults to HEAD',
       'HEAD'
+    )
+    .option(
+      '--ruleset <ruleset>',
+      'run comparison with a locally defined ruleset, if not set, looks for the ruleset on the [x-optic-ruleset] key on the spec, and then the optic.dev.yml file.'
     )
     .option('--check', 'enable checks', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
@@ -164,7 +169,16 @@ const runDiff = async (
   config: OpticCliConfig,
   options: DiffActionOptions
 ): Promise<{ checks: { passed: number; failed: number; total: number } }> => {
-  const ruleRunner = await generateRuleRunner(config, options.check);
+  const ruleRunner = await generateRuleRunner(
+    {
+      rulesetArg: options.ruleset,
+      specRuleset: headFile.isEmptySpec
+        ? baseFile.jsonLike[OPTIC_RULESET_KEY]
+        : headFile.jsonLike[OPTIC_RULESET_KEY],
+      config,
+    },
+    options.check
+  );
   const specResults = await generateSpecResults(
     ruleRunner,
     baseFile,
@@ -248,6 +262,7 @@ type DiffActionOptions = {
   check: boolean;
   web: boolean;
   json: boolean;
+  ruleset?: string;
 };
 
 const getDiffAction =
@@ -260,6 +275,7 @@ const getDiffAction =
     const files: [string | undefined, string | undefined] = [file1, file2];
     let shouldExit1 = false;
     if (file1 && file2) {
+      // TODO also maybe download from spec id (if optic token)
       const parsedFiles = await getBaseAndHeadFromFiles(file1, file2);
       const diffResult = await runDiff(files, parsedFiles, config, options);
       shouldExit1 = diffResult.checks.failed > 0 && options.check;
