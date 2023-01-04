@@ -1,3 +1,4 @@
+import { test, expect, describe } from '@jest/globals';
 import { createMultiSessionsCommentBody } from '../compare-comment';
 
 const comparison = {
