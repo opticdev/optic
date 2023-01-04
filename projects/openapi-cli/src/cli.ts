@@ -42,6 +42,11 @@ export async function runCli(packageManifest?: {
     distTag: config.updateNotifier.distTag,
   }).notify();
 
+  console.log('oas commands are now part of the optic cli');
+  console.log(
+    'Updated documented is at: http://useoptic.com/docs/document-existing-api\n\n'
+  );
+
   const runId = randomUUID();
   if (config.analytics.segment) {
     initSegment({

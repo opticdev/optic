@@ -2,7 +2,7 @@
   "name": "@useoptic/standard-rulesets",
   "license": "MIT",
   "packageManager": "yarn@3.0.2",
-  "version": "0.35.11-0",
+  "version": "0.35.12",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -62,6 +62,5 @@
         "<rootDir>../../../../node_modules/nimma/dist/legacy/cjs/index.js"
       ]
     }
-  },
-  "stableVersion": "0.35.10"
+  }
 }

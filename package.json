@@ -2,7 +2,7 @@
   "name": "openapi-workspaces",
   "license": "MIT",
   "private": true,
-  "version": "0.35.11-0",
+  "version": "0.35.12",
   "workspaces": [
     "projects/json-pointer-helpers",
     "projects/openapi-io",
@@ -16,6 +16,5 @@
   "scripts": {
     "release": "gh release create --target=$(git branch --show-current) v$(node -e \"process.stdout.write(require('./package.json').version)\")",
     "version": "yarn workspaces foreach -v version"
-  },
-  "stableVersion": "0.35.10"
+  }
 }

@@ -2,7 +2,7 @@
   "name": "@useoptic/openapi-cli",
   "license": "MIT",
   "packageManager": "yarn@3.0.2",
-  "version": "0.35.11-0",
+  "version": "0.35.12",
   "main": "build/lib.js",
   "types": "build/lib.d.ts",
   "files": [
@@ -115,6 +115,5 @@
         "<rootDir>../../../../node_modules/csv-parse/dist/cjs/sync.cjs"
       ]
     }
-  },
-  "stableVersion": "0.35.10"
+  }
 }
