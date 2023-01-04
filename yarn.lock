@@ -2359,59 +2359,46 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:7.10.0":
-  version: 7.10.0
-  resolution: "@sentry/core@npm:7.10.0"
+"@sentry/core@npm:7.29.0":
+  version: 7.29.0
+  resolution: "@sentry/core@npm:7.29.0"
   dependencies:
-    "@sentry/hub": 7.10.0
-    "@sentry/types": 7.10.0
-    "@sentry/utils": 7.10.0
+    "@sentry/types": 7.29.0
+    "@sentry/utils": 7.29.0
     tslib: ^1.9.3
-  checksum: e99627e7c863619f8698cced5d4aa518ca456ad10084f53325bdaa3645e355e5e1cb029438ddab480801b578d3b1f0a44b0fb9dba9240fd7eced6d7bc7e407ca
+  checksum: d9330ed3528f2328b524cb237e400368dcb6c36b8afb791d28141e98ab5c0b56dc306a65cfc7164108cb5616346dabe793a39a140257f723906dc25a03b7ebcd
   languageName: node
   linkType: hard
 
-"@sentry/hub@npm:7.10.0":
-  version: 7.10.0
-  resolution: "@sentry/hub@npm:7.10.0"
+"@sentry/node@npm:^7.29.0":
+  version: 7.29.0
+  resolution: "@sentry/node@npm:7.29.0"
   dependencies:
-    "@sentry/types": 7.10.0
-    "@sentry/utils": 7.10.0
-    tslib: ^1.9.3
-  checksum: b5710a358d48b9f25fb7b31fe83bfd43e813162a0035e472b3e78d448a6f0beed49aa945770f4e474d29e36d560d6d9696be4067de359480bd1df247d0dadf16
-  languageName: node
-  linkType: hard
-
-"@sentry/node@npm:^7.10.0":
-  version: 7.10.0
-  resolution: "@sentry/node@npm:7.10.0"
-  dependencies:
-    "@sentry/core": 7.10.0
-    "@sentry/hub": 7.10.0
-    "@sentry/types": 7.10.0
-    "@sentry/utils": 7.10.0
+    "@sentry/core": 7.29.0
+    "@sentry/types": 7.29.0
+    "@sentry/utils": 7.29.0
     cookie: ^0.4.1
     https-proxy-agent: ^5.0.0
     lru_map: ^0.3.3
     tslib: ^1.9.3
-  checksum: b0ff649d938cc940392ecb0eb3c46f8f66e7e11e6fa7633190489d51a0a6d0cdceb7b5b17aa7d69e064c71938b7e610bbf9585279493e1864c4c3eb70e0fa161
+  checksum: 1669d47dfaede34080a63f385bbac9908d4de68d055e1b8414554a77b9e89aee9839ce081a01e3301365d327f457c040b685536dba10f6e9eb71bf866fa9d065
   languageName: node
   linkType: hard
 
-"@sentry/types@npm:7.10.0":
-  version: 7.10.0
-  resolution: "@sentry/types@npm:7.10.0"
-  checksum: f5b02c60b8c485a32221baa97d5bbf6a4ca3473464b71b7a7b58f81946d4135dd8e038791e999802c50b4f1da3ed303ddc62c4c889080e9835f6abc1415873b2
+"@sentry/types@npm:7.29.0":
+  version: 7.29.0
+  resolution: "@sentry/types@npm:7.29.0"
+  checksum: 53815b66662a193cfd7024b9fb2477afb8178a771aa59f3bef10578cc940a9d7207722f9f04e2ca65a8e118cef012ac42f4936aa921aacdfc00a914bec88b009
   languageName: node
   linkType: hard
 
-"@sentry/utils@npm:7.10.0":
-  version: 7.10.0
-  resolution: "@sentry/utils@npm:7.10.0"
+"@sentry/utils@npm:7.29.0":
+  version: 7.29.0
+  resolution: "@sentry/utils@npm:7.29.0"
   dependencies:
-    "@sentry/types": 7.10.0
+    "@sentry/types": 7.29.0
     tslib: ^1.9.3
-  checksum: 9006835d150c2a47ba5240c257192ea42d5961f99e8f0952edf8870f431ff6430de6e86b7588aa9c495ca29c5e3a083548099cfff8602c9df5c32524f2662087
+  checksum: 9914a2129692a5713453437d75b957a18ad5a4ef8085776e5499208ad329dea8da27ee2e2b74fdc089a3831b4e2929f8e6c0f3bc75528f41023d85de5077f462
   languageName: node
   linkType: hard
 
@@ -3366,7 +3353,7 @@ __metadata:
     "@babel/preset-typescript": ^7.17.0
     "@httptoolkit/httpolyglot": ^2.0.1
     "@jsdevtools/ono": ^7.1.3
-    "@sentry/node": ^7.10.0
+    "@sentry/node": ^7.29.0
     "@types/analytics-node": ^3.1.7
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
@@ -3507,7 +3494,7 @@ __metadata:
     "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
     "@octokit/rest": ^18.12.0
-    "@sentry/node": ^7.10.0
+    "@sentry/node": ^7.29.0
     "@types/analytics-node": ^3.1.7
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
@@ -3559,7 +3546,7 @@ __metadata:
     "@babel/preset-typescript": ^7.17.0
     "@babel/runtime": ^7.20.6
     "@octokit/rest": ^18.12.0
-    "@sentry/node": ^7.10.0
+    "@sentry/node": ^7.29.0
     "@stoplight/spectral-core": ^1.8.1
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
@@ -3612,7 +3599,7 @@ __metadata:
     "@babel/preset-typescript": ^7.17.0
     "@babel/runtime": ^7.20.6
     "@octokit/rest": ^18.12.0
-    "@sentry/node": ^7.10.0
+    "@sentry/node": ^7.29.0
     "@stoplight/spectral-core": ^1.8.1
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
