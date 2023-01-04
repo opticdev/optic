@@ -1,0 +1,588 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`rebuilds a path structure from operations already in spec 1`] = `
+Array [
+  Object {
+    "count": 0,
+    "httpMethods": Set {
+      "get",
+    },
+    "inferred": "constant",
+    "name": "users",
+    "parent": null,
+    "verified": true,
+  },
+  Object {
+    "count": 0,
+    "httpMethods": Set {
+      "get",
+    },
+    "inferred": "variable",
+    "name": "username",
+    "parent": Object {
+      "count": 0,
+      "httpMethods": Set {
+        "get",
+      },
+      "inferred": "constant",
+      "name": "users",
+      "parent": null,
+      "verified": true,
+    },
+    "verified": true,
+  },
+  Object {
+    "count": 0,
+    "httpMethods": Set {
+      "get",
+    },
+    "inferred": "constant",
+    "name": "events",
+    "parent": Object {
+      "count": 0,
+      "httpMethods": Set {
+        "get",
+      },
+      "inferred": "variable",
+      "name": "username",
+      "parent": Object {
+        "count": 0,
+        "httpMethods": Set {
+          "get",
+        },
+        "inferred": "constant",
+        "name": "users",
+        "parent": null,
+        "verified": true,
+      },
+      "verified": true,
+    },
+    "verified": true,
+  },
+  Object {
+    "count": 0,
+    "httpMethods": Set {
+      "get",
+    },
+    "inferred": "constant",
+    "name": "public",
+    "parent": Object {
+      "count": 0,
+      "httpMethods": Set {
+        "get",
+      },
+      "inferred": "constant",
+      "name": "events",
+      "parent": Object {
+        "count": 0,
+        "httpMethods": Set {
+          "get",
+        },
+        "inferred": "variable",
+        "name": "username",
+        "parent": Object {
+          "count": 0,
+          "httpMethods": Set {
+            "get",
+          },
+          "inferred": "constant",
+          "name": "users",
+          "parent": null,
+          "verified": true,
+        },
+        "verified": true,
+      },
+      "verified": true,
+    },
+    "verified": true,
+  },
+  Object {
+    "count": 0,
+    "httpMethods": Set {},
+    "inferred": "constant",
+    "name": "orgs",
+    "parent": Object {
+      "count": 0,
+      "httpMethods": Set {
+        "get",
+      },
+      "inferred": "constant",
+      "name": "events",
+      "parent": Object {
+        "count": 0,
+        "httpMethods": Set {
+          "get",
+        },
+        "inferred": "variable",
+        "name": "username",
+        "parent": Object {
+          "count": 0,
+          "httpMethods": Set {
+            "get",
+          },
+          "inferred": "constant",
+          "name": "users",
+          "parent": null,
+          "verified": true,
+        },
+        "verified": true,
+      },
+      "verified": true,
+    },
+    "verified": true,
+  },
+  Object {
+    "count": 0,
+    "httpMethods": Set {
+      "get",
+    },
+    "inferred": "variable",
+    "name": "org",
+    "parent": Object {
+      "count": 0,
+      "httpMethods": Set {},
+      "inferred": "constant",
+      "name": "orgs",
+      "parent": Object {
+        "count": 0,
+        "httpMethods": Set {
+          "get",
+        },
+        "inferred": "constant",
+        "name": "events",
+        "parent": Object {
+          "count": 0,
+          "httpMethods": Set {
+            "get",
+          },
+          "inferred": "variable",
+          "name": "username",
+          "parent": Object {
+            "count": 0,
+            "httpMethods": Set {
+              "get",
+            },
+            "inferred": "constant",
+            "name": "users",
+            "parent": null,
+            "verified": true,
+          },
+          "verified": true,
+        },
+        "verified": true,
+      },
+      "verified": true,
+    },
+    "verified": true,
+  },
+  Object {
+    "count": 0,
+    "httpMethods": Set {
+      "get",
+    },
+    "inferred": "constant",
+    "name": "followers",
+    "parent": Object {
+      "count": 0,
+      "httpMethods": Set {
+        "get",
+      },
+      "inferred": "variable",
+      "name": "username",
+      "parent": Object {
+        "count": 0,
+        "httpMethods": Set {
+          "get",
+        },
+        "inferred": "constant",
+        "name": "users",
+        "parent": null,
+        "verified": true,
+      },
+      "verified": true,
+    },
+    "verified": true,
+  },
+  Object {
+    "count": 0,
+    "httpMethods": Set {
+      "get",
+    },
+    "inferred": "constant",
+    "name": "following",
+    "parent": Object {
+      "count": 0,
+      "httpMethods": Set {
+        "get",
+      },
+      "inferred": "variable",
+      "name": "username",
+      "parent": Object {
+        "count": 0,
+        "httpMethods": Set {
+          "get",
+        },
+        "inferred": "constant",
+        "name": "users",
+        "parent": null,
+        "verified": true,
+      },
+      "verified": true,
+    },
+    "verified": true,
+  },
+  Object {
+    "count": 0,
+    "httpMethods": Set {
+      "get",
+    },
+    "inferred": "variable",
+    "name": "target_user",
+    "parent": Object {
+      "count": 0,
+      "httpMethods": Set {
+        "get",
+      },
+      "inferred": "constant",
+      "name": "following",
+      "parent": Object {
+        "count": 0,
+        "httpMethods": Set {
+          "get",
+        },
+        "inferred": "variable",
+        "name": "username",
+        "parent": Object {
+          "count": 0,
+          "httpMethods": Set {
+            "get",
+          },
+          "inferred": "constant",
+          "name": "users",
+          "parent": null,
+          "verified": true,
+        },
+        "verified": true,
+      },
+      "verified": true,
+    },
+    "verified": true,
+  },
+  Object {
+    "count": 0,
+    "httpMethods": Set {
+      "get",
+    },
+    "inferred": "constant",
+    "name": "gists",
+    "parent": Object {
+      "count": 0,
+      "httpMethods": Set {
+        "get",
+      },
+      "inferred": "variable",
+      "name": "username",
+      "parent": Object {
+        "count": 0,
+        "httpMethods": Set {
+          "get",
+        },
+        "inferred": "constant",
+        "name": "users",
+        "parent": null,
+        "verified": true,
+      },
+      "verified": true,
+    },
+    "verified": true,
+  },
+  Object {
+    "count": 0,
+    "httpMethods": Set {
+      "get",
+      "post",
+    },
+    "inferred": "constant",
+    "name": "gpg_keys",
+    "parent": Object {
+      "count": 0,
+      "httpMethods": Set {
+        "get",
+      },
+      "inferred": "variable",
+      "name": "username",
+      "parent": Object {
+        "count": 0,
+        "httpMethods": Set {
+          "get",
+        },
+        "inferred": "constant",
+        "name": "users",
+        "parent": null,
+        "verified": true,
+      },
+      "verified": true,
+    },
+    "verified": true,
+  },
+  Object {
+    "count": 0,
+    "httpMethods": Set {
+      "delete",
+    },
+    "inferred": "variable",
+    "name": "key",
+    "parent": Object {
+      "count": 0,
+      "httpMethods": Set {
+        "get",
+        "post",
+      },
+      "inferred": "constant",
+      "name": "gpg_keys",
+      "parent": Object {
+        "count": 0,
+        "httpMethods": Set {
+          "get",
+        },
+        "inferred": "variable",
+        "name": "username",
+        "parent": Object {
+          "count": 0,
+          "httpMethods": Set {
+            "get",
+          },
+          "inferred": "constant",
+          "name": "users",
+          "parent": null,
+          "verified": true,
+        },
+        "verified": true,
+      },
+      "verified": true,
+    },
+    "verified": true,
+  },
+  Object {
+    "count": 0,
+    "httpMethods": Set {
+      "get",
+    },
+    "inferred": "constant",
+    "name": "hovercard",
+    "parent": Object {
+      "count": 0,
+      "httpMethods": Set {
+        "get",
+      },
+      "inferred": "variable",
+      "name": "username",
+      "parent": Object {
+        "count": 0,
+        "httpMethods": Set {
+          "get",
+        },
+        "inferred": "constant",
+        "name": "users",
+        "parent": null,
+        "verified": true,
+      },
+      "verified": true,
+    },
+    "verified": true,
+  },
+  Object {
+    "count": 0,
+    "httpMethods": Set {
+      "get",
+    },
+    "inferred": "constant",
+    "name": "installation",
+    "parent": Object {
+      "count": 0,
+      "httpMethods": Set {
+        "get",
+      },
+      "inferred": "variable",
+      "name": "username",
+      "parent": Object {
+        "count": 0,
+        "httpMethods": Set {
+          "get",
+        },
+        "inferred": "constant",
+        "name": "users",
+        "parent": null,
+        "verified": true,
+      },
+      "verified": true,
+    },
+    "verified": true,
+  },
+  Object {
+    "count": 0,
+    "httpMethods": Set {
+      "get",
+      "post",
+    },
+    "inferred": "constant",
+    "name": "keys",
+    "parent": Object {
+      "count": 0,
+      "httpMethods": Set {
+        "get",
+      },
+      "inferred": "variable",
+      "name": "username",
+      "parent": Object {
+        "count": 0,
+        "httpMethods": Set {
+          "get",
+        },
+        "inferred": "constant",
+        "name": "users",
+        "parent": null,
+        "verified": true,
+      },
+      "verified": true,
+    },
+    "verified": true,
+  },
+  Object {
+    "count": 0,
+    "httpMethods": Set {
+      "get",
+      "post",
+    },
+    "inferred": "constant",
+    "name": "orgs",
+    "parent": Object {
+      "count": 0,
+      "httpMethods": Set {
+        "get",
+      },
+      "inferred": "variable",
+      "name": "username",
+      "parent": Object {
+        "count": 0,
+        "httpMethods": Set {
+          "get",
+        },
+        "inferred": "constant",
+        "name": "users",
+        "parent": null,
+        "verified": true,
+      },
+      "verified": true,
+    },
+    "verified": true,
+  },
+  Object {
+    "count": 0,
+    "httpMethods": Set {
+      "get",
+    },
+    "inferred": "constant",
+    "name": "packages",
+    "parent": Object {
+      "count": 0,
+      "httpMethods": Set {
+        "get",
+      },
+      "inferred": "variable",
+      "name": "username",
+      "parent": Object {
+        "count": 0,
+        "httpMethods": Set {
+          "get",
+        },
+        "inferred": "constant",
+        "name": "users",
+        "parent": null,
+        "verified": true,
+      },
+      "verified": true,
+    },
+    "verified": true,
+  },
+  Object {
+    "count": 0,
+    "httpMethods": Set {},
+    "inferred": "variable",
+    "name": "package_type",
+    "parent": Object {
+      "count": 0,
+      "httpMethods": Set {
+        "get",
+      },
+      "inferred": "constant",
+      "name": "packages",
+      "parent": Object {
+        "count": 0,
+        "httpMethods": Set {
+          "get",
+        },
+        "inferred": "variable",
+        "name": "username",
+        "parent": Object {
+          "count": 0,
+          "httpMethods": Set {
+            "get",
+          },
+          "inferred": "constant",
+          "name": "users",
+          "parent": null,
+          "verified": true,
+        },
+        "verified": true,
+      },
+      "verified": true,
+    },
+    "verified": true,
+  },
+  Object {
+    "count": 0,
+    "httpMethods": Set {
+      "get",
+    },
+    "inferred": "variable",
+    "name": "package_name",
+    "parent": Object {
+      "count": 0,
+      "httpMethods": Set {},
+      "inferred": "variable",
+      "name": "package_type",
+      "parent": Object {
+        "count": 0,
+        "httpMethods": Set {
+          "get",
+        },
+        "inferred": "constant",
+        "name": "packages",
+        "parent": Object {
+          "count": 0,
+          "httpMethods": Set {
+            "get",
+          },
+          "inferred": "variable",
+          "name": "username",
+          "parent": Object {
+            "count": 0,
+            "httpMethods": Set {
+              "get",
+            },
+            "inferred": "constant",
+            "name": "users",
+            "parent": null,
+            "verified": true,
+          },
+          "verified": true,
+        },
+        "verified": true,
+      },
+      "verified": true,
+    },
+    "verified": true,
+  },
+]
+`;

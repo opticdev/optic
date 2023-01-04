@@ -6,6 +6,7 @@ import {
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 
+import Commander from 'commander';
 import { registerDiff } from './commands/diff/diff';
 import { registerRulesetUpload } from './commands/ruleset/upload';
 
@@ -19,6 +20,11 @@ import {
 import { hasGit, isInGitRepo, getRootPath } from './utils/git-utils';
 import { getAnonId } from './utils/anonymous-id';
 import { registerRulesetInit } from './commands/ruleset/init';
+import { captureCommand } from '@useoptic/openapi-cli/build/commands/capture';
+import { newCommand } from '@useoptic/openapi-cli/build/commands/new';
+import { captureCertCommand } from '@useoptic/openapi-cli/build/commands/capture-cert';
+import { clearCommand } from '@useoptic/openapi-cli/build/commands/clear';
+import { verifyCommand } from '@useoptic/openapi-cli/build/commands/verify';
 
 const packageJson = require('../package.json');
 
@@ -70,6 +76,18 @@ export const initCli = async () => {
     .addHelpCommand(false);
   registerRulesetUpload(rulesetSubcommands, cliConfig);
   registerRulesetInit(rulesetSubcommands, cliConfig);
+
+  const oas = new Commander.Command('oas');
+  cli.addCommand(oas);
+  oas.description(
+    'generate OpenAPI operations and patches based on API traffic. See `optic oas --help`'
+  );
+  // commands for tracking changes with openapi
+  oas.addCommand(await captureCommand());
+  oas.addCommand(await newCommand());
+  oas.addCommand(await captureCertCommand());
+  oas.addCommand(await clearCommand());
+  oas.addCommand(await verifyCommand());
 
   return cli;
 };

@@ -1,0 +1,232 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`applying non destructive patches to yaml adding to an array collection 1`] = `
+"# This is YAML.
+---
+\\"items\\":
+
+  - HELLO:
+      name: WORLD
+      in: query
+  - an array
+
+  - 'of values'
+"
+`;
+
+exports[`applying non destructive patches to yaml adding to an object collection 1`] = `
+"# This is YAML.
+---
+\\"items\\":
+
+  - an array
+
+  - 'of values'
+cursor:
+  offset: 0
+  items: 2
+  totalCount: 14
+  nextPageUrl: https://api.example.com/items/2
+"
+`;
+
+exports[`applying non destructive patches to yaml removing from an array collection 1`] = `
+"# This is YAML.
+---
+\\"items\\":
+
+  - an array
+"
+`;
+
+exports[`applying non destructive patches to yaml removing key from root object 1`] = `
+"# This is YAML.
+---
+hello: WORLD
+"
+`;
+
+exports[`applying non destructive patches to yaml replacing a string with a string 1`] = `
+"# This is YAML.
+---
+\\"items\\":
+
+  - true
+
+  - 'of values'
+"
+`;
+
+exports[`applying non destructive patches to yaml replacing a string with an array 1`] = `
+"# This is YAML.
+---
+\\"items\\":
+
+  - - red
+    - blue
+    - yellow
+
+  - 'of values'
+"
+`;
+
+exports[`applying non destructive patches to yaml replacing root object key 1`] = `
+"# This is YAML.
+---
+\\"items\\":
+  - red
+  - blue
+  - yellow
+"
+`;
+
+exports[`applying non destructive patches to yaml works with a real world patch 1`] = `
+"openapi: 3.0.3
+# Optic stuff...
+x-optic-path-ignore:
+  - '**/**.ico'
+info:
+  title: Untitled service
+  version: 1.0.0
+
+# Aidan Added a comment here
+paths:
+  /todos:
+    get:
+      responses:
+        '200':
+          description: 200 response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  todos:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        completed_at:
+                          type: string
+                        color:
+                          type: string
+                        status:
+                          type: string
+                        created_at:
+                          type: string
+                        due_at:
+                          type: string
+                      required:
+                        - name
+                        - status
+                        - created_at
+                  links:
+                    type: object
+                    properties:
+                      completed_todos:
+                        type: string
+                      archived_todos:
+                        type: string
+                    required:
+                      - completed_todos
+                      - archived_todos
+                required:
+                  - todos
+                  - links
+"
+`;
+
+exports[`applying non destructive patches to yaml works with a real world patch with correct number keys (status codes) 1`] = `
+"openapi: 3.0.3
+# Optic stuff...
+x-optic-path-ignore:
+  - '**/**.ico'
+info:
+  title: Untitled service
+  version: 1.0.0
+
+# Aidan Added a comment here
+paths:
+  /todos:
+    get:
+      responses:
+        '200':
+          description: 200 response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  todos:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        completed_at:
+                          type: string
+                        color:
+                          type: string
+                      required:
+                        - name
+                        - color
+                required:
+                  - todos
+  /users:
+    get:
+      responses:
+        {}
+  /_private/browser/stats:
+    post:
+      responses:
+        \\"200\\":
+          description: 200 response
+      requestBody:
+        content:
+          text/plain;charset=UTF-8:
+            {}
+  /orgs/easystats:
+    get:
+      responses:
+        \\"200\\":
+          description: 200 response
+          content:
+            application/json; charset=utf-8:
+              {}
+  /orgs/easystats/hooks:
+    get:
+      responses:
+        \\"404\\":
+          description: 404 response
+          content:
+            application/json; charset=utf-8:
+              {}
+  \\"/users/{user}/followers\\":
+    parameters:
+      - in: path
+        name: user
+        required: true
+    get:
+      responses:
+        \\"200\\":
+          description: 200 response
+          content:
+            application/json; charset=utf-8:
+              {}
+  \\"/users/{user}/orgs\\":
+    parameters:
+      - in: path
+        name: user
+        required: true
+    get:
+      responses:
+        \\"200\\":
+          description: 200 response
+          content:
+            application/json; charset=utf-8:
+              {}
+"
+`;

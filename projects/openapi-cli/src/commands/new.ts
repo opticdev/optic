@@ -18,11 +18,10 @@ const defaultOpenAPIVersion = '3.1.0';
 export async function newCommand(): Promise<Command> {
   const command = new Command('new');
 
-  const feedback = await createCommandFeedback(command);
+  const feedback = createCommandFeedback(command);
 
   command
     .description('create a new OpenAPI spec file')
-    .alias('create')
     .argument(
       '[file-path]',
       'path of the new OpenAPI file (written to stdout when not provided)'

@@ -22,6 +22,7 @@ import { Server as ConnectServer } from 'connect';
 import portfinder from 'portfinder';
 import globalLog from 'log';
 import invariant from 'ts-invariant';
+import chalk from 'chalk';
 type Logger = typeof globalLog;
 
 export const log: Logger = globalLog.get('captures:streams:sources:proxy'); // export so it can be enabled in testing
@@ -38,16 +39,25 @@ export class ProxyInteractions {
       targetCA?: Array<{ cert: Buffer | string }>;
     } = {}
   ): Promise<[ProxyInteractions, string, string]> {
+    let { host, protocol } = new URL(targetHost);
     if (targetHost.includes('/')) {
       // accept urls to be passed in rather than pure hosts
-      let { host } = new URL(targetHost);
       targetHost = host;
     }
 
-    invariant(
-      targetHost.match(/^([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9\-]+(:\d+)?$/),
-      'targetHost must be a valid host (hostname:port)'
-    ); // port optional
+    if (protocol)
+      invariant(
+        targetHost.match(/^([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9\-]+(:\d+)?$/),
+        'targetHost must be a valid host (hostname:port)'
+      ); // port optional
+
+    if (protocol === 'https:') {
+      console.log(
+        chalk.gray(
+          'Target uses TLS. If traffic is not being captured run "oas setup-tls"'
+        )
+      );
+    }
 
     const capturingProxy = mockttp.getLocal({
       cors: false,
@@ -323,6 +333,7 @@ class TransparentProxy {
   url?: string;
   tunnelAbort: AbortController;
   tlsEnabled: boolean;
+  serverDestroy: (cb: (err?: Error) => void) => void;
 
   constructor(
     targetHost: string,
@@ -339,6 +350,8 @@ class TransparentProxy {
       },
       captureRequest
     );
+
+    this.serverDestroy = destroyCommandForServer(this.server);
 
     this.tlsEnabled = !!options.https;
 
@@ -517,7 +530,7 @@ class TransparentProxy {
 
   stop(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      this.server.close((err) => {
+      this.serverDestroy((err) => {
         // stops accepting new connections, waits for tunnels to finish
         if (err) {
           reject(err);
@@ -554,6 +567,24 @@ function isTransitiveSocketError(err: Error) {
 
 const transitiveSocketErrors = Object.freeze([
   'ECONNRESET',
+  'ENOTFOUND',
   'EPIPE',
   'ETIMEDOUT',
 ]);
+
+function destroyCommandForServer(server: httpolyglot.Server) {
+  let connections = {};
+
+  server.on('connection', function (conn) {
+    var key = conn.remoteAddress + ':' + conn.remotePort;
+    connections[key] = conn;
+    conn.on('close', function () {
+      delete connections[key];
+    });
+  });
+
+  return function (cb: (err?: Error) => void) {
+    server.close(cb);
+    for (var key in connections) connections[key].destroy();
+  };
+}

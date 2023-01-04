@@ -85,6 +85,7 @@ export function* typePatches(
   // option one: convert to a one-off
   yield {
     description: `make ${diff.key} oneOf`,
+    diff,
     impact: [
       PatchImpact.Addition,
       !shapeContext.location
@@ -98,6 +99,7 @@ export function* typePatches(
 
   // option two: change the type
   yield {
+    diff,
     description: `change type of ${diff.key}`,
     impact: [PatchImpact.BackwardsIncompatible],
     groupedOperations: changeTypeOperations(),

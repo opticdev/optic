@@ -29,6 +29,7 @@ export function* oneOfKeyword(
   );
 
   yield {
+    description: `'${keyName}' did not match schema`,
     kind: ShapeDiffResultKind.UnmatchedType,
     keyword: JsonSchemaKnownKeyword.oneOf,
     instancePath: validationError.instancePath,

@@ -51,7 +51,6 @@ export function* requiredPatches(
       }
     );
   }
-
   // patch one: make required field optional
   let makeOptionalPatch = {
     impact: [
@@ -62,6 +61,7 @@ export function* requiredPatches(
         ? PatchImpact.BackwardsCompatible
         : PatchImpact.BackwardsIncompatible,
     ],
+    diff,
     description: `make property ${diff.key} optional`,
     groupedOperations: [
       ...makeOptionalOperations(requiredArray.indexOf(diff.key)),
@@ -74,6 +74,7 @@ export function* requiredPatches(
   // patch two: remove property
   yield {
     description: `remove property ${diff.key}`,
+    diff,
     impact: [
       !shapeContext.location
         ? PatchImpact.BackwardsCompatibilityUnknown

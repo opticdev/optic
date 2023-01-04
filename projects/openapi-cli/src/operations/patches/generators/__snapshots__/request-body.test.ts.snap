@@ -4,6 +4,9 @@ exports[`requestBodyPatches generates a patch for a missing request body 1`] = `
 Array [
   Object {
     "description": "make request body optional",
+    "diff": Object {
+      "kind": "MissingRequestBody",
+    },
     "groupedOperations": Array [
       Object {
         "intent": "make request body optional",
@@ -46,6 +49,10 @@ exports[`requestBodyPatches generates a patch for a unmatched request body conte
 Array [
   Object {
     "description": "add 'text/csv' body as a valid request body type",
+    "diff": Object {
+      "contentType": "text/csv",
+      "kind": "UnmatchedRequestBody",
+    },
     "groupedOperations": Array [
       Object {
         "intent": "add text/csv as content type",
@@ -89,6 +96,10 @@ exports[`requestBodyPatches generates a patch for an unspecified request body 1`
 Array [
   Object {
     "description": "add 'application/json' body as a valid request body type",
+    "diff": Object {
+      "contentType": "application/json",
+      "kind": "UnmatchedRequestBody",
+    },
     "groupedOperations": Array [
       Object {
         "intent": "add request body to operation",
