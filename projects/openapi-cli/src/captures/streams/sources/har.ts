@@ -211,12 +211,12 @@ export class HarEntries {
  */
 async function toBase64(
   buffer: Buffer,
-  encoding: string | string[] | undefined
+  encodings: string | string[] | undefined
 ): Promise<string> {
   try {
-    const firstEncoding = Array.isArray(encoding) ? encoding[0] : encoding;
+    const firstEncoding = Array.isArray(encodings) ? encodings[0] : encodings;
 
-    if (Array.isArray(encoding) && encoding.length > 1)
+    if (Array.isArray(encodings) && encodings.length > 1)
       throw new Error('multiple content-encodinings are not supported');
 
     switch (firstEncoding) {

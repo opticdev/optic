@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import { Writable } from 'stream';
 import { trackEvent, flushEvents } from '../../segment';
 import chalk from 'chalk';
-export async function createCommandFeedback(
+export function createCommandFeedback(
   command: Command,
   options?: {
     destination?: Writable;

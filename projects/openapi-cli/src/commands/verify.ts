@@ -26,7 +26,7 @@ import {
 
 export async function verifyCommand(): Promise<Command> {
   const command = new Command('verify');
-  const feedback = await createCommandFeedback(command);
+  const feedback = createCommandFeedback(command);
 
   command
     .description('match observed traffic up to an OpenAPI spec')
@@ -205,7 +205,7 @@ export async function verifyCommand(): Promise<Command> {
 
 async function renderOperationStatus(
   observations: StatusObservations,
-  feedback: Awaited<ReturnType<typeof createCommandFeedback>>
+  feedback: ReturnType<typeof createCommandFeedback>
 ) {
   const { pathsToAdd } = await observationToUndocumented(observations);
 

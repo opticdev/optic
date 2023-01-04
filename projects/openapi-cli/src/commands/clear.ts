@@ -8,7 +8,7 @@ import path from 'path';
 
 export async function clearCommand(): Promise<Command> {
   const command = new Command('clear');
-  const feedback = await createCommandFeedback(command);
+  const feedback = createCommandFeedback(command);
 
   command
     .description('clear captures for the OpenAPI file')

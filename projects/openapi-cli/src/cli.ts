@@ -61,7 +61,7 @@ export async function runCli(packageManifest?: {
   }
 
   const cli = await makeCli(config);
-  const feedback = await createCommandFeedback(cli);
+  const feedback = createCommandFeedback(cli);
   const subCommandNames = cli.commands.flatMap((cmd) => [
     cmd.name(),
     ...cmd.aliases(),

@@ -5,7 +5,7 @@ import url from 'url';
 export class RunCommand {
   constructor(
     private proxyUrl: string,
-    private feedback: Awaited<ReturnType<typeof createCommandFeedback>>
+    private feedback: ReturnType<typeof createCommandFeedback>
   ) {}
 
   completed: boolean = false;

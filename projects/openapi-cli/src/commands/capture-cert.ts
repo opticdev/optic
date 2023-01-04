@@ -21,7 +21,7 @@ const platform: 'mac' | 'windows' | 'linux' =
 export async function captureCertCommand(): Promise<Command> {
   const command = new Command('setup-tls');
 
-  const feedback = await createCommandFeedback(command);
+  const feedback = createCommandFeedback(command);
 
   command
     .description(
@@ -40,7 +40,7 @@ export async function captureCertCommand(): Promise<Command> {
 
       console.log(`We take privacy seriously. You should understand how Optic's TLS capturing works:
 
-THe Optic proxy is a man-in-the-middle proxy that only runs on and logs data to your local machine. 
+The Optic proxy is a man-in-the-middle proxy that only runs on and logs data to your local machine. 
  
 1. The 'capture' command assigns your system proxy settings when starting, and restores them upon exit. Most clients will respect those settings and route traffic through Optic.
 2. The Optic proxy transparently routes all traffic to its destination, even traffic it can not read.
@@ -53,7 +53,7 @@ By default, there is no way for Optic to read any TLS traffic. If you want to us
 3. Use that Cert to terminate TLS and log traffic from the target hostnames. 
 
 If you do this, you are man-in-the-middling yourself. Optic will theoretically be able to see any TLS traffic when the 'capture' command is activated.   
-You are welcome to read the source code github.com/opticdev/optic
+You are welcome to read the source code https://github.com/opticdev/optic
 `);
 
       const answer = await ContinueSetup();

@@ -12,7 +12,7 @@ const platform: 'mac' | 'windows' | 'linux' =
 export class SystemProxy {
   constructor(
     private proxyUrl: string,
-    private feedback: Awaited<ReturnType<typeof createCommandFeedback>>
+    private feedback: ReturnType<typeof createCommandFeedback>
   ) {}
   private stopCommand: (() => Promise<void>) | undefined = undefined;
 

@@ -10,7 +10,7 @@ import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { trackCompletion } from '../segment';
 import logNode from 'log-node';
 
-import { captureCertCommand, getCertStore } from './capture-cert';
+import { getCertStore } from './capture-cert';
 import {
   CapturedInteraction,
   HarEntries,
@@ -25,9 +25,7 @@ import { RunCommand } from '../captures/run-command';
 export async function captureCommand(): Promise<Command> {
   const command = new Command('capture');
 
-  const feedback = await createCommandFeedback(command);
-
-  let certCommand = await captureCertCommand();
+  const feedback = createCommandFeedback(command);
 
   command
     .argument('<openapi-file>', 'an OpenAPI spec file to add an operation to')
@@ -51,7 +49,6 @@ export async function captureCommand(): Promise<Command> {
       `output debug information (on stderr). Use LOG_LEVEL env with 'debug', 'info' to increase verbosity`
     )
     .option('-o, --output <output>', 'file name for output')
-    .addCommand(certCommand)
     .action(async (filePath: string, targetUrl: string) => {
       const [openApiExists, trafficDirectory] = await captureStorage(filePath);
 
@@ -268,7 +265,7 @@ export interface CaptureObservations
   extends AsyncIterable<CaptureObservation> {}
 
 async function renderCaptureProgress(
-  feedback: Awaited<ReturnType<typeof createCommandFeedback>>,
+  feedback: ReturnType<typeof createCommandFeedback>,
   observations: CaptureObservations,
   config: { interactiveCapture: boolean; debug: boolean }
 ) {
