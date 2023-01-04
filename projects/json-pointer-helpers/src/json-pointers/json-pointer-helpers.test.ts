@@ -1,3 +1,4 @@
+import { describe, it, expect } from '@jest/globals';
 import jsonPointerHelpers from './json-pointer-helpers';
 
 describe('json schema pointer helpers', () => {

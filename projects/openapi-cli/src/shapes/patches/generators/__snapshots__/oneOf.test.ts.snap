@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`one of shape patch generator can add an additional branch to a complex one of 1`] = `
-Array [
-  Object {
+[
+  {
     "description": "expand one of for oneOf",
-    "diff": Object {
+    "diff": {
       "description": "'oneOf' did not match schema",
-      "example": Array [
+      "example": [
         1,
         2,
         3,
@@ -17,15 +17,15 @@ Array [
       "kind": "UnmatchedType",
       "propertyPath": "/properties/location/properties/principality/properties/coordinates/oneOf",
     },
-    "groupedOperations": Array [
-      Object {
+    "groupedOperations": [
+      {
         "intent": "add new oneOf branch to oneOf",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "add",
             "path": "/properties/location/properties/principality/properties/coordinates/oneOf/-",
-            "value": Object {
-              "items": Object {
+            "value": {
+              "items": {
                 "type": "number",
               },
               "type": "array",
@@ -34,7 +34,7 @@ Array [
         ],
       },
     ],
-    "impact": Array [
+    "impact": [
       "Addition",
       "BackwardsCompatibilityUnknown",
     ],
@@ -43,10 +43,10 @@ Array [
 `;
 
 exports[`one of shape patch generator when new field in one of object variant of one of 1`] = `
-Array [
-  Object {
+[
+  {
     "description": "add property hello",
-    "diff": Object {
+    "diff": {
       "description": "'hello' is not documented",
       "example": "world",
       "instancePath": "/polyProp/hello",
@@ -57,34 +57,34 @@ Array [
       "propertyExamplePath": "/polyProp/hello",
       "propertyPath": "/properties/polyProp/oneOf/0/properties/hello",
     },
-    "groupedOperations": Array [
-      Object {
+    "groupedOperations": [
+      {
         "intent": "add required [] to parent object and make hello required",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "extra": "same",
             "op": "add",
             "path": "/properties/polyProp/oneOf/0/required",
-            "value": Array [
+            "value": [
               "hello",
             ],
           },
         ],
       },
-      Object {
+      {
         "intent": "add property hello schema to properties",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "add",
             "path": "/properties/polyProp/oneOf/0/properties/hello",
-            "value": Object {
+            "value": {
               "type": "string",
             },
           },
         ],
       },
     ],
-    "impact": Array [
+    "impact": [
       "Addition",
       "BackwardsCompatibilityUnknown",
     ],
@@ -93,10 +93,10 @@ Array [
 `;
 
 exports[`one of shape patch generator when new primitive types provided to existing one of  1`] = `
-Array [
-  Object {
+[
+  {
     "description": "expand one of for oneOf",
-    "diff": Object {
+    "diff": {
       "description": "'oneOf' did not match schema",
       "example": true,
       "instancePath": "/polyProp",
@@ -105,21 +105,21 @@ Array [
       "kind": "UnmatchedType",
       "propertyPath": "/properties/polyProp/oneOf",
     },
-    "groupedOperations": Array [
-      Object {
+    "groupedOperations": [
+      {
         "intent": "add new oneOf branch to oneOf",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "add",
             "path": "/properties/polyProp/oneOf/-",
-            "value": Object {
+            "value": {
               "type": "boolean",
             },
           },
         ],
       },
     ],
-    "impact": Array [
+    "impact": [
       "Addition",
       "BackwardsCompatibilityUnknown",
     ],
@@ -128,44 +128,44 @@ Array [
 `;
 
 exports[`one of shape patch generator when root schema is obejct and is shown an array 1`] = `
-Array [
-  Object {
+[
+  {
     "description": "make  oneOf",
-    "diff": Object {
+    "diff": {
       "description": "'' did not match schema",
-      "example": Array [],
+      "example": [],
       "instancePath": "",
       "key": "",
       "keyword": "type",
       "kind": "UnmatchedType",
       "propertyPath": "",
     },
-    "groupedOperations": Array [
-      Object {
+    "groupedOperations": [
+      {
         "intent": "replace  with a one of containing both types",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "remove",
             "path": "/type",
           },
-          Object {
+          {
             "op": "remove",
             "path": "/properties",
           },
-          Object {
+          {
             "op": "add",
             "path": "/oneOf",
-            "value": Array [
-              Object {
-                "properties": Object {
-                  "sup": Object {
+            "value": [
+              {
+                "properties": {
+                  "sup": {
                     "type": "string",
                   },
                 },
                 "type": "object",
               },
-              Object {
-                "items": Object {},
+              {
+                "items": {},
                 "type": "array",
               },
             ],
@@ -173,38 +173,38 @@ Array [
         ],
       },
     ],
-    "impact": Array [
+    "impact": [
       "Addition",
       "BackwardsCompatibilityUnknown",
     ],
   },
-  Object {
+  {
     "description": "change type of ",
-    "diff": Object {
+    "diff": {
       "description": "'' did not match schema",
-      "example": Array [],
+      "example": [],
       "instancePath": "",
       "key": "",
       "keyword": "type",
       "kind": "UnmatchedType",
       "propertyPath": "",
     },
-    "groupedOperations": Array [
-      Object {
+    "groupedOperations": [
+      {
         "intent": "change  type",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "replace",
             "path": "",
-            "value": Object {
-              "items": Object {},
+            "value": {
+              "items": {},
               "type": "array",
             },
           },
         ],
       },
     ],
-    "impact": Array [
+    "impact": [
       "BackwardsIncompatible",
     ],
   },

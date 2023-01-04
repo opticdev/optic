@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`required shape patch generator missing required fields will patch as 'make optional' or 'remove' 1`] = `
-Array [
-  Object {
+[
+  {
     "description": "make property f3 optional",
-    "diff": Object {
+    "diff": {
       "description": "required property 'f3' was missing",
       "example": undefined,
       "instancePath": "/hello/f3",
@@ -14,25 +14,25 @@ Array [
       "parentObjectPath": "/properties/hello",
       "propertyPath": "/properties/hello/properties/f3",
     },
-    "groupedOperations": Array [
-      Object {
+    "groupedOperations": [
+      {
         "intent": "remove f3 from parent's required array",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "remove",
             "path": "/properties/hello/required/2",
           },
         ],
       },
     ],
-    "impact": Array [
+    "impact": [
       "Addition",
       "BackwardsCompatibilityUnknown",
     ],
   },
-  Object {
+  {
     "description": "remove property f3",
-    "diff": Object {
+    "diff": {
       "description": "required property 'f3' was missing",
       "example": undefined,
       "instancePath": "/hello/f3",
@@ -42,27 +42,27 @@ Array [
       "parentObjectPath": "/properties/hello",
       "propertyPath": "/properties/hello/properties/f3",
     },
-    "groupedOperations": Array [
-      Object {
+    "groupedOperations": [
+      {
         "intent": "remove f3 from parent's required array",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "remove",
             "path": "/properties/hello/required/2",
           },
         ],
       },
-      Object {
+      {
         "intent": "remove f3 from parent's properties object",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "remove",
             "path": "/properties/hello/properties/f3",
           },
         ],
       },
     ],
-    "impact": Array [
+    "impact": [
       "BackwardsCompatibilityUnknown",
     ],
   },

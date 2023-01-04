@@ -1,3 +1,4 @@
+import { it,  expect } from '@jest/globals';
 import {
   computeInferredOperations,
   InferPathStructure,

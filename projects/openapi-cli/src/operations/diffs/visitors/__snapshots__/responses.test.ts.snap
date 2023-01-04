@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`visitResponses detects a missing response body 1`] = `
-Array [
-  Object {
+[
+  {
     "kind": "MissingResponseBody",
     "statusCode": "200",
   },
@@ -10,8 +10,8 @@ Array [
 `;
 
 exports[`visitResponses detects an unspecified response 1`] = `
-Array [
-  Object {
+[
+  {
     "contentType": null,
     "kind": "UnmatchedResponseStatusCode",
     "statusCode": "400",
@@ -20,8 +20,8 @@ Array [
 `;
 
 exports[`visitResponses detects an unspecified response body 1`] = `
-Array [
-  Object {
+[
+  {
     "contentType": "text/plain",
     "kind": "UnmatchdResponseBody",
     "statusCode": "200",

@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`one of json schema diff visitor can add an additional branch to a complex one of 1`] = `
-Array [
-  Object {
+[
+  {
     "description": "'oneOf' did not match schema",
-    "example": Array [
+    "example": [
       1,
       2,
       3,
@@ -19,8 +19,8 @@ Array [
 `;
 
 exports[`one of json schema diff visitor when new field in one of object variant of one of 1`] = `
-Array [
-  Object {
+[
+  {
     "description": "'hello' is not documented",
     "example": "world",
     "instancePath": "/polyProp/hello",
@@ -35,8 +35,8 @@ Array [
 `;
 
 exports[`one of json schema diff visitor when new primitive types provided to existing one of  1`] = `
-Array [
-  Object {
+[
+  {
     "description": "'oneOf' did not match schema",
     "example": true,
     "instancePath": "/polyProp",
@@ -49,10 +49,10 @@ Array [
 `;
 
 exports[`one of json schema diff visitor when one of variant is an array with mismatching item 1`] = `
-Array [
-  Object {
+[
+  {
     "description": "'oneOf' did not match schema",
-    "example": Array [
+    "example": [
       "user1",
       "user2",
       "user3",
@@ -67,10 +67,10 @@ Array [
 `;
 
 exports[`one of json schema diff visitor when root schema is obejct and is shown an array 1`] = `
-Array [
-  Object {
+[
+  {
     "description": "'' did not match schema",
-    "example": Array [],
+    "example": [],
     "instancePath": "",
     "key": "",
     "keyword": "type",

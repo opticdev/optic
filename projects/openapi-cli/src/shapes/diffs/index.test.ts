@@ -1,3 +1,4 @@
+import { it, describe, expect } from '@jest/globals';
 import { diffValueBySchema, SchemaCompilationError } from '.';
 
 describe('diffValueBySchema', () => {
