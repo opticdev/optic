@@ -1,3 +1,4 @@
+import { test, expect, describe, beforeEach, afterEach, jest } from '@jest/globals';
 import { UserError } from '@useoptic/openapi-utilities';
 import { createOpticClient } from '@useoptic/optic-ci/build/cli/clients/optic-client';
 import {
@@ -108,7 +109,7 @@ describe('initializeRules', () => {
 
   test('extends ruleset from cloud', async () => {
     const mockClient = {
-      getRuleConfig: jest.fn(),
+      getRuleConfig: jest.fn<any>(),
     };
     mockClient.getRuleConfig.mockResolvedValue({
       config: {
