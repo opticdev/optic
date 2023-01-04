@@ -7,10 +7,6 @@ import {
   prepareRulesets,
   ExternalRule,
 } from '@useoptic/rulesets-base';
-import {
-  createOpticClient,
-  OpticBackendClient,
-} from '@useoptic/optic-ci/build/cli/clients/optic-client';
 import { loadCliConfig } from '../../config';
 
 const isLocalJsFile = (name: string) => name.endsWith('.js');
@@ -18,7 +14,6 @@ const isLocalJsFile = (name: string) => name.endsWith('.js');
 type InputPayload = Parameters<typeof prepareRulesets>[0];
 
 const getStandardToUse = async (
-  client: OpticBackendClient,
   options: {
     specRuleset?: string;
     rulesetArg?: string;
@@ -27,10 +22,10 @@ const getStandardToUse = async (
 ): Promise<OpticCliConfig['ruleset']> => {
   // We always take the --ruleset arg as priority, then the ruleset on the API spec (from the head), then fallback to the optic.dev.yml config
   if (options.rulesetArg) {
-    const config = await loadCliConfig(options.rulesetArg);
+    const config = await loadCliConfig(options.rulesetArg, options.config.client);
     return config.ruleset;
   } else if (options.specRuleset) {
-    const ruleset = await client.getRuleConfig(options.specRuleset);
+    const ruleset = await options.config.client.getRuleConfig(options.specRuleset);
     return ruleset.config.ruleset;
   } else {
     return options.config.ruleset;
@@ -48,8 +43,7 @@ export const generateRuleRunner = async (
   let rulesets: (Ruleset | ExternalRule)[] = [];
 
   if (checksEnabled) {
-    const client = createOpticClient('');
-    const standard = await getStandardToUse(client, options);
+    const standard = await getStandardToUse(options);
 
     const rulesToFetch: string[] = [];
     const localRulesets: InputPayload['localRulesets'] = {};
@@ -68,7 +62,7 @@ export const generateRuleRunner = async (
     }
     const response =
       rulesToFetch.length > 0
-        ? await client.getManyRulesetsByName(rulesToFetch)
+        ? await options.config.client.getManyRulesetsByName(rulesToFetch)
         : { rulesets: [] };
     for (const hostedRuleset of response.rulesets) {
       if (hostedRuleset) {
