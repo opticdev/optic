@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`get gets an object 1`] = `
-Object {
+{
   "be": "123",
   "the": "bc",
 }
@@ -12,7 +12,7 @@ exports[`json schema pointer helpers appends are escaped 1`] = `"/paths/~1exampl
 exports[`json schema pointer helpers can compile an array of paths 1`] = `"/~1paths~1pets~1get/hello/goodbye"`;
 
 exports[`json schema pointer helpers can parse a json pointer into parts 1`] = `
-Array [
+[
   "paths",
   "/user/{username}",
   "get",

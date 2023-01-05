@@ -1,3 +1,4 @@
+import { it, expect } from '@jest/globals';
 import { validateSchema } from './advanced-validation';
 
 it('a polymorphic schema cannot have type', () => {
@@ -31,7 +32,7 @@ it('an object schema cannot have array items', () => {
     // @ts-ignore
     validateSchema({ type: 'object', items: [] })
   ).toThrowErrorMatchingInlineSnapshot(
-    `"schema with type \\"object\\" cannot also include keywords: items"`
+    `"schema with type "object" cannot also include keywords: items"`
   );
 });
 it('an array schema cannot have properties or required', () => {
@@ -39,6 +40,6 @@ it('an array schema cannot have properties or required', () => {
     // @ts-ignore
     validateSchema({ type: 'array', required: [], properties: {} })
   ).toThrowErrorMatchingInlineSnapshot(
-    `"schema with type \\"array\\" cannot also include keywords: properties, required"`
+    `"schema with type "array" cannot also include keywords: properties, required"`
   );
 });

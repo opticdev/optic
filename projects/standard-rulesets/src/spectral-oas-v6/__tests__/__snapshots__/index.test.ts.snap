@@ -2,4 +2,4 @@
 
 exports[`fromOpticConfig invalid 1`] = `"- ruleset/naming/applies must be equal to one of the allowed values always,added,addedOrChanged,changed"`;
 
-exports[`fromOpticConfig invalid non-existent rule 1`] = `"Cannot extend non-existing rule: \\"operation-2xx-response\\""`;
+exports[`fromOpticConfig invalid non-existent rule 1`] = `"Cannot extend non-existing rule: "operation-2xx-response""`;

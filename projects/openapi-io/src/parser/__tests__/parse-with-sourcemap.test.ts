@@ -1,3 +1,4 @@
+import { it, test, expect, describe } from '@jest/globals';
 import {
   dereferenceOpenApi,
   ParseOpenAPIResult,

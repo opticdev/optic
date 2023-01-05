@@ -1,42 +1,42 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`can parse an OpenAPI spec with external references 1`] = `
-Object {
-  "flattened": Object {
-    "example": Object {
+{
+  "flattened": {
+    "example": {
       "token": "11111111",
-      "user": Object {
+      "user": {
         "name": "Homer",
       },
     },
-    "properties": Object {
-      "token": Object {
+    "properties": {
+      "token": {
         "type": "string",
       },
-      "user": Object {
-        "example": Object {
+      "user": {
+        "example": {
           "name": "Homer",
         },
-        "properties": Object {
-          "name": Object {
+        "properties": {
+          "name": {
             "type": "string",
           },
         },
-        "required": Array [
+        "required": [
           "name",
         ],
         "type": "object",
       },
     },
-    "required": Array [
+    "required": [
       "user",
       "token",
     ],
     "type": "object",
   },
   "sourcemap": JsonSchemaSourcemap {
-    "files": Array [],
-    "refMappings": Object {},
+    "files": [],
+    "refMappings": {},
     "rootFilePath": "/inputs/openapi3-with-references/external-multiple.yaml",
   },
   "success": true,

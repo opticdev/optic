@@ -1,3 +1,4 @@
+import { jest, test, expect, describe } from '@jest/globals'
 import { defaultEmptySpec, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { RuleError } from '../errors';
 import { RuleRunner, Matchers } from '../rule-runner';
@@ -43,7 +44,7 @@ describe('OperationRule', () => {
 
     expect(mockFn.mock.calls.length).toBe(2);
     const operationCalled = mockFn.mock.calls.map(
-      (call) => `${call[0].method} ${call[0].path}`
+      (call: any) => `${call[0].method} ${call[0].path}`
     );
 
     for (const op of [`get /api/users/{userId}`, `get /api/users`]) {

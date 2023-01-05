@@ -3,7 +3,7 @@
 exports[`applying non destructive patches to yaml adding to an array collection 1`] = `
 "# This is YAML.
 ---
-\\"items\\":
+"items":
 
   - HELLO:
       name: WORLD
@@ -17,7 +17,7 @@ exports[`applying non destructive patches to yaml adding to an array collection 
 exports[`applying non destructive patches to yaml adding to an object collection 1`] = `
 "# This is YAML.
 ---
-\\"items\\":
+"items":
 
   - an array
 
@@ -33,7 +33,7 @@ cursor:
 exports[`applying non destructive patches to yaml removing from an array collection 1`] = `
 "# This is YAML.
 ---
-\\"items\\":
+"items":
 
   - an array
 "
@@ -49,7 +49,7 @@ hello: WORLD
 exports[`applying non destructive patches to yaml replacing a string with a string 1`] = `
 "# This is YAML.
 ---
-\\"items\\":
+"items":
 
   - true
 
@@ -60,7 +60,7 @@ exports[`applying non destructive patches to yaml replacing a string with a stri
 exports[`applying non destructive patches to yaml replacing a string with an array 1`] = `
 "# This is YAML.
 ---
-\\"items\\":
+"items":
 
   - - red
     - blue
@@ -73,7 +73,7 @@ exports[`applying non destructive patches to yaml replacing a string with an arr
 exports[`applying non destructive patches to yaml replacing root object key 1`] = `
 "# This is YAML.
 ---
-\\"items\\":
+"items":
   - red
   - blue
   - yellow
@@ -182,7 +182,7 @@ paths:
   /_private/browser/stats:
     post:
       responses:
-        \\"200\\":
+        "200":
           description: 200 response
       requestBody:
         content:
@@ -191,7 +191,7 @@ paths:
   /orgs/easystats:
     get:
       responses:
-        \\"200\\":
+        "200":
           description: 200 response
           content:
             application/json; charset=utf-8:
@@ -199,31 +199,31 @@ paths:
   /orgs/easystats/hooks:
     get:
       responses:
-        \\"404\\":
+        "404":
           description: 404 response
           content:
             application/json; charset=utf-8:
               {}
-  \\"/users/{user}/followers\\":
+  "/users/{user}/followers":
     parameters:
       - in: path
         name: user
         required: true
     get:
       responses:
-        \\"200\\":
+        "200":
           description: 200 response
           content:
             application/json; charset=utf-8:
               {}
-  \\"/users/{user}/orgs\\":
+  "/users/{user}/orgs":
     parameters:
       - in: path
         name: user
         required: true
     get:
       responses:
-        \\"200\\":
+        "200":
           description: 200 response
           content:
             application/json; charset=utf-8:

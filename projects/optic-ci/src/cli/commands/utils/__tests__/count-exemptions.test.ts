@@ -1,3 +1,4 @@
+import { jest, test, expect, describe } from '@jest/globals'
 import { ChangeType, IChange } from '@useoptic/openapi-utilities';
 import { newExemptionsCount } from '../count-exemptions';
 
@@ -9,7 +10,7 @@ describe('newExemptionsCount', () => {
         'x-optic-exemptions': ['test1', 'test2'],
       },
     };
-    expect(newExemptionsCount(change as IChange)).toBe(2);
+    expect(newExemptionsCount(change as any)).toBe(2);
   });
 
   test('exemption changed', () => {
@@ -24,6 +25,6 @@ describe('newExemptionsCount', () => {
         },
       },
     };
-    expect(newExemptionsCount(change as IChange)).toBe(2);
+    expect(newExemptionsCount(change as any)).toBe(2);
   });
 });

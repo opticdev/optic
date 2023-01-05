@@ -1,3 +1,4 @@
+import { test, expect, describe, jest, beforeEach, afterEach } from '@jest/globals';
 import {
   runOptic,
   setupWorkspace,
@@ -10,7 +11,7 @@ setupTestServer(({ url, method }) => {
   if (method === 'POST' && /\/api\/rulesets$/.test(url)) {
     return JSON.stringify({
       id: '123',
-      upload_url: 'http://localhost:8888/upload_url',
+      upload_url: `${process.env.BWTS_HOST_OVERRIDE}/upload-url`,
       ruleset_url: 'http://app.useoptic.com/ruleset_url',
     });
   }

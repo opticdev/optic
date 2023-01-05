@@ -1,26 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`breaking changes ruleset - parameter enum change "cookie" parameter enum narrowing 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "cookie",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "cookie",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
@@ -28,15 +28,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -61,25 +61,25 @@ Array [
     "type": "changed",
     "where": "GET /api/users cookie parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "cookie",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "cookie",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
@@ -87,15 +87,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -120,25 +120,25 @@ Array [
     "type": "changed",
     "where": "GET /api/users cookie parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "cookie",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "cookie",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
@@ -146,15 +146,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -179,25 +179,25 @@ Array [
     "type": "changed",
     "where": "GET /api/users cookie parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "cookie",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "cookie",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
@@ -205,15 +205,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -242,26 +242,26 @@ Array [
 `;
 
 exports[`breaking changes ruleset - parameter enum change "header" parameter enum narrowing 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "header",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "header",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
@@ -269,15 +269,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -302,25 +302,25 @@ Array [
     "type": "changed",
     "where": "GET /api/users header parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "header",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "header",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
@@ -328,15 +328,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -361,25 +361,25 @@ Array [
     "type": "changed",
     "where": "GET /api/users header parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "header",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "header",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
@@ -387,15 +387,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -420,25 +420,25 @@ Array [
     "type": "changed",
     "where": "GET /api/users header parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "header",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "header",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
@@ -446,15 +446,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -483,26 +483,26 @@ Array [
 `;
 
 exports[`breaking changes ruleset - parameter enum change "path" parameter enum narrowing 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "path",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "path",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
@@ -510,15 +510,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "path": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -543,25 +543,25 @@ Array [
     "type": "changed",
     "where": "GET /api/users path parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "path",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "path",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
@@ -569,15 +569,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "path": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -602,25 +602,25 @@ Array [
     "type": "changed",
     "where": "GET /api/users path parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "path",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "path",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
@@ -628,15 +628,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "path": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -665,26 +665,26 @@ Array [
 `;
 
 exports[`breaking changes ruleset - parameter enum change "query" parameter enum narrowing 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "query",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "query",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
@@ -692,15 +692,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -725,25 +725,25 @@ Array [
     "type": "changed",
     "where": "GET /api/users query parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "query",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "query",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
@@ -751,15 +751,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -784,25 +784,25 @@ Array [
     "type": "changed",
     "where": "GET /api/users query parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "query",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "query",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
@@ -810,15 +810,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -843,25 +843,25 @@ Array [
     "type": "changed",
     "where": "GET /api/users query parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "query",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "query",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
@@ -869,15 +869,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -906,39 +906,39 @@ Array [
 `;
 
 exports[`breaking changes ruleset - parameter enum change enum added to "cookie" parameter 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "cookie",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "cookie",
           "name": "test",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -963,38 +963,38 @@ Array [
     "type": "changed",
     "where": "GET /api/users cookie parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "cookie",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "cookie",
           "name": "test",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1019,38 +1019,38 @@ Array [
     "type": "changed",
     "where": "GET /api/users cookie parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "cookie",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "cookie",
           "name": "test",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1075,38 +1075,38 @@ Array [
     "type": "changed",
     "where": "GET /api/users cookie parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "cookie",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "cookie",
           "name": "test",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1135,39 +1135,39 @@ Array [
 `;
 
 exports[`breaking changes ruleset - parameter enum change enum added to "header" parameter 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "header",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "header",
           "name": "test",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1192,38 +1192,38 @@ Array [
     "type": "changed",
     "where": "GET /api/users header parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "header",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "header",
           "name": "test",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1248,38 +1248,38 @@ Array [
     "type": "changed",
     "where": "GET /api/users header parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "header",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "header",
           "name": "test",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1304,38 +1304,38 @@ Array [
     "type": "changed",
     "where": "GET /api/users header parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "header",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "header",
           "name": "test",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1364,39 +1364,39 @@ Array [
 `;
 
 exports[`breaking changes ruleset - parameter enum change enum added to "path" parameter 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "path",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "path",
           "name": "test",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "path": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1421,38 +1421,38 @@ Array [
     "type": "changed",
     "where": "GET /api/users path parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "path",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "path",
           "name": "test",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "path": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1477,38 +1477,38 @@ Array [
     "type": "changed",
     "where": "GET /api/users path parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "path",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "path",
           "name": "test",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "path": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1537,39 +1537,39 @@ Array [
 `;
 
 exports[`breaking changes ruleset - parameter enum change enum added to "query" parameter 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "query",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "query",
           "name": "test",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1594,38 +1594,38 @@ Array [
     "type": "changed",
     "where": "GET /api/users query parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "query",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "query",
           "name": "test",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1650,38 +1650,38 @@ Array [
     "type": "changed",
     "where": "GET /api/users query parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "query",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "query",
           "name": "test",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1706,38 +1706,38 @@ Array [
     "type": "changed",
     "where": "GET /api/users query parameter: test",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "query",
           "name": "test",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               "a",
               "b",
             ],
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "query",
           "name": "test",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "test",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",

@@ -1,25 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`RequestRule body assertions added failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "contentType": "application/json",
-        "flatSchema": Object {},
+        "flatSchema": {},
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -46,27 +46,27 @@ Array [
 `;
 
 exports[`RequestRule body assertions added passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "contentType": "application/json",
-        "flatSchema": Object {
+        "flatSchema": {
           "type": "string",
         },
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -93,33 +93,33 @@ Array [
 `;
 
 exports[`RequestRule body assertions addedOrChanged failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "contentType": "application/json",
-          "flatSchema": Object {
+          "flatSchema": {
             "description": "empty",
           },
         },
-        "before": Object {
+        "before": {
           "contentType": "application/json",
-          "flatSchema": Object {},
+          "flatSchema": {},
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -146,27 +146,27 @@ Array [
 `;
 
 exports[`RequestRule body assertions addedOrChanged passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "contentType": "application/json",
-        "flatSchema": Object {
+        "flatSchema": {
           "type": "string",
         },
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -193,35 +193,35 @@ Array [
 `;
 
 exports[`RequestRule body assertions changed failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "contentType": "application/json",
-          "flatSchema": Object {
+          "flatSchema": {
             "type": "object",
           },
         },
-        "before": Object {
+        "before": {
           "contentType": "application/json",
-          "flatSchema": Object {
+          "flatSchema": {
             "type": "array",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -248,37 +248,37 @@ Array [
 `;
 
 exports[`RequestRule body assertions changed passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "contentType": "application/json",
-          "flatSchema": Object {
+          "flatSchema": {
             "description": "abc",
             "type": "array",
           },
         },
-        "before": Object {
+        "before": {
           "contentType": "application/json",
-          "flatSchema": Object {
+          "flatSchema": {
             "description": "123",
             "type": "array",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -305,27 +305,27 @@ Array [
 `;
 
 exports[`RequestRule body assertions custom matchers matches failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "contentType": "application/json",
-        "flatSchema": Object {
+        "flatSchema": {
           "type": "object",
         },
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -339,12 +339,12 @@ Array [
     "docsLink": undefined,
     "error": "Expected a partial match",
     "exempted": false,
-    "expected": "{\\"schema\\":{\\"type\\":\\"object\\",\\"properties\\":{\\"id\\":{\\"type\\":\\"string\\"}}}}",
+    "expected": "{"schema":{"type":"object","properties":{"id":{"type":"string"}}}}",
     "isMust": true,
     "isShould": false,
     "name": "request type",
     "passed": false,
-    "received": "{\\"schema\\":{\\"type\\":\\"object\\",\\"properties\\":{\\"notid\\":{\\"type\\":\\"string\\"},\\"name\\":{\\"type\\":\\"string\\"}}}}",
+    "received": "{"schema":{"type":"object","properties":{"notid":{"type":"string"},"name":{"type":"string"}}}}",
     "type": "added",
     "where": "GET /api/users request body: application/json",
   },
@@ -352,27 +352,27 @@ Array [
 `;
 
 exports[`RequestRule body assertions custom matchers matches inverted assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "contentType": "application/json",
-        "flatSchema": Object {
+        "flatSchema": {
           "type": "object",
         },
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -399,27 +399,27 @@ Array [
 `;
 
 exports[`RequestRule body assertions custom matchers matches passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "contentType": "application/json",
-        "flatSchema": Object {
+        "flatSchema": {
           "type": "object",
         },
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -446,27 +446,27 @@ Array [
 `;
 
 exports[`RequestRule body assertions custom matchers matchesOneOf failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "contentType": "application/json",
-        "flatSchema": Object {
+        "flatSchema": {
           "type": "object",
         },
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -480,12 +480,12 @@ Array [
     "docsLink": undefined,
     "error": "Expected at least one partial match",
     "exempted": false,
-    "expected": "[{\\"schema\\":{\\"type\\":\\"object\\",\\"properties\\":{\\"id\\":{\\"type\\":\\"string\\"}}}},{\\"schema\\":{\\"type\\":\\"array\\",\\"items\\":{}}}]",
+    "expected": "[{"schema":{"type":"object","properties":{"id":{"type":"string"}}}},{"schema":{"type":"array","items":{}}}]",
     "isMust": true,
     "isShould": false,
     "name": "request type",
     "passed": false,
-    "received": "{\\"schema\\":{\\"type\\":\\"object\\",\\"properties\\":{\\"notid\\":{\\"type\\":\\"string\\"},\\"name\\":{\\"type\\":\\"string\\"}}}}",
+    "received": "{"schema":{"type":"object","properties":{"notid":{"type":"string"},"name":{"type":"string"}}}}",
     "type": "added",
     "where": "GET /api/users request body: application/json",
   },
@@ -493,27 +493,27 @@ Array [
 `;
 
 exports[`RequestRule body assertions custom matchers matchesOneOf inverted assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "contentType": "application/json",
-        "flatSchema": Object {
+        "flatSchema": {
           "type": "object",
         },
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -540,27 +540,27 @@ Array [
 `;
 
 exports[`RequestRule body assertions custom matchers matchesOneOf passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "contentType": "application/json",
-        "flatSchema": Object {
+        "flatSchema": {
           "type": "object",
         },
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -587,21 +587,21 @@ Array [
 `;
 
 exports[`RequestRule body assertions removed failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -610,10 +610,10 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
         "kind": "body",
       },
-      "removed": Object {
-        "before": Object {
+      "removed": {
+        "before": {
           "contentType": "application/json",
-          "flatSchema": Object {
+          "flatSchema": {
             "type": "array",
           },
         },
@@ -636,21 +636,21 @@ Array [
 `;
 
 exports[`RequestRule body assertions removed passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -659,10 +659,10 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
         "kind": "body",
       },
-      "removed": Object {
-        "before": Object {
+      "removed": {
+        "before": {
           "contentType": "application/json",
-          "flatSchema": Object {
+          "flatSchema": {
             "type": "string",
           },
         },
@@ -685,20 +685,20 @@ Array [
 `;
 
 exports[`RequestRule body assertions requirement failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -707,9 +707,9 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
         "kind": "body",
       },
-      "value": Object {
+      "value": {
         "contentType": "application/json",
-        "flatSchema": Object {},
+        "flatSchema": {},
       },
     },
     "condition": undefined,
@@ -729,20 +729,20 @@ Array [
 `;
 
 exports[`RequestRule body assertions requirement passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -751,9 +751,9 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
         "kind": "body",
       },
-      "value": Object {
+      "value": {
         "contentType": "application/json",
-        "flatSchema": Object {
+        "flatSchema": {
           "type": "string",
         },
       },
@@ -775,23 +775,23 @@ Array [
 `;
 
 exports[`RequestRule property assertions added failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "hello",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -801,8 +801,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/hello",
         "kind": "field",
       },
-      "value": Object {
-        "flatSchema": Object {},
+      "value": {
+        "flatSchema": {},
         "key": "hello",
         "required": false,
       },
@@ -823,23 +823,23 @@ Array [
 `;
 
 exports[`RequestRule property assertions added passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "hello",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -849,8 +849,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/hello",
         "kind": "field",
       },
-      "value": Object {
-        "flatSchema": Object {
+      "value": {
+        "flatSchema": {
           "type": "string",
         },
         "key": "hello",
@@ -873,23 +873,23 @@ Array [
 `;
 
 exports[`RequestRule property assertions addedOrChanged failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "hello",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -899,8 +899,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/hello",
         "kind": "field",
       },
-      "value": Object {
-        "flatSchema": Object {
+      "value": {
+        "flatSchema": {
           "description": "asd",
         },
         "key": "hello",
@@ -923,23 +923,23 @@ Array [
 `;
 
 exports[`RequestRule property assertions addedOrChanged passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "hello",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -949,8 +949,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/hello",
         "kind": "field",
       },
-      "value": Object {
-        "flatSchema": Object {
+      "value": {
+        "flatSchema": {
           "type": "string",
         },
         "key": "hello",
@@ -973,20 +973,20 @@ Array [
 `;
 
 exports[`RequestRule property assertions changed failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "type": "number",
           },
           "key": "hello",
           "required": false,
         },
-        "before": Object {
-          "flatSchema": Object {
+        "before": {
+          "flatSchema": {
             "format": "uuid",
             "type": "string",
           },
@@ -994,21 +994,21 @@ Array [
           "required": false,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "items",
             "hello",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1036,21 +1036,21 @@ Array [
 `;
 
 exports[`RequestRule property assertions changed passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "format": "date",
             "type": "string",
           },
           "key": "hello",
           "required": false,
         },
-        "before": Object {
-          "flatSchema": Object {
+        "before": {
+          "flatSchema": {
             "format": "uuid",
             "type": "string",
           },
@@ -1058,21 +1058,21 @@ Array [
           "required": false,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "items",
             "hello",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1100,24 +1100,24 @@ Array [
 `;
 
 exports[`RequestRule property assertions removed failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "goodbye",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1127,9 +1127,9 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/goodbye",
         "kind": "field",
       },
-      "removed": Object {
-        "before": Object {
-          "flatSchema": Object {
+      "removed": {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "goodbye",
@@ -1153,24 +1153,24 @@ Array [
 `;
 
 exports[`RequestRule property assertions removed passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "goodbye",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1180,9 +1180,9 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/goodbye",
         "kind": "field",
       },
-      "removed": Object {
-        "before": Object {
-          "flatSchema": Object {
+      "removed": {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "goodbye",
@@ -1206,23 +1206,23 @@ Array [
 `;
 
 exports[`RequestRule property assertions requirement failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "hello",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1232,8 +1232,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/hello",
         "kind": "field",
       },
-      "value": Object {
-        "flatSchema": Object {},
+      "value": {
+        "flatSchema": {},
         "key": "hello",
         "required": false,
       },
@@ -1254,23 +1254,23 @@ Array [
 `;
 
 exports[`RequestRule property assertions requirement passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "hello",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1280,8 +1280,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/hello",
         "kind": "field",
       },
-      "value": Object {
-        "flatSchema": Object {
+      "value": {
+        "flatSchema": {
           "type": "string",
         },
         "key": "hello",

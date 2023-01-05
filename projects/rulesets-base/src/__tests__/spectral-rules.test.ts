@@ -1,3 +1,4 @@
+import { jest, test, expect, describe } from '@jest/globals'
 import {
   Spectral,
   RulesetDefinition as SpectralRulesetDefinition,

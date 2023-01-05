@@ -1,3 +1,5 @@
+import { jest, test, expect, describe } from '@jest/globals'
+
 import { defaultEmptySpec, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { RuleError } from '../errors';
 import { RuleRunner } from '../rule-runner';
@@ -66,7 +68,7 @@ describe('SpecificationRule', () => {
       await ruleRunner.runRulesWithFacts(createRuleInputs(emptySpec, json));
 
       expect(mockFn.mock.calls.length > 0).toBe(true);
-      const ruleContext = mockFn.mock.calls[0][1];
+      const ruleContext = mockFn.mock.calls[0][1] as any;
       expect(ruleContext.specification.change).toBe('added');
       expect(ruleContext).toMatchSnapshot();
     });
@@ -83,7 +85,7 @@ describe('SpecificationRule', () => {
       await ruleRunner.runRulesWithFacts(createRuleInputs(json, emptySpec));
 
       expect(mockFn.mock.calls.length > 0).toBe(true);
-      const ruleContext = mockFn.mock.calls[0][1];
+      const ruleContext = mockFn.mock.calls[0][1] as any;
       expect(ruleContext.specification.change).toBe('removed');
       expect(ruleContext).toMatchSnapshot();
     });
