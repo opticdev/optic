@@ -225,7 +225,7 @@ const runDiff = async (
     logComparison(specResults, { output: 'pretty', verbose: false });
 
     console.log('');
-    console.log(`Configure check rulesets in your local optic.dev.yml file.`);
+    console.log(`Configure check rulesets in optic cloud or your local optic.dev.yml file.`);
   }
 
   if (options.web) {
@@ -302,6 +302,13 @@ const getDiffAction =
       process.exitCode = 1;
       return;
     }
+
+    if (config.isAuthenticated) {
+      // TODO check parsed files and check that the git state is clean
+      // TODO would we ever want to upload if not in a git repo? probably yes but do we have any tags?
+      // TODO get apis
+    }
+
     if (!options.web && !options.json) {
       console.log(
         chalk.blue(
