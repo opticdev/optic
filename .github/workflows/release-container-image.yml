@@ -39,7 +39,7 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
+      - uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
 
       - name: Install Task
         run: curl -sL https://taskfile.dev/install.sh | sudo bash -s -- -b /usr/local/bin/
