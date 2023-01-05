@@ -194,12 +194,16 @@ export async function initializeConfig(): Promise<OpticCliConfig> {
         ...cliConfig,
         ...(await loadCliConfig(opticYmlPath, cliConfig.client)),
       };
+    }
 
+    try {
       cliConfig.vcs = {
         type: VCS.Git,
         sha: await resolveGitRef('HEAD'),
         status: (await isGitStatusClean()) ? 'clean' : 'dirty',
       };
+    } catch (e) {
+      // Git command can fail in a repo with no commits, we should treat this as having no commits
     }
   }
 

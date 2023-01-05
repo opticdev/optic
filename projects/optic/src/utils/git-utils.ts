@@ -33,7 +33,7 @@ export const getRootPath = async (): Promise<string> =>
 export const isGitStatusClean = async (): Promise<boolean> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
-      if (err || stderr || !stdout) reject();
+      if (err || stderr) reject(err || stderr);
       resolve(stdout.trim() === '');
     };
     const command = `git status --porcelain`;
@@ -43,7 +43,7 @@ export const isGitStatusClean = async (): Promise<boolean> =>
 export const resolveGitRef = async (ref: string): Promise<string> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
-      if (err || stderr || !stdout) reject();
+      if (err || stderr || !stdout) reject(err || stderr);
       resolve(stdout.trim());
     };
     const command = `git rev-parse ${ref}`;

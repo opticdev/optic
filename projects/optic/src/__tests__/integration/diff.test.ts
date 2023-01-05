@@ -12,24 +12,16 @@ jest.setTimeout(30000);
 
 describe('diff', () => {
   test('two files, no repo or config', async () => {
-    const workspace = await setupWorkspace('diff/files-no-repo');
+    const workspace = await setupWorkspace('diff/files-no-repo', {
+      repo: true,
+      commit: true,
+    });
     const { combined, code } = await runOptic(
       workspace,
       'diff example-api-v0.json example-api-v1.json'
     );
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     expect(code).toBe(0);
-  });
-
-  test('basic rules config', async () => {
-    const workspace = await setupWorkspace('diff/basic-rules');
-    const { combined, code } = await runOptic(
-      workspace,
-      'diff example-api-v0.json example-api-v1.json --check'
-    );
-
-    expect(code).toBe(1);
-    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
   });
 
   describe('with mock server', () => {
@@ -66,7 +58,10 @@ describe('diff', () => {
     });
 
     test('custom rules', async () => {
-      const workspace = await setupWorkspace('diff/custom-rules');
+      const workspace = await setupWorkspace('diff/custom-rules', {
+        repo: true,
+        commit: true,
+      });
       const { combined, code } = await runOptic(
         workspace,
         'diff example-api-v0.json example-api-v1.json --check'
@@ -77,7 +72,10 @@ describe('diff', () => {
     });
 
     test('extends', async () => {
-      const workspace = await setupWorkspace('diff/extends');
+      const workspace = await setupWorkspace('diff/extends', {
+        repo: true,
+        commit: true,
+      });
       const { combined, code } = await runOptic(
         workspace,
         'diff example-api-v0.json example-api-v1.json --check'
@@ -89,7 +87,10 @@ describe('diff', () => {
   });
 
   test('breaking changes exclusion', async () => {
-    const workspace = await setupWorkspace('diff/breaking-changes-exclusion');
+    const workspace = await setupWorkspace('diff/breaking-changes-exclusion', {
+      repo: true,
+      commit: true,
+    });
     const { combined, code } = await runOptic(
       workspace,
       'diff example-api-v0.json example-api-v1.json --check'
@@ -100,7 +101,10 @@ describe('diff', () => {
   });
 
   test('basic rules config', async () => {
-    const workspace = await setupWorkspace('diff/basic-rules-dev-yml');
+    const workspace = await setupWorkspace('diff/basic-rules-dev-yml', {
+      repo: true,
+      commit: true,
+    });
     const { combined, code } = await runOptic(
       workspace,
       'diff example-api-v0.json example-api-v1.json --check'
@@ -112,7 +116,11 @@ describe('diff', () => {
 
   test('breaking changes exclusion', async () => {
     const workspace = await setupWorkspace(
-      'diff/breaking-changes-exclusion-dev-yml'
+      'diff/breaking-changes-exclusion-dev-yml',
+      {
+        repo: true,
+        commit: true,
+      }
     );
     const { combined, code } = await runOptic(
       workspace,

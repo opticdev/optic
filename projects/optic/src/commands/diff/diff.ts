@@ -313,7 +313,6 @@ const getDiffAction =
     }
 
     const diffResult = await runDiff(files, parsedFiles, config, options);
-
     if (config.isAuthenticated) {
       const [baseParseResult, headParseResult] = parsedFiles;
       const baseParseApiId: string | null = 'TODO';
