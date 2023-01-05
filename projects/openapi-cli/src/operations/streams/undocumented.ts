@@ -17,6 +17,7 @@ export interface UndocumentedOperations
 
 interface OperationPair {
   pathPattern: string;
+  onApiBasePath: boolean;
   methods: OpenAPIV3.HttpMethods[];
 }
 
@@ -41,6 +42,8 @@ export class UndocumentedOperations {
     };
 
     for await (let operation of operations) {
+      if (!operation.onApiBasePath) continue;
+
       // TODO: figure out whether we can create queries once and update it incrementally,
       // recreating these facts constantly can get expens ive
 
@@ -111,10 +114,18 @@ export class UndocumentedOperations {
       (interaction) => {
         const basePath: string = hostBaseMap[interaction.request.host] || '/';
 
-        const offset = basePath !== '/' ? basePath.length : 0;
+        const hasBathPath = basePath !== '/';
+
+        const offset = hasBathPath ? basePath.length : 0;
+
+        const pathPattern =
+          hasBathPath && interaction.request.path.startsWith(basePath)
+            ? interaction.request.path.substring(offset)
+            : interaction.request.path;
 
         return {
-          pathPattern: interaction.request.path.substring(offset),
+          pathPattern,
+          onApiBasePath: interaction.request.path.startsWith(basePath),
           methods: [interaction.request.method],
         };
       }
