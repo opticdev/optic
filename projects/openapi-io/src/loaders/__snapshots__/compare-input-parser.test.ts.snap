@@ -1,14 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`can parse a file  1`] = `
-Object {
+{
   "filePath": "/path/to/spec.json",
   "from": 0,
 }
 `;
 
 exports[`can parse a git rev-file  1`] = `
-Object {
+{
   "branch": "main",
   "from": 1,
   "name": "path/to/spec.json",
@@ -16,7 +16,7 @@ Object {
 `;
 
 exports[`can parse a git rev-file  2`] = `
-Object {
+{
   "branch": "feature/1",
   "from": 1,
   "name": "spec.json",
@@ -24,7 +24,7 @@ Object {
 `;
 
 exports[`can parse a git rev-file  3`] = `
-Object {
+{
   "branch": "feature/1/define-spc",
   "from": 1,
   "name": "path/to/spec.json",

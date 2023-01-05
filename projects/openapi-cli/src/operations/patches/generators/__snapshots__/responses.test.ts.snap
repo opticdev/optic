@@ -1,21 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`responsesPatches generates a patch for a missing response body 1`] = `
-Array [
-  Object {
+[
+  {
     "description": "remove response content for 200",
-    "groupedOperations": Array [
-      Object {
+    "diff": {
+      "kind": "MissingResponseBody",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
         "intent": "remove response content (1 bodies)",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "remove",
             "path": "/responses/200/content",
           },
         ],
       },
     ],
-    "impact": Array [
+    "impact": [
       "BackwardsIncompatible",
     ],
   },
@@ -23,11 +27,11 @@ Array [
 `;
 
 exports[`responsesPatches generates a patch for a missing response body 2`] = `
-Object {
+{
   "method": "post",
   "pathPattern": "/some-path",
-  "responses": Object {
-    "200": Object {
+  "responses": {
+    "200": {
       "description": "success",
     },
   },
@@ -35,22 +39,27 @@ Object {
 `;
 
 exports[`responsesPatches generates a patch for an unspecified response body 1`] = `
-Array [
-  Object {
+[
+  {
     "description": "add text/plain response for 200",
-    "groupedOperations": Array [
-      Object {
+    "diff": {
+      "contentType": "text/plain",
+      "kind": "UnmatchdResponseBody",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
         "intent": "add response body for content type 'text/plain'",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "add",
             "path": "/responses/200/content/text~1plain",
-            "value": Object {},
+            "value": {},
           },
         ],
       },
     ],
-    "impact": Array [
+    "impact": [
       "Addition",
       "BackwardsCompatible",
     ],
@@ -59,14 +68,14 @@ Array [
 `;
 
 exports[`responsesPatches generates a patch for an unspecified response body 2`] = `
-Object {
+{
   "method": "post",
   "pathPattern": "/some-path",
-  "responses": Object {
-    "200": Object {
-      "content": Object {
-        "application/json": Object {},
-        "text/plain": Object {},
+  "responses": {
+    "200": {
+      "content": {
+        "application/json": {},
+        "text/plain": {},
       },
       "description": "success",
     },
@@ -75,24 +84,29 @@ Object {
 `;
 
 exports[`responsesPatches generates a patch for an unspecified response status code 1`] = `
-Array [
-  Object {
+[
+  {
     "description": "add 400 response",
-    "groupedOperations": Array [
-      Object {
+    "diff": {
+      "contentType": null,
+      "kind": "UnmatchedResponseStatusCode",
+      "statusCode": "400",
+    },
+    "groupedOperations": [
+      {
         "intent": "add response status code",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "add",
             "path": "/responses/400",
-            "value": Object {
-              "description": "automatically documented through Optic",
+            "value": {
+              "description": "400 response",
             },
           },
         ],
       },
     ],
-    "impact": Array [
+    "impact": [
       "Addition",
       "BackwardsCompatible",
     ],
@@ -101,15 +115,15 @@ Array [
 `;
 
 exports[`responsesPatches generates a patch for an unspecified response status code 2`] = `
-Object {
+{
   "method": "post",
   "pathPattern": "/some-path",
-  "responses": Object {
-    "200": Object {
+  "responses": {
+    "200": {
       "description": "success",
     },
-    "400": Object {
-      "description": "automatically documented through Optic",
+    "400": {
+      "description": "400 response",
     },
   },
 }

@@ -12,15 +12,20 @@ export function* requiredKeyword(
   );
   const key = validationError.params.missingProperty;
   yield {
+    description: `required property '${validationError.params.missingProperty}' was missing`,
     instancePath: jsonPointerHelpers.append(
       validationError.instancePath,
       validationError.params.missingProperty
     ),
-    propertyPath: jsonPointerHelpers.append(parentObjectPath, key),
+    propertyPath: jsonPointerHelpers.append(
+      parentObjectPath,
+      'properties',
+      key
+    ),
     kind: ShapeDiffResultKind.MissingRequiredProperty,
     keyword: JsonSchemaKnownKeyword.required,
     parentObjectPath,
     key,
-    example,
+    example: undefined,
   };
 }

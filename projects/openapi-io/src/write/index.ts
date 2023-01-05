@@ -1,11 +1,11 @@
-import { dump as yamlDump, load as yamlLoad } from 'js-yaml';
+import yaml from 'yaml';
 
 export function writeYaml(document: any, indent: 2 | 4 = 2) {
-  return yamlDump(document, { indent, noRefs: true });
+  return yaml.stringify(document);
 }
 
 export function loadYaml(contents: string) {
-  return yamlLoad(contents);
+  return yaml.parse(contents);
 }
 
 export function isJson(filePath: string) {

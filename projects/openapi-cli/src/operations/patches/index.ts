@@ -11,6 +11,7 @@ import { Result, Ok, Err } from 'ts-results';
 export type { PatchOperation };
 export { PatchOperationGroup, PatchImpact };
 import { diffOperationPatchGenerators } from './generators';
+import { ShapeDiffResult } from '../../shapes/diffs';
 
 export function* generateOperationPatchesByDiff(
   diff: OperationDiffResult,
@@ -27,6 +28,7 @@ export function* generateOperationPatchesByDiff(
 export interface OperationPatch {
   description: string;
   impact: PatchImpact[];
+  diff: ShapeDiffResult | OperationDiffResult | undefined;
   groupedOperations: PatchOperationGroup[];
 }
 
@@ -48,7 +50,7 @@ export class OperationPatch {
     try {
       const result = JsonPatch.applyPatch(
         operation,
-        [...OperationPatch.operations(patch)],
+        JsonPatch.deepClone([...OperationPatch.operations(patch)]),
         true, // validate ops so we get useful error messages
         false // don't mutate the original schema
       );

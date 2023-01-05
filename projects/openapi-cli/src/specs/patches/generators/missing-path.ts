@@ -9,6 +9,7 @@ import {
   PatchOperation,
 } from '../../../patches';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { OperationDiffResultKind } from '../../../operations/diffs';
 
 export function* missingPathPatches(
   undocumentedOperation: UndocumentedOperation
@@ -60,6 +61,11 @@ export function* missingPathPatches(
   );
 
   yield {
+    diff: {
+      kind: OperationDiffResultKind.UnmatchedPath,
+      subject: pathPattern,
+    },
+    path: jsonPointerHelpers.compile(['paths']),
     description: `add '${pathPattern}' and method${
       methods.length > 1 ? 's' : ''
     } ${methods.map((m) => m.toUpperCase()).join(', ')}`,

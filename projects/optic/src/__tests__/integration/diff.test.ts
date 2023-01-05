@@ -1,3 +1,4 @@
+import { test, expect, describe, jest } from '@jest/globals';
 import fs from 'node:fs/promises';
 import path from 'path';
 import {
@@ -38,7 +39,7 @@ describe('diff', () => {
           rulesets: [
             {
               name: '@org/custom-ruleset',
-              url: 'http://localhost:8888/download-url',
+              url: `${process.env.BWTS_HOST_OVERRIDE}/download-url`,
               uploaded_at: '2022-11-02T17:55:48.078Z',
             },
           ],

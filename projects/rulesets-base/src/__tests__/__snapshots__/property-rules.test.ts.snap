@@ -1,29 +1,29 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`PropertyRule assertions added failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
-        "flatSchema": Object {},
+[
+  {
+    "change": {
+      "added": {
+        "flatSchema": {},
         "key": "hello",
         "required": false,
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "hello",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -46,29 +46,29 @@ Array [
     "type": "added",
     "where": "GET /api/users request body: application/json property: hello",
   },
-  Object {
-    "change": Object {
-      "added": Object {
-        "flatSchema": Object {},
+  {
+    "change": {
+      "added": {
+        "flatSchema": {},
         "key": "goodthings",
         "required": false,
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "goodthings",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -98,31 +98,31 @@ Array [
 `;
 
 exports[`PropertyRule assertions added passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
-        "flatSchema": Object {
+[
+  {
+    "change": {
+      "added": {
+        "flatSchema": {
           "type": "string",
         },
         "key": "hello",
         "required": false,
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "hello",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -145,31 +145,31 @@ Array [
     "type": "added",
     "where": "GET /api/users request body: application/json property: hello",
   },
-  Object {
-    "change": Object {
-      "added": Object {
-        "flatSchema": Object {
+  {
+    "change": {
+      "added": {
+        "flatSchema": {
           "type": "string",
         },
         "key": "goodthings",
         "required": false,
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "goodthings",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -199,29 +199,29 @@ Array [
 `;
 
 exports[`PropertyRule assertions addedOrChanged failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
-        "flatSchema": Object {},
+[
+  {
+    "change": {
+      "added": {
+        "flatSchema": {},
         "key": "hello",
         "required": false,
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "hello",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -244,38 +244,38 @@ Array [
     "type": "added",
     "where": "GET /api/users request body: application/json property: hello",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "description": "blah",
           },
           "key": "goodthings",
           "required": false,
         },
-        "before": Object {
-          "flatSchema": Object {},
+        "before": {
+          "flatSchema": {},
           "key": "goodthings",
           "required": false,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "goodthings",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -305,31 +305,31 @@ Array [
 `;
 
 exports[`PropertyRule assertions addedOrChanged passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
-        "flatSchema": Object {
+[
+  {
+    "change": {
+      "added": {
+        "flatSchema": {
           "type": "string",
         },
         "key": "hello",
         "required": false,
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "hello",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -352,41 +352,41 @@ Array [
     "type": "added",
     "where": "GET /api/users request body: application/json property: hello",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "description": "blah",
             "type": "string",
           },
           "key": "goodthings",
           "required": false,
         },
-        "before": Object {
-          "flatSchema": Object {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "goodthings",
           "required": false,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "goodthings",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -416,42 +416,42 @@ Array [
 `;
 
 exports[`PropertyRule assertions changed failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "description": "blah",
             "type": "number",
           },
           "key": "goodthings",
           "required": false,
         },
-        "before": Object {
-          "flatSchema": Object {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "goodthings",
           "required": false,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "goodthings",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -481,42 +481,42 @@ Array [
 `;
 
 exports[`PropertyRule assertions changed passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "description": "blah",
             "type": "string",
           },
           "key": "goodthings",
           "required": false,
         },
-        "before": Object {
-          "flatSchema": Object {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "goodthings",
           "required": false,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "goodthings",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -546,25 +546,25 @@ Array [
 `;
 
 exports[`PropertyRule assertions removed failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "goodthings",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -576,9 +576,9 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/goodthings",
         "kind": "field",
       },
-      "removed": Object {
-        "before": Object {
-          "flatSchema": Object {
+      "removed": {
+        "before": {
+          "flatSchema": {
             "type": "number",
           },
           "key": "goodthings",
@@ -603,25 +603,25 @@ Array [
 `;
 
 exports[`PropertyRule assertions removed passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "goodthings",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -633,9 +633,9 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/goodthings",
         "kind": "field",
       },
-      "removed": Object {
-        "before": Object {
-          "flatSchema": Object {
+      "removed": {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "goodthings",
@@ -660,23 +660,23 @@ Array [
 `;
 
 exports[`PropertyRule assertions requirement failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "hello",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -686,8 +686,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/hello",
         "kind": "field",
       },
-      "value": Object {
-        "flatSchema": Object {},
+      "value": {
+        "flatSchema": {},
         "key": "hello",
         "required": false,
       },
@@ -704,23 +704,23 @@ Array [
     "type": "requirement",
     "where": "GET /api/users request body: application/json property: hello",
   },
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "goodthings",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -732,8 +732,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/goodthings",
         "kind": "field",
       },
-      "value": Object {
-        "flatSchema": Object {},
+      "value": {
+        "flatSchema": {},
         "key": "goodthings",
         "required": false,
       },
@@ -755,23 +755,23 @@ Array [
 `;
 
 exports[`PropertyRule assertions requirement passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "hello",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -781,8 +781,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/hello",
         "kind": "field",
       },
-      "value": Object {
-        "flatSchema": Object {
+      "value": {
+        "flatSchema": {
           "type": "string",
         },
         "key": "hello",
@@ -801,23 +801,23 @@ Array [
     "type": "requirement",
     "where": "GET /api/users request body: application/json property: hello",
   },
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "goodthings",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -829,8 +829,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/goodthings",
         "kind": "field",
       },
-      "value": Object {
-        "flatSchema": Object {
+      "value": {
+        "flatSchema": {
           "type": "string",
         },
         "key": "goodthings",

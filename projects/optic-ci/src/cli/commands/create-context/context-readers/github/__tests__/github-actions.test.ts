@@ -1,3 +1,4 @@
+import { jest, test, expect, afterAll } from '@jest/globals'
 import fs from 'fs/promises';
 import { UserError } from '@useoptic/openapi-utilities';
 import { getContextFromGithubEnvironment } from '../github-actions';
@@ -76,7 +77,7 @@ test('get head sha from github context', async () => {
           },
         })
       )
-    )
+    ) as any
   );
 
   expect(await getContextFromGithubEnvironment()).toEqual({

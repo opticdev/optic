@@ -1,3 +1,4 @@
+import { beforeAll, it, describe, expect } from '@jest/globals';
 import { CapturedInteraction } from './interaction';
 import { CapturedBody } from './body';
 import { HarEntries, HttpArchive } from './streams/sources/har';
@@ -32,7 +33,7 @@ describe('CapturedIntearction.fromHarEntry', () => {
       (entry) =>
         entry.request.postData &&
         entry.request.postData.mimeType.startsWith('application/json')
-    );
+    )!;
     expect(testEntry).toBeTruthy();
 
     let interaction = CapturedInteraction.fromHarEntry(testEntry);
@@ -50,7 +51,7 @@ describe('CapturedIntearction.fromHarEntry', () => {
       (entry) =>
         entry.response.content.text &&
         entry.response.content.mimeType.startsWith('application/json')
-    );
+    )!;
     expect(testEntry).toBeTruthy();
 
     let interaction = CapturedInteraction.fromHarEntry(testEntry);
@@ -68,14 +69,14 @@ describe('CapturedIntearction.fromHarEntry', () => {
         entry.request.postData &&
         entry.request.postData.mimeType.startsWith('application/json') &&
         !entry.request.postData.encoding
-    );
+    )!;
 
     let encoding = 'base64';
-    testEntry.request.postData.text = Buffer.from(
-      testEntry.request.postData.text,
+    testEntry.request.postData!.text = Buffer.from(
+      testEntry.request.postData!.text,
       'utf-8'
     ).toString(encoding as BufferEncoding);
-    testEntry.request.postData.encoding = encoding;
+    testEntry.request.postData!.encoding = encoding;
 
     let interaction = CapturedInteraction.fromHarEntry(testEntry);
     expect(interaction).toMatchSnapshot({
@@ -93,11 +94,11 @@ describe('CapturedIntearction.fromHarEntry', () => {
         entry.response.content.text &&
         entry.response.content.mimeType.startsWith('application/json') &&
         !entry.response.content.encoding
-    );
+    )!;
 
     let encoding = 'base64';
     testEntry.response.content.text = Buffer.from(
-      testEntry.response.content.text,
+      testEntry.response.content.text!,
       'utf-8'
     ).toString(encoding as BufferEncoding);
     testEntry.response.content.encoding = encoding;
@@ -134,7 +135,7 @@ describe('CapturedInteraction.fromProxyInteraction', () => {
       request: { body: matchBody() },
     });
 
-    let parsingBody = CapturedBody.text(interaction.request.body);
+    let parsingBody = CapturedBody.text(interaction!.request.body!);
     expect(parsingBody).resolves.toBe('some-body');
   });
 

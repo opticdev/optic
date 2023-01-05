@@ -1,8 +1,8 @@
+import { it, expect } from '@jest/globals';
 import * as path from 'path';
 import { loadSpecFromFile, loadSpecFromUrl } from './file';
 import { inGit, loadSpecFromBranch } from './file-on-branch';
 import { SpecLoaderResult } from './types';
-import { serialize } from 'jest-serializer';
 
 const cwd = process.cwd();
 

@@ -34,6 +34,7 @@ export function* oneOfPatches(
 
   yield {
     description: `expand one of for ${diff.key}`,
+    diff,
     impact: [
       PatchImpact.Addition,
       !shapeContext.location

@@ -1,14 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`requestBodyPatches generates a patch for a missing request body 1`] = `
-Array [
-  Object {
+[
+  {
     "description": "make request body optional",
-    "groupedOperations": Array [
-      Object {
+    "diff": {
+      "kind": "MissingRequestBody",
+    },
+    "groupedOperations": [
+      {
         "intent": "make request body optional",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "replace",
             "path": "/requestBody/required",
             "value": false,
@@ -16,7 +19,7 @@ Array [
         ],
       },
     ],
-    "impact": Array [
+    "impact": [
       "Addition",
       "BackwardsCompatible",
     ],
@@ -25,17 +28,17 @@ Array [
 `;
 
 exports[`requestBodyPatches generates a patch for a missing request body 2`] = `
-Object {
+{
   "method": "post",
   "pathPattern": "/some-path",
-  "requestBody": Object {
-    "content": Object {
-      "application/json": Object {},
+  "requestBody": {
+    "content": {
+      "application/json": {},
     },
     "required": false,
   },
-  "responses": Object {
-    "200": Object {
+  "responses": {
+    "200": {
       "description": "success",
     },
   },
@@ -43,22 +46,26 @@ Object {
 `;
 
 exports[`requestBodyPatches generates a patch for a unmatched request body content type 1`] = `
-Array [
-  Object {
+[
+  {
     "description": "add 'text/csv' body as a valid request body type",
-    "groupedOperations": Array [
-      Object {
+    "diff": {
+      "contentType": "text/csv",
+      "kind": "UnmatchedRequestBody",
+    },
+    "groupedOperations": [
+      {
         "intent": "add text/csv as content type",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "add",
             "path": "/requestBody/content/text~1csv",
-            "value": Object {},
+            "value": {},
           },
         ],
       },
     ],
-    "impact": Array [
+    "impact": [
       "Addition",
       "BackwardsCompatible",
     ],
@@ -67,18 +74,18 @@ Array [
 `;
 
 exports[`requestBodyPatches generates a patch for a unmatched request body content type 2`] = `
-Object {
+{
   "method": "post",
   "pathPattern": "/some-path",
-  "requestBody": Object {
-    "content": Object {
-      "application/json": Object {},
-      "text/csv": Object {},
+  "requestBody": {
+    "content": {
+      "application/json": {},
+      "text/csv": {},
     },
     "required": true,
   },
-  "responses": Object {
-    "200": Object {
+  "responses": {
+    "200": {
       "description": "success",
     },
   },
@@ -86,34 +93,38 @@ Object {
 `;
 
 exports[`requestBodyPatches generates a patch for an unspecified request body 1`] = `
-Array [
-  Object {
+[
+  {
     "description": "add 'application/json' body as a valid request body type",
-    "groupedOperations": Array [
-      Object {
+    "diff": {
+      "contentType": "application/json",
+      "kind": "UnmatchedRequestBody",
+    },
+    "groupedOperations": [
+      {
         "intent": "add request body to operation",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "add",
             "path": "/requestBody",
-            "value": Object {
-              "content": Object {},
+            "value": {
+              "content": {},
             },
           },
         ],
       },
-      Object {
+      {
         "intent": "add application/json as content type",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "add",
             "path": "/requestBody/content/application~1json",
-            "value": Object {},
+            "value": {},
           },
         ],
       },
     ],
-    "impact": Array [
+    "impact": [
       "Addition",
       "BackwardsCompatible",
     ],
@@ -122,16 +133,16 @@ Array [
 `;
 
 exports[`requestBodyPatches generates a patch for an unspecified request body 2`] = `
-Object {
+{
   "method": "post",
   "pathPattern": "/some-path",
-  "requestBody": Object {
-    "content": Object {
-      "application/json": Object {},
+  "requestBody": {
+    "content": {
+      "application/json": {},
     },
   },
-  "responses": Object {
-    "200": Object {
+  "responses": {
+    "200": {
       "description": "success",
     },
   },

@@ -1,9 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`type json schema diff visitor when provided with an array 1`] = `
-Array [
-  Object {
-    "example": Array [
+[
+  {
+    "description": "'stringField' did not match schema",
+    "example": [
       "1",
       "2",
       "3",
@@ -19,9 +20,10 @@ Array [
 `;
 
 exports[`type json schema diff visitor when provided with an object 1`] = `
-Array [
-  Object {
-    "example": Object {
+[
+  {
+    "description": "'stringField' did not match schema",
+    "example": {
       "field": "string",
     },
     "instancePath": "/stringField",
@@ -34,8 +36,9 @@ Array [
 `;
 
 exports[`type json schema diff visitor when provided with another primitive 1`] = `
-Array [
-  Object {
+[
+  {
+    "description": "'stringField' did not match schema",
     "example": 123,
     "instancePath": "/stringField",
     "key": "stringField",
@@ -47,8 +50,9 @@ Array [
 `;
 
 exports[`type json schema diff visitor when provided with null value 1`] = `
-Array [
-  Object {
+[
+  {
+    "description": "'stringField' did not match schema",
     "example": null,
     "instancePath": "/stringField",
     "key": "stringField",

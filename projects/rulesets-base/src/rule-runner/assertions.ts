@@ -216,8 +216,9 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
               type: 'removed',
             });
           } else {
-            const err = e as Error;
-            throw new UserError(err.message);
+            const err = e as UserError;
+            err.type = 'user-error';
+            throw err;
           }
         }
       }
@@ -255,8 +256,9 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
               type: 'requirement',
             });
           } else {
-            const err = e as Error;
-            throw new UserError(err.message);
+            const err = e as UserError;
+            err.type = 'user-error';
+            throw err;
           }
         }
       }
@@ -288,8 +290,9 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
               type: 'added',
             });
           } else {
-            const err = e as Error;
-            throw new UserError(err.message);
+            const err = e as UserError;
+            err.type = 'user-error';
+            throw err;
           }
         }
       }
@@ -322,8 +325,9 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
               type: 'changed',
             });
           } else {
-            const err = e as Error;
-            throw new UserError(err.message);
+            const err = e as UserError;
+            err.type = 'user-error';
+            throw err;
           }
         }
       }
@@ -407,7 +411,6 @@ export const createResponseBodyAssertions =
     return responseBodyAssertions as ResponseBodyAssertionsRunner;
   };
 
-export const createPropertyAssertions =
-  (): AssertionRunner<'property'> => {
-    return new AssertionRunner('property');
-  };
+export const createPropertyAssertions = (): AssertionRunner<'property'> => {
+  return new AssertionRunner('property');
+};

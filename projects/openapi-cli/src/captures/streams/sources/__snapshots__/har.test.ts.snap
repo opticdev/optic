@@ -1,92 +1,92 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`HarEntries can be encoded as Readable JSON stream 1`] = `
-Object {
-  "log": Object {
+{
+  "log": {
     "creator": "Optic capture command",
-    "entries": Array [
-      Object {
-        "_initiator": Object {
+    "entries": [
+      {
+        "_initiator": {
           "type": "other",
         },
         "_priority": "VeryHigh",
         "_resourceType": "document",
-        "cache": Object {},
+        "cache": {},
         "connection": "418",
         "pageref": "page_1",
-        "request": Object {
+        "request": {
           "bodySize": 0,
-          "cookies": Array [],
-          "headers": Array [
-            Object {
+          "cookies": [],
+          "headers": [
+            {
               "name": ":authority",
               "value": "petstore.swagger.io",
             },
-            Object {
+            {
               "name": ":method",
               "value": "GET",
             },
-            Object {
+            {
               "name": ":path",
               "value": "/",
             },
-            Object {
+            {
               "name": ":scheme",
               "value": "https",
             },
-            Object {
+            {
               "name": "accept",
               "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
             },
-            Object {
+            {
               "name": "accept-encoding",
               "value": "gzip, deflate, br",
             },
-            Object {
+            {
               "name": "accept-language",
               "value": "en-GB,en;q=0.9,nl-NL;q=0.8,nl;q=0.7,en-US;q=0.6",
             },
-            Object {
+            {
               "name": "cache-control",
               "value": "no-cache",
             },
-            Object {
+            {
               "name": "pragma",
               "value": "no-cache",
             },
-            Object {
+            {
               "name": "sec-ch-ua",
-              "value": "\\" Not A;Brand\\";v=\\"99\\", \\"Chromium\\";v=\\"101\\", \\"Google Chrome\\";v=\\"101\\"",
+              "value": "" Not A;Brand";v="99", "Chromium";v="101", "Google Chrome";v="101"",
             },
-            Object {
+            {
               "name": "sec-ch-ua-mobile",
               "value": "?0",
             },
-            Object {
+            {
               "name": "sec-ch-ua-platform",
-              "value": "\\"macOS\\"",
+              "value": ""macOS"",
             },
-            Object {
+            {
               "name": "sec-fetch-dest",
               "value": "document",
             },
-            Object {
+            {
               "name": "sec-fetch-mode",
               "value": "navigate",
             },
-            Object {
+            {
               "name": "sec-fetch-site",
               "value": "none",
             },
-            Object {
+            {
               "name": "sec-fetch-user",
               "value": "?1",
             },
-            Object {
+            {
               "name": "upgrade-insecure-requests",
               "value": "1",
             },
-            Object {
+            {
               "name": "user-agent",
               "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36",
             },
@@ -94,88 +94,88 @@ Object {
           "headersSize": -1,
           "httpVersion": "http/2.0",
           "method": "GET",
-          "queryString": Array [],
+          "queryString": [],
           "url": "https://petstore.swagger.io/",
         },
-        "response": Object {
+        "response": {
           "_error": null,
           "_transferSize": 705,
           "bodySize": -1,
-          "content": Object {
+          "content": {
             "mimeType": "text/html",
             "size": 734,
             "text": "<!-- HTML for static distribution bundle build -->
 <!DOCTYPE html>
-<html lang=\\"en\\">
+<html lang="en">
   <head>
-    <meta charset=\\"UTF-8\\">
+    <meta charset="UTF-8">
     <title>Swagger UI</title>
-    <link rel=\\"stylesheet\\" type=\\"text/css\\" href=\\"./swagger-ui.css\\" />
-    <link rel=\\"stylesheet\\" type=\\"text/css\\" href=\\"index.css\\" />
-    <link rel=\\"icon\\" type=\\"image/png\\" href=\\"./favicon-32x32.png\\" sizes=\\"32x32\\" />
-    <link rel=\\"icon\\" type=\\"image/png\\" href=\\"./favicon-16x16.png\\" sizes=\\"16x16\\" />
+    <link rel="stylesheet" type="text/css" href="./swagger-ui.css" />
+    <link rel="stylesheet" type="text/css" href="index.css" />
+    <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
   </head>
 
   <body>
-    <div id=\\"swagger-ui\\"></div>
-    <script src=\\"./swagger-ui-bundle.js\\" charset=\\"UTF-8\\"> </script>
-    <script src=\\"./swagger-ui-standalone-preset.js\\" charset=\\"UTF-8\\"> </script>
-    <script src=\\"./swagger-initializer.js\\" charset=\\"UTF-8\\"> </script>
+    <div id="swagger-ui"></div>
+    <script src="./swagger-ui-bundle.js" charset="UTF-8"> </script>
+    <script src="./swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
+    <script src="./swagger-initializer.js" charset="UTF-8"> </script>
   </body>
 </html>
 ",
           },
-          "cookies": Array [],
-          "headers": Array [
-            Object {
+          "cookies": [],
+          "headers": [
+            {
               "name": "access-control-allow-headers",
               "value": "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type",
             },
-            Object {
+            {
               "name": "access-control-allow-methods",
               "value": "GET, POST, OPTIONS",
             },
-            Object {
+            {
               "name": "access-control-allow-origin",
               "value": "*",
             },
-            Object {
+            {
               "name": "cache-control",
               "value": "max-age=86400",
             },
-            Object {
+            {
               "name": "content-encoding",
               "value": "gzip",
             },
-            Object {
+            {
               "name": "content-length",
               "value": "327",
             },
-            Object {
+            {
               "name": "content-type",
               "value": "text/html",
             },
-            Object {
+            {
               "name": "date",
               "value": "Wed, 11 May 2022 11:46:52 GMT",
             },
-            Object {
+            {
               "name": "etag",
-              "value": "\\"62740dea-147\\"",
+              "value": ""62740dea-147"",
             },
-            Object {
+            {
               "name": "expires",
               "value": "Thu, 12 May 2022 11:46:52 GMT",
             },
-            Object {
+            {
               "name": "last-modified",
               "value": "Thu, 05 May 2022 17:48:26 GMT",
             },
-            Object {
+            {
               "name": "server",
               "value": "nginx",
             },
-            Object {
+            {
               "name": "vary",
               "value": "Accept-Encoding",
             },
@@ -189,7 +189,7 @@ Object {
         "serverIPAddress": "52.70.147.42",
         "startedDateTime": "2022-05-11T11:46:52.286Z",
         "time": 87.15100004337728,
-        "timings": Object {
+        "timings": {
           "_blocked_queueing": 2.078999998047948,
           "blocked": 2.600999998047948,
           "connect": -1,
@@ -200,46 +200,46 @@ Object {
           "wait": 83.72700001157075,
         },
       },
-      Object {
-        "_initiator": Object {
-          "stack": Object {
-            "callFrames": Array [
-              Object {
+      {
+        "_initiator": {
+          "stack": {
+            "callFrames": [
+              {
                 "columnNumber": 179022,
                 "functionName": "",
                 "lineNumber": 1,
                 "scriptId": "28",
                 "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
               },
-              Object {
+              {
                 "columnNumber": 783240,
                 "functionName": "c",
                 "lineNumber": 1,
                 "scriptId": "28",
                 "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
               },
-              Object {
+              {
                 "columnNumber": 783028,
                 "functionName": "",
                 "lineNumber": 1,
                 "scriptId": "28",
                 "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
               },
-              Object {
+              {
                 "columnNumber": 783669,
                 "functionName": "",
                 "lineNumber": 1,
                 "scriptId": "28",
                 "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
               },
-              Object {
+              {
                 "columnNumber": 3173,
                 "functionName": "o",
                 "lineNumber": 1,
                 "scriptId": "28",
                 "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
               },
-              Object {
+              {
                 "columnNumber": 3372,
                 "functionName": "s",
                 "lineNumber": 1,
@@ -247,282 +247,282 @@ Object {
                 "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
               },
             ],
-            "parent": Object {
-              "callFrames": Array [
-                Object {
+            "parent": {
+              "callFrames": [
+                {
                   "columnNumber": 3238,
                   "functionName": "o",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 3372,
                   "functionName": "s",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 3431,
                   "functionName": "",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 329161,
                   "functionName": "t",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 3318,
                   "functionName": "",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 178236,
                   "functionName": "Y",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 226947,
                   "functionName": "fn.fetch",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 222210,
                   "functionName": "Dn",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 158298,
                   "functionName": "",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 263139,
                   "functionName": "",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 79,
                   "functionName": "dispatch",
                   "lineNumber": 3664,
                   "scriptId": "22",
                   "url": "",
                 },
-                Object {
+                {
                   "columnNumber": 781281,
                   "functionName": "",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 174053,
                   "functionName": "",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 960823,
                   "functionName": "r",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 965201,
                   "functionName": "",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 159070,
                   "functionName": "",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 263139,
                   "functionName": "",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 79,
                   "functionName": "dispatch",
                   "lineNumber": 3664,
                   "scriptId": "22",
                   "url": "",
                 },
-                Object {
+                {
                   "columnNumber": 781281,
                   "functionName": "",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 77794,
                   "functionName": "",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 960823,
                   "functionName": "r",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 965201,
                   "functionName": "",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 1035720,
                   "functionName": "",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 1035998,
                   "functionName": "",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 1036171,
                   "functionName": "",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 630763,
                   "functionName": "Ve",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 630917,
                   "functionName": "Ge",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 649120,
                   "functionName": "",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 649214,
                   "functionName": "Or",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 649628,
                   "functionName": "jr",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 655264,
                   "functionName": "",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 730556,
                   "functionName": "De",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 651087,
                   "functionName": "",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 651117,
                   "functionName": "Mr",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 639184,
                   "functionName": "Xt",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 638410,
                   "functionName": "Qt",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 846780,
                   "functionName": "t.unstable_runWithPriority",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 659445,
                   "functionName": "Jo",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 730296,
                   "functionName": "Re",
                   "lineNumber": 1,
                   "scriptId": "28",
                   "url": "https://petstore.swagger.io/swagger-ui-bundle.js",
                 },
-                Object {
+                {
                   "columnNumber": 638203,
                   "functionName": "Zt",
                   "lineNumber": 1,
@@ -537,78 +537,78 @@ Object {
         },
         "_priority": "High",
         "_resourceType": "fetch",
-        "cache": Object {},
+        "cache": {},
         "connection": "418",
         "pageref": "page_1",
-        "request": Object {
+        "request": {
           "bodySize": 0,
-          "cookies": Array [],
-          "headers": Array [
-            Object {
+          "cookies": [],
+          "headers": [
+            {
               "name": ":authority",
               "value": "petstore.swagger.io",
             },
-            Object {
+            {
               "name": ":method",
               "value": "GET",
             },
-            Object {
+            {
               "name": ":path",
               "value": "/v2/store/inventory",
             },
-            Object {
+            {
               "name": ":scheme",
               "value": "https",
             },
-            Object {
+            {
               "name": "accept",
               "value": "application/json",
             },
-            Object {
+            {
               "name": "accept-encoding",
               "value": "gzip, deflate, br",
             },
-            Object {
+            {
               "name": "accept-language",
               "value": "en-GB,en;q=0.9,nl-NL;q=0.8,nl;q=0.7,en-US;q=0.6",
             },
-            Object {
+            {
               "name": "cache-control",
               "value": "no-cache",
             },
-            Object {
+            {
               "name": "pragma",
               "value": "no-cache",
             },
-            Object {
+            {
               "name": "referer",
               "value": "https://petstore.swagger.io/",
             },
-            Object {
+            {
               "name": "sec-ch-ua",
-              "value": "\\" Not A;Brand\\";v=\\"99\\", \\"Chromium\\";v=\\"101\\", \\"Google Chrome\\";v=\\"101\\"",
+              "value": "" Not A;Brand";v="99", "Chromium";v="101", "Google Chrome";v="101"",
             },
-            Object {
+            {
               "name": "sec-ch-ua-mobile",
               "value": "?0",
             },
-            Object {
+            {
               "name": "sec-ch-ua-platform",
-              "value": "\\"macOS\\"",
+              "value": ""macOS"",
             },
-            Object {
+            {
               "name": "sec-fetch-dest",
               "value": "empty",
             },
-            Object {
+            {
               "name": "sec-fetch-mode",
               "value": "cors",
             },
-            Object {
+            {
               "name": "sec-fetch-site",
               "value": "same-origin",
             },
-            Object {
+            {
               "name": "user-agent",
               "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36",
             },
@@ -616,41 +616,41 @@ Object {
           "headersSize": -1,
           "httpVersion": "http/2.0",
           "method": "GET",
-          "queryString": Array [],
+          "queryString": [],
           "url": "https://petstore.swagger.io/v2/store/inventory",
         },
-        "response": Object {
+        "response": {
           "_error": null,
           "_transferSize": 339,
           "bodySize": -1,
-          "content": Object {
+          "content": {
             "mimeType": "application/json",
             "size": 133,
-            "text": "{\\"sold\\":11,\\"hethjytkfyilkhgjn\\":1,\\"string\\":367,\\"unavailable\\":2,\\"pending\\":6,\\"testStatus\\":1,\\"available\\":432,\\"OK\\":8,\\"free\\":1,\\"status\\":26}",
+            "text": "{"sold":11,"hethjytkfyilkhgjn":1,"string":367,"unavailable":2,"pending":6,"testStatus":1,"available":432,"OK":8,"free":1,"status":26}",
           },
-          "cookies": Array [],
-          "headers": Array [
-            Object {
+          "cookies": [],
+          "headers": [
+            {
               "name": "access-control-allow-headers",
               "value": "Content-Type, api_key, Authorization",
             },
-            Object {
+            {
               "name": "access-control-allow-methods",
               "value": "GET, POST, DELETE, PUT",
             },
-            Object {
+            {
               "name": "access-control-allow-origin",
               "value": "*",
             },
-            Object {
+            {
               "name": "content-type",
               "value": "application/json",
             },
-            Object {
+            {
               "name": "date",
               "value": "Wed, 11 May 2022 11:47:04 GMT",
             },
-            Object {
+            {
               "name": "server",
               "value": "Jetty(9.2.9.v20150224)",
             },
@@ -664,7 +664,7 @@ Object {
         "serverIPAddress": "52.70.147.42",
         "startedDateTime": "2022-05-11T11:47:04.681Z",
         "time": 86.20700001483783,
-        "timings": Object {
+        "timings": {
           "_blocked_queueing": 1.1159999994561076,
           "blocked": 1.4859999994561077,
           "connect": -1,

@@ -4,6 +4,8 @@ import {
 } from '../../../operations';
 import { SpecPatch, OpenAPIV3 } from '../..';
 import { PatchOperationGroup, PatchImpact } from '../../../patches';
+import { OperationDiffResultKind } from '../../../operations/diffs';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 export function* missingMethodPatches(
   undocumentedOperation: UndocumentedOperation
@@ -26,6 +28,12 @@ export function* missingMethodPatches(
   );
 
   yield {
+    diff: {
+      kind: OperationDiffResultKind.UnmatchedMethod,
+      subject: method,
+      pathPattern: pathPattern,
+    },
+    path: jsonPointerHelpers.compile(['paths', pathPattern]),
     description: `add '${method.toUpperCase()}' method for '${pathPattern}'`,
     impact: [PatchImpact.Addition, PatchImpact.BackwardsCompatible],
     groupedOperations,

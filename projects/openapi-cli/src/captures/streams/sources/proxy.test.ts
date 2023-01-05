@@ -1,3 +1,5 @@
+import { it, describe, expect, beforeAll, afterAll } from '@jest/globals';
+
 import { ProxyCertAuthority, ProxyInteractions } from './proxy';
 import * as mockttp from 'mockttp';
 import bent from 'bent';

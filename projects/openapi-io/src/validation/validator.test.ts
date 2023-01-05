@@ -1,3 +1,4 @@
+import { test, expect, describe } from '@jest/globals';
 import fs from 'fs-extra';
 
 import { validateOpenApiV3Document } from './validator';
@@ -199,9 +200,9 @@ test('processValidatorErrors attaches the sourcemap', async () => {
   try {
     validateOpenApiV3Document(spec.jsonLike, spec.sourcemap);
   } catch (error) {
-    const filterOutFileNames = error.message
+    const filterOutFileNames = (error as any).message
       .split('\n')
-      .filter((i) => !i.startsWith('[90m/'))
+      .filter((i: any) => !i.startsWith('[90m/'))
       .join('\n');
 
     expect(filterOutFileNames).toMatchSnapshot();

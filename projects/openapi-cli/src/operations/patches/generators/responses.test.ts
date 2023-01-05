@@ -1,3 +1,4 @@
+import { it, describe, expect } from '@jest/globals';
 import { responsesPatches } from './responses';
 import {
   diffInteractionByOperation,

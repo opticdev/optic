@@ -4,13 +4,13 @@ import invariant from 'ts-invariant';
 import stripAnsi from 'strip-ansi';
 import sliceAnsi from 'slice-ansi';
 import Path from 'path';
+import chalk from 'chalk'
 
 type ObservedOperation = { pathPattern: string; method: string };
 
 const spinner = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
 
 export async function updateReporter(stream: WriteStream, cwd: string) {
-  const chalk = (await import('chalk')).default;
 
   let stats = {
     filesUpdated: Array.from<string>([]),
@@ -94,26 +94,6 @@ export async function updateReporter(stream: WriteStream, cwd: string) {
     )}`;
   }
 
-  function updateFooter() {
-    let totalCount = stats.interactionsCount;
-    let matchedCount = stats.matchedInteractionsCount;
-
-    let statsLineIndex = lines.findIndex((line) => line.id === 'footer-stats');
-    let statsLine = lines[statsLineIndex];
-    invariant(statsLine, 'expect stats line to exist when footer lines');
-
-    statsLine.spinner = totalCount === 0;
-    statsLine.text =
-      totalCount === 0
-        ? chalk.dim(
-            'No requests that match any documented paths + methods found yet'
-          )
-        : `${matchedCount} ${chalk.dim('matched')} ${chalk.dim(
-            '/'
-          )} ${totalCount} ${chalk.dim('total observed requests')}`;
-    renderLine(statsLineIndex);
-  }
-
   function onTerminalResize() {
     for (let i = 0; i < lines.length; i++) {
       renderLine(i);
@@ -123,17 +103,10 @@ export async function updateReporter(stream: WriteStream, cwd: string) {
   stream.on('resize', onTerminalResize);
 
   appendLine({ id: 'footer-empty-line' });
-  appendLine({ id: 'footer-stats' });
-  appendLine({
-    id: 'footer-exit-message',
-    text: '> Press Enter to finish and apply the patches',
-  });
-  updateFooter();
 
   return {
     capturedInteraction({ path, method }: { path: string; method: string }) {
       stats.interactionsCount++;
-      updateFooter();
     },
     matchedInteraction(op: ObservedOperation) {
       let id = operationId(op);
@@ -172,7 +145,6 @@ export async function updateReporter(stream: WriteStream, cwd: string) {
       }
 
       stats.matchedInteractionsCount++;
-      updateFooter();
     },
     patch(op: ObservedOperation, capturedPath: string, description: string) {
       let id = operationId(op);
@@ -245,8 +217,7 @@ export async function updateReporter(stream: WriteStream, cwd: string) {
             : `${patchCount} ${chalk.dim(
                 `patch${patchCount > 1 ? 'es' : ''} applied`
               )}`;
-        let icon =
-          patchCount <= 0 ? chalk.greenBright('✓') : chalk.blueBright('»');
+        let icon = patchCount <= 0 ? chalk.greenBright(' ✓') : chalk.blueBright(' »');
 
         line.icon = icon;
         line.spinner = false;
@@ -254,21 +225,10 @@ export async function updateReporter(stream: WriteStream, cwd: string) {
         renderLine(lineIndex);
       }
 
-      let footerLineIndex = lines.findIndex(
-        (line) => line.id === 'footer-exit-message'
-      )!;
-      let footerLine = lines[footerLineIndex];
-      footerLine.text =
-        stats.matchedOperations.size > 0
-          ? 'Finished and applied patches'
-          : 'Finished without applying any patches';
-      renderLine(footerLineIndex);
-
       if (stats.filesUpdated.length > 0) {
         appendLine({ id: 'summary-margin' });
         for (let i = 0; i < stats.filesUpdated.length; i++) {
           let path = stats.filesUpdated[i];
-          let id = `file-update--${path}`;
 
           let relativePath = Path.relative(cwd, path);
           let isFarRemoved = relativePath
@@ -276,14 +236,6 @@ export async function updateReporter(stream: WriteStream, cwd: string) {
             .slice(0, 4)
             .every((component) => component === '..');
 
-          appendLine({
-            id,
-            text: `${chalk.dim('Updated')} ${
-              isFarRemoved || relativePath.length + 5 > path.length
-                ? path
-                : relativePath
-            }`,
-          });
         }
       }
 

@@ -40,61 +40,45 @@ optic diff openapi.yaml --base main --check
 
 <img src="https://i.imgur.com/JEQL2GV.png" width="400" />
 
-[Read breaking change documentation](https://useoptic.com/docs/breaking-changes)
+[Read breaking change documentation](https://useoptic.com/docs)
 
-## Easily adopt OpenAPI
+## Easily adopt OpenAPI and keep your specs up-to-date
 
-Create new and update existing OpenAPI specifications straight from your services' traffic. Optic makes it easy to adopt OpenAPI in a day, without changing how you work.
+With Optic it is easy to document an existing API with OpenAPI. Just show Optic traffic and it will write all the boilerplate OpenAPI for you. 
 
-### Tracking changes with Optic:
+#### Capturing traffic
 
-Show Optic real API traffic using the `oas capture` commands. Traffic can come from your development environment, tests, or the browser.
-
-```bash
-oas capture --proxy localhost:3000 traffic.har
-```
-
-Captured traffic is like working copy in Git. Use `oas status` to see the difference between how your OpenAPI specification says your API works, and how it actually works.
+Show Optic real API traffic using the `optic capture` command. Traffic can come from: 
+- local development environment ie `localhost:4000`
+- a live API ie `https://api.twitter.com` or `https://api.your-service.com`
 
 ```bash
-oas openapi.yaml status --har traffic.har
+optic capture openapi.yml localhost:4000
 ```
 
-<img src="https://user-images.githubusercontent.com/857549/183688912-f8c8c486-01f0-40d6-832d-a2895bead18e.png" width="400" />
+#### Quickly documenting an existing API
 
-Run `oas add` and `oas update` to update the spec. Optic precision patches your OpenAPI file with the same additions, updates, and removals you would manually write. This is faster and much less error-prone than writing OpenAPI by hand.
+Capture a lot of traffic then run `optic verify` with the `--document all` flag: 
 
 ```bash
-oas openapi.yaml add --har traffic.har  GET /lists
+optic verify openapi.yml --document all
 ```
 
-<img src="https://user-images.githubusercontent.com/857549/183689051-7599a5d1-8098-4613-981b-cd463951b492.png" width="400" />
+#### Track API changes with OpenAPI
 
-```bash
-oas openapi.yaml update --har traffic.har
-```
+Captured traffic is like working copy in Git. Use `optic verify` to see the difference between how your OpenAPI specification says your API works, and how it actually works.
 
-<img src="https://user-images.githubusercontent.com/857549/183689232-878d6a7b-557f-4f74-a6d2-84258531e18b.png" width="400" />
+https://user-images.githubusercontent.com/5900338/210244068-22540288-1f6d-46a7-a2e9-5b3d19a00f31.mp4
 
-> ### A collaborator, not a generator
->
-> Using `oas` to update your spec is like working with a collaborator. It helps you write all the boilerplate OpenAPI and keep your spec in sync with the actual API's behavior.
->
-> ✅ **Never overwrites changes developers make to the same OpenAPI file**
->
-> ✅ **Respects $refs across multiple files**
->
-> ✅ **Improves accuracy of your specification**
->
-> ✅ **Speeds up your team**
-
-[Read Adopting OpenAPI documentation](https://www.useoptic.com/docs/track-changes)
+The `verify` command detects drift between your OpenAPI spec and the actual API:
+- If Optic detects planned changes made code-first, you can quickly and accurately document them by passing the `--patch` flag. 
+- If Optic detects unexpected changes (bugs), they will continue to show up as errors until you fix the API implementation and resolve them. Some teams even run `optic verify` in CI to fail PRs where the API and OpenAPI spec are out of sync. 
 
 ## Resources
 
 - [Documentation](https://useoptic.com/docs)
 - [Beyond API Linting: How Optic is different](https://useoptic.com/blog/beyond-api-linting)
-- [Adding Optic to your CI Pipeline](https://useoptic.com/docs/optic-cloud)
+- [Adding Optic to your CI Pipeline](https://useoptic.com/docs/running-in-ci)
 - [Book office hours](https://calendly.com/optic-onboarding/optic-office-hours)
 
 ## License

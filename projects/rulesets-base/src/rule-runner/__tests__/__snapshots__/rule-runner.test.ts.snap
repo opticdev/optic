@@ -1,21 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`spectral rules runs spectral rules 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
           "method": "",
           "path": "This Specification",
         },
-        "conceptualPath": Array [],
+        "conceptualPath": [],
         "jsonPath": "",
         "kind": "API",
       },
     },
     "condition": "oas3-api-servers",
-    "error": "OpenAPI \\"servers\\" must be present and non-empty array.",
+    "error": "OpenAPI "servers" must be present and non-empty array.",
     "isMust": true,
     "isShould": false,
     "passed": false,
