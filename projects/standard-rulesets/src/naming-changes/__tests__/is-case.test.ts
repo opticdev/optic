@@ -1,3 +1,4 @@
+import { test, expect, describe } from '@jest/globals';
 import { isCase } from '../isCase';
 
 describe('isCase', () => {

@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`required json schema diff visitor missing required fields' 1`] = `
-Array [
-  Object {
+[
+  {
     "description": "required property 'f3' was missing",
     "example": undefined,
     "instancePath": "/hello/f3",

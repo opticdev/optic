@@ -1,35 +1,35 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`breaking changes ruleset - parameter type change "cookie" parameter type change 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "cookie",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "cookie",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "version",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -54,34 +54,34 @@ Array [
     "type": "changed",
     "where": "GET /api/users cookie parameter: version",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "cookie",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "cookie",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "version",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -106,34 +106,34 @@ Array [
     "type": "changed",
     "where": "GET /api/users cookie parameter: version",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "cookie",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "cookie",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "version",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -158,34 +158,34 @@ Array [
     "type": "changed",
     "where": "GET /api/users cookie parameter: version",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "cookie",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "cookie",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "version",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -214,35 +214,35 @@ Array [
 `;
 
 exports[`breaking changes ruleset - parameter type change "header" parameter type change 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "header",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "header",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "version",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -267,34 +267,34 @@ Array [
     "type": "changed",
     "where": "GET /api/users header parameter: version",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "header",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "header",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "version",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -319,34 +319,34 @@ Array [
     "type": "changed",
     "where": "GET /api/users header parameter: version",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "header",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "header",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "version",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -371,34 +371,34 @@ Array [
     "type": "changed",
     "where": "GET /api/users header parameter: version",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "header",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "header",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "version",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -427,35 +427,35 @@ Array [
 `;
 
 exports[`breaking changes ruleset - parameter type change "path" parameter type change 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "path",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "path",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "path": "version",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -480,34 +480,34 @@ Array [
     "type": "changed",
     "where": "GET /api/users path parameter: version",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "path",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "path",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "path": "version",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -532,34 +532,34 @@ Array [
     "type": "changed",
     "where": "GET /api/users path parameter: version",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "path",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "path",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "path": "version",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -588,35 +588,35 @@ Array [
 `;
 
 exports[`breaking changes ruleset - parameter type change "query" parameter type change 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "query",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "query",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "version",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -641,34 +641,34 @@ Array [
     "type": "changed",
     "where": "GET /api/users query parameter: version",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "query",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "query",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "version",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -693,34 +693,34 @@ Array [
     "type": "changed",
     "where": "GET /api/users query parameter: version",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "query",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "query",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "version",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -745,34 +745,34 @@ Array [
     "type": "changed",
     "where": "GET /api/users query parameter: version",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "query",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "query",
           "name": "version",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "version",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",

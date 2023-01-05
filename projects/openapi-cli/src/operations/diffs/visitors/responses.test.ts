@@ -1,3 +1,4 @@
+import { it, describe, expect } from '@jest/globals';
 import { visitResponses } from './responses';
 import { CapturedBody, CapturedResponse } from '../../../captures';
 

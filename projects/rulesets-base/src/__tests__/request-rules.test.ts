@@ -1,3 +1,4 @@
+import { jest, test, expect, describe } from '@jest/globals'
 import { defaultEmptySpec, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { RuleError } from '../errors';
 import { RuleRunner } from '../rule-runner';
@@ -55,7 +56,7 @@ describe('RequestRule', () => {
       await ruleRunner.runRulesWithFacts(createRuleInputs(json, json));
 
       expect(mockFn.mock.calls.length).toBe(1);
-      const requestFromCallArg = mockFn.mock.calls[0][0];
+      const requestFromCallArg = mockFn.mock.calls[0][0] as any;
       expect(requestFromCallArg.contentType).toBe('application/json');
       expect(requestFromCallArg.location.jsonPath).toBe(
         '/paths/~1api~1users/get/requestBody/content/application~1json'
@@ -108,7 +109,7 @@ describe('RequestRule', () => {
       );
 
       expect(mockFn.mock.calls.length).toBe(1);
-      const requestFromCallArg = mockFn.mock.calls[0][0];
+      const requestFromCallArg = mockFn.mock.calls[0][0] as any;
       expect(requestFromCallArg.contentType).toBe('application/json');
       expect(requestFromCallArg.location.jsonPath).toBe(
         '/paths/~1api~1users/get/requestBody/content/application~1json'
@@ -129,7 +130,7 @@ describe('RequestRule', () => {
       await ruleRunner.runRulesWithFacts(createRuleInputs(json, json));
 
       expect(mockFn.mock.calls.length).toBe(1);
-      const requestFromCallArg = mockFn.mock.calls[0][0];
+      const requestFromCallArg = mockFn.mock.calls[0][0] as any;
       expect(requestFromCallArg.contentType).toBe('application/xml');
       expect(requestFromCallArg.location.jsonPath).toBe(
         '/paths/~1api~1users~1{userId}/get/requestBody/content/application~1xml'

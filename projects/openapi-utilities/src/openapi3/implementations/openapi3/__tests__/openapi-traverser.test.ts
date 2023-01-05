@@ -1,3 +1,4 @@
+import { it, expect, describe } from '@jest/globals';
 import { OpenAPITraverser } from '../openapi-traverser';
 import fs from 'fs-extra';
 

@@ -1,11 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`json changelog collects changes properly: jsonChangelog 1`] = `
-Object {
-  "operations": Array [
-    Object {
-      "attributes": Array [
-        Object {
+{
+  "operations": [
+    {
+      "attributes": [
+        {
           "after": "get_examples",
           "before": "getExamples",
           "key": "operationId",
@@ -13,51 +13,51 @@ Object {
       ],
       "change": "changed",
       "name": "get /example",
-      "parameters": Array [],
+      "parameters": [],
       "requestBody": undefined,
-      "responses": Array [
-        Object {
-          "attributes": Array [],
+      "responses": [
+        {
+          "attributes": [],
           "change": "changed",
-          "contentTypes": Array [
-            Object {
-              "attributes": Array [],
+          "contentTypes": [
+            {
+              "attributes": [],
               "change": "changed",
               "name": "application/json",
-              "schemaChanges": Array [
-                Object {
-                  "attributes": Array [
-                    Object {
-                      "after": Array [
-                        Object {
-                          "properties": Object {
-                            "orderId": Object {
+              "schemaChanges": [
+                {
+                  "attributes": [
+                    {
+                      "after": [
+                        {
+                          "properties": {
+                            "orderId": {
                               "type": "number",
                             },
                           },
                           "type": "object",
                         },
-                        Object {
-                          "properties": Object {
-                            "fulfillmentId": Object {
+                        {
+                          "properties": {
+                            "fulfillmentId": {
                               "type": "string",
                             },
                           },
                           "type": "object",
                         },
                       ],
-                      "before": Array [
-                        Object {
-                          "properties": Object {
-                            "orderId": Object {
+                      "before": [
+                        {
+                          "properties": {
+                            "orderId": {
                               "type": "string",
                             },
                           },
                           "type": "object",
                         },
-                        Object {
-                          "properties": Object {
-                            "fulfillmentId": Object {
+                        {
+                          "properties": {
+                            "fulfillmentId": {
                               "type": "string",
                             },
                           },
@@ -70,9 +70,9 @@ Object {
                   "change": "changed",
                   "name": "composedObject",
                 },
-                Object {
-                  "attributes": Array [
-                    Object {
+                {
+                  "attributes": [
+                    {
                       "after": "number",
                       "before": "string",
                       "key": "type",
@@ -81,23 +81,23 @@ Object {
                   "change": "changed",
                   "name": "composedObject.orderId",
                 },
-                Object {
-                  "attributes": Array [
-                    Object {
-                      "after": Array [
-                        Object {
-                          "properties": Object {
-                            "orderId": Object {
+                {
+                  "attributes": [
+                    {
+                      "after": [
+                        {
+                          "properties": {
+                            "orderId": {
                               "type": "string",
                             },
                           },
                           "type": "object",
                         },
-                        Object {
-                          "properties": Object {
-                            "order": Object {
-                              "properties": Object {
-                                "id": Object {
+                        {
+                          "properties": {
+                            "order": {
+                              "properties": {
+                                "id": {
                                   "type": "string",
                                 },
                               },
@@ -107,10 +107,10 @@ Object {
                           "type": "object",
                         },
                       ],
-                      "before": Array [
-                        Object {
-                          "properties": Object {
-                            "orderId": Object {
+                      "before": [
+                        {
+                          "properties": {
+                            "orderId": {
                               "type": "string",
                             },
                           },
@@ -123,37 +123,37 @@ Object {
                   "change": "changed",
                   "name": "expandableObject",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "expandableObject.order",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "expandableObject.order.id",
                 },
-                Object {
-                  "attributes": Array [
-                    Object {
-                      "after": Array [
-                        Object {
+                {
+                  "attributes": [
+                    {
+                      "after": [
+                        {
                           "type": "string",
                         },
-                        Object {
+                        {
                           "type": "number",
                         },
                       ],
-                      "before": Array [
-                        Object {
+                      "before": [
+                        {
                           "type": "string",
                         },
-                        Object {
+                        {
                           "type": "number",
                         },
-                        Object {
-                          "properties": Object {
-                            "orderId": Object {
+                        {
+                          "properties": {
+                            "orderId": {
                               "type": "string",
                             },
                           },
@@ -166,8 +166,8 @@ Object {
                   "change": "changed",
                   "name": "stringOrNumberOrObject",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "removed",
                   "name": "stringOrNumberOrObject.orderId",
                 },
@@ -178,30 +178,30 @@ Object {
         },
       ],
     },
-    Object {
-      "attributes": Array [],
+    {
+      "attributes": [],
       "change": "removed",
       "name": "get /pet",
-      "parameters": Array [],
+      "parameters": [],
       "requestBody": undefined,
-      "responses": Array [
-        Object {
-          "attributes": Array [],
+      "responses": [
+        {
+          "attributes": [],
           "change": "removed",
-          "contentTypes": Array [],
+          "contentTypes": [],
           "name": "404 response",
         },
-        Object {
-          "attributes": Array [],
+        {
+          "attributes": [],
           "change": "removed",
-          "contentTypes": Array [],
+          "contentTypes": [],
           "name": "405 response",
         },
       ],
     },
-    Object {
-      "attributes": Array [
-        Object {
+    {
+      "attributes": [
+        {
           "after": "addPet-change",
           "before": "addPet",
           "key": "operationId",
@@ -209,18 +209,18 @@ Object {
       ],
       "change": "changed",
       "name": "post /pet",
-      "parameters": Array [],
-      "requestBody": Object {
-        "attributes": Array [],
+      "parameters": [],
+      "requestBody": {
+        "attributes": [],
         "change": "changed",
-        "contentTypes": Array [
-          Object {
-            "attributes": Array [],
+        "contentTypes": [
+          {
+            "attributes": [],
             "change": "changed",
             "name": "application/json",
-            "schemaChanges": Array [
-              Object {
-                "attributes": Array [],
+            "schemaChanges": [
+              {
+                "attributes": [],
                 "change": "added",
                 "name": "category.other",
               },
@@ -229,91 +229,91 @@ Object {
         ],
         "name": "Request Body",
       },
-      "responses": Array [],
+      "responses": [],
     },
-    Object {
-      "attributes": Array [],
+    {
+      "attributes": [],
       "change": "changed",
       "name": "put /pet",
-      "parameters": Array [],
-      "requestBody": Object {
-        "attributes": Array [],
+      "parameters": [],
+      "requestBody": {
+        "attributes": [],
         "change": "changed",
-        "contentTypes": Array [
-          Object {
-            "attributes": Array [],
+        "contentTypes": [
+          {
+            "attributes": [],
             "change": "changed",
             "name": "application/json",
-            "schemaChanges": Array [
-              Object {
-                "attributes": Array [],
+            "schemaChanges": [
+              {
+                "attributes": [],
                 "change": "added",
                 "name": "example",
               },
-              Object {
-                "attributes": Array [],
+              {
+                "attributes": [],
                 "change": "removed",
                 "name": "name",
               },
-              Object {
-                "attributes": Array [],
+              {
+                "attributes": [],
                 "change": "added",
                 "name": "number",
               },
             ],
           },
-          Object {
-            "attributes": Array [],
+          {
+            "attributes": [],
             "change": "removed",
             "name": "application/xml",
-            "schemaChanges": Array [
-              Object {
-                "attributes": Array [],
+            "schemaChanges": [
+              {
+                "attributes": [],
                 "change": "removed",
                 "name": "category",
               },
-              Object {
-                "attributes": Array [],
+              {
+                "attributes": [],
                 "change": "removed",
                 "name": "category.id",
               },
-              Object {
-                "attributes": Array [],
+              {
+                "attributes": [],
                 "change": "removed",
                 "name": "category.name",
               },
-              Object {
-                "attributes": Array [],
+              {
+                "attributes": [],
                 "change": "removed",
                 "name": "id",
               },
-              Object {
-                "attributes": Array [],
+              {
+                "attributes": [],
                 "change": "removed",
                 "name": "name",
               },
-              Object {
-                "attributes": Array [],
+              {
+                "attributes": [],
                 "change": "removed",
                 "name": "photoUrls",
               },
-              Object {
-                "attributes": Array [],
+              {
+                "attributes": [],
                 "change": "removed",
                 "name": "status",
               },
-              Object {
-                "attributes": Array [],
+              {
+                "attributes": [],
                 "change": "removed",
                 "name": "tags",
               },
-              Object {
-                "attributes": Array [],
+              {
+                "attributes": [],
                 "change": "removed",
                 "name": "tags.items.id",
               },
-              Object {
-                "attributes": Array [],
+              {
+                "attributes": [],
                 "change": "removed",
                 "name": "tags.items.name",
               },
@@ -322,146 +322,146 @@ Object {
         ],
         "name": "Request Body",
       },
-      "responses": Array [
-        Object {
-          "attributes": Array [],
+      "responses": [
+        {
+          "attributes": [],
           "change": "removed",
-          "contentTypes": Array [],
+          "contentTypes": [],
           "name": "400 response",
         },
       ],
     },
-    Object {
-      "attributes": Array [],
+    {
+      "attributes": [],
       "change": "added",
       "name": "get /pet/findByStatus",
-      "parameters": Array [
-        Object {
-          "attributes": Array [],
+      "parameters": [
+        {
+          "attributes": [],
           "change": "added",
           "name": "query parameter 'status'",
         },
-        Object {
-          "attributes": Array [],
+        {
+          "attributes": [],
           "change": "added",
           "name": "cookie parameter 'debug'",
         },
       ],
       "requestBody": undefined,
-      "responses": Array [
-        Object {
-          "attributes": Array [],
+      "responses": [
+        {
+          "attributes": [],
           "change": "added",
-          "contentTypes": Array [
-            Object {
-              "attributes": Array [],
+          "contentTypes": [
+            {
+              "attributes": [],
               "change": "added",
               "name": "application/json",
-              "schemaChanges": Array [
-                Object {
-                  "attributes": Array [],
+              "schemaChanges": [
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.category",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.category.id",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.category.name",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.id",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.name",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.photoUrls",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.status",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.tags",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.tags.items.id",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.tags.items.name",
                 },
               ],
             },
-            Object {
-              "attributes": Array [],
+            {
+              "attributes": [],
               "change": "added",
               "name": "application/xml",
-              "schemaChanges": Array [
-                Object {
-                  "attributes": Array [],
+              "schemaChanges": [
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.category",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.category.id",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.category.name",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.id",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.name",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.photoUrls",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.status",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.tags",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.tags.items.id",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.tags.items.name",
                 },
@@ -470,140 +470,140 @@ Object {
           ],
           "name": "200 response",
         },
-        Object {
-          "attributes": Array [],
+        {
+          "attributes": [],
           "change": "added",
-          "contentTypes": Array [],
+          "contentTypes": [],
           "name": "400 response",
         },
       ],
     },
-    Object {
-      "attributes": Array [],
+    {
+      "attributes": [],
       "change": "added",
       "name": "get /pet/findByTags",
-      "parameters": Array [
-        Object {
-          "attributes": Array [],
+      "parameters": [
+        {
+          "attributes": [],
           "change": "added",
           "name": "query parameter 'tags'",
         },
       ],
       "requestBody": undefined,
-      "responses": Array [
-        Object {
-          "attributes": Array [],
+      "responses": [
+        {
+          "attributes": [],
           "change": "added",
-          "contentTypes": Array [
-            Object {
-              "attributes": Array [],
+          "contentTypes": [
+            {
+              "attributes": [],
               "change": "added",
               "name": "application/json",
-              "schemaChanges": Array [
-                Object {
-                  "attributes": Array [],
+              "schemaChanges": [
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.category",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.category.id",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.category.name",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.id",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.name",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.photoUrls",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.status",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.tags",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.tags.items.id",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.tags.items.name",
                 },
               ],
             },
-            Object {
-              "attributes": Array [],
+            {
+              "attributes": [],
               "change": "added",
               "name": "application/xml",
-              "schemaChanges": Array [
-                Object {
-                  "attributes": Array [],
+              "schemaChanges": [
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.category",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.category.id",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.category.name",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.id",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.name",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.photoUrls",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.status",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.tags",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.tags.items.id",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "items.tags.items.name",
                 },
@@ -612,172 +612,172 @@ Object {
           ],
           "name": "200 response",
         },
-        Object {
-          "attributes": Array [],
+        {
+          "attributes": [],
           "change": "added",
-          "contentTypes": Array [],
+          "contentTypes": [],
           "name": "400 response",
         },
       ],
     },
-    Object {
-      "attributes": Array [],
+    {
+      "attributes": [],
       "change": "added",
       "name": "delete /pet/{petId}",
-      "parameters": Array [
-        Object {
-          "attributes": Array [],
+      "parameters": [
+        {
+          "attributes": [],
           "change": "added",
           "name": "path parameter 'petId'",
         },
-        Object {
-          "attributes": Array [],
+        {
+          "attributes": [],
           "change": "added",
           "name": "header parameter 'api_key'",
         },
       ],
       "requestBody": undefined,
-      "responses": Array [
-        Object {
-          "attributes": Array [],
+      "responses": [
+        {
+          "attributes": [],
           "change": "added",
-          "contentTypes": Array [],
+          "contentTypes": [],
           "name": "400 response",
         },
-        Object {
-          "attributes": Array [],
+        {
+          "attributes": [],
           "change": "added",
-          "contentTypes": Array [],
+          "contentTypes": [],
           "name": "404 response",
         },
       ],
     },
-    Object {
-      "attributes": Array [],
+    {
+      "attributes": [],
       "change": "added",
       "name": "get /pet/{petId}",
-      "parameters": Array [
-        Object {
-          "attributes": Array [],
+      "parameters": [
+        {
+          "attributes": [],
           "change": "added",
           "name": "path parameter 'petId'",
         },
       ],
       "requestBody": undefined,
-      "responses": Array [
-        Object {
-          "attributes": Array [],
+      "responses": [
+        {
+          "attributes": [],
           "change": "added",
-          "contentTypes": Array [
-            Object {
-              "attributes": Array [],
+          "contentTypes": [
+            {
+              "attributes": [],
               "change": "added",
               "name": "application/json",
-              "schemaChanges": Array [
-                Object {
-                  "attributes": Array [],
+              "schemaChanges": [
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "category",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "category.id",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "category.name",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "id",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "name",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "photoUrls",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "status",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "tags",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "tags.items.id",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "tags.items.name",
                 },
               ],
             },
-            Object {
-              "attributes": Array [],
+            {
+              "attributes": [],
               "change": "added",
               "name": "application/xml",
-              "schemaChanges": Array [
-                Object {
-                  "attributes": Array [],
+              "schemaChanges": [
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "category",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "category.id",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "category.name",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "id",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "name",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "photoUrls",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "status",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "tags",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "tags.items.id",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "tags.items.name",
                 },
@@ -786,69 +786,69 @@ Object {
           ],
           "name": "200 response",
         },
-        Object {
-          "attributes": Array [],
+        {
+          "attributes": [],
           "change": "added",
-          "contentTypes": Array [],
+          "contentTypes": [],
           "name": "400 response",
         },
-        Object {
-          "attributes": Array [],
+        {
+          "attributes": [],
           "change": "added",
-          "contentTypes": Array [],
+          "contentTypes": [],
           "name": "404 response",
         },
       ],
     },
-    Object {
-      "attributes": Array [],
+    {
+      "attributes": [],
       "change": "added",
       "name": "post /pet/{petId}",
-      "parameters": Array [
-        Object {
-          "attributes": Array [],
+      "parameters": [
+        {
+          "attributes": [],
           "change": "added",
           "name": "path parameter 'petId'",
         },
       ],
-      "requestBody": Object {
-        "attributes": Array [],
+      "requestBody": {
+        "attributes": [],
         "change": "added",
-        "contentTypes": Array [
-          Object {
-            "attributes": Array [],
+        "contentTypes": [
+          {
+            "attributes": [],
             "change": "added",
             "name": "application/x-www-form-urlencoded",
-            "schemaChanges": Array [],
+            "schemaChanges": [],
           },
         ],
         "name": "Request Body",
       },
-      "responses": Array [
-        Object {
-          "attributes": Array [],
+      "responses": [
+        {
+          "attributes": [],
           "change": "added",
-          "contentTypes": Array [],
+          "contentTypes": [],
           "name": "405 response",
         },
       ],
     },
-    Object {
-      "attributes": Array [],
+    {
+      "attributes": [],
       "change": "changed",
       "name": "post /pet/{petId}/uploadImage",
-      "parameters": Array [
-        Object {
-          "attributes": Array [
-            Object {
-              "after": Object {
-                "enum": Array [
+      "parameters": [
+        {
+          "attributes": [
+            {
+              "after": {
+                "enum": [
                   0,
                   1,
                 ],
                 "type": "integer",
               },
-              "before": Object {
+              "before": {
                 "type": "integer",
               },
               "key": "schema",
@@ -859,28 +859,28 @@ Object {
         },
       ],
       "requestBody": undefined,
-      "responses": Array [
-        Object {
-          "attributes": Array [],
+      "responses": [
+        {
+          "attributes": [],
           "change": "removed",
-          "contentTypes": Array [
-            Object {
-              "attributes": Array [],
+          "contentTypes": [
+            {
+              "attributes": [],
               "change": "removed",
               "name": "application/json",
-              "schemaChanges": Array [
-                Object {
-                  "attributes": Array [],
+              "schemaChanges": [
+                {
+                  "attributes": [],
                   "change": "removed",
                   "name": "code",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "removed",
                   "name": "message",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "removed",
                   "name": "type",
                 },
@@ -889,27 +889,27 @@ Object {
           ],
           "name": "200 response",
         },
-        Object {
-          "attributes": Array [],
+        {
+          "attributes": [],
           "change": "added",
-          "contentTypes": Array [
-            Object {
-              "attributes": Array [],
+          "contentTypes": [
+            {
+              "attributes": [],
               "change": "added",
               "name": "application/json",
-              "schemaChanges": Array [
-                Object {
-                  "attributes": Array [],
+              "schemaChanges": [
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "code",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "message",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "type",
                 },
@@ -918,27 +918,27 @@ Object {
           ],
           "name": "201 response",
         },
-        Object {
-          "attributes": Array [],
+        {
+          "attributes": [],
           "change": "added",
-          "contentTypes": Array [
-            Object {
-              "attributes": Array [],
+          "contentTypes": [
+            {
+              "attributes": [],
               "change": "added",
               "name": "application/json",
-              "schemaChanges": Array [
-                Object {
-                  "attributes": Array [],
+              "schemaChanges": [
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "code",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "message",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "type",
                 },
@@ -947,18 +947,18 @@ Object {
           ],
           "name": "404 response",
         },
-        Object {
-          "attributes": Array [],
+        {
+          "attributes": [],
           "change": "changed",
-          "contentTypes": Array [
-            Object {
-              "attributes": Array [],
+          "contentTypes": [
+            {
+              "attributes": [],
               "change": "changed",
               "name": "application/json",
-              "schemaChanges": Array [
-                Object {
-                  "attributes": Array [
-                    Object {
+              "schemaChanges": [
+                {
+                  "attributes": [
+                    {
                       "after": "integer",
                       "before": "string",
                       "key": "type",
@@ -974,29 +974,29 @@ Object {
         },
       ],
     },
-    Object {
-      "attributes": Array [],
+    {
+      "attributes": [],
       "change": "changed",
       "name": "post /store/order",
-      "parameters": Array [],
-      "requestBody": Object {
-        "attributes": Array [],
+      "parameters": [],
+      "requestBody": {
+        "attributes": [],
         "change": "changed",
-        "contentTypes": Array [
-          Object {
-            "attributes": Array [],
+        "contentTypes": [
+          {
+            "attributes": [],
             "change": "changed",
             "name": "*/*",
-            "schemaChanges": Array [
-              Object {
-                "attributes": Array [
-                  Object {
-                    "after": Array [
+            "schemaChanges": [
+              {
+                "attributes": [
+                  {
+                    "after": [
                       "placed",
                       "delivered",
                       "canceled",
                     ],
-                    "before": Array [
+                    "before": [
                       "placed",
                       "approved",
                       "delivered",
@@ -1007,8 +1007,8 @@ Object {
                 "change": "changed",
                 "name": "status",
               },
-              Object {
-                "attributes": Array [],
+              {
+                "attributes": [],
                 "change": "added",
                 "name": "summary",
               },
@@ -1017,25 +1017,25 @@ Object {
         ],
         "name": "Request Body",
       },
-      "responses": Array [
-        Object {
-          "attributes": Array [],
+      "responses": [
+        {
+          "attributes": [],
           "change": "changed",
-          "contentTypes": Array [
-            Object {
-              "attributes": Array [],
+          "contentTypes": [
+            {
+              "attributes": [],
               "change": "changed",
               "name": "application/json",
-              "schemaChanges": Array [
-                Object {
-                  "attributes": Array [
-                    Object {
-                      "after": Array [
+              "schemaChanges": [
+                {
+                  "attributes": [
+                    {
+                      "after": [
                         "placed",
                         "delivered",
                         "canceled",
                       ],
-                      "before": Array [
+                      "before": [
                         "placed",
                         "approved",
                         "delivered",
@@ -1046,27 +1046,27 @@ Object {
                   "change": "changed",
                   "name": "status",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "summary",
                 },
               ],
             },
-            Object {
-              "attributes": Array [],
+            {
+              "attributes": [],
               "change": "changed",
               "name": "application/xml",
-              "schemaChanges": Array [
-                Object {
-                  "attributes": Array [
-                    Object {
-                      "after": Array [
+              "schemaChanges": [
+                {
+                  "attributes": [
+                    {
+                      "after": [
                         "placed",
                         "delivered",
                         "canceled",
                       ],
-                      "before": Array [
+                      "before": [
                         "placed",
                         "approved",
                         "delivered",
@@ -1077,8 +1077,8 @@ Object {
                   "change": "changed",
                   "name": "status",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "summary",
                 },
@@ -1089,34 +1089,34 @@ Object {
         },
       ],
     },
-    Object {
-      "attributes": Array [],
+    {
+      "attributes": [],
       "change": "changed",
       "name": "delete /store/order/{orderId}",
-      "parameters": Array [],
+      "parameters": [],
       "requestBody": undefined,
-      "responses": Array [
-        Object {
-          "attributes": Array [],
+      "responses": [
+        {
+          "attributes": [],
           "change": "changed",
-          "contentTypes": Array [
-            Object {
-              "attributes": Array [],
+          "contentTypes": [
+            {
+              "attributes": [],
               "change": "added",
               "name": "application/json",
-              "schemaChanges": Array [
-                Object {
-                  "attributes": Array [],
+              "schemaChanges": [
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "code",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "message",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "type",
                 },
@@ -1127,31 +1127,31 @@ Object {
         },
       ],
     },
-    Object {
-      "attributes": Array [],
+    {
+      "attributes": [],
       "change": "changed",
       "name": "get /store/order/{orderId}",
-      "parameters": Array [],
+      "parameters": [],
       "requestBody": undefined,
-      "responses": Array [
-        Object {
-          "attributes": Array [],
+      "responses": [
+        {
+          "attributes": [],
           "change": "changed",
-          "contentTypes": Array [
-            Object {
-              "attributes": Array [],
+          "contentTypes": [
+            {
+              "attributes": [],
               "change": "changed",
               "name": "application/json",
-              "schemaChanges": Array [
-                Object {
-                  "attributes": Array [
-                    Object {
-                      "after": Array [
+              "schemaChanges": [
+                {
+                  "attributes": [
+                    {
+                      "after": [
                         "placed",
                         "delivered",
                         "canceled",
                       ],
-                      "before": Array [
+                      "before": [
                         "placed",
                         "approved",
                         "delivered",
@@ -1162,21 +1162,21 @@ Object {
                   "change": "changed",
                   "name": "status",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "summary",
                 },
               ],
             },
-            Object {
-              "attributes": Array [],
+            {
+              "attributes": [],
               "change": "changed",
               "name": "application/xml",
-              "schemaChanges": Array [
-                Object {
-                  "attributes": Array [
-                    Object {
+              "schemaChanges": [
+                {
+                  "attributes": [
+                    {
                       "after": false,
                       "before": true,
                       "key": "required",
@@ -1185,15 +1185,15 @@ Object {
                   "change": "changed",
                   "name": "petId",
                 },
-                Object {
-                  "attributes": Array [
-                    Object {
-                      "after": Array [
+                {
+                  "attributes": [
+                    {
+                      "after": [
                         "placed",
                         "delivered",
                         "canceled",
                       ],
-                      "before": Array [
+                      "before": [
                         "placed",
                         "approved",
                         "delivered",
@@ -1204,8 +1204,8 @@ Object {
                   "change": "changed",
                   "name": "status",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "summary",
                 },
@@ -1214,27 +1214,27 @@ Object {
           ],
           "name": "200 response",
         },
-        Object {
-          "attributes": Array [],
+        {
+          "attributes": [],
           "change": "changed",
-          "contentTypes": Array [
-            Object {
-              "attributes": Array [],
+          "contentTypes": [
+            {
+              "attributes": [],
               "change": "added",
               "name": "application/json",
-              "schemaChanges": Array [
-                Object {
-                  "attributes": Array [],
+              "schemaChanges": [
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "code",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "message",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "type",
                 },
@@ -1245,28 +1245,28 @@ Object {
         },
       ],
     },
-    Object {
-      "attributes": Array [],
+    {
+      "attributes": [],
       "change": "changed",
       "name": "post /user",
-      "parameters": Array [],
-      "requestBody": Object {
-        "attributes": Array [],
+      "parameters": [],
+      "requestBody": {
+        "attributes": [],
         "change": "changed",
-        "contentTypes": Array [
-          Object {
-            "attributes": Array [],
+        "contentTypes": [
+          {
+            "attributes": [],
             "change": "changed",
             "name": "*/*",
-            "schemaChanges": Array [
-              Object {
-                "attributes": Array [],
+            "schemaChanges": [
+              {
+                "attributes": [],
                 "change": "added",
                 "name": "bio",
               },
-              Object {
-                "attributes": Array [
-                  Object {
+              {
+                "attributes": [
+                  {
                     "after": false,
                     "before": true,
                     "key": "required",
@@ -1275,15 +1275,15 @@ Object {
                 "change": "changed",
                 "name": "lastName",
               },
-              Object {
-                "attributes": Array [],
+              {
+                "attributes": [],
                 "change": "removed",
                 "name": "phone",
               },
-              Object {
-                "attributes": Array [
-                  Object {
-                    "after": Array [
+              {
+                "attributes": [
+                  {
+                    "after": [
                       "activation-pending",
                       "activated",
                       "blocked",
@@ -1291,12 +1291,12 @@ Object {
                     "before": undefined,
                     "key": "enum",
                   },
-                  Object {
+                  {
                     "after": undefined,
                     "before": "int32",
                     "key": "format",
                   },
-                  Object {
+                  {
                     "after": "string",
                     "before": "integer",
                     "key": "type",
@@ -1305,9 +1305,9 @@ Object {
                 "change": "changed",
                 "name": "userStatus",
               },
-              Object {
-                "attributes": Array [
-                  Object {
+              {
+                "attributes": [
+                  {
                     "after": true,
                     "before": false,
                     "key": "required",
@@ -1321,30 +1321,30 @@ Object {
         ],
         "name": "Request Body",
       },
-      "responses": Array [],
+      "responses": [],
     },
-    Object {
-      "attributes": Array [],
+    {
+      "attributes": [],
       "change": "changed",
       "name": "post /user/createWithArray",
-      "parameters": Array [],
-      "requestBody": Object {
-        "attributes": Array [],
+      "parameters": [],
+      "requestBody": {
+        "attributes": [],
         "change": "changed",
-        "contentTypes": Array [
-          Object {
-            "attributes": Array [],
+        "contentTypes": [
+          {
+            "attributes": [],
             "change": "changed",
             "name": "*/*",
-            "schemaChanges": Array [
-              Object {
-                "attributes": Array [],
+            "schemaChanges": [
+              {
+                "attributes": [],
                 "change": "added",
                 "name": "items.bio",
               },
-              Object {
-                "attributes": Array [
-                  Object {
+              {
+                "attributes": [
+                  {
                     "after": false,
                     "before": true,
                     "key": "required",
@@ -1353,15 +1353,15 @@ Object {
                 "change": "changed",
                 "name": "items.lastName",
               },
-              Object {
-                "attributes": Array [],
+              {
+                "attributes": [],
                 "change": "removed",
                 "name": "items.phone",
               },
-              Object {
-                "attributes": Array [
-                  Object {
-                    "after": Array [
+              {
+                "attributes": [
+                  {
+                    "after": [
                       "activation-pending",
                       "activated",
                       "blocked",
@@ -1369,12 +1369,12 @@ Object {
                     "before": undefined,
                     "key": "enum",
                   },
-                  Object {
+                  {
                     "after": undefined,
                     "before": "int32",
                     "key": "format",
                   },
-                  Object {
+                  {
                     "after": "string",
                     "before": "integer",
                     "key": "type",
@@ -1383,9 +1383,9 @@ Object {
                 "change": "changed",
                 "name": "items.userStatus",
               },
-              Object {
-                "attributes": Array [
-                  Object {
+              {
+                "attributes": [
+                  {
                     "after": true,
                     "before": false,
                     "key": "required",
@@ -1399,30 +1399,30 @@ Object {
         ],
         "name": "Request Body",
       },
-      "responses": Array [],
+      "responses": [],
     },
-    Object {
-      "attributes": Array [],
+    {
+      "attributes": [],
       "change": "changed",
       "name": "post /user/createWithList",
-      "parameters": Array [],
-      "requestBody": Object {
-        "attributes": Array [],
+      "parameters": [],
+      "requestBody": {
+        "attributes": [],
         "change": "changed",
-        "contentTypes": Array [
-          Object {
-            "attributes": Array [],
+        "contentTypes": [
+          {
+            "attributes": [],
             "change": "changed",
             "name": "*/*",
-            "schemaChanges": Array [
-              Object {
-                "attributes": Array [],
+            "schemaChanges": [
+              {
+                "attributes": [],
                 "change": "added",
                 "name": "items.bio",
               },
-              Object {
-                "attributes": Array [
-                  Object {
+              {
+                "attributes": [
+                  {
                     "after": false,
                     "before": true,
                     "key": "required",
@@ -1431,15 +1431,15 @@ Object {
                 "change": "changed",
                 "name": "items.lastName",
               },
-              Object {
-                "attributes": Array [],
+              {
+                "attributes": [],
                 "change": "removed",
                 "name": "items.phone",
               },
-              Object {
-                "attributes": Array [
-                  Object {
-                    "after": Array [
+              {
+                "attributes": [
+                  {
+                    "after": [
                       "activation-pending",
                       "activated",
                       "blocked",
@@ -1447,12 +1447,12 @@ Object {
                     "before": undefined,
                     "key": "enum",
                   },
-                  Object {
+                  {
                     "after": undefined,
                     "before": "int32",
                     "key": "format",
                   },
-                  Object {
+                  {
                     "after": "string",
                     "before": "integer",
                     "key": "type",
@@ -1461,9 +1461,9 @@ Object {
                 "change": "changed",
                 "name": "items.userStatus",
               },
-              Object {
-                "attributes": Array [
-                  Object {
+              {
+                "attributes": [
+                  {
                     "after": true,
                     "before": false,
                     "key": "required",
@@ -1477,47 +1477,47 @@ Object {
         ],
         "name": "Request Body",
       },
-      "responses": Array [],
+      "responses": [],
     },
-    Object {
-      "attributes": Array [],
+    {
+      "attributes": [],
       "change": "changed",
       "name": "get /user/login",
-      "parameters": Array [],
+      "parameters": [],
       "requestBody": undefined,
-      "responses": Array [
-        Object {
-          "attributes": Array [],
+      "responses": [
+        {
+          "attributes": [],
           "change": "changed",
-          "contentTypes": Array [],
+          "contentTypes": [],
           "name": "200 response",
         },
       ],
     },
-    Object {
-      "attributes": Array [],
+    {
+      "attributes": [],
       "change": "changed",
       "name": "get /user/{username}",
-      "parameters": Array [],
+      "parameters": [],
       "requestBody": undefined,
-      "responses": Array [
-        Object {
-          "attributes": Array [],
+      "responses": [
+        {
+          "attributes": [],
           "change": "changed",
-          "contentTypes": Array [
-            Object {
-              "attributes": Array [],
+          "contentTypes": [
+            {
+              "attributes": [],
               "change": "changed",
               "name": "application/json",
-              "schemaChanges": Array [
-                Object {
-                  "attributes": Array [],
+              "schemaChanges": [
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "bio",
                 },
-                Object {
-                  "attributes": Array [
-                    Object {
+                {
+                  "attributes": [
+                    {
                       "after": false,
                       "before": true,
                       "key": "required",
@@ -1526,15 +1526,15 @@ Object {
                   "change": "changed",
                   "name": "lastName",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "removed",
                   "name": "phone",
                 },
-                Object {
-                  "attributes": Array [
-                    Object {
-                      "after": Array [
+                {
+                  "attributes": [
+                    {
+                      "after": [
                         "activation-pending",
                         "activated",
                         "blocked",
@@ -1542,12 +1542,12 @@ Object {
                       "before": undefined,
                       "key": "enum",
                     },
-                    Object {
+                    {
                       "after": undefined,
                       "before": "int32",
                       "key": "format",
                     },
-                    Object {
+                    {
                       "after": "string",
                       "before": "integer",
                       "key": "type",
@@ -1556,9 +1556,9 @@ Object {
                   "change": "changed",
                   "name": "userStatus",
                 },
-                Object {
-                  "attributes": Array [
-                    Object {
+                {
+                  "attributes": [
+                    {
                       "after": true,
                       "before": false,
                       "key": "required",
@@ -1569,19 +1569,19 @@ Object {
                 },
               ],
             },
-            Object {
-              "attributes": Array [],
+            {
+              "attributes": [],
               "change": "changed",
               "name": "application/xml",
-              "schemaChanges": Array [
-                Object {
-                  "attributes": Array [],
+              "schemaChanges": [
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "bio",
                 },
-                Object {
-                  "attributes": Array [
-                    Object {
+                {
+                  "attributes": [
+                    {
                       "after": false,
                       "before": true,
                       "key": "required",
@@ -1590,15 +1590,15 @@ Object {
                   "change": "changed",
                   "name": "lastName",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "removed",
                   "name": "phone",
                 },
-                Object {
-                  "attributes": Array [
-                    Object {
-                      "after": Array [
+                {
+                  "attributes": [
+                    {
+                      "after": [
                         "activation-pending",
                         "activated",
                         "blocked",
@@ -1606,12 +1606,12 @@ Object {
                       "before": undefined,
                       "key": "enum",
                     },
-                    Object {
+                    {
                       "after": undefined,
                       "before": "int32",
                       "key": "format",
                     },
-                    Object {
+                    {
                       "after": "string",
                       "before": "integer",
                       "key": "type",
@@ -1620,9 +1620,9 @@ Object {
                   "change": "changed",
                   "name": "userStatus",
                 },
-                Object {
-                  "attributes": Array [
-                    Object {
+                {
+                  "attributes": [
+                    {
                       "after": true,
                       "before": false,
                       "key": "required",
@@ -1636,27 +1636,27 @@ Object {
           ],
           "name": "200 response",
         },
-        Object {
-          "attributes": Array [],
+        {
+          "attributes": [],
           "change": "changed",
-          "contentTypes": Array [
-            Object {
-              "attributes": Array [],
+          "contentTypes": [
+            {
+              "attributes": [],
               "change": "added",
               "name": "application/json",
-              "schemaChanges": Array [
-                Object {
-                  "attributes": Array [],
+              "schemaChanges": [
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "code",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "message",
                 },
-                Object {
-                  "attributes": Array [],
+                {
+                  "attributes": [],
                   "change": "added",
                   "name": "type",
                 },
@@ -1667,28 +1667,28 @@ Object {
         },
       ],
     },
-    Object {
-      "attributes": Array [],
+    {
+      "attributes": [],
       "change": "changed",
       "name": "put /user/{username}",
-      "parameters": Array [],
-      "requestBody": Object {
-        "attributes": Array [],
+      "parameters": [],
+      "requestBody": {
+        "attributes": [],
         "change": "changed",
-        "contentTypes": Array [
-          Object {
-            "attributes": Array [],
+        "contentTypes": [
+          {
+            "attributes": [],
             "change": "changed",
             "name": "*/*",
-            "schemaChanges": Array [
-              Object {
-                "attributes": Array [],
+            "schemaChanges": [
+              {
+                "attributes": [],
                 "change": "added",
                 "name": "bio",
               },
-              Object {
-                "attributes": Array [
-                  Object {
+              {
+                "attributes": [
+                  {
                     "after": false,
                     "before": true,
                     "key": "required",
@@ -1697,15 +1697,15 @@ Object {
                 "change": "changed",
                 "name": "lastName",
               },
-              Object {
-                "attributes": Array [],
+              {
+                "attributes": [],
                 "change": "removed",
                 "name": "phone",
               },
-              Object {
-                "attributes": Array [
-                  Object {
-                    "after": Array [
+              {
+                "attributes": [
+                  {
+                    "after": [
                       "activation-pending",
                       "activated",
                       "blocked",
@@ -1713,12 +1713,12 @@ Object {
                     "before": undefined,
                     "key": "enum",
                   },
-                  Object {
+                  {
                     "after": undefined,
                     "before": "int32",
                     "key": "format",
                   },
-                  Object {
+                  {
                     "after": "string",
                     "before": "integer",
                     "key": "type",
@@ -1727,9 +1727,9 @@ Object {
                 "change": "changed",
                 "name": "userStatus",
               },
-              Object {
-                "attributes": Array [
-                  Object {
+              {
+                "attributes": [
+                  {
                     "after": true,
                     "before": false,
                     "key": "required",
@@ -1743,7 +1743,7 @@ Object {
         ],
         "name": "Request Body",
       },
-      "responses": Array [],
+      "responses": [],
     },
   ],
 }

@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`type shape patch generator when provided with an array, it can apply patches 1`] = `
-Array [
-  Object {
+[
+  {
     "description": "make stringField oneOf",
-    "diff": Object {
+    "diff": {
       "description": "'stringField' did not match schema",
-      "example": Array [
+      "example": [
         "1",
         "2",
         "3",
@@ -18,23 +18,23 @@ Array [
       "kind": "UnmatchedType",
       "propertyPath": "/properties/stringField",
     },
-    "groupedOperations": Array [
-      Object {
+    "groupedOperations": [
+      {
         "intent": "replace stringField with a one of containing both types",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "remove",
             "path": "/properties/stringField/type",
           },
-          Object {
+          {
             "op": "add",
             "path": "/properties/stringField/oneOf",
-            "value": Array [
-              Object {
+            "value": [
+              {
                 "type": "string",
               },
-              Object {
-                "items": Object {
+              {
+                "items": {
                   "type": "string",
                 },
                 "type": "array",
@@ -44,16 +44,16 @@ Array [
         ],
       },
     ],
-    "impact": Array [
+    "impact": [
       "Addition",
       "BackwardsCompatibilityUnknown",
     ],
   },
-  Object {
+  {
     "description": "change type of stringField",
-    "diff": Object {
+    "diff": {
       "description": "'stringField' did not match schema",
-      "example": Array [
+      "example": [
         "1",
         "2",
         "3",
@@ -65,15 +65,15 @@ Array [
       "kind": "UnmatchedType",
       "propertyPath": "/properties/stringField",
     },
-    "groupedOperations": Array [
-      Object {
+    "groupedOperations": [
+      {
         "intent": "change stringField type",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "replace",
             "path": "/properties/stringField",
-            "value": Object {
-              "items": Object {
+            "value": {
+              "items": {
                 "type": "string",
               },
               "type": "array",
@@ -82,7 +82,7 @@ Array [
         ],
       },
     ],
-    "impact": Array [
+    "impact": [
       "BackwardsIncompatible",
     ],
   },
@@ -90,12 +90,12 @@ Array [
 `;
 
 exports[`type shape patch generator when provided with an object, it can apply patches 1`] = `
-Array [
-  Object {
+[
+  {
     "description": "make stringField oneOf",
-    "diff": Object {
+    "diff": {
       "description": "'stringField' did not match schema",
-      "example": Object {
+      "example": {
         "field": "string",
       },
       "instancePath": "/stringField",
@@ -104,22 +104,22 @@ Array [
       "kind": "UnmatchedType",
       "propertyPath": "/properties/stringField",
     },
-    "groupedOperations": Array [
-      Object {
+    "groupedOperations": [
+      {
         "intent": "replace stringField with a one of containing both types",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "remove",
             "path": "/properties/stringField/type",
           },
-          Object {
+          {
             "op": "add",
             "path": "/properties/stringField/oneOf",
-            "value": Array [
-              Object {
+            "value": [
+              {
                 "type": "string",
               },
-              Object {
+              {
                 "type": "object",
               },
             ],
@@ -127,16 +127,16 @@ Array [
         ],
       },
     ],
-    "impact": Array [
+    "impact": [
       "Addition",
       "BackwardsCompatibilityUnknown",
     ],
   },
-  Object {
+  {
     "description": "change type of stringField",
-    "diff": Object {
+    "diff": {
       "description": "'stringField' did not match schema",
-      "example": Object {
+      "example": {
         "field": "string",
       },
       "instancePath": "/stringField",
@@ -145,21 +145,21 @@ Array [
       "kind": "UnmatchedType",
       "propertyPath": "/properties/stringField",
     },
-    "groupedOperations": Array [
-      Object {
+    "groupedOperations": [
+      {
         "intent": "change stringField type",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "replace",
             "path": "/properties/stringField",
-            "value": Object {
+            "value": {
               "type": "object",
             },
           },
         ],
       },
     ],
-    "impact": Array [
+    "impact": [
       "BackwardsIncompatible",
     ],
   },
@@ -167,10 +167,10 @@ Array [
 `;
 
 exports[`type shape patch generator when provided with another primitive, it can apply patches 1`] = `
-Array [
-  Object {
+[
+  {
     "description": "make stringField oneOf",
-    "diff": Object {
+    "diff": {
       "description": "'stringField' did not match schema",
       "example": 123,
       "instancePath": "/stringField",
@@ -179,22 +179,22 @@ Array [
       "kind": "UnmatchedType",
       "propertyPath": "/properties/stringField",
     },
-    "groupedOperations": Array [
-      Object {
+    "groupedOperations": [
+      {
         "intent": "replace stringField with a one of containing both types",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "remove",
             "path": "/properties/stringField/type",
           },
-          Object {
+          {
             "op": "add",
             "path": "/properties/stringField/oneOf",
-            "value": Array [
-              Object {
+            "value": [
+              {
                 "type": "string",
               },
-              Object {
+              {
                 "type": "number",
               },
             ],
@@ -202,14 +202,14 @@ Array [
         ],
       },
     ],
-    "impact": Array [
+    "impact": [
       "Addition",
       "BackwardsCompatibilityUnknown",
     ],
   },
-  Object {
+  {
     "description": "change type of stringField",
-    "diff": Object {
+    "diff": {
       "description": "'stringField' did not match schema",
       "example": 123,
       "instancePath": "/stringField",
@@ -218,21 +218,21 @@ Array [
       "kind": "UnmatchedType",
       "propertyPath": "/properties/stringField",
     },
-    "groupedOperations": Array [
-      Object {
+    "groupedOperations": [
+      {
         "intent": "change stringField type",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "replace",
             "path": "/properties/stringField",
-            "value": Object {
+            "value": {
               "type": "number",
             },
           },
         ],
       },
     ],
-    "impact": Array [
+    "impact": [
       "BackwardsIncompatible",
     ],
   },
@@ -240,10 +240,10 @@ Array [
 `;
 
 exports[`type shape patch generator when provided with null value, it can apply patches 1`] = `
-Array [
-  Object {
+[
+  {
     "description": "make stringField oneOf",
-    "diff": Object {
+    "diff": {
       "description": "'stringField' did not match schema",
       "example": null,
       "instancePath": "/stringField",
@@ -252,22 +252,22 @@ Array [
       "kind": "UnmatchedType",
       "propertyPath": "/properties/stringField",
     },
-    "groupedOperations": Array [
-      Object {
+    "groupedOperations": [
+      {
         "intent": "replace stringField with a one of containing both types",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "remove",
             "path": "/properties/stringField/type",
           },
-          Object {
+          {
             "op": "add",
             "path": "/properties/stringField/oneOf",
-            "value": Array [
-              Object {
+            "value": [
+              {
                 "type": "string",
               },
-              Object {
+              {
                 "type": "null",
               },
             ],
@@ -275,14 +275,14 @@ Array [
         ],
       },
     ],
-    "impact": Array [
+    "impact": [
       "Addition",
       "BackwardsCompatibilityUnknown",
     ],
   },
-  Object {
+  {
     "description": "change type of stringField",
-    "diff": Object {
+    "diff": {
       "description": "'stringField' did not match schema",
       "example": null,
       "instancePath": "/stringField",
@@ -291,21 +291,21 @@ Array [
       "kind": "UnmatchedType",
       "propertyPath": "/properties/stringField",
     },
-    "groupedOperations": Array [
-      Object {
+    "groupedOperations": [
+      {
         "intent": "change stringField type",
-        "operations": Array [
-          Object {
+        "operations": [
+          {
             "op": "replace",
             "path": "/properties/stringField",
-            "value": Object {
+            "value": {
               "type": "null",
             },
           },
         ],
       },
     ],
-    "impact": Array [
+    "impact": [
       "BackwardsIncompatible",
     ],
   },

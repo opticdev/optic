@@ -1,17 +1,18 @@
+import { it, expect } from '@jest/globals';
 import { parseAddOperations } from './document';
 
 it('can parse from input string', () => {
   const toAdd = parseAddOperations('get /todos, post /todos/{status}/');
   expect(toAdd.unwrap()).toMatchInlineSnapshot(`
-    Array [
-      Object {
-        "methods": Array [
+    [
+      {
+        "methods": [
           "get",
         ],
         "pathPattern": "/todos",
       },
-      Object {
-        "methods": Array [
+      {
+        "methods": [
           "post",
         ],
         "pathPattern": "/todos/{status}",

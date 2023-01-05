@@ -1,3 +1,4 @@
+import { it, describe, expect } from '@jest/globals';
 import { requestBodyPatches } from './request-body';
 import {
   diffInteractionByOperation,
@@ -184,7 +185,7 @@ function operationFixture(
   requestBody: OpenAPIV3.RequestBodyObject | null
 ): Operation {
   return {
-    requestBody,
+    requestBody: requestBody ?? undefined,
     method: HttpMethods.POST,
     pathPattern: '/some-path',
     responses: {

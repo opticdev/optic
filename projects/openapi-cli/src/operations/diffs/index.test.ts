@@ -1,3 +1,4 @@
+import { it, describe, expect } from '@jest/globals';
 import { diffOperationWithSpec, OperationDiffResultKind } from '.';
 import { HttpMethods } from '..';
 import { OpenAPIV3 } from '../../specs';

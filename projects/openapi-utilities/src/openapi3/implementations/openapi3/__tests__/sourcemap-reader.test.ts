@@ -1,5 +1,6 @@
 // TODO get rid of fixture import so we don't have circular references
 import { parseOpenAPIWithSourcemap } from '../../../../../../openapi-io/src/parser/openapi-sourcemap-parser';
+import { it, expect, describe } from '@jest/globals';
 import path from 'path';
 import { sourcemapReader } from '../sourcemap-reader';
 const util = require('util');

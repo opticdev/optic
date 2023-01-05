@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`naming changes always pathComponents failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/usersList/{userId}",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/usersList/{}",
           "get",
@@ -17,7 +17,7 @@ Array [
         "jsonPath": "/paths/~1api~1usersList~1{userId}/get",
         "kind": "operation",
       },
-      "value": Object {
+      "value": {
         "method": "get",
         "pathPattern": "/api/usersList/{userId}",
       },
@@ -39,20 +39,20 @@ Array [
 `;
 
 exports[`naming changes always pathComponents failing assertion 2`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "method": "get",
         "pathPattern": "/api/usersList/{userId}",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/usersList/{userId}",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/usersList/{}",
           "get",
@@ -78,20 +78,20 @@ Array [
 `;
 
 exports[`naming changes always pathComponents failing assertion 3`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "method": "get",
         "pathPattern": "/api/usersList/{userId}",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/usersList/{userId}",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/usersList/{}",
           "get",
@@ -117,15 +117,15 @@ Array [
 `;
 
 exports[`naming changes always pathComponents passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users-list/{userId}",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users-list/{}",
           "get",
@@ -133,7 +133,7 @@ Array [
         "jsonPath": "/paths/~1api~1users-list~1{userId}/get",
         "kind": "operation",
       },
-      "value": Object {
+      "value": {
         "method": "get",
         "pathPattern": "/api/users-list/{userId}",
       },
@@ -155,20 +155,20 @@ Array [
 `;
 
 exports[`naming changes always pathComponents passing assertion 2`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "method": "get",
         "pathPattern": "/api/users-list/{userId}",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users-list/{userId}",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users-list/{}",
           "get",
@@ -194,20 +194,20 @@ Array [
 `;
 
 exports[`naming changes always pathComponents passing assertion 3`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "method": "get",
         "pathPattern": "/api/users-list/{userId}",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users-list/{userId}",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users-list/{}",
           "get",
@@ -233,18 +233,18 @@ Array [
 `;
 
 exports[`naming changes always queryParameters failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "snake_case",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -255,7 +255,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "query-parameter",
       },
-      "value": Object {
+      "value": {
         "description": "hi",
         "in": "query",
         "name": "snake_case",
@@ -278,24 +278,24 @@ Array [
 `;
 
 exports[`naming changes always queryParameters failing assertion 2`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "description": "hi",
         "in": "query",
         "name": "snake_case",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "snake_case",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -324,30 +324,30 @@ Array [
 `;
 
 exports[`naming changes always queryParameters failing assertion 3`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "description": "hi",
           "in": "query",
           "name": "snake_case",
         },
-        "before": Object {
+        "before": {
           "in": "query",
           "name": "snake_case",
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "snake_case",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -376,18 +376,18 @@ Array [
 `;
 
 exports[`naming changes always queryParameters passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "camelCase",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -398,7 +398,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "query-parameter",
       },
-      "value": Object {
+      "value": {
         "description": "hi",
         "in": "query",
         "name": "camelCase",
@@ -421,24 +421,24 @@ Array [
 `;
 
 exports[`naming changes always queryParameters passing assertion 2`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "description": "hi",
         "in": "query",
         "name": "camelCase",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "camelCase",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -467,30 +467,30 @@ Array [
 `;
 
 exports[`naming changes always queryParameters passing assertion 3`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "description": "hi",
           "in": "query",
           "name": "camelCase",
         },
-        "before": Object {
+        "before": {
           "in": "query",
           "name": "camelCase",
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "camelCase",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -519,18 +519,18 @@ Array [
 `;
 
 exports[`naming changes always request header failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "snake_case",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -541,7 +541,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "header-parameter",
       },
-      "value": Object {
+      "value": {
         "description": "hi",
         "in": "header",
         "name": "snake_case",
@@ -564,24 +564,24 @@ Array [
 `;
 
 exports[`naming changes always request header failing assertion 2`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "description": "hi",
         "in": "header",
         "name": "snake_case",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "snake_case",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -610,30 +610,30 @@ Array [
 `;
 
 exports[`naming changes always request header failing assertion 3`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "description": "hi",
           "in": "header",
           "name": "snake_case",
         },
-        "before": Object {
+        "before": {
           "in": "header",
           "name": "snake_case",
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "snake_case",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -662,18 +662,18 @@ Array [
 `;
 
 exports[`naming changes always request header passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "PascalCase",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -684,7 +684,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "header-parameter",
       },
-      "value": Object {
+      "value": {
         "description": "hi",
         "in": "header",
         "name": "PascalCase",
@@ -707,24 +707,24 @@ Array [
 `;
 
 exports[`naming changes always request header passing assertion 2`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "description": "hi",
         "in": "header",
         "name": "PascalCase",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "PascalCase",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -753,30 +753,30 @@ Array [
 `;
 
 exports[`naming changes always request header passing assertion 3`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "description": "hi",
           "in": "header",
           "name": "PascalCase",
         },
-        "before": Object {
+        "before": {
           "in": "header",
           "name": "PascalCase",
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "PascalCase",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -805,23 +805,23 @@ Array [
 `;
 
 exports[`naming changes always request property failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "userName",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -831,8 +831,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/userName",
         "kind": "field",
       },
-      "value": Object {
-        "flatSchema": Object {
+      "value": {
+        "flatSchema": {
           "description": "hi",
           "type": "string",
         },
@@ -856,11 +856,11 @@ Array [
 `;
 
 exports[`naming changes always request property failing assertion 2`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
-        "flatSchema": Object {
+[
+  {
+    "change": {
+      "added": {
+        "flatSchema": {
           "description": "hi",
           "type": "string",
         },
@@ -868,20 +868,20 @@ Array [
         "required": false,
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "userName",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -908,41 +908,41 @@ Array [
 `;
 
 exports[`naming changes always request property failing assertion 3`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "description": "hi",
             "type": "string",
           },
           "key": "userName",
           "required": false,
         },
-        "before": Object {
-          "flatSchema": Object {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "userName",
           "required": false,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "userName",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -969,23 +969,23 @@ Array [
 `;
 
 exports[`naming changes always request property passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "user_name",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -995,8 +995,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/user_name",
         "kind": "field",
       },
-      "value": Object {
-        "flatSchema": Object {
+      "value": {
+        "flatSchema": {
           "description": "hi",
           "type": "string",
         },
@@ -1020,11 +1020,11 @@ Array [
 `;
 
 exports[`naming changes always request property passing assertion 2`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
-        "flatSchema": Object {
+[
+  {
+    "change": {
+      "added": {
+        "flatSchema": {
           "description": "hi",
           "type": "string",
         },
@@ -1032,20 +1032,20 @@ Array [
         "required": false,
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "user_name",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1072,41 +1072,41 @@ Array [
 `;
 
 exports[`naming changes always request property passing assertion 3`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "description": "hi",
             "type": "string",
           },
           "key": "user_name",
           "required": false,
         },
-        "before": Object {
-          "flatSchema": Object {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "user_name",
           "required": false,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "user_name",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1133,19 +1133,19 @@ Array [
 `;
 
 exports[`naming changes always response header failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "header": "camelCase",
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1157,10 +1157,10 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200/headers/camelCase",
         "kind": "response-header",
       },
-      "value": Object {
+      "value": {
         "description": "hello",
         "name": "camelCase",
-        "schema": Object {},
+        "schema": {},
       },
     },
     "condition": undefined,
@@ -1180,25 +1180,25 @@ Array [
 `;
 
 exports[`naming changes always response header failing assertion 2`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "description": "hello",
         "name": "camelCase",
-        "schema": Object {},
+        "schema": {},
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "header": "camelCase",
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1228,31 +1228,31 @@ Array [
 `;
 
 exports[`naming changes always response header failing assertion 3`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "description": "hello",
           "name": "camelCase",
-          "schema": Object {},
+          "schema": {},
         },
-        "before": Object {
+        "before": {
           "name": "camelCase",
-          "schema": Object {},
+          "schema": {},
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "header": "camelCase",
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1282,19 +1282,19 @@ Array [
 `;
 
 exports[`naming changes always response header passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "header": "param-case",
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1306,10 +1306,10 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200/headers/param-case",
         "kind": "response-header",
       },
-      "value": Object {
+      "value": {
         "description": "hello",
         "name": "param-case",
-        "schema": Object {},
+        "schema": {},
       },
     },
     "condition": undefined,
@@ -1329,25 +1329,25 @@ Array [
 `;
 
 exports[`naming changes always response header passing assertion 2`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "description": "hello",
         "name": "param-case",
-        "schema": Object {},
+        "schema": {},
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "header": "param-case",
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1377,31 +1377,31 @@ Array [
 `;
 
 exports[`naming changes always response header passing assertion 3`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "description": "hello",
           "name": "param-case",
-          "schema": Object {},
+          "schema": {},
         },
-        "before": Object {
+        "before": {
           "name": "param-case",
-          "schema": Object {},
+          "schema": {},
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "header": "param-case",
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1431,24 +1431,24 @@ Array [
 `;
 
 exports[`naming changes always response property failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "userName",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1460,8 +1460,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/userName",
         "kind": "field",
       },
-      "value": Object {
-        "flatSchema": Object {
+      "value": {
+        "flatSchema": {
           "description": "hi",
           "type": "string",
         },
@@ -1486,11 +1486,11 @@ Array [
 `;
 
 exports[`naming changes always response property failing assertion 2`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
-        "flatSchema": Object {
+[
+  {
+    "change": {
+      "added": {
+        "flatSchema": {
           "description": "hi",
           "type": "string",
         },
@@ -1498,21 +1498,21 @@ Array [
         "required": false,
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "userName",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1542,42 +1542,42 @@ Array [
 `;
 
 exports[`naming changes always response property failing assertion 3`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "description": "hi",
             "type": "string",
           },
           "key": "userName",
           "required": false,
         },
-        "before": Object {
-          "flatSchema": Object {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "userName",
           "required": false,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "userName",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1607,24 +1607,24 @@ Array [
 `;
 
 exports[`naming changes always response property passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "user_name",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1636,8 +1636,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/user_name",
         "kind": "field",
       },
-      "value": Object {
-        "flatSchema": Object {
+      "value": {
+        "flatSchema": {
           "description": "hi",
           "type": "string",
         },
@@ -1662,11 +1662,11 @@ Array [
 `;
 
 exports[`naming changes always response property passing assertion 2`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
-        "flatSchema": Object {
+[
+  {
+    "change": {
+      "added": {
+        "flatSchema": {
           "description": "hi",
           "type": "string",
         },
@@ -1674,21 +1674,21 @@ Array [
         "required": false,
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "user_name",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1718,42 +1718,42 @@ Array [
 `;
 
 exports[`naming changes always response property passing assertion 3`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "description": "hi",
             "type": "string",
           },
           "key": "user_name",
           "required": false,
         },
-        "before": Object {
-          "flatSchema": Object {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "user_name",
           "required": false,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "user_name",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",

@@ -1,16 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`breaking changes ruleset operation removal 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -18,8 +18,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "removed": Object {
-        "before": Object {
+      "removed": {
+        "before": {
           "method": "get",
           "pathPattern": "/api/users",
         },
@@ -42,40 +42,40 @@ Array [
 `;
 
 exports[`breaking changes ruleset request property optional to required 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "id",
           "required": true,
         },
-        "before": Object {
-          "flatSchema": Object {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "id",
           "required": false,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "id",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -98,39 +98,39 @@ Array [
     "type": "changed",
     "where": "GET /api/users request body: application/json property: id",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "id",
           "required": true,
         },
-        "before": Object {
-          "flatSchema": Object {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "id",
           "required": false,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "id",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -157,40 +157,40 @@ Array [
 `;
 
 exports[`breaking changes ruleset request property type change 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "type": "number",
           },
           "key": "id",
           "required": true,
         },
-        "before": Object {
-          "flatSchema": Object {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "id",
           "required": true,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "id",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -213,39 +213,39 @@ Array [
     "type": "changed",
     "where": "GET /api/users request body: application/json property: id",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "type": "number",
           },
           "key": "id",
           "required": true,
         },
-        "before": Object {
-          "flatSchema": Object {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "id",
           "required": true,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "id",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -272,31 +272,31 @@ Array [
 `;
 
 exports[`breaking changes ruleset required request property added 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
-        "flatSchema": Object {
+[
+  {
+    "change": {
+      "added": {
+        "flatSchema": {
           "type": "string",
         },
         "key": "anotherKey",
         "required": true,
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "anotherKey",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -323,25 +323,25 @@ Array [
 `;
 
 exports[`breaking changes ruleset response property removed 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "name",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -353,9 +353,9 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/name",
         "kind": "field",
       },
-      "removed": Object {
-        "before": Object {
-          "flatSchema": Object {
+      "removed": {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "name",
@@ -380,41 +380,41 @@ Array [
 `;
 
 exports[`breaking changes ruleset response property required to optional 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "id",
           "required": false,
         },
-        "before": Object {
-          "flatSchema": Object {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "id",
           "required": true,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "id",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -440,40 +440,40 @@ Array [
     "type": "changed",
     "where": "GET /api/users response 200 response body: application/json property id",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "id",
           "required": false,
         },
-        "before": Object {
-          "flatSchema": Object {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "id",
           "required": true,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "id",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -503,41 +503,41 @@ Array [
 `;
 
 exports[`breaking changes ruleset response property type change 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "type": "number",
           },
           "key": "id",
           "required": false,
         },
-        "before": Object {
-          "flatSchema": Object {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "id",
           "required": false,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "id",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -563,40 +563,40 @@ Array [
     "type": "changed",
     "where": "GET /api/users response 200 response body: application/json property id",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "type": "number",
           },
           "key": "id",
           "required": false,
         },
-        "before": Object {
-          "flatSchema": Object {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "id",
           "required": false,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "id",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -626,35 +626,35 @@ Array [
 `;
 
 exports[`breaking changes ruleset root request body type change 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "contentType": "application/json",
-          "flatSchema": Object {
+          "flatSchema": {
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "contentType": "application/json",
-          "flatSchema": Object {
+          "flatSchema": {
             "type": "object",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -681,28 +681,28 @@ Array [
 `;
 
 exports[`breaking changes ruleset root response body type change 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "contentType": "application/json",
-          "flatSchema": Object {
+          "flatSchema": {
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "contentType": "application/json",
-          "flatSchema": Object {
+          "flatSchema": {
             "type": "number",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
@@ -710,7 +710,7 @@ Array [
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -739,16 +739,16 @@ Array [
 `;
 
 exports[`breaking changes ruleset valid changes 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "cookie",
           "name": "enum-widening",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               1,
               2,
               3,
@@ -756,11 +756,11 @@ Array [
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "cookie",
           "name": "enum-widening",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               1,
               2,
             ],
@@ -768,15 +768,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "enum-widening",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -801,15 +801,15 @@ Array [
     "type": "changed",
     "where": "GET /api/users cookie parameter: enum-widening",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "cookie",
           "name": "enum-widening",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               1,
               2,
               3,
@@ -817,11 +817,11 @@ Array [
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "cookie",
           "name": "enum-widening",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               1,
               2,
             ],
@@ -829,15 +829,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "enum-widening",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -862,15 +862,15 @@ Array [
     "type": "changed",
     "where": "GET /api/users cookie parameter: enum-widening",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "cookie",
           "name": "enum-widening",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               1,
               2,
               3,
@@ -878,11 +878,11 @@ Array [
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "cookie",
           "name": "enum-widening",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               1,
               2,
             ],
@@ -890,15 +890,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "enum-widening",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -923,22 +923,22 @@ Array [
     "type": "changed",
     "where": "GET /api/users cookie parameter: enum-widening",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "header",
           "name": "enum-removal",
-          "schema": Object {
+          "schema": {
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "header",
           "name": "enum-removal",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               1,
               2,
             ],
@@ -946,15 +946,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "enum-removal",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -979,22 +979,22 @@ Array [
     "type": "changed",
     "where": "GET /api/users header parameter: enum-removal",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "header",
           "name": "enum-removal",
-          "schema": Object {
+          "schema": {
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "header",
           "name": "enum-removal",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               1,
               2,
             ],
@@ -1002,15 +1002,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "enum-removal",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1035,22 +1035,22 @@ Array [
     "type": "changed",
     "where": "GET /api/users header parameter: enum-removal",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "header",
           "name": "enum-removal",
-          "schema": Object {
+          "schema": {
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "header",
           "name": "enum-removal",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               1,
               2,
             ],
@@ -1058,15 +1058,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "enum-removal",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1091,35 +1091,35 @@ Array [
     "type": "changed",
     "where": "GET /api/users header parameter: enum-removal",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "query",
           "name": "required",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "query",
           "name": "required",
           "required": true,
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "required",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1144,35 +1144,35 @@ Array [
     "type": "changed",
     "where": "GET /api/users query parameter: required",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "query",
           "name": "required",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "query",
           "name": "required",
           "required": true,
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "required",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1197,35 +1197,35 @@ Array [
     "type": "changed",
     "where": "GET /api/users query parameter: required",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "query",
           "name": "required",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "query",
           "name": "required",
           "required": true,
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "required",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1250,15 +1250,15 @@ Array [
     "type": "changed",
     "where": "GET /api/users query parameter: required",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "cookie",
           "name": "enum-widening",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               1,
               2,
               3,
@@ -1266,11 +1266,11 @@ Array [
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "cookie",
           "name": "enum-widening",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               1,
               2,
             ],
@@ -1278,15 +1278,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "enum-widening",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1311,22 +1311,22 @@ Array [
     "type": "changed",
     "where": "GET /api/users cookie parameter: enum-widening",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "header",
           "name": "enum-removal",
-          "schema": Object {
+          "schema": {
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "in": "header",
           "name": "enum-removal",
-          "schema": Object {
-            "enum": Array [
+          "schema": {
+            "enum": [
               1,
               2,
             ],
@@ -1334,15 +1334,15 @@ Array [
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "enum-removal",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1367,35 +1367,35 @@ Array [
     "type": "changed",
     "where": "GET /api/users header parameter: enum-removal",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "query",
           "name": "required",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
-        "before": Object {
+        "before": {
           "in": "query",
           "name": "required",
           "required": true,
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "required",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1420,39 +1420,39 @@ Array [
     "type": "changed",
     "where": "GET /api/users query parameter: required",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "id",
           "required": false,
         },
-        "before": Object {
-          "flatSchema": Object {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "id",
           "required": true,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "id",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1475,30 +1475,30 @@ Array [
     "type": "changed",
     "where": "GET /api/users request body: application/json property: id",
   },
-  Object {
-    "change": Object {
-      "added": Object {
-        "flatSchema": Object {
+  {
+    "change": {
+      "added": {
+        "flatSchema": {
           "type": "number",
         },
         "key": "anotherId",
         "required": false,
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "anotherId",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1521,39 +1521,39 @@ Array [
     "type": "added",
     "where": "GET /api/users request body: application/json property: anotherId",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "id",
           "required": false,
         },
-        "before": Object {
-          "flatSchema": Object {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "id",
           "required": true,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "id",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1576,40 +1576,40 @@ Array [
     "type": "changed",
     "where": "GET /api/users request body: application/json property: id",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "name",
           "required": true,
         },
-        "before": Object {
-          "flatSchema": Object {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "name",
           "required": false,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "name",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1635,40 +1635,40 @@ Array [
     "type": "changed",
     "where": "GET /api/users response 200 response body: application/json property name",
   },
-  Object {
-    "change": Object {
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "flatSchema": Object {
+      "changed": {
+        "after": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "name",
           "required": true,
         },
-        "before": Object {
-          "flatSchema": Object {
+        "before": {
+          "flatSchema": {
             "type": "string",
           },
           "key": "name",
           "required": false,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "name",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",

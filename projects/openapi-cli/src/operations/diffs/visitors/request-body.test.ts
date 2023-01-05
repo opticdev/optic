@@ -1,3 +1,4 @@
+import { it, describe, expect } from '@jest/globals';
 import { visitRequestBody } from './request-body';
 import { Operation, HttpMethods } from '../..';
 import { CapturedBody, CapturedRequest } from '../../../captures';
@@ -16,10 +17,10 @@ describe('visitRequestBody', () => {
       body: CapturedBody.fromJSON({}, 'application/json'),
     };
 
-    const matchingResults = [...visitRequestBody(requestWithoutBody, null)];
+    const matchingResults = [...visitRequestBody(requestWithoutBody, undefined)];
     expect(matchingResults).toHaveLength(0);
 
-    const unmatchingResults = [...visitRequestBody(requestWithBody, null)];
+    const unmatchingResults = [...visitRequestBody(requestWithBody, undefined)];
     expect(unmatchingResults).toHaveLength(1);
     expect(unmatchingResults).toMatchSnapshot();
   });

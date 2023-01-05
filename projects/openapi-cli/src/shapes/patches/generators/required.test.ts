@@ -1,3 +1,4 @@
+import { it, describe, expect } from '@jest/globals';
 import { SchemaObject } from '../..';
 import { diffValueBySchema } from '../../diffs';
 import { generateShapePatchesByDiff } from '..';

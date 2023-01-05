@@ -1,17 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`SpecificationRule custom matchers matches failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {},
-        "conceptualPath": Array [],
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {},
+        "conceptualPath": [],
         "jsonPath": "",
         "kind": "specification",
       },
-      "value": Object {
-        "info": Object {
+      "value": {
+        "info": {
           "title": "Empty",
           "version": "0.0.0",
         },
@@ -22,12 +22,12 @@ Array [
     "docsLink": undefined,
     "error": "Expected a partial match",
     "exempted": false,
-    "expected": "{\\"info\\":{\\"license\\":{}}}",
+    "expected": "{"info":{"license":{}}}",
     "isMust": true,
     "isShould": false,
     "name": "operation description",
     "passed": false,
-    "received": "{\\"openapi\\":\\"3.1.0\\",\\"paths\\":{},\\"info\\":{\\"version\\":\\"0.0.0\\",\\"title\\":\\"Empty\\"}}",
+    "received": "{"openapi":"3.1.0","paths":{},"info":{"version":"0.0.0","title":"Empty"}}",
     "type": "requirement",
     "where": "specification",
   },
@@ -35,17 +35,17 @@ Array [
 `;
 
 exports[`SpecificationRule custom matchers matches inverted assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {},
-        "conceptualPath": Array [],
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {},
+        "conceptualPath": [],
         "jsonPath": "",
         "kind": "specification",
       },
-      "value": Object {
-        "info": Object {
+      "value": {
+        "info": {
           "title": "Empty",
           "version": "0.0.0",
         },
@@ -69,18 +69,18 @@ Array [
 `;
 
 exports[`SpecificationRule custom matchers matches passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {},
-        "conceptualPath": Array [],
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {},
+        "conceptualPath": [],
         "jsonPath": "",
         "kind": "specification",
       },
-      "value": Object {
-        "info": Object {
-          "license": Object {
+      "value": {
+        "info": {
+          "license": {
             "name": "MIT",
             "url": "some-url",
           },
@@ -107,17 +107,17 @@ Array [
 `;
 
 exports[`SpecificationRule custom matchers matchesOneOf failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {},
-        "conceptualPath": Array [],
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {},
+        "conceptualPath": [],
         "jsonPath": "",
         "kind": "specification",
       },
-      "value": Object {
-        "info": Object {
+      "value": {
+        "info": {
           "title": "Empty",
           "version": "0.0.0",
         },
@@ -128,12 +128,12 @@ Array [
     "docsLink": undefined,
     "error": "Expected at least one partial match",
     "exempted": false,
-    "expected": "[{\\"info\\":{\\"license\\":{}}},{\\"security\\":[]}]",
+    "expected": "[{"info":{"license":{}}},{"security":[]}]",
     "isMust": true,
     "isShould": false,
     "name": "operation description",
     "passed": false,
-    "received": "{\\"openapi\\":\\"3.1.0\\",\\"paths\\":{},\\"info\\":{\\"version\\":\\"0.0.0\\",\\"title\\":\\"Empty\\"}}",
+    "received": "{"openapi":"3.1.0","paths":{},"info":{"version":"0.0.0","title":"Empty"}}",
     "type": "requirement",
     "where": "specification",
   },
@@ -141,17 +141,17 @@ Array [
 `;
 
 exports[`SpecificationRule custom matchers matchesOneOf inverted assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {},
-        "conceptualPath": Array [],
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {},
+        "conceptualPath": [],
         "jsonPath": "",
         "kind": "specification",
       },
-      "value": Object {
-        "info": Object {
+      "value": {
+        "info": {
           "title": "Empty",
           "version": "0.0.0",
         },
@@ -175,18 +175,18 @@ Array [
 `;
 
 exports[`SpecificationRule custom matchers matchesOneOf passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {},
-        "conceptualPath": Array [],
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {},
+        "conceptualPath": [],
         "jsonPath": "",
         "kind": "specification",
       },
-      "value": Object {
-        "info": Object {
-          "license": Object {
+      "value": {
+        "info": {
+          "license": {
             "name": "MIT",
             "url": "some-url",
           },
@@ -213,17 +213,17 @@ Array [
 `;
 
 exports[`SpecificationRule requirement failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {},
-        "conceptualPath": Array [],
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {},
+        "conceptualPath": [],
         "jsonPath": "",
         "kind": "specification",
       },
-      "value": Object {
-        "info": Object {
+      "value": {
+        "info": {
           "title": "Empty",
           "version": "0.0.0",
         },
@@ -247,17 +247,17 @@ Array [
 `;
 
 exports[`SpecificationRule requirement passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {},
-        "conceptualPath": Array [],
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {},
+        "conceptualPath": [],
         "jsonPath": "",
         "kind": "specification",
       },
-      "value": Object {
-        "info": Object {
+      "value": {
+        "info": {
           "title": "Empty",
           "version": "0.0.0",
         },
@@ -282,18 +282,18 @@ Array [
 `;
 
 exports[`SpecificationRule rulesContext after 1`] = `
-Object {
-  "custom": Object {},
-  "operation": Object {
+{
+  "custom": {},
+  "operation": {
     "change": null,
     "cookieParameters": Map {},
     "headerParameters": Map {},
-    "location": Object {
-      "conceptualLocation": Object {
+    "location": {
+      "conceptualLocation": {
         "method": "",
         "path": "",
       },
-      "conceptualPath": Array [],
+      "conceptualPath": [],
       "jsonPath": "",
       "kind": "operation",
     },
@@ -301,53 +301,53 @@ Object {
     "path": "",
     "pathParameters": Map {},
     "queryParameters": Map {},
-    "raw": Object {
-      "responses": Object {},
+    "raw": {
+      "responses": {},
     },
-    "requests": Array [],
+    "requests": [],
     "responses": Map {},
     "security": null,
-    "value": Object {
+    "value": {
       "method": "",
       "pathPattern": "",
     },
   },
-  "specification": Object {
+  "specification": {
     "change": "changed",
-    "location": Object {
-      "conceptualLocation": Object {},
-      "conceptualPath": Array [],
+    "location": {
+      "conceptualLocation": {},
+      "conceptualPath": [],
       "jsonPath": "",
       "kind": "specification",
     },
-    "raw": Object {
-      "info": Object {
+    "raw": {
+      "info": {
         "title": "Empty",
         "version": "0.0.0",
       },
       "openapi": "3.1.0",
-      "paths": Object {
-        "/api/users": Object {
-          "get": Object {
+      "paths": {
+        "/api/users": {
+          "get": {
             "description": "hello",
-            "responses": Object {},
+            "responses": {},
           },
         },
       },
-      "servers": Array [
-        Object {
+      "servers": [
+        {
           "url": "http://optic.com",
         },
       ],
     },
-    "value": Object {
-      "info": Object {
+    "value": {
+      "info": {
         "title": "Empty",
         "version": "0.0.0",
       },
       "openapi": "3.1.0",
-      "servers": Array [
-        Object {
+      "servers": [
+        {
           "url": "http://optic.com",
         },
       ],
@@ -357,18 +357,18 @@ Object {
 `;
 
 exports[`SpecificationRule rulesContext after is empty spec 1`] = `
-Object {
-  "custom": Object {},
-  "operation": Object {
+{
+  "custom": {},
+  "operation": {
     "change": null,
     "cookieParameters": Map {},
     "headerParameters": Map {},
-    "location": Object {
-      "conceptualLocation": Object {
+    "location": {
+      "conceptualLocation": {
         "method": "",
         "path": "",
       },
-      "conceptualPath": Array [],
+      "conceptualPath": [],
       "jsonPath": "",
       "kind": "operation",
     },
@@ -376,53 +376,53 @@ Object {
     "path": "",
     "pathParameters": Map {},
     "queryParameters": Map {},
-    "raw": Object {
-      "responses": Object {},
+    "raw": {
+      "responses": {},
     },
-    "requests": Array [],
+    "requests": [],
     "responses": Map {},
     "security": null,
-    "value": Object {
+    "value": {
       "method": "",
       "pathPattern": "",
     },
   },
-  "specification": Object {
+  "specification": {
     "change": "removed",
-    "location": Object {
-      "conceptualLocation": Object {},
-      "conceptualPath": Array [],
+    "location": {
+      "conceptualLocation": {},
+      "conceptualPath": [],
       "jsonPath": "",
       "kind": "specification",
     },
-    "raw": Object {
-      "info": Object {
+    "raw": {
+      "info": {
         "title": "Empty",
         "version": "0.0.0",
       },
       "openapi": "3.1.0",
-      "paths": Object {
-        "/api/users": Object {
-          "get": Object {
+      "paths": {
+        "/api/users": {
+          "get": {
             "description": "hello",
-            "responses": Object {},
+            "responses": {},
           },
         },
       },
-      "servers": Array [
-        Object {
+      "servers": [
+        {
           "url": "http://optic.com",
         },
       ],
     },
-    "value": Object {
-      "info": Object {
+    "value": {
+      "info": {
         "title": "Empty",
         "version": "0.0.0",
       },
       "openapi": "3.1.0",
-      "servers": Array [
-        Object {
+      "servers": [
+        {
           "url": "http://optic.com",
         },
       ],
@@ -432,18 +432,18 @@ Object {
 `;
 
 exports[`SpecificationRule rulesContext before 1`] = `
-Object {
-  "custom": Object {},
-  "operation": Object {
+{
+  "custom": {},
+  "operation": {
     "change": null,
     "cookieParameters": Map {},
     "headerParameters": Map {},
-    "location": Object {
-      "conceptualLocation": Object {
+    "location": {
+      "conceptualLocation": {
         "method": "",
         "path": "",
       },
-      "conceptualPath": Array [],
+      "conceptualPath": [],
       "jsonPath": "",
       "kind": "operation",
     },
@@ -451,53 +451,53 @@ Object {
     "path": "",
     "pathParameters": Map {},
     "queryParameters": Map {},
-    "raw": Object {
-      "responses": Object {},
+    "raw": {
+      "responses": {},
     },
-    "requests": Array [],
+    "requests": [],
     "responses": Map {},
     "security": null,
-    "value": Object {
+    "value": {
       "method": "",
       "pathPattern": "",
     },
   },
-  "specification": Object {
+  "specification": {
     "change": "removed",
-    "location": Object {
-      "conceptualLocation": Object {},
-      "conceptualPath": Array [],
+    "location": {
+      "conceptualLocation": {},
+      "conceptualPath": [],
       "jsonPath": "",
       "kind": "specification",
     },
-    "raw": Object {
-      "info": Object {
+    "raw": {
+      "info": {
         "title": "Empty",
         "version": "0.0.0",
       },
       "openapi": "3.1.0",
-      "paths": Object {
-        "/api/users": Object {
-          "get": Object {
+      "paths": {
+        "/api/users": {
+          "get": {
             "description": "hello",
-            "responses": Object {},
+            "responses": {},
           },
         },
       },
-      "servers": Array [
-        Object {
+      "servers": [
+        {
           "url": "http://optic.com",
         },
       ],
     },
-    "value": Object {
-      "info": Object {
+    "value": {
+      "info": {
         "title": "Empty",
         "version": "0.0.0",
       },
       "openapi": "3.1.0",
-      "servers": Array [
-        Object {
+      "servers": [
+        {
           "url": "http://optic.com",
         },
       ],
@@ -507,18 +507,18 @@ Object {
 `;
 
 exports[`SpecificationRule rulesContext before is empty spec 1`] = `
-Object {
-  "custom": Object {},
-  "operation": Object {
+{
+  "custom": {},
+  "operation": {
     "change": null,
     "cookieParameters": Map {},
     "headerParameters": Map {},
-    "location": Object {
-      "conceptualLocation": Object {
+    "location": {
+      "conceptualLocation": {
         "method": "",
         "path": "",
       },
-      "conceptualPath": Array [],
+      "conceptualPath": [],
       "jsonPath": "",
       "kind": "operation",
     },
@@ -526,53 +526,53 @@ Object {
     "path": "",
     "pathParameters": Map {},
     "queryParameters": Map {},
-    "raw": Object {
-      "responses": Object {},
+    "raw": {
+      "responses": {},
     },
-    "requests": Array [],
+    "requests": [],
     "responses": Map {},
     "security": null,
-    "value": Object {
+    "value": {
       "method": "",
       "pathPattern": "",
     },
   },
-  "specification": Object {
+  "specification": {
     "change": "added",
-    "location": Object {
-      "conceptualLocation": Object {},
-      "conceptualPath": Array [],
+    "location": {
+      "conceptualLocation": {},
+      "conceptualPath": [],
       "jsonPath": "",
       "kind": "specification",
     },
-    "raw": Object {
-      "info": Object {
+    "raw": {
+      "info": {
         "title": "Empty",
         "version": "0.0.0",
       },
       "openapi": "3.1.0",
-      "paths": Object {
-        "/api/users": Object {
-          "get": Object {
+      "paths": {
+        "/api/users": {
+          "get": {
             "description": "hello",
-            "responses": Object {},
+            "responses": {},
           },
         },
       },
-      "servers": Array [
-        Object {
+      "servers": [
+        {
           "url": "http://optic.com",
         },
       ],
     },
-    "value": Object {
-      "info": Object {
+    "value": {
+      "info": {
         "title": "Empty",
         "version": "0.0.0",
       },
       "openapi": "3.1.0",
-      "servers": Array [
-        Object {
+      "servers": [
+        {
           "url": "http://optic.com",
         },
       ],

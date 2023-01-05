@@ -1,3 +1,4 @@
+import { it, describe, expect } from '@jest/globals';
 import { HarEntries, HttpArchive } from './har';
 import fs from 'fs';
 import Path from 'path';

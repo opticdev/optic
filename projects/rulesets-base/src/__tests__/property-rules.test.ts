@@ -1,3 +1,4 @@
+import { jest, test, expect, describe } from '@jest/globals'
 import { defaultEmptySpec, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { RuleError } from '../errors';
 import { RuleRunner } from '../rule-runner';
@@ -66,7 +67,7 @@ describe('PropertyRule', () => {
       await ruleRunner.runRulesWithFacts(createRuleInputs(json, json));
 
       expect(mockFn.mock.calls.length).toBe(1);
-      const propertyFromCallArg = mockFn.mock.calls[0][0];
+      const propertyFromCallArg = mockFn.mock.calls[0][0] as any;
       expect(propertyFromCallArg.value.key).toBe('hello');
     });
   });
