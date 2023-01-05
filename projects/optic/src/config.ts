@@ -7,7 +7,13 @@ import {
   createOpticClient,
   OpticBackendClient,
 } from '@useoptic/optic-ci/build/cli/clients/optic-client';
-import { hasGit, isInGitRepo, getRootPath } from './utils/git-utils';
+import {
+  hasGit,
+  isInGitRepo,
+  getRootPath,
+  isGitStatusClean,
+  resolveGitRef,
+} from './utils/git-utils';
 
 export enum VCS {
   Git = 'git',
@@ -19,6 +25,11 @@ export const OPTIC_DEV_YML_NAME = 'optic.dev.yml';
 type ConfigRuleset = { name: string; config: unknown };
 
 export type RawYmlConfig = {
+  ruleset?: unknown[];
+  extends?: string;
+};
+
+export type OpticCliConfig = Omit<RawYmlConfig, 'ruleset' | 'extends'> & {
   // path to the loaded config, or undefined if it was the default config
   configPath?: string;
 
@@ -26,13 +37,12 @@ export type RawYmlConfig = {
   root: string;
 
   // the detected vcs
-  vcs?: string;
+  vcs?: {
+    type: VCS;
+    sha: string;
+    status: 'clean' | 'dirty';
+  };
 
-  ruleset?: unknown[];
-  extends?: string;
-};
-
-export type OpticCliConfig = Omit<RawYmlConfig, 'ruleset' | 'extends'> & {
   ruleset: ConfigRuleset[];
   isAuthenticated: boolean;
   client: OpticBackendClient;
@@ -185,7 +195,11 @@ export async function initializeConfig(): Promise<OpticCliConfig> {
         ...(await loadCliConfig(opticYmlPath, cliConfig.client)),
       };
 
-      cliConfig.vcs = VCS.Git;
+      cliConfig.vcs = {
+        type: VCS.Git,
+        sha: await resolveGitRef('HEAD'),
+        status: (await isGitStatusClean()) ? 'clean' : 'dirty',
+      };
     }
   }
 

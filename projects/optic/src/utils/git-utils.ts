@@ -29,3 +29,23 @@ export const getRootPath = async (): Promise<string> =>
     const command = `git rev-parse --show-toplevel`;
     exec(command, cb);
   });
+
+export const isGitStatusClean = async (): Promise<boolean> =>
+  new Promise((resolve, reject) => {
+    const cb = (err: unknown, stdout: string, stderr: string) => {
+      if (err || stderr || !stdout) reject();
+      resolve(stdout.trim() === '');
+    };
+    const command = `git status --porcelain`;
+    exec(command, cb);
+  });
+
+export const resolveGitRef = async (ref: string): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const cb = (err: unknown, stdout: string, stderr: string) => {
+      if (err || stderr || !stdout) reject();
+      resolve(stdout.trim());
+    };
+    const command = `git rev-parse ${ref}`;
+    exec(command, cb);
+  });

@@ -139,10 +139,15 @@ const openBrowserToPage = async (url: string) => {
 
 const getBaseAndHeadFromFiles = async (
   file1: string,
-  file2: string
+  file2: string,
+  config: OpticCliConfig
 ): Promise<[ParseResult, ParseResult]> => {
   try {
-    return Promise.all([getFileFromFsOrGit(file1), getFileFromFsOrGit(file2)]);
+    // TODO update function to try download from spec-id cloud
+    return Promise.all([
+      getFileFromFsOrGit(file1, config),
+      getFileFromFsOrGit(file2, config),
+    ]);
   } catch (e) {
     console.error(e);
     throw new UserError();
@@ -152,10 +157,16 @@ const getBaseAndHeadFromFiles = async (
 const getBaseAndHeadFromFileAndBase = async (
   file1: string,
   base: string,
-  root: string
+  root: string,
+  config: OpticCliConfig
 ): Promise<[ParseResult, ParseResult]> => {
   try {
-    const { baseFile, headFile } = await parseFilesFromRef(file1, base, root);
+    const { baseFile, headFile } = await parseFilesFromRef(
+      file1,
+      base,
+      root,
+      config
+    );
     return [baseFile, headFile];
   } catch (e) {
     console.error(e);
@@ -225,7 +236,9 @@ const runDiff = async (
     logComparison(specResults, { output: 'pretty', verbose: false });
 
     console.log('');
-    console.log(`Configure check rulesets in optic cloud or your local optic.dev.yml file.`);
+    console.log(
+      `Configure check rulesets in optic cloud or your local optic.dev.yml file.`
+    );
   }
 
   if (options.web) {
@@ -273,14 +286,11 @@ const getDiffAction =
     options: DiffActionOptions
   ) => {
     const files: [string | undefined, string | undefined] = [file1, file2];
-    let shouldExit1 = false;
+    let parsedFiles: [ParseResult, ParseResult];
     if (file1 && file2) {
-      // TODO also maybe download from spec id (if optic token)
-      const parsedFiles = await getBaseAndHeadFromFiles(file1, file2);
-      const diffResult = await runDiff(files, parsedFiles, config, options);
-      shouldExit1 = diffResult.checks.failed > 0 && options.check;
+      parsedFiles = await getBaseAndHeadFromFiles(file1, file2, config);
     } else if (file1) {
-      if (config.vcs !== VCS.Git) {
+      if (config.vcs?.type !== VCS.Git) {
         const commandVariant = `optic diff <file> --base <ref>`;
         console.error(
           `Error: ${commandVariant} must be called from a git repository.`
@@ -288,13 +298,12 @@ const getDiffAction =
         process.exitCode = 1;
         return;
       }
-      const parsedFiles = await getBaseAndHeadFromFileAndBase(
+      parsedFiles = await getBaseAndHeadFromFileAndBase(
         file1,
         options.base,
-        config.root
+        config.root,
+        config
       );
-      const diffResult = await runDiff(files, parsedFiles, config, options);
-      shouldExit1 = diffResult.checks.failed > 0 && options.check;
     } else {
       console.error(
         'Command removed: optic diff (no args) has been removed, please use optic diff <file_path> --base <base> instead'
@@ -303,10 +312,28 @@ const getDiffAction =
       return;
     }
 
+    const diffResult = await runDiff(files, parsedFiles, config, options);
+
     if (config.isAuthenticated) {
-      // TODO check parsed files and check that the git state is clean
-      // TODO would we ever want to upload if not in a git repo? probably yes but do we have any tags?
-      // TODO get apis
+      const [baseParseResult, headParseResult] = parsedFiles;
+      const baseParseApiId: string | null = 'TODO';
+      const headParseApiId: string | null = 'TODO';
+      const shouldUploadBaseSpec = baseParseResult.context && baseParseApiId;
+      const shouldUploadHeadSpec = headParseResult.context && headParseApiId;
+      if (shouldUploadBaseSpec) {
+        // TODO upload spec
+      }
+      if (shouldUploadHeadSpec) {
+        // TODO upload spec
+      }
+
+      const shouldUploadResults =
+        (shouldUploadBaseSpec || baseParseResult.isEmptySpec) &&
+        (shouldUploadHeadSpec || headParseResult.isEmptySpec);
+
+      if (shouldUploadResults) {
+        // TODO upload results
+      }
     }
 
     if (!options.web && !options.json) {
@@ -317,5 +344,5 @@ const getDiffAction =
       );
     }
 
-    if (shouldExit1) process.exitCode = 1;
+    if (diffResult.checks.failed > 0 && options.check) process.exitCode = 1;
   };
