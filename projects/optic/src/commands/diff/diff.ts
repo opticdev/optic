@@ -315,10 +315,9 @@ const getDiffAction =
     const diffResult = await runDiff(files, parsedFiles, config, options);
     if (config.isAuthenticated) {
       const [baseParseResult, headParseResult] = parsedFiles;
-      const baseParseApiId: string | null = 'TODO';
-      const headParseApiId: string | null = 'TODO';
-      const shouldUploadBaseSpec = baseParseResult.context && baseParseApiId;
-      const shouldUploadHeadSpec = headParseResult.context && headParseApiId;
+      const apiId: string | null = 'TODO'; // headParseResult.jsonLike[OPTIC_URL_KEY] ?? baseParseResult.jsonLike[OPTIC_URL_KEY] ?? null
+      const shouldUploadBaseSpec = baseParseResult.context && apiId;
+      const shouldUploadHeadSpec = headParseResult.context && apiId;
       if (shouldUploadBaseSpec) {
         // TODO upload spec
       }
