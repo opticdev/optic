@@ -3740,7 +3740,7 @@ __metadata:
     slice-ansi: ^4.0.0
     stream-chain: ^2.2.5
     stream-json: ^1.7.4
-    strip-ansi: ^6.0.1
+    strip-ansi: ^7.0.0
     ts-invariant: ^0.9.4
     ts-jest: ^29.0.3
     ts-node: ^10.8.1
@@ -10244,7 +10244,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strip-ansi@npm:^7.0.1":
+"strip-ansi@npm:^7.0.0, strip-ansi@npm:^7.0.1":
   version: 7.0.1
   resolution: "strip-ansi@npm:7.0.1"
   dependencies:
