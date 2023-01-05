@@ -1,3 +1,4 @@
+import { jest, test, expect, describe } from '@jest/globals'
 import { defaultEmptySpec, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { RuleRunner } from '../rule-runner';
 import { OperationRule, Ruleset } from '../rules';
@@ -50,8 +51,8 @@ describe('ruleset', () => {
     await ruleRunner.runRulesWithFacts(createRuleInputs(json, json));
 
     expect(mockFn.mock.calls.length).toBe(1);
-    expect(mockFn.mock.calls[0][0].method).toBe('get');
-    expect(mockFn.mock.calls[0][0].path).toBe('/api/users');
+    expect((mockFn.mock.calls[0][0] as any).method).toBe('get');
+    expect((mockFn.mock.calls[0][0] as any).path).toBe('/api/users');
   });
 
   describe('docsLink', () => {

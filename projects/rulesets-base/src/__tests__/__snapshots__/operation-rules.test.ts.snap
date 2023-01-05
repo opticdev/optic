@@ -1,20 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`OperationRule assertions added failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "method": "get",
         "pathPattern": "/api/users",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -40,21 +40,21 @@ Array [
 `;
 
 exports[`OperationRule assertions added passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "description": "hello",
         "method": "post",
         "pathPattern": "/api/users",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "post",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "post",
@@ -80,27 +80,27 @@ Array [
 `;
 
 exports[`OperationRule assertions addedOrChanged failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "method": "post",
           "pathPattern": "/api/users",
           "summary": "hello",
         },
-        "before": Object {
+        "before": {
           "method": "post",
           "pathPattern": "/api/users",
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "post",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "post",
@@ -122,19 +122,19 @@ Array [
     "type": "changed",
     "where": "POST /api/users",
   },
-  Object {
-    "change": Object {
-      "added": Object {
+  {
+    "change": {
+      "added": {
         "method": "get",
         "pathPattern": "/api/users",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -160,29 +160,29 @@ Array [
 `;
 
 exports[`OperationRule assertions addedOrChanged passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "description": "hello",
           "method": "get",
           "pathPattern": "/api/users",
           "summary": "this is a summary",
         },
-        "before": Object {
+        "before": {
           "description": "hello",
           "method": "get",
           "pathPattern": "/api/users",
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -204,20 +204,20 @@ Array [
     "type": "changed",
     "where": "GET /api/users",
   },
-  Object {
-    "change": Object {
-      "added": Object {
+  {
+    "change": {
+      "added": {
         "description": "hello",
         "method": "post",
         "pathPattern": "/api/users",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "post",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "post",
@@ -243,28 +243,28 @@ Array [
 `;
 
 exports[`OperationRule assertions changed failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "method": "get",
           "operationId": "get-users-changed",
           "pathPattern": "/api/users",
         },
-        "before": Object {
+        "before": {
           "method": "get",
           "operationId": "get-users",
           "pathPattern": "/api/users",
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -290,27 +290,27 @@ Array [
 `;
 
 exports[`OperationRule assertions changed passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "method": "get",
           "operationId": "get-users",
           "pathPattern": "/api/users",
         },
-        "before": Object {
+        "before": {
           "method": "get",
           "pathPattern": "/api/users",
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -336,15 +336,15 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers hasCookieParameterMatching failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -352,14 +352,14 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "value": Object {
+      "value": {
         "method": "get",
         "pathPattern": "/api/users",
       },
     },
     "condition": undefined,
     "docsLink": undefined,
-    "error": "Could not find a partial match in cookie parameters. Value to match: {\\"description\\":\\"Matcher.string\\"}",
+    "error": "Could not find a partial match in cookie parameters. Value to match: {"description":"Matcher.string"}",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -374,15 +374,15 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers hasCookieParameterMatching inverted assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -390,7 +390,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "value": Object {
+      "value": {
         "method": "get",
         "pathPattern": "/api/users",
       },
@@ -412,15 +412,15 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers hasCookieParameterMatching passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -428,7 +428,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "value": Object {
+      "value": {
         "method": "get",
         "pathPattern": "/api/users",
       },
@@ -450,15 +450,15 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers hasHeaderParameterMatching failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -466,14 +466,14 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "value": Object {
+      "value": {
         "method": "get",
         "pathPattern": "/api/users",
       },
     },
     "condition": undefined,
     "docsLink": undefined,
-    "error": "Could not find a partial match in header parameters. Value to match: {\\"description\\":\\"Matcher.string\\"}",
+    "error": "Could not find a partial match in header parameters. Value to match: {"description":"Matcher.string"}",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -488,15 +488,15 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers hasHeaderParameterMatching inverted assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -504,7 +504,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "value": Object {
+      "value": {
         "method": "get",
         "pathPattern": "/api/users",
       },
@@ -526,15 +526,15 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers hasHeaderParameterMatching passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -542,7 +542,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "value": Object {
+      "value": {
         "method": "get",
         "pathPattern": "/api/users",
       },
@@ -564,15 +564,15 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers hasPathParameterMatching failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -580,14 +580,14 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "value": Object {
+      "value": {
         "method": "get",
         "pathPattern": "/api/users",
       },
     },
     "condition": undefined,
     "docsLink": undefined,
-    "error": "Could not find a partial match in path parameters. Value to match: {\\"description\\":\\"Matcher.string\\"}",
+    "error": "Could not find a partial match in path parameters. Value to match: {"description":"Matcher.string"}",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -602,15 +602,15 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers hasPathParameterMatching inverted assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -618,7 +618,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "value": Object {
+      "value": {
         "method": "get",
         "pathPattern": "/api/users",
       },
@@ -640,15 +640,15 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers hasPathParameterMatching passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -656,7 +656,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "value": Object {
+      "value": {
         "method": "get",
         "pathPattern": "/api/users",
       },
@@ -678,15 +678,15 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers hasQueryParameterMatching failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -694,7 +694,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "value": Object {
+      "value": {
         "method": "get",
         "pathPattern": "/api/users",
       },
@@ -716,15 +716,15 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers hasQueryParameterMatching inverted assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -732,7 +732,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "value": Object {
+      "value": {
         "method": "get",
         "pathPattern": "/api/users",
       },
@@ -754,15 +754,15 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers hasQueryParameterMatching passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -770,7 +770,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "value": Object {
+      "value": {
         "method": "get",
         "pathPattern": "/api/users",
       },
@@ -792,27 +792,27 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers hasRequests failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "method": "get",
           "operationId": "get-users",
           "pathPattern": "/api/users",
         },
-        "before": Object {
+        "before": {
           "method": "get",
           "pathPattern": "/api/users",
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -838,27 +838,27 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers hasRequests inverted assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "method": "get",
           "operationId": "get-users",
           "pathPattern": "/api/users",
         },
-        "before": Object {
+        "before": {
           "method": "get",
           "pathPattern": "/api/users",
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -884,27 +884,27 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers hasRequests passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "method": "get",
           "operationId": "get-users",
           "pathPattern": "/api/users",
         },
-        "before": Object {
+        "before": {
           "method": "get",
           "pathPattern": "/api/users",
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -930,16 +930,16 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers hasResponses failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -947,8 +947,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "removed": Object {
-        "before": Object {
+      "removed": {
+        "before": {
           "method": "get",
           "pathPattern": "/api/users",
         },
@@ -971,16 +971,16 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers hasResponses inverted assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -988,8 +988,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "removed": Object {
-        "before": Object {
+      "removed": {
+        "before": {
           "method": "get",
           "pathPattern": "/api/users",
         },
@@ -1012,16 +1012,16 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers hasResponses passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1029,8 +1029,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "removed": Object {
-        "before": Object {
+      "removed": {
+        "before": {
           "method": "get",
           "pathPattern": "/api/users",
         },
@@ -1053,20 +1053,20 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers matches failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "method": "get",
         "pathPattern": "/api/users",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1079,12 +1079,12 @@ Array [
     "docsLink": undefined,
     "error": "Expected a partial match",
     "exempted": false,
-    "expected": "{\\"description\\":\\"Matcher.string\\"}",
+    "expected": "{"description":"Matcher.string"}",
     "isMust": true,
     "isShould": false,
     "name": "operation description",
     "passed": false,
-    "received": "{\\"responses\\":{}}",
+    "received": "{"responses":{}}",
     "type": "added",
     "where": "GET /api/users",
   },
@@ -1092,20 +1092,20 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers matches inverted assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "method": "get",
         "pathPattern": "/api/users",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1131,21 +1131,21 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers matches passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "description": "hello",
         "method": "get",
         "pathPattern": "/api/users",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1171,20 +1171,20 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers matches with custom message 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "method": "get",
         "pathPattern": "/api/users",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1197,12 +1197,12 @@ Array [
     "docsLink": undefined,
     "error": "this is a custom message",
     "exempted": false,
-    "expected": "{\\"description\\":\\"Matcher.string\\"}",
+    "expected": "{"description":"Matcher.string"}",
     "isMust": true,
     "isShould": false,
     "name": "operation description",
     "passed": false,
-    "received": "{\\"responses\\":{}}",
+    "received": "{"responses":{}}",
     "type": "added",
     "where": "GET /api/users",
   },
@@ -1210,20 +1210,20 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers matchesOneOf failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "method": "get",
         "pathPattern": "/api/users",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1236,12 +1236,12 @@ Array [
     "docsLink": undefined,
     "error": "Expected at least one partial match",
     "exempted": false,
-    "expected": "[{\\"description\\":\\"Matcher.string\\"},{\\"summary\\":\\"Matcher.string\\"}]",
+    "expected": "[{"description":"Matcher.string"},{"summary":"Matcher.string"}]",
     "isMust": true,
     "isShould": false,
     "name": "operation description",
     "passed": false,
-    "received": "{\\"responses\\":{}}",
+    "received": "{"responses":{}}",
     "type": "added",
     "where": "GET /api/users",
   },
@@ -1249,20 +1249,20 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers matchesOneOf inverted assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "method": "get",
         "pathPattern": "/api/users",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1288,21 +1288,21 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers matchesOneOf passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "description": "hello",
         "method": "get",
         "pathPattern": "/api/users",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1328,21 +1328,21 @@ Array [
 `;
 
 exports[`OperationRule assertions custom matchers not does not bleed into different assertions 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "description": "hello",
         "method": "get",
         "pathPattern": "/api/users",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1364,20 +1364,20 @@ Array [
     "type": "added",
     "where": "GET /api/users",
   },
-  Object {
-    "change": Object {
-      "added": Object {
+  {
+    "change": {
+      "added": {
         "description": "hello",
         "method": "get",
         "pathPattern": "/api/users",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1403,16 +1403,16 @@ Array [
 `;
 
 exports[`OperationRule assertions removed failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1420,8 +1420,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "removed": Object {
-        "before": Object {
+      "removed": {
+        "before": {
           "method": "get",
           "pathPattern": "/api/users",
         },
@@ -1444,16 +1444,16 @@ Array [
 `;
 
 exports[`OperationRule assertions removed passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1461,8 +1461,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "removed": Object {
-        "before": Object {
+      "removed": {
+        "before": {
           "method": "get",
           "pathPattern": "/api/users",
           "summary": "hello",
@@ -1486,15 +1486,15 @@ Array [
 `;
 
 exports[`OperationRule assertions requirement failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1502,7 +1502,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "value": Object {
+      "value": {
         "method": "get",
         "pathPattern": "/api/users",
       },
@@ -1524,15 +1524,15 @@ Array [
 `;
 
 exports[`OperationRule assertions requirement passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1540,7 +1540,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "value": Object {
+      "value": {
         "description": "hello",
         "method": "get",
         "pathPattern": "/api/users",
@@ -1563,23 +1563,23 @@ Array [
 `;
 
 exports[`OperationRule cookieParameter assertions added failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "in": "cookie",
         "name": "new-param",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1608,24 +1608,24 @@ Array [
 `;
 
 exports[`OperationRule cookieParameter assertions added passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "description": "hello",
         "in": "cookie",
         "name": "new-param",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1654,30 +1654,30 @@ Array [
 `;
 
 exports[`OperationRule cookieParameter assertions changed failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "cookie",
           "name": "new-param",
           "required": true,
         },
-        "before": Object {
+        "before": {
           "in": "cookie",
           "name": "new-param",
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1706,30 +1706,30 @@ Array [
 `;
 
 exports[`OperationRule cookieParameter assertions changed passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "cookie",
           "name": "new-param",
         },
-        "before": Object {
+        "before": {
           "in": "cookie",
           "name": "new-param",
           "required": true,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1758,19 +1758,19 @@ Array [
 `;
 
 exports[`OperationRule cookieParameter assertions removed failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1781,8 +1781,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "cookie-parameter",
       },
-      "removed": Object {
-        "before": Object {
+      "removed": {
+        "before": {
           "in": "cookie",
           "name": "new-param",
           "required": true,
@@ -1806,19 +1806,19 @@ Array [
 `;
 
 exports[`OperationRule cookieParameter assertions removed passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1829,8 +1829,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "cookie-parameter",
       },
-      "removed": Object {
-        "before": Object {
+      "removed": {
+        "before": {
           "in": "cookie",
           "name": "new-param",
         },
@@ -1853,18 +1853,18 @@ Array [
 `;
 
 exports[`OperationRule cookieParameter assertions requirement failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "hello",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1875,7 +1875,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "cookie-parameter",
       },
-      "value": Object {
+      "value": {
         "in": "cookie",
         "name": "hello",
       },
@@ -1897,18 +1897,18 @@ Array [
 `;
 
 exports[`OperationRule cookieParameter assertions requirement passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "cookie": "hello",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1919,7 +1919,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "cookie-parameter",
       },
-      "value": Object {
+      "value": {
         "description": "hello",
         "in": "cookie",
         "name": "hello",
@@ -1942,23 +1942,23 @@ Array [
 `;
 
 exports[`OperationRule headerParameter assertions added failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "in": "header",
         "name": "new-param",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -1987,24 +1987,24 @@ Array [
 `;
 
 exports[`OperationRule headerParameter assertions added passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "description": "hello",
         "in": "header",
         "name": "new-param",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -2033,30 +2033,30 @@ Array [
 `;
 
 exports[`OperationRule headerParameter assertions changed failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "header",
           "name": "new-param",
           "required": true,
         },
-        "before": Object {
+        "before": {
           "in": "header",
           "name": "new-param",
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -2085,30 +2085,30 @@ Array [
 `;
 
 exports[`OperationRule headerParameter assertions changed passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "header",
           "name": "new-param",
         },
-        "before": Object {
+        "before": {
           "in": "header",
           "name": "new-param",
           "required": true,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -2137,19 +2137,19 @@ Array [
 `;
 
 exports[`OperationRule headerParameter assertions removed failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -2160,8 +2160,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "header-parameter",
       },
-      "removed": Object {
-        "before": Object {
+      "removed": {
+        "before": {
           "in": "header",
           "name": "new-param",
           "required": true,
@@ -2185,19 +2185,19 @@ Array [
 `;
 
 exports[`OperationRule headerParameter assertions removed passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -2208,8 +2208,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "header-parameter",
       },
-      "removed": Object {
-        "before": Object {
+      "removed": {
+        "before": {
           "in": "header",
           "name": "new-param",
         },
@@ -2232,18 +2232,18 @@ Array [
 `;
 
 exports[`OperationRule headerParameter assertions requirement failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "hello",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -2254,7 +2254,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "header-parameter",
       },
-      "value": Object {
+      "value": {
         "in": "header",
         "name": "hello",
       },
@@ -2276,18 +2276,18 @@ Array [
 `;
 
 exports[`OperationRule headerParameter assertions requirement passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "header": "hello",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -2298,7 +2298,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "header-parameter",
       },
-      "value": Object {
+      "value": {
         "description": "hello",
         "in": "header",
         "name": "hello",
@@ -2321,23 +2321,23 @@ Array [
 `;
 
 exports[`OperationRule pathParameter assertions added failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "in": "path",
         "name": "new-param",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "path": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -2366,24 +2366,24 @@ Array [
 `;
 
 exports[`OperationRule pathParameter assertions added passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "description": "hello",
         "in": "path",
         "name": "new-param",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "path": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -2412,30 +2412,30 @@ Array [
 `;
 
 exports[`OperationRule pathParameter assertions changed failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "path",
           "name": "new-param",
           "required": true,
         },
-        "before": Object {
+        "before": {
           "in": "path",
           "name": "new-param",
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "path": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -2464,30 +2464,30 @@ Array [
 `;
 
 exports[`OperationRule pathParameter assertions changed passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "path",
           "name": "new-param",
         },
-        "before": Object {
+        "before": {
           "in": "path",
           "name": "new-param",
           "required": true,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "path": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -2516,19 +2516,19 @@ Array [
 `;
 
 exports[`OperationRule pathParameter assertions removed failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "path": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -2539,8 +2539,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "path-parameter",
       },
-      "removed": Object {
-        "before": Object {
+      "removed": {
+        "before": {
           "in": "path",
           "name": "new-param",
           "required": true,
@@ -2564,19 +2564,19 @@ Array [
 `;
 
 exports[`OperationRule pathParameter assertions removed passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "path": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -2587,8 +2587,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "path-parameter",
       },
-      "removed": Object {
-        "before": Object {
+      "removed": {
+        "before": {
           "in": "path",
           "name": "new-param",
         },
@@ -2611,18 +2611,18 @@ Array [
 `;
 
 exports[`OperationRule pathParameter assertions requirement failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "path": "hello",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -2633,7 +2633,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "path-parameter",
       },
-      "value": Object {
+      "value": {
         "in": "path",
         "name": "hello",
       },
@@ -2655,18 +2655,18 @@ Array [
 `;
 
 exports[`OperationRule pathParameter assertions requirement passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "path": "hello",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -2677,7 +2677,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "path-parameter",
       },
-      "value": Object {
+      "value": {
         "description": "hello",
         "in": "path",
         "name": "hello",
@@ -2700,23 +2700,23 @@ Array [
 `;
 
 exports[`OperationRule queryParameter assertions added failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "in": "query",
         "name": "new-param",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -2745,24 +2745,24 @@ Array [
 `;
 
 exports[`OperationRule queryParameter assertions added passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "description": "hello",
         "in": "query",
         "name": "new-param",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -2791,30 +2791,30 @@ Array [
 `;
 
 exports[`OperationRule queryParameter assertions changed failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "query",
           "name": "new-param",
           "required": true,
         },
-        "before": Object {
+        "before": {
           "in": "query",
           "name": "new-param",
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -2843,30 +2843,30 @@ Array [
 `;
 
 exports[`OperationRule queryParameter assertions changed passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "in": "query",
           "name": "new-param",
         },
-        "before": Object {
+        "before": {
           "in": "query",
           "name": "new-param",
           "required": true,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -2895,19 +2895,19 @@ Array [
 `;
 
 exports[`OperationRule queryParameter assertions removed failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -2918,8 +2918,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "query-parameter",
       },
-      "removed": Object {
-        "before": Object {
+      "removed": {
+        "before": {
           "in": "query",
           "name": "new-param",
           "required": true,
@@ -2943,19 +2943,19 @@ Array [
 `;
 
 exports[`OperationRule queryParameter assertions removed passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "new-param",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -2966,8 +2966,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "query-parameter",
       },
-      "removed": Object {
-        "before": Object {
+      "removed": {
+        "before": {
           "in": "query",
           "name": "new-param",
         },
@@ -2990,18 +2990,18 @@ Array [
 `;
 
 exports[`OperationRule queryParameter assertions requirement failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "hello",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -3012,7 +3012,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "query-parameter",
       },
-      "value": Object {
+      "value": {
         "in": "query",
         "name": "hello",
       },
@@ -3034,18 +3034,18 @@ Array [
 `;
 
 exports[`OperationRule queryParameter assertions requirement passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "hello",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -3056,7 +3056,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "query-parameter",
       },
-      "value": Object {
+      "value": {
         "description": "hello",
         "in": "query",
         "name": "hello",
@@ -3079,18 +3079,18 @@ Array [
 `;
 
 exports[`OperationRule rulesContext after 1`] = `
-Object {
-  "custom": Object {},
-  "operation": Object {
+{
+  "custom": {},
+  "operation": {
     "change": "added",
     "cookieParameters": Map {},
     "headerParameters": Map {},
-    "location": Object {
-      "conceptualLocation": Object {
+    "location": {
+      "conceptualLocation": {
         "method": "get",
         "path": "/api/users",
       },
-      "conceptualPath": Array [
+      "conceptualPath": [
         "operations",
         "/api/users",
         "get",
@@ -3102,55 +3102,55 @@ Object {
     "path": "/api/users",
     "pathParameters": Map {},
     "queryParameters": Map {},
-    "raw": Object {
+    "raw": {
       "description": "hello",
-      "responses": Object {},
+      "responses": {},
     },
-    "requests": Array [],
+    "requests": [],
     "responses": Map {},
     "security": null,
-    "value": Object {
+    "value": {
       "description": "hello",
       "method": "get",
       "pathPattern": "/api/users",
     },
   },
-  "specification": Object {
+  "specification": {
     "change": "changed",
-    "location": Object {
-      "conceptualLocation": Object {},
-      "conceptualPath": Array [],
+    "location": {
+      "conceptualLocation": {},
+      "conceptualPath": [],
       "jsonPath": "",
       "kind": "specification",
     },
-    "raw": Object {
-      "info": Object {
+    "raw": {
+      "info": {
         "title": "Empty",
         "version": "0.0.0",
       },
       "openapi": "3.1.0",
-      "paths": Object {
-        "/api/users": Object {
-          "get": Object {
+      "paths": {
+        "/api/users": {
+          "get": {
             "description": "hello",
-            "responses": Object {},
+            "responses": {},
           },
         },
       },
-      "servers": Array [
-        Object {
+      "servers": [
+        {
           "url": "http://optic.com",
         },
       ],
     },
-    "value": Object {
-      "info": Object {
+    "value": {
+      "info": {
         "title": "Empty",
         "version": "0.0.0",
       },
       "openapi": "3.1.0",
-      "servers": Array [
-        Object {
+      "servers": [
+        {
           "url": "http://optic.com",
         },
       ],
@@ -3160,18 +3160,18 @@ Object {
 `;
 
 exports[`OperationRule rulesContext before 1`] = `
-Object {
-  "custom": Object {},
-  "operation": Object {
+{
+  "custom": {},
+  "operation": {
     "change": "removed",
     "cookieParameters": Map {},
     "headerParameters": Map {},
-    "location": Object {
-      "conceptualLocation": Object {
+    "location": {
+      "conceptualLocation": {
         "method": "get",
         "path": "/api/users",
       },
-      "conceptualPath": Array [
+      "conceptualPath": [
         "operations",
         "/api/users",
         "get",
@@ -3183,55 +3183,55 @@ Object {
     "path": "/api/users",
     "pathParameters": Map {},
     "queryParameters": Map {},
-    "raw": Object {
+    "raw": {
       "description": "hello",
-      "responses": Object {},
+      "responses": {},
     },
-    "requests": Array [],
+    "requests": [],
     "responses": Map {},
     "security": null,
-    "value": Object {
+    "value": {
       "description": "hello",
       "method": "get",
       "pathPattern": "/api/users",
     },
   },
-  "specification": Object {
+  "specification": {
     "change": "removed",
-    "location": Object {
-      "conceptualLocation": Object {},
-      "conceptualPath": Array [],
+    "location": {
+      "conceptualLocation": {},
+      "conceptualPath": [],
       "jsonPath": "",
       "kind": "specification",
     },
-    "raw": Object {
-      "info": Object {
+    "raw": {
+      "info": {
         "title": "Empty",
         "version": "0.0.0",
       },
       "openapi": "3.1.0",
-      "paths": Object {
-        "/api/users": Object {
-          "get": Object {
+      "paths": {
+        "/api/users": {
+          "get": {
             "description": "hello",
-            "responses": Object {},
+            "responses": {},
           },
         },
       },
-      "servers": Array [
-        Object {
+      "servers": [
+        {
           "url": "http://optic.com",
         },
       ],
     },
-    "value": Object {
-      "info": Object {
+    "value": {
+      "info": {
         "title": "Empty",
         "version": "0.0.0",
       },
       "openapi": "3.1.0",
-      "servers": Array [
-        Object {
+      "servers": [
+        {
           "url": "http://optic.com",
         },
       ],

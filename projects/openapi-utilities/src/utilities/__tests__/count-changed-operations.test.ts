@@ -1,3 +1,4 @@
+import { it, expect, describe } from '@jest/globals';
 import { countOperationsModifications } from '../count-changed-operations';
 import {
   OpenApiKind,

@@ -1,18 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ResponseRule assertion helpers failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -22,14 +22,14 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200",
         "kind": "response",
       },
-      "value": Object {
+      "value": {
         "description": "hello",
         "statusCode": "200",
       },
     },
     "condition": undefined,
     "docsLink": undefined,
-    "error": "Could not find a partial match in header parameters with name isgood. Value to match: {\\"description\\":\\"Matcher.string\\"}",
+    "error": "Could not find a partial match in header parameters with name isgood. Value to match: {"description":"Matcher.string"}",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -44,18 +44,18 @@ Array [
 `;
 
 exports[`ResponseRule assertion helpers inverted assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -65,7 +65,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200",
         "kind": "response",
       },
-      "value": Object {
+      "value": {
         "description": "hello",
         "statusCode": "200",
       },
@@ -87,18 +87,18 @@ Array [
 `;
 
 exports[`ResponseRule assertion helpers passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -108,7 +108,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200",
         "kind": "response",
       },
-      "value": Object {
+      "value": {
         "description": "hello",
         "statusCode": "200",
       },
@@ -130,23 +130,23 @@ Array [
 `;
 
 exports[`ResponseRule header assertions added failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "name": "isnotsogood",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "header": "isnotsogood",
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -176,24 +176,24 @@ Array [
 `;
 
 exports[`ResponseRule header assertions added passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "description": "yes",
         "name": "isgood",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "header": "isgood",
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -223,23 +223,23 @@ Array [
 `;
 
 exports[`ResponseRule header assertions addedOrChanged failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "added": Object {
+[
+  {
+    "change": {
+      "added": {
         "name": "isnotsogood",
       },
       "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "header": "isnotsogood",
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -269,36 +269,36 @@ Array [
 `;
 
 exports[`ResponseRule header assertions addedOrChanged passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "description": "yes",
           "name": "isgood",
-          "schema": Object {
+          "schema": {
             "type": "number",
           },
         },
-        "before": Object {
+        "before": {
           "description": "yes",
           "name": "isgood",
-          "schema": Object {
+          "schema": {
             "type": "string",
           },
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "header": "isgood",
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -328,31 +328,31 @@ Array [
 `;
 
 exports[`ResponseRule header assertions changed failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "description": "yes",
           "name": "isgood",
           "required": true,
         },
-        "before": Object {
+        "before": {
           "description": "yes",
           "name": "isgood",
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "header": "isgood",
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -382,31 +382,31 @@ Array [
 `;
 
 exports[`ResponseRule header assertions changed passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "changed",
-      "changed": Object {
-        "after": Object {
+      "changed": {
+        "after": {
           "description": "yes",
           "name": "isgood",
         },
-        "before": Object {
+        "before": {
           "description": "yes",
           "name": "isgood",
           "required": true,
         },
       },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "header": "isgood",
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -436,19 +436,19 @@ Array [
 `;
 
 exports[`ResponseRule header assertions does not get double called for each body 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "header": "isgood",
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -460,7 +460,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200/headers/isgood",
         "kind": "response-header",
       },
-      "value": Object {
+      "value": {
         "description": "yes",
         "name": "isgood",
       },
@@ -482,20 +482,20 @@ Array [
 `;
 
 exports[`ResponseRule header assertions removed failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "header": "isgood",
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -507,8 +507,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200/headers/isgood",
         "kind": "response-header",
       },
-      "removed": Object {
-        "before": Object {
+      "removed": {
+        "before": {
           "description": "yes",
           "name": "isgood",
           "required": true,
@@ -532,20 +532,20 @@ Array [
 `;
 
 exports[`ResponseRule header assertions removed passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "header": "isgood",
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -557,8 +557,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200/headers/isgood",
         "kind": "response-header",
       },
-      "removed": Object {
-        "before": Object {
+      "removed": {
+        "before": {
           "description": "yes",
           "name": "isgood",
         },
@@ -581,19 +581,19 @@ Array [
 `;
 
 exports[`ResponseRule header assertions requirement failing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "header": "isnotsogood",
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -605,7 +605,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200/headers/isnotsogood",
         "kind": "response-header",
       },
-      "value": Object {
+      "value": {
         "name": "isnotsogood",
       },
     },
@@ -626,19 +626,19 @@ Array [
 `;
 
 exports[`ResponseRule header assertions requirement passing assertion 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "header": "isgood",
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -650,7 +650,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200/headers/isgood",
         "kind": "response-header",
       },
-      "value": Object {
+      "value": {
         "description": "yes",
         "name": "isgood",
       },

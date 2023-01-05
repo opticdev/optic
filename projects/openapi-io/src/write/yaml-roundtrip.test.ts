@@ -1,3 +1,4 @@
+import { it, expect, describe } from '@jest/globals';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { applyOperationsToYamlString } from './yaml-roundtrip';
 
@@ -262,7 +263,7 @@ paths:
           path: '/paths/~1todos/get/responses/200/content/application~1json; charset=utf-8/schema/properties/links/required',
           value: ['completed_todos'],
           extra: 'same',
-        },
+        } as any,
         {
           op: 'add',
           path: '/paths/~1todos/get/responses/200/content/application~1json; charset=utf-8/schema/properties/links/properties/completed_todos',

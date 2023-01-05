@@ -1,19 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`breaking changes ruleset - response status code removal status code removal 1`] = `
-Array [
-  Object {
-    "change": Object {
+[
+  {
+    "change": {
       "changeType": "removed",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -23,8 +23,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200",
         "kind": "response",
       },
-      "removed": Object {
-        "before": Object {
+      "removed": {
+        "before": {
           "description": "",
           "statusCode": "200",
         },

@@ -1,11 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ProxyInteractions captures requests and responses, proxied to a target server 1`] = `
-Object {
-  "request": Object {
-    "body": Object {
-      "buffer": Object {
-        "data": Array [
+{
+  "request": {
+    "body": {
+      "buffer": {
+        "data": [
           115,
           116,
           114,
@@ -16,7 +16,7 @@ Object {
         "type": "Buffer",
       },
     },
-    "headers": Object {
+    "headers": {
       "accept-encoding": "br, gzip, deflate",
       "connection": "close",
       "content-length": "6",
@@ -28,7 +28,7 @@ Object {
     "path": "/some-path",
     "protocol": "http",
     "rawHeaders": Any<Array>,
-    "timingEvents": Object {
+    "timingEvents": {
       "bodyReceivedTimestamp": Any<Number>,
       "headersSentTimestamp": Any<Number>,
       "responseSentTimestamp": Any<Number>,
@@ -37,10 +37,10 @@ Object {
     },
     "url": "http://localhost:8001/some-path",
   },
-  "response": Object {
-    "body": Object {
-      "buffer": Object {
-        "data": Array [
+  "response": {
+    "body": {
+      "buffer": {
+        "data": [
           84,
           101,
           115,
@@ -58,7 +58,7 @@ Object {
         "type": "Buffer",
       },
     },
-    "headers": Object {
+    "headers": {
       "connection": "close",
       "date": Any<String>,
       "transfer-encoding": "chunked",
@@ -67,7 +67,7 @@ Object {
     "rawHeaders": Any<Array>,
     "statusCode": 200,
     "statusMessage": "OK",
-    "timingEvents": Object {
+    "timingEvents": {
       "bodyReceivedTimestamp": Any<Number>,
       "headersSentTimestamp": Any<Number>,
       "responseSentTimestamp": Any<Number>,

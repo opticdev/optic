@@ -1,3 +1,4 @@
+import { it, beforeEach, describe, expect } from '@jest/globals';
 import { OperationQueries } from './queries';
 import { SpecFacts, OpenAPIV3 } from '../specs';
 import { collect } from '../lib/async-tools';

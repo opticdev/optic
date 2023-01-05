@@ -124,6 +124,7 @@ export class SchemaCompilationError extends Error {
   constructor(ajvError: Error) {
     super(`Error compiling schema: ${ajvError.message}`);
     Ono.extend(this, ajvError);
+    Object.setPrototypeOf(this, SchemaCompilationError.prototype);
   }
 }
 

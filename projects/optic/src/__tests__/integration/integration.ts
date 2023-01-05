@@ -1,7 +1,6 @@
 import { beforeEach, afterEach } from '@jest/globals';
 import http from 'http';
 import fs from 'node:fs/promises';
-import os from 'node:os';
 import { spawn } from 'child_process';
 import path from 'node:path';
 
