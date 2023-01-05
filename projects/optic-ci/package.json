@@ -33,7 +33,7 @@
     "@types/node": "^17.0.15",
     "@types/picomatch": "^2.3.0",
     "@types/url-join": "^4.0.1",
-    "@types/uuid": "^8.3.1",
+    "@types/uuid": "^9.0.0",
     "@useoptic/rulesets-base": "workspace:*",
     "@useoptic/standard-rulesets": "workspace:*",
     "babel-jest": "^29.3.1",

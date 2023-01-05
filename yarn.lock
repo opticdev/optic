@@ -3611,10 +3611,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/uuid@npm:^8.3.1":
-  version: 8.3.4
-  resolution: "@types/uuid@npm:8.3.4"
-  checksum: 6f11f3ff70f30210edaa8071422d405e9c1d4e53abbe50fdce365150d3c698fe7bbff65c1e71ae080cbfb8fded860dbb5e174da96fdbbdfcaa3fb3daa474d20f
+"@types/uuid@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "@types/uuid@npm:9.0.0"
+  checksum: 59ae56d9547c8758588659da2a2b4c97cce79c2aae1798c892bb29452ef08e87859dea2ec3a66bfa88d0d2153147520be2b1893be920f9f0bc9c53a3207ea6aa
   languageName: node
   linkType: hard
 
@@ -3887,7 +3887,7 @@ __metadata:
     "@types/node": ^17.0.15
     "@types/picomatch": ^2.3.0
     "@types/url-join": ^4.0.1
-    "@types/uuid": ^8.3.1
+    "@types/uuid": ^9.0.0
     "@useoptic/openapi-io": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"
     "@useoptic/rulesets-base": "workspace:*"
@@ -3941,7 +3941,7 @@ __metadata:
     "@types/picomatch": ^2.3.0
     "@types/tar": ^6
     "@types/url-join": ^4.0.1
-    "@types/uuid": ^8.3.1
+    "@types/uuid": ^9.0.0
     "@useoptic/openapi-cli": "workspace:*"
     "@useoptic/openapi-io": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"
