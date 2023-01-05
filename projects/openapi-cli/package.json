@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/openapi-cli",
   "license": "MIT",
-  "packageManager": "yarn@3.0.2",
+  "packageManager": "yarn@3.3.1",
   "version": "0.35.12",
   "main": "build/lib.js",
   "types": "build/lib.d.ts",
