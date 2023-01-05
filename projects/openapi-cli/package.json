@@ -67,7 +67,7 @@
     "analytics-node": "^6.2.0",
     "async-exit-hook": "^2.0.1",
     "axax": "^0.2.2",
-    "chalk": "4.1.2",
+    "chalk": "5.2.0",
     "commander": "^9.4.1",
     "conf": "^10.2.0",
     "fast-deep-equal": "^3.1.3",
