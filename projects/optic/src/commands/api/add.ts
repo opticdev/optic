@@ -118,15 +118,17 @@ const getApiAddAction =
     let ruleset = options.ruleset;
     if (!ruleset) {
       // TODO fetch existing rulesets
-      const existingStandards: { id: string; name: string; slug: string }[] =
-        [];
+      const existingStandards: { id: string; name: string; slug: string }[] = [
+        { id: '', name: '', slug: 'a' },
+      ];
 
       const rulesetResponse = await prompts([
         {
           type: 'confirm',
           message:
-            'Would you like to attach a standard to added APIs? Note that you can always add a standard later',
+            'Would you like to attach a standard to any added APIs? Note that you can always add a standard later',
           name: 'add',
+          initial: true,
         },
         {
           type: (prev) =>
@@ -158,7 +160,7 @@ const getApiAddAction =
 
       if (rulesetResponse.rulesetSlug) {
         ruleset = rulesetResponse.rulesetSlug;
-      } else if (rulesetResponse.add) {
+      } else if (rulesetResponse.add && rulesetResponse.useExisting === 'new') {
         const createRulesetResponse = await prompts({
           type: 'multiselect',
           name: 'rulesets',
@@ -172,11 +174,16 @@ const getApiAddAction =
           ],
         });
 
-        // TODO create ruleset API with sensible defaults
-        const rulesetUrl = 'todo';
-        logger.info(
-          `A new standard has been created. You can view and edit this standard at ${rulesetUrl}`
-        );
+        if (
+          createRulesetResponse.rulesets &&
+          createRulesetResponse.rulesets.length > 0
+        ) {
+          // TODO create ruleset API with sensible defaults
+          const rulesetUrl = 'todo';
+          logger.info(
+            `A new standard has been created. You can view and edit this standard at ${rulesetUrl}`
+          );
+        }
       }
     } else {
       // TODO make API call to check that ruleset exists
