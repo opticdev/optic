@@ -4,20 +4,26 @@ import { TestHelpers } from '@useoptic/rulesets-base';
 import { NamingChangesRuleset } from '../index';
 
 describe('fromOpticConfig', () => {
-  test('invalid configuration', () => {
-    const out = NamingChangesRuleset.fromOpticConfig({ required_on: 'invalid' });
+  test('invalid configuration', async () => {
+    const out = await NamingChangesRuleset.fromOpticConfig({
+      required_on: 'invalid',
+    });
     expect(out).toEqual(
       '- ruleset/naming/required_on must be equal to one of the allowed values'
     );
   });
 
-  test('with valid config', () => {
-    expect(NamingChangesRuleset.fromOpticConfig({ required_on: 'always' })).toBeInstanceOf(NamingChangesRuleset)
-  })
+  test('with valid config', async () => {
+    expect(
+      await NamingChangesRuleset.fromOpticConfig({ required_on: 'always' })
+    ).toBeInstanceOf(NamingChangesRuleset);
+  });
 
-  test('with legacy valid config', () => {
-    expect(NamingChangesRuleset.fromOpticConfig({ applies: 'always' })).toBeInstanceOf(NamingChangesRuleset)
-  })
+  test('with legacy valid config', async () => {
+    expect(
+      await NamingChangesRuleset.fromOpticConfig({ applies: 'always' })
+    ).toBeInstanceOf(NamingChangesRuleset);
+  });
 });
 
 describe('naming changes configuration', () => {
