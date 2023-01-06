@@ -66,7 +66,7 @@ const getApiAddAction =
       process.exitCode = 1;
       return;
     } else if ('TODO check in git repo') {
-      console.error('Must be in a git repo to add apis');
+      console.error('Must have git in path and be in a git repo to add apis');
       process.exitCode = 1;
       return;
     }
@@ -84,21 +84,30 @@ const getApiAddAction =
     // Then upload specs to optic cloud (with throttle, etc)
   };
 
-type SpecToAdd = {};
+type ApisToAdd = {
+  path: string;
+  revisions: {}[];
+};
 
+// TODO implement this as a stream
 async function discoverOneApi(
   path: string,
   depth: string
-): Promise<SpecToAdd[]> {
+): Promise<ApisToAdd[]> {
   // Check whether path is a valid openapi spec
   // If it is not, error and exit
 
-  // If it is ok, start traversing git history and pulling specs
+  // first parent treats merge commits as a single depth (not including children in it)
+  // git rev-list HEAD -n depth --first-parent or just git rev-list HEAD --first-parent
+
+  // TODO should we stop when we see a spec removed?
+
+  // go reverse and once we dont have that spec anymore, we finish
 
   return [];
 }
 
-async function discoverAllApis(): Promise<SpecToAdd[]> {
+async function discoverAllApis(): Promise<ApisToAdd[]> {
   // Pull all specs that match the openapi spec criteria
   return [];
 }
