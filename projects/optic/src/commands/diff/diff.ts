@@ -26,7 +26,7 @@ import {
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { getAnonId } from '../../utils/anonymous-id';
-import { OPTIC_RULESET_KEY } from '../../constants';
+import { OPTIC_STANDARD_KEY } from '../../constants';
 
 const description = `run a diff between two API specs`;
 
@@ -43,11 +43,11 @@ Example usage:
   Diff \`openapi-spec-v0.yml\` against \`openapi-spec-v1.yml\`
   $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml
 
-  Run a diff and check the changes against the detected ruleset (looks at --ruleset, then 'x-optic-ruleset' in the spec, then the optic.dev.yml file)):
+  Run a diff and check the changes against the detected standard (looks at --standard, then 'x-optic-standard' in the spec, then the optic.dev.yml file)):
   $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml --check
 
-  Specify a different ruleset config to run against
-  $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml --check --ruleset ./other_config.yml
+  Specify a different standard config to run against
+  $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml --check --standard ./other_config.yml
   `;
 
 type SpecResults = Awaited<ReturnType<typeof generateSpecResults>>;
@@ -184,8 +184,8 @@ const runDiff = async (
     {
       rulesetArg: options.ruleset,
       specRuleset: headFile.isEmptySpec
-        ? baseFile.jsonLike[OPTIC_RULESET_KEY]
-        : headFile.jsonLike[OPTIC_RULESET_KEY],
+        ? baseFile.jsonLike[OPTIC_STANDARD_KEY]
+        : headFile.jsonLike[OPTIC_STANDARD_KEY],
       config,
     },
     options.check

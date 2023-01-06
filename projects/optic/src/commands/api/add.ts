@@ -16,7 +16,7 @@ const usage = () => `
   optic api add
   optic api add <path_to_spec.yml>
   optic api add <path_to_spec.yml> --history-depth 0
-  optic api add <path_to_spec.yml> --ruleset <ruleset_id> --web`;
+  optic api add <path_to_spec.yml> --standard <standard_id> --web`;
 
 const helpText = `
 Example usage:
@@ -29,8 +29,8 @@ Example usage:
   Discover all apis in the current repo
   $ optic api add
 
-  Add all apis and attach rulesets - configure your ruleset in Optic cloud
-  $ optic api add --ruleset <ruleset_id>
+  Add all apis and attach standard - configure your API standard in Optic cloud
+  $ optic api add --standard <standard_id>
   `;
 
 export const registerApiAdd = (cli: Command, config: OpticCliConfig) => {
@@ -44,12 +44,12 @@ export const registerApiAdd = (cli: Command, config: OpticCliConfig) => {
     .argument('[spec_path]', 'path to file to compare')
     .option(
       '--history-depth <history-depth>',
-      'Set rulesets to run on API diffs. You can always add this later by setting the `[x-optic-ruleset]` key on your OpenAPI spec',
+      'Sets the depth of how far to crawl through to add historic API data. Set history-depth=0 if you want to crawl the entire history',
       '1'
     )
     .option(
-      '--ruleset <ruleset>',
-      'Set rulesets to run on API diffs. You can always add this later by setting the `[x-optic-ruleset]` key on your OpenAPI spec'
+      '--standard <standard>',
+      'Set a standard to run on API diffs. You can always add this later by setting the `[x-optic-standard]` key on your OpenAPI spec'
     )
     .option('--web', 'open to the added API in Optic Cloud', false)
     .action(wrapActionHandlerWithSentry(getApiAddAction(config)));
@@ -57,7 +57,7 @@ export const registerApiAdd = (cli: Command, config: OpticCliConfig) => {
 
 type ApiAddActionOptions = {
   historyDepth: string;
-  ruleset?: boolean;
+  standard?: boolean;
   web?: boolean;
 };
 
@@ -115,9 +115,9 @@ const getApiAddAction =
     }
     logger.info('');
 
-    let ruleset = options.ruleset;
-    if (!ruleset) {
-      // TODO fetch existing rulesets
+    let standard = options.standard;
+    if (!standard) {
+      // TODO fetch existing standard
       const existingStandards: { id: string; name: string; slug: string }[] = [
         { id: '', name: '', slug: 'a' },
       ];
@@ -149,7 +149,7 @@ const getApiAddAction =
         },
         {
           type: (prev) => (prev === 'existing' ? 'select' : null),
-          name: 'rulesetSlug',
+          name: 'standard',
           message: 'Select an existing standard to add to these APIs',
           choices: existingStandards.map((r) => ({
             title: r.slug,
@@ -158,8 +158,8 @@ const getApiAddAction =
         },
       ]);
 
-      if (rulesetResponse.rulesetSlug) {
-        ruleset = rulesetResponse.rulesetSlug;
+      if (rulesetResponse.standard) {
+        standard = rulesetResponse.standard;
       } else if (rulesetResponse.add && rulesetResponse.useExisting === 'new') {
         const createRulesetResponse = await prompts({
           type: 'multiselect',
@@ -191,7 +191,7 @@ const getApiAddAction =
       if (!rulesetExists) {
         logger.warn(
           chalk.yellow(
-            `Warning: It looks like the standard ${options.ruleset} does not exist.`
+            `Warning: It looks like the standard ${standard} does not exist.`
           )
         );
       }
@@ -200,7 +200,7 @@ const getApiAddAction =
     logger.info('');
     logger.info(
       `Adding APIs to organization ${org.name}${
-        ruleset ? ` with ruleset ${ruleset}` : ''
+        standard ? ` with standard ${standard}` : ''
       }`
     );
 
@@ -262,7 +262,7 @@ const getApiAddAction =
       // Write to file only if optic-url is not set
       if (!opticUrl) {
         // TODO write to json / yml non-desctructively
-        // If no x-optic-url, add x-optic-url + add ruleset
+        // If no x-optic-url, add x-optic-url + add standard
       }
     }
   };
