@@ -4,13 +4,13 @@
 
 **Shipping an API is easy** -- the REST is hard. We built Optic because every developer/team should be able to get the benefits of OpenAPI, without all the time/effort/costs. 
 
-**📋 Documentation for all your APIs**
+[**📋 Documentation for all your APIs**](#document-your-existing-apis-in-minutes)    ← *write your API promises down*
 
-**🛑 Prevent breaking changes from shipping**
+[**🛑 Prevent breaking changes from shipping**](#prevent-breaking-changes-with-api-diffs)  ← *keep your promises*
 
-**✅ Verify your API is working-as-designed (the OpenAPI and implimentation are in sync)**
+[**✅ Verify your API is working-as-designed (the OpenAPI and implimentation are in sync)**](#verify-your-api-is-working-as-designed)    ← *make sure the API works as-designed*
 
-**🎨 Build a consistent API that follows your team's standards**
+[**🎨 Build a consistent API that follows your team's standards**](#build-a-consistent-api-that-follows-your-teams-standards)  ← *raise the quality of your API*
 
 ## Document your existing APIs in minutes 
 Use real API traffic to write your initial OpenAPI specification and correctly patch the spec whenever an API changes. 
@@ -41,3 +41,6 @@ https://user-images.githubusercontent.com/5900338/211033179-86d5021f-17d1-4391-a
 **[Read Full Documentation](https://www.useoptic.com/docs/diff-openapi)**
 
 
+## Verify your API is working-as-designed
+
+## Build a consistent API that follows your team's standards
