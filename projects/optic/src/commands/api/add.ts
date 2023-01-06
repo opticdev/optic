@@ -111,9 +111,9 @@ const getApiAddAction =
           );
           logger.info(e);
         } else {
-          logger.debug(`Disregarding candidate ${path}`, e);
+          logger.debug(`Disregarding candidate ${path}`);
+          logger.debug(e);
         }
-        // Is an invalid spec
         continue;
       }
       if (parseResult.isEmptySpec) {
@@ -126,6 +126,7 @@ const getApiAddAction =
         ? 'todo get optic id from url'
         : 'todo make API call';
 
+      logger.info(`Found OpenAPI Spec at ${path}`);
       for await (const sha of shas) {
         let parseResult: ParseResult;
         try {
@@ -143,6 +144,7 @@ const getApiAddAction =
           );
           continue;
         }
+        logger.info(`Uploading spec ${sha}:${path}`);
 
         // TODO Upload spec here
       }
@@ -199,11 +201,9 @@ async function getPathCandidatesForSha(sha: string): Promise<Map<Path, Sha[]>> {
     .trim()
     .split('\n')
     .filter((path) => !!path);
-  const cwd = process.cwd();
 
   for (const p of relativePaths) {
-    const absolutePath = path.join(cwd, p);
-    results.set(absolutePath, [sha]);
+    results.set(p, [sha]);
   }
 
   return results;
