@@ -13,8 +13,7 @@ jest.setTimeout(30000);
 describe('diff', () => {
   test('two files, no repo or config', async () => {
     const workspace = await setupWorkspace('diff/files-no-repo', {
-      repo: true,
-      commit: true,
+      repo: false,
     });
     const { combined, code } = await runOptic(
       workspace,
