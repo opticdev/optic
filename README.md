@@ -78,7 +78,7 @@ ruleset:
       pathComponents: camelCase
       requestHeaders: Capital-Param-Case
       queryParameters: Capital-Param-Case
-  - examples # Examples in the OpenAPI are required and must match the schemas
+  - examples: # Examples in the OpenAPI are required and must match the schemas
       require_request_examples: true
       require_response_examples: true
       require_parameter_examples: true    
