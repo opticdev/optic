@@ -136,13 +136,13 @@ const getApiAddAction =
             `${sha}:${path} is not a valid OpenAPI file, stopping here`,
             e
           );
-          continue;
+          break;
         }
         if (parseResult.isEmptySpec) {
           logger.debug(
             `File ${path} does not exist in sha ${sha}, stopping here`
           );
-          continue;
+          break;
         }
         logger.info(`Uploading spec ${sha}:${path}`);
 
