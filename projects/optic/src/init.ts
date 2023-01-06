@@ -10,13 +10,7 @@ import Commander from 'commander';
 import { registerDiff } from './commands/diff/diff';
 import { registerRulesetUpload } from './commands/ruleset/upload';
 
-import {
-  VCS,
-  DefaultOpticCliConfig,
-  detectCliConfig,
-  loadCliConfig,
-  OpticCliConfig,
-} from './config';
+import { initializeConfig } from './config';
 import { hasGit, isInGitRepo, getRootPath } from './utils/git-utils';
 import { getAnonId } from './utils/anonymous-id';
 import { registerRulesetInit } from './commands/ruleset/init';
@@ -51,17 +45,7 @@ export const initCli = async () => {
     } catch (e) {}
   });
 
-  let cliConfig: OpticCliConfig = DefaultOpticCliConfig;
-  if ((await hasGit()) && (await isInGitRepo())) {
-    const gitRoot = await getRootPath();
-    const opticYmlPath = await detectCliConfig(gitRoot);
-
-    if (opticYmlPath) {
-      cliConfig = await loadCliConfig(opticYmlPath);
-    }
-
-    cliConfig.vcs = VCS.Git;
-  }
+  const cliConfig = await initializeConfig();
 
   cli.version(packageJson.version);
   cli.addHelpCommand(false);

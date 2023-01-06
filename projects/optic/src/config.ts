@@ -3,7 +3,17 @@ import yaml from 'js-yaml';
 import { UserError } from '@useoptic/openapi-utilities';
 import Ajv from 'ajv';
 import path from 'node:path';
-import { createOpticClient } from '@useoptic/optic-ci/build/cli/clients/optic-client';
+import {
+  createOpticClient,
+  OpticBackendClient,
+} from '@useoptic/optic-ci/build/cli/clients/optic-client';
+import {
+  hasGit,
+  isInGitRepo,
+  getRootPath,
+  isGitStatusClean,
+  resolveGitRef,
+} from './utils/git-utils';
 
 export enum VCS {
   Git = 'git',
@@ -15,6 +25,11 @@ export const OPTIC_DEV_YML_NAME = 'optic.dev.yml';
 type ConfigRuleset = { name: string; config: unknown };
 
 export type RawYmlConfig = {
+  ruleset?: unknown[];
+  extends?: string;
+};
+
+export type OpticCliConfig = Omit<RawYmlConfig, 'ruleset' | 'extends'> & {
   // path to the loaded config, or undefined if it was the default config
   configPath?: string;
 
@@ -22,47 +37,29 @@ export type RawYmlConfig = {
   root: string;
 
   // the detected vcs
-  vcs?: string;
+  vcs?: {
+    type: VCS;
+    sha: string;
+    status: 'clean' | 'dirty';
+  };
 
-  files: {
-    path: string;
-    id: string;
-  }[];
-
-  ruleset?: unknown[];
-  extends?: string;
-};
-
-export type OpticCliConfig = Omit<RawYmlConfig, 'ruleset' | 'extends'> & {
   ruleset: ConfigRuleset[];
+  isAuthenticated: boolean;
+  client: OpticBackendClient;
 };
 
-export const DefaultOpticCliConfig: OpticCliConfig = {
+const DefaultOpticCliConfig: OpticCliConfig = {
   root: process.cwd(),
   configPath: undefined,
-  files: [],
   ruleset: [{ name: 'breaking-changes', config: {} }],
+  isAuthenticated: false,
+  client: createOpticClient('no_token'),
 };
 
 const ajv = new Ajv();
 const configSchema = {
   type: 'object',
   properties: {
-    files: {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          path: {
-            type: 'string',
-          },
-          id: {
-            type: 'string',
-          },
-        },
-        required: ['path', 'id'],
-      },
-    },
     extends: {
       type: 'string',
     },
@@ -108,15 +105,13 @@ export async function detectCliConfig(
 }
 
 export async function loadCliConfig(
-  configPath: string
+  configPath: string,
+  client: OpticBackendClient
 ): Promise<OpticCliConfig> {
   const config = yaml.load(await fs.readFile(configPath, 'utf-8'));
   validateConfig(config, configPath);
   const rawConfig = config as RawYmlConfig;
-  await initializeRules(rawConfig);
-
-  // force files to be an empty array if it's not in the yaml
-  rawConfig.files ||= [];
+  await initializeRules(rawConfig, client);
 
   const cliConfig = config as OpticCliConfig;
   cliConfig.root = path.dirname(configPath);
@@ -137,11 +132,12 @@ export const validateConfig = (config: unknown, path: string) => {
   }
 };
 
-export const initializeRules = async (config: RawYmlConfig) => {
+export const initializeRules = async (
+  config: RawYmlConfig,
+  client: OpticBackendClient
+) => {
   let rulesetMap: Map<string, ConfigRuleset> = new Map();
   if (config.extends) {
-    // TODO in the future add in login flow to set token
-    const client = createOpticClient('no_token');
     console.log(`Extending ruleset from ${config.extends}`);
 
     try {
@@ -177,3 +173,39 @@ export const initializeRules = async (config: RawYmlConfig) => {
 
   config.ruleset = [...rulesetMap.values()];
 };
+
+export async function initializeConfig(): Promise<OpticCliConfig> {
+  let cliConfig: OpticCliConfig = DefaultOpticCliConfig;
+  const maybeEnvToken = process.env.OPTIC_TOKEN;
+  // TODO implement read from XDG BASEDIR ~/.config/optic/config.json when optic login implemented
+  const maybeUserToken = undefined;
+  const token = maybeEnvToken || maybeUserToken;
+  if (token) {
+    cliConfig.isAuthenticated = true;
+    cliConfig.client = createOpticClient(token);
+  }
+
+  if ((await hasGit()) && (await isInGitRepo())) {
+    const gitRoot = await getRootPath();
+    const opticYmlPath = await detectCliConfig(gitRoot);
+
+    if (opticYmlPath) {
+      cliConfig = {
+        ...cliConfig,
+        ...(await loadCliConfig(opticYmlPath, cliConfig.client)),
+      };
+    }
+
+    try {
+      cliConfig.vcs = {
+        type: VCS.Git,
+        sha: await resolveGitRef('HEAD'),
+        status: (await isGitStatusClean()) ? 'clean' : 'dirty',
+      };
+    } catch (e) {
+      // Git command can fail in a repo with no commits, we should treat this as having no commits
+    }
+  }
+
+  return cliConfig;
+}
