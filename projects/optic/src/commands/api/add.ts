@@ -5,6 +5,9 @@ import { Command } from 'commander';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 
 import { OpticCliConfig, VCS } from '../../config';
+import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
+import { logger } from '../../logger';
+import { OPTIC_URL_KEY } from '../../constants';
 
 const exec = promisify(callbackExec);
 
@@ -61,23 +64,23 @@ const getApiAddAction =
   (config: OpticCliConfig) =>
   async (path_to_spec: string | undefined, options: ApiAddActionOptions) => {
     if (isNaN(Number(options.historyDepth))) {
-      console.error(
+      logger.error(
         '--history-depth is not a number. history-depth must be a number'
       );
       process.exitCode = 1;
       return;
     } else if (!path_to_spec && options.historyDepth !== '1') {
-      console.error(
+      logger.error(
         'Invalid argument combination: Cannot set a history-depth !== 1 when no spec path is provided'
       );
       process.exitCode = 1;
       return;
     } else if (!config.isAuthenticated) {
-      console.error('Must be logged in to add APIs. Log in with `optic login`');
+      logger.error('Must be logged in to add APIs. Log in with `optic login`');
       process.exitCode = 1;
       return;
     } else if (!config.vcs || config.vcs?.type !== VCS.Git) {
-      console.error('Must have git in path and be in a git repo to add apis');
+      logger.error('Must have git in path and be in a git repo to add apis');
       process.exitCode = 1;
       return;
     }
@@ -98,18 +101,57 @@ const getApiAddAction =
     for await (const [path, shas] of candidates) {
       const [firstSha] = shas;
 
-      // Load API - check for:
-      // - is valid OpenAPI spec? If not, log out information - if path=path_to_spec, log information, otherwise log debug
-      // - has x-optic-url? if not, add API, otherwise get the API id from url
-
-      for await (const sha of shas) {
-        // TODO maybe check if sha already exists in optic
-        // upload spec
+      let parseResult: ParseResult;
+      try {
+        parseResult = await getFileFromFsOrGit(`${firstSha}:${path}`, config);
+      } catch (e) {
+        if (path === path_to_spec) {
+          logger.info(
+            `File ${path_to_spec} is not a valid OpenAPI file. Optic currently supports OpenAPI 3 and 3.1`
+          );
+          logger.info(e);
+        } else {
+          logger.debug(`Disregarding candidate ${path}`, e);
+        }
+        // Is an invalid spec
+        continue;
+      }
+      if (parseResult.isEmptySpec) {
+        logger.info(`File ${path} does not exist in sha ${firstSha}`);
+        continue;
       }
 
-      // Write to file
-      // If no x-optic-url, add x-optic-url + add ruleset
-      // if existing x-optic-url, do not add ruleset
+      const opticUrl = parseResult.jsonLike[OPTIC_URL_KEY];
+      const apiId = opticUrl
+        ? 'todo get optic id from url'
+        : 'todo make API call';
+
+      for await (const sha of shas) {
+        let parseResult: ParseResult;
+        try {
+          parseResult = await getFileFromFsOrGit(`${sha}:${path}`, config);
+        } catch (e) {
+          logger.debug(
+            `${sha}:${path} is not a valid OpenAPI file, stopping here`,
+            e
+          );
+          continue;
+        }
+        if (parseResult.isEmptySpec) {
+          logger.debug(
+            `File ${path} does not exist in sha ${sha}, stopping here`
+          );
+          continue;
+        }
+
+        // TODO Upload spec here
+      }
+
+      // Write to file only if optic-url is not set
+      if (!opticUrl) {
+        // TODO write to json / yml non-desctructively
+        // If no x-optic-url, add x-optic-url + add ruleset
+      }
     }
   };
 
