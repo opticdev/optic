@@ -19,7 +19,7 @@
     "compare": "yarn ts-node src/index.tsx compare"
   },
   "dependencies": {
-    "@stoplight/spectral-core": "^1.16.0",
+    "@stoplight/spectral-core": "^1.8.1",
     "@stoplight/spectral-ruleset-bundler": "^1.5.0",
     "@stoplight/spectral-rulesets": "^1.14.1",
     "@useoptic/openapi-utilities": "workspace:*",

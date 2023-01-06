@@ -19,7 +19,11 @@ export type RulesetPayload = {
   >;
   standardRulesets: Record<
     string,
-    { fromOpticConfig: (config: unknown) => Ruleset | ExternalRule | string }
+    {
+      fromOpticConfig: (
+        config: unknown
+      ) => Promise<Ruleset | ExternalRule | string>;
+    }
   >;
 };
 
@@ -40,7 +44,7 @@ export async function prepareRulesets(
     if (StandardRulesets[ruleset.name as keyof typeof StandardRulesets]) {
       const RulesetClass =
         StandardRulesets[ruleset.name as keyof typeof StandardRulesets];
-      instanceOrErrorMsg = RulesetClass.fromOpticConfig(ruleset.config);
+      instanceOrErrorMsg = await RulesetClass.fromOpticConfig(ruleset.config);
     } else if (payload.localRulesets[ruleset.name]) {
       try {
         instanceOrErrorMsg = await resolveRuleset(

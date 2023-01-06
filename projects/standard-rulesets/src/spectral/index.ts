@@ -6,6 +6,7 @@ import fetch from 'node-fetch';
 import { bundleAndLoadRuleset } from '@stoplight/spectral-ruleset-bundler/with-loader';
 import Ajv from 'ajv';
 import { IChange, IFact, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
+import { ExternalRuleBase } from '@useoptic/rulesets-base/build/rules/external-rule-base';
 // import fetch from 'node-fetch';
 
 const ajv = new Ajv();
@@ -26,15 +27,13 @@ const configSchema = {
 };
 const validateConfigSchema = ajv.compile(configSchema);
 
-export class SpectralRulesets {
+export class SpectralRulesets extends ExternalRuleBase {
   constructor(
     private options: {
-      spectralRules: Promise<SpectralRule>[];
+      spectralRules: SpectralRule[];
     }
-  ) {}
-
-  async preparedRulesets() {
-    return await Promise.all(this.options.spectralRules);
+  ) {
+    super();
   }
 
   async runRules(inputs: {
@@ -45,16 +44,16 @@ export class SpectralRulesets {
     nextJsonLike: OpenAPIV3.Document<{}>;
     currentJsonLike: OpenAPIV3.Document<{}>;
   }): Promise<Result[]> {
-    const rulesets = await this.preparedRulesets();
-
     const allResults = await Promise.all(
-      rulesets.map((ruleset) => ruleset.runRules(inputs))
+      this.options.spectralRules.map((ruleset) => ruleset.runRules(inputs))
     );
 
     return allResults.flat(1);
   }
 
-  static fromOpticConfig(config: unknown): SpectralRulesets | string {
+  static async fromOpticConfig(
+    config: unknown
+  ): Promise<SpectralRulesets | string> {
     const result = validateConfigSchema(config);
 
     if (!result && validateConfigSchema.errors) {
@@ -88,7 +87,9 @@ export class SpectralRulesets {
           })
       );
 
-      return new SpectralRulesets({ spectralRules: [...added, ...always] });
+      return new SpectralRulesets({
+        spectralRules: await Promise.all([...added, ...always]),
+      });
     } catch (e) {
       return (e as Error).message;
     }

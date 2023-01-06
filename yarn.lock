@@ -2940,7 +2940,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stoplight/spectral-core@npm:>=1, @stoplight/spectral-core@npm:^1.16.0":
+"@stoplight/spectral-core@npm:>=1":
   version: 1.16.0
   resolution: "@stoplight/spectral-core@npm:1.16.0"
   dependencies:
@@ -4278,7 +4278,7 @@ __metadata:
     "@babel/preset-env": ^7.17.0
     "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
-    "@stoplight/spectral-core": ^1.16.0
+    "@stoplight/spectral-core": ^1.8.1
     "@stoplight/spectral-ruleset-bundler": ^1.5.0
     "@stoplight/spectral-rulesets": ^1.14.1
     "@types/babel__core": ^7
