@@ -41,7 +41,7 @@ export class SpectralOasV6Ruleset extends SpectralRule {
             error.keyword === 'enum'
               ? `${error.message} ${error.params.allowedValues}`
               : error.message;
-          return `- ruleset/naming${error.instancePath} ${message}`;
+          return `- ruleset/spectral-oas-v6${error.instancePath} ${message}`;
         })
         .join('\n- ');
     }
