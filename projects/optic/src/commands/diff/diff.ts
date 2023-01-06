@@ -26,6 +26,7 @@ import {
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { getAnonId } from '../../utils/anonymous-id';
+import { OPTIC_RULESET_KEY } from '../../constants';
 
 const description = `run a diff between two API specs`;
 
@@ -42,11 +43,11 @@ Example usage:
   Diff \`openapi-spec-v0.yml\` against \`openapi-spec-v1.yml\`
   $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml
 
-  Run a diff and view changes in the Optic web view
-  $ optic diff --id user-api --base master --web
-
-  Run a diff and check the changes against the rulesets configured in your \`optic.dev.yml\` config file:
+  Run a diff and check the changes against the detected ruleset (looks at --ruleset, then 'x-optic-ruleset' in the spec, then the optic.dev.yml file)):
   $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml --check
+
+  Specify a different ruleset config to run against
+  $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml --check --ruleset ./other_config.yml
   `;
 
 type SpecResults = Awaited<ReturnType<typeof generateSpecResults>>;
@@ -71,6 +72,10 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
       '--base <base>',
       'the base ref to compare against. Defaults to HEAD',
       'HEAD'
+    )
+    .option(
+      '--ruleset <ruleset>',
+      'run comparison with a locally defined ruleset, if not set, looks for the ruleset on the [x-optic-ruleset] key on the spec, and then the optic.dev.yml file.'
     )
     .option('--check', 'enable checks', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
@@ -134,10 +139,15 @@ const openBrowserToPage = async (url: string) => {
 
 const getBaseAndHeadFromFiles = async (
   file1: string,
-  file2: string
+  file2: string,
+  config: OpticCliConfig
 ): Promise<[ParseResult, ParseResult]> => {
   try {
-    return Promise.all([getFileFromFsOrGit(file1), getFileFromFsOrGit(file2)]);
+    // TODO update function to try download from spec-id cloud
+    return Promise.all([
+      getFileFromFsOrGit(file1, config),
+      getFileFromFsOrGit(file2, config),
+    ]);
   } catch (e) {
     console.error(e);
     throw new UserError();
@@ -147,10 +157,16 @@ const getBaseAndHeadFromFiles = async (
 const getBaseAndHeadFromFileAndBase = async (
   file1: string,
   base: string,
-  root: string
+  root: string,
+  config: OpticCliConfig
 ): Promise<[ParseResult, ParseResult]> => {
   try {
-    const { baseFile, headFile } = await parseFilesFromRef(file1, base, root);
+    const { baseFile, headFile } = await parseFilesFromRef(
+      file1,
+      base,
+      root,
+      config
+    );
     return [baseFile, headFile];
   } catch (e) {
     console.error(e);
@@ -164,7 +180,16 @@ const runDiff = async (
   config: OpticCliConfig,
   options: DiffActionOptions
 ): Promise<{ checks: { passed: number; failed: number; total: number } }> => {
-  const ruleRunner = await generateRuleRunner(config, options.check);
+  const ruleRunner = await generateRuleRunner(
+    {
+      rulesetArg: options.ruleset,
+      specRuleset: headFile.isEmptySpec
+        ? baseFile.jsonLike[OPTIC_RULESET_KEY]
+        : headFile.jsonLike[OPTIC_RULESET_KEY],
+      config,
+    },
+    options.check
+  );
   const specResults = await generateSpecResults(
     ruleRunner,
     baseFile,
@@ -211,7 +236,9 @@ const runDiff = async (
     logComparison(specResults, { output: 'pretty', verbose: false });
 
     console.log('');
-    console.log(`Configure check rulesets in your local optic.dev.yml file.`);
+    console.log(
+      `Configure check rulesets in optic cloud or your local optic.dev.yml file.`
+    );
   }
 
   if (options.web) {
@@ -248,6 +275,7 @@ type DiffActionOptions = {
   check: boolean;
   web: boolean;
   json: boolean;
+  ruleset?: string;
 };
 
 const getDiffAction =
@@ -258,13 +286,11 @@ const getDiffAction =
     options: DiffActionOptions
   ) => {
     const files: [string | undefined, string | undefined] = [file1, file2];
-    let shouldExit1 = false;
+    let parsedFiles: [ParseResult, ParseResult];
     if (file1 && file2) {
-      const parsedFiles = await getBaseAndHeadFromFiles(file1, file2);
-      const diffResult = await runDiff(files, parsedFiles, config, options);
-      shouldExit1 = diffResult.checks.failed > 0 && options.check;
+      parsedFiles = await getBaseAndHeadFromFiles(file1, file2, config);
     } else if (file1) {
-      if (config.vcs !== VCS.Git) {
+      if (config.vcs?.type !== VCS.Git) {
         const commandVariant = `optic diff <file> --base <ref>`;
         console.error(
           `Error: ${commandVariant} must be called from a git repository.`
@@ -272,13 +298,12 @@ const getDiffAction =
         process.exitCode = 1;
         return;
       }
-      const parsedFiles = await getBaseAndHeadFromFileAndBase(
+      parsedFiles = await getBaseAndHeadFromFileAndBase(
         file1,
         options.base,
-        config.root
+        config.root,
+        config
       );
-      const diffResult = await runDiff(files, parsedFiles, config, options);
-      shouldExit1 = diffResult.checks.failed > 0 && options.check;
     } else {
       console.error(
         'Command removed: optic diff (no args) has been removed, please use optic diff <file_path> --base <base> instead'
@@ -286,6 +311,29 @@ const getDiffAction =
       process.exitCode = 1;
       return;
     }
+
+    const diffResult = await runDiff(files, parsedFiles, config, options);
+    if (config.isAuthenticated) {
+      const [baseParseResult, headParseResult] = parsedFiles;
+      const apiId: string | null = 'TODO'; // headParseResult.jsonLike[OPTIC_URL_KEY] ?? baseParseResult.jsonLike[OPTIC_URL_KEY] ?? null
+      const shouldUploadBaseSpec = baseParseResult.context && apiId;
+      const shouldUploadHeadSpec = headParseResult.context && apiId;
+      if (shouldUploadBaseSpec) {
+        // TODO upload spec
+      }
+      if (shouldUploadHeadSpec) {
+        // TODO upload spec
+      }
+
+      const shouldUploadResults =
+        (shouldUploadBaseSpec || baseParseResult.isEmptySpec) &&
+        (shouldUploadHeadSpec || headParseResult.isEmptySpec);
+
+      if (shouldUploadResults) {
+        // TODO upload results
+      }
+    }
+
     if (!options.web && !options.json) {
       console.log(
         chalk.blue(
@@ -294,5 +342,5 @@ const getDiffAction =
       );
     }
 
-    if (shouldExit1) process.exitCode = 1;
+    if (diffResult.checks.failed > 0 && options.check) process.exitCode = 1;
   };
