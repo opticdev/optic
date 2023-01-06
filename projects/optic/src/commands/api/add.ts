@@ -1,5 +1,3 @@
-import { promisify } from 'util';
-import { exec as callbackExec } from 'child_process';
 import { Command } from 'commander';
 import prompts from 'prompts';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
@@ -7,10 +5,13 @@ import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/u
 import { OpticCliConfig, VCS } from '../../config';
 import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
 import { logger } from '../../logger';
-import { OPTIC_URL_KEY } from '../../constants';
+import { OPTIC_STANDARD_KEY, OPTIC_URL_KEY } from '../../constants';
 import chalk from 'chalk';
-
-const exec = promisify(callbackExec);
+import {
+  getPathCandidatesForSha,
+  getShasCandidatesForPath,
+} from './get-file-candidates';
+import { writeJson, writeYml } from './write-to-file';
 
 const usage = () => `
   optic api add
@@ -57,7 +58,7 @@ export const registerApiAdd = (cli: Command, config: OpticCliConfig) => {
 
 type ApiAddActionOptions = {
   historyDepth: string;
-  standard?: boolean;
+  standard?: string;
   web?: boolean;
 };
 
@@ -231,10 +232,10 @@ const getApiAddAction =
         continue;
       }
 
-      const opticUrl = parseResult.jsonLike[OPTIC_URL_KEY];
-      const apiId = opticUrl
-        ? 'todo get optic id from url'
-        : 'todo make API call';
+      const existingOpticUrl = parseResult.jsonLike[OPTIC_URL_KEY];
+      const api: { id: string; url: string } = existingOpticUrl
+        ? { id: '', url: 'todo get optic id from url' }
+        : { id: '', url: 'todo make API call' };
 
       logger.info(`Found OpenAPI Spec at ${path}`);
       for await (const sha of shas) {
@@ -260,66 +261,18 @@ const getApiAddAction =
       }
 
       // Write to file only if optic-url is not set
-      if (!opticUrl) {
-        // TODO write to json / yml non-desctructively
-        // If no x-optic-url, add x-optic-url + add standard
+      if (!existingOpticUrl) {
+        if (/.json/i.test(path)) {
+          await writeJson(path, {
+            [OPTIC_URL_KEY]: api.url,
+            ...(standard ? { [OPTIC_STANDARD_KEY]: standard } : {}),
+          });
+        } else {
+          await writeYml(path, {
+            [OPTIC_URL_KEY]: api.url,
+            ...(standard ? { [OPTIC_STANDARD_KEY]: standard } : {}),
+          });
+        }
       }
     }
   };
-
-type Path = string;
-type Sha = string;
-
-async function getShasCandidatesForPath(
-  path: string,
-  depth: string
-): Promise<Map<Path, Sha[]>> {
-  // This should return commits in reverse chronological order
-  // first parent treats merge commits as a single depth (not including children in it)
-  const command =
-    depth === '0'
-      ? `git rev-list HEAD --first-parent`
-      : `git rev-list HEAD -n ${depth} --first-parent`;
-  let hashes: string[];
-  try {
-    const commandResults = await exec(command).then(({ stdout }) =>
-      stdout.trim()
-    );
-    hashes = commandResults.split('\n');
-  } catch (e) {
-    // Will fail in an empty git repository
-    return new Map();
-  }
-
-  return new Map([[path, hashes]]);
-}
-
-async function getPathCandidatesForSha(sha: string): Promise<Map<Path, Sha[]>> {
-  const results = new Map();
-  // Pull all spec candidates (i.e. specs that have openapi key and are yml/yaml/json)
-  // This won't check version / validity of spec and will not look for swagger2 specs
-  const command = `toplevel=$(git rev-parse --show-toplevel) && \
-    git grep --untracked --name-only -E 'openapi' -- \
-    $toplevel/'*.yml' \
-    $toplevel/'*.yaml' \
-    $toplevel/'*.json' \
-    || true`;
-
-  const res = await exec(command);
-  if (res.stderr) throw new Error(res.stderr);
-  const relativePaths = res.stdout
-    .trim()
-    .split('\n')
-    .filter((path) => !!path);
-
-  for (const p of relativePaths) {
-    results.set(p, [sha]);
-  }
-
-  return results;
-}
-
-async function uploadSpecs() {
-  // upload specs
-  // update the apis on the HEAD branch and add 'x-optic-url' to the apis
-}
