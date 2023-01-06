@@ -1,7 +1,12 @@
+import path from 'path';
+import { promisify } from 'util';
+import { exec as callbackExec } from 'child_process';
 import { Command } from 'commander';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 
 import { OpticCliConfig, VCS } from '../../config';
+
+const exec = promisify(callbackExec);
 
 const usage = () => `
   optic api add
@@ -55,61 +60,111 @@ type ApiAddActionOptions = {
 const getApiAddAction =
   (config: OpticCliConfig) =>
   async (path_to_spec: string | undefined, options: ApiAddActionOptions) => {
-    if (!path_to_spec && options.historyDepth !== '1') {
+    if (isNaN(Number(options.historyDepth))) {
+      console.error(
+        '--history-depth is not a number. history-depth must be a number'
+      );
+      process.exitCode = 1;
+      return;
+    } else if (!path_to_spec && options.historyDepth !== '1') {
       console.error(
         'Invalid argument combination: Cannot set a history-depth !== 1 when no spec path is provided'
       );
       process.exitCode = 1;
       return;
-    } else if ('TODO check if logged in, merge other open PR') {
+    } else if (!config.isAuthenticated) {
       console.error('Must be logged in to add APIs. Log in with `optic login`');
       process.exitCode = 1;
       return;
-    } else if ('TODO check in git repo') {
+    } else if (!config.vcs || config.vcs?.type !== VCS.Git) {
       console.error('Must have git in path and be in a git repo to add apis');
       process.exitCode = 1;
       return;
     }
 
-    // TODO add prompts
-    // Validation to do
-    //  - if more than one org, ask for which org to add to
-    // - if no ruleset
-    //  - prompt for a ruleset / give suggestions
-
-    if (path_to_spec) {
-    } else {
+    if ('todo fetch orgs related to token') {
+      //  - if more than one org, ask for which org to add to
     }
 
-    // Then upload specs to optic cloud (with throttle, etc)
+    if (!options.ruleset) {
+      console.log('TODO set info for rulesets');
+      //  - prompt for a ruleset / give suggestions
+    }
+
+    const candidates = path_to_spec
+      ? await getShasCandidatesForPath(path_to_spec, options.historyDepth)
+      : await getPathCandidatesForSha(config.vcs.sha);
+
+    for await (const [path, shas] of candidates) {
+      const [firstSha] = shas;
+
+      // Load API - check for:
+      // - is valid OpenAPI spec? If not, log out information - if path=path_to_spec, log information, otherwise log debug
+      // - has x-optic-url? if not, add API, otherwise get the API id from url
+
+      for await (const sha of shas) {
+        // TODO maybe check if sha already exists in optic
+        // upload spec
+      }
+
+      // Write to file
+      // If no x-optic-url, add x-optic-url + add ruleset
+      // if existing x-optic-url, do not add ruleset
+    }
   };
 
-type ApisToAdd = {
-  path: string;
-  revisions: {}[];
-};
+type Path = string;
+type Sha = string;
 
-// TODO implement this as a stream
-async function discoverOneApi(
+async function getShasCandidatesForPath(
   path: string,
   depth: string
-): Promise<ApisToAdd[]> {
-  // Check whether path is a valid openapi spec
-  // If it is not, error and exit
-
+): Promise<Map<Path, Sha[]>> {
+  // This should return commits in reverse chronological order
   // first parent treats merge commits as a single depth (not including children in it)
-  // git rev-list HEAD -n depth --first-parent or just git rev-list HEAD --first-parent
+  const command =
+    depth === '0'
+      ? `git rev-list HEAD --first-parent`
+      : `git rev-list HEAD -n ${depth} --first-parent`;
+  let hashes: string[];
+  try {
+    const commandResults = await exec(command).then(({ stdout }) =>
+      stdout.trim()
+    );
+    hashes = commandResults.split('\n');
+  } catch (e) {
+    // Will fail in an empty git repository
+    return new Map();
+  }
 
-  // TODO should we stop when we see a spec removed?
-
-  // go reverse and once we dont have that spec anymore, we finish
-
-  return [];
+  return new Map([[path, hashes]]);
 }
 
-async function discoverAllApis(): Promise<ApisToAdd[]> {
-  // Pull all specs that match the openapi spec criteria
-  return [];
+async function getPathCandidatesForSha(sha: string): Promise<Map<Path, Sha[]>> {
+  const results = new Map();
+  // Pull all spec candidates (i.e. specs that have openapi key and are yml/yaml/json)
+  // This won't check version / validity of spec and will not look for swagger2 specs
+  const command = `toplevel=$(git rev-parse --show-toplevel) && \
+    git grep --untracked --name-only -E 'openapi' -- \
+    $toplevel/'*.yml' \
+    $toplevel/'*.yaml' \
+    $toplevel/'*.json' \
+    || true`;
+
+  const res = await exec(command);
+  if (res.stderr) throw new Error(res.stderr);
+  const relativePaths = res.stdout
+    .trim()
+    .split('\n')
+    .filter((path) => !!path);
+  const cwd = process.cwd();
+
+  for (const p of relativePaths) {
+    const absolutePath = path.join(cwd, p);
+    results.set(absolutePath, [sha]);
+  }
+
+  return results;
 }
 
 async function uploadSpecs() {
