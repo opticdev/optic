@@ -13,6 +13,10 @@ import {
 } from './get-file-candidates';
 import { writeJson, writeYml } from './write-to-file';
 
+function short(sha: string) {
+  return sha.slice(0, 8);
+}
+
 const usage = () => `
   optic api add
   optic api add <path_to_spec.yml>
@@ -92,7 +96,7 @@ const getApiAddAction =
     // TODO replace this with an API call
     const organizations: { id: string; name: string }[] = await [
       { id: 'a', name: 'org1' },
-      { id: 'b', name: 'org2' },
+      // { id: 'b', name: 'org2' },
     ];
     if (organizations.length > 1) {
       const response = await prompts({
@@ -228,7 +232,7 @@ const getApiAddAction =
         continue;
       }
       if (parseResult.isEmptySpec) {
-        logger.info(`File ${path} does not exist in sha ${firstSha}`);
+        logger.info(`File ${path} does not exist in sha ${short(firstSha)}`);
         continue;
       }
 
@@ -244,18 +248,18 @@ const getApiAddAction =
           parseResult = await getFileFromFsOrGit(`${sha}:${path}`, config);
         } catch (e) {
           logger.debug(
-            `${sha}:${path} is not a valid OpenAPI file, stopping here`,
+            `${short(sha)}:${path} is not a valid OpenAPI file, stopping here`,
             e
           );
           break;
         }
         if (parseResult.isEmptySpec) {
           logger.debug(
-            `File ${path} does not exist in sha ${sha}, stopping here`
+            `File ${path} does not exist in sha ${short(sha)}, stopping here`
           );
           break;
         }
-        logger.info(`Uploading spec ${sha}:${path}`);
+        logger.info(`Uploading spec ${short(sha)}:${path}`);
 
         // TODO Upload spec here
       }

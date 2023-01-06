@@ -9,7 +9,7 @@ const validLogLevels = new Set([
   'silent',
 ]);
 const logLevel = process.env.LOG_LEVEL;
-if (process.env.ENVIRONMENT === 'test') {
+if (!logLevel && process.env.ENVIRONMENT === 'test') {
   log.setLevel('silent');
 } else if (logLevel && validLogLevels.has(logLevel)) {
   log.setLevel(logLevel as any);
