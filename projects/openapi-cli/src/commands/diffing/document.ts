@@ -408,7 +408,9 @@ export function addOperations(
     // phase one: documented all undocumented operations
     let updatingSpec: AT.Subject<OpenAPIV3.Document> = new AT.Subject();
     const undocumentedOperations = UndocumentedOperations.fromPairs(
-      AT.from(requiredOperations),
+      AT.from(
+        requiredOperations.map((add) => ({ ...add, onApiBasePath: true }))
+      ),
       spec,
       updatingSpec.iterator
     );
