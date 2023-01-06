@@ -67,12 +67,6 @@ Here is an example of a [team's automated API standards](https://useoptic.com/st
 ```yaml
 ruleset:
   - breaking-changes # prevent all breaking changes
-  - spectral:
-      onAdded: # Latest API standards are enforced only on additions to the spec
-        - ./rest-standards.spectral.yml
-      always:  # Other rules/standards are enforced all the time
-        - ./metadata-standards.spectral.yml
-        - ./openapi-is-valid.spectral.yml
   - naming:  # Naming rules apply on added properties, but won't fail on legacy
       applies: added 
       pathComponents: camelCase
