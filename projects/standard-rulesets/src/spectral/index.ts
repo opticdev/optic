@@ -1,13 +1,15 @@
 import { SpectralRule } from '@useoptic/rulesets-base';
 import { Ruleset, Spectral } from '@stoplight/spectral-core';
-import fs from 'fs';
 import fetch from 'node-fetch';
 // @ts-ignore
 import { bundleAndLoadRuleset } from '@stoplight/spectral-ruleset-bundler/with-loader';
 import Ajv from 'ajv';
 import { IChange, IFact, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
 import { ExternalRuleBase } from '@useoptic/rulesets-base/build/rules/external-rule-base';
-// import fetch from 'node-fetch';
+import { URL } from 'url';
+import path from 'path';
+import os from 'os';
+import fs from 'fs-extra';
 
 const ajv = new Ajv();
 const configSchema = {
@@ -50,7 +52,6 @@ export class SpectralRulesets extends ExternalRuleBase {
 
     return allResults.flat(1);
   }
-
   static async fromOpticConfig(
     config: unknown
   ): Promise<SpectralRulesets | string> {
@@ -96,11 +97,35 @@ export class SpectralRulesets extends ExternalRuleBase {
   }
 }
 
+function isUrl(uri: string) {
+  try {
+    new URL(uri);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 async function uriToSpectral(uri: string) {
   const spectral = new Spectral();
-  const ruleset: Ruleset = await bundleAndLoadRuleset(uri, { fs, fetch });
-  // setting explicitly because of a poor choice in Spectral core. The instanceof is fragile when you load code / types from different modules and combine them (like we have to with bundle and core)
-  // https://github.com/stoplightio/spectral/blob/a1bd6d29b473aff257dbf66264ebdf471fae07cc/packages/core/src/spectral.ts#L87
-  spectral.ruleset = ruleset;
-  return spectral;
+
+  if ((isUrl(uri) && uri.endsWith('yml')) || uri.endsWith('yaml')) {
+    const tmpFile = path.join(
+      os.tmpdir(),
+      (Math.random() + 1).toString(36).substring(7) + '.yml'
+    );
+
+    const fetchUri = await fetch(uri);
+    const loadedData = await fetchUri.text();
+    await fs.writeFile(tmpFile, loadedData);
+    const ruleset: Ruleset = await bundleAndLoadRuleset(tmpFile, { fs, fetch });
+    spectral.ruleset = ruleset;
+    return spectral;
+  } else {
+    const ruleset: Ruleset = await bundleAndLoadRuleset(uri, { fs, fetch });
+    // setting explicitly because of a poor choice in Spectral core. The instanceof is fragile when you load code / types from different modules and combine them (like we have to with bundle and core)
+    // https://github.com/stoplightio/spectral/blob/a1bd6d29b473aff257dbf66264ebdf471fae07cc/packages/core/src/spectral.ts#L87
+    spectral.ruleset = ruleset;
+    return spectral;
+  }
 }
