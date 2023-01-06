@@ -1,6 +1,6 @@
 import { test, expect, describe } from '@jest/globals';
-import { SpectralRulesets } from '..';
 import * as path from 'path';
+import { SpectralRulesets } from '../index';
 
 describe('fromOpticConfig', () => {
   test('valid ruleset files work', async () => {
@@ -26,12 +26,9 @@ describe('fromOpticConfig', () => {
 
   test('non-existant files fail', async () => {
     const t = async () => {
-      const ruleset = SpectralRulesets.fromOpticConfig({
+      await SpectralRulesets.fromOpticConfig({
         always: [path.join(__dirname, 'example-1bd.yml')],
       });
-      if (ruleset instanceof SpectralRulesets) {
-        console.log(await ruleset.preparedRulesets());
-      }
     };
     expect(t()).rejects;
   });
