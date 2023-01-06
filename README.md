@@ -8,7 +8,7 @@
 
 [**🛑 Prevent breaking changes from shipping**](#prevent-breaking-changes-with-api-diffs)  ← *keep your promises*
 
-[**✅ Verify your API is working-as-designed (the OpenAPI and implimentation are in sync)**](#verify-your-api-is-working-as-designed)    ← *make sure the API works as-designed*
+[**✅ Verify your API is working-as-designed (the OpenAPI and implementation are in sync)**](#verify-your-api-is-working-as-designed)    ← *make sure the API works as-designed*
 
 [**🎨 Build a consistent API that follows your team's standards**](#build-a-consistent-api-that-follows-your-teams-standards)  ← *raise the quality of your API*
 
@@ -19,9 +19,9 @@ npm install -g @useoptic/optic
 ## Document your existing APIs in minutes 
 Use real API traffic to write your initial OpenAPI specification and correctly patch the spec whenever an API changes. 
 
-1. Use the CLI to magicly capture traffic `optic oas capture https://api.github.com` OR provide a HAR (HTTP Archive format). 
-2. Then run `optic oas verify` to see a list of "Undocumented" endpoints. Optic is your API version control tool, like git for APIs. "Undocumented" endpoints are "Untracked" files in git. 
-3. Add operations one at a time or pass `--document all`
+1. Use the CLI to magically capture traffic `optic oas capture https://api.github.com` OR provide a HAR (HTTP Archive format). 
+2. Then run `optic oas verify` to see a list of "Undocumented" endpoints. Optic is your API version control tool, like git for APIs. "Undocumented" endpoints are like "Untracked" files in git. 
+3. Add operations one at a time or use `--document all` to document all of them at once
 
 **[Documentation: Generate an OpenAPI from traffic](https://www.useoptic.com/docs/document-existing-api)**
 
@@ -32,7 +32,7 @@ https://user-images.githubusercontent.com/5900338/210244068-22540288-1f6d-46a7-a
 
 ## Prevent breaking changes with API diffs
 
-Breaking changes ruin your API consumer's days. Optic prevents breaking changes from reaching production with `diff` -- an accurate and robust OpenAPI diff tool that is built to work within Git workflows, and has full support for OpenAPI 3.0 3.1 and `$ref`, and complex types like `oneOf/allOf/anyOf`. 
+Breaking changes ruin your API consumer's days. Optic prevents breaking changes from reaching production with its accurate and robust OpenAPI diff. The `diff` command is built to work with Git workflows, and has full support for OpenAPI 3 & 3.1, `$ref`, and complex schema types like `oneOf/allOf/anyOf`. 
 
 ```bash
 optic diff openapi.yaml --base main --check
@@ -46,37 +46,42 @@ https://user-images.githubusercontent.com/5900338/211033179-86d5021f-17d1-4391-a
 
 ## Verify your API is working-as-designed
 
-With Optic you can verify the API behavior in CI and understand your API Test Coverage (the % of your API functionality your testing covered). If optic oas verify detects no diffs, and you have high coverage, you can be very confident your API is working as-designed.
+With Optic you can verify your API behavior in CI and understand your team's API Test Coverage (the % of your API functionality your testing covered). If `optic oas verify` detects no diffs, and you have high API Coverage, you can be very confident your API is working as designed.
 
 ```bash
 optic oas verify openapi.yml
 ```
 
-**[Documentation: Verify your API is working as-designed](https://www.useoptic.com/verify-api-behaviors)**
+**[Documentation: Verify your API works as designed](https://www.useoptic.com/verify-api-behaviors)**
 
 https://user-images.githubusercontent.com/5900338/211056700-00163967-12fd-447a-a108-f82bc9c9f0ad.mp4
 
 **[Read Documentation](https://www.useoptic.com/verify-api-behaviors)**
 
 ## Build a consistent API that follows your team's standards
-Optic makes it easy for everyone on your team to review API changes, and automate your API standards. It makes API linting usable and productive for developers on teams like [Snyk](https://snyk.io/blog/snyk-api-development-shift-left/) because it raises the quality of their APIs without getting in the way of developers. 
+Optic makes it easy for everyone on your team to review API changes, and automate your API standards. It makes API linting usable and productive for developers on teams like [Snyk](https://snyk.io/blog/snyk-api-development-shift-left/) because it raises the quality of the APIs without getting in the way of developers. 
 
 You can read about how Optic goes [beyond simple API Linting](https://www.useoptic.com/blog/beyond-api-linting). 
 
+Here is an example of a [team's automated API standards](https://useoptic.com/standards):
 ```
 ruleset:
-  - breaking-changes
+  - breaking-changes # prevent all breaking changes
   - spectral:
-      onAdded:
+      onAdded: # Latest API standards are enforced only on additions to the spec
         - ./rest-standards.spectral.yml
-      always: 
+      always:  # Other rules/standards are enforced all the time
         - ./metadata-standards.spectral.yml
         - ./openapi-is-valid.spectral.yml
-  - naming:
-      applies: added
+  - naming:  # Naming rules apply on added properties, but won't fail on legacy
+      applies: added 
       pathComponents: camelCase
       requestHeaders: Capital-Param-Case
       queryParameters: Capital-Param-Case
+  - examples # Examples in the OpenAPI are required and must match the schemas
+      require_request_examples: true
+      require_response_examples: true
+      require_parameter_examples: true    
 ```
 
 https://user-images.githubusercontent.com/5900338/211058178-6c3c7f76-55be-4e7a-81f0-3aec07253518.mp4
