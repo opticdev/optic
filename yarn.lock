@@ -3499,6 +3499,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/prompts@npm:^2":
+  version: 2.4.2
+  resolution: "@types/prompts@npm:2.4.2"
+  dependencies:
+    "@types/node": "*"
+    kleur: ^3.0.3
+  checksum: 1c2277534a546d77fe7390e4a3a34881ceb7015c95f5b22d1b239cb6c287c300c4dc5a713c1f734f3f892b243225ed703b1d1d149b9995af024c7a19dc49369e
+  languageName: node
+  linkType: hard
+
 "@types/responselike@npm:*, @types/responselike@npm:^1.0.0":
   version: 1.0.0
   resolution: "@types/responselike@npm:1.0.0"
@@ -3939,6 +3949,7 @@ __metadata:
     "@types/json-stable-stringify": ^1.0.33
     "@types/node": ^18.0.0
     "@types/picomatch": ^2.3.0
+    "@types/prompts": ^2
     "@types/tar": ^6
     "@types/url-join": ^4.0.1
     "@types/uuid": ^9.0.0
@@ -3965,6 +3976,7 @@ __metadata:
     open: ^8.4.0
     picomatch: ^2.3.1
     prettier: ^2.4.1
+    prompts: ^2.4.2
     tar: ^6.1.11
     ts-jest: ^29.0.3
     ts-node: ^10.8.0
@@ -9290,7 +9302,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prompts@npm:^2.0.1":
+"prompts@npm:^2.0.1, prompts@npm:^2.4.2":
   version: 2.4.2
   resolution: "prompts@npm:2.4.2"
   dependencies:
