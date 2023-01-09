@@ -296,10 +296,63 @@ const getDiffAllAction =
       options
     );
 
-    // TODO if the working dir is clean, or no x-optic-url specs detected, add a helpful message of what they might want to do
-    // with results, log out results and print a summary
+    if (warnings.missingOpticUrl.length > 0) {
+      logger.info(
+        chalk.yellow(
+          'Warning - the following OpenAPI specs were detected but did not have x-optic-url keys. `optic diff-all` only runs on specs that include `x-optic-url` keys.'
+        )
+      );
+      logger.info(
+        'Run the `optic api add` command to add these specs to optic'
+      );
+      logger.info(warnings.missingOpticUrl.map((f) => f.path).join('\n'));
+      logger.info('');
+    }
+
+    if (warnings.unparseableFromSpec.length > 0) {
+      logger.error(
+        chalk.red(
+          `Error - the following specs could not be parsed from the ref ${options.compareFrom}`
+        )
+      );
+
+      for (const unparseableFrom of warnings.unparseableFromSpec) {
+        logger.error(`spec: ${unparseableFrom.path}`);
+        logger.error(unparseableFrom.error);
+        logger.error('');
+      }
+    }
+
+    if (warnings.unparseableToSpec.length > 0) {
+      logger.error(
+        chalk.red(
+          `Error - the following specs could not be parsed from the ${
+            options.compareTo
+              ? `ref ${options.compareTo}`
+              : 'current working directory'
+          }`
+        )
+      );
+
+      for (const unparseableTo of warnings.unparseableToSpec) {
+        logger.error(`spec: ${unparseableTo.path}`);
+        logger.error(unparseableTo.error);
+        logger.error('');
+      }
+      process.exitCode = 1;
+    }
+
+    if (results.length === 0) {
+      logger.info(
+        'No comparisons were run between specs - `optic diff-all` will run comparisons on any spec that has an `x-optic-url` key'
+      );
+      logger.info(
+        'Get started by running `optic api add` and making a change to an API spec'
+      );
+    }
+
     if (!options.web) {
-      console.log(
+      logger.info(
         chalk.blue(
           `Rerun this command with the --web flag to view the detailed changes in your browser`
         )
