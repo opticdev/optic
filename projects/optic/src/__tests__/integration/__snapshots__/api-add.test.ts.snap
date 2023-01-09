@@ -1,0 +1,99 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`optic api add git - no cli interaction discover all files in repo 1`] = `
+"
+
+Will add detected APIs to organization org1 with standard blah
+Looking for APIs in the git root ($workspace$)
+Found OpenAPI Spec at example-api-v0.json
+Uploading spec COMMIT-HASH:example-api-v0.json
+Found OpenAPI Spec at nested/speccopy2.yml
+Uploading spec COMMIT-HASH:nested/speccopy2.yml
+Found OpenAPI Spec at spec.yml
+Uploading spec COMMIT-HASH:spec.yml
+"
+`;
+
+exports[`optic api add git - no cli interaction discover one file with history depth 1`] = `
+"
+
+Will add detected APIs to organization org1 with standard blah
+Adding API ./spec.yml and traversing history to a depth of 1
+Found OpenAPI Spec at ./spec.yml
+Uploading spec COMMIT-HASH:./spec.yml
+"
+`;
+
+exports[`optic api add git - no cli interaction discover one file with history depth 2`] = `
+"openapi: 3.0.3
+info:
+  title: a spec
+  description: The API
+  version: 0.1.0
+paths:
+  /filler_route:
+    post:
+      operationId: create
+      responses:
+        "201":
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2
+x-optic-url: todo make API call
+x-optic-standard: blah
+"
+`;
+
+exports[`optic api add no vcs - no cli interaction discover all files in repo 1`] = `
+"
+
+Will add detected APIs to organization org1 with standard blah
+Looking for APIs in the current directory ($workspace$)
+Found OpenAPI Spec at $workspace$/example-api-v0.json
+Found OpenAPI Spec at $workspace$/spec.yml
+Found OpenAPI Spec at $workspace$/nested/speccopy2.yml
+"
+`;
+
+exports[`optic api add no vcs - no cli interaction discover one file with history depth 1`] = `
+"
+
+Will add detected APIs to organization org1 with standard blah
+Adding API ./spec.yml
+Found OpenAPI Spec at $workspace$/spec.yml
+"
+`;
+
+exports[`optic api add no vcs - no cli interaction discover one file with history depth 2`] = `
+"openapi: 3.0.3
+info:
+  title: a spec
+  description: The API
+  version: 0.1.0
+paths:
+  /filler_route:
+    post:
+      operationId: create
+      responses:
+        "201":
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2
+x-optic-url: todo make API call
+x-optic-standard: blah
+"
+`;

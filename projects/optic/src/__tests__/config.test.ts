@@ -22,10 +22,6 @@ describe('detectConfig', () => {
     console.warn = jest.fn();
   });
 
-  afterEach(() => {
-    jest.resetAllMocks();
-  });
-
   test('finds config', async () => {
     const path = await detectCliConfig('src/__tests__/');
     expect(path).toBe('src/__tests__/optic.yml');

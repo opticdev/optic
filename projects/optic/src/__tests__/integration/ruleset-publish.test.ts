@@ -1,4 +1,11 @@
-import { test, expect, describe, jest, beforeEach, afterEach } from '@jest/globals';
+import {
+  test,
+  expect,
+  describe,
+  jest,
+  beforeEach,
+  afterEach,
+} from '@jest/globals';
 import {
   runOptic,
   setupWorkspace,
@@ -15,7 +22,7 @@ setupTestServer(({ url, method }) => {
       ruleset_url: 'http://app.useoptic.com/ruleset_url',
     });
   }
-  return JSON.stringify({})
+  return JSON.stringify({});
 });
 
 describe('optic ruleset upload', () => {
@@ -25,7 +32,6 @@ describe('optic ruleset upload', () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
     process.env = { ...oldEnv };
   });
 
@@ -41,7 +47,9 @@ describe('optic ruleset upload', () => {
   });
 
   test('exits if ruleset file does not have rulesConstructor', async () => {
-    const workspace = await setupWorkspace('ruleset-publish/no-rulesConstructor');
+    const workspace = await setupWorkspace(
+      'ruleset-publish/no-rulesConstructor'
+    );
     process.env.OPTIC_TOKEN = '123';
     const { combined, code } = await runOptic(
       workspace,
