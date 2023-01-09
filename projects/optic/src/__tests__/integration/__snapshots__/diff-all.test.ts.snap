@@ -1,0 +1,103 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`diff-all diffs all files in an workspace with x-optic-url keys 1`] = `
+"[34mDiffing HEAD~1:mvspec.yml to empty spec[39m
+
+specification details:
+- before [31mremoved[39m
+
+[1mPOST[22m /filler_route: [31mremoved[39m
+Checks
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
+    removed rule: prevent operation removal
+      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
+      at [4m$workspace$/mvspec.yml:9:136[24m
+
+    removed rule: prevent removing response property
+      [31m[31mx[39m[31m cannot remove response property 'id'. This is a breaking change.[39m
+      at [4m$workspace$/mvspec.yml:19:390[24m
+
+    removed rule: prevent response status code removal
+      [31m[31mx[39m[31m must not remove response status code 201. This is a breaking change.[39m
+      at [4m$workspace$/mvspec.yml:12:193[24m
+
+
+
+1 operation removed
+[32m[1m0 checks passed[22m[39m
+[31m[1m3 checks failed[22m[39m
+
+[34mDiffing HEAD~1:specwithkey.json to specwithkey.json[39m
+No changes were detected
+
+Checks
+
+  [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /example
+
+
+  [1m[42m[37m PASS [39m[49m[22m [1mPATCH[22m /example
+
+
+  [1m[42m[37m PASS [39m[49m[22m [1mPOST[22m /example
+
+
+  [1m[42m[37m PASS [39m[49m[22m [1mPUT[22m /example
+
+
+
+[32m[1m4 checks passed[22m[39m
+[31m[1m0 checks failed[22m[39m
+
+[34mDiffing HEAD~1:specwithkey.yml to specwithkey.yml[39m
+No changes were detected
+
+Checks
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
+    requirement rule: operation path component naming check
+      [31m[31mx[39m[31m filler_route is not camelCase[39m
+      at [4m$workspace$/specwithkey.yml:9:136[24m
+
+
+
+
+[32m[1m0 checks passed[22m[39m
+[31m[1m1 checks failed[22m[39m
+
+[34mDiffing empty spec to movedspec.yml[39m
+
+specification details:
+- openapi, info, x-optic-url [32madded[39m
+
+[1mPOST[22m /filler_route: [32madded[39m
+  - operationId [32madded[39m
+  - response [1m201[22m: [32madded[39m
+    - description [32madded[39m
+    - body [1mapplication/json[22m: [32madded[39m
+      - type [32madded[39m
+      - field [3mid[23m [32madded[39m
+        - required, type, format, example [32madded[39m
+
+Checks
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
+    requirement rule: operation path component naming check
+      [31m[31mx[39m[31m filler_route is not camelCase[39m
+      at [4m$workspace$/movedspec.yml:9:136[24m
+
+
+
+1 operation added
+[32m[1m0 checks passed[22m[39m
+[31m[1m1 checks failed[22m[39m
+
+[33mWarning - the following OpenAPI specs were detected but did not have x-optic-url keys. \`optic diff-all\` only runs on specs that include \`x-optic-url\` keys.[39m
+Run the \`optic api add\` command to add these specs to optic
+specwithoutkey.json
+specwithoutkey.yml
+
+Configure check rulesets in optic cloud or your local optic.dev.yml file.
+[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
+"
+`;

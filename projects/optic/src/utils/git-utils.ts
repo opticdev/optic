@@ -63,8 +63,11 @@ export const findOpenApiSpecsCandidates = async (
           .filter((path) => !!path)
       );
     };
+    const args = ref
+      ? `--name-only -E 'openapi' ${ref}`
+      : `--untracked --name-only -E 'openapi'`;
     const command = `toplevel=$(git rev-parse --show-toplevel) && \
-    git grep --untracked --name-only -E 'openapi' ${ref ? ref : ''} -- \
+    git grep ${args} -- \
     $toplevel/'*.yml' \
     $toplevel/'*.yaml' \
     $toplevel/'*.json' \

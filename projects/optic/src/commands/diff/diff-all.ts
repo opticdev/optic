@@ -14,6 +14,11 @@ import {
 import { getAnonId } from '../../utils/anonymous-id';
 import open from 'open';
 import { compressData } from './compressResults';
+import {
+  generateChangelogData,
+  logComparison,
+  terminalChangelog,
+} from '@useoptic/openapi-utilities';
 
 const usage = () => `
   optic diff-all
@@ -155,11 +160,42 @@ async function computeAll(
       (typeof fromParseResults.jsonLike[OPTIC_URL_KEY] === 'string' &&
         toParseResults.isEmptySpec)
     ) {
+      logger.info(
+        chalk.blue(
+          `Diffing ${candidate.from ?? 'empty spec'} to ${
+            candidate.to ?? 'empty spec'
+          }`
+        )
+      );
       const { specResults, checks } = await compute(
         [fromParseResults, toParseResults],
         config,
         options
       );
+
+      if (specResults.changes.length === 0) {
+        logger.info('No changes were detected');
+      }
+      logger.info('');
+
+      const changelogData = generateChangelogData({
+        changes: specResults.changes,
+        toFile: toParseResults.jsonLike,
+        rules: specResults.results,
+      });
+      for (const log of terminalChangelog(changelogData)) {
+        logger.info(log);
+      }
+
+      if (options.check) {
+        if (specResults.results.length > 0) {
+          logger.info('Checks');
+          logger.info('');
+        }
+
+        logComparison(specResults, { output: 'pretty', verbose: false });
+        logger.info('');
+      }
 
       if (config.isAuthenticated) {
         const apiId: string | null = 'TODO'; // toParseResults.jsonLike[OPTIC_URL_KEY] ?? fromParseResults.jsonLike[OPTIC_URL_KEY] ?? null
@@ -188,8 +224,9 @@ async function computeAll(
       });
 
       if (
-        specResults.changes.length > 0 ||
-        (!options.check && specResults.results.length > 0)
+        options.web &&
+        (specResults.changes.length > 0 ||
+          (!options.check && specResults.results.length > 0))
       ) {
         const meta = {
           createdAt: new Date(),
@@ -348,6 +385,12 @@ const getDiffAllAction =
       );
       logger.info(
         'Get started by running `optic api add` and making a change to an API spec'
+      );
+    }
+
+    if (options.check) {
+      logger.info(
+        `Configure check rulesets in optic cloud or your local optic.dev.yml file.`
       );
     }
 
