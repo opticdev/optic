@@ -1,14 +1,10 @@
 import { Command } from 'commander';
-import zlib from 'node:zlib';
 import open from 'open';
 
 import {
-  generateSpecResults,
   logComparison,
   generateChangelogData,
   terminalChangelog,
-  OpenAPIV3,
-  IChange,
   UserError,
   jsonChangelog,
 } from '@useoptic/openapi-utilities';
@@ -26,6 +22,7 @@ import {
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { getAnonId } from '../../utils/anonymous-id';
 import { compute } from './compute';
+import { compressData } from './compressResults';
 
 const description = `run a diff between two API specs`;
 
@@ -48,8 +45,6 @@ Example usage:
   Specify a different standard config to run against
   $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml --check --standard ./other_config.yml
   `;
-
-type SpecResults = Awaited<ReturnType<typeof generateSpecResults>>;
 
 export const registerDiff = (cli: Command, config: OpticCliConfig) => {
   cli
@@ -74,60 +69,6 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
     .action(wrapActionHandlerWithSentry(getDiffAction(config)));
-};
-
-// We can remove the components from spec since the changelog is flattened, and any valid refs will
-// already be added into endpoints they're used in
-const removeComponentsFromSpec = (
-  spec: OpenAPIV3.Document
-): OpenAPIV3.Document => {
-  const { components, ...componentlessSpec } = spec;
-  return componentlessSpec;
-};
-
-const removeSourcemapsFromResults = (specResults: SpecResults): SpecResults => {
-  const { results, changes, ...rest } = specResults;
-
-  return {
-    ...rest,
-    results: results.map((result) => {
-      const { sourcemap, ...sourcemaplessResult } = result;
-      return sourcemaplessResult;
-    }),
-    changes: changes.map((change) => {
-      const { sourcemap, ...sourcemaplessLocation } = change.location;
-      return {
-        ...change,
-        location: {
-          ...sourcemaplessLocation,
-        },
-      };
-    }) as IChange[],
-  };
-};
-
-const compressData = (
-  baseFile: ParseResult,
-  headFile: ParseResult,
-  specResults: SpecResults,
-  meta: Record<string, unknown>
-): string => {
-  const dataToCompress = {
-    base: removeComponentsFromSpec(baseFile.jsonLike),
-    head: removeComponentsFromSpec(headFile.jsonLike),
-    results: removeSourcemapsFromResults(specResults),
-    meta,
-    version: '1',
-  };
-  const compressed = zlib.brotliCompressSync(
-    Buffer.from(JSON.stringify(dataToCompress))
-  );
-  const urlSafeString = Buffer.from(compressed).toString('base64');
-  return urlSafeString;
-};
-
-const openBrowserToPage = async (url: string) => {
-  await open(url, { wait: false });
 };
 
 const getBaseAndHeadFromFiles = async (
@@ -237,9 +178,9 @@ const runDiff = async (
       compressedDataLength: compressedData.length,
     });
     await flushEvents();
-    await openBrowserToPage(
-      `${config.client.getWebBase()}/cli/diff#${compressedData}`
-    );
+    await open(`${config.client.getWebBase()}/cli/diff#${compressedData}`, {
+      wait: false,
+    });
   }
 
   return diffResults;

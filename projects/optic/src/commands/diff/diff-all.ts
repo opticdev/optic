@@ -6,6 +6,14 @@ import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
 import { logger } from '../../logger';
 import { OPTIC_URL_KEY } from '../../constants';
 import { compute } from './compute';
+import chalk from 'chalk';
+import {
+  flushEvents,
+  trackEvent,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
+import { getAnonId } from '../../utils/anonymous-id';
+import open from 'open';
+import { compressData } from './compressResults';
 
 const usage = () => `
   optic diff-all
@@ -152,14 +160,56 @@ async function computeAll(
         config,
         options
       );
-      const diffResults = { checks };
 
-      // TODO if authenticated upload
+      if (config.isAuthenticated) {
+        const apiId: string | null = 'TODO'; // toParseResults.jsonLike[OPTIC_URL_KEY] ?? fromParseResults.jsonLike[OPTIC_URL_KEY] ?? null
+        const shouldUploadBaseSpec = fromParseResults.context && apiId;
+        const shouldUploadHeadSpec = toParseResults.context && apiId;
+        if (shouldUploadBaseSpec) {
+          // TODO upload spec
+        }
+        if (shouldUploadHeadSpec) {
+          // TODO upload spec
+        }
 
-      // run comparisons
-      // - upload specs
-      // - run diff
-      // - upload run
+        const shouldUploadResults =
+          (shouldUploadBaseSpec || fromParseResults.isEmptySpec) &&
+          (shouldUploadHeadSpec || toParseResults.isEmptySpec);
+
+        if (shouldUploadResults) {
+          // TODO upload results
+        }
+      }
+      results.push({
+        specResults,
+        checks,
+        from: candidate.from,
+        to: candidate.to,
+      });
+
+      if (
+        specResults.changes.length > 0 ||
+        (!options.check && specResults.results.length > 0)
+      ) {
+        const meta = {
+          createdAt: new Date(),
+          command: ['optic', ...process.argv.slice(2)].join(' '),
+        };
+
+        const compressedData = compressData(
+          fromParseResults,
+          toParseResults,
+          specResults,
+          meta
+        );
+        const anonymousId = await getAnonId();
+        trackEvent('optic.diff_all.view_web', anonymousId, {
+          compressedDataLength: compressedData.length,
+        });
+        await open(`${config.client.getWebBase()}/cli/diff#${compressedData}`, {
+          wait: false,
+        });
+      }
     } else if (
       !toParseResults.isEmptySpec &&
       typeof toParseResults.jsonLike[OPTIC_URL_KEY] !== 'string'
@@ -176,7 +226,10 @@ async function computeAll(
   };
 }
 
-type Results = [];
+type Results = (Awaited<ReturnType<typeof compute>> & {
+  from?: string;
+  to?: string;
+})[];
 
 type Warnings = {
   missingOpticUrl: {
@@ -243,9 +296,17 @@ const getDiffAllAction =
       options
     );
 
-    // TODO if authenticated upload
-
     // TODO if the working dir is clean, or no x-optic-url specs detected, add a helpful message of what they might want to do
     // with results, log out results and print a summary
-    // if --web, open browser
+    if (!options.web) {
+      console.log(
+        chalk.blue(
+          `Rerun this command with the --web flag to view the detailed changes in your browser`
+        )
+      );
+    }
+    await flushEvents();
+
+    if (results.some((result) => result.checks.failed > 0) && options.check)
+      process.exitCode = 1;
   };
