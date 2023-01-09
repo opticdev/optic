@@ -51,12 +51,6 @@ Example usage:
   `;
 
 type SpecResults = Awaited<ReturnType<typeof generateSpecResults>>;
-const webBase =
-  process.env.OPTIC_ENV === 'staging'
-    ? 'https://app.o3c.info'
-    : process.env.OPTIC_ENV === 'local'
-    ? 'http://localhost:3000'
-    : 'https://app.useoptic.com';
 
 export const registerDiff = (cli: Command, config: OpticCliConfig) => {
   cli
@@ -264,7 +258,9 @@ const runDiff = async (
       compressedDataLength: compressedData.length,
     });
     await flushEvents();
-    await openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
+    await openBrowserToPage(
+      `${config.client.getWebBase()}/cli/diff#${compressedData}`
+    );
   }
 
   return diffResults;
