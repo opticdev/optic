@@ -56,11 +56,21 @@ type DiffAllActionOptions = {
 
 const getDiffAllAction =
   (config: OpticCliConfig) => async (options: DiffAllActionOptions) => {
-    // TODO validate is in git repo
+    if (config.vcs?.type !== VCS.Git) {
+      console.error(
+        `Error: optic diff-all must be called from a git repository.`
+      );
+      process.exitCode = 1;
+      return;
+    }
+
+    const compareToCandidates = [];
+    const compareFromCandidates = [];
     // collect specs from the `to` branch AND the `from` branch - use the git get file candiate functions and modify to search based on `sha` or no sha
     // In the to-specs, list out valid openpai specs that do not have `x-optic-url` and warn
     // Filter out specs on `to` that do not have x-optic-url
     // filter out specs from `from` that do not have x-optic-url and that are already included in `to` (even to specs without `x-optic-url`)
+
     // TODO if the working dir is clean, or no x-optic-url specs detected, add a helpful message of what they might want to do
     // generate a list of comparisons
     // run comparisons
