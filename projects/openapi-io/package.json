@@ -28,7 +28,7 @@
     "@types/copyfiles": "^2",
     "@types/crypto-js": "^4.0.2",
     "@types/fast-json-patch": "^1.1.5",
-    "@types/fs-extra": "^9.0.13",
+    "@types/fs-extra": "^11.0.0",
     "@types/is-url": "^1.2.30",
     "@types/lodash.clonedeep": "^4",
     "@types/lodash.sortby": "^4.7.6",
