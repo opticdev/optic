@@ -80,18 +80,3 @@ ruleset:
       require_response_examples: true # default is false
       require_parameter_examples: true # default is false
 ```
-
-## Spectral
-
-Use [spectral's oas ruleset](https://meta.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#openapi-rules) and apply Optic's lifecycle methods to control when spectral rules are triggered. Runs on spectral v6 and applies the [oas ruleset](https://meta.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#openapi-rules) provided by spectral.
-
-```yml
-ruleset:
-  - spectral-oas-v6:
-      applies: always # also available are 'added' or addedOrChanged
-      rules:
-        # turn off rules - see a full list of rules https://meta.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#openapi-rules
-        operation-operationId: false
-```
-
-If you need to use custom spectral functions, or want to bring your own spectral ruleset, you can set this up using our [Spectral Custom Rule](../rulesets-base/README.md#connecting-spectral-to-optic)

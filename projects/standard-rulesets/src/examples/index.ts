@@ -43,7 +43,9 @@ const configSchema = {
 const validateConfigSchema = ajv.compile(configSchema);
 
 export class ExamplesRuleset extends Ruleset {
-  static fromOpticConfig(config: unknown): ExamplesRuleset | string {
+  static async fromOpticConfig(
+    config: unknown
+  ): Promise<ExamplesRuleset | string> {
     const result = validateConfigSchema(config);
 
     if (!result) {
