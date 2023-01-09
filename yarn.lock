@@ -3496,12 +3496,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/fs-extra@npm:^9.0.13":
-  version: 9.0.13
-  resolution: "@types/fs-extra@npm:9.0.13"
+"@types/fs-extra@npm:^11.0.0":
+  version: 11.0.0
+  resolution: "@types/fs-extra@npm:11.0.0"
   dependencies:
+    "@types/jsonfile": "*"
     "@types/node": "*"
-  checksum: add79e212acd5ac76b97b9045834e03a7996aef60a814185e0459088fd290519a3c1620865d588fa36c4498bf614210d2a703af5cf80aa1dbc125db78f6edac3
+  checksum: 00e706ad9fdcfd96aa15172e37e136075754256c7d52f5c33d04423f0ec786e5651526c7c90bab26a72cc882475e9c1687e33900a1176b6803b7b3fd6cdd35d8
   languageName: node
   linkType: hard
 
@@ -3585,6 +3586,15 @@ __metadata:
   version: 1.0.33
   resolution: "@types/json-stable-stringify@npm:1.0.33"
   checksum: 5fb2b6761d7079396372239366afbb4d454bdf2c78fb26a78214b1c3f7a94e131910b1fe0607aae90f8a49dd71972d8a10d74088145b92d3fcb5b38fb1359e30
+  languageName: node
+  linkType: hard
+
+"@types/jsonfile@npm:*":
+  version: 6.1.1
+  resolution: "@types/jsonfile@npm:6.1.1"
+  dependencies:
+    "@types/node": "*"
+  checksum: 0f8fe0a9221a00e8413cffba723dfe16553868724b830237256fb0052ecd5cac96498189d1235a001cfa815f352008261c9ceb373f0aa58227f891e0c7a12c4d
   languageName: node
   linkType: hard
 
@@ -3751,6 +3761,16 @@ __metadata:
   version: 2.4.3
   resolution: "@types/prettier@npm:2.4.3"
   checksum: b240434daabac54700c862b0bb52a83fec396e0e9c847447119ba41fd8404d79aadfa174e6306fb094b29efadac586344b7606c3a71c286b71755ab2579d54df
+  languageName: node
+  linkType: hard
+
+"@types/prompts@npm:^2":
+  version: 2.4.2
+  resolution: "@types/prompts@npm:2.4.2"
+  dependencies:
+    "@types/node": "*"
+    kleur: ^3.0.3
+  checksum: 1c2277534a546d77fe7390e4a3a34881ceb7015c95f5b22d1b239cb6c287c300c4dc5a713c1f734f3f892b243225ed703b1d1d149b9995af024c7a19dc49369e
   languageName: node
   linkType: hard
 
@@ -3951,7 +3971,7 @@ __metadata:
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
     "@types/bent": ^7
-    "@types/fs-extra": ^9.0.13
+    "@types/fs-extra": ^11.0.0
     "@types/is-url": ^1.2.30
     "@types/json-stable-stringify": ^1.0.33
     "@types/lodash.sortby": ^4.7.7
@@ -4033,7 +4053,7 @@ __metadata:
     "@types/copyfiles": ^2
     "@types/crypto-js": ^4.0.2
     "@types/fast-json-patch": ^1.1.5
-    "@types/fs-extra": ^9.0.13
+    "@types/fs-extra": ^11.0.0
     "@types/is-url": ^1.2.30
     "@types/lodash.clonedeep": ^4
     "@types/lodash.sortby": ^4.7.6
@@ -4201,6 +4221,7 @@ __metadata:
     "@types/json-stable-stringify": ^1.0.33
     "@types/node": ^18.0.0
     "@types/picomatch": ^2.3.0
+    "@types/prompts": ^2
     "@types/tar": ^6
     "@types/url-join": ^4.0.1
     "@types/uuid": ^9.0.0
@@ -4227,6 +4248,7 @@ __metadata:
     open: ^8.4.0
     picomatch: ^2.3.1
     prettier: ^2.4.1
+    prompts: ^2.4.2
     tar: ^6.1.11
     ts-jest: ^29.0.3
     ts-node: ^10.8.0
@@ -10026,7 +10048,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prompts@npm:^2.0.1":
+"prompts@npm:^2.0.1, prompts@npm:^2.4.2":
   version: 2.4.2
   resolution: "prompts@npm:2.4.2"
   dependencies:
