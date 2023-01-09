@@ -132,7 +132,7 @@ async function uriToSpectral(uri: string) {
     let loadUri = uri;
 
     if (!isUrl(uri)) {
-      const filePath = path.resolve(process.cwd(), uri);
+      const filePath = path.resolve(uri);
       const fileDoesExist = await fileExits(filePath);
       if (fileDoesExist) {
         loadUri = filePath;
