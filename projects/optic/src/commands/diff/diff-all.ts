@@ -1,10 +1,7 @@
 import { Command } from 'commander';
 import { OpticCliConfig, VCS } from '../../config';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
-import {
-  findOpenApiSpecsCandidates,
-  resolveGitRef,
-} from '../../utils/git-utils';
+import { findOpenApiSpecsCandidates } from '../../utils/git-utils';
 import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
 import { logger } from '../../logger';
 import { OPTIC_URL_KEY } from '../../constants';
@@ -18,10 +15,8 @@ import { getAnonId } from '../../utils/anonymous-id';
 import open from 'open';
 import { compressData } from './compressResults';
 import {
-  generateChangelogData,
   generateComparisonLogs,
   jsonChangelog,
-  logComparison,
   terminalChangelog,
 } from '@useoptic/openapi-utilities';
 
