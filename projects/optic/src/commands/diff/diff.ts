@@ -20,13 +20,12 @@ import {
 } from '../../utils/spec-loaders';
 import { OpticCliConfig, VCS } from '../../config';
 import chalk from 'chalk';
-import { generateRuleRunner } from './generate-rule-runner';
 import {
   flushEvents,
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { getAnonId } from '../../utils/anonymous-id';
-import { OPTIC_STANDARD_KEY } from '../../constants';
+import { compute } from './compute';
 
 const description = `run a diff between two API specs`;
 
@@ -139,8 +138,8 @@ const getBaseAndHeadFromFiles = async (
   try {
     // TODO update function to try download from spec-id cloud
     return Promise.all([
-      getFileFromFsOrGit(file1, config),
-      getFileFromFsOrGit(file2, config),
+      getFileFromFsOrGit(file1, config, false),
+      getFileFromFsOrGit(file2, config, true),
     ]);
   } catch (e) {
     console.error(e);
@@ -174,38 +173,18 @@ const runDiff = async (
   config: OpticCliConfig,
   options: DiffActionOptions
 ): Promise<{ checks: { passed: number; failed: number; total: number } }> => {
-  const ruleRunner = await generateRuleRunner(
-    {
-      rulesetArg: options.ruleset,
-      specRuleset: headFile.isEmptySpec
-        ? baseFile.jsonLike[OPTIC_STANDARD_KEY]
-        : headFile.jsonLike[OPTIC_STANDARD_KEY],
-      config,
-    },
-    options.check
+  const { specResults, checks } = await compute(
+    [baseFile, headFile],
+    config,
+    options
   );
-  const specResults = await generateSpecResults(
-    ruleRunner,
-    baseFile,
-    headFile,
-    null
-  );
+  const diffResults = { checks };
 
   const changelogData = generateChangelogData({
     changes: specResults.changes,
     toFile: headFile.jsonLike,
     rules: specResults.results,
   });
-
-  const diffResults = {
-    checks: {
-      total: specResults.results.length,
-      passed: specResults.results.filter((check) => check.passed).length,
-      failed: specResults.results.filter(
-        (check) => !check.passed && !check.exempted
-      ).length,
-    },
-  };
 
   if (options.json) {
     console.log(JSON.stringify(jsonChangelog(changelogData)));

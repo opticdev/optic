@@ -1,6 +1,11 @@
 import { Command } from 'commander';
 import { OpticCliConfig, VCS } from '../../config';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
+import { findOpenApiSpecsCandidates } from '../../utils/git-utils';
+import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
+import { logger } from '../../logger';
+import { OPTIC_URL_KEY } from '../../constants';
+import { compute } from './compute';
 
 const usage = () => `
   optic diff-all
@@ -41,7 +46,6 @@ export const registerDiffAll = (cli: Command, config: OpticCliConfig) => {
     )
     .option('--check', 'enable checks', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
-    .option('--json', 'output as json', false)
     .action(wrapActionHandlerWithSentry(getDiffAllAction(config)));
 };
 
@@ -54,30 +58,194 @@ type DiffAllActionOptions = {
   json: boolean;
 };
 
+// Match up the to and from candidates
+// This will return the comparisons we can try to run
+function matchCandidates(
+  from: {
+    ref: string;
+    paths: string[];
+  },
+  to: { ref?: string; paths: string[] }
+): Map<
+  string,
+  {
+    from?: string;
+    to?: string;
+  }
+> {
+  const results = new Map<string, { from?: string; to?: string }>();
+  for (const path of from.paths) {
+    const strippedPath = path.replace(`${from.ref}:`, '');
+    results.set(strippedPath, {
+      from: path,
+    });
+  }
+
+  for (const path of to.paths) {
+    const strippedPath = to.ref ? path.replace(`${to.ref}:`, '') : path;
+    const maybePathObject = results.get(strippedPath);
+    if (maybePathObject) {
+      maybePathObject.to = path;
+    } else {
+      results.set(strippedPath, {
+        to: path,
+      });
+    }
+  }
+  return results;
+}
+
+async function computeAll(
+  candidatesMap: ReturnType<typeof matchCandidates>,
+  config: OpticCliConfig,
+  options: DiffAllActionOptions
+): Promise<{
+  warnings: Warnings;
+  results: Results;
+}> {
+  const warnings: Warnings = {
+    missingOpticUrl: [],
+    unparseableFromSpec: [],
+    unparseableToSpec: [],
+  };
+
+  const results: Results = [];
+
+  for await (const [_, candidate] of candidatesMap) {
+    // try load both from + to spec
+    let fromParseResults: ParseResult;
+    let toParseResults: ParseResult;
+    try {
+      fromParseResults = await getFileFromFsOrGit(
+        candidate.from,
+        config,
+        false
+      );
+    } catch (e) {
+      warnings.unparseableFromSpec.push({
+        path: candidate.from!,
+        error: e,
+      });
+      continue;
+    }
+
+    try {
+      toParseResults = await getFileFromFsOrGit(candidate.to, config, true);
+    } catch (e) {
+      warnings.unparseableToSpec.push({
+        path: candidate.to!,
+        error: e,
+      });
+      continue;
+    }
+
+    // Cases we run the comparison:
+    // - if to spec has x-optic-url
+    // - if from spec has x-optic-url AND to spec is empty
+    if (
+      typeof toParseResults.jsonLike[OPTIC_URL_KEY] === 'string' ||
+      (typeof fromParseResults.jsonLike[OPTIC_URL_KEY] === 'string' &&
+        toParseResults.isEmptySpec)
+    ) {
+      const { specResults, checks } = await compute(
+        [fromParseResults, toParseResults],
+        config,
+        options
+      );
+      const diffResults = { checks };
+
+      // TODO if authenticated upload
+
+      // run comparisons
+      // - upload specs
+      // - run diff
+      // - upload run
+    } else if (
+      !toParseResults.isEmptySpec &&
+      typeof toParseResults.jsonLike[OPTIC_URL_KEY] !== 'string'
+    ) {
+      warnings.missingOpticUrl.push({
+        path: candidate.to!,
+      });
+      continue;
+    }
+  }
+  return {
+    warnings,
+    results,
+  };
+}
+
+type Results = [];
+
+type Warnings = {
+  missingOpticUrl: {
+    path: string;
+  }[];
+  unparseableFromSpec: {
+    path: string;
+    error: unknown;
+  }[];
+  unparseableToSpec: { path: string; error: unknown }[];
+};
+
 const getDiffAllAction =
   (config: OpticCliConfig) => async (options: DiffAllActionOptions) => {
     if (config.vcs?.type !== VCS.Git) {
-      console.error(
+      logger.error(
         `Error: optic diff-all must be called from a git repository.`
       );
       process.exitCode = 1;
       return;
     }
 
-    const compareToCandidates = [];
-    const compareFromCandidates = [];
-    // collect specs from the `to` branch AND the `from` branch - use the git get file candiate functions and modify to search based on `sha` or no sha
-    // In the to-specs, list out valid openpai specs that do not have `x-optic-url` and warn
-    // Filter out specs on `to` that do not have x-optic-url
-    // filter out specs from `from` that do not have x-optic-url and that are already included in `to` (even to specs without `x-optic-url`)
+    let compareToCandidates;
+    let compareFromCandidates;
+
+    try {
+      compareToCandidates = await findOpenApiSpecsCandidates(options.compareTo);
+    } catch (e) {
+      logger.error(
+        `Error reading files from git history for --compare-to ${options.compareTo}`
+      );
+      logger.error(e);
+      process.exitCode = 1;
+      return;
+    }
+
+    try {
+      compareFromCandidates = await findOpenApiSpecsCandidates(
+        options.compareFrom
+      );
+    } catch (e) {
+      logger.error(
+        `Error reading files from git history for --compare-from ${options.compareFrom}`
+      );
+      logger.error(e);
+      process.exitCode = 1;
+      return;
+    }
+
+    const candidatesMap = matchCandidates(
+      {
+        ref: options.compareFrom,
+        paths: compareFromCandidates,
+      },
+      {
+        ref: options.compareTo,
+        paths: compareToCandidates,
+      }
+    );
+
+    const { warnings, results } = await computeAll(
+      candidatesMap,
+      config,
+      options
+    );
+
+    // TODO if authenticated upload
 
     // TODO if the working dir is clean, or no x-optic-url specs detected, add a helpful message of what they might want to do
-    // generate a list of comparisons
-    // run comparisons
-    // - upload specs
-    // - run diff
-    // - upload run
     // with results, log out results and print a summary
     // if --web, open browser
-    // TODO implement --json flag
   };
