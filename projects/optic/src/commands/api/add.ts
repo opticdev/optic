@@ -66,6 +66,202 @@ type ApiAddActionOptions = {
   web?: boolean;
 };
 
+async function getOrganizationToUploadTo(): Promise<
+  | {
+      ok: true;
+      org: { id: string; name: string };
+    }
+  | {
+      ok: false;
+      error: string;
+    }
+> {
+  let org: { id: string; name: string };
+
+  // TODO replace this with an API call
+  const organizations: { id: string; name: string }[] = await [
+    { id: 'a', name: 'org1' },
+    // { id: 'b', name: 'org2' },
+  ];
+  if (organizations.length > 1) {
+    const response = await prompts({
+      type: 'select',
+      name: 'orgId',
+      message: 'Select the organization you want to add APIs to',
+      choices: organizations.map((org) => ({
+        title: org.name,
+        value: org.id,
+      })),
+    });
+    org = organizations.find((o) => o.id === response.orgId)!;
+  } else if (organizations.length === 0) {
+    process.exitCode = 1;
+    return {
+      ok: false,
+      error:
+        'Authenticated token was not associated with any organizations. Generate a new token at https://app.useoptic.com',
+    };
+  } else {
+    org = organizations[0];
+  }
+
+  return { ok: true, org };
+}
+
+async function promptForStandard(): Promise<string | undefined> {
+  // TODO fetch existing standard
+  const existingStandards: { id: string; name: string; slug: string }[] = [
+    { id: '', name: '', slug: 'a' },
+  ];
+
+  const rulesetResponse = await prompts([
+    {
+      type: 'confirm',
+      message:
+        'Would you like to attach a standard to any added APIs? Note that you can always add a standard later',
+      name: 'add',
+      initial: true,
+    },
+    {
+      type: (prev) => (prev && existingStandards.length > 0 ? 'select' : null),
+      message:
+        "Would you like to use an existing standard or create a new standard using Optic's built in rulesets",
+      name: 'useExisting',
+      choices: [
+        {
+          title: 'Use an existing standard',
+          value: 'existing',
+        },
+        {
+          title: "Create a new standard using Optic's built in rulesets",
+          value: 'new',
+        },
+      ],
+    },
+    {
+      type: (prev) => (prev === 'existing' ? 'select' : null),
+      name: 'standard',
+      message: 'Select an existing standard to add to these APIs',
+      choices: existingStandards.map((r) => ({
+        title: r.slug,
+        value: r.slug,
+      })),
+    },
+  ]);
+
+  if (rulesetResponse.standard) {
+    return rulesetResponse.standard;
+  } else if (rulesetResponse.add && rulesetResponse.useExisting === 'new') {
+    const createRulesetResponse = await prompts({
+      type: 'multiselect',
+      name: 'rulesets',
+      min: 1,
+      hint: '- Space to select. Return to submit',
+      message: 'Select the rulesets you want to add to your standard',
+      choices: [
+        { title: 'Breaking changes', value: 'breaking-changes' },
+        { title: 'Enforce naming conventions', value: 'naming' },
+        { title: 'Require examples in schemas', value: 'examples' },
+      ],
+    });
+
+    if (
+      createRulesetResponse.rulesets &&
+      createRulesetResponse.rulesets.length > 0
+    ) {
+      // TODO create ruleset API with sensible defaults
+      const rulesetUrl = 'todo';
+      logger.info(
+        `A new standard has been created. You can view and edit this standard at ${rulesetUrl}`
+      );
+      return rulesetUrl;
+    }
+  }
+}
+
+async function verifyStandardExists(
+  standard: string
+): Promise<{ ok: boolean }> {
+  // TODO make API call to check that ruleset exists
+  return { ok: true };
+}
+
+async function crawlCandidateSpecs(
+  [path, shas]: [string, string[]],
+  config: OpticCliConfig,
+  options: {
+    path_to_spec: string | undefined;
+    standard: string | undefined;
+  }
+) {
+  const [firstSha] = shas;
+
+  let parseResult: ParseResult;
+  try {
+    parseResult = await getFileFromFsOrGit(`${firstSha}:${path}`, config);
+  } catch (e) {
+    if (path === options.path_to_spec) {
+      logger.info(
+        `File ${options.path_to_spec} is not a valid OpenAPI file. Optic currently supports OpenAPI 3 and 3.1`
+      );
+      logger.info(e);
+    } else {
+      logger.debug(`Disregarding candidate ${path}`);
+      logger.debug(e);
+    }
+    return;
+  }
+  if (parseResult.isEmptySpec) {
+    logger.info(`File ${path} does not exist in sha ${short(firstSha)}`);
+    return;
+  }
+
+  const existingOpticUrl = parseResult.jsonLike[OPTIC_URL_KEY];
+  const api: { id: string; url: string } = existingOpticUrl
+    ? { id: '', url: 'todo get optic id from url' }
+    : { id: '', url: 'todo make API call' };
+
+  logger.info(`Found OpenAPI Spec at ${path}`);
+  for await (const sha of shas) {
+    let parseResult: ParseResult;
+    try {
+      parseResult = await getFileFromFsOrGit(`${sha}:${path}`, config);
+    } catch (e) {
+      logger.debug(
+        `${short(
+          sha
+        )}:${path} is not a valid OpenAPI file, skipping sha version`,
+        e
+      );
+      continue;
+    }
+    if (parseResult.isEmptySpec) {
+      logger.debug(
+        `File ${path} does not exist in sha ${short(sha)}, stopping here`
+      );
+      break;
+    }
+    logger.info(`Uploading spec ${short(sha)}:${path}`);
+
+    // TODO Upload spec here
+  }
+
+  // Write to file only if optic-url is not set
+  if (!existingOpticUrl) {
+    if (/.json/i.test(path)) {
+      await writeJson(path, {
+        [OPTIC_URL_KEY]: api.url,
+        ...(options.standard ? { [OPTIC_STANDARD_KEY]: options.standard } : {}),
+      });
+    } else {
+      await writeYml(path, {
+        [OPTIC_URL_KEY]: api.url,
+        ...(options.standard ? { [OPTIC_STANDARD_KEY]: options.standard } : {}),
+      });
+    }
+  }
+}
+
 const getApiAddAction =
   (config: OpticCliConfig) =>
   async (path_to_spec: string | undefined, options: ApiAddActionOptions) => {
@@ -91,109 +287,20 @@ const getApiAddAction =
       return;
     }
 
-    let org: { id: string; name: string };
-
-    // TODO replace this with an API call
-    const organizations: { id: string; name: string }[] = await [
-      { id: 'a', name: 'org1' },
-      // { id: 'b', name: 'org2' },
-    ];
-    if (organizations.length > 1) {
-      const response = await prompts({
-        type: 'select',
-        name: 'orgId',
-        message: 'Select the organization you want to add APIs to',
-        choices: organizations.map((org) => ({
-          title: org.name,
-          value: org.id,
-        })),
-      });
-      org = organizations.find((o) => o.id === response.orgId)!;
-    } else if (organizations.length === 0) {
-      logger.error(
-        'Authenticated token was not associated with any organizations. Generate a new token at https://app.useoptic.com'
-      );
+    const orgRes = await getOrganizationToUploadTo();
+    if (!orgRes.ok) {
+      logger.error(orgRes.error);
       process.exitCode = 1;
       return;
-    } else {
-      org = organizations[0];
     }
     logger.info('');
 
     let standard = options.standard;
     if (!standard) {
-      // TODO fetch existing standard
-      const existingStandards: { id: string; name: string; slug: string }[] = [
-        { id: '', name: '', slug: 'a' },
-      ];
-
-      const rulesetResponse = await prompts([
-        {
-          type: 'confirm',
-          message:
-            'Would you like to attach a standard to any added APIs? Note that you can always add a standard later',
-          name: 'add',
-          initial: true,
-        },
-        {
-          type: (prev) =>
-            prev && existingStandards.length > 0 ? 'select' : null,
-          message:
-            "Would you like to use an existing standard or create a new standard using Optic's built in rulesets",
-          name: 'useExisting',
-          choices: [
-            {
-              title: 'Use an existing standard',
-              value: 'existing',
-            },
-            {
-              title: "Create a new standard using Optic's built in rulesets",
-              value: 'new',
-            },
-          ],
-        },
-        {
-          type: (prev) => (prev === 'existing' ? 'select' : null),
-          name: 'standard',
-          message: 'Select an existing standard to add to these APIs',
-          choices: existingStandards.map((r) => ({
-            title: r.slug,
-            value: r.slug,
-          })),
-        },
-      ]);
-
-      if (rulesetResponse.standard) {
-        standard = rulesetResponse.standard;
-      } else if (rulesetResponse.add && rulesetResponse.useExisting === 'new') {
-        const createRulesetResponse = await prompts({
-          type: 'multiselect',
-          name: 'rulesets',
-          min: 1,
-          hint: '- Space to select. Return to submit',
-          message: 'Select the rulesets you want to add to your standard',
-          choices: [
-            { title: 'Breaking changes', value: 'breaking-changes' },
-            { title: 'Enforce naming conventions', value: 'naming' },
-            { title: 'Require examples in schemas', value: 'examples' },
-          ],
-        });
-
-        if (
-          createRulesetResponse.rulesets &&
-          createRulesetResponse.rulesets.length > 0
-        ) {
-          // TODO create ruleset API with sensible defaults
-          const rulesetUrl = 'todo';
-          logger.info(
-            `A new standard has been created. You can view and edit this standard at ${rulesetUrl}`
-          );
-        }
-      }
+      standard = await promptForStandard();
     } else {
-      // TODO make API call to check that ruleset exists
-      const rulesetExists = 'asd';
-      if (!rulesetExists) {
+      const results = await verifyStandardExists(standard);
+      if (!results.ok) {
         logger.warn(
           chalk.yellow(
             `Warning: It looks like the standard ${standard} does not exist.`
@@ -204,7 +311,7 @@ const getApiAddAction =
 
     logger.info('');
     logger.info(
-      `Adding APIs to organization ${org.name}${
+      `Adding APIs to organization ${orgRes.org.name}${
         standard ? ` with standard ${standard}` : ''
       }`
     );
@@ -213,72 +320,10 @@ const getApiAddAction =
       ? await getShasCandidatesForPath(path_to_spec, options.historyDepth)
       : await getPathCandidatesForSha(config.vcs.sha);
 
-    for await (const [path, shas] of candidates) {
-      const [firstSha] = shas;
-
-      let parseResult: ParseResult;
-      try {
-        parseResult = await getFileFromFsOrGit(`${firstSha}:${path}`, config);
-      } catch (e) {
-        if (path === path_to_spec) {
-          logger.info(
-            `File ${path_to_spec} is not a valid OpenAPI file. Optic currently supports OpenAPI 3 and 3.1`
-          );
-          logger.info(e);
-        } else {
-          logger.debug(`Disregarding candidate ${path}`);
-          logger.debug(e);
-        }
-        continue;
-      }
-      if (parseResult.isEmptySpec) {
-        logger.info(`File ${path} does not exist in sha ${short(firstSha)}`);
-        continue;
-      }
-
-      const existingOpticUrl = parseResult.jsonLike[OPTIC_URL_KEY];
-      const api: { id: string; url: string } = existingOpticUrl
-        ? { id: '', url: 'todo get optic id from url' }
-        : { id: '', url: 'todo make API call' };
-
-      logger.info(`Found OpenAPI Spec at ${path}`);
-      for await (const sha of shas) {
-        let parseResult: ParseResult;
-        try {
-          parseResult = await getFileFromFsOrGit(`${sha}:${path}`, config);
-        } catch (e) {
-          logger.debug(
-            `${short(
-              sha
-            )}:${path} is not a valid OpenAPI file, skipping sha version`,
-            e
-          );
-          continue;
-        }
-        if (parseResult.isEmptySpec) {
-          logger.debug(
-            `File ${path} does not exist in sha ${short(sha)}, stopping here`
-          );
-          break;
-        }
-        logger.info(`Uploading spec ${short(sha)}:${path}`);
-
-        // TODO Upload spec here
-      }
-
-      // Write to file only if optic-url is not set
-      if (!existingOpticUrl) {
-        if (/.json/i.test(path)) {
-          await writeJson(path, {
-            [OPTIC_URL_KEY]: api.url,
-            ...(standard ? { [OPTIC_STANDARD_KEY]: standard } : {}),
-          });
-        } else {
-          await writeYml(path, {
-            [OPTIC_URL_KEY]: api.url,
-            ...(standard ? { [OPTIC_STANDARD_KEY]: standard } : {}),
-          });
-        }
-      }
+    for await (const candidate of candidates) {
+      await crawlCandidateSpecs(candidate, config, {
+        path_to_spec,
+        standard,
+      });
     }
   };
