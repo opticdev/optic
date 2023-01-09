@@ -105,6 +105,13 @@ function isUrl(uri: string) {
     return false;
   }
 }
+async function fileExits(path: string) {
+  return new Promise((resolve, reject) => {
+    fs.access(path, fs.constants.R_OK, (err) => {
+      resolve(Boolean(err));
+    });
+  });
+}
 
 async function uriToSpectral(uri: string) {
   const spectral = new Spectral();
@@ -122,6 +129,16 @@ async function uriToSpectral(uri: string) {
     spectral.ruleset = ruleset;
     return spectral;
   } else {
+    let loadUri = uri;
+
+    if (!isUrl(uri)) {
+      const filePath = path.resolve(process.cwd(), uri);
+      const fileDoesExist = await fileExits(filePath);
+      if (fileDoesExist) {
+        loadUri = filePath;
+      }
+    }
+
     const ruleset: Ruleset = await bundleAndLoadRuleset(uri, { fs, fetch });
     // setting explicitly because of a poor choice in Spectral core. The instanceof is fragile when you load code / types from different modules and combine them (like we have to with bundle and core)
     // https://github.com/stoplightio/spectral/blob/a1bd6d29b473aff257dbf66264ebdf471fae07cc/packages/core/src/spectral.ts#L87
