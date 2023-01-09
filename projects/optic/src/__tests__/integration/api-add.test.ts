@@ -31,7 +31,6 @@ describe('optic api add', () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
     process.env = { ...oldEnv };
   });
 
