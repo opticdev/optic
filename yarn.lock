@@ -3248,12 +3248,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/fs-extra@npm:^9.0.13":
-  version: 9.0.13
-  resolution: "@types/fs-extra@npm:9.0.13"
+"@types/fs-extra@npm:^11.0.0":
+  version: 11.0.0
+  resolution: "@types/fs-extra@npm:11.0.0"
   dependencies:
+    "@types/jsonfile": "*"
     "@types/node": "*"
-  checksum: add79e212acd5ac76b97b9045834e03a7996aef60a814185e0459088fd290519a3c1620865d588fa36c4498bf614210d2a703af5cf80aa1dbc125db78f6edac3
+  checksum: 00e706ad9fdcfd96aa15172e37e136075754256c7d52f5c33d04423f0ec786e5651526c7c90bab26a72cc882475e9c1687e33900a1176b6803b7b3fd6cdd35d8
   languageName: node
   linkType: hard
 
@@ -3330,6 +3331,15 @@ __metadata:
   version: 1.0.33
   resolution: "@types/json-stable-stringify@npm:1.0.33"
   checksum: 5fb2b6761d7079396372239366afbb4d454bdf2c78fb26a78214b1c3f7a94e131910b1fe0607aae90f8a49dd71972d8a10d74088145b92d3fcb5b38fb1359e30
+  languageName: node
+  linkType: hard
+
+"@types/jsonfile@npm:*":
+  version: 6.1.1
+  resolution: "@types/jsonfile@npm:6.1.1"
+  dependencies:
+    "@types/node": "*"
+  checksum: 0f8fe0a9221a00e8413cffba723dfe16553868724b830237256fb0052ecd5cac96498189d1235a001cfa815f352008261c9ceb373f0aa58227f891e0c7a12c4d
   languageName: node
   linkType: hard
 
@@ -3699,7 +3709,7 @@ __metadata:
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
     "@types/bent": ^7
-    "@types/fs-extra": ^9.0.13
+    "@types/fs-extra": ^11.0.0
     "@types/is-url": ^1.2.30
     "@types/json-stable-stringify": ^1.0.33
     "@types/lodash.sortby": ^4.7.7
@@ -3781,7 +3791,7 @@ __metadata:
     "@types/copyfiles": ^2
     "@types/crypto-js": ^4.0.2
     "@types/fast-json-patch": ^1.1.5
-    "@types/fs-extra": ^9.0.13
+    "@types/fs-extra": ^11.0.0
     "@types/is-url": ^1.2.30
     "@types/lodash.clonedeep": ^4
     "@types/lodash.sortby": ^4.7.6
