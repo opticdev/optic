@@ -1,7 +1,10 @@
 import { Command } from 'commander';
 import { OpticCliConfig, VCS } from '../../config';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
-import { findOpenApiSpecsCandidates } from '../../utils/git-utils';
+import {
+  findOpenApiSpecsCandidates,
+  resolveGitRef,
+} from '../../utils/git-utils';
 import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
 import { logger } from '../../logger';
 import { OPTIC_URL_KEY } from '../../constants';
@@ -16,6 +19,8 @@ import open from 'open';
 import { compressData } from './compressResults';
 import {
   generateChangelogData,
+  generateComparisonLogs,
+  jsonChangelog,
   logComparison,
   terminalChangelog,
 } from '@useoptic/openapi-utilities';
@@ -59,6 +64,7 @@ export const registerDiffAll = (cli: Command, config: OpticCliConfig) => {
     )
     .option('--check', 'enable checks', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
+    .option('--json', 'output as json', false)
     .action(wrapActionHandlerWithSentry(getDiffAllAction(config)));
 };
 
@@ -114,7 +120,7 @@ async function computeAll(
   options: DiffAllActionOptions
 ): Promise<{
   warnings: Warnings;
-  results: Results;
+  results: Result[];
 }> {
   const warnings: Warnings = {
     missingOpticUrl: [],
@@ -122,7 +128,7 @@ async function computeAll(
     unparseableToSpec: [],
   };
 
-  const results: Results = [];
+  const results: Result[] = [];
 
   for await (const [_, candidate] of candidatesMap) {
     // try load both from + to spec
@@ -167,7 +173,7 @@ async function computeAll(
           }`
         )
       );
-      const { specResults, checks } = await compute(
+      const { specResults, checks, changelogData } = await compute(
         [fromParseResults, toParseResults],
         config,
         options
@@ -178,11 +184,6 @@ async function computeAll(
       }
       logger.info('');
 
-      const changelogData = generateChangelogData({
-        changes: specResults.changes,
-        toFile: toParseResults.jsonLike,
-        rules: specResults.results,
-      });
       for (const log of terminalChangelog(changelogData)) {
         logger.info(log);
       }
@@ -193,60 +194,25 @@ async function computeAll(
           logger.info('');
         }
 
-        logComparison(specResults, { output: 'pretty', verbose: false });
+        for (const log of generateComparisonLogs(specResults, {
+          output: 'pretty',
+          verbose: false,
+        })) {
+          logger.info(log);
+        }
+
         logger.info('');
       }
 
-      if (config.isAuthenticated) {
-        const apiId: string | null = 'TODO'; // toParseResults.jsonLike[OPTIC_URL_KEY] ?? fromParseResults.jsonLike[OPTIC_URL_KEY] ?? null
-        const shouldUploadBaseSpec = fromParseResults.context && apiId;
-        const shouldUploadHeadSpec = toParseResults.context && apiId;
-        if (shouldUploadBaseSpec) {
-          // TODO upload spec
-        }
-        if (shouldUploadHeadSpec) {
-          // TODO upload spec
-        }
-
-        const shouldUploadResults =
-          (shouldUploadBaseSpec || fromParseResults.isEmptySpec) &&
-          (shouldUploadHeadSpec || toParseResults.isEmptySpec);
-
-        if (shouldUploadResults) {
-          // TODO upload results
-        }
-      }
       results.push({
+        fromParseResults,
+        toParseResults,
         specResults,
         checks,
+        changelogData,
         from: candidate.from,
         to: candidate.to,
       });
-
-      if (
-        options.web &&
-        (specResults.changes.length > 0 ||
-          (!options.check && specResults.results.length > 0))
-      ) {
-        const meta = {
-          createdAt: new Date(),
-          command: ['optic', ...process.argv.slice(2)].join(' '),
-        };
-
-        const compressedData = compressData(
-          fromParseResults,
-          toParseResults,
-          specResults,
-          meta
-        );
-        const anonymousId = await getAnonId();
-        trackEvent('optic.diff_all.view_web', anonymousId, {
-          compressedDataLength: compressedData.length,
-        });
-        await open(`${config.client.getWebBase()}/cli/diff#${compressedData}`, {
-          wait: false,
-        });
-      }
     } else if (
       !toParseResults.isEmptySpec &&
       typeof toParseResults.jsonLike[OPTIC_URL_KEY] !== 'string'
@@ -263,10 +229,12 @@ async function computeAll(
   };
 }
 
-type Results = (Awaited<ReturnType<typeof compute>> & {
+type Result = Awaited<ReturnType<typeof compute>> & {
+  fromParseResults: ParseResult;
+  toParseResults: ParseResult;
   from?: string;
   to?: string;
-})[];
+};
 
 type Warnings = {
   missingOpticUrl: {
@@ -279,6 +247,76 @@ type Warnings = {
   unparseableToSpec: { path: string; error: unknown }[];
 };
 
+function handleWarnings(warnings: Warnings, options: DiffAllActionOptions) {
+  if (warnings.missingOpticUrl.length > 0) {
+    logger.info(
+      chalk.yellow(
+        'Warning - the following OpenAPI specs were detected but did not have x-optic-url keys. `optic diff-all` only runs on specs that include `x-optic-url` keys.'
+      )
+    );
+    logger.info('Run the `optic api add` command to add these specs to optic');
+    logger.info(warnings.missingOpticUrl.map((f) => f.path).join('\n'));
+    logger.info('');
+  }
+
+  if (warnings.unparseableFromSpec.length > 0) {
+    logger.error(
+      chalk.red(
+        `Error - the following specs could not be parsed from the ref ${options.compareFrom}`
+      )
+    );
+
+    for (const unparseableFrom of warnings.unparseableFromSpec) {
+      logger.error(`spec: ${unparseableFrom.path}`);
+      logger.error(unparseableFrom.error);
+      logger.error('');
+    }
+  }
+
+  if (warnings.unparseableToSpec.length > 0) {
+    logger.error(
+      chalk.red(
+        `Error - the following specs could not be parsed from the ${
+          options.compareTo
+            ? `ref ${options.compareTo}`
+            : 'current working directory'
+        }`
+      )
+    );
+
+    for (const unparseableTo of warnings.unparseableToSpec) {
+      logger.error(`spec: ${unparseableTo.path}`);
+      logger.error(unparseableTo.error);
+      logger.error('');
+    }
+    process.exitCode = 1;
+  }
+}
+
+async function openWebpage(
+  { fromParseResults, toParseResults, specResults }: Result,
+  config: OpticCliConfig
+) {
+  const meta = {
+    createdAt: new Date(),
+    command: ['optic', ...process.argv.slice(2)].join(' '),
+  };
+
+  const compressedData = compressData(
+    fromParseResults,
+    toParseResults,
+    specResults,
+    meta
+  );
+  const anonymousId = await getAnonId();
+  trackEvent('optic.diff_all.view_web', anonymousId, {
+    compressedDataLength: compressedData.length,
+  });
+  await open(`${config.client.getWebBase()}/cli/diff#${compressedData}`, {
+    wait: false,
+  });
+}
+
 const getDiffAllAction =
   (config: OpticCliConfig) => async (options: DiffAllActionOptions) => {
     if (config.vcs?.type !== VCS.Git) {
@@ -289,8 +327,13 @@ const getDiffAllAction =
       return;
     }
 
-    let compareToCandidates;
-    let compareFromCandidates;
+    if (options.json) {
+      // For json output we only want to render json
+      logger.setLevel('silent');
+    }
+
+    let compareToCandidates: string[];
+    let compareFromCandidates: string[];
 
     try {
       compareToCandidates = await findOpenApiSpecsCandidates(options.compareTo);
@@ -333,51 +376,37 @@ const getDiffAllAction =
       options
     );
 
-    if (warnings.missingOpticUrl.length > 0) {
-      logger.info(
-        chalk.yellow(
-          'Warning - the following OpenAPI specs were detected but did not have x-optic-url keys. `optic diff-all` only runs on specs that include `x-optic-url` keys.'
-        )
-      );
-      logger.info(
-        'Run the `optic api add` command to add these specs to optic'
-      );
-      logger.info(warnings.missingOpticUrl.map((f) => f.path).join('\n'));
-      logger.info('');
-    }
+    if (config.isAuthenticated) {
+      for (const result of results) {
+        const { fromParseResults, toParseResults, specResults } = result;
+        const apiId: string | null = 'TODO'; // toParseResults.jsonLike[OPTIC_URL_KEY] ?? fromParseResults.jsonLike[OPTIC_URL_KEY] ?? null
+        const shouldUploadBaseSpec = fromParseResults.context && apiId;
+        const shouldUploadHeadSpec = toParseResults.context && apiId;
+        if (shouldUploadBaseSpec) {
+          // TODO upload spec
+        }
+        if (shouldUploadHeadSpec) {
+          // TODO upload spec
+        }
 
-    if (warnings.unparseableFromSpec.length > 0) {
-      logger.error(
-        chalk.red(
-          `Error - the following specs could not be parsed from the ref ${options.compareFrom}`
-        )
-      );
+        const shouldUploadResults =
+          (shouldUploadBaseSpec || fromParseResults.isEmptySpec) &&
+          (shouldUploadHeadSpec || toParseResults.isEmptySpec);
 
-      for (const unparseableFrom of warnings.unparseableFromSpec) {
-        logger.error(`spec: ${unparseableFrom.path}`);
-        logger.error(unparseableFrom.error);
-        logger.error('');
+        if (shouldUploadResults) {
+          // TODO upload results
+        }
+        if (
+          options.web &&
+          (specResults.changes.length > 0 ||
+            (!options.check && specResults.results.length > 0))
+        ) {
+          openWebpage(result, config);
+        }
       }
     }
 
-    if (warnings.unparseableToSpec.length > 0) {
-      logger.error(
-        chalk.red(
-          `Error - the following specs could not be parsed from the ${
-            options.compareTo
-              ? `ref ${options.compareTo}`
-              : 'current working directory'
-          }`
-        )
-      );
-
-      for (const unparseableTo of warnings.unparseableToSpec) {
-        logger.error(`spec: ${unparseableTo.path}`);
-        logger.error(unparseableTo.error);
-        logger.error('');
-      }
-      process.exitCode = 1;
-    }
+    handleWarnings(warnings, options);
 
     if (results.length === 0) {
       logger.info(
@@ -391,6 +420,21 @@ const getDiffAllAction =
     if (options.check) {
       logger.info(
         `Configure check rulesets in optic cloud or your local optic.dev.yml file.`
+      );
+    }
+    if (options.json) {
+      // Needs to be a console.log call to render over the logger.level
+      console.log(
+        JSON.stringify({
+          results: results.reduce((acc, next) => {
+            const strippedPath = next.from
+              ? next.from.replace(`${options.compareFrom}:`, '')
+              : next.to?.replace(`${options.compareTo}:`, '') ?? 'empty diff';
+            acc[strippedPath] = jsonChangelog(next.changelogData);
+            return acc;
+          }, {}),
+          warnings,
+        })
       );
     }
 

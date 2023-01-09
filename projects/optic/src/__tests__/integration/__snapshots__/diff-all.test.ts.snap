@@ -101,3 +101,8 @@ Configure check rulesets in optic cloud or your local optic.dev.yml file.
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
+
+exports[`diff-all diffs all files with --json 1`] = `
+"{"results":{"mvspec.yml":{"operations":[{"name":"post /filler_route","change":"removed","attributes":[],"parameters":[],"responses":[{"name":"201 response","change":"removed","attributes":[],"contentTypes":[{"name":"application/json","change":"removed","attributes":[],"schemaChanges":[{"name":"id","change":"removed","attributes":[]}]}]}]}]},"specwithkey.json":{"operations":[]},"specwithkey.yml":{"operations":[]},"movedspec.yml":{"operations":[{"name":"post /filler_route","change":"added","attributes":[],"parameters":[],"responses":[{"name":"201 response","change":"added","attributes":[],"contentTypes":[{"name":"application/json","change":"added","attributes":[],"schemaChanges":[{"name":"id","change":"added","attributes":[]}]}]}]}]}},"warnings":{"missingOpticUrl":[{"path":"specwithoutkey.json"},{"path":"specwithoutkey.yml"}],"unparseableFromSpec":[],"unparseableToSpec":[]}}
+"
+`;

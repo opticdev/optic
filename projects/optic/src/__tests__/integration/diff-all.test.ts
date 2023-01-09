@@ -48,4 +48,25 @@ describe('diff-all', () => {
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     expect(code).toBe(1);
   });
+
+  test('diffs all files with --json', async () => {
+    const workspace = await setupWorkspace('diff-all/repo', {
+      repo: true,
+      commit: true,
+    });
+
+    await run(
+      `mv ./mvspec.yml ./movedspec.yml && git add . && git commit -m 'move spec'`,
+      false,
+      workspace
+    );
+
+    const { combined, code } = await runOptic(
+      workspace,
+      'diff-all --check --json'
+    );
+
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(code).toBe(1);
+  });
 });

@@ -1,4 +1,7 @@
-import { generateSpecResults } from '@useoptic/openapi-utilities';
+import {
+  generateChangelogData,
+  generateSpecResults,
+} from '@useoptic/openapi-utilities';
 import { generateRuleRunner } from './generate-rule-runner';
 import { OPTIC_STANDARD_KEY } from '../../constants';
 import { ParseResult } from '../../utils/spec-loaders';
@@ -29,8 +32,15 @@ export async function compute(
     null
   );
 
+  const changelogData = generateChangelogData({
+    changes: specResults.changes,
+    toFile: headFile.jsonLike,
+    rules: specResults.results,
+  });
+
   return {
     specResults,
+    changelogData,
     checks: {
       total: specResults.results.length,
       passed: specResults.results.filter((check) => check.passed).length,

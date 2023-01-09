@@ -22,7 +22,7 @@ const md = {
   bold: (s: string) => `**${s}**`,
 };
 
-function* generateComparisonLogs(
+export function* generateComparisonLogs(
   comparison: {
     results: ResultWithSourcemap[];
     changes: IChange[];
