@@ -139,7 +139,7 @@ async function uriToSpectral(uri: string) {
       }
     }
 
-    const ruleset: Ruleset = await bundleAndLoadRuleset(uri, { fs, fetch });
+    const ruleset: Ruleset = await bundleAndLoadRuleset(loadUri, { fs, fetch });
     // setting explicitly because of a poor choice in Spectral core. The instanceof is fragile when you load code / types from different modules and combine them (like we have to with bundle and core)
     // https://github.com/stoplightio/spectral/blob/a1bd6d29b473aff257dbf66264ebdf471fae07cc/packages/core/src/spectral.ts#L87
     spectral.ruleset = ruleset;
