@@ -30,7 +30,7 @@
     "@types/babel__core": "^7",
     "@types/babel__preset-env": "^7",
     "@types/bent": "^7",
-    "@types/fs-extra": "^9.0.13",
+    "@types/fs-extra": "^11.0.0",
     "@types/is-url": "^1.2.30",
     "@types/json-stable-stringify": "^1.0.33",
     "@types/lodash.sortby": "^4.7.7",
