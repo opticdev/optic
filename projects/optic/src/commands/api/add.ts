@@ -248,10 +248,12 @@ const getApiAddAction =
           parseResult = await getFileFromFsOrGit(`${sha}:${path}`, config);
         } catch (e) {
           logger.debug(
-            `${short(sha)}:${path} is not a valid OpenAPI file, stopping here`,
+            `${short(
+              sha
+            )}:${path} is not a valid OpenAPI file, skipping sha version`,
             e
           );
-          break;
+          continue;
         }
         if (parseResult.isEmptySpec) {
           logger.debug(
