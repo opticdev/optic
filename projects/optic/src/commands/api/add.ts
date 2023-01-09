@@ -1,5 +1,6 @@
 import { Command } from 'commander';
 import prompts from 'prompts';
+import path from 'path';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 
 import { OpticCliConfig, VCS } from '../../config';
@@ -7,10 +8,8 @@ import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
 import { logger } from '../../logger';
 import { OPTIC_STANDARD_KEY, OPTIC_URL_KEY } from '../../constants';
 import chalk from 'chalk';
-import {
-  getPathCandidatesForSha,
-  getShasCandidatesForPath,
-} from './get-file-candidates';
+import * as GitCandidates from './git-get-file-candidates';
+import * as FsCandidates from './get-file-candidates';
 import { writeJson, writeYml } from './write-to-file';
 
 function short(sha: string) {
@@ -194,11 +193,12 @@ async function crawlCandidateSpecs(
     standard: string | undefined;
   }
 ) {
-  const [firstSha] = shas;
+  const [firstSha, ...remainingShas] = shas;
 
   let parseResult: ParseResult;
   try {
-    parseResult = await getFileFromFsOrGit(`${firstSha}:${path}`, config);
+    const identifier = config.vcs ? `${firstSha}:${path}` : path;
+    parseResult = await getFileFromFsOrGit(identifier, config);
   } catch (e) {
     if (path === options.path_to_spec) {
       logger.info(
@@ -216,13 +216,20 @@ async function crawlCandidateSpecs(
     return;
   }
 
+  logger.info(`Found OpenAPI Spec at ${path}`);
   const existingOpticUrl = parseResult.jsonLike[OPTIC_URL_KEY];
+
   const api: { id: string; url: string } = existingOpticUrl
     ? { id: '', url: 'todo get optic id from url' }
     : { id: '', url: 'todo make API call' };
 
-  logger.info(`Found OpenAPI Spec at ${path}`);
-  for await (const sha of shas) {
+  // TODO upload spec here
+  if (firstSha) {
+    logger.info(`Uploading spec ${short(firstSha)}:${path}`);
+  }
+  // We need to upload this spec separately to handle non-VCS cases
+
+  for await (const sha of remainingShas) {
     let parseResult: ParseResult;
     try {
       parseResult = await getFileFromFsOrGit(`${sha}:${path}`, config);
@@ -281,10 +288,6 @@ const getApiAddAction =
       logger.error('Must be logged in to add APIs. Log in with `optic login`');
       process.exitCode = 1;
       return;
-    } else if (!config.vcs || config.vcs?.type !== VCS.Git) {
-      logger.error('Must have git in path and be in a git repo to add apis');
-      process.exitCode = 1;
-      return;
     }
 
     const orgRes = await getOrganizationToUploadTo();
@@ -311,14 +314,41 @@ const getApiAddAction =
 
     logger.info('');
     logger.info(
-      `Adding APIs to organization ${orgRes.org.name}${
+      `Will add detected APIs to organization ${orgRes.org.name}${
         standard ? ` with standard ${standard}` : ''
       }`
     );
 
-    const candidates = path_to_spec
-      ? await getShasCandidatesForPath(path_to_spec, options.historyDepth)
-      : await getPathCandidatesForSha(config.vcs.sha);
+    if (config.vcs && config.vcs?.type === VCS.Git) {
+      logger.info(
+        path_to_spec
+          ? `Adding API ${path_to_spec} and traversing history to a depth of ${options.historyDepth}`
+          : `Looking for APIs in the git root (${config.root})`
+      );
+    } else {
+      logger.info(
+        path_to_spec
+          ? `Adding API ${path_to_spec}`
+          : `Looking for APIs in the current directory (${process.cwd()})`
+      );
+    }
+
+    let candidates: Map<string, string[]>;
+
+    if (config.vcs?.type === VCS.Git) {
+      candidates = path_to_spec
+        ? await GitCandidates.getShasCandidatesForPath(
+            path_to_spec,
+            options.historyDepth
+          )
+        : await GitCandidates.getPathCandidatesForSha(config.vcs.sha);
+    } else {
+      const files = path_to_spec
+        ? [path.resolve(path_to_spec)]
+        : await FsCandidates.getFileCandidates();
+
+      candidates = new Map(files.map((f) => [f, []]));
+    }
 
     for await (const candidate of candidates) {
       await crawlCandidateSpecs(candidate, config, {

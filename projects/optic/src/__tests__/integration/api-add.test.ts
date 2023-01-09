@@ -34,20 +34,34 @@ describe('optic api add', () => {
     process.env = { ...oldEnv };
   });
 
-  describe('no interaction', () => {
+  describe.each([
+    [
+      'git',
+      {
+        repo: true,
+        commit: true,
+      },
+    ],
+    [
+      'no vcs',
+      {
+        repo: true, // To force a no vcs - we need to init an empty git repo (otherwise it uses the optic git repo)
+        commit: false,
+      },
+    ],
+  ])('%s - no cli interaction', (vcs, setupOptions) => {
     // TODO when connecting API, force to only return one org
     test('discover one file with history depth', async () => {
       process.env.OPTIC_TOKEN = 'something';
-      const workspace = await setupWorkspace('api-add/one-file', {
-        repo: true,
-        commit: true,
-      });
-      // add another commit
-      await run(
-        `touch ./hello.yml && git add . && git commit -m 'another one'`,
-        false,
-        workspace
-      );
+      const workspace = await setupWorkspace('api-add/one-file', setupOptions);
+      if (vcs === 'git') {
+        // add another commit
+        await run(
+          `touch ./hello.yml && git add . && git commit -m 'another one'`,
+          false,
+          workspace
+        );
+      }
       const { combined, code } = await runOptic(
         workspace,
         'api add ./spec.yml --standard blah'
@@ -70,10 +84,10 @@ describe('optic api add', () => {
     test('discover all files in repo', async () => {
       process.env.OPTIC_TOKEN = 'something';
 
-      const workspace = await setupWorkspace('api-add/many-files', {
-        repo: true,
-        commit: true,
-      });
+      const workspace = await setupWorkspace(
+        'api-add/many-files',
+        setupOptions
+      );
 
       const { combined, code } = await runOptic(
         workspace,
