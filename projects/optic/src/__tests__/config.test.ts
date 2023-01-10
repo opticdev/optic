@@ -1,13 +1,6 @@
-import {
-  test,
-  expect,
-  describe,
-  beforeEach,
-  afterEach,
-  jest,
-} from '@jest/globals';
+import { test, expect, describe, beforeEach, jest } from '@jest/globals';
 import { UserError } from '@useoptic/openapi-utilities';
-import { createOpticClient } from '@useoptic/optic-ci/build/cli/clients/optic-client';
+import { createOpticClient } from '../client';
 import {
   detectCliConfig,
   initializeRules,
@@ -15,7 +8,7 @@ import {
   RawYmlConfig,
 } from '../config';
 
-jest.mock('@useoptic/optic-ci/build/cli/clients/optic-client');
+jest.mock('./client');
 
 describe('detectConfig', () => {
   beforeEach(() => {
