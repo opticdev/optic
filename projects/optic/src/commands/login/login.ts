@@ -43,13 +43,15 @@ Once you've created a token, enter it below.
     message: 'Enter your token here:',
   });
 
+  const base64Token = Buffer.from(response.token).toString('base64');
+
   const newConfig = userConfig
     ? {
         ...userConfig,
-        token: response.token,
+        token: base64Token,
       }
     : {
-        token: response.token,
+        token: base64Token,
       };
   await fs.writeFile(USER_CONFIG_PATH, JSON.stringify(newConfig), 'utf-8');
 

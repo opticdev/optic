@@ -215,7 +215,9 @@ export async function initializeConfig(): Promise<OpticCliConfig> {
   let cliConfig: OpticCliConfig = DefaultOpticCliConfig;
   const userConfig = await readUserConfig();
   const maybeEnvToken = process.env.OPTIC_TOKEN;
-  const maybeUserToken = userConfig?.token;
+  const maybeUserToken = userConfig?.token
+    ? Buffer.from(userConfig.token, 'base64').toString()
+    : null;
   const token = maybeEnvToken || maybeUserToken;
   if (token) {
     cliConfig.authenticationType = maybeEnvToken
