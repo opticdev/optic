@@ -48,8 +48,14 @@ type SpecPushActionOptions = {
 const getSpecPushAction =
   (config: OpticCliConfig) =>
   async (spec_path: string | undefined, options: SpecPushActionOptions) => {
-    // validation
-    // TODO check that tags fit the correct format
+    if (!config.isAuthenticated) {
+      logger.error(
+        'Must be logged in to push specs. Log in with `optic login`'
+      );
+      process.exitCode = 1;
+      return;
+    }
+
     const tagsToAdd: string[] = [];
     if (options.tag) {
       const tags = options.tag.split(',');
@@ -120,7 +126,14 @@ const getSpecPushAction =
     }
 
     const api = { id: '', url: 'todo get optic id from url' };
+    logger.info('');
+    logger.info(
+      `Uploading spec for api ${api.url} with tags ${tagsToAdd.join(', ')}`
+    );
     // TODO make API call
 
+    logger.info(
+      `Succesfully uploaded spec to Optic. View the spec here ${'TODODODODOO'}`
+    );
     // TODO log out spec url and maybe open if --web
   };

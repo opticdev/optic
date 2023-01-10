@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`optic spec push can push a spec to a repo 1`] = `
+"Automatically adding the git sha git:bffa8edb474c8df1954f7bed7bcc45e2ee2b782a and branch git:master as tags 
+
+Uploading spec for api todo get optic id from url with tags env:production, the-favorite-api, git:bffa8edb474c8df1954f7bed7bcc45e2ee2b782a, git:master
+Succesfully uploaded spec to Optic. View the spec here TODODODODOO
+"
+`;
+
+exports[`optic spec push requires at least one tag to push 1`] = `
+"Not automatically including any git tags because the current working directory has uncommited changes.
+Must include at least 1 tag in order to run optic spec push
+"
+`;
