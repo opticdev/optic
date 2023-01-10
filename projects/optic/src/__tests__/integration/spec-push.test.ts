@@ -19,6 +19,10 @@ setupTestServer(({ url, method }) => {
   return JSON.stringify({});
 });
 
+function sanitizeOutput(out: string) {
+  return out.replace(/git:[a-zA-Z0-9]{40}/g, 'git:COMMIT-HASH');
+}
+
 describe('optic spec push', () => {
   let oldEnv: any;
   beforeEach(() => {
@@ -41,7 +45,9 @@ describe('optic spec push', () => {
       'spec push ./spec.yml --tag env:production,the-favorite-api'
     );
     expect(code).toBe(0);
-    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(
+      normalizeWorkspace(workspace, sanitizeOutput(combined))
+    ).toMatchSnapshot();
   });
 
   test('requires at least one tag to push', async () => {
@@ -57,6 +63,25 @@ describe('optic spec push', () => {
     );
 
     expect(code).toBe(1);
-    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(
+      normalizeWorkspace(workspace, sanitizeOutput(combined))
+    ).toMatchSnapshot();
+  });
+
+  test('requires x-optic-url', async () => {
+    const workspace = await setupWorkspace('spec-push/no-x-optic-url', {
+      repo: true,
+      commit: true,
+    });
+    process.env.OPTIC_TOKEN = '123';
+    const { combined, code } = await runOptic(
+      workspace,
+      'spec push ./spec.yml'
+    );
+
+    expect(code).toBe(1);
+    expect(
+      normalizeWorkspace(workspace, sanitizeOutput(combined))
+    ).toMatchSnapshot();
   });
 });
