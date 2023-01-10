@@ -10,7 +10,7 @@ import { OPTIC_LOGIN_PAT_LINK } from '../../constants';
 
 export const registerLogin = (cli: Command, config: OpticCliConfig) => {
   cli
-    .command('login')
+    .command('login', { hidden: true })
     .description('Login to Optic')
     .action(wrapActionHandlerWithSentry(getLoginAction(config)));
 };
