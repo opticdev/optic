@@ -96,9 +96,9 @@ describe('initializeRules', () => {
 
   test('extends ruleset from cloud', async () => {
     const mockClient = {
-      getRuleConfig: jest.fn<any>(),
+      getStandard: jest.fn<any>(),
     };
-    mockClient.getRuleConfig.mockResolvedValue({
+    mockClient.getStandard.mockResolvedValue({
       config: {
         ruleset: [
           { name: 'from-cloud-ruleset', config: {} },
