@@ -20,13 +20,11 @@
   },
   "dependencies": {
     "@stoplight/spectral-core": "^1.8.1",
-    "@stoplight/spectral-ruleset-bundler": "^1.5.0",
     "@stoplight/spectral-rulesets": "^1.14.1",
     "@useoptic/openapi-utilities": "workspace:*",
     "@useoptic/rulesets-base": "workspace:*",
     "ajv": "^8.6.0",
     "ajv-formats": "~2.1.0",
-    "fs-extra": "^11.1.0",
     "whatwg-mimetype": "^3.0.0"
   },
   "devDependencies": {
@@ -37,7 +35,6 @@
     "@babel/preset-typescript": "^7.17.0",
     "@types/babel__core": "^7",
     "@types/babel__preset-env": "^7",
-    "@types/fs-extra": "^11.0.0",
     "@types/json-stable-stringify": "^1.0.33",
     "@types/lodash.pick": "^4",
     "@types/node": "^18.0.0",
