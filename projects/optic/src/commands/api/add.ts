@@ -45,7 +45,10 @@ export const registerApiAdd = (cli: Command, config: OpticCliConfig) => {
     })
     .addHelpText('after', helpText)
     .description('Add APIs to Optic')
-    .argument('[spec_path]', 'path to file to compare')
+    .argument(
+      '[spec_path]',
+      'optional path to file to add, if not set looks at working directory'
+    )
     .option(
       '--history-depth <history-depth>',
       'Sets the depth of how far to crawl through to add historic API data. Set history-depth=0 if you want to crawl the entire history',
@@ -267,6 +270,7 @@ async function crawlCandidateSpecs(
       });
     }
   }
+  // TODO log api URL and maybe open in --web
 }
 
 const getApiAddAction =
