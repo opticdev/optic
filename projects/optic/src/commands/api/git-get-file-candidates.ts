@@ -1,5 +1,6 @@
 import { promisify } from 'util';
 import { exec as callbackExec } from 'child_process';
+import { findOpenApiSpecsCandidates } from '../../utils/git-utils';
 
 const exec = promisify(callbackExec);
 
@@ -36,19 +37,7 @@ export async function getPathCandidatesForSha(
   const results = new Map();
   // Pull all spec candidates (i.e. specs that have openapi key and are yml/yaml/json)
   // This won't check version / validity of spec and will not look for swagger2 specs
-  const command = `toplevel=$(git rev-parse --show-toplevel) && \
-    git grep --untracked --name-only -E 'openapi' -- \
-    $toplevel/'*.yml' \
-    $toplevel/'*.yaml' \
-    $toplevel/'*.json' \
-    || true`;
-
-  const res = await exec(command);
-  if (res.stderr) throw new Error(res.stderr);
-  const relativePaths = res.stdout
-    .trim()
-    .split('\n')
-    .filter((path) => !!path);
+  const relativePaths = await findOpenApiSpecsCandidates();
 
   for (const p of relativePaths) {
     results.set(p, [sha]);

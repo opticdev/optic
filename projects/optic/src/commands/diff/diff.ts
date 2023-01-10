@@ -1,14 +1,10 @@
 import { Command } from 'commander';
-import zlib from 'node:zlib';
 import open from 'open';
 
 import {
-  generateSpecResults,
   logComparison,
   generateChangelogData,
   terminalChangelog,
-  OpenAPIV3,
-  IChange,
   UserError,
   jsonChangelog,
 } from '@useoptic/openapi-utilities';
@@ -20,13 +16,13 @@ import {
 } from '../../utils/spec-loaders';
 import { OpticCliConfig, VCS } from '../../config';
 import chalk from 'chalk';
-import { generateRuleRunner } from './generate-rule-runner';
 import {
   flushEvents,
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { getAnonId } from '../../utils/anonymous-id';
-import { OPTIC_STANDARD_KEY } from '../../constants';
+import { compute } from './compute';
+import { compressData } from './compressResults';
 
 const description = `run a diff between two API specs`;
 
@@ -49,14 +45,6 @@ Example usage:
   Specify a different standard config to run against
   $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml --check --standard ./other_config.yml
   `;
-
-type SpecResults = Awaited<ReturnType<typeof generateSpecResults>>;
-const webBase =
-  process.env.OPTIC_ENV === 'staging'
-    ? 'https://app.o3c.info'
-    : process.env.OPTIC_ENV === 'local'
-    ? 'http://localhost:3000'
-    : 'https://app.useoptic.com';
 
 export const registerDiff = (cli: Command, config: OpticCliConfig) => {
   cli
@@ -83,60 +71,6 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     .action(wrapActionHandlerWithSentry(getDiffAction(config)));
 };
 
-// We can remove the components from spec since the changelog is flattened, and any valid refs will
-// already be added into endpoints they're used in
-const removeComponentsFromSpec = (
-  spec: OpenAPIV3.Document
-): OpenAPIV3.Document => {
-  const { components, ...componentlessSpec } = spec;
-  return componentlessSpec;
-};
-
-const removeSourcemapsFromResults = (specResults: SpecResults): SpecResults => {
-  const { results, changes, ...rest } = specResults;
-
-  return {
-    ...rest,
-    results: results.map((result) => {
-      const { sourcemap, ...sourcemaplessResult } = result;
-      return sourcemaplessResult;
-    }),
-    changes: changes.map((change) => {
-      const { sourcemap, ...sourcemaplessLocation } = change.location;
-      return {
-        ...change,
-        location: {
-          ...sourcemaplessLocation,
-        },
-      };
-    }) as IChange[],
-  };
-};
-
-const compressData = (
-  baseFile: ParseResult,
-  headFile: ParseResult,
-  specResults: SpecResults,
-  meta: Record<string, unknown>
-): string => {
-  const dataToCompress = {
-    base: removeComponentsFromSpec(baseFile.jsonLike),
-    head: removeComponentsFromSpec(headFile.jsonLike),
-    results: removeSourcemapsFromResults(specResults),
-    meta,
-    version: '1',
-  };
-  const compressed = zlib.brotliCompressSync(
-    Buffer.from(JSON.stringify(dataToCompress))
-  );
-  const urlSafeString = Buffer.from(compressed).toString('base64');
-  return urlSafeString;
-};
-
-const openBrowserToPage = async (url: string) => {
-  await open(url, { wait: false });
-};
-
 const getBaseAndHeadFromFiles = async (
   file1: string,
   file2: string,
@@ -145,8 +79,8 @@ const getBaseAndHeadFromFiles = async (
   try {
     // TODO update function to try download from spec-id cloud
     return Promise.all([
-      getFileFromFsOrGit(file1, config),
-      getFileFromFsOrGit(file2, config),
+      getFileFromFsOrGit(file1, config, false),
+      getFileFromFsOrGit(file2, config, true),
     ]);
   } catch (e) {
     console.error(e);
@@ -180,38 +114,18 @@ const runDiff = async (
   config: OpticCliConfig,
   options: DiffActionOptions
 ): Promise<{ checks: { passed: number; failed: number; total: number } }> => {
-  const ruleRunner = await generateRuleRunner(
-    {
-      rulesetArg: options.ruleset,
-      specRuleset: headFile.isEmptySpec
-        ? baseFile.jsonLike[OPTIC_STANDARD_KEY]
-        : headFile.jsonLike[OPTIC_STANDARD_KEY],
-      config,
-    },
-    options.check
+  const { specResults, checks } = await compute(
+    [baseFile, headFile],
+    config,
+    options
   );
-  const specResults = await generateSpecResults(
-    ruleRunner,
-    baseFile,
-    headFile,
-    null
-  );
+  const diffResults = { checks };
 
   const changelogData = generateChangelogData({
     changes: specResults.changes,
     toFile: headFile.jsonLike,
     rules: specResults.results,
   });
-
-  const diffResults = {
-    checks: {
-      total: specResults.results.length,
-      passed: specResults.results.filter((check) => check.passed).length,
-      failed: specResults.results.filter(
-        (check) => !check.passed && !check.exempted
-      ).length,
-    },
-  };
 
   if (options.json) {
     console.log(JSON.stringify(jsonChangelog(changelogData)));
@@ -264,7 +178,9 @@ const runDiff = async (
       compressedDataLength: compressedData.length,
     });
     await flushEvents();
-    await openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
+    await open(`${config.client.getWebBase()}/cli/diff#${compressedData}`, {
+      wait: false,
+    });
   }
 
   return diffResults;

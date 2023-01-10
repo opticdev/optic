@@ -71,6 +71,7 @@ export {
 } from './utilities/compare-comment';
 export {
   logComparison,
+  generateComparisonLogs,
   getComparisonLogs,
 } from './utilities/comparison-render';
 export {

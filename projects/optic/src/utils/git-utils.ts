@@ -49,3 +49,28 @@ export const resolveGitRef = async (ref: string): Promise<string> =>
     const command = `git rev-parse ${ref}`;
     exec(command, cb);
   });
+
+export const findOpenApiSpecsCandidates = async (
+  ref?: string
+): Promise<string[]> =>
+  new Promise((resolve, reject) => {
+    const cb = (err: unknown, stdout: string, stderr: string) => {
+      if (err || stderr || !stdout) reject(err || stderr);
+      resolve(
+        stdout
+          .trim()
+          .split('\n')
+          .filter((path) => !!path)
+      );
+    };
+    const args = ref
+      ? `--name-only -E 'openapi' ${ref}`
+      : `--untracked --name-only -E 'openapi'`;
+    const command = `toplevel=$(git rev-parse --show-toplevel) && \
+    git grep ${args} -- \
+    $toplevel/'*.yml' \
+    $toplevel/'*.yaml' \
+    $toplevel/'*.json' \
+    || true`;
+    exec(command, cb);
+  });

@@ -198,7 +198,7 @@ async function crawlCandidateSpecs(
   let parseResult: ParseResult;
   try {
     const identifier = config.vcs ? `${firstSha}:${path}` : path;
-    parseResult = await getFileFromFsOrGit(identifier, config);
+    parseResult = await getFileFromFsOrGit(identifier, config, false);
   } catch (e) {
     if (path === options.path_to_spec) {
       logger.info(
@@ -232,7 +232,7 @@ async function crawlCandidateSpecs(
   for await (const sha of remainingShas) {
     let parseResult: ParseResult;
     try {
-      parseResult = await getFileFromFsOrGit(`${sha}:${path}`, config);
+      parseResult = await getFileFromFsOrGit(`${sha}:${path}`, config, false);
     } catch (e) {
       logger.debug(
         `${short(

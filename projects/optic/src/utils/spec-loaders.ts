@@ -136,15 +136,18 @@ async function specFromInputToResults(
 
 // filePathOrRef can be a path, or a gitref:path (delimited by `:`)
 export const getFileFromFsOrGit = async (
-  filePathOrRef: string,
-  config: OpticCliConfig
+  filePathOrRef: string | undefined,
+  config: OpticCliConfig,
+  strict: boolean
 ): Promise<ParseResult> => {
   const file = await specFromInputToResults(
     parseSpecVersion(filePathOrRef, defaultEmptySpec),
     config,
     process.cwd()
   ).then((results) => {
-    validateOpenApiV3Document(results.jsonLike, results.sourcemap);
+    validateOpenApiV3Document(results.jsonLike, results.sourcemap, {
+      strictOpenAPI: strict,
+    });
     return results;
   });
   return file;
@@ -184,7 +187,9 @@ export const parseFilesFromRef = async (
       config,
       process.cwd()
     ).then((results) => {
-      validateOpenApiV3Document(results.jsonLike, results.sourcemap);
+      validateOpenApiV3Document(results.jsonLike, results.sourcemap, {
+        strictOpenAPI: false,
+      });
       return results;
     }),
     headFile: await specFromInputToResults(
