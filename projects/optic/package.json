@@ -55,7 +55,6 @@
     "@useoptic/openapi-cli": "workspace:*",
     "@useoptic/openapi-io": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
-    "@useoptic/optic-ci": "workspace:*",
     "@useoptic/rulesets-base": "workspace:*",
     "@useoptic/standard-rulesets": "workspace:*",
     "ajv": "^8.6.0",
