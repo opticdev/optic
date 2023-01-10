@@ -72,7 +72,9 @@ const breakingChangesRules = [
 type BreakingChangesRules = typeof breakingChangesRules;
 
 export class BreakingChangesRuleset extends Ruleset<BreakingChangesRules> {
-  static fromOpticConfig(config: unknown): BreakingChangesRuleset | string {
+  static async fromOpticConfig(
+    config: unknown
+  ): Promise<BreakingChangesRuleset | string> {
     const result = validateConfigSchema(config);
 
     if (!result) {

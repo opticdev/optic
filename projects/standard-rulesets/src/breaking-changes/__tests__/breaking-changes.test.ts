@@ -5,7 +5,7 @@ import { BreakingChangesRuleset } from '../index';
 
 describe('fromOpticConfig', () => {
   test('invalid configuration', async () => {
-    const out = BreakingChangesRuleset.fromOpticConfig({
+    const out = await BreakingChangesRuleset.fromOpticConfig({
       exclude_operations_with_extension: 12,
     });
     expect(out).toEqual(
