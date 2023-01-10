@@ -2,7 +2,7 @@ import { SpectralRule } from '@useoptic/rulesets-base';
 import { Ruleset, Spectral } from '@stoplight/spectral-core';
 import fetch from 'node-fetch';
 // @ts-ignore
-import { bundleAndLoadRuleset } from '@stoplight/spectral-ruleset-bundler/with-loader';
+import { bundleAndLoadRuleset } from '@stoplight/spectral-ruleset-bundler/dist/loader/node';
 import Ajv from 'ajv';
 import { IChange, IFact, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
 import { ExternalRuleBase } from '@useoptic/rulesets-base/build/rules/external-rule-base';

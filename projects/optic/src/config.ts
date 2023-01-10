@@ -186,7 +186,7 @@ type UserConfig = {
   token: string;
 };
 
-async function readUserConfig(): Promise<UserConfig | null> {
+export async function readUserConfig(): Promise<UserConfig | null> {
   try {
     const validator = ajv.compile({
       type: 'object',
