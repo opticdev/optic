@@ -8,7 +8,7 @@ import {
   RawYmlConfig,
 } from '../config';
 
-jest.mock('./client');
+jest.mock('../client');
 
 describe('detectConfig', () => {
   beforeEach(() => {
