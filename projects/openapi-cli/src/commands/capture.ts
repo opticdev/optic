@@ -49,8 +49,8 @@ export async function captureCommand(): Promise<Command> {
       `output debug information (on stderr). Use LOG_LEVEL env with 'debug', 'info' to increase verbosity`
     )
     .option('-o, --output <output>', 'file name for output')
-    .action(async (filePath: string, targetUrl: string) => {
-      const [openApiExists, trafficDirectory] = await captureStorage(filePath);
+    .action(async (openapiFile: string, targetUrl: string) => {
+      const [openApiExists, trafficDirectory] = await captureStorage(openapiFile);
 
       if (!openApiExists) {
         return await feedback.inputError(
