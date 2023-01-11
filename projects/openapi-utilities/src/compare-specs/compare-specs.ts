@@ -42,13 +42,13 @@ export const compareSpecs = async (
   const fromSpec = from.isEmptySpec ? {} : from.jsonLike;
   const toSpec = to.isEmptySpec ? {} : to.jsonLike;
 
-  const diffs = diff(from, to);
+  const diffs = diff(fromSpec, toSpec);
 
   const results = await ruleRunner.runRules({
     context: {}, // TODO
     diffs,
-    fromSpec: fromSpec as any, // TODO make sure this works correctly
-    toSpec: toSpec as any, // TODO make sure this works correctly
+    fromSpec: from.jsonLike,
+    toSpec: to.jsonLike,
   });
 
   return {

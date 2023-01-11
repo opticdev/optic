@@ -200,7 +200,7 @@ export class RuleRunner {
     diffs: ObjectDiff[];
     fromSpec: OpenAPIV3.Document;
     toSpec: OpenAPIV3.Document;
-  }) {
+  }): Promise<RuleResult[]> {
     const { context, fromSpec: beforeApiSpec, toSpec: afterApiSpec } = inputs;
     const externalRules = this.rules.filter((rule) =>
       ExternalRuleBase.isInstance(rule)
@@ -229,8 +229,15 @@ export class RuleRunner {
 
     const factTree = constructFactTree(dedupedFacts);
 
+    // Get node list of openapi facts
+
+    // Get facts that have changes
+
+    // From these facts, use
+    // Get relevant change from here
+
     // Run rules on specifications and collect the results
-    const specificationResults = runSpecificationRules({
+    const specificationResults: RuleResult[] = runSpecificationRules({
       specificationNode: openApiFactNodes.specification,
       rules: rulesOrRulesets,
       customRuleContext: context,
@@ -238,7 +245,7 @@ export class RuleRunner {
       afterApiSpec,
     });
 
-    const endpointResults: Result[] = [];
+    const endpointResults: RuleResult[] = [];
 
     // For each endpoint from the endpoint fact nodes (this will include endpoints in both before and after specs) run rules and collect the results
     for (const endpointNode of openApiFactNodes.endpoints.values()) {

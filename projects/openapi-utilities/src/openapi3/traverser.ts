@@ -1,7 +1,7 @@
 import { jsonPointerHelpers as jsonPointer } from '@useoptic/json-pointer-helpers';
 import { OpenAPIV3, OpenAPIV3_1 } from 'openapi-types';
 
-type OpenApiV3TraverserFact = {
+export type OpenApiV3TraverserFact = {
   location: {
     jsonPath: string;
   };
