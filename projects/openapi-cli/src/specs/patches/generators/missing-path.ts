@@ -41,6 +41,9 @@ export function* missingPathPatches(
               in: 'path',
               name: parameterName,
               required: true,
+              schema: {
+                type: 'string',
+              },
             };
           }
         ),
