@@ -1,0 +1,209 @@
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { getParameterIdentity, isParameterObject } from './array-identifiers';
+
+export type JSONValue =
+  | null
+  | string
+  | number
+  | boolean
+  | JSONObject
+  | JSONArray;
+
+export type JSONArray = JSONValue[];
+
+export type JSONObject = {
+  [x: string]: JSONValue;
+};
+
+export type ObjectDiff =
+  | {
+      // Added
+      before?: undefined;
+      after: string;
+      pathReconciliation?: undefined;
+    }
+  | {
+      // Changed
+      before: string;
+      after: string;
+      pathReconciliation?: undefined;
+    }
+  | {
+      // Removed
+      before: string;
+      after?: undefined;
+      // Required to maintain pointers from reordering array keys
+      pathReconciliation: [number, string][];
+    };
+
+type StackItem<T extends JSONObject | JSONArray = JSONObject | JSONArray> = [
+  {
+    value: T;
+    path: string;
+  },
+  {
+    value: T;
+    path: string;
+  }
+];
+
+// Diffs two objects, generating the leaf nodes that have changes
+export function diff(before: any, after: any): ObjectDiff[] {
+  const diffResults: ObjectDiff[] = [];
+  const stack: StackItem[] = [
+    [
+      { value: before, path: '' },
+      { value: after, path: '' },
+    ],
+  ];
+  while (stack.length > 0) {
+    const [before, after] = stack.pop()!;
+    const comparisons: {
+      beforeValue: JSONValue | undefined;
+      beforePath: string;
+      afterValue: JSONValue | undefined;
+      afterPath: string;
+    }[] = [];
+
+    // TODO in the future, skip adding comparisons based on diff preprocessing step
+
+    // Start by matching up values to compare - match up the before and after values by id
+    // for arrays, we look at some known OpenAPI identifiers (such as parameters, or primitives) and fallback to using positional identity
+    // for objects, we just use the key
+    if (Array.isArray(before.value) && Array.isArray(after.value)) {
+      const allValues = [...before.value, ...after.value];
+      const arrayIdFn: (v: any, i: number) => string = allValues.every((v) =>
+        isParameterObject(v)
+      )
+        ? getParameterIdentity
+        : allValues.every((v) => typeof v !== 'object')
+        ? (v: any) => String(v)
+        : (_, i: number) => String(i);
+
+      const beforeValuesById: Map<string, [JSONValue, number]> = new Map(
+        before.value.map((v, i) => [arrayIdFn(v, i), [v, i]])
+      );
+      const afterValuesById: Map<string, [JSONValue, number]> = new Map(
+        after.value.map((v, i) => [arrayIdFn(v, i), [v, i]])
+      );
+
+      const keys = new Set([
+        ...beforeValuesById.keys(),
+        ...afterValuesById.keys(),
+      ]);
+      for (const key of keys) {
+        const [beforeValue, beforeIdx] = beforeValuesById.get(key) ?? [];
+        const [afterValue, afterIdx] = afterValuesById.get(key) ?? [];
+        const beforePath = jsonPointerHelpers.append(
+          before.path,
+          String(beforeIdx)
+        );
+        const afterPath = jsonPointerHelpers.append(
+          after.path,
+          String(afterIdx)
+        );
+
+        comparisons.push({
+          beforeValue,
+          beforePath,
+          afterValue,
+          afterPath,
+        });
+      }
+    } else if (!Array.isArray(before.value) && !Array.isArray(after.value)) {
+      const keys = new Set([
+        ...Object.keys(before.value),
+        ...Object.keys(after.value),
+      ]);
+
+      for (const key of keys) {
+        const beforeValue = before.value[key];
+        const beforePath = jsonPointerHelpers.append(before.path, key);
+        const afterValue = after.value[key];
+        const afterPath = jsonPointerHelpers.append(after.path, key);
+        comparisons.push({
+          beforeValue,
+          beforePath,
+          afterValue,
+          afterPath,
+        });
+      }
+    } else {
+      throw new Error(
+        'Unexpectedly found mismatch between array and object in diff traversal'
+      );
+    }
+
+    // Once we've matched up comparisons to make, we can determine if a key is added, removed or changed
+    // If both are objects / arrays, we continue the diff
+    for (const {
+      beforeValue,
+      beforePath,
+      afterValue,
+      afterPath,
+    } of comparisons) {
+      if (beforeValue && afterValue === undefined) {
+        // Because before + after paths can change diverge due to array rearrangement, we need to track this to determine from where something was removed in an after spec
+        // We don't need to look at the last key to see path differences since
+        const beforeParts = jsonPointerHelpers.decode(beforePath).slice(0, -1);
+        const afterParts = jsonPointerHelpers.decode(afterPath).slice(0, -1);
+        const pathReconciliation: [number, string][] = [];
+        for (let i = 0; i < beforeParts.length; i++) {
+          const before = beforeParts[i];
+          const after = afterParts[i];
+          if (before !== after) {
+            pathReconciliation.push([i, after]);
+          }
+        }
+        // generate path reconciliation
+        diffResults.push({
+          before: beforePath,
+          pathReconciliation,
+        });
+      } else if (beforeValue === undefined && afterValue) {
+        diffResults.push({
+          after: afterPath,
+        });
+      } else {
+        // Check if values are both objects OR both arrays, if they are continue traversing
+        if (
+          typeof beforeValue === 'object' &&
+          beforeValue !== null &&
+          typeof afterValue === 'object' &&
+          afterValue !== null &&
+          !Array.isArray(beforeValue) &&
+          !Array.isArray(afterValue)
+        ) {
+          stack.push([
+            { value: beforeValue, path: beforePath },
+            { value: afterValue, path: afterPath },
+          ]);
+        } else if (
+          typeof beforeValue === 'object' &&
+          beforeValue !== null &&
+          typeof afterValue === 'object' &&
+          afterValue !== null &&
+          Array.isArray(beforeValue) &&
+          Array.isArray(afterValue)
+        ) {
+          stack.push([
+            { value: beforeValue, path: beforePath },
+            { value: afterValue, path: afterPath },
+          ]);
+        }
+        // Next, check if values are the same (strict equality, no deep comparison)
+        else if (beforeValue === afterValue) {
+          // do nothing, because the values are the same
+          // this will fail if types mismatch
+        } else {
+          diffResults.push({
+            before: beforePath,
+            after: afterPath,
+          });
+        }
+      }
+    }
+  }
+
+  return diffResults;
+}

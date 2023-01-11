@@ -100,6 +100,14 @@ export class OpticBackendClient extends JsonHttpClient {
     });
   };
 
+  public getWebBase(): string {
+    return process.env.OPTIC_ENV === 'staging'
+      ? 'https://app.o3c.info'
+      : process.env.OPTIC_ENV === 'local'
+      ? 'http://localhost:3000'
+      : 'https://app.useoptic.com';
+  }
+
   public async getUploadUrls(
     sessionId: string,
     slots: UploadSlot[] = []
@@ -204,10 +212,8 @@ export class OpticBackendClient extends JsonHttpClient {
   public async getRuleConfig(
     rulesetConfigIdentifier: string
   ): Promise<RulesetConfig> {
-    const encodedIdentifier = encodeURIComponent(rulesetConfigIdentifier)
-    return this.getJson(
-      `/api/ruleset-configs/${encodedIdentifier}`
-    );
+    const encodedIdentifier = encodeURIComponent(rulesetConfigIdentifier);
+    return this.getJson(`/api/ruleset-configs/${encodedIdentifier}`);
   }
 }
 

@@ -1,10 +1,11 @@
+import { test, expect, describe } from '@jest/globals';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { TestHelpers } from '@useoptic/rulesets-base';
 import { ExamplesRuleset } from '../index';
 
 describe('fromOpticConfig', () => {
   test('invalid configuration', async () => {
-    const out = ExamplesRuleset.fromOpticConfig({
+    const out = await ExamplesRuleset.fromOpticConfig({
       require_parameter_examples: 123,
     });
     expect(out).toEqual(

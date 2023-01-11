@@ -1,3 +1,4 @@
+import { jest, test, expect, describe, beforeEach } from '@jest/globals';
 import { downloadRuleset } from '../download-ruleset';
 import fetch, { Response } from 'node-fetch';
 import zlib from 'node:zlib';
@@ -7,10 +8,6 @@ jest.mock('node-fetch');
 jest.mock('node:fs/promises');
 
 describe('downloadRuleset', () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-  });
-
   test('throws on load error', async () => {
     (fs.access as any).mockRejectedValue(new Error('file does not exist'));
     (fetch as any).mockResolvedValue({

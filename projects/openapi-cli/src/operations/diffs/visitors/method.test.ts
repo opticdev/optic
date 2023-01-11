@@ -1,3 +1,4 @@
+import { it, describe, expect } from '@jest/globals';
 import { visitMethod } from './method';
 import { OpenAPIV3 } from '../../../specs';
 import { Some, None } from 'ts-results';

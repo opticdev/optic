@@ -1,3 +1,4 @@
+import { test, expect, describe } from '@jest/globals';
 import { generateHashForComparison } from '../comparison-hash';
 
 const comparison = {

@@ -60,7 +60,9 @@ const configSchema = {
 const validateConfigSchema = ajv.compile(configSchema);
 
 export class NamingChangesRuleset extends Ruleset<Rule[]> {
-  static fromOpticConfig(config: unknown): NamingChangesRuleset | string {
+  static async fromOpticConfig(
+    config: unknown
+  ): Promise<NamingChangesRuleset | string> {
     const result = validateConfigSchema(config);
 
     if (!result) {

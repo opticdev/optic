@@ -1,88 +1,96 @@
-![GitHub Repo stars](https://img.shields.io/github/stars/opticdev/optic?style=social)
-![GitHub contributors](https://img.shields.io/github/contributors-anon/opticdev/optic?style=social)
-![npm](https://img.shields.io/npm/dm/@useoptic/openapi-io?style=social)
+![GitHub Repo stars](https://img.shields.io/github/stars/opticdev/optic?style=social) ![GitHub contributors](https://img.shields.io/github/contributors-anon/opticdev/optic?style=social) ![npm](https://img.shields.io/npm/dm/@useoptic/openapi-io?style=social) ![license](https://img.shields.io/github/license/opticdev/optic?style=social) 
 
-# Adopt OpenAPI. Start working API-first.
+# Optic helps you ship a great API
 
-> Optic's Open Source tools make OpenAPI and API-first practices easy for any team to adopt.
+**Shipping an API is easy** -- the REST is hard. We built Optic because every developer/team should be able to get the benefits of OpenAPI, without all the time/effort/costs. 
 
-## Installation
+[**📋 Documentation for all your APIs**](#document-your-existing-apis-in-minutes)    ← *write your API promises down*
+
+[**🛑 Prevent breaking changes from shipping**](#prevent-breaking-changes-with-api-diffs)  ← *keep your promises*
+
+[**✅ Verify your API is working-as-designed (the OpenAPI and implementation are in sync)**](#verify-your-api-is-working-as-designed)    ← *make sure the API works as-designed*
+
+[**🎨 Build a consistent API that follows your team's standards**](#build-a-consistent-api-that-follows-your-teams-standards)  ← *raise the quality of your API*
 
 ```bash
 npm install -g @useoptic/optic
 ```
 
-## Diff OpenAPI specifications
+## Document your existing APIs in minutes 
+Use real API traffic to write your initial OpenAPI specification and correctly patch the spec whenever an API changes. 
 
-Understand the API changes between two versions of an OpenAPI descriptions. Optic helps teams review proposed API changes:
+1. Use the CLI to magically capture traffic `optic oas capture https://api.github.com` OR provide a HAR (HTTP Archive format). 
+2. Then run `optic oas verify` to see a list of "Undocumented" endpoints. Optic is your API version control tool, like git for APIs. "Undocumented" endpoints are like "Untracked" files in git. 
+3. Add operations one at a time or use `--document all` to document all of them at once
 
-_diff current branch with base branch_
+**[Documentation: Generate an OpenAPI from traffic](https://www.useoptic.com/docs/document-existing-api)**
 
-```bash
-optic diff openapi.yaml --base main
-```
 
-_between two OpenAPI files_
+https://user-images.githubusercontent.com/5900338/210244068-22540288-1f6d-46a7-a2e9-5b3d19a00f31.mp4
 
-```bash
-optic diff openapi.yaml openapi-changed.yaml
-```
+**[Read Documentation](https://www.useoptic.com/docs/document-existing-api)**
 
-<img src="https://i.imgur.com/hpKgOha.png" width="400" />
+## Prevent breaking changes with API diffs
 
-## Catch breaking changes
-
-API diffs containing breaking changes will be flagged so you do not break consumers. Optic helps you keep your promises.
+Breaking changes ruin your API consumer's days. Optic prevents breaking changes from reaching production with its accurate and robust OpenAPI diff. The `diff` command is built to work with Git workflows, and has full support for OpenAPI 3 & 3.1, `$ref`, and complex schema types like `oneOf/allOf/anyOf`. 
 
 ```bash
 optic diff openapi.yaml --base main --check
 ```
 
-<img src="https://i.imgur.com/JEQL2GV.png" width="400" />
+**[Documentation: Diff OpenAPI and Catch Breaking Changes](https://www.useoptic.com/docs/diff-openapi)**
 
-[Read breaking change documentation](https://useoptic.com/docs)
+https://user-images.githubusercontent.com/5900338/211033179-86d5021f-17d1-4391-afc9-77689aa5882f.mp4
 
-## Easily adopt OpenAPI and keep your specs up-to-date
+**[Read Documentation](https://www.useoptic.com/docs/diff-openapi)**
 
-With Optic it is easy to document an existing API with OpenAPI. Just show Optic traffic and it will write all the boilerplate OpenAPI for you. 
+## Verify your API is working-as-designed
 
-#### Capturing traffic
-
-Show Optic real API traffic using the `optic capture` command. Traffic can come from: 
-- local development environment ie `localhost:4000`
-- a live API ie `https://api.twitter.com` or `https://api.your-service.com`
+With Optic you can verify your API behavior in CI and understand your team's API Test Coverage (the % of your API functionality your testing covered). If `optic oas verify` detects no diffs, and you have high API Coverage, you can be very confident your API is working as designed.
 
 ```bash
-optic capture openapi.yml localhost:4000
+optic oas verify openapi.yml
 ```
 
-#### Quickly documenting an existing API
+**[Documentation: Verify your API works as designed](https://www.useoptic.com/verify-api-behaviors)**
 
-Capture a lot of traffic then run `optic verify` with the `--document all` flag: 
+https://user-images.githubusercontent.com/5900338/211056700-00163967-12fd-447a-a108-f82bc9c9f0ad.mp4
 
-```bash
-optic verify openapi.yml --document all
+**[Read Documentation](https://www.useoptic.com/verify-api-behaviors)**
+
+## Build a consistent API that follows your team's standards
+Optic makes it easy for everyone on your team to review API changes, and automate your API standards. It makes API linting usable and productive for developers on teams like [Snyk](https://snyk.io/blog/snyk-api-development-shift-left/) because it raises the quality of the APIs without getting in the way of developers. 
+
+You can read about how Optic goes [beyond simple API Linting](https://www.useoptic.com/blog/beyond-api-linting). 
+
+Here is an example of a [team's automated API standards](https://useoptic.com/standards):
+```yaml
+ruleset:
+  - breaking-changes # prevent all breaking changes
+  - naming:  # Naming rules apply on added properties, but won't fail on legacy
+      applies: added 
+      pathComponents: camelCase
+      requestHeaders: Capital-Param-Case
+      queryParameters: Capital-Param-Case
+  - examples: # Examples in the OpenAPI are required and must match the schemas
+      require_request_examples: true
+      require_response_examples: true
+      require_parameter_examples: true    
 ```
 
-#### Track API changes with OpenAPI
+https://user-images.githubusercontent.com/5900338/211058178-6c3c7f76-55be-4e7a-81f0-3aec07253518.mp4
 
-Captured traffic is like working copy in Git. Use `optic verify` to see the difference between how your OpenAPI specification says your API works, and how it actually works.
+**[Read Documentation](https://www.useoptic.com/docs/api-standards)**
 
-https://user-images.githubusercontent.com/5900338/210244068-22540288-1f6d-46a7-a2e9-5b3d19a00f31.mp4
 
-The `verify` command detects drift between your OpenAPI spec and the actual API:
-- If Optic detects planned changes made code-first, you can quickly and accurately document them by passing the `--patch` flag. 
-- If Optic detects unexpected changes (bugs), they will continue to show up as errors until you fix the API implementation and resolve them. Some teams even run `optic verify` in CI to fail PRs where the API and OpenAPI spec are out of sync. 
+--- 
 
-## Resources
-
-- [Documentation](https://useoptic.com/docs)
-- [Beyond API Linting: How Optic is different](https://useoptic.com/blog/beyond-api-linting)
-- [Adding Optic to your CI Pipeline](https://useoptic.com/docs/running-in-ci)
-- [Book office hours](https://calendly.com/optic-onboarding/optic-office-hours)
+## Community & Support
+- If you run into bugs, please open [Issues](https://github.com/opticdev/optic/issues). 
+- [Discord](https://github.com/opticdev/optic/issues)
+- Anyone is welcome to [book office hours](https://calendly.com/optic-onboarding/optic-office-hours) for support or to talk about contributing. 
 
 ## License
-
 MIT
 
 ## Contributors ✨

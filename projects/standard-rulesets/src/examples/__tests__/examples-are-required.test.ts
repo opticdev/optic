@@ -1,10 +1,11 @@
+import { test, expect, describe } from '@jest/globals';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { TestHelpers } from '@useoptic/rulesets-base';
 import { ExamplesRuleset } from '../index';
 
 describe('fromOpticConfig', () => {
   test('invalid configuration', async () => {
-    const out = ExamplesRuleset.fromOpticConfig({
+    const out = await ExamplesRuleset.fromOpticConfig({
       require_parameter_examples: 123,
     });
     expect(out).toEqual(
@@ -44,7 +45,11 @@ describe('examples are required ruleset', () => {
         },
       },
     };
-    const results = await TestHelpers.runRulesWithInputs([requireAll], input, input);
+    const results = await TestHelpers.runRulesWithInputs(
+      [requireAll],
+      input,
+      input
+    );
     expect(results.length > 0).toBe(true);
 
     expect(results).toMatchSnapshot();
@@ -90,7 +95,11 @@ describe('examples are required ruleset', () => {
         },
       },
     };
-    const results = await TestHelpers.runRulesWithInputs([requireAll], input, input);
+    const results = await TestHelpers.runRulesWithInputs(
+      [requireAll],
+      input,
+      input
+    );
     expect(results.filter((i) => !i.passed).length === 0).toBe(true);
   });
   test('responses without examples error', async () => {
@@ -113,7 +122,11 @@ describe('examples are required ruleset', () => {
         },
       },
     };
-    const results = await TestHelpers.runRulesWithInputs([requireAll], input, input);
+    const results = await TestHelpers.runRulesWithInputs(
+      [requireAll],
+      input,
+      input
+    );
     expect(results.length > 0).toBe(true);
 
     expect(results).toMatchSnapshot();
@@ -144,7 +157,11 @@ describe('examples are required ruleset', () => {
         },
       },
     };
-    const results = await TestHelpers.runRulesWithInputs([requireAll], input, input);
+    const results = await TestHelpers.runRulesWithInputs(
+      [requireAll],
+      input,
+      input
+    );
     expect(results.filter((i) => !i.passed).length === 0).toBe(true);
   });
 
@@ -167,7 +184,11 @@ describe('examples are required ruleset', () => {
         },
       },
     };
-    const results = await TestHelpers.runRulesWithInputs([requireAll], input, input);
+    const results = await TestHelpers.runRulesWithInputs(
+      [requireAll],
+      input,
+      input
+    );
     expect(results.length > 0).toBe(true);
 
     expect(results).toMatchSnapshot();
@@ -194,7 +215,11 @@ describe('examples are required ruleset', () => {
         },
       },
     };
-    const results = await TestHelpers.runRulesWithInputs([requireAll], input, input);
+    const results = await TestHelpers.runRulesWithInputs(
+      [requireAll],
+      input,
+      input
+    );
     expect(results.filter((i) => !i.passed).length === 0).toBe(true);
   });
 
@@ -222,7 +247,11 @@ describe('examples are required ruleset', () => {
         },
       },
     };
-    const results = await TestHelpers.runRulesWithInputs([requireAll], input, input);
+    const results = await TestHelpers.runRulesWithInputs(
+      [requireAll],
+      input,
+      input
+    );
     expect(results.filter((i) => !i.passed).length === 0).toBe(true);
   });
 });

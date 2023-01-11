@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`CapturedIntearction.fromHarEntry can create a CapturedInteraction from a HttpArchive.Entry 1`] = `
-Object {
-  "request": Object {
+{
+  "request": {
     "body": null,
     "host": "petstore.swagger.io",
     "method": "get",
     "path": "/v2/store/inventory",
   },
-  "response": Object {
-    "body": Object {
+  "response": {
+    "body": {
       "contentType": "application/json",
       "size": 133,
       "stream": Any<Readable>,
@@ -20,9 +20,9 @@ Object {
 `;
 
 exports[`CapturedIntearction.fromHarEntry includes request bodies 1`] = `
-Object {
-  "request": Object {
-    "body": Object {
+{
+  "request": {
+    "body": {
       "contentType": "application/json",
       "size": 128,
       "stream": Any<Readable>,
@@ -31,8 +31,8 @@ Object {
     "method": "post",
     "path": "/v2/store/order",
   },
-  "response": Object {
-    "body": Object {
+  "response": {
+    "body": {
       "contentType": "application/json",
       "size": 119,
       "stream": Any<Readable>,
@@ -43,15 +43,15 @@ Object {
 `;
 
 exports[`CapturedIntearction.fromHarEntry includes response bodies 1`] = `
-Object {
-  "request": Object {
+{
+  "request": {
     "body": null,
     "host": "petstore.swagger.io",
     "method": "get",
     "path": "/v2/store/inventory",
   },
-  "response": Object {
-    "body": Object {
+  "response": {
+    "body": {
       "contentType": "application/json",
       "size": 133,
       "stream": Any<Readable>,
@@ -62,9 +62,9 @@ Object {
 `;
 
 exports[`CapturedIntearction.fromHarEntry supports request body encoding for supported Buffer encodings 1`] = `
-Object {
-  "request": Object {
-    "body": Object {
+{
+  "request": {
+    "body": {
       "contentType": "application/json",
       "size": 128,
       "stream": Any<Readable>,
@@ -73,8 +73,8 @@ Object {
     "method": "post",
     "path": "/v2/store/order",
   },
-  "response": Object {
-    "body": Object {
+  "response": {
+    "body": {
       "contentType": "application/json",
       "size": 119,
       "stream": Any<Readable>,
@@ -85,15 +85,15 @@ Object {
 `;
 
 exports[`CapturedIntearction.fromHarEntry supports response body encoding for supported Buffer encodings 1`] = `
-Object {
-  "request": Object {
+{
+  "request": {
     "body": null,
     "host": "petstore.swagger.io",
     "method": "get",
     "path": "/v2/store/inventory",
   },
-  "response": Object {
-    "body": Object {
+  "response": {
+    "body": {
       "contentType": "application/json",
       "size": 133,
       "stream": Any<Readable>,
@@ -104,14 +104,14 @@ Object {
 `;
 
 exports[`CapturedInteraction.fromProxyInteraction can create a CaturedInteraction from a ProxySource.Interaction 1`] = `
-Object {
-  "request": Object {
+{
+  "request": {
     "body": null,
     "host": "localhost",
     "method": "get",
     "path": "/test-path",
   },
-  "response": Object {
+  "response": {
     "body": null,
     "statusCode": "200",
   },
@@ -119,9 +119,9 @@ Object {
 `;
 
 exports[`CapturedInteraction.fromProxyInteraction includes request bodies 1`] = `
-Object {
-  "request": Object {
-    "body": Object {
+{
+  "request": {
+    "body": {
       "contentType": "text/plain",
       "size": 9,
       "stream": Any<Readable>,
@@ -130,7 +130,7 @@ Object {
     "method": "get",
     "path": "/test-path",
   },
-  "response": Object {
+  "response": {
     "body": null,
     "statusCode": "200",
   },
@@ -138,15 +138,15 @@ Object {
 `;
 
 exports[`CapturedInteraction.fromProxyInteraction includes response bodies 1`] = `
-Object {
-  "request": Object {
+{
+  "request": {
     "body": null,
     "host": "localhost",
     "method": "get",
     "path": "/test-path",
   },
-  "response": Object {
-    "body": Object {
+  "response": {
+    "body": {
       "contentType": null,
       "size": 0,
       "stream": Any<Readable>,

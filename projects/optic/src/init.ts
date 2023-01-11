@@ -6,25 +6,21 @@ import {
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 
-import Commander from 'commander';
 import { registerDiff } from './commands/diff/diff';
 import { registerRulesetUpload } from './commands/ruleset/upload';
 
-import {
-  VCS,
-  DefaultOpticCliConfig,
-  detectCliConfig,
-  loadCliConfig,
-  OpticCliConfig,
-} from './config';
-import { hasGit, isInGitRepo, getRootPath } from './utils/git-utils';
+import { initializeConfig } from './config';
 import { getAnonId } from './utils/anonymous-id';
 import { registerRulesetInit } from './commands/ruleset/init';
+import { registerApiAdd } from './commands/api/add';
 import { captureCommand } from '@useoptic/openapi-cli/build/commands/capture';
 import { newCommand } from '@useoptic/openapi-cli/build/commands/new';
 import { captureCertCommand } from '@useoptic/openapi-cli/build/commands/capture-cert';
 import { clearCommand } from '@useoptic/openapi-cli/build/commands/clear';
 import { verifyCommand } from '@useoptic/openapi-cli/build/commands/verify';
+import { registerDiffAll } from './commands/diff/diff-all';
+import { registerSpecPush } from './commands/spec/push';
+import { registerLogin } from './commands/login/login';
 
 const packageJson = require('../package.json');
 
@@ -51,22 +47,14 @@ export const initCli = async () => {
     } catch (e) {}
   });
 
-  let cliConfig: OpticCliConfig = DefaultOpticCliConfig;
-  if ((await hasGit()) && (await isInGitRepo())) {
-    const gitRoot = await getRootPath();
-    const opticYmlPath = await detectCliConfig(gitRoot);
-
-    if (opticYmlPath) {
-      cliConfig = await loadCliConfig(opticYmlPath);
-    }
-
-    cliConfig.vcs = VCS.Git;
-  }
+  const cliConfig = await initializeConfig();
 
   cli.version(packageJson.version);
   cli.addHelpCommand(false);
 
   registerDiff(cli, cliConfig);
+  registerDiffAll(cli, cliConfig);
+  registerLogin(cli, cliConfig);
 
   const rulesetSubcommands = cli
     .command('ruleset')
@@ -77,8 +65,13 @@ export const initCli = async () => {
   registerRulesetUpload(rulesetSubcommands, cliConfig);
   registerRulesetInit(rulesetSubcommands, cliConfig);
 
-  const oas = new Commander.Command('oas');
-  cli.addCommand(oas);
+  const apiSubcommands = cli.command('api').addHelpCommand(false);
+  registerApiAdd(apiSubcommands, cliConfig);
+
+  const specSubcommands = cli.command('spec').addHelpCommand(false);
+  registerSpecPush(specSubcommands, cliConfig);
+
+  const oas = cli.command('oas');
   oas.description(
     'generate OpenAPI operations and patches based on API traffic. See `optic oas --help`'
   );

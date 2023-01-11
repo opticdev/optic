@@ -1,3 +1,4 @@
+import { it, describe, expect } from '@jest/globals';
 import { updateByExample } from '../../commands/update-by-example';
 import Path from 'path';
 import { collect } from '../../lib/async-tools';

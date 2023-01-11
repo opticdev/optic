@@ -1,3 +1,11 @@
+import {
+  test,
+  expect,
+  describe,
+  beforeEach,
+  afterEach,
+  jest,
+} from '@jest/globals';
 import { UserError } from '@useoptic/openapi-utilities';
 import { createOpticClient } from '@useoptic/optic-ci/build/cli/clients/optic-client';
 import {
@@ -12,10 +20,6 @@ jest.mock('@useoptic/optic-ci/build/cli/clients/optic-client');
 describe('detectConfig', () => {
   beforeEach(() => {
     console.warn = jest.fn();
-  });
-
-  afterEach(() => {
-    jest.resetAllMocks();
   });
 
   test('finds config', async () => {
@@ -36,13 +40,6 @@ describe('validateConfig', () => {
   test('success', () => {
     const config = {};
     expect(() => validateConfig(config, 'somePath')).not.toThrow();
-  });
-
-  describe('files', () => {
-    test('not array is invalid', () => {
-      const config = { files: { foo: 'bar' } };
-      expect(() => validateConfig(config, 'somePath')).toThrow(UserError);
-    });
   });
 
   describe('rulesets', () => {
@@ -74,20 +71,18 @@ describe('validateConfig', () => {
 
 describe('initializeRules', () => {
   test('empty ruleset', async () => {
-    const config: RawYmlConfig = { root: '', files: [] };
-    await initializeRules(config);
+    const config: RawYmlConfig = {};
+    await initializeRules(config, createOpticClient(''));
 
     expect(config.ruleset).toEqual([]);
   });
 
   test('valid rules', async () => {
     const config: RawYmlConfig = {
-      root: '',
-      files: [],
       ruleset: ['some-rule', { 'complex-rule': { withConfig: true } }],
     };
 
-    await initializeRules(config);
+    await initializeRules(config, createOpticClient(''));
     expect(config.ruleset?.length).toBe(2);
     expect(config.ruleset?.[0]).toEqual({ name: 'some-rule', config: {} });
     expect(config.ruleset?.[1]).toEqual({
@@ -98,17 +93,17 @@ describe('initializeRules', () => {
 
   test('empty rule', async () => {
     const config: RawYmlConfig = {
-      root: '',
-      files: [],
       ruleset: [{}],
     };
 
-    await expect(() => initializeRules(config)).rejects.toThrow(UserError);
+    await expect(() =>
+      initializeRules(config, createOpticClient(''))
+    ).rejects.toThrow(UserError);
   });
 
   test('extends ruleset from cloud', async () => {
     const mockClient = {
-      getRuleConfig: jest.fn(),
+      getRuleConfig: jest.fn<any>(),
     };
     mockClient.getRuleConfig.mockResolvedValue({
       config: {
@@ -123,12 +118,10 @@ describe('initializeRules', () => {
     );
 
     const config: RawYmlConfig = {
-      root: '',
       ruleset: [{ 'should-be-overwritten': { goodbye: false } }],
-      files: [],
       extends: '@orgslug/rulesetconfigid',
     };
-    await initializeRules(config);
+    await initializeRules(config, createOpticClient(''));
     expect(config.ruleset).toEqual([
       { name: 'from-cloud-ruleset', config: {} },
       { name: 'should-be-overwritten', config: { goodbye: false } },

@@ -1,18 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`examples are required ruleset parameters need examples 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "validExample",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -23,11 +23,11 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "query-parameter",
       },
-      "value": Object {
+      "value": {
         "example": "123",
         "in": "query",
         "name": "validExample",
-        "schema": Object {
+        "schema": {
           "type": "string",
         },
       },
@@ -45,17 +45,17 @@ Array [
     "type": "requirement",
     "where": "GET /api/users query parameter: validExample",
   },
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "notSet",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -66,10 +66,10 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/1",
         "kind": "query-parameter",
       },
-      "value": Object {
+      "value": {
         "in": "query",
         "name": "notSet",
-        "schema": Object {
+        "schema": {
           "type": "string",
         },
       },
@@ -87,17 +87,17 @@ Array [
     "type": "requirement",
     "where": "GET /api/users query parameter: notSet",
   },
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "validExample",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -108,11 +108,11 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "query-parameter",
       },
-      "value": Object {
+      "value": {
         "example": "123",
         "in": "query",
         "name": "validExample",
-        "schema": Object {
+        "schema": {
           "type": "string",
         },
       },
@@ -130,17 +130,17 @@ Array [
     "type": "requirement",
     "where": "GET /api/users query parameter: validExample",
   },
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "notSet",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -151,10 +151,10 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/1",
         "kind": "query-parameter",
       },
-      "value": Object {
+      "value": {
         "in": "query",
         "name": "notSet",
-        "schema": Object {
+        "schema": {
           "type": "string",
         },
       },
@@ -176,20 +176,20 @@ Array [
 `;
 
 exports[`examples are required ruleset request without example errors 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
           "method": "post",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "post",
@@ -198,9 +198,9 @@ Array [
         "jsonPath": "/paths/~1api~1users/post/requestBody/content/application~1json",
         "kind": "body",
       },
-      "value": Object {
+      "value": {
         "contentType": "application/json",
-        "flatSchema": Object {
+        "flatSchema": {
           "type": "object",
         },
       },
@@ -218,19 +218,19 @@ Array [
     "type": "requirement",
     "where": "POST /api/users request body: application/json",
   },
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
           "method": "post",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "post",
@@ -239,9 +239,9 @@ Array [
         "jsonPath": "/paths/~1api~1users/post/requestBody/content/application~1json",
         "kind": "body",
       },
-      "value": Object {
+      "value": {
         "contentType": "application/json",
-        "flatSchema": Object {
+        "flatSchema": {
           "type": "object",
         },
       },
@@ -259,22 +259,22 @@ Array [
     "type": "requirement",
     "where": "POST /api/users request body: application/json",
   },
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "hello",
           ],
           "method": "post",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "post",
@@ -284,8 +284,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/post/requestBody/content/application~1json/schema/properties/hello",
         "kind": "field",
       },
-      "value": Object {
-        "flatSchema": Object {
+      "value": {
+        "flatSchema": {
           "type": "string",
         },
         "key": "hello",
@@ -304,22 +304,22 @@ Array [
     "type": "requirement",
     "where": "POST /api/users request body: application/json property: hello",
   },
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "body": Object {
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
               "contentType": "application/json",
             },
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "world",
           ],
           "method": "post",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "post",
@@ -329,8 +329,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/post/requestBody/content/application~1json/schema/properties/world",
         "kind": "field",
       },
-      "value": Object {
-        "flatSchema": Object {
+      "value": {
+        "flatSchema": {
           "type": "number",
         },
         "key": "world",
@@ -353,13 +353,13 @@ Array [
 `;
 
 exports[`examples are required ruleset responses without examples error 1`] = `
-Array [
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
@@ -367,7 +367,7 @@ Array [
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -378,9 +378,9 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
         "kind": "body",
       },
-      "value": Object {
+      "value": {
         "contentType": "application/json",
-        "flatSchema": Object {
+        "flatSchema": {
           "type": "object",
         },
       },
@@ -398,23 +398,23 @@ Array [
     "type": "requirement",
     "where": "GET /api/users response 200 response body: application/json",
   },
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "hello",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -426,8 +426,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/hello",
         "kind": "field",
       },
-      "value": Object {
-        "flatSchema": Object {
+      "value": {
+        "flatSchema": {
           "type": "string",
         },
         "key": "hello",
@@ -447,23 +447,23 @@ Array [
     "type": "requirement",
     "where": "GET /api/users response 200 response body: application/json property hello",
   },
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
               "contentType": "application/json",
             },
             "statusCode": "200",
           },
-          "jsonSchemaTrail": Array [
+          "jsonSchemaTrail": [
             "world",
           ],
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -475,8 +475,8 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/world",
         "kind": "field",
       },
-      "value": Object {
-        "flatSchema": Object {
+      "value": {
+        "flatSchema": {
           "type": "number",
         },
         "key": "world",
@@ -496,17 +496,17 @@ Array [
     "type": "requirement",
     "where": "GET /api/users response 200 response body: application/json property world",
   },
-  Object {
-    "change": Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
             "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
         },
-        "conceptualPath": Array [
+        "conceptualPath": [
           "operations",
           "/api/users",
           "get",
@@ -516,7 +516,7 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/responses/200",
         "kind": "response",
       },
-      "value": Object {
+      "value": {
         "description": "ok",
         "statusCode": "200",
       },

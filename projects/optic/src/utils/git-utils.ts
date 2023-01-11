@@ -20,6 +20,17 @@ export const isInGitRepo = async (): Promise<boolean> =>
     exec(command, cb);
   });
 
+export const getCurrentBranchName = async (): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const cb = (err: unknown, stdout: string, stderr: string) => {
+      if (err || stderr || !stdout) reject();
+      resolve(stdout.trim());
+    };
+
+    const command = 'git rev-parse --abbrev-ref HEAD';
+    exec(command, cb);
+  });
+
 export const getRootPath = async (): Promise<string> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
@@ -27,5 +38,50 @@ export const getRootPath = async (): Promise<string> =>
       resolve(stdout.trim());
     };
     const command = `git rev-parse --show-toplevel`;
+    exec(command, cb);
+  });
+
+export const isGitStatusClean = async (): Promise<boolean> =>
+  new Promise((resolve, reject) => {
+    const cb = (err: unknown, stdout: string, stderr: string) => {
+      if (err || stderr) reject(err || stderr);
+      resolve(stdout.trim() === '');
+    };
+    const command = `git status --porcelain`;
+    exec(command, cb);
+  });
+
+export const resolveGitRef = async (ref: string): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const cb = (err: unknown, stdout: string, stderr: string) => {
+      if (err || stderr || !stdout) reject(err || stderr);
+      resolve(stdout.trim());
+    };
+    const command = `git rev-parse ${ref}`;
+    exec(command, cb);
+  });
+
+export const findOpenApiSpecsCandidates = async (
+  ref?: string
+): Promise<string[]> =>
+  new Promise((resolve, reject) => {
+    const cb = (err: unknown, stdout: string, stderr: string) => {
+      if (err || stderr || !stdout) reject(err || stderr);
+      resolve(
+        stdout
+          .trim()
+          .split('\n')
+          .filter((path) => !!path)
+      );
+    };
+    const args = ref
+      ? `--name-only -E 'openapi' ${ref}`
+      : `--untracked --name-only -E 'openapi'`;
+    const command = `toplevel=$(git rev-parse --show-toplevel) && \
+    git grep ${args} -- \
+    $toplevel/'*.yml' \
+    $toplevel/'*.yaml' \
+    $toplevel/'*.json' \
+    || true`;
     exec(command, cb);
   });
