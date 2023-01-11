@@ -97,7 +97,7 @@ export class SpectralRulesets extends ExternalRuleBase {
 
   async runRulesV2(inputs: {
     context: any;
-    objectDiff: ObjectDiff[];
+    diffs: ObjectDiff[];
     nextJsonLike: OpenAPIV3.Document<{}>;
     currentJsonLike: OpenAPIV3.Document<{}>;
   }): Promise<RuleResult[]> {
