@@ -54,6 +54,8 @@ export * from './ci-types';
 export { generateSpecResults } from './openapi3/implementations/openapi3/generate-spec-results';
 export * from './openapi3/implementations/openapi3/types';
 
+export { SPEC_TAG_REGEXP } from './specs/tags';
+
 export {
   getFactForJsonPath,
   constructFactTree,

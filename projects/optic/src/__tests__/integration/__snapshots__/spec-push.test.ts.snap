@@ -9,23 +9,8 @@ Succesfully uploaded spec to Optic. View the spec here TODODODODOO
 `;
 
 exports[`optic spec push requires x-optic-url 1`] = `
-"/Users/nicholaslim/Desktop/repos/optic/projects/optic/node_modules/ts-node/src/index.ts:843
-    return new TSError(diagnosticText, diagnosticCodes, diagnostics);
-           ^
-TSError: ⨯ Unable to compile TypeScript:
-../../src/config.ts(152,37): error TS2339: Property 'getRuleConfig' does not exist on type 'OpticBackendClient'.
-
-    at createTSError (/Users/nicholaslim/Desktop/repos/optic/projects/optic/node_modules/ts-node/src/index.ts:843:12)
-    at reportTSError (/Users/nicholaslim/Desktop/repos/optic/projects/optic/node_modules/ts-node/src/index.ts:847:19)
-    at getOutput (/Users/nicholaslim/Desktop/repos/optic/projects/optic/node_modules/ts-node/src/index.ts:1057:36)
-    at Object.compile (/Users/nicholaslim/Desktop/repos/optic/projects/optic/node_modules/ts-node/src/index.ts:1411:41)
-    at Module.m._compile (/Users/nicholaslim/Desktop/repos/optic/projects/optic/node_modules/ts-node/src/index.ts:1596:30)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1213:10)
-    at Object.require.extensions.<computed> [as .ts] (/Users/nicholaslim/Desktop/repos/optic/projects/optic/node_modules/ts-node/src/index.ts:1600:12)
-    at Module.load (node:internal/modules/cjs/loader:1037:32)
-    at Function.Module._load (node:internal/modules/cjs/loader:878:12)
-    at Module.require (node:internal/modules/cjs/loader:1061:19) {
-  diagnosticCodes: [ 2339 ]
-}
+"Automatically adding the git sha git:COMMIT-HASH and branch git:master as tags 
+File ./spec.yml does not have an optic url. Files must be added to Optic and have an x-optic-url key before specs can be pushed up to Optic.
+[33mHint: [39m Run optic api add ./spec.yml
 "
 `;

@@ -1,5 +1,6 @@
 import { Command } from 'commander';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
+import { SPEC_TAG_REGEXP } from '@useoptic/openapi-utilities';
 
 import { OpticCliConfig, VCS } from '../../config';
 import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
@@ -7,8 +8,6 @@ import { logger } from '../../logger';
 import { OPTIC_URL_KEY } from '../../constants';
 import * as Git from '../../utils/git-utils';
 import chalk from 'chalk';
-
-const validTagRegexp = /[a-zA-Z0-9:-_]/;
 
 const usage = () => `
   optic spec push <path_to_spec.yml>
@@ -59,7 +58,7 @@ const getSpecPushAction =
     const tagsToAdd: string[] = [];
     if (options.tag) {
       const tags = options.tag.split(',');
-      const invalidTags = tags.filter((tag) => !validTagRegexp.test(tag));
+      const invalidTags = tags.filter((tag) => !SPEC_TAG_REGEXP.test(tag));
       if (invalidTags.length > 0) {
         logger.error(
           `The following tags were invalid: ${invalidTags.join(
