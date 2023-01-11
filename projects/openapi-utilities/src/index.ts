@@ -94,6 +94,8 @@ export {
   getLabel,
 } from './utilities/count-changed-operations';
 
+export { ObjectDiff } from './diff/diff';
+
 export {
   sourcemapReader,
   OpenApiFact,
