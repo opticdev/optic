@@ -8,6 +8,7 @@ import {
   OpenAPIV3,
   Result,
   RuleResult,
+  typeofDiff,
 } from '@useoptic/openapi-utilities';
 import { ExternalRuleBase } from '../rules/external-rule-base';
 import { isExempted } from '../rule-runner/utils';
@@ -51,6 +52,29 @@ function toOpticResult(
   };
 }
 
+function toOpticRuleResult(
+  spectralResult: SpectralResult,
+  lifecycle: Lifecycle,
+  jsonPath: string,
+  opts: {
+    exempted: boolean;
+    docsLink?: string;
+  }
+): RuleResult {
+  return {
+    exempted: opts.exempted,
+    docsLink: opts.docsLink,
+    passed: false,
+    error: `Error code: ${spectralResult.code.toString()}: ${
+      spectralResult.message
+    }`,
+    where: `${lifecycle} `,
+    jsonPath,
+    name: `Spectral ${lifecycle} rule`,
+    type: lifecycle === 'always' ? 'requirement' : lifecycle,
+  };
+}
+
 export class SpectralRule extends ExternalRuleBase {
   private lifecycle: Lifecycle;
   public name: string;
@@ -78,15 +102,18 @@ export class SpectralRule extends ExternalRuleBase {
     fromSpec: OpenAPIV3.Document;
     toSpec: OpenAPIV3.Document;
   }): Promise<RuleResult[]> {
-    // const factTree = constructFactTree(inputs.nextFacts);
+    // todo construct significant nodes from tospec
 
-    // const changesByJsonPath: Record<string, IChange> = inputs.changelog.reduce(
-    //   (acc, next) => {
-    //     acc[next.location.jsonPath] = next;
-    //     return acc;
-    //   },
-    //   {}
-    // );
+    const factTree = constructFactTree([]);
+
+    const changesByJsonPath: Record<string, ObjectDiff> = inputs.diffs.reduce(
+      (acc, next) => {
+        const location = next.after ?? next.before;
+        acc[location] = next;
+        return acc;
+      },
+      {}
+    );
 
     let spectralResults: SpectralResult[];
     try {
@@ -112,7 +139,7 @@ export class SpectralRule extends ExternalRuleBase {
       // This exemption is actually on the Fact level, rather than the spectral path
       // This is for consistency with our current rule engine. In the future we should attach exemptions on the nodes which trigger them, which would require us to rework the rules engine
       const rawForPath = jsonPointerHelpers.get(
-        inputs.nextJsonLike,
+        inputs.toSpec,
         fact.location.jsonPath
       );
       const exempted = isExempted(rawForPath, this.name);
@@ -120,39 +147,55 @@ export class SpectralRule extends ExternalRuleBase {
       // TODO in the future update to pass in the JSON path from spectral, rather than the fact json path
       if (this.lifecycle === 'always') {
         results.push(
-          toOpticResult(spectralResult, 'always', fact, {
+          toOpticRuleResult(spectralResult, 'always', fact.location.jsonPath, {
             exempted,
             docsLink: this.docsLink,
           })
         );
       } else {
         // find if there is an appropriate change
-        const maybeChange: IChange | undefined =
+        const maybeChange: ObjectDiff | undefined =
           changesByJsonPath[fact.location.jsonPath];
         if (maybeChange) {
-          if (this.lifecycle === 'added' && maybeChange.added) {
+          const changeType = typeofDiff(maybeChange);
+          if (this.lifecycle === 'added' && changeType === 'added') {
             results.push(
-              toOpticResult(spectralResult, 'added', maybeChange, {
-                exempted,
-                docsLink: this.docsLink,
-              })
+              toOpticRuleResult(
+                spectralResult,
+                'added',
+                fact.location.jsonPath,
+                {
+                  exempted,
+                  docsLink: this.docsLink,
+                }
+              )
             );
-          } else if (this.lifecycle === 'changed' && maybeChange.changed) {
+          } else if (this.lifecycle === 'changed' && changeType === 'changed') {
             results.push(
-              toOpticResult(spectralResult, 'changed', maybeChange, {
-                exempted,
-                docsLink: this.docsLink,
-              })
+              toOpticRuleResult(
+                spectralResult,
+                'changed',
+                fact.location.jsonPath,
+                {
+                  exempted,
+                  docsLink: this.docsLink,
+                }
+              )
             );
           } else if (
             this.lifecycle === 'addedOrChanged' &&
-            (maybeChange.added || maybeChange.changed)
+            (changeType === 'added' || changeType === 'changed')
           ) {
             results.push(
-              toOpticResult(spectralResult, 'addedOrChanged', maybeChange, {
-                exempted,
-                docsLink: this.docsLink,
-              })
+              toOpticRuleResult(
+                spectralResult,
+                'addedOrChanged',
+                fact.location.jsonPath,
+                {
+                  exempted,
+                  docsLink: this.docsLink,
+                }
+              )
             );
           }
         }

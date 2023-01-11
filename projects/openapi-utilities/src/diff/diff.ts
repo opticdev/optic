@@ -47,6 +47,14 @@ type StackItem<T extends JSONObject | JSONArray = JSONObject | JSONArray> = [
   }
 ];
 
+export function typeofDiff(diff: ObjectDiff): 'added' | 'changed' | 'removed' {
+  return diff.after && diff.before
+    ? 'changed'
+    : diff.after
+    ? 'added'
+    : 'removed';
+}
+
 // Diffs two objects, generating the leaf nodes that have changes
 export function diff(before: any, after: any): ObjectDiff[] {
   const diffResults: ObjectDiff[] = [];

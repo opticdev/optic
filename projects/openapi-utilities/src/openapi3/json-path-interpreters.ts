@@ -1,19 +1,25 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { IFact } from './sdk/types';
+
+interface FactLike {
+  location: {
+    jsonPath: string;
+  };
+}
 
 // A trie datastructure keyed by json path parts
-export type FactTree = Record<
+export type FactTree<T extends FactLike> = Record<
   string,
-  { fact: IFact | null; children: FactTree }
+  { fact: T | null; children: FactTree<T> }
 >;
 
 // We need a special json path decoder since the leading / is significant and points to the root
-const decodePathWithLeadingTrail = (pointer: string) => pointer.split('/').map(jsonPointerHelpers.unescape);
+const decodePathWithLeadingTrail = (pointer: string) =>
+  pointer.split('/').map(jsonPointerHelpers.unescape);
 
-export function constructFactTree(facts: IFact[]): FactTree {
-  const factTree: FactTree = {};
+export function constructFactTree<T extends FactLike>(facts: T[]): FactTree<T> {
+  const factTree: FactTree<T> = {};
   for (const fact of facts) {
-    let tree: FactTree = factTree;
+    let tree: FactTree<T> = factTree;
     const pathParts = decodePathWithLeadingTrail(fact.location.jsonPath);
 
     for (let i = 0; i < pathParts.length; i++) {
@@ -33,11 +39,11 @@ export function constructFactTree(facts: IFact[]): FactTree {
   return factTree;
 }
 
-export function getFactForJsonPath(
+export function getFactForJsonPath<T extends FactLike>(
   jsonPath: string,
-  factTree: FactTree
-): IFact | null {
-  let fact: IFact | null = null;
+  factTree: FactTree<T>
+): T | null {
+  let fact: T | null = null;
   let tree = factTree;
 
   for (const part of decodePathWithLeadingTrail(jsonPath)) {
