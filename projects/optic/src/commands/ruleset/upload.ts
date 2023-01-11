@@ -32,7 +32,10 @@ export const registerRulesetUpload = (cli: Command, config: OpticCliConfig) => {
       `
 This command also requires a token to be provided via the environment variable OPTIC_TOKEN. Generate an optic token at https://app.useoptic.com.`
     )
-    .argument('<path_to_ruleset>', 'the path to the ruleset to upload')
+    .argument(
+      '<path_to_ruleset>',
+      'the path to the javascript ruleset file to upload, typically "./build/main.js".'
+    )
     .action(wrapActionHandlerWithSentry(getUploadAction()));
 };
 
