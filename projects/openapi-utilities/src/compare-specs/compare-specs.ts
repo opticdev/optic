@@ -53,7 +53,7 @@ export const compareSpecs = async (
 
   return {
     diffs,
-    results: [],
+    results,
     version: packageJson.version,
   };
 };
