@@ -8,8 +8,8 @@ import {
   OpenApiKind,
   ObjectDiff,
   RuleResult,
-  OpenApiV3Traverser,
-  constructFactTree,
+  traverseSpec,
+  factsToChangelog,
 } from '@useoptic/openapi-utilities';
 import {
   ISpectralDiagnostic,
@@ -34,6 +34,21 @@ type SpectralRules = Extract<
   SpectralRulesetDefinition,
   { extends: any; rules: any }
 >['rules'];
+
+function resultToRuleResult(r: Result): RuleResult {
+  return {
+    where: r.where,
+    error: r.error,
+    passed: r.passed,
+    exempted: r.exempted,
+    jsonPath: r.change.location.jsonPath,
+    name: r.name ?? 'Rule',
+    type: r.type,
+    docsLink: r.docsLink,
+    expected: r.expected,
+    received: r.received,
+  };
+}
 
 export class RuleRunner {
   constructor(private rules: (Ruleset | Rule | ExternalRule)[]) {}
@@ -214,27 +229,17 @@ export class RuleRunner {
       const results = await externalRule.runRulesV2(inputs);
       externalResults.push(...results);
     }
-    const beforeTraverser = new OpenApiV3Traverser();
-    beforeTraverser.traverse(inputs.fromSpec);
-    const afterTraverser = new OpenApiV3Traverser();
-    afterTraverser.traverse(inputs.toSpec);
-    const dedupedFacts = [
-      ...new Map(
-        [...beforeTraverser.facts(), ...afterTraverser.facts()].map((f) => [
-          f.location.jsonPath,
-          f,
-        ])
-      ).values(),
-    ];
 
-    const factTree = constructFactTree(dedupedFacts);
+    // TODO reimplement the rule runner so we don't need to generate legacy fact types here
+    const beforeFacts = traverseSpec(inputs.fromSpec);
+    const afterFacts = traverseSpec(inputs.toSpec);
+    const changelog = factsToChangelog(beforeFacts, afterFacts);
 
-    // Get node list of openapi facts
-
-    // Get facts that have changes
-
-    // From these facts, use
-    // Get relevant change from here
+    const openApiFactNodes = groupFacts({
+      beforeFacts,
+      afterFacts,
+      changes: changelog,
+    });
 
     // Run rules on specifications and collect the results
     const specificationResults: RuleResult[] = runSpecificationRules({
@@ -243,7 +248,7 @@ export class RuleRunner {
       customRuleContext: context,
       beforeApiSpec,
       afterApiSpec,
-    });
+    }).map(resultToRuleResult);
 
     const endpointResults: RuleResult[] = [];
 
@@ -257,7 +262,7 @@ export class RuleRunner {
         beforeApiSpec,
         afterApiSpec,
       });
-      endpointResults.push(...operationResults);
+      endpointResults.push(...operationResults.map(resultToRuleResult));
 
       const requestRules = runRequestRules({
         specificationNode: openApiFactNodes.specification,
@@ -268,7 +273,7 @@ export class RuleRunner {
         beforeApiSpec,
         afterApiSpec,
       });
-      endpointResults.push(...requestRules);
+      endpointResults.push(...requestRules.map(resultToRuleResult));
 
       for (const responseNode of endpointNode.responses.values()) {
         const responseRules = runResponseRules({
@@ -290,7 +295,10 @@ export class RuleRunner {
           beforeApiSpec,
           afterApiSpec,
         });
-        endpointResults.push(...responseBodyRules, ...responseRules);
+        endpointResults.push(
+          ...responseBodyRules.map(resultToRuleResult),
+          ...responseRules.map(resultToRuleResult)
+        );
       }
     }
 

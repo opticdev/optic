@@ -5,7 +5,7 @@ export interface RuleResult {
   exempted?: boolean;
   jsonPath: string;
   name: string;
-  type: 'requirement' | 'added' | 'changed' | 'removed' | 'addedOrChanged';
+  type?: 'requirement' | 'added' | 'changed' | 'removed' | 'addedOrChanged';
   docsLink?: string;
   expected?: string; // JSON string values
   received?: string; // JSON string values
