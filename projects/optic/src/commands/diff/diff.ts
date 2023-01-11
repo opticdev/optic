@@ -23,6 +23,8 @@ import {
 import { getAnonId } from '../../utils/anonymous-id';
 import { compute } from './compute';
 import { compressData } from './compressResults';
+import { OPTIC_URL_KEY } from '../../constants';
+import { getApiFromOpticUrl } from '../../utils/specs';
 
 const description = `run a diff between two API specs`;
 
@@ -231,7 +233,11 @@ const getDiffAction =
     const diffResult = await runDiff(files, parsedFiles, config, options);
     if (config.isAuthenticated) {
       const [baseParseResult, headParseResult] = parsedFiles;
-      const apiId: string | null = 'TODO'; // headParseResult.jsonLike[OPTIC_URL_KEY] ?? baseParseResult.jsonLike[OPTIC_URL_KEY] ?? null
+      const opticUrl: string | null =
+        headParseResult.jsonLike[OPTIC_URL_KEY] ??
+        baseParseResult.jsonLike[OPTIC_URL_KEY] ??
+        null;
+      const apiId: string | null = opticUrl && getApiFromOpticUrl(opticUrl);
       const shouldUploadBaseSpec = baseParseResult.context && apiId;
       const shouldUploadHeadSpec = headParseResult.context && apiId;
       if (shouldUploadBaseSpec) {
