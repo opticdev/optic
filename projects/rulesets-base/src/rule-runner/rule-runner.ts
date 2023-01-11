@@ -94,6 +94,7 @@ export class RuleRunner {
     return opticResult;
   }
 
+  // TODO deprecate
   async runRulesWithFacts(inputs: {
     context: any;
     nextFacts: IFact[];

@@ -6,6 +6,7 @@ import {
   IFact,
   ObjectDiff,
   OpenAPIV3,
+  OpenApiV3Traverser,
   Result,
   RuleResult,
   typeofDiff,
@@ -102,9 +103,10 @@ export class SpectralRule extends ExternalRuleBase {
     fromSpec: OpenAPIV3.Document;
     toSpec: OpenAPIV3.Document;
   }): Promise<RuleResult[]> {
-    // todo construct significant nodes from tospec
+    const traverser = new OpenApiV3Traverser();
+    traverser.traverse(inputs.toSpec);
 
-    const factTree = constructFactTree([{ location: { jsonPath: '' } }]);
+    const factTree = constructFactTree([...traverser.facts()]);
 
     const changesByJsonPath: Record<string, ObjectDiff> = inputs.diffs.reduce(
       (acc, next) => {
