@@ -7,6 +7,8 @@ import {
   terminalChangelog,
   UserError,
   jsonChangelog,
+  ResultWithSourcemap,
+  IChange,
 } from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import {
@@ -24,7 +26,8 @@ import { getAnonId } from '../../utils/anonymous-id';
 import { compute } from './compute';
 import { compressData } from './compressResults';
 import { OPTIC_URL_KEY } from '../../constants';
-import { getApiFromOpticUrl } from '../../utils/specs';
+import { computeChecksum } from '../../utils/checksum';
+import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 
 const description = `run a diff between two API specs`;
 
@@ -115,13 +118,20 @@ const runDiff = async (
   [baseFile, headFile]: [ParseResult, ParseResult],
   config: OpticCliConfig,
   options: DiffActionOptions
-): Promise<{ checks: { passed: number; failed: number; total: number } }> => {
+): Promise<{
+  checks: { passed: number; failed: number; total: number };
+  specResults: {
+    changes: IChange[];
+    results: ResultWithSourcemap[];
+    version: string;
+  };
+}> => {
   const { specResults, checks } = await compute(
     [baseFile, headFile],
     config,
     options
   );
-  const diffResults = { checks };
+  const diffResults = { checks, specResults };
 
   const changelogData = generateChangelogData({
     changes: specResults.changes,
@@ -241,7 +251,29 @@ const getDiffAction =
       const shouldUploadBaseSpec = baseParseResult.context && apiId;
       const shouldUploadHeadSpec = headParseResult.context && apiId;
       if (shouldUploadBaseSpec) {
-        // TODO upload spec
+        const spec_checksum = computeChecksum(baseParseResult.jsonLike);
+        const sourcemap_checksum = computeChecksum(baseParseResult.sourcemap);
+        const result = await config.client.prepareSpecUpload({
+          api_id: apiId,
+          spec_checksum,
+          sourcemap_checksum,
+        });
+        if ('upload_id' in result) {
+          result.spec_url;
+          result.sourcemap_url;
+
+          // TODO upload to s3
+          // TODO get tags
+          // todo get branch
+
+          await config.client.createSpec({
+            upload_id: result.upload_id,
+            api_id: apiId,
+            tags: [],
+          });
+        } else {
+          result.spec_id;
+        }
       }
       if (shouldUploadHeadSpec) {
         // TODO upload spec
@@ -249,10 +281,24 @@ const getDiffAction =
 
       const shouldUploadResults =
         (shouldUploadBaseSpec || baseParseResult.isEmptySpec) &&
-        (shouldUploadHeadSpec || headParseResult.isEmptySpec);
+        (shouldUploadHeadSpec || headParseResult.isEmptySpec) &&
+        apiId;
 
       if (shouldUploadResults) {
-        // TODO upload results
+        // TODO maybe sanitize the specResults checksum piece
+        const checksum = computeChecksum(diffResult.specResults);
+        const result = await config.client.prepareRunUpload({
+          checksum,
+        });
+
+        // TODO upload to s3
+
+        await config.client.createRun({
+          upload_id: result.upload_id,
+          api_id: apiId,
+          from_spec_id: 'todo',
+          to_spec_id: 'todo',
+        });
       }
     }
 

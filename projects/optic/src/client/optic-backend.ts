@@ -100,9 +100,10 @@ export class OpticBackendClient extends JsonHttpClient {
         upload_id: string;
         spec_url: string;
         sourcemap_url: string;
-        spec_id?: undefined;
       }
-    | { spec_id: string }
+    | {
+        spec_id: string;
+      }
   > {
     return this.postJson(`/api/specs/prepare`, body);
   }
