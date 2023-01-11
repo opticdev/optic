@@ -1,4 +1,4 @@
-import { it,  expect } from '@jest/globals';
+import { it, expect } from '@jest/globals';
 import {
   computeInferredOperations,
   InferPathStructure,
@@ -240,6 +240,47 @@ it('can multiple top level resources ', () => {
     {
       methods: ['get'],
       pathPattern: '/users/{user}/addresses/{address}',
+    },
+  ]);
+});
+
+it('can infer multiple top level resources under the an API path', () => {
+  const pathStructure = new InferPathStructure([
+    {
+      pathPattern: '/api',
+      methods: ['get'],
+    },
+  ]);
+
+  pathStructure.includeObservedUrlPath('get', '/api/orders/3/products');
+  pathStructure.includeObservedUrlPath('get', '/api/orders/3');
+  pathStructure.includeObservedUrlPath('get', '/api/orders/3/tracking');
+  pathStructure.includeObservedUrlPath(
+    'get',
+    '/api/users/m24-3343/addresses/1'
+  );
+  pathStructure.includeObservedUrlPath('get', '/api/users/n94-3343/addresses');
+  pathStructure.includeObservedUrlPath(
+    'get',
+    '/api/users/n94-3343/addresses/4'
+  );
+  pathStructure.includeObservedUrlPath('get', '/api/health-check');
+  pathStructure.includeObservedUrlPath('get', '/api/rates/10005');
+
+  pathStructure.replaceConstantsWithVariables();
+
+  const results = pathStructure.undocumentedPaths();
+
+  expect(results).toEqual([
+    { methods: ['get'], pathPattern: '/api/orders/{order}' },
+    { methods: ['get'], pathPattern: '/api/orders/{order}/products' },
+    { methods: ['get'], pathPattern: '/api/orders/{order}/tracking' },
+    { methods: ['get'], pathPattern: '/api/health-check' },
+    { methods: ['get'], pathPattern: '/api/rates/{rate}' },
+    { methods: ['get'], pathPattern: '/api/users/{user}/addresses' },
+    {
+      methods: ['get'],
+      pathPattern: '/api/users/{user}/addresses/{address}',
     },
   ]);
 });

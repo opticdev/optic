@@ -162,6 +162,7 @@ export class InferPathStructure {
           if (
             children.length > 0 &&
             children[0].parent !== null &&
+            !parentIsNeverResource(children[0].parent.name) &&
             !sharedVariableParent
           ) {
             // incorporate verified from spec
@@ -401,9 +402,26 @@ function stripParamBrackets(input: string): string {
   return input.substring(1, input.length - 1);
 }
 
+const reservedPatterns = [
+  /api/,
+  /v[0-9]+/,
+  /v[0-9]+/,
+  /[0-9]+\.[0-9]+/,
+  /20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]/,
+];
+
+function parentIsNeverResource(parent: string): boolean {
+  return reservedPatterns.some((pattern) => pattern.test(parent));
+}
+
 function looksLikeAVariable(stringValue: string): boolean {
-  // any number is a variable
-  if (!isNaN(Number(stringValue))) return true;
+  if (reservedPatterns.some((pattern) => pattern.test(stringValue)))
+    return false;
+
+  if (stringValue)
+    if (!isNaN(Number(stringValue)))
+      // any number is a variable
+      return true;
   // any uuid is a variable
   if (
     /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i.test(
