@@ -4038,8 +4038,6 @@ __metadata:
     "@babel/preset-env": ^7.17.0
     "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
-    "@stoplight/spectral-core": ^1.8.1
-    "@stoplight/spectral-rulesets": ^1.14.1
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
     "@types/json-stable-stringify": ^1.0.33
