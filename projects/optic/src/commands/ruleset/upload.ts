@@ -8,7 +8,6 @@ import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/u
 import { UserError } from '@useoptic/openapi-utilities';
 
 import { OpticCliConfig } from '../../config';
-import { createOpticClient } from '@useoptic/optic-ci/build/cli/clients/optic-client';
 import { uploadFileToS3 } from './s3';
 
 const expectedFileShape = `Expected ruleset file to have a default export with the shape
@@ -36,50 +35,50 @@ This command also requires a token to be provided via the environment variable O
       '<path_to_ruleset>',
       'the path to the javascript ruleset file to upload, typically "./build/main.js".'
     )
-    .action(wrapActionHandlerWithSentry(getUploadAction()));
+    .action(wrapActionHandlerWithSentry(getUploadAction(config)));
 };
 
-const getUploadAction = () => async (filePath: string) => {
-  const maybeToken = process.env.OPTIC_TOKEN;
+const getUploadAction =
+  (config: OpticCliConfig) => async (filePath: string) => {
+    const maybeToken = process.env.OPTIC_TOKEN;
 
-  if (!maybeToken) {
-    throw new UserError(
-      'No optic token was provided (set the environment variable `OPTIC_TOKEN` with your optic token). Generate an optic token at https://app.useoptic.com.'
+    if (!maybeToken) {
+      throw new UserError(
+        'No optic token was provided (set the environment variable `OPTIC_TOKEN` with your optic token). Generate an optic token at https://app.useoptic.com.'
+      );
+    }
+
+    const absolutePath = path.join(process.cwd(), filePath);
+    const userRuleFile = await import(absolutePath).catch((e) => {
+      console.error(e);
+      throw new UserError();
+    });
+
+    if (!fileIsValid(userRuleFile)) {
+      throw new UserError(
+        `Rules file does not match expected format. ${expectedFileShape}`
+      );
+    }
+
+    const name = userRuleFile.default.name;
+    const configSchema = userRuleFile.default.configSchema ?? {};
+    const description = userRuleFile.default.description;
+
+    const fileBuffer = await fs.readFile(absolutePath);
+    const compressed = zlib.brotliCompressSync(fileBuffer);
+
+    const compressedFileBuffer = Buffer.from(compressed);
+    const ruleset = await config.client.createRuleset(
+      name,
+      description,
+      configSchema
     );
-  }
+    await uploadFileToS3(ruleset.upload_url, compressedFileBuffer);
+    await config.client.patchRuleset(ruleset.id, true);
 
-  const absolutePath = path.join(process.cwd(), filePath);
-  const userRuleFile = await import(absolutePath).catch((e) => {
-    console.error(e);
-    throw new UserError();
-  });
-
-  if (!fileIsValid(userRuleFile)) {
-    throw new UserError(
-      `Rules file does not match expected format. ${expectedFileShape}`
-    );
-  }
-
-  const name = userRuleFile.default.name;
-  const configSchema = userRuleFile.default.configSchema ?? {};
-  const description = userRuleFile.default.description;
-
-  const fileBuffer = await fs.readFile(absolutePath);
-  const compressed = zlib.brotliCompressSync(fileBuffer);
-
-  const compressedFileBuffer = Buffer.from(compressed);
-  const opticClient = createOpticClient(maybeToken);
-  const ruleset = await opticClient.createRuleset(
-    name,
-    description,
-    configSchema
-  );
-  await uploadFileToS3(ruleset.upload_url, compressedFileBuffer);
-  await opticClient.patchRuleset(ruleset.id, true);
-
-  console.log('Successfully uploaded the ruleset');
-  console.log(`View this ruleset at ${ruleset.ruleset_url}`);
-};
+    console.log('Successfully uploaded the ruleset');
+    console.log(`View this ruleset at ${ruleset.ruleset_url}`);
+  };
 
 const ajv = new Ajv();
 const configSchema = {

@@ -13,19 +13,22 @@ const isLocalJsFile = (name: string) => name.endsWith('.js');
 
 type InputPayload = Parameters<typeof prepareRulesets>[0];
 
-const getStandardToUse = async (
-  options: {
-    specRuleset?: string;
-    rulesetArg?: string;
-    config: OpticCliConfig;
-  }
-): Promise<OpticCliConfig['ruleset']> => {
+const getStandardToUse = async (options: {
+  specRuleset?: string;
+  rulesetArg?: string;
+  config: OpticCliConfig;
+}): Promise<OpticCliConfig['ruleset']> => {
   // We always take the --ruleset arg as priority, then the ruleset on the API spec (from the head), then fallback to the optic.dev.yml config
   if (options.rulesetArg) {
-    const config = await loadCliConfig(options.rulesetArg, options.config.client);
+    const config = await loadCliConfig(
+      options.rulesetArg,
+      options.config.client
+    );
     return config.ruleset;
   } else if (options.specRuleset) {
-    const ruleset = await options.config.client.getRuleConfig(options.specRuleset);
+    const ruleset = await options.config.client.getStandard(
+      options.specRuleset
+    );
     return ruleset.config.ruleset;
   } else {
     return options.config.ruleset;

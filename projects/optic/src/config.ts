@@ -4,10 +4,7 @@ import { UserError } from '@useoptic/openapi-utilities';
 import Ajv from 'ajv';
 import os from 'os';
 import path from 'node:path';
-import {
-  createOpticClient,
-  OpticBackendClient,
-} from '@useoptic/optic-ci/build/cli/clients/optic-client';
+import { createOpticClient, OpticBackendClient } from './client';
 import {
   hasGit,
   isInGitRepo,
@@ -149,7 +146,7 @@ export const initializeRules = async (
     console.log(`Extending ruleset from ${config.extends}`);
 
     try {
-      const response = await client.getRuleConfig(config.extends);
+      const response = await client.getStandard(config.extends);
       rulesetMap = new Map(
         response.config.ruleset.map((conf) => [conf.name, conf])
       );
