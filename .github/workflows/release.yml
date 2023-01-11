@@ -155,11 +155,7 @@ jobs:
   publish-container-image:
     needs: release
     if: github.event.release.prerelease == false
-    uses: opticdev/optic/.github/workflows/release-container-image.yml@main
+    uses: .github/workflows/release-container-image.yml
     with:
       optic_version: ${{ needs.release.outputs.optic_version }}
-    secrets:
-      BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
-      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-      DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
-      AWS_REGION: ${{ secrets.AWS_REGION }}
+    secrets: inherit
