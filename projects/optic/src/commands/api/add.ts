@@ -196,12 +196,9 @@ async function crawlCandidateSpecs(
     standard: string | undefined;
   }
 ) {
-  const [firstSha, ...remainingShas] = shas;
-
   let parseResult: ParseResult;
   try {
-    const identifier = config.vcs ? `${firstSha}:${path}` : path;
-    parseResult = await getFileFromFsOrGit(identifier, config, false);
+    parseResult = await getFileFromFsOrGit(path, config, false);
   } catch (e) {
     if (path === options.path_to_spec) {
       logger.info(
@@ -215,7 +212,7 @@ async function crawlCandidateSpecs(
     return;
   }
   if (parseResult.isEmptySpec) {
-    logger.info(`File ${path} does not exist in sha ${short(firstSha)}`);
+    logger.info(`File ${path} does not exist in working directory`);
     return;
   }
 
@@ -226,13 +223,7 @@ async function crawlCandidateSpecs(
     ? { id: '', url: 'todo get optic id from url' }
     : { id: '', url: 'todo make API call' };
 
-  // TODO upload spec here
-  if (firstSha) {
-    logger.info(`Uploading spec ${short(firstSha)}:${path}`);
-  }
-  // We need to upload this spec separately to handle non-VCS cases
-
-  for await (const sha of remainingShas) {
+  for await (const sha of shas) {
     let parseResult: ParseResult;
     try {
       parseResult = await getFileFromFsOrGit(`${sha}:${path}`, config, false);
