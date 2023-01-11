@@ -8,6 +8,8 @@ import {
   OpenApiKind,
   ObjectDiff,
   RuleResult,
+  OpenApiV3Traverser,
+  constructFactTree,
 } from '@useoptic/openapi-utilities';
 import {
   ISpectralDiagnostic,
@@ -212,14 +214,20 @@ export class RuleRunner {
       const results = await externalRule.runRulesV2(inputs);
       externalResults.push(...results);
     }
+    const beforeTraverser = new OpenApiV3Traverser();
+    beforeTraverser.traverse(inputs.fromSpec);
+    const afterTraverser = new OpenApiV3Traverser();
+    afterTraverser.traverse(inputs.toSpec);
+    const dedupedFacts = [
+      ...new Map(
+        [...beforeTraverser.facts(), ...afterTraverser.facts()].map((f) => [
+          f.location.jsonPath,
+          f,
+        ])
+      ).values(),
+    ];
 
-    // Groups the flat list of beforefacts, afterfacts and changes by location (e.g. operation, query parameter, response, response property, etc).
-    // A node can contain a before fact, after fact and or change.
-    // const openApiFactNodes = groupFacts({
-    //   beforeFacts: currentFacts,
-    //   afterFacts: nextFacts,
-    //   changes: changelog,
-    // });
+    const factTree = constructFactTree(dedupedFacts);
 
     // Run rules on specifications and collect the results
     const specificationResults = runSpecificationRules({

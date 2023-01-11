@@ -50,7 +50,8 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
   }
 
   *facts(): IterableIterator<OpenApiV3TraverserFact> {
-    if (!this.input) return;
+    if (!this.input || (this.input as any)['x-optic-ci-empty-spec'] === true)
+      return;
 
     yield {
       location: {
