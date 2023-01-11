@@ -20,6 +20,17 @@ export const isInGitRepo = async (): Promise<boolean> =>
     exec(command, cb);
   });
 
+export const getCurrentBranchName = async (): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const cb = (err: unknown, stdout: string, stderr: string) => {
+      if (err || stderr || !stdout) reject();
+      resolve(stdout.trim());
+    };
+
+    const command = 'git rev-parse --abbrev-ref HEAD';
+    exec(command, cb);
+  });
+
 export const getRootPath = async (): Promise<string> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
