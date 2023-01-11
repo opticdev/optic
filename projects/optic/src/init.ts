@@ -41,6 +41,7 @@ export const initCli = async () => {
       const anonymousId = await getAnonId();
       trackEvent(`optic.${commandName}`, anonymousId, {
         args,
+        isInCi: process.env.CI === 'true',
       });
       await flushEvents();
       // we can ignore non-critical tracking errors
