@@ -98,8 +98,8 @@ export class SpectralRulesets extends ExternalRuleBase {
   async runRulesV2(inputs: {
     context: any;
     diffs: ObjectDiff[];
-    nextJsonLike: OpenAPIV3.Document<{}>;
-    currentJsonLike: OpenAPIV3.Document<{}>;
+    fromSpec: OpenAPIV3.Document;
+    toSpec: OpenAPIV3.Document;
   }): Promise<RuleResult[]> {
     const absolutePathTmpSpec = path.join(
       os.tmpdir(),
@@ -107,10 +107,7 @@ export class SpectralRulesets extends ExternalRuleBase {
     );
 
     // write one tmp spec for all the spectral runs to use
-    await fs.writeFile(
-      absolutePathTmpSpec,
-      JSON.stringify(inputs.nextJsonLike)
-    );
+    await fs.writeFile(absolutePathTmpSpec, JSON.stringify(inputs.fromSpec));
 
     const added = this.options.added.map((ruleInput) => {
       return new SpectralRule({
