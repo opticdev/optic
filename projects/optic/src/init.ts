@@ -19,6 +19,7 @@ import { captureCertCommand } from '@useoptic/openapi-cli/build/commands/capture
 import { clearCommand } from '@useoptic/openapi-cli/build/commands/clear';
 import { verifyCommand } from '@useoptic/openapi-cli/build/commands/verify';
 import { registerDiffAll } from './commands/diff/diff-all';
+import { registerLogin } from './commands/login/login';
 
 const packageJson = require('../package.json');
 
@@ -52,6 +53,7 @@ export const initCli = async () => {
 
   registerDiff(cli, cliConfig);
   registerDiffAll(cli, cliConfig);
+  registerLogin(cli, cliConfig);
 
   const rulesetSubcommands = cli
     .command('ruleset')
