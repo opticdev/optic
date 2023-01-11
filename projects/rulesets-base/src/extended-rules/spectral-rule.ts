@@ -104,7 +104,7 @@ export class SpectralRule extends ExternalRuleBase {
   }): Promise<RuleResult[]> {
     // todo construct significant nodes from tospec
 
-    const factTree = constructFactTree([]);
+    const factTree = constructFactTree([{ location: { jsonPath: '' } }]);
 
     const changesByJsonPath: Record<string, ObjectDiff> = inputs.diffs.reduce(
       (acc, next) => {
