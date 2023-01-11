@@ -34,7 +34,7 @@ export const registerSpecPush = (cli: Command, config: OpticCliConfig) => {
     .argument('[spec_path]', 'path to file to push')
     .option(
       '--tag <tag>',
-      'Adds additional tags to the spec version. If the spec is unchanged from git, the git tag will automatically be included. Tags must be alphanumeric or the - _ : characters'
+      'Adds additional tags to the spec version. In git repositories with a clean working directory, a git tag will automatically be included. Tags must be alphanumeric or the - _ : characters'
     )
     .option('--web', 'open to the push spec in Optic Cloud', false)
     .action(wrapActionHandlerWithSentry(getSpecPushAction(config)));
