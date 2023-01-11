@@ -1,14 +1,18 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import {
-  IFact,
-  IChange,
-  OpenAPIV3,
-  Result,
   constructFactTree,
   getFactForJsonPath,
+  IChange,
+  IFact,
+  OpenAPIV3,
+  Result,
 } from '@useoptic/openapi-utilities';
 import { ExternalRuleBase } from '../rules/external-rule-base';
 import { isExempted } from '../rule-runner/utils';
+import { exec, spawn } from 'child_process';
+import path from 'node:path';
+import os from 'node:os';
+import fs from 'node:fs/promises';
 
 type Lifecycle = 'added' | 'addedOrChanged' | 'changed' | 'always';
 
@@ -47,18 +51,21 @@ function toOpticResult(
 
 export class SpectralRule extends ExternalRuleBase {
   private lifecycle: Lifecycle;
-  private spectral: Spectral;
   public name: string;
+  private rulesetPointer: string;
+  private flatSpecFile: string;
   public docsLink?: string;
   constructor(options: {
-    spectral: Spectral;
     name: string;
     applies?: Lifecycle;
+    rulesetPointer: string;
+    flatSpecFile: string;
     docsLink?: string;
   }) {
     super();
     this.name = options.name;
-    this.spectral = options.spectral;
+    this.flatSpecFile = options.flatSpecFile;
+    this.rulesetPointer = options.rulesetPointer;
     this.lifecycle = options.applies ?? 'always';
     this.docsLink = options.docsLink;
   }
@@ -81,7 +88,16 @@ export class SpectralRule extends ExternalRuleBase {
       {}
     );
 
-    const spectralResults = await this.spectral.run(inputs.nextJsonLike);
+    let spectralResults: SpectralResult[];
+    try {
+      const output = await runSpectral(this.rulesetPointer, this.flatSpecFile);
+      // sometimes first line has a message
+      const withoutLeading = output.substring(output.indexOf('[')).trim();
+      spectralResults = JSON.parse(withoutLeading) as SpectralResult[];
+    } catch (e: any) {
+      throw new Error(e.message ? e.message : e);
+    }
+
     const results: Result[] = [];
 
     for (const spectralResult of spectralResults) {
@@ -144,4 +160,51 @@ export class SpectralRule extends ExternalRuleBase {
     }
     return results;
   }
+}
+
+async function runSpectral(
+  spectralRuleset: string,
+  afterSpecAbsolutePath: string
+): Promise<string> {
+  const resultsOutput = path.join(
+    os.tmpdir(),
+    `spectral-output-${Math.floor(Math.random() * 100000)}.json`
+  );
+
+  return new Promise((resolve, reject) => {
+    const spectralRunning = spawn(
+      'spectral',
+      [
+        'lint',
+        afterSpecAbsolutePath,
+        '--format=json',
+        `--ruleset="${spectralRuleset}"`,
+        `--o="${resultsOutput}"`,
+      ],
+      { shell: false, cwd: process.cwd(), env: process.env }
+    );
+
+    spectralRunning.stdout.on('data', function (data) {
+      console.log('stdout: ' + data.toString());
+    });
+
+    let error = '';
+    spectralRunning.stderr.on('data', function (data) {
+      error = error + data.toString();
+    });
+
+    spectralRunning.on('exit', async function (code) {
+      if (code !== 2) {
+        resolve((await fs.readFile(resultsOutput)).toString());
+        fs.unlink(resultsOutput);
+      } else {
+        reject(`Error running spectral ruleset ${spectralRuleset}: ${error}`);
+      }
+    });
+    spectralRunning.on('error', () => {
+      reject(
+        `Error running Spectral CLI. Please install "npm install -g @stoplight/spectral-cli"`
+      );
+    });
+  });
 }
