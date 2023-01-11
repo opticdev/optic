@@ -50,24 +50,6 @@ describe('optic spec push', () => {
     ).toMatchSnapshot();
   });
 
-  test('requires at least one tag to push', async () => {
-    const workspace = await setupWorkspace('spec-push/simple', {
-      repo: true,
-      commit: true,
-    });
-    process.env.OPTIC_TOKEN = '123';
-    await run(`touch ./hello.yml`, false, workspace);
-    const { combined, code } = await runOptic(
-      workspace,
-      'spec push ./spec.yml'
-    );
-
-    expect(code).toBe(1);
-    expect(
-      normalizeWorkspace(workspace, sanitizeOutput(combined))
-    ).toMatchSnapshot();
-  });
-
   test('requires x-optic-url', async () => {
     const workspace = await setupWorkspace('spec-push/no-x-optic-url', {
       repo: true,

@@ -87,14 +87,6 @@ const getSpecPushAction =
       }
     }
 
-    if (tagsToAdd.length === 0) {
-      logger.error(
-        `Must include at least 1 tag in order to run optic spec push`
-      );
-      process.exitCode = 1;
-      return;
-    }
-
     let parseResult: ParseResult;
     try {
       parseResult = await getFileFromFsOrGit(spec_path, config, false);
@@ -128,7 +120,9 @@ const getSpecPushAction =
     const api = { id: '', url: 'todo get optic id from url' };
     logger.info('');
     logger.info(
-      `Uploading spec for api ${api.url} with tags ${tagsToAdd.join(', ')}`
+      `Uploading spec for api ${api.url} ${
+        tagsToAdd.length > 0 ? `with tags ${tagsToAdd.join(', ')}` : ''
+      }`
     );
     // TODO make API call
 
