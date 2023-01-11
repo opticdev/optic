@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import yaml from 'js-yaml';
 import { UserError } from '@useoptic/openapi-utilities';
 import Ajv from 'ajv';
+import os from 'os';
 import path from 'node:path';
 import { createOpticClient, OpticBackendClient } from './client';
 import {
@@ -18,6 +19,12 @@ export enum VCS {
 
 export const OPTIC_YML_NAME = 'optic.yml';
 export const OPTIC_DEV_YML_NAME = 'optic.dev.yml';
+export const USER_CONFIG_PATH = path.join(
+  os.homedir(),
+  '.config',
+  'optic',
+  'config.json'
+);
 
 type ConfigRuleset = { name: string; config: unknown };
 
@@ -42,6 +49,7 @@ export type OpticCliConfig = Omit<RawYmlConfig, 'ruleset' | 'extends'> & {
 
   ruleset: ConfigRuleset[];
   isAuthenticated: boolean;
+  authenticationType?: 'user' | 'env';
   client: OpticBackendClient;
 };
 
@@ -171,13 +179,49 @@ export const initializeRules = async (
   config.ruleset = [...rulesetMap.values()];
 };
 
+type UserConfig = {
+  token: string;
+};
+
+export async function readUserConfig(): Promise<UserConfig | null> {
+  try {
+    const validator = ajv.compile({
+      type: 'object',
+      properties: {
+        token: {
+          type: 'string',
+        },
+      },
+      required: ['token'],
+    });
+    const unvalidatedConfig = JSON.parse(
+      await fs.readFile(USER_CONFIG_PATH, 'utf-8')
+    );
+    const result = validator(unvalidatedConfig);
+    if (!result) {
+      return null;
+    }
+
+    return unvalidatedConfig as UserConfig;
+  } catch (e) {
+    return null;
+  }
+}
+
 export async function initializeConfig(): Promise<OpticCliConfig> {
   let cliConfig: OpticCliConfig = DefaultOpticCliConfig;
+  const userConfig = await readUserConfig();
   const maybeEnvToken = process.env.OPTIC_TOKEN;
-  // TODO implement read from XDG BASEDIR ~/.config/optic/config.json when optic login implemented
-  const maybeUserToken = undefined;
+  const maybeUserToken = userConfig?.token
+    ? Buffer.from(userConfig.token, 'base64').toString()
+    : null;
   const token = maybeEnvToken || maybeUserToken;
   if (token) {
+    cliConfig.authenticationType = maybeEnvToken
+      ? 'env'
+      : maybeUserToken
+      ? 'user'
+      : undefined;
     cliConfig.isAuthenticated = true;
     cliConfig.client = createOpticClient(token);
   }
