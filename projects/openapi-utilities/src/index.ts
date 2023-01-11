@@ -95,6 +95,7 @@ export {
 } from './utilities/count-changed-operations';
 
 export { ObjectDiff } from './diff/diff';
+export { RuleResult } from './new-types';
 
 export {
   sourcemapReader,

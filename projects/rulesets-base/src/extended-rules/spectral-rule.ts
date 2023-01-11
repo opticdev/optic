@@ -4,12 +4,14 @@ import {
   getFactForJsonPath,
   IChange,
   IFact,
+  ObjectDiff,
   OpenAPIV3,
   Result,
+  RuleResult,
 } from '@useoptic/openapi-utilities';
 import { ExternalRuleBase } from '../rules/external-rule-base';
 import { isExempted } from '../rule-runner/utils';
-import { exec, spawn } from 'child_process';
+import { spawn } from 'child_process';
 import path from 'node:path';
 import os from 'node:os';
 import fs from 'node:fs/promises';
@@ -68,6 +70,95 @@ export class SpectralRule extends ExternalRuleBase {
     this.rulesetPointer = options.rulesetPointer;
     this.lifecycle = options.applies ?? 'always';
     this.docsLink = options.docsLink;
+  }
+
+  async runRulesV2(inputs: {
+    context: any;
+    diffs: ObjectDiff[];
+    fromSpec: OpenAPIV3.Document;
+    toSpec: OpenAPIV3.Document;
+  }): Promise<RuleResult[]> {
+    // const factTree = constructFactTree(inputs.nextFacts);
+
+    // const changesByJsonPath: Record<string, IChange> = inputs.changelog.reduce(
+    //   (acc, next) => {
+    //     acc[next.location.jsonPath] = next;
+    //     return acc;
+    //   },
+    //   {}
+    // );
+
+    let spectralResults: SpectralResult[];
+    try {
+      const output = await runSpectral(this.rulesetPointer, this.flatSpecFile);
+      // sometimes first line has a message
+      const withoutLeading = output.substring(output.indexOf('[')).trim();
+      spectralResults = JSON.parse(withoutLeading) as SpectralResult[];
+    } catch (e: any) {
+      throw new Error(e.message ? e.message : e);
+    }
+
+    const results: RuleResult[] = [];
+
+    for (const spectralResult of spectralResults) {
+      const path = jsonPointerHelpers.compile(
+        spectralResult.path.map((p) => String(p))
+      );
+      const fact = getFactForJsonPath(path, factTree);
+      if (!fact) {
+        continue;
+      }
+
+      // This exemption is actually on the Fact level, rather than the spectral path
+      // This is for consistency with our current rule engine. In the future we should attach exemptions on the nodes which trigger them, which would require us to rework the rules engine
+      const rawForPath = jsonPointerHelpers.get(
+        inputs.nextJsonLike,
+        fact.location.jsonPath
+      );
+      const exempted = isExempted(rawForPath, this.name);
+
+      // TODO in the future update to pass in the JSON path from spectral, rather than the fact json path
+      if (this.lifecycle === 'always') {
+        results.push(
+          toOpticResult(spectralResult, 'always', fact, {
+            exempted,
+            docsLink: this.docsLink,
+          })
+        );
+      } else {
+        // find if there is an appropriate change
+        const maybeChange: IChange | undefined =
+          changesByJsonPath[fact.location.jsonPath];
+        if (maybeChange) {
+          if (this.lifecycle === 'added' && maybeChange.added) {
+            results.push(
+              toOpticResult(spectralResult, 'added', maybeChange, {
+                exempted,
+                docsLink: this.docsLink,
+              })
+            );
+          } else if (this.lifecycle === 'changed' && maybeChange.changed) {
+            results.push(
+              toOpticResult(spectralResult, 'changed', maybeChange, {
+                exempted,
+                docsLink: this.docsLink,
+              })
+            );
+          } else if (
+            this.lifecycle === 'addedOrChanged' &&
+            (maybeChange.added || maybeChange.changed)
+          ) {
+            results.push(
+              toOpticResult(spectralResult, 'addedOrChanged', maybeChange, {
+                exempted,
+                docsLink: this.docsLink,
+              })
+            );
+          }
+        }
+      }
+    }
+    return results;
   }
 
   async runRules(inputs: {

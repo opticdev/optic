@@ -7,6 +7,7 @@ import {
   ILocation,
   OpenApiKind,
   ObjectDiff,
+  RuleResult,
 } from '@useoptic/openapi-utilities';
 import {
   ISpectralDiagnostic,
@@ -205,9 +206,9 @@ export class RuleRunner {
       (rule) => !ExternalRuleBase.isInstance(rule)
     ) as (Ruleset | Rule)[];
 
-    const externalResults: Result[] = [];
+    const externalResults: RuleResult[] = [];
     for (const externalRule of externalRules) {
-      const results = await externalRule.runRules(inputs);
+      const results = await externalRule.runRulesV2(inputs);
       externalResults.push(...results);
     }
 

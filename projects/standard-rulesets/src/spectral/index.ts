@@ -1,6 +1,13 @@
 import { SpectralRule } from '@useoptic/rulesets-base';
 import Ajv from 'ajv';
-import { IChange, IFact, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
+import {
+  IChange,
+  IFact,
+  ObjectDiff,
+  OpenAPIV3,
+  Result,
+  RuleResult,
+} from '@useoptic/openapi-utilities';
 import { ExternalRuleBase } from '@useoptic/rulesets-base/build/rules/external-rule-base';
 import path from 'path';
 import os from 'os';
@@ -87,6 +94,55 @@ export class SpectralRulesets extends ExternalRuleBase {
 
     return allResults.flat(1);
   }
+
+  async runRulesV2(inputs: {
+    context: any;
+    objectDiff: ObjectDiff[];
+    nextJsonLike: OpenAPIV3.Document<{}>;
+    currentJsonLike: OpenAPIV3.Document<{}>;
+  }): Promise<RuleResult[]> {
+    const absolutePathTmpSpec = path.join(
+      os.tmpdir(),
+      `optic-next-spec-${Math.floor(Math.random() * 100000)}.json`
+    );
+
+    // write one tmp spec for all the spectral runs to use
+    await fs.writeFile(
+      absolutePathTmpSpec,
+      JSON.stringify(inputs.nextJsonLike)
+    );
+
+    const added = this.options.added.map((ruleInput) => {
+      return new SpectralRule({
+        name:
+          'Spectral Rules applied to additions to the specification: ' +
+          ruleInput,
+        flatSpecFile: absolutePathTmpSpec,
+        applies: 'added',
+        rulesetPointer: ruleInput,
+      });
+    });
+    const always = this.options.always.map((ruleInput) => {
+      return new SpectralRule({
+        name: 'Spectral Rules applied to entire specification: ' + ruleInput,
+        flatSpecFile: absolutePathTmpSpec,
+        applies: 'always',
+        rulesetPointer: ruleInput,
+      });
+    });
+
+    const allRulesets = [...always, ...added];
+
+    const allResults = await Promise.all(
+      allRulesets.map((ruleset) => ruleset.runRulesV2(inputs))
+    );
+
+    // remove tmp spec
+    await fs.unlink(absolutePathTmpSpec);
+
+    return allResults.flat(1);
+  }
+
   static async fromOpticConfig(
     config: unknown
   ): Promise<SpectralRulesets | string> {

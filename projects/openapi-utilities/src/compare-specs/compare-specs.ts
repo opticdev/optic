@@ -1,5 +1,6 @@
 import { OpenAPIV3 } from 'openapi-types';
 import { ObjectDiff, diff } from '../diff/diff';
+import { RuleResult } from '../new-types';
 const packageJson = require('../../package.json');
 
 type SerializedSourcemap = {
@@ -26,7 +27,7 @@ type RuleRunner = {
     diffs: ObjectDiff[];
     fromSpec: OpenAPIV3.Document;
     toSpec: OpenAPIV3.Document;
-  }) => Promise<{}[]>;
+  }) => Promise<RuleResult[]>;
 };
 
 export const compareSpecs = async (
@@ -35,7 +36,7 @@ export const compareSpecs = async (
   ruleRunner: RuleRunner
 ): Promise<{
   diffs: ObjectDiff[];
-  results: {}[];
+  results: RuleResult[];
   version: string;
 }> => {
   const fromSpec = from.isEmptySpec ? {} : from.jsonLike;
