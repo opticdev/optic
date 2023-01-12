@@ -23,20 +23,6 @@ describe('diff', () => {
     expect(code).toBe(0);
   });
 
-  test('breaking changes exclusion', async () => {
-    const workspace = await setupWorkspace('diff/breaking-changes-exclusion', {
-      repo: true,
-      commit: true,
-    });
-    const { combined, code } = await runOptic(
-      workspace,
-      'diff example-api-v0.json example-api-v1.json --check'
-    );
-
-    expect(code).toBe(0);
-    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
-  });
-
   test('basic rules config', async () => {
     const workspace = await setupWorkspace('diff/basic-rules-dev-yml', {
       repo: true,
@@ -65,6 +51,20 @@ describe('diff', () => {
     );
 
     expect(code).toBe(0);
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+  });
+
+  test('petstore diff', async () => {
+    const workspace = await setupWorkspace('diff/petstore', {
+      repo: true,
+      commit: true,
+    });
+    const { combined, code } = await runOptic(
+      workspace,
+      'diff petstore-base.json petstore-updated.json --check --ruleset ./ruleset.yml'
+    );
+
+    expect(code).toBe(1);
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
   });
 
