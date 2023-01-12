@@ -7,7 +7,12 @@ import {
   trackEvent as _trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 
-const id = machineIdSync();
+let id: string;
+try {
+  id = machineIdSync();
+} catch (e) {
+  id = 'unknown-user';
+}
 
 export const trackEvent = (eventName: string, properties?: any) =>
   _trackEvent(eventName, id, properties);
