@@ -44,6 +44,9 @@ export class SystemProxy {
         this.feedback.notable(`Mac System Proxy settings cleared`);
       };
     } else {
+      this.feedback.notable(
+        `Proxy running on ${this.proxyUrl}. System proxy updated`
+      );
       console.log(
         `automatic proxy configuration is not supported on ${platform}`
       );
