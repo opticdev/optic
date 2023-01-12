@@ -8,9 +8,7 @@
   "paths": {
     "/user": {
       "post": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "x-maturity": "stable",
         "summary": "Create user",
         "description": "This can only be done by the logged in user.",
@@ -37,9 +35,7 @@
     },
     "/user/login": {
       "get": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "x-maturity": "wip",
         "summary": "Logs user into the system",
         "operationId": "loginUser",
@@ -85,7 +81,13 @@
             "content": {
               "application/xml": {
                 "schema": {
-                  "type": "string"
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["id"]
                 }
               },
               "application/json": {
@@ -104,9 +106,7 @@
     },
     "/user/logout": {
       "get": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "x-maturity": "wip",
         "summary": "Logs out current logged in user session",
         "operationId": "logoutUser",
@@ -120,9 +120,7 @@
     },
     "/user/{username}": {
       "get": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "x-maturity": "wip",
         "summary": "Get user by user name",
         "operationId": "getUserByName",
@@ -164,9 +162,7 @@
         }
       },
       "patch": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "x-maturity": "wip",
         "summary": "Updated user",
         "description": "This can only be done by the logged in user.",
@@ -206,9 +202,7 @@
         "x-codegen-request-body-name": "body"
       },
       "delete": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "summary": "Delete user",
         "x-maturity": "wip",
         "description": "This can only be done by the logged in user.",
@@ -261,11 +255,7 @@
           "status": {
             "type": "string",
             "description": "Order Status",
-            "enum": [
-              "placed",
-              "approved",
-              "delivered"
-            ]
+            "enum": ["placed", "approved", "delivered"]
           },
           "complete": {
             "type": "boolean",
@@ -293,7 +283,15 @@
       },
       "User": {
         "type": "object",
-        "required": ["id", "username", "firstName", "lastName", "email", "password", "phone"],
+        "required": [
+          "id",
+          "username",
+          "firstName",
+          "lastName",
+          "email",
+          "password",
+          "phone"
+        ],
         "properties": {
           "id": {
             "type": "integer",
@@ -326,41 +324,42 @@
         "xml": {
           "name": "User"
         }
-      }, "UserPatch": {
-  "type": "object",
-  "properties": {
-    "id": {
-      "type": "integer",
-      "format": "int64"
-    },
-    "username": {
-      "type": "string"
-    },
-    "firstName": {
-      "type": "string"
-    },
-    "lastName": {
-      "type": "string"
-    },
-    "email": {
-      "type": "string"
-    },
-    "password": {
-      "type": "string"
-    },
-    "phone": {
-      "type": "string"
-    },
-    "userStatus": {
-      "type": "integer",
-      "description": "User Status",
-      "format": "int32"
-    }
-  },
-  "xml": {
-    "name": "User"
-  }
-},
+      },
+      "UserPatch": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "username": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "userStatus": {
+            "type": "integer",
+            "description": "User Status",
+            "format": "int32"
+          }
+        },
+        "xml": {
+          "name": "User"
+        }
+      },
       "Tag": {
         "type": "object",
         "properties": {
@@ -377,10 +376,7 @@
         }
       },
       "Pet": {
-        "required": [
-          "name",
-          "photoUrls"
-        ],
+        "required": ["name", "photoUrls"],
         "type": "object",
         "properties": {
           "id": {
@@ -417,11 +413,7 @@
           "status": {
             "type": "string",
             "description": "pet status in the store",
-            "enum": [
-              "available",
-              "pending",
-              "sold"
-            ]
+            "enum": ["available", "pending", "sold"]
           }
         },
         "xml": {
