@@ -40,6 +40,11 @@ export function getLocation<T extends V3FactType>(
   const parts = jsonPointer.decode(fact.location.jsonPath);
   if (fact.type === 'specification') {
     return {} as FactLocation<T>;
+  } else if (fact.type === 'path') {
+    const [, pathPattern] = parts;
+    return {
+      pathPattern,
+    } as FactLocation<T>;
   } else if (
     fact.type === 'operation' ||
     fact.type === 'request-header' ||
@@ -140,6 +145,12 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
 
     for (let [pathPattern, paths] of Object.entries(this.input.paths || {})) {
       const traverser = this;
+      yield {
+        location: {
+          jsonPath: jsonPointer.append('', 'paths', pathPattern),
+        },
+        type: 'path',
+      };
 
       const traverseIfPresent = function* (
         method: OpenAPIV3.HttpMethods

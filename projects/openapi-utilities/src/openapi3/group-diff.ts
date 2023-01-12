@@ -7,11 +7,6 @@ import {
 } from './json-path-interpreters';
 import { getLocation, OpenApiV3Traverser } from './traverser';
 
-function getEndpointId(endpoint: { pathPattern: string; method: string }) {
-  const { pathPattern, method } = endpoint;
-  return `${pathPattern}.${method.toUpperCase()}`;
-}
-
 function constructTree(spec: OpenAPIV3.Document) {
   const traverser = new OpenApiV3Traverser();
   traverser.traverse(spec);
@@ -51,15 +46,39 @@ type Endpoint = {
 
 class GroupedDiffs {
   public specification: Diff[];
-  public endpoints: Record<string, Endpoint>;
+  public paths: Record<
+    string,
+    {
+      diffs: Diff[];
+      methods: Record<string, Endpoint>;
+    }
+  >;
   constructor() {
-    this.endpoints = {};
+    this.paths = {};
     this.specification = [];
   }
 
-  getOrSetEndpoint(endpointId: string): Endpoint {
-    if (this.endpoints[endpointId]) {
-      return this.endpoints[endpointId];
+  getOrSetPath(path: string): {
+    diffs: Diff[];
+    methods: Record<string, Endpoint>;
+  } {
+    if (this.paths[path]) {
+      return this.paths[path];
+    } else {
+      const pathObject = {
+        diffs: [],
+        methods: {},
+      };
+      this.paths[path] = pathObject;
+      return pathObject;
+    }
+  }
+
+  getOrSetEndpoint(path: string, method: string): Endpoint {
+    const pathObject = this.getOrSetPath(path);
+    const methodLower = method.toLowerCase();
+    if (pathObject.methods[methodLower]) {
+      return pathObject.methods[methodLower];
     } else {
       const endpoint: Endpoint = {
         diffs: [],
@@ -73,13 +92,13 @@ class GroupedDiffs {
         },
         responses: {},
       };
-      this.endpoints[endpointId] = endpoint;
+      pathObject.methods[methodLower] = endpoint;
       return endpoint;
     }
   }
 
-  getOrSetRequestBody(endpointId: string, contentType: string): Body {
-    const endpoint = this.getOrSetEndpoint(endpointId);
+  getOrSetRequestBody(path: string, method: string, contentType: string): Body {
+    const endpoint = this.getOrSetEndpoint(path, method);
     if (endpoint.request.contents[contentType]) {
       return endpoint.request.contents[contentType];
     } else {
@@ -91,8 +110,8 @@ class GroupedDiffs {
     }
   }
 
-  getOrSetResponse(endpointId: string, statusCode: string): Response {
-    const endpoint = this.getOrSetEndpoint(endpointId);
+  getOrSetResponse(path: string, method: string, statusCode: string): Response {
+    const endpoint = this.getOrSetEndpoint(path, method);
 
     if (endpoint.responses[statusCode]) {
       return endpoint.responses[statusCode];
@@ -108,11 +127,12 @@ class GroupedDiffs {
   }
 
   getOrSetResponseBody(
-    endpointId: string,
+    path: string,
+    method: string,
     statusCode: string,
     contentType: string
   ): Body {
-    const response = this.getOrSetResponse(endpointId, statusCode);
+    const response = this.getOrSetResponse(path, method, statusCode);
     if (response.contents[contentType]) {
       return response.contents[contentType];
     } else {
@@ -148,50 +168,48 @@ export function groupDiffsByEndpoint(
       const diffToAdd = { ...diff, trail, change: typeofDiff(diff) };
       if (fact.type === 'specification') {
         grouped.specification.push(diffToAdd);
+      } else if (fact.type === 'path') {
+        const { pathPattern } = getLocation(fact);
+        const path = grouped.getOrSetPath(pathPattern);
+        path.diffs.push(diffToAdd);
       } else if (fact.type === 'operation') {
-        const location = getLocation(fact);
-        const endpointId = getEndpointId(location);
-        const endpoint = grouped.getOrSetEndpoint(endpointId);
+        const { pathPattern, method } = getLocation(fact);
+        const endpoint = grouped.getOrSetEndpoint(pathPattern, method);
         endpoint.diffs.push(diffToAdd);
       } else if (fact.type === 'request-header') {
-        const location = getLocation(fact);
-        const endpointId = getEndpointId(location);
-        const endpoint = grouped.getOrSetEndpoint(endpointId);
+        const { pathPattern, method } = getLocation(fact);
+        const endpoint = grouped.getOrSetEndpoint(pathPattern, method);
         endpoint.headerParameters.push(diffToAdd);
       } else if (fact.type === 'request-query') {
-        const location = getLocation(fact);
-        const endpointId = getEndpointId(location);
-        const endpoint = grouped.getOrSetEndpoint(endpointId);
+        const { pathPattern, method } = getLocation(fact);
+        const endpoint = grouped.getOrSetEndpoint(pathPattern, method);
         endpoint.queryParameters.push(diffToAdd);
       } else if (fact.type === 'request-cookie') {
-        const location = getLocation(fact);
-        const endpointId = getEndpointId(location);
-        const endpoint = grouped.getOrSetEndpoint(endpointId);
+        const { pathPattern, method } = getLocation(fact);
+        const endpoint = grouped.getOrSetEndpoint(pathPattern, method);
         endpoint.cookieParameters.push(diffToAdd);
       } else if (fact.type === 'request-path') {
-        const location = getLocation(fact);
-        const endpointId = getEndpointId(location);
-        const endpoint = grouped.getOrSetEndpoint(endpointId);
+        const { pathPattern, method } = getLocation(fact);
+        const endpoint = grouped.getOrSetEndpoint(pathPattern, method);
         endpoint.pathParameters.push(diffToAdd);
       } else if (fact.type === 'requestBody') {
-        const location = getLocation(fact);
-        const endpointId = getEndpointId(location);
-        const endpoint = grouped.getOrSetEndpoint(endpointId);
+        const { pathPattern, method } = getLocation(fact);
+        const endpoint = grouped.getOrSetEndpoint(pathPattern, method);
         endpoint.request.diffs.push(diffToAdd);
       } else if (fact.type === 'response') {
-        const location = getLocation(fact);
-        const endpointId = getEndpointId(location);
+        const { pathPattern, method, statusCode } = getLocation(fact);
         const response = grouped.getOrSetResponse(
-          endpointId,
-          location.statusCode
+          pathPattern,
+          method,
+          statusCode
         );
         response.diffs.push(diffToAdd);
       } else if (fact.type === 'response-header') {
-        const location = getLocation(fact);
-        const endpointId = getEndpointId(location);
+        const { pathPattern, method, statusCode } = getLocation(fact);
         const response = grouped.getOrSetResponse(
-          endpointId,
-          location.statusCode
+          pathPattern,
+          method,
+          statusCode
         );
         response.headers.push(diffToAdd);
       } else if (
@@ -200,7 +218,6 @@ export function groupDiffsByEndpoint(
         fact.type === 'body-example'
       ) {
         const location = getLocation(fact);
-        const endpointId = getEndpointId(location);
 
         if ('trail' in location) {
           // For field locations we need to adjust the trails since each field is considered significant
@@ -211,9 +228,14 @@ export function groupDiffsByEndpoint(
         }
         const body =
           location.location === 'request'
-            ? grouped.getOrSetRequestBody(endpointId, location.contentType)
+            ? grouped.getOrSetRequestBody(
+                location.pathPattern,
+                location.method,
+                location.contentType
+              )
             : grouped.getOrSetResponseBody(
-                endpointId,
+                location.pathPattern,
+                location.method,
                 location.statusCode,
                 location.contentType
               );

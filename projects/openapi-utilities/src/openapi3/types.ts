@@ -1,7 +1,8 @@
-import { OpenAPIV3 } from 'openapi-types';
+import { OpenAPI, OpenAPIV3 } from 'openapi-types';
 
 export type V3FactType =
   | 'specification'
+  | 'path'
   | 'operation'
   | 'request-header'
   | 'request-query'
@@ -28,6 +29,8 @@ export type OpenApiV3TraverserFact<T extends V3FactType> = T extends T
 
 export type FactLocation<T extends V3FactType> = T extends 'specification'
   ? {}
+  : T extends 'path'
+  ? { pathPattern: string }
   : T extends
       | 'operation'
       | 'request-header'
@@ -83,6 +86,8 @@ export type FactLocation<T extends V3FactType> = T extends 'specification'
 
 export type FactRawItem<T extends V3FactType> = T extends 'specification'
   ? OpenAPIV3.Document
+  : T extends 'path'
+  ? OpenAPIV3.PathItemObject
   : T extends 'operation'
   ? OpenAPIV3.OperationObject
   : T extends 'request-header'

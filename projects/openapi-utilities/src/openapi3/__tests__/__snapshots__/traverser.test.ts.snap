@@ -29,7 +29,48 @@ exports[`interpreters for operation can get raw fact details 1`] = `
     "content": {
       "*/*": {
         "schema": {
-          "$ref": "#/components/schemas/User",
+          "properties": {
+            "email": {
+              "type": "string",
+            },
+            "firstName": {
+              "type": "string",
+            },
+            "id": {
+              "format": "int64",
+              "type": "integer",
+            },
+            "lastName": {
+              "type": "string",
+            },
+            "password": {
+              "type": "string",
+            },
+            "phone": {
+              "type": "string",
+            },
+            "userStatus": {
+              "description": "User Status",
+              "format": "int32",
+              "type": "integer",
+            },
+            "username": {
+              "type": "string",
+            },
+          },
+          "required": [
+            "id",
+            "username",
+            "firstName",
+            "lastName",
+            "email",
+            "password",
+            "phone",
+          ],
+          "type": "object",
+          "xml": {
+            "name": "User",
+          },
         },
       },
     },
@@ -82,7 +123,48 @@ exports[`interpreters for requestBody can get raw fact details 1`] = `
   "content": {
     "*/*": {
       "schema": {
-        "$ref": "#/components/schemas/User",
+        "properties": {
+          "email": {
+            "type": "string",
+          },
+          "firstName": {
+            "type": "string",
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer",
+          },
+          "lastName": {
+            "type": "string",
+          },
+          "password": {
+            "type": "string",
+          },
+          "phone": {
+            "type": "string",
+          },
+          "userStatus": {
+            "description": "User Status",
+            "format": "int32",
+            "type": "integer",
+          },
+          "username": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "id",
+          "username",
+          "firstName",
+          "lastName",
+          "email",
+          "password",
+          "phone",
+        ],
+        "type": "object",
+        "xml": {
+          "name": "User",
+        },
       },
     },
   },
@@ -134,242 +216,6 @@ exports[`interpreters for response-header get locations from json paths 1`] = `
 
 exports[`interpreters for specification can get raw fact details 1`] = `
 {
-  "components": {
-    "schemas": {
-      "ApiResponse": {
-        "properties": {
-          "code": {
-            "format": "int32",
-            "type": "integer",
-          },
-          "message": {
-            "type": "string",
-          },
-          "type": {
-            "type": "string",
-          },
-        },
-        "type": "object",
-      },
-      "Category": {
-        "properties": {
-          "id": {
-            "format": "int64",
-            "type": "integer",
-          },
-          "name": {
-            "type": "string",
-          },
-        },
-        "type": "object",
-        "xml": {
-          "name": "Category",
-        },
-      },
-      "Order": {
-        "properties": {
-          "complete": {
-            "default": false,
-            "type": "boolean",
-          },
-          "id": {
-            "format": "int64",
-            "type": "integer",
-          },
-          "petId": {
-            "format": "int64",
-            "type": "integer",
-          },
-          "quantity": {
-            "format": "int32",
-            "type": "integer",
-          },
-          "shipDate": {
-            "format": "date-time",
-            "type": "string",
-          },
-          "status": {
-            "description": "Order Status",
-            "enum": [
-              "placed",
-              "approved",
-              "delivered",
-            ],
-            "type": "string",
-          },
-        },
-        "type": "object",
-        "xml": {
-          "name": "Order",
-        },
-      },
-      "Pet": {
-        "properties": {
-          "category": {
-            "$ref": "#/components/schemas/Category",
-          },
-          "id": {
-            "format": "int64",
-            "type": "integer",
-          },
-          "name": {
-            "example": "doggie",
-            "type": "string",
-          },
-          "photoUrls": {
-            "items": {
-              "type": "string",
-            },
-            "type": "array",
-            "xml": {
-              "name": "photoUrl",
-              "wrapped": true,
-            },
-          },
-          "status": {
-            "description": "pet status in the store",
-            "enum": [
-              "available",
-              "pending",
-              "sold",
-            ],
-            "type": "string",
-          },
-          "tags": {
-            "items": {
-              "$ref": "#/components/schemas/Tag",
-            },
-            "type": "array",
-            "xml": {
-              "name": "tag",
-              "wrapped": true,
-            },
-          },
-        },
-        "required": [
-          "name",
-          "photoUrls",
-        ],
-        "type": "object",
-        "xml": {
-          "name": "Pet",
-        },
-      },
-      "Tag": {
-        "properties": {
-          "id": {
-            "format": "int64",
-            "type": "integer",
-          },
-          "name": {
-            "type": "string",
-          },
-        },
-        "type": "object",
-        "xml": {
-          "name": "Tag",
-        },
-      },
-      "User": {
-        "properties": {
-          "email": {
-            "type": "string",
-          },
-          "firstName": {
-            "type": "string",
-          },
-          "id": {
-            "format": "int64",
-            "type": "integer",
-          },
-          "lastName": {
-            "type": "string",
-          },
-          "password": {
-            "type": "string",
-          },
-          "phone": {
-            "type": "string",
-          },
-          "userStatus": {
-            "description": "User Status",
-            "format": "int32",
-            "type": "integer",
-          },
-          "username": {
-            "type": "string",
-          },
-        },
-        "required": [
-          "id",
-          "username",
-          "firstName",
-          "lastName",
-          "email",
-          "password",
-          "phone",
-        ],
-        "type": "object",
-        "xml": {
-          "name": "User",
-        },
-      },
-      "UserPatch": {
-        "properties": {
-          "email": {
-            "type": "string",
-          },
-          "firstName": {
-            "type": "string",
-          },
-          "id": {
-            "format": "int64",
-            "type": "integer",
-          },
-          "lastName": {
-            "type": "string",
-          },
-          "password": {
-            "type": "string",
-          },
-          "phone": {
-            "type": "string",
-          },
-          "userStatus": {
-            "description": "User Status",
-            "format": "int32",
-            "type": "integer",
-          },
-          "username": {
-            "type": "string",
-          },
-        },
-        "type": "object",
-        "xml": {
-          "name": "User",
-        },
-      },
-    },
-    "securitySchemes": {
-      "api_key": {
-        "in": "header",
-        "name": "api_key",
-        "type": "apiKey",
-      },
-      "petstore_auth": {
-        "flows": {
-          "implicit": {
-            "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
-            "scopes": {
-              "read:pets": "read your pets",
-              "write:pets": "modify pets in your account",
-            },
-          },
-        },
-        "type": "oauth2",
-      },
-    },
-  },
   "info": {
     "description": "This is a sample server Petstore server.  You can find out more about     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample, you can use the api key \`special-key\` to test the authorization     filters.",
     "title": "Swagger Petstore",
@@ -385,7 +231,48 @@ exports[`interpreters for specification can get raw fact details 1`] = `
           "content": {
             "*/*": {
               "schema": {
-                "$ref": "#/components/schemas/User",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                  },
+                  "firstName": {
+                    "type": "string",
+                  },
+                  "id": {
+                    "format": "int64",
+                    "type": "integer",
+                  },
+                  "lastName": {
+                    "type": "string",
+                  },
+                  "password": {
+                    "type": "string",
+                  },
+                  "phone": {
+                    "type": "string",
+                  },
+                  "userStatus": {
+                    "description": "User Status",
+                    "format": "int32",
+                    "type": "integer",
+                  },
+                  "username": {
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "id",
+                  "username",
+                  "firstName",
+                  "lastName",
+                  "email",
+                  "password",
+                  "phone",
+                ],
+                "type": "object",
+                "xml": {
+                  "name": "User",
+                },
               },
             },
           },
@@ -546,12 +433,94 @@ exports[`interpreters for specification can get raw fact details 1`] = `
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                    },
+                    "firstName": {
+                      "type": "string",
+                    },
+                    "id": {
+                      "format": "int64",
+                      "type": "integer",
+                    },
+                    "lastName": {
+                      "type": "string",
+                    },
+                    "password": {
+                      "type": "string",
+                    },
+                    "phone": {
+                      "type": "string",
+                    },
+                    "userStatus": {
+                      "description": "User Status",
+                      "format": "int32",
+                      "type": "integer",
+                    },
+                    "username": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "id",
+                    "username",
+                    "firstName",
+                    "lastName",
+                    "email",
+                    "password",
+                    "phone",
+                  ],
+                  "type": "object",
+                  "xml": {
+                    "name": "User",
+                  },
                 },
               },
               "application/xml": {
                 "schema": {
-                  "$ref": "#/components/schemas/User",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                    },
+                    "firstName": {
+                      "type": "string",
+                    },
+                    "id": {
+                      "format": "int64",
+                      "type": "integer",
+                    },
+                    "lastName": {
+                      "type": "string",
+                    },
+                    "password": {
+                      "type": "string",
+                    },
+                    "phone": {
+                      "type": "string",
+                    },
+                    "userStatus": {
+                      "description": "User Status",
+                      "format": "int32",
+                      "type": "integer",
+                    },
+                    "username": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "id",
+                    "username",
+                    "firstName",
+                    "lastName",
+                    "email",
+                    "password",
+                    "phone",
+                  ],
+                  "type": "object",
+                  "xml": {
+                    "name": "User",
+                  },
                 },
               },
             },
@@ -590,7 +559,48 @@ exports[`interpreters for specification can get raw fact details 1`] = `
           "content": {
             "*/*": {
               "schema": {
-                "$ref": "#/components/schemas/User",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                  },
+                  "firstName": {
+                    "type": "string",
+                  },
+                  "id": {
+                    "format": "int64",
+                    "type": "integer",
+                  },
+                  "lastName": {
+                    "type": "string",
+                  },
+                  "password": {
+                    "type": "string",
+                  },
+                  "phone": {
+                    "type": "string",
+                  },
+                  "userStatus": {
+                    "description": "User Status",
+                    "format": "int32",
+                    "type": "integer",
+                  },
+                  "username": {
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "id",
+                  "username",
+                  "firstName",
+                  "lastName",
+                  "email",
+                  "password",
+                  "phone",
+                ],
+                "type": "object",
+                "xml": {
+                  "name": "User",
+                },
               },
             },
           },
@@ -628,6 +638,12 @@ exports[`traversing a spec can traverse a spec (./inputs/openapi3/polymorphic-sc
       "jsonPath": "",
     },
     "type": "specification",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1example",
+    },
+    "type": "path",
   },
   {
     "location": {
@@ -714,6 +730,12 @@ exports[`traversing a spec can traverse a spec (./inputs/openapi3/polymorphic-sc
   },
   {
     "location": {
+      "jsonPath": "/paths/~1example",
+    },
+    "type": "path",
+  },
+  {
+    "location": {
       "jsonPath": "/paths/~1example/get",
     },
     "type": "operation",
@@ -797,9 +819,69 @@ exports[`traversing a spec can traverse a spec (./inputs/openapi3/smallpetstore0
   },
   {
     "location": {
+      "jsonPath": "/paths/~1user",
+    },
+    "type": "path",
+  },
+  {
+    "location": {
       "jsonPath": "/paths/~1user/post",
     },
     "type": "operation",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*",
+    },
+    "type": "body",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/id",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/username",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/firstName",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/lastName",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/email",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/password",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/phone",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/userStatus",
+    },
+    "type": "field",
   },
   {
     "location": {
@@ -826,9 +908,69 @@ exports[`traversing a spec can traverse a spec (./inputs/openapi3/smallpetstore1
   },
   {
     "location": {
+      "jsonPath": "/paths/~1user",
+    },
+    "type": "path",
+  },
+  {
+    "location": {
       "jsonPath": "/paths/~1user/post",
     },
     "type": "operation",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*",
+    },
+    "type": "body",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/id",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/username",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/firstName",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/lastName",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/email",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/password",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/phone",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/userStatus",
+    },
+    "type": "field",
   },
   {
     "location": {
@@ -841,6 +983,12 @@ exports[`traversing a spec can traverse a spec (./inputs/openapi3/smallpetstore1
       "jsonPath": "/paths/~1user/post/responses/default",
     },
     "type": "response",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1login",
+    },
+    "type": "path",
   },
   {
     "location": {
@@ -904,6 +1052,12 @@ exports[`traversing a spec can traverse a spec (./inputs/openapi3/smallpetstore1
   },
   {
     "location": {
+      "jsonPath": "/paths/~1user~1logout",
+    },
+    "type": "path",
+  },
+  {
+    "location": {
       "jsonPath": "/paths/~1user~1logout/get",
     },
     "type": "operation",
@@ -916,6 +1070,12 @@ exports[`traversing a spec can traverse a spec (./inputs/openapi3/smallpetstore1
   },
   {
     "location": {
+      "jsonPath": "/paths/~1user~1{username}",
+    },
+    "type": "path",
+  },
+  {
+    "location": {
       "jsonPath": "/paths/~1user~1{username}/get",
     },
     "type": "operation",
@@ -925,6 +1085,114 @@ exports[`traversing a spec can traverse a spec (./inputs/openapi3/smallpetstore1
       "jsonPath": "/paths/~1user~1{username}/get/parameters/0",
     },
     "type": "request-path",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml",
+    },
+    "type": "body",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/id",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/username",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/firstName",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/lastName",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/email",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/password",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/phone",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/userStatus",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json",
+    },
+    "type": "body",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/id",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/username",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/firstName",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/lastName",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/email",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/password",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/phone",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/userStatus",
+    },
+    "type": "field",
   },
   {
     "location": {
@@ -955,6 +1223,60 @@ exports[`traversing a spec can traverse a spec (./inputs/openapi3/smallpetstore1
       "jsonPath": "/paths/~1user~1{username}/patch/parameters/0",
     },
     "type": "request-path",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/patch/requestBody/content/*~1*",
+    },
+    "type": "body",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/patch/requestBody/content/*~1*/schema/properties/id",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/patch/requestBody/content/*~1*/schema/properties/username",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/patch/requestBody/content/*~1*/schema/properties/firstName",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/patch/requestBody/content/*~1*/schema/properties/lastName",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/patch/requestBody/content/*~1*/schema/properties/email",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/patch/requestBody/content/*~1*/schema/properties/password",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/patch/requestBody/content/*~1*/schema/properties/phone",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1{username}/patch/requestBody/content/*~1*/schema/properties/userStatus",
+    },
+    "type": "field",
   },
   {
     "location": {
