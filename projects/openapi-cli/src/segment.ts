@@ -14,6 +14,8 @@ try {
   id = 'unknown-user';
 }
 
+export { flushEvents };
+
 export const trackEvent = (eventName: string, properties?: any) =>
   _trackEvent(eventName, id, properties);
 
