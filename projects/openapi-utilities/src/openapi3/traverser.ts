@@ -1,7 +1,4 @@
-import {
-  jsonPointerHelpers as jsonPointer,
-  jsonPointerHelpers,
-} from '@useoptic/json-pointer-helpers';
+import { jsonPointerHelpers as jsonPointer } from '@useoptic/json-pointer-helpers';
 import { OpenAPIV3, OpenAPIV3_1 } from 'openapi-types';
 // This is the V2 traverser version which is intended to be used for
 // more efficient storage + better compatibility between versions
@@ -77,7 +74,7 @@ export function getRaw<T extends OpenApiV3TraverserFact['type']>(
   spec: OpenAPIV3.Document,
   fact: Extract<OpenApiV3TraverserFact, { type: T }>
 ): RawItem<T> {
-  return jsonPointerHelpers.get(spec, fact.location.jsonPath);
+  return jsonPointer.get(spec, fact.location.jsonPath);
 }
 
 export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
