@@ -10,7 +10,6 @@
     "/src"
   ],
   "bin": {
-    "oas": "build/oas.js",
     "optic": "build/index.js"
   },
   "scripts": {
