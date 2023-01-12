@@ -8,8 +8,7 @@ import { captureCommand } from './commands/capture';
 import { newCommand } from './commands/new';
 import { verifyCommand } from './commands/verify';
 import { CliConfig, readConfig } from './config';
-import { initSegment, trackEvent } from './segment';
-import { initSentry } from './sentry';
+import { trackEvent } from './segment';
 import { clearCommand } from './commands/clear';
 import { captureCertCommand } from './commands/capture-cert';
 
@@ -47,24 +46,6 @@ export async function runCli(packageManifest?: {
     'Updated documented is at: http://useoptic.com/docs/document-existing-api\n\n'
   );
 
-  const runId = randomUUID();
-  if (config.analytics.segment) {
-    initSegment({
-      ...config.analytics.segment,
-      version: config.package.version,
-      name: config.package.name,
-      runId,
-    });
-  }
-
-  if (config.errors.sentry) {
-    initSentry({
-      ...config.errors.sentry,
-      version: config.package.version,
-      runId,
-    });
-  }
-
   const cli = await makeCli(config);
   const feedback = createCommandFeedback(cli);
   const subCommandNames = cli.commands.flatMap((cmd) => [
@@ -95,7 +76,6 @@ export async function runCli(packageManifest?: {
   }
 
   trackEvent('openapi-cli-run', {
-    runId,
     version: config.package.version,
   });
 
