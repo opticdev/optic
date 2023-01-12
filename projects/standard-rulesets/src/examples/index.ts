@@ -1,4 +1,4 @@
-import { Rule, Ruleset } from '@useoptic/rulesets-base';
+import { Rule, RuleContext, Ruleset } from '@useoptic/rulesets-base';
 import Ajv from 'ajv';
 import { appliesWhen } from './constants';
 import {
@@ -60,7 +60,12 @@ export class ExamplesRuleset extends Ruleset {
     return new ExamplesRuleset(validatedConfig);
   }
 
-  constructor(config: YamlConfig = {}) {
+  constructor(
+    config: YamlConfig & {
+      matches?: (context: RuleContext) => boolean;
+      docsLink?: string;
+    }
+  ) {
     const rules: Rule[] = [
       requireValidResponseExamples,
       requirePropertyExamplesMatchSchema,
@@ -81,6 +86,8 @@ export class ExamplesRuleset extends Ruleset {
       ...config,
       name: 'Examples ruleset',
       rules: rules,
+      matches: config.matches,
+      docsLink: config.docsLink,
     });
   }
 }
