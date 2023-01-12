@@ -1,4 +1,7 @@
-import { jsonPointerHelpers as jsonPointer } from '@useoptic/json-pointer-helpers';
+import {
+  jsonPointerHelpers as jsonPointer,
+  jsonPointerHelpers,
+} from '@useoptic/json-pointer-helpers';
 import { OpenAPIV3, OpenAPIV3_1 } from 'openapi-types';
 // This is the V2 traverser version which is intended to be used for
 // more efficient storage + better compatibility between versions
@@ -7,6 +10,7 @@ export type OpenApiV3TraverserFact = {
     jsonPath: string;
   };
   type:
+    | 'specification'
     | 'operation'
     | 'request-header'
     | 'request-query'
@@ -17,10 +21,38 @@ export type OpenApiV3TraverserFact = {
     | 'field'
     | 'response'
     | 'response-header'
-    | 'specification'
     | 'body-example'
     | 'component-schema-example';
 };
+
+type RawItem<T extends OpenApiV3TraverserFact['type']> =
+  T extends 'specification'
+    ? OpenAPIV3.Document
+    : T extends 'operation'
+    ? OpenAPIV3.OperationObject
+    : T extends 'request-header'
+    ? OpenAPIV3.ParameterObject
+    : T extends 'request-query'
+    ? OpenAPIV3.ParameterObject
+    : T extends 'request-cookie'
+    ? OpenAPIV3.ParameterObject
+    : T extends 'request-path'
+    ? OpenAPIV3.ParameterObject
+    : T extends 'body'
+    ? OpenAPIV3.MediaTypeObject
+    : T extends 'requestBody'
+    ? OpenAPIV3.RequestBodyObject
+    : T extends 'field'
+    ? OpenAPIV3.SchemaObject
+    : T extends 'response'
+    ? OpenAPIV3.ResponseObject
+    : T extends 'response-header'
+    ? OpenAPIV3.HeaderObject
+    : T extends 'body-example'
+    ? OpenAPIV3.ExampleObject
+    : T extends 'component-schema-example'
+    ? OpenAPIV3.ExampleObject
+    : never;
 
 type Traverse<DocSchema> = {
   format: string;
@@ -40,6 +72,13 @@ const isNotReferenceObject = <T extends {}>(
 const isObject = (value: any) => {
   return typeof value === 'object' && !Array.isArray(value) && value !== null;
 };
+
+export function getRaw<T extends OpenApiV3TraverserFact['type']>(
+  spec: OpenAPIV3.Document,
+  fact: Extract<OpenApiV3TraverserFact, { type: T }>
+): RawItem<T> {
+  return jsonPointerHelpers.get(spec, fact.location.jsonPath);
+}
 
 export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
   format = 'openapi3';
