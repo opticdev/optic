@@ -178,26 +178,30 @@ export function groupDiffsByEndpoint(
         if (diff.before !== undefined && diff.after === undefined) {
           const rawPathObject = jsonPointerHelpers.get(specs.from, diff.before);
           for (const method of Object.keys(rawPathObject)) {
-            const newDiff: Diff = {
-              before: jsonPointerHelpers.append(diff.before, method),
-              trail: '',
-              change: 'removed',
-            };
-            const endpointId = getEndpointId({ pathPattern, method });
-            const endpoint = grouped.getOrSetEndpoint(endpointId);
-            endpoint.diffs.push(newDiff);
+            if (Object.values(OpenAPIV3.HttpMethods).includes(method as any)) {
+              const newDiff: Diff = {
+                before: jsonPointerHelpers.append(diff.before, method),
+                trail: '',
+                change: 'removed',
+              };
+              const endpointId = getEndpointId({ pathPattern, method });
+              const endpoint = grouped.getOrSetEndpoint(endpointId);
+              endpoint.diffs.push(newDiff);
+            }
           }
         } else if (diff.before === undefined && diff.after !== undefined) {
           const rawPathObject = jsonPointerHelpers.get(specs.to, diff.after);
           for (const method of Object.keys(rawPathObject)) {
-            const newDiff: Diff = {
-              after: jsonPointerHelpers.append(diff.after, method),
-              trail: '',
-              change: 'added',
-            };
-            const endpointId = getEndpointId({ pathPattern, method });
-            const endpoint = grouped.getOrSetEndpoint(endpointId);
-            endpoint.diffs.push(newDiff);
+            if (Object.values(OpenAPIV3.HttpMethods).includes(method as any)) {
+              const newDiff: Diff = {
+                after: jsonPointerHelpers.append(diff.after, method),
+                trail: '',
+                change: 'added',
+              };
+              const endpointId = getEndpointId({ pathPattern, method });
+              const endpoint = grouped.getOrSetEndpoint(endpointId);
+              endpoint.diffs.push(newDiff);
+            }
           }
         }
       } else if (fact.type === 'operation') {
