@@ -1,31 +1,17 @@
 import { jsonPointerHelpers as jsonPointer } from '@useoptic/json-pointer-helpers';
 import { OpenAPIV3, OpenAPIV3_1 } from 'openapi-types';
-// This is the V2 traverser version which is intended to be used for
-// more efficient storage + better compatibility between versions
-export type OpenApiV3TraverserFact = {
-  location: {
-    jsonPath: string;
-  };
-  type:
-    | 'operation'
-    | 'request-header'
-    | 'request-query'
-    | 'request-cookie'
-    | 'request-path'
-    | 'body'
-    | 'requestBody'
-    | 'field'
-    | 'response'
-    | 'response-header'
-    | 'specification'
-    | 'body-example'
-    | 'component-schema-example';
-};
+import {
+  FactLocation,
+  FactRawItem,
+  OpenApiV3TraverserFact,
+  V3FactType,
+} from './types';
 
+// This is the V2 traverser version which is intended to be used for more efficient storage + better compatibility between OpenAPI versions
 type Traverse<DocSchema> = {
   format: string;
   traverse(input: DocSchema): void;
-  facts(): IterableIterator<OpenApiV3TraverserFact>;
+  facts(): IterableIterator<OpenApiV3TraverserFact<V3FactType>>;
 };
 
 const getReadableLocation = (jsonPath: string): string =>
@@ -41,6 +27,102 @@ const isObject = (value: any) => {
   return typeof value === 'object' && !Array.isArray(value) && value !== null;
 };
 
+export function getRaw<T extends V3FactType>(
+  spec: OpenAPIV3.Document,
+  fact: OpenApiV3TraverserFact<T>
+): FactRawItem<T> {
+  return jsonPointer.get(spec, fact.location.jsonPath);
+}
+
+export function getLocation<T extends V3FactType>(
+  fact: OpenApiV3TraverserFact<T>
+): FactLocation<T> {
+  const parts = jsonPointer.decode(fact.location.jsonPath);
+  if (fact.type === 'specification') {
+    return {} as FactLocation<T>;
+  } else if (fact.type === 'path') {
+    const [, pathPattern] = parts;
+    return {
+      pathPattern,
+    } as FactLocation<T>;
+  } else if (
+    fact.type === 'operation' ||
+    fact.type === 'request-header' ||
+    fact.type === 'request-query' ||
+    fact.type === 'request-cookie' ||
+    fact.type === 'request-path' ||
+    fact.type === 'requestBody'
+  ) {
+    const [, pathPattern, method] = parts;
+    return {
+      pathPattern,
+      method,
+    } as FactLocation<T>;
+  } else if (fact.type === 'body' || fact.type === 'body-example') {
+    // 'paths', {pathPattern}, {method}, 'requestBody', 'content', {contentType}
+    // OR
+    // 'paths', {pathPattern}, {method}, 'responses', {statusCode}, content', {contentType}
+    const isResponse = parts[3] === 'responses';
+    if (isResponse) {
+      const [, pathPattern, method, , statusCode, , contentType] = parts;
+      return {
+        location: 'response',
+        pathPattern,
+        method,
+        statusCode,
+        contentType,
+      } as FactLocation<T>;
+    } else {
+      const [, pathPattern, method, , , contentType] = parts;
+      return {
+        location: 'request',
+        pathPattern,
+        method,
+        contentType,
+      } as FactLocation<T>;
+    }
+  } else if (fact.type === 'field') {
+    const isResponse = parts[3] === 'responses';
+    if (isResponse) {
+      const [, pathPattern, method, , statusCode, , contentType, ...trail] =
+        parts;
+      return {
+        location: 'response',
+        pathPattern,
+        method,
+        statusCode,
+        contentType,
+        trail,
+      } as FactLocation<T>;
+    } else {
+      const [, pathPattern, method, , , contentType, ...trail] = parts;
+      return {
+        location: 'request',
+        pathPattern,
+        method,
+        contentType,
+        trail,
+      } as FactLocation<T>;
+    }
+  } else if (fact.type === 'response') {
+    const [, pathPattern, method, , statusCode] = parts;
+    return {
+      pathPattern,
+      method,
+      statusCode,
+    } as FactLocation<T>;
+  } else if (fact.type === 'response-header') {
+    const [, pathPattern, method, , statusCode, , name] = parts;
+    return {
+      pathPattern,
+      method,
+      statusCode,
+      headerName: name,
+    } as FactLocation<T>;
+  }
+  return {} as FactLocation<T>;
+}
+
 export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
   format = 'openapi3';
 
@@ -50,7 +132,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
     this.input = input;
   }
 
-  *facts(): IterableIterator<OpenApiV3TraverserFact> {
+  *facts(): IterableIterator<OpenApiV3TraverserFact<V3FactType>> {
     if (!this.input || (this.input as any)['x-optic-ci-empty-spec'] === true)
       return;
 
@@ -63,10 +145,16 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
 
     for (let [pathPattern, paths] of Object.entries(this.input.paths || {})) {
       const traverser = this;
+      yield {
+        location: {
+          jsonPath: jsonPointer.append('', 'paths', pathPattern),
+        },
+        type: 'path',
+      };
 
       const traverseIfPresent = function* (
         method: OpenAPIV3.HttpMethods
-      ): IterableIterator<OpenApiV3TraverserFact> {
+      ): IterableIterator<OpenApiV3TraverserFact<V3FactType>> {
         const pathObject = paths?.[method];
         if (pathObject) {
           yield* traverser.traverseOperations(pathObject, method, pathPattern);
@@ -95,7 +183,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
     operation: OpenAPIV3.OperationObject | OpenAPIV3_1.OperationObject,
     method: string,
     pathPattern: string
-  ): IterableIterator<OpenApiV3TraverserFact> {
+  ): IterableIterator<OpenApiV3TraverserFact<V3FactType>> {
     const jsonPath = jsonPointer.append('', 'paths', pathPattern, method);
     yield {
       location: {
@@ -170,9 +258,8 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
   *traverseResponse(
     response: OpenAPIV3.ResponseObject,
     jsonPath: string
-  ): IterableIterator<OpenApiV3TraverserFact> {
+  ): IterableIterator<OpenApiV3TraverserFact<V3FactType>> {
     yield* this.traverseResponseHeaders(response, jsonPath);
-
     for (let [contentType, body] of Object.entries(response.content || {})) {
       yield* this.traverseBody(
         body,
@@ -193,7 +280,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
     operation: OpenAPIV3.OperationObject | OpenAPIV3_1.OperationObject,
     jsonPath: string,
     operationPath: string
-  ): IterableIterator<OpenApiV3TraverserFact> {
+  ): IterableIterator<OpenApiV3TraverserFact<V3FactType>> {
     if (operation.parameters) {
       for (let [i, parameter] of Object.entries(operation.parameters)) {
         const nextJsonPath = jsonPointer.append(jsonPath, i);
@@ -265,7 +352,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
   *traverseResponseHeaders(
     response: OpenAPIV3.ResponseObject | OpenAPIV3_1.ResponsesObject,
     jsonPath: string
-  ): IterableIterator<OpenApiV3TraverserFact> {
+  ): IterableIterator<OpenApiV3TraverserFact<V3FactType>> {
     if (response.headers) {
       for (let [name, header] of Object.entries(response.headers)) {
         const nextJsonPath = jsonPointer.append(jsonPath, 'headers', name);
@@ -295,7 +382,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
     body: OpenAPIV3.MediaTypeObject | OpenAPIV3_1.MediaTypeObject,
     contentType: string,
     jsonPath: string
-  ): IterableIterator<OpenApiV3TraverserFact> {
+  ): IterableIterator<OpenApiV3TraverserFact<V3FactType>> {
     const { schema, examples, example } = body;
 
     if (schema) {
@@ -363,7 +450,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
   *traverseField(
     schema: OpenAPIV3.SchemaObject | OpenAPIV3_1.SchemaObject,
     jsonPath: string
-  ): IterableIterator<OpenApiV3TraverserFact> {
+  ): IterableIterator<OpenApiV3TraverserFact<V3FactType>> {
     yield {
       location: {
         jsonPath,
@@ -376,7 +463,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
   *traverseSchema(
     schema: OpenAPIV3.SchemaObject | OpenAPIV3_1.SchemaObject,
     jsonPath: string
-  ): IterableIterator<OpenApiV3TraverserFact> {
+  ): IterableIterator<OpenApiV3TraverserFact<V3FactType>> {
     if (schema.oneOf || schema.anyOf || schema.allOf) {
       const schemas = [
         { branchType: 'oneOf', schemas: schema.oneOf },
@@ -472,7 +559,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
       | OpenAPIV3_1.SchemaObject
       | OpenAPIV3_1.ReferenceObject,
     schemaName: string
-  ): IterableIterator<OpenApiV3TraverserFact> {
+  ): IterableIterator<OpenApiV3TraverserFact<V3FactType>> {
     const jsonPath = jsonPointer.append(
       '',
       'components',
