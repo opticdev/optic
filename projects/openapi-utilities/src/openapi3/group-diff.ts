@@ -14,24 +14,35 @@ function constructTree(spec: OpenAPIV3.Document) {
   return constructFactTree([...traverser.facts()]);
 }
 
-type Diff = {
+export type Diff = {
   trail: string; // The relative path from the diff to the significant node
   change: 'added' | 'changed' | 'removed';
-  before?: string;
-  after?: string;
-};
+} & (
+  | {
+      before?: undefined;
+      after: string;
+    }
+  | {
+      before: string;
+      after: string;
+    }
+  | {
+      before: string;
+      after?: undefined;
+    }
+);
 
-type Body = {
+export type Body = {
   diffs: Diff[];
 };
 
-type Response = {
+export type Response = {
   diffs: Diff[];
   headers: Diff[];
   contents: Record<string, Body>;
 };
 
-type Endpoint = {
+export type Endpoint = {
   diffs: Diff[];
   queryParameters: Diff[];
   pathParameters: Diff[];
@@ -44,7 +55,7 @@ type Endpoint = {
   responses: Record<string, Response>;
 };
 
-class GroupedDiffs {
+export class GroupedDiffs {
   public specification: Diff[];
   public paths: Record<
     string,
