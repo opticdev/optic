@@ -23,6 +23,8 @@ import {
 import { getAnonId } from '../../utils/anonymous-id';
 import { compute } from './compute';
 import { compressData } from './compressResults';
+import { generateRuleRunner } from './generate-rule-runner';
+import { OPTIC_STANDARD_KEY } from '../../constants';
 
 const description = `run a diff between two API specs`;
 
@@ -114,7 +116,7 @@ const runDiff = async (
   config: OpticCliConfig,
   options: DiffActionOptions
 ): Promise<{ checks: { passed: number; failed: number; total: number } }> => {
-  const { specResults, checks, ruleRunner, changelogData } = await compute(
+  const { specResults, checks, changelogData } = await compute(
     [baseFile, headFile],
     config,
     options
@@ -185,7 +187,16 @@ const runDiff = async (
       base: options.base,
     };
 
-    // TODO remove this when we have v2 clidiff
+    const ruleRunner = await generateRuleRunner(
+      {
+        rulesetArg: options.ruleset,
+        specRuleset: headFile.isEmptySpec
+          ? baseFile.jsonLike[OPTIC_STANDARD_KEY]
+          : headFile.jsonLike[OPTIC_STANDARD_KEY],
+        config,
+      },
+      options.check
+    );
     const specResultsLegacy = await generateSpecResults(
       ruleRunner,
       baseFile,

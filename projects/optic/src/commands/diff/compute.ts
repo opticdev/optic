@@ -39,7 +39,6 @@ export async function compute(
   return {
     specResults,
     changelogData,
-    ruleRunner,
     checks: {
       total: specResults.results.length,
       passed: specResults.results.filter((check) => check.passed).length,
