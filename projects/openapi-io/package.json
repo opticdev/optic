@@ -57,7 +57,7 @@
     "ajv-errors": "~3.0.0",
     "ajv-formats": "~2.1.0",
     "bottleneck": "^2.19.5",
-    "chalk": "^4.1.2",
+    "chalk": "^5.0.0",
     "copyfiles": "^2.4.1",
     "crypto-js": "^4.1.1",
     "fast-deep-equal": "^3.1.3",

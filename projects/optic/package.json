@@ -56,7 +56,7 @@
     "@useoptic/standard-rulesets": "workspace:*",
     "ajv": "^8.6.0",
     "bottleneck": "^2.19.5",
-    "chalk": "^4.1.2",
+    "chalk": "^5.0.0",
     "commander": "^9.4.1",
     "dotenv": "^16.0.3",
     "is-url": "^1.2.4",
