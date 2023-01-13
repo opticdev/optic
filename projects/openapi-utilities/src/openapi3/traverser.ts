@@ -123,6 +123,101 @@ export function getLocation<T extends V3FactType>(
   return {} as FactLocation<T>;
 }
 
+export const jsonPath = {
+  specification: () => '',
+  path: ({ path }: { path: string }) => jsonPointer.append('', 'paths', path),
+  operation: ({ path, method }: { path: string; method: string }) =>
+    jsonPointer.append('', 'paths', path, method),
+  operationParameter: ({
+    path,
+    parameterIndex,
+  }: {
+    path: string;
+    parameterIndex: string;
+  }) => jsonPointer.append('', 'paths', path, 'parameters', parameterIndex),
+  parameter: ({
+    path,
+    method,
+    parameterIndex,
+  }: {
+    path: string;
+    method: string;
+    parameterIndex: string;
+  }) =>
+    jsonPointer.append('', 'paths', path, method, 'parameters', parameterIndex),
+  request: ({ path, method }: { path: string; method: string }) =>
+    jsonPointer.append('', 'paths', path, method, 'requestBody'),
+  requestBody: ({
+    path,
+    method,
+    contentType,
+  }: {
+    path: string;
+    method: string;
+    contentType: string;
+  }) =>
+    jsonPointer.append(
+      '',
+      'paths',
+      path,
+      method,
+      'requestBody',
+      'contents',
+      contentType
+    ),
+  response: ({
+    path,
+    method,
+    statusCode,
+  }: {
+    path: string;
+    method: string;
+    statusCode: string;
+  }) => jsonPointer.append('', 'paths', path, method, 'responses', statusCode),
+  responseHeader: ({
+    path,
+    method,
+    statusCode,
+    headerName,
+  }: {
+    path: string;
+    method: string;
+    statusCode: string;
+    headerName: string;
+  }) =>
+    jsonPointer.append(
+      '',
+      'paths',
+      path,
+      method,
+      'responses',
+      statusCode,
+      'headers',
+      headerName
+    ),
+  responseBody: ({
+    path,
+    method,
+    statusCode,
+    contentType,
+  }: {
+    path: string;
+    method: string;
+    statusCode: string;
+    contentType: string;
+  }) =>
+    jsonPointer.append(
+      '',
+      'paths',
+      path,
+      method,
+      'responses',
+      statusCode,
+      'contents',
+      contentType
+    ),
+};
+
 export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
   format = 'openapi3';
 
@@ -138,7 +233,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
 
     yield {
       location: {
-        jsonPath: '',
+        jsonPath: jsonPath.specification(),
       },
       type: 'specification',
     };
@@ -147,7 +242,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
       const traverser = this;
       yield {
         location: {
-          jsonPath: jsonPointer.append('', 'paths', pathPattern),
+          jsonPath: jsonPath.path({ path: pathPattern }),
         },
         type: 'path',
       };
@@ -184,25 +279,22 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
     method: string,
     pathPattern: string
   ): IterableIterator<OpenApiV3TraverserFact<V3FactType>> {
-    const jsonPath = jsonPointer.append('', 'paths', pathPattern, method);
+    const currentPath = jsonPath.operation({ path: pathPattern, method });
     yield {
       location: {
-        jsonPath: jsonPath,
+        jsonPath: currentPath,
       },
       type: 'operation',
     };
 
-    yield* this.traverseParameters(
-      operation,
-      jsonPointer.append(jsonPath, 'parameters'),
-      pathPattern
-    );
+    yield* this.traverseParameters(operation, method, pathPattern);
     const requestBody = operation.requestBody;
     if (requestBody) {
+      const reqBodyPath = jsonPath.request({ path: pathPattern, method });
       if (!isObject(requestBody)) {
         console.warn(
           `Expected an object at: ${getReadableLocation(
-            jsonPointer.append(jsonPath, 'requestBody')
+            reqBodyPath
           )}, found ${requestBody}`
         );
       } else if (isNotReferenceObject(requestBody)) {
@@ -212,18 +304,18 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
           yield* this.traverseBody(
             body,
             contentType,
-            jsonPointer.append(jsonPath, 'requestBody', 'content', contentType)
+            jsonPath.requestBody({ path: pathPattern, method, contentType })
           );
         yield {
           location: {
-            jsonPath: jsonPointer.append(jsonPath, 'requestBody'),
+            jsonPath: reqBodyPath,
           },
           type: 'requestBody',
         };
       } else {
         console.warn(
           `Expected a flattened spec, found a reference at: ${getReadableLocation(
-            jsonPointer.append(jsonPath, 'requestBody')
+            reqBodyPath
           )}`
         );
       }
@@ -232,11 +324,11 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
     for (let [statusCode, response] of Object.entries(
       operation.responses || {}
     )) {
-      const nextJsonPath = jsonPointer.append(
-        jsonPath,
-        'responses',
-        statusCode
-      );
+      const nextJsonPath = jsonPath.response({
+        path: pathPattern,
+        method,
+        statusCode,
+      });
       if (!isObject(response)) {
         console.warn(
           `Expected an object at: ${getReadableLocation(
@@ -244,7 +336,13 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
           )}, found ${response}`
         );
       } else if (isNotReferenceObject(response)) {
-        yield* this.traverseResponse(response, nextJsonPath);
+        yield {
+          location: {
+            jsonPath: nextJsonPath,
+          },
+          type: 'response',
+        };
+        yield* this.traverseResponse(response, pathPattern, method, statusCode);
       } else {
         console.warn(
           `Expected a flattened spec, found a reference at: ${getReadableLocation(
@@ -257,33 +355,32 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
 
   *traverseResponse(
     response: OpenAPIV3.ResponseObject,
-    jsonPath: string
+    path: string,
+    method: string,
+    statusCode: string
   ): IterableIterator<OpenApiV3TraverserFact<V3FactType>> {
-    yield* this.traverseResponseHeaders(response, jsonPath);
+    yield* this.traverseResponseHeaders(response, path, method, statusCode);
     for (let [contentType, body] of Object.entries(response.content || {})) {
       yield* this.traverseBody(
         body,
         contentType,
-        jsonPointer.append(jsonPath, 'content', contentType)
+        jsonPath.responseBody({ path, method, statusCode, contentType })
       );
     }
-
-    yield {
-      location: {
-        jsonPath,
-      },
-      type: 'response',
-    };
   }
 
   *traverseParameters(
     operation: OpenAPIV3.OperationObject | OpenAPIV3_1.OperationObject,
-    jsonPath: string,
-    operationPath: string
+    method: string,
+    path: string
   ): IterableIterator<OpenApiV3TraverserFact<V3FactType>> {
     if (operation.parameters) {
       for (let [i, parameter] of Object.entries(operation.parameters)) {
-        const nextJsonPath = jsonPointer.append(jsonPath, i);
+        const nextJsonPath = jsonPath.parameter({
+          path,
+          method,
+          parameterIndex: i,
+        });
         if (!isObject(parameter)) {
           console.warn(
             `Expected an object at: ${getReadableLocation(
@@ -315,7 +412,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
 
     const sharedParametersPointer = jsonPointer.compile([
       'paths',
-      operationPath,
+      path,
       'parameters',
     ]);
 
@@ -329,10 +426,6 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
         | OpenAPIV3.ParameterObject[]
         | OpenAPIV3_1.ParameterObject[];
       for (let [i, parameter] of Object.entries(shared)) {
-        const nextJsonPath = jsonPointer.append(
-          sharedParametersPointer,
-          i.toString()
-        );
         switch (parameter.in) {
           case 'query':
           case 'header':
@@ -340,7 +433,10 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
           case 'cookie':
             yield {
               location: {
-                jsonPath: nextJsonPath,
+                jsonPath: jsonPath.operationParameter({
+                  path,
+                  parameterIndex: i,
+                }),
               },
               type: `request-${parameter.in}`,
             };
@@ -351,11 +447,18 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
 
   *traverseResponseHeaders(
     response: OpenAPIV3.ResponseObject | OpenAPIV3_1.ResponsesObject,
-    jsonPath: string
+    path: string,
+    method: string,
+    statusCode: string
   ): IterableIterator<OpenApiV3TraverserFact<V3FactType>> {
     if (response.headers) {
       for (let [name, header] of Object.entries(response.headers)) {
-        const nextJsonPath = jsonPointer.append(jsonPath, 'headers', name);
+        const nextJsonPath = jsonPath.responseHeader({
+          path,
+          method,
+          statusCode,
+          headerName: name,
+        });
         if (!isObject(header)) {
           console.warn(
             `Expected an object at: ${getReadableLocation(

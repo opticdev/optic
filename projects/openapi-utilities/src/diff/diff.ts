@@ -49,10 +49,12 @@ type StackItem<T extends JSONObject | JSONArray = JSONObject | JSONArray> = [
   }
 ];
 
-export function typeofDiff(diff: ObjectDiff): 'added' | 'changed' | 'removed' {
-  return diff.after && diff.before
+export function typeofDiff(
+  diff: Omit<ObjectDiff, 'pathReconciliation'>
+): 'added' | 'changed' | 'removed' {
+  return diff.after !== undefined && diff.before !== undefined
     ? 'changed'
-    : diff.after
+    : diff.after !== undefined
     ? 'added'
     : 'removed';
 }
