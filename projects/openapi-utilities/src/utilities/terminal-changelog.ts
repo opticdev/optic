@@ -78,7 +78,7 @@ export function* terminalChangelog(
     label: 'specification details:',
   });
 
-  for (const [method, endpoint] of Object.entries(endpoints))
+  for (const [, endpoint] of Object.entries(endpoints))
     yield* getEndpointLogs(specs, endpoint);
 }
 
@@ -118,8 +118,6 @@ function* getEndpointLogs(
   for (const [statusCode, response] of Object.entries(responses)) {
     yield* indent(getResponseChangeLogs(response, statusCode));
   }
-
-  yield '';
 }
 
 function* getResponseChangeLogs(response: Response, statusCode: string) {
