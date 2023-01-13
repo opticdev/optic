@@ -16,6 +16,7 @@ import open from 'open';
 import { compressData } from './compressResults';
 import {
   generateComparisonLogs,
+  generateSpecResults,
   jsonChangelog,
   terminalChangelog,
 } from '@useoptic/openapi-utilities';
@@ -174,7 +175,7 @@ async function computeAll(
         options
       );
 
-      if (specResults.changes.length === 0) {
+      if (specResults.diffs.length === 0) {
         logger.info('No changes were detected');
       }
       logger.info('');
@@ -297,10 +298,18 @@ async function openWebpage(
     command: ['optic', ...process.argv.slice(2)].join(' '),
   };
 
+  // TODO remove this when we have v2 clidiff
+  const specResultsLegacy = await generateSpecResults(
+    ruleRunner,
+    fromParseResults,
+    toParseResults,
+    null
+  );
+
   const compressedData = compressData(
     fromParseResults,
     toParseResults,
-    specResults,
+    specResultsLegacy,
     meta
   );
   const anonymousId = await getAnonId();
@@ -394,7 +403,7 @@ const getDiffAllAction =
         }
         if (
           options.web &&
-          (specResults.changes.length > 0 ||
+          (specResults.diffs.length > 0 ||
             (!options.check && specResults.results.length > 0))
         ) {
           openWebpage(result, config);

@@ -3,10 +3,10 @@ import open from 'open';
 
 import {
   logComparison,
-  generateChangelogData,
   terminalChangelog,
   UserError,
   jsonChangelog,
+  generateSpecResults,
 } from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import {
@@ -114,24 +114,18 @@ const runDiff = async (
   config: OpticCliConfig,
   options: DiffActionOptions
 ): Promise<{ checks: { passed: number; failed: number; total: number } }> => {
-  const { specResults, checks } = await compute(
+  const { specResults, checks, ruleRunner, changelogData } = await compute(
     [baseFile, headFile],
     config,
     options
   );
   const diffResults = { checks };
 
-  const changelogData = generateChangelogData({
-    changes: specResults.changes,
-    toFile: headFile.jsonLike,
-    rules: specResults.results,
-  });
-
   if (options.json) {
     console.log(JSON.stringify(jsonChangelog(changelogData)));
     return diffResults;
   } else {
-    if (specResults.changes.length === 0) {
+    if (specResults.diffs.length === 0) {
       console.log('No changes were detected');
     } else {
       console.log('');
@@ -157,7 +151,7 @@ const runDiff = async (
 
   if (options.web) {
     if (
-      specResults.changes.length === 0 &&
+      specResults.diffs.length === 0 &&
       (!options.check || specResults.results.length === 0)
     ) {
       console.log('Empty changelog: not opening web view');
@@ -171,7 +165,20 @@ const runDiff = async (
       base: options.base,
     };
 
-    const compressedData = compressData(baseFile, headFile, specResults, meta);
+    // TODO remove this when we have v2 clidiff
+    const specResultsLegacy = await generateSpecResults(
+      ruleRunner,
+      baseFile,
+      headFile,
+      null
+    );
+
+    const compressedData = compressData(
+      baseFile,
+      headFile,
+      specResultsLegacy,
+      meta
+    );
     console.log('Opening up diff in web view');
     const anonymousId = await getAnonId();
     trackEvent('optic.diff.view_web', anonymousId, {

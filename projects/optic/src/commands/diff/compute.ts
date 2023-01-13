@@ -1,6 +1,6 @@
 import {
-  generateChangelogData,
-  generateSpecResults,
+  groupDiffsByEndpoint,
+  compareSpecs,
 } from '@useoptic/openapi-utilities';
 import { generateRuleRunner } from './generate-rule-runner';
 import { OPTIC_STANDARD_KEY } from '../../constants';
@@ -25,22 +25,21 @@ export async function compute(
     },
     options.check
   );
-  const specResults = await generateSpecResults(
-    ruleRunner,
-    baseFile,
-    headFile,
-    null
-  );
 
-  const changelogData = generateChangelogData({
-    changes: specResults.changes,
-    toFile: headFile.jsonLike,
-    rules: specResults.results,
-  });
+  const specResults = await compareSpecs(baseFile, headFile, ruleRunner);
+
+  const changelogData = groupDiffsByEndpoint(
+    {
+      from: baseFile.jsonLike,
+      to: headFile.jsonLike,
+    },
+    specResults.diffs
+  );
 
   return {
     specResults,
     changelogData,
+    ruleRunner,
     checks: {
       total: specResults.results.length,
       passed: specResults.results.filter((check) => check.passed).length,
