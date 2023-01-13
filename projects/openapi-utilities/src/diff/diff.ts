@@ -19,22 +19,24 @@ export type ObjectDiff =
   | {
       // Added
       before?: undefined;
-      after: string;
+      after: JSONPath;
       pathReconciliation?: undefined;
     }
   | {
       // Changed
-      before: string;
-      after: string;
+      before: JSONPath;
+      after: JSONPath;
       pathReconciliation?: undefined;
     }
   | {
       // Removed
-      before: string;
+      before: JSONPath;
       after?: undefined;
       // Required to maintain pointers from reordering array keys
       pathReconciliation: [number, string][];
     };
+
+type JSONPath = string;
 
 type StackItem<T extends JSONObject | JSONArray = JSONObject | JSONArray> = [
   {
@@ -46,6 +48,14 @@ type StackItem<T extends JSONObject | JSONArray = JSONObject | JSONArray> = [
     path: string;
   }
 ];
+
+export function typeofDiff(diff: ObjectDiff): 'added' | 'changed' | 'removed' {
+  return diff.after && diff.before
+    ? 'changed'
+    : diff.after
+    ? 'added'
+    : 'removed';
+}
 
 // Diffs two objects, generating the leaf nodes that have changes
 export function diff(before: any, after: any): ObjectDiff[] {

@@ -51,6 +51,8 @@ const isObject = (value: any) => {
   return typeof value === 'object' && !Array.isArray(value) && value !== null;
 };
 
+// TODO deprecate this usage of facts
+// This is currently used by the rule runner, openapi-cli and changelogv1
 export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
   format = 'openapi3';
 

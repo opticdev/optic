@@ -6,6 +6,10 @@ import {
   OperationLocation,
   ILocation,
   OpenApiKind,
+  ObjectDiff,
+  RuleResult,
+  traverseSpec,
+  factsToChangelog,
 } from '@useoptic/openapi-utilities';
 import {
   ISpectralDiagnostic,
@@ -30,6 +34,21 @@ type SpectralRules = Extract<
   SpectralRulesetDefinition,
   { extends: any; rules: any }
 >['rules'];
+
+function resultToRuleResult(r: Result): RuleResult {
+  return {
+    where: r.where,
+    error: r.error,
+    passed: r.passed,
+    exempted: r.exempted,
+    jsonPath: r.change.location.jsonPath,
+    name: r.name ?? 'Rule',
+    type: r.type,
+    docsLink: r.docsLink,
+    expected: r.expected,
+    received: r.received,
+  };
+}
 
 export class RuleRunner {
   constructor(private rules: (Ruleset | Rule | ExternalRule)[]) {}
@@ -92,6 +111,7 @@ export class RuleRunner {
     return opticResult;
   }
 
+  // TODO deprecate
   async runRulesWithFacts(inputs: {
     context: any;
     nextFacts: IFact[];
@@ -115,10 +135,10 @@ export class RuleRunner {
       (rule) => !ExternalRuleBase.isInstance(rule)
     ) as (Ruleset | Rule)[];
 
-    const externalResults: Result[] = []
-    for( const externalRule of externalRules) {
+    const externalResults: Result[] = [];
+    for (const externalRule of externalRules) {
       const results = await externalRule.runRules(inputs);
-      externalResults.push(...results)
+      externalResults.push(...results);
     }
 
     // Groups the flat list of beforefacts, afterfacts and changes by location (e.g. operation, query parameter, response, response property, etc).
@@ -184,6 +204,101 @@ export class RuleRunner {
           afterApiSpec,
         });
         endpointResults.push(...responseBodyRules, ...responseRules);
+      }
+    }
+
+    return [...externalResults, ...specificationResults, ...endpointResults];
+  }
+
+  async runRules(inputs: {
+    context: any;
+    diffs: ObjectDiff[];
+    fromSpec: OpenAPIV3.Document;
+    toSpec: OpenAPIV3.Document;
+  }): Promise<RuleResult[]> {
+    const { context, fromSpec: beforeApiSpec, toSpec: afterApiSpec } = inputs;
+    const externalRules = this.rules.filter((rule) =>
+      ExternalRuleBase.isInstance(rule)
+    ) as ExternalRule[];
+    const rulesOrRulesets = this.rules.filter(
+      (rule) => !ExternalRuleBase.isInstance(rule)
+    ) as (Ruleset | Rule)[];
+
+    const externalResults: RuleResult[] = [];
+    for (const externalRule of externalRules) {
+      const results = await externalRule.runRulesV2(inputs);
+      externalResults.push(...results);
+    }
+
+    // TODO reimplement the rule runner so we don't need to generate legacy fact types here
+    const beforeFacts = traverseSpec(inputs.fromSpec);
+    const afterFacts = traverseSpec(inputs.toSpec);
+    const changelog = factsToChangelog(beforeFacts, afterFacts);
+
+    const openApiFactNodes = groupFacts({
+      beforeFacts,
+      afterFacts,
+      changes: changelog,
+    });
+
+    // Run rules on specifications and collect the results
+    const specificationResults: RuleResult[] = runSpecificationRules({
+      specificationNode: openApiFactNodes.specification,
+      rules: rulesOrRulesets,
+      customRuleContext: context,
+      beforeApiSpec,
+      afterApiSpec,
+    }).map(resultToRuleResult);
+
+    const endpointResults: RuleResult[] = [];
+
+    // For each endpoint from the endpoint fact nodes (this will include endpoints in both before and after specs) run rules and collect the results
+    for (const endpointNode of openApiFactNodes.endpoints.values()) {
+      const operationResults = runOperationRules({
+        specificationNode: openApiFactNodes.specification,
+        operationNode: endpointNode,
+        rules: rulesOrRulesets,
+        customRuleContext: context,
+        beforeApiSpec,
+        afterApiSpec,
+      });
+      endpointResults.push(...operationResults.map(resultToRuleResult));
+
+      const requestRules = runRequestRules({
+        specificationNode: openApiFactNodes.specification,
+        operationNode: endpointNode,
+        requestNode: endpointNode.request,
+        rules: rulesOrRulesets,
+        customRuleContext: context,
+        beforeApiSpec,
+        afterApiSpec,
+      });
+      endpointResults.push(...requestRules.map(resultToRuleResult));
+
+      for (const responseNode of endpointNode.responses.values()) {
+        const responseRules = runResponseRules({
+          specificationNode: openApiFactNodes.specification,
+          operationNode: endpointNode,
+          responseNode: responseNode,
+          rules: rulesOrRulesets,
+          customRuleContext: context,
+          beforeApiSpec,
+          afterApiSpec,
+        });
+
+        const responseBodyRules = runResponseBodyRules({
+          specificationNode: openApiFactNodes.specification,
+          operationNode: endpointNode,
+          responseNode: responseNode,
+          rules: rulesOrRulesets,
+          customRuleContext: context,
+          beforeApiSpec,
+          afterApiSpec,
+        });
+        endpointResults.push(
+          ...responseBodyRules.map(resultToRuleResult),
+          ...responseRules.map(resultToRuleResult)
+        );
       }
     }
 
