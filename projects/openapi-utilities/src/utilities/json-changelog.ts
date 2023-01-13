@@ -83,64 +83,19 @@ export function jsonChangelog(
 ): JsonChangelog {
   const results: JsonChangelog = { operations: [] };
 
-  const { paths } = groupedChanges;
-  for (const [path, pathObject] of Object.entries(paths)) {
-    const isAdded = pathObject.diffs.some(
-      (diff) => typeofDiff(diff) === 'added'
-    );
-    const isRemoved = pathObject.diffs.some(
-      (diff) => typeofDiff(diff) === 'removed'
-    );
-    if (isAdded || isRemoved) {
-      const jsonPath = jsonPointerHelpers.compile(['paths', path]);
-      const raw = isAdded
-        ? jsonPointerHelpers.get(specs.to, jsonPath)
-        : jsonPointerHelpers.get(specs.from, jsonPath);
-
-      for (const method of Object.keys(raw)) {
-        results.operations.push(
-          getEndpointLogs(specs, method, path, {
-            diffs: [
-              isAdded
-                ? {
-                    after: jsonPointerHelpers.compile(['paths', path, method]),
-                    trail: '',
-                    change: 'added',
-                  }
-                : {
-                    before: jsonPointerHelpers.compile(['paths', path, method]),
-                    trail: '',
-                    change: 'removed',
-                  },
-            ],
-            queryParameters: [],
-            pathParameters: [],
-            cookieParameters: [],
-            headerParameters: [],
-            request: {
-              diffs: [],
-              contents: {},
-            },
-            responses: {},
-          })
-        );
-      }
-    }
-
-    for (const [method, endpoint] of Object.entries(pathObject.methods))
-      results.operations.push(getEndpointLogs(specs, method, path, endpoint));
-  }
+  for (const endpoint of Object.values(groupedChanges.endpoints))
+    results.operations.push(getEndpointLogs(specs, endpoint));
 
   return results;
 }
 
 function getEndpointLogs(
   specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
-  method: string,
-  path: string,
   endpointChange: Endpoint
 ): OperationChangelog {
   const {
+    method,
+    path,
     request,
     responses,
     cookieParameters,
