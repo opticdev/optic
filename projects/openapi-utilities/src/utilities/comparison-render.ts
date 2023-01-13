@@ -6,6 +6,7 @@ import {
   ObjectDiff,
   SerializedSourcemap,
   sourcemapReader,
+  OpenAPIV3,
 } from '..';
 import groupBy from 'lodash.groupby';
 import isUrl from 'is-url';
@@ -252,7 +253,14 @@ export function* generateComparisonLogsV2(
         },
         type: 'operation',
       });
-      return `${location.method}-${location.pathPattern}`;
+
+      if (
+        Object.values(OpenAPIV3.HttpMethods).includes(location.method as any)
+      ) {
+        return `${location.pathPattern}-${location.method}`;
+      } else {
+        return `${location.pathPattern}-`;
+      }
     } else {
       return 'Specification';
     }
@@ -272,10 +280,14 @@ export function* generateComparisonLogsV2(
     if (location === 'specification') {
       yield `${getIndent(1)}${resultNode} ${bold('Specification')}`;
     } else {
-      const [method, path] = location.split('-');
-      yield `${getIndent(1)}${resultNode} ${bold(
-        method.toUpperCase()
-      )} ${path}`;
+      const [path, method] = location.split('-');
+      if (method === '') {
+        yield `${getIndent(1)}${resultNode} ${path}`;
+      } else {
+        yield `${getIndent(1)}${resultNode} ${bold(
+          method.toUpperCase()
+        )} ${path}`;
+      }
     }
 
     for (const result of renderedResults) {
