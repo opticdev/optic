@@ -203,7 +203,7 @@ export function* generateComparisonLogsV2(
   },
   comparison: {
     results: RuleResult[];
-    changes: ObjectDiff[];
+    diffs: ObjectDiff[];
   },
   options: {
     output: 'pretty' | 'plain' | 'md';
@@ -242,7 +242,6 @@ export function* generateComparisonLogsV2(
     (result) => !result.passed && result.exempted
   ).length;
   const passedNumberOfChecks = totalNumberOfChecks - failedNumberOfChecks;
-  // const operationsModifsLabel = getOperationsModifsLabel(comparison.changes);
   const groupedResults = groupBy(comparison.results, (result) => {
     // Openapi V3 specific
     const parts = jsonPointerHelpers.decode(result.location.jsonPath);

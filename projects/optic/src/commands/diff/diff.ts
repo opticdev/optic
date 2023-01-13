@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import open from 'open';
 
 import {
-  logComparison,
+  generateComparisonLogsV2,
   terminalChangelog,
   UserError,
   jsonChangelog,
@@ -122,7 +122,14 @@ const runDiff = async (
   const diffResults = { checks };
 
   if (options.json) {
-    console.log(JSON.stringify(jsonChangelog(changelogData)));
+    console.log(
+      JSON.stringify(
+        jsonChangelog(
+          { from: baseFile.jsonLike, to: headFile.jsonLike },
+          changelogData
+        )
+      )
+    );
     return diffResults;
   } else {
     if (specResults.diffs.length === 0) {
@@ -130,7 +137,10 @@ const runDiff = async (
     } else {
       console.log('');
     }
-    for (const log of terminalChangelog(changelogData)) {
+    for (const log of terminalChangelog(
+      { from: baseFile.jsonLike, to: headFile.jsonLike },
+      changelogData
+    )) {
       console.log(log);
     }
   }
@@ -141,7 +151,17 @@ const runDiff = async (
       console.log('');
     }
 
-    logComparison(specResults, { output: 'pretty', verbose: false });
+    for (const log of generateComparisonLogsV2(
+      changelogData,
+      {
+        from: baseFile.sourcemap,
+        to: headFile.sourcemap,
+      },
+      specResults,
+      { output: 'pretty', verbose: false }
+    )) {
+      console.log(log);
+    }
 
     console.log('');
     console.log(

@@ -73,6 +73,7 @@ export {
 } from './utilities/compare-comment';
 export {
   logComparison,
+  generateComparisonLogsV2,
   generateComparisonLogs,
   getComparisonLogs,
 } from './utilities/comparison-render';
