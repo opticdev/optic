@@ -1,5 +1,5 @@
 import { Command, Argument } from 'commander';
-import { createSpecFile, SpecTemplate, OpenAPIV3 } from '../lib';
+import { createSpecFile, SpecTemplate, OpenAPIV3 } from '../workflows';
 import * as fs from 'fs';
 import * as path from 'path';
 import { applyTemplate } from '../workflows';
