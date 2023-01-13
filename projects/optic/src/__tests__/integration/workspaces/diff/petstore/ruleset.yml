@@ -1,0 +1,10 @@
+ruleset:
+  - breaking-changes
+  - naming:
+      required_on: added
+      requestHeaders: snake_case
+      queryParameters: snake_case
+      responseHeaders: snake_case
+      cookieParameters: snake_case
+      pathComponents: snake_case
+      properties: snake_case
