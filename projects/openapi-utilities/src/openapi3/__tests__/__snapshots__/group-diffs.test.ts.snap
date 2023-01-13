@@ -3,10 +3,12 @@
 exports[`groupDiffsByEndpoint can group diffs by endpoint for small-pet-store  1`] = `
 GroupedDiffs {
   "endpoints": {
-    "/user.POST": {
+    "/user-~_~-POST": {
       "cookieParameters": [],
       "diffs": [],
       "headerParameters": [],
+      "method": "POST",
+      "path": "/user",
       "pathParameters": [],
       "queryParameters": [],
       "request": {
@@ -25,7 +27,7 @@ GroupedDiffs {
       },
       "responses": {},
     },
-    "/user/login.GET": {
+    "/user/login-~_~-GET": {
       "cookieParameters": [],
       "diffs": [
         {
@@ -35,6 +37,8 @@ GroupedDiffs {
         },
       ],
       "headerParameters": [],
+      "method": "GET",
+      "path": "/user/login",
       "pathParameters": [],
       "queryParameters": [],
       "request": {
@@ -43,7 +47,7 @@ GroupedDiffs {
       },
       "responses": {},
     },
-    "/user/logout.GET": {
+    "/user/logout-~_~-GET": {
       "cookieParameters": [],
       "diffs": [
         {
@@ -53,6 +57,8 @@ GroupedDiffs {
         },
       ],
       "headerParameters": [],
+      "method": "GET",
+      "path": "/user/logout",
       "pathParameters": [],
       "queryParameters": [],
       "request": {
@@ -61,7 +67,7 @@ GroupedDiffs {
       },
       "responses": {},
     },
-    "/user/{username}.DELETE": {
+    "/user/{username}-~_~-DELETE": {
       "cookieParameters": [],
       "diffs": [
         {
@@ -71,6 +77,8 @@ GroupedDiffs {
         },
       ],
       "headerParameters": [],
+      "method": "DELETE",
+      "path": "/user/{username}",
       "pathParameters": [],
       "queryParameters": [],
       "request": {
@@ -79,7 +87,7 @@ GroupedDiffs {
       },
       "responses": {},
     },
-    "/user/{username}.GET": {
+    "/user/{username}-~_~-GET": {
       "cookieParameters": [],
       "diffs": [
         {
@@ -89,6 +97,8 @@ GroupedDiffs {
         },
       ],
       "headerParameters": [],
+      "method": "GET",
+      "path": "/user/{username}",
       "pathParameters": [],
       "queryParameters": [],
       "request": {
@@ -97,7 +107,7 @@ GroupedDiffs {
       },
       "responses": {},
     },
-    "/user/{username}.PATCH": {
+    "/user/{username}-~_~-PATCH": {
       "cookieParameters": [],
       "diffs": [
         {
@@ -107,6 +117,8 @@ GroupedDiffs {
         },
       ],
       "headerParameters": [],
+      "method": "PATCH",
+      "path": "/user/{username}",
       "pathParameters": [],
       "queryParameters": [],
       "request": {
