@@ -1,7 +1,7 @@
 import { OpenAPIV3 } from 'openapi-types';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
-import { typeofDiff } from '../diff/diff';
+import { typeofDiff, getTypeofDiffs } from '../diff/diff';
 import type {
   GroupedDiffs,
   Body,
@@ -31,16 +31,6 @@ type RawChange<T> = { key: string } & (
       removed: T;
     }
 );
-
-function getTypeofDiffs(diffs: Diff[]): 'added' | 'changed' | 'removed' | null {
-  return diffs.length === 0
-    ? null
-    : diffs.every((diff) => typeofDiff(diff) === 'added')
-    ? 'added'
-    : diffs.every((diff) => typeofDiff(diff) === 'removed')
-    ? 'removed'
-    : 'changed';
-}
 
 const getDetailsDiff = (change: RawChange<any>): ChangedNode['attributes'] => {
   return [

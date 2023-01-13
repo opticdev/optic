@@ -59,6 +59,18 @@ export function typeofDiff(
     : 'removed';
 }
 
+export function getTypeofDiffs(
+  diffs: Omit<ObjectDiff, 'pathReconciliation'>[]
+): 'added' | 'changed' | 'removed' | null {
+  return diffs.length === 0
+    ? null
+    : diffs.every((diff) => typeofDiff(diff) === 'added')
+    ? 'added'
+    : diffs.every((diff) => typeofDiff(diff) === 'removed')
+    ? 'removed'
+    : 'changed';
+}
+
 // Diffs two objects, generating the leaf nodes that have changes
 export function diff(before: any, after: any): ObjectDiff[] {
   const diffResults: ObjectDiff[] = [];

@@ -3,7 +3,10 @@ export interface RuleResult {
   error?: string;
   passed: boolean;
   exempted?: boolean;
-  jsonPath: string;
+  location: {
+    jsonPath: string;
+    spec: 'before' | 'after';
+  };
   name: string;
   type?: 'requirement' | 'added' | 'changed' | 'removed' | 'addedOrChanged';
   docsLink?: string;

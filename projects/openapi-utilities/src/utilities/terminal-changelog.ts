@@ -1,5 +1,5 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { typeofDiff } from '../diff/diff';
+import { typeofDiff, getTypeofDiffs } from '../diff/diff';
 import type {
   GroupedDiffs,
   Body,
@@ -10,16 +10,6 @@ import type {
 
 import { Instance as Chalk } from 'chalk';
 import { getLocation, getRaw } from '../openapi3/traverser';
-
-function getTypeofDiffs(diffs: Diff[]): 'added' | 'changed' | 'removed' | null {
-  return diffs.length === 0
-    ? null
-    : diffs.every((diff) => typeofDiff(diff) === 'added')
-    ? 'added'
-    : diffs.every((diff) => typeofDiff(diff) === 'removed')
-    ? 'removed'
-    : 'changed';
-}
 
 const chalk = new Chalk();
 
