@@ -306,6 +306,7 @@ async function openWebpage(
   const anonymousId = await getAnonId();
   trackEvent('optic.diff_all.view_web', anonymousId, {
     compressedDataLength: compressedData.length,
+    isInCi: process.env.CI === 'true',
   });
   await open(`${config.client.getWebBase()}/cli/diff#${compressedData}`, {
     wait: false,

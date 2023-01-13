@@ -1,52 +1,23 @@
-import Analytics from 'analytics-node';
 import { machineIdSync } from 'node-machine-id';
 import exitHook from 'async-exit-hook';
+
 import { AbortSignal } from 'node-abort-controller';
+import {
+  flushEvents,
+  trackEvent as _trackEvent,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
 
-let analytics: {
-  segment: Analytics;
-  anonymousId: string;
-  app: { name: string; version: string };
-  runId: string;
-} | null = null;
+let id: string;
+try {
+  id = machineIdSync();
+} catch (e) {
+  id = 'unknown-user';
+}
 
-export const initSegment = ({
-  key,
-  version,
-  name,
-  runId,
-}: {
-  key: string;
-  version: string;
-  name: string;
-  runId: string;
-}) => {
-  let segment = new Analytics(key);
-  let anonymousId;
-  try {
-    anonymousId = machineIdSync();
-  } catch (err) {
-    console.warn('Could not initialise segment even tracking (non critical): ');
-  }
+export { flushEvents };
 
-  if (segment && anonymousId) {
-    analytics = { segment, anonymousId, app: { version, name }, runId };
-  }
-};
-
-export const trackEvent = (eventName: string, properties?: any) => {
-  if (analytics) {
-    analytics.segment.track({
-      event: eventName,
-      anonymousId: analytics.anonymousId,
-      properties,
-      context: {
-        app: analytics.app,
-        runId: analytics.runId,
-      },
-    });
-  }
-};
+export const trackEvent = (eventName: string, properties?: any) =>
+  _trackEvent(eventName, id, properties);
 
 export async function trackCompletion<S extends { [key: string]: any }>(
   eventName: string,
@@ -60,7 +31,7 @@ export async function trackCompletion<S extends { [key: string]: any }>(
   function finish(callback?) {
     if (!callback) callback = () => {};
     if (!completed) {
-      trackEvent(`${eventName}.canceled`, stats);
+      _trackEvent(`${eventName}.canceled`, id, stats);
     }
 
     flushEvents().then(callback, (err) => {
@@ -80,23 +51,7 @@ export async function trackCompletion<S extends { [key: string]: any }>(
 
   completed = true;
 
-  trackEvent(`${eventName}.completed`, stats);
+  _trackEvent(`${eventName}.completed`, id, stats);
 
   finish();
 }
-
-export const flushEvents = (): Promise<void> => {
-  if (analytics) {
-    return new Promise((resolve, reject) => {
-      analytics!.segment.flush((err, batch) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
-  } else {
-    return Promise.resolve();
-  }
-};

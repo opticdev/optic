@@ -1,31 +1,13 @@
-import * as Sentry from '@sentry/node';
-
-export const initSentry = ({
-  dsn,
-  runId,
-  version,
-}: {
-  dsn: string;
-  runId: string;
-  version: string;
-}) => {
-  Sentry.init({
-    dsn,
-    tracesSampleRate: 1.0,
-    release: version,
-  });
-
-  Sentry.setTag('runId', runId);
-};
+import { SentryClient } from '@useoptic/openapi-utilities/build/utilities/sentry';
 
 export function trackWarning(
   message: string,
   context?: { [key: string]: any }
 ) {
-  Sentry.withScope(function (scope) {
+  SentryClient.withScope(function (scope) {
     if (context) {
       scope.setContext('warning context', context);
     }
-    Sentry.captureMessage(message, 'warning');
+    SentryClient.captureMessage(message, 'warning');
   });
 }
