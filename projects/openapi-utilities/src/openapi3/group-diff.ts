@@ -5,7 +5,7 @@ import {
   constructFactTree,
   getFactForJsonPath,
 } from './json-path-interpreters';
-import { getLocation, getRaw, OpenApiV3Traverser } from './traverser';
+import { getLocation, OpenApiV3Traverser } from './traverser';
 
 const SEPARATOR = '-~_~-';
 

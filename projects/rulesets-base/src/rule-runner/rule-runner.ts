@@ -44,7 +44,9 @@ function resultToRuleResult(r: Result): RuleResult {
     location: {
       jsonPath: r.change.location.jsonPath,
       spec:
-        'removed' in r.change && !r.change.removed?.before ? 'before' : 'after',
+        'removed' in r.change && !!r.change.removed?.before
+          ? 'before'
+          : 'after',
     },
     name: r.name ?? 'Rule',
     type: r.type,
