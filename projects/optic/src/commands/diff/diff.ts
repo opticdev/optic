@@ -22,7 +22,7 @@ import {
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { getAnonId } from '../../utils/anonymous-id';
 import { compute } from './compute';
-import { compressData } from './compressResults';
+import { compressData, compressDataV2 } from './compressResults';
 import { generateRuleRunner } from './generate-rule-runner';
 import { OPTIC_STANDARD_KEY } from '../../constants';
 
@@ -187,29 +187,36 @@ const runDiff = async (
       base: options.base,
     };
 
-    const ruleRunner = await generateRuleRunner(
-      {
-        rulesetArg: options.ruleset,
-        specRuleset: headFile.isEmptySpec
-          ? baseFile.jsonLike[OPTIC_STANDARD_KEY]
-          : headFile.jsonLike[OPTIC_STANDARD_KEY],
-        config,
-      },
-      options.check
-    );
-    const specResultsLegacy = await generateSpecResults(
-      ruleRunner,
-      baseFile,
-      headFile,
-      null
-    );
+    let compressedData: string;
+    if (process.env.NEW_WEB_VIEW === 'true') {
+      compressedData = compressDataV2(baseFile, headFile, specResults, meta);
+    } else {
+      // TODO remove this old flow when new web view is ready
+      const ruleRunner = await generateRuleRunner(
+        {
+          rulesetArg: options.ruleset,
+          specRuleset: headFile.isEmptySpec
+            ? baseFile.jsonLike[OPTIC_STANDARD_KEY]
+            : headFile.jsonLike[OPTIC_STANDARD_KEY],
+          config,
+        },
+        options.check
+      );
+      const specResultsLegacy = await generateSpecResults(
+        ruleRunner,
+        baseFile,
+        headFile,
+        null
+      );
 
-    const compressedData = compressData(
-      baseFile,
-      headFile,
-      specResultsLegacy,
-      meta
-    );
+      compressedData = compressData(
+        baseFile,
+        headFile,
+        specResultsLegacy,
+        meta
+      );
+    }
+
     console.log('Opening up diff in web view');
     const anonymousId = await getAnonId();
     trackEvent('optic.diff.view_web', anonymousId, {

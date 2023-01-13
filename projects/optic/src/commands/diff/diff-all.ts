@@ -13,7 +13,7 @@ import {
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { getAnonId } from '../../utils/anonymous-id';
 import open from 'open';
-import { compressData } from './compressResults';
+import { compressDataV2 } from './compressResults';
 import {
   generateComparisonLogsV2,
   jsonChangelog,
@@ -305,10 +305,10 @@ async function openWebpage(
     command: ['optic', ...process.argv.slice(2)].join(' '),
   };
 
-  const compressedData = compressData(
+  const compressedData = compressDataV2(
     fromParseResults,
     toParseResults,
-    specResults as any, // TODO this won't work will need to fix
+    specResults,
     meta
   );
   const anonymousId = await getAnonId();
