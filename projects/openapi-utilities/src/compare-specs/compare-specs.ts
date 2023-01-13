@@ -12,7 +12,7 @@ type SerializedSourcemap = {
     sha256: string;
   }>;
 
-  refMappings: { [key: number]: string };
+  refMappings: { [key: string]: [number, string] };
 };
 
 type InputSpec = {
