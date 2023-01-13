@@ -19,22 +19,24 @@ export type ObjectDiff =
   | {
       // Added
       before?: undefined;
-      after: string;
+      after: JSONPath;
       pathReconciliation?: undefined;
     }
   | {
       // Changed
-      before: string;
-      after: string;
+      before: JSONPath;
+      after: JSONPath;
       pathReconciliation?: undefined;
     }
   | {
       // Removed
-      before: string;
+      before: JSONPath;
       after?: undefined;
       // Required to maintain pointers from reordering array keys
       pathReconciliation: [number, string][];
     };
+
+type JSONPath = string;
 
 type StackItem<T extends JSONObject | JSONArray = JSONObject | JSONArray> = [
   {
