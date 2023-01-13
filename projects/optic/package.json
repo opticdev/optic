@@ -63,7 +63,7 @@
     "js-yaml": "^4.1.0",
     "json-stable-stringify": "^1.0.1",
     "loglevel": "^1.8.0",
-    "node-fetch": "^2.6.7",
+    "node-fetch": "^3.0.0",
     "node-machine-id": "^1.1.12",
     "open": "^8.4.0",
     "picomatch": "^2.3.1",

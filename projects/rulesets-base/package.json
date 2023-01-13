@@ -24,7 +24,7 @@
     "@useoptic/json-pointer-helpers": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
     "lodash.pick": "^4.4.0",
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^3.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.0",
