@@ -243,7 +243,7 @@ const getDiffAction =
     if (config.isAuthenticated) {
       const [baseParseResult, headParseResult] = parsedFiles;
 
-      await uploadDiff(
+      const run = await uploadDiff(
         {
           from: baseParseResult,
           to: headParseResult,
@@ -251,7 +251,9 @@ const getDiffAction =
         diffResult.specResults,
         config
       );
-      console.log(`Uploaded results of diff to TODO TODO`);
+      if (run) {
+        console.log(`Uploaded results of diff to ${run.id} TODO`);
+      }
     }
 
     if (!options.web && !options.json) {

@@ -19,6 +19,7 @@ import {
   jsonChangelog,
   terminalChangelog,
 } from '@useoptic/openapi-utilities';
+import { uploadDiff } from './upload-diff';
 
 const usage = () => `
   optic diff-all
@@ -375,22 +376,16 @@ const getDiffAllAction =
     if (config.isAuthenticated) {
       for (const result of results) {
         const { fromParseResults, toParseResults, specResults } = result;
-        const apiId: string | null = 'TODO'; // toParseResults.jsonLike[OPTIC_URL_KEY] ?? fromParseResults.jsonLike[OPTIC_URL_KEY] ?? null
-        const shouldUploadBaseSpec = fromParseResults.context && apiId;
-        const shouldUploadHeadSpec = toParseResults.context && apiId;
-        if (shouldUploadBaseSpec) {
-          // TODO upload spec
-        }
-        if (shouldUploadHeadSpec) {
-          // TODO upload spec
-        }
-
-        const shouldUploadResults =
-          (shouldUploadBaseSpec || fromParseResults.isEmptySpec) &&
-          (shouldUploadHeadSpec || toParseResults.isEmptySpec);
-
-        if (shouldUploadResults) {
-          // TODO upload results
+        const run = await uploadDiff(
+          {
+            from: fromParseResults,
+            to: toParseResults,
+          },
+          specResults,
+          config
+        );
+        if (run) {
+          logger.info(`Uploaded results of diff to ${run.id} TODO`);
         }
         if (
           options.web &&
