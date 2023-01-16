@@ -26,6 +26,7 @@ import { getAnonId } from '../../utils/anonymous-id';
 import { compute } from './compute';
 import { compressData } from './compressResults';
 import { uploadDiff } from './upload-diff';
+import { getRunUrl } from '../../utils/cloud-urls';
 
 const description = `run a diff between two API specs`;
 
@@ -252,7 +253,8 @@ const getDiffAction =
         config
       );
       if (run) {
-        console.log(`Uploaded results of diff to ${run.id} TODO`);
+        const url = getRunUrl(config.client.getWebBase(), run.orgId, run.runId);
+        console.log(`Uploaded results of diff to ${url}`);
       }
     }
 

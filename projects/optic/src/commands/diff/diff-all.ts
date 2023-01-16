@@ -20,7 +20,7 @@ import {
   terminalChangelog,
 } from '@useoptic/openapi-utilities';
 import { uploadDiff } from './upload-diff';
-import { getApiFromOpticUrl } from '../../utils/cloud-urls';
+import { getApiFromOpticUrl, getRunUrl } from '../../utils/cloud-urls';
 
 const usage = () => `
   optic diff-all
@@ -386,7 +386,12 @@ const getDiffAllAction =
           config
         );
         if (run) {
-          logger.info(`Uploaded results of diff to ${run.id} TODO`);
+          const url = getRunUrl(
+            config.client.getWebBase(),
+            run.orgId,
+            run.runId
+          );
+          console.log(`Uploaded results of diff to ${url}`);
         }
         if (
           options.web &&
