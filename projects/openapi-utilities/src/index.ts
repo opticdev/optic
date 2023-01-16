@@ -94,6 +94,10 @@ export {
   getLabel,
 } from './utilities/count-changed-operations';
 
+export { ObjectDiff, typeofDiff, diff } from './diff/diff';
+export { RuleResult } from './new-types';
+export { OpenApiV3Traverser } from './openapi3/traverser';
+
 export {
   sourcemapReader,
   OpenApiFact,

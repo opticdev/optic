@@ -1,4 +1,11 @@
-import { IChange, IFact, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
+import {
+  IChange,
+  IFact,
+  ObjectDiff,
+  OpenAPIV3,
+  Result,
+  RuleResult,
+} from '@useoptic/openapi-utilities';
 
 class NotImplementedError extends Error {}
 
@@ -20,6 +27,15 @@ export class ExternalRuleBase {
     nextJsonLike: OpenAPIV3.Document;
     currentJsonLike: OpenAPIV3.Document;
   }): Promise<Result[]> {
+    throw new NotImplementedError();
+  }
+
+  runRulesV2(inputs: {
+    context: any;
+    diffs: ObjectDiff[];
+    fromSpec: OpenAPIV3.Document;
+    toSpec: OpenAPIV3.Document;
+  }): Promise<RuleResult[]> {
     throw new NotImplementedError();
   }
 }

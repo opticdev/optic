@@ -28,7 +28,7 @@ export const initCli = async () => {
   initSentry(process.env.SENTRY_URL, packageJson.version);
   initSegment(process.env.SEGMENT_KEY);
   cli.hook('preAction', async (command) => {
-    const subcommands = ['ruleset'];
+    const subcommands = ['ruleset', 'oas', 'api', 'spec'];
     try {
       let commandName: string;
       let args: string[];
@@ -41,6 +41,7 @@ export const initCli = async () => {
       const anonymousId = await getAnonId();
       trackEvent(`optic.${commandName}`, anonymousId, {
         args,
+        isInCi: process.env.CI === 'true',
       });
       await flushEvents();
       // we can ignore non-critical tracking errors

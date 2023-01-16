@@ -22,6 +22,7 @@ type PathComponentCandidate = {
   inferred: 'constant' | 'variable';
   parent: PathComponentCandidate | null;
   verified: boolean; // provided by user, should not be changed
+  examplePath?: string;
 };
 
 export class InferPathStructure {
@@ -112,7 +113,10 @@ export class InferPathStructure {
       const match = constantMatch || variableMatch;
 
       if (match) {
-        if (isLast) match.httpMethods.add(method);
+        if (isLast) {
+          match.httpMethods.add(method);
+          match.examplePath = urlPath;
+        }
         parent = match;
       } else if (!match) {
         const isConfidentVariable = !isFirst && looksLikeAVariable(fragment);
@@ -127,6 +131,7 @@ export class InferPathStructure {
           name: name,
           inferred: isConfidentVariable ? 'variable' : 'constant',
           verified: false,
+          examplePath: pathToSegments(urlPath, index + 1),
         };
         this.paths.push(insert);
         parent = insert;
@@ -162,6 +167,7 @@ export class InferPathStructure {
           if (
             children.length > 0 &&
             children[0].parent !== null &&
+            !parentIsNeverResource(children[0].parent.name) &&
             !sharedVariableParent
           ) {
             // incorporate verified from spec
@@ -181,6 +187,7 @@ export class InferPathStructure {
                 httpMethods,
                 count: toCollapse.length,
                 verified: false,
+                examplePath: toCollapse[0]?.examplePath,
               };
 
               const descendants = this.paths.filter(
@@ -228,6 +235,10 @@ export class InferPathStructure {
       );
 
       uniqueConstants.forEach((constant) => {
+        const examplePath = reduce!.andDescendants.find(
+          (i) => i.name === constant
+        )?.examplePath;
+
         const newConstant: PathComponentCandidate = {
           parent: reduce!.insertVariable,
           name: constant,
@@ -235,6 +246,7 @@ export class InferPathStructure {
           count: 22,
           inferred: 'constant',
           httpMethods: combinedHttpMethods,
+          examplePath: examplePath,
         };
         graph.push(newConstant);
         reduce!.andDescendants.forEach((old) => {
@@ -253,6 +265,10 @@ export class InferPathStructure {
       );
 
       uniqueVariables.forEach((variable) => {
+        const examplePath = reduce!.andDescendants.find(
+          (i) => i.name === variable
+        )?.examplePath;
+
         const newVariable: PathComponentCandidate = {
           parent: reduce!.insertVariable,
           name: variable,
@@ -260,6 +276,7 @@ export class InferPathStructure {
           count: 0,
           inferred: 'variable',
           httpMethods: combinedHttpMethods,
+          examplePath,
         };
         graph.push(newVariable);
         reduce!.andDescendants.forEach((old) => {
@@ -282,7 +299,11 @@ export class InferPathStructure {
   //     .sort();
   // };
 
-  undocumentedPaths = () => {
+  undocumentedPaths: () => {
+    methods: Array<HttpMethod>;
+    pathPattern: string;
+    examplePath: string;
+  }[] = () => {
     return this.paths
       .map((pathComponent) => {
         const pathPattern = reducePathPattern(pathComponent);
@@ -296,7 +317,11 @@ export class InferPathStructure {
           }
         ) as Array<HttpMethod>;
 
-        return { methods, pathPattern };
+        return {
+          methods,
+          pathPattern,
+          examplePath: pathComponent.examplePath ?? '',
+        };
       })
       .filter((i) => i.methods.length > 0);
   };
@@ -401,9 +426,26 @@ function stripParamBrackets(input: string): string {
   return input.substring(1, input.length - 1);
 }
 
+const reservedPatterns = [
+  /api/,
+  /v[0-9]+/,
+  /v[0-9]+/,
+  /[0-9]+\.[0-9]+/,
+  /20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]/,
+];
+
+function parentIsNeverResource(parent: string): boolean {
+  return reservedPatterns.some((pattern) => pattern.test(parent));
+}
+
 function looksLikeAVariable(stringValue: string): boolean {
-  // any number is a variable
-  if (!isNaN(Number(stringValue))) return true;
+  if (reservedPatterns.some((pattern) => pattern.test(stringValue)))
+    return false;
+
+  if (stringValue)
+    if (!isNaN(Number(stringValue)))
+      // any number is a variable
+      return true;
   // any uuid is a variable
   if (
     /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i.test(
@@ -416,4 +458,9 @@ function looksLikeAVariable(stringValue: string): boolean {
     return true;
 
   return false;
+}
+
+function pathToSegments(path: string, n: number) {
+  const withoutLeading = path.split('/').filter((i) => Boolean(i));
+  return '/' + withoutLeading.slice(0, n).join('/');
 }

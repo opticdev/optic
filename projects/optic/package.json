@@ -2,17 +2,14 @@
   "name": "@useoptic/optic",
   "license": "MIT",
   "packageManager": "yarn@3.3.1",
-  "version": "0.36.3-3",
+  "version": "0.36.5",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
     "/build",
     "/src"
   ],
-  "bin": {
-    "oas": "build/oas.js",
-    "optic": "build/index.js"
-  },
+  "bin": "build/index.js",
   "scripts": {
     "dev:test": "ENVIRONMENT=test jest --colors",
     "build": "yarn tsc --build --verbose && yarn babel ./src --out-dir ./build --extensions \".ts\",\".tsx\"",
@@ -60,7 +57,7 @@
     "ajv": "^8.6.0",
     "bottleneck": "^2.19.5",
     "chalk": "^4.1.2",
-    "commander": "^9.4.1",
+    "commander": "^10.0.0",
     "dotenv": "^16.0.3",
     "is-url": "^1.2.4",
     "js-yaml": "^4.1.0",
@@ -74,6 +71,5 @@
     "tar": "^6.1.11",
     "url-join": "^4.0.1",
     "uuid": "^9.0.0"
-  },
-  "stableVersion": "0.36.2"
+  }
 }

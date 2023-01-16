@@ -189,6 +189,7 @@ const runDiff = async (
     const anonymousId = await getAnonId();
     trackEvent('optic.diff.view_web', anonymousId, {
       compressedDataLength: compressedData.length,
+      isInCi: process.env.CI === 'true',
     });
     await flushEvents();
     await open(`${config.client.getWebBase()}/cli/diff#${compressedData}`, {

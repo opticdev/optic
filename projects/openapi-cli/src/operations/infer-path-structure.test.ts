@@ -1,4 +1,4 @@
-import { it,  expect } from '@jest/globals';
+import { it, expect } from '@jest/globals';
 import {
   computeInferredOperations,
   InferPathStructure,
@@ -53,7 +53,7 @@ it('will learn entirely new paths', () => {
   pathStructure.includeObservedUrlPath('post', '/todos');
 
   expect(pathStructure.undocumentedPaths()).toEqual([
-    { methods: ['get', 'post'], pathPattern: '/todos' },
+    { methods: ['get', 'post'], pathPattern: '/todos', examplePath: '/todos' },
   ]);
 });
 
@@ -69,6 +69,7 @@ it('can expand the structure from new patterns with obvious variables', () => {
     {
       methods: ['get'],
       pathPattern: '/organizations/{organization}/repositories/{repository}',
+      examplePath: '/organizations/648/repositories/11221',
     },
   ]);
 });
@@ -92,10 +93,12 @@ it('can expand the structure from new patterns with hints in spec variables', ()
     {
       methods: ['get'],
       pathPattern: '/organizations/{organization}/members',
+      examplePath: '/organizations/opticdev/members',
     },
     {
       methods: ['get'],
       pathPattern: '/organizations/{organization}/members/{member}',
+      examplePath: '/organizations/opticdev/members/1',
     },
   ]);
 });
@@ -135,9 +138,14 @@ it('can reduce overlapping string constants to variables', () => {
 
   pathStructure.replaceConstantsWithVariables();
   expect(pathStructure.undocumentedPaths()).toEqual([
-    { methods: ['get'], pathPattern: '/organizations/{organization}' },
     {
       methods: ['get'],
+      pathPattern: '/organizations/{organization}',
+      examplePath: '/organizations/opticdev',
+    },
+    {
+      methods: ['get'],
+      examplePath: '/organizations/opticdev/repositories/optic',
       pathPattern: '/organizations/{organization}/repositories/{repository}',
     },
   ]);
@@ -155,7 +163,11 @@ it('respects verified components', () => {
 
   pathStructure.replaceConstantsWithVariables();
   expect(pathStructure.undocumentedPaths()).toEqual([
-    { methods: ['get'], pathPattern: '/users/{username}/events/private' },
+    {
+      methods: ['get'],
+      pathPattern: '/users/{username}/events/private',
+      examplePath: '/users/name-of-a-person/events/private',
+    },
   ]);
 });
 
@@ -176,9 +188,21 @@ it('can learn a variable component with constants after', () => {
 
   pathStructure.replaceConstantsWithVariables();
   expect(pathStructure.undocumentedPaths()).toEqual([
-    { methods: ['get'], pathPattern: '/users/{user}/events' },
-    { methods: ['get'], pathPattern: '/users/{user}/repos' },
-    { methods: ['get'], pathPattern: '/users/{user}/favorites' },
+    {
+      methods: ['get'],
+      pathPattern: '/users/{user}/events',
+      examplePath: '/users/name-of-a-person/events',
+    },
+    {
+      methods: ['get'],
+      pathPattern: '/users/{user}/repos',
+      examplePath: '/users/othername-of-thing/repos',
+    },
+    {
+      methods: ['get'],
+      pathPattern: '/users/{user}/favorites',
+      examplePath: '/users/othername-of-thing/favorites',
+    },
   ]);
 });
 
@@ -209,10 +233,26 @@ it('can learn a variable component with variables after', () => {
 
   pathStructure.replaceConstantsWithVariables();
   expect(pathStructure.undocumentedPaths()).toEqual([
-    { methods: ['get'], pathPattern: '/users/{user}/events' },
-    { methods: ['get'], pathPattern: '/users/{user}/repos' },
-    { methods: ['get'], pathPattern: '/users/{user}/favorites' },
-    { methods: ['get'], pathPattern: '/users/{user}/repos/{repo}' },
+    {
+      methods: ['get'],
+      pathPattern: '/users/{user}/events',
+      examplePath: '/users/name-of-a-person/events',
+    },
+    {
+      methods: ['get'],
+      pathPattern: '/users/{user}/repos',
+      examplePath: '/users/othername-of-thing/repos',
+    },
+    {
+      methods: ['get'],
+      pathPattern: '/users/{user}/favorites',
+      examplePath: '/users/othername-of-thing/favorites',
+    },
+    {
+      methods: ['get'],
+      pathPattern: '/users/{user}/repos/{repo}',
+      examplePath: '/users/othername-of-thing/repos/abc',
+    },
   ]);
 });
 
@@ -231,15 +271,106 @@ it('can multiple top level resources ', () => {
   pathStructure.replaceConstantsWithVariables();
 
   expect(pathStructure.undocumentedPaths()).toEqual([
-    { methods: ['get'], pathPattern: '/orders/{order}' },
-    { methods: ['get'], pathPattern: '/orders/{order}/products' },
-    { methods: ['get'], pathPattern: '/orders/{order}/tracking' },
-    { methods: ['get'], pathPattern: '/health-check' },
-    { methods: ['get'], pathPattern: '/rates/{rate}' },
-    { methods: ['get'], pathPattern: '/users/{user}/addresses' },
+    {
+      methods: ['get'],
+      pathPattern: '/orders/{order}',
+      examplePath: '/orders/3',
+    },
+    {
+      methods: ['get'],
+      pathPattern: '/orders/{order}/products',
+      examplePath: '/orders/3/products',
+    },
+    {
+      methods: ['get'],
+      pathPattern: '/orders/{order}/tracking',
+      examplePath: '/orders/3/tracking',
+    },
+    {
+      methods: ['get'],
+      pathPattern: '/health-check',
+      examplePath: '/health-check',
+    },
+    {
+      methods: ['get'],
+      pathPattern: '/rates/{rate}',
+      examplePath: '/rates/10005',
+    },
+    {
+      methods: ['get'],
+      pathPattern: '/users/{user}/addresses',
+      examplePath: '/users/m24-3343/addresses',
+    },
     {
       methods: ['get'],
       pathPattern: '/users/{user}/addresses/{address}',
+      examplePath: '/users/m24-3343/addresses/1',
+    },
+  ]);
+});
+
+it('can infer multiple top level resources under the an API path', () => {
+  const pathStructure = new InferPathStructure([
+    {
+      pathPattern: '/api',
+      methods: ['get'],
+    },
+  ]);
+
+  pathStructure.includeObservedUrlPath('get', '/api/orders/3/products');
+  pathStructure.includeObservedUrlPath('get', '/api/orders/3');
+  pathStructure.includeObservedUrlPath('get', '/api/orders/3/tracking');
+  pathStructure.includeObservedUrlPath(
+    'get',
+    '/api/users/m24-3343/addresses/1'
+  );
+  pathStructure.includeObservedUrlPath('get', '/api/users/n94-3343/addresses');
+  pathStructure.includeObservedUrlPath(
+    'get',
+    '/api/users/n94-3343/addresses/4'
+  );
+  pathStructure.includeObservedUrlPath('get', '/api/health-check');
+  pathStructure.includeObservedUrlPath('get', '/api/rates/10005');
+
+  pathStructure.replaceConstantsWithVariables();
+
+  const results = pathStructure.undocumentedPaths();
+
+  expect(results).toEqual([
+    {
+      methods: ['get'],
+      pathPattern: '/api/orders/{order}',
+      examplePath: '/api/orders/3',
+    },
+    {
+      methods: ['get'],
+      pathPattern: '/api/orders/{order}/products',
+      examplePath: '/api/orders/3/products',
+    },
+    {
+      methods: ['get'],
+      pathPattern: '/api/orders/{order}/tracking',
+      examplePath: '/api/orders/3/tracking',
+    },
+    {
+      methods: ['get'],
+      pathPattern: '/api/health-check',
+      examplePath: '/api/health-check',
+    },
+    {
+      methods: ['get'],
+      pathPattern: '/api/rates/{rate}',
+      examplePath: '/api/rates/10005',
+    },
+    {
+      methods: ['get'],
+      examplePath: '/api/users/m24-3343/addresses',
+      pathPattern: '/api/users/{user}/addresses',
+    },
+    {
+      methods: ['get'],
+      pathPattern: '/api/users/{user}/addresses/{address}',
+      examplePath: '/api/users/m24-3343/addresses/1',
     },
   ]);
 });
@@ -264,10 +395,11 @@ it('works with async captured interactions', async () => {
   );
 
   expect(operationsToAdd).toEqual([
-    { methods: ['get'], pathPattern: '/orders' },
+    { methods: ['get'], pathPattern: '/orders', examplePath: '/orders' },
     {
       methods: ['post', 'patch'],
       pathPattern: '/orders/{order}/products',
+      examplePath: '/orders/3/products',
     },
   ]);
 });

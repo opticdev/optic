@@ -2,7 +2,7 @@
   "name": "@useoptic/optic-ci",
   "license": "MIT",
   "packageManager": "yarn@3.3.1",
-  "version": "0.36.3-3",
+  "version": "0.36.5",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -56,7 +56,7 @@
     "ajv": "^8.6.0",
     "bottleneck": "^2.19.5",
     "chalk": "^4.1.2",
-    "commander": "^9.4.1",
+    "commander": "^10.0.0",
     "is-url": "^1.2.4",
     "js-yaml": "^4.1.0",
     "json-stable-stringify": "^1.0.1",
@@ -66,6 +66,5 @@
     "picomatch": "^2.3.1",
     "url-join": "^4.0.1",
     "uuid": "^9.0.0"
-  },
-  "stableVersion": "0.36.2"
+  }
 }

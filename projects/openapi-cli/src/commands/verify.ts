@@ -215,7 +215,11 @@ async function renderOperationStatus(
     for (let unmatchedPath of pathsToAdd) {
       undocumentedPaths++;
       unmatchedPath.methods.forEach((method) =>
-        renderUndocumentedPath(method.toUpperCase(), unmatchedPath.pathPattern)
+        renderUndocumentedPath(
+          method.toUpperCase(),
+          unmatchedPath.pathPattern,
+          unmatchedPath.examplePath
+        )
       );
     }
     feedback.commandInstruction('--document all', 'to document these paths');
@@ -292,10 +296,17 @@ async function getInteractions(
   return AT.merge(...sources);
 }
 
-function renderUndocumentedPath(method: string, pathPattern: string) {
+function renderUndocumentedPath(
+  method: string,
+  pathPattern: string,
+  examplePath: string
+) {
   console.log(
     `${chalk.bgYellow('  Undocumented  ')} ${method
       .toUpperCase()
-      .padStart(6, ' ')}   ${pathPattern}`
+      .padStart(6, ' ')}   ${pathPattern}\n${''.padStart(
+      22, // undocumented + method length
+      ' '
+    )}${examplePath}`
   );
 }

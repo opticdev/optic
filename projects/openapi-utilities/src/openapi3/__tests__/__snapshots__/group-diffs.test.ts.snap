@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`groupDiffsByEndpoint can group diffs by endpoint for small-pet-store  1`] = `
+GroupedDiffs {
+  "paths": {
+    "/user": {
+      "diffs": [],
+      "methods": {
+        "post": {
+          "cookieParameters": [],
+          "diffs": [],
+          "headerParameters": [],
+          "pathParameters": [],
+          "queryParameters": [],
+          "request": {
+            "contents": {
+              "*/*": {
+                "diffs": [
+                  {
+                    "after": "/paths/~1user/post/requestBody/content/*~1*/schema/required",
+                    "change": "added",
+                    "trail": "/schema/required",
+                  },
+                ],
+              },
+            },
+            "diffs": [],
+          },
+          "responses": {},
+        },
+      },
+    },
+    "/user/login": {
+      "diffs": [
+        {
+          "after": "/paths/~1user~1login",
+          "change": "added",
+          "trail": "",
+        },
+      ],
+      "methods": {},
+    },
+    "/user/logout": {
+      "diffs": [
+        {
+          "after": "/paths/~1user~1logout",
+          "change": "added",
+          "trail": "",
+        },
+      ],
+      "methods": {},
+    },
+    "/user/{username}": {
+      "diffs": [
+        {
+          "after": "/paths/~1user~1{username}",
+          "change": "added",
+          "trail": "",
+        },
+      ],
+      "methods": {},
+    },
+  },
+  "specification": [],
+}
+`;
