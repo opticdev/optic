@@ -20,6 +20,7 @@ import {
   terminalChangelog,
 } from '@useoptic/openapi-utilities';
 import { uploadDiff } from './upload-diff';
+import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 
 const usage = () => `
   optic diff-all
@@ -158,8 +159,8 @@ async function computeAll(
     // - if to spec has x-optic-url
     // - if from spec has x-optic-url AND to spec is empty
     if (
-      typeof toParseResults.jsonLike[OPTIC_URL_KEY] === 'string' ||
-      (typeof fromParseResults.jsonLike[OPTIC_URL_KEY] === 'string' &&
+      getApiFromOpticUrl(toParseResults.jsonLike[OPTIC_URL_KEY]) ||
+      (getApiFromOpticUrl(fromParseResults.jsonLike[OPTIC_URL_KEY]) &&
         toParseResults.isEmptySpec)
     ) {
       logger.info(
@@ -247,7 +248,7 @@ function handleWarnings(warnings: Warnings, options: DiffAllActionOptions) {
   if (warnings.missingOpticUrl.length > 0) {
     logger.info(
       chalk.yellow(
-        'Warning - the following OpenAPI specs were detected but did not have x-optic-url keys. `optic diff-all` only runs on specs that include `x-optic-url` keys.'
+        'Warning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. `optic diff-all` only runs on specs that include `x-optic-url` keys that point to specs uploaded to optic.'
       )
     );
     logger.info('Run the `optic api add` command to add these specs to optic');

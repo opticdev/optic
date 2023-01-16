@@ -17,6 +17,20 @@ import {
 jest.setTimeout(30000);
 
 setupTestServer(({ url, method }) => {
+  if (method === 'POST' && /\/api\/specs\/prepare$/.test(url)) {
+    return JSON.stringify({
+      spec_id: 'already-uploaded',
+    });
+  } else if (method === 'POST' && /\/api\/runs\/prepare$/.test(url)) {
+    return JSON.stringify({
+      check_results_url: `${process.env.BWTS_HOST_OVERRIDE}/special-s3-route`,
+      upload_id: '123',
+    });
+  } else if (method === 'POST' && /\/api\/runs2$/.test(url)) {
+    return JSON.stringify({
+      id: 'run-id',
+    });
+  }
   return JSON.stringify({});
 });
 
@@ -42,6 +56,7 @@ describe('diff-all', () => {
       false,
       workspace
     );
+    process.env.OPTIC_TOKEN = '123';
 
     const { combined, code } = await runOptic(workspace, 'diff-all --check');
 
@@ -60,6 +75,7 @@ describe('diff-all', () => {
       false,
       workspace
     );
+    process.env.OPTIC_TOKEN = '123';
 
     const { combined, code } = await runOptic(
       workspace,
