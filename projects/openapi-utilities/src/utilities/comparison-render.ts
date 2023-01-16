@@ -281,7 +281,7 @@ export function* generateComparisonLogsV2(
       yield `${getIndent(1)}${resultNode} ${bold('Specification')}`;
     } else {
       const [path, method] = location.split('-');
-      if (method === '') {
+      if (!method) {
         yield `${getIndent(1)}${resultNode} ${path}`;
       } else {
         yield `${getIndent(1)}${resultNode} ${bold(
