@@ -391,7 +391,7 @@ const getDiffAllAction =
             run.orgId,
             run.runId
           );
-          console.log(`Uploaded results of diff to ${url}`);
+          logger.info(`Uploaded results of diff to ${url}`);
         }
         if (
           options.web &&
