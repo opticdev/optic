@@ -1,4 +1,11 @@
-import { test, expect, describe, jest } from '@jest/globals';
+import {
+  test,
+  expect,
+  describe,
+  jest,
+  beforeEach,
+  afterEach,
+} from '@jest/globals';
 import fs from 'node:fs/promises';
 import path from 'path';
 import {
@@ -6,9 +13,20 @@ import {
   setupWorkspace,
   normalizeWorkspace,
   setupTestServer,
+  run,
 } from './integration';
 
 jest.setTimeout(30000);
+
+let oldEnv: any;
+beforeEach(() => {
+  oldEnv = { ...process.env };
+  process.env.LOG_LEVEL = 'info';
+});
+
+afterEach(() => {
+  process.env = { ...oldEnv };
+});
 
 describe('diff', () => {
   test('two files, no repo or config', async () => {
@@ -101,7 +119,7 @@ describe('diff', () => {
             './workspaces/diff/custom-rules/rules/cloud-mock.js'
           )
         );
-      } else if (method === 'GET' && /\/api\/ruleset-configs\//) {
+      } else if (method === 'GET' && /\/api\/ruleset-configs\//.test(url)) {
         return JSON.stringify({
           organization_id: 'abc',
           config: {
@@ -111,8 +129,44 @@ describe('diff', () => {
           created_at: '2022-11-02T17:55:48.078Z',
           updated_at: '2022-11-02T17:55:48.078Z',
         });
+      } else if (method === 'POST' && /\/api\/specs\/prepare$/.test(url)) {
+        return JSON.stringify({
+          spec_id: 'already-uploaded',
+        });
+      } else if (method === 'POST' && /\/api\/runs\/prepare$/.test(url)) {
+        return JSON.stringify({
+          check_results_url: `${process.env.BWTS_HOST_OVERRIDE}/special-s3-route`,
+          upload_id: '123',
+        });
+      } else if (method === 'POST' && /\/api\/runs2$/.test(url)) {
+        return JSON.stringify({
+          id: 'run-id',
+        });
       }
       return JSON.stringify({});
+    });
+
+    test.only('uploads specs if authenticated', async () => {
+      const workspace = await setupWorkspace('diff/upload', {
+        repo: true,
+        commit: true,
+      });
+
+      await run(
+        `sed -i '' 's/string/number/' spec.json && git add . && git commit -m 'update spec'`,
+        false,
+        workspace
+      );
+
+      process.env.OPTIC_TOKEN = '123';
+
+      const { combined, code } = await runOptic(
+        workspace,
+        'diff spec.json --base HEAD~1 --check'
+      );
+
+      expect(code).toBe(1);
+      expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     });
 
     test('ruleset key on api spec', async () => {

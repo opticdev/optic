@@ -354,3 +354,29 @@ Configure check rulesets in optic cloud or your local optic.dev.yml file.
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
+
+exports[`diff with mock server uploads specs if authenticated 1`] = `
+"
+[1mPATCH[22m /example: 
+  - response [1m200[22m: 
+    - body [1mapplication/json[22m: 
+      - type [33mchanged[39m
+
+Checks
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mPATCH[22m /example
+    changed rule: prevent response property type changes
+      [31m[31mx[39m[31m expected response body application/json root shape to not change type. This is a breaking change.[39m
+      at [4m$workspace$/spec.json:24:565[24m
+
+
+
+1 operation changed
+[32m[1m0 checks passed[22m[39m
+[31m[1m1 checks failed[22m[39m
+
+Configure check rulesets in optic cloud or your local optic.dev.yml file.
+Uploaded results of diff to TODO TODO
+[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
+"
+`;

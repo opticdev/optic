@@ -22,7 +22,7 @@ export async function uploadSpec(
     sourcemap_checksum,
   });
   if ('upload_id' in result) {
-    Promise.all([
+    await Promise.all([
       uploadFileToS3(
         result.spec_url,
         Buffer.from(JSON.stringify(opts.spec.jsonLike))

@@ -287,6 +287,8 @@ const getDiffAction =
           client: config.client,
           specResults: diffResult.specResults,
         });
+
+        console.log(`Uploaded results of diff to TODO TODO`);
       }
     }
 
