@@ -1,4 +1,4 @@
-import { IChange, ResultWithSourcemap } from '@useoptic/openapi-utilities';
+import { compareSpecs } from '@useoptic/openapi-utilities';
 import { OpticBackendClient } from '../client';
 import { computeChecksum } from './checksum';
 import { uploadFileToS3 } from './s3';
@@ -50,12 +50,7 @@ export async function uploadRun(
     fromSpecId: string;
     toSpecId: string;
     client: OpticBackendClient;
-    specResults: {
-      // TODO change this type
-      changes: IChange[];
-      results: ResultWithSourcemap[];
-      version: string;
-    };
+    specResults: Awaited<ReturnType<typeof compareSpecs>>;
   }
 ) {
   const checksum = computeChecksum(opts.specResults);

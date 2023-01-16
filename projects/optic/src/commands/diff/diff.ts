@@ -119,7 +119,10 @@ const runDiff = async (
   [baseFile, headFile]: [ParseResult, ParseResult],
   config: OpticCliConfig,
   options: DiffActionOptions
-): Promise<{ checks: { passed: number; failed: number; total: number } }> => {
+): Promise<{
+  checks: { passed: number; failed: number; total: number };
+  specResults: Awaited<ReturnType<typeof compute>>['specResults'];
+}> => {
   const { specResults, checks, changelogData } = await compute(
     [baseFile, headFile],
     config,
