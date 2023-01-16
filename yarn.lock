@@ -3745,7 +3745,7 @@ __metadata:
     lodash.sortby: ^4.7.0
     log: ^6.3.1
     log-node: ^8.0.3
-    minimatch: 5.1.2
+    minimatch: 5.1.4
     mockttp: ^3.3.1
     node-abort-controller: ^3.0.1
     node-fetch: ^2.6.7
@@ -8420,12 +8420,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:5.1.2":
-  version: 5.1.2
-  resolution: "minimatch@npm:5.1.2"
+"minimatch@npm:5.1.4":
+  version: 5.1.4
+  resolution: "minimatch@npm:5.1.4"
   dependencies:
     brace-expansion: ^2.0.1
-  checksum: 32ffda25b9fb8270a1c1beafdb7489dc0e411af553495136509a945691f63c9b6b000eeeaaf8bffe3efa609c1d6d3bc0f5a106f6c3443b5c05da649100ded964
+  checksum: 0de6d7d154e70d12487b30a7bfcb74bd15fd1f1ec007a2516699ba76e63f78ca2e5016c200b242ed75123aff8dcccf49947f71b629fb1b1f221c8e76a13ed8de
   languageName: node
   linkType: hard
 
