@@ -153,7 +153,7 @@ describe('diff', () => {
       });
 
       await run(
-        `sed -i '' 's/string/number/' spec.json && git add . && git commit -m 'update spec'`,
+        `sed -i.bak 's/string/number/' spec.json spec.json && git add . && git commit -m 'update spec'`,
         false,
         workspace
       );
