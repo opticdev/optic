@@ -52,7 +52,7 @@ export async function uploadRun(
     client: OpticBackendClient;
     specResults: Awaited<ReturnType<typeof compareSpecs>>;
   }
-) {
+): Promise<{ id: string }> {
   const checksum = computeChecksum(opts.specResults);
   const result = await opts.client.prepareRunUpload({
     api_id: apiId,
@@ -64,7 +64,7 @@ export async function uploadRun(
     Buffer.from(JSON.stringify(opts.specResults))
   );
 
-  await opts.client.createRun({
+  return await opts.client.createRun({
     upload_id: result.upload_id,
     api_id: apiId,
     from_spec_id: opts.fromSpecId,

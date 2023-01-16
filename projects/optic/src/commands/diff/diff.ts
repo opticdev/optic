@@ -22,13 +22,11 @@ import {
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { getAnonId } from '../../utils/anonymous-id';
 import { compute } from './compute';
-import { OPTIC_URL_KEY } from '../../constants';
-import { getApiFromOpticUrl } from '../../utils/cloud-urls';
-import { EMPTY_SPEC_ID, uploadRun, uploadSpec } from '../../utils/cloud-specs';
-import * as Git from '../../utils/git-utils';
 import { compressData, compressDataV2 } from './compressResults';
 import { generateRuleRunner } from './generate-rule-runner';
 import { OPTIC_STANDARD_KEY } from '../../constants';
+import { uploadDiff } from './upload-diff';
+import { getRunUrl } from '../../utils/cloud-urls';
 
 const description = `run a diff between two API specs`;
 
@@ -284,51 +282,18 @@ const getDiffAction =
     const diffResult = await runDiff(files, parsedFiles, config, options);
     if (config.isAuthenticated) {
       const [baseParseResult, headParseResult] = parsedFiles;
-      const opticUrl: string | null =
-        headParseResult.jsonLike[OPTIC_URL_KEY] ??
-        baseParseResult.jsonLike[OPTIC_URL_KEY] ??
-        null;
-      const apiId: string | null = opticUrl && getApiFromOpticUrl(opticUrl);
-      // We upload a spec if it is unchanged in git and there is an API id on the spec
-      let baseSpecId: string | null = null;
-      let headSpecId: string | null = null;
-      if (baseParseResult.context && apiId) {
-        const tags =
-          baseParseResult.context.vcs === VCS.Git
-            ? [`git:${baseParseResult.context.sha}`]
-            : [];
-        baseSpecId = await uploadSpec(apiId, {
-          spec: baseParseResult,
-          client: config.client,
-          tags,
-        });
-      } else if (baseParseResult.isEmptySpec) {
-        baseSpecId = EMPTY_SPEC_ID;
-      }
-      if (headParseResult.context && apiId) {
-        let tags: string[] = [];
-        if (headParseResult.context.vcs === VCS.Git) {
-          const currentBranch = await Git.getCurrentBranchName();
-          tags = [`git:${headParseResult.context.sha}`, `git:${currentBranch}`];
-        }
-        headSpecId = await uploadSpec(apiId, {
-          spec: headParseResult,
-          client: config.client,
-          tags,
-        });
-      } else if (headParseResult.isEmptySpec) {
-        headSpecId = EMPTY_SPEC_ID;
-      }
 
-      if (baseSpecId && headSpecId && apiId) {
-        await uploadRun(apiId, {
-          fromSpecId: baseSpecId,
-          toSpecId: headSpecId,
-          client: config.client,
-          specResults: diffResult.specResults,
-        });
-
-        console.log(`Uploaded results of diff to TODO TODO`);
+      const run = await uploadDiff(
+        {
+          from: baseParseResult,
+          to: headParseResult,
+        },
+        diffResult.specResults,
+        config
+      );
+      if (run) {
+        const url = getRunUrl(config.client.getWebBase(), run.orgId, run.runId);
+        console.log(`Uploaded results of diff to ${url}`);
       }
     }
 

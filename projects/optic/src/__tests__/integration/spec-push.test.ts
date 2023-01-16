@@ -16,6 +16,18 @@ import {
 jest.setTimeout(30000);
 
 setupTestServer(({ url, method }) => {
+  if (method === 'POST' && /\/api\/specs\/prepare$/.test(url)) {
+    return JSON.stringify({
+      upload_id: '123',
+      spec_url: `${process.env.BWTS_HOST_OVERRIDE}/special-s3-route/spec`,
+      sourcemap_url: `${process.env.BWTS_HOST_OVERRIDE}/special-s3-route/sourcemap`,
+    });
+  } else if (method === 'POST' && /\/api\/specs$/.test(url)) {
+    return JSON.stringify({
+      id: 'spec-id',
+    });
+  }
+
   return JSON.stringify({});
 });
 
@@ -28,6 +40,7 @@ describe('optic spec push', () => {
   beforeEach(() => {
     oldEnv = { ...process.env };
     process.env.LOG_LEVEL = 'info';
+    process.env.OPTIC_ENV = 'local';
   });
 
   afterEach(() => {

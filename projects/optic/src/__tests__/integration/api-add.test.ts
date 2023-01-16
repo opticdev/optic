@@ -20,6 +20,25 @@ function sanitizeOutput(out: string) {
 }
 
 setupTestServer(({ url, method }) => {
+  if (method === 'POST' && /\/api\/specs\/prepare$/.test(url)) {
+    return JSON.stringify({
+      upload_id: '123',
+      spec_url: `${process.env.BWTS_HOST_OVERRIDE}/special-s3-route/spec`,
+      sourcemap_url: `${process.env.BWTS_HOST_OVERRIDE}/special-s3-route/sourcemap`,
+    });
+  } else if (method === 'POST' && /\/api\/specs$/.test(url)) {
+    return JSON.stringify({
+      id: 'spec-id',
+    });
+  } else if (method === 'GET' && /\/api\/token\/orgs/.test(url)) {
+    return JSON.stringify([{ id: 'org-id', name: 'org-blah' }]);
+  } else if (method === 'GET' && /\/api\/ruleset-configs/.test(url)) {
+    // a return value means it exists
+    return JSON.stringify({});
+  } else if (method === 'POST' && /\/api\/api\/create/.test(url)) {
+    return JSON.stringify({ id: 'api-id' });
+  }
+
   return JSON.stringify({});
 });
 
@@ -28,6 +47,7 @@ describe('optic api add', () => {
   beforeEach(() => {
     oldEnv = { ...process.env };
     process.env.LOG_LEVEL = 'info';
+    process.env.OPTIC_ENV = 'test';
   });
 
   afterEach(() => {
@@ -50,7 +70,6 @@ describe('optic api add', () => {
       },
     ],
   ])('%s - no cli interaction', (vcs, setupOptions) => {
-    // TODO when connecting API, force to only return one org
     test('discover one file with history depth', async () => {
       process.env.OPTIC_TOKEN = 'something';
       const workspace = await setupWorkspace('api-add/one-file', setupOptions);
