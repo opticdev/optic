@@ -1,4 +1,5 @@
 import { Command } from 'commander';
+import open from 'open';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import { SPEC_TAG_REGEXP } from '@useoptic/openapi-utilities';
 
@@ -9,7 +10,7 @@ import { OPTIC_URL_KEY } from '../../constants';
 import * as Git from '../../utils/git-utils';
 import chalk from 'chalk';
 import { uploadSpec } from '../../utils/cloud-specs';
-import { getApiFromOpticUrl } from '../../utils/cloud-urls';
+import { getApiFromOpticUrl, getSpecUrl } from '../../utils/cloud-urls';
 
 const usage = () => `
   optic spec push <path_to_spec.yml>
@@ -108,7 +109,7 @@ const getSpecPushAction =
       return;
     }
     const opticUrl: string = parseResult.jsonLike[OPTIC_URL_KEY];
-    const maybeApiId = getApiFromOpticUrl(opticUrl);
+    const specDetails = getApiFromOpticUrl(opticUrl);
 
     if (typeof opticUrl !== 'string') {
       logger.error(
@@ -117,7 +118,7 @@ const getSpecPushAction =
       logger.error(`${chalk.yellow('Hint: ')} Run optic api add ${spec_path}`);
       process.exitCode = 1;
       return;
-    } else if (!maybeApiId) {
+    } else if (!specDetails) {
       logger.error(
         `File ${spec_path} does not a valid. Files must be added to Optic and have an x-optic-url key that points to an uploaded spec before specs can be pushed up to Optic.`
       );
@@ -132,14 +133,22 @@ const getSpecPushAction =
         tagsToAdd.length > 0 ? `with tags ${tagsToAdd.join(', ')}` : ''
       }`
     );
-    const spec = await uploadSpec(maybeApiId, {
+    const specId = await uploadSpec(specDetails.apiId, {
       spec: parseResult,
       client: config.client,
       tags: tagsToAdd,
     });
+    const url = getSpecUrl(
+      config.client.getWebBase(),
+      specDetails.orgId,
+      specId
+    );
 
     logger.info(
-      `Succesfully uploaded spec to Optic. View the spec here ${'TODODODODOO'}`
+      `Succesfully uploaded spec to Optic. View the spec here ${url}`
     );
-    // TODO log out spec url and maybe open if --web
+
+    if (options.web) {
+      await open(url, { wait: false });
+    }
   };
