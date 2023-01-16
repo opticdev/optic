@@ -146,14 +146,14 @@ describe('diff', () => {
       return JSON.stringify({});
     });
 
-    test.only('uploads specs if authenticated', async () => {
+    test('uploads specs if authenticated', async () => {
       const workspace = await setupWorkspace('diff/upload', {
         repo: true,
         commit: true,
       });
 
       await run(
-        `sed -i '' 's/string/number/' spec.json && git add . && git commit -m 'update spec'`,
+        `sed -i.bak 's/string/number/' spec.json spec.json && git add . && git commit -m 'update spec'`,
         false,
         workspace
       );
