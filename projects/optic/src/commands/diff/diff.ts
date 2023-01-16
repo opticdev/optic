@@ -2,13 +2,11 @@ import { Command } from 'commander';
 import open from 'open';
 
 import {
-  logComparison,
-  generateChangelogData,
+  generateComparisonLogsV2,
   terminalChangelog,
   UserError,
   jsonChangelog,
-  ResultWithSourcemap,
-  IChange,
+  generateSpecResults,
 } from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import {
@@ -24,11 +22,13 @@ import {
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { getAnonId } from '../../utils/anonymous-id';
 import { compute } from './compute';
-import { compressData } from './compressResults';
 import { OPTIC_URL_KEY } from '../../constants';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { EMPTY_SPEC_ID, uploadRun, uploadSpec } from '../../utils/cloud-specs';
 import * as Git from '../../utils/git-utils';
+import { compressData, compressDataV2 } from './compressResults';
+import { generateRuleRunner } from './generate-rule-runner';
+import { OPTIC_STANDARD_KEY } from '../../constants';
 
 const description = `run a diff between two API specs`;
 
@@ -119,37 +119,34 @@ const runDiff = async (
   [baseFile, headFile]: [ParseResult, ParseResult],
   config: OpticCliConfig,
   options: DiffActionOptions
-): Promise<{
-  checks: { passed: number; failed: number; total: number };
-  specResults: {
-    changes: IChange[];
-    results: ResultWithSourcemap[];
-    version: string;
-  };
-}> => {
-  const { specResults, checks } = await compute(
+): Promise<{ checks: { passed: number; failed: number; total: number } }> => {
+  const { specResults, checks, changelogData } = await compute(
     [baseFile, headFile],
     config,
     options
   );
   const diffResults = { checks, specResults };
 
-  const changelogData = generateChangelogData({
-    changes: specResults.changes,
-    toFile: headFile.jsonLike,
-    rules: specResults.results,
-  });
-
   if (options.json) {
-    console.log(JSON.stringify(jsonChangelog(changelogData)));
+    console.log(
+      JSON.stringify(
+        jsonChangelog(
+          { from: baseFile.jsonLike, to: headFile.jsonLike },
+          changelogData
+        )
+      )
+    );
     return diffResults;
   } else {
-    if (specResults.changes.length === 0) {
+    if (specResults.diffs.length === 0) {
       console.log('No changes were detected');
     } else {
       console.log('');
     }
-    for (const log of terminalChangelog(changelogData)) {
+    for (const log of terminalChangelog(
+      { from: baseFile.jsonLike, to: headFile.jsonLike },
+      changelogData
+    )) {
       console.log(log);
     }
   }
@@ -160,7 +157,17 @@ const runDiff = async (
       console.log('');
     }
 
-    logComparison(specResults, { output: 'pretty', verbose: false });
+    for (const log of generateComparisonLogsV2(
+      changelogData,
+      {
+        from: baseFile.sourcemap,
+        to: headFile.sourcemap,
+      },
+      specResults,
+      { output: 'pretty', verbose: false }
+    )) {
+      console.log(log);
+    }
 
     console.log('');
     console.log(
@@ -170,7 +177,7 @@ const runDiff = async (
 
   if (options.web) {
     if (
-      specResults.changes.length === 0 &&
+      specResults.diffs.length === 0 &&
       (!options.check || specResults.results.length === 0)
     ) {
       console.log('Empty changelog: not opening web view');
@@ -184,7 +191,36 @@ const runDiff = async (
       base: options.base,
     };
 
-    const compressedData = compressData(baseFile, headFile, specResults, meta);
+    let compressedData: string;
+    if (process.env.NEW_WEB_VIEW === 'true') {
+      compressedData = compressDataV2(baseFile, headFile, specResults, meta);
+    } else {
+      // TODO remove this old flow when new web view is ready
+      const ruleRunner = await generateRuleRunner(
+        {
+          rulesetArg: options.ruleset,
+          specRuleset: headFile.isEmptySpec
+            ? baseFile.jsonLike[OPTIC_STANDARD_KEY]
+            : headFile.jsonLike[OPTIC_STANDARD_KEY],
+          config,
+        },
+        options.check
+      );
+      const specResultsLegacy = await generateSpecResults(
+        ruleRunner,
+        baseFile,
+        headFile,
+        null
+      );
+
+      compressedData = compressData(
+        baseFile,
+        headFile,
+        specResultsLegacy,
+        meta
+      );
+    }
+
     console.log('Opening up diff in web view');
     const anonymousId = await getAnonId();
     trackEvent('optic.diff.view_web', anonymousId, {

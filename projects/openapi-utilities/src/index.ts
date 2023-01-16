@@ -73,6 +73,7 @@ export {
 } from './utilities/compare-comment';
 export {
   logComparison,
+  generateComparisonLogsV2,
   generateComparisonLogs,
   getComparisonLogs,
 } from './utilities/comparison-render';
@@ -94,6 +95,8 @@ export {
   getLabel,
 } from './utilities/count-changed-operations';
 
+export { compareSpecs } from './compare-specs/compare-specs';
+export { groupDiffsByEndpoint } from './openapi3/group-diff';
 export { ObjectDiff, typeofDiff, diff } from './diff/diff';
 export { RuleResult } from './new-types';
 export { OpenApiV3Traverser } from './openapi3/traverser';

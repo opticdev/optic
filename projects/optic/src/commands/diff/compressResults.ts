@@ -3,10 +3,12 @@ import {
   OpenAPIV3,
   IChange,
   generateSpecResults,
+  compareSpecs,
 } from '@useoptic/openapi-utilities';
 import { ParseResult } from '../../utils/spec-loaders';
 
 type SpecResults = Awaited<ReturnType<typeof generateSpecResults>>;
+type SpecResultsV2 = Awaited<ReturnType<typeof compareSpecs>>;
 
 // We can remove the components from spec since the changelog is flattened, and any valid refs will
 // already be added into endpoints they're used in
@@ -50,6 +52,26 @@ export const compressData = (
     results: removeSourcemapsFromResults(specResults),
     meta,
     version: '1',
+  };
+  const compressed = zlib.brotliCompressSync(
+    Buffer.from(JSON.stringify(dataToCompress))
+  );
+  const urlSafeString = Buffer.from(compressed).toString('base64');
+  return urlSafeString;
+};
+
+export const compressDataV2 = (
+  baseFile: ParseResult,
+  headFile: ParseResult,
+  specResults: SpecResultsV2,
+  meta: Record<string, unknown>
+): string => {
+  const dataToCompress = {
+    base: removeComponentsFromSpec(baseFile.jsonLike),
+    head: removeComponentsFromSpec(headFile.jsonLike),
+    results: specResults,
+    meta,
+    version: '2',
   };
   const compressed = zlib.brotliCompressSync(
     Buffer.from(JSON.stringify(dataToCompress))

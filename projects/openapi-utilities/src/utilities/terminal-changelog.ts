@@ -1,14 +1,15 @@
-import {
-  groupChangesAndRules,
-  OpenApiEndpointChange,
-  RequestChange,
-  ResponseChange,
-  BodyChange,
-} from './group-changes';
-import { ChangeVariant, OpenApiKind, OpenApiFact } from '../openapi3/sdk/types';
+import { OpenAPIV3 } from 'openapi-types';
+import { typeofDiff, getTypeofDiffs } from '../diff/diff';
+import type {
+  GroupedDiffs,
+  Body,
+  Diff,
+  Endpoint,
+  Response,
+} from '../openapi3/group-diff';
+
 import { Instance as Chalk } from 'chalk';
-import isEqual from 'lodash.isequal';
-import omit from 'lodash.omit';
+import { getLocation, getRaw } from '../openapi3/traverser';
 
 const chalk = new Chalk();
 
@@ -18,103 +19,48 @@ const changed = chalk.yellow('changed');
 
 const INDENTATION = '  ';
 
-const getAddedOrRemovedLabel = (change: ChangeVariant<any>) =>
-  change.added ? added : change.removed ? removed : '';
+const getAddedOrRemovedLabel = (
+  change: 'added' | 'changed' | 'removed' | null
+) => (change === 'added' ? added : change === 'removed' ? removed : '');
 
-const getDiff = (before: object, after: object) => {
-  const output = {
-    added: <string[]>[],
-    changed: <string[]>[],
-    removed: <string[]>[],
+function* getDetailLogs(diffs: Diff[], options: { label?: string } = {}) {
+  if (diffs.length === 0) return;
+  if (options.label) yield options.label;
+
+  const summarized: {
+    added: string[];
+    changed: string[];
+    removed: string[];
+  } = {
+    added: [],
+    changed: [],
+    removed: [],
   };
 
-  const beforeKeys = new Set(Object.keys(before));
-  const afterKeys = new Set(Object.keys(after));
-
-  for (const key of beforeKeys) {
-    if (!afterKeys.has(key)) output.removed.push(key);
-    else if (!isEqual((before as any)[key], (after as any)[key]))
-      output.changed.push(key);
+  for (const diff of diffs) {
+    if (diff.trail === '') {
+      continue;
+    }
+    const key = typeofDiff(diff);
+    summarized[key].push(diff.trail);
   }
 
-  for (const key of afterKeys) {
-    if (!beforeKeys.has(key)) output.added.push(key);
-  }
-
-  return output;
-};
-
-const getDetailsDiff = (
-  change: ChangeVariant<any>,
-  excludedKeys: string[] = []
-) => {
-  const excludeKeys = (fact: OpenApiFact) => omit(fact, excludedKeys);
-
-  const mergeFlatSchema = (fact: OpenApiFact) => {
-    if ('flatSchema' in fact) {
-      const { flatSchema, ...factRest } = fact;
-      return {
-        ...factRest,
-        ...flatSchema,
-      };
-    } else return fact;
-  };
-
-  const before = excludeKeys(
-    mergeFlatSchema(
-      change.added
-        ? {}
-        : change.removed
-        ? change.removed
-        : change.changed
-        ? change.changed.before
-        : {}
-    )
-  );
-
-  const after = excludeKeys(
-    mergeFlatSchema(
-      change.added
-        ? change.added
-        : change.removed
-        ? {}
-        : change.changed
-        ? change.changed.after
-        : {}
-    )
-  );
-
-  return getDiff(before, after);
-};
-
-function* getDetailLogs(
-  change: ChangeVariant<any>,
-  options: { label?: string; excludeKeys?: string[] } = {}
-) {
-  const { label, excludeKeys } = options;
-  const diff = getDetailsDiff(change, excludeKeys);
-
-  const diffCount =
-    diff.changed.length + diff.removed.length + diff.added.length;
-
-  if (!diffCount) return;
-
-  if (label) yield label;
-
-  if (diff.added.length) {
-    const keys = diff.added.join(', ');
+  if (summarized.added.length) {
+    const keys = summarized.added.join(', ');
     yield `- ${keys} ${added}`;
   }
 
-  if (diff.changed.length) {
-    const keys = diff.changed.join(', ');
+  if (summarized.changed.length) {
+    const keys = summarized.changed.join(', ');
     yield `- ${keys} ${changed}`;
   }
 
-  if (diff.removed.length) {
-    const keys = diff.removed.join(', ');
+  if (summarized.removed.length) {
+    const keys = summarized.removed.join(', ');
     yield `- ${keys} ${removed}`;
   }
+
+  yield '';
 }
 
 function* indent(generator: Generator<string>) {
@@ -124,22 +70,21 @@ function* indent(generator: Generator<string>) {
 }
 
 export function* terminalChangelog(
-  groupedChanges: ReturnType<typeof groupChangesAndRules>
+  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  groupedChanges: GroupedDiffs
 ): Generator<string> {
-  const { changesByEndpoint, specification } = groupedChanges;
-  for (const specificationChange of specification.changes) {
-    yield* getDetailLogs(specificationChange, {
-      label: 'specification details:',
-    });
-    yield '';
-  }
-  for (const [_, endpointChange] of changesByEndpoint) {
-    yield* getEndpointLogs(endpointChange);
-  }
+  const { endpoints, specification } = groupedChanges;
+  yield* getDetailLogs(specification, {
+    label: 'specification details:',
+  });
+
+  for (const [, endpoint] of Object.entries(endpoints))
+    yield* getEndpointLogs(specs, endpoint);
 }
 
 function* getEndpointLogs(
-  endpointChange: OpenApiEndpointChange
+  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  endpointChange: Endpoint
 ): Generator<string> {
   const {
     method,
@@ -147,173 +92,145 @@ function* getEndpointLogs(
     request,
     responses,
     cookieParameters,
-    change,
-    headers,
+    diffs,
+    headerParameters,
     pathParameters,
     queryParameters,
   } = endpointChange;
 
+  const change = getTypeofDiffs(diffs);
   yield `${chalk.bold(method.toUpperCase())} ${path}: ${
     change ? getAddedOrRemovedLabel(change) : ''
   }`;
 
-  if (change?.removed) {
-    return;
-  }
+  yield* indent(getDetailLogs(diffs));
 
-  if (change) {
-    yield* indent(
-      getDetailLogs(change, { excludeKeys: ['pathPattern', 'method'] })
-    );
-  }
+  yield* indent(getParameterLogs(specs, 'query', queryParameters));
 
-  for (const [name, parameterChange] of queryParameters.changes) {
-    yield* indent(getParameterLogs('query', name, parameterChange));
-  }
+  yield* indent(getParameterLogs(specs, 'cookie', cookieParameters));
 
-  for (const [name, parameterChange] of cookieParameters.changes) {
-    yield* indent(getParameterLogs('cookie', name, parameterChange));
-  }
+  yield* indent(getParameterLogs(specs, 'path', pathParameters));
 
-  for (const [name, parameterChange] of pathParameters.changes) {
-    yield* indent(getParameterLogs('path', name, parameterChange));
-  }
-
-  for (const [name, parameterChange] of headers.changes) {
-    yield* indent(getParameterLogs('header', name, parameterChange));
-  }
+  yield* indent(getParameterLogs(specs, 'header', headerParameters));
 
   yield* indent(getRequestChangeLogs(request));
 
-  for (const [key, response] of responses) {
-    yield* indent(getResponseChangeLogs(response, key));
+  for (const [statusCode, response] of Object.entries(responses)) {
+    yield* indent(getResponseChangeLogs(response, statusCode));
   }
-
-  yield '';
 }
 
-function* getResponseChangeLogs(
-  { change, headers, contentTypes }: ResponseChange,
-  key: string
-) {
-  const label = `- response ${chalk.bold(key)}:`;
+function* getResponseChangeLogs(response: Response, statusCode: string) {
+  const label = `- response ${chalk.bold(statusCode)}:`;
+  const change = getTypeofDiffs(response.diffs);
 
-  if (change?.removed) {
+  if (change === 'removed') {
     yield `${label} ${removed}`;
     return;
   }
 
-  if (change || headers.changes.size || contentTypes.size) {
-    yield `${label} ${change?.added ? added : ''}`;
+  if (
+    change ||
+    response.headers.length ||
+    Object.values(response.contents).length
+  ) {
+    yield `${label} ${change === 'added' ? added : ''}`;
   }
 
   if (change) {
-    yield* indent(getDetailLogs(change, { excludeKeys: ['statusCode'] }));
+    yield* indent(getDetailLogs(response.diffs));
   }
-  for (const [key, responseHeader] of headers.changes) {
-    yield* indent(getResponseHeaderLogs(responseHeader, key));
+  for (const diff of response.headers) {
+    yield* indent(getResponseHeaderLogs(diff));
   }
 
-  for (const [key, contentType] of contentTypes) {
+  for (const [key, contentType] of Object.entries(response.contents)) {
     yield* indent(getBodyChangeLogs(contentType, key));
   }
 }
 
-function* getRequestChangeLogs({ change, bodyChanges }: RequestChange) {
+function* getRequestChangeLogs(request: Endpoint['request']) {
+  const change = getTypeofDiffs(request.diffs);
   const label = `- request:`;
 
-  if (change?.removed) {
+  if (change === 'removed') {
     yield `${label} ${removed}`;
     return;
   }
 
-  if (change || bodyChanges.size) {
-    yield `${label} ${change?.added ? added : ''}`;
+  if (change || Object.values(request.contents).length) {
+    yield `${label} ${change === 'added' ? added : ''}`;
   }
 
-  if (change) {
-    yield* indent(getDetailLogs(change));
-  }
+  yield* indent(getDetailLogs(request.diffs));
 
-  for (const [key, bodyChange] of bodyChanges) {
+  for (const [key, bodyChange] of Object.entries(request.contents)) {
     yield* indent(getBodyChangeLogs(bodyChange, key));
   }
 }
 
-function* getBodyChangeLogs(
-  { bodyChange, fieldChanges, exampleChanges }: BodyChange,
-  key: string
-) {
+function* getBodyChangeLogs(body: Body, key: string) {
+  const change = getTypeofDiffs(body.diffs);
   const label = `- body ${chalk.bold(key)}:`;
 
-  if (bodyChange?.removed) {
+  if (change === 'removed') {
     yield `${label} ${removed}`;
     return;
   }
 
-  if (bodyChange || fieldChanges.length || exampleChanges.length) {
-    yield `${label} ${bodyChange?.added ? added : ''}`;
-  }
+  yield `${label} ${change === 'added' ? added : ''}`;
 
-  if (bodyChange) {
-    yield* indent(getDetailLogs(bodyChange, { excludeKeys: ['contentType'] }));
-  }
-
-  for (const fieldChange of fieldChanges) {
-    yield* indent(getFieldLogs(fieldChange));
-  }
-
-  for (const exampleChange of exampleChanges) {
-    yield* indent(getExampleLogs(exampleChange));
-  }
+  yield* indent(getDetailLogs(body.diffs));
 }
 
-function* getResponseHeaderLogs(
-  change: ChangeVariant<OpenApiKind.ResponseHeader>,
-  key: string
-) {
-  yield `- response header ${chalk.italic(key)}: ${getAddedOrRemovedLabel(
-    change
-  )}`;
+function* getResponseHeaderLogs(diff: Diff) {
+  const change = typeofDiff(diff);
+  const location = getLocation({
+    location: { jsonPath: diff.after ?? diff.before },
+    type: 'response-header',
+  });
+  yield `- response header ${chalk.italic(
+    location.headerName
+  )}: ${getAddedOrRemovedLabel(change)}`;
 
-  if (!change.removed) {
-    yield* indent(getDetailLogs(change, { excludeKeys: ['name'] }));
-  }
-}
-function* getFieldLogs(change: ChangeVariant<OpenApiKind.Field>) {
-  const path = change.location.conceptualPath;
-  const key = path[path.length - 1];
-  yield `- field ${chalk.italic(key)} ${getAddedOrRemovedLabel(change)}`;
-
-  if (!change.removed) {
-    yield* indent(getDetailLogs(change, { excludeKeys: ['key'] }));
-  }
-}
-
-function* getExampleLogs(change: ChangeVariant<OpenApiKind.BodyExample>) {
-  yield `- example ${getAddedOrRemovedLabel(change)}`;
-  if (!change.removed) {
-    yield* indent(
-      getDetailLogs(change, { excludeKeys: ['name', 'contentType'] })
-    );
+  if (change !== 'removed') {
+    yield* indent(getDetailLogs([diff]));
   }
 }
 
 function* getParameterLogs(
-  parameterType: string,
-  parameterName: string,
-  change: ChangeVariant<
-    | OpenApiKind.QueryParameter
-    | OpenApiKind.CookieParameter
-    | OpenApiKind.PathParameter
-    | OpenApiKind.HeaderParameter
-  >
+  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  parameterType: 'query' | 'cookie' | 'path' | 'header',
+  diffs: Diff[]
 ) {
-  yield `- ${parameterType} parameter ${chalk.italic(
-    parameterName
-  )}: ${getAddedOrRemovedLabel(change)}`;
+  const diffByName: Record<string, Diff[]> = {};
+  for (const diff of diffs) {
+    const raw =
+      diff.after !== undefined
+        ? getRaw(specs.to, {
+            location: { jsonPath: diff.after },
+            type: `request-${parameterType}`,
+          })
+        : getRaw(specs.from, {
+            location: { jsonPath: diff.before },
+            type: `request-${parameterType}`,
+          });
 
-  if (!change.removed) {
-    yield* indent(getDetailLogs(change));
+    if (diffByName[raw.name]) {
+      diffByName[raw.name].push(diff);
+    } else {
+      diffByName[raw.name] = [diff];
+    }
+  }
+
+  for (const [name, diffsForName] of Object.entries(diffByName)) {
+    const change = getTypeofDiffs(diffsForName);
+    yield `- ${parameterType} parameter ${chalk.italic(
+      name
+    )}: ${getAddedOrRemovedLabel(change)}`;
+
+    if (change !== 'removed') {
+      yield* indent(getDetailLogs(diffsForName));
+    }
   }
 }
