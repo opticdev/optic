@@ -118,6 +118,7 @@ export class OpticBackendClient extends JsonHttpClient {
 
   public async prepareRunUpload(body: {
     checksum: string;
+    api_id: string;
   }): Promise<{ upload_id: string; check_results_url: string }> {
     return this.postJson(`/api/runs/prepare`, body);
   }

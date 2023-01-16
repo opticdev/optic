@@ -26,8 +26,9 @@ import { getAnonId } from '../../utils/anonymous-id';
 import { compute } from './compute';
 import { compressData } from './compressResults';
 import { OPTIC_URL_KEY } from '../../constants';
-import { computeChecksum } from '../../utils/checksum';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
+import { EMPTY_SPEC_ID, uploadRun, uploadSpec } from '../../utils/cloud-specs';
+import * as Git from '../../utils/git-utils';
 
 const description = `run a diff between two API specs`;
 
@@ -248,56 +249,43 @@ const getDiffAction =
         baseParseResult.jsonLike[OPTIC_URL_KEY] ??
         null;
       const apiId: string | null = opticUrl && getApiFromOpticUrl(opticUrl);
-      const shouldUploadBaseSpec = baseParseResult.context && apiId;
-      const shouldUploadHeadSpec = headParseResult.context && apiId;
-      if (shouldUploadBaseSpec) {
-        const spec_checksum = computeChecksum(baseParseResult.jsonLike);
-        const sourcemap_checksum = computeChecksum(baseParseResult.sourcemap);
-        const result = await config.client.prepareSpecUpload({
-          api_id: apiId,
-          spec_checksum,
-          sourcemap_checksum,
+      // We upload a spec if it is unchanged in git and there is an API id on the spec
+      let baseSpecId: string | null = null;
+      let headSpecId: string | null = null;
+      if (baseParseResult.context && apiId) {
+        const tags =
+          baseParseResult.context.vcs === VCS.Git
+            ? [`git:${baseParseResult.context.sha}`]
+            : [];
+        baseSpecId = await uploadSpec(apiId, {
+          spec: baseParseResult,
+          client: config.client,
+          tags,
         });
-        if ('upload_id' in result) {
-          result.spec_url;
-          result.sourcemap_url;
-
-          // TODO upload to s3
-          // TODO get tags
-          // todo get branch
-
-          await config.client.createSpec({
-            upload_id: result.upload_id,
-            api_id: apiId,
-            tags: [],
-          });
-        } else {
-          result.spec_id;
+      } else if (baseParseResult.isEmptySpec) {
+        baseSpecId = EMPTY_SPEC_ID;
+      }
+      if (headParseResult.context && apiId) {
+        let tags: string[] = [];
+        if (headParseResult.context.vcs === VCS.Git) {
+          const currentBranch = await Git.getCurrentBranchName();
+          tags = [`git:${headParseResult.context.sha}`, `git:${currentBranch}`];
         }
-      }
-      if (shouldUploadHeadSpec) {
-        // TODO upload spec
-      }
-
-      const shouldUploadResults =
-        (shouldUploadBaseSpec || baseParseResult.isEmptySpec) &&
-        (shouldUploadHeadSpec || headParseResult.isEmptySpec) &&
-        apiId;
-
-      if (shouldUploadResults) {
-        // TODO maybe sanitize the specResults checksum piece
-        const checksum = computeChecksum(diffResult.specResults);
-        const result = await config.client.prepareRunUpload({
-          checksum,
+        headSpecId = await uploadSpec(apiId, {
+          spec: headParseResult,
+          client: config.client,
+          tags,
         });
+      } else if (headParseResult.isEmptySpec) {
+        headSpecId = EMPTY_SPEC_ID;
+      }
 
-        // TODO upload to s3
-
-        await config.client.createRun({
-          upload_id: result.upload_id,
-          api_id: apiId,
-          from_spec_id: 'todo',
-          to_spec_id: 'todo',
+      if (baseSpecId && headSpecId && apiId) {
+        await uploadRun(apiId, {
+          fromSpecId: baseSpecId,
+          toSpecId: headSpecId,
+          client: config.client,
+          specResults: diffResult.specResults,
         });
       }
     }

@@ -8,7 +8,7 @@ import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/u
 import { UserError } from '@useoptic/openapi-utilities';
 
 import { OpticCliConfig } from '../../config';
-import { uploadFileToS3 } from './s3';
+import { uploadFileToS3 } from '../../utils/s3';
 
 const expectedFileShape = `Expected ruleset file to have a default export with the shape
 {
