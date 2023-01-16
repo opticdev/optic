@@ -4,9 +4,10 @@ exports[`diff-all diffs all files in an workspace with x-optic-url keys 1`] = `
 "[34mDiffing HEAD~1:mvspec.yml to empty spec[39m
 
 specification details:
-- before [31mremoved[39m
+- /x-optic-url, /info/description [31mremoved[39m
 
 [1mPOST[22m /filler_route: [31mremoved[39m
+  
 Checks
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
@@ -68,17 +69,11 @@ Checks
 [34mDiffing empty spec to movedspec.yml[39m
 
 specification details:
-- openapi, info, x-optic-url [32madded[39m
+- /x-optic-url, /info/description [32madded[39m
+- /openapi, /info/version, /info/title [33mchanged[39m
 
 [1mPOST[22m /filler_route: [32madded[39m
-  - operationId [32madded[39m
-  - response [1m201[22m: [32madded[39m
-    - description [32madded[39m
-    - body [1mapplication/json[22m: [32madded[39m
-      - type [32madded[39m
-      - field [3mid[23m [32madded[39m
-        - required, type, format, example [32madded[39m
-
+  
 Checks
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
@@ -103,6 +98,6 @@ Configure check rulesets in optic cloud or your local optic.dev.yml file.
 `;
 
 exports[`diff-all diffs all files with --json 1`] = `
-"{"results":{"mvspec.yml":{"operations":[{"name":"post /filler_route","change":"removed","attributes":[],"parameters":[],"responses":[{"name":"201 response","change":"removed","attributes":[],"contentTypes":[{"name":"application/json","change":"removed","attributes":[],"schemaChanges":[{"name":"id","change":"removed","attributes":[]}]}]}]}]},"specwithkey.json":{"operations":[]},"specwithkey.yml":{"operations":[]},"movedspec.yml":{"operations":[{"name":"post /filler_route","change":"added","attributes":[],"parameters":[],"responses":[{"name":"201 response","change":"added","attributes":[],"contentTypes":[{"name":"application/json","change":"added","attributes":[],"schemaChanges":[{"name":"id","change":"added","attributes":[]}]}]}]}]}},"warnings":{"missingOpticUrl":[{"path":"specwithoutkey.json"},{"path":"specwithoutkey.yml"}],"unparseableFromSpec":[],"unparseableToSpec":[]}}
+"{"results":{"mvspec.yml":{"operations":[{"name":"POST /filler_route","change":"removed","attributes":[{"key":"","before":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}}}}}}],"parameters":[],"responses":[]}]},"specwithkey.json":{"operations":[]},"specwithkey.yml":{"operations":[]},"movedspec.yml":{"operations":[{"name":"POST /filler_route","change":"added","attributes":[{"key":"","after":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}}}}}}],"parameters":[],"responses":[]}]}},"warnings":{"missingOpticUrl":[{"path":"specwithoutkey.json"},{"path":"specwithoutkey.yml"}],"unparseableFromSpec":[],"unparseableToSpec":[]}}
 "
 `;

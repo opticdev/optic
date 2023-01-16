@@ -2,25 +2,21 @@
 
 exports[`diff basic rules config 1`] = `
 "
-[1mGET[22m /example: 
-  - operationId [33mchanged[39m
-
-[1mPATCH[22m /example: 
-  - operationId [33mchanged[39m
-  - response [1m200[22m: [32madded[39m
-    - description [32madded[39m
-    - body [1mapplication/json[22m: [32madded[39m
-      - type [32madded[39m
-      - example [32madded[39m
-        - value [32madded[39m
-
-[1mPOST[22m /example: [31mremoved[39m
-[1mPUT[22m /example: 
-  - operationId [33mchanged[39m
-
 [1mGET[22m /invalid_name: [32madded[39m
-  - operationId [32madded[39m
-
+  
+[1mPOST[22m /example: [31mremoved[39m
+  
+[1mPATCH[22m /example: 
+  - /operationId [33mchanged[39m
+  
+  - response [1m200[22m: [32madded[39m
+    
+[1mPUT[22m /example: 
+  - /operationId [33mchanged[39m
+  
+[1mGET[22m /example: 
+  - /operationId [33mchanged[39m
+  
 Checks
 
   [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /example
@@ -57,27 +53,21 @@ Configure check rulesets in optic cloud or your local optic.dev.yml file.
 
 exports[`diff breaking changes exclusion 1`] = `
 "
-[1mGET[22m /example: 
-  - x-optic-ignore-breaking-changes [32madded[39m
-  - operationId [33mchanged[39m
-  - query parameter [3muserId[23m: [32madded[39m
-    - in, name, schema, required, description [32madded[39m
-
 [1mPATCH[22m /example: 
-  - operationId [33mchanged[39m
+  - /operationId [33mchanged[39m
+  
   - response [1m200[22m: [32madded[39m
-    - description [32madded[39m
-    - body [1mapplication/json[22m: [32madded[39m
-      - type [32madded[39m
-      - example [32madded[39m
-        - value [32madded[39m
-
-[1mPOST[22m /example: 
-  - operationId [33mchanged[39m
-
+    
 [1mPUT[22m /example: 
-  - operationId [33mchanged[39m
-
+  - /operationId [33mchanged[39m
+  
+[1mPOST[22m /example: 
+  - /operationId [33mchanged[39m
+  
+[1mGET[22m /example: 
+  - /x-optic-ignore-breaking-changes, /parameters [32madded[39m
+  - /operationId [33mchanged[39m
+  
 4 operations changed
 [32m[1m0 checks passed[22m[39m
 [31m[1m0 checks failed[22m[39m
@@ -90,436 +80,148 @@ Configure check rulesets in optic cloud or your local optic.dev.yml file.
 exports[`diff petstore diff 1`] = `
 "
 specification details:
-- info, servers [33mchanged[39m
-
-[1mGET[22m /example: 
-  - query parameter [3maddedQueryParameter[23m: [32madded[39m
-    - name, in, description, required, schema [32madded[39m
-  - query parameter [3mdeletedQueryParameter[23m: [31mremoved[39m
-  - query parameter [3moptionalToRequired[23m: 
-    - required [32madded[39m
-  - query parameter [3mrequiredToOptional[23m: 
-    - required [31mremoved[39m
-  - response [1m200[22m: 
-    - body [1mapplication/json[22m: 
-      - field [3mcomposedObject[23m 
-        - allOf [33mchanged[39m
-      - field [3morderId[23m 
-        - type [33mchanged[39m
-      - field [3mexpandableObject[23m 
-        - anyOf [33mchanged[39m
-      - field [3morder[23m [32madded[39m
-        - required, type [32madded[39m
-      - field [3mid[23m [32madded[39m
-        - required, type [32madded[39m
-      - field [3mfromTypeArrays[23m 
-        - type [33mchanged[39m
-      - field [3maddedRequiredKey[23m [32madded[39m
-        - required, type [32madded[39m
-      - field [3mdeletedRequiredKey[23m [31mremoved[39m
-      - field [3moptionalToRequired[23m 
-        - required [33mchanged[39m
-      - field [3mrequiredToOptional[23m 
-        - required [33mchanged[39m
-      - field [3mstringOrNumberOrObject[23m 
-        - oneOf [33mchanged[39m
-      - field [3morderId[23m [31mremoved[39m
-      - field [3mtoTypeArrays[23m 
-        - type [33mchanged[39m
+- /components/schemas/User/properties/bio, /components/schemas/User/properties/userStatus/enum, /components/schemas/User/required/2, /components/schemas/Order/properties/summary, /components/schemas/Order/properties/status/enum/2, /servers/2 [32madded[39m
+- /components/schemas/User/properties/userStatus/type, /info/title [33mchanged[39m
+- /components/schemas/User/properties/phone, /components/schemas/User/properties/userStatus/format, /components/schemas/User/required/2, /components/schemas/Order/properties/status/enum/1 [31mremoved[39m
 
 [1mGET[22m /parameters_at_path: [32madded[39m
-  - query parameter [3mquery_in_path[23m: [32madded[39m
-    - name, in, description, required, schema [32madded[39m
-  - response [1m200[22m: [32madded[39m
-    - description [32madded[39m
-    - body [1mapplication/json[22m: [32madded[39m
-      - type [32madded[39m
-
-[1mGET[22m /pet: [31mremoved[39m
-[1mPOST[22m /pet: 
-  - operationId [33mchanged[39m
-
-[1mPUT[22m /pet: 
-  - request: 
-    - body [1mapplication/json[22m: 
-      - field [3mname[23m [31mremoved[39m
-      - field [3mnumber[23m [32madded[39m
-        - required, type [32madded[39m
-    - body [1mapplication/xml[22m: [31mremoved[39m
-  - response [1m400[22m: [31mremoved[39m
-
+  
 [1mGET[22m /pet/findByStatus: [32madded[39m
-  - tags, summary, description, operationId, security [32madded[39m
-  - query parameter [3mstatus[23m: [32madded[39m
-    - name, in, description, required, style, explode, schema [32madded[39m
-  - cookie parameter [3mdebug[23m: [32madded[39m
-    - name, in, description, required, schema [32madded[39m
-  - response [1m200[22m: [32madded[39m
-    - description [32madded[39m
-    - body [1mapplication/json[22m: [32madded[39m
-      - type [32madded[39m
-      - field [3mcategory[23m [32madded[39m
-        - required, type, xml [32madded[39m
-      - field [3mid[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mname[23m [32madded[39m
-        - required, type [32madded[39m
-      - field [3mid[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mname[23m [32madded[39m
-        - required, type, example [32madded[39m
-      - field [3mphotoUrls[23m [32madded[39m
-        - required, type, xml [32madded[39m
-      - field [3mstatus[23m [32madded[39m
-        - required, type, description, enum [32madded[39m
-      - field [3mtags[23m [32madded[39m
-        - required, type, xml [32madded[39m
-      - field [3mid[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mname[23m [32madded[39m
-        - required, type [32madded[39m
-    - body [1mapplication/xml[22m: [32madded[39m
-      - type [32madded[39m
-      - field [3mcategory[23m [32madded[39m
-        - required, type, xml [32madded[39m
-      - field [3mid[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mname[23m [32madded[39m
-        - required, type [32madded[39m
-      - field [3mid[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mname[23m [32madded[39m
-        - required, type, example [32madded[39m
-      - field [3mphotoUrls[23m [32madded[39m
-        - required, type, xml [32madded[39m
-      - field [3mstatus[23m [32madded[39m
-        - required, type, description, enum [32madded[39m
-      - field [3mtags[23m [32madded[39m
-        - required, type, xml [32madded[39m
-      - field [3mid[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mname[23m [32madded[39m
-        - required, type [32madded[39m
-  - response [1m400[22m: [32madded[39m
-    - description [32madded[39m
-
+  
 [1mGET[22m /pet/findByTags: [32madded[39m
-  - tags, summary, description, operationId, deprecated, security [32madded[39m
-  - query parameter [3mtags[23m: [32madded[39m
-    - name, in, description, required, style, explode, schema [32madded[39m
-  - response [1m200[22m: [32madded[39m
-    - description [32madded[39m
-    - body [1mapplication/json[22m: [32madded[39m
-      - type [32madded[39m
-      - field [3mcategory[23m [32madded[39m
-        - required, type, xml [32madded[39m
-      - field [3mid[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mname[23m [32madded[39m
-        - required, type [32madded[39m
-      - field [3mid[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mname[23m [32madded[39m
-        - required, type, example [32madded[39m
-      - field [3mphotoUrls[23m [32madded[39m
-        - required, type, xml [32madded[39m
-      - field [3mstatus[23m [32madded[39m
-        - required, type, description, enum [32madded[39m
-      - field [3mtags[23m [32madded[39m
-        - required, type, xml [32madded[39m
-      - field [3mid[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mname[23m [32madded[39m
-        - required, type [32madded[39m
-    - body [1mapplication/xml[22m: [32madded[39m
-      - type [32madded[39m
-      - field [3mcategory[23m [32madded[39m
-        - required, type, xml [32madded[39m
-      - field [3mid[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mname[23m [32madded[39m
-        - required, type [32madded[39m
-      - field [3mid[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mname[23m [32madded[39m
-        - required, type, example [32madded[39m
-      - field [3mphotoUrls[23m [32madded[39m
-        - required, type, xml [32madded[39m
-      - field [3mstatus[23m [32madded[39m
-        - required, type, description, enum [32madded[39m
-      - field [3mtags[23m [32madded[39m
-        - required, type, xml [32madded[39m
-      - field [3mid[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mname[23m [32madded[39m
-        - required, type [32madded[39m
-  - response [1m400[22m: [32madded[39m
-    - description [32madded[39m
-
-[1mDELETE[22m /pet/{petId}: [32madded[39m
-  - tags, summary, operationId, security [32madded[39m
-  - path parameter [3mpetId[23m: [32madded[39m
-    - name, in, description, required, schema [32madded[39m
-  - header parameter [3mapi_key[23m: [32madded[39m
-    - name, in, schema [32madded[39m
-  - response [1m400[22m: [32madded[39m
-    - description [32madded[39m
-  - response [1m404[22m: [32madded[39m
-    - description [32madded[39m
-
+  
 [1mGET[22m /pet/{petId}: [32madded[39m
-  - tags, summary, description, operationId, security [32madded[39m
-  - path parameter [3mpetId[23m: [32madded[39m
-    - name, in, description, required, schema [32madded[39m
-  - response [1m200[22m: [32madded[39m
-    - description [32madded[39m
-    - body [1mapplication/json[22m: [32madded[39m
-      - type, xml [32madded[39m
-      - field [3mcategory[23m [32madded[39m
-        - required, type, xml [32madded[39m
-      - field [3mid[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mname[23m [32madded[39m
-        - required, type [32madded[39m
-      - field [3mid[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mname[23m [32madded[39m
-        - required, type, example [32madded[39m
-      - field [3mphotoUrls[23m [32madded[39m
-        - required, type, xml [32madded[39m
-      - field [3mstatus[23m [32madded[39m
-        - required, type, description, enum [32madded[39m
-      - field [3mtags[23m [32madded[39m
-        - required, type, xml [32madded[39m
-      - field [3mid[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mname[23m [32madded[39m
-        - required, type [32madded[39m
-    - body [1mapplication/xml[22m: [32madded[39m
-      - type, xml [32madded[39m
-      - field [3mcategory[23m [32madded[39m
-        - required, type, xml [32madded[39m
-      - field [3mid[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mname[23m [32madded[39m
-        - required, type [32madded[39m
-      - field [3mid[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mname[23m [32madded[39m
-        - required, type, example [32madded[39m
-      - field [3mphotoUrls[23m [32madded[39m
-        - required, type, xml [32madded[39m
-      - field [3mstatus[23m [32madded[39m
-        - required, type, description, enum [32madded[39m
-      - field [3mtags[23m [32madded[39m
-        - required, type, xml [32madded[39m
-      - field [3mid[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mname[23m [32madded[39m
-        - required, type [32madded[39m
-  - response [1m400[22m: [32madded[39m
-    - description [32madded[39m
-  - response [1m404[22m: [32madded[39m
-    - description [32madded[39m
-
+  
 [1mPOST[22m /pet/{petId}: [32madded[39m
-  - tags, summary, operationId, security [32madded[39m
-  - path parameter [3mpetId[23m: [32madded[39m
-    - name, in, description, required, schema [32madded[39m
-  - request: [32madded[39m
-    - body [1mapplication/x-www-form-urlencoded[22m: [32madded[39m
-  - response [1m405[22m: [32madded[39m
-    - description [32madded[39m
-
-[1mPOST[22m /pet/{petId}/uploadImage: 
-  - cookie parameter [3mdebug[23m: 
-    - schema [33mchanged[39m
-  - response [1m200[22m: [31mremoved[39m
-  - response [1m201[22m: [32madded[39m
-    - description [32madded[39m
-    - body [1mapplication/json[22m: [32madded[39m
-      - type [32madded[39m
-      - field [3mcode[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mmessage[23m [32madded[39m
-        - required, type [32madded[39m
-      - field [3mtype[23m [32madded[39m
-        - required, type [32madded[39m
-  - response [1m404[22m: [32madded[39m
-    - description [32madded[39m
-    - body [1mapplication/json[22m: [32madded[39m
-      - type [32madded[39m
-      - field [3mcode[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mmessage[23m [32madded[39m
-        - required, type [32madded[39m
-      - field [3mtype[23m [32madded[39m
-        - required, type [32madded[39m
-  - response [1mdefault[22m: 
-    - body [1mapplication/json[22m: 
-      - field [3mtype[23m 
-        - type [33mchanged[39m
-
-[1mPOST[22m /store/order: 
-  - request: 
-    - body [1m*/*[22m: 
-      - field [3mstatus[23m 
-        - enum [33mchanged[39m
-      - field [3msummary[23m [32madded[39m
-        - required, type, description [32madded[39m
-  - response [1m200[22m: 
-    - body [1mapplication/json[22m: 
-      - field [3mstatus[23m 
-        - enum [33mchanged[39m
-      - field [3msummary[23m [32madded[39m
-        - required, type, description [32madded[39m
-      - example [32madded[39m
-        - value [32madded[39m
-    - body [1mapplication/xml[22m: 
-      - field [3mstatus[23m 
-        - enum [33mchanged[39m
-      - field [3msummary[23m [32madded[39m
-        - required, type, description [32madded[39m
-
-[1mDELETE[22m /store/order/{orderId}: 
-  - response [1m404[22m: 
-    - body [1mapplication/json[22m: [32madded[39m
-      - type [32madded[39m
-      - field [3mcode[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mmessage[23m [32madded[39m
-        - required, type [32madded[39m
-      - field [3mtype[23m [32madded[39m
-        - required, type [32madded[39m
-
-[1mGET[22m /store/order/{orderId}: 
-  - response [1m200[22m: 
-    - body [1mapplication/json[22m: 
-      - field [3mstatus[23m 
-        - enum [33mchanged[39m
-      - field [3msummary[23m [32madded[39m
-        - required, type, description [32madded[39m
-    - body [1mapplication/xml[22m: 
-      - field [3mpetId[23m 
-        - required [33mchanged[39m
-      - field [3mstatus[23m 
-        - enum [33mchanged[39m
-      - field [3msummary[23m [32madded[39m
-        - required, type, description [32madded[39m
-  - response [1m404[22m: 
-    - body [1mapplication/json[22m: [32madded[39m
-      - type [32madded[39m
-      - field [3mcode[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mmessage[23m [32madded[39m
-        - required, type [32madded[39m
-      - field [3mtype[23m [32madded[39m
-        - required, type [32madded[39m
-
-[1mPOST[22m /user: 
-  - request: 
-    - body [1m*/*[22m: 
-      - field [3mbio[23m [32madded[39m
-        - required, type [32madded[39m
-      - field [3mlastName[23m 
-        - required [33mchanged[39m
-      - field [3mphone[23m [31mremoved[39m
-      - field [3muserStatus[23m 
-        - enum [32madded[39m
-        - type [33mchanged[39m
-        - format [31mremoved[39m
-      - field [3musername[23m 
-        - required [33mchanged[39m
-
-[1mPOST[22m /user/createWithArray: 
-  - request: 
-    - body [1m*/*[22m: 
-      - field [3mbio[23m [32madded[39m
-        - required, type [32madded[39m
-      - field [3mlastName[23m 
-        - required [33mchanged[39m
-      - field [3mphone[23m [31mremoved[39m
-      - field [3muserStatus[23m 
-        - enum [32madded[39m
-        - type [33mchanged[39m
-        - format [31mremoved[39m
-      - field [3musername[23m 
-        - required [33mchanged[39m
-
-[1mPOST[22m /user/createWithList: 
-  - request: 
-    - body [1m*/*[22m: 
-      - field [3mbio[23m [32madded[39m
-        - required, type [32madded[39m
-      - field [3mlastName[23m 
-        - required [33mchanged[39m
-      - field [3mphone[23m [31mremoved[39m
-      - field [3muserStatus[23m 
-        - enum [32madded[39m
-        - type [33mchanged[39m
-        - format [31mremoved[39m
-      - field [3musername[23m 
-        - required [33mchanged[39m
-
-[1mGET[22m /user/login: 
-  - response [1m200[22m: 
-    - response header [3mX-Expires-After[23m: 
-      - schema [33mchanged[39m
-    - response header [3mX-Rate-Limit[23m: [32madded[39m
-      - description, schema [32madded[39m
-    - response header [3mcontent-type[23m: [31mremoved[39m
-
-[1mGET[22m /user/{username}: 
-  - response [1m200[22m: 
-    - body [1mapplication/json[22m: 
-      - field [3mbio[23m [32madded[39m
-        - required, type [32madded[39m
-      - field [3mlastName[23m 
-        - required [33mchanged[39m
-      - field [3mphone[23m [31mremoved[39m
-      - field [3muserStatus[23m 
-        - enum [32madded[39m
-        - type [33mchanged[39m
-        - format [31mremoved[39m
-      - field [3musername[23m 
-        - required [33mchanged[39m
-    - body [1mapplication/xml[22m: 
-      - field [3mbio[23m [32madded[39m
-        - required, type [32madded[39m
-      - field [3mlastName[23m 
-        - required [33mchanged[39m
-      - field [3mphone[23m [31mremoved[39m
-      - field [3muserStatus[23m 
-        - enum [32madded[39m
-        - type [33mchanged[39m
-        - format [31mremoved[39m
-      - field [3musername[23m 
-        - required [33mchanged[39m
-  - response [1m404[22m: 
-    - body [1mapplication/json[22m: [32madded[39m
-      - type [32madded[39m
-      - field [3mcode[23m [32madded[39m
-        - required, type, format [32madded[39m
-      - field [3mmessage[23m [32madded[39m
-        - required, type [32madded[39m
-      - field [3mtype[23m [32madded[39m
-        - required, type [32madded[39m
-
+  
+[1mDELETE[22m /pet/{petId}: [32madded[39m
+  
 [1mPUT[22m /user/{username}: 
   - request: 
     - body [1m*/*[22m: 
-      - field [3mbio[23m [32madded[39m
-        - required, type [32madded[39m
-      - field [3mlastName[23m 
-        - required [33mchanged[39m
-      - field [3mphone[23m [31mremoved[39m
-      - field [3muserStatus[23m 
-        - enum [32madded[39m
-        - type [33mchanged[39m
-        - format [31mremoved[39m
-      - field [3musername[23m 
-        - required [33mchanged[39m
-
+      - /schema/properties/bio, /schema/properties/userStatus/enum, /schema/required/2 [32madded[39m
+      - /schema/properties/userStatus/type [33mchanged[39m
+      - /schema/properties/phone, /schema/properties/userStatus/format, /schema/required/2 [31mremoved[39m
+      
+[1mGET[22m /user/{username}: 
+  - response [1m200[22m: 
+    - body [1mapplication/json[22m: 
+      - /schema/properties/bio, /schema/properties/userStatus/enum, /schema/required/2 [32madded[39m
+      - /schema/properties/userStatus/type [33mchanged[39m
+      - /schema/properties/phone, /schema/properties/userStatus/format, /schema/required/2 [31mremoved[39m
+      
+    - body [1mapplication/xml[22m: 
+      - /schema/properties/bio, /schema/properties/userStatus/enum, /schema/required/2 [32madded[39m
+      - /schema/properties/userStatus/type [33mchanged[39m
+      - /schema/properties/phone, /schema/properties/userStatus/format, /schema/required/2 [31mremoved[39m
+      
+  - response [1m404[22m: 
+    - body [1mapplication/json[22m: [32madded[39m
+      
+[1mGET[22m /user/login: 
+  - response [1m200[22m: 
+    - response header [3mcontent-type[23m: [31mremoved[39m
+    - response header [3mX-Rate-Limit[23m: [32madded[39m
+      
+    - response header [3mX-Expires-After[23m: 
+      - /schema/type [33mchanged[39m
+      
+    - response header [3mX-Expires-After[23m: [32madded[39m
+      - /schema/format [32madded[39m
+      
+[1mPOST[22m /user/createWithList: 
+  - request: 
+    - body [1m*/*[22m: 
+      - /schema/items/properties/bio, /schema/items/properties/userStatus/enum, /schema/items/required/2 [32madded[39m
+      - /schema/items/properties/userStatus/type [33mchanged[39m
+      - /schema/items/properties/phone, /schema/items/properties/userStatus/format, /schema/items/required/2 [31mremoved[39m
+      
+[1mPOST[22m /user/createWithArray: 
+  - request: 
+    - body [1m*/*[22m: 
+      - /schema/items/properties/bio, /schema/items/properties/userStatus/enum, /schema/items/required/2 [32madded[39m
+      - /schema/items/properties/userStatus/type [33mchanged[39m
+      - /schema/items/properties/phone, /schema/items/properties/userStatus/format, /schema/items/required/2 [31mremoved[39m
+      
+[1mPOST[22m /user: 
+  - request: 
+    - body [1m*/*[22m: 
+      - /schema/properties/bio, /schema/properties/userStatus/enum, /schema/required/2 [32madded[39m
+      - /schema/properties/userStatus/type [33mchanged[39m
+      - /schema/properties/phone, /schema/properties/userStatus/format, /schema/required/2 [31mremoved[39m
+      
+[1mDELETE[22m /store/order/{orderId}: 
+  - response [1m404[22m: 
+    - body [1mapplication/json[22m: [32madded[39m
+      
+[1mGET[22m /store/order/{orderId}: 
+  - response [1m200[22m: 
+    - body [1mapplication/json[22m: 
+      - /schema/properties/summary, /schema/properties/status/enum/2 [32madded[39m
+      - /schema/properties/status/enum/1 [31mremoved[39m
+      
+    - body [1mapplication/xml[22m: 
+      - /schema/properties/summary, /schema/properties/status/enum/2 [32madded[39m
+      - /schema/properties/status/enum/1, /schema/required/1 [31mremoved[39m
+      
+  - response [1m404[22m: 
+    - body [1mapplication/json[22m: [32madded[39m
+      
+[1mPOST[22m /store/order: 
+  - request: 
+    - body [1m*/*[22m: 
+      - /schema/properties/summary, /schema/properties/status/enum/2 [32madded[39m
+      - /schema/properties/status/enum/1 [31mremoved[39m
+      
+  - response [1m200[22m: 
+    - body [1mapplication/json[22m: 
+      - /schema/properties/summary, /schema/properties/status/enum/2 [32madded[39m
+      - /schema/properties/status/enum/1 [31mremoved[39m
+      
+    - body [1mapplication/xml[22m: 
+      - /schema/properties/summary, /schema/properties/status/enum/2 [32madded[39m
+      - /schema/properties/status/enum/1 [31mremoved[39m
+      
+[1mPOST[22m /pet/{petId}/uploadImage: 
+  - cookie parameter [3mundefined[23m: [32madded[39m
+    - /schema/enum [32madded[39m
+    
+  - response [1m200[22m: [31mremoved[39m
+  - response [1m201[22m: [32madded[39m
+    
+  - response [1m404[22m: [32madded[39m
+    
+  - response [1mdefault[22m: 
+    - body [1mapplication/json[22m: 
+      - /schema/properties/type/type [33mchanged[39m
+      
+[1mGET[22m /pet: [31mremoved[39m
+  
+[1mPOST[22m /pet: 
+  - /operationId [33mchanged[39m
+  
+[1mPUT[22m /pet: 
+  - request: 
+    - body [1mapplication/xml[22m: [31mremoved[39m
+    - body [1mapplication/json[22m: 
+      - /schema/properties/number, /schema/required/0 [32madded[39m
+      - /schema/properties/name, /schema/required/0 [31mremoved[39m
+      
+  - response [1m400[22m: [31mremoved[39m
+[1mGET[22m /example: 
+  - query parameter [3mdeletedQueryParameter[23m: [31mremoved[39m
+  - query parameter [3maddedQueryParameter[23m: [32madded[39m
+    
+  - query parameter [3mundefined[23m: 
+    - /required [32madded[39m
+    - /required [31mremoved[39m
+    
+  - response [1m200[22m: 
+    - body [1mapplication/json[22m: 
+      - /schema/properties/requiredKeys/required/0, /schema/properties/requiredKeys/required/1, /schema/properties/requiredKeys/properties/addedRequiredKey, /schema/properties/expandableObject/anyOf/1 [32madded[39m
+      - /schema/properties/toTypeArrays/type, /schema/properties/fromTypeArrays/type, /schema/properties/composedObject/allOf/0/properties/orderId/type [33mchanged[39m
+      - /schema/properties/requiredKeys/required/0, /schema/properties/requiredKeys/required/1, /schema/properties/requiredKeys/properties/deletedRequiredKey, /schema/properties/stringOrNumberOrObject/oneOf/2 [31mremoved[39m
+      
 Checks
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /example
@@ -709,6 +411,9 @@ Checks
 
 
 
+  [1m[42m[37m PASS [39m[49m[22m /parameters_at_path
+
+
   [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /parameters_at_path
 
 
@@ -770,49 +475,41 @@ Configure check rulesets in optic cloud or your local optic.dev.yml file.
 
 exports[`diff two files, no repo or config 1`] = `
 "
-[1mGET[22m /example: 
-  - operationId [33mchanged[39m
-
 [1mPATCH[22m /example: 
-  - operationId [33mchanged[39m
+  - /operationId [33mchanged[39m
+  
   - response [1m200[22m: [32madded[39m
-    - description [32madded[39m
-    - body [1mapplication/json[22m: [32madded[39m
-      - type [32madded[39m
-      - example [32madded[39m
-        - value [32madded[39m
-
-[1mPOST[22m /example: 
-  - operationId [33mchanged[39m
-
+    
 [1mPUT[22m /example: 
-  - operationId [33mchanged[39m
-
+  - /operationId [33mchanged[39m
+  
+[1mPOST[22m /example: 
+  - /operationId [33mchanged[39m
+  
+[1mGET[22m /example: 
+  - /operationId [33mchanged[39m
+  
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
 
 exports[`diff with --ruleset arg 1`] = `
 "
-[1mGET[22m /example: 
-  - operationId [33mchanged[39m
-
-[1mPATCH[22m /example: 
-  - operationId [33mchanged[39m
-  - response [1m200[22m: [32madded[39m
-    - description [32madded[39m
-    - body [1mapplication/json[22m: [32madded[39m
-      - type [32madded[39m
-      - example [32madded[39m
-        - value [32madded[39m
-
-[1mPOST[22m /example: [31mremoved[39m
-[1mPUT[22m /example: 
-  - operationId [33mchanged[39m
-
 [1mGET[22m /invalid_name: [32madded[39m
-  - operationId [32madded[39m
-
+  
+[1mPOST[22m /example: [31mremoved[39m
+  
+[1mPATCH[22m /example: 
+  - /operationId [33mchanged[39m
+  
+  - response [1m200[22m: [32madded[39m
+    
+[1mPUT[22m /example: 
+  - /operationId [33mchanged[39m
+  
+[1mGET[22m /example: 
+  - /operationId [33mchanged[39m
+  
 Checks
 
   [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /example
@@ -849,28 +546,24 @@ Configure check rulesets in optic cloud or your local optic.dev.yml file.
 
 exports[`diff with mock server custom rules 1`] = `
 "
-[1mGET[22m /example: 
-  - operationId [33mchanged[39m
-
-[1mPATCH[22m /example: 
-  - operationId [33mchanged[39m
-  - response [1m200[22m: [32madded[39m
-    - description [32madded[39m
-    - body [1mapplication/json[22m: [32madded[39m
-      - type [32madded[39m
-      - example [32madded[39m
-        - value [32madded[39m
-
-[1mPOST[22m /example: [31mremoved[39m
-[1mPUT[22m /example: 
-  - operationId [33mchanged[39m
-
 [1mGET[22m /invalid_name: [32madded[39m
-  - operationId [32madded[39m
-
+  
+[1mPOST[22m /example: [31mremoved[39m
+  
+[1mPATCH[22m /example: 
+  - /operationId [33mchanged[39m
+  
+  - response [1m200[22m: [32madded[39m
+    
+[1mPUT[22m /example: 
+  - /operationId [33mchanged[39m
+  
+[1mGET[22m /example: 
+  - /operationId [33mchanged[39m
+  
 Checks
 
-  [1m[42m[37m PASS [39m[49m[22m [1mSpecification[22m
+  [1m[42m[37m PASS [39m[49m[22m Specification
 
 
   [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /example
@@ -908,25 +601,21 @@ Configure check rulesets in optic cloud or your local optic.dev.yml file.
 exports[`diff with mock server extends 1`] = `
 "Extending ruleset from @test-org/ruleset-id
 
-[1mGET[22m /example: 
-  - operationId [33mchanged[39m
-
-[1mPATCH[22m /example: 
-  - operationId [33mchanged[39m
-  - response [1m200[22m: [32madded[39m
-    - description [32madded[39m
-    - body [1mapplication/json[22m: [32madded[39m
-      - type [32madded[39m
-      - example [32madded[39m
-        - value [32madded[39m
-
-[1mPOST[22m /example: [31mremoved[39m
-[1mPUT[22m /example: 
-  - operationId [33mchanged[39m
-
 [1mGET[22m /invalid_name: [32madded[39m
-  - operationId [32madded[39m
-
+  
+[1mPOST[22m /example: [31mremoved[39m
+  
+[1mPATCH[22m /example: 
+  - /operationId [33mchanged[39m
+  
+  - response [1m200[22m: [32madded[39m
+    
+[1mPUT[22m /example: 
+  - /operationId [33mchanged[39m
+  
+[1mGET[22m /example: 
+  - /operationId [33mchanged[39m
+  
 Checks
 
   [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /example
@@ -964,27 +653,23 @@ Configure check rulesets in optic cloud or your local optic.dev.yml file.
 exports[`diff with mock server ruleset key on api spec 1`] = `
 "
 specification details:
-- x-optic-ruleset [32madded[39m
-
-[1mGET[22m /example: 
-  - operationId [33mchanged[39m
-
-[1mPATCH[22m /example: 
-  - operationId [33mchanged[39m
-  - response [1m200[22m: [32madded[39m
-    - description [32madded[39m
-    - body [1mapplication/json[22m: [32madded[39m
-      - type [32madded[39m
-      - example [32madded[39m
-        - value [32madded[39m
-
-[1mPOST[22m /example: [31mremoved[39m
-[1mPUT[22m /example: 
-  - operationId [33mchanged[39m
+- /x-optic-ruleset [32madded[39m
 
 [1mGET[22m /invalid_name: [32madded[39m
-  - operationId [32madded[39m
-
+  
+[1mPOST[22m /example: [31mremoved[39m
+  
+[1mPATCH[22m /example: 
+  - /operationId [33mchanged[39m
+  
+  - response [1m200[22m: [32madded[39m
+    
+[1mPUT[22m /example: 
+  - /operationId [33mchanged[39m
+  
+[1mGET[22m /example: 
+  - /operationId [33mchanged[39m
+  
 Checks
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /example
@@ -1008,8 +693,8 @@ exports[`diff with mock server uploads specs if authenticated 1`] = `
 [1mPATCH[22m /example: 
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 
-      - type [33mchanged[39m
-
+      - /schema/type [33mchanged[39m
+      
 Checks
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPATCH[22m /example
