@@ -1,5 +1,6 @@
 import { Command } from 'commander';
 import prompts from 'prompts';
+import open from 'open';
 import path from 'path';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 
@@ -11,6 +12,14 @@ import chalk from 'chalk';
 import * as GitCandidates from './git-get-file-candidates';
 import * as FsCandidates from './get-file-candidates';
 import { writeJson, writeYml } from './write-to-file';
+import { OpticBackendClient } from '../../client';
+import { uploadSpec } from '../../utils/cloud-specs';
+import {
+  getApiFromOpticUrl,
+  getApiUrl,
+  getStandardsUrl,
+} from '../../utils/cloud-urls';
+import { getDefaultRulesetConfig } from './default-ruleset-config';
 
 function short(sha: string) {
   return sha.slice(0, 8);
@@ -68,7 +77,7 @@ type ApiAddActionOptions = {
   web?: boolean;
 };
 
-async function getOrganizationToUploadTo(): Promise<
+async function getOrganizationToUploadTo(client: OpticBackendClient): Promise<
   | {
       ok: true;
       org: { id: string; name: string };
@@ -80,11 +89,7 @@ async function getOrganizationToUploadTo(): Promise<
 > {
   let org: { id: string; name: string };
 
-  // TODO replace this with an API call
-  const organizations: { id: string; name: string }[] = await [
-    { id: 'a', name: 'org1' },
-    // { id: 'b', name: 'org2' },
-  ];
+  const organizations = await client.getTokenOrgs();
   if (organizations.length > 1) {
     const response = await prompts({
       type: 'select',
@@ -110,11 +115,11 @@ async function getOrganizationToUploadTo(): Promise<
   return { ok: true, org };
 }
 
-async function promptForStandard(): Promise<string | undefined> {
-  // TODO fetch existing standard
-  const existingStandards: { id: string; name: string; slug: string }[] = [
-    { id: '', name: '', slug: 'a' },
-  ];
+async function promptForStandard(
+  orgId: string,
+  client: OpticBackendClient
+): Promise<string | undefined> {
+  const existingStandards = await client.getOrgStandards(orgId);
 
   const rulesetResponse = await prompts([
     {
@@ -171,29 +176,49 @@ async function promptForStandard(): Promise<string | undefined> {
       createRulesetResponse.rulesets &&
       createRulesetResponse.rulesets.length > 0
     ) {
-      // TODO create ruleset API with sensible defaults
-      const rulesetUrl = 'todo';
-      logger.info(
-        `A new standard has been created. You can view and edit this standard at ${rulesetUrl}`
+      const rulesetsToAdd: string[] = createRulesetResponse.rulesets;
+      const rulesetsWithConfig = rulesetsToAdd.map((rulesetName) => ({
+        name: rulesetName,
+        config: getDefaultRulesetConfig(rulesetName),
+      }));
+      const standard = await client.createOrgStandard(
+        orgId,
+        rulesetsWithConfig
       );
-      return rulesetUrl;
+      const standardUrl = getStandardsUrl(
+        client.getWebBase(),
+        orgId,
+        standard.id
+      );
+
+      logger.info(
+        `A new standard has been created. You can view and edit this standard at ${standardUrl}`
+      );
+      return standard.slug;
     }
   }
 }
 
 async function verifyStandardExists(
-  standard: string
+  standard: string,
+  client: OpticBackendClient
 ): Promise<{ ok: boolean }> {
-  // TODO make API call to check that ruleset exists
-  return { ok: true };
+  try {
+    await client.getStandard(standard);
+    return { ok: true };
+  } catch (e) {
+    return { ok: false };
+  }
 }
 
 async function crawlCandidateSpecs(
+  orgId: string,
   [path, shas]: [string, string[]],
   config: OpticCliConfig,
   options: {
     path_to_spec: string | undefined;
     standard: string | undefined;
+    web?: boolean;
   }
 ) {
   let parseResult: ParseResult;
@@ -218,10 +243,19 @@ async function crawlCandidateSpecs(
 
   logger.info(`Found OpenAPI Spec at ${path}`);
   const existingOpticUrl = parseResult.jsonLike[OPTIC_URL_KEY];
+  const maybeParsedUrl = getApiFromOpticUrl(existingOpticUrl);
 
-  const api: { id: string; url: string } = existingOpticUrl
-    ? { id: '', url: 'todo get optic id from url' }
-    : { id: '', url: 'todo make API call' };
+  let api: { id: string; url: string };
+  if (existingOpticUrl && maybeParsedUrl) {
+    api = { id: maybeParsedUrl.apiId, url: existingOpticUrl };
+  } else {
+    const name = parseResult.jsonLike?.info?.title ?? path;
+    const { id } = await config.client.createApi(orgId, name);
+    api = {
+      id,
+      url: getApiUrl(config.client.getWebBase(), orgId, id),
+    };
+  }
 
   for await (const sha of shas) {
     let parseResult: ParseResult;
@@ -244,11 +278,15 @@ async function crawlCandidateSpecs(
     }
     logger.info(`Uploading spec ${short(sha)}:${path}`);
 
-    // TODO Upload spec here
+    await uploadSpec(api.id, {
+      spec: parseResult,
+      tags: [`git:${sha}`],
+      client: config.client,
+    });
   }
 
-  // Write to file only if optic-url is not set
-  if (!existingOpticUrl) {
+  // Write to file only if optic-url is not set or is invalid
+  if (!existingOpticUrl || !maybeParsedUrl) {
     if (/.json/i.test(path)) {
       await writeJson(path, {
         [OPTIC_URL_KEY]: api.url,
@@ -260,8 +298,13 @@ async function crawlCandidateSpecs(
         ...(options.standard ? { [OPTIC_STANDARD_KEY]: options.standard } : {}),
       });
     }
+    logger.info(`Added spec ${path} to ${api.url}`);
+    if (options.web) {
+      await open(api.url, { wait: false });
+    }
+  } else {
+    logger.info(`Spec ${path} has already been added at ${api.url}`);
   }
-  // TODO log api URL and maybe open in --web
 }
 
 const getApiAddAction =
@@ -285,7 +328,7 @@ const getApiAddAction =
       return;
     }
 
-    const orgRes = await getOrganizationToUploadTo();
+    const orgRes = await getOrganizationToUploadTo(config.client);
     if (!orgRes.ok) {
       logger.error(orgRes.error);
       process.exitCode = 1;
@@ -295,9 +338,9 @@ const getApiAddAction =
 
     let standard = options.standard;
     if (!standard) {
-      standard = await promptForStandard();
+      standard = await promptForStandard(orgRes.org.id, config.client);
     } else {
-      const results = await verifyStandardExists(standard);
+      const results = await verifyStandardExists(standard, config.client);
       if (!results.ok) {
         logger.warn(
           chalk.yellow(
@@ -346,9 +389,10 @@ const getApiAddAction =
     }
 
     for await (const candidate of candidates) {
-      await crawlCandidateSpecs(candidate, config, {
+      await crawlCandidateSpecs(orgRes.org.id, candidate, config, {
         path_to_spec,
         standard,
+        web: options.web,
       });
     }
   };
