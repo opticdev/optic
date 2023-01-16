@@ -3,16 +3,16 @@
 exports[`optic spec push can push a spec to a repo 1`] = `
 "Automatically adding the git sha git:COMMIT-HASH and branch git:master as tags 
 
-Uploading spec for api todo get optic id from url with tags env:production, the-favorite-api, git:COMMIT-HASH, git:master
-Succesfully uploaded spec to Optic. View the spec here TODODODODOO
+Uploading spec for api at https://app.useoptic.com/organizations/org-id/apis/api-id with tags env:production, the-favorite-api, git:COMMIT-HASH, git:master
+Succesfully uploaded spec to Optic. View the spec here http://localhost:3000/organizations/org-id/specs/spec-id
 "
 `;
 
 exports[`optic spec push does not automatically add git tags when not clean state 1`] = `
 "Not automatically including any git tags because the current working directory has uncommited changes.
 
-Uploading spec for api todo get optic id from url 
-Succesfully uploaded spec to Optic. View the spec here TODODODODOO
+Uploading spec for api at https://app.useoptic.com/organizations/org-id/apis/api-id 
+Succesfully uploaded spec to Optic. View the spec here http://localhost:3000/organizations/org-id/specs/spec-id
 "
 `;
 
