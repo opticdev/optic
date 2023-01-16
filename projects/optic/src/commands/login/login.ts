@@ -1,5 +1,6 @@
 import { Command } from 'commander';
 import prompts from 'prompts';
+import path from 'path';
 import fs from 'node:fs/promises';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 
@@ -53,6 +54,7 @@ Once you've created a token, enter it below.
     : {
         token: base64Token,
       };
+  await fs.mkdir(path.dirname(USER_CONFIG_PATH), { recursive: true });
   await fs.writeFile(USER_CONFIG_PATH, JSON.stringify(newConfig), 'utf-8');
 
   logger.info(chalk.green(`Successfully saved config to ${USER_CONFIG_PATH}`));
