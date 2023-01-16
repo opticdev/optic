@@ -1024,7 +1024,7 @@ Checks
 [31m[1m1 checks failed[22m[39m
 
 Configure check rulesets in optic cloud or your local optic.dev.yml file.
-Uploaded results of diff to TODO TODO
+Uploaded results of diff to http://localhost:3000/organizations/org-id/runs/api-id
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
