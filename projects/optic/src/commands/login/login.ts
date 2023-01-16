@@ -44,18 +44,22 @@ Once you've created a token, enter it below.
     message: 'Enter your token here:',
   });
 
-  const base64Token = Buffer.from(response.token).toString('base64');
+  if (response.token) {
+    const base64Token = Buffer.from(response.token).toString('base64');
 
-  const newConfig = userConfig
-    ? {
-        ...userConfig,
-        token: base64Token,
-      }
-    : {
-        token: base64Token,
-      };
-  await fs.mkdir(path.dirname(USER_CONFIG_PATH), { recursive: true });
-  await fs.writeFile(USER_CONFIG_PATH, JSON.stringify(newConfig), 'utf-8');
+    const newConfig = userConfig
+      ? {
+          ...userConfig,
+          token: base64Token,
+        }
+      : {
+          token: base64Token,
+        };
+    await fs.mkdir(path.dirname(USER_CONFIG_PATH), { recursive: true });
+    await fs.writeFile(USER_CONFIG_PATH, JSON.stringify(newConfig), 'utf-8');
 
-  logger.info(chalk.green(`Successfully saved config to ${USER_CONFIG_PATH}`));
+    logger.info(
+      chalk.green(`Successfully saved config to ${USER_CONFIG_PATH}`)
+    );
+  }
 };
