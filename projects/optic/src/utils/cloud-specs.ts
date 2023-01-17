@@ -67,7 +67,7 @@ export async function uploadRun(
     Buffer.from(stableResultsString)
   );
 
-  await opts.client.createRun({
+  return await opts.client.createRun({
     upload_id: result.upload_id,
     api_id: apiId,
     from_spec_id: opts.fromSpecId,

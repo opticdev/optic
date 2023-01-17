@@ -3,7 +3,7 @@ info:
   title: a spec
   description: The API
   version: 0.1.0
-x-optic-url: 'https://app.useoptic.com/organizations/org-id/apis/api-id'
+x-optic-url: 'not-good'
 paths:
   /filler_route:
     post:
