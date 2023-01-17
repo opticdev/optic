@@ -19,6 +19,8 @@ import {
   jsonChangelog,
   terminalChangelog,
 } from '@useoptic/openapi-utilities';
+import { uploadDiff } from './upload-diff';
+import { getApiFromOpticUrl, getRunUrl } from '../../utils/cloud-urls';
 
 const usage = () => `
   optic diff-all
@@ -157,8 +159,8 @@ async function computeAll(
     // - if to spec has x-optic-url
     // - if from spec has x-optic-url AND to spec is empty
     if (
-      typeof toParseResults.jsonLike[OPTIC_URL_KEY] === 'string' ||
-      (typeof fromParseResults.jsonLike[OPTIC_URL_KEY] === 'string' &&
+      getApiFromOpticUrl(toParseResults.jsonLike[OPTIC_URL_KEY]) ||
+      (getApiFromOpticUrl(fromParseResults.jsonLike[OPTIC_URL_KEY]) &&
         toParseResults.isEmptySpec)
     ) {
       logger.info(
@@ -246,7 +248,7 @@ function handleWarnings(warnings: Warnings, options: DiffAllActionOptions) {
   if (warnings.missingOpticUrl.length > 0) {
     logger.info(
       chalk.yellow(
-        'Warning - the following OpenAPI specs were detected but did not have x-optic-url keys. `optic diff-all` only runs on specs that include `x-optic-url` keys.'
+        'Warning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. `optic diff-all` only runs on specs that include `x-optic-url` keys that point to specs uploaded to optic.'
       )
     );
     logger.info('Run the `optic api add` command to add these specs to optic');
@@ -289,28 +291,32 @@ function handleWarnings(warnings: Warnings, options: DiffAllActionOptions) {
 }
 
 async function openWebpage(
+  url: string | null,
   { fromParseResults, toParseResults, specResults }: Result,
   config: OpticCliConfig
 ) {
-  const meta = {
-    createdAt: new Date(),
-    command: ['optic', ...process.argv.slice(2)].join(' '),
-  };
-
-  const compressedData = compressData(
-    fromParseResults,
-    toParseResults,
-    specResults,
-    meta
-  );
-  const anonymousId = await getAnonId();
-  trackEvent('optic.diff_all.view_web', anonymousId, {
-    compressedDataLength: compressedData.length,
+  const analyticsData: Record<string, any> = {
     isInCi: process.env.CI === 'true',
-  });
-  await open(`${config.client.getWebBase()}/cli/diff#${compressedData}`, {
-    wait: false,
-  });
+  };
+  if (!url) {
+    const meta = {
+      createdAt: new Date(),
+      command: ['optic', ...process.argv.slice(2)].join(' '),
+    };
+
+    const compressedData = compressData(
+      fromParseResults,
+      toParseResults,
+      specResults,
+      meta
+    );
+    analyticsData.compressedDataLength = compressedData.length;
+    url = `${config.client.getWebBase()}/cli/diff#${compressedData}`;
+  }
+  const anonymousId = await getAnonId();
+  trackEvent('optic.diff_all.view_web', anonymousId, analyticsData);
+
+  await open(url, { wait: false });
 }
 
 const getDiffAllAction =
@@ -375,29 +381,25 @@ const getDiffAllAction =
     if (config.isAuthenticated) {
       for (const result of results) {
         const { fromParseResults, toParseResults, specResults } = result;
-        const apiId: string | null = 'TODO'; // toParseResults.jsonLike[OPTIC_URL_KEY] ?? fromParseResults.jsonLike[OPTIC_URL_KEY] ?? null
-        const shouldUploadBaseSpec = fromParseResults.context && apiId;
-        const shouldUploadHeadSpec = toParseResults.context && apiId;
-        if (shouldUploadBaseSpec) {
-          // TODO upload spec
-        }
-        if (shouldUploadHeadSpec) {
-          // TODO upload spec
-        }
-
-        const shouldUploadResults =
-          (shouldUploadBaseSpec || fromParseResults.isEmptySpec) &&
-          (shouldUploadHeadSpec || toParseResults.isEmptySpec);
-
-        if (shouldUploadResults) {
-          // TODO upload results
+        const run = await uploadDiff(
+          {
+            from: fromParseResults,
+            to: toParseResults,
+          },
+          specResults,
+          config
+        );
+        let url: string | null = null;
+        if (run) {
+          url = getRunUrl(config.client.getWebBase(), run.orgId, run.runId);
+          logger.info(`Uploaded results of diff to ${url}`);
         }
         if (
           options.web &&
           (specResults.changes.length > 0 ||
             (!options.check && specResults.results.length > 0))
         ) {
-          openWebpage(result, config);
+          openWebpage(url, result, config);
         }
       }
     }
