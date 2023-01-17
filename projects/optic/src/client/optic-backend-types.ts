@@ -2,6 +2,8 @@ export type Standard = {
   config: {
     ruleset: { name: string; config: unknown }[];
   };
+  name: string;
+  slug: string;
   organization_id: string;
   ruleset_id: string;
   created_at: string;

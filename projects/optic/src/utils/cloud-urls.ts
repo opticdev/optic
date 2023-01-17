@@ -47,3 +47,11 @@ export function getSpecUrl(
 ): string {
   return urljoin(baseUrl, `organizations/${orgId}/specs/${specId}`);
 }
+
+export function getStandardsUrl(
+  baseUrl: string,
+  orgId: string,
+  standardId: string
+) {
+  return urljoin(baseUrl, `organizations/${orgId}/standards/${standardId}`);
+}
