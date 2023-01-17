@@ -100,9 +100,10 @@ export class OpticBackendClient extends JsonHttpClient {
         upload_id: string;
         spec_url: string;
         sourcemap_url: string;
-        spec_id?: undefined;
       }
-    | { spec_id: string }
+    | {
+        spec_id: string;
+      }
   > {
     return this.postJson(`/api/specs/prepare`, body);
   }
@@ -117,6 +118,7 @@ export class OpticBackendClient extends JsonHttpClient {
 
   public async prepareRunUpload(body: {
     checksum: string;
+    api_id: string;
   }): Promise<{ upload_id: string; check_results_url: string }> {
     return this.postJson(`/api/runs/prepare`, body);
   }
