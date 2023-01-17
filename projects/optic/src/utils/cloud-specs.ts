@@ -1,3 +1,4 @@
+import stableStringify from 'json-stable-stringify';
 import { IChange, ResultWithSourcemap } from '@useoptic/openapi-utilities';
 import { OpticBackendClient } from '../client';
 import { computeChecksum } from './checksum';
@@ -14,8 +15,10 @@ export async function uploadSpec(
     tags: string[];
   }
 ): Promise<string> {
-  const spec_checksum = computeChecksum(opts.spec.jsonLike);
-  const sourcemap_checksum = computeChecksum(opts.spec.sourcemap);
+  const stableSpecString = stableStringify(opts.spec.jsonLike);
+  const stableSourcemapString = stableStringify(opts.spec.sourcemap);
+  const spec_checksum = computeChecksum(stableSpecString);
+  const sourcemap_checksum = computeChecksum(stableSourcemapString);
   const result = await opts.client.prepareSpecUpload({
     api_id: apiId,
     spec_checksum,
@@ -23,14 +26,8 @@ export async function uploadSpec(
   });
   if ('upload_id' in result) {
     await Promise.all([
-      uploadFileToS3(
-        result.spec_url,
-        Buffer.from(JSON.stringify(opts.spec.jsonLike))
-      ),
-      uploadFileToS3(
-        result.sourcemap_url,
-        Buffer.from(JSON.stringify(opts.spec.sourcemap))
-      ),
+      uploadFileToS3(result.spec_url, Buffer.from(stableSpecString)),
+      uploadFileToS3(result.sourcemap_url, Buffer.from(stableSourcemapString)),
     ]);
 
     const { id } = await opts.client.createSpec({
@@ -58,7 +55,8 @@ export async function uploadRun(
     };
   }
 ) {
-  const checksum = computeChecksum(opts.specResults);
+  const stableResultsString = stableStringify(opts.specResults);
+  const checksum = computeChecksum(stableResultsString);
   const result = await opts.client.prepareRunUpload({
     api_id: apiId,
     checksum,
@@ -66,7 +64,7 @@ export async function uploadRun(
 
   await uploadFileToS3(
     result.check_results_url,
-    Buffer.from(JSON.stringify(opts.specResults))
+    Buffer.from(stableResultsString)
   );
 
   await opts.client.createRun({
