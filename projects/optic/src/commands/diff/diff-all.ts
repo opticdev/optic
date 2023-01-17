@@ -299,28 +299,32 @@ function handleWarnings(warnings: Warnings, options: DiffAllActionOptions) {
 }
 
 async function openWebpage(
+  url: string | null,
   { fromParseResults, toParseResults, specResults }: Result,
   config: OpticCliConfig
 ) {
-  const meta = {
-    createdAt: new Date(),
-    command: ['optic', ...process.argv.slice(2)].join(' '),
-  };
-
-  const compressedData = compressDataV2(
-    fromParseResults,
-    toParseResults,
-    specResults,
-    meta
-  );
-  const anonymousId = await getAnonId();
-  trackEvent('optic.diff_all.view_web', anonymousId, {
-    compressedDataLength: compressedData.length,
+  const analyticsData: Record<string, any> = {
     isInCi: process.env.CI === 'true',
-  });
-  await open(`${config.client.getWebBase()}/cli/diff#${compressedData}`, {
-    wait: false,
-  });
+  };
+  if (!url) {
+    const meta = {
+      createdAt: new Date(),
+      command: ['optic', ...process.argv.slice(2)].join(' '),
+    };
+
+    const compressedData = compressDataV2(
+      fromParseResults,
+      toParseResults,
+      specResults,
+      meta
+    );
+    analyticsData.compressedDataLength = compressedData.length;
+    url = `${config.client.getWebBase()}/cli/diff#${compressedData}`;
+  }
+  const anonymousId = await getAnonId();
+  trackEvent('optic.diff_all.view_web', anonymousId, analyticsData);
+
+  await open(url, { wait: false });
 }
 
 const getDiffAllAction =
@@ -393,12 +397,9 @@ const getDiffAllAction =
           specResults,
           config
         );
+        let url: string | null = null;
         if (run) {
-          const url = getRunUrl(
-            config.client.getWebBase(),
-            run.orgId,
-            run.runId
-          );
+          url = getRunUrl(config.client.getWebBase(), run.orgId, run.runId);
           logger.info(`Uploaded results of diff to ${url}`);
         }
         if (
@@ -406,7 +407,7 @@ const getDiffAllAction =
           (specResults.diffs.length > 0 ||
             (!options.check && specResults.results.length > 0))
         ) {
-          openWebpage(result, config);
+          openWebpage(url, result, config);
         }
       }
     }

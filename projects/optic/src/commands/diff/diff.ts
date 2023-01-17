@@ -7,8 +7,6 @@ import {
   UserError,
   jsonChangelog,
   generateSpecResults,
-  ResultWithSourcemap,
-  IChange,
 } from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import {
@@ -178,64 +176,6 @@ const runDiff = async (
     );
   }
 
-  if (options.web) {
-    if (
-      specResults.diffs.length === 0 &&
-      (!options.check || specResults.results.length === 0)
-    ) {
-      console.log('Empty changelog: not opening web view');
-      return diffResults;
-    }
-    const meta = {
-      createdAt: new Date(),
-      command: ['optic', ...process.argv.slice(2)].join(' '),
-      file1,
-      file2,
-      base: options.base,
-    };
-
-    let compressedData: string;
-    if (process.env.NEW_WEB_VIEW === 'true') {
-      compressedData = compressDataV2(baseFile, headFile, specResults, meta);
-    } else {
-      // TODO remove this old flow when new web view is ready
-      const ruleRunner = await generateRuleRunner(
-        {
-          rulesetArg: options.ruleset,
-          specRuleset: headFile.isEmptySpec
-            ? baseFile.jsonLike[OPTIC_STANDARD_KEY]
-            : headFile.jsonLike[OPTIC_STANDARD_KEY],
-          config,
-        },
-        options.check
-      );
-      const specResultsLegacy = await generateSpecResults(
-        ruleRunner,
-        baseFile,
-        headFile,
-        null
-      );
-
-      compressedData = compressData(
-        baseFile,
-        headFile,
-        specResultsLegacy,
-        meta
-      );
-    }
-
-    console.log('Opening up diff in web view');
-    const anonymousId = await getAnonId();
-    trackEvent('optic.diff.view_web', anonymousId, {
-      compressedDataLength: compressedData.length,
-      isInCi: process.env.CI === 'true',
-    });
-    await flushEvents();
-    await open(`${config.client.getWebBase()}/cli/diff#${compressedData}`, {
-      wait: false,
-    });
-  }
-
   return diffResults;
 };
 
@@ -282,9 +222,9 @@ const getDiffAction =
     }
 
     const diffResult = await runDiff(files, parsedFiles, config, options);
+    let maybeUrl: string | null = null;
+    const [baseParseResult, headParseResult] = parsedFiles;
     if (config.isAuthenticated) {
-      const [baseParseResult, headParseResult] = parsedFiles;
-
       const run = await uploadDiff(
         {
           from: baseParseResult,
@@ -294,9 +234,74 @@ const getDiffAction =
         config
       );
       if (run) {
-        const url = getRunUrl(config.client.getWebBase(), run.orgId, run.runId);
-        console.log(`Uploaded results of diff to ${url}`);
+        maybeUrl = getRunUrl(config.client.getWebBase(), run.orgId, run.runId);
+        console.log(`Uploaded results of diff to ${maybeUrl}`);
       }
+    }
+
+    if (options.web) {
+      if (
+        diffResult.specResults.diffs.length === 0 &&
+        (!options.check || diffResult.specResults.results.length === 0)
+      ) {
+        console.log('Empty changelog: not opening web view');
+      }
+      const analyticsData: Record<string, any> = {
+        isInCi: process.env.CI === 'true',
+      };
+
+      if (!maybeUrl) {
+        const meta = {
+          createdAt: new Date(),
+          command: ['optic', ...process.argv.slice(2)].join(' '),
+          file1,
+          file2,
+          base: options.base,
+        };
+
+        let compressedData: string;
+        if (process.env.NEW_WEB_VIEW === 'true') {
+          compressedData = compressDataV2(
+            baseParseResult,
+            headParseResult,
+            diffResult.specResults,
+            meta
+          );
+        } else {
+          // TODO remove this old flow when new web view is ready
+          const ruleRunner = await generateRuleRunner(
+            {
+              rulesetArg: options.ruleset,
+              specRuleset: headParseResult.isEmptySpec
+                ? baseParseResult.jsonLike[OPTIC_STANDARD_KEY]
+                : headParseResult.jsonLike[OPTIC_STANDARD_KEY],
+              config,
+            },
+            options.check
+          );
+          const specResultsLegacy = await generateSpecResults(
+            ruleRunner,
+            baseParseResult,
+            headParseResult,
+            null
+          );
+          compressedData = compressData(
+            baseParseResult,
+            headParseResult,
+            specResultsLegacy,
+            meta
+          );
+        }
+        (analyticsData.compressedDataLength = compressedData.length),
+          console.log('Opening up diff in web view');
+        maybeUrl = `${config.client.getWebBase()}/cli/diff#${compressedData}`;
+        await flushEvents();
+      }
+      const anonymousId = await getAnonId();
+      trackEvent('optic.diff.view_web', anonymousId, analyticsData);
+      await open(maybeUrl, {
+        wait: false,
+      });
     }
 
     if (!options.web && !options.json) {
