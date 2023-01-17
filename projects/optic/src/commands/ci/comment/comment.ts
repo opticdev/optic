@@ -2,7 +2,7 @@ import { Command, Option } from 'commander';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 
 import { OpticCliConfig } from '../../../config';
-import { readDataForCi } from '../../../utils/ci-data';
+import { CiRunDetails, readDataForCi } from '../../../utils/ci-data';
 import {
   COMPARE_SUMMARY_IDENTIFIER,
   generateCompareSummaryMarkdown,
@@ -118,7 +118,17 @@ const getCiCommentAction =
 
     const options = _options as CiCommentActionOptions;
 
-    const data = await readDataForCi();
+    let data: CiRunDetails;
+    try {
+      data = await readDataForCi();
+    } catch (e) {
+      logger.error(
+        'Could not find a valid ci run details file. CI run detail files are generated from `optic diff` and `optic diff-all` when run in ci (`CI=true`)'
+      );
+      logger.error(e);
+      process.exitCode = 1;
+      return;
+    }
     const commenter: CommentApi = {} as any; // TODO
 
     const maybeComment: { id: string; body: string } | null =
