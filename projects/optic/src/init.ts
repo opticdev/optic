@@ -21,6 +21,7 @@ import { verifyCommand } from '@useoptic/openapi-cli/build/commands/verify';
 import { registerDiffAll } from './commands/diff/diff-all';
 import { registerSpecPush } from './commands/spec/push';
 import { registerLogin } from './commands/login/login';
+import { registerCiComment } from './commands/ci/comment/comment';
 
 const packageJson = require('../package.json');
 
@@ -28,7 +29,7 @@ export const initCli = async () => {
   initSentry(process.env.SENTRY_URL, packageJson.version);
   initSegment(process.env.SEGMENT_KEY);
   cli.hook('preAction', async (command) => {
-    const subcommands = ['ruleset', 'oas', 'api', 'spec'];
+    const subcommands = ['ruleset', 'oas', 'api', 'spec', 'ci'];
     try {
       let commandName: string;
       let args: string[];
@@ -71,6 +72,9 @@ export const initCli = async () => {
 
   const specSubcommands = cli.command('spec').addHelpCommand(false);
   registerSpecPush(specSubcommands, cliConfig);
+
+  const ciSubcommands = cli.command('ci').addHelpCommand(false);
+  registerCiComment(ciSubcommands, cliConfig);
 
   const oas = cli.command('oas');
   oas.description(
