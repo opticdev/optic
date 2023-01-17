@@ -24,10 +24,34 @@ export function getApiFromOpticUrl(
   }
 }
 
+export function getApiUrl(
+  baseUrl: string,
+  orgId: string,
+  apiId: string
+): string {
+  return urljoin(baseUrl, `organizations/${orgId}/apis/${apiId}`);
+}
+
 export function getRunUrl(
   baseUrl: string,
   orgId: string,
   runId: string
 ): string {
   return urljoin(baseUrl, `organizations/${orgId}/runs/${runId}`);
+}
+
+export function getSpecUrl(
+  baseUrl: string,
+  orgId: string,
+  specId: string
+): string {
+  return urljoin(baseUrl, `organizations/${orgId}/specs/${specId}`);
+}
+
+export function getStandardsUrl(
+  baseUrl: string,
+  orgId: string,
+  standardId: string
+) {
+  return urljoin(baseUrl, `organizations/${orgId}/standards/${standardId}`);
 }

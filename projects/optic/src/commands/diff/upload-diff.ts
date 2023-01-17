@@ -36,7 +36,7 @@ export async function uploadDiff(
     let tags: string[] = [];
     if (specs.to.context.vcs === VCS.Git) {
       const currentBranch = await Git.getCurrentBranchName();
-      tags = [`git:${specs.to.context.sha}`, `git:${currentBranch}`];
+      tags = [`git:${specs.to.context.sha}`, `gitbranch:${currentBranch}`];
     }
     headSpecId = await uploadSpec(specDetails.apiId, {
       spec: specs.to,
