@@ -270,7 +270,10 @@ const getDiffAction =
         let tags: string[] = [];
         if (headParseResult.context.vcs === VCS.Git) {
           const currentBranch = await Git.getCurrentBranchName();
-          tags = [`git:${headParseResult.context.sha}`, `git:${currentBranch}`];
+          tags = [
+            `git:${headParseResult.context.sha}`,
+            `gitbranch:${currentBranch}`,
+          ];
         }
         headSpecId = await uploadSpec(specDetails.apiId, {
           spec: headParseResult,
