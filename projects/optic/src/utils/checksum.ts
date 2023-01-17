@@ -5,5 +5,5 @@ export function computeChecksum(file: string): string {
 
   hash.update(file);
 
-  return hash.digest('hex');
+  return hash.digest('base64');
 }
