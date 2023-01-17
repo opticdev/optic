@@ -4,7 +4,7 @@ import path from 'path';
 import * as fs from 'fs-extra';
 
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
-import { trackCompletion, trackEvent } from '../segment';
+import { flushEvents, trackCompletion, trackEvent } from '../segment';
 import { trackWarning } from '../sentry';
 import * as AT from '../lib/async-tools';
 import { readDeferencedSpec } from '../specs';
@@ -181,9 +181,9 @@ export async function verifyCommand(): Promise<Command> {
         },
       });
 
-      await Promise.all(
-        analytics.map((event) => trackEvent(event.event, event.properties))
-      );
+      analytics.forEach((event) => trackEvent(event.event, event.properties));
+
+      await flushEvents();
 
       if (!options.exit0 && hasDiff) {
         console.log(
