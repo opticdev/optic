@@ -1,5 +1,5 @@
 import stableStringify from 'json-stable-stringify';
-import { IChange, ResultWithSourcemap } from '@useoptic/openapi-utilities';
+import { ObjectDiff, RuleResult } from '@useoptic/openapi-utilities';
 import { OpticBackendClient } from '../client';
 import { computeChecksum } from './checksum';
 import { uploadFileToS3 } from './s3';
@@ -48,9 +48,8 @@ export async function uploadRun(
     toSpecId: string;
     client: OpticBackendClient;
     specResults: {
-      // TODO change this type
-      changes: IChange[];
-      results: ResultWithSourcemap[];
+      diffs: ObjectDiff[];
+      results: RuleResult[];
       version: string;
     };
   }

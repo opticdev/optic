@@ -6,225 +6,856 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     {
       "attributes": [
         {
-          "after": "get_examples",
-          "before": "getExamples",
-          "key": "operationId",
-        },
-      ],
-      "change": "changed",
-      "name": "get /example",
-      "parameters": [],
-      "requestBody": undefined,
-      "responses": [
-        {
-          "attributes": [],
-          "change": "changed",
-          "contentTypes": [
-            {
-              "attributes": [],
-              "change": "changed",
-              "name": "application/json",
-              "schemaChanges": [
-                {
-                  "attributes": [
-                    {
-                      "after": [
-                        {
-                          "properties": {
-                            "orderId": {
-                              "type": "number",
-                            },
-                          },
-                          "type": "object",
-                        },
-                        {
-                          "properties": {
-                            "fulfillmentId": {
-                              "type": "string",
-                            },
-                          },
-                          "type": "object",
-                        },
-                      ],
-                      "before": [
-                        {
-                          "properties": {
-                            "orderId": {
-                              "type": "string",
-                            },
-                          },
-                          "type": "object",
-                        },
-                        {
-                          "properties": {
-                            "fulfillmentId": {
-                              "type": "string",
-                            },
-                          },
-                          "type": "object",
-                        },
-                      ],
-                      "key": "allOf",
-                    },
-                  ],
-                  "change": "changed",
-                  "name": "composedObject",
+          "after": {
+            "description": "Multiple status values can be provided with comma separated strings",
+            "operationId": "findPetsByStatus",
+            "parameters": [
+              {
+                "description": "Status values that need to be considered for filter",
+                "explode": true,
+                "in": "query",
+                "name": "status",
+                "required": true,
+                "schema": {
+                  "items": {
+                    "default": "available",
+                    "enum": [
+                      "available",
+                      "pending",
+                      "sold",
+                    ],
+                    "type": "string",
+                  },
+                  "type": "array",
                 },
-                {
-                  "attributes": [
-                    {
-                      "after": "number",
-                      "before": "string",
-                      "key": "type",
-                    },
+                "style": "form",
+              },
+              {
+                "description": "A debug token",
+                "in": "cookie",
+                "name": "debug",
+                "required": false,
+                "schema": {
+                  "enum": [
+                    0,
+                    1,
                   ],
-                  "change": "changed",
-                  "name": "composedObject.orderId",
+                  "type": "integer",
                 },
-                {
-                  "attributes": [
-                    {
-                      "after": [
-                        {
-                          "properties": {
-                            "orderId": {
-                              "type": "string",
+              },
+            ],
+            "responses": {
+              "200": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "items": {
+                        "properties": {
+                          "category": {
+                            "properties": {
+                              "id": {
+                                "format": "int64",
+                                "type": "integer",
+                              },
+                              "name": {
+                                "type": "string",
+                              },
+                            },
+                            "type": "object",
+                            "xml": {
+                              "name": "Category",
                             },
                           },
-                          "type": "object",
-                        },
-                        {
-                          "properties": {
-                            "order": {
+                          "id": {
+                            "format": "int64",
+                            "type": "integer",
+                          },
+                          "name": {
+                            "example": "doggie",
+                            "type": "string",
+                          },
+                          "photoUrls": {
+                            "items": {
+                              "type": "string",
+                            },
+                            "type": "array",
+                            "xml": {
+                              "name": "photoUrl",
+                              "wrapped": true,
+                            },
+                          },
+                          "status": {
+                            "description": "pet status in the store",
+                            "enum": [
+                              "available",
+                              "pending",
+                              "sold",
+                            ],
+                            "type": "string",
+                          },
+                          "tags": {
+                            "items": {
                               "properties": {
                                 "id": {
+                                  "format": "int64",
+                                  "type": "integer",
+                                },
+                                "name": {
                                   "type": "string",
                                 },
                               },
                               "type": "object",
+                              "xml": {
+                                "name": "Tag",
+                              },
+                            },
+                            "type": "array",
+                            "xml": {
+                              "name": "tag",
+                              "wrapped": true,
                             },
                           },
-                          "type": "object",
                         },
-                      ],
-                      "before": [
-                        {
-                          "properties": {
-                            "orderId": {
+                        "required": [
+                          "name",
+                          "photoUrls",
+                        ],
+                        "type": "object",
+                        "xml": {
+                          "name": "Pet",
+                        },
+                      },
+                      "type": "array",
+                    },
+                  },
+                  "application/xml": {
+                    "schema": {
+                      "items": {
+                        "properties": {
+                          "category": {
+                            "properties": {
+                              "id": {
+                                "format": "int64",
+                                "type": "integer",
+                              },
+                              "name": {
+                                "type": "string",
+                              },
+                            },
+                            "type": "object",
+                            "xml": {
+                              "name": "Category",
+                            },
+                          },
+                          "id": {
+                            "format": "int64",
+                            "type": "integer",
+                          },
+                          "name": {
+                            "example": "doggie",
+                            "type": "string",
+                          },
+                          "photoUrls": {
+                            "items": {
                               "type": "string",
                             },
-                          },
-                          "type": "object",
-                        },
-                      ],
-                      "key": "anyOf",
-                    },
-                  ],
-                  "change": "changed",
-                  "name": "expandableObject",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "expandableObject.order",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "expandableObject.order.id",
-                },
-                {
-                  "attributes": [
-                    {
-                      "after": [
-                        {
-                          "type": "string",
-                        },
-                        {
-                          "type": "number",
-                        },
-                      ],
-                      "before": [
-                        {
-                          "type": "string",
-                        },
-                        {
-                          "type": "number",
-                        },
-                        {
-                          "properties": {
-                            "orderId": {
-                              "type": "string",
+                            "type": "array",
+                            "xml": {
+                              "name": "photoUrl",
+                              "wrapped": true,
                             },
                           },
-                          "type": "object",
+                          "status": {
+                            "description": "pet status in the store",
+                            "enum": [
+                              "available",
+                              "pending",
+                              "sold",
+                            ],
+                            "type": "string",
+                          },
+                          "tags": {
+                            "items": {
+                              "properties": {
+                                "id": {
+                                  "format": "int64",
+                                  "type": "integer",
+                                },
+                                "name": {
+                                  "type": "string",
+                                },
+                              },
+                              "type": "object",
+                              "xml": {
+                                "name": "Tag",
+                              },
+                            },
+                            "type": "array",
+                            "xml": {
+                              "name": "tag",
+                              "wrapped": true,
+                            },
+                          },
                         },
-                      ],
-                      "key": "oneOf",
+                        "required": [
+                          "name",
+                          "photoUrls",
+                        ],
+                        "type": "object",
+                        "xml": {
+                          "name": "Pet",
+                        },
+                      },
+                      "type": "array",
                     },
-                  ],
-                  "change": "changed",
-                  "name": "stringOrNumberOrObject",
+                  },
                 },
-                {
-                  "attributes": [],
-                  "change": "removed",
-                  "name": "stringOrNumberOrObject.orderId",
-                },
-              ],
+                "description": "successful operation",
+              },
+              "400": {
+                "content": {},
+                "description": "Invalid status value",
+              },
             },
-          ],
-          "name": "200 response",
+            "security": [
+              {
+                "petstore_auth": [
+                  "write:pets",
+                  "read:pets",
+                ],
+              },
+            ],
+            "summary": "Finds Pets by status",
+            "tags": [
+              "pet",
+            ],
+          },
+          "before": undefined,
+          "key": "",
         },
       ],
-    },
-    {
-      "attributes": [],
-      "change": "removed",
-      "name": "get /pet",
+      "change": "added",
+      "name": "GET /pet/findByStatus",
       "parameters": [],
       "requestBody": undefined,
-      "responses": [
-        {
-          "attributes": [],
-          "change": "removed",
-          "contentTypes": [],
-          "name": "404 response",
-        },
-        {
-          "attributes": [],
-          "change": "removed",
-          "contentTypes": [],
-          "name": "405 response",
-        },
-      ],
+      "responses": [],
     },
     {
       "attributes": [
         {
-          "after": "addPet-change",
-          "before": "addPet",
-          "key": "operationId",
+          "after": {
+            "deprecated": true,
+            "description": "Muliple tags can be provided with comma separated strings. Use         tag1, tag2, tag3 for testing.",
+            "operationId": "findPetsByTags",
+            "parameters": [
+              {
+                "description": "Tags to filter by",
+                "explode": true,
+                "in": "query",
+                "name": "tags",
+                "required": true,
+                "schema": {
+                  "items": {
+                    "type": "string",
+                  },
+                  "type": "array",
+                },
+                "style": "form",
+              },
+            ],
+            "responses": {
+              "200": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "items": {
+                        "properties": {
+                          "category": {
+                            "properties": {
+                              "id": {
+                                "format": "int64",
+                                "type": "integer",
+                              },
+                              "name": {
+                                "type": "string",
+                              },
+                            },
+                            "type": "object",
+                            "xml": {
+                              "name": "Category",
+                            },
+                          },
+                          "id": {
+                            "format": "int64",
+                            "type": "integer",
+                          },
+                          "name": {
+                            "example": "doggie",
+                            "type": "string",
+                          },
+                          "photoUrls": {
+                            "items": {
+                              "type": "string",
+                            },
+                            "type": "array",
+                            "xml": {
+                              "name": "photoUrl",
+                              "wrapped": true,
+                            },
+                          },
+                          "status": {
+                            "description": "pet status in the store",
+                            "enum": [
+                              "available",
+                              "pending",
+                              "sold",
+                            ],
+                            "type": "string",
+                          },
+                          "tags": {
+                            "items": {
+                              "properties": {
+                                "id": {
+                                  "format": "int64",
+                                  "type": "integer",
+                                },
+                                "name": {
+                                  "type": "string",
+                                },
+                              },
+                              "type": "object",
+                              "xml": {
+                                "name": "Tag",
+                              },
+                            },
+                            "type": "array",
+                            "xml": {
+                              "name": "tag",
+                              "wrapped": true,
+                            },
+                          },
+                        },
+                        "required": [
+                          "name",
+                          "photoUrls",
+                        ],
+                        "type": "object",
+                        "xml": {
+                          "name": "Pet",
+                        },
+                      },
+                      "type": "array",
+                    },
+                  },
+                  "application/xml": {
+                    "schema": {
+                      "items": {
+                        "properties": {
+                          "category": {
+                            "properties": {
+                              "id": {
+                                "format": "int64",
+                                "type": "integer",
+                              },
+                              "name": {
+                                "type": "string",
+                              },
+                            },
+                            "type": "object",
+                            "xml": {
+                              "name": "Category",
+                            },
+                          },
+                          "id": {
+                            "format": "int64",
+                            "type": "integer",
+                          },
+                          "name": {
+                            "example": "doggie",
+                            "type": "string",
+                          },
+                          "photoUrls": {
+                            "items": {
+                              "type": "string",
+                            },
+                            "type": "array",
+                            "xml": {
+                              "name": "photoUrl",
+                              "wrapped": true,
+                            },
+                          },
+                          "status": {
+                            "description": "pet status in the store",
+                            "enum": [
+                              "available",
+                              "pending",
+                              "sold",
+                            ],
+                            "type": "string",
+                          },
+                          "tags": {
+                            "items": {
+                              "properties": {
+                                "id": {
+                                  "format": "int64",
+                                  "type": "integer",
+                                },
+                                "name": {
+                                  "type": "string",
+                                },
+                              },
+                              "type": "object",
+                              "xml": {
+                                "name": "Tag",
+                              },
+                            },
+                            "type": "array",
+                            "xml": {
+                              "name": "tag",
+                              "wrapped": true,
+                            },
+                          },
+                        },
+                        "required": [
+                          "name",
+                          "photoUrls",
+                        ],
+                        "type": "object",
+                        "xml": {
+                          "name": "Pet",
+                        },
+                      },
+                      "type": "array",
+                    },
+                  },
+                },
+                "description": "successful operation",
+              },
+              "400": {
+                "content": {},
+                "description": "Invalid tag value",
+              },
+            },
+            "security": [
+              {
+                "petstore_auth": [
+                  "write:pets",
+                  "read:pets",
+                ],
+              },
+            ],
+            "summary": "Finds Pets by tags",
+            "tags": [
+              "pet",
+            ],
+          },
+          "before": undefined,
+          "key": "",
         },
       ],
-      "change": "changed",
-      "name": "post /pet",
+      "change": "added",
+      "name": "GET /pet/findByTags",
+      "parameters": [],
+      "requestBody": undefined,
+      "responses": [],
+    },
+    {
+      "attributes": [
+        {
+          "after": {
+            "description": "Returns a single pet",
+            "operationId": "getPetById",
+            "parameters": [
+              {
+                "description": "ID of pet to return",
+                "in": "path",
+                "name": "petId",
+                "required": true,
+                "schema": {
+                  "format": "int64",
+                  "type": "integer",
+                },
+              },
+            ],
+            "responses": {
+              "200": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "properties": {
+                        "category": {
+                          "properties": {
+                            "id": {
+                              "format": "int64",
+                              "type": "integer",
+                            },
+                            "name": {
+                              "type": "string",
+                            },
+                          },
+                          "type": "object",
+                          "xml": {
+                            "name": "Category",
+                          },
+                        },
+                        "id": {
+                          "format": "int64",
+                          "type": "integer",
+                        },
+                        "name": {
+                          "example": "doggie",
+                          "type": "string",
+                        },
+                        "photoUrls": {
+                          "items": {
+                            "type": "string",
+                          },
+                          "type": "array",
+                          "xml": {
+                            "name": "photoUrl",
+                            "wrapped": true,
+                          },
+                        },
+                        "status": {
+                          "description": "pet status in the store",
+                          "enum": [
+                            "available",
+                            "pending",
+                            "sold",
+                          ],
+                          "type": "string",
+                        },
+                        "tags": {
+                          "items": {
+                            "properties": {
+                              "id": {
+                                "format": "int64",
+                                "type": "integer",
+                              },
+                              "name": {
+                                "type": "string",
+                              },
+                            },
+                            "type": "object",
+                            "xml": {
+                              "name": "Tag",
+                            },
+                          },
+                          "type": "array",
+                          "xml": {
+                            "name": "tag",
+                            "wrapped": true,
+                          },
+                        },
+                      },
+                      "required": [
+                        "name",
+                        "photoUrls",
+                      ],
+                      "type": "object",
+                      "xml": {
+                        "name": "Pet",
+                      },
+                    },
+                  },
+                  "application/xml": {
+                    "schema": {
+                      "properties": {
+                        "category": {
+                          "properties": {
+                            "id": {
+                              "format": "int64",
+                              "type": "integer",
+                            },
+                            "name": {
+                              "type": "string",
+                            },
+                          },
+                          "type": "object",
+                          "xml": {
+                            "name": "Category",
+                          },
+                        },
+                        "id": {
+                          "format": "int64",
+                          "type": "integer",
+                        },
+                        "name": {
+                          "example": "doggie",
+                          "type": "string",
+                        },
+                        "photoUrls": {
+                          "items": {
+                            "type": "string",
+                          },
+                          "type": "array",
+                          "xml": {
+                            "name": "photoUrl",
+                            "wrapped": true,
+                          },
+                        },
+                        "status": {
+                          "description": "pet status in the store",
+                          "enum": [
+                            "available",
+                            "pending",
+                            "sold",
+                          ],
+                          "type": "string",
+                        },
+                        "tags": {
+                          "items": {
+                            "properties": {
+                              "id": {
+                                "format": "int64",
+                                "type": "integer",
+                              },
+                              "name": {
+                                "type": "string",
+                              },
+                            },
+                            "type": "object",
+                            "xml": {
+                              "name": "Tag",
+                            },
+                          },
+                          "type": "array",
+                          "xml": {
+                            "name": "tag",
+                            "wrapped": true,
+                          },
+                        },
+                      },
+                      "required": [
+                        "name",
+                        "photoUrls",
+                      ],
+                      "type": "object",
+                      "xml": {
+                        "name": "Pet",
+                      },
+                    },
+                  },
+                },
+                "description": "successful operation",
+              },
+              "400": {
+                "content": {},
+                "description": "Invalid ID supplied",
+              },
+              "404": {
+                "content": {},
+                "description": "Pet not found",
+              },
+            },
+            "security": [
+              {
+                "api_key": [],
+              },
+            ],
+            "summary": "Find pet by ID",
+            "tags": [
+              "pet",
+            ],
+          },
+          "before": undefined,
+          "key": "",
+        },
+      ],
+      "change": "added",
+      "name": "GET /pet/{petId}",
+      "parameters": [],
+      "requestBody": undefined,
+      "responses": [],
+    },
+    {
+      "attributes": [
+        {
+          "after": {
+            "operationId": "updatePetWithForm",
+            "parameters": [
+              {
+                "description": "ID of pet that needs to be updated",
+                "in": "path",
+                "name": "petId",
+                "required": true,
+                "schema": {
+                  "format": "int64",
+                  "type": "integer",
+                },
+              },
+            ],
+            "requestBody": {
+              "content": {
+                "application/x-www-form-urlencoded": {
+                  "examples": {
+                    "available": {
+                      "name": "new name",
+                      "status": "available",
+                    },
+                    "sold": {
+                      "name": "good boy",
+                      "status": "sold",
+                    },
+                  },
+                  "schema": {
+                    "properties": {
+                      "name": {
+                        "description": "Updated name of the pet",
+                        "type": "string",
+                      },
+                      "status": {
+                        "description": "Updated status of the pet",
+                        "type": "string",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            "responses": {
+              "405": {
+                "content": {},
+                "description": "Invalid input",
+              },
+            },
+            "security": [
+              {
+                "petstore_auth": [
+                  "write:pets",
+                  "read:pets",
+                ],
+              },
+            ],
+            "summary": "Updates a pet in the store with form data",
+            "tags": [
+              "pet",
+            ],
+          },
+          "before": undefined,
+          "key": "",
+        },
+      ],
+      "change": "added",
+      "name": "POST /pet/{petId}",
+      "parameters": [],
+      "requestBody": undefined,
+      "responses": [],
+    },
+    {
+      "attributes": [
+        {
+          "after": {
+            "operationId": "deletePet",
+            "parameters": [
+              {
+                "in": "header",
+                "name": "api_key",
+                "schema": {
+                  "type": "string",
+                },
+              },
+              {
+                "description": "Pet id to delete",
+                "in": "path",
+                "name": "petId",
+                "required": true,
+                "schema": {
+                  "format": "int64",
+                  "type": "integer",
+                },
+              },
+            ],
+            "responses": {
+              "400": {
+                "content": {},
+                "description": "Invalid ID supplied",
+              },
+              "404": {
+                "content": {},
+                "description": "Pet not found",
+              },
+            },
+            "security": [
+              {
+                "petstore_auth": [
+                  "write:pets",
+                  "read:pets",
+                ],
+              },
+            ],
+            "summary": "Deletes a pet",
+            "tags": [
+              "pet",
+            ],
+          },
+          "before": undefined,
+          "key": "",
+        },
+      ],
+      "change": "added",
+      "name": "DELETE /pet/{petId}",
+      "parameters": [],
+      "requestBody": undefined,
+      "responses": [],
+    },
+    {
+      "attributes": [],
+      "change": null,
+      "name": "PUT /user/{username}",
       "parameters": [],
       "requestBody": {
         "attributes": [],
-        "change": "changed",
+        "change": null,
         "contentTypes": [
           {
-            "attributes": [],
-            "change": "changed",
-            "name": "application/json",
-            "schemaChanges": [
+            "attributes": [
               {
-                "attributes": [],
-                "change": "added",
-                "name": "category.other",
+                "after": undefined,
+                "before": {
+                  "type": "string",
+                },
+                "key": "/schema/properties/phone",
+              },
+              {
+                "after": {
+                  "type": "string",
+                },
+                "before": undefined,
+                "key": "/schema/properties/bio",
+              },
+              {
+                "after": "string",
+                "before": "integer",
+                "key": "/schema/properties/userStatus/type",
+              },
+              {
+                "after": undefined,
+                "before": "int32",
+                "key": "/schema/properties/userStatus/format",
+              },
+              {
+                "after": [
+                  "activation-pending",
+                  "activated",
+                  "blocked",
+                ],
+                "before": undefined,
+                "key": "/schema/properties/userStatus/enum",
+              },
+              {
+                "after": undefined,
+                "before": "lastName",
+                "key": "/schema/required/2",
+              },
+              {
+                "after": "username",
+                "before": undefined,
+                "key": "/schema/required/2",
               },
             ],
+            "change": "changed",
+            "name": "*/*",
           },
         ],
         "name": "Request Body",
@@ -233,593 +864,534 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": "changed",
-      "name": "put /pet",
+      "change": null,
+      "name": "GET /user/{username}",
+      "parameters": [],
+      "requestBody": undefined,
+      "responses": [
+        {
+          "attributes": [],
+          "change": null,
+          "contentTypes": [
+            {
+              "attributes": [
+                {
+                  "after": undefined,
+                  "before": {
+                    "type": "string",
+                  },
+                  "key": "/schema/properties/phone",
+                },
+                {
+                  "after": {
+                    "type": "string",
+                  },
+                  "before": undefined,
+                  "key": "/schema/properties/bio",
+                },
+                {
+                  "after": "string",
+                  "before": "integer",
+                  "key": "/schema/properties/userStatus/type",
+                },
+                {
+                  "after": undefined,
+                  "before": "int32",
+                  "key": "/schema/properties/userStatus/format",
+                },
+                {
+                  "after": [
+                    "activation-pending",
+                    "activated",
+                    "blocked",
+                  ],
+                  "before": undefined,
+                  "key": "/schema/properties/userStatus/enum",
+                },
+                {
+                  "after": undefined,
+                  "before": "lastName",
+                  "key": "/schema/required/2",
+                },
+                {
+                  "after": "username",
+                  "before": undefined,
+                  "key": "/schema/required/2",
+                },
+              ],
+              "change": "changed",
+              "name": "application/json",
+            },
+            {
+              "attributes": [
+                {
+                  "after": undefined,
+                  "before": {
+                    "type": "string",
+                  },
+                  "key": "/schema/properties/phone",
+                },
+                {
+                  "after": {
+                    "type": "string",
+                  },
+                  "before": undefined,
+                  "key": "/schema/properties/bio",
+                },
+                {
+                  "after": "string",
+                  "before": "integer",
+                  "key": "/schema/properties/userStatus/type",
+                },
+                {
+                  "after": undefined,
+                  "before": "int32",
+                  "key": "/schema/properties/userStatus/format",
+                },
+                {
+                  "after": [
+                    "activation-pending",
+                    "activated",
+                    "blocked",
+                  ],
+                  "before": undefined,
+                  "key": "/schema/properties/userStatus/enum",
+                },
+                {
+                  "after": undefined,
+                  "before": "lastName",
+                  "key": "/schema/required/2",
+                },
+                {
+                  "after": "username",
+                  "before": undefined,
+                  "key": "/schema/required/2",
+                },
+              ],
+              "change": "changed",
+              "name": "application/xml",
+            },
+          ],
+          "name": "200 response",
+        },
+        {
+          "attributes": [],
+          "change": null,
+          "contentTypes": [
+            {
+              "attributes": [
+                {
+                  "after": {
+                    "schema": {
+                      "properties": {
+                        "code": {
+                          "format": "int32",
+                          "type": "integer",
+                        },
+                        "message": {
+                          "type": "string",
+                        },
+                        "type": {
+                          "type": "string",
+                        },
+                      },
+                      "type": "object",
+                    },
+                  },
+                  "before": undefined,
+                  "key": "",
+                },
+              ],
+              "change": "added",
+              "name": "application/json",
+            },
+          ],
+          "name": "404 response",
+        },
+      ],
+    },
+    {
+      "attributes": [],
+      "change": null,
+      "name": "GET /user/login",
+      "parameters": [],
+      "requestBody": undefined,
+      "responses": [
+        {
+          "attributes": [],
+          "change": null,
+          "contentTypes": [],
+          "name": "200 response",
+        },
+      ],
+    },
+    {
+      "attributes": [],
+      "change": null,
+      "name": "POST /user/createWithList",
       "parameters": [],
       "requestBody": {
         "attributes": [],
-        "change": "changed",
+        "change": null,
         "contentTypes": [
           {
-            "attributes": [],
+            "attributes": [
+              {
+                "after": undefined,
+                "before": {
+                  "type": "string",
+                },
+                "key": "/schema/items/properties/phone",
+              },
+              {
+                "after": {
+                  "type": "string",
+                },
+                "before": undefined,
+                "key": "/schema/items/properties/bio",
+              },
+              {
+                "after": "string",
+                "before": "integer",
+                "key": "/schema/items/properties/userStatus/type",
+              },
+              {
+                "after": undefined,
+                "before": "int32",
+                "key": "/schema/items/properties/userStatus/format",
+              },
+              {
+                "after": [
+                  "activation-pending",
+                  "activated",
+                  "blocked",
+                ],
+                "before": undefined,
+                "key": "/schema/items/properties/userStatus/enum",
+              },
+              {
+                "after": undefined,
+                "before": "lastName",
+                "key": "/schema/items/required/2",
+              },
+              {
+                "after": "username",
+                "before": undefined,
+                "key": "/schema/items/required/2",
+              },
+            ],
             "change": "changed",
-            "name": "application/json",
-            "schemaChanges": [
-              {
-                "attributes": [],
-                "change": "added",
-                "name": "example",
-              },
-              {
-                "attributes": [],
-                "change": "removed",
-                "name": "name",
-              },
-              {
-                "attributes": [],
-                "change": "added",
-                "name": "number",
-              },
-            ],
-          },
-          {
-            "attributes": [],
-            "change": "removed",
-            "name": "application/xml",
-            "schemaChanges": [
-              {
-                "attributes": [],
-                "change": "removed",
-                "name": "category",
-              },
-              {
-                "attributes": [],
-                "change": "removed",
-                "name": "category.id",
-              },
-              {
-                "attributes": [],
-                "change": "removed",
-                "name": "category.name",
-              },
-              {
-                "attributes": [],
-                "change": "removed",
-                "name": "id",
-              },
-              {
-                "attributes": [],
-                "change": "removed",
-                "name": "name",
-              },
-              {
-                "attributes": [],
-                "change": "removed",
-                "name": "photoUrls",
-              },
-              {
-                "attributes": [],
-                "change": "removed",
-                "name": "status",
-              },
-              {
-                "attributes": [],
-                "change": "removed",
-                "name": "tags",
-              },
-              {
-                "attributes": [],
-                "change": "removed",
-                "name": "tags.items.id",
-              },
-              {
-                "attributes": [],
-                "change": "removed",
-                "name": "tags.items.name",
-              },
-            ],
+            "name": "*/*",
           },
         ],
         "name": "Request Body",
       },
-      "responses": [
-        {
-          "attributes": [],
-          "change": "removed",
-          "contentTypes": [],
-          "name": "400 response",
-        },
-      ],
+      "responses": [],
     },
     {
       "attributes": [],
-      "change": "added",
-      "name": "get /pet/findByStatus",
-      "parameters": [
-        {
-          "attributes": [],
-          "change": "added",
-          "name": "query parameter 'status'",
-        },
-        {
-          "attributes": [],
-          "change": "added",
-          "name": "cookie parameter 'debug'",
-        },
-      ],
-      "requestBody": undefined,
-      "responses": [
-        {
-          "attributes": [],
-          "change": "added",
-          "contentTypes": [
-            {
-              "attributes": [],
-              "change": "added",
-              "name": "application/json",
-              "schemaChanges": [
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.category",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.category.id",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.category.name",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.id",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.name",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.photoUrls",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.status",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.tags",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.tags.items.id",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.tags.items.name",
-                },
-              ],
-            },
-            {
-              "attributes": [],
-              "change": "added",
-              "name": "application/xml",
-              "schemaChanges": [
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.category",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.category.id",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.category.name",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.id",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.name",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.photoUrls",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.status",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.tags",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.tags.items.id",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.tags.items.name",
-                },
-              ],
-            },
-          ],
-          "name": "200 response",
-        },
-        {
-          "attributes": [],
-          "change": "added",
-          "contentTypes": [],
-          "name": "400 response",
-        },
-      ],
-    },
-    {
-      "attributes": [],
-      "change": "added",
-      "name": "get /pet/findByTags",
-      "parameters": [
-        {
-          "attributes": [],
-          "change": "added",
-          "name": "query parameter 'tags'",
-        },
-      ],
-      "requestBody": undefined,
-      "responses": [
-        {
-          "attributes": [],
-          "change": "added",
-          "contentTypes": [
-            {
-              "attributes": [],
-              "change": "added",
-              "name": "application/json",
-              "schemaChanges": [
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.category",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.category.id",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.category.name",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.id",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.name",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.photoUrls",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.status",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.tags",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.tags.items.id",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.tags.items.name",
-                },
-              ],
-            },
-            {
-              "attributes": [],
-              "change": "added",
-              "name": "application/xml",
-              "schemaChanges": [
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.category",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.category.id",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.category.name",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.id",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.name",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.photoUrls",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.status",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.tags",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.tags.items.id",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "items.tags.items.name",
-                },
-              ],
-            },
-          ],
-          "name": "200 response",
-        },
-        {
-          "attributes": [],
-          "change": "added",
-          "contentTypes": [],
-          "name": "400 response",
-        },
-      ],
-    },
-    {
-      "attributes": [],
-      "change": "added",
-      "name": "delete /pet/{petId}",
-      "parameters": [
-        {
-          "attributes": [],
-          "change": "added",
-          "name": "path parameter 'petId'",
-        },
-        {
-          "attributes": [],
-          "change": "added",
-          "name": "header parameter 'api_key'",
-        },
-      ],
-      "requestBody": undefined,
-      "responses": [
-        {
-          "attributes": [],
-          "change": "added",
-          "contentTypes": [],
-          "name": "400 response",
-        },
-        {
-          "attributes": [],
-          "change": "added",
-          "contentTypes": [],
-          "name": "404 response",
-        },
-      ],
-    },
-    {
-      "attributes": [],
-      "change": "added",
-      "name": "get /pet/{petId}",
-      "parameters": [
-        {
-          "attributes": [],
-          "change": "added",
-          "name": "path parameter 'petId'",
-        },
-      ],
-      "requestBody": undefined,
-      "responses": [
-        {
-          "attributes": [],
-          "change": "added",
-          "contentTypes": [
-            {
-              "attributes": [],
-              "change": "added",
-              "name": "application/json",
-              "schemaChanges": [
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "category",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "category.id",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "category.name",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "id",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "name",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "photoUrls",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "status",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "tags",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "tags.items.id",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "tags.items.name",
-                },
-              ],
-            },
-            {
-              "attributes": [],
-              "change": "added",
-              "name": "application/xml",
-              "schemaChanges": [
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "category",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "category.id",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "category.name",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "id",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "name",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "photoUrls",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "status",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "tags",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "tags.items.id",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "tags.items.name",
-                },
-              ],
-            },
-          ],
-          "name": "200 response",
-        },
-        {
-          "attributes": [],
-          "change": "added",
-          "contentTypes": [],
-          "name": "400 response",
-        },
-        {
-          "attributes": [],
-          "change": "added",
-          "contentTypes": [],
-          "name": "404 response",
-        },
-      ],
-    },
-    {
-      "attributes": [],
-      "change": "added",
-      "name": "post /pet/{petId}",
-      "parameters": [
-        {
-          "attributes": [],
-          "change": "added",
-          "name": "path parameter 'petId'",
-        },
-      ],
+      "change": null,
+      "name": "POST /user/createWithArray",
+      "parameters": [],
       "requestBody": {
         "attributes": [],
-        "change": "added",
+        "change": null,
         "contentTypes": [
           {
-            "attributes": [],
-            "change": "added",
-            "name": "application/x-www-form-urlencoded",
-            "schemaChanges": [],
+            "attributes": [
+              {
+                "after": undefined,
+                "before": {
+                  "type": "string",
+                },
+                "key": "/schema/items/properties/phone",
+              },
+              {
+                "after": {
+                  "type": "string",
+                },
+                "before": undefined,
+                "key": "/schema/items/properties/bio",
+              },
+              {
+                "after": "string",
+                "before": "integer",
+                "key": "/schema/items/properties/userStatus/type",
+              },
+              {
+                "after": undefined,
+                "before": "int32",
+                "key": "/schema/items/properties/userStatus/format",
+              },
+              {
+                "after": [
+                  "activation-pending",
+                  "activated",
+                  "blocked",
+                ],
+                "before": undefined,
+                "key": "/schema/items/properties/userStatus/enum",
+              },
+              {
+                "after": undefined,
+                "before": "lastName",
+                "key": "/schema/items/required/2",
+              },
+              {
+                "after": "username",
+                "before": undefined,
+                "key": "/schema/items/required/2",
+              },
+            ],
+            "change": "changed",
+            "name": "*/*",
+          },
+        ],
+        "name": "Request Body",
+      },
+      "responses": [],
+    },
+    {
+      "attributes": [],
+      "change": null,
+      "name": "POST /user",
+      "parameters": [],
+      "requestBody": {
+        "attributes": [],
+        "change": null,
+        "contentTypes": [
+          {
+            "attributes": [
+              {
+                "after": undefined,
+                "before": {
+                  "type": "string",
+                },
+                "key": "/schema/properties/phone",
+              },
+              {
+                "after": {
+                  "type": "string",
+                },
+                "before": undefined,
+                "key": "/schema/properties/bio",
+              },
+              {
+                "after": "string",
+                "before": "integer",
+                "key": "/schema/properties/userStatus/type",
+              },
+              {
+                "after": undefined,
+                "before": "int32",
+                "key": "/schema/properties/userStatus/format",
+              },
+              {
+                "after": [
+                  "activation-pending",
+                  "activated",
+                  "blocked",
+                ],
+                "before": undefined,
+                "key": "/schema/properties/userStatus/enum",
+              },
+              {
+                "after": undefined,
+                "before": "lastName",
+                "key": "/schema/required/2",
+              },
+              {
+                "after": "username",
+                "before": undefined,
+                "key": "/schema/required/2",
+              },
+            ],
+            "change": "changed",
+            "name": "*/*",
+          },
+        ],
+        "name": "Request Body",
+      },
+      "responses": [],
+    },
+    {
+      "attributes": [],
+      "change": null,
+      "name": "DELETE /store/order/{orderId}",
+      "parameters": [],
+      "requestBody": undefined,
+      "responses": [
+        {
+          "attributes": [],
+          "change": null,
+          "contentTypes": [
+            {
+              "attributes": [
+                {
+                  "after": {
+                    "schema": {
+                      "properties": {
+                        "code": {
+                          "format": "int32",
+                          "type": "integer",
+                        },
+                        "message": {
+                          "type": "string",
+                        },
+                        "type": {
+                          "type": "string",
+                        },
+                      },
+                      "type": "object",
+                    },
+                  },
+                  "before": undefined,
+                  "key": "",
+                },
+              ],
+              "change": "added",
+              "name": "application/json",
+            },
+          ],
+          "name": "404 response",
+        },
+      ],
+    },
+    {
+      "attributes": [],
+      "change": null,
+      "name": "GET /store/order/{orderId}",
+      "parameters": [],
+      "requestBody": undefined,
+      "responses": [
+        {
+          "attributes": [],
+          "change": null,
+          "contentTypes": [
+            {
+              "attributes": [
+                {
+                  "after": {
+                    "description": "Human readable summary of order",
+                    "type": "string",
+                  },
+                  "before": undefined,
+                  "key": "/schema/properties/summary",
+                },
+                {
+                  "after": undefined,
+                  "before": "approved",
+                  "key": "/schema/properties/status/enum/1",
+                },
+                {
+                  "after": "canceled",
+                  "before": undefined,
+                  "key": "/schema/properties/status/enum/2",
+                },
+              ],
+              "change": "changed",
+              "name": "application/json",
+            },
+            {
+              "attributes": [
+                {
+                  "after": {
+                    "description": "Human readable summary of order",
+                    "type": "string",
+                  },
+                  "before": undefined,
+                  "key": "/schema/properties/summary",
+                },
+                {
+                  "after": undefined,
+                  "before": "approved",
+                  "key": "/schema/properties/status/enum/1",
+                },
+                {
+                  "after": "canceled",
+                  "before": undefined,
+                  "key": "/schema/properties/status/enum/2",
+                },
+                {
+                  "after": undefined,
+                  "before": "petId",
+                  "key": "/schema/required/1",
+                },
+              ],
+              "change": "changed",
+              "name": "application/xml",
+            },
+          ],
+          "name": "200 response",
+        },
+        {
+          "attributes": [],
+          "change": null,
+          "contentTypes": [
+            {
+              "attributes": [
+                {
+                  "after": {
+                    "schema": {
+                      "properties": {
+                        "code": {
+                          "format": "int32",
+                          "type": "integer",
+                        },
+                        "message": {
+                          "type": "string",
+                        },
+                        "type": {
+                          "type": "string",
+                        },
+                      },
+                      "type": "object",
+                    },
+                  },
+                  "before": undefined,
+                  "key": "",
+                },
+              ],
+              "change": "added",
+              "name": "application/json",
+            },
+          ],
+          "name": "404 response",
+        },
+      ],
+    },
+    {
+      "attributes": [],
+      "change": null,
+      "name": "POST /store/order",
+      "parameters": [],
+      "requestBody": {
+        "attributes": [],
+        "change": null,
+        "contentTypes": [
+          {
+            "attributes": [
+              {
+                "after": {
+                  "description": "Human readable summary of order",
+                  "type": "string",
+                },
+                "before": undefined,
+                "key": "/schema/properties/summary",
+              },
+              {
+                "after": undefined,
+                "before": "approved",
+                "key": "/schema/properties/status/enum/1",
+              },
+              {
+                "after": "canceled",
+                "before": undefined,
+                "key": "/schema/properties/status/enum/2",
+              },
+            ],
+            "change": "changed",
+            "name": "*/*",
           },
         ],
         "name": "Request Body",
@@ -827,147 +1399,209 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
       "responses": [
         {
           "attributes": [],
-          "change": "added",
-          "contentTypes": [],
-          "name": "405 response",
+          "change": null,
+          "contentTypes": [
+            {
+              "attributes": [
+                {
+                  "after": {
+                    "complete": false,
+                    "id": 458102,
+                    "petId": 581231,
+                    "quantity": 31,
+                    "shipDate": "2022-03-04T22:54:32.631Z",
+                    "status": "delivered",
+                    "summary": "31 boxes of dog food",
+                  },
+                  "before": undefined,
+                  "key": "",
+                },
+                {
+                  "after": {
+                    "description": "Human readable summary of order",
+                    "type": "string",
+                  },
+                  "before": undefined,
+                  "key": "/schema/properties/summary",
+                },
+                {
+                  "after": undefined,
+                  "before": "approved",
+                  "key": "/schema/properties/status/enum/1",
+                },
+                {
+                  "after": "canceled",
+                  "before": undefined,
+                  "key": "/schema/properties/status/enum/2",
+                },
+              ],
+              "change": "changed",
+              "name": "application/json",
+            },
+            {
+              "attributes": [
+                {
+                  "after": {
+                    "description": "Human readable summary of order",
+                    "type": "string",
+                  },
+                  "before": undefined,
+                  "key": "/schema/properties/summary",
+                },
+                {
+                  "after": undefined,
+                  "before": "approved",
+                  "key": "/schema/properties/status/enum/1",
+                },
+                {
+                  "after": "canceled",
+                  "before": undefined,
+                  "key": "/schema/properties/status/enum/2",
+                },
+              ],
+              "change": "changed",
+              "name": "application/xml",
+            },
+          ],
+          "name": "200 response",
         },
       ],
     },
     {
       "attributes": [],
-      "change": "changed",
-      "name": "post /pet/{petId}/uploadImage",
+      "change": null,
+      "name": "POST /pet/{petId}/uploadImage",
       "parameters": [
         {
           "attributes": [
             {
-              "after": {
-                "enum": [
-                  0,
-                  1,
-                ],
-                "type": "integer",
-              },
-              "before": {
-                "type": "integer",
-              },
-              "key": "schema",
+              "after": [
+                0,
+                1,
+              ],
+              "before": undefined,
+              "key": "/schema/enum",
             },
           ],
-          "change": "changed",
-          "name": "cookie parameter 'debug'",
+          "change": "added",
+          "name": "request-cookie parameter 'undefined'",
         },
       ],
       "requestBody": undefined,
       "responses": [
         {
-          "attributes": [],
-          "change": "removed",
-          "contentTypes": [
+          "attributes": [
             {
-              "attributes": [],
-              "change": "removed",
-              "name": "application/json",
-              "schemaChanges": [
-                {
-                  "attributes": [],
-                  "change": "removed",
-                  "name": "code",
+              "after": undefined,
+              "before": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "properties": {
+                        "code": {
+                          "format": "int32",
+                          "type": "integer",
+                        },
+                        "message": {
+                          "type": "string",
+                        },
+                        "type": {
+                          "type": "string",
+                        },
+                      },
+                      "type": "object",
+                    },
+                  },
                 },
-                {
-                  "attributes": [],
-                  "change": "removed",
-                  "name": "message",
-                },
-                {
-                  "attributes": [],
-                  "change": "removed",
-                  "name": "type",
-                },
-              ],
+                "description": "successful operation",
+              },
+              "key": "",
             },
           ],
+          "change": "removed",
+          "contentTypes": [],
           "name": "200 response",
         },
         {
-          "attributes": [],
-          "change": "added",
-          "contentTypes": [
+          "attributes": [
             {
-              "attributes": [],
-              "change": "added",
-              "name": "application/json",
-              "schemaChanges": [
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "code",
+              "after": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "properties": {
+                        "code": {
+                          "format": "int32",
+                          "type": "integer",
+                        },
+                        "message": {
+                          "type": "string",
+                        },
+                        "type": {
+                          "type": "string",
+                        },
+                      },
+                      "type": "object",
+                    },
+                  },
                 },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "message",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "type",
-                },
-              ],
+                "description": "successful operation",
+              },
+              "before": undefined,
+              "key": "",
             },
           ],
+          "change": "added",
+          "contentTypes": [],
           "name": "201 response",
         },
         {
-          "attributes": [],
-          "change": "added",
-          "contentTypes": [
+          "attributes": [
             {
-              "attributes": [],
-              "change": "added",
-              "name": "application/json",
-              "schemaChanges": [
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "code",
+              "after": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "properties": {
+                        "code": {
+                          "format": "int32",
+                          "type": "integer",
+                        },
+                        "message": {
+                          "type": "string",
+                        },
+                        "type": {
+                          "type": "string",
+                        },
+                      },
+                      "type": "object",
+                    },
+                  },
                 },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "message",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "type",
-                },
-              ],
+                "description": "Pet not found",
+              },
+              "before": undefined,
+              "key": "",
             },
           ],
+          "change": "added",
+          "contentTypes": [],
           "name": "404 response",
         },
         {
           "attributes": [],
-          "change": "changed",
+          "change": null,
           "contentTypes": [
             {
-              "attributes": [],
-              "change": "changed",
-              "name": "application/json",
-              "schemaChanges": [
+              "attributes": [
                 {
-                  "attributes": [
-                    {
-                      "after": "integer",
-                      "before": "string",
-                      "key": "type",
-                    },
-                  ],
-                  "change": "changed",
-                  "name": "type",
+                  "after": "integer",
+                  "before": "string",
+                  "key": "/schema/properties/type/type",
                 },
               ],
+              "change": "changed",
+              "name": "application/json",
             },
           ],
           "name": "default response",
@@ -975,348 +1609,57 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
       ],
     },
     {
-      "attributes": [],
-      "change": "changed",
-      "name": "post /store/order",
-      "parameters": [],
-      "requestBody": {
-        "attributes": [],
-        "change": "changed",
-        "contentTypes": [
-          {
-            "attributes": [],
-            "change": "changed",
-            "name": "*/*",
-            "schemaChanges": [
-              {
-                "attributes": [
-                  {
-                    "after": [
-                      "placed",
-                      "delivered",
-                      "canceled",
-                    ],
-                    "before": [
-                      "placed",
-                      "approved",
-                      "delivered",
-                    ],
-                    "key": "enum",
-                  },
-                ],
-                "change": "changed",
-                "name": "status",
+      "attributes": [
+        {
+          "after": undefined,
+          "before": {
+            "responses": {
+              "404": {
+                "content": {},
+                "description": "Pet not found",
               },
-              {
-                "attributes": [],
-                "change": "added",
-                "name": "summary",
+              "405": {
+                "content": {},
+                "description": "Validation exception",
               },
-            ],
+            },
           },
-        ],
-        "name": "Request Body",
-      },
-      "responses": [
-        {
-          "attributes": [],
-          "change": "changed",
-          "contentTypes": [
-            {
-              "attributes": [],
-              "change": "changed",
-              "name": "application/json",
-              "schemaChanges": [
-                {
-                  "attributes": [
-                    {
-                      "after": [
-                        "placed",
-                        "delivered",
-                        "canceled",
-                      ],
-                      "before": [
-                        "placed",
-                        "approved",
-                        "delivered",
-                      ],
-                      "key": "enum",
-                    },
-                  ],
-                  "change": "changed",
-                  "name": "status",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "summary",
-                },
-              ],
-            },
-            {
-              "attributes": [],
-              "change": "changed",
-              "name": "application/xml",
-              "schemaChanges": [
-                {
-                  "attributes": [
-                    {
-                      "after": [
-                        "placed",
-                        "delivered",
-                        "canceled",
-                      ],
-                      "before": [
-                        "placed",
-                        "approved",
-                        "delivered",
-                      ],
-                      "key": "enum",
-                    },
-                  ],
-                  "change": "changed",
-                  "name": "status",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "summary",
-                },
-              ],
-            },
-          ],
-          "name": "200 response",
+          "key": "",
         },
       ],
-    },
-    {
-      "attributes": [],
-      "change": "changed",
-      "name": "delete /store/order/{orderId}",
+      "change": "removed",
+      "name": "GET /pet",
       "parameters": [],
       "requestBody": undefined,
-      "responses": [
-        {
-          "attributes": [],
-          "change": "changed",
-          "contentTypes": [
-            {
-              "attributes": [],
-              "change": "added",
-              "name": "application/json",
-              "schemaChanges": [
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "code",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "message",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "type",
-                },
-              ],
-            },
-          ],
-          "name": "404 response",
-        },
-      ],
+      "responses": [],
     },
     {
-      "attributes": [],
-      "change": "changed",
-      "name": "get /store/order/{orderId}",
-      "parameters": [],
-      "requestBody": undefined,
-      "responses": [
+      "attributes": [
         {
-          "attributes": [],
-          "change": "changed",
-          "contentTypes": [
-            {
-              "attributes": [],
-              "change": "changed",
-              "name": "application/json",
-              "schemaChanges": [
-                {
-                  "attributes": [
-                    {
-                      "after": [
-                        "placed",
-                        "delivered",
-                        "canceled",
-                      ],
-                      "before": [
-                        "placed",
-                        "approved",
-                        "delivered",
-                      ],
-                      "key": "enum",
-                    },
-                  ],
-                  "change": "changed",
-                  "name": "status",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "summary",
-                },
-              ],
-            },
-            {
-              "attributes": [],
-              "change": "changed",
-              "name": "application/xml",
-              "schemaChanges": [
-                {
-                  "attributes": [
-                    {
-                      "after": false,
-                      "before": true,
-                      "key": "required",
-                    },
-                  ],
-                  "change": "changed",
-                  "name": "petId",
-                },
-                {
-                  "attributes": [
-                    {
-                      "after": [
-                        "placed",
-                        "delivered",
-                        "canceled",
-                      ],
-                      "before": [
-                        "placed",
-                        "approved",
-                        "delivered",
-                      ],
-                      "key": "enum",
-                    },
-                  ],
-                  "change": "changed",
-                  "name": "status",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "summary",
-                },
-              ],
-            },
-          ],
-          "name": "200 response",
-        },
-        {
-          "attributes": [],
-          "change": "changed",
-          "contentTypes": [
-            {
-              "attributes": [],
-              "change": "added",
-              "name": "application/json",
-              "schemaChanges": [
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "code",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "message",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "type",
-                },
-              ],
-            },
-          ],
-          "name": "404 response",
+          "after": "addPet-change",
+          "before": "addPet",
+          "key": "/operationId",
         },
       ],
-    },
-    {
-      "attributes": [],
       "change": "changed",
-      "name": "post /user",
+      "name": "POST /pet",
       "parameters": [],
       "requestBody": {
         "attributes": [],
-        "change": "changed",
+        "change": null,
         "contentTypes": [
           {
-            "attributes": [],
-            "change": "changed",
-            "name": "*/*",
-            "schemaChanges": [
+            "attributes": [
               {
-                "attributes": [],
-                "change": "added",
-                "name": "bio",
-              },
-              {
-                "attributes": [
-                  {
-                    "after": false,
-                    "before": true,
-                    "key": "required",
-                  },
-                ],
-                "change": "changed",
-                "name": "lastName",
-              },
-              {
-                "attributes": [],
-                "change": "removed",
-                "name": "phone",
-              },
-              {
-                "attributes": [
-                  {
-                    "after": [
-                      "activation-pending",
-                      "activated",
-                      "blocked",
-                    ],
-                    "before": undefined,
-                    "key": "enum",
-                  },
-                  {
-                    "after": undefined,
-                    "before": "int32",
-                    "key": "format",
-                  },
-                  {
-                    "after": "string",
-                    "before": "integer",
-                    "key": "type",
-                  },
-                ],
-                "change": "changed",
-                "name": "userStatus",
-              },
-              {
-                "attributes": [
-                  {
-                    "after": true,
-                    "before": false,
-                    "key": "required",
-                  },
-                ],
-                "change": "changed",
-                "name": "username",
+                "after": {
+                  "type": "string",
+                },
+                "before": undefined,
+                "key": "/schema/properties/category/properties/other",
               },
             ],
+            "change": "added",
+            "name": "application/json",
           },
         ],
         "name": "Request Body",
@@ -1325,425 +1668,221 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": "changed",
-      "name": "post /user/createWithArray",
+      "change": null,
+      "name": "PUT /pet",
       "parameters": [],
       "requestBody": {
         "attributes": [],
-        "change": "changed",
+        "change": null,
         "contentTypes": [
           {
-            "attributes": [],
-            "change": "changed",
-            "name": "*/*",
-            "schemaChanges": [
+            "attributes": [
               {
-                "attributes": [],
-                "change": "added",
-                "name": "items.bio",
-              },
-              {
-                "attributes": [
-                  {
-                    "after": false,
-                    "before": true,
-                    "key": "required",
-                  },
-                ],
-                "change": "changed",
-                "name": "items.lastName",
-              },
-              {
-                "attributes": [],
-                "change": "removed",
-                "name": "items.phone",
-              },
-              {
-                "attributes": [
-                  {
-                    "after": [
-                      "activation-pending",
-                      "activated",
-                      "blocked",
+                "after": undefined,
+                "before": {
+                  "schema": {
+                    "properties": {
+                      "category": {
+                        "properties": {
+                          "id": {
+                            "format": "int64",
+                            "type": "integer",
+                          },
+                          "name": {
+                            "type": "string",
+                          },
+                        },
+                        "type": "object",
+                        "xml": {
+                          "name": "Category",
+                        },
+                      },
+                      "id": {
+                        "format": "int64",
+                        "type": "integer",
+                      },
+                      "name": {
+                        "example": "doggie",
+                        "type": "string",
+                      },
+                      "photoUrls": {
+                        "items": {
+                          "type": "string",
+                        },
+                        "type": "array",
+                        "xml": {
+                          "name": "photoUrl",
+                          "wrapped": true,
+                        },
+                      },
+                      "status": {
+                        "description": "pet status in the store",
+                        "enum": [
+                          "available",
+                          "pending",
+                          "sold",
+                        ],
+                        "type": "string",
+                      },
+                      "tags": {
+                        "items": {
+                          "properties": {
+                            "id": {
+                              "format": "int64",
+                              "type": "integer",
+                            },
+                            "name": {
+                              "type": "string",
+                            },
+                          },
+                          "type": "object",
+                          "xml": {
+                            "name": "Tag",
+                          },
+                        },
+                        "type": "array",
+                        "xml": {
+                          "name": "tag",
+                          "wrapped": true,
+                        },
+                      },
+                    },
+                    "required": [
+                      "name",
+                      "photoUrls",
                     ],
-                    "before": undefined,
-                    "key": "enum",
+                    "type": "object",
+                    "xml": {
+                      "name": "Pet",
+                    },
                   },
-                  {
-                    "after": undefined,
-                    "before": "int32",
-                    "key": "format",
-                  },
-                  {
-                    "after": "string",
-                    "before": "integer",
-                    "key": "type",
-                  },
-                ],
-                "change": "changed",
-                "name": "items.userStatus",
-              },
-              {
-                "attributes": [
-                  {
-                    "after": true,
-                    "before": false,
-                    "key": "required",
-                  },
-                ],
-                "change": "changed",
-                "name": "items.username",
+                },
+                "key": "",
               },
             ],
+            "change": "removed",
+            "name": "application/xml",
+          },
+          {
+            "attributes": [
+              {
+                "after": undefined,
+                "before": {
+                  "example": "doggie",
+                  "type": "string",
+                },
+                "key": "/schema/properties/name",
+              },
+              {
+                "after": {
+                  "type": "string",
+                },
+                "before": undefined,
+                "key": "/schema/properties/example",
+              },
+              {
+                "after": {
+                  "type": "string",
+                },
+                "before": undefined,
+                "key": "/schema/properties/number",
+              },
+              {
+                "after": undefined,
+                "before": "name",
+                "key": "/schema/required/0",
+              },
+              {
+                "after": "number",
+                "before": undefined,
+                "key": "/schema/required/0",
+              },
+            ],
+            "change": "changed",
+            "name": "application/json",
           },
         ],
         "name": "Request Body",
       },
-      "responses": [],
-    },
-    {
-      "attributes": [],
-      "change": "changed",
-      "name": "post /user/createWithList",
-      "parameters": [],
-      "requestBody": {
-        "attributes": [],
-        "change": "changed",
-        "contentTypes": [
-          {
-            "attributes": [],
-            "change": "changed",
-            "name": "*/*",
-            "schemaChanges": [
-              {
-                "attributes": [],
-                "change": "added",
-                "name": "items.bio",
-              },
-              {
-                "attributes": [
-                  {
-                    "after": false,
-                    "before": true,
-                    "key": "required",
-                  },
-                ],
-                "change": "changed",
-                "name": "items.lastName",
-              },
-              {
-                "attributes": [],
-                "change": "removed",
-                "name": "items.phone",
-              },
-              {
-                "attributes": [
-                  {
-                    "after": [
-                      "activation-pending",
-                      "activated",
-                      "blocked",
-                    ],
-                    "before": undefined,
-                    "key": "enum",
-                  },
-                  {
-                    "after": undefined,
-                    "before": "int32",
-                    "key": "format",
-                  },
-                  {
-                    "after": "string",
-                    "before": "integer",
-                    "key": "type",
-                  },
-                ],
-                "change": "changed",
-                "name": "items.userStatus",
-              },
-              {
-                "attributes": [
-                  {
-                    "after": true,
-                    "before": false,
-                    "key": "required",
-                  },
-                ],
-                "change": "changed",
-                "name": "items.username",
-              },
-            ],
-          },
-        ],
-        "name": "Request Body",
-      },
-      "responses": [],
-    },
-    {
-      "attributes": [],
-      "change": "changed",
-      "name": "get /user/login",
-      "parameters": [],
-      "requestBody": undefined,
       "responses": [
         {
-          "attributes": [],
-          "change": "changed",
+          "attributes": [
+            {
+              "after": undefined,
+              "before": {
+                "content": {},
+                "description": "Invalid ID supplied",
+              },
+              "key": "",
+            },
+          ],
+          "change": "removed",
           "contentTypes": [],
-          "name": "200 response",
+          "name": "400 response",
         },
       ],
     },
     {
-      "attributes": [],
+      "attributes": [
+        {
+          "after": "get_examples",
+          "before": "getExamples",
+          "key": "/operationId",
+        },
+      ],
       "change": "changed",
-      "name": "get /user/{username}",
+      "name": "GET /example",
       "parameters": [],
       "requestBody": undefined,
       "responses": [
         {
           "attributes": [],
-          "change": "changed",
+          "change": null,
           "contentTypes": [
             {
-              "attributes": [],
+              "attributes": [
+                {
+                  "after": {
+                    "properties": {
+                      "order": {
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                          },
+                        },
+                        "type": "object",
+                      },
+                    },
+                    "type": "object",
+                  },
+                  "before": undefined,
+                  "key": "/schema/properties/expandableObject/anyOf/1",
+                },
+                {
+                  "after": "number",
+                  "before": "string",
+                  "key": "/schema/properties/composedObject/allOf/0/properties/orderId/type",
+                },
+                {
+                  "after": undefined,
+                  "before": {
+                    "properties": {
+                      "orderId": {
+                        "type": "string",
+                      },
+                    },
+                    "type": "object",
+                  },
+                  "key": "/schema/properties/stringOrNumberOrObject/oneOf/2",
+                },
+              ],
               "change": "changed",
               "name": "application/json",
-              "schemaChanges": [
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "bio",
-                },
-                {
-                  "attributes": [
-                    {
-                      "after": false,
-                      "before": true,
-                      "key": "required",
-                    },
-                  ],
-                  "change": "changed",
-                  "name": "lastName",
-                },
-                {
-                  "attributes": [],
-                  "change": "removed",
-                  "name": "phone",
-                },
-                {
-                  "attributes": [
-                    {
-                      "after": [
-                        "activation-pending",
-                        "activated",
-                        "blocked",
-                      ],
-                      "before": undefined,
-                      "key": "enum",
-                    },
-                    {
-                      "after": undefined,
-                      "before": "int32",
-                      "key": "format",
-                    },
-                    {
-                      "after": "string",
-                      "before": "integer",
-                      "key": "type",
-                    },
-                  ],
-                  "change": "changed",
-                  "name": "userStatus",
-                },
-                {
-                  "attributes": [
-                    {
-                      "after": true,
-                      "before": false,
-                      "key": "required",
-                    },
-                  ],
-                  "change": "changed",
-                  "name": "username",
-                },
-              ],
-            },
-            {
-              "attributes": [],
-              "change": "changed",
-              "name": "application/xml",
-              "schemaChanges": [
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "bio",
-                },
-                {
-                  "attributes": [
-                    {
-                      "after": false,
-                      "before": true,
-                      "key": "required",
-                    },
-                  ],
-                  "change": "changed",
-                  "name": "lastName",
-                },
-                {
-                  "attributes": [],
-                  "change": "removed",
-                  "name": "phone",
-                },
-                {
-                  "attributes": [
-                    {
-                      "after": [
-                        "activation-pending",
-                        "activated",
-                        "blocked",
-                      ],
-                      "before": undefined,
-                      "key": "enum",
-                    },
-                    {
-                      "after": undefined,
-                      "before": "int32",
-                      "key": "format",
-                    },
-                    {
-                      "after": "string",
-                      "before": "integer",
-                      "key": "type",
-                    },
-                  ],
-                  "change": "changed",
-                  "name": "userStatus",
-                },
-                {
-                  "attributes": [
-                    {
-                      "after": true,
-                      "before": false,
-                      "key": "required",
-                    },
-                  ],
-                  "change": "changed",
-                  "name": "username",
-                },
-              ],
             },
           ],
           "name": "200 response",
         },
-        {
-          "attributes": [],
-          "change": "changed",
-          "contentTypes": [
-            {
-              "attributes": [],
-              "change": "added",
-              "name": "application/json",
-              "schemaChanges": [
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "code",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "message",
-                },
-                {
-                  "attributes": [],
-                  "change": "added",
-                  "name": "type",
-                },
-              ],
-            },
-          ],
-          "name": "404 response",
-        },
       ],
-    },
-    {
-      "attributes": [],
-      "change": "changed",
-      "name": "put /user/{username}",
-      "parameters": [],
-      "requestBody": {
-        "attributes": [],
-        "change": "changed",
-        "contentTypes": [
-          {
-            "attributes": [],
-            "change": "changed",
-            "name": "*/*",
-            "schemaChanges": [
-              {
-                "attributes": [],
-                "change": "added",
-                "name": "bio",
-              },
-              {
-                "attributes": [
-                  {
-                    "after": false,
-                    "before": true,
-                    "key": "required",
-                  },
-                ],
-                "change": "changed",
-                "name": "lastName",
-              },
-              {
-                "attributes": [],
-                "change": "removed",
-                "name": "phone",
-              },
-              {
-                "attributes": [
-                  {
-                    "after": [
-                      "activation-pending",
-                      "activated",
-                      "blocked",
-                    ],
-                    "before": undefined,
-                    "key": "enum",
-                  },
-                  {
-                    "after": undefined,
-                    "before": "int32",
-                    "key": "format",
-                  },
-                  {
-                    "after": "string",
-                    "before": "integer",
-                    "key": "type",
-                  },
-                ],
-                "change": "changed",
-                "name": "userStatus",
-              },
-              {
-                "attributes": [
-                  {
-                    "after": true,
-                    "before": false,
-                    "key": "required",
-                  },
-                ],
-                "change": "changed",
-                "name": "username",
-              },
-            ],
-          },
-        ],
-        "name": "Request Body",
-      },
-      "responses": [],
     },
   ],
 }
