@@ -30,21 +30,17 @@ export const COMPARE_SUMMARY_IDENTIFIER = `optic-comment-3UsoJCz_Z0SpGLo5Vjw6o`;
 
 export const getMetadataFromMarkdown = (
   body: string
-): { commit_sha: string; date: Date } | null => {
+): { commit_sha: string } | null => {
   const maybeSha = body.match(/commit_sha: (.+)\n/i)?.[1] ?? null;
-  const maybeTimestamp = body.match(/timestamp: (.+)\n/i)?.[1] ?? null;
-  const maybeDate = maybeTimestamp ? new Date(maybeTimestamp) : null;
-  const isDateValid = maybeDate && !isNaN(maybeDate.getTime());
-  return maybeSha && isDateValid
+  return maybeSha
     ? {
         commit_sha: maybeSha,
-        date: maybeDate,
       }
     : null;
 };
 
 export const generateCompareSummaryMarkdown = (
-  commit: { sha: string; timestamp: string },
+  commit: { sha: string },
   results: CiRunDetails
 ) => {
   const anyCompletedHasWarning = results.completed.some(
@@ -55,7 +51,6 @@ export const generateCompareSummaryMarkdown = (
 DO NOT MODIFY
 app_id: ${COMPARE_SUMMARY_IDENTIFIER}
 commit_sha: ${commit.sha}
-timestamp: ${commit.timestamp}
 -->
 ${
   results.completed.length > 0

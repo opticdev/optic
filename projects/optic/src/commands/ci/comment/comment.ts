@@ -48,6 +48,10 @@ export const registerCiComment = (cli: Command, config: OpticCliConfig) => {
       '--merge-request-id <merge-request-id>',
       '[gitlab only] the merge request iid in the repo'
     )
+    .option(
+      '--enterprise-base-url <enterprise-base-url>',
+      '(only for enterprise versions of github or gitlab) - the base url to your enterprise github / gitlab instance'
+    )
     .description('comment on a pull request / merge request')
     .action(wrapActionHandlerWithSentry(getCiCommentAction(config)));
 };
@@ -60,6 +64,7 @@ type UnvalidatedOptions = {
   projectId?: string;
   mergeRequestId?: string;
   sha: string;
+  enterpriseBaseUrl?: string;
 };
 
 type CiCommentActionOptions =
@@ -69,12 +74,14 @@ type CiCommentActionOptions =
       repo: string;
       pullRequest: string;
       sha: string;
+      enterpriseBaseUrl?: string;
     }
   | {
       provider: 'gitlab';
       projectId: string;
       mergeRequestId: string;
       sha: string;
+      enterpriseBaseUrl?: string;
     };
 
 const getCiCommentAction =
@@ -133,23 +140,11 @@ const getCiCommentAction =
 
     const maybeComment: { id: string; body: string } | null =
       await commenter.getComment(COMPARE_SUMMARY_IDENTIFIER);
-    const commitCreatedAt = await commenter.getShaCreatedAt(options.sha);
-    const body = generateCompareSummaryMarkdown(
-      {
-        sha: options.sha,
-        timestamp: commitCreatedAt.toISOString(),
-      },
-      data
-    );
+    const body = generateCompareSummaryMarkdown({ sha: options.sha }, data);
 
     if (maybeComment) {
       // If there's a comment already, we need to check whether this session newer than the posted comment
-      const maybeMetadata = getMetadataFromMarkdown(maybeComment.body);
-      const shouldWriteComment =
-        !!maybeMetadata && commitCreatedAt > maybeMetadata.date;
-      if (shouldWriteComment) {
-        await commenter.updateComment(maybeComment.id, body);
-      }
+      await commenter.updateComment(maybeComment.id, body);
     } else {
       // if does not have comment, we should only comment when there is a completed or failed session
       if (data.completed.length > 0 || data.failed.length > 0) {
