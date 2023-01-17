@@ -1,4 +1,5 @@
 import { Command } from 'commander';
+import open from 'open';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import { SPEC_TAG_REGEXP } from '@useoptic/openapi-utilities';
 
@@ -8,6 +9,8 @@ import { logger } from '../../logger';
 import { OPTIC_URL_KEY } from '../../constants';
 import * as Git from '../../utils/git-utils';
 import chalk from 'chalk';
+import { uploadSpec } from '../../utils/cloud-specs';
+import { getApiFromOpticUrl, getSpecUrl } from '../../utils/cloud-urls';
 
 const usage = () => `
   optic spec push <path_to_spec.yml>
@@ -74,7 +77,7 @@ const getSpecPushAction =
     if (config.vcs?.type === VCS.Git) {
       if (config.vcs.status === 'clean') {
         const sha = `git:${config.vcs.sha}`;
-        const branch = `git:${await Git.getCurrentBranchName()}`;
+        const branch = `gitbranch:${await Git.getCurrentBranchName()}`;
         tagsToAdd.push(sha, branch);
         logger.info(
           `Automatically adding the git sha ${sha} and branch ${branch} as tags `
@@ -106,6 +109,7 @@ const getSpecPushAction =
       return;
     }
     const opticUrl: string = parseResult.jsonLike[OPTIC_URL_KEY];
+    const specDetails = getApiFromOpticUrl(opticUrl);
 
     if (typeof opticUrl !== 'string') {
       logger.error(
@@ -114,19 +118,37 @@ const getSpecPushAction =
       logger.error(`${chalk.yellow('Hint: ')} Run optic api add ${spec_path}`);
       process.exitCode = 1;
       return;
+    } else if (!specDetails) {
+      logger.error(
+        `File ${spec_path} does not a valid. Files must be added to Optic and have an x-optic-url key that points to an uploaded spec before specs can be pushed up to Optic.`
+      );
+      logger.error(`${chalk.yellow('Hint: ')} Run optic api add ${spec_path}`);
+      process.exitCode = 1;
+      return;
     }
 
-    const api = { id: '', url: 'todo get optic id from url' };
     logger.info('');
     logger.info(
-      `Uploading spec for api ${api.url} ${
+      `Uploading spec for api at ${opticUrl} ${
         tagsToAdd.length > 0 ? `with tags ${tagsToAdd.join(', ')}` : ''
       }`
     );
-    // TODO make API call
+    const specId = await uploadSpec(specDetails.apiId, {
+      spec: parseResult,
+      client: config.client,
+      tags: tagsToAdd,
+    });
+    const url = getSpecUrl(
+      config.client.getWebBase(),
+      specDetails.orgId,
+      specId
+    );
 
     logger.info(
-      `Succesfully uploaded spec to Optic. View the spec here ${'TODODODODOO'}`
+      `Succesfully uploaded spec to Optic. View the spec here ${url}`
     );
-    // TODO log out spec url and maybe open if --web
+
+    if (options.web) {
+      await open(url, { wait: false });
+    }
   };

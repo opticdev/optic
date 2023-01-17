@@ -7,6 +7,8 @@ import {
   UserError,
   jsonChangelog,
   generateSpecResults,
+  ResultWithSourcemap,
+  IChange,
 } from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import {
@@ -25,6 +27,8 @@ import { compute } from './compute';
 import { compressData, compressDataV2 } from './compressResults';
 import { generateRuleRunner } from './generate-rule-runner';
 import { OPTIC_STANDARD_KEY } from '../../constants';
+import { uploadDiff } from './upload-diff';
+import { getRunUrl } from '../../utils/cloud-urls';
 
 const description = `run a diff between two API specs`;
 
@@ -115,13 +119,16 @@ const runDiff = async (
   [baseFile, headFile]: [ParseResult, ParseResult],
   config: OpticCliConfig,
   options: DiffActionOptions
-): Promise<{ checks: { passed: number; failed: number; total: number } }> => {
+): Promise<{
+  checks: { passed: number; failed: number; total: number };
+  specResults: Awaited<ReturnType<typeof compute>>['specResults'];
+}> => {
   const { specResults, checks, changelogData } = await compute(
     [baseFile, headFile],
     config,
     options
   );
-  const diffResults = { checks };
+  const diffResults = { checks, specResults };
 
   if (options.json) {
     console.log(
@@ -277,22 +284,18 @@ const getDiffAction =
     const diffResult = await runDiff(files, parsedFiles, config, options);
     if (config.isAuthenticated) {
       const [baseParseResult, headParseResult] = parsedFiles;
-      const apiId: string | null = 'TODO'; // headParseResult.jsonLike[OPTIC_URL_KEY] ?? baseParseResult.jsonLike[OPTIC_URL_KEY] ?? null
-      const shouldUploadBaseSpec = baseParseResult.context && apiId;
-      const shouldUploadHeadSpec = headParseResult.context && apiId;
-      if (shouldUploadBaseSpec) {
-        // TODO upload spec
-      }
-      if (shouldUploadHeadSpec) {
-        // TODO upload spec
-      }
 
-      const shouldUploadResults =
-        (shouldUploadBaseSpec || baseParseResult.isEmptySpec) &&
-        (shouldUploadHeadSpec || headParseResult.isEmptySpec);
-
-      if (shouldUploadResults) {
-        // TODO upload results
+      const run = await uploadDiff(
+        {
+          from: baseParseResult,
+          to: headParseResult,
+        },
+        diffResult.specResults,
+        config
+      );
+      if (run) {
+        const url = getRunUrl(config.client.getWebBase(), run.orgId, run.runId);
+        console.log(`Uploaded results of diff to ${url}`);
       }
     }
 
