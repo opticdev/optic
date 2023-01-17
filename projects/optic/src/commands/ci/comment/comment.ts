@@ -8,7 +8,7 @@ import {
   generateCompareSummaryMarkdown,
 } from './common';
 import { logger } from '../../../logger';
-import { CommentApi } from './comment-api';
+import { CommentApi, GithubCommenter, GitlabCommenter } from './comment-api';
 
 const usage = () => `
   GITHUB_TOKEN=<github-token> optic ci comment --provider github --owner <repo-owner> --repo <repo-name> --pull-request <pr-number> --sha <commit-sha>
@@ -135,7 +135,10 @@ const getCiCommentAction =
       process.exitCode = 1;
       return;
     }
-    const commenter: CommentApi = {} as any; // TODO
+    const commenter: CommentApi =
+      options.provider === 'github'
+        ? new GithubCommenter({ ...options, token: githubToken })
+        : new GitlabCommenter({ ...options, token: gitlabToken });
 
     const maybeComment: { id: string; body: string } | null =
       await commenter.getComment(COMPARE_SUMMARY_IDENTIFIER);
