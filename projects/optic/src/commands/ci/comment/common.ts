@@ -28,17 +28,6 @@ const getChecksLabel = (
 
 export const COMPARE_SUMMARY_IDENTIFIER = `optic-comment-3UsoJCz_Z0SpGLo5Vjw6o`;
 
-export const getMetadataFromMarkdown = (
-  body: string
-): { commit_sha: string } | null => {
-  const maybeSha = body.match(/commit_sha: (.+)\n/i)?.[1] ?? null;
-  return maybeSha
-    ? {
-        commit_sha: maybeSha,
-      }
-    : null;
-};
-
 export const generateCompareSummaryMarkdown = (
   commit: { sha: string },
   results: CiRunDetails

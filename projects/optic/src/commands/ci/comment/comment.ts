@@ -6,7 +6,6 @@ import { CiRunDetails, readDataForCi } from '../../../utils/ci-data';
 import {
   COMPARE_SUMMARY_IDENTIFIER,
   generateCompareSummaryMarkdown,
-  getMetadataFromMarkdown,
 } from './common';
 import { logger } from '../../../logger';
 import { CommentApi } from './comment-api';

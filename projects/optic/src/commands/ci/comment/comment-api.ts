@@ -1,4 +1,6 @@
 import { Octokit } from '@octokit/rest';
+import urljoin from 'url-join';
+import { JsonHttpClient } from '../../../client/JsonHttpClient';
 
 export interface CommentApi {
   getComment: (
@@ -88,5 +90,80 @@ export class GithubCommenter implements CommentApi {
       issue_number: Number(this.options.pullRequest),
       body,
     });
+  }
+}
+
+export class GitlabCommenter extends JsonHttpClient implements CommentApi {
+  private baseUrl: string;
+  constructor(
+    private options: {
+      token: string;
+      projectId: string;
+      mergeRequestId: string;
+      sha: string;
+      enterpriseBaseUrl?: string;
+    }
+  ) {
+    super();
+    this.baseUrl = options.enterpriseBaseUrl ?? 'https://gitlab.com';
+  }
+
+  async getComment(
+    commentIdentifier: string
+  ): Promise<{ id: string; body: string } | null> {
+    const comments = await this.getJson<
+      {
+        id: number;
+        body: string;
+      }[]
+    >(
+      urljoin(
+        this.baseUrl,
+        `/api/v4/projects/${this.options.projectId}/merge_requests/${this.options.mergeRequestId}/notes`
+      ),
+      {
+        Authorization: `Bearer ${this.options.token}`,
+      }
+    );
+    const maybeComment =
+      comments.find((comment) =>
+        new RegExp(commentIdentifier).test(comment.body || '')
+      ) || null;
+    return maybeComment
+      ? {
+          body: maybeComment.body || '',
+          id: String(maybeComment.id),
+        }
+      : null;
+  }
+
+  async updateComment(commentId: string, body: string): Promise<void> {
+    await this.putJson(
+      urljoin(
+        this.baseUrl,
+        `/api/v4/projects/${this.options.projectId}/merge_requests/${this.options.mergeRequestId}/notes/${commentId}`
+      ),
+      {
+        body,
+      },
+      {
+        Authorization: `Bearer ${this.options.token}`,
+      }
+    );
+  }
+
+  async createComment(body: string): Promise<void> {
+    await this.postJson(
+      urljoin(
+        this.baseUrl,
+        `/api/v4/projects/${this.options.projectId}/merge_requests/${this.options.mergeRequestId}/notes`
+      ),
+      {
+        body,
+      },
+      {
+        Authorization: `Bearer ${this.options.token}`,
+      }
+    );
   }
 }
