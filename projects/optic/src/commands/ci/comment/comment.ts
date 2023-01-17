@@ -4,10 +4,12 @@ import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/u
 import { OpticCliConfig } from '../../../config';
 import { readDataForCi } from '../../../utils/ci-data';
 import {
+  COMPARE_SUMMARY_IDENTIFIER,
   generateCompareSummaryMarkdown,
   getMetadataFromMarkdown,
 } from './common';
 import { logger } from '../../../logger';
+import { CommentApi } from './comment-api';
 
 const usage = () => `
   GITHUB_TOKEN=<github-token> optic ci comment --provider github --owner <repo-owner> --repo <repo-name> --pull-request <pr-number> --sha <commit-sha>
@@ -117,18 +119,11 @@ const getCiCommentAction =
     const options = _options as CiCommentActionOptions;
 
     const data = await readDataForCi();
-    // todo fetch comment
-    //     const maybeComment = await findOpticComment(
-    //   octokit,
-    //   COMPARE_SUMMARY_IDENTIFIER,
-    //   owner,
-    //   repo,
-    //   pull_request
-    // );
+    const commenter: CommentApi = {} as any; // TODO
 
-    const maybeComment: { body: string } | null = null as any;
-    // todo fetch commit hash date
-    const commitCreatedAt = new Date();
+    const maybeComment: { id: string; body: string } | null =
+      await commenter.getComment(COMPARE_SUMMARY_IDENTIFIER);
+    const commitCreatedAt = await commenter.getShaCreatedAt(options.sha);
     const body = generateCompareSummaryMarkdown(
       {
         sha: options.sha,
@@ -143,24 +138,12 @@ const getCiCommentAction =
       const shouldWriteComment =
         !!maybeMetadata && commitCreatedAt > maybeMetadata.date;
       if (shouldWriteComment) {
-        // TODO update the comment body
-        // await octokit.rest.issues.updateComment({
-        //   owner,
-        //   repo,
-        //   comment_id: maybeComment.id,
-        //   body,
-        // });
+        await commenter.updateComment(maybeComment.id, body);
       }
     } else {
       // if does not have comment, we should only comment when there is a completed or failed session
       if (data.completed.length > 0 || data.failed.length > 0) {
-        // TODO create comment
-        // await octokit.rest.issues.createComment({
-        //   owner,
-        //   repo,
-        //   issue_number: pull_request,
-        //   body,
-        // });
+        await commenter.createComment(body);
       }
     }
   };
