@@ -32,6 +32,10 @@ export class OpticBackendClient extends JsonHttpClient {
       : 'https://app.useoptic.com';
   }
 
+  public getTokenOrgs(): Promise<{ id: string; name: string }[]> {
+    return this.getJson(`/api/token/orgs`);
+  }
+
   public async createRuleset(
     name: string,
     description: string,
@@ -80,15 +84,23 @@ export class OpticBackendClient extends JsonHttpClient {
   public async createOrgStandard(
     organizationId: string,
     standard: Types.StandardConfig
-  ) {
-    // TODO
+  ): Promise<{ id: string; slug: string }> {
+    return this.postJson<{ id: string; slug: string }>(
+      `/api/organizations/${organizationId}/ruleset-configs`,
+      {
+        config: { ruleset: standard },
+      }
+    );
   }
 
   public async getOrgStandards(
     organizationId: string
   ): Promise<Types.Standard[]> {
-    // TODO
-    return [];
+    const response = await this.getJson<{
+      data: Types.Standard[];
+    }>(`/api/organizations/${organizationId}/ruleset-configs`);
+
+    return response.data;
   }
 
   public async prepareSpecUpload(body: {
@@ -100,9 +112,10 @@ export class OpticBackendClient extends JsonHttpClient {
         upload_id: string;
         spec_url: string;
         sourcemap_url: string;
-        spec_id?: undefined;
       }
-    | { spec_id: string }
+    | {
+        spec_id: string;
+      }
   > {
     return this.postJson(`/api/specs/prepare`, body);
   }
@@ -117,6 +130,7 @@ export class OpticBackendClient extends JsonHttpClient {
 
   public async prepareRunUpload(body: {
     checksum: string;
+    api_id: string;
   }): Promise<{ upload_id: string; check_results_url: string }> {
     return this.postJson(`/api/runs/prepare`, body);
   }
@@ -131,8 +145,14 @@ export class OpticBackendClient extends JsonHttpClient {
     return this.postJson(`/api/runs2`, run);
   }
 
-  public async createApi() {
-    // TODO
+  public async createApi(
+    organizationId: string,
+    name: string
+  ): Promise<{ id: string }> {
+    return this.postJson(`/api/api/create`, {
+      name,
+      organization_id: organizationId,
+    });
   }
 }
 
