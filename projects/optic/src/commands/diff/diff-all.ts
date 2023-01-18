@@ -13,9 +13,9 @@ import {
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { getAnonId } from '../../utils/anonymous-id';
 import open from 'open';
-import { compressData } from './compressResults';
+import { compressDataV2 } from './compressResults';
 import {
-  generateComparisonLogs,
+  generateComparisonLogsV2,
   jsonChangelog,
   terminalChangelog,
 } from '@useoptic/openapi-utilities';
@@ -176,12 +176,15 @@ async function computeAll(
         options
       );
 
-      if (specResults.changes.length === 0) {
+      if (specResults.diffs.length === 0) {
         logger.info('No changes were detected');
       }
       logger.info('');
 
-      for (const log of terminalChangelog(changelogData)) {
+      for (const log of terminalChangelog(
+        { from: fromParseResults.jsonLike, to: toParseResults.jsonLike },
+        changelogData
+      )) {
         logger.info(log);
       }
 
@@ -191,10 +194,15 @@ async function computeAll(
           logger.info('');
         }
 
-        for (const log of generateComparisonLogs(specResults, {
-          output: 'pretty',
-          verbose: false,
-        })) {
+        for (const log of generateComparisonLogsV2(
+          changelogData,
+          { from: fromParseResults.sourcemap, to: toParseResults.sourcemap },
+          specResults,
+          {
+            output: 'pretty',
+            verbose: false,
+          }
+        )) {
           logger.info(log);
         }
 
@@ -304,7 +312,7 @@ async function openWebpage(
       command: ['optic', ...process.argv.slice(2)].join(' '),
     };
 
-    const compressedData = compressData(
+    const compressedData = compressDataV2(
       fromParseResults,
       toParseResults,
       specResults,
@@ -396,7 +404,7 @@ const getDiffAllAction =
         }
         if (
           options.web &&
-          (specResults.changes.length > 0 ||
+          (specResults.diffs.length > 0 ||
             (!options.check && specResults.results.length > 0))
         ) {
           openWebpage(url, result, config);
@@ -428,7 +436,13 @@ const getDiffAllAction =
             const strippedPath = next.from
               ? next.from.replace(`${options.compareFrom}:`, '')
               : next.to?.replace(`${options.compareTo}:`, '') ?? 'empty diff';
-            acc[strippedPath] = jsonChangelog(next.changelogData);
+            acc[strippedPath] = jsonChangelog(
+              {
+                from: next.fromParseResults.jsonLike,
+                to: next.toParseResults.jsonLike,
+              },
+              next.changelogData
+            );
             return acc;
           }, {}),
           warnings,

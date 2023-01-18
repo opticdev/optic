@@ -41,7 +41,13 @@ function resultToRuleResult(r: Result): RuleResult {
     error: r.error,
     passed: r.passed,
     exempted: r.exempted,
-    jsonPath: r.change.location.jsonPath,
+    location: {
+      jsonPath: r.change.location.jsonPath,
+      spec:
+        'removed' in r.change && !!r.change.removed?.before
+          ? 'before'
+          : 'after',
+    },
     name: r.name ?? 'Rule',
     type: r.type,
     docsLink: r.docsLink,

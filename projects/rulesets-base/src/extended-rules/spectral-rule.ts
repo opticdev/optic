@@ -70,7 +70,10 @@ function toOpticRuleResult(
       spectralResult.message
     }`,
     where: `${lifecycle} `,
-    jsonPath,
+    location: {
+      jsonPath,
+      spec: 'before',
+    },
     name: `Spectral ${lifecycle} rule`,
     type: lifecycle === 'always' ? 'requirement' : lifecycle,
   };

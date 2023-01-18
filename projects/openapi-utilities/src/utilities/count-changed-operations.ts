@@ -1,5 +1,9 @@
+import { OpenAPIV3 } from 'openapi-types';
+import { getTypeofDiffs, ObjectDiff, typeofDiff } from '../diff/diff';
 import { isChangeVariant } from '../openapi3/sdk/isType';
 import { OpenApiKind, IChange, ChangeType } from '../openapi3/sdk/types';
+import { getLocation } from '../openapi3/traverser';
+import { GroupedDiffs } from '../openapi3/group-diff';
 
 const getChangeOperationId = (change: IChange) => {
   const path = (change.location.conceptualLocation as any).path;
@@ -71,3 +75,28 @@ export const getLabel = (
 
 export const getOperationsModifsLabel = (changes: IChange[]) =>
   getLabel(countOperationsModifications(changes));
+
+export const getOperationsChangedLabel = (
+  groupedDiffs: GroupedDiffs
+): string => {
+  const addedOps = new Set();
+  const changedOps = new Set();
+  const removedOps = new Set();
+  for (const endpoint of Object.values(groupedDiffs.endpoints)) {
+    const id = `${endpoint.path}${endpoint.method}`;
+    const typeofDiffs = getTypeofDiffs(endpoint.diffs);
+    if (typeofDiffs === 'added') {
+      addedOps.add(id);
+    } else if (typeofDiffs === 'removed') {
+      removedOps.add(id);
+    } else {
+      changedOps.add(id);
+    }
+  }
+
+  return getLabel({
+    added: addedOps.size,
+    changed: changedOps.size,
+    removed: removedOps.size,
+  });
+};

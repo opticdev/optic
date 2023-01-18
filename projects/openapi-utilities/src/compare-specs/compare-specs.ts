@@ -12,7 +12,7 @@ type SerializedSourcemap = {
     sha256: string;
   }>;
 
-  refMappings: { [key: number]: string };
+  refMappings: { [key: string]: [number, string] };
 };
 
 type InputSpec = {
@@ -39,10 +39,7 @@ export const compareSpecs = async (
   results: RuleResult[];
   version: string;
 }> => {
-  const fromSpec = from.isEmptySpec ? {} : from.jsonLike;
-  const toSpec = to.isEmptySpec ? {} : to.jsonLike;
-
-  const diffs = diff(fromSpec, toSpec);
+  const diffs = diff(from.jsonLike, to.jsonLike);
 
   const results = await ruleRunner.runRules({
     context: {}, // TODO

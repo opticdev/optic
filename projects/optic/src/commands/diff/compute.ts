@@ -1,11 +1,13 @@
 import {
-  generateChangelogData,
-  generateSpecResults,
+  groupDiffsByEndpoint,
+  compareSpecs,
 } from '@useoptic/openapi-utilities';
 import { generateRuleRunner } from './generate-rule-runner';
 import { OPTIC_STANDARD_KEY } from '../../constants';
 import { ParseResult } from '../../utils/spec-loaders';
 import { OpticCliConfig } from '../../config';
+import { trackEvent } from '@useoptic/openapi-utilities/build/utilities/segment';
+import { getAnonId } from '../../utils/anonymous-id';
 
 export async function compute(
   [baseFile, headFile]: [ParseResult, ParseResult],
@@ -15,7 +17,7 @@ export async function compute(
     check: boolean;
   }
 ) {
-  const ruleRunner = await generateRuleRunner(
+  const { runner, ruleNames } = await generateRuleRunner(
     {
       rulesetArg: options.ruleset,
       specRuleset: headFile.isEmptySpec
@@ -25,18 +27,20 @@ export async function compute(
     },
     options.check
   );
-  const specResults = await generateSpecResults(
-    ruleRunner,
-    baseFile,
-    headFile,
-    null
-  );
 
-  const changelogData = generateChangelogData({
-    changes: specResults.changes,
-    toFile: headFile.jsonLike,
-    rules: specResults.results,
+  trackEvent('diff.rulesets', await getAnonId(), {
+    ruleset: ruleNames,
   });
+
+  const specResults = await compareSpecs(baseFile, headFile, runner);
+
+  const changelogData = groupDiffsByEndpoint(
+    {
+      from: baseFile.jsonLike,
+      to: headFile.jsonLike,
+    },
+    specResults.diffs
+  );
 
   return {
     specResults,
