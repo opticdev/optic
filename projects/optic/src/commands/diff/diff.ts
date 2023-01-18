@@ -269,7 +269,7 @@ const getDiffAction =
           );
         } else {
           // TODO remove this old flow when new web view is ready
-          const ruleRunner = await generateRuleRunner(
+          const { runner } = await generateRuleRunner(
             {
               rulesetArg: options.ruleset,
               specRuleset: headParseResult.isEmptySpec
@@ -280,7 +280,7 @@ const getDiffAction =
             options.check
           );
           const specResultsLegacy = await generateSpecResults(
-            ruleRunner,
+            runner,
             baseParseResult,
             headParseResult,
             null
