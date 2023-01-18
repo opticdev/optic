@@ -31,7 +31,9 @@ setupTestServer(({ url, method }) => {
       id: 'spec-id',
     });
   } else if (method === 'GET' && /\/api\/token\/orgs/.test(url)) {
-    return JSON.stringify([{ id: 'org-id', name: 'org-blah' }]);
+    return JSON.stringify({
+      organizations: [{ id: 'org-id', name: 'org-blah' }],
+    });
   } else if (method === 'GET' && /\/api\/ruleset-configs/.test(url)) {
     // a return value means it exists
     return JSON.stringify({});
