@@ -78,7 +78,7 @@
     "lodash.sortby": "^4.7.0",
     "log": "^6.3.1",
     "log-node": "^8.0.3",
-    "minimatch": "6.1.0",
+    "minimatch": "6.1.5",
     "mockttp": "^3.3.1",
     "node-abort-controller": "^3.0.1",
     "node-forge": "^1.2.1",
