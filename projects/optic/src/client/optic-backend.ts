@@ -88,7 +88,7 @@ export class OpticBackendClient extends JsonHttpClient {
     standard: Types.StandardConfig
   ): Promise<{ id: string; slug: string }> {
     return this.postJson<{ id: string; slug: string }>(
-      `/api/organizations/${organizationId}/ruleset-configs`,
+      `/api/organizations/${organizationId}/standards`,
       {
         config: { ruleset: standard },
       }
@@ -100,7 +100,7 @@ export class OpticBackendClient extends JsonHttpClient {
   ): Promise<Types.Standard[]> {
     const response = await this.getJson<{
       data: Types.Standard[];
-    }>(`/api/organizations/${organizationId}/ruleset-configs`);
+    }>(`/api/organizations/${organizationId}/standards`);
 
     return response.data;
   }
