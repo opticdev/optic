@@ -151,7 +151,7 @@ export class OpticBackendClient extends JsonHttpClient {
     organizationId: string,
     name: string
   ): Promise<{ id: string }> {
-    return this.postJson(`/api/api/create`, {
+    return this.postJson(`/api/api`, {
       name,
       organization_id: organizationId,
     });
