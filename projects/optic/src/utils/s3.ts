@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 
 export const uploadFileToS3 = async (
   signedUrl: string,
-  file: Buffer,
+  file: string | Buffer,
   additionalHeaders: Record<string, string> = {}
 ) => {
   await fetch(signedUrl, {

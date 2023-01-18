@@ -26,10 +26,10 @@ export async function uploadSpec(
   });
   if ('upload_id' in result) {
     await Promise.all([
-      uploadFileToS3(result.spec_url, Buffer.from(stableSpecString), {
+      uploadFileToS3(result.spec_url, stableSpecString, {
         'x-amz-checksum-sha256': spec_checksum,
       }),
-      uploadFileToS3(result.sourcemap_url, Buffer.from(stableSourcemapString), {
+      uploadFileToS3(result.sourcemap_url, stableSourcemapString, {
         'x-amz-checksum-sha256': sourcemap_checksum,
       }),
     ]);
