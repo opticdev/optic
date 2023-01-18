@@ -15,7 +15,7 @@ export type CiRunDetails = {
   completed: {
     warnings: string[];
     apiName: string;
-    opticWebUrl: string;
+    opticWebUrl?: string | null;
     comparison: Comparison;
   }[];
   failed: { apiName: string; error: string }[];
@@ -30,7 +30,7 @@ export async function writeDataForCi(
         warnings: string[];
         results: RuleResult[];
         groupedDiffs: ReturnType<typeof groupDiffsByEndpoint>;
-        url: string;
+        url?: string | null;
         name: string;
       }
     | {
