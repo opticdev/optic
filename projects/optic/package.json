@@ -2,7 +2,7 @@
   "name": "@useoptic/optic",
   "license": "MIT",
   "packageManager": "yarn@3.3.1",
-  "version": "0.36.6-3",
+  "version": "0.36.6-5",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -34,6 +34,7 @@
     "@types/picomatch": "^2.3.0",
     "@types/prompts": "^2",
     "@types/tar": "^6",
+    "@types/update-notifier": "^5",
     "@types/url-join": "^4.0.1",
     "@types/uuid": "^9.0.0",
     "babel-jest": "^29.3.1",
@@ -69,6 +70,7 @@
     "picomatch": "^2.3.1",
     "prompts": "^2.4.2",
     "tar": "^6.1.11",
+    "update-notifier": "^5.1.0",
     "url-join": "^4.0.1",
     "uuid": "^9.0.0"
   },
