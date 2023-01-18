@@ -17,7 +17,7 @@ export async function compute(
     check: boolean;
   }
 ) {
-  const { runner, ruleNames } = await generateRuleRunner(
+  const { runner, ruleNames, warnings } = await generateRuleRunner(
     {
       rulesetArg: options.ruleset,
       specRuleset: headFile.isEmptySpec
@@ -43,6 +43,7 @@ export async function compute(
   );
 
   return {
+    warnings,
     specResults,
     changelogData,
     checks: {

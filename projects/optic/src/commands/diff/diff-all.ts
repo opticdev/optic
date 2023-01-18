@@ -170,11 +170,15 @@ async function computeAll(
           }`
         )
       );
-      const { specResults, checks, changelogData } = await compute(
+      const { specResults, checks, changelogData, warnings } = await compute(
         [fromParseResults, toParseResults],
         config,
         options
       );
+
+      for (const warning of warnings) {
+        logger.warn(warning);
+      }
 
       if (specResults.diffs.length === 0) {
         logger.info('No changes were detected');
@@ -210,6 +214,7 @@ async function computeAll(
       }
 
       results.push({
+        warnings,
         fromParseResults,
         toParseResults,
         specResults,

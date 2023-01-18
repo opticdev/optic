@@ -122,7 +122,7 @@ const runDiff = async (
   checks: { passed: number; failed: number; total: number };
   specResults: Awaited<ReturnType<typeof compute>>['specResults'];
 }> => {
-  const { specResults, checks, changelogData } = await compute(
+  const { specResults, checks, changelogData, warnings } = await compute(
     [baseFile, headFile],
     config,
     options
@@ -140,6 +140,10 @@ const runDiff = async (
     );
     return diffResults;
   } else {
+    for (const warning of warnings) {
+      console.warn(warning);
+    }
+
     if (specResults.diffs.length === 0) {
       console.log('No changes were detected');
     } else {
