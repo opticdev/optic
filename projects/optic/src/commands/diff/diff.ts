@@ -27,6 +27,7 @@ import { generateRuleRunner } from './generate-rule-runner';
 import { OPTIC_STANDARD_KEY } from '../../constants';
 import { uploadDiff } from './upload-diff';
 import { getRunUrl } from '../../utils/cloud-urls';
+import { writeDataForCi } from '../../utils/ci-data';
 
 const description = `run a diff between two API specs`;
 
@@ -247,7 +248,7 @@ const getDiffAction =
         console.log('Empty changelog: not opening web view');
       }
       const analyticsData: Record<string, any> = {
-        isInCi: process.env.CI === 'true',
+        isInCi: config.isInCi,
       };
 
       if (!maybeUrl) {
@@ -302,6 +303,12 @@ const getDiffAction =
       await open(maybeUrl, {
         wait: false,
       });
+    }
+
+    if (config.isInCi) {
+      // dump results to a file to pass in to comment
+      // writeDataForCi([{
+      // }])
     }
 
     if (!options.web && !options.json) {

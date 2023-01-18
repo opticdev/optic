@@ -304,7 +304,7 @@ async function openWebpage(
   config: OpticCliConfig
 ) {
   const analyticsData: Record<string, any> = {
-    isInCi: process.env.CI === 'true',
+    isInCi: config.isInCi,
   };
   if (!url) {
     const meta = {

@@ -51,6 +51,8 @@ export type OpticCliConfig = Omit<RawYmlConfig, 'ruleset' | 'extends'> & {
   isAuthenticated: boolean;
   authenticationType?: 'user' | 'env';
   client: OpticBackendClient;
+
+  isInCi: boolean;
 };
 
 const DefaultOpticCliConfig: OpticCliConfig = {
@@ -59,6 +61,7 @@ const DefaultOpticCliConfig: OpticCliConfig = {
   ruleset: [{ name: 'breaking-changes', config: {} }],
   isAuthenticated: false,
   client: createOpticClient('no_token'),
+  isInCi: process.env.CI === 'true',
 };
 
 const ajv = new Ajv();
