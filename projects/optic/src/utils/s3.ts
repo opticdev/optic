@@ -12,5 +12,10 @@ export const uploadFileToS3 = async (
       'x-amz-server-side-encryption': 'AES256',
     },
     body: file,
+  }).then(async (response) => {
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(`${response.status} ${response.statusText} \n${text}`);
+    }
   });
 };
