@@ -121,13 +121,15 @@ const runDiff = async (
 ): Promise<{
   checks: { passed: number; failed: number; total: number };
   specResults: Awaited<ReturnType<typeof compute>>['specResults'];
+  changelogData: Awaited<ReturnType<typeof compute>>['changelogData'];
+  warnings: string[];
 }> => {
   const { specResults, checks, changelogData, warnings } = await compute(
     [baseFile, headFile],
     config,
     options
   );
-  const diffResults = { checks, specResults };
+  const diffResults = { checks, specResults, changelogData, warnings };
 
   if (options.json) {
     console.log(
@@ -310,9 +312,15 @@ const getDiffAction =
     }
 
     if (config.isInCi) {
-      // dump results to a file to pass in to comment
-      // writeDataForCi([{
-      // }])
+      await writeDataForCi([
+        {
+          warnings: diffResult.warnings,
+          groupedDiffs: diffResult.changelogData,
+          name: file1,
+          results: diffResult.specResults.results,
+          url: maybeUrl,
+        },
+      ]);
     }
 
     if (!options.web && !options.json) {
