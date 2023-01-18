@@ -1,4 +1,5 @@
 import { program as cli } from 'commander';
+import updateNotifier from 'update-notifier';
 import { initSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import {
   flushEvents,
@@ -22,6 +23,8 @@ import { registerDiffAll } from './commands/diff/diff-all';
 import { registerSpecPush } from './commands/spec/push';
 import { registerLogin } from './commands/login/login';
 import { registerCiComment } from './commands/ci/comment/comment';
+import { logger } from './logger';
+import chalk from 'chalk';
 
 const packageJson = require('../package.json');
 
@@ -47,6 +50,26 @@ export const initCli = async () => {
       await flushEvents();
       // we can ignore non-critical tracking errors
     } catch (e) {}
+  });
+
+  const notifier = updateNotifier({
+    pkg: {
+      name: packageJson.name,
+      version: packageJson.version,
+    },
+  });
+
+  cli.hook('postAction', async () => {
+    if (notifier.update) {
+      logger.info(
+        `
+${chalk.green(chalk.bold(`New Optic version available:`))} ${
+          notifier.update.latest
+        } (current ${notifier.update.current})
+
+Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
+      );
+    }
   });
 
   const cliConfig = await initializeConfig();

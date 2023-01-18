@@ -32,7 +32,9 @@ export class OpticBackendClient extends JsonHttpClient {
       : 'https://app.useoptic.com';
   }
 
-  public getTokenOrgs(): Promise<{ id: string; name: string }[]> {
+  public getTokenOrgs(): Promise<{
+    organizations: { id: string; name: string }[];
+  }> {
     return this.getJson(`/api/token/orgs`);
   }
 

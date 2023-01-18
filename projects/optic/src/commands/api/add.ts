@@ -89,7 +89,7 @@ async function getOrganizationToUploadTo(client: OpticBackendClient): Promise<
 > {
   let org: { id: string; name: string };
 
-  const organizations = await client.getTokenOrgs();
+  const { organizations } = await client.getTokenOrgs();
   if (organizations.length > 1) {
     const response = await prompts({
       type: 'select',
