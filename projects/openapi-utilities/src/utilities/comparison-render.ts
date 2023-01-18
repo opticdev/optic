@@ -244,7 +244,7 @@ export function* generateComparisonLogsV2(
   ).length;
   const passedNumberOfChecks = totalNumberOfChecks - failedNumberOfChecks;
   const groupedResults = groupBy(comparison.results, (result) => {
-    // Openapi V3 specific
+    // OpenAPIV3 assumption
     const parts = jsonPointerHelpers.decode(result.location.jsonPath);
     if (parts.length >= 3 && parts[0] === 'paths') {
       const location = getLocation({

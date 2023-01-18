@@ -93,6 +93,7 @@ export {
   getOperationsModifsLabel,
   countOperationsModifications,
   getLabel,
+  getOperationsChangedLabel,
 } from './utilities/count-changed-operations';
 
 export { compareSpecs } from './compare-specs/compare-specs';
