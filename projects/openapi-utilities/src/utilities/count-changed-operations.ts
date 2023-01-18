@@ -1,8 +1,6 @@
-import { OpenAPIV3 } from 'openapi-types';
-import { getTypeofDiffs, ObjectDiff, typeofDiff } from '../diff/diff';
+import { getTypeofDiffs } from '../diff/diff';
 import { isChangeVariant } from '../openapi3/sdk/isType';
 import { OpenApiKind, IChange, ChangeType } from '../openapi3/sdk/types';
-import { getLocation } from '../openapi3/traverser';
 import { GroupedDiffs } from '../openapi3/group-diff';
 
 const getChangeOperationId = (change: IChange) => {
