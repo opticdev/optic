@@ -37,7 +37,7 @@ setupTestServer(({ url, method }) => {
   } else if (method === 'GET' && /\/api\/ruleset-configs/.test(url)) {
     // a return value means it exists
     return JSON.stringify({});
-  } else if (method === 'POST' && /\/api\/api\/create/.test(url)) {
+  } else if (method === 'POST' && /\/api\/api/.test(url)) {
     return JSON.stringify({ id: 'api-id' });
   }
 
