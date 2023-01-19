@@ -32,7 +32,7 @@ tasks:
   test:
     desc: Test
     cmds:
-      - yarn workspaces foreach -pv --no-private run ws:test
+      - yarn workspaces foreach -pv --no-private run ws:test {{.CLI_ARGS}}
 
   update-snapshots:
     desc: Update snapshots
