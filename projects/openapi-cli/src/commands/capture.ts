@@ -141,10 +141,6 @@ export async function captureCommand(): Promise<Command> {
 
           for await (let line of lines) {
             if (line.trim().length === 0) {
-              if (process.stdin.isTTY) {
-                readline.moveCursor(process.stdin, 0, -1);
-                readline.clearLine(process.stdin, 1);
-              }
               sourcesController.abort();
             }
           }
