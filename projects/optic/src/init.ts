@@ -25,6 +25,7 @@ import { registerLogin } from './commands/login/login';
 import { registerCiComment } from './commands/ci/comment/comment';
 import { logger } from './logger';
 import chalk from 'chalk';
+import { registerDereference } from './commands/dereference/dereference';
 
 const packageJson = require('../package.json');
 
@@ -78,8 +79,21 @@ Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
   cli.addHelpCommand(false);
 
   registerDiff(cli, cliConfig);
+
+  const oas = cli.command('oas');
+  oas.description(
+    'generate OpenAPI operations and patches based on API traffic. See `optic oas --help`'
+  );
+  // commands for tracking changes with openapi
+  oas.addCommand(await captureCommand());
+  oas.addCommand(await newCommand());
+  oas.addCommand(await captureCertCommand());
+  oas.addCommand(await clearCommand());
+  oas.addCommand(await verifyCommand());
+
   registerDiffAll(cli, cliConfig);
   registerLogin(cli, cliConfig);
+  registerDereference(cli, cliConfig);
 
   const rulesetSubcommands = cli
     .command('ruleset')
@@ -98,17 +112,6 @@ Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
 
   const ciSubcommands = cli.command('ci').addHelpCommand(false);
   registerCiComment(ciSubcommands, cliConfig);
-
-  const oas = cli.command('oas');
-  oas.description(
-    'generate OpenAPI operations and patches based on API traffic. See `optic oas --help`'
-  );
-  // commands for tracking changes with openapi
-  oas.addCommand(await captureCommand());
-  oas.addCommand(await newCommand());
-  oas.addCommand(await captureCertCommand());
-  oas.addCommand(await clearCommand());
-  oas.addCommand(await verifyCommand());
 
   return cli;
 };
