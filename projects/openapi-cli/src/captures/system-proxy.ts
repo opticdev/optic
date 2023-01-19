@@ -2,7 +2,7 @@ import { exec } from 'child_process';
 import url from 'url';
 import { createCommandFeedback } from '../commands/reporters/feedback';
 
-const platform: 'mac' | 'windows' | 'linux' =
+export const platform: 'mac' | 'windows' | 'linux' =
   process.platform === 'win32'
     ? 'windows'
     : process.platform === 'darwin'
