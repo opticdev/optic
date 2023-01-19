@@ -21,6 +21,7 @@ import {
 } from '@useoptic/openapi-utilities';
 import { uploadDiff } from './upload-diff';
 import { getApiFromOpticUrl, getRunUrl } from '../../utils/cloud-urls';
+import { writeDataForCi } from '../../utils/ci-data';
 
 const usage = () => `
   optic diff-all
@@ -170,11 +171,15 @@ async function computeAll(
           }`
         )
       );
-      const { specResults, checks, changelogData } = await compute(
+      const { specResults, checks, changelogData, warnings } = await compute(
         [fromParseResults, toParseResults],
         config,
         options
       );
+
+      for (const warning of warnings) {
+        logger.warn(warning);
+      }
 
       if (specResults.diffs.length === 0) {
         logger.info('No changes were detected');
@@ -209,7 +214,24 @@ async function computeAll(
         logger.info('');
       }
 
+      let url: string | null = null;
+      if (config.isAuthenticated) {
+        const run = await uploadDiff(
+          {
+            from: fromParseResults,
+            to: toParseResults,
+          },
+          specResults,
+          config
+        );
+        if (run) {
+          url = getRunUrl(config.client.getWebBase(), run.orgId, run.runId);
+          logger.info(`Uploaded results of diff to ${url}`);
+        }
+      }
+
       results.push({
+        warnings,
         fromParseResults,
         toParseResults,
         specResults,
@@ -217,6 +239,7 @@ async function computeAll(
         changelogData,
         from: candidate.from,
         to: candidate.to,
+        url,
       });
     } else if (
       !toParseResults.isEmptySpec &&
@@ -239,6 +262,7 @@ type Result = Awaited<ReturnType<typeof compute>> & {
   toParseResults: ParseResult;
   from?: string;
   to?: string;
+  url: string | null;
 };
 
 type Warnings = {
@@ -304,7 +328,7 @@ async function openWebpage(
   config: OpticCliConfig
 ) {
   const analyticsData: Record<string, any> = {
-    isInCi: process.env.CI === 'true',
+    isInCi: config.isInCi,
   };
   if (!url) {
     const meta = {
@@ -386,29 +410,14 @@ const getDiffAllAction =
       options
     );
 
-    if (config.isAuthenticated) {
-      for (const result of results) {
-        const { fromParseResults, toParseResults, specResults } = result;
-        const run = await uploadDiff(
-          {
-            from: fromParseResults,
-            to: toParseResults,
-          },
-          specResults,
-          config
-        );
-        let url: string | null = null;
-        if (run) {
-          url = getRunUrl(config.client.getWebBase(), run.orgId, run.runId);
-          logger.info(`Uploaded results of diff to ${url}`);
-        }
-        if (
-          options.web &&
-          (specResults.diffs.length > 0 ||
-            (!options.check && specResults.results.length > 0))
-        ) {
-          openWebpage(url, result, config);
-        }
+    for (const result of results) {
+      const { specResults, url } = result;
+      if (
+        options.web &&
+        (specResults.diffs.length > 0 ||
+          (!options.check && specResults.results.length > 0))
+      ) {
+        openWebpage(url, result, config);
       }
     }
 
@@ -428,6 +437,28 @@ const getDiffAllAction =
         `Configure check rulesets in optic cloud or your local optic.dev.yml file.`
       );
     }
+
+    if (config.isInCi) {
+      const errors: { name: string; error: string }[] = [
+        ...warnings.unparseableFromSpec.map((spec) => ({
+          name: spec.path,
+          error: (spec.error as Error).message,
+        })),
+        ...warnings.unparseableToSpec.map((spec) => ({
+          name: spec.path,
+          error: (spec.error as Error).message,
+        })),
+      ];
+      const completedComparisons = results.map((result) => ({
+        warnings: result.warnings,
+        groupedDiffs: result.changelogData,
+        results: result.specResults.results,
+        name: result.to ?? result.from ?? 'Unknown comparison',
+        url: result.url,
+      }));
+      await writeDataForCi([...completedComparisons, ...errors]);
+    }
+
     if (options.json) {
       // Needs to be a console.log call to render over the logger.level
       console.log(

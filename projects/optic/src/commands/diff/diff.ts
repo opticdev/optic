@@ -27,6 +27,7 @@ import { generateRuleRunner } from './generate-rule-runner';
 import { OPTIC_STANDARD_KEY } from '../../constants';
 import { uploadDiff } from './upload-diff';
 import { getRunUrl } from '../../utils/cloud-urls';
+import { writeDataForCi } from '../../utils/ci-data';
 
 const description = `run a diff between two API specs`;
 
@@ -120,13 +121,15 @@ const runDiff = async (
 ): Promise<{
   checks: { passed: number; failed: number; total: number };
   specResults: Awaited<ReturnType<typeof compute>>['specResults'];
+  changelogData: Awaited<ReturnType<typeof compute>>['changelogData'];
+  warnings: string[];
 }> => {
-  const { specResults, checks, changelogData } = await compute(
+  const { specResults, checks, changelogData, warnings } = await compute(
     [baseFile, headFile],
     config,
     options
   );
-  const diffResults = { checks, specResults };
+  const diffResults = { checks, specResults, changelogData, warnings };
 
   if (options.json) {
     console.log(
@@ -139,6 +142,10 @@ const runDiff = async (
     );
     return diffResults;
   } else {
+    for (const warning of warnings) {
+      console.warn(warning);
+    }
+
     if (specResults.diffs.length === 0) {
       console.log('No changes were detected');
     } else {
@@ -247,7 +254,7 @@ const getDiffAction =
         console.log('Empty changelog: not opening web view');
       }
       const analyticsData: Record<string, any> = {
-        isInCi: process.env.CI === 'true',
+        isInCi: config.isInCi,
       };
 
       if (!maybeUrl) {
@@ -302,6 +309,18 @@ const getDiffAction =
       await open(maybeUrl, {
         wait: false,
       });
+    }
+
+    if (config.isInCi) {
+      await writeDataForCi([
+        {
+          warnings: diffResult.warnings,
+          groupedDiffs: diffResult.changelogData,
+          name: file1,
+          results: diffResult.specResults.results,
+          url: maybeUrl,
+        },
+      ]);
     }
 
     if (!options.web && !options.json) {

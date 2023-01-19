@@ -42,9 +42,10 @@ export const generateRuleRunner = async (
     config: OpticCliConfig;
   },
   checksEnabled: boolean
-): Promise<{ runner: RuleRunner; ruleNames: string[] }> => {
+): Promise<{ runner: RuleRunner; ruleNames: string[]; warnings: string[] }> => {
   let rulesets: (Ruleset | ExternalRule)[] = [];
   let ruleNames: string[] = [];
+  let warnings: string[] = [];
 
   if (checksEnabled) {
     const standard = await getStandardToUse(options);
@@ -86,10 +87,9 @@ export const generateRuleRunner = async (
     });
 
     rulesets = results.rulesets;
-    for (const warning of results.warnings) {
-      console.error(warning);
-    }
+
+    warnings.push(...results.warnings);
   }
 
-  return { runner: new RuleRunner(rulesets), ruleNames };
+  return { runner: new RuleRunner(rulesets), ruleNames, warnings };
 };

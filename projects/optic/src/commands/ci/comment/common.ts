@@ -61,14 +61,14 @@ ${results.completed
       `<tr>
 <td>
 
-[${s.apiName}](${s.opticWebUrl})
+${s.opticWebUrl ? `[${s.apiName}](${s.opticWebUrl})` : s.apiName}
 
 </td>
 <td>
 
-${getOperationsChangedLabel(s.comparison.groupedDiffs)} ([view changelog](${
-        s.opticWebUrl
-      }))
+${getOperationsChangedLabel(s.comparison.groupedDiffs)} ${
+        s.opticWebUrl ? `([view changelog](${s.opticWebUrl}))` : ''
+      }
 
 </td>
 <td>
