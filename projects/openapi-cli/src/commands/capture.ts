@@ -18,7 +18,7 @@ import {
   ProxyCertAuthority,
   ProxyInteractions,
 } from '../captures';
-import { SystemProxy } from '../captures/system-proxy';
+import { platform, SystemProxy } from '../captures/system-proxy';
 import { captureStorage } from '../captures/capture-storage';
 import { RunCommand } from '../captures/run-command';
 
@@ -141,6 +141,11 @@ export async function captureCommand(): Promise<Command> {
 
           for await (let line of lines) {
             if (line.trim().length === 0) {
+              // @todo get this working on windows. It cleans up the incremental request count but fails on windows. It's not essential
+              if (process.stdin.isTTY && platform !== 'windows') {
+                readline.moveCursor(process.stdin, 0, -1);
+                readline.clearLine(process.stdin, 1);
+              }
               sourcesController.abort();
             }
           }
