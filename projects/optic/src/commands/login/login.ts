@@ -7,7 +7,7 @@ import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/u
 import { OpticCliConfig, USER_CONFIG_PATH, readUserConfig } from '../../config';
 import { logger } from '../../logger';
 import chalk from 'chalk';
-import { OPTIC_LOGIN_PAT_LINK } from '../../constants';
+import { getNewTokenUrl } from '../../utils/cloud-urls';
 
 export const registerLogin = (cli: Command, config: OpticCliConfig) => {
   cli
@@ -32,7 +32,9 @@ const getLoginAction = (config: OpticCliConfig) => async () => {
 
   logger.info(`${chalk.blue('Generate a token below')}
 
-Create an account and generate a personal access token at ${OPTIC_LOGIN_PAT_LINK}.
+Create an account and generate a personal access token at ${getNewTokenUrl(
+    config.client.getWebBase()
+  )}.
 
 Once you've created a token, enter it below.
   

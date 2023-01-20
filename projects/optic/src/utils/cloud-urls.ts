@@ -55,3 +55,7 @@ export function getStandardsUrl(
 ) {
   return urljoin(baseUrl, `organizations/${orgId}/standards/${standardId}`);
 }
+
+export function getNewTokenUrl(baseUrl: string) {
+  return urljoin(baseUrl, 'user-settings/personal-access-token/new');
+}
