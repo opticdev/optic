@@ -7,9 +7,10 @@ import { finished } from 'stream/promises';
 import fs from 'fs-extra';
 import { ProxyCertAuthority } from '../captures';
 import { Option, Some, None } from 'ts-results';
-import readline from 'readline';
 import chalk from 'chalk';
 import path from 'path';
+import { requireAdmin } from '../require-admin';
+import { exec } from 'child_process';
 
 const platform: 'mac' | 'windows' | 'linux' =
   process.platform === 'win32'
@@ -38,30 +39,6 @@ export async function captureCertCommand(): Promise<Command> {
         return feedback.notable('CA certificate deleted for use by proxy');
       }
 
-      console.log(`We take privacy seriously. You should understand how Optic's TLS capturing works:
-
-The Optic proxy is a man-in-the-middle proxy that only runs on and logs data to your local machine. 
- 
-1. The 'capture' command assigns your system proxy settings when starting, and restores them upon exit. Most clients will respect those settings and route traffic through Optic.
-2. The Optic proxy transparently routes all traffic to its destination, even traffic it can not read.
-3. The Optic proxy is also a man-in-the-middle. It tries to read traffic to your API hostnames: i.e. localhost:3005 or https://api.example.com to learn and verify API behaviors
-
-By default, there is no way for Optic to read any TLS traffic. If you want to use Optic to read TLS traffic, it will need a trusted CA Certification. This setup wizard will:
-
-1. Generate a CA Certificate on your local machine (it will not phone it home)
-2. Add that certificate to your trust chain 
-3. Use that Cert to terminate TLS and log traffic from the target hostnames. 
-
-If you do this, you are man-in-the-middling yourself. Optic will theoretically be able to see any TLS traffic when the 'capture' command is activated.   
-You are welcome to read the source code https://github.com/opticdev/optic
-`);
-
-      const answer = await ContinueSetup();
-
-      if (!answer) {
-        process.exit(0);
-      }
-
       let maybeCa = certStore.get();
       let ca: ProxyCertAuthority;
       if (
@@ -82,21 +59,29 @@ You are welcome to read the source code https://github.com/opticdev/optic
       const destination: Writable = fs.createWriteStream(absoluteFilePath);
       await writeCert(ca, destination);
 
+      let couldAdd;
       switch (platform) {
         case 'mac': {
-          console.log(
+          await requireAdmin('Trusting certificate requires sudo. ');
+
+          couldAdd = await tryRunningCertAddCommand(
+            `security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${absoluteFilePath}`,
             `Certificate written to optic.local.cert. 
 Trust it by running this command with sudo:\n
 sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${absoluteFilePath}
 
 Once added, you can run 'capture' with TLS targets ie https://api.github.com`
           );
+
           break;
         }
+        /// kill this... it needs to write a cer file their PWD and then they need to go manually trust it, probably, we think
         case 'windows':
-          console.log(
+          await requireAdmin('Trusting certificate requires Admin.');
+          couldAdd = await tryRunningCertAddCommand(
+            `powershell "Import-Certificate -FilePath ^"C:${absoluteFilePath}^" -CertStoreLocation cert:\\CurrentUser\\Root`,
             `Certificate written to ${absoluteFilePath}. 
-             Trust it: https://techcommunity.microsoft.com/t5/windows-server-essentials-and/installing-a-self-signed-certificate-as-a-trusted-root-ca-in/ba-p/396105
+             Trust it: https://superuser.com/questions/463081/adding-self-signed-certificate-to-trusted-root-certificate-store-using-command-l
 
 Once added, you can run 'capture' with TLS targets ie https://api.github.com`
           );
@@ -109,6 +94,12 @@ Once added, you can run 'capture' with TLS targets ie https://api.github.com`
           );
           break;
       }
+
+      if (couldAdd) {
+        console.log(chalk.green('Certificate trusted'));
+        await fs.unlink(absoluteFilePath);
+      }
+
       process.exit(0);
     });
   return command;
@@ -161,28 +152,25 @@ export function getCertStore() {
 
 export type CertStore = ReturnType<typeof getCertStore>;
 
-async function ContinueSetup(): Promise<boolean> {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
+async function tryRunningCertAddCommand(
+  command: string,
+  manualInstructions: string
+) {
   return new Promise((resolve, reject) => {
-    rl.question(chalk.bold.blue('Continue setup? yes/no: '), function (answer) {
-      if (
-        answer === 'yes' ||
-        answer === 'Yes' ||
-        answer === 'y' ||
-        answer === 'Y'
-      ) {
-        resolve(true);
-      } else {
-        resolve(false);
+    console.log(`Running: "${command}"`);
+    exec(command, (err, stdout, stderr) => {
+      if (err) {
+        console.log(
+          chalk.red(
+            `could not add certificate: ${err} ${
+              stderr || ' '
+            }\nPlease follow the manual instructions`
+          )
+        );
+        console.log(manualInstructions);
+        return resolve(false);
       }
-    });
-
-    rl.on('close', function () {
-      process.exit(0);
+      resolve(true);
     });
   });
 }
