@@ -24,7 +24,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apidevtools/json-schema-ref-parser@npm:^9.0.9":
+"@apidevtools/json-schema-ref-parser@npm:9.0.9":
   version: 9.0.9
   resolution: "@apidevtools/json-schema-ref-parser@npm:9.0.9"
   dependencies:
@@ -3805,7 +3805,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@useoptic/openapi-io@workspace:projects/openapi-io"
   dependencies:
-    "@apidevtools/json-schema-ref-parser": ^9.0.9
+    "@apidevtools/json-schema-ref-parser": 9.0.9
     "@babel/core": ^7.17.0
     "@babel/plugin-transform-runtime": ^7.17.0
     "@babel/preset-env": ^7.17.0
