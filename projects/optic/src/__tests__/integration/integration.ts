@@ -3,6 +3,7 @@ import http from 'http';
 import fs from 'node:fs/promises';
 import { spawn } from 'child_process';
 import path from 'node:path';
+import { AddressInfo } from 'net';
 
 const root = path.join(__dirname, '..', '..', '..');
 
@@ -79,7 +80,7 @@ export async function setupWorkspace(
 
   if (options.repo) {
     const { code: gitInitCode, combined: gitCombined } = await run(
-      'git init && git config user.email "test@useoptic.com" && git config user.name "Optic test"',
+      'git init && git config user.email "test@useoptic.com" && git config user.name "Optic test" && git config commit.gpgsign false',
       false,
       dir
     );
@@ -132,7 +133,7 @@ let server: http.Server;
 type MockHttpHandler = (req: { url: string; method: string }) => any;
 
 export let reqs: http.IncomingMessage[] = [];
-const createListener =  (handler?: MockHttpHandler) => {
+const createListener = (handler?: MockHttpHandler) => {
   return async function listener(
     req: http.IncomingMessage,
     resp: http.ServerResponse
@@ -153,9 +154,11 @@ export function setupTestServer(maybeHandler?: MockHttpHandler) {
   beforeEach(() => {
     reqs = [];
     server = http.createServer(createListener(maybeHandler));
-    server.listen(8888);
+    server.listen();
     originalBwtsHostOverride = process.env.BWTS_HOST_OVERRIDE;
-    process.env.BWTS_HOST_OVERRIDE = 'http://localhost:8888';
+    const { port } = server.address() as AddressInfo;
+
+    process.env.BWTS_HOST_OVERRIDE = `http://127.0.0.1:${port}`;
   });
 
   afterEach(() => {
