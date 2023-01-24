@@ -28,6 +28,18 @@ exports[`interpreters for operation can get raw fact details 1`] = `
   "requestBody": {
     "content": {
       "*/*": {
+        "examples": {
+          "Pet": {
+            "email": "pet@store.com",
+            "firstName": "mr",
+            "id": 123,
+            "lastName": "pet",
+            "password": "secret",
+            "phone": "123456789",
+            "userStatus": 1,
+            "username": "mr-pet",
+          },
+        },
         "schema": {
           "properties": {
             "email": {
@@ -122,6 +134,18 @@ exports[`interpreters for requestBody can get raw fact details 1`] = `
 {
   "content": {
     "*/*": {
+      "examples": {
+        "Pet": {
+          "email": "pet@store.com",
+          "firstName": "mr",
+          "id": 123,
+          "lastName": "pet",
+          "password": "secret",
+          "phone": "123456789",
+          "userStatus": 1,
+          "username": "mr-pet",
+        },
+      },
       "schema": {
         "properties": {
           "email": {
@@ -230,6 +254,18 @@ exports[`interpreters for specification can get raw fact details 1`] = `
         "requestBody": {
           "content": {
             "*/*": {
+              "examples": {
+                "Pet": {
+                  "email": "pet@store.com",
+                  "firstName": "mr",
+                  "id": 123,
+                  "lastName": "pet",
+                  "password": "secret",
+                  "phone": "123456789",
+                  "userStatus": 1,
+                  "username": "mr-pet",
+                },
+              },
               "schema": {
                 "properties": {
                   "email": {
@@ -971,6 +1007,12 @@ exports[`traversing a spec can traverse a spec (./inputs/openapi3/smallpetstore1
       "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/userStatus",
     },
     "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/examples/Pet",
+    },
+    "type": "body-example",
   },
   {
     "location": {

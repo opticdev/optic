@@ -39,7 +39,7 @@ export type FactLocation<T extends V3FactType> = T extends 'specification'
       | 'request-path'
       | 'requestBody'
   ? { pathPattern: string; method: string }
-  : T extends 'body' | 'body-example'
+  : T extends 'body'
   ?
       | {
           location: 'response';
@@ -53,6 +53,23 @@ export type FactLocation<T extends V3FactType> = T extends 'specification'
           pathPattern: string;
           method: string;
           contentType: string;
+        }
+  : T extends 'body-example'
+  ?
+      | {
+          location: 'response';
+          pathPattern: string;
+          method: string;
+          statusCode: string;
+          contentType: string;
+          exampleTrail: string[];
+        }
+      | {
+          location: 'request';
+          pathPattern: string;
+          method: string;
+          contentType: string;
+          exampleTrail: string[];
         }
   : T extends 'field'
   ?

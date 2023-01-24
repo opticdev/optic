@@ -16,6 +16,11 @@ GroupedDiffs {
           "*/*": {
             "diffs": [
               {
+                "after": "/paths/~1user/post/requestBody/content/*~1*/examples",
+                "change": "added",
+                "trail": "/examples",
+              },
+              {
                 "after": "/paths/~1user/post/requestBody/content/*~1*/schema/required",
                 "change": "added",
                 "trail": "/schema/required",

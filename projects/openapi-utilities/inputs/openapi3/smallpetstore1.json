@@ -60,6 +60,18 @@
                 "xml": {
                   "name": "User"
                 }
+              },
+              "examples": {
+                "Pet": {
+                  "id": 123,
+                  "username": "mr-pet",
+                  "firstName": "mr",
+                  "lastName": "pet",
+                  "email": "pet@store.com",
+                  "password": "secret",
+                  "phone": "123456789",
+                  "userStatus": 1
+                }
               }
             }
           },

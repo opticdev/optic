@@ -257,6 +257,11 @@ export function groupDiffsByEndpoint(
             ...location.trail,
             ...jsonPointerHelpers.decode(diffToAdd.trail),
           ]);
+        } else if ('exampleTrail' in location) {
+          diffToAdd.trail = jsonPointerHelpers.compile([
+            ...location.exampleTrail,
+            ...jsonPointerHelpers.decode(diffToAdd.trail),
+          ]);
         }
         const endpointId = getEndpointId(location);
         const body =

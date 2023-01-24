@@ -58,7 +58,7 @@ export function getLocation<T extends V3FactType>(
       pathPattern,
       method,
     } as FactLocation<T>;
-  } else if (fact.type === 'body' || fact.type === 'body-example') {
+  } else if (fact.type === 'body') {
     // 'paths', {pathPattern}, {method}, 'requestBody', 'content', {contentType}
     // OR
     // 'paths', {pathPattern}, {method}, 'responses', {statusCode}, content', {contentType}
@@ -79,6 +79,37 @@ export function getLocation<T extends V3FactType>(
         pathPattern,
         method,
         contentType,
+      } as FactLocation<T>;
+    }
+  } else if (fact.type === 'body-example') {
+    const isResponse = parts[3] === 'responses';
+    if (isResponse) {
+      const [
+        ,
+        pathPattern,
+        method,
+        ,
+        statusCode,
+        ,
+        contentType,
+        ...exampleTrail
+      ] = parts;
+      return {
+        location: 'response',
+        pathPattern,
+        method,
+        statusCode,
+        contentType,
+        exampleTrail,
+      } as FactLocation<T>;
+    } else {
+      const [, pathPattern, method, , , contentType, ...exampleTrail] = parts;
+      return {
+        location: 'request',
+        pathPattern,
+        method,
+        contentType,
+        exampleTrail,
       } as FactLocation<T>;
     }
   } else if (fact.type === 'field') {
