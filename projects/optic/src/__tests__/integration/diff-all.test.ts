@@ -40,6 +40,7 @@ describe('diff-all', () => {
     oldEnv = { ...process.env };
     process.env.LOG_LEVEL = 'info';
     process.env.OPTIC_ENV = 'local';
+    process.env.CI = 'true';
   });
 
   afterEach(() => {
