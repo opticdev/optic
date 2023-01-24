@@ -35,9 +35,9 @@ const getLoginAction = (config: OpticCliConfig) => async () => {
 
   logger.info(`${chalk.blue('Generate a token below')}
 
-Create an account and generate a personal access token at ${tokenUrl}.
-
-Once you've created a token, enter it below.
+Create an account and generate a personal access token at ${chalk.underline.blue(
+    tokenUrl
+  )}.
   
 `);
 
@@ -65,7 +65,9 @@ Once you've created a token, enter it below.
     await fs.writeFile(USER_CONFIG_PATH, JSON.stringify(newConfig), 'utf-8');
 
     logger.info(
-      chalk.green(`Successfully saved config to ${USER_CONFIG_PATH}`)
+      chalk.green(
+        `Successfully saved your personal access token to ${USER_CONFIG_PATH}`
+      )
     );
   }
 };
