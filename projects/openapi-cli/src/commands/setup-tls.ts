@@ -51,6 +51,10 @@ export async function setupTlsCommand(): Promise<Command> {
       const destination: Writable = fs.createWriteStream(absoluteFilePath);
       await writeCert(ca, destination);
 
+      console.log(
+        'Hey Optic here. We take privacy seriously so we wanted to let you know how intercepting TLS traffic works: A self-signed certificate generated on your machine (we do not have it) is added to your trust chain. That allows the Optic proxy to read TLS traffic that is sent through it. The CLI will save TLS traffic to the target host (your API) in the tmp directory. It is never sent to us and all the processing happens locally. All the code is Open Source https://github.com/opticdev/optic'
+      );
+
       switch (platform) {
         case 'mac': {
           await exitIfNotElevated(
