@@ -34,11 +34,7 @@ export const compareSpecs = async (
   from: InputSpec,
   to: InputSpec,
   ruleRunner: RuleRunner
-): Promise<{
-  diffs: ObjectDiff[];
-  results: RuleResult[];
-  version: string;
-}> => {
+): Promise<CompareSpecResults> => {
   const diffs = diff(from.jsonLike, to.jsonLike);
 
   const results = await ruleRunner.runRules({
@@ -53,4 +49,10 @@ export const compareSpecs = async (
     results,
     version: packageJson.version,
   };
+};
+
+export type CompareSpecResults = {
+  diffs: ObjectDiff[];
+  results: RuleResult[];
+  version: string;
 };
