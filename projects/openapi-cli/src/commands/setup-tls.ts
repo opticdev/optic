@@ -7,12 +7,11 @@ import { finished } from 'stream/promises';
 import fs from 'fs-extra';
 import { ProxyCertAuthority } from '../captures';
 import { Option, Some, None } from 'ts-results';
-import readline from 'readline';
 import chalk from 'chalk';
 import path from 'path';
 import { exitIfNotElevated, platform, runCommand } from '../shell-utils';
 
-export async function captureCertCommand(): Promise<Command> {
+export async function setupTlsCommand(): Promise<Command> {
   const command = new Command('setup-tls');
 
   const feedback = createCommandFeedback(command);

@@ -10,7 +10,7 @@ import { verifyCommand } from './commands/verify';
 import { CliConfig, readConfig } from './config';
 import { trackEvent } from './segment';
 import { clearCommand } from './commands/clear';
-import { captureCertCommand } from './commands/setup-tls';
+import { setupTlsCommand } from './commands/setup-tls';
 
 export async function makeCli(config: CliConfig) {
   const cli = new Command('oas');
@@ -20,7 +20,7 @@ export async function makeCli(config: CliConfig) {
 
   cli.addCommand(await captureCommand());
   cli.addCommand(await newCommand());
-  cli.addCommand(await captureCertCommand());
+  cli.addCommand(await setupTlsCommand());
   cli.addCommand(await clearCommand());
   cli.addCommand(await verifyCommand());
   // registerDebugTemplateCommand(cli);
