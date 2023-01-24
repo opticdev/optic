@@ -87,7 +87,7 @@ Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
   // commands for tracking changes with openapi
   oas.addCommand(await captureCommand());
   oas.addCommand(await newCommand());
-  oas.addCommand(await captureCertCommand());
+  oas.addCommand(await setupTlsCommand());
   oas.addCommand(await clearCommand());
   oas.addCommand(await verifyCommand());
 
