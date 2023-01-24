@@ -241,7 +241,12 @@ const getDiffAction =
         config
       );
       if (run) {
-        maybeUrl = getRunUrl(config.client.getWebBase(), run.orgId, run.runId);
+        maybeUrl = getRunUrl(
+          config.client.getWebBase(),
+          run.orgId,
+          run.apiId,
+          run.runId
+        );
         console.log(`Uploaded results of diff to ${maybeUrl}`);
       }
     }
