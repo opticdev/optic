@@ -225,7 +225,12 @@ async function computeAll(
           config
         );
         if (run) {
-          url = getRunUrl(config.client.getWebBase(), run.orgId, run.runId);
+          url = getRunUrl(
+            config.client.getWebBase(),
+            run.orgId,
+            run.apiId,
+            run.runId
+          );
           logger.info(`Uploaded results of diff to ${url}`);
         }
       }

@@ -9,7 +9,7 @@ export async function uploadDiff(
   specs: { from: ParseResult; to: ParseResult },
   specResults: Parameters<typeof uploadRun>['1']['specResults'],
   config: OpticCliConfig
-): Promise<{ runId: string; orgId: string } | null> {
+): Promise<{ runId: string; apiId: string; orgId: string } | null> {
   const opticUrl: string | null =
     specs.to.jsonLike[OPTIC_URL_KEY] ??
     specs.from.jsonLike[OPTIC_URL_KEY] ??
@@ -55,6 +55,7 @@ export async function uploadDiff(
       specResults,
     });
     return {
+      apiId: specDetails.apiId,
       runId: run.id,
       orgId: specDetails.orgId,
     };

@@ -141,6 +141,7 @@ const getSpecPushAction =
     const url = getSpecUrl(
       config.client.getWebBase(),
       specDetails.orgId,
+      specDetails.apiId,
       specId
     );
 
