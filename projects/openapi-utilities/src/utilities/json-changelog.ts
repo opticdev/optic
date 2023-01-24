@@ -40,12 +40,14 @@ const getDetailsDiff = (change: RawChange<any>): ChangedNode['attributes'] => {
         ? {
             before: undefined,
             after: change.added,
+            change: 'added',
           }
         : change.changed
-        ? change.changed
+        ? { ...change.changed, change: 'changed' }
         : {
             before: change.removed,
             after: undefined,
+            change: 'removed',
           }),
     },
   ];
@@ -54,7 +56,12 @@ const getDetailsDiff = (change: RawChange<any>): ChangedNode['attributes'] => {
 type ChangedNode = {
   name: string;
   change: 'added' | 'removed' | 'changed' | null;
-  attributes: { key: string; before: any; after: any }[];
+  attributes: {
+    key: string;
+    before: any;
+    after: any;
+    change: 'added' | 'changed' | 'removed';
+  }[];
 };
 
 type OperationChangelog = ChangedNode & {
