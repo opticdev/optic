@@ -23,6 +23,7 @@ beforeEach(() => {
   oldEnv = { ...process.env };
   process.env.LOG_LEVEL = 'info';
   process.env.OPTIC_ENV = 'local';
+  process.env.CI = 'false';
 });
 
 afterEach(() => {
@@ -160,6 +161,7 @@ describe('diff', () => {
       );
 
       process.env.OPTIC_TOKEN = '123';
+      process.env.CI = 'true';
 
       const { combined, code } = await runOptic(
         workspace,
