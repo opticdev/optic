@@ -96,8 +96,6 @@ Run the \`optic api add\` command to add these specs to optic
 specwithoutkey.json
 specwithoutkey.yml
 
-Configure check rulesets in optic cloud or your local optic.dev.yml file.
-[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
 
