@@ -10,7 +10,7 @@ import { verifyCommand } from './commands/verify';
 import { CliConfig, readConfig } from './config';
 import { trackEvent } from './segment';
 import { clearCommand } from './commands/clear';
-import { captureCertCommand } from './commands/capture-cert';
+import { setupTlsCommand } from './commands/setup-tls';
 
 export async function makeCli(config: CliConfig) {
   const cli = new Command('oas');
@@ -20,7 +20,7 @@ export async function makeCli(config: CliConfig) {
 
   cli.addCommand(await captureCommand());
   cli.addCommand(await newCommand());
-  cli.addCommand(await captureCertCommand());
+  cli.addCommand(await setupTlsCommand());
   cli.addCommand(await clearCommand());
   cli.addCommand(await verifyCommand());
   // registerDebugTemplateCommand(cli);
@@ -41,10 +41,10 @@ export async function runCli(packageManifest?: {
     distTag: config.updateNotifier.distTag,
   }).notify();
 
-  console.log('oas commands are now part of the optic cli');
-  console.log(
-    'Updated documented is at: http://useoptic.com/docs/document-existing-api\n\n'
-  );
+  // console.log('oas commands are now part of the optic cli');
+  // console.log(
+  //   'Updated documented is at: http://useoptic.com/docs/document-existing-api\n\n'
+  // );
 
   const cli = await makeCli(config);
   const feedback = createCommandFeedback(cli);

@@ -10,7 +10,7 @@ import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { trackCompletion } from '../segment';
 import logNode from 'log-node';
 
-import { getCertStore } from './capture-cert';
+import { getCertStore } from './setup-tls';
 import {
   CapturedInteraction,
   HarEntries,
@@ -18,9 +18,10 @@ import {
   ProxyCertAuthority,
   ProxyInteractions,
 } from '../captures';
-import { platform, SystemProxy } from '../captures/system-proxy';
+import { SystemProxy } from '../captures/system-proxy';
 import { captureStorage } from '../captures/capture-storage';
 import { RunCommand } from '../captures/run-command';
+import { platform } from '../shell-utils';
 
 export async function captureCommand(): Promise<Command> {
   const command = new Command('capture');
