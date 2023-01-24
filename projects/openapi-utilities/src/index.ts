@@ -98,7 +98,7 @@ export {
 
 export { compareSpecs } from './compare-specs/compare-specs';
 export { groupDiffsByEndpoint } from './openapi3/group-diff';
-export { ObjectDiff, typeofDiff, diff } from './diff/diff';
+export { ObjectDiff, typeofDiff, diff, reconcileDiff } from './diff/diff';
 export { RuleResult } from './new-types';
 export { OpenApiV3Traverser } from './openapi3/traverser';
 

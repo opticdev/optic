@@ -232,7 +232,7 @@ export function diff(before: any, after: any): ObjectDiff[] {
   return diffResults;
 }
 
-export function reconcilePath(diff: ObjectDiff): ObjectDiff {
+export function reconcileDiff(diff: ObjectDiff): ObjectDiff {
   if (diff.pathReconciliation) {
     const previousPath = diff.before;
     const parts = jsonPointerHelpers.decode(previousPath);

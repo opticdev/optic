@@ -1,5 +1,5 @@
 import { describe, test, expect } from '@jest/globals';
-import { diff, ObjectDiff, reconcilePath } from '../diff';
+import { diff, ObjectDiff, reconcileDiff } from '../diff';
 import { before, after } from './mock-data';
 
 describe('diff openapi', () => {
@@ -142,7 +142,7 @@ describe('path reconciliation', () => {
       pathReconciliation: [[1, '2']],
     } as ObjectDiff;
 
-    expect(reconcilePath(diff)).toEqual({
+    expect(reconcileDiff(diff)).toEqual({
       before: '/parameters/2/nested/schema/removeme',
       pathReconciliation: [],
     });
