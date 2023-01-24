@@ -37,7 +37,7 @@ const getLoginAction = (config: OpticCliConfig) => async () => {
 
 Create an account and generate a personal access token at ${chalk.underline.blue(
     tokenUrl
-  )}.
+  )}
   
 `);
 
