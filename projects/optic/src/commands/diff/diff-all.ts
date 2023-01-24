@@ -437,7 +437,7 @@ const getDiffAllAction =
       );
     }
 
-    if (options.check) {
+    if (options.check && !config.isInCi) {
       logger.info(
         `Configure check rulesets in optic cloud or your local optic.dev.yml file.`
       );
@@ -486,7 +486,7 @@ const getDiffAllAction =
       );
     }
 
-    if (!options.web) {
+    if (!options.web && !config.isInCi) {
       logger.info(
         chalk.blue(
           `Rerun this command with the --web flag to view the detailed changes in your browser`
