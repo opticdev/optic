@@ -35,17 +35,22 @@ export function getApiUrl(
 export function getRunUrl(
   baseUrl: string,
   orgId: string,
+  apiId: string,
   runId: string
 ): string {
-  return urljoin(baseUrl, `organizations/${orgId}/runs/${runId}`);
+  return urljoin(baseUrl, `organizations/${orgId}/apis/${apiId}/runs/${runId}`);
 }
 
 export function getSpecUrl(
   baseUrl: string,
   orgId: string,
+  apiId: string,
   specId: string
 ): string {
-  return urljoin(baseUrl, `organizations/${orgId}/specs/${specId}`);
+  return urljoin(
+    baseUrl,
+    `organizations/${orgId}/apis/${apiId}/specs/${specId}`
+  );
 }
 
 export function getStandardsUrl(
@@ -53,7 +58,10 @@ export function getStandardsUrl(
   orgId: string,
   standardId: string
 ) {
-  return urljoin(baseUrl, `organizations/${orgId}/standards/${standardId}`);
+  return urljoin(
+    baseUrl,
+    `organizations/${orgId}/settings/standards/${standardId}`
+  );
 }
 
 export function getNewTokenUrl(baseUrl: string) {
