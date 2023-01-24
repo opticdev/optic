@@ -10,13 +10,7 @@ import { Option, Some, None } from 'ts-results';
 import readline from 'readline';
 import chalk from 'chalk';
 import path from 'path';
-
-const platform: 'mac' | 'windows' | 'linux' =
-  process.platform === 'win32'
-    ? 'windows'
-    : process.platform === 'darwin'
-    ? 'mac'
-    : 'linux';
+import { exitIfNotElevated, platform, runCommand } from '../shell-utils';
 
 export async function captureCertCommand(): Promise<Command> {
   const command = new Command('setup-tls');
@@ -36,30 +30,6 @@ export async function captureCertCommand(): Promise<Command> {
       if (options.del) {
         certStore.delete();
         return feedback.notable('CA certificate deleted for use by proxy');
-      }
-
-      console.log(`We take privacy seriously. You should understand how Optic's TLS capturing works:
-
-The Optic proxy is a man-in-the-middle proxy that only runs on and logs data to your local machine. 
- 
-1. The 'capture' command assigns your system proxy settings when starting, and restores them upon exit. Most clients will respect those settings and route traffic through Optic.
-2. The Optic proxy transparently routes all traffic to its destination, even traffic it can not read.
-3. The Optic proxy is also a man-in-the-middle. It tries to read traffic to your API hostnames: i.e. localhost:3005 or https://api.example.com to learn and verify API behaviors
-
-By default, there is no way for Optic to read any TLS traffic. If you want to use Optic to read TLS traffic, it will need a trusted CA Certification. This setup wizard will:
-
-1. Generate a CA Certificate on your local machine (it will not phone it home)
-2. Add that certificate to your trust chain 
-3. Use that Cert to terminate TLS and log traffic from the target hostnames. 
-
-If you do this, you are man-in-the-middling yourself. Optic will theoretically be able to see any TLS traffic when the 'capture' command is activated.   
-You are welcome to read the source code https://github.com/opticdev/optic
-`);
-
-      const answer = await ContinueSetup();
-
-      if (!answer) {
-        process.exit(0);
       }
 
       let maybeCa = certStore.get();
@@ -84,13 +54,34 @@ You are welcome to read the source code https://github.com/opticdev/optic
 
       switch (platform) {
         case 'mac': {
-          console.log(
-            `Certificate written to optic.local.cert. 
-Trust it by running this command with sudo:\n
-sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${absoluteFilePath}
-
-Once added, you can run 'capture' with TLS targets ie https://api.github.com`
+          await exitIfNotElevated(
+            'Run this command with sudo to trust the certificate'
           );
+
+          console.log(
+            'Trusting Cert. This may take a few seconds. If you see a Keychain prompt appear, enter your password'
+          );
+
+          try {
+            await runCommand(
+              `security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${absoluteFilePath}`
+            );
+            console.log(
+              chalk.green(
+                "Certificate trusted. 'oas capture' can now see traffic sent to https hosts when Optic is running"
+              )
+            );
+            await fs.unlink(absoluteFilePath);
+          } catch (e) {
+            console.error(chalk.red('Error trusting certificate ' + e));
+            console.error(
+              chalk.red(
+                'Try trusting it manually. It has been written to  ' +
+                  absoluteFilePath
+              )
+            );
+          }
+
           break;
         }
         case 'windows':
@@ -160,29 +151,3 @@ export function getCertStore() {
 }
 
 export type CertStore = ReturnType<typeof getCertStore>;
-
-async function ContinueSetup(): Promise<boolean> {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  return new Promise((resolve, reject) => {
-    rl.question(chalk.bold.blue('Continue setup? yes/no: '), function (answer) {
-      if (
-        answer === 'yes' ||
-        answer === 'Yes' ||
-        answer === 'y' ||
-        answer === 'Y'
-      ) {
-        resolve(true);
-      } else {
-        resolve(false);
-      }
-    });
-
-    rl.on('close', function () {
-      process.exit(0);
-    });
-  });
-}
