@@ -16,7 +16,7 @@ import { registerRulesetInit } from './commands/ruleset/init';
 import { registerApiAdd } from './commands/api/add';
 import { captureCommand } from '@useoptic/openapi-cli/build/commands/capture';
 import { newCommand } from '@useoptic/openapi-cli/build/commands/new';
-import { captureCertCommand } from '@useoptic/openapi-cli/build/commands/capture-cert';
+import { setupTlsCommand } from '@useoptic/openapi-cli/build/commands/setup-tls';
 import { clearCommand } from '@useoptic/openapi-cli/build/commands/clear';
 import { verifyCommand } from '@useoptic/openapi-cli/build/commands/verify';
 import { registerDiffAll } from './commands/diff/diff-all';
@@ -87,7 +87,7 @@ Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
   // commands for tracking changes with openapi
   oas.addCommand(await captureCommand());
   oas.addCommand(await newCommand());
-  oas.addCommand(await captureCertCommand());
+  oas.addCommand(await setupTlsCommand());
   oas.addCommand(await clearCommand());
   oas.addCommand(await verifyCommand());
 

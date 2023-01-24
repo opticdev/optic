@@ -1,13 +1,6 @@
-import { exec } from 'child_process';
 import url from 'url';
 import { createCommandFeedback } from '../commands/reporters/feedback';
-
-export const platform: 'mac' | 'windows' | 'linux' =
-  process.platform === 'win32'
-    ? 'windows'
-    : process.platform === 'darwin'
-    ? 'mac'
-    : 'linux';
+import { platform, runCommand } from '../shell-utils';
 
 export class SystemProxy {
   constructor(
@@ -78,16 +71,4 @@ export async function chooseInterfaceMac() {
     }
   });
   return name || 'Wi-Fi';
-}
-
-async function runCommand(command: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    exec(command, (err, stdout, stderr) => {
-      if (err) {
-        console.error(`exec error: ${err}`);
-        return reject(err);
-      }
-      resolve(stdout);
-    });
-  });
 }

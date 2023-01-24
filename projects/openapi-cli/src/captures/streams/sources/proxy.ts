@@ -51,14 +51,6 @@ export class ProxyInteractions {
         'targetHost must be a valid host (hostname:port)'
       ); // port optional
 
-    if (protocol === 'https:') {
-      console.log(
-        chalk.gray(
-          'Target uses TLS. If traffic is not being captured run "oas setup-tls"'
-        )
-      );
-    }
-
     const capturingProxy = mockttp.getLocal({
       cors: false,
       debug: false,
@@ -158,7 +150,27 @@ export class ProxyInteractions {
       requestsById.delete(id);
     }
 
-    await capturingProxy.on('response', onResponse);
+    let alreadyLoggedTlsError = false;
+    function onTLSError(error) {
+      if (
+        !alreadyLoggedTlsError &&
+        protocol === 'https:' &&
+        error.failureCause === 'cert-rejected' &&
+        targetHost === error.hostname
+      ) {
+        alreadyLoggedTlsError = true;
+        console.error(
+          chalk.red(
+            '\nYou are trying to intercept a https host without a trusted certificate for the Optic Proxy.\nYou need to run "optic oas setup-tls" to generate and trust a certificate'
+          )
+        );
+      }
+    }
+
+    await Promise.all([
+      capturingProxy.on('response', onResponse),
+      capturingProxy.on('tls-client-error', onTLSError),
+    ]);
 
     abort.addEventListener('abort', onAbort);
 
@@ -167,6 +179,7 @@ export class ProxyInteractions {
     });
 
     function onAbort(e) {
+      capturingProxy.reset();
       interactions.onCompleted();
     }
 
@@ -210,6 +223,7 @@ export class ProxyInteractions {
 
     const stream = (async function* () {
       yield* interactions.iterator;
+      capturingProxy.reset();
       await capturingProxy.stop();
       await transparentProxy.stop();
     })();
@@ -261,11 +275,12 @@ export class ProxyCertAuthority {
     const cert = pki.createCertificate();
     cert.publicKey = keyPair.publicKey;
     cert.serialNumber = generateSerialNumber();
+    const curYear = new Date().getFullYear();
 
     cert.validity.notBefore = new Date();
     cert.validity.notBefore.setDate(cert.validity.notBefore.getDate() - 1); // account for wonky time keeping
     cert.validity.notAfter = new Date();
-    cert.validity.notAfter.setDate(cert.validity.notAfter.getDate() + 30);
+    cert.validity.notAfter.setFullYear(curYear + 2);
 
     cert.setSubject([
       {
@@ -425,7 +440,7 @@ class TransparentProxy {
                 });
 
                 clientSocket.write(
-                  `HTTP/${req.httpVersion} 200 Connection Establishe d\r\nProxy-agent: Optic Transparent proxy\r\n\r\n`
+                  `HTTP/${req.httpVersion} 200 Connection Established\r\nProxy-agent: Optic Transparent proxy\r\n\r\n`
                 );
                 serverSocket.write(reqHead);
                 clientSocket.pipe(serverSocket);
