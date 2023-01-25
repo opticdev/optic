@@ -11,7 +11,6 @@ import { registerDiff } from './commands/diff/diff';
 import { registerRulesetUpload } from './commands/ruleset/upload';
 
 import { initializeConfig } from './config';
-import { getAnonId } from './utils/anonymous-id';
 import { registerRulesetInit } from './commands/ruleset/init';
 import { registerApiAdd } from './commands/api/add';
 import { captureCommand } from '@useoptic/openapi-cli/build/commands/capture';
@@ -43,8 +42,7 @@ export const initCli = async () => {
       } else {
         [commandName, ...args] = command.args;
       }
-      const anonymousId = await getAnonId();
-      trackEvent(`optic.${commandName}`, anonymousId, {
+      trackEvent(`optic.${commandName}`, {
         args,
         isInCi: process.env.CI === 'true',
       });

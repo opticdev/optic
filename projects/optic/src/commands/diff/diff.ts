@@ -20,7 +20,6 @@ import {
   flushEvents,
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
-import { getAnonId } from '../../utils/anonymous-id';
 import { compute } from './compute';
 import { compressData, compressDataV2 } from './compressResults';
 import { generateRuleRunner } from './generate-rule-runner';
@@ -311,8 +310,7 @@ const getDiffAction =
         maybeUrl = `${config.client.getWebBase()}/cli/diff#${compressedData}`;
         await flushEvents();
       }
-      const anonymousId = await getAnonId();
-      trackEvent('optic.diff.view_web', anonymousId, analyticsData);
+      trackEvent('optic.diff.view_web', analyticsData);
       await open(maybeUrl, {
         wait: false,
       });

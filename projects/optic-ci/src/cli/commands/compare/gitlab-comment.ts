@@ -46,13 +46,17 @@ export const sendGitlabMessage = async ({
       pull_number
     );
 
-    trackEvent('optic_ci.gitlab_comment', `${owner}-optic-ci`, {
-      owner,
-      repo,
-      pull_number,
-      org_repo_pr: `${owner}/${repo}/${pull_number}`,
-      number_of_reviewers: reviewers.length,
-    });
+    trackEvent(
+      'optic_ci.gitlab_comment',
+      {
+        owner,
+        repo,
+        pull_number,
+        org_repo_pr: `${owner}/${repo}/${pull_number}`,
+        number_of_reviewers: reviewers.length,
+      },
+      `${owner}-optic-ci`
+    );
   } catch (e) {
     console.error(e);
     throw new UserError();
