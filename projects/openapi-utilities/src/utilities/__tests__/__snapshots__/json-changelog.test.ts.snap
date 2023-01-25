@@ -806,12 +806,12 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "PUT /user/{username}",
       "parameters": [],
       "requestBody": {
         "attributes": [],
-        "change": null,
+        "change": "changed",
         "contentTypes": [
           {
             "attributes": [
@@ -888,14 +888,14 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "GET /user/{username}",
       "parameters": [],
       "requestBody": undefined,
       "responses": [
         {
           "attributes": [],
-          "change": null,
+          "change": "changed",
           "contentTypes": [
             {
               "attributes": [
@@ -1038,7 +1038,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
         },
         {
           "attributes": [],
-          "change": null,
+          "change": "changed",
           "contentTypes": [
             {
               "attributes": [
@@ -1076,14 +1076,14 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "GET /user/login",
       "parameters": [],
       "requestBody": undefined,
       "responses": [
         {
           "attributes": [],
-          "change": null,
+          "change": "changed",
           "contentTypes": [],
           "name": "200 response",
         },
@@ -1091,12 +1091,12 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "POST /user/createWithList",
       "parameters": [],
       "requestBody": {
         "attributes": [],
-        "change": null,
+        "change": "changed",
         "contentTypes": [
           {
             "attributes": [
@@ -1251,12 +1251,12 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "POST /user/createWithArray",
       "parameters": [],
       "requestBody": {
         "attributes": [],
-        "change": null,
+        "change": "changed",
         "contentTypes": [
           {
             "attributes": [
@@ -1411,12 +1411,12 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "POST /user",
       "parameters": [],
       "requestBody": {
         "attributes": [],
-        "change": null,
+        "change": "changed",
         "contentTypes": [
           {
             "attributes": [
@@ -1493,14 +1493,14 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "DELETE /store/order/{orderId}",
       "parameters": [],
       "requestBody": undefined,
       "responses": [
         {
           "attributes": [],
-          "change": null,
+          "change": "changed",
           "contentTypes": [
             {
               "attributes": [
@@ -1538,14 +1538,14 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "GET /store/order/{orderId}",
       "parameters": [],
       "requestBody": undefined,
       "responses": [
         {
           "attributes": [],
-          "change": null,
+          "change": "changed",
           "contentTypes": [
             {
               "attributes": [
@@ -1646,7 +1646,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
         },
         {
           "attributes": [],
-          "change": null,
+          "change": "changed",
           "contentTypes": [
             {
               "attributes": [
@@ -1684,12 +1684,12 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "POST /store/order",
       "parameters": [],
       "requestBody": {
         "attributes": [],
-        "change": null,
+        "change": "changed",
         "contentTypes": [
           {
             "attributes": [
@@ -1737,7 +1737,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
       "responses": [
         {
           "attributes": [],
-          "change": null,
+          "change": "changed",
           "contentTypes": [
             {
               "attributes": [
@@ -1840,7 +1840,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "POST /pet/{petId}/uploadImage",
       "parameters": [
         {
@@ -1965,7 +1965,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
         },
         {
           "attributes": [],
-          "change": null,
+          "change": "changed",
           "contentTypes": [
             {
               "attributes": [
@@ -2030,7 +2030,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
       "parameters": [],
       "requestBody": {
         "attributes": [],
-        "change": null,
+        "change": "changed",
         "contentTypes": [
           {
             "attributes": [
@@ -2054,12 +2054,12 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "PUT /pet",
       "parameters": [],
       "requestBody": {
         "attributes": [],
-        "change": null,
+        "change": "changed",
         "contentTypes": [
           {
             "attributes": [
@@ -2223,7 +2223,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
       "responses": [
         {
           "attributes": [],
-          "change": null,
+          "change": "changed",
           "contentTypes": [
             {
               "attributes": [

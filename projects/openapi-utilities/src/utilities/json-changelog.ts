@@ -129,7 +129,7 @@ function getEndpointLogs(
 
   return {
     name: `${method} ${path}`,
-    change: operationChange,
+    change: operationChange ?? 'changed',
     attributes: operationChange
       ? diffs.flatMap((diff) => {
           const rawChange = getRawChange(diff, specs);
@@ -163,7 +163,7 @@ function getResponseChangeLogs(
   // TODO this is missing response-headers
   return {
     name: `${statusCode} response`,
-    change: responseChange,
+    change: responseChange ?? 'changed',
     attributes: responseChange
       ? response.diffs.flatMap((diff) => {
           const rawChange = getRawChange(diff, specs);
@@ -189,7 +189,7 @@ function getRequestChangeLogs(
 
   return {
     name: `Request Body`,
-    change: requestChange,
+    change: requestChange ?? 'changed',
     attributes: requestChange
       ? request.diffs.flatMap((diff) => {
           const rawChange = getRawChange(diff, specs);
