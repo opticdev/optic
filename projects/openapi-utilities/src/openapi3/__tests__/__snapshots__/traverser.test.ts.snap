@@ -36,7 +36,7 @@ exports[`interpreters for operation can get raw fact details 1`] = `
             "lastName": "pet",
             "password": "secret",
             "phone": "123456789",
-            "userStatus": 1,
+            "userStatus": "active",
             "username": "mr-pet",
           },
         },
@@ -63,8 +63,7 @@ exports[`interpreters for operation can get raw fact details 1`] = `
             },
             "userStatus": {
               "description": "User Status",
-              "format": "int32",
-              "type": "integer",
+              "type": "string",
             },
             "username": {
               "type": "string",
@@ -142,7 +141,7 @@ exports[`interpreters for requestBody can get raw fact details 1`] = `
           "lastName": "pet",
           "password": "secret",
           "phone": "123456789",
-          "userStatus": 1,
+          "userStatus": "active",
           "username": "mr-pet",
         },
       },
@@ -169,8 +168,7 @@ exports[`interpreters for requestBody can get raw fact details 1`] = `
           },
           "userStatus": {
             "description": "User Status",
-            "format": "int32",
-            "type": "integer",
+            "type": "string",
           },
           "username": {
             "type": "string",
@@ -262,7 +260,7 @@ exports[`interpreters for specification can get raw fact details 1`] = `
                   "lastName": "pet",
                   "password": "secret",
                   "phone": "123456789",
-                  "userStatus": 1,
+                  "userStatus": "active",
                   "username": "mr-pet",
                 },
               },
@@ -289,8 +287,7 @@ exports[`interpreters for specification can get raw fact details 1`] = `
                   },
                   "userStatus": {
                     "description": "User Status",
-                    "format": "int32",
-                    "type": "integer",
+                    "type": "string",
                   },
                   "username": {
                     "type": "string",
@@ -366,9 +363,23 @@ exports[`interpreters for specification can get raw fact details 1`] = `
                     "id": {
                       "type": "string",
                     },
+                    "name": {
+                      "type": "string",
+                    },
+                    "status": {
+                      "properties": {
+                        "lastLogin": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "lastLogin",
+                      ],
+                      "type": "object",
+                    },
                   },
                   "required": [
-                    "id",
+                    "name",
                   ],
                   "type": "object",
                 },
@@ -931,6 +942,84 @@ exports[`traversing a spec can traverse a spec (./inputs/openapi3/smallpetstore0
     },
     "type": "response",
   },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1login",
+    },
+    "type": "path",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1login/get",
+    },
+    "type": "operation",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1login/get/parameters/0",
+    },
+    "type": "request-query",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1login/get/parameters/1",
+    },
+    "type": "request-query",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit",
+    },
+    "type": "response-header",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1login/get/responses/200/headers/X-Expires-After",
+    },
+    "type": "response-header",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1xml",
+    },
+    "type": "body",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/properties/id",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/properties/status",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/properties/status/properties/lastLogin",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1json",
+    },
+    "type": "body",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1login/get/responses/200",
+    },
+    "type": "response",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1login/get/responses/400",
+    },
+    "type": "response",
+  },
 ]
 `;
 
@@ -1010,6 +1099,12 @@ exports[`traversing a spec can traverse a spec (./inputs/openapi3/smallpetstore1
   },
   {
     "location": {
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/examples",
+    },
+    "type": "body-examples",
+  },
+  {
+    "location": {
       "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/examples/Pet",
     },
     "type": "body-example",
@@ -1071,6 +1166,24 @@ exports[`traversing a spec can traverse a spec (./inputs/openapi3/smallpetstore1
   {
     "location": {
       "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/properties/id",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/properties/status",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/properties/status/properties/lastLogin",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/properties/name",
     },
     "type": "field",
   },
