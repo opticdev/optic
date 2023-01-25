@@ -1,13 +1,10 @@
 import stableStringify from 'json-stable-stringify';
-import {
-  CompareSpecResults,
-  ObjectDiff,
-  RuleResult,
-} from '@useoptic/openapi-utilities';
+import { CompareSpecResults } from '@useoptic/openapi-utilities';
 import { OpticBackendClient } from '../client';
 import { computeChecksum } from './checksum';
 import { uploadFileToS3 } from './s3';
 import { ParseResult } from './spec-loaders';
+import { trackEvent } from '@useoptic/openapi-utilities/build/utilities/segment';
 
 export const EMPTY_SPEC_ID = 'EMPTY';
 
@@ -17,6 +14,7 @@ export async function uploadSpec(
     spec: ParseResult;
     client: OpticBackendClient;
     tags: string[];
+    orgId: string;
   }
 ): Promise<string> {
   const stableSpecString = stableStringify(opts.spec.jsonLike);
@@ -43,6 +41,11 @@ export async function uploadSpec(
       api_id: apiId,
       tags: opts.tags,
     });
+    trackEvent('spec.added', {
+      apiId,
+      orgId: opts.orgId,
+      specId: id,
+    });
     return id;
   } else {
     return result.spec_id;
@@ -54,6 +57,7 @@ export async function uploadRun(
   opts: {
     fromSpecId: string;
     toSpecId: string;
+    orgId: string;
     client: OpticBackendClient;
     specResults: CompareSpecResults;
   }
@@ -73,10 +77,17 @@ export async function uploadRun(
     }
   );
 
-  return await opts.client.createRun({
+  const run = await opts.client.createRun({
     upload_id: result.upload_id,
     api_id: apiId,
     from_spec_id: opts.fromSpecId,
     to_spec_id: opts.toSpecId,
   });
+  trackEvent('run.added', {
+    apiId,
+    orgId: opts.orgId,
+    runId: run.id,
+  });
+
+  return run;
 }

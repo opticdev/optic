@@ -137,6 +137,7 @@ const getSpecPushAction =
       spec: parseResult,
       client: config.client,
       tags: tagsToAdd,
+      orgId: specDetails.orgId,
     });
     const url = getSpecUrl(
       config.client.getWebBase(),
