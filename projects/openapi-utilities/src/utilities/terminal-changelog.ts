@@ -10,6 +10,7 @@ import type {
 
 import { Instance as Chalk } from 'chalk';
 import { getLocation, getRaw } from '../openapi3/traverser';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 const chalk = new Chalk();
 
@@ -113,14 +114,18 @@ function* getEndpointLogs(
 
   yield* indent(getParameterLogs(specs, 'header', headerParameters));
 
-  yield* indent(getRequestChangeLogs(request));
+  yield* indent(getRequestChangeLogs(specs, request));
 
   for (const [statusCode, response] of Object.entries(responses)) {
-    yield* indent(getResponseChangeLogs(response, statusCode));
+    yield* indent(getResponseChangeLogs(specs, response, statusCode));
   }
 }
 
-function* getResponseChangeLogs(response: Response, statusCode: string) {
+function* getResponseChangeLogs(
+  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  response: Response,
+  statusCode: string
+) {
   const label = `- response ${chalk.bold(statusCode)}:`;
   const change = getTypeofDiffs(response.diffs);
 
@@ -145,11 +150,14 @@ function* getResponseChangeLogs(response: Response, statusCode: string) {
   }
 
   for (const [key, contentType] of Object.entries(response.contents)) {
-    yield* indent(getBodyChangeLogs(contentType, key));
+    yield* indent(getBodyChangeLogs(specs, contentType, key));
   }
 }
 
-function* getRequestChangeLogs(request: Endpoint['request']) {
+function* getRequestChangeLogs(
+  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  request: Endpoint['request']
+) {
   const change = getTypeofDiffs(request.diffs);
   const label = `- request:`;
 
@@ -165,12 +173,46 @@ function* getRequestChangeLogs(request: Endpoint['request']) {
   yield* indent(getDetailLogs(request.diffs));
 
   for (const [key, bodyChange] of Object.entries(request.contents)) {
-    yield* indent(getBodyChangeLogs(bodyChange, key));
+    yield* indent(getBodyChangeLogs(specs, bodyChange, key));
   }
 }
 
-function* getBodyChangeLogs(body: Body, key: string) {
-  const flatDiffs = [...Object.values(body.fields).flat(), ...body.examples];
+function getRootBodyPath(path: string): string {
+  const parts = jsonPointerHelpers.decode(path);
+  if (parts[3] === 'responses') {
+    return jsonPointerHelpers.compile(parts.slice(0, 7));
+  } else {
+    return jsonPointerHelpers.compile(parts.slice(0, 6));
+  }
+}
+
+function* getBodyChangeLogs(
+  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  body: Body,
+  key: string
+) {
+  const fieldDiffs: Diff[] = Object.entries(body.fields).map(([key, diffs]) => {
+    const firstDiffPath = diffs[0].after ?? diffs[0].before;
+
+    // TODO figure out if we need to handle path reconciliation here
+    // This might only be an issue with nested enums + rearranging + removing keys with oneOf/anyOf/allOf
+    const absolutePath = jsonPointerHelpers.join(
+      getRootBodyPath(firstDiffPath),
+      key
+    );
+    const beforeRaw = jsonPointerHelpers.tryGet(specs.from, absolutePath);
+    const afterRaw = jsonPointerHelpers.tryGet(specs.to, absolutePath);
+    const before = beforeRaw.match ? absolutePath : undefined;
+    const after = afterRaw.match ? absolutePath : undefined;
+
+    return {
+      before,
+      after,
+      trail: key,
+      change: before && after ? 'changed' : before ? 'removed' : 'added',
+    } as Diff;
+  });
+  const flatDiffs = [...fieldDiffs, ...body.examples];
   const change = getTypeofDiffs(flatDiffs);
   const label = `- body ${chalk.bold(key)}:`;
 

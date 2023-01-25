@@ -99,21 +99,21 @@ specification details:
 [1mPUT[22m /user/{username}: 
   - request: 
     - body [1m*/*[22m: 
-      - /schema/properties/bio, /schema/properties/userStatus/enum, /schema/required/2 [32madded[39m
-      - /schema/properties/userStatus/type [33mchanged[39m
-      - /schema/properties/phone, /schema/properties/userStatus/format, /schema/required/2 [31mremoved[39m
+      - /schema/properties/bio [32madded[39m
+      - /schema/properties/userStatus, /schema/properties/lastName, /schema/properties/username [33mchanged[39m
+      - /schema/properties/phone [31mremoved[39m
       
 [1mGET[22m /user/{username}: 
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 
-      - /schema/properties/bio, /schema/properties/userStatus/enum, /schema/required/2 [32madded[39m
-      - /schema/properties/userStatus/type [33mchanged[39m
-      - /schema/properties/phone, /schema/properties/userStatus/format, /schema/required/2 [31mremoved[39m
+      - /schema/properties/bio [32madded[39m
+      - /schema/properties/userStatus, /schema/properties/lastName, /schema/properties/username [33mchanged[39m
+      - /schema/properties/phone [31mremoved[39m
       
     - body [1mapplication/xml[22m: 
-      - /schema/properties/bio, /schema/properties/userStatus/enum, /schema/required/2 [32madded[39m
-      - /schema/properties/userStatus/type [33mchanged[39m
-      - /schema/properties/phone, /schema/properties/userStatus/format, /schema/required/2 [31mremoved[39m
+      - /schema/properties/bio [32madded[39m
+      - /schema/properties/userStatus, /schema/properties/lastName, /schema/properties/username [33mchanged[39m
+      - /schema/properties/phone [31mremoved[39m
       
   - response [1m404[22m: 
     - body [1mapplication/json[22m: [32madded[39m
@@ -132,23 +132,23 @@ specification details:
 [1mPOST[22m /user/createWithList: 
   - request: 
     - body [1m*/*[22m: 
-      - /schema/items/properties/bio, /schema/items/properties/userStatus/enum, /schema/items/required/2 [32madded[39m
-      - /schema/items/properties/userStatus/type [33mchanged[39m
-      - /schema/items/properties/phone, /schema/items/properties/userStatus/format, /schema/items/required/2 [31mremoved[39m
+      - /schema/items/properties/bio [32madded[39m
+      - /schema/items/properties/userStatus [33mchanged[39m
+      - /schema/items/properties/phone [31mremoved[39m
       
 [1mPOST[22m /user/createWithArray: 
   - request: 
     - body [1m*/*[22m: 
-      - /schema/items/properties/bio, /schema/items/properties/userStatus/enum, /schema/items/required/2 [32madded[39m
-      - /schema/items/properties/userStatus/type [33mchanged[39m
-      - /schema/items/properties/phone, /schema/items/properties/userStatus/format, /schema/items/required/2 [31mremoved[39m
+      - /schema/items/properties/bio [32madded[39m
+      - /schema/items/properties/userStatus [33mchanged[39m
+      - /schema/items/properties/phone [31mremoved[39m
       
 [1mPOST[22m /user: 
   - request: 
     - body [1m*/*[22m: 
-      - /schema/properties/bio, /schema/properties/userStatus/enum, /schema/required/2 [32madded[39m
-      - /schema/properties/userStatus/type [33mchanged[39m
-      - /schema/properties/phone, /schema/properties/userStatus/format, /schema/required/2 [31mremoved[39m
+      - /schema/properties/bio [32madded[39m
+      - /schema/properties/userStatus, /schema/properties/lastName, /schema/properties/username [33mchanged[39m
+      - /schema/properties/phone [31mremoved[39m
       
 [1mDELETE[22m /store/order/{orderId}: 
   - response [1m404[22m: 
@@ -157,12 +157,12 @@ specification details:
 [1mGET[22m /store/order/{orderId}: 
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 
-      - /schema/properties/summary, /schema/properties/status/enum/2 [32madded[39m
-      - /schema/properties/status/enum/1 [31mremoved[39m
+      - /schema/properties/summary [32madded[39m
+      - /schema/properties/status [33mchanged[39m
       
     - body [1mapplication/xml[22m: 
-      - /schema/properties/summary, /schema/properties/status/enum/2 [32madded[39m
-      - /schema/properties/status/enum/1, /schema/required/1 [31mremoved[39m
+      - /schema/properties/summary [32madded[39m
+      - /schema/properties/status, /schema/properties/petId [33mchanged[39m
       
   - response [1m404[22m: 
     - body [1mapplication/json[22m: [32madded[39m
@@ -170,17 +170,17 @@ specification details:
 [1mPOST[22m /store/order: 
   - request: 
     - body [1m*/*[22m: 
-      - /schema/properties/summary, /schema/properties/status/enum/2 [32madded[39m
-      - /schema/properties/status/enum/1 [31mremoved[39m
+      - /schema/properties/summary [32madded[39m
+      - /schema/properties/status [33mchanged[39m
       
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 
-      - /schema/properties/summary, /schema/properties/status/enum/2 [32madded[39m
-      - /schema/properties/status/enum/1 [31mremoved[39m
+      - /schema/properties/summary [32madded[39m
+      - /schema/properties/status [33mchanged[39m
       
     - body [1mapplication/xml[22m: 
-      - /schema/properties/summary, /schema/properties/status/enum/2 [32madded[39m
-      - /schema/properties/status/enum/1 [31mremoved[39m
+      - /schema/properties/summary [32madded[39m
+      - /schema/properties/status [33mchanged[39m
       
 [1mPOST[22m /pet/{petId}/uploadImage: 
   - cookie parameter [3mundefined[23m: [32madded[39m
@@ -193,7 +193,7 @@ specification details:
     
   - response [1mdefault[22m: 
     - body [1mapplication/json[22m: 
-      - /schema/properties/type/type [33mchanged[39m
+      - /schema/properties/type [33mchanged[39m
       
 [1mGET[22m /pet: [31mremoved[39m
   
@@ -204,8 +204,8 @@ specification details:
   - request: 
     - body [1mapplication/xml[22m: [31mremoved[39m
     - body [1mapplication/json[22m: 
-      - /schema/properties/number, /schema/required/0 [32madded[39m
-      - /schema/properties/name, /schema/required/0 [31mremoved[39m
+      - /schema/properties/number [32madded[39m
+      - /schema/properties/name [31mremoved[39m
       
   - response [1m400[22m: [31mremoved[39m
 [1mGET[22m /example: 
@@ -218,9 +218,9 @@ specification details:
     
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 
-      - /schema/properties/requiredKeys/required/0, /schema/properties/requiredKeys/required/1, /schema/properties/requiredKeys/properties/addedRequiredKey, /schema/properties/expandableObject/anyOf/1 [32madded[39m
-      - /schema/properties/toTypeArrays/type, /schema/properties/fromTypeArrays/type, /schema/properties/composedObject/allOf/0/properties/orderId/type [33mchanged[39m
-      - /schema/properties/requiredKeys/required/0, /schema/properties/requiredKeys/required/1, /schema/properties/requiredKeys/properties/deletedRequiredKey, /schema/properties/stringOrNumberOrObject/oneOf/2 [31mremoved[39m
+      - /schema/properties/requiredKeys/properties/addedRequiredKey [32madded[39m
+      - /schema/properties/toTypeArrays, /schema/properties/fromTypeArrays, /schema/properties/requiredKeys/properties/requiredToOptional, /schema/properties/requiredKeys/properties/optionalToRequired, /schema/properties/expandableObject, /schema/properties/composedObject/allOf/0/properties/orderId, /schema/properties/stringOrNumberOrObject [33mchanged[39m
+      - /schema/properties/requiredKeys/properties/deletedRequiredKey [31mremoved[39m
       
 Checks
 
@@ -693,7 +693,6 @@ exports[`diff with mock server uploads specs if authenticated 1`] = `
 [1mPATCH[22m /example: 
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 
-      - /schema/type [33mchanged[39m
       
 Checks
 
