@@ -3,28 +3,22 @@
 exports[`optic api add git - no cli interaction discover all files in repo 1`] = `
 "
 
-Will add detected APIs to organization org-blah with standard blah
-Looking for APIs in the git root ($workspace$)
-Found OpenAPI Spec at example-api-v0.json
-Uploading spec COMMIT-HASH:example-api-v0.json
-Added spec example-api-v0.json to https://app.useoptic.com/organizations/org-id/apis/api-id
-Found OpenAPI Spec at nested/speccopy2.yml
-Uploading spec COMMIT-HASH:nested/speccopy2.yml
-Added spec nested/speccopy2.yml to https://app.useoptic.com/organizations/org-id/apis/api-id
-Found OpenAPI Spec at spec.yml
-Uploading spec COMMIT-HASH:spec.yml
-Added spec spec.yml to https://app.useoptic.com/organizations/org-id/apis/api-id
+[1m[90mLooking for OpenAPI specs in the git root ($workspace$)[39m[22m
+[32m✔[39m [1m[34mEmpty[39m[22m is now being tracked.
+  [1mView history: [4mundefined[24m[22m
+[32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
+  [1mView history: [4mundefined[24m[22m
+[32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
+  [1mView history: [4mundefined[24m[22m
 "
 `;
 
 exports[`optic api add git - no cli interaction discover one file with history depth 1`] = `
 "
 
-Will add detected APIs to organization org-blah with standard blah
-Adding API ./spec.yml and traversing history to a depth of 1
-Found OpenAPI Spec at ./spec.yml
-Uploading spec COMMIT-HASH:./spec.yml
-Added spec ./spec.yml to https://app.useoptic.com/organizations/org-id/apis/api-id
+[1m[90mAdding API ./spec.yml[39m[22m
+[32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
+  [1mView history: [4mundefined[24m[22m
 "
 `;
 
@@ -58,24 +52,22 @@ x-optic-standard: blah
 exports[`optic api add no vcs - no cli interaction discover all files in repo 1`] = `
 "
 
-Will add detected APIs to organization org-blah with standard blah
-Looking for APIs in the current directory ($workspace$)
-Found OpenAPI Spec at $workspace$/example-api-v0.json
-Added spec $workspace$/example-api-v0.json to https://app.useoptic.com/organizations/org-id/apis/api-id
-Found OpenAPI Spec at $workspace$/spec.yml
-Added spec $workspace$/spec.yml to https://app.useoptic.com/organizations/org-id/apis/api-id
-Found OpenAPI Spec at $workspace$/nested/speccopy2.yml
-Added spec $workspace$/nested/speccopy2.yml to https://app.useoptic.com/organizations/org-id/apis/api-id
+[1m[90mLooking for OpenAPI specs in the current directory ($workspace$)[39m[22m
+[32m✔[39m [1m[34mEmpty[39m[22m is now being tracked.
+  [1mView history: [4mundefined[24m[22m
+[32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
+  [1mView history: [4mundefined[24m[22m
+[32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
+  [1mView history: [4mundefined[24m[22m
 "
 `;
 
 exports[`optic api add no vcs - no cli interaction discover one file with history depth 1`] = `
 "
 
-Will add detected APIs to organization org-blah with standard blah
-Adding API ./spec.yml
-Found OpenAPI Spec at $workspace$/spec.yml
-Added spec $workspace$/spec.yml to https://app.useoptic.com/organizations/org-id/apis/api-id
+[1m[90mAdding API ./spec.yml[39m[22m
+[32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
+  [1mView history: [4mundefined[24m[22m
 "
 `;
 
