@@ -124,6 +124,7 @@ jobs:
           if [ "$SKIP_PUBLISH" = "false" ]
           then
             echo "Publishing $VERSION to the "$RELEASE_CHANNEL" channel"
+            cp README.md ./projects/optic/README.md
             task publish -- --tag $RELEASE_CHANNEL
           else
             echo "SKIP_PUBLISH=$SKIP_PUBLISH"
