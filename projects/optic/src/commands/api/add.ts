@@ -3,7 +3,7 @@ import prompts from 'prompts';
 import open from 'open';
 import path from 'path';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
-
+import ora from 'ora';
 import { OpticCliConfig, VCS } from '../../config';
 import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
 import { logger } from '../../logger';
@@ -121,6 +121,14 @@ async function promptForStandard(
 ): Promise<string | undefined> {
   const existingStandards = await client.getOrgStandards(orgId);
 
+  // if empty, create default without interrupting first time users
+  if (existingStandards.length === 0) {
+    const standard = await client.createOrgStandard(orgId, [
+      { name: 'breaking-changes', config: {} },
+    ]);
+    return standard.slug;
+  }
+
   const rulesetResponse = await prompts([
     {
       type: 'confirm',
@@ -227,7 +235,9 @@ async function crawlCandidateSpecs(
   } catch (e) {
     if (path === options.path_to_spec) {
       logger.info(
-        `File ${options.path_to_spec} is not a valid OpenAPI file. Optic currently supports OpenAPI 3 and 3.1`
+        chalk.red(
+          `File ${options.path_to_spec} is not a valid OpenAPI file. Optic currently supports OpenAPI 3 and 3.1`
+        )
       );
       logger.info(e);
     } else {
@@ -237,16 +247,21 @@ async function crawlCandidateSpecs(
     return;
   }
   if (parseResult.isEmptySpec) {
-    logger.info(`File ${path} does not exist in working directory`);
+    logger.info(chalk.red(`File ${path} does not exist in working directory`));
     return;
   }
 
-  logger.info(`Found OpenAPI Spec at ${path}`);
+  const spinner = ora(`Found OpenAPI at ${path}`);
+  spinner.color = 'blue';
+
   const existingOpticUrl = parseResult.jsonLike[OPTIC_URL_KEY];
   const maybeParsedUrl = getApiFromOpticUrl(existingOpticUrl);
 
+  let alreadyTracked = false;
+
   let api: { id: string; url: string };
   if (existingOpticUrl && maybeParsedUrl) {
+    alreadyTracked = true;
     api = { id: maybeParsedUrl.apiId, url: existingOpticUrl };
   } else {
     const name = parseResult.jsonLike?.info?.title ?? path;
@@ -257,6 +272,7 @@ async function crawlCandidateSpecs(
     };
   }
 
+  let versionUploadCount = 0;
   for await (const sha of shas) {
     let parseResult: ParseResult;
     try {
@@ -276,8 +292,10 @@ async function crawlCandidateSpecs(
       );
       break;
     }
-    logger.info(`Uploading spec ${short(sha)}:${path}`);
-
+    versionUploadCount++;
+    spinner.text = `${chalk.bold.blue(
+      parseResult.jsonLike.info.title || path
+    )} version ${sha.substring(0, 6)} uploading`;
     await uploadSpec(api.id, {
       spec: parseResult,
       tags: [`git:${sha}`],
@@ -298,13 +316,19 @@ async function crawlCandidateSpecs(
         ...(options.standard ? { [OPTIC_STANDARD_KEY]: options.standard } : {}),
       });
     }
-    logger.info(`Added spec ${path} to ${api.url}`);
+    logger.debug(`Added spec ${path} to ${api.url}`);
     if (options.web) {
       await open(api.url, { wait: false });
     }
   } else {
-    logger.info(`Spec ${path} has already been added at ${api.url}`);
+    logger.debug(`Spec ${path} has already been added at ${api.url}`);
   }
+
+  spinner.succeed(
+    `${chalk.bold.blue(parseResult.jsonLike.info.title || path)} ${
+      alreadyTracked ? 'already being tracked' : 'is now being tracked'
+    }.\n  ${chalk.bold(`View history: ${chalk.underline(existingOpticUrl)}`)}`
+  );
 }
 
 const getApiAddAction =
@@ -351,23 +375,22 @@ const getApiAddAction =
     }
 
     logger.info('');
-    logger.info(
-      `Will add detected APIs to organization ${orgRes.org.name}${
-        standard ? ` with standard ${standard}` : ''
-      }`
-    );
 
     if (config.vcs && config.vcs?.type === VCS.Git) {
       logger.info(
-        path_to_spec
-          ? `Adding API ${path_to_spec} and traversing history to a depth of ${options.historyDepth}`
-          : `Looking for APIs in the git root (${config.root})`
+        chalk.bold.gray(
+          path_to_spec
+            ? `Adding API ${path_to_spec}`
+            : `Looking for OpenAPI specs in the git root (${config.root})`
+        )
       );
     } else {
       logger.info(
-        path_to_spec
-          ? `Adding API ${path_to_spec}`
-          : `Looking for APIs in the current directory (${process.cwd()})`
+        chalk.bold.gray(
+          path_to_spec
+            ? `Adding API ${path_to_spec}`
+            : `Looking for OpenAPI specs in the current directory (${process.cwd()})`
+        )
       );
     }
 
