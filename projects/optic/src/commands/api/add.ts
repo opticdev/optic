@@ -121,14 +121,6 @@ async function promptForStandard(
 ): Promise<string | undefined> {
   const existingStandards = await client.getOrgStandards(orgId);
 
-  // if empty, create default without interrupting first time users
-  if (existingStandards.length === 0) {
-    const standard = await client.createOrgStandard(orgId, [
-      { name: 'breaking-changes', config: {} },
-    ]);
-    return standard.slug;
-  }
-
   const rulesetResponse = await prompts([
     {
       type: 'confirm',

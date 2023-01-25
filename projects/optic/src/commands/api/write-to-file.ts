@@ -19,12 +19,20 @@ export async function writeJson(
   await fs
     .readFile(path, 'utf-8')
     .then((file) => {
-      const parsed = JSON.parse(file);
-      parsed[OPTIC_URL_KEY] = data[OPTIC_URL_KEY];
+      const { openapi, ...other } = JSON.parse(file);
+
+      // clear
+      delete other[OPTIC_STANDARD_KEY];
+      delete other[OPTIC_URL_KEY];
+
+      const updated = {};
+
+      updated[OPTIC_URL_KEY] = data[OPTIC_URL_KEY];
       if (data[OPTIC_STANDARD_KEY]) {
-        parsed[OPTIC_STANDARD_KEY] = data[OPTIC_STANDARD_KEY];
+        updated[OPTIC_STANDARD_KEY] = data[OPTIC_STANDARD_KEY];
       }
-      return JSON.stringify(parsed);
+
+      return JSON.stringify({ openapi: openapi, ...updated, ...other });
     })
     .then((file) => fs.writeFile(path, file));
 }
