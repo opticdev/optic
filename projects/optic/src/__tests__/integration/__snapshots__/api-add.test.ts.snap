@@ -24,6 +24,7 @@ exports[`optic api add git - no cli interaction discover one file with history d
 
 exports[`optic api add git - no cli interaction discover one file with history depth 2`] = `
 "openapi: 3.0.3
+x-optic-url: "https://app.useoptic.com/organizations/org-id/apis/api-id"
 info:
   title: a spec
   description: The API
@@ -44,8 +45,6 @@ paths:
                     type: string
                     format: uuid
                     example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2
-x-optic-url: https://app.useoptic.com/organizations/org-id/apis/api-id
-x-optic-standard: blah
 "
 `;
 
@@ -73,6 +72,7 @@ exports[`optic api add no vcs - no cli interaction discover one file with histor
 
 exports[`optic api add no vcs - no cli interaction discover one file with history depth 2`] = `
 "openapi: 3.0.3
+x-optic-url: "https://app.useoptic.com/organizations/org-id/apis/api-id"
 info:
   title: a spec
   description: The API
@@ -93,7 +93,5 @@ paths:
                     type: string
                     format: uuid
                     example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2
-x-optic-url: https://app.useoptic.com/organizations/org-id/apis/api-id
-x-optic-standard: blah
 "
 `;
