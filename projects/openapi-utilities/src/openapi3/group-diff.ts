@@ -6,6 +6,7 @@ import {
   getFactForJsonPath,
 } from './json-path-interpreters';
 import { getLocation, OpenApiV3Traverser } from './traverser';
+import { OpenApiV3TraverserFact } from './types';
 
 const SEPARATOR = '-~_~-';
 
@@ -45,7 +46,7 @@ export type Diff = {
 );
 
 export type Body = {
-  diffs: Diff[];
+  diffs: Record<string, Diff[]>;
 };
 
 export type Response = {
@@ -107,7 +108,7 @@ export class GroupedDiffs {
       return endpoint.request.contents[contentType];
     } else {
       const requestBody: Body = {
-        diffs: [],
+        diffs: {},
       };
       endpoint.request.contents[contentType] = requestBody;
       return requestBody;
@@ -140,11 +141,72 @@ export class GroupedDiffs {
       return response.contents[contentType];
     } else {
       const responseBody: Body = {
-        diffs: [],
+        diffs: {},
       };
       response.contents[contentType] = responseBody;
       return responseBody;
     }
+  }
+}
+
+function normalizeRequiredDiff(
+  spec: OpenAPIV3.Document,
+  fact: OpenApiV3TraverserFact<'body'> | OpenApiV3TraverserFact<'field'>,
+  pointers: {
+    absolute: string;
+    trail: string;
+  }
+): string[] | null {
+  const trailParts = jsonPointerHelpers.decode(pointers.trail);
+  const maybeBaseRequiredPath =
+    fact.type === 'body' && trailParts[1] === 'required'
+      ? jsonPointerHelpers.append(fact.location.jsonPath, 'schema')
+      : fact.type === 'field' && trailParts[0] === 'required'
+      ? fact.location.jsonPath
+      : null;
+  const location = getLocation(fact);
+
+  if (!maybeBaseRequiredPath) {
+    return null;
+  }
+
+  const expectAnArray =
+    (fact.type === 'body' && trailParts.length === 2) ||
+    (fact.type === 'field' && trailParts.length === 1);
+  const expectAString =
+    (fact.type === 'body' && trailParts.length === 3) ||
+    (fact.type === 'field' && trailParts.length === 2);
+
+  // fetch the required keys
+  const raw = jsonPointerHelpers.get(spec, pointers.absolute);
+
+  // Here we'll need to check if the required added is valid and maybe fan out keys to add
+  if (
+    (Array.isArray(raw) && expectAnArray) ||
+    (typeof raw === 'string' && expectAString)
+  ) {
+    const keysToTest = Array.isArray(raw)
+      ? raw.filter((k) => typeof k === 'string')
+      : [raw];
+
+    return keysToTest
+      .map((k) =>
+        jsonPointerHelpers.append(maybeBaseRequiredPath, 'properties', k)
+      )
+      .filter((p) => jsonPointerHelpers.tryGet(spec, p).match)
+      .map((p) =>
+        jsonPointerHelpers.relative(
+          p,
+          fact.location.jsonPath.replace(
+            'trail' in location
+              ? jsonPointerHelpers.compile(location.trail)
+              : '',
+            ''
+          )
+        )
+      );
+  } else {
+    return [];
   }
 }
 
@@ -158,11 +220,10 @@ export function groupDiffsByEndpoint(
   const grouped = new GroupedDiffs();
 
   for (const diff of diffs) {
-    const fact = diff.after
-      ? getFactForJsonPath(diff.after, toTree)
-      : diff.before
-      ? getFactForJsonPath(diff.before, fromTree)
-      : null;
+    const fact =
+      diff.after !== undefined
+        ? getFactForJsonPath(diff.after, toTree)
+        : getFactForJsonPath(diff.before, fromTree);
     if (fact) {
       const trail = jsonPointerHelpers.relative(
         diff.after ?? diff.before,
@@ -244,25 +305,27 @@ export function groupDiffsByEndpoint(
         const endpointId = getEndpointId({ pathPattern, method });
         const response = grouped.getOrSetResponse(endpointId, statusCode);
         response.headers.push(diffToAdd);
-      } else if (
-        fact.type === 'body' ||
-        fact.type === 'field' ||
-        fact.type === 'body-example'
-      ) {
+      } else if (fact.type === 'body-example') {
         const location = getLocation(fact);
 
-        if ('trail' in location) {
-          // For field locations we need to adjust the trails since each field is considered significant
-          diffToAdd.trail = jsonPointerHelpers.compile([
-            ...location.trail,
-            ...jsonPointerHelpers.decode(diffToAdd.trail),
-          ]);
-        } else if ('exampleTrail' in location) {
-          diffToAdd.trail = jsonPointerHelpers.compile([
-            ...location.exampleTrail,
-            ...jsonPointerHelpers.decode(diffToAdd.trail),
-          ]);
+        const endpointId = getEndpointId(location);
+        const key = jsonPointerHelpers.compile(location.trail);
+        const body =
+          location.location === 'request'
+            ? grouped.getOrSetRequestBody(endpointId, location.contentType)
+            : grouped.getOrSetResponseBody(
+                endpointId,
+                location.statusCode,
+                location.contentType
+              );
+
+        if (body.diffs[key]) {
+          body.diffs[key].push(diffToAdd);
+        } else {
+          body.diffs[key] = [diffToAdd];
         }
+      } else if (fact.type === 'body' || fact.type === 'field') {
+        const location = getLocation(fact);
         const endpointId = getEndpointId(location);
         const body =
           location.location === 'request'
@@ -272,7 +335,24 @@ export function groupDiffsByEndpoint(
                 location.statusCode,
                 location.contentType
               );
-        body.diffs.push(diffToAdd);
+
+        const specToFetchFrom =
+          diff.after !== undefined ? specs.to : specs.from;
+
+        let fieldKeys = normalizeRequiredDiff(specToFetchFrom, fact, {
+          absolute: diff.after ?? diff.before,
+          trail,
+        }) ?? [
+          'trail' in location ? jsonPointerHelpers.compile(location.trail) : '',
+        ];
+
+        for (const fieldKey of fieldKeys) {
+          if (body.diffs[fieldKey]) {
+            body.diffs[fieldKey].push(diffToAdd);
+          } else {
+            body.diffs[fieldKey] = [diffToAdd];
+          }
+        }
       }
     }
   }

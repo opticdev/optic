@@ -62,14 +62,14 @@ export type FactLocation<T extends V3FactType> = T extends 'specification'
           method: string;
           statusCode: string;
           contentType: string;
-          exampleTrail: string[];
+          trail: string[];
         }
       | {
           location: 'request';
           pathPattern: string;
           method: string;
           contentType: string;
-          exampleTrail: string[];
+          trail: string[];
         }
   : T extends 'field'
   ?

@@ -52,9 +52,8 @@
                     "type": "string"
                   },
                   "userStatus": {
-                    "type": "integer",
-                    "description": "User Status",
-                    "format": "int32"
+                    "type": "string",
+                    "description": "User Status"
                   }
                 },
                 "xml": {
@@ -70,7 +69,7 @@
                   "email": "pet@store.com",
                   "password": "secret",
                   "phone": "123456789",
-                  "userStatus": 1
+                  "userStatus": "active"
                 }
               }
             }
@@ -138,9 +137,21 @@
                   "properties": {
                     "id": {
                       "type": "string"
+                    },
+                    "status": {
+                      "type": "object",
+                      "properties": {
+                        "lastLogin": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["lastLogin"]
+                    },
+                    "name": {
+                      "type": "string"
                     }
                   },
-                  "required": ["id"]
+                  "required": ["name"]
                 }
               },
               "application/json": {

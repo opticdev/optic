@@ -14,18 +14,78 @@ GroupedDiffs {
       "request": {
         "contents": {
           "*/*": {
-            "diffs": [
-              {
-                "after": "/paths/~1user/post/requestBody/content/*~1*/examples",
-                "change": "added",
-                "trail": "/examples",
-              },
-              {
-                "after": "/paths/~1user/post/requestBody/content/*~1*/schema/required",
-                "change": "added",
-                "trail": "/schema/required",
-              },
-            ],
+            "diffs": {
+              "": [
+                {
+                  "after": "/paths/~1user/post/requestBody/content/*~1*/examples",
+                  "change": "added",
+                  "trail": "/examples",
+                },
+              ],
+              "/schema/properties/email": [
+                {
+                  "after": "/paths/~1user/post/requestBody/content/*~1*/schema/required",
+                  "change": "added",
+                  "trail": "/schema/required",
+                },
+              ],
+              "/schema/properties/firstName": [
+                {
+                  "after": "/paths/~1user/post/requestBody/content/*~1*/schema/required",
+                  "change": "added",
+                  "trail": "/schema/required",
+                },
+              ],
+              "/schema/properties/id": [
+                {
+                  "after": "/paths/~1user/post/requestBody/content/*~1*/schema/required",
+                  "change": "added",
+                  "trail": "/schema/required",
+                },
+              ],
+              "/schema/properties/lastName": [
+                {
+                  "after": "/paths/~1user/post/requestBody/content/*~1*/schema/required",
+                  "change": "added",
+                  "trail": "/schema/required",
+                },
+              ],
+              "/schema/properties/password": [
+                {
+                  "after": "/paths/~1user/post/requestBody/content/*~1*/schema/required",
+                  "change": "added",
+                  "trail": "/schema/required",
+                },
+              ],
+              "/schema/properties/phone": [
+                {
+                  "after": "/paths/~1user/post/requestBody/content/*~1*/schema/required",
+                  "change": "added",
+                  "trail": "/schema/required",
+                },
+              ],
+              "/schema/properties/userStatus": [
+                {
+                  "after": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/userStatus/type",
+                  "before": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/userStatus/type",
+                  "change": "changed",
+                  "trail": "/type",
+                },
+                {
+                  "before": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/userStatus/format",
+                  "change": "removed",
+                  "pathReconciliation": [],
+                  "trail": "/format",
+                },
+              ],
+              "/schema/properties/username": [
+                {
+                  "after": "/paths/~1user/post/requestBody/content/*~1*/schema/required",
+                  "change": "added",
+                  "trail": "/schema/required",
+                },
+              ],
+            },
           },
         },
         "diffs": [],
@@ -34,13 +94,7 @@ GroupedDiffs {
     },
     "/user/login-~_~-GET": {
       "cookieParameters": [],
-      "diffs": [
-        {
-          "after": "/paths/~1user~1login/get",
-          "change": "added",
-          "trail": "",
-        },
-      ],
+      "diffs": [],
       "headerParameters": [],
       "method": "GET",
       "path": "/user/login",
@@ -50,7 +104,45 @@ GroupedDiffs {
         "contents": {},
         "diffs": [],
       },
-      "responses": {},
+      "responses": {
+        "200": {
+          "contents": {
+            "application/xml": {
+              "diffs": {
+                "/schema/properties/id": [
+                  {
+                    "before": "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/required/0",
+                    "change": "removed",
+                    "pathReconciliation": [],
+                    "trail": "/schema/required/0",
+                  },
+                ],
+                "/schema/properties/name": [
+                  {
+                    "after": "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/required/0",
+                    "change": "added",
+                    "trail": "/schema/required/0",
+                  },
+                  {
+                    "after": "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/properties/name",
+                    "change": "added",
+                    "trail": "",
+                  },
+                ],
+                "/schema/properties/status/properties/lastLogin": [
+                  {
+                    "after": "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/properties/status/required",
+                    "change": "added",
+                    "trail": "/required",
+                  },
+                ],
+              },
+            },
+          },
+          "diffs": [],
+          "headers": [],
+        },
+      },
     },
     "/user/logout-~_~-GET": {
       "cookieParameters": [],

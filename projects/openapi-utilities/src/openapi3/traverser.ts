@@ -84,32 +84,24 @@ export function getLocation<T extends V3FactType>(
   } else if (fact.type === 'body-example') {
     const isResponse = parts[3] === 'responses';
     if (isResponse) {
-      const [
-        ,
-        pathPattern,
-        method,
-        ,
-        statusCode,
-        ,
-        contentType,
-        ...exampleTrail
-      ] = parts;
+      const [, pathPattern, method, , statusCode, , contentType, ...trail] =
+        parts;
       return {
         location: 'response',
         pathPattern,
         method,
         statusCode,
         contentType,
-        exampleTrail,
+        trail,
       } as FactLocation<T>;
     } else {
-      const [, pathPattern, method, , , contentType, ...exampleTrail] = parts;
+      const [, pathPattern, method, , , contentType, ...trail] = parts;
       return {
         location: 'request',
         pathPattern,
         method,
         contentType,
-        exampleTrail,
+        trail,
       } as FactLocation<T>;
     }
   } else if (fact.type === 'field') {
