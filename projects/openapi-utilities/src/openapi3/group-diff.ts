@@ -46,7 +46,8 @@ export type Diff = {
 );
 
 export type Body = {
-  diffs: Record<string, Diff[]>;
+  fields: Record<string, Diff[]>;
+  examples: Diff[];
 };
 
 export type Response = {
@@ -108,7 +109,8 @@ export class GroupedDiffs {
       return endpoint.request.contents[contentType];
     } else {
       const requestBody: Body = {
-        diffs: {},
+        fields: {},
+        examples: [],
       };
       endpoint.request.contents[contentType] = requestBody;
       return requestBody;
@@ -141,7 +143,8 @@ export class GroupedDiffs {
       return response.contents[contentType];
     } else {
       const responseBody: Body = {
-        diffs: {},
+        fields: {},
+        examples: [],
       };
       response.contents[contentType] = responseBody;
       return responseBody;
@@ -316,11 +319,7 @@ export function groupDiffsByEndpoint(
                 location.contentType
               );
 
-        if (body.diffs[key]) {
-          body.diffs[key].push(diffToAdd);
-        } else {
-          body.diffs[key] = [diffToAdd];
-        }
+        body.examples.push(diffToAdd);
       } else if (fact.type === 'body' || fact.type === 'field') {
         const location = getLocation(fact);
         const endpointId = getEndpointId(location);
@@ -344,10 +343,10 @@ export function groupDiffsByEndpoint(
         ];
 
         for (const fieldKey of fieldKeys) {
-          if (body.diffs[fieldKey]) {
-            body.diffs[fieldKey].push(diffToAdd);
+          if (body.fields[fieldKey]) {
+            body.fields[fieldKey].push(diffToAdd);
           } else {
-            body.diffs[fieldKey] = [diffToAdd];
+            body.fields[fieldKey] = [diffToAdd];
           }
         }
       }

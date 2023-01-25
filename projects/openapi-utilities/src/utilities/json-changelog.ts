@@ -200,21 +200,121 @@ function getRequestChangeLogs(
   };
 }
 
+function getRootBodyPath(path: string): string {
+  const parts = jsonPointerHelpers.decode(path);
+  if (parts[3] === 'responses') {
+    return jsonPointerHelpers.compile(parts.slice(0, 7));
+  } else {
+    return jsonPointerHelpers.compile(parts.slice(0, 6));
+  }
+}
+
 function getBodyChangeLogs(
   specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
   body: Body,
   contentType: string
 ): ChangedNode {
-  const bodyChange = getTypeofDiffs(body.diffs);
+  const fieldDiffs: Diff[] = Object.entries(body.fields).map(([key, diffs]) => {
+    const firstDiffPath = diffs[0].after ?? diffs[0].before;
+
+    // TODO figure out if we need to handle path reconciliation here
+    // This might only be an issue with nested enums + rearranging + removing keys with oneOf/anyOf/allOf
+    const absolutePath = jsonPointerHelpers.join(
+      getRootBodyPath(firstDiffPath),
+      key
+    );
+    const beforeRaw = jsonPointerHelpers.tryGet(specs.from, absolutePath);
+    const afterRaw = jsonPointerHelpers.tryGet(specs.to, absolutePath);
+    const before = beforeRaw.match ? absolutePath : undefined;
+    const after = afterRaw.match ? absolutePath : undefined;
+
+    return {
+      before,
+      after,
+      trail: key,
+      change: before && after ? 'changed' : before ? 'removed' : 'added',
+    } as Diff;
+  });
+  const exampleDiffs = body.examples;
+
+  // Group body diffs by trail and then log based on that
+
+  const bodyChange = getTypeofDiffs([...fieldDiffs, ...exampleDiffs]);
 
   return {
     name: `${contentType}`,
     change: bodyChange,
     attributes: bodyChange
-      ? body.diffs.flatMap((diff) => {
-          const rawChange = getRawChange(diff, specs);
-          return getDetailsDiff(rawChange);
-        })
+      ? fieldDiffs
+          .flatMap((diff) => {
+            const rawChange = getRawChange(diff, specs);
+            let beforeRequired = false;
+            let afterRequired = false;
+            if (diff.after) {
+              const parts = jsonPointerHelpers.decode(diff.after);
+              const pointer = parts.slice(0, -2);
+              const key = parts[parts.length - 1];
+              const raw = jsonPointerHelpers.tryGet(
+                specs.to,
+                jsonPointerHelpers.compile([...pointer, 'required'])
+              );
+              if (
+                raw.match &&
+                Array.isArray(raw.value) &&
+                raw.value.includes(key)
+              ) {
+                afterRequired = true;
+              }
+            }
+
+            if (diff.before) {
+              const parts = jsonPointerHelpers.decode(diff.before);
+              const pointer = parts.slice(0, -2);
+              const key = parts[parts.length - 1];
+              const raw = jsonPointerHelpers.tryGet(
+                specs.from,
+                jsonPointerHelpers.compile([...pointer, 'required'])
+              );
+              if (
+                raw.match &&
+                Array.isArray(raw.value) &&
+                raw.value.includes(key)
+              ) {
+                beforeRequired = true;
+              }
+            }
+
+            if (rawChange.added) {
+              rawChange.added = {
+                ...rawChange.added,
+                required: afterRequired,
+              };
+            } else if (rawChange.changed) {
+              rawChange.changed = {
+                before: {
+                  ...rawChange.changed.before,
+                  required: beforeRequired,
+                },
+                after: {
+                  ...rawChange.changed.after,
+                  required: afterRequired,
+                },
+              };
+            } else if (rawChange.removed) {
+              rawChange.removed = {
+                ...rawChange.removed,
+                required: beforeRequired,
+              };
+            }
+
+            return getDetailsDiff(rawChange);
+          })
+          .concat(
+            exampleDiffs.flatMap((diff) => {
+              const rawChange = getRawChange(diff, specs);
+              return getDetailsDiff(rawChange);
+            })
+          )
       : [],
   };
 }

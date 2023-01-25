@@ -14,14 +14,14 @@ GroupedDiffs {
       "request": {
         "contents": {
           "*/*": {
-            "diffs": {
-              "/examples": [
-                {
-                  "after": "/paths/~1user/post/requestBody/content/*~1*/examples",
-                  "change": "added",
-                  "trail": "",
-                },
-              ],
+            "examples": [
+              {
+                "after": "/paths/~1user/post/requestBody/content/*~1*/examples",
+                "change": "added",
+                "trail": "",
+              },
+            ],
+            "fields": {
               "/schema/properties/email": [
                 {
                   "after": "/paths/~1user/post/requestBody/content/*~1*/schema/required",
@@ -108,7 +108,8 @@ GroupedDiffs {
         "200": {
           "contents": {
             "application/xml": {
-              "diffs": {
+              "examples": [],
+              "fields": {
                 "/schema/properties/id": [
                   {
                     "before": "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/required/0",

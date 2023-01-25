@@ -170,7 +170,8 @@ function* getRequestChangeLogs(request: Endpoint['request']) {
 }
 
 function* getBodyChangeLogs(body: Body, key: string) {
-  const change = getTypeofDiffs(body.diffs);
+  const flatDiffs = [...Object.values(body.fields).flat(), ...body.examples];
+  const change = getTypeofDiffs(flatDiffs);
   const label = `- body ${chalk.bold(key)}:`;
 
   if (change === 'removed') {
@@ -180,7 +181,7 @@ function* getBodyChangeLogs(body: Body, key: string) {
 
   yield `${label} ${change === 'added' ? added : ''}`;
 
-  yield* indent(getDetailLogs(body.diffs));
+  yield* indent(getDetailLogs(flatDiffs));
 }
 
 function* getResponseHeaderLogs(diff: Diff) {
