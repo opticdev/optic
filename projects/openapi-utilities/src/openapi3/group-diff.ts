@@ -179,6 +179,10 @@ function normalizeRequiredDiff(
 
   // fetch the required keys
   const raw = jsonPointerHelpers.get(spec, pointers.absolute);
+  const bodyPath = fact.location.jsonPath.replace(
+    'trail' in location ? jsonPointerHelpers.compile(location.trail) : '',
+    ''
+  );
 
   // Here we'll need to check if the required added is valid and maybe fan out keys to add
   if (
@@ -194,17 +198,7 @@ function normalizeRequiredDiff(
         jsonPointerHelpers.append(maybeBaseRequiredPath, 'properties', k)
       )
       .filter((p) => jsonPointerHelpers.tryGet(spec, p).match)
-      .map((p) =>
-        jsonPointerHelpers.relative(
-          p,
-          fact.location.jsonPath.replace(
-            'trail' in location
-              ? jsonPointerHelpers.compile(location.trail)
-              : '',
-            ''
-          )
-        )
-      );
+      .map((p) => jsonPointerHelpers.relative(p, bodyPath));
   } else {
     return [];
   }
@@ -305,7 +299,10 @@ export function groupDiffsByEndpoint(
         const endpointId = getEndpointId({ pathPattern, method });
         const response = grouped.getOrSetResponse(endpointId, statusCode);
         response.headers.push(diffToAdd);
-      } else if (fact.type === 'body-example') {
+      } else if (
+        fact.type === 'body-example' ||
+        fact.type === 'body-examples'
+      ) {
         const location = getLocation(fact);
 
         const endpointId = getEndpointId(location);

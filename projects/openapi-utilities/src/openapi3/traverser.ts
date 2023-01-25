@@ -81,7 +81,7 @@ export function getLocation<T extends V3FactType>(
         contentType,
       } as FactLocation<T>;
     }
-  } else if (fact.type === 'body-example') {
+  } else if (fact.type === 'body-example' || fact.type === 'body-examples') {
     const isResponse = parts[3] === 'responses';
     if (isResponse) {
       const [, pathPattern, method, , statusCode, , contentType, ...trail] =
@@ -435,6 +435,12 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
     }
 
     if (examples) {
+      yield {
+        location: {
+          jsonPath: jsonPointer.append(jsonPath, 'examples'),
+        },
+        type: 'body-examples',
+      };
       for (let [name, example] of Object.entries(examples)) {
         const nextJsonPath = jsonPointer.append(jsonPath, 'examples', name);
         if (!isObject(example)) {

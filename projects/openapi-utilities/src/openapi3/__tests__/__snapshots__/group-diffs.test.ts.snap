@@ -15,11 +15,11 @@ GroupedDiffs {
         "contents": {
           "*/*": {
             "diffs": {
-              "": [
+              "/examples": [
                 {
                   "after": "/paths/~1user/post/requestBody/content/*~1*/examples",
                   "change": "added",
-                  "trail": "/examples",
+                  "trail": "",
                 },
               ],
               "/schema/properties/email": [
