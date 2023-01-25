@@ -3,6 +3,7 @@ import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/u
 import { ParseResult, getFileFromFsOrGit } from '../../utils/spec-loaders';
 import { OpticCliConfig } from '../../config';
 import { UserError } from '@useoptic/openapi-utilities';
+import { isYaml, writeYaml } from '@useoptic/openapi-io';
 
 const description = `dereference an OpenAPI specification`;
 
@@ -45,7 +46,12 @@ const deferenceAction =
     let parsedFile: ParseResult;
     if (filePath) {
       parsedFile = await getDereferencedSpec(filePath, config);
-      console.log(JSON.stringify(parsedFile.jsonLike, null, 2));
+
+      if (isYaml(filePath)) {
+        console.log(writeYaml(parsedFile.jsonLike));
+      } else {
+        console.log(JSON.stringify(parsedFile.jsonLike, null, 2));
+      }
     } else {
       console.error('No specification found');
       process.exitCode = 1;

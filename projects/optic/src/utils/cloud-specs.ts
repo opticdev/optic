@@ -1,5 +1,9 @@
 import stableStringify from 'json-stable-stringify';
-import { ObjectDiff, RuleResult } from '@useoptic/openapi-utilities';
+import {
+  CompareSpecResults,
+  ObjectDiff,
+  RuleResult,
+} from '@useoptic/openapi-utilities';
 import { OpticBackendClient } from '../client';
 import { computeChecksum } from './checksum';
 import { uploadFileToS3 } from './s3';
@@ -51,11 +55,7 @@ export async function uploadRun(
     fromSpecId: string;
     toSpecId: string;
     client: OpticBackendClient;
-    specResults: {
-      diffs: ObjectDiff[];
-      results: RuleResult[];
-      version: string;
-    };
+    specResults: CompareSpecResults;
   }
 ) {
   const stableResultsString = stableStringify(opts.specResults);
