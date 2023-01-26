@@ -1,4 +1,3 @@
-import { machineIdSync } from 'node-machine-id';
 import exitHook from 'async-exit-hook';
 
 import {
@@ -6,17 +5,10 @@ import {
   trackEvent as _trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 
-let id: string;
-try {
-  id = machineIdSync();
-} catch (e) {
-  id = 'unknown-user';
-}
-
 export { flushEvents };
 
 export const trackEvent = (eventName: string, properties?: any) =>
-  _trackEvent(eventName, id, properties);
+  _trackEvent(eventName, properties);
 
 export async function trackCompletion<S extends { [key: string]: any }>(
   eventName: string,
@@ -30,7 +22,7 @@ export async function trackCompletion<S extends { [key: string]: any }>(
   function finish(callback?) {
     if (!callback) callback = () => {};
     if (!completed) {
-      _trackEvent(`${eventName}.canceled`, id, stats);
+      _trackEvent(`${eventName}.canceled`, stats);
     }
 
     flushEvents().then(callback, (err) => {
@@ -50,7 +42,7 @@ export async function trackCompletion<S extends { [key: string]: any }>(
 
   completed = true;
 
-  _trackEvent(`${eventName}.completed`, id, stats);
+  _trackEvent(`${eventName}.completed`, stats);
 
   finish();
 }

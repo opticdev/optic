@@ -7,7 +7,6 @@ import { OPTIC_STANDARD_KEY } from '../../constants';
 import { ParseResult } from '../../utils/spec-loaders';
 import { OpticCliConfig } from '../../config';
 import { trackEvent } from '@useoptic/openapi-utilities/build/utilities/segment';
-import { getAnonId } from '../../utils/anonymous-id';
 
 export async function compute(
   [baseFile, headFile]: [ParseResult, ParseResult],
@@ -28,7 +27,7 @@ export async function compute(
     options.check
   );
 
-  trackEvent('diff.rulesets', await getAnonId(), {
+  trackEvent('diff.rulesets', {
     ruleset: ruleNames,
   });
 

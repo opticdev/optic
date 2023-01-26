@@ -319,8 +319,6 @@ const runCompare = async ({
 
   trackEvent(
     'optic_ci.compare',
-    (normalizedCiContext && normalizedCiContext.user) ||
-      `${projectName}-optic-ci`,
     {
       isInCi: process.env.CI === 'true',
       projectName,
@@ -337,7 +335,9 @@ const runCompare = async ({
             org_repo_pr: `${normalizedCiContext.organization}/${normalizedCiContext.repo}/${normalizedCiContext.pull_request}`,
           }
         : {}),
-    }
+    },
+    (normalizedCiContext && normalizedCiContext.user) ||
+      `${projectName}-optic-ci`
   );
 
   await flushEvents();
