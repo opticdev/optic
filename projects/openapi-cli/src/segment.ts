@@ -1,6 +1,5 @@
 import exitHook from 'async-exit-hook';
 
-import { AbortSignal } from 'node-abort-controller';
 import {
   flushEvents,
   trackEvent as _trackEvent,

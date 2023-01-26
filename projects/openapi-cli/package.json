@@ -2,7 +2,7 @@
   "name": "@useoptic/openapi-cli",
   "license": "MIT",
   "packageManager": "yarn@3.3.1",
-  "version": "0.36.11",
+  "version": "0.36.12",
   "main": "build/lib.js",
   "types": "build/lib.d.ts",
   "files": [
@@ -81,7 +81,6 @@
     "log-node": "^8.0.3",
     "minimatch": "6.1.6",
     "mockttp": "^3.3.1",
-    "node-abort-controller": "^3.0.1",
     "node-forge": "^1.2.1",
     "node-machine-id": "^1.1.12",
     "object-hash": "^3.0.0",
