@@ -909,7 +909,6 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                         "userStatus": 2,
                       },
                     },
-                    "required": false,
                     "schema": {
                       "example": {
                         "email": "hello@123.com",
@@ -971,7 +970,6 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                         "userStatus": 2,
                       },
                     },
-                    "required": false,
                     "schema": {
                       "properties": {
                         "email": {
@@ -1168,7 +1166,6 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               "attributes": [
                 {
                   "after": {
-                    "required": false,
                     "schema": {
                       "properties": {
                         "code": {
@@ -1264,7 +1261,6 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               },
               {
                 "after": {
-                  "required": false,
                   "schema": {
                     "items": {
                       "properties": {
@@ -1315,7 +1311,6 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                   },
                 },
                 "before": {
-                  "required": false,
                   "schema": {
                     "items": {
                       "properties": {
@@ -1424,7 +1419,6 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               },
               {
                 "after": {
-                  "required": false,
                   "schema": {
                     "items": {
                       "properties": {
@@ -1475,7 +1469,6 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                   },
                 },
                 "before": {
-                  "required": false,
                   "schema": {
                     "items": {
                       "properties": {
@@ -1630,7 +1623,6 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               "attributes": [
                 {
                   "after": {
-                    "required": false,
                     "schema": {
                       "properties": {
                         "code": {
@@ -1776,7 +1768,6 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               "attributes": [
                 {
                   "after": {
-                    "required": false,
                     "schema": {
                       "properties": {
                         "code": {
@@ -2190,7 +2181,6 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               {
                 "after": undefined,
                 "before": {
-                  "required": false,
                   "schema": {
                     "properties": {
                       "category": {

@@ -1,7 +1,6 @@
 import { OpenAPIV3 } from 'openapi-types';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
-import { typeofDiff } from '../../diff/diff';
 import { typeofV3Diffs } from '../../openapi3/group-diff';
 import type {
   GroupedDiffs,
@@ -10,7 +9,6 @@ import type {
   Endpoint,
   Response,
 } from '../../openapi3/group-diff';
-import { getRaw } from '../../openapi3/traverser';
 import { interpretFieldLevelDiffs } from './common';
 
 type RawChange<T> = { key: string } & (
@@ -75,6 +73,63 @@ type OperationChangelog = ChangedNode & {
 type JsonChangelog = {
   operations: OperationChangelog[];
 };
+
+function attachRequiredToField(
+  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  diff: Diff,
+  rawChange: RawChange<any>
+) {
+  let beforeRequired = false;
+  let afterRequired = false;
+  if (diff.after) {
+    const parts = jsonPointerHelpers.decode(diff.after);
+    const pointer = parts.slice(0, -2);
+    const key = parts[parts.length - 1];
+    const raw = jsonPointerHelpers.tryGet(
+      specs.to,
+      jsonPointerHelpers.compile([...pointer, 'required'])
+    );
+    if (raw.match && Array.isArray(raw.value) && raw.value.includes(key)) {
+      afterRequired = true;
+    }
+  }
+
+  if (diff.before) {
+    const parts = jsonPointerHelpers.decode(diff.before);
+    const pointer = parts.slice(0, -2);
+    const key = parts[parts.length - 1];
+    const raw = jsonPointerHelpers.tryGet(
+      specs.from,
+      jsonPointerHelpers.compile([...pointer, 'required'])
+    );
+    if (raw.match && Array.isArray(raw.value) && raw.value.includes(key)) {
+      beforeRequired = true;
+    }
+  }
+
+  if (rawChange.added) {
+    rawChange.added = {
+      ...rawChange.added,
+      required: afterRequired,
+    };
+  } else if (rawChange.changed) {
+    rawChange.changed = {
+      before: {
+        ...rawChange.changed.before,
+        required: beforeRequired,
+      },
+      after: {
+        ...rawChange.changed.after,
+        required: afterRequired,
+      },
+    };
+  } else if (rawChange.removed) {
+    rawChange.removed = {
+      ...rawChange.removed,
+      required: beforeRequired,
+    };
+  }
+}
 
 export function jsonChangelog(
   specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
@@ -221,71 +276,14 @@ function getBodyChangeLogs(
       ? fieldDiffs
           .flatMap((diff) => {
             const rawChange = getRawChange(diff, specs);
-            let beforeRequired = false;
-            let afterRequired = false;
-            if (diff.after) {
-              const parts = jsonPointerHelpers.decode(diff.after);
-              const pointer = parts.slice(0, -2);
-              const key = parts[parts.length - 1];
-              const raw = jsonPointerHelpers.tryGet(
-                specs.to,
-                jsonPointerHelpers.compile([...pointer, 'required'])
-              );
-              if (
-                raw.match &&
-                Array.isArray(raw.value) &&
-                raw.value.includes(key)
-              ) {
-                afterRequired = true;
-              }
+            if (diff.trail !== '') {
+              attachRequiredToField(specs, diff, rawChange);
             }
-
-            if (diff.before) {
-              const parts = jsonPointerHelpers.decode(diff.before);
-              const pointer = parts.slice(0, -2);
-              const key = parts[parts.length - 1];
-              const raw = jsonPointerHelpers.tryGet(
-                specs.from,
-                jsonPointerHelpers.compile([...pointer, 'required'])
-              );
-              if (
-                raw.match &&
-                Array.isArray(raw.value) &&
-                raw.value.includes(key)
-              ) {
-                beforeRequired = true;
-              }
-            }
-
-            if (rawChange.added) {
-              rawChange.added = {
-                ...rawChange.added,
-                required: afterRequired,
-              };
-            } else if (rawChange.changed) {
-              rawChange.changed = {
-                before: {
-                  ...rawChange.changed.before,
-                  required: beforeRequired,
-                },
-                after: {
-                  ...rawChange.changed.after,
-                  required: afterRequired,
-                },
-              };
-            } else if (rawChange.removed) {
-              rawChange.removed = {
-                ...rawChange.removed,
-                required: beforeRequired,
-              };
-            }
-
             return getDetailsDiff(rawChange);
           })
           .concat(
             exampleDiffs.flatMap((diff) => {
               const rawChange = getRawChange(diff, specs);
-              console.log(diff, rawChange);
               return getDetailsDiff(rawChange);
             })
           )
