@@ -900,6 +900,124 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
             {
               "attributes": [
                 {
+                  "after": {
+                    "examples": {
+                      "One": {
+                        "email": "hello@123.com",
+                        "id": 12,
+                        "lastName": "me",
+                        "userStatus": 2,
+                      },
+                    },
+                    "required": false,
+                    "schema": {
+                      "example": {
+                        "email": "hello@123.com",
+                        "id": 12,
+                        "lastName": "me",
+                        "userStatus": 2,
+                      },
+                      "properties": {
+                        "bio": {
+                          "type": "string",
+                        },
+                        "email": {
+                          "type": "string",
+                        },
+                        "firstName": {
+                          "type": "string",
+                        },
+                        "id": {
+                          "format": "int64",
+                          "type": "integer",
+                        },
+                        "lastName": {
+                          "type": "string",
+                        },
+                        "password": {
+                          "type": "string",
+                        },
+                        "userStatus": {
+                          "description": "User Status",
+                          "enum": [
+                            "activation-pending",
+                            "activated",
+                            "blocked",
+                          ],
+                          "type": "string",
+                        },
+                        "username": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "email",
+                        "username",
+                        "userStatus",
+                      ],
+                      "type": "object",
+                      "xml": {
+                        "name": "User",
+                      },
+                    },
+                  },
+                  "before": {
+                    "examples": {
+                      "One": {
+                        "email": "hello@123.com",
+                        "id": 12,
+                        "lastName": "me",
+                        "userStatus": 2,
+                      },
+                    },
+                    "required": false,
+                    "schema": {
+                      "properties": {
+                        "email": {
+                          "type": "string",
+                        },
+                        "firstName": {
+                          "type": "string",
+                        },
+                        "id": {
+                          "format": "int64",
+                          "type": "integer",
+                        },
+                        "lastName": {
+                          "type": "string",
+                        },
+                        "password": {
+                          "type": "string",
+                        },
+                        "phone": {
+                          "type": "string",
+                        },
+                        "userStatus": {
+                          "description": "User Status",
+                          "format": "int32",
+                          "type": "integer",
+                        },
+                        "username": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "email",
+                        "lastName",
+                        "userStatus",
+                      ],
+                      "type": "object",
+                      "xml": {
+                        "name": "User",
+                      },
+                    },
+                  },
+                  "change": "changed",
+                  "key": "",
+                },
+                {
                   "after": undefined,
                   "before": {
                     "required": false,
@@ -1028,6 +1146,12 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                   },
                   "change": "changed",
                   "key": "/schema/properties/username",
+                },
+                {
+                  "after": 2,
+                  "before": 1,
+                  "change": "changed",
+                  "key": "/examples/One/userStatus",
                 },
               ],
               "change": "changed",
@@ -1787,10 +1911,10 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                   },
                   "before": undefined,
                   "change": "added",
-                  "key": "",
+                  "key": "/example",
                 },
               ],
-              "change": "added",
+              "change": "changed",
               "name": "application/json",
             },
             {

@@ -25,6 +25,26 @@ exports[`interpreters for operation can get raw fact details 1`] = `
 {
   "description": "This can only be done by the logged in user.",
   "operationId": "createUser",
+  "parameters": [
+    {
+      "description": "something",
+      "in": "query",
+      "name": "seomthing",
+      "required": true,
+      "schema": {
+        "type": "string",
+      },
+    },
+    {
+      "description": "something",
+      "in": "query",
+      "name": "somethingelse",
+      "required": true,
+      "schema": {
+        "type": "string",
+      },
+    },
+  ],
   "requestBody": {
     "content": {
       "*/*": {
@@ -249,6 +269,26 @@ exports[`interpreters for specification can get raw fact details 1`] = `
       "post": {
         "description": "This can only be done by the logged in user.",
         "operationId": "createUser",
+        "parameters": [
+          {
+            "description": "something",
+            "in": "query",
+            "name": "seomthing",
+            "required": true,
+            "schema": {
+              "type": "string",
+            },
+          },
+          {
+            "description": "something",
+            "in": "query",
+            "name": "somethingelse",
+            "required": true,
+            "schema": {
+              "type": "string",
+            },
+          },
+        ],
         "requestBody": {
           "content": {
             "*/*": {
@@ -878,6 +918,12 @@ exports[`traversing a spec can traverse a spec (./inputs/openapi3/smallpetstore0
   },
   {
     "location": {
+      "jsonPath": "/paths/~1user/post/parameters/0",
+    },
+    "type": "request-query",
+  },
+  {
+    "location": {
       "jsonPath": "/paths/~1user/post/requestBody/content/*~1*",
     },
     "type": "body",
@@ -1042,6 +1088,18 @@ exports[`traversing a spec can traverse a spec (./inputs/openapi3/smallpetstore1
       "jsonPath": "/paths/~1user/post",
     },
     "type": "operation",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user/post/parameters/0",
+    },
+    "type": "request-query",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1user/post/parameters/1",
+    },
+    "type": "request-query",
   },
   {
     "location": {

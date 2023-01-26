@@ -337,6 +337,10 @@ export function groupDiffsByEndpoint(
         fact.type === 'body-examples'
       ) {
         const location = getLocation(fact);
+        diffToAdd.trail = jsonPointerHelpers.join(
+          jsonPointerHelpers.compile(location.trail),
+          diffToAdd.trail
+        );
 
         const endpointId = getEndpointId(location);
         const body =

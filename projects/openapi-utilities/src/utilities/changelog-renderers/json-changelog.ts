@@ -285,6 +285,7 @@ function getBodyChangeLogs(
           .concat(
             exampleDiffs.flatMap((diff) => {
               const rawChange = getRawChange(diff, specs);
+              console.log(diff, rawChange);
               return getDetailsDiff(rawChange);
             })
           )

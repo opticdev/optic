@@ -1161,6 +1161,14 @@ export const openAPI: OpenAPIV3.Document = {
                     name: 'User',
                   },
                 },
+                examples: {
+                  One: {
+                    id: 12,
+                    email: 'hello@123.com',
+                    lastName: 'me',
+                    userStatus: 1,
+                  },
+                },
               },
               'application/json': {
                 schema: {
@@ -1197,6 +1205,14 @@ export const openAPI: OpenAPIV3.Document = {
                   },
                   xml: {
                     name: 'User',
+                  },
+                },
+                examples: {
+                  One: {
+                    id: 12,
+                    email: 'hello@123.com',
+                    lastName: 'me',
+                    userStatus: 2,
                   },
                 },
               },
