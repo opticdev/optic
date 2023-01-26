@@ -2,7 +2,6 @@ import { Command } from 'commander';
 import path from 'path';
 import * as fs from 'fs-extra';
 import readline from 'readline';
-import { AbortController, AbortSignal } from 'node-abort-controller';
 import { Writable } from 'stream';
 import exitHook from 'async-exit-hook';
 import * as AT from '../lib/async-tools';

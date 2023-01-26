@@ -81,21 +81,21 @@ describe('diff', () => {
     });
     const { combined, code } = await runOptic(
       workspace,
-      'diff petstore-base.json petstore-updated.json --check --ruleset ./ruleset.yml'
+      'diff petstore-base.json petstore-updated.json --check --standard ./ruleset.yml'
     );
 
     expect(code).toBe(1);
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
   });
 
-  test('with --ruleset arg', async () => {
-    const workspace = await setupWorkspace('diff/with-ruleset-arg', {
+  test('with --standard arg', async () => {
+    const workspace = await setupWorkspace('diff/with-standard-arg', {
       repo: true,
       commit: true,
     });
     const { combined, code } = await runOptic(
       workspace,
-      'diff example-api-v0.json example-api-v1.json --check --ruleset ./ruleset.yml'
+      'diff example-api-v0.json example-api-v1.json --check --standard ./ruleset.yml'
     );
 
     expect(code).toBe(1);
@@ -173,7 +173,7 @@ describe('diff', () => {
     });
 
     test('ruleset key on api spec', async () => {
-      const workspace = await setupWorkspace('diff/with-x-optic-ruleset', {
+      const workspace = await setupWorkspace('diff/with-x-optic-standard', {
         repo: true,
         commit: true,
       });

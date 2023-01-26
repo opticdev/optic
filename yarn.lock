@@ -3774,7 +3774,6 @@ __metadata:
     log-node: ^8.0.3
     minimatch: 6.1.6
     mockttp: ^3.3.1
-    node-abort-controller: ^3.0.1
     node-fetch: ^2.6.7
     node-forge: ^1.2.1
     node-machine-id: ^1.1.12
@@ -3903,6 +3902,7 @@ __metadata:
     lodash.isequal: ^4.5.0
     lodash.omit: ^4.5.0
     lodash.sortby: ^4.7.0
+    node-machine-id: ^1.1.12
     openapi-types: ^12.0.2
     prettier: ^2.4.1
     ts-invariant: ^0.9.3
@@ -8996,13 +8996,6 @@ __metadata:
     lodash.topath:
       optional: true
   checksum: 6dcf4aa3dd35c714142f04cfde76727202e1aea802cde0584ef35eabf45d217a9352c55e65045ff91956bb348b3b07ede4ca13af5a6bc8e7ce2f3b2ca353f9bd
-  languageName: node
-  linkType: hard
-
-"node-abort-controller@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "node-abort-controller@npm:3.0.1"
-  checksum: 2b3d75c65249fea99e8ba22da3a8bc553f034f44dd12f5f4b38b520f718b01c88718c978f0c24c2a460fc01de9a80b567028f547b94440cb47adeacfeb82c2ee
   languageName: node
   linkType: hard
 

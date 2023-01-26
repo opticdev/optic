@@ -27,6 +27,7 @@ export async function uploadDiff(
       spec: specs.from,
       client: config.client,
       tags,
+      orgId: specDetails.orgId,
     });
   } else if (specs.from.isEmptySpec) {
     baseSpecId = EMPTY_SPEC_ID;
@@ -42,6 +43,7 @@ export async function uploadDiff(
       spec: specs.to,
       client: config.client,
       tags,
+      orgId: specDetails.orgId,
     });
   } else if (specs.to.isEmptySpec) {
     headSpecId = EMPTY_SPEC_ID;
@@ -53,6 +55,7 @@ export async function uploadDiff(
       toSpecId: headSpecId,
       client: config.client,
       specResults,
+      orgId: specDetails.orgId,
     });
     return {
       apiId: specDetails.apiId,

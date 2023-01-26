@@ -7,7 +7,6 @@ import {
 } from 'mockttp';
 // import { getCA, CAOptions } from 'mockttp/dist/util/tls';
 import { Subject } from '../../../lib/async-tools';
-import { AbortSignal, AbortController } from 'node-abort-controller'; // remove when Node v14 is out of LTS
 import { pki, md } from 'node-forge';
 import { randomBytes } from 'crypto';
 import { Readable } from 'stream';

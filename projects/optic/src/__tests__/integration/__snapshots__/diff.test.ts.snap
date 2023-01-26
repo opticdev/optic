@@ -46,7 +46,7 @@ Checks
 [32m[1m3 checks passed[22m[39m
 [31m[1m2 checks failed[22m[39m
 
-Configure check rulesets in optic cloud or your local optic.dev.yml file.
+Configure check standards in optic cloud or your local optic.dev.yml file.
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
@@ -72,7 +72,7 @@ exports[`diff breaking changes exclusion 1`] = `
 [32m[1m0 checks passed[22m[39m
 [31m[1m0 checks failed[22m[39m
 
-Configure check rulesets in optic cloud or your local optic.dev.yml file.
+Configure check standards in optic cloud or your local optic.dev.yml file.
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
@@ -472,7 +472,7 @@ Checks
 [32m[1m155 checks passed[22m[39m
 [31m[1m45 checks failed[22m[39m
 
-Configure check rulesets in optic cloud or your local optic.dev.yml file.
+Configure check standards in optic cloud or your local optic.dev.yml file.
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
@@ -497,7 +497,7 @@ exports[`diff two files, no repo or config 1`] = `
 "
 `;
 
-exports[`diff with --ruleset arg 1`] = `
+exports[`diff with --standard arg 1`] = `
 "
 [1mGET[22m /invalid_name: [32madded[39m
   
@@ -543,7 +543,7 @@ Checks
 [32m[1m3 checks passed[22m[39m
 [31m[1m2 checks failed[22m[39m
 
-Configure check rulesets in optic cloud or your local optic.dev.yml file.
+Configure check standards in optic cloud or your local optic.dev.yml file.
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
@@ -597,7 +597,7 @@ Checks
 [32m[1m5 checks passed[22m[39m
 [31m[1m2 checks failed[22m[39m
 
-Configure check rulesets in optic cloud or your local optic.dev.yml file.
+Configure check standards in optic cloud or your local optic.dev.yml file.
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
@@ -649,7 +649,7 @@ Checks
 [32m[1m3 checks passed[22m[39m
 [31m[1m2 checks failed[22m[39m
 
-Configure check rulesets in optic cloud or your local optic.dev.yml file.
+Configure check standards in optic cloud or your local optic.dev.yml file.
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
@@ -657,7 +657,7 @@ Configure check rulesets in optic cloud or your local optic.dev.yml file.
 exports[`diff with mock server ruleset key on api spec 1`] = `
 "
 specification details:
-- /x-optic-ruleset [32madded[39m
+- /x-optic-standard [32madded[39m
 
 [1mGET[22m /invalid_name: [32madded[39m
   
@@ -687,7 +687,7 @@ Checks
 [32m[1m0 checks passed[22m[39m
 [31m[1m1 checks failed[22m[39m
 
-Configure check rulesets in optic cloud or your local optic.dev.yml file.
+Configure check standards in optic cloud or your local optic.dev.yml file.
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;

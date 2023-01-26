@@ -4,7 +4,6 @@ import { ProxyCertAuthority, ProxyInteractions } from './proxy';
 import * as mockttp from 'mockttp';
 import bent from 'bent';
 import { collect } from '../../../lib/async-tools';
-import { AbortController } from 'node-abort-controller'; // remove when Node v14 is out of LTS
 import fetch from 'node-fetch';
 import https from 'https';
 import UrlJoin from 'url-join';
