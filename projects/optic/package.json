@@ -2,7 +2,7 @@
   "name": "@useoptic/optic",
   "license": "MIT",
   "packageManager": "yarn@3.3.1",
-  "version": "0.36.12-0",
+  "version": "0.36.12",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -67,12 +67,12 @@
     "node-fetch": "^2.6.7",
     "node-machine-id": "^1.1.12",
     "open": "^8.4.0",
+    "ora": "5.4.1",
     "picomatch": "^2.3.1",
     "prompts": "^2.4.2",
     "tar": "^6.1.11",
     "update-notifier": "^5.1.0",
     "url-join": "^4.0.1",
     "uuid": "^9.0.0"
-  },
-  "stableVersion": "0.36.11"
+  }
 }

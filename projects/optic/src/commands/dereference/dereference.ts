@@ -4,7 +4,8 @@ import { ParseResult, getFileFromFsOrGit } from '../../utils/spec-loaders';
 import { OpticCliConfig } from '../../config';
 import { UserError } from '@useoptic/openapi-utilities';
 import { isYaml, writeYaml } from '@useoptic/openapi-io';
-
+import fs from 'node:fs/promises';
+import path from 'path';
 const description = `dereference an OpenAPI specification`;
 
 const usage = () => `
@@ -25,6 +26,7 @@ export const registerDereference = (cli: Command, config: OpticCliConfig) => {
     .addHelpText('after', helpText)
     .description(description)
     .argument('[file_path]', 'openapi file to dereference')
+    .option('-o [output]', 'output file name')
     .action(wrapActionHandlerWithSentry(deferenceAction(config)));
 };
 
@@ -42,15 +44,29 @@ const getDereferencedSpec = async (
 };
 
 const deferenceAction =
-  (config: OpticCliConfig) => async (filePath: string | undefined) => {
+  (config: OpticCliConfig) => async (filePath: string | undefined, options) => {
+    const { o } = options;
     let parsedFile: ParseResult;
     if (filePath) {
       parsedFile = await getDereferencedSpec(filePath, config);
 
-      if (isYaml(filePath)) {
-        console.log(writeYaml(parsedFile.jsonLike));
+      if (o) {
+        // write to file
+        const outputPath = path.resolve(o);
+        await fs.writeFile(
+          outputPath,
+          isYaml(o)
+            ? writeYaml(parsedFile.jsonLike)
+            : JSON.stringify(parsedFile.jsonLike, null, 2)
+        );
+        console.log('wrote dereferenced spec to ' + path.resolve(o));
       } else {
-        console.log(JSON.stringify(parsedFile.jsonLike, null, 2));
+        // assume pipe >
+        if (isYaml(filePath)) {
+          console.log(writeYaml(parsedFile.jsonLike));
+        } else {
+          console.log(JSON.stringify(parsedFile.jsonLike, null, 2));
+        }
       }
     } else {
       console.error('No specification found');

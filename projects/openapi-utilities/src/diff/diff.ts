@@ -231,3 +231,21 @@ export function diff(before: any, after: any): ObjectDiff[] {
 
   return diffResults;
 }
+
+export function reconcileDiff(diff: ObjectDiff): ObjectDiff {
+  if (diff.pathReconciliation) {
+    const previousPath = diff.before;
+    const parts = jsonPointerHelpers.decode(previousPath);
+    for (const [index, replacement] of diff.pathReconciliation) {
+      parts[index] = replacement;
+    }
+
+    return {
+      before: jsonPointerHelpers.compile(parts),
+      after: undefined,
+      pathReconciliation: [],
+    };
+  } else {
+    return diff;
+  }
+}
