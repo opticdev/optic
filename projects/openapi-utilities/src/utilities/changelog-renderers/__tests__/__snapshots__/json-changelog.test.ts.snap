@@ -1790,7 +1790,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                   "key": "",
                 },
               ],
-              "change": "changed",
+              "change": "added",
               "name": "application/json",
             },
             {
@@ -2044,7 +2044,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                 "key": "/schema/properties/category/properties/other",
               },
             ],
-            "change": "added",
+            "change": "changed",
             "name": "application/json",
           },
         ],

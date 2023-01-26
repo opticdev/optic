@@ -1,7 +1,8 @@
 import { OpenAPIV3 } from 'openapi-types';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
-import { typeofDiff, getTypeofDiffs } from '../../diff/diff';
+import { typeofDiff } from '../../diff/diff';
+import { typeofV3Diffs } from '../../openapi3/group-diff';
 import type {
   GroupedDiffs,
   Body,
@@ -103,7 +104,7 @@ function getEndpointLogs(
     queryParameters,
   } = endpointChange;
 
-  const operationChange = getTypeofDiffs(diffs);
+  const operationChange = typeofV3Diffs(diffs);
 
   const parameterChanges = [];
   for (const diff of queryParameters) {
@@ -155,7 +156,7 @@ function getResponseChangeLogs(
   contentTypes: ChangedNode[];
 } {
   const contentTypeChanges: ChangedNode[] = [];
-  const responseChange = getTypeofDiffs(response.diffs);
+  const responseChange = typeofV3Diffs(response.diffs);
 
   for (const [contentType, body] of Object.entries(response.contents)) {
     contentTypeChanges.push(getBodyChangeLogs(specs, body, contentType));
@@ -182,7 +183,7 @@ function getRequestChangeLogs(
   contentTypes: ChangedNode[];
 } {
   const contentTypes: ChangedNode[] = [];
-  const requestChange = getTypeofDiffs(request.diffs);
+  const requestChange = typeofV3Diffs(request.diffs);
 
   for (const [contentType, body] of Object.entries(request.contents)) {
     contentTypes.push(getBodyChangeLogs(specs, body, contentType));
@@ -211,7 +212,7 @@ function getBodyChangeLogs(
 
   // Group body diffs by trail and then log based on that
 
-  const bodyChange = getTypeofDiffs([...fieldDiffs, ...exampleDiffs]);
+  const bodyChange = typeofV3Diffs([...fieldDiffs, ...exampleDiffs]);
 
   return {
     name: `${contentType}`,

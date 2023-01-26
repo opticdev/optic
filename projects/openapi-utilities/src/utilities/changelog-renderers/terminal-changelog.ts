@@ -1,5 +1,5 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { typeofDiff, getTypeofDiffs } from '../../diff/diff';
+import { typeofDiff } from '../../diff/diff';
 import type {
   GroupedDiffs,
   Body,
@@ -7,7 +7,7 @@ import type {
   Endpoint,
   Response,
 } from '../../openapi3/group-diff';
-
+import { typeofV3Diffs } from '../../openapi3/group-diff';
 import { Instance as Chalk } from 'chalk';
 import { getLocation, getRaw } from '../../openapi3/traverser';
 import { interpretFieldLevelDiffs } from './common';
@@ -99,7 +99,7 @@ function* getEndpointLogs(
     queryParameters,
   } = endpointChange;
 
-  const change = getTypeofDiffs(diffs);
+  const change = typeofV3Diffs(diffs);
   yield `${chalk.bold(method.toUpperCase())} ${path}: ${
     change ? getAddedOrRemovedLabel(change) : ''
   }`;
@@ -127,7 +127,7 @@ function* getResponseChangeLogs(
   statusCode: string
 ) {
   const label = `- response ${chalk.bold(statusCode)}:`;
-  const change = getTypeofDiffs(response.diffs);
+  const change = typeofV3Diffs(response.diffs);
 
   if (change === 'removed') {
     yield `${label} ${removed}`;
@@ -158,7 +158,7 @@ function* getRequestChangeLogs(
   specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
   request: Endpoint['request']
 ) {
-  const change = getTypeofDiffs(request.diffs);
+  const change = typeofV3Diffs(request.diffs);
   const label = `- request:`;
 
   if (change === 'removed') {
@@ -184,7 +184,7 @@ function* getBodyChangeLogs(
 ) {
   const fieldDiffs = interpretFieldLevelDiffs(specs, body.fields);
   const flatDiffs = [...fieldDiffs, ...body.examples];
-  const change = getTypeofDiffs(flatDiffs);
+  const change = typeofV3Diffs(flatDiffs);
   const label = `- body ${chalk.bold(key)}:`;
 
   if (change === 'removed') {
@@ -238,7 +238,7 @@ function* getParameterLogs(
   }
 
   for (const [name, diffsForName] of Object.entries(diffByName)) {
-    const change = getTypeofDiffs(diffsForName);
+    const change = typeofV3Diffs(diffsForName);
     yield `- ${parameterType} parameter ${chalk.italic(
       name
     )}: ${getAddedOrRemovedLabel(change)}`;

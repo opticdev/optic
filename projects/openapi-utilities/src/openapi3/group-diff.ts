@@ -27,6 +27,15 @@ function constructTree(spec: OpenAPIV3.Document) {
   return constructFactTree([...traverser.facts()]);
 }
 
+export function typeofV3Diffs(diffs: Diff[]) {
+  for (const diff of diffs) {
+    if (diff.trail === '') {
+      return typeofDiff(diff);
+    }
+  }
+  return diffs.length > 0 ? 'changed' : null;
+}
+
 export type Diff = {
   trail: string; // The relative path from the diff to the significant node
   change: 'added' | 'changed' | 'removed';
