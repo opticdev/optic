@@ -174,8 +174,8 @@ specification details:
       - /schema/properties/status [33mchanged[39m
       
   - response [1m200[22m: 
-    - body [1mapplication/json[22m: [32madded[39m
-      - /schema/properties/summary [32madded[39m
+    - body [1mapplication/json[22m: 
+      - /schema/properties/summary, /example [32madded[39m
       - /schema/properties/status [33mchanged[39m
       
     - body [1mapplication/xml[22m: 

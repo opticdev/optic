@@ -835,19 +835,15 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               },
               {
                 "after": {
-                  "description": "User Status",
                   "enum": [
                     "activation-pending",
                     "activated",
                     "blocked",
                   ],
-                  "required": true,
                   "type": "string",
                 },
                 "before": {
-                  "description": "User Status",
                   "format": "int32",
-                  "required": true,
                   "type": "integer",
                 },
                 "change": "changed",
@@ -856,11 +852,9 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               {
                 "after": {
                   "required": false,
-                  "type": "string",
                 },
                 "before": {
                   "required": true,
-                  "type": "string",
                 },
                 "change": "changed",
                 "key": "/schema/properties/lastName",
@@ -868,11 +862,9 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               {
                 "after": {
                   "required": true,
-                  "type": "string",
                 },
                 "before": {
                   "required": false,
-                  "type": "string",
                 },
                 "change": "changed",
                 "key": "/schema/properties/username",
@@ -901,14 +893,6 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               "attributes": [
                 {
                   "after": {
-                    "examples": {
-                      "One": {
-                        "email": "hello@123.com",
-                        "id": 12,
-                        "lastName": "me",
-                        "userStatus": 2,
-                      },
-                    },
                     "schema": {
                       "example": {
                         "email": "hello@123.com",
@@ -920,32 +904,12 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                         "bio": {
                           "type": "string",
                         },
-                        "email": {
-                          "type": "string",
-                        },
-                        "firstName": {
-                          "type": "string",
-                        },
-                        "id": {
-                          "format": "int64",
-                          "type": "integer",
-                        },
-                        "lastName": {
-                          "type": "string",
-                        },
-                        "password": {
-                          "type": "string",
-                        },
                         "userStatus": {
-                          "description": "User Status",
                           "enum": [
                             "activation-pending",
                             "activated",
                             "blocked",
                           ],
-                          "type": "string",
-                        },
-                        "username": {
                           "type": "string",
                         },
                       },
@@ -955,49 +919,17 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                         "username",
                         "userStatus",
                       ],
-                      "type": "object",
-                      "xml": {
-                        "name": "User",
-                      },
                     },
                   },
                   "before": {
-                    "examples": {
-                      "One": {
-                        "email": "hello@123.com",
-                        "id": 12,
-                        "lastName": "me",
-                        "userStatus": 2,
-                      },
-                    },
                     "schema": {
                       "properties": {
-                        "email": {
-                          "type": "string",
-                        },
-                        "firstName": {
-                          "type": "string",
-                        },
-                        "id": {
-                          "format": "int64",
-                          "type": "integer",
-                        },
-                        "lastName": {
-                          "type": "string",
-                        },
-                        "password": {
-                          "type": "string",
-                        },
                         "phone": {
                           "type": "string",
                         },
                         "userStatus": {
-                          "description": "User Status",
                           "format": "int32",
                           "type": "integer",
-                        },
-                        "username": {
-                          "type": "string",
                         },
                       },
                       "required": [
@@ -1006,10 +938,6 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                         "lastName",
                         "userStatus",
                       ],
-                      "type": "object",
-                      "xml": {
-                        "name": "User",
-                      },
                     },
                   },
                   "change": "changed",
@@ -1035,19 +963,15 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                 },
                 {
                   "after": {
-                    "description": "User Status",
                     "enum": [
                       "activation-pending",
                       "activated",
                       "blocked",
                     ],
-                    "required": true,
                     "type": "string",
                   },
                   "before": {
-                    "description": "User Status",
                     "format": "int32",
-                    "required": true,
                     "type": "integer",
                   },
                   "change": "changed",
@@ -1056,11 +980,9 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                 {
                   "after": {
                     "required": false,
-                    "type": "string",
                   },
                   "before": {
                     "required": true,
-                    "type": "string",
                   },
                   "change": "changed",
                   "key": "/schema/properties/lastName",
@@ -1068,11 +990,9 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                 {
                   "after": {
                     "required": true,
-                    "type": "string",
                   },
                   "before": {
                     "required": false,
-                    "type": "string",
                   },
                   "change": "changed",
                   "key": "/schema/properties/username",
@@ -1103,19 +1023,15 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                 },
                 {
                   "after": {
-                    "description": "User Status",
                     "enum": [
                       "activation-pending",
                       "activated",
                       "blocked",
                     ],
-                    "required": true,
                     "type": "string",
                   },
                   "before": {
-                    "description": "User Status",
                     "format": "int32",
-                    "required": true,
                     "type": "integer",
                   },
                   "change": "changed",
@@ -1124,11 +1040,9 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                 {
                   "after": {
                     "required": false,
-                    "type": "string",
                   },
                   "before": {
                     "required": true,
-                    "type": "string",
                   },
                   "change": "changed",
                   "key": "/schema/properties/lastName",
@@ -1136,11 +1050,9 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                 {
                   "after": {
                     "required": true,
-                    "type": "string",
                   },
                   "before": {
                     "required": false,
-                    "type": "string",
                   },
                   "change": "changed",
                   "key": "/schema/properties/username",
@@ -1241,19 +1153,15 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               },
               {
                 "after": {
-                  "description": "User Status",
                   "enum": [
                     "activation-pending",
                     "activated",
                     "blocked",
                   ],
-                  "required": true,
                   "type": "string",
                 },
                 "before": {
-                  "description": "User Status",
                   "format": "int32",
-                  "required": true,
                   "type": "integer",
                 },
                 "change": "changed",
@@ -1267,32 +1175,12 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                         "bio": {
                           "type": "string",
                         },
-                        "email": {
-                          "type": "string",
-                        },
-                        "firstName": {
-                          "type": "string",
-                        },
-                        "id": {
-                          "format": "int64",
-                          "type": "integer",
-                        },
-                        "lastName": {
-                          "type": "string",
-                        },
-                        "password": {
-                          "type": "string",
-                        },
                         "userStatus": {
-                          "description": "User Status",
                           "enum": [
                             "activation-pending",
                             "activated",
                             "blocked",
                           ],
-                          "type": "string",
-                        },
-                        "username": {
                           "type": "string",
                         },
                       },
@@ -1302,44 +1190,19 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                         "username",
                         "userStatus",
                       ],
-                      "type": "object",
-                      "xml": {
-                        "name": "User",
-                      },
                     },
-                    "type": "array",
                   },
                 },
                 "before": {
                   "schema": {
                     "items": {
                       "properties": {
-                        "email": {
-                          "type": "string",
-                        },
-                        "firstName": {
-                          "type": "string",
-                        },
-                        "id": {
-                          "format": "int64",
-                          "type": "integer",
-                        },
-                        "lastName": {
-                          "type": "string",
-                        },
-                        "password": {
-                          "type": "string",
-                        },
                         "phone": {
                           "type": "string",
                         },
                         "userStatus": {
-                          "description": "User Status",
                           "format": "int32",
                           "type": "integer",
-                        },
-                        "username": {
-                          "type": "string",
                         },
                       },
                       "required": [
@@ -1348,12 +1211,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                         "lastName",
                         "userStatus",
                       ],
-                      "type": "object",
-                      "xml": {
-                        "name": "User",
-                      },
                     },
-                    "type": "array",
                   },
                 },
                 "change": "changed",
@@ -1399,19 +1257,15 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               },
               {
                 "after": {
-                  "description": "User Status",
                   "enum": [
                     "activation-pending",
                     "activated",
                     "blocked",
                   ],
-                  "required": true,
                   "type": "string",
                 },
                 "before": {
-                  "description": "User Status",
                   "format": "int32",
-                  "required": true,
                   "type": "integer",
                 },
                 "change": "changed",
@@ -1425,32 +1279,12 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                         "bio": {
                           "type": "string",
                         },
-                        "email": {
-                          "type": "string",
-                        },
-                        "firstName": {
-                          "type": "string",
-                        },
-                        "id": {
-                          "format": "int64",
-                          "type": "integer",
-                        },
-                        "lastName": {
-                          "type": "string",
-                        },
-                        "password": {
-                          "type": "string",
-                        },
                         "userStatus": {
-                          "description": "User Status",
                           "enum": [
                             "activation-pending",
                             "activated",
                             "blocked",
                           ],
-                          "type": "string",
-                        },
-                        "username": {
                           "type": "string",
                         },
                       },
@@ -1460,44 +1294,19 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                         "username",
                         "userStatus",
                       ],
-                      "type": "object",
-                      "xml": {
-                        "name": "User",
-                      },
                     },
-                    "type": "array",
                   },
                 },
                 "before": {
                   "schema": {
                     "items": {
                       "properties": {
-                        "email": {
-                          "type": "string",
-                        },
-                        "firstName": {
-                          "type": "string",
-                        },
-                        "id": {
-                          "format": "int64",
-                          "type": "integer",
-                        },
-                        "lastName": {
-                          "type": "string",
-                        },
-                        "password": {
-                          "type": "string",
-                        },
                         "phone": {
                           "type": "string",
                         },
                         "userStatus": {
-                          "description": "User Status",
                           "format": "int32",
                           "type": "integer",
-                        },
-                        "username": {
-                          "type": "string",
                         },
                       },
                       "required": [
@@ -1506,12 +1315,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                         "lastName",
                         "userStatus",
                       ],
-                      "type": "object",
-                      "xml": {
-                        "name": "User",
-                      },
                     },
-                    "type": "array",
                   },
                 },
                 "change": "changed",
@@ -1557,19 +1361,15 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               },
               {
                 "after": {
-                  "description": "User Status",
                   "enum": [
                     "activation-pending",
                     "activated",
                     "blocked",
                   ],
-                  "required": true,
                   "type": "string",
                 },
                 "before": {
-                  "description": "User Status",
                   "format": "int32",
-                  "required": true,
                   "type": "integer",
                 },
                 "change": "changed",
@@ -1578,11 +1378,9 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               {
                 "after": {
                   "required": false,
-                  "type": "string",
                 },
                 "before": {
                   "required": true,
-                  "type": "string",
                 },
                 "change": "changed",
                 "key": "/schema/properties/lastName",
@@ -1590,11 +1388,9 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               {
                 "after": {
                   "required": true,
-                  "type": "string",
                 },
                 "before": {
                   "required": false,
-                  "type": "string",
                 },
                 "change": "changed",
                 "key": "/schema/properties/username",
@@ -1677,24 +1473,18 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                 },
                 {
                   "after": {
-                    "description": "Order Status",
                     "enum": [
                       "placed",
                       "delivered",
                       "canceled",
                     ],
-                    "required": false,
-                    "type": "string",
                   },
                   "before": {
-                    "description": "Order Status",
                     "enum": [
                       "placed",
                       "approved",
                       "delivered",
                     ],
-                    "required": false,
-                    "type": "string",
                   },
                   "change": "changed",
                   "key": "/schema/properties/status",
@@ -1717,38 +1507,28 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                 },
                 {
                   "after": {
-                    "description": "Order Status",
                     "enum": [
                       "placed",
                       "delivered",
                       "canceled",
                     ],
-                    "required": false,
-                    "type": "string",
                   },
                   "before": {
-                    "description": "Order Status",
                     "enum": [
                       "placed",
                       "approved",
                       "delivered",
                     ],
-                    "required": false,
-                    "type": "string",
                   },
                   "change": "changed",
                   "key": "/schema/properties/status",
                 },
                 {
                   "after": {
-                    "format": "int64",
                     "required": false,
-                    "type": "integer",
                   },
                   "before": {
-                    "format": "int64",
                     "required": true,
-                    "type": "integer",
                   },
                   "change": "changed",
                   "key": "/schema/properties/petId",
@@ -1820,24 +1600,18 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               },
               {
                 "after": {
-                  "description": "Order Status",
                   "enum": [
                     "placed",
                     "delivered",
                     "canceled",
                   ],
-                  "required": false,
-                  "type": "string",
                 },
                 "before": {
-                  "description": "Order Status",
                   "enum": [
                     "placed",
                     "approved",
                     "delivered",
                   ],
-                  "required": false,
-                  "type": "string",
                 },
                 "change": "changed",
                 "key": "/schema/properties/status",
@@ -1868,24 +1642,18 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                 },
                 {
                   "after": {
-                    "description": "Order Status",
                     "enum": [
                       "placed",
                       "delivered",
                       "canceled",
                     ],
-                    "required": false,
-                    "type": "string",
                   },
                   "before": {
-                    "description": "Order Status",
                     "enum": [
                       "placed",
                       "approved",
                       "delivered",
                     ],
-                    "required": false,
-                    "type": "string",
                   },
                   "change": "changed",
                   "key": "/schema/properties/status",
@@ -1922,24 +1690,18 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                 },
                 {
                   "after": {
-                    "description": "Order Status",
                     "enum": [
                       "placed",
                       "delivered",
                       "canceled",
                     ],
-                    "required": false,
-                    "type": "string",
                   },
                   "before": {
-                    "description": "Order Status",
                     "enum": [
                       "placed",
                       "approved",
                       "delivered",
                     ],
-                    "required": false,
-                    "type": "string",
                   },
                   "change": "changed",
                   "key": "/schema/properties/status",
@@ -2086,11 +1848,9 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               "attributes": [
                 {
                   "after": {
-                    "required": false,
                     "type": "integer",
                   },
                   "before": {
-                    "required": false,
                     "type": "string",
                   },
                   "change": "changed",
@@ -2366,7 +2126,6 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                         "type": "object",
                       },
                     ],
-                    "required": false,
                   },
                   "before": {
                     "anyOf": [
@@ -2379,18 +2138,15 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                         "type": "object",
                       },
                     ],
-                    "required": false,
                   },
                   "change": "changed",
                   "key": "/schema/properties/expandableObject",
                 },
                 {
                   "after": {
-                    "required": false,
                     "type": "number",
                   },
                   "before": {
-                    "required": false,
                     "type": "string",
                   },
                   "change": "changed",
@@ -2406,7 +2162,6 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                         "type": "number",
                       },
                     ],
-                    "required": false,
                   },
                   "before": {
                     "oneOf": [
@@ -2425,7 +2180,6 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                         "type": "object",
                       },
                     ],
-                    "required": false,
                   },
                   "change": "changed",
                   "key": "/schema/properties/stringOrNumberOrObject",

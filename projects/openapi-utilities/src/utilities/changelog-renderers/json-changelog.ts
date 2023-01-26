@@ -10,6 +10,7 @@ import type {
   Response,
 } from '../../openapi3/group-diff';
 import { interpretFieldLevelDiffs } from './common';
+import isEqual from 'lodash.isequal';
 
 type RawChange<T> = { key: string } & (
   | {
@@ -32,7 +33,54 @@ type RawChange<T> = { key: string } & (
     }
 );
 
+function isObject(a: any) {
+  return typeof a === 'object' && a !== null && !Array.isArray(a);
+}
+
+// This function mutates and removes keys
+function omitSameValueKeys(a: any, b: any): [any, any] {
+  const keysToOmit: Set<string> = new Set();
+  const keysToContinue: Set<string> = new Set();
+  if (isObject(a) && isObject(b)) {
+    const clonedA = { ...a };
+    const clonedB = { ...b };
+    for (const key of new Set([...Object.keys(a), ...Object.keys(b)])) {
+      if (isEqual(a[key], b[key])) {
+        keysToOmit.add(key);
+      } else if (isObject(a[key]) && isObject(b[key])) {
+        keysToContinue.add(key);
+      }
+    }
+
+    for (const key of keysToOmit) {
+      delete clonedA[key];
+      delete clonedB[key];
+    }
+    for (const key of keysToContinue) {
+      const [aValue, bValue] = omitSameValueKeys(a[key], b[key]);
+      clonedA[key] = aValue;
+      clonedB[key] = bValue;
+    }
+    return [clonedA, clonedB];
+  }
+  return [a, b];
+}
+
 const getDetailsDiff = (change: RawChange<any>): ChangedNode['attributes'] => {
+  if (change.changed) {
+    const [before, after] = omitSameValueKeys(
+      change.changed.before,
+      change.changed.after
+    );
+    return [
+      {
+        key: change.key,
+        change: 'changed',
+        before,
+        after,
+      },
+    ];
+  }
   return [
     {
       key: change.key,
@@ -42,8 +90,6 @@ const getDetailsDiff = (change: RawChange<any>): ChangedNode['attributes'] => {
             after: change.added,
             change: 'added',
           }
-        : change.changed
-        ? { ...change.changed, change: 'changed' }
         : {
             before: change.removed,
             after: undefined,
