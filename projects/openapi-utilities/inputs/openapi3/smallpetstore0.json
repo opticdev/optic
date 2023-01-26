@@ -13,6 +13,15 @@
         "summary": "Create user",
         "description": "This can only be done by the logged in user.",
         "operationId": "createUser",
+        "parameters": [
+          {
+            "name": "seomthing",
+            "in": "query",
+            "description": "something",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
         "requestBody": {
           "description": "Created user object",
           "content": {

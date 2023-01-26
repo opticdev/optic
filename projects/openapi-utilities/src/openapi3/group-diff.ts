@@ -69,10 +69,10 @@ export type Endpoint = {
   method: string;
   path: string;
   diffs: Diff[];
-  queryParameters: Diff[];
-  pathParameters: Diff[];
-  cookieParameters: Diff[];
-  headerParameters: Diff[];
+  queryParameters: Record<string, Diff[]>;
+  pathParameters: Record<string, Diff[]>;
+  cookieParameters: Record<string, Diff[]>;
+  headerParameters: Record<string, Diff[]>;
   request: {
     diffs: Diff[];
     contents: Record<string, Body>;
@@ -97,10 +97,10 @@ export class GroupedDiffs {
         method,
         path,
         diffs: [],
-        queryParameters: [],
-        pathParameters: [],
-        cookieParameters: [],
-        headerParameters: [],
+        queryParameters: {},
+        pathParameters: {},
+        cookieParameters: {},
+        headerParameters: {},
         request: {
           diffs: [],
           contents: {},
@@ -159,6 +159,19 @@ export class GroupedDiffs {
       return responseBody;
     }
   }
+}
+
+function getParameterName(spec: OpenAPIV3.Document, pointer: string) {
+  // /paths/path/method/parameters/n
+  const parts = jsonPointerHelpers.decode(pointer);
+  const basePointer =
+    parts[2] === 'parameters'
+      ? jsonPointerHelpers.compile(parts.slice(0, 4))
+      : jsonPointerHelpers.compile(parts.slice(0, 5));
+
+  const raw = jsonPointerHelpers.get(spec, basePointer);
+
+  return raw.name;
 }
 
 function normalizeRequiredDiff(
@@ -235,6 +248,7 @@ export function groupDiffsByEndpoint(
         diff.after ?? diff.before,
         fact.location.jsonPath
       );
+      const specToFetchFrom = diff.after !== undefined ? specs.to : specs.from;
       const diffToAdd = { ...diff, trail, change: typeofDiff(diff) };
       if (fact.type === 'specification') {
         grouped.specification.push(diffToAdd);
@@ -276,26 +290,33 @@ export function groupDiffsByEndpoint(
         const endpointId = getEndpointId({ pathPattern, method });
         const endpoint = grouped.getOrSetEndpoint(endpointId);
         endpoint.diffs.push(diffToAdd);
-      } else if (fact.type === 'request-header') {
+      } else if (
+        fact.type === 'request-header' ||
+        fact.type === 'request-query' ||
+        fact.type === 'request-cookie' ||
+        fact.type === 'request-path'
+      ) {
+        const parameter =
+          fact.type === 'request-header'
+            ? 'headerParameters'
+            : fact.type === 'request-query'
+            ? 'queryParameters'
+            : fact.type === 'request-cookie'
+            ? 'cookieParameters'
+            : 'pathParameters';
         const { pathPattern, method } = getLocation(fact);
         const endpointId = getEndpointId({ pathPattern, method });
         const endpoint = grouped.getOrSetEndpoint(endpointId);
-        endpoint.headerParameters.push(diffToAdd);
-      } else if (fact.type === 'request-query') {
-        const { pathPattern, method } = getLocation(fact);
-        const endpointId = getEndpointId({ pathPattern, method });
-        const endpoint = grouped.getOrSetEndpoint(endpointId);
-        endpoint.queryParameters.push(diffToAdd);
-      } else if (fact.type === 'request-cookie') {
-        const { pathPattern, method } = getLocation(fact);
-        const endpointId = getEndpointId({ pathPattern, method });
-        const endpoint = grouped.getOrSetEndpoint(endpointId);
-        endpoint.cookieParameters.push(diffToAdd);
-      } else if (fact.type === 'request-path') {
-        const { pathPattern, method } = getLocation(fact);
-        const endpointId = getEndpointId({ pathPattern, method });
-        const endpoint = grouped.getOrSetEndpoint(endpointId);
-        endpoint.pathParameters.push(diffToAdd);
+        const name = getParameterName(
+          specToFetchFrom,
+          diff.after ?? diff.before
+        );
+
+        if (endpoint[parameter][name]) {
+          endpoint[parameter][name].push(diffToAdd);
+        } else {
+          endpoint[parameter][name] = [diffToAdd];
+        }
       } else if (fact.type === 'requestBody') {
         const { pathPattern, method } = getLocation(fact);
         const endpointId = getEndpointId({ pathPattern, method });
@@ -318,7 +339,6 @@ export function groupDiffsByEndpoint(
         const location = getLocation(fact);
 
         const endpointId = getEndpointId(location);
-        const key = jsonPointerHelpers.compile(location.trail);
         const body =
           location.location === 'request'
             ? grouped.getOrSetRequestBody(endpointId, location.contentType)
@@ -340,9 +360,6 @@ export function groupDiffsByEndpoint(
                 location.statusCode,
                 location.contentType
               );
-
-        const specToFetchFrom =
-          diff.after !== undefined ? specs.to : specs.from;
 
         let fieldKeys = normalizeRequiredDiff(specToFetchFrom, fact, {
           absolute: diff.after ?? diff.before,

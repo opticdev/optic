@@ -215,28 +215,8 @@ function* getResponseHeaderLogs(diff: Diff) {
 function* getParameterLogs(
   specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
   parameterType: 'query' | 'cookie' | 'path' | 'header',
-  diffs: Diff[]
+  diffByName: Record<string, Diff[]>
 ) {
-  const diffByName: Record<string, Diff[]> = {};
-  for (const diff of diffs) {
-    const raw =
-      diff.after !== undefined
-        ? getRaw(specs.to, {
-            location: { jsonPath: diff.after },
-            type: `request-${parameterType}`,
-          })
-        : getRaw(specs.from, {
-            location: { jsonPath: diff.before },
-            type: `request-${parameterType}`,
-          });
-
-    if (diffByName[raw.name]) {
-      diffByName[raw.name].push(diff);
-    } else {
-      diffByName[raw.name] = [diff];
-    }
-  }
-
   for (const [name, diffsForName] of Object.entries(diffByName)) {
     const change = typeofV3Diffs(diffsForName);
     yield `- ${parameterType} parameter ${chalk.italic(

@@ -4,13 +4,29 @@ exports[`groupDiffsByEndpoint can group diffs by endpoint for small-pet-store  1
 GroupedDiffs {
   "endpoints": {
     "/user-~_~-POST": {
-      "cookieParameters": [],
+      "cookieParameters": {},
       "diffs": [],
-      "headerParameters": [],
+      "headerParameters": {},
       "method": "POST",
       "path": "/user",
-      "pathParameters": [],
-      "queryParameters": [],
+      "pathParameters": {},
+      "queryParameters": {
+        "seomthing": [
+          {
+            "after": "/paths/~1user/post/parameters/0/required",
+            "before": "/paths/~1user/post/parameters/0/required",
+            "change": "changed",
+            "trail": "/required",
+          },
+        ],
+        "somethingelse": [
+          {
+            "after": "/paths/~1user/post/parameters/1",
+            "change": "added",
+            "trail": "",
+          },
+        ],
+      },
       "request": {
         "contents": {
           "*/*": {
@@ -93,13 +109,13 @@ GroupedDiffs {
       "responses": {},
     },
     "/user/login-~_~-GET": {
-      "cookieParameters": [],
+      "cookieParameters": {},
       "diffs": [],
-      "headerParameters": [],
+      "headerParameters": {},
       "method": "GET",
       "path": "/user/login",
-      "pathParameters": [],
-      "queryParameters": [],
+      "pathParameters": {},
+      "queryParameters": {},
       "request": {
         "contents": {},
         "diffs": [],
@@ -146,7 +162,7 @@ GroupedDiffs {
       },
     },
     "/user/logout-~_~-GET": {
-      "cookieParameters": [],
+      "cookieParameters": {},
       "diffs": [
         {
           "after": "/paths/~1user~1logout/get",
@@ -154,11 +170,11 @@ GroupedDiffs {
           "trail": "",
         },
       ],
-      "headerParameters": [],
+      "headerParameters": {},
       "method": "GET",
       "path": "/user/logout",
-      "pathParameters": [],
-      "queryParameters": [],
+      "pathParameters": {},
+      "queryParameters": {},
       "request": {
         "contents": {},
         "diffs": [],
@@ -166,7 +182,7 @@ GroupedDiffs {
       "responses": {},
     },
     "/user/{username}-~_~-DELETE": {
-      "cookieParameters": [],
+      "cookieParameters": {},
       "diffs": [
         {
           "after": "/paths/~1user~1{username}/delete",
@@ -174,11 +190,11 @@ GroupedDiffs {
           "trail": "",
         },
       ],
-      "headerParameters": [],
+      "headerParameters": {},
       "method": "DELETE",
       "path": "/user/{username}",
-      "pathParameters": [],
-      "queryParameters": [],
+      "pathParameters": {},
+      "queryParameters": {},
       "request": {
         "contents": {},
         "diffs": [],
@@ -186,7 +202,7 @@ GroupedDiffs {
       "responses": {},
     },
     "/user/{username}-~_~-GET": {
-      "cookieParameters": [],
+      "cookieParameters": {},
       "diffs": [
         {
           "after": "/paths/~1user~1{username}/get",
@@ -194,11 +210,11 @@ GroupedDiffs {
           "trail": "",
         },
       ],
-      "headerParameters": [],
+      "headerParameters": {},
       "method": "GET",
       "path": "/user/{username}",
-      "pathParameters": [],
-      "queryParameters": [],
+      "pathParameters": {},
+      "queryParameters": {},
       "request": {
         "contents": {},
         "diffs": [],
@@ -206,7 +222,7 @@ GroupedDiffs {
       "responses": {},
     },
     "/user/{username}-~_~-PATCH": {
-      "cookieParameters": [],
+      "cookieParameters": {},
       "diffs": [
         {
           "after": "/paths/~1user~1{username}/patch",
@@ -214,11 +230,11 @@ GroupedDiffs {
           "trail": "",
         },
       ],
-      "headerParameters": [],
+      "headerParameters": {},
       "method": "PATCH",
       "path": "/user/{username}",
-      "pathParameters": [],
-      "queryParameters": [],
+      "pathParameters": {},
+      "queryParameters": {},
       "request": {
         "contents": {},
         "diffs": [],

@@ -183,7 +183,7 @@ specification details:
       - /schema/properties/status [33mchanged[39m
       
 [1mPOST[22m /pet/{petId}/uploadImage: 
-  - cookie parameter [3mundefined[23m: 
+  - cookie parameter [3mdebug[23m: 
     - /schema/enum [32madded[39m
     
   - response [1m200[22m: [31mremoved[39m
@@ -214,9 +214,11 @@ specification details:
   - query parameter [3mdeletedQueryParameter[23m: [31mremoved[39m
   - query parameter [3maddedQueryParameter[23m: [32madded[39m
     
-  - query parameter [3mundefined[23m: 
-    - /required [32madded[39m
+  - query parameter [3mrequiredToOptional[23m: 
     - /required [31mremoved[39m
+    
+  - query parameter [3moptionalToRequired[23m: 
+    - /required [32madded[39m
     
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 

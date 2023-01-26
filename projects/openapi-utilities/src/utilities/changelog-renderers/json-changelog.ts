@@ -107,20 +107,20 @@ function getEndpointLogs(
   const operationChange = typeofV3Diffs(diffs);
 
   const parameterChanges = [];
-  for (const diff of queryParameters) {
-    parameterChanges.push(getParameterLogs(specs, 'request-query', diff));
+  for (const [name, diffs] of Object.entries(queryParameters)) {
+    parameterChanges.push(getParameterLogs(specs, 'query', name, diffs));
   }
 
-  for (const diff of cookieParameters) {
-    parameterChanges.push(getParameterLogs(specs, 'request-cookie', diff));
+  for (const [name, diffs] of Object.entries(cookieParameters)) {
+    parameterChanges.push(getParameterLogs(specs, 'cookie', name, diffs));
   }
 
-  for (const diff of pathParameters) {
-    parameterChanges.push(getParameterLogs(specs, 'request-path', diff));
+  for (const [name, diffs] of Object.entries(pathParameters)) {
+    parameterChanges.push(getParameterLogs(specs, 'path', name, diffs));
   }
 
-  for (const diff of headerParameters) {
-    parameterChanges.push(getParameterLogs(specs, 'request-header', diff));
+  for (const [name, diffs] of Object.entries(headerParameters)) {
+    parameterChanges.push(getParameterLogs(specs, 'header', name, diffs));
   }
 
   const responseChanges: ChangedNode[] = [];
@@ -294,29 +294,17 @@ function getBodyChangeLogs(
 
 function getParameterLogs(
   specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
-  parameterType:
-    | 'request-header'
-    | 'request-query'
-    | 'request-cookie'
-    | 'request-path',
-  diff: Diff
+  type: string,
+  name: string,
+  diffs: Diff[]
 ): ChangedNode {
-  const raw =
-    diff.after !== undefined
-      ? getRaw(specs.to, {
-          location: { jsonPath: diff.after },
-          type: parameterType,
-        })
-      : getRaw(specs.from, {
-          location: { jsonPath: diff.before },
-          type: parameterType,
-        });
-
-  const rawChange = getRawChange(diff, specs);
   return {
-    name: `${parameterType} parameter '${raw.name}'`,
-    change: typeofDiff(diff),
-    attributes: getDetailsDiff(rawChange),
+    name: `${type} parameter '${name}'`,
+    change: typeofV3Diffs(diffs),
+    attributes: diffs.flatMap((diff) => {
+      const rawChange = getRawChange(diff, specs);
+      return getDetailsDiff(rawChange);
+    }),
   };
 }
 
