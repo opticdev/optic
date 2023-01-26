@@ -14,6 +14,7 @@ export type V3FactType =
   | 'response'
   | 'response-header'
   | 'body-example'
+  | 'body-examples'
   | 'component-schema-example';
 
 type _OpenApiV3TraverserFact<T extends V3FactType> = {
@@ -39,7 +40,7 @@ export type FactLocation<T extends V3FactType> = T extends 'specification'
       | 'request-path'
       | 'requestBody'
   ? { pathPattern: string; method: string }
-  : T extends 'body' | 'body-example'
+  : T extends 'body'
   ?
       | {
           location: 'response';
@@ -53,6 +54,23 @@ export type FactLocation<T extends V3FactType> = T extends 'specification'
           pathPattern: string;
           method: string;
           contentType: string;
+        }
+  : T extends 'body-example' | 'body-examples'
+  ?
+      | {
+          location: 'response';
+          pathPattern: string;
+          method: string;
+          statusCode: string;
+          contentType: string;
+          trail: string[];
+        }
+      | {
+          location: 'request';
+          pathPattern: string;
+          method: string;
+          contentType: string;
+          trail: string[];
         }
   : T extends 'field'
   ?
@@ -109,6 +127,8 @@ export type FactRawItem<T extends V3FactType> = T extends 'specification'
   : T extends 'response-header'
   ? OpenAPIV3.HeaderObject
   : T extends 'body-example'
+  ? NonNullable<OpenAPIV3.MediaTypeObject['example']>
+  : T extends 'body-examples'
   ? OpenAPIV3.ExampleObject
   : T extends 'component-schema-example'
   ? OpenAPIV3.ExampleObject

@@ -8126,7 +8126,57 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
           "change": null,
           "contentTypes": Map {
             "application/json" => {
-              "bodyChange": null,
+              "bodyChange": {
+                "changeType": "changed",
+                "changed": {
+                  "after": {
+                    "contentType": "application/json",
+                    "flatSchema": {
+                      "example": {
+                        "email": "hello@123.com",
+                        "id": 12,
+                        "lastName": "me",
+                        "userStatus": 2,
+                      },
+                      "type": "object",
+                      "xml": {
+                        "name": "User",
+                      },
+                    },
+                  },
+                  "before": {
+                    "contentType": "application/json",
+                    "flatSchema": {
+                      "type": "object",
+                      "xml": {
+                        "name": "User",
+                      },
+                    },
+                  },
+                },
+                "location": {
+                  "conceptualLocation": {
+                    "inResponse": {
+                      "body": {
+                        "contentType": "application/json",
+                      },
+                      "statusCode": "200",
+                    },
+                    "method": "get",
+                    "path": "/user/{username}",
+                  },
+                  "conceptualPath": [
+                    "operations",
+                    "/user/{}",
+                    "get",
+                    "responses",
+                    "200",
+                    "application/json",
+                  ],
+                  "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json",
+                  "kind": "body",
+                },
+              },
               "exampleChanges": [],
               "fieldChanges": [
                 {
@@ -8373,7 +8423,54 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
             },
             "application/xml" => {
               "bodyChange": null,
-              "exampleChanges": [],
+              "exampleChanges": [
+                {
+                  "changeType": "changed",
+                  "changed": {
+                    "after": {
+                      "contentType": "application/xml",
+                      "email": "hello@123.com",
+                      "id": 12,
+                      "lastName": "me",
+                      "name": "One",
+                      "userStatus": 2,
+                    },
+                    "before": {
+                      "contentType": "application/xml",
+                      "email": "hello@123.com",
+                      "id": 12,
+                      "lastName": "me",
+                      "name": "One",
+                      "userStatus": 1,
+                    },
+                  },
+                  "location": {
+                    "conceptualLocation": {
+                      "inResponse": {
+                        "body": {
+                          "contentType": "application/xml",
+                        },
+                        "statusCode": "200",
+                      },
+                      "method": "get",
+                      "name": "One",
+                      "path": "/user/{username}",
+                    },
+                    "conceptualPath": [
+                      "operations",
+                      "/user/{}",
+                      "get",
+                      "responses",
+                      "200",
+                      "application/xml",
+                      "examples",
+                      "One",
+                    ],
+                    "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/examples/One",
+                    "kind": "body-example",
+                  },
+                },
+              ],
               "fieldChanges": [
                 {
                   "added": {

@@ -1,15 +1,16 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { typeofDiff, getTypeofDiffs } from '../diff/diff';
+import { typeofDiff } from '../../diff/diff';
 import type {
   GroupedDiffs,
   Body,
   Diff,
   Endpoint,
   Response,
-} from '../openapi3/group-diff';
-
+} from '../../openapi3/group-diff';
+import { typeofV3Diffs } from '../../openapi3/group-diff';
 import { Instance as Chalk } from 'chalk';
-import { getLocation, getRaw } from '../openapi3/traverser';
+import { getLocation, getRaw } from '../../openapi3/traverser';
+import { interpretFieldLevelDiffs } from './common';
 
 const chalk = new Chalk();
 
@@ -98,7 +99,7 @@ function* getEndpointLogs(
     queryParameters,
   } = endpointChange;
 
-  const change = getTypeofDiffs(diffs);
+  const change = typeofV3Diffs(diffs);
   yield `${chalk.bold(method.toUpperCase())} ${path}: ${
     change ? getAddedOrRemovedLabel(change) : ''
   }`;
@@ -113,16 +114,20 @@ function* getEndpointLogs(
 
   yield* indent(getParameterLogs(specs, 'header', headerParameters));
 
-  yield* indent(getRequestChangeLogs(request));
+  yield* indent(getRequestChangeLogs(specs, request));
 
   for (const [statusCode, response] of Object.entries(responses)) {
-    yield* indent(getResponseChangeLogs(response, statusCode));
+    yield* indent(getResponseChangeLogs(specs, response, statusCode));
   }
 }
 
-function* getResponseChangeLogs(response: Response, statusCode: string) {
+function* getResponseChangeLogs(
+  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  response: Response,
+  statusCode: string
+) {
   const label = `- response ${chalk.bold(statusCode)}:`;
-  const change = getTypeofDiffs(response.diffs);
+  const change = typeofV3Diffs(response.diffs);
 
   if (change === 'removed') {
     yield `${label} ${removed}`;
@@ -145,12 +150,15 @@ function* getResponseChangeLogs(response: Response, statusCode: string) {
   }
 
   for (const [key, contentType] of Object.entries(response.contents)) {
-    yield* indent(getBodyChangeLogs(contentType, key));
+    yield* indent(getBodyChangeLogs(specs, contentType, key));
   }
 }
 
-function* getRequestChangeLogs(request: Endpoint['request']) {
-  const change = getTypeofDiffs(request.diffs);
+function* getRequestChangeLogs(
+  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  request: Endpoint['request']
+) {
+  const change = typeofV3Diffs(request.diffs);
   const label = `- request:`;
 
   if (change === 'removed') {
@@ -165,12 +173,18 @@ function* getRequestChangeLogs(request: Endpoint['request']) {
   yield* indent(getDetailLogs(request.diffs));
 
   for (const [key, bodyChange] of Object.entries(request.contents)) {
-    yield* indent(getBodyChangeLogs(bodyChange, key));
+    yield* indent(getBodyChangeLogs(specs, bodyChange, key));
   }
 }
 
-function* getBodyChangeLogs(body: Body, key: string) {
-  const change = getTypeofDiffs(body.diffs);
+function* getBodyChangeLogs(
+  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  body: Body,
+  key: string
+) {
+  const fieldDiffs = interpretFieldLevelDiffs(specs, body.fields);
+  const flatDiffs = [...fieldDiffs, ...body.examples];
+  const change = typeofV3Diffs(flatDiffs);
   const label = `- body ${chalk.bold(key)}:`;
 
   if (change === 'removed') {
@@ -180,7 +194,7 @@ function* getBodyChangeLogs(body: Body, key: string) {
 
   yield `${label} ${change === 'added' ? added : ''}`;
 
-  yield* indent(getDetailLogs(body.diffs));
+  yield* indent(getDetailLogs(flatDiffs));
 }
 
 function* getResponseHeaderLogs(diff: Diff) {
@@ -201,30 +215,10 @@ function* getResponseHeaderLogs(diff: Diff) {
 function* getParameterLogs(
   specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
   parameterType: 'query' | 'cookie' | 'path' | 'header',
-  diffs: Diff[]
+  diffByName: Record<string, Diff[]>
 ) {
-  const diffByName: Record<string, Diff[]> = {};
-  for (const diff of diffs) {
-    const raw =
-      diff.after !== undefined
-        ? getRaw(specs.to, {
-            location: { jsonPath: diff.after },
-            type: `request-${parameterType}`,
-          })
-        : getRaw(specs.from, {
-            location: { jsonPath: diff.before },
-            type: `request-${parameterType}`,
-          });
-
-    if (diffByName[raw.name]) {
-      diffByName[raw.name].push(diff);
-    } else {
-      diffByName[raw.name] = [diff];
-    }
-  }
-
   for (const [name, diffsForName] of Object.entries(diffByName)) {
-    const change = getTypeofDiffs(diffsForName);
+    const change = typeofV3Diffs(diffsForName);
     yield `- ${parameterType} parameter ${chalk.italic(
       name
     )}: ${getAddedOrRemovedLabel(change)}`;

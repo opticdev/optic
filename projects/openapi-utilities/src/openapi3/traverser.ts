@@ -58,7 +58,7 @@ export function getLocation<T extends V3FactType>(
       pathPattern,
       method,
     } as FactLocation<T>;
-  } else if (fact.type === 'body' || fact.type === 'body-example') {
+  } else if (fact.type === 'body') {
     // 'paths', {pathPattern}, {method}, 'requestBody', 'content', {contentType}
     // OR
     // 'paths', {pathPattern}, {method}, 'responses', {statusCode}, content', {contentType}
@@ -79,6 +79,29 @@ export function getLocation<T extends V3FactType>(
         pathPattern,
         method,
         contentType,
+      } as FactLocation<T>;
+    }
+  } else if (fact.type === 'body-example' || fact.type === 'body-examples') {
+    const isResponse = parts[3] === 'responses';
+    if (isResponse) {
+      const [, pathPattern, method, , statusCode, , contentType, ...trail] =
+        parts;
+      return {
+        location: 'response',
+        pathPattern,
+        method,
+        statusCode,
+        contentType,
+        trail,
+      } as FactLocation<T>;
+    } else {
+      const [, pathPattern, method, , , contentType, ...trail] = parts;
+      return {
+        location: 'request',
+        pathPattern,
+        method,
+        contentType,
+        trail,
       } as FactLocation<T>;
     }
   } else if (fact.type === 'field') {
@@ -127,6 +150,8 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
   format = 'openapi3';
 
   input: (OpenAPIV3.Document | OpenAPIV3_1.Document) | undefined = undefined;
+
+  warnings: string[] = [];
 
   traverse(input: OpenAPIV3.Document | OpenAPIV3_1.Document): void {
     this.input = input;
@@ -200,7 +225,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
     const requestBody = operation.requestBody;
     if (requestBody) {
       if (!isObject(requestBody)) {
-        console.warn(
+        this.warnings.push(
           `Expected an object at: ${getReadableLocation(
             jsonPointer.append(jsonPath, 'requestBody')
           )}, found ${requestBody}`
@@ -221,7 +246,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
           type: 'requestBody',
         };
       } else {
-        console.warn(
+        this.warnings.push(
           `Expected a flattened spec, found a reference at: ${getReadableLocation(
             jsonPointer.append(jsonPath, 'requestBody')
           )}`
@@ -238,7 +263,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
         statusCode
       );
       if (!isObject(response)) {
-        console.warn(
+        this.warnings.push(
           `Expected an object at: ${getReadableLocation(
             nextJsonPath
           )}, found ${response}`
@@ -246,7 +271,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
       } else if (isNotReferenceObject(response)) {
         yield* this.traverseResponse(response, nextJsonPath);
       } else {
-        console.warn(
+        this.warnings.push(
           `Expected a flattened spec, found a reference at: ${getReadableLocation(
             nextJsonPath
           )}`
@@ -285,7 +310,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
       for (let [i, parameter] of Object.entries(operation.parameters)) {
         const nextJsonPath = jsonPointer.append(jsonPath, i);
         if (!isObject(parameter)) {
-          console.warn(
+          this.warnings.push(
             `Expected an object at: ${getReadableLocation(
               nextJsonPath
             )}, found ${parameter}`
@@ -304,7 +329,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
               };
           }
         } else {
-          console.warn(
+          this.warnings.push(
             `Expected a flattened spec, found a reference at: ${getReadableLocation(
               nextJsonPath
             )}`
@@ -357,7 +382,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
       for (let [name, header] of Object.entries(response.headers)) {
         const nextJsonPath = jsonPointer.append(jsonPath, 'headers', name);
         if (!isObject(header)) {
-          console.warn(
+          this.warnings.push(
             `Expected an object at: ${getReadableLocation(
               nextJsonPath
             )}, found ${header}`
@@ -368,7 +393,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
             type: 'response-header',
           };
         } else {
-          console.warn(
+          this.warnings.push(
             `Expected a flattened spec, found a reference at: ${getReadableLocation(
               nextJsonPath
             )}`
@@ -388,7 +413,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
     if (schema) {
       const nextJsonPath = jsonPointer.append(jsonPath, 'schema');
       if (!isObject(schema)) {
-        console.warn(
+        this.warnings.push(
           `Expected an object at: ${getReadableLocation(
             nextJsonPath
           )}, found ${schema}`
@@ -403,7 +428,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
 
         yield* this.traverseSchema(schema, nextJsonPath);
       } else {
-        console.warn(
+        this.warnings.push(
           `Expected a flattened spec, found a reference at: ${getReadableLocation(
             nextJsonPath
           )}`
@@ -412,10 +437,16 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
     }
 
     if (examples) {
+      yield {
+        location: {
+          jsonPath: jsonPointer.append(jsonPath, 'examples'),
+        },
+        type: 'body-examples',
+      };
       for (let [name, example] of Object.entries(examples)) {
         const nextJsonPath = jsonPointer.append(jsonPath, 'examples', name);
         if (!isObject(example)) {
-          console.warn(
+          this.warnings.push(
             `Expected an object at: ${getReadableLocation(
               nextJsonPath
             )}, found ${example}`
@@ -428,7 +459,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
             type: 'body-example',
           };
         } else {
-          console.warn(
+          this.warnings.push(
             `Expected a flattened spec, found a reference at: ${getReadableLocation(
               nextJsonPath
             )}`
@@ -486,7 +517,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
         );
 
         if (!isObject(branchSchema)) {
-          console.warn(
+          this.warnings.push(
             `Expected an object at: ${getReadableLocation(
               newJsonPath
             )}, found ${branchSchema}`
@@ -494,7 +525,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
         } else if (isNotReferenceObject(branchSchema)) {
           yield* this.traverseSchema(branchSchema, newJsonPath);
         } else {
-          console.warn(
+          this.warnings.push(
             `Expected a flattened spec, found a reference at: ${getReadableLocation(
               newJsonPath
             )}`
@@ -510,7 +541,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
         )) {
           const nextJsonPath = jsonPointer.append(jsonPath, 'properties', key);
           if (!isObject(fieldSchema)) {
-            console.warn(
+            this.warnings.push(
               `Expected an object at: ${getReadableLocation(
                 jsonPath
               )}, nextJsonPath ${fieldSchema}`
@@ -518,7 +549,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
           } else if (isNotReferenceObject(fieldSchema)) {
             yield* this.traverseField(fieldSchema, nextJsonPath);
           } else {
-            console.warn(
+            this.warnings.push(
               `Expected a flattened spec, found a reference at: ${getReadableLocation(
                 nextJsonPath
               )}`
@@ -530,7 +561,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
         const arrayItems = schema.items;
         const nextJsonPath = jsonPointer.append(jsonPath, 'items');
         if (!isObject(arrayItems)) {
-          console.warn(
+          this.warnings.push(
             `Expected an object at: ${getReadableLocation(
               nextJsonPath
             )}, found ${arrayItems}`
@@ -538,7 +569,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
         } else if (isNotReferenceObject(arrayItems)) {
           yield* this.traverseSchema(arrayItems, nextJsonPath);
         } else {
-          console.warn(
+          this.warnings.push(
             `Expected a flattened spec, found a reference at: ${getReadableLocation(
               nextJsonPath
             )}`
@@ -569,7 +600,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
     const nextJsonPath = jsonPointer.append(jsonPath, 'example');
 
     if (!isObject(schema)) {
-      console.warn(
+      this.warnings.push(
         `Expected an object at: ${getReadableLocation(
           nextJsonPath
         )}, found ${schema}`
@@ -584,7 +615,7 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
         };
       }
     } else {
-      console.warn(
+      this.warnings.push(
         `Expected a flattened spec, found a reference at: ${getReadableLocation(
           nextJsonPath
         )}`

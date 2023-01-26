@@ -13,6 +13,22 @@
         "summary": "Create user",
         "description": "This can only be done by the logged in user.",
         "operationId": "createUser",
+        "parameters": [
+          {
+            "name": "seomthing",
+            "in": "query",
+            "description": "something",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "somethingelse",
+            "in": "query",
+            "description": "something",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
         "requestBody": {
           "description": "Created user object",
           "content": {
@@ -52,13 +68,24 @@
                     "type": "string"
                   },
                   "userStatus": {
-                    "type": "integer",
-                    "description": "User Status",
-                    "format": "int32"
+                    "type": "string",
+                    "description": "User Status"
                   }
                 },
                 "xml": {
                   "name": "User"
+                }
+              },
+              "examples": {
+                "Pet": {
+                  "id": 123,
+                  "username": "mr-pet",
+                  "firstName": "mr",
+                  "lastName": "pet",
+                  "email": "pet@store.com",
+                  "password": "secret",
+                  "phone": "123456789",
+                  "userStatus": "active"
                 }
               }
             }
@@ -126,9 +153,21 @@
                   "properties": {
                     "id": {
                       "type": "string"
+                    },
+                    "status": {
+                      "type": "object",
+                      "properties": {
+                        "lastLogin": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["lastLogin"]
+                    },
+                    "name": {
+                      "type": "string"
                     }
                   },
-                  "required": ["id"]
+                  "required": ["name"]
                 }
               },
               "application/json": {

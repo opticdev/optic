@@ -231,6 +231,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
             ],
           },
           "before": undefined,
+          "change": "added",
           "key": "",
         },
       ],
@@ -450,6 +451,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
             ],
           },
           "before": undefined,
+          "change": "added",
           "key": "",
         },
       ],
@@ -659,6 +661,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
             ],
           },
           "before": undefined,
+          "change": "added",
           "key": "",
         },
       ],
@@ -733,6 +736,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
             ],
           },
           "before": undefined,
+          "change": "added",
           "key": "",
         },
       ],
@@ -790,6 +794,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
             ],
           },
           "before": undefined,
+          "change": "added",
           "key": "",
         },
       ],
@@ -801,57 +806,68 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "PUT /user/{username}",
       "parameters": [],
       "requestBody": {
         "attributes": [],
-        "change": null,
+        "change": "changed",
         "contentTypes": [
           {
             "attributes": [
               {
                 "after": undefined,
                 "before": {
+                  "required": false,
                   "type": "string",
                 },
+                "change": "removed",
                 "key": "/schema/properties/phone",
               },
               {
                 "after": {
+                  "required": false,
                   "type": "string",
                 },
                 "before": undefined,
+                "change": "added",
                 "key": "/schema/properties/bio",
               },
               {
-                "after": "string",
-                "before": "integer",
-                "key": "/schema/properties/userStatus/type",
+                "after": {
+                  "enum": [
+                    "activation-pending",
+                    "activated",
+                    "blocked",
+                  ],
+                  "type": "string",
+                },
+                "before": {
+                  "format": "int32",
+                  "type": "integer",
+                },
+                "change": "changed",
+                "key": "/schema/properties/userStatus",
               },
               {
-                "after": undefined,
-                "before": "int32",
-                "key": "/schema/properties/userStatus/format",
+                "after": {
+                  "required": false,
+                },
+                "before": {
+                  "required": true,
+                },
+                "change": "changed",
+                "key": "/schema/properties/lastName",
               },
               {
-                "after": [
-                  "activation-pending",
-                  "activated",
-                  "blocked",
-                ],
-                "before": undefined,
-                "key": "/schema/properties/userStatus/enum",
-              },
-              {
-                "after": undefined,
-                "before": "lastName",
-                "key": "/schema/required/2",
-              },
-              {
-                "after": "username",
-                "before": undefined,
-                "key": "/schema/required/2",
+                "after": {
+                  "required": true,
+                },
+                "before": {
+                  "required": false,
+                },
+                "change": "changed",
+                "key": "/schema/properties/username",
               },
             ],
             "change": "changed",
@@ -864,59 +880,122 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "GET /user/{username}",
       "parameters": [],
       "requestBody": undefined,
       "responses": [
         {
           "attributes": [],
-          "change": null,
+          "change": "changed",
           "contentTypes": [
             {
               "attributes": [
                 {
+                  "after": {
+                    "schema": {
+                      "example": {
+                        "email": "hello@123.com",
+                        "id": 12,
+                        "lastName": "me",
+                        "userStatus": 2,
+                      },
+                      "properties": {
+                        "bio": {
+                          "type": "string",
+                        },
+                        "userStatus": {
+                          "enum": [
+                            "activation-pending",
+                            "activated",
+                            "blocked",
+                          ],
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "email",
+                        "username",
+                        "userStatus",
+                      ],
+                    },
+                  },
+                  "before": {
+                    "schema": {
+                      "properties": {
+                        "phone": {
+                          "type": "string",
+                        },
+                        "userStatus": {
+                          "format": "int32",
+                          "type": "integer",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "email",
+                        "lastName",
+                        "userStatus",
+                      ],
+                    },
+                  },
+                  "change": "changed",
+                  "key": "",
+                },
+                {
                   "after": undefined,
                   "before": {
+                    "required": false,
                     "type": "string",
                   },
+                  "change": "removed",
                   "key": "/schema/properties/phone",
                 },
                 {
                   "after": {
+                    "required": false,
                     "type": "string",
                   },
                   "before": undefined,
+                  "change": "added",
                   "key": "/schema/properties/bio",
                 },
                 {
-                  "after": "string",
-                  "before": "integer",
-                  "key": "/schema/properties/userStatus/type",
+                  "after": {
+                    "enum": [
+                      "activation-pending",
+                      "activated",
+                      "blocked",
+                    ],
+                    "type": "string",
+                  },
+                  "before": {
+                    "format": "int32",
+                    "type": "integer",
+                  },
+                  "change": "changed",
+                  "key": "/schema/properties/userStatus",
                 },
                 {
-                  "after": undefined,
-                  "before": "int32",
-                  "key": "/schema/properties/userStatus/format",
+                  "after": {
+                    "required": false,
+                  },
+                  "before": {
+                    "required": true,
+                  },
+                  "change": "changed",
+                  "key": "/schema/properties/lastName",
                 },
                 {
-                  "after": [
-                    "activation-pending",
-                    "activated",
-                    "blocked",
-                  ],
-                  "before": undefined,
-                  "key": "/schema/properties/userStatus/enum",
-                },
-                {
-                  "after": undefined,
-                  "before": "lastName",
-                  "key": "/schema/required/2",
-                },
-                {
-                  "after": "username",
-                  "before": undefined,
-                  "key": "/schema/required/2",
+                  "after": {
+                    "required": true,
+                  },
+                  "before": {
+                    "required": false,
+                  },
+                  "change": "changed",
+                  "key": "/schema/properties/username",
                 },
               ],
               "change": "changed",
@@ -927,45 +1006,62 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                 {
                   "after": undefined,
                   "before": {
+                    "required": false,
                     "type": "string",
                   },
+                  "change": "removed",
                   "key": "/schema/properties/phone",
                 },
                 {
                   "after": {
+                    "required": false,
                     "type": "string",
                   },
                   "before": undefined,
+                  "change": "added",
                   "key": "/schema/properties/bio",
                 },
                 {
-                  "after": "string",
-                  "before": "integer",
-                  "key": "/schema/properties/userStatus/type",
+                  "after": {
+                    "enum": [
+                      "activation-pending",
+                      "activated",
+                      "blocked",
+                    ],
+                    "type": "string",
+                  },
+                  "before": {
+                    "format": "int32",
+                    "type": "integer",
+                  },
+                  "change": "changed",
+                  "key": "/schema/properties/userStatus",
                 },
                 {
-                  "after": undefined,
-                  "before": "int32",
-                  "key": "/schema/properties/userStatus/format",
+                  "after": {
+                    "required": false,
+                  },
+                  "before": {
+                    "required": true,
+                  },
+                  "change": "changed",
+                  "key": "/schema/properties/lastName",
                 },
                 {
-                  "after": [
-                    "activation-pending",
-                    "activated",
-                    "blocked",
-                  ],
-                  "before": undefined,
-                  "key": "/schema/properties/userStatus/enum",
+                  "after": {
+                    "required": true,
+                  },
+                  "before": {
+                    "required": false,
+                  },
+                  "change": "changed",
+                  "key": "/schema/properties/username",
                 },
                 {
-                  "after": undefined,
-                  "before": "lastName",
-                  "key": "/schema/required/2",
-                },
-                {
-                  "after": "username",
-                  "before": undefined,
-                  "key": "/schema/required/2",
+                  "after": 2,
+                  "before": 1,
+                  "change": "changed",
+                  "key": "/examples/One/userStatus",
                 },
               ],
               "change": "changed",
@@ -976,7 +1072,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
         },
         {
           "attributes": [],
-          "change": null,
+          "change": "changed",
           "contentTypes": [
             {
               "attributes": [
@@ -999,6 +1095,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                     },
                   },
                   "before": undefined,
+                  "change": "added",
                   "key": "",
                 },
               ],
@@ -1012,14 +1109,14 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "GET /user/login",
       "parameters": [],
       "requestBody": undefined,
       "responses": [
         {
           "attributes": [],
-          "change": null,
+          "change": "changed",
           "contentTypes": [],
           "name": "200 response",
         },
@@ -1027,57 +1124,98 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "POST /user/createWithList",
       "parameters": [],
       "requestBody": {
         "attributes": [],
-        "change": null,
+        "change": "changed",
         "contentTypes": [
           {
             "attributes": [
               {
                 "after": undefined,
                 "before": {
+                  "required": false,
                   "type": "string",
                 },
+                "change": "removed",
                 "key": "/schema/items/properties/phone",
               },
               {
                 "after": {
+                  "required": false,
                   "type": "string",
                 },
                 "before": undefined,
+                "change": "added",
                 "key": "/schema/items/properties/bio",
               },
               {
-                "after": "string",
-                "before": "integer",
-                "key": "/schema/items/properties/userStatus/type",
+                "after": {
+                  "enum": [
+                    "activation-pending",
+                    "activated",
+                    "blocked",
+                  ],
+                  "type": "string",
+                },
+                "before": {
+                  "format": "int32",
+                  "type": "integer",
+                },
+                "change": "changed",
+                "key": "/schema/items/properties/userStatus",
               },
               {
-                "after": undefined,
-                "before": "int32",
-                "key": "/schema/items/properties/userStatus/format",
-              },
-              {
-                "after": [
-                  "activation-pending",
-                  "activated",
-                  "blocked",
-                ],
-                "before": undefined,
-                "key": "/schema/items/properties/userStatus/enum",
-              },
-              {
-                "after": undefined,
-                "before": "lastName",
-                "key": "/schema/items/required/2",
-              },
-              {
-                "after": "username",
-                "before": undefined,
-                "key": "/schema/items/required/2",
+                "after": {
+                  "schema": {
+                    "items": {
+                      "properties": {
+                        "bio": {
+                          "type": "string",
+                        },
+                        "userStatus": {
+                          "enum": [
+                            "activation-pending",
+                            "activated",
+                            "blocked",
+                          ],
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "email",
+                        "username",
+                        "userStatus",
+                      ],
+                    },
+                  },
+                },
+                "before": {
+                  "schema": {
+                    "items": {
+                      "properties": {
+                        "phone": {
+                          "type": "string",
+                        },
+                        "userStatus": {
+                          "format": "int32",
+                          "type": "integer",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "email",
+                        "lastName",
+                        "userStatus",
+                      ],
+                    },
+                  },
+                },
+                "change": "changed",
+                "key": "",
               },
             ],
             "change": "changed",
@@ -1090,57 +1228,98 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "POST /user/createWithArray",
       "parameters": [],
       "requestBody": {
         "attributes": [],
-        "change": null,
+        "change": "changed",
         "contentTypes": [
           {
             "attributes": [
               {
                 "after": undefined,
                 "before": {
+                  "required": false,
                   "type": "string",
                 },
+                "change": "removed",
                 "key": "/schema/items/properties/phone",
               },
               {
                 "after": {
+                  "required": false,
                   "type": "string",
                 },
                 "before": undefined,
+                "change": "added",
                 "key": "/schema/items/properties/bio",
               },
               {
-                "after": "string",
-                "before": "integer",
-                "key": "/schema/items/properties/userStatus/type",
+                "after": {
+                  "enum": [
+                    "activation-pending",
+                    "activated",
+                    "blocked",
+                  ],
+                  "type": "string",
+                },
+                "before": {
+                  "format": "int32",
+                  "type": "integer",
+                },
+                "change": "changed",
+                "key": "/schema/items/properties/userStatus",
               },
               {
-                "after": undefined,
-                "before": "int32",
-                "key": "/schema/items/properties/userStatus/format",
-              },
-              {
-                "after": [
-                  "activation-pending",
-                  "activated",
-                  "blocked",
-                ],
-                "before": undefined,
-                "key": "/schema/items/properties/userStatus/enum",
-              },
-              {
-                "after": undefined,
-                "before": "lastName",
-                "key": "/schema/items/required/2",
-              },
-              {
-                "after": "username",
-                "before": undefined,
-                "key": "/schema/items/required/2",
+                "after": {
+                  "schema": {
+                    "items": {
+                      "properties": {
+                        "bio": {
+                          "type": "string",
+                        },
+                        "userStatus": {
+                          "enum": [
+                            "activation-pending",
+                            "activated",
+                            "blocked",
+                          ],
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "email",
+                        "username",
+                        "userStatus",
+                      ],
+                    },
+                  },
+                },
+                "before": {
+                  "schema": {
+                    "items": {
+                      "properties": {
+                        "phone": {
+                          "type": "string",
+                        },
+                        "userStatus": {
+                          "format": "int32",
+                          "type": "integer",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "email",
+                        "lastName",
+                        "userStatus",
+                      ],
+                    },
+                  },
+                },
+                "change": "changed",
+                "key": "",
               },
             ],
             "change": "changed",
@@ -1153,57 +1332,68 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "POST /user",
       "parameters": [],
       "requestBody": {
         "attributes": [],
-        "change": null,
+        "change": "changed",
         "contentTypes": [
           {
             "attributes": [
               {
                 "after": undefined,
                 "before": {
+                  "required": false,
                   "type": "string",
                 },
+                "change": "removed",
                 "key": "/schema/properties/phone",
               },
               {
                 "after": {
+                  "required": false,
                   "type": "string",
                 },
                 "before": undefined,
+                "change": "added",
                 "key": "/schema/properties/bio",
               },
               {
-                "after": "string",
-                "before": "integer",
-                "key": "/schema/properties/userStatus/type",
+                "after": {
+                  "enum": [
+                    "activation-pending",
+                    "activated",
+                    "blocked",
+                  ],
+                  "type": "string",
+                },
+                "before": {
+                  "format": "int32",
+                  "type": "integer",
+                },
+                "change": "changed",
+                "key": "/schema/properties/userStatus",
               },
               {
-                "after": undefined,
-                "before": "int32",
-                "key": "/schema/properties/userStatus/format",
+                "after": {
+                  "required": false,
+                },
+                "before": {
+                  "required": true,
+                },
+                "change": "changed",
+                "key": "/schema/properties/lastName",
               },
               {
-                "after": [
-                  "activation-pending",
-                  "activated",
-                  "blocked",
-                ],
-                "before": undefined,
-                "key": "/schema/properties/userStatus/enum",
-              },
-              {
-                "after": undefined,
-                "before": "lastName",
-                "key": "/schema/required/2",
-              },
-              {
-                "after": "username",
-                "before": undefined,
-                "key": "/schema/required/2",
+                "after": {
+                  "required": true,
+                },
+                "before": {
+                  "required": false,
+                },
+                "change": "changed",
+                "key": "/schema/properties/username",
               },
             ],
             "change": "changed",
@@ -1216,14 +1406,14 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "DELETE /store/order/{orderId}",
       "parameters": [],
       "requestBody": undefined,
       "responses": [
         {
           "attributes": [],
-          "change": null,
+          "change": "changed",
           "contentTypes": [
             {
               "attributes": [
@@ -1246,6 +1436,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                     },
                   },
                   "before": undefined,
+                  "change": "added",
                   "key": "",
                 },
               ],
@@ -1259,34 +1450,44 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "GET /store/order/{orderId}",
       "parameters": [],
       "requestBody": undefined,
       "responses": [
         {
           "attributes": [],
-          "change": null,
+          "change": "changed",
           "contentTypes": [
             {
               "attributes": [
                 {
                   "after": {
                     "description": "Human readable summary of order",
+                    "required": false,
                     "type": "string",
                   },
                   "before": undefined,
+                  "change": "added",
                   "key": "/schema/properties/summary",
                 },
                 {
-                  "after": undefined,
-                  "before": "approved",
-                  "key": "/schema/properties/status/enum/1",
-                },
-                {
-                  "after": "canceled",
-                  "before": undefined,
-                  "key": "/schema/properties/status/enum/2",
+                  "after": {
+                    "enum": [
+                      "placed",
+                      "delivered",
+                      "canceled",
+                    ],
+                  },
+                  "before": {
+                    "enum": [
+                      "placed",
+                      "approved",
+                      "delivered",
+                    ],
+                  },
+                  "change": "changed",
+                  "key": "/schema/properties/status",
                 },
               ],
               "change": "changed",
@@ -1297,25 +1498,40 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                 {
                   "after": {
                     "description": "Human readable summary of order",
+                    "required": false,
                     "type": "string",
                   },
                   "before": undefined,
+                  "change": "added",
                   "key": "/schema/properties/summary",
                 },
                 {
-                  "after": undefined,
-                  "before": "approved",
-                  "key": "/schema/properties/status/enum/1",
+                  "after": {
+                    "enum": [
+                      "placed",
+                      "delivered",
+                      "canceled",
+                    ],
+                  },
+                  "before": {
+                    "enum": [
+                      "placed",
+                      "approved",
+                      "delivered",
+                    ],
+                  },
+                  "change": "changed",
+                  "key": "/schema/properties/status",
                 },
                 {
-                  "after": "canceled",
-                  "before": undefined,
-                  "key": "/schema/properties/status/enum/2",
-                },
-                {
-                  "after": undefined,
-                  "before": "petId",
-                  "key": "/schema/required/1",
+                  "after": {
+                    "required": false,
+                  },
+                  "before": {
+                    "required": true,
+                  },
+                  "change": "changed",
+                  "key": "/schema/properties/petId",
                 },
               ],
               "change": "changed",
@@ -1326,7 +1542,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
         },
         {
           "attributes": [],
-          "change": null,
+          "change": "changed",
           "contentTypes": [
             {
               "attributes": [
@@ -1349,6 +1565,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                     },
                   },
                   "before": undefined,
+                  "change": "added",
                   "key": "",
                 },
               ],
@@ -1362,32 +1579,42 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "POST /store/order",
       "parameters": [],
       "requestBody": {
         "attributes": [],
-        "change": null,
+        "change": "changed",
         "contentTypes": [
           {
             "attributes": [
               {
                 "after": {
                   "description": "Human readable summary of order",
+                  "required": false,
                   "type": "string",
                 },
                 "before": undefined,
+                "change": "added",
                 "key": "/schema/properties/summary",
               },
               {
-                "after": undefined,
-                "before": "approved",
-                "key": "/schema/properties/status/enum/1",
-              },
-              {
-                "after": "canceled",
-                "before": undefined,
-                "key": "/schema/properties/status/enum/2",
+                "after": {
+                  "enum": [
+                    "placed",
+                    "delivered",
+                    "canceled",
+                  ],
+                },
+                "before": {
+                  "enum": [
+                    "placed",
+                    "approved",
+                    "delivered",
+                  ],
+                },
+                "change": "changed",
+                "key": "/schema/properties/status",
               },
             ],
             "change": "changed",
@@ -1399,10 +1626,38 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
       "responses": [
         {
           "attributes": [],
-          "change": null,
+          "change": "changed",
           "contentTypes": [
             {
               "attributes": [
+                {
+                  "after": {
+                    "description": "Human readable summary of order",
+                    "required": false,
+                    "type": "string",
+                  },
+                  "before": undefined,
+                  "change": "added",
+                  "key": "/schema/properties/summary",
+                },
+                {
+                  "after": {
+                    "enum": [
+                      "placed",
+                      "delivered",
+                      "canceled",
+                    ],
+                  },
+                  "before": {
+                    "enum": [
+                      "placed",
+                      "approved",
+                      "delivered",
+                    ],
+                  },
+                  "change": "changed",
+                  "key": "/schema/properties/status",
+                },
                 {
                   "after": {
                     "complete": false,
@@ -1414,25 +1669,8 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                     "summary": "31 boxes of dog food",
                   },
                   "before": undefined,
-                  "key": "",
-                },
-                {
-                  "after": {
-                    "description": "Human readable summary of order",
-                    "type": "string",
-                  },
-                  "before": undefined,
-                  "key": "/schema/properties/summary",
-                },
-                {
-                  "after": undefined,
-                  "before": "approved",
-                  "key": "/schema/properties/status/enum/1",
-                },
-                {
-                  "after": "canceled",
-                  "before": undefined,
-                  "key": "/schema/properties/status/enum/2",
+                  "change": "added",
+                  "key": "/example",
                 },
               ],
               "change": "changed",
@@ -1443,20 +1681,30 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                 {
                   "after": {
                     "description": "Human readable summary of order",
+                    "required": false,
                     "type": "string",
                   },
                   "before": undefined,
+                  "change": "added",
                   "key": "/schema/properties/summary",
                 },
                 {
-                  "after": undefined,
-                  "before": "approved",
-                  "key": "/schema/properties/status/enum/1",
-                },
-                {
-                  "after": "canceled",
-                  "before": undefined,
-                  "key": "/schema/properties/status/enum/2",
+                  "after": {
+                    "enum": [
+                      "placed",
+                      "delivered",
+                      "canceled",
+                    ],
+                  },
+                  "before": {
+                    "enum": [
+                      "placed",
+                      "approved",
+                      "delivered",
+                    ],
+                  },
+                  "change": "changed",
+                  "key": "/schema/properties/status",
                 },
               ],
               "change": "changed",
@@ -1469,7 +1717,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "POST /pet/{petId}/uploadImage",
       "parameters": [
         {
@@ -1480,11 +1728,12 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                 1,
               ],
               "before": undefined,
+              "change": "added",
               "key": "/schema/enum",
             },
           ],
-          "change": "added",
-          "name": "request-cookie parameter 'undefined'",
+          "change": "changed",
+          "name": "cookie parameter 'debug'",
         },
       ],
       "requestBody": undefined,
@@ -1515,6 +1764,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                 },
                 "description": "successful operation",
               },
+              "change": "removed",
               "key": "",
             },
           ],
@@ -1548,6 +1798,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                 "description": "successful operation",
               },
               "before": undefined,
+              "change": "added",
               "key": "",
             },
           ],
@@ -1581,6 +1832,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                 "description": "Pet not found",
               },
               "before": undefined,
+              "change": "added",
               "key": "",
             },
           ],
@@ -1590,14 +1842,19 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
         },
         {
           "attributes": [],
-          "change": null,
+          "change": "changed",
           "contentTypes": [
             {
               "attributes": [
                 {
-                  "after": "integer",
-                  "before": "string",
-                  "key": "/schema/properties/type/type",
+                  "after": {
+                    "type": "integer",
+                  },
+                  "before": {
+                    "type": "string",
+                  },
+                  "change": "changed",
+                  "key": "/schema/properties/type",
                 },
               ],
               "change": "changed",
@@ -1624,6 +1881,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               },
             },
           },
+          "change": "removed",
           "key": "",
         },
       ],
@@ -1638,6 +1896,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
         {
           "after": "addPet-change",
           "before": "addPet",
+          "change": "changed",
           "key": "/operationId",
         },
       ],
@@ -1646,19 +1905,21 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
       "parameters": [],
       "requestBody": {
         "attributes": [],
-        "change": null,
+        "change": "changed",
         "contentTypes": [
           {
             "attributes": [
               {
                 "after": {
+                  "required": false,
                   "type": "string",
                 },
                 "before": undefined,
+                "change": "added",
                 "key": "/schema/properties/category/properties/other",
               },
             ],
-            "change": "added",
+            "change": "changed",
             "name": "application/json",
           },
         ],
@@ -1668,12 +1929,12 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
     },
     {
       "attributes": [],
-      "change": null,
+      "change": "changed",
       "name": "PUT /pet",
       "parameters": [],
       "requestBody": {
         "attributes": [],
-        "change": null,
+        "change": "changed",
         "contentTypes": [
           {
             "attributes": [
@@ -1757,6 +2018,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                     },
                   },
                 },
+                "change": "removed",
                 "key": "",
               },
             ],
@@ -1769,33 +2031,29 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                 "after": undefined,
                 "before": {
                   "example": "doggie",
+                  "required": true,
                   "type": "string",
                 },
+                "change": "removed",
                 "key": "/schema/properties/name",
               },
               {
                 "after": {
+                  "required": false,
                   "type": "string",
                 },
                 "before": undefined,
+                "change": "added",
                 "key": "/schema/properties/example",
               },
               {
                 "after": {
+                  "required": true,
                   "type": "string",
                 },
                 "before": undefined,
+                "change": "added",
                 "key": "/schema/properties/number",
-              },
-              {
-                "after": undefined,
-                "before": "name",
-                "key": "/schema/required/0",
-              },
-              {
-                "after": "number",
-                "before": undefined,
-                "key": "/schema/required/0",
               },
             ],
             "change": "changed",
@@ -1813,6 +2071,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
                 "content": {},
                 "description": "Invalid ID supplied",
               },
+              "change": "removed",
               "key": "",
             },
           ],
@@ -1827,6 +2086,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
         {
           "after": "get_examples",
           "before": "getExamples",
+          "change": "changed",
           "key": "/operationId",
         },
       ],
@@ -1837,43 +2097,92 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
       "responses": [
         {
           "attributes": [],
-          "change": null,
+          "change": "changed",
           "contentTypes": [
             {
               "attributes": [
                 {
                   "after": {
-                    "properties": {
-                      "order": {
+                    "anyOf": [
+                      {
                         "properties": {
-                          "id": {
+                          "orderId": {
                             "type": "string",
                           },
                         },
                         "type": "object",
                       },
-                    },
-                    "type": "object",
+                      {
+                        "properties": {
+                          "order": {
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                              },
+                            },
+                            "type": "object",
+                          },
+                        },
+                        "type": "object",
+                      },
+                    ],
                   },
-                  "before": undefined,
-                  "key": "/schema/properties/expandableObject/anyOf/1",
-                },
-                {
-                  "after": "number",
-                  "before": "string",
-                  "key": "/schema/properties/composedObject/allOf/0/properties/orderId/type",
-                },
-                {
-                  "after": undefined,
                   "before": {
-                    "properties": {
-                      "orderId": {
+                    "anyOf": [
+                      {
+                        "properties": {
+                          "orderId": {
+                            "type": "string",
+                          },
+                        },
+                        "type": "object",
+                      },
+                    ],
+                  },
+                  "change": "changed",
+                  "key": "/schema/properties/expandableObject",
+                },
+                {
+                  "after": {
+                    "type": "number",
+                  },
+                  "before": {
+                    "type": "string",
+                  },
+                  "change": "changed",
+                  "key": "/schema/properties/composedObject/allOf/0/properties/orderId",
+                },
+                {
+                  "after": {
+                    "oneOf": [
+                      {
                         "type": "string",
                       },
-                    },
-                    "type": "object",
+                      {
+                        "type": "number",
+                      },
+                    ],
                   },
-                  "key": "/schema/properties/stringOrNumberOrObject/oneOf/2",
+                  "before": {
+                    "oneOf": [
+                      {
+                        "type": "string",
+                      },
+                      {
+                        "type": "number",
+                      },
+                      {
+                        "properties": {
+                          "orderId": {
+                            "type": "string",
+                          },
+                        },
+                        "type": "object",
+                      },
+                    ],
+                  },
+                  "change": "changed",
+                  "key": "/schema/properties/stringOrNumberOrObject",
                 },
               ],
               "change": "changed",
