@@ -74,6 +74,5 @@
     "update-notifier": "^5.1.0",
     "url-join": "^4.0.1",
     "uuid": "^9.0.0"
-  },
-  "stableVersion": "0.36.9"
+  }
 }
