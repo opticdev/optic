@@ -1,4 +1,4 @@
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 import open from 'open';
 
 import {
@@ -70,6 +70,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
       '--standard <standard>',
       'run comparison with a locally defined standard, if not set, looks for the standard on the [x-optic-standard] key on the spec, and then the optic.dev.yml file.'
     )
+    .addOption(new Option('--ruleset <ruleset>', '').hideHelp())
     .option('--check', 'enable checks', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
@@ -194,6 +195,7 @@ type DiffActionOptions = {
   web: boolean;
   json: boolean;
   standard?: string;
+  ruleset?: string;
 };
 
 const getDiffAction =
@@ -203,6 +205,9 @@ const getDiffAction =
     file2: string | undefined,
     options: DiffActionOptions
   ) => {
+    if (options.ruleset && !options.standard) {
+      options.standard = options.ruleset;
+    }
     const files: [string | undefined, string | undefined] = [file1, file2];
     let parsedFiles: [ParseResult, ParseResult];
     if (file1 && file2) {
