@@ -177,10 +177,12 @@ const runDiff = async (
       console.log(log);
     }
 
-    console.log('');
-    console.log(
-      `Configure check rulesets in optic cloud or your local optic.dev.yml file.`
-    );
+    if (!config.isInCi) {
+      console.log('');
+      console.log(
+        `Configure check rulesets in optic cloud or your local optic.dev.yml file.`
+      );
+    }
   }
 
   return diffResults;
@@ -328,7 +330,7 @@ const getDiffAction =
       ]);
     }
 
-    if (!options.web && !options.json) {
+    if (!options.web && !options.json && !config.isInCi) {
       console.log(
         chalk.blue(
           `Rerun this command with the --web flag to view the detailed changes in your browser`

@@ -3,6 +3,7 @@ import prompts from 'prompts';
 import path from 'path';
 import fs from 'node:fs/promises';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
+import open from 'open';
 
 import { OpticCliConfig, USER_CONFIG_PATH, readUserConfig } from '../../config';
 import { logger } from '../../logger';
@@ -30,15 +31,18 @@ const getLoginAction = (config: OpticCliConfig) => async () => {
     }
   }
 
+  const tokenUrl = getNewTokenUrl(config.client.getWebBase());
+
   logger.info(`${chalk.blue('Generate a token below')}
 
-Create an account and generate a personal access token at ${getNewTokenUrl(
-    config.client.getWebBase()
-  )}.
-
-Once you've created a token, enter it below.
+Create an account and generate a personal access token at ${chalk.underline.blue(
+    tokenUrl
+  )}
   
 `);
+
+  // prompt breaks if we steal focus as its starting.
+  setTimeout(() => open(tokenUrl), 100);
 
   const response = await prompts({
     type: 'password',
@@ -61,7 +65,9 @@ Once you've created a token, enter it below.
     await fs.writeFile(USER_CONFIG_PATH, JSON.stringify(newConfig), 'utf-8');
 
     logger.info(
-      chalk.green(`Successfully saved config to ${USER_CONFIG_PATH}`)
+      chalk.green(
+        `Successfully saved your personal access token to ${USER_CONFIG_PATH}`
+      )
     );
   }
 };

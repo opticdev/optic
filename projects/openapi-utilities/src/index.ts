@@ -96,7 +96,10 @@ export {
   getOperationsChangedLabel,
 } from './utilities/count-changed-operations';
 
-export { compareSpecs } from './compare-specs/compare-specs';
+export {
+  compareSpecs,
+  CompareSpecResults,
+} from './compare-specs/compare-specs';
 export { groupDiffsByEndpoint } from './openapi3/group-diff';
 export { ObjectDiff, typeofDiff, diff, reconcileDiff } from './diff/diff';
 export { RuleResult } from './new-types';
