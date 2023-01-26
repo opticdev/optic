@@ -653,7 +653,7 @@ Configure check rulesets in optic cloud or your local optic.dev.yml file.
 exports[`diff with mock server ruleset key on api spec 1`] = `
 "
 specification details:
-- /x-optic-ruleset [32madded[39m
+- /x-optic-standard [32madded[39m
 
 [1mGET[22m /invalid_name: [32madded[39m
   

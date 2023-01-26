@@ -67,8 +67,8 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
       'HEAD'
     )
     .option(
-      '--ruleset <ruleset>',
-      'run comparison with a locally defined ruleset, if not set, looks for the ruleset on the [x-optic-ruleset] key on the spec, and then the optic.dev.yml file.'
+      '--standard <standard>',
+      'run comparison with a locally defined standard, if not set, looks for the ruleset on the [x-optic-standard] key on the spec, and then the optic.dev.yml file.'
     )
     .option('--check', 'enable checks', false)
     .option('--web', 'view the diff in the optic changelog web view', false)

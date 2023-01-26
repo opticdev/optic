@@ -173,7 +173,7 @@ describe('diff', () => {
     });
 
     test('ruleset key on api spec', async () => {
-      const workspace = await setupWorkspace('diff/with-x-optic-ruleset', {
+      const workspace = await setupWorkspace('diff/with-x-optic-standard', {
         repo: true,
         commit: true,
       });
