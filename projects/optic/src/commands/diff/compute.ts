@@ -13,13 +13,13 @@ export async function compute(
   [baseFile, headFile]: [ParseResult, ParseResult],
   config: OpticCliConfig,
   options: {
-    ruleset?: string;
+    standard?: string;
     check: boolean;
   }
 ) {
   const { runner, ruleNames, warnings } = await generateRuleRunner(
     {
-      rulesetArg: options.ruleset,
+      rulesetArg: options.standard,
       specRuleset: headFile.isEmptySpec
         ? baseFile.jsonLike[OPTIC_STANDARD_KEY]
         : headFile.jsonLike[OPTIC_STANDARD_KEY],
