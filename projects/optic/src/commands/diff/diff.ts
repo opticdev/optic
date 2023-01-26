@@ -68,7 +68,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     )
     .option(
       '--standard <standard>',
-      'run comparison with a locally defined standard, if not set, looks for the ruleset on the [x-optic-standard] key on the spec, and then the optic.dev.yml file.'
+      'run comparison with a locally defined standard, if not set, looks for the standard on the [x-optic-standard] key on the spec, and then the optic.dev.yml file.'
     )
     .option('--check', 'enable checks', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
@@ -180,7 +180,7 @@ const runDiff = async (
     if (!config.isInCi) {
       console.log('');
       console.log(
-        `Configure check rulesets in optic cloud or your local optic.dev.yml file.`
+        `Configure check standards in optic cloud or your local optic.dev.yml file.`
       );
     }
   }
@@ -193,7 +193,7 @@ type DiffActionOptions = {
   check: boolean;
   web: boolean;
   json: boolean;
-  ruleset?: string;
+  standard?: string;
 };
 
 const getDiffAction =
@@ -285,7 +285,7 @@ const getDiffAction =
           // TODO remove this old flow when new web view is ready
           const { runner } = await generateRuleRunner(
             {
-              rulesetArg: options.ruleset,
+              rulesetArg: options.standard,
               specRuleset: headParseResult.isEmptySpec
                 ? baseParseResult.jsonLike[OPTIC_STANDARD_KEY]
                 : headParseResult.jsonLike[OPTIC_STANDARD_KEY],
