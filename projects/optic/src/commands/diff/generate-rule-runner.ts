@@ -8,6 +8,7 @@ import {
   ExternalRule,
 } from '@useoptic/rulesets-base';
 import { loadCliConfig } from '../../config';
+import { logger } from '../../logger';
 
 const isLocalJsFile = (name: string) => name.endsWith('.js');
 
@@ -43,12 +44,20 @@ export const generateRuleRunner = async (
   },
   checksEnabled: boolean
 ): Promise<{ runner: RuleRunner; ruleNames: string[]; warnings: string[] }> => {
+  logger.debug('Initializing rule runner with the following options');
+  logger.debug({
+    options,
+    checksEnabled,
+  });
   let rulesets: (Ruleset | ExternalRule)[] = [];
   let ruleNames: string[] = [];
   let warnings: string[] = [];
 
   if (checksEnabled) {
     const standard = await getStandardToUse(options);
+    logger.debug({
+      standard,
+    });
     ruleNames.push(...standard.map((s) => s.name));
 
     const rulesToFetch: string[] = [];
@@ -79,6 +88,11 @@ export const generateRuleRunner = async (
       }
     }
 
+    logger.debug({
+      rulesToFetch,
+      localRulesets,
+      hostedRulesets,
+    });
     const results = await prepareRulesets({
       ruleset: standard,
       localRulesets,
