@@ -6,7 +6,6 @@ import {
   terminalChangelog,
   UserError,
   jsonChangelog,
-  generateSpecResults,
 } from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import {
@@ -21,9 +20,7 @@ import {
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { compute } from './compute';
-import { compressData, compressDataV2 } from './compressResults';
-import { generateRuleRunner } from './generate-rule-runner';
-import { OPTIC_STANDARD_KEY } from '../../constants';
+import { compressDataV2 } from './compressResults';
 import { uploadDiff } from './upload-diff';
 import { getRunUrl } from '../../utils/cloud-urls';
 import { writeDataForCi } from '../../utils/ci-data';
@@ -276,39 +273,12 @@ const getDiffAction =
           base: options.base,
         };
 
-        let compressedData: string;
-        if (process.env.NEW_WEB_VIEW === 'true') {
-          compressedData = compressDataV2(
-            baseParseResult,
-            headParseResult,
-            diffResult.specResults,
-            meta
-          );
-        } else {
-          // TODO remove this old flow when new web view is ready
-          const { runner } = await generateRuleRunner(
-            {
-              rulesetArg: options.standard,
-              specRuleset: headParseResult.isEmptySpec
-                ? baseParseResult.jsonLike[OPTIC_STANDARD_KEY]
-                : headParseResult.jsonLike[OPTIC_STANDARD_KEY],
-              config,
-            },
-            options.check
-          );
-          const specResultsLegacy = await generateSpecResults(
-            runner,
-            baseParseResult,
-            headParseResult,
-            null
-          );
-          compressedData = compressData(
-            baseParseResult,
-            headParseResult,
-            specResultsLegacy,
-            meta
-          );
-        }
+        const compressedData = compressDataV2(
+          baseParseResult,
+          headParseResult,
+          diffResult.specResults,
+          meta
+        );
         analyticsData.compressedDataLength = compressedData.length;
         logger.info('Opening up diff in web view');
         maybeUrl = `${config.client.getWebBase()}/cli/diff#${compressedData}`;
