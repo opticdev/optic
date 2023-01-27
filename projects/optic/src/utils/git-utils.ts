@@ -1,3 +1,4 @@
+import { parseOpenAPIFromRepoWithSourcemap } from '@useoptic/openapi-io';
 import { exec } from 'child_process';
 
 export const hasGit = async (): Promise<boolean> =>
@@ -83,5 +84,31 @@ export const findOpenApiSpecsCandidates = async (
     $toplevel/'*.yaml' \
     $toplevel/'*.json' \
     || true`;
+    exec(command, cb);
+  });
+
+export const remotes = async (): Promise<string[]> =>
+  new Promise((resolve, reject) => {
+    const cb = (err: unknown, stdout: string, stderr: string) => {
+      if (err || stderr || !stdout) reject(err || stderr);
+      resolve(
+        stdout
+          .trim()
+          .split('\n')
+          .filter((remote) => remote.trim())
+      );
+    };
+    const command = `git remote`;
+    exec(command, cb);
+  });
+
+export const getRemoteUrl = async (remote: string): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const cb = (err: unknown, stdout: string, stderr: string) => {
+      if (err || stderr || !stdout) reject(err || stderr);
+      resolve(stdout.trim());
+    };
+
+    const command = `git remote get-url ${remote}`;
     exec(command, cb);
   });
