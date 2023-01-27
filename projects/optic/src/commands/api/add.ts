@@ -341,7 +341,7 @@ async function crawlCandidateSpecs(
   );
 }
 
-const getApiAddAction =
+export const getApiAddAction =
   (config: OpticCliConfig) =>
   async (path_to_spec: string | undefined, options: ApiAddActionOptions) => {
     if (isNaN(Number(options.historyDepth))) {

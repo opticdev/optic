@@ -7,6 +7,7 @@ import path from 'path';
 import chalk from 'chalk';
 import open from 'open';
 import { getRemoteUrl, remotes } from '../../utils/git-utils';
+import { getApiAddAction } from '../api/add';
 
 const configsPath = path.join(__dirname, '..', '..', '..', 'ci', 'configs');
 
@@ -32,40 +33,69 @@ export const registerCiSetup = (cli: Command, config: OpticCliConfig) => {
 type PromptAnswers = {
   provider: 'GitHub' | 'GitLab';
   standardsFail: boolean;
+  discover: boolean;
 };
 
 const getCiSetupAction = (config: OpticCliConfig) => async () => {
   let maybeProvider = await guessProvider();
 
-  const answers: PromptAnswers = await prompts([
-    {
-      type: 'select',
-      name: 'provider',
-      message: 'What CI provider would you like to configure?',
-      choices: [
-        { title: 'GitHub Actions', value: 'GitHub' },
-        { title: 'GitLab CI/CD', value: 'GitLab' },
-      ],
+  const answers: PromptAnswers = await prompts(
+    [
+      {
+        type: 'select',
+        name: 'provider',
+        message: 'What CI provider would you like to configure?',
+        choices: [
+          { title: 'GitHub Actions', value: 'GitHub' },
+          { title: 'GitLab CI/CD', value: 'GitLab' },
+        ],
 
-      initial: maybeProvider === 'GitLab' ? 1 : undefined,
-    },
-    {
-      type: 'select',
-      name: 'standardsFail',
-      message: 'Should failing standards fail your build?',
-      choices: [
-        { title: 'Yes - Recommended', value: true },
-        { title: 'No', value: false },
-      ],
-    },
-  ]);
+        initial: maybeProvider === 'GitLab' ? 1 : undefined,
+      },
+      {
+        type: 'select',
+        name: 'standardsFail',
+        message: 'Should failing standards fail your build?',
+        choices: [
+          { title: 'Yes - Recommended', value: true },
+          { title: 'No', value: false },
+        ],
+      },
+      {
+        type: 'select',
+        name: 'discover',
+        message:
+          'Would you like to discover API specs in the current repository?',
+        choices: [
+          { title: 'Yes - Recommended', value: true },
+          { title: 'No', value: false },
+        ],
+      },
+    ],
+    { onCancel: () => process.exit(1) }
+  );
+
+  if (answers.discover) {
+    console.log();
+    console.log(`${chalk.green('✔')} Discovering API specs in your repo`);
+
+    try {
+      await getApiAddAction(config)(undefined, { historyDepth: '1' });
+      console.log(`${chalk.green('✔')} Discovery complete`);
+    } catch (e) {
+      console.log(
+        chalk.red(`Discovery failed with error: ${(e as Error).message}`)
+      );
+      console.log('Continuing.');
+    }
+
+    console.log();
+  }
 
   if (answers.provider === 'GitHub') {
     await setupGitHub(config, answers);
   } else if (answers.provider === 'GitLab') {
     await setupGitLab(config, answers);
-  } else {
-    throw new Error('Unknown provider');
   }
 };
 
@@ -182,11 +212,14 @@ async function verifyPath(root: string, target: string): Promise<boolean> {
   }
 
   if (exists) {
-    const answer = await prompts({
-      type: 'confirm',
-      name: 'continue',
-      message: `Continuing will ovewrite the file at ${target}. Continue?`,
-    });
+    const answer = await prompts(
+      {
+        type: 'confirm',
+        name: 'continue',
+        message: `Continuing will ovewrite the file at ${target}. Continue?`,
+      },
+      { onCancel: () => process.exit(1) }
+    );
 
     return answer.continue;
   }
@@ -195,12 +228,15 @@ async function verifyPath(root: string, target: string): Promise<boolean> {
 }
 
 async function openUrlPrompt(url: string) {
-  const answer = await prompts({
-    type: 'confirm',
-    name: 'open',
-    message: `Open ${url} in your browser?`,
-    initial: true,
-  });
+  const answer = await prompts(
+    {
+      type: 'confirm',
+      name: 'open',
+      message: `Open ${url} in your browser?`,
+      initial: true,
+    },
+    { onCancel: () => process.exit(1) }
+  );
 
   if (answer.open) {
     await open(url, { wait: false });
