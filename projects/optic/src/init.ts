@@ -25,6 +25,7 @@ import { registerCiComment } from './commands/ci/comment/comment';
 import { logger } from './logger';
 import chalk from 'chalk';
 import { registerDereference } from './commands/dereference/dereference';
+import { registerCiSetup } from './commands/ci/setup';
 
 const packageJson = require('../package.json');
 
@@ -110,6 +111,7 @@ Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
 
   const ciSubcommands = cli.command('ci').addHelpCommand(false);
   registerCiComment(ciSubcommands, cliConfig);
+  registerCiSetup(ciSubcommands, cliConfig);
 
   return cli;
 };
