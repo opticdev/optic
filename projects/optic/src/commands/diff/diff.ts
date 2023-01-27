@@ -115,7 +115,6 @@ const getBaseAndHeadFromFileAndBase = async (
 };
 
 const runDiff = async (
-  [file1, file2]: [string | undefined, string | undefined],
   [baseFile, headFile]: [ParseResult, ParseResult],
   config: OpticCliConfig,
   options: DiffActionOptions
@@ -208,7 +207,6 @@ const getDiffAction =
     if (options.ruleset && !options.standard) {
       options.standard = options.ruleset;
     }
-    const files: [string | undefined, string | undefined] = [file1, file2];
     let parsedFiles: [ParseResult, ParseResult];
     if (file1 && file2) {
       parsedFiles = await getBaseAndHeadFromFiles(file1, file2, config);
@@ -235,7 +233,7 @@ const getDiffAction =
       return;
     }
 
-    const diffResult = await runDiff(files, parsedFiles, config, options);
+    const diffResult = await runDiff(parsedFiles, config, options);
     let maybeUrl: string | null = null;
     const [baseParseResult, headParseResult] = parsedFiles;
     if (config.isAuthenticated) {

@@ -239,6 +239,8 @@ export async function initializeConfig(): Promise<OpticCliConfig> {
         ...cliConfig,
         ...(await loadCliConfig(opticYmlPath, cliConfig.client)),
       };
+    } else {
+      cliConfig.root = gitRoot;
     }
 
     try {
