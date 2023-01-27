@@ -27,7 +27,7 @@ Example usage:
 
 export const registerSpecPush = (cli: Command, config: OpticCliConfig) => {
   cli
-    .command('push', { hidden: true })
+    .command('push')
     .configureHelp({
       commandUsage: usage,
     })

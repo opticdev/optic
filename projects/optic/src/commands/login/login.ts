@@ -12,7 +12,7 @@ import { getNewTokenUrl } from '../../utils/cloud-urls';
 
 export const registerLogin = (cli: Command, config: OpticCliConfig) => {
   cli
-    .command('login', { hidden: true })
+    .command('login')
     .description('Login to Optic')
     .action(wrapActionHandlerWithSentry(getLoginAction(config)));
 };

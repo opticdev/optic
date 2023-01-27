@@ -20,7 +20,7 @@ const usage = () => `
 
 export const registerCiSetup = (cli: Command, config: OpticCliConfig) => {
   cli
-    .command('setup', { hidden: true })
+    .command('setup')
     .configureHelp({
       commandUsage: usage,
     })
