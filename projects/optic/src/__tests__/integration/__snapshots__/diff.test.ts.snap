@@ -46,7 +46,7 @@ Checks
 [32m[1m3 checks passed[22m[39m
 [31m[1m2 checks failed[22m[39m
 
-Configure check rulesets in optic cloud or your local optic.dev.yml file.
+Configure check standards in optic cloud or your local optic.dev.yml file.
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
@@ -72,7 +72,7 @@ exports[`diff breaking changes exclusion 1`] = `
 [32m[1m0 checks passed[22m[39m
 [31m[1m0 checks failed[22m[39m
 
-Configure check rulesets in optic cloud or your local optic.dev.yml file.
+Configure check standards in optic cloud or your local optic.dev.yml file.
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
@@ -99,21 +99,21 @@ specification details:
 [1mPUT[22m /user/{username}: 
   - request: 
     - body [1m*/*[22m: 
-      - /schema/properties/bio, /schema/properties/userStatus/enum, /schema/required/2 [32madded[39m
-      - /schema/properties/userStatus/type [33mchanged[39m
-      - /schema/properties/phone, /schema/properties/userStatus/format, /schema/required/2 [31mremoved[39m
+      - /schema/properties/bio [32madded[39m
+      - /schema/properties/userStatus, /schema/properties/lastName, /schema/properties/username [33mchanged[39m
+      - /schema/properties/phone [31mremoved[39m
       
 [1mGET[22m /user/{username}: 
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 
-      - /schema/properties/bio, /schema/properties/userStatus/enum, /schema/required/2 [32madded[39m
-      - /schema/properties/userStatus/type [33mchanged[39m
-      - /schema/properties/phone, /schema/properties/userStatus/format, /schema/required/2 [31mremoved[39m
+      - /schema/properties/bio [32madded[39m
+      - /schema/properties/userStatus, /schema/properties/lastName, /schema/properties/username [33mchanged[39m
+      - /schema/properties/phone [31mremoved[39m
       
     - body [1mapplication/xml[22m: 
-      - /schema/properties/bio, /schema/properties/userStatus/enum, /schema/required/2 [32madded[39m
-      - /schema/properties/userStatus/type [33mchanged[39m
-      - /schema/properties/phone, /schema/properties/userStatus/format, /schema/required/2 [31mremoved[39m
+      - /schema/properties/bio [32madded[39m
+      - /schema/properties/userStatus, /schema/properties/lastName, /schema/properties/username [33mchanged[39m
+      - /schema/properties/phone [31mremoved[39m
       
   - response [1m404[22m: 
     - body [1mapplication/json[22m: [32madded[39m
@@ -132,23 +132,23 @@ specification details:
 [1mPOST[22m /user/createWithList: 
   - request: 
     - body [1m*/*[22m: 
-      - /schema/items/properties/bio, /schema/items/properties/userStatus/enum, /schema/items/required/2 [32madded[39m
-      - /schema/items/properties/userStatus/type [33mchanged[39m
-      - /schema/items/properties/phone, /schema/items/properties/userStatus/format, /schema/items/required/2 [31mremoved[39m
+      - /schema/items/properties/bio [32madded[39m
+      - /schema/items/properties/userStatus [33mchanged[39m
+      - /schema/items/properties/phone [31mremoved[39m
       
 [1mPOST[22m /user/createWithArray: 
   - request: 
     - body [1m*/*[22m: 
-      - /schema/items/properties/bio, /schema/items/properties/userStatus/enum, /schema/items/required/2 [32madded[39m
-      - /schema/items/properties/userStatus/type [33mchanged[39m
-      - /schema/items/properties/phone, /schema/items/properties/userStatus/format, /schema/items/required/2 [31mremoved[39m
+      - /schema/items/properties/bio [32madded[39m
+      - /schema/items/properties/userStatus [33mchanged[39m
+      - /schema/items/properties/phone [31mremoved[39m
       
 [1mPOST[22m /user: 
   - request: 
     - body [1m*/*[22m: 
-      - /schema/properties/bio, /schema/properties/userStatus/enum, /schema/required/2 [32madded[39m
-      - /schema/properties/userStatus/type [33mchanged[39m
-      - /schema/properties/phone, /schema/properties/userStatus/format, /schema/required/2 [31mremoved[39m
+      - /schema/properties/bio [32madded[39m
+      - /schema/properties/userStatus, /schema/properties/lastName, /schema/properties/username [33mchanged[39m
+      - /schema/properties/phone [31mremoved[39m
       
 [1mDELETE[22m /store/order/{orderId}: 
   - response [1m404[22m: 
@@ -157,12 +157,12 @@ specification details:
 [1mGET[22m /store/order/{orderId}: 
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 
-      - /schema/properties/summary, /schema/properties/status/enum/2 [32madded[39m
-      - /schema/properties/status/enum/1 [31mremoved[39m
+      - /schema/properties/summary [32madded[39m
+      - /schema/properties/status [33mchanged[39m
       
     - body [1mapplication/xml[22m: 
-      - /schema/properties/summary, /schema/properties/status/enum/2 [32madded[39m
-      - /schema/properties/status/enum/1, /schema/required/1 [31mremoved[39m
+      - /schema/properties/summary [32madded[39m
+      - /schema/properties/status, /schema/properties/petId [33mchanged[39m
       
   - response [1m404[22m: 
     - body [1mapplication/json[22m: [32madded[39m
@@ -170,20 +170,20 @@ specification details:
 [1mPOST[22m /store/order: 
   - request: 
     - body [1m*/*[22m: 
-      - /schema/properties/summary, /schema/properties/status/enum/2 [32madded[39m
-      - /schema/properties/status/enum/1 [31mremoved[39m
+      - /schema/properties/summary [32madded[39m
+      - /schema/properties/status [33mchanged[39m
       
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 
-      - /schema/properties/summary, /schema/properties/status/enum/2 [32madded[39m
-      - /schema/properties/status/enum/1 [31mremoved[39m
+      - /schema/properties/summary, /example [32madded[39m
+      - /schema/properties/status [33mchanged[39m
       
     - body [1mapplication/xml[22m: 
-      - /schema/properties/summary, /schema/properties/status/enum/2 [32madded[39m
-      - /schema/properties/status/enum/1 [31mremoved[39m
+      - /schema/properties/summary [32madded[39m
+      - /schema/properties/status [33mchanged[39m
       
 [1mPOST[22m /pet/{petId}/uploadImage: 
-  - cookie parameter [3mundefined[23m: [32madded[39m
+  - cookie parameter [3mdebug[23m: 
     - /schema/enum [32madded[39m
     
   - response [1m200[22m: [31mremoved[39m
@@ -193,7 +193,7 @@ specification details:
     
   - response [1mdefault[22m: 
     - body [1mapplication/json[22m: 
-      - /schema/properties/type/type [33mchanged[39m
+      - /schema/properties/type [33mchanged[39m
       
 [1mGET[22m /pet: [31mremoved[39m
   
@@ -204,23 +204,27 @@ specification details:
   - request: 
     - body [1mapplication/xml[22m: [31mremoved[39m
     - body [1mapplication/json[22m: 
-      - /schema/properties/number, /schema/required/0 [32madded[39m
-      - /schema/properties/name, /schema/required/0 [31mremoved[39m
+      - /schema/properties/number [32madded[39m
+      - /schema/properties/name [31mremoved[39m
       
   - response [1m400[22m: [31mremoved[39m
+[1mPOST[22m /example: 
+  - query parameter [3msomethingelse[23m: [31mremoved[39m
 [1mGET[22m /example: 
   - query parameter [3mdeletedQueryParameter[23m: [31mremoved[39m
   - query parameter [3maddedQueryParameter[23m: [32madded[39m
     
-  - query parameter [3mundefined[23m: 
-    - /required [32madded[39m
+  - query parameter [3mrequiredToOptional[23m: 
     - /required [31mremoved[39m
+    
+  - query parameter [3moptionalToRequired[23m: 
+    - /required [32madded[39m
     
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 
-      - /schema/properties/requiredKeys/required/0, /schema/properties/requiredKeys/required/1, /schema/properties/requiredKeys/properties/addedRequiredKey, /schema/properties/expandableObject/anyOf/1 [32madded[39m
-      - /schema/properties/toTypeArrays/type, /schema/properties/fromTypeArrays/type, /schema/properties/composedObject/allOf/0/properties/orderId/type [33mchanged[39m
-      - /schema/properties/requiredKeys/required/0, /schema/properties/requiredKeys/required/1, /schema/properties/requiredKeys/properties/deletedRequiredKey, /schema/properties/stringOrNumberOrObject/oneOf/2 [31mremoved[39m
+      - /schema/properties/requiredKeys/properties/addedRequiredKey [32madded[39m
+      - /schema/properties/toTypeArrays, /schema/properties/fromTypeArrays, /schema/properties/requiredKeys/properties/requiredToOptional, /schema/properties/requiredKeys/properties/optionalToRequired, /schema/properties/expandableObject, /schema/properties/composedObject/allOf/0/properties/orderId, /schema/properties/stringOrNumberOrObject [33mchanged[39m
+      - /schema/properties/requiredKeys/properties/deletedRequiredKey [31mremoved[39m
       
 Checks
 
@@ -270,53 +274,53 @@ Checks
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /pet
     removed rule: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
-      at [4m$workspace$/petstore-base.json:127:4226[24m
+      at [4m$workspace$/petstore-base.json:146:4709[24m
 
     removed rule: prevent response status code removal
       [31m[31mx[39m[31m must not remove response status code 404. This is a breaking change.[39m
-      at [4m$workspace$/petstore-base.json:129:4268[24m
+      at [4m$workspace$/petstore-base.json:148:4751[24m
 
     removed rule: prevent response status code removal
       [31m[31mx[39m[31m must not remove response status code 405. This is a breaking change.[39m
-      at [4m$workspace$/petstore-base.json:130:4336[24m
+      at [4m$workspace$/petstore-base.json:149:4819[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPUT[22m /pet
     added rule: prevent changing request property to required
       [31m[31mx[39m[31m cannot add a required request property 'number' to an existing operation. This is a breaking change.[39m
-      at [4m$workspace$/petstore-updated.json:161:5273[24m
+      at [4m$workspace$/petstore-updated.json:173:5554[24m
 
     removed rule: prevent response status code removal
       [31m[31mx[39m[31m must not remove response status code 400. This is a breaking change.[39m
-      at [4m$workspace$/petstore-base.json:223:7881[24m
+      at [4m$workspace$/petstore-base.json:242:8364[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /pet/{petId}/uploadImage
     changed rule: prevent cookie parameters enum breaking changes
       [31m[31mx[39m[31m cannot add an enum to restrict possible values for cookie parameter 'debug'. This is a breaking change.[39m
-      at [4m$workspace$/petstore-updated.json:728:26749[24m
+      at [4m$workspace$/petstore-updated.json:740:27030[24m
 
     removed rule: prevent removing response property
       [31m[31mx[39m[31m cannot remove response property 'code'. This is a breaking change.[39m
-      at [4m$workspace$/petstore-base.json:375:13322[24m
+      at [4m$workspace$/petstore-base.json:394:13805[24m
 
     removed rule: prevent removing response property
       [31m[31mx[39m[31m cannot remove response property 'type'. This is a breaking change.[39m
-      at [4m$workspace$/petstore-base.json:376:13392[24m
+      at [4m$workspace$/petstore-base.json:395:13875[24m
 
     removed rule: prevent removing response property
       [31m[31mx[39m[31m cannot remove response property 'message'. This is a breaking change.[39m
-      at [4m$workspace$/petstore-base.json:377:13442[24m
+      at [4m$workspace$/petstore-base.json:396:13925[24m
 
     removed rule: prevent response status code removal
       [31m[31mx[39m[31m must not remove response status code 200. This is a breaking change.[39m
-      at [4m$workspace$/petstore-base.json:368:13083[24m
+      at [4m$workspace$/petstore-base.json:387:13566[24m
 
     changed rule: prevent response property type changes
       [31m[31mx[39m[31m expected response body property 'type' to not change type. This is a breaking change.[39m
-      at [4m$workspace$/petstore-updated.json:794:28833[24m
+      at [4m$workspace$/petstore-updated.json:806:29114[24m
 
 
 
@@ -326,7 +330,7 @@ Checks
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /store/order/{orderId}
     changed rule: prevent making response property optional
       [31m[31mx[39m[31m cannot make required response property 'petId' optional. This is a breaking change.[39m
-      at [4m$workspace$/petstore-updated.json:957:34662[24m
+      at [4m$workspace$/petstore-updated.json:969:34943[24m
 
 
 
@@ -336,78 +340,78 @@ Checks
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /user
     changed rule: prevent changing request property to required
       [31m[31mx[39m[31m cannot make a request property required. This is a breaking change.[39m
-      at [4m$workspace$/petstore-updated.json:1065:38733[24m
+      at [4m$workspace$/petstore-updated.json:1077:39014[24m
 
     changed rule: prevent request property type changes
       [31m[31mx[39m[31m expected request body property 'userStatus' to not change type. This is a breaking change.[39m
-      at [4m$workspace$/petstore-updated.json:1070:38991[24m
+      at [4m$workspace$/petstore-updated.json:1082:39272[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /user/createWithArray
     changed rule: prevent changing request property to required
       [31m[31mx[39m[31m cannot make a request property required. This is a breaking change.[39m
-      at [4m$workspace$/petstore-updated.json:1105:40178[24m
+      at [4m$workspace$/petstore-updated.json:1117:40459[24m
 
     changed rule: prevent request property type changes
       [31m[31mx[39m[31m expected request body property 'userStatus' to not change type. This is a breaking change.[39m
-      at [4m$workspace$/petstore-updated.json:1110:40446[24m
+      at [4m$workspace$/petstore-updated.json:1122:40727[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /user/createWithList
     changed rule: prevent changing request property to required
       [31m[31mx[39m[31m cannot make a request property required. This is a breaking change.[39m
-      at [4m$workspace$/petstore-updated.json:1146:41663[24m
+      at [4m$workspace$/petstore-updated.json:1158:41944[24m
 
     changed rule: prevent request property type changes
       [31m[31mx[39m[31m expected request body property 'userStatus' to not change type. This is a breaking change.[39m
-      at [4m$workspace$/petstore-updated.json:1151:41931[24m
+      at [4m$workspace$/petstore-updated.json:1163:42212[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /user/login
     added rule: header parameter naming check
       [31m[31mx[39m[31m X-Rate-Limit is not snake_case[39m
-      at [4m$workspace$/petstore-updated.json:1196:43271[24m
+      at [4m$workspace$/petstore-updated.json:1208:43552[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /user/{username}
     changed rule: prevent making response property optional
       [31m[31mx[39m[31m cannot make required response property 'lastName' optional. This is a breaking change.[39m
-      at [4m$workspace$/petstore-updated.json:1253:45219[24m
+      at [4m$workspace$/petstore-updated.json:1265:45500[24m
 
     changed rule: prevent making response property optional
       [31m[31mx[39m[31m cannot make required response property 'lastName' optional. This is a breaking change.[39m
-      at [4m$workspace$/petstore-updated.json:1274:46138[24m
+      at [4m$workspace$/petstore-updated.json:1286:46419[24m
 
     removed rule: prevent removing response property
       [31m[31mx[39m[31m cannot remove response property 'phone'. This is a breaking change.[39m
-      at [4m$workspace$/petstore-base.json:796:28299[24m
+      at [4m$workspace$/petstore-base.json:815:28782[24m
 
     removed rule: prevent removing response property
       [31m[31mx[39m[31m cannot remove response property 'phone'. This is a breaking change.[39m
-      at [4m$workspace$/petstore-base.json:817:29184[24m
+      at [4m$workspace$/petstore-base.json:836:29667[24m
 
     changed rule: prevent response property type changes
       [31m[31mx[39m[31m expected response body property 'userStatus' to not change type. This is a breaking change.[39m
-      at [4m$workspace$/petstore-updated.json:1256:45378[24m
+      at [4m$workspace$/petstore-updated.json:1268:45659[24m
 
     changed rule: prevent response property type changes
       [31m[31mx[39m[31m expected response body property 'userStatus' to not change type. This is a breaking change.[39m
-      at [4m$workspace$/petstore-updated.json:1277:46297[24m
+      at [4m$workspace$/petstore-updated.json:1289:46578[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPUT[22m /user/{username}
     changed rule: prevent changing request property to required
       [31m[31mx[39m[31m cannot make a request property required. This is a breaking change.[39m
-      at [4m$workspace$/petstore-updated.json:1330:48050[24m
+      at [4m$workspace$/petstore-updated.json:1342:48331[24m
 
     changed rule: prevent request property type changes
       [31m[31mx[39m[31m expected request body property 'userStatus' to not change type. This is a breaking change.[39m
-      at [4m$workspace$/petstore-updated.json:1335:48308[24m
+      at [4m$workspace$/petstore-updated.json:1347:48589[24m
 
 
 
@@ -420,41 +424,41 @@ Checks
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /pet/findByStatus
     added rule: operation path component naming check
       [31m[31mx[39m[31m findByStatus is not snake_case[39m
-      at [4m$workspace$/petstore-updated.json:304:10659[24m
+      at [4m$workspace$/petstore-updated.json:316:10940[24m
 
     added rule: response property naming check
       [31m[31mx[39m[31m photoUrls is not snake_case[39m
-      at [4m$workspace$/petstore-updated.json:355:12509[24m
+      at [4m$workspace$/petstore-updated.json:367:12790[24m
 
     added rule: response property naming check
       [31m[31mx[39m[31m photoUrls is not snake_case[39m
-      at [4m$workspace$/petstore-updated.json:399:14370[24m
+      at [4m$workspace$/petstore-updated.json:411:14651[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /pet/findByTags
     added rule: operation path component naming check
       [31m[31mx[39m[31m findByTags is not snake_case[39m
-      at [4m$workspace$/petstore-updated.json:434:15684[24m
+      at [4m$workspace$/petstore-updated.json:446:15965[24m
 
     added rule: response property naming check
       [31m[31mx[39m[31m photoUrls is not snake_case[39m
-      at [4m$workspace$/petstore-updated.json:471:17142[24m
+      at [4m$workspace$/petstore-updated.json:483:17423[24m
 
     added rule: response property naming check
       [31m[31mx[39m[31m photoUrls is not snake_case[39m
-      at [4m$workspace$/petstore-updated.json:515:19003[24m
+      at [4m$workspace$/petstore-updated.json:527:19284[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /pet/{petId}
     added rule: response property naming check
       [31m[31mx[39m[31m photoUrls is not snake_case[39m
-      at [4m$workspace$/petstore-updated.json:584:21551[24m
+      at [4m$workspace$/petstore-updated.json:596:21832[24m
 
     added rule: response property naming check
       [31m[31mx[39m[31m photoUrls is not snake_case[39m
-      at [4m$workspace$/petstore-updated.json:625:23254[24m
+      at [4m$workspace$/petstore-updated.json:637:23535[24m
 
 
 
@@ -464,11 +468,11 @@ Checks
   [1m[42m[37m PASS [39m[49m[22m [1mDELETE[22m /pet/{petId}
 
 
-6 operations added, 13 changed, 1 removed
+6 operations added, 14 changed, 1 removed
 [32m[1m155 checks passed[22m[39m
 [31m[1m45 checks failed[22m[39m
 
-Configure check rulesets in optic cloud or your local optic.dev.yml file.
+Configure check standards in optic cloud or your local optic.dev.yml file.
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
@@ -493,7 +497,7 @@ exports[`diff two files, no repo or config 1`] = `
 "
 `;
 
-exports[`diff with --ruleset arg 1`] = `
+exports[`diff with --standard arg 1`] = `
 "
 [1mGET[22m /invalid_name: [32madded[39m
   
@@ -539,7 +543,7 @@ Checks
 [32m[1m3 checks passed[22m[39m
 [31m[1m2 checks failed[22m[39m
 
-Configure check rulesets in optic cloud or your local optic.dev.yml file.
+Configure check standards in optic cloud or your local optic.dev.yml file.
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
@@ -593,7 +597,7 @@ Checks
 [32m[1m5 checks passed[22m[39m
 [31m[1m2 checks failed[22m[39m
 
-Configure check rulesets in optic cloud or your local optic.dev.yml file.
+Configure check standards in optic cloud or your local optic.dev.yml file.
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
@@ -645,7 +649,7 @@ Checks
 [32m[1m3 checks passed[22m[39m
 [31m[1m2 checks failed[22m[39m
 
-Configure check rulesets in optic cloud or your local optic.dev.yml file.
+Configure check standards in optic cloud or your local optic.dev.yml file.
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
@@ -653,7 +657,7 @@ Configure check rulesets in optic cloud or your local optic.dev.yml file.
 exports[`diff with mock server ruleset key on api spec 1`] = `
 "
 specification details:
-- /x-optic-ruleset [32madded[39m
+- /x-optic-standard [32madded[39m
 
 [1mGET[22m /invalid_name: [32madded[39m
   
@@ -683,7 +687,7 @@ Checks
 [32m[1m0 checks passed[22m[39m
 [31m[1m1 checks failed[22m[39m
 
-Configure check rulesets in optic cloud or your local optic.dev.yml file.
+Configure check standards in optic cloud or your local optic.dev.yml file.
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
@@ -693,7 +697,6 @@ exports[`diff with mock server uploads specs if authenticated 1`] = `
 [1mPATCH[22m /example: 
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 
-      - /schema/type [33mchanged[39m
       
 Checks
 

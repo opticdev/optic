@@ -11,7 +11,6 @@ import {
   flushEvents,
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
-import { getAnonId } from '../../utils/anonymous-id';
 import open from 'open';
 import { compressDataV2 } from './compressResults';
 import {
@@ -25,7 +24,7 @@ import { writeDataForCi } from '../../utils/ci-data';
 
 const usage = () => `
   optic diff-all
-  optic diff-all --compare-from main --compare-to feat/new-api --check --web --ruleset @org/example-ruleset`;
+  optic diff-all --compare-from main --compare-to feat/new-api --check --web --standard @org/example-standard`;
 
 const helpText = `
 Example usage:
@@ -35,8 +34,8 @@ Example usage:
   Diff all specs with \`x-optic-url\` in the current repo from main to feature/1
   $ optic diff-all --compare-from main --compare-to feature/1
 
-  Diff all specs with a ruleset, run checks and open up in a web browser
-  $ optic diff-all --ruleset @org/example-ruleset --web --check
+  Diff all specs with a standard, run checks and open up in a web browser
+  $ optic diff-all --standard @org/example-standard --web --check
   `;
 
 export const registerDiffAll = (cli: Command, config: OpticCliConfig) => {
@@ -57,8 +56,8 @@ export const registerDiffAll = (cli: Command, config: OpticCliConfig) => {
       'HEAD~1'
     )
     .option(
-      '--ruleset <ruleset>',
-      'run comparison with a locally defined ruleset, if not set, looks for the ruleset on the [x-optic-ruleset] key on the spec, and then the optic.dev.yml file.'
+      '--standard <standard>',
+      'run comparison with a locally defined standard, if not set, looks for the standard on the [x-optic-standard] key on the spec, and then the optic.dev.yml file.'
     )
     .option('--check', 'enable checks', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
@@ -69,7 +68,7 @@ export const registerDiffAll = (cli: Command, config: OpticCliConfig) => {
 type DiffAllActionOptions = {
   compareTo?: string;
   compareFrom: string;
-  ruleset?: string;
+  standard?: string;
   check: boolean;
   web: boolean;
   json: boolean;
@@ -350,8 +349,7 @@ async function openWebpage(
     analyticsData.compressedDataLength = compressedData.length;
     url = `${config.client.getWebBase()}/cli/diff#${compressedData}`;
   }
-  const anonymousId = await getAnonId();
-  trackEvent('optic.diff_all.view_web', anonymousId, analyticsData);
+  trackEvent('optic.diff_all.view_web', analyticsData);
 
   await open(url, { wait: false });
 }
@@ -439,7 +437,7 @@ const getDiffAllAction =
 
     if (options.check && !config.isInCi) {
       logger.info(
-        `Configure check rulesets in optic cloud or your local optic.dev.yml file.`
+        `Configure check standards in optic cloud or your local optic.dev.yml file.`
       );
     }
 

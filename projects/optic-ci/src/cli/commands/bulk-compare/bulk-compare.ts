@@ -333,8 +333,6 @@ const runBulkCompare = async ({
 
   trackEvent(
     'optic_ci.bulk_compare',
-    (normalizedCiContext && normalizedCiContext.user) ||
-      `${projectName}-optic-ci`,
     {
       isInCi: process.env.CI === 'true',
       numberOfErrors,
@@ -349,7 +347,9 @@ const runBulkCompare = async ({
             org_repo_pr: `${normalizedCiContext.organization}/${normalizedCiContext.repo}/${normalizedCiContext.pull_request}`,
           }
         : {}),
-    }
+    },
+    (normalizedCiContext && normalizedCiContext.user) ||
+      `${projectName}-optic-ci`
   );
 
   if (output === 'json') {

@@ -20,6 +20,10 @@ import {
   getStandardsUrl,
 } from '../../utils/cloud-urls';
 import { getDefaultRulesetConfig } from './default-ruleset-config';
+import {
+  flushEvents,
+  trackEvent,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
 
 function short(sha: string) {
   return sha.slice(0, 8);
@@ -274,7 +278,6 @@ async function crawlCandidateSpecs(
     };
   }
 
-  let versionUploadCount = 0;
   for await (const sha of shas) {
     let parseResult: ParseResult;
     try {
@@ -294,7 +297,6 @@ async function crawlCandidateSpecs(
       );
       break;
     }
-    versionUploadCount++;
     spinner.text = `${chalk.bold.blue(
       parseResult.jsonLike.info.title || path
     )} version ${sha.substring(0, 6)} uploading`;
@@ -302,6 +304,7 @@ async function crawlCandidateSpecs(
       spec: parseResult,
       tags: [`git:${sha}`],
       client: config.client,
+      orgId,
     });
   }
 
@@ -319,6 +322,13 @@ async function crawlCandidateSpecs(
       });
     }
     logger.debug(`Added spec ${path} to ${api.url}`);
+
+    trackEvent('api.added', {
+      apiId: api.id,
+      orgId: orgId,
+      url: api.url,
+    });
+
     if (options.web) {
       await open(api.url, { wait: false });
     }
@@ -444,4 +454,5 @@ const getApiAddAction =
         web: options.web,
       });
     }
+    await flushEvents();
   };

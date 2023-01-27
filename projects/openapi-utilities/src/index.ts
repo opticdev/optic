@@ -85,8 +85,8 @@ export {
   groupChangesAndRules,
 } from './utilities/group-changes';
 export { traverseSpec } from './utilities/traverse-spec';
-export { terminalChangelog } from './utilities/terminal-changelog';
-export { jsonChangelog } from './utilities/json-changelog';
+export { terminalChangelog } from './utilities/changelog-renderers/terminal-changelog';
+export { jsonChangelog } from './utilities/changelog-renderers/json-changelog';
 export { generateChangelogData } from './utilities/generate-changelog-data';
 export { compareChangesByPath } from './utilities/compare-changes-by-path';
 export {

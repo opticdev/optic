@@ -1,6 +1,6 @@
 {
   "openapi": "3.0.1",
-  "x-optic-ruleset": "@test-org/ruleset-id",
+  "x-optic-standard": "@test-org/ruleset-id",
   "paths": {
     "/example": {
       "get": {

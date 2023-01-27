@@ -21,14 +21,18 @@ export const publishGithubMessage = async (
         pull_number,
       });
 
-    trackEvent('optic_ci.github_comment', `${owner}-optic-ci`, {
-      owner,
-      repo,
-      pull_number,
-      number_of_reviewers:
-        requestedReviewers.users.length + requestedReviewers.teams.length,
-      org_repo_pr: `${owner}/${repo}/${pull_number}`,
-    });
+    trackEvent(
+      'optic_ci.github_comment',
+      {
+        owner,
+        repo,
+        pull_number,
+        number_of_reviewers:
+          requestedReviewers.users.length + requestedReviewers.teams.length,
+        org_repo_pr: `${owner}/${repo}/${pull_number}`,
+      },
+      `${owner}-optic-ci`
+    );
   } catch (e) {
     return handleError(e);
   }

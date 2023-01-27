@@ -1,4 +1,4 @@
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 import open from 'open';
 
 import {
@@ -20,7 +20,6 @@ import {
   flushEvents,
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
-import { getAnonId } from '../../utils/anonymous-id';
 import { compute } from './compute';
 import { compressData, compressDataV2 } from './compressResults';
 import { generateRuleRunner } from './generate-rule-runner';
@@ -67,9 +66,10 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
       'HEAD'
     )
     .option(
-      '--ruleset <ruleset>',
-      'run comparison with a locally defined ruleset, if not set, looks for the ruleset on the [x-optic-ruleset] key on the spec, and then the optic.dev.yml file.'
+      '--standard <standard>',
+      'run comparison with a locally defined standard, if not set, looks for the standard on the [x-optic-standard] key on the spec, and then the optic.dev.yml file.'
     )
+    .addOption(new Option('--ruleset <ruleset>', '').hideHelp())
     .option('--check', 'enable checks', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
@@ -114,7 +114,6 @@ const getBaseAndHeadFromFileAndBase = async (
 };
 
 const runDiff = async (
-  [file1, file2]: [string | undefined, string | undefined],
   [baseFile, headFile]: [ParseResult, ParseResult],
   config: OpticCliConfig,
   options: DiffActionOptions
@@ -180,7 +179,7 @@ const runDiff = async (
     if (!config.isInCi) {
       console.log('');
       console.log(
-        `Configure check rulesets in optic cloud or your local optic.dev.yml file.`
+        `Configure check standards in optic cloud or your local optic.dev.yml file.`
       );
     }
   }
@@ -193,6 +192,7 @@ type DiffActionOptions = {
   check: boolean;
   web: boolean;
   json: boolean;
+  standard?: string;
   ruleset?: string;
 };
 
@@ -203,7 +203,9 @@ const getDiffAction =
     file2: string | undefined,
     options: DiffActionOptions
   ) => {
-    const files: [string | undefined, string | undefined] = [file1, file2];
+    if (options.ruleset && !options.standard) {
+      options.standard = options.ruleset;
+    }
     let parsedFiles: [ParseResult, ParseResult];
     if (file1 && file2) {
       parsedFiles = await getBaseAndHeadFromFiles(file1, file2, config);
@@ -230,7 +232,7 @@ const getDiffAction =
       return;
     }
 
-    const diffResult = await runDiff(files, parsedFiles, config, options);
+    const diffResult = await runDiff(parsedFiles, config, options);
     let maybeUrl: string | null = null;
     const [baseParseResult, headParseResult] = parsedFiles;
     if (config.isAuthenticated) {
@@ -285,7 +287,7 @@ const getDiffAction =
           // TODO remove this old flow when new web view is ready
           const { runner } = await generateRuleRunner(
             {
-              rulesetArg: options.ruleset,
+              rulesetArg: options.standard,
               specRuleset: headParseResult.isEmptySpec
                 ? baseParseResult.jsonLike[OPTIC_STANDARD_KEY]
                 : headParseResult.jsonLike[OPTIC_STANDARD_KEY],
@@ -311,8 +313,7 @@ const getDiffAction =
         maybeUrl = `${config.client.getWebBase()}/cli/diff#${compressedData}`;
         await flushEvents();
       }
-      const anonymousId = await getAnonId();
-      trackEvent('optic.diff.view_web', anonymousId, analyticsData);
+      trackEvent('optic.diff.view_web', analyticsData);
       await open(maybeUrl, {
         wait: false,
       });

@@ -1,15 +1,16 @@
 import { OpenAPIV3 } from 'openapi-types';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
-import { typeofDiff, getTypeofDiffs } from '../diff/diff';
+import { typeofV3Diffs } from '../../openapi3/group-diff';
 import type {
   GroupedDiffs,
   Body,
   Diff,
   Endpoint,
   Response,
-} from '../openapi3/group-diff';
-import { getRaw } from '../openapi3/traverser';
+} from '../../openapi3/group-diff';
+import { interpretFieldLevelDiffs } from './common';
+import isEqual from 'lodash.isequal';
 
 type RawChange<T> = { key: string } & (
   | {
@@ -32,7 +33,54 @@ type RawChange<T> = { key: string } & (
     }
 );
 
+function isObject(a: any) {
+  return typeof a === 'object' && a !== null && !Array.isArray(a);
+}
+
+// This function mutates and removes keys
+function omitSameValueKeys(a: any, b: any): [any, any] {
+  const keysToOmit: Set<string> = new Set();
+  const keysToContinue: Set<string> = new Set();
+  if (isObject(a) && isObject(b)) {
+    const clonedA = { ...a };
+    const clonedB = { ...b };
+    for (const key of new Set([...Object.keys(a), ...Object.keys(b)])) {
+      if (isEqual(a[key], b[key])) {
+        keysToOmit.add(key);
+      } else if (isObject(a[key]) && isObject(b[key])) {
+        keysToContinue.add(key);
+      }
+    }
+
+    for (const key of keysToOmit) {
+      delete clonedA[key];
+      delete clonedB[key];
+    }
+    for (const key of keysToContinue) {
+      const [aValue, bValue] = omitSameValueKeys(a[key], b[key]);
+      clonedA[key] = aValue;
+      clonedB[key] = bValue;
+    }
+    return [clonedA, clonedB];
+  }
+  return [a, b];
+}
+
 const getDetailsDiff = (change: RawChange<any>): ChangedNode['attributes'] => {
+  if (change.changed) {
+    const [before, after] = omitSameValueKeys(
+      change.changed.before,
+      change.changed.after
+    );
+    return [
+      {
+        key: change.key,
+        change: 'changed',
+        before,
+        after,
+      },
+    ];
+  }
   return [
     {
       key: change.key,
@@ -40,12 +88,12 @@ const getDetailsDiff = (change: RawChange<any>): ChangedNode['attributes'] => {
         ? {
             before: undefined,
             after: change.added,
+            change: 'added',
           }
-        : change.changed
-        ? change.changed
         : {
             before: change.removed,
             after: undefined,
+            change: 'removed',
           }),
     },
   ];
@@ -54,7 +102,12 @@ const getDetailsDiff = (change: RawChange<any>): ChangedNode['attributes'] => {
 type ChangedNode = {
   name: string;
   change: 'added' | 'removed' | 'changed' | null;
-  attributes: { key: string; before: any; after: any }[];
+  attributes: {
+    key: string;
+    before: any;
+    after: any;
+    change: 'added' | 'changed' | 'removed';
+  }[];
 };
 
 type OperationChangelog = ChangedNode & {
@@ -66,6 +119,63 @@ type OperationChangelog = ChangedNode & {
 type JsonChangelog = {
   operations: OperationChangelog[];
 };
+
+function attachRequiredToField(
+  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  diff: Diff,
+  rawChange: RawChange<any>
+) {
+  let beforeRequired = false;
+  let afterRequired = false;
+  if (diff.after) {
+    const parts = jsonPointerHelpers.decode(diff.after);
+    const pointer = parts.slice(0, -2);
+    const key = parts[parts.length - 1];
+    const raw = jsonPointerHelpers.tryGet(
+      specs.to,
+      jsonPointerHelpers.compile([...pointer, 'required'])
+    );
+    if (raw.match && Array.isArray(raw.value) && raw.value.includes(key)) {
+      afterRequired = true;
+    }
+  }
+
+  if (diff.before) {
+    const parts = jsonPointerHelpers.decode(diff.before);
+    const pointer = parts.slice(0, -2);
+    const key = parts[parts.length - 1];
+    const raw = jsonPointerHelpers.tryGet(
+      specs.from,
+      jsonPointerHelpers.compile([...pointer, 'required'])
+    );
+    if (raw.match && Array.isArray(raw.value) && raw.value.includes(key)) {
+      beforeRequired = true;
+    }
+  }
+
+  if (rawChange.added) {
+    rawChange.added = {
+      ...rawChange.added,
+      required: afterRequired,
+    };
+  } else if (rawChange.changed) {
+    rawChange.changed = {
+      before: {
+        ...rawChange.changed.before,
+        required: beforeRequired,
+      },
+      after: {
+        ...rawChange.changed.after,
+        required: afterRequired,
+      },
+    };
+  } else if (rawChange.removed) {
+    rawChange.removed = {
+      ...rawChange.removed,
+      required: beforeRequired,
+    };
+  }
+}
 
 export function jsonChangelog(
   specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
@@ -95,23 +205,23 @@ function getEndpointLogs(
     queryParameters,
   } = endpointChange;
 
-  const operationChange = getTypeofDiffs(diffs);
+  const operationChange = typeofV3Diffs(diffs);
 
   const parameterChanges = [];
-  for (const diff of queryParameters) {
-    parameterChanges.push(getParameterLogs(specs, 'request-query', diff));
+  for (const [name, diffs] of Object.entries(queryParameters)) {
+    parameterChanges.push(getParameterLogs(specs, 'query', name, diffs));
   }
 
-  for (const diff of cookieParameters) {
-    parameterChanges.push(getParameterLogs(specs, 'request-cookie', diff));
+  for (const [name, diffs] of Object.entries(cookieParameters)) {
+    parameterChanges.push(getParameterLogs(specs, 'cookie', name, diffs));
   }
 
-  for (const diff of pathParameters) {
-    parameterChanges.push(getParameterLogs(specs, 'request-path', diff));
+  for (const [name, diffs] of Object.entries(pathParameters)) {
+    parameterChanges.push(getParameterLogs(specs, 'path', name, diffs));
   }
 
-  for (const diff of headerParameters) {
-    parameterChanges.push(getParameterLogs(specs, 'request-header', diff));
+  for (const [name, diffs] of Object.entries(headerParameters)) {
+    parameterChanges.push(getParameterLogs(specs, 'header', name, diffs));
   }
 
   const responseChanges: ChangedNode[] = [];
@@ -122,7 +232,7 @@ function getEndpointLogs(
 
   return {
     name: `${method} ${path}`,
-    change: operationChange,
+    change: operationChange ?? 'changed',
     attributes: operationChange
       ? diffs.flatMap((diff) => {
           const rawChange = getRawChange(diff, specs);
@@ -147,7 +257,7 @@ function getResponseChangeLogs(
   contentTypes: ChangedNode[];
 } {
   const contentTypeChanges: ChangedNode[] = [];
-  const responseChange = getTypeofDiffs(response.diffs);
+  const responseChange = typeofV3Diffs(response.diffs);
 
   for (const [contentType, body] of Object.entries(response.contents)) {
     contentTypeChanges.push(getBodyChangeLogs(specs, body, contentType));
@@ -156,7 +266,7 @@ function getResponseChangeLogs(
   // TODO this is missing response-headers
   return {
     name: `${statusCode} response`,
-    change: responseChange,
+    change: responseChange ?? 'changed',
     attributes: responseChange
       ? response.diffs.flatMap((diff) => {
           const rawChange = getRawChange(diff, specs);
@@ -174,7 +284,7 @@ function getRequestChangeLogs(
   contentTypes: ChangedNode[];
 } {
   const contentTypes: ChangedNode[] = [];
-  const requestChange = getTypeofDiffs(request.diffs);
+  const requestChange = typeofV3Diffs(request.diffs);
 
   for (const [contentType, body] of Object.entries(request.contents)) {
     contentTypes.push(getBodyChangeLogs(specs, body, contentType));
@@ -182,7 +292,7 @@ function getRequestChangeLogs(
 
   return {
     name: `Request Body`,
-    change: requestChange,
+    change: requestChange ?? 'changed',
     attributes: requestChange
       ? request.diffs.flatMap((diff) => {
           const rawChange = getRawChange(diff, specs);
@@ -198,45 +308,48 @@ function getBodyChangeLogs(
   body: Body,
   contentType: string
 ): ChangedNode {
-  const bodyChange = getTypeofDiffs(body.diffs);
+  const fieldDiffs = interpretFieldLevelDiffs(specs, body.fields);
+  const exampleDiffs = body.examples;
+
+  // Group body diffs by trail and then log based on that
+
+  const bodyChange = typeofV3Diffs([...fieldDiffs, ...exampleDiffs]);
 
   return {
     name: `${contentType}`,
     change: bodyChange,
     attributes: bodyChange
-      ? body.diffs.flatMap((diff) => {
-          const rawChange = getRawChange(diff, specs);
-          return getDetailsDiff(rawChange);
-        })
+      ? fieldDiffs
+          .flatMap((diff) => {
+            const rawChange = getRawChange(diff, specs);
+            if (diff.trail !== '') {
+              attachRequiredToField(specs, diff, rawChange);
+            }
+            return getDetailsDiff(rawChange);
+          })
+          .concat(
+            exampleDiffs.flatMap((diff) => {
+              const rawChange = getRawChange(diff, specs);
+              return getDetailsDiff(rawChange);
+            })
+          )
       : [],
   };
 }
 
 function getParameterLogs(
   specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
-  parameterType:
-    | 'request-header'
-    | 'request-query'
-    | 'request-cookie'
-    | 'request-path',
-  diff: Diff
+  type: string,
+  name: string,
+  diffs: Diff[]
 ): ChangedNode {
-  const raw =
-    diff.after !== undefined
-      ? getRaw(specs.to, {
-          location: { jsonPath: diff.after },
-          type: parameterType,
-        })
-      : getRaw(specs.from, {
-          location: { jsonPath: diff.before },
-          type: parameterType,
-        });
-
-  const rawChange = getRawChange(diff, specs);
   return {
-    name: `${parameterType} parameter '${raw.name}'`,
-    change: typeofDiff(diff),
-    attributes: getDetailsDiff(rawChange),
+    name: `${type} parameter '${name}'`,
+    change: typeofV3Diffs(diffs),
+    attributes: diffs.flatMap((diff) => {
+      const rawChange = getRawChange(diff, specs);
+      return getDetailsDiff(rawChange);
+    }),
   };
 }
 
