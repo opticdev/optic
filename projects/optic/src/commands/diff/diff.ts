@@ -27,6 +27,7 @@ import { OPTIC_STANDARD_KEY } from '../../constants';
 import { uploadDiff } from './upload-diff';
 import { getRunUrl } from '../../utils/cloud-urls';
 import { writeDataForCi } from '../../utils/ci-data';
+import { logger } from '../../logger';
 
 const description = `run a diff between two API specs`;
 
@@ -143,26 +144,26 @@ const runDiff = async (
     return diffResults;
   } else {
     for (const warning of warnings) {
-      console.warn(warning);
+      logger.warn(warning);
     }
 
     if (specResults.diffs.length === 0) {
-      console.log('No changes were detected');
+      logger.info('No changes were detected');
     } else {
-      console.log('');
+      logger.info('');
     }
     for (const log of terminalChangelog(
       { from: baseFile.jsonLike, to: headFile.jsonLike },
       changelogData
     )) {
-      console.log(log);
+      logger.info(log);
     }
   }
 
   if (options.check) {
     if (specResults.results.length > 0) {
-      console.log('Checks');
-      console.log('');
+      logger.info('Checks');
+      logger.info('');
     }
 
     for (const log of generateComparisonLogsV2(
@@ -174,12 +175,12 @@ const runDiff = async (
       specResults,
       { output: 'pretty', verbose: false }
     )) {
-      console.log(log);
+      logger.info(log);
     }
 
     if (!config.isInCi) {
-      console.log('');
-      console.log(
+      logger.info('');
+      logger.info(
         `Configure check standards in optic cloud or your local optic.dev.yml file.`
       );
     }
@@ -214,7 +215,7 @@ const getDiffAction =
     } else if (file1) {
       if (config.vcs?.type !== VCS.Git) {
         const commandVariant = `optic diff <file> --base <ref>`;
-        console.error(
+        logger.error(
           `Error: ${commandVariant} must be called from a git repository.`
         );
         process.exitCode = 1;
@@ -227,7 +228,7 @@ const getDiffAction =
         config
       );
     } else {
-      console.error(
+      logger.error(
         'Command removed: optic diff (no args) has been removed, please use optic diff <file_path> --base <base> instead'
       );
       process.exitCode = 1;
@@ -253,7 +254,7 @@ const getDiffAction =
           run.apiId,
           run.runId
         );
-        console.log(`Uploaded results of diff to ${maybeUrl}`);
+        logger.info(`Uploaded results of diff to ${maybeUrl}`);
       }
     }
 
@@ -262,7 +263,7 @@ const getDiffAction =
         diffResult.specResults.diffs.length === 0 &&
         (!options.check || diffResult.specResults.results.length === 0)
       ) {
-        console.log('Empty changelog: not opening web view');
+        logger.info('Empty changelog: not opening web view');
       }
       const analyticsData: Record<string, any> = {
         isInCi: config.isInCi,
@@ -310,8 +311,8 @@ const getDiffAction =
             meta
           );
         }
-        (analyticsData.compressedDataLength = compressedData.length),
-          console.log('Opening up diff in web view');
+        analyticsData.compressedDataLength = compressedData.length;
+        logger.info('Opening up diff in web view');
         maybeUrl = `${config.client.getWebBase()}/cli/diff#${compressedData}`;
         await flushEvents();
       }
@@ -334,7 +335,7 @@ const getDiffAction =
     }
 
     if (!options.web && !options.json && !config.isInCi) {
-      console.log(
+      logger.info(
         chalk.blue(
           `Rerun this command with the --web flag to view the detailed changes in your browser`
         )
