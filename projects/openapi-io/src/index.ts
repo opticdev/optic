@@ -22,6 +22,7 @@ import { filePathToGitPath } from './parser/resolvers/git-branch-file-resolver';
 import { jsonPointerLogger } from './validation/log-json-pointer';
 import { applyOperationsToYamlString } from './write/yaml-roundtrip';
 
+export { denormalize } from './denormalizers/denormalize';
 export {
   applyOperationsToYamlString,
   filePathToGitPath,

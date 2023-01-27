@@ -6,7 +6,6 @@ import Hex from 'crypto-js/enc-hex';
 
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
-
 export type JsonPath = string;
 export type FileReference = number;
 
@@ -49,6 +48,15 @@ export class JsonSchemaSourcemap {
         contents,
         sha256: Hex.stringify(sha256(contents)),
       });
+    }
+  }
+
+  // Used to log pointers to the same file where it's been reorganized
+  logPointerToRootFile(newPointer: string, originalPointer: string) {
+    const rootFile = this.files.find((file) => file.path === this.rootFilePath);
+
+    if (rootFile) {
+      this.refMappings[newPointer] = [rootFile.index, originalPointer];
     }
   }
 
