@@ -44,7 +44,7 @@ Example usage:
   $ optic api add <path_to_spec.yml> --history-depth <depth>
 
   Discover all apis in the current repo
-  $ optic api add
+  $ optic api add --all
 
   Add all apis and attach standard - configure your API standard in Optic cloud
   $ optic api add --standard <standard_id>
@@ -67,6 +67,7 @@ export const registerApiAdd = (cli: Command, config: OpticCliConfig) => {
       'Sets the depth of how far to crawl through to add historic API data. Set history-depth=0 if you want to crawl the entire history',
       '1'
     )
+    .option('--all', 'discover all APIs in the current repo')
     .option(
       '--standard <standard>',
       'Set a standard to run on API diffs. You can always add this later by setting the `[x-optic-standard]` key on your OpenAPI spec'
@@ -79,6 +80,7 @@ type ApiAddActionOptions = {
   historyDepth: string;
   standard?: string;
   web?: boolean;
+  all?: boolean;
 };
 
 async function getOrganizationToUploadTo(client: OpticBackendClient): Promise<
@@ -346,18 +348,42 @@ export const getApiAddAction =
   async (path_to_spec: string | undefined, options: ApiAddActionOptions) => {
     if (isNaN(Number(options.historyDepth))) {
       logger.error(
-        '--history-depth is not a number. history-depth must be a number'
+        chalk.red(
+          '--history-depth is not a number. history-depth must be a number'
+        )
+      );
+      process.exitCode = 1;
+      return;
+    } else if (!path_to_spec && !options.all) {
+      logger.error(
+        chalk.red(
+          'No spec path provided. Run "optic api add /path/to/spec.yml" or use the "optic api add --all" flag'
+        )
+      );
+      process.exitCode = 1;
+      return;
+    } else if (path_to_spec && options.all) {
+      logger.error(
+        chalk.red(
+          'The spec path and the "--all" flag were both provided. Use one or the other.'
+        )
       );
       process.exitCode = 1;
       return;
     } else if (!path_to_spec && options.historyDepth !== '1') {
       logger.error(
-        'Invalid argument combination: Cannot set a history-depth !== 1 when no spec path is provided'
+        chalk.red(
+          'Invalid argument combination: Cannot set a history-depth !== 1 when no spec path is provided'
+        )
       );
       process.exitCode = 1;
       return;
     } else if (!config.isAuthenticated) {
-      logger.error('Must be logged in to add APIs. Log in with `optic login`');
+      logger.error(
+        chalk.red(
+          'You must be logged in to add APIs to Optic Cloud. Please run "optic login"'
+        )
+      );
       process.exitCode = 1;
       return;
     }
