@@ -12,6 +12,7 @@ import {
   isGitStatusClean,
   resolveGitRef,
 } from './utils/git-utils';
+import { logger } from './logger';
 
 export enum VCS {
   Git = 'git',
@@ -252,6 +253,8 @@ export async function initializeConfig(): Promise<OpticCliConfig> {
       // Git command can fail in a repo with no commits, we should treat this as having no commits
     }
   }
+
+  logger.debug(cliConfig);
 
   return cliConfig;
 }
