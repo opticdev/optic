@@ -260,8 +260,11 @@ async function crawlCandidateSpecs(
   const spinner = ora(`Found OpenAPI at ${path}`);
   spinner.color = 'blue';
 
-  const existingOpticUrl = parseResult.jsonLike[OPTIC_URL_KEY];
-  const maybeParsedUrl = getApiFromOpticUrl(existingOpticUrl);
+  const existingOpticUrl: string | undefined =
+    parseResult.jsonLike[OPTIC_URL_KEY];
+  const maybeParsedUrl = existingOpticUrl
+    ? getApiFromOpticUrl(existingOpticUrl)
+    : null;
 
   let alreadyTracked = false;
 
@@ -339,7 +342,7 @@ async function crawlCandidateSpecs(
   spinner.succeed(
     `${chalk.bold.blue(parseResult.jsonLike.info.title || path)} ${
       alreadyTracked ? 'already being tracked' : 'is now being tracked'
-    }.\n  ${chalk.bold(`View history: ${chalk.underline(existingOpticUrl)}`)}`
+    }.\n  ${chalk.bold(`View history: ${chalk.underline(api.url)}`)}`
   );
 }
 
