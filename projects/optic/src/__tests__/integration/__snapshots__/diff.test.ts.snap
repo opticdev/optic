@@ -395,8 +395,9 @@ Checks
 [32m[1m155 checks passed[22m[39m
 [31m[1m45 checks failed[22m[39m
 
-Configure check standards in optic cloud or your local optic.dev.yml file.
-[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
+[34m[1mSee the full history of this API by running "optic add petstore-base.json"[22m[39m
+[34m[1mStart running checks in CI by running "optic ci setup" [22m[39m
+[1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
 
@@ -446,8 +447,9 @@ Checks
 [32m[1m3 checks passed[22m[39m
 [31m[1m2 checks failed[22m[39m
 
-Configure check standards in optic cloud or your local optic.dev.yml file.
-[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
+[34m[1mSee the full history of this API by running "optic add example-api-v0.json"[22m[39m
+[34m[1mStart running checks in CI by running "optic ci setup" [22m[39m
+[1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
 
@@ -467,7 +469,7 @@ exports[`diff two files, no repo or config 1`] = `
 [1mGET[22m /example: 
   - /operationId [33mchanged[39m
   
-[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
+[1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
 
@@ -517,8 +519,9 @@ Checks
 [32m[1m3 checks passed[22m[39m
 [31m[1m2 checks failed[22m[39m
 
-Configure check standards in optic cloud or your local optic.dev.yml file.
-[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
+[34m[1mSee the full history of this API by running "optic add example-api-v0.json"[22m[39m
+[34m[1mStart running checks in CI by running "optic ci setup" [22m[39m
+[1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
 
@@ -571,8 +574,9 @@ Checks
 [32m[1m5 checks passed[22m[39m
 [31m[1m2 checks failed[22m[39m
 
-Configure check standards in optic cloud or your local optic.dev.yml file.
-[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
+[34m[1mSee the full history of this API by running "optic add example-api-v0.json"[22m[39m
+[34m[1mStart running checks in CI by running "optic ci setup" [22m[39m
+[1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
 
@@ -623,8 +627,9 @@ Checks
 [32m[1m3 checks passed[22m[39m
 [31m[1m2 checks failed[22m[39m
 
-Configure check standards in optic cloud or your local optic.dev.yml file.
-[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
+[34m[1mSee the full history of this API by running "optic add example-api-v0.json"[22m[39m
+[34m[1mStart running checks in CI by running "optic ci setup" [22m[39m
+[1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
 
@@ -661,8 +666,9 @@ Checks
 [32m[1m0 checks passed[22m[39m
 [31m[1m1 checks failed[22m[39m
 
-Configure check standards in optic cloud or your local optic.dev.yml file.
-[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
+[34m[1mSee the full history of this API by running "optic add example-api-v0.json"[22m[39m
+[34m[1mStart running checks in CI by running "optic ci setup" [22m[39m
+[1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
 
@@ -684,6 +690,7 @@ Checks
 1 operation changed
 [32m[1m0 checks passed[22m[39m
 [31m[1m1 checks failed[22m[39m
+
 Uploaded results of diff to http://localhost:3000/organizations/org-id/apis/api-id/runs/run-id
 "
 `;
