@@ -28,6 +28,7 @@ import { getRunUrl } from '../../utils/cloud-urls';
 import { writeDataForCi } from '../../utils/ci-data';
 import { logger } from '../../logger';
 import { errorHandler } from '../../error-handler';
+import path from 'path';
 
 const description = `run a diff between two API specs`;
 
@@ -131,6 +132,9 @@ const runDiff = async (
   );
   const diffResults = { checks, specResults, changelogData, warnings };
 
+
+  const hasOpticUrl = headFile.jsonLike['x-optic-url']
+
   if (options.json) {
     console.log(
       JSON.stringify(
@@ -177,11 +181,14 @@ const runDiff = async (
       logger.info(log);
     }
 
-    if (!config.isInCi) {
-      logger.info('');
-      logger.info(
-        `Configure check standards in optic cloud or your local optic.dev.yml file.`
-      );
+    logger.info('')
+
+    if (!hasOpticUrl) {
+      logger.info(chalk.blue.bold(`See the full history of this API by running "optic add ${path.parse(baseFile.sourcemap.rootFilePath).base}"`))
+    }
+
+    if (!config.isInCi && specResults.results.length) {
+      logger.info(chalk.blue.bold(`Start running checks in CI by running "optic ci setup" `))
     }
   }
 
@@ -334,7 +341,7 @@ const getDiffAction =
 
     if (!options.web && !options.json && !config.isInCi) {
       logger.info(
-        chalk.blue(
+        chalk.bold.blue(
           `Rerun this command with the --web flag to view the detailed changes in your browser`
         )
       );
