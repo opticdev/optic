@@ -1,0 +1,204 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`denormalize denormalizes shared path parameters 1`] = `
+{
+  "jsonLike": {
+    "info": {
+      "title": "some thing",
+      "version": "v0",
+    },
+    "openapi": "3.0.1",
+    "paths": {
+      "/example": {
+        "get": {
+          "parameters": [
+            {
+              "description": "something here",
+              "in": "query",
+              "name": "something-else",
+              "required": true,
+              "schema": {
+                "example": "d5b640e5-d88c-4c17-9bf0-93597b7a1ce2",
+                "format": "uuid",
+                "type": "string",
+              },
+            },
+            {
+              "description": "should-not-override",
+              "in": "query",
+              "name": "should-not-override",
+              "required": true,
+              "schema": {
+                "example": "d5b640e5-d88c-4c17-9bf0-93597b7a1ce2",
+                "format": "uuid",
+                "type": "string",
+              },
+            },
+            {
+              "description": "something here",
+              "in": "query",
+              "name": "something",
+              "required": true,
+              "schema": {
+                "example": "d5b640e5-d88c-4c17-9bf0-93597b7a1ce2",
+                "format": "uuid",
+                "type": "string",
+              },
+            },
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "string",
+                  },
+                },
+              },
+              "description": "some thing",
+            },
+          },
+        },
+        "post": {
+          "parameters": [
+            {
+              "description": "should not be overriden",
+              "in": "query",
+              "name": "should-not-override",
+              "required": true,
+              "schema": {
+                "example": "d5b640e5-d88c-4c17-9bf0-93597b7a1ce2",
+                "format": "uuid",
+                "type": "string",
+              },
+            },
+            {
+              "description": "something here",
+              "in": "query",
+              "name": "something-else",
+              "required": true,
+              "schema": {
+                "example": "d5b640e5-d88c-4c17-9bf0-93597b7a1ce2",
+                "format": "uuid",
+                "type": "string",
+              },
+            },
+            {
+              "description": "something here",
+              "in": "query",
+              "name": "something",
+              "required": true,
+              "schema": {
+                "example": "d5b640e5-d88c-4c17-9bf0-93597b7a1ce2",
+                "format": "uuid",
+                "type": "string",
+              },
+            },
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "string",
+                  },
+                },
+              },
+              "description": "some thing",
+            },
+          },
+        },
+      },
+    },
+  },
+  "sourcemap": JsonSchemaSourcemap {
+    "files": [
+      {
+        "contents": "openapi: '3.0.1'
+info:
+  title: 'some thing'
+  version: 'v0'
+paths:
+  /example:
+    parameters:
+      - name: something-else
+        in: query
+        required: true
+        description: something here
+        schema:
+          type: string
+          format: uuid
+          example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2
+      - name: should-not-override
+        in: query
+        required: true
+        description: should-not-override
+        schema:
+          type: string
+          format: uuid
+          example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2
+      - $ref: parameters.yml#/something
+    get:
+      responses:
+        200:
+          description: 'some thing'
+          content:
+            application/json:
+              schema:
+                type: 'string'
+    post:
+      parameters:
+        - name: should-not-override
+          in: query
+          required: true
+          description: should not be overriden
+          schema:
+            type: string
+            format: uuid
+            example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2
+      responses:
+        200:
+          description: 'some thing'
+          content:
+            application/json:
+              schema:
+                type: 'string'
+",
+        "index": 0,
+        "path": "/Users/nicholaslim/Desktop/repos/optic/projects/openapi-io/src/denormalizers/__tests__/specs/openapi.yaml",
+        "sha256": "44bb048800379bdd9651daa9c6a380dbd68232443881cbbaa0c155240e45c001",
+      },
+      {
+        "contents": "something:
+  name: something
+  in: query
+  required: true
+  description: something here
+  schema:
+    type: string
+    format: uuid
+    example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2
+",
+        "index": 1,
+        "path": "/Users/nicholaslim/Desktop/repos/optic/projects/openapi-io/src/denormalizers/__tests__/specs/parameters.yml",
+        "sha256": "85d23de44c126a054df04ca9720a69b0842935868c6d0a771baa37f0bee832ba",
+      },
+    ],
+    "refMappings": {
+      "/paths/~1example/parameters/0": [
+        0,
+        "/paths/~1example/get/parameters/0",
+      ],
+      "/paths/~1example/parameters/1": [
+        0,
+        "/paths/~1example/get/parameters/1",
+      ],
+      "/paths/~1example/parameters/2": [
+        1,
+        "/paths/~1example/get/parameters/2",
+      ],
+    },
+    "rootFilePath": "/Users/nicholaslim/Desktop/repos/optic/projects/openapi-io/src/denormalizers/__tests__/specs/openapi.yaml",
+  },
+}
+`;
