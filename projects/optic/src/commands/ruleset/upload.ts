@@ -4,11 +4,11 @@ import path from 'path';
 import { Command } from 'commander';
 import Ajv from 'ajv';
 
-import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import { UserError } from '@useoptic/openapi-utilities';
 
 import { OpticCliConfig } from '../../config';
 import { uploadFileToS3 } from '../../utils/s3';
+import { errorHandler } from '../../error-handler';
 
 const expectedFileShape = `Expected ruleset file to have a default export with the shape
 {
@@ -35,7 +35,7 @@ This command also requires a token to be provided via the environment variable O
       '<path_to_ruleset>',
       'the path to the javascript ruleset file to upload, typically "./build/main.js".'
     )
-    .action(wrapActionHandlerWithSentry(getUploadAction(config)));
+    .action(errorHandler(getUploadAction(config)));
 };
 
 const getUploadAction =

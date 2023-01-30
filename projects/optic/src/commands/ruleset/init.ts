@@ -1,11 +1,11 @@
 import fs from 'node:fs/promises';
-import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import { Command } from 'commander';
 import fetch from 'node-fetch';
 import { OpticCliConfig } from '../../config';
 import tar from 'tar';
 import path from 'path';
 import chalk from 'chalk';
+import { errorHandler } from '../../error-handler';
 
 const DEFAULT_INIT_FOLDER = 'optic-ruleset';
 const owner = 'opticdev';
@@ -18,7 +18,7 @@ export const registerRulesetInit = (cli: Command, config: OpticCliConfig) => {
     .command('init')
     .description('Initializes a new ruleset project')
     .argument('[name]', 'the name of the new ruleset project')
-    .action(wrapActionHandlerWithSentry(getInitAction()));
+    .action(errorHandler(getInitAction()));
 };
 
 const getInitAction = () => async (name?: string) => {

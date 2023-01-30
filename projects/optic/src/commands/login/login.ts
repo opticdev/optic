@@ -2,19 +2,19 @@ import { Command } from 'commander';
 import prompts from 'prompts';
 import path from 'path';
 import fs from 'node:fs/promises';
-import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import open from 'open';
 
 import { OpticCliConfig, USER_CONFIG_PATH, readUserConfig } from '../../config';
 import { logger } from '../../logger';
 import chalk from 'chalk';
 import { getNewTokenUrl } from '../../utils/cloud-urls';
+import { errorHandler } from '../../error-handler';
 
 export const registerLogin = (cli: Command, config: OpticCliConfig) => {
   cli
     .command('login', { hidden: true })
     .description('Login to Optic')
-    .action(wrapActionHandlerWithSentry(getLoginAction(config)));
+    .action(errorHandler(getLoginAction(config)));
 };
 
 const getLoginAction = (config: OpticCliConfig) => async () => {

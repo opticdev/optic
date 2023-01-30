@@ -1,6 +1,5 @@
 import { Command } from 'commander';
 import { OpticCliConfig, VCS } from '../../config';
-import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import { findOpenApiSpecsCandidates } from '../../utils/git-utils';
 import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
 import { logger } from '../../logger';
@@ -21,6 +20,7 @@ import {
 import { uploadDiff } from './upload-diff';
 import { getApiFromOpticUrl, getRunUrl } from '../../utils/cloud-urls';
 import { writeDataForCi } from '../../utils/ci-data';
+import { errorHandler } from '../../error-handler';
 
 const usage = () => `
   optic diff-all
@@ -62,7 +62,7 @@ export const registerDiffAll = (cli: Command, config: OpticCliConfig) => {
     .option('--check', 'enable checks', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
-    .action(wrapActionHandlerWithSentry(getDiffAllAction(config)));
+    .action(errorHandler(getDiffAllAction(config)));
 };
 
 type DiffAllActionOptions = {
