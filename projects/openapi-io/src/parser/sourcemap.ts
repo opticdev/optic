@@ -50,12 +50,15 @@ export class JsonSchemaSourcemap {
     }
   }
 
-  // Used to log pointers to the same file where it's been reorganized
-  logPointerToRootFile(newPointer: string, originalPointer: string) {
-    const rootFile = this.files.find((file) => file.path === this.rootFilePath);
+  logPointerInFile(
+    filePath: string,
+    sourcePointer: string,
+    targetPointer: string
+  ) {
+    const thisFile = this.files.find((i) => filePath === i.path);
 
-    if (rootFile) {
-      this.refMappings[newPointer] = [rootFile.index, originalPointer];
+    if (thisFile) {
+      this.refMappings[targetPointer] = [thisFile.index, sourcePointer];
     }
   }
 

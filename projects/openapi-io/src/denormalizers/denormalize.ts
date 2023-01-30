@@ -1,6 +1,16 @@
 import { ParseOpenAPIResult } from '../parser/openapi-sourcemap-parser';
-import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  OpenAPIV3,
+  SerializedSourcemap,
+  sourcemapReader,
+} from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+
+function getFilePathFromPointer(sourcemap: SerializedSourcemap, path: string) {
+  const maybePath = sourcemapReader(sourcemap).findFile(path);
+
+  return maybePath?.filePath ?? null;
+}
 
 // Denormalizes a dereferenced openapi spec
 // For now, this function only denormalizes shared path parameters
@@ -41,7 +51,18 @@ export function denormalize(parse: ParseOpenAPIResult): ParseOpenAPIResult {
                 String(operation.parameters.length),
               ]);
 
-              parse.sourcemap.logPointerToRootFile(newPointer, oldPointer);
+              const maybeFilePath = getFilePathFromPointer(
+                parse.sourcemap,
+                oldPointer
+              );
+
+              if (maybeFilePath) {
+                parse.sourcemap.logPointerInFile(
+                  maybeFilePath,
+                  newPointer,
+                  oldPointer
+                );
+              }
               operation.parameters.push(parameter);
             }
           }
