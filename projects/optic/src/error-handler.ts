@@ -12,7 +12,7 @@ export const errorHandler = <Args extends any[], Return extends any>(
       return await fn(...args);
     } catch (e) {
       if (UserError.isInstance(e)) {
-        logger.error(e.message);
+        console.error(e.message);
       } else if (
         e instanceof BadRequestError &&
         /Invalid token/i.test(e.message)
@@ -27,7 +27,7 @@ export const errorHandler = <Args extends any[], Return extends any>(
         logger.error('');
         logger.error(chalk.green('Run optic login to generate a new token'));
       } else {
-        logger.error((e as Error).message);
+        console.error((e as Error).message);
         SentryClient.captureException(e);
         await SentryClient.flush();
       }
