@@ -114,7 +114,6 @@ exports[`denormalize denormalizes shared path parameters 1`] = `
   "sourcemap": JsonSchemaSourcemap {
     "files": [
       {
-        "ast": null,
         "contents": "openapi: '3.0.1'
 info:
   title: 'some thing'
@@ -170,7 +169,6 @@ paths:
         "sha256": "44bb048800379bdd9651daa9c6a380dbd68232443881cbbaa0c155240e45c001",
       },
       {
-        "ast": null,
         "contents": "something:
   name: something
   in: query

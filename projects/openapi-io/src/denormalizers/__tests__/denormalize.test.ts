@@ -14,8 +14,6 @@ function prepSnapshot(result: ParseOpenAPIResult) {
     i.path = i.path.split(cwd)[1];
     // @ts-ignore
     i.index = null;
-    // @ts-ignore
-    i.ast = null;
   });
 
   result.sourcemap.rootFilePath = result.sourcemap.rootFilePath.split(cwd)[1];
