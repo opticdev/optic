@@ -1,4 +1,12 @@
 import fetch, { Response } from 'node-fetch';
+import {
+  BadRequestError,
+  UnauthorizedError,
+  ForbiddenError,
+  NotFoundError,
+  InternalError,
+  ServiceUnavailableError,
+} from './errors';
 
 export class JsonHttpClient {
   // Create overridable this.fetch instance
@@ -23,7 +31,23 @@ export class JsonHttpClient {
       return json;
     } else {
       const text = await response.text();
-      throw new Error(`${response.status} ${response.statusText} \n${text}`);
+      const message = `${response.status} ${response.statusText} \n${text}`;
+      const ErrorClass =
+        response.status === 400
+          ? BadRequestError
+          : response.status === 401
+          ? UnauthorizedError
+          : response.status === 403
+          ? ForbiddenError
+          : response.status === 404
+          ? NotFoundError
+          : response.status === 500
+          ? InternalError
+          : response.status === 503
+          ? ServiceUnavailableError
+          : Error;
+
+      throw new ErrorClass(message);
     }
   }
 
