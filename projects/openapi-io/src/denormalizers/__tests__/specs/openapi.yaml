@@ -1,0 +1,49 @@
+openapi: '3.0.1'
+info:
+  title: 'some thing'
+  version: 'v0'
+paths:
+  /example:
+    parameters:
+      - name: something-else
+        in: query
+        required: true
+        description: something here
+        schema:
+          type: string
+          format: uuid
+          example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2
+      - name: should-not-override
+        in: query
+        required: true
+        description: should-not-override
+        schema:
+          type: string
+          format: uuid
+          example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2
+      - $ref: parameters.yml#/something
+    get:
+      responses:
+        200:
+          description: 'some thing'
+          content:
+            application/json:
+              schema:
+                type: 'string'
+    post:
+      parameters:
+        - name: should-not-override
+          in: query
+          required: true
+          description: should not be overriden
+          schema:
+            type: string
+            format: uuid
+            example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2
+      responses:
+        200:
+          description: 'some thing'
+          content:
+            application/json:
+              schema:
+                type: 'string'
