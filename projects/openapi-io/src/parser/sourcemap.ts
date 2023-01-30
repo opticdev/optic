@@ -1,11 +1,9 @@
-import { YAMLMapping, YAMLNode, YAMLSequence } from 'yaml-ast-parser';
 import * as fs from 'fs-extra';
 // @ts-ignore
 import sha256 from 'crypto-js/sha256';
 import Hex from 'crypto-js/enc-hex';
 
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-
 
 export type JsonPath = string;
 export type FileReference = number;
@@ -52,6 +50,18 @@ export class JsonSchemaSourcemap {
     }
   }
 
+  logPointerInFile(
+    filePath: string,
+    sourcePointer: string,
+    targetPointer: string
+  ) {
+    const thisFile = this.files.find((i) => filePath === i.path);
+
+    if (thisFile) {
+      this.refMappings[targetPointer] = [thisFile.index, sourcePointer];
+    }
+  }
+
   logPointer(pathRelativeToFile: string, pathRelativeToRoot: string) {
     const thisFile = this.files.find((i) =>
       pathRelativeToFile.startsWith(i.path)
@@ -71,32 +81,4 @@ export class JsonSchemaSourcemap {
       this.refMappings[rootKey] = [thisFile.index, jsonPointer];
     }
   }
-}
-export function resolveJsonPointerInYamlAst(
-  node: YAMLNode, // root ast
-  pointer: string
-): YAMLNode | undefined {
-  const decoded = jsonPointerHelpers.decode(pointer);
-  const isEmpty =
-    decoded.length === 0 || (decoded.length === 1 && decoded[0] === '');
-
-  if (isEmpty) return node;
-
-  const found: YAMLNode | undefined = decoded.reduce((current, path) => {
-    if (!current) return undefined;
-    const node: YAMLNode = current.key ? current.value : current;
-    const isNumericalKey =
-      !isNaN(Number(path)) && (node as any).hasOwnProperty('items');
-
-    if (isNumericalKey) {
-      return (node as YAMLSequence).items[Number(path)];
-    } else {
-      const field = node.mappings.find(
-        (i: YAMLMapping) => i.key.value === path
-      );
-      return field;
-    }
-  }, node as YAMLNode | undefined);
-
-  return found;
 }
