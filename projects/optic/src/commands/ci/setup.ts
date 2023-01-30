@@ -1,6 +1,5 @@
-import { Command, Option } from 'commander';
+import { Command } from 'commander';
 import { OpticCliConfig } from '../../config';
-import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import prompts from 'prompts';
 import fs from 'fs/promises';
 import path from 'path';
@@ -8,6 +7,7 @@ import chalk from 'chalk';
 import open from 'open';
 import { getRemoteUrl, remotes } from '../../utils/git-utils';
 import { getApiAddAction } from '../api/add';
+import { errorHandler } from '../../error-handler';
 
 const configsPath = path.join(__dirname, '..', '..', '..', 'ci', 'configs');
 
@@ -27,7 +27,7 @@ export const registerCiSetup = (cli: Command, config: OpticCliConfig) => {
     .description(
       'Answer a series of prompts to generate CI configuration for Optic'
     )
-    .action(wrapActionHandlerWithSentry(getCiSetupAction(config)));
+    .action(errorHandler(getCiSetupAction(config)));
 };
 
 type PromptAnswers = {
