@@ -33,7 +33,7 @@ export const registerCiSetup = (cli: Command, config: OpticCliConfig) => {
 type PromptAnswers = {
   provider: 'GitHub' | 'GitLab';
   standardsFail: boolean;
-  discover: boolean;
+  discover?: boolean | undefined;
 };
 
 const getCiSetupAction = (config: OpticCliConfig) => async () => {
@@ -62,7 +62,7 @@ const getCiSetupAction = (config: OpticCliConfig) => async () => {
         ],
       },
       {
-        type: 'select',
+        type: config.isAuthenticated ? 'select' : false,
         name: 'discover',
         message:
           'Would you like to discover API specs in the current repository?',
@@ -132,9 +132,15 @@ async function setupGitHub(config: OpticCliConfig, answers: PromptAnswers) {
   console.log();
   console.log(chalk.red("Wait, you're not finished yet"));
   console.log(
-    'Before pushing your new GitHub Actions workflow, follow the instructions at\n' +
-      `${githubInstructions} to set up the required secrets in your repository.`
+    `Before pushing your new GitHub Actions workflow, follow the instructions at ${githubInstructions} to set up the required secrets in your repository.`
   );
+
+  if (answers.discover === undefined) {
+    console.log();
+    console.log(
+      "Since you aren't logged in, api discovery was not run. Run `optic login` to log in and then run `optic api add --all` in this repo to discover all api specs."
+    );
+  }
   console.log();
 
   await openUrlPrompt(githubInstructions);
