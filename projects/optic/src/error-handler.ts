@@ -11,14 +11,14 @@ export const errorHandler = <Args extends any[], Return extends any>(
     try {
       return await fn(...args);
     } catch (e) {
-      const err = e as Error;
-      logger.error(err.message);
       if (UserError.isInstance(e)) {
-        // TODO nothing
+        logger.error(e.message);
       } else if (
         e instanceof BadRequestError &&
-        /Invalid Token/i.test(e.message)
+        /Invalid token/i.test(e.message)
       ) {
+        logger.error('');
+        logger.error(chalk.red.bold('Error making request to Optic'));
         logger.error(
           chalk.red(
             'It looks like your token is invalid (this could mean your token has expired, or it has been revoked).'
@@ -27,6 +27,7 @@ export const errorHandler = <Args extends any[], Return extends any>(
         logger.error('');
         logger.error(chalk.green('Run optic login to generate a new token'));
       } else {
+        logger.error((e as Error).message);
         SentryClient.captureException(e);
         await SentryClient.flush();
       }
