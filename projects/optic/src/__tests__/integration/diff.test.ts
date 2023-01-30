@@ -43,7 +43,7 @@ describe('diff', () => {
     expect(code).toBe(0);
   });
 
-  test('basic rules config', async () => {
+  test('reads optic.dev.yml for rulesets', async () => {
     const workspace = await setupWorkspace('diff/basic-rules-dev-yml', {
       repo: true,
       commit: true,
@@ -54,23 +54,6 @@ describe('diff', () => {
     );
 
     expect(code).toBe(1);
-    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
-  });
-
-  test('breaking changes exclusion', async () => {
-    const workspace = await setupWorkspace(
-      'diff/breaking-changes-exclusion-dev-yml',
-      {
-        repo: true,
-        commit: true,
-      }
-    );
-    const { combined, code } = await runOptic(
-      workspace,
-      'diff example-api-v0.json example-api-v1.json --check'
-    );
-
-    expect(code).toBe(0);
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
   });
 

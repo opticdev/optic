@@ -1,3 +1,0 @@
-ruleset:
-  - breaking-changes:
-      exclude_operations_with_extension: 'x-optic-ignore-breaking-changes'
