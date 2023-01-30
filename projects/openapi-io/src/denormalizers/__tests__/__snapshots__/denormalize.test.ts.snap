@@ -114,6 +114,7 @@ exports[`denormalize denormalizes shared path parameters 1`] = `
   "sourcemap": JsonSchemaSourcemap {
     "files": [
       {
+        "ast": null,
         "contents": "openapi: '3.0.1'
 info:
   title: 'some thing'
@@ -164,11 +165,12 @@ paths:
               schema:
                 type: 'string'
 ",
-        "index": 0,
-        "path": "/Users/nicholaslim/Desktop/repos/optic/projects/openapi-io/src/denormalizers/__tests__/specs/openapi.yaml",
+        "index": null,
+        "path": "/src/denormalizers/__tests__/specs/openapi.yaml",
         "sha256": "44bb048800379bdd9651daa9c6a380dbd68232443881cbbaa0c155240e45c001",
       },
       {
+        "ast": null,
         "contents": "something:
   name: something
   in: query
@@ -179,8 +181,8 @@ paths:
     format: uuid
     example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2
 ",
-        "index": 1,
-        "path": "/Users/nicholaslim/Desktop/repos/optic/projects/openapi-io/src/denormalizers/__tests__/specs/parameters.yml",
+        "index": null,
+        "path": "/src/denormalizers/__tests__/specs/parameters.yml",
         "sha256": "85d23de44c126a054df04ca9720a69b0842935868c6d0a771baa37f0bee832ba",
       },
     ],
@@ -198,7 +200,7 @@ paths:
         "/paths/~1example/get/parameters/2",
       ],
     },
-    "rootFilePath": "/Users/nicholaslim/Desktop/repos/optic/projects/openapi-io/src/denormalizers/__tests__/specs/openapi.yaml",
+    "rootFilePath": "/src/denormalizers/__tests__/specs/openapi.yaml",
   },
 }
 `;

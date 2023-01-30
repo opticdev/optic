@@ -2,8 +2,28 @@ import { test, expect, describe } from '@jest/globals';
 import path from 'path';
 
 import { denormalize } from '../denormalize';
-import { parseOpenAPIWithSourcemap } from '../../parser/openapi-sourcemap-parser';
+import {
+  ParseOpenAPIResult,
+  parseOpenAPIWithSourcemap,
+} from '../../parser/openapi-sourcemap-parser';
+import sortBy from 'lodash.sortby';
 
+function prepSnapshot(result: ParseOpenAPIResult) {
+  const cwd = process.cwd();
+  result.sourcemap.files.forEach((i) => {
+    i.path = i.path.split(cwd)[1];
+    // @ts-ignore
+    i.index = null;
+    // @ts-ignore
+    i.ast = null;
+  });
+
+  result.sourcemap.rootFilePath = result.sourcemap.rootFilePath.split(cwd)[1];
+
+  result.sourcemap.files = sortBy(result.sourcemap.files, 'path');
+
+  return result;
+}
 describe('denormalize', () => {
   test('denormalizes shared path parameters', async () => {
     const specPath = path.resolve(
@@ -13,6 +33,6 @@ describe('denormalize', () => {
 
     const denormalized = denormalize(spec);
 
-    expect(denormalized).toMatchSnapshot();
+    expect(prepSnapshot(denormalized)).toMatchSnapshot();
   });
 });
