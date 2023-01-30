@@ -55,7 +55,7 @@ const getCiSetupAction = (config: OpticCliConfig) => async () => {
       {
         type: 'select',
         name: 'standardsFail',
-        message: 'Should failing standards fail your build?',
+        message: 'Should failing standards fail CI?',
         choices: [
           { title: 'Yes - Recommended', value: true },
           { title: 'No', value: false },
@@ -80,7 +80,10 @@ const getCiSetupAction = (config: OpticCliConfig) => async () => {
     console.log(`${chalk.green('✔')} Discovering API specs in your repo`);
 
     try {
-      await getApiAddAction(config)(undefined, { historyDepth: '1' });
+      await getApiAddAction(config)(undefined, {
+        historyDepth: '1',
+        all: true,
+      });
       console.log(`${chalk.green('✔')} Discovery complete`);
     } catch (e) {
       console.log(
