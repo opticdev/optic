@@ -33,26 +33,22 @@ export class JsonHttpClient {
     } else {
       const text = await response.text();
       const message = `${response.status} ${response.statusText} \n${text}`;
-      const ErrorClass =
+      const error =
         response.status === 400
-          ? BadRequestError
+          ? new BadRequestError(message, this.source)
           : response.status === 401
-          ? UnauthorizedError
+          ? new UnauthorizedError(message, this.source)
           : response.status === 403
-          ? ForbiddenError
+          ? new ForbiddenError(message, this.source)
           : response.status === 404
-          ? NotFoundError
+          ? new NotFoundError(message, this.source)
           : response.status === 500
-          ? InternalError
+          ? new InternalError(message, this.source)
           : response.status === 503
-          ? ServiceUnavailableError
-          : Error;
+          ? new ServiceUnavailableError(message, this.source)
+          : new Error(message);
 
-      const error = new ErrorClass(message);
-      if ('source' in error) {
-        error.source = this.source;
-      }
-      return error;
+      throw error;
     }
   }
 
