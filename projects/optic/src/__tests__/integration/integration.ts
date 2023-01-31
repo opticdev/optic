@@ -80,11 +80,10 @@ export async function setupWorkspace(
 
   if (options.repo) {
     const { code: gitInitCode, combined: gitCombined } = await run(
-      'git init \
+      'git init -b master \
       && git config user.email "test@useoptic.com" \
       && git config user.name "Optic test" \
-      && git config commit.gpgsign false \
-      && git config --system init.defaultbranch master',
+      && git config commit.gpgsign false',
       false,
       dir
     );
