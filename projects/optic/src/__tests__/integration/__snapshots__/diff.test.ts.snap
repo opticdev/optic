@@ -666,7 +666,7 @@ Configure check standards in optic cloud or your local optic.dev.yml file.
 "
 `;
 
-exports[`diff with mock server uploads specs if authenticated 1`] = `
+exports[`diff with mock server uploads specs if authenticated and --upload 1`] = `
 "
 [1mPATCH[22m /example: 
   - response [1m200[22m: 
