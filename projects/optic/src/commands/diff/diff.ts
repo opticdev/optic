@@ -132,8 +132,7 @@ const runDiff = async (
   );
   const diffResults = { checks, specResults, changelogData, warnings };
 
-
-  const hasOpticUrl = headFile.jsonLike['x-optic-url']
+  const hasOpticUrl = headFile.jsonLike['x-optic-url'];
 
   if (options.json) {
     console.log(
@@ -181,14 +180,16 @@ const runDiff = async (
       logger.info(log);
     }
 
-    logger.info('')
+    logger.info('');
 
     if (!hasOpticUrl) {
-      logger.info(chalk.blue.bold(`See the full history of this API by running "optic add ${path.parse(baseFile.sourcemap.rootFilePath).base}"`))
-    }
-
-    if (!config.isInCi && specResults.results.length) {
-      logger.info(chalk.blue.bold(`Start running checks in CI by running "optic ci setup" `))
+      logger.info(
+        chalk.blue.bold(
+          `See the full history of this API by running "optic add ${
+            path.parse(baseFile.sourcemap.rootFilePath).base
+          } --history-depth 0"`
+        )
+      );
     }
   }
 
