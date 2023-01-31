@@ -2,6 +2,7 @@
 
 exports[`diff petstore diff 1`] = `
 <<<<<<< HEAD
+<<<<<<< HEAD
 "/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843
     return new TSError(diagnosticText, diagnosticCodes, diagnostics);
            ^
@@ -26,6 +27,14 @@ specification details:
 - /servers/2 [32madded[39m
 - /info/title [33mchanged[39m
 
+=======
+"
+specification details:
+- /components/schemas/User/properties/bio, /components/schemas/User/properties/userStatus/enum, /components/schemas/User/required/2, /components/schemas/Order/properties/summary, /components/schemas/Order/properties/status/enum/2, /servers/2 [32madded[39m
+- /components/schemas/User/properties/userStatus/type, /info/title [33mchanged[39m
+- /components/schemas/User/properties/phone, /components/schemas/User/properties/userStatus/format, /components/schemas/User/required/2, /components/schemas/Order/properties/status/enum/1 [31mremoved[39m
+
+>>>>>>> parent of 06ae4a3df (update snaps)
 [1mGET[22m /parameters_at_path: [32madded[39m
   
 [1mGET[22m /pet/findByStatus: [32madded[39m
@@ -417,160 +426,303 @@ Checks
 [34m[1mSee the full history of this API by running "optic add petstore-base.json"[22m[39m
 [34m[1mStart running checks in CI by running "optic ci setup" [22m[39m
 [1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
+<<<<<<< HEAD
 >>>>>>> origin/cli-hooks
+=======
+>>>>>>> parent of 06ae4a3df (update snaps)
 "
 `;
 
 exports[`diff reads optic.dev.yml for rulesets 1`] = `
-"/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843
-    return new TSError(diagnosticText, diagnosticCodes, diagnostics);
-           ^
-TSError: ⨯ Unable to compile TypeScript:
-../../src/init.ts(46,42): error TS2345: Argument of type '{ args: string[]; isInCi: boolean; }' is not assignable to parameter of type 'string'.
+"
+[1mGET[22m /invalid_name: [32madded[39m
+  
+[1mPOST[22m /example: [31mremoved[39m
+  
+[1mPATCH[22m /example: 
+  - /operationId [33mchanged[39m
+  
+  - response [1m200[22m: [32madded[39m
+    
+[1mPUT[22m /example: 
+  - /operationId [33mchanged[39m
+  
+[1mGET[22m /example: 
+  - /operationId [33mchanged[39m
+  
+Checks
 
-    at createTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843:12)
-    at reportTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:847:19)
-    at getOutput (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1057:36)
-    at Object.compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1411:41)
-    at Module.m._compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1596:30)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1203:10)
-    at Object.require.extensions.<computed> [as .ts] (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1600:12)
-    at Module.load (node:internal/modules/cjs/loader:1027:32)
-    at Function.Module._load (node:internal/modules/cjs/loader:868:12)
-    at Module.require (node:internal/modules/cjs/loader:1051:19) {
-  diagnosticCodes: [ 2345 ]
-}
+  [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /example
+
+
+  [1m[42m[37m PASS [39m[49m[22m [1mPATCH[22m /example
+
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /example
+    removed rule: prevent operation removal
+      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
+      at [4m$workspace$/example-api-v0.json:9:150[24m
+
+
+
+  [1m[42m[37m PASS [39m[49m[22m [1mPUT[22m /example
+
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /invalid_name
+    requirement rule: operation path component naming check
+      [31m[31mx[39m[31m invalid_name is not camelCase[39m
+      at [4m$workspace$/example-api-v1.json:31:632[24m
+
+
+
+1 operation added, 3 changed, 1 removed
+[32m[1m3 checks passed[22m[39m
+[31m[1m2 checks failed[22m[39m
+
+[34m[1mSee the full history of this API by running "optic add example-api-v0.json"[22m[39m
+[34m[1mStart running checks in CI by running "optic ci setup" [22m[39m
+[1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
 
 exports[`diff two files, no repo or config 1`] = `
-"/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843
-    return new TSError(diagnosticText, diagnosticCodes, diagnostics);
-           ^
-TSError: ⨯ Unable to compile TypeScript:
-../../src/init.ts(46,42): error TS2345: Argument of type '{ args: string[]; isInCi: boolean; }' is not assignable to parameter of type 'string'.
-
-    at createTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843:12)
-    at reportTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:847:19)
-    at getOutput (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1057:36)
-    at Object.compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1411:41)
-    at Module.m._compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1596:30)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1203:10)
-    at Object.require.extensions.<computed> [as .ts] (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1600:12)
-    at Module.load (node:internal/modules/cjs/loader:1027:32)
-    at Function.Module._load (node:internal/modules/cjs/loader:868:12)
-    at Module.require (node:internal/modules/cjs/loader:1051:19) {
-  diagnosticCodes: [ 2345 ]
-}
+"
+[1mPATCH[22m /example: 
+  - /operationId [33mchanged[39m
+  
+  - response [1m200[22m: [32madded[39m
+    
+[1mPUT[22m /example: 
+  - /operationId [33mchanged[39m
+  
+[1mPOST[22m /example: 
+  - /operationId [33mchanged[39m
+  
+[1mGET[22m /example: 
+  - /operationId [33mchanged[39m
+  
+[1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
 
 exports[`diff with --standard arg 1`] = `
-"/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843
-    return new TSError(diagnosticText, diagnosticCodes, diagnostics);
-           ^
-TSError: ⨯ Unable to compile TypeScript:
-../../src/init.ts(46,42): error TS2345: Argument of type '{ args: string[]; isInCi: boolean; }' is not assignable to parameter of type 'string'.
+"
+[1mGET[22m /invalid_name: [32madded[39m
+  
+[1mPOST[22m /example: [31mremoved[39m
+  
+[1mPATCH[22m /example: 
+  - /operationId [33mchanged[39m
+  
+  - response [1m200[22m: [32madded[39m
+    
+[1mPUT[22m /example: 
+  - /operationId [33mchanged[39m
+  
+[1mGET[22m /example: 
+  - /operationId [33mchanged[39m
+  
+Checks
 
-    at createTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843:12)
-    at reportTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:847:19)
-    at getOutput (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1057:36)
-    at Object.compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1411:41)
-    at Module.m._compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1596:30)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1203:10)
-    at Object.require.extensions.<computed> [as .ts] (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1600:12)
-    at Module.load (node:internal/modules/cjs/loader:1027:32)
-    at Function.Module._load (node:internal/modules/cjs/loader:868:12)
-    at Module.require (node:internal/modules/cjs/loader:1051:19) {
-  diagnosticCodes: [ 2345 ]
-}
+  [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /example
+
+
+  [1m[42m[37m PASS [39m[49m[22m [1mPATCH[22m /example
+
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /example
+    removed rule: prevent operation removal
+      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
+      at [4m$workspace$/example-api-v0.json:9:150[24m
+
+
+
+  [1m[42m[37m PASS [39m[49m[22m [1mPUT[22m /example
+
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /invalid_name
+    requirement rule: operation path component naming check
+      [31m[31mx[39m[31m invalid_name is not camelCase[39m
+      at [4m$workspace$/example-api-v1.json:31:632[24m
+
+
+
+1 operation added, 3 changed, 1 removed
+[32m[1m3 checks passed[22m[39m
+[31m[1m2 checks failed[22m[39m
+
+[34m[1mSee the full history of this API by running "optic add example-api-v0.json"[22m[39m
+[34m[1mStart running checks in CI by running "optic ci setup" [22m[39m
+[1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
 
 exports[`diff with mock server custom rules 1`] = `
-"/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843
-    return new TSError(diagnosticText, diagnosticCodes, diagnostics);
-           ^
-TSError: ⨯ Unable to compile TypeScript:
-../../src/init.ts(46,42): error TS2345: Argument of type '{ args: string[]; isInCi: boolean; }' is not assignable to parameter of type 'string'.
+"
+[1mGET[22m /invalid_name: [32madded[39m
+  
+[1mPOST[22m /example: [31mremoved[39m
+  
+[1mPATCH[22m /example: 
+  - /operationId [33mchanged[39m
+  
+  - response [1m200[22m: [32madded[39m
+    
+[1mPUT[22m /example: 
+  - /operationId [33mchanged[39m
+  
+[1mGET[22m /example: 
+  - /operationId [33mchanged[39m
+  
+Checks
 
-    at createTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843:12)
-    at reportTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:847:19)
-    at getOutput (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1057:36)
-    at Object.compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1411:41)
-    at Module.m._compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1596:30)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1203:10)
-    at Object.require.extensions.<computed> [as .ts] (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1600:12)
-    at Module.load (node:internal/modules/cjs/loader:1027:32)
-    at Function.Module._load (node:internal/modules/cjs/loader:868:12)
-    at Module.require (node:internal/modules/cjs/loader:1051:19) {
-  diagnosticCodes: [ 2345 ]
-}
+  [1m[42m[37m PASS [39m[49m[22m Specification
+
+
+  [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /example
+
+
+  [1m[42m[37m PASS [39m[49m[22m [1mPATCH[22m /example
+
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /example
+    removed rule: prevent operation removal
+      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
+      at [4m$workspace$/example-api-v0.json:9:150[24m
+
+
+
+  [1m[42m[37m PASS [39m[49m[22m [1mPUT[22m /example
+
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /invalid_name
+    requirement rule: operation path component naming check
+      [31m[31mx[39m[31m invalid_name is not camelCase[39m
+      at [4m$workspace$/example-api-v1.json:31:632[24m
+
+
+
+1 operation added, 3 changed, 1 removed
+[32m[1m5 checks passed[22m[39m
+[31m[1m2 checks failed[22m[39m
+
+[34m[1mSee the full history of this API by running "optic add example-api-v0.json"[22m[39m
+[34m[1mStart running checks in CI by running "optic ci setup" [22m[39m
+[1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
 
 exports[`diff with mock server extends 1`] = `
-"/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843
-    return new TSError(diagnosticText, diagnosticCodes, diagnostics);
-           ^
-TSError: ⨯ Unable to compile TypeScript:
-../../src/init.ts(46,42): error TS2345: Argument of type '{ args: string[]; isInCi: boolean; }' is not assignable to parameter of type 'string'.
+"Extending ruleset from @test-org/ruleset-id
 
-    at createTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843:12)
-    at reportTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:847:19)
-    at getOutput (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1057:36)
-    at Object.compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1411:41)
-    at Module.m._compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1596:30)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1203:10)
-    at Object.require.extensions.<computed> [as .ts] (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1600:12)
-    at Module.load (node:internal/modules/cjs/loader:1027:32)
-    at Function.Module._load (node:internal/modules/cjs/loader:868:12)
-    at Module.require (node:internal/modules/cjs/loader:1051:19) {
-  diagnosticCodes: [ 2345 ]
-}
+[1mGET[22m /invalid_name: [32madded[39m
+  
+[1mPOST[22m /example: [31mremoved[39m
+  
+[1mPATCH[22m /example: 
+  - /operationId [33mchanged[39m
+  
+  - response [1m200[22m: [32madded[39m
+    
+[1mPUT[22m /example: 
+  - /operationId [33mchanged[39m
+  
+[1mGET[22m /example: 
+  - /operationId [33mchanged[39m
+  
+Checks
+
+  [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /example
+
+
+  [1m[42m[37m PASS [39m[49m[22m [1mPATCH[22m /example
+
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /example
+    removed rule: prevent operation removal
+      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
+      at [4m$workspace$/example-api-v0.json:9:150[24m
+
+
+
+  [1m[42m[37m PASS [39m[49m[22m [1mPUT[22m /example
+
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /invalid_name
+    requirement rule: operation path component naming check
+      [31m[31mx[39m[31m invalid_name is not camelCase[39m
+      at [4m$workspace$/example-api-v1.json:31:632[24m
+
+
+
+1 operation added, 3 changed, 1 removed
+[32m[1m3 checks passed[22m[39m
+[31m[1m2 checks failed[22m[39m
+
+[34m[1mSee the full history of this API by running "optic add example-api-v0.json"[22m[39m
+[34m[1mStart running checks in CI by running "optic ci setup" [22m[39m
+[1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
 
 exports[`diff with mock server ruleset key on api spec 1`] = `
-"/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843
-    return new TSError(diagnosticText, diagnosticCodes, diagnostics);
-           ^
-TSError: ⨯ Unable to compile TypeScript:
-../../src/init.ts(46,42): error TS2345: Argument of type '{ args: string[]; isInCi: boolean; }' is not assignable to parameter of type 'string'.
+"
+specification details:
+- /x-optic-standard [32madded[39m
 
-    at createTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843:12)
-    at reportTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:847:19)
-    at getOutput (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1057:36)
-    at Object.compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1411:41)
-    at Module.m._compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1596:30)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1203:10)
-    at Object.require.extensions.<computed> [as .ts] (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1600:12)
-    at Module.load (node:internal/modules/cjs/loader:1027:32)
-    at Function.Module._load (node:internal/modules/cjs/loader:868:12)
-    at Module.require (node:internal/modules/cjs/loader:1051:19) {
-  diagnosticCodes: [ 2345 ]
-}
+[1mGET[22m /invalid_name: [32madded[39m
+  
+[1mPOST[22m /example: [31mremoved[39m
+  
+[1mPATCH[22m /example: 
+  - /operationId [33mchanged[39m
+  
+  - response [1m200[22m: [32madded[39m
+    
+[1mPUT[22m /example: 
+  - /operationId [33mchanged[39m
+  
+[1mGET[22m /example: 
+  - /operationId [33mchanged[39m
+  
+Checks
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /example
+    removed rule: prevent operation removal
+      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
+      at [4m$workspace$/example-api-v0.json:9:150[24m
+
+
+
+1 operation added, 3 changed, 1 removed
+[32m[1m0 checks passed[22m[39m
+[31m[1m1 checks failed[22m[39m
+
+[34m[1mSee the full history of this API by running "optic add example-api-v0.json"[22m[39m
+[34m[1mStart running checks in CI by running "optic ci setup" [22m[39m
+[1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
 
 exports[`diff with mock server uploads specs if authenticated 1`] = `
-"/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843
-    return new TSError(diagnosticText, diagnosticCodes, diagnostics);
-           ^
-TSError: ⨯ Unable to compile TypeScript:
-../../src/init.ts(46,42): error TS2345: Argument of type '{ args: string[]; isInCi: boolean; }' is not assignable to parameter of type 'string'.
+"
+[1mPATCH[22m /example: 
+  - response [1m200[22m: 
+    - body [1mapplication/json[22m: 
+      
+Checks
 
-    at createTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843:12)
-    at reportTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:847:19)
-    at getOutput (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1057:36)
-    at Object.compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1411:41)
-    at Module.m._compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1596:30)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1203:10)
-    at Object.require.extensions.<computed> [as .ts] (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1600:12)
-    at Module.load (node:internal/modules/cjs/loader:1027:32)
-    at Function.Module._load (node:internal/modules/cjs/loader:868:12)
-    at Module.require (node:internal/modules/cjs/loader:1051:19) {
-  diagnosticCodes: [ 2345 ]
-}
+  [1m[41m[37m FAIL [39m[49m[22m [1mPATCH[22m /example
+    changed rule: prevent response property type changes
+      [31m[31mx[39m[31m expected response body application/json root shape to not change type. This is a breaking change.[39m
+      at [4m$workspace$/spec.json:24:565[24m
+
+
+
+1 operation changed
+[32m[1m0 checks passed[22m[39m
+[31m[1m1 checks failed[22m[39m
+
+Uploaded results of diff to http://localhost:3000/organizations/org-id/apis/api-id/runs/run-id
 "
 `;
