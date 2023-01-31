@@ -2,7 +2,7 @@
   "name": "openapi-workspaces",
   "license": "MIT",
   "private": true,
-  "version": "0.36.13-1",
+  "version": "0.36.13",
   "workspaces": [
     "projects/json-pointer-helpers",
     "projects/openapi-io",
@@ -28,6 +28,5 @@
     "**/*.+(js|jsx|ts|tsx|json|css)": [
       "yarn prettier --write"
     ]
-  },
-  "stableVersion": "0.36.12"
+  }
 }
