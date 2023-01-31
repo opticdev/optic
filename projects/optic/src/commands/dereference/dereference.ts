@@ -36,7 +36,10 @@ const getDereferencedSpec = async (
 ): Promise<ParseResult> => {
   try {
     // TODO update function to try download from spec-id cloud
-    return getFileFromFsOrGit(file1, config, false);
+    return getFileFromFsOrGit(file1, config, {
+      strict: false,
+      denormalize: false,
+    });
   } catch (e) {
     console.error(e);
     throw new UserError();

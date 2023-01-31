@@ -14,7 +14,7 @@ function getFilePathFromPointer(sourcemap: SerializedSourcemap, path: string) {
 
 // Denormalizes a dereferenced openapi spec
 // For now, this function only denormalizes shared path parameters
-export function denormalize(parse: ParseOpenAPIResult): ParseOpenAPIResult {
+export function denormalize<T extends ParseOpenAPIResult>(parse: T): T {
   for (const [pathKey, path] of Object.entries(parse.jsonLike.paths)) {
     if (path && path.parameters) {
       for (const method of Object.values(OpenAPIV3.HttpMethods)) {
