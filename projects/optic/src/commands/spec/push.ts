@@ -91,7 +91,10 @@ const getSpecPushAction =
 
     let parseResult: ParseResult;
     try {
-      parseResult = await getFileFromFsOrGit(spec_path, config, false);
+      parseResult = await getFileFromFsOrGit(spec_path, config, {
+        strict: false,
+        denormalize: true,
+      });
     } catch (e) {
       logger.error(
         `File ${spec_path} is not a valid OpenAPI file. Optic currently supports OpenAPI 3 and 3.1`
