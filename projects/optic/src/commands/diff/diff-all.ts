@@ -219,7 +219,7 @@ async function computeAll(
 
       let url: string | null = null;
       if (options.upload) {
-        const run = await uploadDiff(
+        await uploadDiff(
           {
             from: fromParseResults,
             to: toParseResults,
@@ -227,15 +227,6 @@ async function computeAll(
           specResults,
           config
         );
-        if (run) {
-          url = getRunUrl(
-            config.client.getWebBase(),
-            run.orgId,
-            run.apiId,
-            run.runId
-          );
-          logger.info(`Uploaded results of diff to ${url}`);
-        }
       }
 
       results.push({

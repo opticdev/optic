@@ -1,6 +1,7 @@
+import ora from 'ora';
 import { OpticCliConfig, VCS } from '../../config';
 import { OPTIC_URL_KEY } from '../../constants';
-import { getApiFromOpticUrl } from '../../utils/cloud-urls';
+import { getApiFromOpticUrl, getRunUrl } from '../../utils/cloud-urls';
 import { ParseResult } from '../../utils/spec-loaders';
 import { EMPTY_SPEC_ID, uploadRun, uploadSpec } from '../../utils/cloud-specs';
 import * as Git from '../../utils/git-utils';
@@ -11,6 +12,11 @@ export async function uploadDiff(
   specResults: Parameters<typeof uploadRun>['1']['specResults'],
   config: OpticCliConfig
 ): Promise<{ runId: string; apiId: string; orgId: string } | null> {
+  const showSpinner = logger.getLevel() !== 5;
+  const spinner = showSpinner
+    ? ora({ text: `Uploading diff...`, color: 'blue' })
+    : null;
+
   const opticUrl: string | null =
     specs.to.jsonLike[OPTIC_URL_KEY] ??
     specs.from.jsonLike[OPTIC_URL_KEY] ??
@@ -58,6 +64,15 @@ export async function uploadDiff(
       specResults,
       orgId: specDetails.orgId,
     });
+
+    const url = getRunUrl(
+      config.client.getWebBase(),
+      specDetails.orgId,
+      specDetails.apiId,
+      run.id
+    );
+    spinner?.succeed(`Uploaded results of diff to ${url}`);
+
     return {
       apiId: specDetails.apiId,
       runId: run.id,
@@ -69,7 +84,7 @@ export async function uploadDiff(
       : config.vcs?.type === VCS.Git
       ? 'there are uncommitted changes in your working directory'
       : 'the current working directory is not a git repo';
-    logger.info(`Not uploading diff results because ${reason}`);
+    spinner?.warn(`Not uploading diff results because ${reason}`);
   }
   return null;
 }

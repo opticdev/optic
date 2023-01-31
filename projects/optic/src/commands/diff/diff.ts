@@ -249,7 +249,7 @@ const getDiffAction =
     let maybeUrl: string | null = null;
     const [baseParseResult, headParseResult] = parsedFiles;
     if (options.upload) {
-      const run = await uploadDiff(
+      await uploadDiff(
         {
           from: baseParseResult,
           to: headParseResult,
@@ -257,15 +257,6 @@ const getDiffAction =
         diffResult.specResults,
         config
       );
-      if (run) {
-        maybeUrl = getRunUrl(
-          config.client.getWebBase(),
-          run.orgId,
-          run.apiId,
-          run.runId
-        );
-        logger.info(`Uploaded results of diff to ${maybeUrl}`);
-      }
     }
 
     if (options.web) {
