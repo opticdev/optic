@@ -10,6 +10,7 @@ import {
   parseOpenAPIFromRepoWithSourcemap,
   ParseOpenAPIResult,
   parseOpenAPIWithSourcemap,
+  denormalize,
 } from '@useoptic/openapi-io';
 import { OpticCliConfig, VCS } from '../config';
 import { resolveGitRef } from './git-utils';
@@ -24,24 +25,18 @@ export type ParseResult = ParseOpenAPIResult & {
   } | null;
 };
 
-enum SpecVersionFrom {
-  file,
-  git,
-  empty,
-}
-
 type SpecFromInput =
   | {
-      from: SpecVersionFrom.file;
+      from: 'file';
       filePath: string;
     }
   | {
-      from: SpecVersionFrom.git;
+      from: 'git';
       branch: string;
       name: string;
     }
   | {
-      from: SpecVersionFrom.empty;
+      from: 'empty';
       value: OpenAPIV3.Document;
     };
 
@@ -56,19 +51,19 @@ function parseSpecVersion(
       const name = raw.substring(index + 1);
 
       return {
-        from: SpecVersionFrom.git,
+        from: 'git',
         name: name.startsWith('/') ? name.substring(1) : name,
         branch: rev,
       };
     } else {
       return {
-        from: SpecVersionFrom.file,
+        from: 'file',
         filePath: raw,
       };
     }
   } else {
     return {
-      from: SpecVersionFrom.empty,
+      from: 'empty',
       value: defaultSpec,
     };
   }
@@ -80,7 +75,7 @@ async function specFromInputToResults(
   workingDir: string = process.cwd()
 ): Promise<ParseResult> {
   switch (input.from) {
-    case SpecVersionFrom.empty: {
+    case 'empty': {
       const emptySpecName = 'empty.json';
       const jsonLike = {
         ...input.value,
@@ -100,7 +95,7 @@ async function specFromInputToResults(
         context: null,
       };
     }
-    case SpecVersionFrom.git: {
+    case 'git': {
       if (config.vcs?.type !== VCS.Git) {
         throw new Error(`${workingDir} is not a git repo`);
       }
@@ -117,7 +112,7 @@ async function specFromInputToResults(
         },
       };
     }
-    case SpecVersionFrom.file:
+    case 'file':
       return {
         ...(await parseOpenAPIWithSourcemap(
           path.resolve(workingDir, input.filePath)
@@ -138,7 +133,10 @@ async function specFromInputToResults(
 export const getFileFromFsOrGit = async (
   filePathOrRef: string | undefined,
   config: OpticCliConfig,
-  strict: boolean
+  options: {
+    strict: boolean;
+    denormalize: boolean;
+  }
 ): Promise<ParseResult> => {
   const file = await specFromInputToResults(
     parseSpecVersion(filePathOrRef, defaultEmptySpec),
@@ -146,18 +144,22 @@ export const getFileFromFsOrGit = async (
     process.cwd()
   ).then((results) => {
     validateOpenApiV3Document(results.jsonLike, results.sourcemap, {
-      strictOpenAPI: strict,
+      strictOpenAPI: options.strict,
     });
     return results;
   });
-  return file;
+
+  return options.denormalize ? denormalize(file) : file;
 };
 
 export const parseFilesFromRef = async (
   filePath: string,
   base: string,
   rootGitPath: string,
-  config: OpticCliConfig
+  config: OpticCliConfig,
+  options: {
+    denormalize: boolean;
+  }
 ): Promise<{
   baseFile: ParseResult;
   headFile: ParseResult;
@@ -186,12 +188,16 @@ export const parseFilesFromRef = async (
       ),
       config,
       process.cwd()
-    ).then((results) => {
-      validateOpenApiV3Document(results.jsonLike, results.sourcemap, {
-        strictOpenAPI: false,
-      });
-      return results;
-    }),
+    )
+      .then((results) => {
+        validateOpenApiV3Document(results.jsonLike, results.sourcemap, {
+          strictOpenAPI: false,
+        });
+        return results;
+      })
+      .then((results) =>
+        options.denormalize ? denormalize(results) : results
+      ),
     headFile: await specFromInputToResults(
       parseSpecVersion(
         existsOnHead ? absolutePath : undefined,
@@ -199,10 +205,14 @@ export const parseFilesFromRef = async (
       ),
       config,
       process.cwd()
-    ).then((results) => {
-      validateOpenApiV3Document(results.jsonLike, results.sourcemap);
-      return results;
-    }),
+    )
+      .then((results) => {
+        validateOpenApiV3Document(results.jsonLike, results.sourcemap);
+        return results;
+      })
+      .then((results) =>
+        options.denormalize ? denormalize(results) : results
+      ),
     pathFromGitRoot: gitFileName,
   };
 };

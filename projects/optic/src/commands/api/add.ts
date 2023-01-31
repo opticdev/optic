@@ -237,7 +237,10 @@ async function crawlCandidateSpecs(
 ) {
   let parseResult: ParseResult;
   try {
-    parseResult = await getFileFromFsOrGit(path, config, false);
+    parseResult = await getFileFromFsOrGit(path, config, {
+      strict: false,
+      denormalize: true,
+    });
   } catch (e) {
     if (path === options.path_to_spec) {
       logger.info(
@@ -284,7 +287,10 @@ async function crawlCandidateSpecs(
   for await (const sha of shas) {
     let parseResult: ParseResult;
     try {
-      parseResult = await getFileFromFsOrGit(`${sha}:${path}`, config, false);
+      parseResult = await getFileFromFsOrGit(`${sha}:${path}`, config, {
+        strict: false,
+        denormalize: true,
+      });
     } catch (e) {
       logger.debug(
         `${short(
