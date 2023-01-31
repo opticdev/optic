@@ -251,7 +251,12 @@ export function groupDiffsByEndpoint(
       const specToFetchFrom = diff.after !== undefined ? specs.to : specs.from;
       const diffToAdd = { ...diff, trail, change: typeofDiff(diff) };
       if (fact.type === 'specification') {
-        grouped.specification.push(diffToAdd);
+        const isComponentDiff = /^\/components/i.test(
+          diff.after ?? diff.before
+        );
+        if (!isComponentDiff) {
+          grouped.specification.push(diffToAdd);
+        }
       } else if (fact.type === 'path') {
         // We have a path fact, but we don't want to have to keep looking up each diff, so we'll "convert" the raw diff
         // and just emit endpoint diffs
