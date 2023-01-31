@@ -4,6 +4,7 @@ import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { ParseResult } from '../../utils/spec-loaders';
 import { EMPTY_SPEC_ID, uploadRun, uploadSpec } from '../../utils/cloud-specs';
 import * as Git from '../../utils/git-utils';
+import { logger } from '../../logger';
 
 export async function uploadDiff(
   specs: { from: ParseResult; to: ParseResult },
@@ -62,6 +63,13 @@ export async function uploadDiff(
       runId: run.id,
       orgId: specDetails.orgId,
     };
+  } else {
+    const reason = !specDetails
+      ? 'no x-optic-url was set on the spec file'
+      : config.vcs?.type === VCS.Git
+      ? 'there are uncommitted changes in your working directory'
+      : 'the current working directory is not a git repo';
+    logger.info(`Not uploading diff results because ${reason}`);
   }
   return null;
 }
