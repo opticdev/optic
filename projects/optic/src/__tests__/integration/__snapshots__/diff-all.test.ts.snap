@@ -1,105 +1,45 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`diff-all diffs all files in an workspace with x-optic-url keys 1`] = `
-"[34mDiffing HEAD~1:mvspec.yml to empty spec[39m
+"/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843
+    return new TSError(diagnosticText, diagnosticCodes, diagnostics);
+           ^
+TSError: ⨯ Unable to compile TypeScript:
+../../src/init.ts(46,42): error TS2345: Argument of type '{ args: string[]; isInCi: boolean; }' is not assignable to parameter of type 'string'.
 
-specification details:
-- /x-optic-url, /info/description [31mremoved[39m
-
-[1mPOST[22m /filler_route: [31mremoved[39m
-  
-Checks
-
-  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
-    removed rule: prevent operation removal
-      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
-      at [4m$workspace$/mvspec.yml:9:178[24m
-
-    removed rule: prevent removing response property
-      [31m[31mx[39m[31m cannot remove response property 'id'. This is a breaking change.[39m
-      at [4m$workspace$/mvspec.yml:19:432[24m
-
-    removed rule: prevent response status code removal
-      [31m[31mx[39m[31m must not remove response status code 201. This is a breaking change.[39m
-      at [4m$workspace$/mvspec.yml:12:235[24m
-
-
-
-1 operation removed
-[32m[1m0 checks passed[22m[39m
-[31m[1m3 checks failed[22m[39m
-
-Uploaded results of diff to http://localhost:3000/organizations/org-id/apis/api-id/runs/run-id
-[34mDiffing HEAD~1:specwithkey.json to specwithkey.json[39m
-No changes were detected
-
-Checks
-
-  [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /example
-
-
-  [1m[42m[37m PASS [39m[49m[22m [1mPATCH[22m /example
-
-
-  [1m[42m[37m PASS [39m[49m[22m [1mPOST[22m /example
-
-
-  [1m[42m[37m PASS [39m[49m[22m [1mPUT[22m /example
-
-
-
-[32m[1m4 checks passed[22m[39m
-[31m[1m0 checks failed[22m[39m
-
-Uploaded results of diff to http://localhost:3000/organizations/org-id/apis/api-id/runs/run-id
-[34mDiffing HEAD~1:specwithkey.yml to specwithkey.yml[39m
-No changes were detected
-
-Checks
-
-  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
-    requirement rule: operation path component naming check
-      [31m[31mx[39m[31m filler_route is not camelCase[39m
-      at [4m$workspace$/specwithkey.yml:9:178[24m
-
-
-
-
-[32m[1m0 checks passed[22m[39m
-[31m[1m1 checks failed[22m[39m
-
-Uploaded results of diff to http://localhost:3000/organizations/org-id/apis/api-id/runs/run-id
-[34mDiffing empty spec to movedspec.yml[39m
-
-specification details:
-- /x-optic-url, /info/description [32madded[39m
-- /openapi, /info/version, /info/title [33mchanged[39m
-
-[1mPOST[22m /filler_route: [32madded[39m
-  
-Checks
-
-  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
-    requirement rule: operation path component naming check
-      [31m[31mx[39m[31m filler_route is not camelCase[39m
-      at [4m$workspace$/movedspec.yml:9:178[24m
-
-
-
-1 operation added
-[32m[1m0 checks passed[22m[39m
-[31m[1m1 checks failed[22m[39m
-
-Uploaded results of diff to http://localhost:3000/organizations/org-id/apis/api-id/runs/run-id
-[33mWarning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. \`optic diff-all\` only runs on specs that include \`x-optic-url\` keys that point to specs uploaded to optic.[39m
-Run the \`optic api add\` command to add these specs to optic
-specwithoutkey.json
-specwithoutkey.yml
-
+    at createTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843:12)
+    at reportTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:847:19)
+    at getOutput (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1057:36)
+    at Object.compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1411:41)
+    at Module.m._compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1596:30)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1203:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1600:12)
+    at Module.load (node:internal/modules/cjs/loader:1027:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:868:12)
+    at Module.require (node:internal/modules/cjs/loader:1051:19) {
+  diagnosticCodes: [ 2345 ]
+}
 "
 `;
 
 exports[`diff-all diffs all files with --json 1`] = `
-"{"results":{"mvspec.yml":{"operations":[{"name":"POST /filler_route","change":"removed","attributes":[{"key":"","before":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}}}}},"change":"removed"}],"parameters":[],"responses":[]}]},"specwithkey.json":{"operations":[]},"specwithkey.yml":{"operations":[]},"movedspec.yml":{"operations":[{"name":"POST /filler_route","change":"added","attributes":[{"key":"","after":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}}}}},"change":"added"}],"parameters":[],"responses":[]}]}},"warnings":{"missingOpticUrl":[{"path":"specwithoutkey.json"},{"path":"specwithoutkey.yml"}],"unparseableFromSpec":[],"unparseableToSpec":[]}}
+"/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843
+    return new TSError(diagnosticText, diagnosticCodes, diagnostics);
+           ^
+TSError: ⨯ Unable to compile TypeScript:
+../../src/init.ts(46,42): error TS2345: Argument of type '{ args: string[]; isInCi: boolean; }' is not assignable to parameter of type 'string'.
+
+    at createTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843:12)
+    at reportTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:847:19)
+    at getOutput (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1057:36)
+    at Object.compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1411:41)
+    at Module.m._compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1596:30)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1203:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1600:12)
+    at Module.load (node:internal/modules/cjs/loader:1027:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:868:12)
+    at Module.require (node:internal/modules/cjs/loader:1051:19) {
+  diagnosticCodes: [ 2345 ]
+}
 "
 `;

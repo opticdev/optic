@@ -1,32 +1,67 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`optic ruleset upload can publish a ruleset 1`] = `
-"Successfully uploaded the ruleset
-View this ruleset at http://app.useoptic.com/ruleset_url
+"/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843
+    return new TSError(diagnosticText, diagnosticCodes, diagnostics);
+           ^
+TSError: ⨯ Unable to compile TypeScript:
+../../src/init.ts(46,42): error TS2345: Argument of type '{ args: string[]; isInCi: boolean; }' is not assignable to parameter of type 'string'.
+
+    at createTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843:12)
+    at reportTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:847:19)
+    at getOutput (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1057:36)
+    at Object.compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1411:41)
+    at Module.m._compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1596:30)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1203:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1600:12)
+    at Module.load (node:internal/modules/cjs/loader:1027:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:868:12)
+    at Module.require (node:internal/modules/cjs/loader:1051:19) {
+  diagnosticCodes: [ 2345 ]
+}
 "
 `;
 
 exports[`optic ruleset upload exits if ruleset file does not have rulesConstructor 1`] = `
-"Rules file does not export a rulesetConstructor that is a function
-Rules file does not match expected format. Expected ruleset file to have a default export with the shape
-{
-  name: string;
-  description: string;
-  configSchema?: any;
-  rulesetConstructor: (config: ConfigSchema) => Ruleset;
+"/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843
+    return new TSError(diagnosticText, diagnosticCodes, diagnostics);
+           ^
+TSError: ⨯ Unable to compile TypeScript:
+../../src/init.ts(46,42): error TS2345: Argument of type '{ args: string[]; isInCi: boolean; }' is not assignable to parameter of type 'string'.
+
+    at createTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843:12)
+    at reportTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:847:19)
+    at getOutput (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1057:36)
+    at Object.compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1411:41)
+    at Module.m._compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1596:30)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1203:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1600:12)
+    at Module.load (node:internal/modules/cjs/loader:1027:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:868:12)
+    at Module.require (node:internal/modules/cjs/loader:1051:19) {
+  diagnosticCodes: [ 2345 ]
 }
 "
 `;
 
 exports[`optic ruleset upload exits if ruleset file shape is not valid 1`] = `
-"Rule file is invalid:
-data/default must have required property 'description'
-Rules file does not match expected format. Expected ruleset file to have a default export with the shape
-{
-  name: string;
-  description: string;
-  configSchema?: any;
-  rulesetConstructor: (config: ConfigSchema) => Ruleset;
+"/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843
+    return new TSError(diagnosticText, diagnosticCodes, diagnostics);
+           ^
+TSError: ⨯ Unable to compile TypeScript:
+../../src/init.ts(46,42): error TS2345: Argument of type '{ args: string[]; isInCi: boolean; }' is not assignable to parameter of type 'string'.
+
+    at createTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843:12)
+    at reportTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:847:19)
+    at getOutput (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1057:36)
+    at Object.compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1411:41)
+    at Module.m._compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1596:30)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1203:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1600:12)
+    at Module.load (node:internal/modules/cjs/loader:1027:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:868:12)
+    at Module.require (node:internal/modules/cjs/loader:1051:19) {
+  diagnosticCodes: [ 2345 ]
 }
 "
 `;
