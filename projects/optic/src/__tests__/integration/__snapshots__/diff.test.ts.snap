@@ -1,40 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`diff petstore diff 1`] = `
-<<<<<<< HEAD
-<<<<<<< HEAD
-"/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843
-    return new TSError(diagnosticText, diagnosticCodes, diagnostics);
-           ^
-TSError: ⨯ Unable to compile TypeScript:
-../../src/init.ts(46,42): error TS2345: Argument of type '{ args: string[]; isInCi: boolean; }' is not assignable to parameter of type 'string'.
-
-    at createTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:843:12)
-    at reportTSError (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:847:19)
-    at getOutput (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1057:36)
-    at Object.compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1411:41)
-    at Module.m._compile (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1596:30)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1203:10)
-    at Object.require.extensions.<computed> [as .ts] (/Users/aidancunniffe/Desktop/optic/projects/optic/node_modules/ts-node/src/index.ts:1600:12)
-    at Module.load (node:internal/modules/cjs/loader:1027:32)
-    at Function.Module._load (node:internal/modules/cjs/loader:868:12)
-    at Module.require (node:internal/modules/cjs/loader:1051:19) {
-  diagnosticCodes: [ 2345 ]
-}
-=======
 "
 specification details:
 - /servers/2 [32madded[39m
 - /info/title [33mchanged[39m
 
-=======
-"
-specification details:
-- /components/schemas/User/properties/bio, /components/schemas/User/properties/userStatus/enum, /components/schemas/User/required/2, /components/schemas/Order/properties/summary, /components/schemas/Order/properties/status/enum/2, /servers/2 [32madded[39m
-- /components/schemas/User/properties/userStatus/type, /info/title [33mchanged[39m
-- /components/schemas/User/properties/phone, /components/schemas/User/properties/userStatus/format, /components/schemas/User/required/2, /components/schemas/Order/properties/status/enum/1 [31mremoved[39m
-
->>>>>>> parent of 06ae4a3df (update snaps)
 [1mGET[22m /parameters_at_path: [32madded[39m
   
 [1mGET[22m /pet/findByStatus: [32madded[39m
@@ -423,13 +394,8 @@ Checks
 [32m[1m155 checks passed[22m[39m
 [31m[1m45 checks failed[22m[39m
 
-[34m[1mSee the full history of this API by running "optic add petstore-base.json"[22m[39m
-[34m[1mStart running checks in CI by running "optic ci setup" [22m[39m
+[34m[1mSee the full history of this API by running "optic add petstore-base.json --history-depth 0"[22m[39m
 [1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
-<<<<<<< HEAD
->>>>>>> origin/cli-hooks
-=======
->>>>>>> parent of 06ae4a3df (update snaps)
 "
 `;
 
@@ -479,8 +445,7 @@ Checks
 [32m[1m3 checks passed[22m[39m
 [31m[1m2 checks failed[22m[39m
 
-[34m[1mSee the full history of this API by running "optic add example-api-v0.json"[22m[39m
-[34m[1mStart running checks in CI by running "optic ci setup" [22m[39m
+[34m[1mSee the full history of this API by running "optic add example-api-v0.json --history-depth 0"[22m[39m
 [1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
@@ -551,8 +516,7 @@ Checks
 [32m[1m3 checks passed[22m[39m
 [31m[1m2 checks failed[22m[39m
 
-[34m[1mSee the full history of this API by running "optic add example-api-v0.json"[22m[39m
-[34m[1mStart running checks in CI by running "optic ci setup" [22m[39m
+[34m[1mSee the full history of this API by running "optic add example-api-v0.json --history-depth 0"[22m[39m
 [1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
@@ -606,8 +570,7 @@ Checks
 [32m[1m5 checks passed[22m[39m
 [31m[1m2 checks failed[22m[39m
 
-[34m[1mSee the full history of this API by running "optic add example-api-v0.json"[22m[39m
-[34m[1mStart running checks in CI by running "optic ci setup" [22m[39m
+[34m[1mSee the full history of this API by running "optic add example-api-v0.json --history-depth 0"[22m[39m
 [1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
@@ -659,8 +622,7 @@ Checks
 [32m[1m3 checks passed[22m[39m
 [31m[1m2 checks failed[22m[39m
 
-[34m[1mSee the full history of this API by running "optic add example-api-v0.json"[22m[39m
-[34m[1mStart running checks in CI by running "optic ci setup" [22m[39m
+[34m[1mSee the full history of this API by running "optic add example-api-v0.json --history-depth 0"[22m[39m
 [1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
@@ -698,8 +660,7 @@ Checks
 [32m[1m0 checks passed[22m[39m
 [31m[1m1 checks failed[22m[39m
 
-[34m[1mSee the full history of this API by running "optic add example-api-v0.json"[22m[39m
-[34m[1mStart running checks in CI by running "optic ci setup" [22m[39m
+[34m[1mSee the full history of this API by running "optic add example-api-v0.json --history-depth 0"[22m[39m
 [1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
