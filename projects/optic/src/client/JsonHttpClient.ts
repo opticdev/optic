@@ -23,7 +23,7 @@ export class JsonHttpClient {
     return text;
   }
 
-  private async handleJsonResponse(response: Response): Promise<any> {
+  private handleJsonResponse = async (response: Response): Promise<any> => {
     if (response.ok) {
       if (response.status === 204) {
         return;
@@ -50,7 +50,7 @@ export class JsonHttpClient {
 
       throw error;
     }
-  }
+  };
 
   async getJson<T = any>(
     url: string,
