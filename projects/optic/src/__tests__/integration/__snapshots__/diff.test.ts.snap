@@ -1,88 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`diff basic rules config 1`] = `
-"
-[1mGET[22m /invalid_name: [32madded[39m
-  
-[1mPOST[22m /example: [31mremoved[39m
-  
-[1mPATCH[22m /example: 
-  - /operationId [33mchanged[39m
-  
-  - response [1m200[22m: [32madded[39m
-    
-[1mPUT[22m /example: 
-  - /operationId [33mchanged[39m
-  
-[1mGET[22m /example: 
-  - /operationId [33mchanged[39m
-  
-Checks
-
-  [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /example
-
-
-  [1m[42m[37m PASS [39m[49m[22m [1mPATCH[22m /example
-
-
-  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /example
-    removed rule: prevent operation removal
-      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
-      at [4m$workspace$/example-api-v0.json:9:150[24m
-
-
-
-  [1m[42m[37m PASS [39m[49m[22m [1mPUT[22m /example
-
-
-  [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /invalid_name
-    requirement rule: operation path component naming check
-      [31m[31mx[39m[31m invalid_name is not camelCase[39m
-      at [4m$workspace$/example-api-v1.json:31:632[24m
-
-
-
-1 operation added, 3 changed, 1 removed
-[32m[1m3 checks passed[22m[39m
-[31m[1m2 checks failed[22m[39m
-
-Configure check standards in optic cloud or your local optic.dev.yml file.
-[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
-"
-`;
-
-exports[`diff breaking changes exclusion 1`] = `
-"
-[1mPATCH[22m /example: 
-  - /operationId [33mchanged[39m
-  
-  - response [1m200[22m: [32madded[39m
-    
-[1mPUT[22m /example: 
-  - /operationId [33mchanged[39m
-  
-[1mPOST[22m /example: 
-  - /operationId [33mchanged[39m
-  
-[1mGET[22m /example: 
-  - /x-optic-ignore-breaking-changes, /parameters [32madded[39m
-  - /operationId [33mchanged[39m
-  
-4 operations changed
-[32m[1m0 checks passed[22m[39m
-[31m[1m0 checks failed[22m[39m
-
-Configure check standards in optic cloud or your local optic.dev.yml file.
-[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
-"
-`;
-
 exports[`diff petstore diff 1`] = `
 "
 specification details:
-- /components/schemas/User/properties/bio, /components/schemas/User/properties/userStatus/enum, /components/schemas/User/required/2, /components/schemas/Order/properties/summary, /components/schemas/Order/properties/status/enum/2, /servers/2 [32madded[39m
-- /components/schemas/User/properties/userStatus/type, /info/title [33mchanged[39m
-- /components/schemas/User/properties/phone, /components/schemas/User/properties/userStatus/format, /components/schemas/User/required/2, /components/schemas/Order/properties/status/enum/1 [31mremoved[39m
+- /servers/2 [32madded[39m
+- /info/title [33mchanged[39m
 
 [1mGET[22m /parameters_at_path: [32madded[39m
   
@@ -471,6 +393,57 @@ Checks
 6 operations added, 14 changed, 1 removed
 [32m[1m155 checks passed[22m[39m
 [31m[1m45 checks failed[22m[39m
+
+Configure check standards in optic cloud or your local optic.dev.yml file.
+[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
+"
+`;
+
+exports[`diff reads optic.dev.yml for rulesets 1`] = `
+"
+[1mGET[22m /invalid_name: [32madded[39m
+  
+[1mPOST[22m /example: [31mremoved[39m
+  
+[1mPATCH[22m /example: 
+  - /operationId [33mchanged[39m
+  
+  - response [1m200[22m: [32madded[39m
+    
+[1mPUT[22m /example: 
+  - /operationId [33mchanged[39m
+  
+[1mGET[22m /example: 
+  - /operationId [33mchanged[39m
+  
+Checks
+
+  [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /example
+
+
+  [1m[42m[37m PASS [39m[49m[22m [1mPATCH[22m /example
+
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /example
+    removed rule: prevent operation removal
+      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
+      at [4m$workspace$/example-api-v0.json:9:150[24m
+
+
+
+  [1m[42m[37m PASS [39m[49m[22m [1mPUT[22m /example
+
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /invalid_name
+    requirement rule: operation path component naming check
+      [31m[31mx[39m[31m invalid_name is not camelCase[39m
+      at [4m$workspace$/example-api-v1.json:31:632[24m
+
+
+
+1 operation added, 3 changed, 1 removed
+[32m[1m3 checks passed[22m[39m
+[31m[1m2 checks failed[22m[39m
 
 Configure check standards in optic cloud or your local optic.dev.yml file.
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m

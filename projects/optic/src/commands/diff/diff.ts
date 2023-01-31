@@ -8,7 +8,6 @@ import {
   jsonChangelog,
   generateSpecResults,
 } from '@useoptic/openapi-utilities';
-import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import {
   parseFilesFromRef,
   ParseResult,
@@ -28,6 +27,7 @@ import { uploadDiff } from './upload-diff';
 import { getRunUrl } from '../../utils/cloud-urls';
 import { writeDataForCi } from '../../utils/ci-data';
 import { logger } from '../../logger';
+import { errorHandler } from '../../error-handler';
 
 const description = `run a diff between two API specs`;
 
@@ -74,7 +74,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     .option('--check', 'enable checks', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
-    .action(wrapActionHandlerWithSentry(getDiffAction(config)));
+    .action(errorHandler(getDiffAction(config)));
 };
 
 const getBaseAndHeadFromFiles = async (

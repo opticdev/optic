@@ -2,7 +2,6 @@ import { Command } from 'commander';
 import prompts from 'prompts';
 import open from 'open';
 import path from 'path';
-import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import ora from 'ora';
 import { OpticCliConfig, VCS } from '../../config';
 import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
@@ -24,6 +23,7 @@ import {
   flushEvents,
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
+import { errorHandler } from '../../error-handler';
 
 function short(sha: string) {
   return sha.slice(0, 8);
@@ -73,7 +73,7 @@ export const registerApiAdd = (cli: Command, config: OpticCliConfig) => {
       'Set a standard to run on API diffs. You can always add this later by setting the `[x-optic-standard]` key on your OpenAPI spec'
     )
     .option('--web', 'open to the added API in Optic Cloud', false)
-    .action(wrapActionHandlerWithSentry(getApiAddAction(config)));
+    .action(errorHandler(getApiAddAction(config)));
 };
 
 type ApiAddActionOptions = {
@@ -263,8 +263,11 @@ async function crawlCandidateSpecs(
   const spinner = ora(`Found OpenAPI at ${path}`);
   spinner.color = 'blue';
 
-  const existingOpticUrl = parseResult.jsonLike[OPTIC_URL_KEY];
-  const maybeParsedUrl = getApiFromOpticUrl(existingOpticUrl);
+  const existingOpticUrl: string | undefined =
+    parseResult.jsonLike[OPTIC_URL_KEY];
+  const maybeParsedUrl = existingOpticUrl
+    ? getApiFromOpticUrl(existingOpticUrl)
+    : null;
 
   let alreadyTracked = false;
 
@@ -345,7 +348,7 @@ async function crawlCandidateSpecs(
   spinner.succeed(
     `${chalk.bold.blue(parseResult.jsonLike.info.title || path)} ${
       alreadyTracked ? 'already being tracked' : 'is now being tracked'
-    }.\n  ${chalk.bold(`View history: ${chalk.underline(existingOpticUrl)}`)}`
+    }.\n  ${chalk.bold(`View history: ${chalk.underline(api.url)}`)}`
   );
 }
 
