@@ -132,11 +132,10 @@ async function computeAll(
     let fromParseResults: ParseResult;
     let toParseResults: ParseResult;
     try {
-      fromParseResults = await getFileFromFsOrGit(
-        candidate.from,
-        config,
-        false
-      );
+      fromParseResults = await getFileFromFsOrGit(candidate.from, config, {
+        strict: false,
+        denormalize: true,
+      });
     } catch (e) {
       warnings.unparseableFromSpec.push({
         path: candidate.from!,
@@ -146,7 +145,10 @@ async function computeAll(
     }
 
     try {
-      toParseResults = await getFileFromFsOrGit(candidate.to, config, true);
+      toParseResults = await getFileFromFsOrGit(candidate.to, config, {
+        strict: true,
+        denormalize: true,
+      });
     } catch (e) {
       warnings.unparseableToSpec.push({
         path: candidate.to!,
