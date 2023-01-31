@@ -142,6 +142,18 @@
         "responses": {}
       }
     },
+    "/parameters_at_path": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/pet": {
       "get": {
         "responses": {
