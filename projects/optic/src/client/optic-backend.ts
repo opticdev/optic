@@ -8,6 +8,7 @@ export class OpticBackendClient extends JsonHttpClient {
     private getAuthToken: () => Promise<string>
   ) {
     super();
+    this.source = 'optic';
   }
 
   // @ts-ignore

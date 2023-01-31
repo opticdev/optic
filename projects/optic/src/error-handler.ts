@@ -14,8 +14,10 @@ export const errorHandler = <Args extends any[], Return extends any>(
       if (UserError.isInstance(e)) {
         console.error(e.message);
       } else if (
-        (e instanceof BadRequestError || e instanceof ForbiddenError) &&
-        /Invalid optic token/i.test(e.message)
+        (e instanceof BadRequestError &&
+          e.source === 'optic' &&
+          /Invalid token/i.test(e.message)) ||
+        (e instanceof ForbiddenError && e.source === 'optic')
       ) {
         logger.error('');
         logger.error(chalk.red.bold('Error making request to Optic'));

@@ -11,6 +11,7 @@ import {
 export class JsonHttpClient {
   // Create overridable this.fetch instance
   fetch: typeof fetch = fetch;
+  source: string = 'client';
 
   private async verifyOkResponse(response: Response) {
     const text = await response.text();
@@ -47,7 +48,11 @@ export class JsonHttpClient {
           ? ServiceUnavailableError
           : Error;
 
-      throw new ErrorClass(message);
+      const error = new ErrorClass(message);
+      if ('source' in error) {
+        error.source = this.source;
+      }
+      return error;
     }
   }
 
