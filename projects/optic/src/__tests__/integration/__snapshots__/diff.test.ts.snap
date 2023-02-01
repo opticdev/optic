@@ -666,7 +666,7 @@ Checks
 "
 `;
 
-exports[`diff with mock server uploads specs if authenticated 1`] = `
+exports[`diff with mock server uploads specs if authenticated and --upload 1`] = `
 "
 [1mPATCH[22m /example: 
   - response [1m200[22m: 
@@ -685,6 +685,6 @@ Checks
 [32m[1m0 checks passed[22m[39m
 [31m[1m1 checks failed[22m[39m
 
-Uploaded results of diff to http://localhost:3000/organizations/org-id/apis/api-id/runs/run-id
+[32m✔[39m Uploaded results of diff to http://localhost:3000/organizations/org-id/apis/api-id/runs/run-id
 "
 `;
