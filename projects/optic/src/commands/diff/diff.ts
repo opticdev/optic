@@ -72,6 +72,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     )
     .addOption(new Option('--ruleset <ruleset>', '').hideHelp())
     .option('--check', 'enable checks', false)
+    .option('--upload', 'upload run to cloud', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
     .action(errorHandler(getDiffAction(config)));
@@ -193,6 +194,7 @@ type DiffActionOptions = {
   base: string;
   check: boolean;
   web: boolean;
+  upload: boolean;
   json: boolean;
   standard?: string;
   ruleset?: string;
@@ -205,6 +207,15 @@ const getDiffAction =
     file2: string | undefined,
     options: DiffActionOptions
   ) => {
+    if (options.upload && !config.isAuthenticated) {
+      logger.error(
+        chalk.bold.red(
+          'Error: Must be logged in to upload results. Run optic login to authenticate.'
+        )
+      );
+      return;
+    }
+
     if (options.ruleset && !options.standard) {
       options.standard = options.ruleset;
     }
@@ -237,8 +248,8 @@ const getDiffAction =
     const diffResult = await runDiff(parsedFiles, config, options);
     let maybeUrl: string | null = null;
     const [baseParseResult, headParseResult] = parsedFiles;
-    if (config.isAuthenticated) {
-      const run = await uploadDiff(
+    if (options.upload) {
+      await uploadDiff(
         {
           from: baseParseResult,
           to: headParseResult,
@@ -246,15 +257,6 @@ const getDiffAction =
         diffResult.specResults,
         config
       );
-      if (run) {
-        maybeUrl = getRunUrl(
-          config.client.getWebBase(),
-          run.orgId,
-          run.apiId,
-          run.runId
-        );
-        logger.info(`Uploaded results of diff to ${maybeUrl}`);
-      }
     }
 
     if (options.web) {

@@ -60,7 +60,10 @@ describe('diff-all', () => {
     );
     process.env.OPTIC_TOKEN = '123';
 
-    const { combined, code } = await runOptic(workspace, 'diff-all --check');
+    const { combined, code } = await runOptic(
+      workspace,
+      'diff-all --check --upload'
+    );
 
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     expect(code).toBe(1);
@@ -81,7 +84,7 @@ describe('diff-all', () => {
 
     const { combined, code } = await runOptic(
       workspace,
-      'diff-all --check --json'
+      'diff-all --check --json --upload'
     );
 
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();

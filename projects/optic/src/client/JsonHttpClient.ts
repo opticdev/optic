@@ -11,6 +11,7 @@ import {
 export class JsonHttpClient {
   // Create overridable this.fetch instance
   fetch: typeof fetch = fetch;
+  source: string = 'client';
 
   private async verifyOkResponse(response: Response) {
     const text = await response.text();
@@ -22,7 +23,7 @@ export class JsonHttpClient {
     return text;
   }
 
-  private async handleJsonResponse(response: Response): Promise<any> {
+  private handleJsonResponse = async (response: Response): Promise<any> => {
     if (response.ok) {
       if (response.status === 204) {
         return;
@@ -32,24 +33,24 @@ export class JsonHttpClient {
     } else {
       const text = await response.text();
       const message = `${response.status} ${response.statusText} \n${text}`;
-      const ErrorClass =
+      const error =
         response.status === 400
-          ? BadRequestError
+          ? new BadRequestError(message, this.source)
           : response.status === 401
-          ? UnauthorizedError
+          ? new UnauthorizedError(message, this.source)
           : response.status === 403
-          ? ForbiddenError
+          ? new ForbiddenError(message, this.source)
           : response.status === 404
-          ? NotFoundError
+          ? new NotFoundError(message, this.source)
           : response.status === 500
-          ? InternalError
+          ? new InternalError(message, this.source)
           : response.status === 503
-          ? ServiceUnavailableError
-          : Error;
+          ? new ServiceUnavailableError(message, this.source)
+          : new Error(message);
 
-      throw new ErrorClass(message);
+      throw error;
     }
-  }
+  };
 
   async getJson<T = any>(
     url: string,
