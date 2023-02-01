@@ -23,10 +23,10 @@ export const isInGitRepo = async (): Promise<boolean> =>
     exec(command, cb);
   });
 
-export const getDefaultBranchName = async (): Promise<string> =>
+export const getDefaultBranchName = async (): Promise<string | null> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
-      if (err || stderr || !stdout) reject();
+      if (err || stderr || !stdout) resolve(null);
       resolve(path.basename(stdout.trim()));
     };
 

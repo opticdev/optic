@@ -433,7 +433,10 @@ export const getApiAddAction =
     logger.info('');
 
     if (config.vcs && config.vcs?.type === VCS.Git) {
-      default_branch = await Git.getDefaultBranchName();
+      const maybeDefaultBranch = await Git.getDefaultBranchName();
+      if (maybeDefaultBranch) {
+        default_branch = maybeDefaultBranch;
+      }
       const maybeOrigin = await Git.guessRemoteOrigin();
       if (maybeOrigin) {
         web_url = maybeOrigin.web_url;
