@@ -237,7 +237,6 @@ async function crawlCandidateSpecs(
     web?: boolean;
     default_branch: string;
     web_url?: string;
-    provider: string;
   }
 ) {
   let parseResult: ParseResult;
@@ -286,7 +285,6 @@ async function crawlCandidateSpecs(
       name,
       default_branch: options.default_branch,
       web_url: options.web_url,
-      provider: options.provider,
     });
     api = {
       id,
@@ -431,7 +429,6 @@ export const getApiAddAction =
 
     let default_branch: string = '';
     let web_url: string | undefined = undefined;
-    let provider: string = '';
 
     logger.info('');
 
@@ -440,7 +437,28 @@ export const getApiAddAction =
       const maybeOrigin = await Git.guessRemoteOrigin();
       if (maybeOrigin) {
         web_url = maybeOrigin.web_url;
-        provider = maybeOrigin.provider;
+      } else {
+        logger.info(chalk.red('Could not parse the git origin'));
+        const results = await prompts([
+          {
+            message:
+              'Do you want to enter the origin details manually? This will help optic link your specs back to your git hosting provider',
+            type: 'confirm',
+
+            name: 'add',
+            initial: true,
+          },
+          {
+            type: (prev) => (prev ? 'text' : null),
+            message: 'Enter the web url where this API is uploaded',
+            hint: 'An example is https://github.com/opticdev/optic',
+            name: 'webUrl',
+          },
+        ]);
+        if (results.webUrl) {
+          web_url = results.webUrl;
+        }
+        logger.info('');
       }
 
       logger.info(
@@ -484,7 +502,6 @@ export const getApiAddAction =
         web: options.web,
         default_branch,
         web_url,
-        provider,
       });
     }
     await flushEvents();

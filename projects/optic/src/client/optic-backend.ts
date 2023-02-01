@@ -153,7 +153,6 @@ export class OpticBackendClient extends JsonHttpClient {
       name: string;
       web_url?: string;
       default_branch: string;
-      provider: string;
     }
   ): Promise<{ id: string }> {
     return this.postJson(`/api/api`, {
