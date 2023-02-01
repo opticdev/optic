@@ -131,7 +131,7 @@ describe('diff', () => {
       return JSON.stringify({});
     });
 
-    test('uploads specs if authenticated', async () => {
+    test('uploads specs if authenticated and --upload', async () => {
       const workspace = await setupWorkspace('diff/upload', {
         repo: true,
         commit: true,
@@ -148,7 +148,7 @@ describe('diff', () => {
 
       const { combined, code } = await runOptic(
         workspace,
-        'diff spec.json --base HEAD~1 --check'
+        'diff spec.json --base HEAD~1 --check --upload'
       );
 
       expect(code).toBe(1);
