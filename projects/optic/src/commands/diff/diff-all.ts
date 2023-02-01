@@ -60,6 +60,7 @@ export const registerDiffAll = (cli: Command, config: OpticCliConfig) => {
       'run comparison with a locally defined standard, if not set, looks for the standard on the [x-optic-standard] key on the spec, and then the optic.dev.yml file.'
     )
     .option('--check', 'enable checks', false)
+    .option('--upload', 'upload specs', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
     .action(errorHandler(getDiffAllAction(config)));
@@ -71,6 +72,7 @@ type DiffAllActionOptions = {
   standard?: string;
   check: boolean;
   web: boolean;
+  upload: boolean;
   json: boolean;
 };
 
@@ -216,8 +218,8 @@ async function computeAll(
       }
 
       let url: string | null = null;
-      if (config.isAuthenticated) {
-        const run = await uploadDiff(
+      if (options.upload) {
+        await uploadDiff(
           {
             from: fromParseResults,
             to: toParseResults,
@@ -225,15 +227,6 @@ async function computeAll(
           specResults,
           config
         );
-        if (run) {
-          url = getRunUrl(
-            config.client.getWebBase(),
-            run.orgId,
-            run.apiId,
-            run.runId
-          );
-          logger.info(`Uploaded results of diff to ${url}`);
-        }
       }
 
       results.push({
@@ -363,6 +356,13 @@ const getDiffAllAction =
         `Error: optic diff-all must be called from a git repository.`
       );
       process.exitCode = 1;
+      return;
+    } else if (options.upload && !config.isAuthenticated) {
+      logger.error(
+        chalk.bold.red(
+          'Error: Must be logged in to upload results. Run optic login to authenticate.'
+        )
+      );
       return;
     }
 
