@@ -5,7 +5,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import chalk from 'chalk';
 import open from 'open';
-import { getRemoteUrl, remotes } from '../../utils/git-utils';
+import { guessRemoteOrigin } from '../../utils/git-utils';
 import { getApiAddAction } from '../api/add';
 import { errorHandler } from '../../error-handler';
 
@@ -37,7 +37,7 @@ type PromptAnswers = {
 };
 
 const getCiSetupAction = (config: OpticCliConfig) => async () => {
-  let maybeProvider = await guessProvider();
+  let maybeProvider = await guessRemoteOrigin();
 
   const answers: PromptAnswers = await prompts(
     [
@@ -50,7 +50,7 @@ const getCiSetupAction = (config: OpticCliConfig) => async () => {
           { title: 'GitLab CI/CD', value: 'GitLab' },
         ],
 
-        initial: maybeProvider === 'GitLab' ? 1 : undefined,
+        initial: maybeProvider?.provider === 'gitlab' ? 1 : undefined,
       },
       {
         type: 'select',
@@ -184,34 +184,7 @@ async function setupGitLab(config: OpticCliConfig, answers: PromptAnswers) {
   await openUrlPrompt(gitlabInstructions);
 }
 
-async function guessProvider(): Promise<PromptAnswers['provider'] | ''> {
-  let remoteUrl: string;
-
-  try {
-    const gitRemotes = await remotes();
-    if (gitRemotes.length === 0) {
-      return '';
-    }
-
-    remoteUrl = await getRemoteUrl(gitRemotes[0]);
-  } catch (e) {
-    return '';
-  }
-
-  if (remoteUrl.includes('github')) {
-    return 'GitHub';
-  }
-
-  if (remoteUrl.includes('gitlab')) {
-    return 'GitLab';
-  }
-
-  return '';
-}
-
 async function verifyPath(root: string, target: string): Promise<boolean> {
-  const fullPath = path.join(root, target);
-
   let exists = false;
   try {
     await fs.access(target);

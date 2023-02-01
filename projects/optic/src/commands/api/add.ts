@@ -13,6 +13,8 @@ import * as FsCandidates from './get-file-candidates';
 import { writeJson, writeYml } from './write-to-file';
 import { OpticBackendClient } from '../../client';
 import { uploadSpec } from '../../utils/cloud-specs';
+import * as Git from '../../utils/git-utils';
+
 import {
   getApiFromOpticUrl,
   getApiUrl,
@@ -233,6 +235,8 @@ async function crawlCandidateSpecs(
     path_to_spec: string | undefined;
     standard: string | undefined;
     web?: boolean;
+    default_branch: string;
+    web_url?: string;
   }
 ) {
   let parseResult: ParseResult;
@@ -277,7 +281,11 @@ async function crawlCandidateSpecs(
     api = { id: maybeParsedUrl.apiId, url: existingOpticUrl };
   } else {
     const name = parseResult.jsonLike?.info?.title ?? path;
-    const { id } = await config.client.createApi(orgId, name);
+    const { id } = await config.client.createApi(orgId, {
+      name,
+      default_branch: options.default_branch,
+      web_url: options.web_url,
+    });
     api = {
       id,
       url: getApiUrl(config.client.getWebBase(), orgId, id),
@@ -419,9 +427,47 @@ export const getApiAddAction =
       }
     }
 
+    let default_branch: string = '';
+    let web_url: string | undefined = undefined;
+
     logger.info('');
 
     if (config.vcs && config.vcs?.type === VCS.Git) {
+      const maybeDefaultBranch = await Git.getDefaultBranchName();
+      if (maybeDefaultBranch) {
+        default_branch = maybeDefaultBranch;
+      }
+      const maybeOrigin = await Git.guessRemoteOrigin();
+      if (maybeOrigin) {
+        web_url = maybeOrigin.web_url;
+      } else {
+        logger.info(
+          chalk.red(
+            'Could not parse git origin details for where this repository lives.'
+          )
+        );
+        const results = await prompts([
+          {
+            message:
+              'Do you want to enter the origin details manually? This will help optic link your specs back to your git hosting provider',
+            type: 'confirm',
+
+            name: 'add',
+            initial: true,
+          },
+          {
+            type: (prev) => (prev ? 'text' : null),
+            message:
+              'Enter the web url where this API is uploaded (example: https://github.com/opticdev/optic)',
+            name: 'webUrl',
+          },
+        ]);
+        if (results.webUrl) {
+          web_url = results.webUrl;
+        }
+        logger.info('');
+      }
+
       logger.info(
         chalk.bold.gray(
           path_to_spec
@@ -461,6 +507,8 @@ export const getApiAddAction =
         path_to_spec,
         standard,
         web: options.web,
+        default_branch,
+        web_url,
       });
     }
     await flushEvents();
