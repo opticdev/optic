@@ -13,6 +13,8 @@ import { JsonSchemaSourcemap } from './sourcemap';
 import { gitBranchResolver } from './resolvers/git-branch-file-resolver';
 import { ExternalRefHandler } from './types';
 import Bottleneck from 'bottleneck';
+// @ts-ignore
+import * as customYaml from './insourced-yaml';
 
 export {
   JSONParserError,
@@ -45,6 +47,9 @@ export async function dereferenceOpenApi(
   // Resolve all references
   const resolverResults: $RefParser.$Refs = await resolver.resolve(path, {
     resolve,
+    parse: {
+      yaml: customYaml,
+    },
   });
 
   const limiter = new Bottleneck({
@@ -85,6 +90,9 @@ export async function dereferenceOpenApi(
       path: path,
       dereference: { circular: 'ignore' },
       resolve,
+      parse: {
+        yaml: customYaml,
+      },
     },
     sourcemap
   );
