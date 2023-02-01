@@ -24,7 +24,6 @@ import { compressData, compressDataV2 } from './compressResults';
 import { generateRuleRunner } from './generate-rule-runner';
 import { OPTIC_STANDARD_KEY } from '../../constants';
 import { uploadDiff } from './upload-diff';
-import { getRunUrl } from '../../utils/cloud-urls';
 import { writeDataForCi } from '../../utils/ci-data';
 import { logger } from '../../logger';
 import { errorHandler } from '../../error-handler';
@@ -187,7 +186,7 @@ const runDiff = async (
     if (!hasOpticUrl) {
       logger.info(
         chalk.blue.bold(
-          `See the full history of this API by running "optic add ${
+          `See the full history of this API by running "optic api add ${
             path.parse(baseFile.sourcemap.rootFilePath).base
           } --history-depth 0"`
         )
