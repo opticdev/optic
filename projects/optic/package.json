@@ -7,7 +7,8 @@
   "types": "build/index.d.ts",
   "files": [
     "/build",
-    "/src"
+    "/src",
+    "/ci/configs"
   ],
   "bin": "build/index.js",
   "scripts": {
