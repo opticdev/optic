@@ -465,9 +465,7 @@ export const getApiAddAction =
     }
 
     logger.info('');
-    logger.info(
-      chalk.blue.bold(`Setup Optic CI checks by running "optic ci setup"`)
-    );
+    logger.info(chalk.blue.bold(`Setup CI checks by running "optic ci setup"`));
 
     await flushEvents();
   };
