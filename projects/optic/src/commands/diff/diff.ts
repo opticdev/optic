@@ -7,7 +7,6 @@ import {
   UserError,
   jsonChangelog,
 } from '@useoptic/openapi-utilities';
-import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import {
   parseFilesFromRef,
   ParseResult,
@@ -25,6 +24,7 @@ import { uploadDiff } from './upload-diff';
 import { getRunUrl } from '../../utils/cloud-urls';
 import { writeDataForCi } from '../../utils/ci-data';
 import { logger } from '../../logger';
+import { errorHandler } from '../../error-handler';
 
 const description = `run a diff between two API specs`;
 
@@ -69,9 +69,10 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     )
     .addOption(new Option('--ruleset <ruleset>', '').hideHelp())
     .option('--check', 'enable checks', false)
+    .option('--upload', 'upload run to cloud', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
-    .action(wrapActionHandlerWithSentry(getDiffAction(config)));
+    .action(errorHandler(getDiffAction(config)));
 };
 
 const getBaseAndHeadFromFiles = async (
@@ -82,8 +83,8 @@ const getBaseAndHeadFromFiles = async (
   try {
     // TODO update function to try download from spec-id cloud
     return Promise.all([
-      getFileFromFsOrGit(file1, config, false),
-      getFileFromFsOrGit(file2, config, true),
+      getFileFromFsOrGit(file1, config, { strict: false, denormalize: true }),
+      getFileFromFsOrGit(file2, config, { strict: true, denormalize: true }),
     ]);
   } catch (e) {
     console.error(e);
@@ -102,7 +103,8 @@ const getBaseAndHeadFromFileAndBase = async (
       file1,
       base,
       root,
-      config
+      config,
+      { denormalize: true }
     );
     return [baseFile, headFile];
   } catch (e) {
@@ -189,6 +191,7 @@ type DiffActionOptions = {
   base: string;
   check: boolean;
   web: boolean;
+  upload: boolean;
   json: boolean;
   standard?: string;
   ruleset?: string;
@@ -201,6 +204,15 @@ const getDiffAction =
     file2: string | undefined,
     options: DiffActionOptions
   ) => {
+    if (options.upload && !config.isAuthenticated) {
+      logger.error(
+        chalk.bold.red(
+          'Error: Must be logged in to upload results. Run optic login to authenticate.'
+        )
+      );
+      return;
+    }
+
     if (options.ruleset && !options.standard) {
       options.standard = options.ruleset;
     }
@@ -233,8 +245,8 @@ const getDiffAction =
     const diffResult = await runDiff(parsedFiles, config, options);
     let maybeUrl: string | null = null;
     const [baseParseResult, headParseResult] = parsedFiles;
-    if (config.isAuthenticated) {
-      const run = await uploadDiff(
+    if (options.upload) {
+      await uploadDiff(
         {
           from: baseParseResult,
           to: headParseResult,
@@ -242,15 +254,6 @@ const getDiffAction =
         diffResult.specResults,
         config
       );
-      if (run) {
-        maybeUrl = getRunUrl(
-          config.client.getWebBase(),
-          run.orgId,
-          run.apiId,
-          run.runId
-        );
-        logger.info(`Uploaded results of diff to ${maybeUrl}`);
-      }
     }
 
     if (options.web) {

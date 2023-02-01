@@ -1,8 +1,8 @@
 {
   "name": "@useoptic/optic",
   "license": "MIT",
-  "packageManager": "yarn@3.3.1",
-  "version": "0.36.13-0",
+  "packageManager": "yarn@3.4.0",
+  "version": "0.36.14",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -27,6 +27,7 @@
     "@babel/preset-typescript": "^7.17.0",
     "@types/babel__core": "^7",
     "@types/babel__preset-env": "^7",
+    "@types/git-url-parse": "^9.0.1",
     "@types/is-url": "^1.2.30",
     "@types/js-yaml": "^4.0.5",
     "@types/json-stable-stringify": "^1.0.33",
@@ -60,6 +61,7 @@
     "chalk": "^4.1.2",
     "commander": "^10.0.0",
     "dotenv": "^16.0.3",
+    "git-url-parse": "^13.1.0",
     "is-url": "^1.2.4",
     "js-yaml": "^4.1.0",
     "json-stable-stringify": "^1.0.1",
@@ -74,6 +76,5 @@
     "update-notifier": "^5.1.0",
     "url-join": "^4.0.1",
     "uuid": "^9.0.0"
-  },
-  "stableVersion": "0.36.12"
+  }
 }

@@ -8,6 +8,7 @@ export class OpticBackendClient extends JsonHttpClient {
     private getAuthToken: () => Promise<string>
   ) {
     super();
+    this.source = 'optic';
   }
 
   // @ts-ignore
@@ -149,10 +150,14 @@ export class OpticBackendClient extends JsonHttpClient {
 
   public async createApi(
     organizationId: string,
-    name: string
+    opts: {
+      name: string;
+      web_url?: string;
+      default_branch: string;
+    }
   ): Promise<{ id: string }> {
     return this.postJson(`/api/api`, {
-      name,
+      ...opts,
       organization_id: organizationId,
     });
   }
@@ -164,6 +169,8 @@ export const createOpticClient = (opticToken: string) => {
     ? hostOverride
     : process.env.OPTIC_ENV === 'staging'
     ? 'https://api.o3c.info'
+    : process.env.OPTIC_ENV === 'local'
+    ? 'http://localhost:3030'
     : 'https://api.useoptic.com';
 
   const opticClient = new OpticBackendClient(backendWebBase, () =>

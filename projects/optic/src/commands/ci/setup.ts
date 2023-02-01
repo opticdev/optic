@@ -1,13 +1,13 @@
-import { Command, Option } from 'commander';
+import { Command } from 'commander';
 import { OpticCliConfig } from '../../config';
-import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import prompts from 'prompts';
 import fs from 'fs/promises';
 import path from 'path';
 import chalk from 'chalk';
 import open from 'open';
-import { getRemoteUrl, remotes } from '../../utils/git-utils';
+import { guessRemoteOrigin } from '../../utils/git-utils';
 import { getApiAddAction } from '../api/add';
+import { errorHandler } from '../../error-handler';
 
 const configsPath = path.join(__dirname, '..', '..', '..', 'ci', 'configs');
 
@@ -27,17 +27,17 @@ export const registerCiSetup = (cli: Command, config: OpticCliConfig) => {
     .description(
       'Answer a series of prompts to generate CI configuration for Optic'
     )
-    .action(wrapActionHandlerWithSentry(getCiSetupAction(config)));
+    .action(errorHandler(getCiSetupAction(config)));
 };
 
 type PromptAnswers = {
   provider: 'GitHub' | 'GitLab';
   standardsFail: boolean;
-  discover: boolean;
+  discover?: boolean | undefined;
 };
 
 const getCiSetupAction = (config: OpticCliConfig) => async () => {
-  let maybeProvider = await guessProvider();
+  let maybeProvider = await guessRemoteOrigin();
 
   const answers: PromptAnswers = await prompts(
     [
@@ -50,19 +50,19 @@ const getCiSetupAction = (config: OpticCliConfig) => async () => {
           { title: 'GitLab CI/CD', value: 'GitLab' },
         ],
 
-        initial: maybeProvider === 'GitLab' ? 1 : undefined,
+        initial: maybeProvider?.provider === 'gitlab' ? 1 : undefined,
       },
       {
         type: 'select',
         name: 'standardsFail',
-        message: 'Should failing standards fail your build?',
+        message: 'Should failing standards fail CI?',
         choices: [
           { title: 'Yes - Recommended', value: true },
           { title: 'No', value: false },
         ],
       },
       {
-        type: 'select',
+        type: config.isAuthenticated ? 'select' : false,
         name: 'discover',
         message:
           'Would you like to discover API specs in the current repository?',
@@ -80,7 +80,10 @@ const getCiSetupAction = (config: OpticCliConfig) => async () => {
     console.log(`${chalk.green('✔')} Discovering API specs in your repo`);
 
     try {
-      await getApiAddAction(config)(undefined, { historyDepth: '1' });
+      await getApiAddAction(config)(undefined, {
+        historyDepth: '1',
+        all: true,
+      });
       console.log(`${chalk.green('✔')} Discovery complete`);
     } catch (e) {
       console.log(
@@ -129,9 +132,15 @@ async function setupGitHub(config: OpticCliConfig, answers: PromptAnswers) {
   console.log();
   console.log(chalk.red("Wait, you're not finished yet"));
   console.log(
-    'Before pushing your new GitHub Actions workflow, follow the instructions at\n' +
-      `${githubInstructions} to set up the required secrets in your repository.`
+    `Before pushing your new GitHub Actions workflow, follow the instructions at ${githubInstructions} to set up the required secrets in your repository.`
   );
+
+  if (answers.discover === undefined) {
+    console.log();
+    console.log(
+      "Since you aren't logged in, api discovery was not run. Run `optic login` to log in and then run `optic api add --all` in this repo to discover all api specs."
+    );
+  }
   console.log();
 
   await openUrlPrompt(githubInstructions);
@@ -175,34 +184,7 @@ async function setupGitLab(config: OpticCliConfig, answers: PromptAnswers) {
   await openUrlPrompt(gitlabInstructions);
 }
 
-async function guessProvider(): Promise<PromptAnswers['provider'] | ''> {
-  let remoteUrl: string;
-
-  try {
-    const gitRemotes = await remotes();
-    if (gitRemotes.length === 0) {
-      return '';
-    }
-
-    remoteUrl = await getRemoteUrl(gitRemotes[0]);
-  } catch (e) {
-    return '';
-  }
-
-  if (remoteUrl.includes('github')) {
-    return 'GitHub';
-  }
-
-  if (remoteUrl.includes('gitlab')) {
-    return 'GitLab';
-  }
-
-  return '';
-}
-
 async function verifyPath(root: string, target: string): Promise<boolean> {
-  const fullPath = path.join(root, target);
-
   let exists = false;
   try {
     await fs.access(target);

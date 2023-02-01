@@ -1,6 +1,5 @@
 import { Command } from 'commander';
 import open from 'open';
-import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import { SPEC_TAG_REGEXP } from '@useoptic/openapi-utilities';
 
 import { OpticCliConfig, VCS } from '../../config';
@@ -11,6 +10,7 @@ import * as Git from '../../utils/git-utils';
 import chalk from 'chalk';
 import { uploadSpec } from '../../utils/cloud-specs';
 import { getApiFromOpticUrl, getSpecUrl } from '../../utils/cloud-urls';
+import { errorHandler } from '../../error-handler';
 
 const usage = () => `
   optic spec push <path_to_spec.yml>
@@ -39,7 +39,7 @@ export const registerSpecPush = (cli: Command, config: OpticCliConfig) => {
       'Adds additional tags to the spec version. In git repositories with a clean working directory, a git tag will automatically be included. Tags must be alphanumeric or the - _ : characters'
     )
     .option('--web', 'open to the push spec in Optic Cloud', false)
-    .action(wrapActionHandlerWithSentry(getSpecPushAction(config)));
+    .action(errorHandler(getSpecPushAction(config)));
 };
 
 type SpecPushActionOptions = {
@@ -91,7 +91,10 @@ const getSpecPushAction =
 
     let parseResult: ParseResult;
     try {
-      parseResult = await getFileFromFsOrGit(spec_path, config, false);
+      parseResult = await getFileFromFsOrGit(spec_path, config, {
+        strict: false,
+        denormalize: true,
+      });
     } catch (e) {
       logger.error(
         `File ${spec_path} is not a valid OpenAPI file. Optic currently supports OpenAPI 3 and 3.1`

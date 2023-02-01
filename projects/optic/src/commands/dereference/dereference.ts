@@ -1,11 +1,11 @@
 import { Command } from 'commander';
-import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import { ParseResult, getFileFromFsOrGit } from '../../utils/spec-loaders';
 import { OpticCliConfig } from '../../config';
 import { UserError } from '@useoptic/openapi-utilities';
 import { isYaml, writeYaml } from '@useoptic/openapi-io';
 import fs from 'node:fs/promises';
 import path from 'path';
+import { errorHandler } from '../../error-handler';
 const description = `dereference an OpenAPI specification`;
 
 const usage = () => `
@@ -27,7 +27,7 @@ export const registerDereference = (cli: Command, config: OpticCliConfig) => {
     .description(description)
     .argument('[file_path]', 'openapi file to dereference')
     .option('-o [output]', 'output file name')
-    .action(wrapActionHandlerWithSentry(deferenceAction(config)));
+    .action(errorHandler(deferenceAction(config)));
 };
 
 const getDereferencedSpec = async (
@@ -36,7 +36,10 @@ const getDereferencedSpec = async (
 ): Promise<ParseResult> => {
   try {
     // TODO update function to try download from spec-id cloud
-    return getFileFromFsOrGit(file1, config, false);
+    return getFileFromFsOrGit(file1, config, {
+      strict: false,
+      denormalize: false,
+    });
   } catch (e) {
     console.error(e);
     throw new UserError();

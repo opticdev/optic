@@ -2,7 +2,6 @@ import { Command } from 'commander';
 import prompts from 'prompts';
 import open from 'open';
 import path from 'path';
-import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import ora from 'ora';
 import { OpticCliConfig, VCS } from '../../config';
 import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
@@ -14,6 +13,8 @@ import * as FsCandidates from './get-file-candidates';
 import { writeJson, writeYml } from './write-to-file';
 import { OpticBackendClient } from '../../client';
 import { uploadSpec } from '../../utils/cloud-specs';
+import * as Git from '../../utils/git-utils';
+
 import {
   getApiFromOpticUrl,
   getApiUrl,
@@ -24,6 +25,7 @@ import {
   flushEvents,
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
+import { errorHandler } from '../../error-handler';
 
 function short(sha: string) {
   return sha.slice(0, 8);
@@ -73,7 +75,7 @@ export const registerApiAdd = (cli: Command, config: OpticCliConfig) => {
       'Set a standard to run on API diffs. You can always add this later by setting the `[x-optic-standard]` key on your OpenAPI spec'
     )
     .option('--web', 'open to the added API in Optic Cloud', false)
-    .action(wrapActionHandlerWithSentry(getApiAddAction(config)));
+    .action(errorHandler(getApiAddAction(config)));
 };
 
 type ApiAddActionOptions = {
@@ -233,11 +235,16 @@ async function crawlCandidateSpecs(
     path_to_spec: string | undefined;
     standard: string | undefined;
     web?: boolean;
+    default_branch: string;
+    web_url?: string;
   }
 ) {
   let parseResult: ParseResult;
   try {
-    parseResult = await getFileFromFsOrGit(path, config, false);
+    parseResult = await getFileFromFsOrGit(path, config, {
+      strict: false,
+      denormalize: true,
+    });
   } catch (e) {
     if (path === options.path_to_spec) {
       logger.info(
@@ -260,8 +267,11 @@ async function crawlCandidateSpecs(
   const spinner = ora(`Found OpenAPI at ${path}`);
   spinner.color = 'blue';
 
-  const existingOpticUrl = parseResult.jsonLike[OPTIC_URL_KEY];
-  const maybeParsedUrl = getApiFromOpticUrl(existingOpticUrl);
+  const existingOpticUrl: string | undefined =
+    parseResult.jsonLike[OPTIC_URL_KEY];
+  const maybeParsedUrl = existingOpticUrl
+    ? getApiFromOpticUrl(existingOpticUrl)
+    : null;
 
   let alreadyTracked = false;
 
@@ -271,7 +281,11 @@ async function crawlCandidateSpecs(
     api = { id: maybeParsedUrl.apiId, url: existingOpticUrl };
   } else {
     const name = parseResult.jsonLike?.info?.title ?? path;
-    const { id } = await config.client.createApi(orgId, name);
+    const { id } = await config.client.createApi(orgId, {
+      name,
+      default_branch: options.default_branch,
+      web_url: options.web_url,
+    });
     api = {
       id,
       url: getApiUrl(config.client.getWebBase(), orgId, id),
@@ -281,7 +295,10 @@ async function crawlCandidateSpecs(
   for await (const sha of shas) {
     let parseResult: ParseResult;
     try {
-      parseResult = await getFileFromFsOrGit(`${sha}:${path}`, config, false);
+      parseResult = await getFileFromFsOrGit(`${sha}:${path}`, config, {
+        strict: false,
+        denormalize: true,
+      });
     } catch (e) {
       logger.debug(
         `${short(
@@ -339,7 +356,7 @@ async function crawlCandidateSpecs(
   spinner.succeed(
     `${chalk.bold.blue(parseResult.jsonLike.info.title || path)} ${
       alreadyTracked ? 'already being tracked' : 'is now being tracked'
-    }.\n  ${chalk.bold(`View history: ${chalk.underline(existingOpticUrl)}`)}`
+    }.\n  ${chalk.bold(`View history: ${chalk.underline(api.url)}`)}`
   );
 }
 
@@ -410,9 +427,47 @@ export const getApiAddAction =
       }
     }
 
+    let default_branch: string = '';
+    let web_url: string | undefined = undefined;
+
     logger.info('');
 
     if (config.vcs && config.vcs?.type === VCS.Git) {
+      const maybeDefaultBranch = await Git.getDefaultBranchName();
+      if (maybeDefaultBranch) {
+        default_branch = maybeDefaultBranch;
+      }
+      const maybeOrigin = await Git.guessRemoteOrigin();
+      if (maybeOrigin) {
+        web_url = maybeOrigin.web_url;
+      } else {
+        logger.info(
+          chalk.red(
+            'Could not parse git origin details for where this repository lives.'
+          )
+        );
+        const results = await prompts([
+          {
+            message:
+              'Do you want to enter the origin details manually? This will help optic link your specs back to your git hosting provider',
+            type: 'confirm',
+
+            name: 'add',
+            initial: true,
+          },
+          {
+            type: (prev) => (prev ? 'text' : null),
+            message:
+              'Enter the web url where this API is uploaded (example: https://github.com/opticdev/optic)',
+            name: 'webUrl',
+          },
+        ]);
+        if (results.webUrl) {
+          web_url = results.webUrl;
+        }
+        logger.info('');
+      }
+
       logger.info(
         chalk.bold.gray(
           path_to_spec
@@ -452,6 +507,8 @@ export const getApiAddAction =
         path_to_spec,
         standard,
         web: options.web,
+        default_branch,
+        web_url,
       });
     }
     await flushEvents();

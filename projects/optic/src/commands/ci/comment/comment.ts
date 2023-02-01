@@ -1,5 +1,4 @@
 import { Command, Option } from 'commander';
-import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 
 import { OpticCliConfig } from '../../../config';
 import { CiRunDetails, readDataForCi } from '../../../utils/ci-data';
@@ -9,6 +8,7 @@ import {
 } from './common';
 import { logger } from '../../../logger';
 import { CommentApi, GithubCommenter, GitlabCommenter } from './comment-api';
+import { errorHandler } from '../../../error-handler';
 
 const usage = () => `
   GITHUB_TOKEN=<github-token> optic ci comment --provider github --owner <repo-owner> --repo <repo-name> --pull-request <pr-number> --sha <commit-sha>
@@ -52,7 +52,7 @@ export const registerCiComment = (cli: Command, config: OpticCliConfig) => {
       '(only for enterprise versions of github or gitlab) - the base url to your enterprise github / gitlab instance'
     )
     .description('comment on a pull request / merge request')
-    .action(wrapActionHandlerWithSentry(getCiCommentAction(config)));
+    .action(errorHandler(getCiCommentAction(config)));
 };
 
 type UnvalidatedOptions = {
