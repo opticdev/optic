@@ -511,5 +511,9 @@ export const getApiAddAction =
         web_url,
       });
     }
+
+    logger.info('');
+    logger.info(chalk.blue.bold(`Setup CI checks by running "optic ci setup"`));
+
     await flushEvents();
   };
