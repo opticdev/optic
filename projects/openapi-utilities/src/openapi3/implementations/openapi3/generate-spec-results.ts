@@ -17,6 +17,10 @@ const traverseSpec = (jsonSpec: OpenAPIV3.Document): IFact[] => {
 
   currentTraverser.traverse(jsonSpec);
 
+  for (const warning of currentTraverser.warnings) {
+    console.warn(warning);
+  }
+
   return [...currentTraverser.facts()];
 };
 
