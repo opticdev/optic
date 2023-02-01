@@ -1,7 +1,7 @@
 import { UserError } from '@useoptic/openapi-utilities';
 import { SentryClient } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import chalk from 'chalk';
-import { BadRequestError } from './client/errors';
+import { BadRequestError, ForbiddenError } from './client/errors';
 import { logger } from './logger';
 
 export const errorHandler = <Args extends any[], Return extends any>(
@@ -14,8 +14,10 @@ export const errorHandler = <Args extends any[], Return extends any>(
       if (UserError.isInstance(e)) {
         console.error(e.message);
       } else if (
-        e instanceof BadRequestError &&
-        /Invalid token/i.test(e.message)
+        (e instanceof BadRequestError &&
+          e.source === 'optic' &&
+          /Invalid token/i.test(e.message)) ||
+        (e instanceof ForbiddenError && e.source === 'optic')
       ) {
         logger.error('');
         logger.error(chalk.red.bold('Error making request to Optic'));
