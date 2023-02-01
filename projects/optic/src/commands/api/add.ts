@@ -438,7 +438,11 @@ export const getApiAddAction =
       if (maybeOrigin) {
         web_url = maybeOrigin.web_url;
       } else {
-        logger.info(chalk.red('Could not parse the git origin'));
+        logger.info(
+          chalk.red(
+            'Could not parse git origin details for where this repository lives.'
+          )
+        );
         const results = await prompts([
           {
             message:
@@ -450,8 +454,8 @@ export const getApiAddAction =
           },
           {
             type: (prev) => (prev ? 'text' : null),
-            message: 'Enter the web url where this API is uploaded',
-            hint: 'An example is https://github.com/opticdev/optic',
+            message:
+              'Enter the web url where this API is uploaded (example: https://github.com/opticdev/optic)',
             name: 'webUrl',
           },
         ]);
