@@ -434,6 +434,16 @@ exports[`circular references circular references with multiple refs 1`] = `
 }
 `;
 
+exports[`circular references does not parse date strings as JS dates 1`] = `
+{
+  "object": {
+    "2022-01-01": "GHI",
+    "2022-01-02": "DEF",
+    "key1": "ABC",
+  },
+}
+`;
+
 exports[`dereferencing openapi files can parse a json schema spec with external references 1`] = `
 {
   "jsonLike": {
