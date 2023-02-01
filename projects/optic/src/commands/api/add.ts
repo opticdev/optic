@@ -457,5 +457,11 @@ export const getApiAddAction =
         web: options.web,
       });
     }
+
+    logger.info('');
+    logger.info(
+      chalk.blue.bold(`Setup Optic CI checks by running "optic ci setup"`)
+    );
+
     await flushEvents();
   };
