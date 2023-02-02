@@ -1,7 +1,11 @@
 import { Command } from 'commander';
 import { OpticCliConfig, VCS } from '../../config';
 import { findOpenApiSpecsCandidates } from '../../utils/git-utils';
-import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
+import {
+  getFileFromFsOrGit,
+  loadRaw,
+  ParseResult,
+} from '../../utils/spec-loaders';
 import { logger } from '../../logger';
 import { OPTIC_URL_KEY } from '../../constants';
 import { compute } from './compute';
@@ -18,9 +22,10 @@ import {
   terminalChangelog,
 } from '@useoptic/openapi-utilities';
 import { uploadDiff } from './upload-diff';
-import { getApiFromOpticUrl, getRunUrl } from '../../utils/cloud-urls';
+import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { writeDataForCi } from '../../utils/ci-data';
 import { errorHandler } from '../../error-handler';
+import { checkOpenAPIVersion } from '@useoptic/openapi-io';
 
 const usage = () => `
   optic diff-all
@@ -121,7 +126,7 @@ async function computeAll(
   warnings: Warnings;
   results: Result[];
 }> {
-  const warnings: Warnings = {
+  const allWarnings: Warnings = {
     missingOpticUrl: [],
     unparseableFromSpec: [],
     unparseableToSpec: [],
@@ -130,6 +135,39 @@ async function computeAll(
   const results: Result[] = [];
 
   for await (const [_, candidate] of candidatesMap) {
+    // We load the raw spec and discard the comparison if there is no optic url or is in an invalid version
+    // Cases we run the comparison:
+    // - if to spec has x-optic-url
+    // - if from spec has x-optic-url AND to spec is empty
+    try {
+      const specPathToLoad = candidate.to ?? candidate.from;
+      if (!specPathToLoad) {
+        logger.debug(
+          `Skipping comparison from ${candidate.from} to ${candidate.to} both are undefined`
+        );
+        continue;
+      }
+
+      const rawSpec = await loadRaw(specPathToLoad);
+      const hasOpticUrl = getApiFromOpticUrl(rawSpec[OPTIC_URL_KEY]);
+      checkOpenAPIVersion(rawSpec);
+      if (!hasOpticUrl) {
+        logger.debug(
+          `Skipping comparison from ${candidate.from} to ${candidate.to} because there was no x-optic-url`
+        );
+        allWarnings.missingOpticUrl.push({
+          path: candidate.to!,
+        });
+        continue;
+      }
+    } catch (e) {
+      logger.debug(
+        `Skipping comparison from ${candidate.from} to ${candidate.to} because of error: `
+      );
+      logger.debug(e);
+      continue;
+    }
+
     // try load both from + to spec
     let fromParseResults: ParseResult;
     let toParseResults: ParseResult;
@@ -139,7 +177,7 @@ async function computeAll(
         denormalize: true,
       });
     } catch (e) {
-      warnings.unparseableFromSpec.push({
+      allWarnings.unparseableFromSpec.push({
         path: candidate.from!,
         error: e,
       });
@@ -152,106 +190,89 @@ async function computeAll(
         denormalize: true,
       });
     } catch (e) {
-      warnings.unparseableToSpec.push({
+      allWarnings.unparseableToSpec.push({
         path: candidate.to!,
         error: e,
       });
       continue;
     }
 
-    // Cases we run the comparison:
-    // - if to spec has x-optic-url
-    // - if from spec has x-optic-url AND to spec is empty
-    if (
-      getApiFromOpticUrl(toParseResults.jsonLike[OPTIC_URL_KEY]) ||
-      (getApiFromOpticUrl(fromParseResults.jsonLike[OPTIC_URL_KEY]) &&
-        toParseResults.isEmptySpec)
-    ) {
-      logger.info(
-        chalk.blue(
-          `Diffing ${candidate.from ?? 'empty spec'} to ${
-            candidate.to ?? 'empty spec'
-          }`
-        )
-      );
-      const { specResults, checks, changelogData, warnings } = await compute(
-        [fromParseResults, toParseResults],
-        config,
-        options
-      );
+    logger.info(
+      chalk.blue(
+        `Diffing ${candidate.from ?? 'empty spec'} to ${
+          candidate.to ?? 'empty spec'
+        }`
+      )
+    );
+    const { specResults, checks, changelogData, warnings } = await compute(
+      [fromParseResults, toParseResults],
+      config,
+      options
+    );
 
-      for (const warning of warnings) {
-        logger.warn(warning);
+    for (const warning of warnings) {
+      logger.warn(warning);
+    }
+
+    if (specResults.diffs.length === 0) {
+      logger.info('No changes were detected');
+    }
+    logger.info('');
+
+    for (const log of terminalChangelog(
+      { from: fromParseResults.jsonLike, to: toParseResults.jsonLike },
+      changelogData
+    )) {
+      logger.info(log);
+    }
+
+    if (options.check) {
+      if (specResults.results.length > 0) {
+        logger.info('Checks');
+        logger.info('');
       }
 
-      if (specResults.diffs.length === 0) {
-        logger.info('No changes were detected');
-      }
-      logger.info('');
-
-      for (const log of terminalChangelog(
-        { from: fromParseResults.jsonLike, to: toParseResults.jsonLike },
-        changelogData
+      for (const log of generateComparisonLogsV2(
+        changelogData,
+        { from: fromParseResults.sourcemap, to: toParseResults.sourcemap },
+        specResults,
+        {
+          output: 'pretty',
+          verbose: false,
+        }
       )) {
         logger.info(log);
       }
 
-      if (options.check) {
-        if (specResults.results.length > 0) {
-          logger.info('Checks');
-          logger.info('');
-        }
-
-        for (const log of generateComparisonLogsV2(
-          changelogData,
-          { from: fromParseResults.sourcemap, to: toParseResults.sourcemap },
-          specResults,
-          {
-            output: 'pretty',
-            verbose: false,
-          }
-        )) {
-          logger.info(log);
-        }
-
-        logger.info('');
-      }
-
-      let url: string | null = null;
-      if (options.upload) {
-        await uploadDiff(
-          {
-            from: fromParseResults,
-            to: toParseResults,
-          },
-          specResults,
-          config
-        );
-      }
-
-      results.push({
-        warnings,
-        fromParseResults,
-        toParseResults,
-        specResults,
-        checks,
-        changelogData,
-        from: candidate.from,
-        to: candidate.to,
-        url,
-      });
-    } else if (
-      !toParseResults.isEmptySpec &&
-      typeof toParseResults.jsonLike[OPTIC_URL_KEY] !== 'string'
-    ) {
-      warnings.missingOpticUrl.push({
-        path: candidate.to!,
-      });
-      continue;
+      logger.info('');
     }
+
+    let url: string | null = null;
+    if (options.upload) {
+      await uploadDiff(
+        {
+          from: fromParseResults,
+          to: toParseResults,
+        },
+        specResults,
+        config
+      );
+    }
+
+    results.push({
+      warnings,
+      fromParseResults,
+      toParseResults,
+      specResults,
+      checks,
+      changelogData,
+      from: candidate.from,
+      to: candidate.to,
+      url,
+    });
   }
   return {
-    warnings,
+    warnings: allWarnings,
     results,
   };
 }
