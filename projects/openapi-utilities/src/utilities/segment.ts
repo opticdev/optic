@@ -14,7 +14,10 @@ export const initSegment = (key: string | undefined) => {
     process.env.OPTIC_TELEMETRY_LEVEL === 'off' ||
     process.env.OPTIC_TELEMETRY_LEVEL === 'error';
   if (key && !isSegmentDisabled) {
-    analytics = new Analytics(key);
+    analytics = new Analytics(key, {
+      // Handle errors thrown here
+      errorHandler: (err) => {},
+    });
   }
 };
 export const trackEvent = (
