@@ -7,11 +7,11 @@ import chalk from 'chalk';
 import open from 'open';
 import { guessRemoteOrigin } from '../../utils/git-utils';
 import { errorHandler } from '../../error-handler';
+import { getCiSetupUrl } from '../../utils/cloud-urls';
+
+type MaybeProvider = Awaited<ReturnType<typeof guessRemoteOrigin>>;
 
 const configsPath = path.join(__dirname, '..', '..', '..', 'ci', 'configs');
-
-const githubInstructions = 'https://www.useoptic.com/docs/github';
-const gitlabInstructions = 'https://www.useoptic.com/docs/gitlab';
 
 const usage = () => `
   optic ci setup
@@ -64,13 +64,17 @@ const getCiSetupAction = (config: OpticCliConfig) => async () => {
   );
 
   if (answers.provider === 'GitHub') {
-    await setupGitHub(config, answers);
+    await setupGitHub(config, maybeProvider, answers);
   } else if (answers.provider === 'GitLab') {
-    await setupGitLab(config, answers);
+    await setupGitLab(config, maybeProvider, answers);
   }
 };
 
-async function setupGitHub(config: OpticCliConfig, answers: PromptAnswers) {
+async function setupGitHub(
+  config: OpticCliConfig,
+  provider: MaybeProvider,
+  answers: PromptAnswers
+) {
   const target = '.github/workflows/optic.yml';
   const targetPath = path.join(config.root, target);
   const targetDir = path.dirname(targetPath);
@@ -97,19 +101,29 @@ async function setupGitHub(config: OpticCliConfig, answers: PromptAnswers) {
     } CI configuration to ${target}`
   );
 
+  const instructionsUrl = getCiSetupUrl(
+    config.client.getWebBase(),
+    provider?.provider,
+    provider?.web_url
+  );
+
   console.log();
   console.log(chalk.red("Wait, you're not finished yet"));
   console.log(
-    `Before pushing your new GitHub Actions workflow, follow the instructions at ${githubInstructions} to set up the required secrets in your repository.`
+    `Before pushing your new GitHub Actions workflow, follow the instructions at ${instructionsUrl} to set up the required secrets in your repository.`
   );
 
 
   console.log();
 
-  await openUrlPrompt(githubInstructions);
+  await openUrlPrompt(instructionsUrl);
 }
 
-async function setupGitLab(config: OpticCliConfig, answers: PromptAnswers) {
+async function setupGitLab(
+  config: OpticCliConfig,
+  provider: MaybeProvider,
+  answers: PromptAnswers
+) {
   const target = '.gitlab-ci.yml';
   const targetPath = path.join(config.root, target);
   const targetDir = path.dirname(targetPath);
@@ -136,15 +150,21 @@ async function setupGitLab(config: OpticCliConfig, answers: PromptAnswers) {
     } CI configuration to ${target}`
   );
 
+  const instructionsUrl = getCiSetupUrl(
+    config.client.getWebBase(),
+    provider?.provider,
+    provider?.web_url
+  );
+
   console.log();
   console.log(chalk.red("Wait, you're not finished yet"));
   console.log(
     'Before pushing your new GitLab CI/CD pipeline, follow the instructions at\n' +
-      `${gitlabInstructions} to set up the required secrets in your repository.`
+      `${instructionsUrl} to set up the required secrets in your repository.`
   );
   console.log();
 
-  await openUrlPrompt(gitlabInstructions);
+  await openUrlPrompt(instructionsUrl);
 }
 
 async function verifyPath(root: string, target: string): Promise<boolean> {
@@ -177,7 +197,7 @@ async function openUrlPrompt(url: string) {
     {
       type: 'confirm',
       name: 'open',
-      message: `Open ${url} in your browser?`,
+      message: `Open setup instructions in your browser?`,
       initial: true,
     },
     { onCancel: () => process.exit(1) }
