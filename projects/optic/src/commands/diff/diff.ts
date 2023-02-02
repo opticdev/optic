@@ -256,7 +256,7 @@ const getDiffAction =
     let maybeUrl: string | null = null;
     const [baseParseResult, headParseResult] = parsedFiles;
     if (options.upload) {
-      await uploadDiff(
+      maybeUrl = await uploadDiff(
         {
           from: baseParseResult,
           to: headParseResult,

@@ -219,7 +219,7 @@ async function computeAll(
 
       let url: string | null = null;
       if (options.upload) {
-        await uploadDiff(
+        url = await uploadDiff(
           {
             from: fromParseResults,
             to: toParseResults,
