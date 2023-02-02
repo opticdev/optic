@@ -1,8 +1,8 @@
 {
   "name": "@useoptic/openapi-io",
   "license": "MIT",
-  "version": "0.36.15-0",
   "packageManager": "yarn@3.4.1",
+  "version": "0.36.15",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [

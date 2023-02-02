@@ -15,10 +15,7 @@ import { OpticBackendClient } from '../../client';
 import { uploadSpec } from '../../utils/cloud-specs';
 import * as Git from '../../utils/git-utils';
 
-import {
-  getApiFromOpticUrl,
-  getApiUrl,
-} from '../../utils/cloud-urls';
+import { getApiFromOpticUrl, getApiUrl } from '../../utils/cloud-urls';
 import {
   flushEvents,
   trackEvent,
