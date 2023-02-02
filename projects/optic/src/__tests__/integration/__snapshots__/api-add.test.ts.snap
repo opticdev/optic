@@ -10,6 +10,8 @@ exports[`optic api add git - no cli interaction discover all files in repo 1`] =
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 [32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
+
+[34m[1mSetup CI checks by running "optic ci setup"[22m[39m
 "
 `;
 
@@ -19,6 +21,8 @@ exports[`optic api add git - no cli interaction discover one file with history d
 [1m[90mAdding API ./spec.yml[39m[22m
 [32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
+
+[34m[1mSetup CI checks by running "optic ci setup"[22m[39m
 "
 `;
 
@@ -58,6 +62,8 @@ exports[`optic api add no vcs - no cli interaction discover all files in repo 1`
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 [32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
+
+[34m[1mSetup CI checks by running "optic ci setup"[22m[39m
 "
 `;
 
@@ -67,6 +73,8 @@ exports[`optic api add no vcs - no cli interaction discover one file with histor
 [1m[90mAdding API ./spec.yml[39m[22m
 [32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
+
+[34m[1mSetup CI checks by running "optic ci setup"[22m[39m
 "
 `;
 

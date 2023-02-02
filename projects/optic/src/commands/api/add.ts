@@ -6,7 +6,7 @@ import ora from 'ora';
 import { OpticCliConfig, VCS } from '../../config';
 import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
 import { logger } from '../../logger';
-import { OPTIC_STANDARD_KEY, OPTIC_URL_KEY } from '../../constants';
+import { OPTIC_URL_KEY } from '../../constants';
 import chalk from 'chalk';
 import * as GitCandidates from './git-get-file-candidates';
 import * as FsCandidates from './get-file-candidates';
@@ -18,9 +18,7 @@ import * as Git from '../../utils/git-utils';
 import {
   getApiFromOpticUrl,
   getApiUrl,
-  getStandardsUrl,
 } from '../../utils/cloud-urls';
-import { getDefaultRulesetConfig } from './default-ruleset-config';
 import {
   flushEvents,
   trackEvent,
@@ -35,7 +33,7 @@ const usage = () => `
   optic api add
   optic api add <path_to_spec.yml>
   optic api add <path_to_spec.yml> --history-depth 0
-  optic api add <path_to_spec.yml> --standard <standard_id> --web`;
+  optic api add <path_to_spec.yml> --web`;
 
 const helpText = `
 Example usage:
@@ -48,8 +46,6 @@ Example usage:
   Discover all apis in the current repo
   $ optic api add --all
 
-  Add all apis and attach standard - configure your API standard in Optic cloud
-  $ optic api add --standard <standard_id>
   `;
 
 export const registerApiAdd = (cli: Command, config: OpticCliConfig) => {
@@ -70,17 +66,12 @@ export const registerApiAdd = (cli: Command, config: OpticCliConfig) => {
       '1'
     )
     .option('--all', 'discover all APIs in the current repo')
-    .option(
-      '--standard <standard>',
-      'Set a standard to run on API diffs. You can always add this later by setting the `[x-optic-standard]` key on your OpenAPI spec'
-    )
     .option('--web', 'open to the added API in Optic Cloud', false)
     .action(errorHandler(getApiAddAction(config)));
 };
 
 type ApiAddActionOptions = {
   historyDepth: string;
-  standard?: string;
   web?: boolean;
   all?: boolean;
 };
@@ -122,118 +113,12 @@ async function getOrganizationToUploadTo(client: OpticBackendClient): Promise<
 
   return { ok: true, org };
 }
-
-async function promptForStandard(
-  orgId: string,
-  client: OpticBackendClient
-): Promise<string | undefined> {
-  const existingStandards = await client.getOrgStandards(orgId);
-
-  // if empty, create default without interrupting first time users
-  if (existingStandards.length === 0) {
-    const standard = await client.createOrgStandard(orgId, [
-      { name: 'breaking-changes', config: {} },
-    ]);
-    return standard.slug;
-  }
-
-  const rulesetResponse = await prompts([
-    {
-      type: 'confirm',
-      message:
-        'Would you like to attach a standard to any added APIs? Note that you can always add a standard later',
-      name: 'add',
-      initial: true,
-    },
-    {
-      type: (prev) => (prev && existingStandards.length > 0 ? 'select' : null),
-      message:
-        "Would you like to use an existing standard or create a new standard using Optic's built in rulesets",
-      name: 'useExisting',
-      choices: [
-        {
-          title: 'Use an existing standard',
-          value: 'existing',
-        },
-        {
-          title: "Create a new standard using Optic's built in rulesets",
-          value: 'new',
-        },
-      ],
-    },
-    {
-      type: (prev) => (prev === 'existing' ? 'select' : null),
-      name: 'standard',
-      message: 'Select an existing standard to add to these APIs',
-      choices: existingStandards.map((r) => ({
-        title: r.slug,
-        value: r.slug,
-      })),
-    },
-  ]);
-
-  if (rulesetResponse.standard) {
-    return rulesetResponse.standard;
-  } else if (rulesetResponse.add && rulesetResponse.useExisting === 'new') {
-    const createRulesetResponse = await prompts({
-      type: 'multiselect',
-      name: 'rulesets',
-      min: 1,
-      hint: '- Space to select. Return to submit',
-      message: 'Select the rulesets you want to add to your standard',
-      choices: [
-        { title: 'Breaking changes', value: 'breaking-changes' },
-        { title: 'Enforce naming conventions', value: 'naming' },
-        { title: 'Require examples in schemas', value: 'examples' },
-      ],
-    });
-
-    if (
-      createRulesetResponse.rulesets &&
-      createRulesetResponse.rulesets.length > 0
-    ) {
-      const rulesetsToAdd: string[] = createRulesetResponse.rulesets;
-      const rulesetsWithConfig = rulesetsToAdd.map((rulesetName) => ({
-        name: rulesetName,
-        config: getDefaultRulesetConfig(rulesetName),
-      }));
-      const standard = await client.createOrgStandard(
-        orgId,
-        rulesetsWithConfig
-      );
-      const standardUrl = getStandardsUrl(
-        client.getWebBase(),
-        orgId,
-        standard.id
-      );
-
-      logger.info(
-        `A new standard has been created. You can view and edit this standard at ${standardUrl}`
-      );
-      return standard.slug;
-    }
-  }
-}
-
-async function verifyStandardExists(
-  standard: string,
-  client: OpticBackendClient
-): Promise<{ ok: boolean }> {
-  try {
-    await client.getStandard(standard);
-    return { ok: true };
-  } catch (e) {
-    return { ok: false };
-  }
-}
-
 async function crawlCandidateSpecs(
   orgId: string,
   [path, shas]: [string, string[]],
   config: OpticCliConfig,
   options: {
     path_to_spec: string | undefined;
-    standard: string | undefined;
     web?: boolean;
     default_branch: string;
     web_url?: string;
@@ -330,12 +215,10 @@ async function crawlCandidateSpecs(
     if (/.json/i.test(path)) {
       await writeJson(path, {
         [OPTIC_URL_KEY]: api.url,
-        ...(options.standard ? { [OPTIC_STANDARD_KEY]: options.standard } : {}),
       });
     } else {
       await writeYml(path, {
         [OPTIC_URL_KEY]: api.url,
-        ...(options.standard ? { [OPTIC_STANDARD_KEY]: options.standard } : {}),
       });
     }
     logger.debug(`Added spec ${path} to ${api.url}`);
@@ -412,20 +295,6 @@ export const getApiAddAction =
       return;
     }
     logger.info('');
-
-    let standard = options.standard;
-    if (!standard) {
-      standard = await promptForStandard(orgRes.org.id, config.client);
-    } else {
-      const results = await verifyStandardExists(standard, config.client);
-      if (!results.ok) {
-        logger.warn(
-          chalk.yellow(
-            `Warning: It looks like the standard ${standard} does not exist.`
-          )
-        );
-      }
-    }
 
     let default_branch: string = '';
     let web_url: string | undefined = undefined;
@@ -505,11 +374,14 @@ export const getApiAddAction =
     for await (const candidate of candidates) {
       await crawlCandidateSpecs(orgRes.org.id, candidate, config, {
         path_to_spec,
-        standard,
         web: options.web,
         default_branch,
         web_url,
       });
     }
+
+    logger.info('');
+    logger.info(chalk.blue.bold(`Setup CI checks by running "optic ci setup"`));
+
     await flushEvents();
   };
