@@ -20,12 +20,15 @@ export const registerLogin = (cli: Command, config: OpticCliConfig) => {
 const getLoginAction = (config: OpticCliConfig) => async () => {
   const userConfig = await readUserConfig();
   if (userConfig?.token) {
-    const { overwrite } = await prompts({
-      type: 'confirm',
-      name: 'overwrite',
-      message:
-        'It appears you are already logged in, would you like to continue? Continuing will overwrite the old login credentials',
-    });
+    const { overwrite } = await prompts(
+      {
+        type: 'confirm',
+        name: 'overwrite',
+        message:
+          'It appears you are already logged in, would you like to continue? Continuing will overwrite the old login credentials',
+      },
+      { onCancel: () => process.exit(1) }
+    );
     if (!overwrite) {
       return;
     }
@@ -44,11 +47,14 @@ Create an account and generate a personal access token at ${chalk.underline.blue
   // prompt breaks if we steal focus as its starting.
   setTimeout(() => open(tokenUrl), 100);
 
-  const response = await prompts({
-    type: 'password',
-    name: 'token',
-    message: 'Enter your token here:',
-  });
+  const response = await prompts(
+    {
+      type: 'password',
+      name: 'token',
+      message: 'Enter your token here:',
+    },
+    { onCancel: () => process.exit(1) }
+  );
 
   if (response.token) {
     const base64Token = Buffer.from(response.token).toString('base64');
