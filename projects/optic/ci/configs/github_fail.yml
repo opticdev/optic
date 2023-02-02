@@ -24,5 +24,3 @@ jobs:
           # If false, standard check failures will show in PR comments and
           # in Optic Cloud but will not cause the action to fail
           standards_fail: true
-        env:
-          OPTIC_ENV: staging
