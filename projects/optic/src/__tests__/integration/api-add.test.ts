@@ -85,7 +85,7 @@ describe('optic api add', () => {
       }
       const { combined, code } = await runOptic(
         workspace,
-        'api add ./spec.yml --standard blah'
+        'api add ./spec.yml'
       );
 
       expect(code).toBe(0);
@@ -112,7 +112,7 @@ describe('optic api add', () => {
 
       const { combined, code } = await runOptic(
         workspace,
-        'api add --all --standard blah'
+        'api add --all'
       );
 
       expect(code).toBe(0);
