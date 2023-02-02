@@ -1,3 +1,4 @@
+import { url } from 'node:inspector';
 import { URL } from 'node:url';
 import urljoin from 'url-join';
 
@@ -66,4 +67,21 @@ export function getStandardsUrl(
 
 export function getNewTokenUrl(baseUrl: string) {
   return urljoin(baseUrl, 'user-settings/personal-access-token/new');
+}
+
+export function getCiSetupUrl(
+  baseUrl: string,
+  provider?: string,
+  web_url?: string
+) {
+  const url = new URL(urljoin(baseUrl, 'ci-setup'));
+  if (provider) {
+    url.searchParams.set('provider', provider);
+  }
+
+  if (web_url) {
+    url.searchParams.set('web_url', web_url);
+  }
+
+  return url.toString();
 }
