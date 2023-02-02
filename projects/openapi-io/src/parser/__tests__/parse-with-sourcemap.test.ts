@@ -202,4 +202,13 @@ describe('circular references', () => {
     JSON.stringify(fileResults.jsonLike);
     expect(fileResults.jsonLike).toMatchSnapshot();
   });
+
+  test('does not parse date strings as JS dates', async () => {
+    const fileResults = await parseOpenAPIWithSourcemap(
+      path.resolve(path.join(__dirname, '../../../inputs/date-example.yml'))
+    );
+
+    JSON.stringify(fileResults.jsonLike);
+    expect(fileResults.jsonLike).toMatchSnapshot();
+  });
 });

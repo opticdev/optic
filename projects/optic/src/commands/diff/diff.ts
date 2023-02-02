@@ -24,10 +24,10 @@ import { compressData, compressDataV2 } from './compressResults';
 import { generateRuleRunner } from './generate-rule-runner';
 import { OPTIC_STANDARD_KEY } from '../../constants';
 import { uploadDiff } from './upload-diff';
-import { getRunUrl } from '../../utils/cloud-urls';
 import { writeDataForCi } from '../../utils/ci-data';
 import { logger } from '../../logger';
 import { errorHandler } from '../../error-handler';
+import path from 'path';
 
 const description = `run a diff between two API specs`;
 
@@ -133,6 +133,8 @@ const runDiff = async (
   );
   const diffResults = { checks, specResults, changelogData, warnings };
 
+  const hasOpticUrl = headFile.jsonLike['x-optic-url'];
+
   if (options.json) {
     console.log(
       JSON.stringify(
@@ -179,10 +181,15 @@ const runDiff = async (
       logger.info(log);
     }
 
-    if (!config.isInCi) {
-      logger.info('');
+    logger.info('');
+
+    if (!hasOpticUrl) {
       logger.info(
-        `Configure check standards in optic cloud or your local optic.dev.yml file.`
+        chalk.blue.bold(
+          `See the full history of this API by running "optic api add ${
+            path.parse(baseFile.sourcemap.rootFilePath).base
+          } --history-depth 0"`
+        )
       );
     }
   }
@@ -337,7 +344,7 @@ const getDiffAction =
 
     if (!options.web && !options.json && !config.isInCi) {
       logger.info(
-        chalk.blue(
+        chalk.bold.blue(
           `Rerun this command with the --web flag to view the detailed changes in your browser`
         )
       );

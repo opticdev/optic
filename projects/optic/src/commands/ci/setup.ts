@@ -6,13 +6,12 @@ import path from 'path';
 import chalk from 'chalk';
 import open from 'open';
 import { guessRemoteOrigin } from '../../utils/git-utils';
-import { getApiAddAction } from '../api/add';
 import { errorHandler } from '../../error-handler';
+import { getCiSetupUrl } from '../../utils/cloud-urls';
+
+type MaybeProvider = Awaited<ReturnType<typeof guessRemoteOrigin>>;
 
 const configsPath = path.join(__dirname, '..', '..', '..', 'ci', 'configs');
-
-const githubInstructions = 'https://www.useoptic.com/docs/github';
-const gitlabInstructions = 'https://www.useoptic.com/docs/gitlab';
 
 const usage = () => `
   optic ci setup
@@ -33,7 +32,6 @@ export const registerCiSetup = (cli: Command, config: OpticCliConfig) => {
 type PromptAnswers = {
   provider: 'GitHub' | 'GitLab';
   standardsFail: boolean;
-  discover?: boolean | undefined;
 };
 
 const getCiSetupAction = (config: OpticCliConfig) => async () => {
@@ -61,48 +59,22 @@ const getCiSetupAction = (config: OpticCliConfig) => async () => {
           { title: 'No', value: false },
         ],
       },
-      {
-        type: config.isAuthenticated ? 'select' : false,
-        name: 'discover',
-        message:
-          'Would you like to discover API specs in the current repository?',
-        choices: [
-          { title: 'Yes - Recommended', value: true },
-          { title: 'No', value: false },
-        ],
-      },
     ],
     { onCancel: () => process.exit(1) }
   );
 
-  if (answers.discover) {
-    console.log();
-    console.log(`${chalk.green('✔')} Discovering API specs in your repo`);
-
-    try {
-      await getApiAddAction(config)(undefined, {
-        historyDepth: '1',
-        all: true,
-      });
-      console.log(`${chalk.green('✔')} Discovery complete`);
-    } catch (e) {
-      console.log(
-        chalk.red(`Discovery failed with error: ${(e as Error).message}`)
-      );
-      console.log('Continuing.');
-    }
-
-    console.log();
-  }
-
   if (answers.provider === 'GitHub') {
-    await setupGitHub(config, answers);
+    await setupGitHub(config, maybeProvider, answers);
   } else if (answers.provider === 'GitLab') {
-    await setupGitLab(config, answers);
+    await setupGitLab(config, maybeProvider, answers);
   }
 };
 
-async function setupGitHub(config: OpticCliConfig, answers: PromptAnswers) {
+async function setupGitHub(
+  config: OpticCliConfig,
+  provider: MaybeProvider,
+  answers: PromptAnswers
+) {
   const target = '.github/workflows/optic.yml';
   const targetPath = path.join(config.root, target);
   const targetDir = path.dirname(targetPath);
@@ -129,24 +101,28 @@ async function setupGitHub(config: OpticCliConfig, answers: PromptAnswers) {
     } CI configuration to ${target}`
   );
 
+  const instructionsUrl = getCiSetupUrl(
+    config.client.getWebBase(),
+    provider?.provider,
+    provider?.web_url
+  );
+
   console.log();
   console.log(chalk.red("Wait, you're not finished yet"));
   console.log(
-    `Before pushing your new GitHub Actions workflow, follow the instructions at ${githubInstructions} to set up the required secrets in your repository.`
+    `Before pushing your new GitHub Actions workflow, follow the instructions at ${instructionsUrl} to set up the required secrets in your repository.`
   );
 
-  if (answers.discover === undefined) {
-    console.log();
-    console.log(
-      "Since you aren't logged in, api discovery was not run. Run `optic login` to log in and then run `optic api add --all` in this repo to discover all api specs."
-    );
-  }
   console.log();
 
-  await openUrlPrompt(githubInstructions);
+  await openUrlPrompt(instructionsUrl);
 }
 
-async function setupGitLab(config: OpticCliConfig, answers: PromptAnswers) {
+async function setupGitLab(
+  config: OpticCliConfig,
+  provider: MaybeProvider,
+  answers: PromptAnswers
+) {
   const target = '.gitlab-ci.yml';
   const targetPath = path.join(config.root, target);
   const targetDir = path.dirname(targetPath);
@@ -173,15 +149,21 @@ async function setupGitLab(config: OpticCliConfig, answers: PromptAnswers) {
     } CI configuration to ${target}`
   );
 
+  const instructionsUrl = getCiSetupUrl(
+    config.client.getWebBase(),
+    provider?.provider,
+    provider?.web_url
+  );
+
   console.log();
   console.log(chalk.red("Wait, you're not finished yet"));
   console.log(
     'Before pushing your new GitLab CI/CD pipeline, follow the instructions at\n' +
-      `${gitlabInstructions} to set up the required secrets in your repository.`
+      `${instructionsUrl} to set up the required secrets in your repository.`
   );
   console.log();
 
-  await openUrlPrompt(gitlabInstructions);
+  await openUrlPrompt(instructionsUrl);
 }
 
 async function verifyPath(root: string, target: string): Promise<boolean> {
@@ -198,7 +180,7 @@ async function verifyPath(root: string, target: string): Promise<boolean> {
       {
         type: 'confirm',
         name: 'continue',
-        message: `Continuing will ovewrite the file at ${target}. Continue?`,
+        message: `Continuing will overwrite the file at ${target}. Continue?`,
       },
       { onCancel: () => process.exit(1) }
     );
@@ -214,7 +196,7 @@ async function openUrlPrompt(url: string) {
     {
       type: 'confirm',
       name: 'open',
-      message: `Open ${url} in your browser?`,
+      message: `Open setup instructions in your browser?`,
       initial: true,
     },
     { onCancel: () => process.exit(1) }
