@@ -69,7 +69,7 @@ function parseSpecVersion(
   }
 }
 
-async function specFromInputToResults(
+export async function parseSpecAndDereference(
   input: SpecFromInput,
   config: OpticCliConfig,
   workingDir: string = process.cwd()
@@ -129,6 +129,20 @@ async function specFromInputToResults(
   }
 }
 
+export function validateAndDenormalize(
+  parseResult: ParseResult,
+  options: {
+    strict: boolean;
+    denormalize: boolean;
+  }
+): ParseResult {
+  validateOpenApiV3Document(parseResult.jsonLike, parseResult.sourcemap, {
+    strictOpenAPI: options.strict,
+  });
+
+  return options.denormalize ? denormalize(parseResult) : parseResult;
+}
+
 // filePathOrRef can be a path, or a gitref:path (delimited by `:`)
 export const getFileFromFsOrGit = async (
   filePathOrRef: string | undefined,
@@ -138,18 +152,13 @@ export const getFileFromFsOrGit = async (
     denormalize: boolean;
   }
 ): Promise<ParseResult> => {
-  const file = await specFromInputToResults(
+  const file = await parseSpecAndDereference(
     parseSpecVersion(filePathOrRef, defaultEmptySpec),
     config,
     process.cwd()
-  ).then((results) => {
-    validateOpenApiV3Document(results.jsonLike, results.sourcemap, {
-      strictOpenAPI: options.strict,
-    });
-    return results;
-  });
+  );
 
-  return options.denormalize ? denormalize(file) : file;
+  return validateAndDenormalize(file, options);
 };
 
 export const parseFilesFromRef = async (
@@ -181,38 +190,32 @@ export const parseFilesFromRef = async (
   ]);
 
   return {
-    baseFile: await specFromInputToResults(
+    baseFile: await parseSpecAndDereference(
       parseSpecVersion(
         existsOnBase ? `${base}:${gitFileName}` : undefined,
         defaultEmptySpec
       ),
       config,
       process.cwd()
-    )
-      .then((results) => {
-        validateOpenApiV3Document(results.jsonLike, results.sourcemap, {
-          strictOpenAPI: false,
-        });
-        return results;
-      })
-      .then((results) =>
-        options.denormalize ? denormalize(results) : results
-      ),
-    headFile: await specFromInputToResults(
+    ).then((file) => {
+      return validateAndDenormalize(file, {
+        denormalize: options.denormalize,
+        strict: false,
+      });
+    }),
+    headFile: await parseSpecAndDereference(
       parseSpecVersion(
         existsOnHead ? absolutePath : undefined,
         defaultEmptySpec
       ),
       config,
       process.cwd()
-    )
-      .then((results) => {
-        validateOpenApiV3Document(results.jsonLike, results.sourcemap);
-        return results;
-      })
-      .then((results) =>
-        options.denormalize ? denormalize(results) : results
-      ),
+    ).then((file) => {
+      return validateAndDenormalize(file, {
+        denormalize: options.denormalize,
+        strict: true,
+      });
+    }),
     pathFromGitRoot: gitFileName,
   };
 };
