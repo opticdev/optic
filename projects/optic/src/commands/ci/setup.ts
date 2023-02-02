@@ -6,7 +6,6 @@ import path from 'path';
 import chalk from 'chalk';
 import open from 'open';
 import { guessRemoteOrigin } from '../../utils/git-utils';
-import { getApiAddAction } from '../api/add';
 import { errorHandler } from '../../error-handler';
 import { getCiSetupUrl } from '../../utils/cloud-urls';
 
@@ -33,7 +32,6 @@ export const registerCiSetup = (cli: Command, config: OpticCliConfig) => {
 type PromptAnswers = {
   provider: 'GitHub' | 'GitLab';
   standardsFail: boolean;
-  discover?: boolean | undefined;
 };
 
 const getCiSetupAction = (config: OpticCliConfig) => async () => {
@@ -61,39 +59,9 @@ const getCiSetupAction = (config: OpticCliConfig) => async () => {
           { title: 'No', value: false },
         ],
       },
-      {
-        type: config.isAuthenticated ? 'select' : false,
-        name: 'discover',
-        message:
-          'Would you like to discover API specs in the current repository?',
-        choices: [
-          { title: 'Yes - Recommended', value: true },
-          { title: 'No', value: false },
-        ],
-      },
     ],
     { onCancel: () => process.exit(1) }
   );
-
-  if (answers.discover) {
-    console.log();
-    console.log(`${chalk.green('✔')} Discovering API specs in your repo`);
-
-    try {
-      await getApiAddAction(config)(undefined, {
-        historyDepth: '1',
-        all: true,
-      });
-      console.log(`${chalk.green('✔')} Discovery complete`);
-    } catch (e) {
-      console.log(
-        chalk.red(`Discovery failed with error: ${(e as Error).message}`)
-      );
-      console.log('Continuing.');
-    }
-
-    console.log();
-  }
 
   if (answers.provider === 'GitHub') {
     await setupGitHub(config, maybeProvider, answers);
@@ -145,12 +113,7 @@ async function setupGitHub(
     `Before pushing your new GitHub Actions workflow, follow the instructions at ${instructionsUrl} to set up the required secrets in your repository.`
   );
 
-  if (answers.discover === undefined) {
-    console.log();
-    console.log(
-      "Since you aren't logged in, api discovery was not run. Run `optic login` to log in and then run `optic api add --all` in this repo to discover all api specs."
-    );
-  }
+
   console.log();
 
   await openUrlPrompt(instructionsUrl);
@@ -218,7 +181,7 @@ async function verifyPath(root: string, target: string): Promise<boolean> {
       {
         type: 'confirm',
         name: 'continue',
-        message: `Continuing will ovewrite the file at ${target}. Continue?`,
+        message: `Continuing will overwrite the file at ${target}. Continue?`,
       },
       { onCancel: () => process.exit(1) }
     );
