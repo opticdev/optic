@@ -34,22 +34,18 @@ export const initCli = async () => {
   initSegment(process.env.SEGMENT_KEY);
   cli.hook('preAction', async (command) => {
     const subcommands = ['ruleset', 'oas', 'api', 'spec', 'ci'];
-    try {
-      let commandName: string;
-      let args: string[];
-      if (subcommands.includes(command.args[0])) {
-        commandName = command.args.slice(0, 2).join('.');
-        args = command.args.slice(2);
-      } else {
-        [commandName, ...args] = command.args;
-      }
-      trackEvent(`optic.${commandName}`, {
-        args,
-        isInCi: process.env.CI === 'true',
-      });
-      await flushEvents();
-      // we can ignore non-critical tracking errors
-    } catch (e) {}
+    let commandName: string;
+    let args: string[];
+    if (subcommands.includes(command.args[0])) {
+      commandName = command.args.slice(0, 2).join('.');
+      args = command.args.slice(2);
+    } else {
+      [commandName, ...args] = command.args;
+    }
+    trackEvent(`optic.${commandName}`, {
+      args,
+      isInCi: process.env.CI === 'true',
+    });
   });
 
   const notifier = updateNotifier({
@@ -70,6 +66,10 @@ ${chalk.green(chalk.bold(`New Optic version available:`))} ${
 Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
       );
     }
+    try {
+      await flushEvents();
+      // we can ignore non-critical tracking errors
+    } catch (e) {}
   });
 
   const cliConfig = await initializeConfig();
