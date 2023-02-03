@@ -363,6 +363,7 @@ const getDiffAllAction =
           'Error: Must be logged in to upload results. Run optic login to authenticate.'
         )
       );
+      process.exitCode = 1;
       return;
     }
 
