@@ -93,6 +93,7 @@ Checks
 [32m✔[39m Uploaded results of diff to http://localhost:3000/organizations/org-id/apis/api-id/runs/run-id
 [33mWarning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. \`optic diff-all\` only runs on specs that include \`x-optic-url\` keys that point to specs uploaded to optic.[39m
 Run the \`optic api add\` command to add these specs to optic
+spec-with-invalid-url.yml
 specwithoutkey.json
 specwithoutkey.yml
 
@@ -100,6 +101,6 @@ specwithoutkey.yml
 `;
 
 exports[`diff-all diffs all files with --json 1`] = `
-"{"results":{"mvspec.yml":{"operations":[{"name":"POST /filler_route","change":"removed","attributes":[{"key":"","before":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}}}}},"change":"removed"}],"parameters":[],"responses":[]}]},"specwithkey.json":{"operations":[]},"specwithkey.yml":{"operations":[]},"movedspec.yml":{"operations":[{"name":"POST /filler_route","change":"added","attributes":[{"key":"","after":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}}}}},"change":"added"}],"parameters":[],"responses":[]}]}},"warnings":{"missingOpticUrl":[{"path":"specwithoutkey.json"},{"path":"specwithoutkey.yml"}],"unparseableFromSpec":[],"unparseableToSpec":[]}}
+"{"results":{"mvspec.yml":{"operations":[{"name":"POST /filler_route","change":"removed","attributes":[{"key":"","before":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}}}}},"change":"removed"}],"parameters":[],"responses":[]}]},"specwithkey.json":{"operations":[]},"specwithkey.yml":{"operations":[]},"movedspec.yml":{"operations":[{"name":"POST /filler_route","change":"added","attributes":[{"key":"","after":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}}}}},"change":"added"}],"parameters":[],"responses":[]}]}},"warnings":{"missingOpticUrl":[{"path":"spec-with-invalid-url.yml"},{"path":"specwithoutkey.json"},{"path":"specwithoutkey.yml"}],"unparseableFromSpec":[],"unparseableToSpec":[]}}
 "
 `;
