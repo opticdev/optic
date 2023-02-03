@@ -113,7 +113,6 @@ async function setupGitHub(
     `Before pushing your new GitHub Actions workflow, follow the instructions at ${instructionsUrl} to set up the required secrets in your repository.`
   );
 
-
   console.log();
 
   await openUrlPrompt(instructionsUrl);

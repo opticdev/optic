@@ -1,8 +1,8 @@
 {
   "name": "@useoptic/openapi-utilities",
   "license": "MIT",
-  "version": "0.36.15-0",
   "packageManager": "yarn@3.4.1",
+  "version": "0.36.16-0",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -23,7 +23,7 @@
     "@babel/preset-env": "^7.17.0",
     "@babel/preset-react": "^7.17.0",
     "@babel/preset-typescript": "^7.17.0",
-    "@types/analytics-node": "^3.1.7",
+    "@types/analytics-node": "^3.1.10",
     "@types/babel__core": "^7",
     "@types/babel__preset-env": "^7",
     "@types/is-url": "^1.2.30",
@@ -65,5 +65,5 @@
     "ts-invariant": "^0.9.3",
     "yaml-ast-parser": "^0.0.43"
   },
-  "stableVersion": "0.36.14"
+  "stableVersion": "0.36.15"
 }

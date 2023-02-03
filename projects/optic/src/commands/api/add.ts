@@ -15,10 +15,7 @@ import { OpticBackendClient } from '../../client';
 import { uploadSpec } from '../../utils/cloud-specs';
 import * as Git from '../../utils/git-utils';
 
-import {
-  getApiFromOpticUrl,
-  getApiUrl,
-} from '../../utils/cloud-urls';
+import { getApiFromOpticUrl, getApiUrl } from '../../utils/cloud-urls';
 import {
   flushEvents,
   trackEvent,
@@ -90,15 +87,18 @@ async function getOrganizationToUploadTo(client: OpticBackendClient): Promise<
 
   const { organizations } = await client.getTokenOrgs();
   if (organizations.length > 1) {
-    const response = await prompts({
-      type: 'select',
-      name: 'orgId',
-      message: 'Select the organization you want to add APIs to',
-      choices: organizations.map((org) => ({
-        title: org.name,
-        value: org.id,
-      })),
-    });
+    const response = await prompts(
+      {
+        type: 'select',
+        name: 'orgId',
+        message: 'Select the organization you want to add APIs to',
+        choices: organizations.map((org) => ({
+          title: org.name,
+          value: org.id,
+        })),
+      },
+      { onCancel: () => process.exit(1) }
+    );
     org = organizations.find((o) => o.id === response.orgId)!;
   } else if (organizations.length === 0) {
     process.exitCode = 1;
@@ -315,22 +315,25 @@ export const getApiAddAction =
             'Could not parse git origin details for where this repository lives.'
           )
         );
-        const results = await prompts([
-          {
-            message:
-              'Do you want to enter the origin details manually? This will help optic link your specs back to your git hosting provider',
-            type: 'confirm',
+        const results = await prompts(
+          [
+            {
+              message:
+                'Do you want to enter the origin details manually? This will help optic link your specs back to your git hosting provider',
+              type: 'confirm',
 
-            name: 'add',
-            initial: true,
-          },
-          {
-            type: (prev) => (prev ? 'text' : null),
-            message:
-              'Enter the web url where this API is uploaded (example: https://github.com/opticdev/optic)',
-            name: 'webUrl',
-          },
-        ]);
+              name: 'add',
+              initial: true,
+            },
+            {
+              type: (prev) => (prev ? 'text' : null),
+              message:
+                'Enter the web url where this API is uploaded (example: https://github.com/opticdev/optic)',
+              name: 'webUrl',
+            },
+          ],
+          { onCancel: () => process.exit(1) }
+        );
         if (results.webUrl) {
           web_url = results.webUrl;
         }

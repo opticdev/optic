@@ -6,12 +6,13 @@ import { ParseResult } from '../../utils/spec-loaders';
 import { EMPTY_SPEC_ID, uploadRun, uploadSpec } from '../../utils/cloud-specs';
 import * as Git from '../../utils/git-utils';
 import { logger } from '../../logger';
+import { sanitizeGitTag } from '@useoptic/openapi-utilities';
 
 export async function uploadDiff(
   specs: { from: ParseResult; to: ParseResult },
   specResults: Parameters<typeof uploadRun>['1']['specResults'],
   config: OpticCliConfig
-): Promise<{ runId: string; apiId: string; orgId: string } | null> {
+): Promise<string | null> {
   const showSpinner = logger.getLevel() !== 5;
   const spinner = showSpinner
     ? ora({ text: `Uploading diff...`, color: 'blue' })
@@ -44,7 +45,10 @@ export async function uploadDiff(
     let tags: string[] = [];
     if (specs.to.context.vcs === VCS.Git) {
       const currentBranch = await Git.getCurrentBranchName();
-      tags = [`git:${specs.to.context.sha}`, `gitbranch:${currentBranch}`];
+      tags = [
+        `git:${specs.to.context.sha}`,
+        sanitizeGitTag(`gitbranch:${currentBranch}`),
+      ];
     }
     headSpecId = await uploadSpec(specDetails.apiId, {
       spec: specs.to,
@@ -73,11 +77,7 @@ export async function uploadDiff(
     );
     spinner?.succeed(`Uploaded results of diff to ${url}`);
 
-    return {
-      apiId: specDetails.apiId,
-      runId: run.id,
-      orgId: specDetails.orgId,
-    };
+    return url;
   } else {
     const reason = !specDetails
       ? 'no x-optic-url was set on the spec file'

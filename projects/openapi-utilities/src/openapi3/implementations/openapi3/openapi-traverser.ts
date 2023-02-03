@@ -57,6 +57,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
   format = 'openapi3';
 
   input: (OpenAPIV3.Document | OpenAPIV3_1.Document) | undefined = undefined;
+  warnings: string[] = [];
 
   traverse(input: OpenAPIV3.Document | OpenAPIV3_1.Document): void {
     this.input = input;
@@ -128,7 +129,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     const requestBody = operation.requestBody;
     if (requestBody) {
       if (!isObject(requestBody)) {
-        console.warn(
+        this.warnings.push(
           `Expected an object at: ${getReadableLocation(
             jsonPointer.append(jsonPath, 'requestBody')
           )}, found ${requestBody}`
@@ -151,7 +152,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
           { ...location, inRequest: {} }
         );
       } else {
-        console.warn(
+        this.warnings.push(
           `Expected a flattened spec, found a reference at: ${getReadableLocation(
             jsonPointer.append(jsonPath, 'requestBody')
           )}`
@@ -168,7 +169,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
         statusCode
       );
       if (!isObject(response)) {
-        console.warn(
+        this.warnings.push(
           `Expected an object at: ${getReadableLocation(
             nextJsonPath
           )}, found ${response}`
@@ -182,7 +183,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
           { ...location, inResponse: { statusCode } }
         );
       } else {
-        console.warn(
+        this.warnings.push(
           `Expected a flattened spec, found a reference at: ${getReadableLocation(
             nextJsonPath
           )}`
@@ -258,7 +259,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
       } else if (parameter.in === 'cookie') {
         paramLocation = { ...location, inRequest: { cookie: parameter.name } };
       } else {
-        console.warn('Found a parameter that was not handled');
+        this.warnings.push('Found a parameter that was not handled');
         return;
       }
 
@@ -270,7 +271,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
       for (let [i, parameter] of Object.entries(operation.parameters)) {
         const nextJsonPath = jsonPointer.append(jsonPath, i);
         if (!isObject(parameter)) {
-          console.warn(
+          this.warnings.push(
             `Expected an object at: ${getReadableLocation(
               nextJsonPath
             )}, found ${parameter}`
@@ -287,7 +288,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
             if (fact) yield fact;
           }
         } else {
-          console.warn(
+          this.warnings.push(
             `Expected a flattened spec, found a reference at: ${getReadableLocation(
               nextJsonPath
             )}`
@@ -398,7 +399,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
       for (let [name, header] of Object.entries(response.headers)) {
         const nextJsonPath = jsonPointer.append(jsonPath, 'headers', name);
         if (!isObject(header)) {
-          console.warn(
+          this.warnings.push(
             `Expected an object at: ${getReadableLocation(
               nextJsonPath
             )}, found ${header}`
@@ -418,7 +419,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
             }
           );
         } else {
-          console.warn(
+          this.warnings.push(
             `Expected a flattened spec, found a reference at: ${getReadableLocation(
               nextJsonPath
             )}`
@@ -464,7 +465,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     if (schema) {
       const nextJsonPath = jsonPointer.append(jsonPath, 'schema');
       if (!isObject(schema)) {
-        console.warn(
+        this.warnings.push(
           `Expected an object at: ${getReadableLocation(
             nextJsonPath
           )}, found ${schema}`
@@ -482,7 +483,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
           jsonSchemaTrail: [],
         });
       } else {
-        console.warn(
+        this.warnings.push(
           `Expected a flattened spec, found a reference at: ${getReadableLocation(
             nextJsonPath
           )}`
@@ -494,7 +495,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
       for (let [name, example] of Object.entries(examples)) {
         const nextJsonPath = jsonPointer.append(jsonPath, 'examples', name);
         if (!isObject(example)) {
-          console.warn(
+          this.warnings.push(
             `Expected an object at: ${getReadableLocation(
               nextJsonPath
             )}, found ${example}`
@@ -509,7 +510,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
             name
           );
         } else {
-          console.warn(
+          this.warnings.push(
             `Expected a flattened spec, found a reference at: ${getReadableLocation(
               nextJsonPath
             )}`
@@ -584,7 +585,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
         ];
 
         if (!isObject(branchSchema)) {
-          console.warn(
+          this.warnings.push(
             `Expected an object at: ${getReadableLocation(
               newJsonPath
             )}, found ${branchSchema}`
@@ -597,7 +598,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
             location
           );
         } else {
-          console.warn(
+          this.warnings.push(
             `Expected a flattened spec, found a reference at: ${getReadableLocation(
               newJsonPath
             )}`
@@ -612,7 +613,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
         )) {
           const nextJsonPath = jsonPointer.append(jsonPath, 'properties', key);
           if (!isObject(fieldSchema)) {
-            console.warn(
+            this.warnings.push(
               `Expected an object at: ${getReadableLocation(
                 jsonPath
               )}, nextJsonPath ${fieldSchema}`
@@ -630,7 +631,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
               }
             );
           } else {
-            console.warn(
+            this.warnings.push(
               `Expected a flattened spec, found a reference at: ${getReadableLocation(
                 nextJsonPath
               )}`
@@ -642,7 +643,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
         const arrayItems = schema.items;
         const nextJsonPath = jsonPointer.append(jsonPath, 'items');
         if (!isObject(arrayItems)) {
-          console.warn(
+          this.warnings.push(
             `Expected an object at: ${getReadableLocation(
               nextJsonPath
             )}, found ${arrayItems}`
@@ -658,7 +659,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
             }
           );
         } else {
-          console.warn(
+          this.warnings.push(
             `Expected a flattened spec, found a reference at: ${getReadableLocation(
               nextJsonPath
             )}`
@@ -691,7 +692,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     const nextJsonPath = jsonPointer.append(jsonPath, 'example');
 
     if (!isObject(schema)) {
-      console.warn(
+      this.warnings.push(
         `Expected an object at: ${getReadableLocation(
           nextJsonPath
         )}, found ${schema}`
@@ -708,7 +709,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
         );
       }
     } else {
-      console.warn(
+      this.warnings.push(
         `Expected a flattened spec, found a reference at: ${getReadableLocation(
           nextJsonPath
         )}`
