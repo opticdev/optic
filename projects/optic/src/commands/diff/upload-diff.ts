@@ -12,7 +12,7 @@ export async function uploadDiff(
   specs: { from: ParseResult; to: ParseResult },
   specResults: Parameters<typeof uploadRun>['1']['specResults'],
   config: OpticCliConfig
-): Promise<{ runId: string; apiId: string; orgId: string } | null> {
+): Promise<string | null> {
   const showSpinner = logger.getLevel() !== 5;
   const spinner = showSpinner
     ? ora({ text: `Uploading diff...`, color: 'blue' })
@@ -77,11 +77,7 @@ export async function uploadDiff(
     );
     spinner?.succeed(`Uploaded results of diff to ${url}`);
 
-    return {
-      apiId: specDetails.apiId,
-      runId: run.id,
-      orgId: specDetails.orgId,
-    };
+    return url;
   } else {
     const reason = !specDetails
       ? 'no x-optic-url was set on the spec file'

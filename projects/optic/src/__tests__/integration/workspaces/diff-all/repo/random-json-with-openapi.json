@@ -1,0 +1,7 @@
+{
+  "bad": {
+    "this-isnt-a-spec": {
+      "but has word": "openapi"
+    }
+  }
+}
