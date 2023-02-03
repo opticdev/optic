@@ -17,7 +17,7 @@ const usage = () => `
 
 export const registerCiComment = (cli: Command, config: OpticCliConfig) => {
   cli
-    .command('comment', { hidden: true })
+    .command('comment')
     .configureHelp({
       commandUsage: usage,
     })

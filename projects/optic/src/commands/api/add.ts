@@ -47,7 +47,7 @@ Example usage:
 
 export const registerApiAdd = (cli: Command, config: OpticCliConfig) => {
   cli
-    .command('add', { hidden: true })
+    .command('add')
     .configureHelp({
       commandUsage: usage,
     })
