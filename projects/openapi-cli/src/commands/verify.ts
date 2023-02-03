@@ -136,7 +136,7 @@ export async function verifyCommand(): Promise<Command> {
 
       const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
 
-      const hasOpticUrl = Boolean(spec['x-optic-url'])
+      const hasOpticUrl = Boolean(spec['x-optic-url']);
 
       const interactions = await makeInteractionsIterator();
 
@@ -188,9 +188,13 @@ export async function verifyCommand(): Promise<Command> {
       await flushEvents();
 
       if (Boolean(options.document) && !hasOpticUrl) {
-        console.log('')
-        console.log(chalk.blue.bold(`Share a link to your API documentation with "optic api add ${specPath}"`))
-        console.log('')
+        console.log('');
+        console.log(
+          chalk.blue.bold(
+            `Share a link to your API documentation with "optic api add ${specPath}"`
+          )
+        );
+        console.log('');
       }
 
       if (!options.exit0 && hasDiff) {
