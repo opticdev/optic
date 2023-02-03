@@ -6,6 +6,7 @@ import { ParseResult } from '../../utils/spec-loaders';
 import { EMPTY_SPEC_ID, uploadRun, uploadSpec } from '../../utils/cloud-specs';
 import * as Git from '../../utils/git-utils';
 import { logger } from '../../logger';
+import { sanitizeGitTag } from '@useoptic/openapi-utilities';
 
 export async function uploadDiff(
   specs: { from: ParseResult; to: ParseResult },
@@ -44,7 +45,10 @@ export async function uploadDiff(
     let tags: string[] = [];
     if (specs.to.context.vcs === VCS.Git) {
       const currentBranch = await Git.getCurrentBranchName();
-      tags = [`git:${specs.to.context.sha}`, `gitbranch:${currentBranch}`];
+      tags = [
+        `git:${specs.to.context.sha}`,
+        sanitizeGitTag(`gitbranch:${currentBranch}`),
+      ];
     }
     headSpecId = await uploadSpec(specDetails.apiId, {
       spec: specs.to,
