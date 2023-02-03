@@ -11,9 +11,10 @@ import {
   ParseOpenAPIResult,
   parseOpenAPIWithSourcemap,
   denormalize,
+  loadYaml,
 } from '@useoptic/openapi-io';
 import { OpticCliConfig, VCS } from '../config';
-import { resolveGitRef } from './git-utils';
+import * as Git from './git-utils';
 
 const exec = promisify(callbackExec);
 
@@ -40,10 +41,7 @@ type SpecFromInput =
       value: OpenAPIV3.Document;
     };
 
-function parseSpecVersion(
-  raw: string | undefined,
-  defaultSpec: OpenAPIV3.Document
-): SpecFromInput {
+function parseSpecVersion(raw: string | undefined): SpecFromInput {
   if (raw) {
     if (raw.includes(':') && !(raw.startsWith('C:') || raw.startsWith('D:'))) {
       const index = raw.indexOf(':');
@@ -64,16 +62,35 @@ function parseSpecVersion(
   } else {
     return {
       from: 'empty',
-      value: defaultSpec,
+      value: defaultEmptySpec,
     };
   }
 }
 
-async function specFromInputToResults(
-  input: SpecFromInput,
-  config: OpticCliConfig,
-  workingDir: string = process.cwd()
+// Loads spec without dereferencing
+export async function loadRaw(filePathOrRef: string): Promise<any> {
+  const input = parseSpecVersion(filePathOrRef);
+  let rawString: string;
+  if (input.from === 'file') {
+    rawString = await fs.readFile(filePathOrRef, 'utf-8');
+  } else if (input.from === 'git') {
+    rawString = await Git.gitShow(input.branch, input.name);
+  } else {
+    return input.value;
+  }
+
+  return /\.json$/i.test(filePathOrRef)
+    ? JSON.parse(rawString)
+    : loadYaml(rawString);
+}
+
+async function parseSpecAndDereference(
+  filePathOrRef: string | undefined,
+  config: OpticCliConfig
 ): Promise<ParseResult> {
+  const workingDir = process.cwd();
+  const input = parseSpecVersion(filePathOrRef);
+
   switch (input.from) {
     case 'empty': {
       const emptySpecName = 'empty.json';
@@ -108,7 +125,7 @@ async function specFromInputToResults(
         isEmptySpec: false,
         context: {
           vcs: 'git',
-          sha: await resolveGitRef(input.branch),
+          sha: await Git.resolveGitRef(input.branch),
         },
       };
     }
@@ -129,6 +146,20 @@ async function specFromInputToResults(
   }
 }
 
+function validateAndDenormalize(
+  parseResult: ParseResult,
+  options: {
+    strict: boolean;
+    denormalize: boolean;
+  }
+): ParseResult {
+  validateOpenApiV3Document(parseResult.jsonLike, parseResult.sourcemap, {
+    strictOpenAPI: options.strict,
+  });
+
+  return options.denormalize ? denormalize(parseResult) : parseResult;
+}
+
 // filePathOrRef can be a path, or a gitref:path (delimited by `:`)
 export const getFileFromFsOrGit = async (
   filePathOrRef: string | undefined,
@@ -138,18 +169,9 @@ export const getFileFromFsOrGit = async (
     denormalize: boolean;
   }
 ): Promise<ParseResult> => {
-  const file = await specFromInputToResults(
-    parseSpecVersion(filePathOrRef, defaultEmptySpec),
-    config,
-    process.cwd()
-  ).then((results) => {
-    validateOpenApiV3Document(results.jsonLike, results.sourcemap, {
-      strictOpenAPI: options.strict,
-    });
-    return results;
-  });
+  const file = await parseSpecAndDereference(filePathOrRef, config);
 
-  return options.denormalize ? denormalize(file) : file;
+  return validateAndDenormalize(file, options);
 };
 
 export const parseFilesFromRef = async (
@@ -181,38 +203,24 @@ export const parseFilesFromRef = async (
   ]);
 
   return {
-    baseFile: await specFromInputToResults(
-      parseSpecVersion(
-        existsOnBase ? `${base}:${gitFileName}` : undefined,
-        defaultEmptySpec
-      ),
-      config,
-      process.cwd()
-    )
-      .then((results) => {
-        validateOpenApiV3Document(results.jsonLike, results.sourcemap, {
-          strictOpenAPI: false,
-        });
-        return results;
-      })
-      .then((results) =>
-        options.denormalize ? denormalize(results) : results
-      ),
-    headFile: await specFromInputToResults(
-      parseSpecVersion(
-        existsOnHead ? absolutePath : undefined,
-        defaultEmptySpec
-      ),
-      config,
-      process.cwd()
-    )
-      .then((results) => {
-        validateOpenApiV3Document(results.jsonLike, results.sourcemap);
-        return results;
-      })
-      .then((results) =>
-        options.denormalize ? denormalize(results) : results
-      ),
+    baseFile: await parseSpecAndDereference(
+      existsOnBase ? `${base}:${gitFileName}` : undefined,
+      config
+    ).then((file) => {
+      return validateAndDenormalize(file, {
+        denormalize: options.denormalize,
+        strict: false,
+      });
+    }),
+    headFile: await parseSpecAndDereference(
+      existsOnHead ? absolutePath : undefined,
+      config
+    ).then((file) => {
+      return validateAndDenormalize(file, {
+        denormalize: options.denormalize,
+        strict: true,
+      });
+    }),
     pathFromGitRoot: gitFileName,
   };
 };

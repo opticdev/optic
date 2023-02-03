@@ -34,6 +34,17 @@ export const getDefaultBranchName = async (): Promise<string | null> =>
     exec(command, cb);
   });
 
+export const gitShow = async (ref: string, path: string): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const cb = (err: unknown, stdout: string, stderr: string) => {
+      if (err || stderr || !stdout) reject(err || new Error(stderr));
+      resolve(stdout.trim());
+    };
+
+    const command = `git show ${ref}:${path}`;
+    exec(command, cb);
+  });
+
 export const getCurrentBranchName = async (): Promise<string> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
