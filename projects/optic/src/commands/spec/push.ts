@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import open from 'open';
-import { SPEC_TAG_REGEXP } from '@useoptic/openapi-utilities';
+import { sanitizeGitTag, SPEC_TAG_REGEXP } from '@useoptic/openapi-utilities';
 
 import { OpticCliConfig, VCS } from '../../config';
 import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
@@ -27,7 +27,7 @@ Example usage:
 
 export const registerSpecPush = (cli: Command, config: OpticCliConfig) => {
   cli
-    .command('push', { hidden: true })
+    .command('push')
     .configureHelp({
       commandUsage: usage,
     })
@@ -77,7 +77,9 @@ const getSpecPushAction =
     if (config.vcs?.type === VCS.Git) {
       if (config.vcs.status === 'clean') {
         const sha = `git:${config.vcs.sha}`;
-        const branch = `gitbranch:${await Git.getCurrentBranchName()}`;
+        const branch = sanitizeGitTag(
+          `gitbranch:${await Git.getCurrentBranchName()}`
+        );
         tagsToAdd.push(sha, branch);
         logger.info(
           `Automatically adding the git sha ${sha} and branch ${branch} as tags `
