@@ -3142,10 +3142,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/analytics-node@npm:^3.1.7":
-  version: 3.1.7
-  resolution: "@types/analytics-node@npm:3.1.7"
-  checksum: b1ec25c26e69677e19cd46f65a2a690af28af51dcb68c1af799c7d62864cd2544b69e10b5b68922882f82226a16d36e021346b27f459697abd9addb4a2a12ac8
+"@types/analytics-node@npm:^3.1.10":
+  version: 3.1.10
+  resolution: "@types/analytics-node@npm:3.1.10"
+  checksum: e4e4ac78817202c5329aa406dbbf304bb31ab56f70e83dbb03ddb3a5ad1ff480ca6a0425e638b01dff716504c4756cddc1dc525fff3f53903c9b50f7bb6c8d6c
   languageName: node
   linkType: hard
 
@@ -3738,7 +3738,7 @@ __metadata:
     "@httptoolkit/httpolyglot": ^2.0.1
     "@jsdevtools/ono": ^7.1.3
     "@sentry/node": ^7.10.0
-    "@types/analytics-node": ^3.1.7
+    "@types/analytics-node": ^3.1.10
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
     "@types/bent": ^7
@@ -3880,7 +3880,7 @@ __metadata:
     "@babel/preset-typescript": ^7.17.0
     "@octokit/rest": ^19.0.0
     "@sentry/node": ^7.10.0
-    "@types/analytics-node": ^3.1.7
+    "@types/analytics-node": ^3.1.10
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
     "@types/is-url": ^1.2.30
