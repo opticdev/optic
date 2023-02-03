@@ -17,7 +17,7 @@ optic-diff-push:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
   script:
     - npm install -g @useoptic/optic
-    - optic diff-all --check
+    - optic diff-all --check --upload
 
 # on merge request, diff with the base and post a comment
 optic-diff-merge-request:
