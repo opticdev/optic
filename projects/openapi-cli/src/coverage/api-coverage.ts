@@ -125,11 +125,11 @@ export class ApiCoverageCounter {
         });
       });
     });
-
+    
     return {
       branches,
       count,
-      percent: ((count / branches) * 100).toFixed(1),
+      percent: branches === 0 ? 0 : ((count / branches) * 100).toFixed(1),
       totalRequests: this.coverage.counts.total,
     };
   };
