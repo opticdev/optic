@@ -185,6 +185,7 @@ export async function captureCommand(): Promise<Command> {
                   feedback.success(`Wrote har to ${outputPath}`);
                   return fs.move(inProgressName, outputPath);
                 }
+                feedback.success(`Wrote har traffic to ${completedName}`);
                 return fs.move(inProgressName, completedName);
               })(),
             ])
