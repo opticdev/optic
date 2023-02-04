@@ -1,6 +1,7 @@
 import url from 'url';
 import { createCommandFeedback } from '../commands/reporters/feedback';
 import { platform, runCommand } from '../shell-utils';
+import { parseMacNetworkLine } from './mac-system-proxy';
 
 export class SystemProxy {
   constructor(
@@ -14,6 +15,18 @@ export class SystemProxy {
 
     if (platform === 'mac') {
       const name = await chooseInterfaceMac();
+
+      const previousState = await Promise.all([
+        runCommand(`networksetup -getwebproxy "${name}"`).then(
+          parseMacNetworkLine
+        ),
+        runCommand(`networksetup -getsecurewebproxy "${name}"`).then(
+          parseMacNetworkLine
+        ),
+        runCommand(`networksetup -getproxybypassdomains "${name}"`).then(
+          (result) => result.trim()
+        ),
+      ]);
 
       await Promise.all([
         runCommand(`networksetup -setwebproxy "${name}" 127.0.0.1 ${port}`),
@@ -30,10 +43,35 @@ export class SystemProxy {
       );
 
       this.stopCommand = async () => {
-        await Promise.all([
-          runCommand(`networksetup -setwebproxystate "${name}" off`),
-          runCommand(`networksetup -setsecurewebproxystate "${name}" off`),
-        ]);
+        // no proxy before
+        if (!previousState[0].enabled && !previousState[1].enabled) {
+          await Promise.all([
+            runCommand(`networksetup -setwebproxystate "${name}" off`),
+            runCommand(`networksetup -setsecurewebproxystate "${name}" off`),
+          ]);
+        } else {
+          const nonSecureProxy = previousState[0];
+          const secureProxy = previousState[1];
+          const bypass = previousState[2];
+          await Promise.all([
+            runCommand(
+              `networksetup -setwebproxystate "${name}" ${
+                nonSecureProxy.host
+              } ${nonSecureProxy.port} ${
+                nonSecureProxy.authenticated ? 'on' : 'off'
+              }`
+            ),
+            runCommand(
+              `networksetup -setsecurewebproxystate "${name}" ${
+                secureProxy.host
+              } ${secureProxy.port} ${secureProxy.authenticated ? 'on' : 'off'}`
+            ),
+            runCommand(
+              `networksetup -setproxybypassdomains "${name}" "${bypass}"`
+            ),
+          ]);
+        }
+
         this.feedback.notable(`Mac System Proxy settings cleared`);
       };
     } else {

@@ -125,7 +125,7 @@ export class ApiCoverageCounter {
         });
       });
     });
-    
+
     return {
       branches,
       count,
