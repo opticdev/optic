@@ -187,6 +187,13 @@ export async function verifyCommand(): Promise<Command> {
 
       await flushEvents();
 
+      // clear captures
+      if ((options.document || options.patch) && !options.har) {
+        const [, captureStorageDirectory] = await captureStorage(specPath);
+        console.log("Resetting captured traffic")
+        await fs.remove(captureStorageDirectory)
+      }
+
       if (Boolean(options.document) && !hasOpticUrl) {
         console.log('');
         console.log(
