@@ -384,6 +384,7 @@ const getDiffAllAction =
           'Error: Must be logged in to upload results. Run optic login to authenticate.'
         )
       );
+      process.exitCode = 1;
       return;
     }
 
@@ -468,11 +469,17 @@ const getDiffAllAction =
       const errors: { name: string; error: string }[] = [
         ...warnings.unparseableFromSpec.map((spec) => ({
           name: spec.path,
-          error: (spec.error as Error).message,
+          error: `Could not parse spec ${spec.path} from the ref ${
+            options.compareFrom
+          }
+
+${(spec.error as Error).message}`,
         })),
         ...warnings.unparseableToSpec.map((spec) => ({
           name: spec.path,
-          error: (spec.error as Error).message,
+          error: `Could not parse spec ${spec.path}
+
+${(spec.error as Error).message}`,
         })),
       ];
       const completedComparisons = results.map((result) => ({
