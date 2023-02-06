@@ -126,28 +126,44 @@ async function setupGitLab(
   const target = '.gitlab-ci.yml';
   const targetPath = path.join(config.root, target);
   const targetDir = path.dirname(targetPath);
-  const shouldContinue = await verifyPath(config.root, target);
 
-  if (!shouldContinue) {
-    return;
+  let exists = false;
+  try {
+    await fs.access(targetPath);
+    exists = true;
+  } catch (e) {
+    exists = false;
   }
-
-  await fs.mkdir(targetDir, { recursive: true });
 
   const fromConfig = path.join(
     configsPath,
     answers.standardsFail ? 'gitlab_fail.yml' : 'gitlab_no_fail.yml'
   );
-
   const configContent = await fs.readFile(fromConfig);
-  await fs.writeFile(path.join(config.root, target), configContent);
 
-  console.log();
-  console.log(
-    `${chalk.green('✔')} Wrote ${
-      answers.provider
-    } CI configuration to ${target}`
-  );
+  if (!exists) {
+    await fs.mkdir(targetDir, { recursive: true });
+
+    await fs.writeFile(targetPath, configContent);
+
+    console.log();
+    console.log(
+      `${chalk.green('✔')} Wrote ${
+        answers.provider
+      } CI configuration to ${target}`
+    );
+  } else {
+    console.log();
+    console.log(
+      chalk.green(
+        "Since you already have a .gitlab-ci.yml file, here's an example of what you'll need to add:"
+      )
+    );
+    console.log();
+    console.log('-- .gitlab-ci.yml -----');
+    console.log(configContent.toString());
+    console.log('-----------------------');
+  }
 
   const instructionsUrl = getCiSetupUrl(
     config.client.getWebBase(),
