@@ -40,6 +40,7 @@ export async function captureCommand(): Promise<Command> {
       '--no-tls',
       'disable TLS support for --proxy and prevent generation of new CA certificates'
     )
+    .option('--no-system-proxy', 'do not override the system proxy')
     .option(
       '--command <command>',
       'command to run with the http_proxy and http_proxy configured'
@@ -103,7 +104,13 @@ export async function captureCommand(): Promise<Command> {
       const runningCommand = Boolean(options.command);
 
       const systemProxy = new SystemProxy(proxyUrl, feedback);
-      if (!runningCommand) await systemProxy.start(undefined);
+      if (!runningCommand && options.systemProxy) {
+        await systemProxy.start(undefined);
+      } else {
+        feedback.notable(
+          `Optic proxy is running at ${proxyUrl}. Route traffic through it and traffic to ${targetUrl} will be captured`
+        );
+      }
 
       sources.push(HarEntries.fromProxyInteractions(proxyInteractions));
 
@@ -185,6 +192,7 @@ export async function captureCommand(): Promise<Command> {
                   feedback.success(`Wrote har to ${outputPath}`);
                   return fs.move(inProgressName, outputPath);
                 }
+                feedback.success(`Wrote har traffic to ${completedName}`);
                 return fs.move(inProgressName, completedName);
               })(),
             ])
