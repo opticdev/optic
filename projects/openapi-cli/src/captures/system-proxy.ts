@@ -28,6 +28,19 @@ export class SystemProxy {
         ),
       ]);
 
+      if (previousState[0].enabled || previousState[1].enabled) {
+        this.feedback.notable(
+          `Your computer already has a system proxy configured. Optic will not overwrite those settings. `
+        );
+        this.feedback.notable(
+          `The Optic proxy is on ${this.proxyUrl}. Route traffic through that proxy to record it`
+        );
+
+        this.stopCommand = async () => {};
+
+        return;
+      }
+
       await Promise.all([
         runCommand(`networksetup -setwebproxy "${name}" 127.0.0.1 ${port}`),
         runCommand(
@@ -43,35 +56,10 @@ export class SystemProxy {
       );
 
       this.stopCommand = async () => {
-        // no proxy before
-        if (!previousState[0].enabled && !previousState[1].enabled) {
-          await Promise.all([
-            runCommand(`networksetup -setwebproxystate "${name}" off`),
-            runCommand(`networksetup -setsecurewebproxystate "${name}" off`),
-          ]);
-        } else {
-          const nonSecureProxy = previousState[0];
-          const secureProxy = previousState[1];
-          const bypass = previousState[2];
-          await Promise.all([
-            runCommand(
-              `networksetup -setwebproxystate "${name}" ${
-                nonSecureProxy.host
-              } ${nonSecureProxy.port} ${
-                nonSecureProxy.authenticated ? 'on' : 'off'
-              }`
-            ),
-            runCommand(
-              `networksetup -setsecurewebproxystate "${name}" ${
-                secureProxy.host
-              } ${secureProxy.port} ${secureProxy.authenticated ? 'on' : 'off'}`
-            ),
-            runCommand(
-              `networksetup -setproxybypassdomains "${name}" "${bypass}"`
-            ),
-          ]);
-        }
-
+        await Promise.all([
+          runCommand(`networksetup -setwebproxystate "${name}" off`),
+          runCommand(`networksetup -setsecurewebproxystate "${name}" off`),
+        ]);
         this.feedback.notable(`Mac System Proxy settings cleared`);
       };
     } else {
