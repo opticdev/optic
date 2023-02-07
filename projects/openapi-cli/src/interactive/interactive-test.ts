@@ -23,6 +23,7 @@ async function main() {
   }
 
   cleanupInteractiveMode();
+  process.exit(1);
 }
 
 export {};

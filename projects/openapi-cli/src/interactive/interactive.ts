@@ -125,8 +125,8 @@ export async function pathPatternMatcher(
         initial: path,
         message,
         validate: ({ value }) => {
-          return tryValidate(path)
-            ? 'match'
+          return tryValidate(path) === 'match'
+            ? true
             : 'This path pattern does not match the against the real path';
         },
         onState: ({ value }) => {
@@ -180,8 +180,8 @@ export async function ignorePatternBuilder(
         name: 'value',
         message,
         validate: ({ value }) => {
-          return tryValidate(ignorePath)
-            ? 'match'
+          return tryValidate(ignorePath) === 'match'
+            ? true
             : 'This ignore glob does not match the path you want to ignore';
         },
         onState: ({ value }) => {
