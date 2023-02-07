@@ -32,6 +32,7 @@ import Ajv from 'ajv';
 
 type YamlConfig = {
   exclude_operations_with_extension?: string;
+  docs_link?: string;
 };
 
 const ajv = new Ajv();
@@ -39,6 +40,9 @@ const configSchema = {
   type: 'object',
   properties: {
     exclude_operations_with_extension: {
+      type: 'string',
+    },
+    docs_link: {
       type: 'string',
     },
   },
@@ -94,6 +98,9 @@ export class BreakingChangesRuleset extends Ruleset<BreakingChangesRules> {
       const extension = validatedConfig.exclude_operations_with_extension;
       constructorConfig.matches = (context) =>
         (context.operation.raw as any)[extension] !== true;
+    }
+    if (validatedConfig.docs_link !== undefined) {
+      constructorConfig.docsLink = validatedConfig.docs_link;
     }
 
     return new BreakingChangesRuleset(constructorConfig);
