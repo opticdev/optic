@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can walk schema works for a basic schema 1`] = `
+{
+  "/properties/a/type": "string",
+  "/properties/b/type": "number",
+  "/properties/c/items": {
+    "type": "string",
+  },
+  "/properties/c/type": "array",
+  "/required": Set {
+    "a",
+    "c",
+  },
+  "/type": "object",
+}
+`;
