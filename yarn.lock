@@ -3749,6 +3749,7 @@ __metadata:
     "@types/log": ^6.3.0
     "@types/node": ^18.0.0
     "@types/node-forge": ^1.0.4
+    "@types/prompts": ^2
     "@types/semver": ^7.3.10
     "@types/slice-ansi": ^4
     "@types/stream-chain": ^2
@@ -3776,6 +3777,7 @@ __metadata:
     is-url: ^1.2.4
     jest: ^29.3.1
     json-schema-traverse: ^1.0.0
+    keypress: ^0.2.1
     lodash.sortby: ^4.7.0
     log: ^6.3.1
     log-node: ^8.0.3
@@ -3789,6 +3791,7 @@ __metadata:
     pluralize: 8.0.0
     portfinder: ^1.0.28
     prettier: ^2.4.1
+    prompts: ^2.4.2
     semver: ^7.3.7
     slice-ansi: ^4.0.0
     stream-chain: ^2.2.5
@@ -8190,6 +8193,13 @@ __metadata:
   version: 5.0.1
   resolution: "jsonpointer@npm:5.0.1"
   checksum: 0b40f712900ad0c846681ea2db23b6684b9d5eedf55807b4708c656f5894b63507d0e28ae10aa1bddbea551241035afe62b6df0800fc94c2e2806a7f3adecd7c
+  languageName: node
+  linkType: hard
+
+"keypress@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "keypress@npm:0.2.1"
+  checksum: 8f643113fc64d4ab873c98e6b6da54de511c0b32ecefcaa4315b7466dde6c94cba0b9231421655c71b1878c7bc7c932eb75c19d0d67b6af15677778f37cd3e9e
   languageName: node
   linkType: hard
 
