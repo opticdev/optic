@@ -9,7 +9,12 @@ import { logger } from '../../logger';
 import chalk from 'chalk';
 import { getNewTokenUrl } from '../../utils/cloud-urls';
 import { errorHandler } from '../../error-handler';
-
+import { createOpticClient } from '../../client';
+import {
+  flushEvents,
+  identify,
+  trackEvent,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
 export const registerLogin = (cli: Command, config: OpticCliConfig) => {
   cli
     .command('login')
@@ -56,24 +61,43 @@ Create an account and generate a personal access token at ${chalk.underline.blue
     { onCancel: () => process.exit(1) }
   );
 
-  if (response.token) {
-    const base64Token = Buffer.from(response.token).toString('base64');
-
-    const newConfig = userConfig
-      ? {
-          ...userConfig,
-          token: base64Token,
-        }
-      : {
-          token: base64Token,
-        };
-    await fs.mkdir(path.dirname(USER_CONFIG_PATH), { recursive: true });
-    await fs.writeFile(USER_CONFIG_PATH, JSON.stringify(newConfig), 'utf-8');
-
-    logger.info(
-      chalk.green(
-        `Successfully saved your personal access token to ${USER_CONFIG_PATH}`
-      )
-    );
+  if (!response.token) {
+    throw new Error('Expected token');
   }
+
+  logger.info(chalk.green(`\nVerifying your token`));
+  const newClient = createOpticClient(response.token);
+  try {
+    const result = await newClient.verifyToken();
+
+    if (result.user) {
+      identify(result.user.userId, result.user.email);
+      trackEvent('cli.login');
+      await flushEvents();
+    }
+  } catch (e) {
+    console.log(e);
+    logger.error(chalk.red(`An error occurred while verifying your token.`));
+    process.exitCode = 1;
+    return;
+  }
+
+  const base64Token = Buffer.from(response.token).toString('base64');
+
+  const newConfig = userConfig
+    ? {
+        ...userConfig,
+        token: base64Token,
+      }
+    : {
+        token: base64Token,
+      };
+  await fs.mkdir(path.dirname(USER_CONFIG_PATH), { recursive: true });
+  await fs.writeFile(USER_CONFIG_PATH, JSON.stringify(newConfig), 'utf-8');
+
+  logger.info(
+    chalk.green(
+      `Successfully saved your personal access token to ${USER_CONFIG_PATH}`
+    )
+  );
 };

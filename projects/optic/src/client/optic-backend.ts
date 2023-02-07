@@ -166,7 +166,7 @@ export class OpticBackendClient extends JsonHttpClient {
     user?: { email: string; userId: string };
     organization?: { organizationId: string };
   }> {
-    return this.getJson(`api/token/verify`);
+    return this.getJson(`/api/token/verify`);
   }
 }
 
