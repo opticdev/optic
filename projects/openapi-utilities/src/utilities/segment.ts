@@ -53,3 +53,14 @@ export const flushEvents = (): Promise<void> => {
     return Promise.resolve();
   }
 };
+
+export const identify = (email: string) => {
+  if (analytics) {
+    analytics.identify({
+      userId: id,
+      traits: {
+        email,
+      },
+    });
+  }
+};
