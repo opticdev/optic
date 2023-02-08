@@ -40,7 +40,10 @@ export function validateSchema(
   schema: SchemaObject,
   example: unknown
 ): { pass: true } | { pass: false; error: string } {
-  const schemaCompiled = ajv.compile(schema);
+  const copy = JSON.parse(JSON.stringify(schema));
+  strictAdditionalProperties(copy);
+
+  const schemaCompiled = ajv.compile(copy);
 
   const result = schemaCompiled(example);
 
@@ -53,6 +56,25 @@ export function validateSchema(
   }
 
   return { pass: true };
+}
+
+function strictAdditionalProperties(schema: any) {
+  if (typeof schema === 'object') {
+    if (Array.isArray(schema)) {
+      schema.forEach(strictAdditionalProperties);
+    } else {
+      // make default false
+      if (
+        schema.type &&
+        schema.type === 'object' &&
+        !schema.hasOwnProperty('additionalProperties')
+      ) {
+        schema.additionalProperties = false;
+      }
+
+      Object.values(schema).forEach(strictAdditionalProperties);
+    }
+  }
 }
 
 export const requireValidRequestExamples = new RequestRule({
