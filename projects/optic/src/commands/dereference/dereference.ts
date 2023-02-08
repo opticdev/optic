@@ -27,6 +27,10 @@ export const registerDereference = (cli: Command, config: OpticCliConfig) => {
     .description(description)
     .argument('[file_path]', 'openapi file to dereference')
     .option('-o [output]', 'output file name')
+    .option(
+      '--filter-x-extensions [extensions]',
+      'extensions to filter when truthy value set'
+    )
     .action(errorHandler(deferenceAction(config)));
 };
 
@@ -48,27 +52,57 @@ const getDereferencedSpec = async (
 
 const deferenceAction =
   (config: OpticCliConfig) => async (filePath: string | undefined, options) => {
-    const { o } = options;
+    const { o, filterXExtensions } = options;
+
+    const filterExtensions = (filterXExtensions || '')
+      .split(/[ ,]+/)
+      .filter((extension) => extension.startsWith('x-'));
+
     let parsedFile: ParseResult;
     if (filePath) {
       parsedFile = await getDereferencedSpec(filePath, config);
+
+      const specJson = parsedFile.jsonLike;
+
+      if (filterExtensions.length) {
+        Object.entries(specJson.paths).forEach(([path, operations]) => {
+          Object.entries(operations!).forEach(([key, operation]) => {
+            if (key === 'parameters') return;
+            // should filter
+            if (
+              operation &&
+              filterExtensions.some((extension) =>
+                Boolean(operation[extension])
+              )
+            ) {
+              // @ts-ignore
+              delete specJson.paths![path]![key]!;
+              const otherKeys = Object.keys(specJson.paths![path] || {});
+              if (
+                otherKeys.length === 0 ||
+                (otherKeys.length === 1 && otherKeys[0] === 'parameters')
+              ) {
+                delete specJson.paths![path];
+              }
+            }
+          });
+        });
+      }
 
       if (o) {
         // write to file
         const outputPath = path.resolve(o);
         await fs.writeFile(
           outputPath,
-          isYaml(o)
-            ? writeYaml(parsedFile.jsonLike)
-            : JSON.stringify(parsedFile.jsonLike, null, 2)
+          isYaml(o) ? writeYaml(specJson) : JSON.stringify(specJson, null, 2)
         );
         console.log('wrote dereferenced spec to ' + path.resolve(o));
       } else {
         // assume pipe >
         if (isYaml(filePath)) {
-          console.log(writeYaml(parsedFile.jsonLike));
+          console.log(writeYaml(specJson));
         } else {
-          console.log(JSON.stringify(parsedFile.jsonLike, null, 2));
+          console.log(JSON.stringify(specJson, null, 2));
         }
       }
     } else {
