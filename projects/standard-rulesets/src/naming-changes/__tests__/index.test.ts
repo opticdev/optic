@@ -6,6 +6,8 @@ describe('fromOpticConfig', () => {
     const ruleset = await NamingChangesRuleset.fromOpticConfig({
       required_on: 'always',
       properties: 'snake_case',
+      exclude_operations_with_extension: 'x-legacy',
+      docs_link: 'asdasd.com',
     });
     expect(ruleset).toBeInstanceOf(NamingChangesRuleset);
   });
