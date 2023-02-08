@@ -71,7 +71,7 @@ Create an account and generate a personal access token at ${chalk.underline.blue
     const result = await newClient.verifyToken();
 
     if (result.user) {
-      identify(result.user.userId, result.user.email);
+      identify(result.user.email);
       trackEvent('cli.login');
       await flushEvents();
     }
