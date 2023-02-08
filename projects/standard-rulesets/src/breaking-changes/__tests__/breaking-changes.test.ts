@@ -21,6 +21,59 @@ describe('fromOpticConfig', () => {
 
     expect(out).toBeInstanceOf(BreakingChangesRuleset);
   });
+
+  test('does not throw breaking change if semvar has updated', async () => {
+    const out = await BreakingChangesRuleset.fromOpticConfig({
+      skip_when_major_version_changes: true,
+    });
+
+    if (out instanceof BreakingChangesRuleset) {
+      const beforeJson: OpenAPIV3.Document = {
+        ...TestHelpers.createEmptySpec(),
+        info: { title: 'Empty', version: '1.0.0' },
+        paths: {
+          '/api/users': {
+            get: {
+              responses: {},
+            },
+          },
+        },
+      };
+      const results = await TestHelpers.runRulesWithInputs(
+        [out],
+        beforeJson,
+        TestHelpers.createEmptySpec()
+      );
+
+      expect(results.length === 0).toBe(true);
+    }
+  });
+  test('does throws breaking change if semvar flag false ', async () => {
+    const out = await BreakingChangesRuleset.fromOpticConfig({
+      skip_when_major_version_changes: false,
+    });
+
+    if (out instanceof BreakingChangesRuleset) {
+      const beforeJson: OpenAPIV3.Document = {
+        ...TestHelpers.createEmptySpec(),
+        info: { title: 'Empty', version: '1.0.0' },
+        paths: {
+          '/api/users': {
+            get: {
+              responses: {},
+            },
+          },
+        },
+      };
+      const results = await TestHelpers.runRulesWithInputs(
+        [out],
+        beforeJson,
+        TestHelpers.createEmptySpec()
+      );
+
+      expect(results.length > 0).toBe(true);
+    }
+  });
 });
 
 describe('breaking changes ruleset', () => {

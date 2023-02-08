@@ -1696,3 +1696,126 @@ exports[`breaking changes ruleset valid changes 1`] = `
   },
 ]
 `;
+
+exports[`fromOpticConfig does not throw breaking change if semvar has updated 1`] = `
+[
+  {
+    "change": {
+      "changeType": "removed",
+      "location": {
+        "conceptualLocation": {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "removed": {
+        "before": {
+          "method": "get",
+          "pathPattern": "/api/users",
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "cannot remove an operation. This is a breaking change.",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent operation removal",
+    "passed": false,
+    "received": undefined,
+    "type": "removed",
+    "where": "GET /api/users",
+  },
+]
+`;
+
+exports[`fromOpticConfig valid config 1`] = `
+[
+  {
+    "change": {
+      "changeType": "removed",
+      "location": {
+        "conceptualLocation": {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "removed": {
+        "before": {
+          "method": "get",
+          "pathPattern": "/api/users",
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "cannot remove an operation. This is a breaking change.",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent operation removal",
+    "passed": false,
+    "received": undefined,
+    "type": "removed",
+    "where": "GET /api/users",
+  },
+]
+`;
+
+exports[`fromOpticConfig will not run when semver changes 1`] = `
+[
+  {
+    "change": {
+      "changeType": "removed",
+      "location": {
+        "conceptualLocation": {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "removed": {
+        "before": {
+          "method": "get",
+          "pathPattern": "/api/users",
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "cannot remove an operation. This is a breaking change.",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent operation removal",
+    "passed": false,
+    "received": undefined,
+    "type": "removed",
+    "where": "GET /api/users",
+  },
+]
+`;
