@@ -87,7 +87,7 @@ https://user-images.githubusercontent.com/5900338/211058178-6c3c7f76-55be-4e7a-8
 
 ## Community & Support
 - If you run into bugs, please open [Issues](https://github.com/opticdev/optic/issues). 
-- [Discord](https://github.com/opticdev/optic/issues)
+- [Discord](https://discord.gg/cu9keWFxtD)
 - Anyone is welcome to [book office hours](https://calendly.com/optic-onboarding/optic-office-hours) for support or to talk about contributing. 
 
 ## License
