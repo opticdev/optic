@@ -12,6 +12,15 @@ describe('fromOpticConfig', () => {
       '- ruleset/examples/require_parameter_examples must be boolean'
     );
   });
+
+  test('valid config', async () => {
+    const ruleset = await ExamplesRuleset.fromOpticConfig({
+      require_parameter_examples: true,
+      exclude_operations_with_extension: 'x-legacy',
+      docs_link: 'asdasd.com',
+    });
+    expect(ruleset).toBeInstanceOf(ExamplesRuleset);
+  });
 });
 
 describe('examples ruleset', () => {

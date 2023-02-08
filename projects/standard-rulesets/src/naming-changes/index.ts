@@ -9,6 +9,8 @@ import { createPathComponentChecks } from './pathComponents';
 import Ajv from 'ajv';
 
 type RulesetConfig = {
+  exclude_operations_with_extension?: string;
+  docs_link?: string;
   required_on?: typeof appliesWhen[number];
   requestHeaders?: typeof casing[number];
   queryParameters?: typeof casing[number];
@@ -25,6 +27,12 @@ const configSchema = {
     required_on: {
       type: 'string',
       enum: appliesWhen,
+    },
+    exclude_operations_with_extension: {
+      type: 'string',
+    },
+    docs_link: {
+      type: 'string',
     },
     // TODO deprecate applies in naming config
     applies: {
@@ -92,16 +100,24 @@ export class NamingChangesRuleset extends Ruleset<Rule[]> {
         namingConfig[key] = validatedConfig[key];
       }
     }
+    let matches: Ruleset['matches'] | undefined = undefined;
+    if (validatedConfig.exclude_operations_with_extension !== undefined) {
+      const extension = validatedConfig.exclude_operations_with_extension;
+      matches = (context) => (context.operation.raw as any)[extension] !== true;
+    }
 
     return new NamingChangesRuleset({
       required_on: required_on,
       options: namingConfig,
+      docsLink: validatedConfig.docs_link,
+      matches,
     });
   }
 
   constructor(config: {
     required_on: typeof appliesWhen[number];
     options?: NamingConfig;
+    docsLink?: string;
     matches?: Ruleset['matches'];
   }) {
     if (!config) {
@@ -109,7 +125,7 @@ export class NamingChangesRuleset extends Ruleset<Rule[]> {
       throw new Error('Expected config object in NamingChangesRuleset');
     }
 
-    const { required_on, matches, options = {} } = config;
+    const { required_on, matches, docsLink, options = {} } = config;
     if (!required_on || !appliesWhen.includes(required_on)) {
       // TODO silence this from sentry
       throw new Error(
@@ -167,6 +183,7 @@ export class NamingChangesRuleset extends Ruleset<Rule[]> {
 
     super({
       name: 'Naming changes ruleset',
+      docsLink,
       matches,
       rules: namingChangeRules,
     });

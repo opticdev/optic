@@ -12,6 +12,15 @@ describe('fromOpticConfig', () => {
       '- ruleset/breaking-changes/exclude_operations_with_extension must be string'
     );
   });
+
+  test('valid config', async () => {
+    const out = await BreakingChangesRuleset.fromOpticConfig({
+      exclude_operations_with_extension: 'x-legacy',
+      docs_link: 'asdasd.com',
+    });
+
+    expect(out).toBeInstanceOf(BreakingChangesRuleset);
+  });
 });
 
 describe('breaking changes ruleset', () => {
@@ -725,8 +734,9 @@ describe('breaking change ruleset configuration', () => {
             responses: {},
           },
           post: {
+            'x-legacy': true,
             responses: {},
-          },
+          } as any,
         },
       },
     };
@@ -742,9 +752,9 @@ describe('breaking change ruleset configuration', () => {
     };
     const results = await TestHelpers.runRulesWithInputs(
       [
-        new BreakingChangesRuleset({
-          matches: (context) => context.operation.method !== 'post',
-        }),
+        BreakingChangesRuleset.fromOpticConfig({
+          exclude_operations_with_extension: 'x-legacy',
+        }) as any,
       ],
       beforeJson,
       afterJson
