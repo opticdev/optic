@@ -352,6 +352,7 @@ exports[`SpecificationRule rulesContext after 1`] = `
         },
       ],
     },
+    "versionChange": null,
   },
 }
 `;
@@ -427,6 +428,7 @@ exports[`SpecificationRule rulesContext after is empty spec 1`] = `
         },
       ],
     },
+    "versionChange": null,
   },
 }
 `;
@@ -502,6 +504,7 @@ exports[`SpecificationRule rulesContext before 1`] = `
         },
       ],
     },
+    "versionChange": null,
   },
 }
 `;
@@ -577,6 +580,7 @@ exports[`SpecificationRule rulesContext before is empty spec 1`] = `
         },
       ],
     },
+    "versionChange": null,
   },
 }
 `;
