@@ -1,7 +1,7 @@
 import { OpenApiKind } from '@useoptic/openapi-utilities';
 import { Operation, RuleContext, Specification } from '../types';
 import { NodeDetail } from './rule-runner-types';
-
+import semver from 'semver';
 const getSpecificationChange = (
   specificationNode: NodeDetail<OpenApiKind.Specification>
 ) => {
@@ -23,6 +23,16 @@ export const createRuleContextWithoutOperation = (
 ): RuleContext => {
   const specificationChange = getSpecificationChange(specification.node);
 
+  const beforeVersion = specification.before?.raw.info.version || '0.0.0';
+  const afterVersion = specification.after?.raw.info.version || '0.0.0';
+  let versionChange;
+
+  try {
+    versionChange = semver.diff(beforeVersion, afterVersion);
+  } catch (e) {
+    versionChange = null;
+  }
+
   return {
     custom,
     specification: {
@@ -30,6 +40,7 @@ export const createRuleContextWithoutOperation = (
         ? specification.before!
         : specification.after!),
       change: specificationChange,
+      versionChange,
     },
     operation: {
       location: {
@@ -73,12 +84,23 @@ export const createRuleContextWithOperation = (
 ): RuleContext => {
   const specificationChange = getSpecificationChange(specification.node);
 
+  const beforeVersion = specification.before?.raw.info.version || '0.0.0';
+  const afterVersion = specification.after?.raw.info.version || '0.0.0';
+  let versionChange;
+
+  try {
+    versionChange = semver.diff(beforeVersion, afterVersion);
+  } catch (e) {
+    versionChange = null;
+  }
+
   if (specificationChange === 'removed') {
     return {
       custom,
       specification: {
         ...specification.before!,
         change: specificationChange,
+        versionChange,
       },
       operation: {
         ...operation.before!,
@@ -91,6 +113,7 @@ export const createRuleContextWithOperation = (
       specification: {
         ...specification.after!,
         change: specificationChange,
+        versionChange,
       },
       operation: {
         ...(operation.after ? operation.after : operation.before),
