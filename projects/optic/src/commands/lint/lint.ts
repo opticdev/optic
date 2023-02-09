@@ -8,10 +8,11 @@ import { logger } from '../../logger';
 import { generateComparisonLogsV2 } from '@useoptic/openapi-utilities';
 import chalk from 'chalk';
 
-const description = `run a diff between two API specs`;
+const description = `lints and validates an OpenAPI file`;
 
 const usage = () => `
-  optic lint <file_path>`;
+  optic lint ./spec.yml
+  optic lint main:spec.yml`;
 
 export const registerLint = (cli: Command, config: OpticCliConfig) => {
   cli
