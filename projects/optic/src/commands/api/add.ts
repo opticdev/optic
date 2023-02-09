@@ -28,8 +28,8 @@ function short(sha: string) {
 }
 
 const usage = () => `
-  optic api add
-  optic api add <path_to_spec.yml>
+  optic api add .
+  optic api add ./folder
   optic api add <path_to_spec.yml> --history-depth 0
   optic api add <path_to_spec.yml> --web`;
 
@@ -42,7 +42,7 @@ Example usage:
   $ optic api add <path_to_spec.yml> --history-depth <depth>
 
   Discover all apis in the current repo
-  $ optic api add --all
+  $ optic api add .
 
   `;
 
@@ -54,10 +54,7 @@ export const registerApiAdd = (cli: Command, config: OpticCliConfig) => {
     })
     .addHelpText('after', helpText)
     .description('Add APIs to Optic')
-    .argument(
-      '[path_to_spec]',
-      'optional path to file or directory to add, if not set looks at working directory'
-    )
+    .argument('<path_to_spec>', 'path to file or directory to add')
     .option(
       '--history-depth <history-depth>',
       'Sets the depth of how far to crawl through to add historic API data. Set history-depth=0 if you want to crawl the entire history',
@@ -267,24 +264,17 @@ export const getApiAddAction =
       path: string;
       isDir: boolean;
     };
-    if (path_to_spec) {
-      try {
-        const isDir = (await fs.lstat(path_to_spec)).isDirectory();
-        file = {
-          path: path.resolve(path_to_spec),
-          isDir,
-        };
-      } catch (e) {
-        logger.error(chalk.red(`${path} is not a file or directory`));
-
-        process.exitCode = 1;
-        return;
-      }
-    } else {
+    try {
+      const isDir = (await fs.lstat(path_to_spec)).isDirectory();
       file = {
-        path: path.resolve(config.root),
-        isDir: true,
+        path: path.resolve(path_to_spec),
+        isDir,
       };
+    } catch (e) {
+      logger.error(chalk.red(`${path} is not a file or directory`));
+
+      process.exitCode = 1;
+      return;
     }
 
     if (file.isDir && options.historyDepth !== '1') {
