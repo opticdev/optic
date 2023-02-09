@@ -8,6 +8,7 @@ import {
 export type RuleContext = {
   specification: Specification & {
     change: 'added' | 'changed' | 'removed' | null;
+    versionChange: 'major' | 'minor' | 'patch' | null;
   };
   operation: Operation & {
     change: 'added' | 'changed' | 'removed' | null;
