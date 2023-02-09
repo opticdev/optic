@@ -251,6 +251,13 @@ const openapi3_1_schema_object = {
     enum: {
       $ref: 'http://json-schema.org/draft-07/schema#/properties/enum',
     },
+    const: {},
+    propertyNames: {
+      $ref: '#/definitions/schema',
+    },
+    unevaluatedProperties: {
+      type: 'boolean',
+    },
     type: {
       oneOf: [
         {
