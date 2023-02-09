@@ -9,6 +9,7 @@ import {
 import { logger } from '../../../logger';
 import { CommentApi, GithubCommenter, GitlabCommenter } from './comment-api';
 import { errorHandler } from '../../../error-handler';
+import chalk from 'chalk';
 
 const usage = () => `
   GITHUB_TOKEN=<github-token> optic ci comment --provider github --owner <repo-owner> --repo <repo-name> --pull-request <pr-number> --sha <commit-sha>
@@ -152,5 +153,28 @@ const getCiCommentAction =
       if (data.completed.length > 0 || data.failed.length > 0) {
         await commenter.createComment(body);
       }
+    }
+
+    logger.log(body);
+    if (data.failed.length || data.noop.length)
+      logger.log(
+        chalk.red(`${data.failed.length + data.noop.length} failures`)
+      );
+    if (data.completed.length) {
+      logger.log('Visual Changelogs:');
+      data.completed.forEach((result) => {
+        const results = result.warnings.length
+          ? `${result.warnings.length}/${result.comparison.results.length} failures`
+          : `all ${result.comparison.results.length} checks passed`;
+
+        const leadIcon = result.warnings.length
+          ? chalk.red('⚠')
+          : chalk.green('✓');
+        logger.log(
+          `- ${leadIcon} ${result.apiName} (${results})  \n  ${chalk.blue(
+            result.opticWebUrl
+          )}`
+        );
+      });
     }
   };
