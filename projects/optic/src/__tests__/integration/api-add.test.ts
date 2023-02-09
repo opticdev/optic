@@ -110,7 +110,39 @@ describe('optic api add', () => {
         setupOptions
       );
 
+      const { combined, code } = await runOptic(workspace, 'api add .');
+
+      expect(code).toBe(0);
+      expect(
+        normalizeWorkspace(workspace, sanitizeOutput(combined))
+      ).toMatchSnapshot();
+    });
+
+    test('discover all files in repo using --all', async () => {
+      process.env.OPTIC_TOKEN = 'something';
+
+      const workspace = await setupWorkspace(
+        'api-add/many-files',
+        setupOptions
+      );
+
       const { combined, code } = await runOptic(workspace, 'api add --all');
+
+      expect(code).toBe(0);
+      expect(
+        normalizeWorkspace(workspace, sanitizeOutput(combined))
+      ).toMatchSnapshot();
+    });
+
+    test('discover all files in a folder', async () => {
+      process.env.OPTIC_TOKEN = 'something';
+
+      const workspace = await setupWorkspace(
+        'api-add/many-files',
+        setupOptions
+      );
+
+      const { combined, code } = await runOptic(workspace, 'api add ./nested');
 
       expect(code).toBe(0);
       expect(

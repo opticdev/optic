@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import prompts from 'prompts';
 import open from 'open';
 import path from 'path';
+import fs from 'node:fs/promises';
 import ora from 'ora';
 import { OpticCliConfig, VCS } from '../../config';
 import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
@@ -27,8 +28,8 @@ function short(sha: string) {
 }
 
 const usage = () => `
-  optic api add
-  optic api add <path_to_spec.yml>
+  optic api add .
+  optic api add ./folder
   optic api add <path_to_spec.yml> --history-depth 0
   optic api add <path_to_spec.yml> --web`;
 
@@ -41,7 +42,7 @@ Example usage:
   $ optic api add <path_to_spec.yml> --history-depth <depth>
 
   Discover all apis in the current repo
-  $ optic api add --all
+  $ optic api add .
 
   `;
 
@@ -53,24 +54,21 @@ export const registerApiAdd = (cli: Command, config: OpticCliConfig) => {
     })
     .addHelpText('after', helpText)
     .description('Add APIs to Optic')
-    .argument(
-      '[spec_path]',
-      'optional path to file to add, if not set looks at working directory'
-    )
+    .argument('[path_to_spec]', 'path to file or directory to add')
     .option(
       '--history-depth <history-depth>',
       'Sets the depth of how far to crawl through to add historic API data. Set history-depth=0 if you want to crawl the entire history',
       '1'
     )
-    .option('--all', 'discover all APIs in the current repo')
+    .option('--all', 'add all', false)
     .option('--web', 'open to the added API in Optic Cloud', false)
     .action(errorHandler(getApiAddAction(config)));
 };
 
 type ApiAddActionOptions = {
   historyDepth: string;
-  web?: boolean;
-  all?: boolean;
+  web: boolean;
+  all: boolean;
 };
 
 async function getOrganizationToUploadTo(client: OpticBackendClient): Promise<
@@ -254,34 +252,52 @@ export const getApiAddAction =
       );
       process.exitCode = 1;
       return;
-    } else if (!path_to_spec && !options.all) {
-      logger.error(
-        chalk.red(
-          'No spec path provided. Run "optic api add /path/to/spec.yml" or use the "optic api add --all" flag'
-        )
-      );
-      process.exitCode = 1;
-      return;
-    } else if (path_to_spec && options.all) {
-      logger.error(
-        chalk.red(
-          'The spec path and the "--all" flag were both provided. Use one or the other.'
-        )
-      );
-      process.exitCode = 1;
-      return;
-    } else if (!path_to_spec && options.historyDepth !== '1') {
-      logger.error(
-        chalk.red(
-          'Invalid argument combination: Cannot set a history-depth !== 1 when no spec path is provided'
-        )
-      );
-      process.exitCode = 1;
-      return;
     } else if (!config.isAuthenticated) {
       logger.error(
         chalk.red(
           'You must be logged in to add APIs to Optic Cloud. Please run "optic login"'
+        )
+      );
+      process.exitCode = 1;
+      return;
+    }
+
+    let file: {
+      path: string;
+      isDir: boolean;
+    };
+    if (path_to_spec) {
+      try {
+        const isDir = (await fs.lstat(path_to_spec)).isDirectory();
+        file = {
+          path: path.resolve(path_to_spec),
+          isDir,
+        };
+      } catch (e) {
+        logger.error(chalk.red(`${path} is not a file or directory`));
+
+        process.exitCode = 1;
+        return;
+      }
+    } else if (options.all) {
+      file = {
+        path: path.resolve(config.root),
+        isDir: true,
+      };
+    } else {
+      logger.error(
+        chalk.red(
+          'Invalid argument combination, must specify either a `path` or `--all`'
+        )
+      );
+      process.exitCode = 1;
+      return;
+    }
+
+    if (file.isDir && options.historyDepth !== '1') {
+      logger.error(
+        chalk.red(
+          'Invalid argument combination: Cannot set a history-depth !== 1 when no spec path is provided'
         )
       );
       process.exitCode = 1;
@@ -339,44 +355,40 @@ export const getApiAddAction =
         }
         logger.info('');
       }
-
-      logger.info(
-        chalk.bold.gray(
-          path_to_spec
-            ? `Adding API ${path_to_spec}`
-            : `Looking for OpenAPI specs in the git root (${config.root})`
-        )
-      );
-    } else {
-      logger.info(
-        chalk.bold.gray(
-          path_to_spec
-            ? `Adding API ${path_to_spec}`
-            : `Looking for OpenAPI specs in the current directory (${process.cwd()})`
-        )
-      );
     }
+
+    logger.info(
+      chalk.bold.gray(
+        file.isDir
+          ? `Looking for OpenAPI specs in directory ${file.path}`
+          : `Adding API ${file.path}`
+      )
+    );
 
     let candidates: Map<string, string[]>;
 
     if (config.vcs?.type === VCS.Git) {
-      candidates = path_to_spec
+      candidates = !file.isDir
         ? await GitCandidates.getShasCandidatesForPath(
-            path_to_spec,
+            file.path,
             options.historyDepth
           )
-        : await GitCandidates.getPathCandidatesForSha(config.vcs.sha);
+        : await GitCandidates.getPathCandidatesForSha(config.vcs.sha, {
+            startsWith: file.path,
+          });
     } else {
-      const files = path_to_spec
-        ? [path.resolve(path_to_spec)]
-        : await FsCandidates.getFileCandidates();
+      const files = !file.isDir
+        ? [path.resolve(file.path)]
+        : await FsCandidates.getFileCandidates({
+            startsWith: file.path,
+          });
 
       candidates = new Map(files.map((f) => [f, []]));
     }
 
     for await (const candidate of candidates) {
       await crawlCandidateSpecs(orgRes.org.id, candidate, config, {
-        path_to_spec,
+        path_to_spec: file?.path,
         web: options.web,
         default_branch,
         web_url,
