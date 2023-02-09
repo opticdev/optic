@@ -3155,6 +3155,7 @@ exports[`OperationRule rulesContext after 1`] = `
         },
       ],
     },
+    "versionChange": null,
   },
 }
 `;
@@ -3236,6 +3237,7 @@ exports[`OperationRule rulesContext before 1`] = `
         },
       ],
     },
+    "versionChange": null,
   },
 }
 `;

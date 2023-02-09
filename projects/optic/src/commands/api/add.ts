@@ -396,6 +396,13 @@ export const getApiAddAction =
     }
 
     logger.info('');
+    logger.info(
+      chalk.blue.bold(
+        `x-optic-url has been added to newly tracked specs. You should commit these changes.`
+      )
+    );
+
+    logger.info('');
     logger.info(chalk.blue.bold(`Setup CI checks by running "optic ci setup"`));
 
     await flushEvents();
