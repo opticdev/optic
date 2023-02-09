@@ -29,6 +29,7 @@ type LintActionOptions = {};
 const getLintAction =
   (config: OpticCliConfig) =>
   async (path: string, options: LintActionOptions) => {
+    logger.info(`Linting spec ${path}...`);
     let file: ParseResult;
     try {
       file = await getFileFromFsOrGit(path, config, {
@@ -48,6 +49,11 @@ const getLintAction =
         check: true,
       }
     );
+
+    logger.info('');
+    logger.info('Checks');
+    logger.info('');
+
     for (const log of generateComparisonLogsV2(
       changelogData,
       {
@@ -60,6 +66,7 @@ const getLintAction =
       logger.info(log);
     }
 
+    logger.info('');
     if (checks.failed > 0) {
       logger.info(
         chalk.red.bold('Linting errors found with your OpenAPI spec.')

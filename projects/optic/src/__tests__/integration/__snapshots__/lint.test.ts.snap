@@ -1,0 +1,83 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lint fails on bad formatting 1`] = `
+"Linting spec spec-with-bad-formatting.yml...
+ValidationError: [31minvalid openapi: [39m[1m[31mpaths > /filler_route > post > responses > 201 > content > application/json > schema > properties > example must be object[39m[22m
+[90m18 |[39m                   id:
+[90m19 |[39m                     type: string
+[90m20 |[39m                   format: uuid
+[90m21 |[39m [1m[31m                  example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2[39m[22m
+[90m22 |[39m 
+[90m$workspace$/spec-with-bad-formatting.yml[39m
+[31minvalid openapi: [39m[1m[31mpaths > /filler_route > post > responses > 201 > content > application/json > schema > properties > format must be object[39m[22m
+[90m17 |[39m                 properties:
+[90m18 |[39m                   id:
+[90m19 |[39m                     type: string
+[90m20 |[39m [1m[31m                  format: uuid[39m[22m
+[90m21 |[39m                   example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2
+[90m22 |[39m 
+[90m$workspace$/spec-with-bad-formatting.yml[39m
+    at new ValidationError (/Users/nicholaslim/Desktop/repos/optic/projects/openapi-io/src/validation/errors.ts:3:5)
+    at validateOpenApiV3Document (/Users/nicholaslim/Desktop/repos/optic/projects/openapi-io/src/validation/validator.ts:138:11)
+    at validateAndDenormalize (/Users/nicholaslim/Desktop/repos/optic/projects/optic/src/utils/spec-loaders.ts:156:28)
+    at /Users/nicholaslim/Desktop/repos/optic/projects/optic/src/utils/spec-loaders.ts:174:10
+    at step (/Users/nicholaslim/Desktop/repos/optic/projects/optic/src/utils/spec-loaders.ts:67:23)
+    at Object.next (/Users/nicholaslim/Desktop/repos/optic/projects/optic/src/utils/spec-loaders.ts:48:53)
+    at fulfilled (/Users/nicholaslim/Desktop/repos/optic/projects/optic/src/utils/spec-loaders.ts:39:58)
+"
+`;
+
+exports[`lint fails on requirement rule errors 1`] = `
+"Linting spec spec-fails-requirement.yml...
+
+Checks
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
+    requirement rule: response property naming check
+      [31m[31mx[39m[31m id_thing is not camelCase[39m
+      at [4m$workspace$/spec-fails-requirement.yml:18:359[24m
+
+
+
+
+[32m[1m0 checks passed[22m[39m
+[31m[1m1 checks failed[22m[39m
+
+[31m[1mLinting errors found with your OpenAPI spec.[22m[39m
+"
+`;
+
+exports[`lint fails on validation errors 1`] = `
+"Linting spec spec-fails-validation.yml...
+ValidationError: [31minvalid openapi: [39m[1m[31minfo must have required property 'title'[39m[22m
+[90m1 |[39m openapi: 3.0.3
+[90m2 |[39m [1m[31minfo:[39m[22m
+[90m3 |[39m   version: 0.1.0
+[90m4 |[39m paths:
+[90m5 |[39m   /filler_route:
+[90m$workspace$/spec-fails-validation.yml[39m
+    at new ValidationError (/Users/nicholaslim/Desktop/repos/optic/projects/openapi-io/src/validation/errors.ts:3:5)
+    at validateOpenApiV3Document (/Users/nicholaslim/Desktop/repos/optic/projects/openapi-io/src/validation/validator.ts:138:11)
+    at validateAndDenormalize (/Users/nicholaslim/Desktop/repos/optic/projects/optic/src/utils/spec-loaders.ts:156:28)
+    at /Users/nicholaslim/Desktop/repos/optic/projects/optic/src/utils/spec-loaders.ts:174:10
+    at step (/Users/nicholaslim/Desktop/repos/optic/projects/optic/src/utils/spec-loaders.ts:67:23)
+    at Object.next (/Users/nicholaslim/Desktop/repos/optic/projects/optic/src/utils/spec-loaders.ts:48:53)
+    at fulfilled (/Users/nicholaslim/Desktop/repos/optic/projects/optic/src/utils/spec-loaders.ts:39:58)
+"
+`;
+
+exports[`lint passes on valid specs 1`] = `
+"Linting spec spec-good-spec.yml...
+
+Checks
+
+  [1m[42m[37m PASS [39m[49m[22m [1mPOST[22m /filler_route
+
+
+
+[32m[1m1 checks passed[22m[39m
+[31m[1m0 checks failed[22m[39m
+
+[32m[1mLinting passed.[22m[39m
+"
+`;
