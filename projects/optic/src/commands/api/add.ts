@@ -54,19 +54,21 @@ export const registerApiAdd = (cli: Command, config: OpticCliConfig) => {
     })
     .addHelpText('after', helpText)
     .description('Add APIs to Optic')
-    .argument('<path_to_spec>', 'path to file or directory to add')
+    .argument('[path_to_spec]', 'path to file or directory to add')
     .option(
       '--history-depth <history-depth>',
       'Sets the depth of how far to crawl through to add historic API data. Set history-depth=0 if you want to crawl the entire history',
       '1'
     )
+    .option('--all', 'add all', false)
     .option('--web', 'open to the added API in Optic Cloud', false)
     .action(errorHandler(getApiAddAction(config)));
 };
 
 type ApiAddActionOptions = {
   historyDepth: string;
-  web?: boolean;
+  web: boolean;
+  all: boolean;
 };
 
 async function getOrganizationToUploadTo(client: OpticBackendClient): Promise<
@@ -241,7 +243,7 @@ async function crawlCandidateSpecs(
 
 export const getApiAddAction =
   (config: OpticCliConfig) =>
-  async (path_to_spec: string, options: ApiAddActionOptions) => {
+  async (path_to_spec: string | undefined, options: ApiAddActionOptions) => {
     if (isNaN(Number(options.historyDepth))) {
       logger.error(
         chalk.red(
@@ -264,15 +266,30 @@ export const getApiAddAction =
       path: string;
       isDir: boolean;
     };
-    try {
-      const isDir = (await fs.lstat(path_to_spec)).isDirectory();
-      file = {
-        path: path.resolve(path_to_spec),
-        isDir,
-      };
-    } catch (e) {
-      logger.error(chalk.red(`${path} is not a file or directory`));
+    if (path_to_spec) {
+      try {
+        const isDir = (await fs.lstat(path_to_spec)).isDirectory();
+        file = {
+          path: path.resolve(path_to_spec),
+          isDir,
+        };
+      } catch (e) {
+        logger.error(chalk.red(`${path} is not a file or directory`));
 
+        process.exitCode = 1;
+        return;
+      }
+    } else if (options.all) {
+      file = {
+        path: path.resolve(config.root),
+        isDir: true,
+      };
+    } else {
+      logger.error(
+        chalk.red(
+          'Invalid argument combination, must specify either a `path` or `--all`'
+        )
+      );
       process.exitCode = 1;
       return;
     }
