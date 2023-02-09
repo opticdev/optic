@@ -1,14 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`yaml surgical patching can add extensions to yaml 1`] = `
-"info:
-  title: TodoAPI
-  version: "1.1"
+"
 openapi: 3.0.1
 x-optic-url: "https://fun.url.example"
-x-hello: "testing..."
+info:
+  title: TodoAPI
+  version: "1.1"
+"x-hello": "testing..."
 paths:
-  /todos:
+  /todos/{todoId}:
     get:
       parameters:
         - name: limit
@@ -34,13 +35,14 @@ paths:
 `;
 
 exports[`yaml surgical patching can update extensions already in yaml 1`] = `
-"info:
-  title: TodoAPI
-  version: "1.1"
+"
 openapi: 3.0.1
 x-hello: "world"
+info:
+  title: TodoAPI
+  version: "1.1"
 paths:
-  /todos:
+  /todos/{todoId}:
     get:
       parameters:
         - name: limit

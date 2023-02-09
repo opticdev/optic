@@ -73,14 +73,21 @@ export function addExtensionsToYaml(
         parsed[extension] && parsed[extension] !== extensions[extension]
     );
 
-    const ops: Parameters<typeof applyOperationsToYamlString>[1] = toDelete.map(
-      (extension) => ({
-        op: 'remove',
-        path: jsonPointerHelpers.compile([extension]),
-      })
-    );
+    let cleanedYaml = yamlContents;
+    if (toDelete.length) {
+      const lines = cleanedYaml.split('\n');
+      const linesToDelete = toDelete
+        .map((i) => {
+          const lineToDelete = matchExtensionLine(i, lines);
+          return lineToDelete;
+        })
+        .sort()
+        .reverse();
 
-    const cleanedYaml = applyOperationsToYamlString(yamlContents, ops);
+      linesToDelete.forEach((deleteIndex) => lines.splice(deleteIndex, 1));
+      cleanedYaml = lines.join('\n');
+    }
+
     const matches = /["']{0,1}openapi["']{0,1}.*$/gm.exec(cleanedYaml);
 
     if (matches) {
@@ -112,4 +119,9 @@ export function addExtensionsToYaml(
     // will respect ordering
     return writeYaml({ openapi, ...updated, ...other });
   }
+}
+
+function matchExtensionLine(extension: string, lines: string[]): number {
+  const regex = new RegExp(`^["']{0,1}${extension}["']{0,1}:.*$`);
+  return lines.findIndex((line) => regex.test(line));
 }
