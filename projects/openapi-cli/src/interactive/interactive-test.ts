@@ -3,7 +3,7 @@ import {
   pathPatternMatcher,
   setupInteractiveMode,
   undocumentedOperation,
-} from './interactive';
+} from './interactive-prompts';
 
 async function main() {
   setupInteractiveMode();
