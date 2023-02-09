@@ -1,13 +1,13 @@
 import { test, expect, describe, beforeEach, jest } from '@jest/globals';
 import { addExtensionsToYaml } from '../write-to-file';
 const yaml = `
+openapi: 3.0.1
 info:
   title: TodoAPI
   version: "1.1"
-openapi: 3.0.1
-x-hello: "testing..."
+"x-hello": "testing..."
 paths:
-  /todos:
+  /todos/{todoId}:
     get:
       parameters:
         - name: limit
