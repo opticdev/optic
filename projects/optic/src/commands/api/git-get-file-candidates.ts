@@ -1,6 +1,7 @@
 import { promisify } from 'util';
 import { exec as callbackExec } from 'child_process';
 import { findOpenApiSpecsCandidates } from '../../utils/git-utils';
+import path from 'path';
 
 const exec = promisify(callbackExec);
 
@@ -32,7 +33,10 @@ export async function getShasCandidatesForPath(
 }
 
 export async function getPathCandidatesForSha(
-  sha: string
+  sha: string,
+  opts: {
+    startsWith: string;
+  }
 ): Promise<Map<Path, Sha[]>> {
   const results = new Map();
   // Pull all spec candidates (i.e. specs that have openapi key and are yml/yaml/json)
@@ -40,6 +44,10 @@ export async function getPathCandidatesForSha(
   const relativePaths = await findOpenApiSpecsCandidates();
 
   for (const p of relativePaths) {
+    if (!path.resolve(p).startsWith(opts.startsWith)) {
+      continue;
+    }
+
     results.set(p, [sha]);
   }
 

@@ -2,6 +2,7 @@ import { test, expect, describe } from '@jest/globals';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { TestHelpers } from '@useoptic/rulesets-base';
 import { ExamplesRuleset } from '../index';
+import { validateSchema } from '../requireValidExamples';
 
 describe('fromOpticConfig', () => {
   test('invalid configuration', async () => {
@@ -11,6 +12,15 @@ describe('fromOpticConfig', () => {
     expect(out).toEqual(
       '- ruleset/examples/require_parameter_examples must be boolean'
     );
+  });
+
+  test('valid config', async () => {
+    const ruleset = await ExamplesRuleset.fromOpticConfig({
+      require_parameter_examples: true,
+      exclude_operations_with_extension: 'x-legacy',
+      docs_link: 'asdasd.com',
+    });
+    expect(ruleset).toBeInstanceOf(ExamplesRuleset);
   });
 });
 
@@ -255,5 +265,35 @@ describe('examples ruleset', () => {
 
     expect(results).toMatchSnapshot();
     expect(results.some((result) => !result.passed)).toBe(true);
+  });
+});
+
+describe('examples should default to additional properties false', () => {
+  test('ajv config will be strict on additional properties', () => {
+    const result = validateSchema(
+      {
+        type: 'object',
+        properties: {
+          a: { type: 'string' },
+          b: { type: 'string' },
+        },
+      },
+      { a: 'abc', b: 'def', c: 'xyz' }
+    );
+    expect(result.pass).toBe(false);
+  });
+  test('ajv config will not override a user defined value', () => {
+    const result = validateSchema(
+      {
+        type: 'object',
+        additionalProperties: true,
+        properties: {
+          a: { type: 'string' },
+          b: { type: 'string' },
+        },
+      },
+      { a: 'abc', b: 'def', c: 'xyz' }
+    );
+    expect(result.pass).toBe(true);
   });
 });

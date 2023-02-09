@@ -1,6 +1,7 @@
 import url from 'url';
 import { createCommandFeedback } from '../commands/reporters/feedback';
 import { platform, runCommand } from '../shell-utils';
+import { parseMacNetworkLine } from './mac-system-proxy';
 
 export class SystemProxy {
   constructor(
@@ -14,6 +15,31 @@ export class SystemProxy {
 
     if (platform === 'mac') {
       const name = await chooseInterfaceMac();
+
+      const previousState = await Promise.all([
+        runCommand(`networksetup -getwebproxy "${name}"`).then(
+          parseMacNetworkLine
+        ),
+        runCommand(`networksetup -getsecurewebproxy "${name}"`).then(
+          parseMacNetworkLine
+        ),
+        runCommand(`networksetup -getproxybypassdomains "${name}"`).then(
+          (result) => result.trim()
+        ),
+      ]);
+
+      if (previousState[0].enabled || previousState[1].enabled) {
+        this.feedback.notable(
+          `Your computer already has a system proxy configured. Optic will not overwrite those settings. `
+        );
+        this.feedback.notable(
+          `The Optic proxy is on ${this.proxyUrl}. Route traffic through that proxy to record it`
+        );
+
+        this.stopCommand = async () => {};
+
+        return;
+      }
 
       await Promise.all([
         runCommand(`networksetup -setwebproxy "${name}" 127.0.0.1 ${port}`),

@@ -161,6 +161,13 @@ export class OpticBackendClient extends JsonHttpClient {
       organization_id: organizationId,
     });
   }
+
+  public async verifyToken(): Promise<{
+    user?: { email: string; userId: string };
+    organization?: { organizationId: string };
+  }> {
+    return this.getJson(`/api/token/verify`);
+  }
 }
 
 export const createOpticClient = (opticToken: string) => {
