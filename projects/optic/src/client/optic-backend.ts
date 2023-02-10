@@ -144,6 +144,7 @@ export class OpticBackendClient extends JsonHttpClient {
     from_spec_id: string;
     to_spec_id: string;
     ruleset?: Types.StandardConfig;
+    ci?: boolean;
   }): Promise<{ id: string }> {
     return this.postJson(`/api/runs2`, run);
   }
