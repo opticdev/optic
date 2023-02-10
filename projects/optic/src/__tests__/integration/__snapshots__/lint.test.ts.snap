@@ -19,11 +19,11 @@ ValidationError: [31minvalid openapi: [39m[1m[31mpaths > /filler_route > pos
 [90m$workspace$/spec-with-bad-formatting.yml[39m
     at new ValidationError (/Users/nicholaslim/Desktop/repos/optic/projects/openapi-io/src/validation/errors.ts:3:5)
     at validateOpenApiV3Document (/Users/nicholaslim/Desktop/repos/optic/projects/openapi-io/src/validation/validator.ts:138:11)
-    at validateAndDenormalize (/Users/nicholaslim/Desktop/repos/optic/projects/optic/src/utils/spec-loaders.ts:156:28)
-    at /Users/nicholaslim/Desktop/repos/optic/projects/optic/src/utils/spec-loaders.ts:174:10
-    at step (/Users/nicholaslim/Desktop/repos/optic/projects/optic/src/utils/spec-loaders.ts:67:23)
-    at Object.next (/Users/nicholaslim/Desktop/repos/optic/projects/optic/src/utils/spec-loaders.ts:48:53)
-    at fulfilled (/Users/nicholaslim/Desktop/repos/optic/projects/optic/src/utils/spec-loaders.ts:39:58)
+    at validateAndDenormalize ($cwd$/src/utils/spec-loaders.ts:156:28)
+    at $cwd$/src/utils/spec-loaders.ts:174:10
+    at step ($cwd$/src/utils/spec-loaders.ts:67:23)
+    at Object.next ($cwd$/src/utils/spec-loaders.ts:48:53)
+    at fulfilled ($cwd$/src/utils/spec-loaders.ts:39:58)
 "
 `;
 
@@ -58,11 +58,11 @@ ValidationError: [31minvalid openapi: [39m[1m[31minfo must have required pro
 [90m$workspace$/spec-fails-validation.yml[39m
     at new ValidationError (/Users/nicholaslim/Desktop/repos/optic/projects/openapi-io/src/validation/errors.ts:3:5)
     at validateOpenApiV3Document (/Users/nicholaslim/Desktop/repos/optic/projects/openapi-io/src/validation/validator.ts:138:11)
-    at validateAndDenormalize (/Users/nicholaslim/Desktop/repos/optic/projects/optic/src/utils/spec-loaders.ts:156:28)
-    at /Users/nicholaslim/Desktop/repos/optic/projects/optic/src/utils/spec-loaders.ts:174:10
-    at step (/Users/nicholaslim/Desktop/repos/optic/projects/optic/src/utils/spec-loaders.ts:67:23)
-    at Object.next (/Users/nicholaslim/Desktop/repos/optic/projects/optic/src/utils/spec-loaders.ts:48:53)
-    at fulfilled (/Users/nicholaslim/Desktop/repos/optic/projects/optic/src/utils/spec-loaders.ts:39:58)
+    at validateAndDenormalize ($cwd$/src/utils/spec-loaders.ts:156:28)
+    at $cwd$/src/utils/spec-loaders.ts:174:10
+    at step ($cwd$/src/utils/spec-loaders.ts:67:23)
+    at Object.next ($cwd$/src/utils/spec-loaders.ts:48:53)
+    at fulfilled ($cwd$/src/utils/spec-loaders.ts:39:58)
 "
 `;
 

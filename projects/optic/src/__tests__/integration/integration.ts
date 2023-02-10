@@ -129,7 +129,9 @@ export async function fileExists(path: string): Promise<boolean> {
 }
 
 export function normalizeWorkspace(workspace: string, text: string): string {
-  return text.replace(new RegExp(workspace, 'g'), '$$workspace$$');
+  return text
+    .replace(new RegExp(workspace, 'g'), '$$workspace$$')
+    .replace(new RegExp(process.cwd(), 'g'), '$$cwd$$');
 }
 
 let server: http.Server;
