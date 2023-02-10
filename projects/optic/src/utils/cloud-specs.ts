@@ -60,6 +60,7 @@ export async function uploadRun(
     orgId: string;
     client: OpticBackendClient;
     specResults: CompareSpecResults;
+    ci: boolean;
   }
 ) {
   const stableResultsString = stableStringify(opts.specResults);
@@ -82,6 +83,7 @@ export async function uploadRun(
     api_id: apiId,
     from_spec_id: opts.fromSpecId,
     to_spec_id: opts.toSpecId,
+    ci: opts.ci,
   });
   trackEvent('run.added', {
     apiId,
