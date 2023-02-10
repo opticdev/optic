@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Create a request to help us improve
+about: Create a request to help us improve.
 title: ''
 labels: enhancement
 assignees: ''
