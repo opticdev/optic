@@ -101,21 +101,23 @@ export const processValidatorErrors = (
 
   const logger = sourcemap && jsonPointerLogger(sourcemap);
 
-  return pathsWithErrors.map((error) => {
-    const pathToLog =
-      error.keyword === 'additionalProperties'
-        ? jsonPointerHelpers.append(
-            error.instancePath,
-            error.params.additionalProperty
-          )
-        : error.instancePath;
+  return pathsWithErrors
+    .map((error) => {
+      const pathToLog =
+        error.keyword === 'additionalProperties'
+          ? jsonPointerHelpers.append(
+              error.instancePath,
+              error.params.additionalProperty
+            )
+          : error.instancePath;
 
-    const preview = logger ? logger.log(pathToLog) : `${error.instancePath}`;
+      const preview = logger ? logger.log(pathToLog) : `${error.instancePath}`;
 
-    return `${chalk.red('invalid openapi: ')}${chalk.bold.red(
-      getReadableError(error)
-    )}\n${preview}`;
-  });
+      return `${chalk.red('invalid openapi: ')}${chalk.bold.red(
+        getReadableError(error)
+      )}\n${preview}`;
+    })
+    .filter((value, index, array) => array.indexOf(value) === index);
 };
 
 export const validateOpenApiV3Document = (
