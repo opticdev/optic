@@ -12,7 +12,6 @@ import chalk from 'chalk';
 import * as GitCandidates from './git-get-file-candidates';
 import * as FsCandidates from './get-file-candidates';
 import { writeJson, writeYml } from './write-to-file';
-import { OpticBackendClient } from '../../client';
 import { uploadSpec } from '../../utils/cloud-specs';
 import * as Git from '../../utils/git-utils';
 
@@ -22,6 +21,7 @@ import {
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { errorHandler } from '../../error-handler';
+import { getOrganizationFromToken } from '../../utils/organization';
 
 function short(sha: string) {
   return sha.slice(0, 8);
@@ -71,46 +71,6 @@ type ApiAddActionOptions = {
   all: boolean;
 };
 
-async function getOrganizationToUploadTo(client: OpticBackendClient): Promise<
-  | {
-      ok: true;
-      org: { id: string; name: string };
-    }
-  | {
-      ok: false;
-      error: string;
-    }
-> {
-  let org: { id: string; name: string };
-
-  const { organizations } = await client.getTokenOrgs();
-  if (organizations.length > 1) {
-    const response = await prompts(
-      {
-        type: 'select',
-        name: 'orgId',
-        message: 'Select the organization you want to add APIs to',
-        choices: organizations.map((org) => ({
-          title: org.name,
-          value: org.id,
-        })),
-      },
-      { onCancel: () => process.exit(1) }
-    );
-    org = organizations.find((o) => o.id === response.orgId)!;
-  } else if (organizations.length === 0) {
-    process.exitCode = 1;
-    return {
-      ok: false,
-      error:
-        'Authenticated token was not associated with any organizations. Generate a new token at https://app.useoptic.com',
-    };
-  } else {
-    org = organizations[0];
-  }
-
-  return { ok: true, org };
-}
 async function crawlCandidateSpecs(
   orgId: string,
   [path, shas]: [string, string[]],
@@ -304,7 +264,10 @@ export const getApiAddAction =
       return;
     }
 
-    const orgRes = await getOrganizationToUploadTo(config.client);
+    const orgRes = await getOrganizationFromToken(
+      config.client,
+      'Select the organization you want to add APIs to'
+    );
     if (!orgRes.ok) {
       logger.error(orgRes.error);
       process.exitCode = 1;

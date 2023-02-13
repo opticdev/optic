@@ -40,6 +40,7 @@ export class OpticBackendClient extends JsonHttpClient {
   }
 
   public async createRuleset(
+    organizationId: string,
     name: string,
     description: string,
     config_schema: any
@@ -48,7 +49,7 @@ export class OpticBackendClient extends JsonHttpClient {
     upload_url: string;
     ruleset_url: string;
   }> {
-    return this.postJson(`/api/rulesets`, {
+    return this.postJson(`/api/organizations/${organizationId}/rulesets`, {
       name,
       description,
       config_schema,
