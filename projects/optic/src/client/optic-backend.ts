@@ -57,12 +57,16 @@ export class OpticBackendClient extends JsonHttpClient {
   }
 
   public async patchRuleset(
+    organizationId: string,
     rulesetId: string,
     uploaded: boolean
   ): Promise<void> {
-    return this.patchJson(`/api/rulesets/${rulesetId}`, {
-      uploaded,
-    });
+    return this.patchJson(
+      `/api/organizations/${organizationId}/rulesets/${rulesetId}`,
+      {
+        uploaded,
+      }
+    );
   }
 
   public async getManyRulesetsByName(rulesets: string[]): Promise<{

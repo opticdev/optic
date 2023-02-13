@@ -100,7 +100,7 @@ const getUploadAction =
       configSchema
     );
     await uploadFileToS3(ruleset.upload_url, compressedFileBuffer);
-    await config.client.patchRuleset(ruleset.id, true);
+    await config.client.patchRuleset(organizationId, ruleset.id, true);
 
     console.log('Successfully uploaded the ruleset');
     console.log(`View this ruleset at ${ruleset.ruleset_url}`);
