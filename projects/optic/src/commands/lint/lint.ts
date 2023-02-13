@@ -38,7 +38,7 @@ const getLintAction =
         denormalize: true,
       });
     } catch (e) {
-      logger.error(e);
+      logger.error(e instanceof Error ? e.message : e);
       process.exitCode = 1;
       return;
     }
