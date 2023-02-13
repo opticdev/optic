@@ -1,4 +1,5 @@
 import * as mockttp from 'mockttp';
+import events from 'events';
 import {
   CompletedRequest,
   CompletedResponse,
@@ -373,6 +374,7 @@ class TransparentProxy {
     // small hack to prevent warnings, because the AbortController polyfill doesn't setup EventEmitter according to spec
     // @ts-ignore
     if (tunnelAbort.signal.eventEmitter) {
+      events.setMaxListeners(Infinity);
       // @ts-ignore
       (tunnelAbort.signal.eventEmitter as EventEmitter).setMaxListeners(
         Infinity
