@@ -5,7 +5,7 @@ import equals from 'fast-deep-equal';
 export function walkSchema(
   schema: FlatOpenAPIV3_1.SchemaObject,
   trail: string = '',
-  map: { [key: string]: any } = {}
+  tuples: [string, any][] = []
 ) {
   const {
     // special case these
@@ -25,19 +25,24 @@ export function walkSchema(
       walkSchema(
         value,
         jsonPointerHelpers.append(trail, 'properties', key),
-        map
+        tuples
       );
     });
   }
 
+  if (oneOf || allOf || anyOf) {
+  }
+
   if (schema.type === 'object')
-    map[jsonPointerHelpers.append(trail, 'required')] = new Set(required || []);
+    tuples[jsonPointerHelpers.append(trail, 'required')] = new Set(
+      required || []
+    );
 
   Object.entries(other).forEach(([key, value]) => {
-    map[jsonPointerHelpers.append(trail, key)] = value;
+    tuples[jsonPointerHelpers.append(trail, key)] = value;
   });
 
-  return map;
+  return tuples;
 }
 
 export function computeCloseness(
