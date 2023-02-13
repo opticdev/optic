@@ -102,8 +102,10 @@ const getUploadAction =
     await uploadFileToS3(ruleset.upload_url, compressedFileBuffer);
     await config.client.patchRuleset(organizationId, ruleset.id, true);
 
-    console.log('Successfully uploaded the ruleset');
-    console.log(`View this ruleset at ${ruleset.ruleset_url}`);
+    console.log(`Successfully uploaded the ruleset ${ruleset.slug}`);
+    console.log(
+      `You can start using this ruleset by adding the ruleset ${ruleset.slug} in your standard.`
+    );
   };
 
 const ajv = new Ajv();

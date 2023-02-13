@@ -46,6 +46,7 @@ export class OpticBackendClient extends JsonHttpClient {
     config_schema: any
   ): Promise<{
     id: string;
+    slug: string;
     upload_url: string;
     ruleset_url: string;
   }> {
