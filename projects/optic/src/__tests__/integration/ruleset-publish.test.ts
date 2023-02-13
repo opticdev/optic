@@ -15,7 +15,7 @@ import {
 jest.setTimeout(30000);
 
 setupTestServer(({ url, method }) => {
-  if (method === 'POST' && /\/api\/rulesets$/.test(url)) {
+  if (method === 'POST' && /\/api\/organizations\/.*\/rulesets$/.test(url)) {
     return JSON.stringify({
       id: '123',
       upload_url: `${process.env.BWTS_HOST_OVERRIDE}/upload-url`,
@@ -40,7 +40,7 @@ describe('optic ruleset upload', () => {
     process.env.OPTIC_TOKEN = '123';
     const { combined, code } = await runOptic(
       workspace,
-      'ruleset upload ./rules.js'
+      'ruleset upload ./rules.js --organization-id 123'
     );
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     expect(code).toBe(0);
@@ -53,7 +53,7 @@ describe('optic ruleset upload', () => {
     process.env.OPTIC_TOKEN = '123';
     const { combined, code } = await runOptic(
       workspace,
-      'ruleset upload ./rules.js'
+      'ruleset upload ./rules.js --organization-id 123'
     );
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     expect(code).toBe(1);
@@ -64,7 +64,7 @@ describe('optic ruleset upload', () => {
     process.env.OPTIC_TOKEN = '123';
     const { combined, code } = await runOptic(
       workspace,
-      'ruleset upload ./rules.js'
+      'ruleset upload ./rules.js --organization-id 123'
     );
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     expect(code).toBe(1);
