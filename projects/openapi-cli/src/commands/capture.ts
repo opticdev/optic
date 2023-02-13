@@ -21,6 +21,7 @@ import { SystemProxy } from '../captures/system-proxy';
 import { captureStorage } from '../captures/capture-storage';
 import { RunCommand } from '../captures/run-command';
 import { platform } from '../shell-utils';
+import chalk from 'chalk';
 
 export async function captureCommand(): Promise<Command> {
   const command = new Command('capture');
@@ -183,9 +184,9 @@ export async function captureCommand(): Promise<Command> {
         sourcesController.abort();
 
         completing
-          .then(() =>
+          .then(async () =>
             Promise.all([
-              !runningCommand ? systemProxy.stop() : Promise.resolve(),
+              !runningCommand ? await systemProxy.stop() : Promise.resolve(),
               (async () => {
                 if (options.output) {
                   const outputPath = path.resolve(options.output);
@@ -193,6 +194,13 @@ export async function captureCommand(): Promise<Command> {
                   return fs.move(inProgressName, outputPath);
                 }
                 feedback.success(`Wrote har traffic to ${completedName}`);
+                feedback.log(
+                  chalk.gray(
+                    `\nRun ${chalk.whiteBright(
+                      `optic oas verify ${filePath}`
+                    )} to diff the captured traffic`
+                  )
+                );
                 return fs.move(inProgressName, completedName);
               })(),
             ])
@@ -206,12 +214,6 @@ export async function captureCommand(): Promise<Command> {
       });
 
       await completing;
-
-      feedback.commandInstruction(
-        `optic oas verify ${filePath}`,
-        'to diff OpenAPI specification and traffic'
-      );
-
       if (exitCode) process.exit(exitCode);
     });
 
