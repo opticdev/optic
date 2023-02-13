@@ -2,7 +2,7 @@
   "name": "@useoptic/openapi-cli",
   "license": "MIT",
   "packageManager": "yarn@3.4.1",
-  "version": "0.38.1-0",
+  "version": "0.38.1",
   "main": "build/lib.js",
   "types": "build/lib.d.ts",
   "files": [
@@ -96,6 +96,5 @@
     "ts-results": "^3.3.0",
     "update-notifier": "^6.0.2",
     "whatwg-mimetype": "^3.0.0"
-  },
-  "stableVersion": "0.38.0"
+  }
 }

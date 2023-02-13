@@ -87,7 +87,7 @@ const getBaseAndHeadFromFiles = async (
       getFileFromFsOrGit(file2, config, { strict: true, denormalize: true }),
     ]);
   } catch (e) {
-    console.error(e);
+    console.error(e instanceof Error ? e.message : e);
     throw new UserError();
   }
 };
@@ -108,7 +108,7 @@ const getBaseAndHeadFromFileAndBase = async (
     );
     return [baseFile, headFile];
   } catch (e) {
-    console.error(e);
+    console.error(e instanceof Error ? e.message : e);
     throw new UserError();
   }
 };

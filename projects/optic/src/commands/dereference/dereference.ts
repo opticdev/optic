@@ -45,7 +45,7 @@ const getDereferencedSpec = async (
       denormalize: false,
     });
   } catch (e) {
-    console.error(e);
+    console.error(e instanceof Error ? e.message : e);
     throw new UserError();
   }
 };
