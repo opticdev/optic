@@ -104,7 +104,7 @@ const getUploadAction =
 
     console.log(`Successfully uploaded the ruleset ${ruleset.slug}`);
     console.log(
-      `You can start using this ruleset by adding the ruleset ${ruleset.slug} in your standard.`
+      `You can start using this ruleset by adding the ruleset ${ruleset.slug} in your optic.dev.yml or standards file.`
     );
   };
 
