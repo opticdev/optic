@@ -206,6 +206,12 @@ export async function captureCommand(): Promise<Command> {
       });
 
       await completing;
+
+      feedback.commandInstruction(
+        `optic oas verify ${filePath}`,
+        'to diff OpenAPI specification and traffic'
+      );
+
       if (exitCode) process.exit(exitCode);
     });
 

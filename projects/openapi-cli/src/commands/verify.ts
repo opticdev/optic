@@ -190,15 +190,17 @@ export async function verifyCommand(): Promise<Command> {
       // clear captures
       if ((options.document || options.patch) && !options.har) {
         const [, captureStorageDirectory] = await captureStorage(specPath);
-        console.log("Resetting captured traffic")
-        await fs.remove(captureStorageDirectory)
+        console.log('Resetting captured traffic');
+        await fs.remove(captureStorageDirectory);
       }
 
       if (Boolean(options.document) && !hasOpticUrl) {
         console.log('');
         console.log(
-          chalk.blue.bold(
-            `Share a link to your API documentation with "optic api add ${specPath}"`
+          chalk.gray(
+            `Share a link to your API documentation with ${chalk.whiteBright(
+              'optic api add ${specPath}'
+            )}`
           )
         );
         console.log('');
