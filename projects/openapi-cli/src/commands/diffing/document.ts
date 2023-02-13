@@ -94,7 +94,7 @@ export function parseAddOperations(
   const components = rawComponents.filter((s) => s.length > 0);
   const pairs: ParsedOperation[] = [];
 
-  const regex = /(get|post|put|delete|patch|options|head)( +)(\/.*)/;
+  const regex = /(get|post|put|delete|patch|options|head)( +)(\/.*)/i;
 
   components.forEach((comp) => {
     const groups = regex.exec(comp);

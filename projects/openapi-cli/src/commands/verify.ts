@@ -188,7 +188,7 @@ export async function verifyCommand(): Promise<Command> {
       await flushEvents();
 
       // clear captures
-      if ((options.document || options.patch) && !options.har) {
+      if ((options.document === 'all' || options.patch) && !options.har) {
         const [, captureStorageDirectory] = await captureStorage(specPath);
         console.log('Resetting captured traffic');
         await fs.remove(captureStorageDirectory);
@@ -326,7 +326,7 @@ function renderUndocumentedPath(
     `${chalk.bgYellow('  Undocumented  ')} ${method
       .toUpperCase()
       .padStart(6, ' ')}   ${pathPattern}\n${''.padStart(
-      25, // undocumented + method length
+      26, // undocumented + method length
       ' '
     )}${examplePath}`
   );
