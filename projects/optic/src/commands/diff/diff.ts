@@ -83,7 +83,7 @@ const getBaseAndHeadFromFiles = async (
   try {
     // TODO update function to try download from spec-id cloud
     return await Promise.all([
-      getFileFromFsOrGit(file1, config, { strict: false, denormalize: true }),
+      getFileFromFsOrGit(file1, config, { strict: true, denormalize: true }),
       getFileFromFsOrGit(file2, config, { strict: true, denormalize: true }),
     ]);
   } catch (e) {

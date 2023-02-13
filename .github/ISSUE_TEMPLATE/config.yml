@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Optic Documentation
+    url: https://www.useoptic.com/docs
+    about: View Optic's documentation.
   - name: Optic Discord
     url: https://discord.useoptic.com
     about: Join our community and ask questions.
