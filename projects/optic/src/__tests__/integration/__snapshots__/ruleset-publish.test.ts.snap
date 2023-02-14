@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`optic ruleset upload can publish a ruleset 1`] = `
-"Successfully uploaded the ruleset
-View this ruleset at http://app.useoptic.com/ruleset_url
+"Successfully uploaded the ruleset @orgslug/ruleset-name
+You can start using this ruleset by adding the ruleset @orgslug/ruleset-name in your optic.dev.yml or standards file.
 "
 `;
 

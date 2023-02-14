@@ -40,15 +40,17 @@ export class OpticBackendClient extends JsonHttpClient {
   }
 
   public async createRuleset(
+    organizationId: string,
     name: string,
     description: string,
     config_schema: any
   ): Promise<{
     id: string;
+    slug: string;
     upload_url: string;
     ruleset_url: string;
   }> {
-    return this.postJson(`/api/rulesets`, {
+    return this.postJson(`/api/organizations/${organizationId}/rulesets`, {
       name,
       description,
       config_schema,
@@ -56,12 +58,16 @@ export class OpticBackendClient extends JsonHttpClient {
   }
 
   public async patchRuleset(
+    organizationId: string,
     rulesetId: string,
     uploaded: boolean
   ): Promise<void> {
-    return this.patchJson(`/api/rulesets/${rulesetId}`, {
-      uploaded,
-    });
+    return this.patchJson(
+      `/api/organizations/${organizationId}/rulesets/${rulesetId}`,
+      {
+        uploaded,
+      }
+    );
   }
 
   public async getManyRulesetsByName(rulesets: string[]): Promise<{
@@ -144,6 +150,7 @@ export class OpticBackendClient extends JsonHttpClient {
     from_spec_id: string;
     to_spec_id: string;
     ruleset?: Types.StandardConfig;
+    ci?: boolean;
   }): Promise<{ id: string }> {
     return this.postJson(`/api/runs2`, run);
   }

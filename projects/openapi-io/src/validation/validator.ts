@@ -66,14 +66,16 @@ export default class OpenAPISchemaValidator {
 
 const getReadableError = (error: ErrorObject): string => {
   if (error.keyword === 'enum') {
-    const paths = error.instancePath.split('/')
-    const key = paths[paths.length - 1]
-    return `${key} ${error.message} ${error.params.allowedValues.join(',')}`
+    const paths = error.instancePath.split('/');
+    const key = paths[paths.length - 1];
+    return `${key} ${error.message} ${error.params.allowedValues.join(',')}`;
   } else {
-    const readableJsonPath = jsonPointerHelpers.decode(error.instancePath).join(' > ')
-    return `${readableJsonPath} ${error.message}` ?? ''
+    const readableJsonPath = jsonPointerHelpers
+      .decode(error.instancePath)
+      .join(' > ');
+    return `${readableJsonPath} ${error.message}` ?? '';
   }
-}
+};
 
 export const processValidatorErrors = (
   spec: any,
@@ -99,15 +101,23 @@ export const processValidatorErrors = (
 
   const logger = sourcemap && jsonPointerLogger(sourcemap);
 
-  return pathsWithErrors.map((error) => {
-    const preview = logger
-      ? logger.log(error.instancePath)
-      : `${error.instancePath}`;
+  return pathsWithErrors
+    .map((error) => {
+      const pathToLog =
+        error.keyword === 'additionalProperties'
+          ? jsonPointerHelpers.append(
+              error.instancePath,
+              error.params.additionalProperty
+            )
+          : error.instancePath;
 
-    return `${chalk.red('invalid openapi: ')}${chalk.bold.red(
-      getReadableError(error)
-    )}\n${preview}`;
-  });
+      const preview = logger ? logger.log(pathToLog) : `${error.instancePath}`;
+
+      return `${chalk.red('invalid openapi: ')}${chalk.bold.red(
+        getReadableError(error)
+      )}\n${preview}`;
+    })
+    .filter((value, index, array) => array.indexOf(value) === index);
 };
 
 export const validateOpenApiV3Document = (

@@ -1,0 +1,4 @@
+ruleset:
+  - naming:
+      required_on: always
+      properties: camelCase

@@ -67,6 +67,7 @@ export async function uploadDiff(
       client: config.client,
       specResults,
       orgId: specDetails.orgId,
+      ci: config.isInCi,
     });
 
     const url = getRunUrl(
