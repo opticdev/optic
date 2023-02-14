@@ -61,7 +61,7 @@ export function validateSchema(
 function strictAdditionalProperties(schema: any) {
   if (Array.isArray(schema)) {
     schema.forEach((item) => strictAdditionalProperties(item));
-  } else if (Object.prototype.toString.call(schema) === '[object Object]') {
+  } else if (typeof schema === 'object' && schema !== null) {
     // make default false
     if (
       schema.hasOwnProperty('type') &&
