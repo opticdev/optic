@@ -59,21 +59,19 @@ export function validateSchema(
 }
 
 function strictAdditionalProperties(schema: any) {
-  if (typeof schema === 'object') {
-    if (Array.isArray(schema)) {
-      schema.forEach(strictAdditionalProperties);
-    } else {
-      // make default false
-      if (
-        schema.type &&
-        schema.type === 'object' &&
-        !schema.hasOwnProperty('additionalProperties')
-      ) {
-        schema.additionalProperties = false;
-      }
-
-      Object.values(schema).forEach(strictAdditionalProperties);
+  if (Array.isArray(schema)) {
+    schema.forEach((item) => strictAdditionalProperties(item));
+  } else if (Object.prototype.toString.call(schema) === '[object Object]') {
+    // make default false
+    if (
+      schema.hasOwnProperty('type') &&
+      schema.type === 'object' &&
+      !schema.hasOwnProperty('additionalProperties')
+    ) {
+      schema.additionalProperties = false;
     }
+
+    Object.values(schema).forEach(strictAdditionalProperties);
   }
 }
 
