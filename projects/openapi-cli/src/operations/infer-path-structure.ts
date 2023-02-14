@@ -304,23 +304,26 @@ export class InferPathStructure {
     pathPattern: string;
     examplePath: string;
   }[] = () => {
-    return this.paths.map((pathComponent) => {
-      const pathPattern = reducePathPattern(pathComponent);
+    return this.paths
+      .map((pathComponent) => {
+        const pathPattern = reducePathPattern(pathComponent);
 
-      const methods = Array.from(pathComponent.httpMethods).filter((method) => {
-        // skip known operations
-        return !this.knownOperations.some(
-          (i) => i.pathPattern === pathPattern && i.methods.includes(method)
-        );
-      }) as Array<HttpMethod>;
+        const methods = Array.from(pathComponent.httpMethods).filter(
+          (method) => {
+            // skip known operations
+            return !this.knownOperations.some(
+              (i) => i.pathPattern === pathPattern && i.methods.includes(method)
+            );
+          }
+        ) as Array<HttpMethod>;
 
-      return {
-        methods,
-        pathPattern,
-        examplePath: pathComponent.examplePath ?? '',
-      };
-    });
-    // .filter((i) => i.methods.length > 0);
+        return {
+          methods,
+          pathPattern,
+          examplePath: pathComponent.examplePath ?? '',
+        };
+      })
+      .filter((i) => i.methods.length > 0);
   };
 }
 
