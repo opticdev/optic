@@ -74,6 +74,22 @@ it('can expand the structure from new patterns with obvious variables', () => {
   ]);
 });
 
+it('can suggest additional methods get added', () => {
+  const pathStructure = new InferPathStructure([
+    { methods: ['get'], pathPattern: '/orgs' },
+  ]);
+
+  pathStructure.includeObservedUrlPath('post', '/orgs');
+
+  expect(pathStructure.undocumentedPaths()).toEqual([
+    {
+      methods: ['post'],
+      pathPattern: '/orgs',
+      examplePath: '/orgs',
+    },
+  ]);
+});
+
 it('can expand the structure from new patterns with hints in spec variables', () => {
   const pathStructure = new InferPathStructure([
     { methods: ['get'], pathPattern: '/organizations/{organization}' },
