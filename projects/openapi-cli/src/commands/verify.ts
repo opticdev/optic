@@ -7,7 +7,7 @@ import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { flushEvents, trackCompletion, trackEvent } from '../segment';
 import { trackWarning } from '../sentry';
 import * as AT from '../lib/async-tools';
-import { readDeferencedSpec } from '../specs';
+import { OpenAPIV3, readDeferencedSpec } from '../specs';
 import { CapturedInteractions, HarEntries } from '../captures';
 import { captureStorage } from '../captures/capture-storage';
 import chalk from 'chalk';
@@ -23,6 +23,7 @@ import {
   renderDiffs,
   updateByInteractions,
 } from './diffing/patch';
+import { specToOperations } from '../operations/queries';
 
 export async function verifyCommand(): Promise<Command> {
   const command = new Command('verify');
@@ -154,6 +155,7 @@ export async function verifyCommand(): Promise<Command> {
 
       const renderingStatus = await renderOperationStatus(
         observations,
+        spec,
         feedback
       );
 
@@ -226,9 +228,13 @@ export async function verifyCommand(): Promise<Command> {
 
 async function renderOperationStatus(
   observations: StatusObservations,
+  spec: OpenAPIV3.Document,
   feedback: ReturnType<typeof createCommandFeedback>
 ) {
-  const { pathsToAdd } = await observationToUndocumented(observations);
+  const { pathsToAdd } = await observationToUndocumented(
+    observations,
+    specToOperations(spec)
+  );
 
   let undocumentedPaths: number = 0;
 
