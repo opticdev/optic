@@ -48,7 +48,13 @@ export function validateSchema(
   const result = schemaCompiled(example);
 
   if (!result) {
-    const error = `- ${ajv.errorsText(schemaCompiled.errors, {
+    schemaCompiled.errors?.forEach((error) => {
+      if (error.keyword === 'additionalProperties') {
+        error.message = `must NOT have additional property '${error.params.additionalProperty}'`;
+      }
+    });
+
+    const error = `  - ${ajv.errorsText(schemaCompiled.errors, {
       separator: '\n- ',
     })}`;
 
