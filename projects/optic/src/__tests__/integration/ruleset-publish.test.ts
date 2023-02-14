@@ -18,6 +18,7 @@ setupTestServer(({ url, method }) => {
   if (method === 'POST' && /\/api\/organizations\/.*\/rulesets$/.test(url)) {
     return JSON.stringify({
       id: '123',
+      slug: '@orgslug/ruleset-name',
       upload_url: `${process.env.BWTS_HOST_OVERRIDE}/upload-url`,
       ruleset_url: 'http://app.useoptic.com/ruleset_url',
     });

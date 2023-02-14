@@ -100,10 +100,12 @@ const getUploadAction =
       configSchema
     );
     await uploadFileToS3(ruleset.upload_url, compressedFileBuffer);
-    await config.client.patchRuleset(ruleset.id, true);
+    await config.client.patchRuleset(organizationId, ruleset.id, true);
 
-    console.log('Successfully uploaded the ruleset');
-    console.log(`View this ruleset at ${ruleset.ruleset_url}`);
+    console.log(`Successfully uploaded the ruleset ${ruleset.slug}`);
+    console.log(
+      `You can start using this ruleset by adding the ruleset ${ruleset.slug} in your optic.dev.yml or standards file.`
+    );
   };
 
 const ajv = new Ajv();
