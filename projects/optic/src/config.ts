@@ -209,7 +209,7 @@ export async function readUserConfig(): Promise<UserConfig | null> {
 async function hasYmlOrJsonChanges(): Promise<boolean> {
   const status = await Git.gitStatus();
 
-  return status.split('\n').some((line) => /\.(json|ya?ml)/i.test(line));
+  return status.split('\n').some((line) => /\.(json|ya?ml)$/i.test(line));
 }
 
 export async function initializeConfig(): Promise<OpticCliConfig> {
