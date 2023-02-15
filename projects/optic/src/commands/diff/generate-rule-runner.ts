@@ -9,6 +9,7 @@ import {
 } from '@useoptic/rulesets-base';
 import { loadCliConfig } from '../../config';
 import { logger } from '../../logger';
+import chalk from 'chalk';
 
 const isLocalJsFile = (name: string) => name.endsWith('.js');
 
@@ -27,10 +28,19 @@ const getStandardToUse = async (options: {
     );
     return config.ruleset;
   } else if (options.specRuleset) {
-    const ruleset = await options.config.client.getStandard(
-      options.specRuleset
-    );
-    return ruleset.config.ruleset;
+    try {
+      const ruleset = await options.config.client.getStandard(
+        options.specRuleset
+      );
+      return ruleset.config.ruleset;
+    } catch (e) {
+      logger.warn(
+        `${chalk.red('Warning:')} Could not download standard ${
+          options.specRuleset
+        }. Please check the ruleset name and whether you are authenticated (run: optic login).`
+      );
+      return [];
+    }
   } else {
     return options.config.ruleset;
   }
