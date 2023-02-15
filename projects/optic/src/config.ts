@@ -5,13 +5,7 @@ import Ajv from 'ajv';
 import os from 'os';
 import path from 'node:path';
 import { createOpticClient, OpticBackendClient } from './client';
-import {
-  hasGit,
-  isInGitRepo,
-  getRootPath,
-  isGitStatusClean,
-  resolveGitRef,
-} from './utils/git-utils';
+import * as Git from './utils/git-utils';
 import { logger } from './logger';
 
 export enum VCS {
@@ -212,6 +206,12 @@ export async function readUserConfig(): Promise<UserConfig | null> {
   }
 }
 
+async function hasYmlOrJsonChanges(): Promise<boolean> {
+  const status = await Git.gitStatus();
+
+  return status.split('\n').some((line) => /\.(json|ya?ml)/i.test(line));
+}
+
 export async function initializeConfig(): Promise<OpticCliConfig> {
   let cliConfig: OpticCliConfig = DefaultOpticCliConfig;
   const userConfig = await readUserConfig();
@@ -230,8 +230,8 @@ export async function initializeConfig(): Promise<OpticCliConfig> {
     cliConfig.client = createOpticClient(token);
   }
 
-  if ((await hasGit()) && (await isInGitRepo())) {
-    const gitRoot = await getRootPath();
+  if ((await Git.hasGit()) && (await Git.isInGitRepo())) {
+    const gitRoot = await Git.getRootPath();
     const opticYmlPath = await detectCliConfig(gitRoot);
 
     if (opticYmlPath) {
@@ -246,8 +246,8 @@ export async function initializeConfig(): Promise<OpticCliConfig> {
     try {
       cliConfig.vcs = {
         type: VCS.Git,
-        sha: await resolveGitRef('HEAD'),
-        status: (await isGitStatusClean()) ? 'clean' : 'dirty',
+        sha: await Git.resolveGitRef('HEAD'),
+        status: (await hasYmlOrJsonChanges()) ? 'dirty' : 'clean',
       };
     } catch (e) {
       // Git command can fail in a repo with no commits, we should treat this as having no commits
