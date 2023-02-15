@@ -79,6 +79,7 @@ async function crawlCandidateSpecs(
     path_to_spec: string | undefined;
     web?: boolean;
     default_branch: string;
+    default_tag?: string | undefined;
     web_url?: string;
   }
 ) {
@@ -127,6 +128,7 @@ async function crawlCandidateSpecs(
     const { id } = await config.client.createApi(orgId, {
       name,
       default_branch: options.default_branch,
+      default_tag: options.default_tag,
       web_url: options.web_url,
     });
     api = {
@@ -276,6 +278,7 @@ export const getApiAddAction =
     logger.info('');
 
     let default_branch: string = '';
+    let default_tag: string | undefined = undefined;
     let web_url: string | undefined = undefined;
 
     logger.info('');
@@ -284,6 +287,7 @@ export const getApiAddAction =
       const maybeDefaultBranch = await Git.getDefaultBranchName();
       if (maybeDefaultBranch) {
         default_branch = maybeDefaultBranch;
+        default_tag = `gitbranch:${default_branch}`;
       }
       const maybeOrigin = await Git.guessRemoteOrigin();
       if (maybeOrigin) {
@@ -354,6 +358,7 @@ export const getApiAddAction =
         path_to_spec: file?.path,
         web: options.web,
         default_branch,
+        default_tag,
         web_url,
       });
     }
