@@ -73,23 +73,25 @@ type ApiAddActionOptions = {
 
 async function crawlCandidateSpecs(
   orgId: string,
-  [path, shas]: [string, string[]],
+  [file_path, shas]: [string, string[]],
   config: OpticCliConfig,
   options: {
     path_to_spec: string | undefined;
     web?: boolean;
     default_branch: string;
+    default_tag?: string | undefined;
     web_url?: string;
   }
 ) {
+  const pathRelativeToRoot = path.relative(config.root, file_path);
   let parseResult: ParseResult;
   try {
-    parseResult = await getFileFromFsOrGit(path, config, {
+    parseResult = await getFileFromFsOrGit(file_path, config, {
       strict: false,
       denormalize: true,
     });
   } catch (e) {
-    if (path === options.path_to_spec) {
+    if (file_path === options.path_to_spec) {
       logger.info(
         chalk.red(
           `File ${options.path_to_spec} is not a valid OpenAPI file. Optic currently supports OpenAPI 3 and 3.1`
@@ -97,17 +99,21 @@ async function crawlCandidateSpecs(
       );
       logger.info(e);
     } else {
-      logger.debug(`Disregarding candidate ${path}`);
+      logger.debug(`Disregarding candidate ${pathRelativeToRoot}`);
       logger.debug(e);
     }
     return;
   }
   if (parseResult.isEmptySpec) {
-    logger.info(chalk.red(`File ${path} does not exist in working directory`));
+    logger.info(
+      chalk.red(
+        `File ${pathRelativeToRoot} does not exist in working directory`
+      )
+    );
     return;
   }
 
-  const spinner = ora(`Found OpenAPI at ${path}`);
+  const spinner = ora(`Found OpenAPI at ${pathRelativeToRoot}`);
   spinner.color = 'blue';
 
   const existingOpticUrl: string | undefined =
@@ -123,10 +129,11 @@ async function crawlCandidateSpecs(
     alreadyTracked = true;
     api = { id: maybeParsedUrl.apiId, url: existingOpticUrl };
   } else {
-    const name = parseResult.jsonLike?.info?.title ?? path;
+    const name = parseResult.jsonLike?.info?.title ?? pathRelativeToRoot;
     const { id } = await config.client.createApi(orgId, {
       name,
       default_branch: options.default_branch,
+      default_tag: options.default_tag,
       web_url: options.web_url,
     });
     api = {
@@ -138,27 +145,33 @@ async function crawlCandidateSpecs(
   for await (const sha of shas) {
     let parseResult: ParseResult;
     try {
-      parseResult = await getFileFromFsOrGit(`${sha}:${path}`, config, {
-        strict: false,
-        denormalize: true,
-      });
+      parseResult = await getFileFromFsOrGit(
+        `${sha}:${pathRelativeToRoot}`,
+        config,
+        {
+          strict: false,
+          denormalize: true,
+        }
+      );
     } catch (e) {
       logger.debug(
         `${short(
           sha
-        )}:${path} is not a valid OpenAPI file, skipping sha version`,
+        )}:${pathRelativeToRoot} is not a valid OpenAPI file, skipping sha version`,
         e
       );
       continue;
     }
     if (parseResult.isEmptySpec) {
       logger.debug(
-        `File ${path} does not exist in sha ${short(sha)}, stopping here`
+        `File ${pathRelativeToRoot} does not exist in sha ${short(
+          sha
+        )}, stopping here`
       );
       break;
     }
     spinner.text = `${chalk.bold.blue(
-      parseResult.jsonLike.info.title || path
+      parseResult.jsonLike.info.title || pathRelativeToRoot
     )} version ${sha.substring(0, 6)} uploading`;
     await uploadSpec(api.id, {
       spec: parseResult,
@@ -170,16 +183,16 @@ async function crawlCandidateSpecs(
 
   // Write to file only if optic-url is not set or is invalid
   if (!existingOpticUrl || !maybeParsedUrl) {
-    if (/.json/i.test(path)) {
-      await writeJson(path, {
+    if (/.json/i.test(file_path)) {
+      await writeJson(file_path, {
         [OPTIC_URL_KEY]: api.url,
       });
     } else {
-      await writeYml(path, {
+      await writeYml(file_path, {
         [OPTIC_URL_KEY]: api.url,
       });
     }
-    logger.debug(`Added spec ${path} to ${api.url}`);
+    logger.debug(`Added spec ${pathRelativeToRoot} to ${api.url}`);
 
     trackEvent('api.added', {
       apiId: api.id,
@@ -191,11 +204,15 @@ async function crawlCandidateSpecs(
       await open(api.url, { wait: false });
     }
   } else {
-    logger.debug(`Spec ${path} has already been added at ${api.url}`);
+    logger.debug(
+      `Spec ${pathRelativeToRoot} has already been added at ${api.url}`
+    );
   }
 
   spinner.succeed(
-    `${chalk.bold.blue(parseResult.jsonLike.info.title || path)} ${
+    `${chalk.bold.blue(
+      parseResult.jsonLike.info.title || pathRelativeToRoot
+    )} ${
       alreadyTracked ? 'already being tracked' : 'is now being tracked'
     }.\n  ${chalk.bold(`View history: ${chalk.underline(api.url)}`)}`
   );
@@ -276,6 +293,7 @@ export const getApiAddAction =
     logger.info('');
 
     let default_branch: string = '';
+    let default_tag: string | undefined = undefined;
     let web_url: string | undefined = undefined;
 
     logger.info('');
@@ -284,6 +302,7 @@ export const getApiAddAction =
       const maybeDefaultBranch = await Git.getDefaultBranchName();
       if (maybeDefaultBranch) {
         default_branch = maybeDefaultBranch;
+        default_tag = `gitbranch:${default_branch}`;
       }
       const maybeOrigin = await Git.guessRemoteOrigin();
       if (maybeOrigin) {
@@ -354,6 +373,7 @@ export const getApiAddAction =
         path_to_spec: file?.path,
         web: options.web,
         default_branch,
+        default_tag,
         web_url,
       });
     }
