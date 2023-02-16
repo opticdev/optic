@@ -83,11 +83,11 @@ export const getRootPath = async (): Promise<string> =>
     exec(command, cb);
   });
 
-export const isGitStatusClean = async (): Promise<boolean> =>
+export const gitStatus = async (): Promise<string> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
       if (err || stderr) reject(err || stderr);
-      resolve(stdout.trim() === '');
+      resolve(stdout.trim());
     };
     const command = `git status --porcelain`;
     exec(command, cb);
