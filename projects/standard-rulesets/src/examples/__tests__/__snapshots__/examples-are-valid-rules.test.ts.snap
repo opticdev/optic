@@ -35,7 +35,7 @@ exports[`examples ruleset invalid parameter example errors 1`] = `
     "condition": undefined,
     "docsLink": undefined,
     "error": "query parameter 'invalidExample' example does not match the schema. 
-- data must be string ",
+  - data must be string ",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -176,7 +176,7 @@ exports[`examples ruleset invalid property example errors 1`] = `
     "condition": undefined,
     "docsLink": undefined,
     "error": "'wrong' example does not match the schema. 
-- data must be string ",
+  - data must be string ",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -360,7 +360,7 @@ exports[`examples ruleset invalid request named example errors 1`] = `
     "condition": undefined,
     "docsLink": undefined,
     "error": "the example named 'main' does not match the schema. 
-- data must have required property 'world' ",
+  - data must have required property 'world' ",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -497,7 +497,7 @@ exports[`examples ruleset invalid request top level example errors 1`] = `
     "condition": undefined,
     "docsLink": undefined,
     "error": "the example does not match the schema. 
-- data must have required property 'world' ",
+  - data must have required property 'world' ",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -729,7 +729,7 @@ exports[`examples ruleset invalid response named example errors 1`] = `
     "condition": undefined,
     "docsLink": undefined,
     "error": "the example named 'main' does not match the schema. 
-- data must have required property 'world' ",
+  - data must have required property 'world' ",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -871,7 +871,7 @@ exports[`examples ruleset invalid response top level example errors 1`] = `
     "condition": undefined,
     "docsLink": undefined,
     "error": "the example does not match the schema. 
-- data must have required property 'world' ",
+  - data must have required property 'world' ",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -883,4 +883,17 @@ exports[`examples ruleset invalid response top level example errors 1`] = `
     "where": "GET /api/users response 200",
   },
 ]
+`;
+
+exports[`examples should default to additional properties false ajv config will be strict on additional properties 1`] = `
+{
+  "error": "  - data must NOT have additional property 'c'",
+  "pass": false,
+}
+`;
+
+exports[`examples should default to additional properties false ajv config will not override a user defined value 1`] = `
+{
+  "pass": true,
+}
 `;
