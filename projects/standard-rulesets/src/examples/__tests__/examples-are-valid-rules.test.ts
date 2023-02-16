@@ -281,6 +281,7 @@ describe('examples should default to additional properties false', () => {
       { a: 'abc', b: 'def', c: 'xyz' }
     );
     expect(result.pass).toBe(false);
+    expect(result).toMatchSnapshot();
   });
   test('ajv config will not override a user defined value', () => {
     const result = validateSchema(
@@ -295,5 +296,6 @@ describe('examples should default to additional properties false', () => {
       { a: 'abc', b: 'def', c: 'xyz' }
     );
     expect(result.pass).toBe(true);
+    expect(result).toMatchSnapshot();
   });
 });
