@@ -57,6 +57,25 @@ export const openAPI: OpenAPIV3.Document = {
     '/example': {
       get: {
         operationId: 'get_examples',
+        parameters: [
+          {
+            name: 'status',
+            in: 'query',
+            required: true,
+            schema: {
+              type: 'string',
+              enum: ['available', 'pending', 'sold'],
+            },
+          },
+          {
+            name: 'nothing',
+            in: 'query',
+            required: true,
+            schema: {
+              type: 'string',
+            },
+          },
+        ],
         responses: {
           '200': {
             description: 'succesful',
