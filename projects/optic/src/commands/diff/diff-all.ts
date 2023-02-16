@@ -1,4 +1,5 @@
 import { Command } from 'commander';
+import pm from 'picomatch';
 import { OpticCliConfig, VCS } from '../../config';
 import { findOpenApiSpecsCandidates } from '../../utils/git-utils';
 import {
@@ -61,6 +62,16 @@ export const registerDiffAll = (cli: Command, config: OpticCliConfig) => {
       'HEAD~1'
     )
     .option(
+      '--match <match>',
+      'a glob to match specs (e.g. "**/*.yml" or "**/specifications/*.json"). Also takes \
+      comma separated values (e.g. "**/*.yml,**/*.json")'
+    )
+    .option(
+      '--ignore <ignore>',
+      'an ignore glob to ignore certain matches (e.g. "**/*.yml" or "**/specifications/*.json"). Also takes \
+comma separated values (e.g. "**/*.yml,**/*.json")'
+    )
+    .option(
       '--standard <standard>',
       'run comparison with a locally defined standard, if not set, looks for the standard on the [x-optic-standard] key on the spec, and then the optic.dev.yml file.'
     )
@@ -75,6 +86,8 @@ type DiffAllActionOptions = {
   compareTo?: string;
   compareFrom: string;
   standard?: string;
+  match?: string;
+  ignore?: string;
   check: boolean;
   web: boolean;
   upload: boolean;
@@ -370,6 +383,37 @@ async function openWebpage(
   await open(url, { wait: false });
 }
 
+function sanitizeRef(maybeGitRef: string): string {
+  return maybeGitRef.includes(':') ? maybeGitRef.split(':')[1] : maybeGitRef;
+}
+
+function applyGlobFilter(
+  filePaths: string[],
+  globs: {
+    matches?: string;
+    ignores?: string;
+  }
+): string[] {
+  const matches = globs.matches?.split(',').filter((g) => g !== '') ?? [];
+  const ignores = globs.ignores?.split(',').filter((g) => g !== '') ?? [];
+
+  const globMatchers = matches.map((g) => pm(g));
+  const ignoreMatchers = ignores.map((i) => pm(i));
+  const matchedFiles = new Set(
+    filePaths
+      .filter((name) =>
+        globMatchers.length === 0
+          ? true
+          : globMatchers.some((globFilter) => globFilter(sanitizeRef(name)))
+      )
+      .filter((name) =>
+        ignoreMatchers.every((ignoreFilter) => !ignoreFilter(sanitizeRef(name)))
+      )
+  );
+
+  return [...matchedFiles];
+}
+
 const getDiffAllAction =
   (config: OpticCliConfig) => async (options: DiffAllActionOptions) => {
     if (config.vcs?.type !== VCS.Git) {
@@ -423,11 +467,17 @@ const getDiffAllAction =
     const candidatesMap = matchCandidates(
       {
         ref: options.compareFrom,
-        paths: compareFromCandidates,
+        paths: applyGlobFilter(compareFromCandidates, {
+          matches: options.match,
+          ignores: options.ignore,
+        }),
       },
       {
         ref: options.compareTo,
-        paths: compareToCandidates,
+        paths: applyGlobFilter(compareToCandidates, {
+          matches: options.match,
+          ignores: options.ignore,
+        }),
       }
     );
 
