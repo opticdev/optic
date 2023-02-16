@@ -90,4 +90,26 @@ describe('diff-all', () => {
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     expect(code).toBe(1);
   });
+
+  test('diff all with glob and ignores', async () => {
+    const workspace = await setupWorkspace('diff-all/globs', {
+      repo: true,
+      commit: true,
+    });
+
+    await run(
+      `mv ./folder-to-run/should-run.yml ./folder-to-run/should-run-mved.yml && git add . && git commit -m 'move spec'`,
+      false,
+      workspace
+    );
+    process.env.OPTIC_TOKEN = '123';
+
+    const { combined, code } = await runOptic(
+      workspace,
+      'diff-all --check --upload --match "folder-to-run/**" --ignore "folder-to-run/ignore/**"'
+    );
+
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(code).toBe(1);
+  });
 });
