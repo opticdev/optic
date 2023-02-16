@@ -393,6 +393,7 @@ function getParameterIndices(
     specs.to,
     location.operation
   );
+
   const before: number = beforeParameters.match
     ? beforeParameters.value.findIndex(
         (p: any) => p.name === location.name && p.in === location.type
@@ -408,6 +409,71 @@ function getParameterIndices(
     before,
     after,
   };
+}
+
+function groupParameterDiffs(
+  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  {
+    type,
+    name,
+    operationTrail,
+  }: {
+    type: string;
+    name: string;
+    operationTrail: string;
+  },
+  keysToGroup: string[],
+  diffs: Diff[]
+) {
+  const groupedDiffs: Diff[] = [];
+  const pathsToGroup = new Set<string>();
+  for (const diff of diffs) {
+    const trail = diff.after ?? diff.before;
+    const parts = jsonPointerHelpers.decode(trail);
+    const index = parts.findIndex((p) => keysToGroup.includes(p));
+    if (index !== -1) {
+      // /paths/:path/:method/parameters/:index
+      const key = jsonPointerHelpers.compile(parts.slice(5, index + 1));
+      pathsToGroup.add(key);
+    } else {
+      groupedDiffs.push(diff);
+    }
+  }
+
+  for (const path of pathsToGroup) {
+    // find the enum in both before and after
+    const indices = getParameterIndices(specs, {
+      operation: operationTrail,
+      name,
+      type,
+    });
+
+    const before = jsonPointerHelpers.append(
+      operationTrail,
+      String(indices.before),
+      ...jsonPointerHelpers.decode(path)
+    );
+    const after = jsonPointerHelpers.append(
+      operationTrail,
+      String(indices.after),
+      ...jsonPointerHelpers.decode(path)
+    );
+    const beforeValue = jsonPointerHelpers.tryGet(specs.from, before);
+    const afterValue = jsonPointerHelpers.tryGet(specs.to, after);
+
+    groupedDiffs.push({
+      trail: path,
+      change:
+        beforeValue.match && afterValue.match
+          ? 'changed'
+          : beforeValue.match
+          ? 'removed'
+          : 'added',
+      before: beforeValue.match ? before : undefined,
+      after: afterValue.match ? after : undefined,
+    } as any);
+  }
+  return groupedDiffs;
 }
 
 function getParameterLogs(
@@ -428,62 +494,23 @@ function getParameterLogs(
   const operationTrail = jsonPointerHelpers.compile([
     'paths',
     path,
-    method,
+    method.toLowerCase(),
     'parameters',
   ]);
-  const attributeDiffs: Diff[] = [];
-  const enumPaths = new Set<string>();
-  for (const diff of diffs) {
-    const trail = diff.after ?? diff.before;
-    const parts = jsonPointerHelpers.decode(trail);
-    const enumIndex = parts.findIndex((p) => p === 'enum');
-    if (enumIndex !== -1) {
-      // /paths/:path/:method/parameters/:index
-      const key = jsonPointerHelpers.compile(parts.slice(5, enumIndex + 1));
-      enumPaths.add(key);
-    } else {
-      attributeDiffs.push(diff);
-    }
-  }
-
-  for (const enumPath of enumPaths) {
-    // find the enum in both before and after
-    const indices = getParameterIndices(specs, {
-      operation: operationTrail,
-      name,
-      type,
-    });
-
-    const before = jsonPointerHelpers.append(
-      operationTrail,
-      String(indices.before),
-      ...jsonPointerHelpers.decode(enumPath)
-    );
-    const after = jsonPointerHelpers.append(
-      operationTrail,
-      String(indices.after),
-      ...jsonPointerHelpers.decode(enumPath)
-    );
-    const beforeEnum = jsonPointerHelpers.tryGet(specs.from, before);
-    const afterEnum = jsonPointerHelpers.tryGet(specs.to, after);
-
-    attributeDiffs.push({
-      trail: enumPath,
-      change:
-        beforeEnum.match && afterEnum.match
-          ? 'changed'
-          : beforeEnum.match
-          ? 'removed'
-          : 'added',
-      before: beforeEnum.match ? before : undefined,
-      after: afterEnum.match ? after : undefined,
-    } as any);
-  }
 
   return {
     name: `${type} parameter '${name}'`,
     change: typeofV3Diffs(diffs),
-    attributes: attributeDiffs.flatMap((diff) => {
+    attributes: groupParameterDiffs(
+      specs,
+      {
+        name,
+        type,
+        operationTrail,
+      },
+      ['enum'],
+      diffs
+    ).flatMap((diff) => {
       const rawChange = getRawChange(diff, specs);
       return getDetailsDiff(rawChange);
     }),
