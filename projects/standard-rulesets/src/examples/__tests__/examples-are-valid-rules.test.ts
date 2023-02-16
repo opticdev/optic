@@ -283,6 +283,31 @@ describe('examples should default to additional properties false', () => {
     expect(result.pass).toBe(false);
     expect(result).toMatchSnapshot();
   });
+
+  test('ajv config will work on additional properties with all of', () => {
+    const result = validateSchema(
+      {
+        allOf: [
+          {
+            type: 'object',
+            properties: {
+              a: { type: 'string' },
+            },
+          },
+          {
+            type: 'object',
+            properties: {
+              b: { type: 'string' },
+            },
+          },
+        ],
+      },
+      { a: 'abc', b: 'def', c: 'A' }
+    );
+    expect(result.pass).toBe(false);
+    expect(result).toMatchSnapshot();
+  });
+
   test('ajv config will not override a user defined value', () => {
     const result = validateSchema(
       {
