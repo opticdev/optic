@@ -29,7 +29,7 @@ export class OpticBackendClient extends JsonHttpClient {
     return process.env.OPTIC_ENV === 'staging'
       ? 'https://app.o3c.info'
       : process.env.OPTIC_ENV === 'local'
-      ? 'http://localhost:3000'
+      ? 'http://localhost:3001'
       : 'https://app.useoptic.com';
   }
 
