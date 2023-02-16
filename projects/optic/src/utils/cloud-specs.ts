@@ -1,10 +1,12 @@
 import stableStringify from 'json-stable-stringify';
-import { CompareSpecResults } from '@useoptic/openapi-utilities';
+import { CompareSpecResults, UserError } from '@useoptic/openapi-utilities';
 import { OpticBackendClient } from '../client';
 import { computeChecksum } from './checksum';
 import { uploadFileToS3 } from './s3';
 import { ParseResult } from './spec-loaders';
 import { trackEvent } from '@useoptic/openapi-utilities/build/utilities/segment';
+import { logger } from '../logger';
+import chalk from 'chalk';
 
 export const EMPTY_SPEC_ID = 'EMPTY';
 
@@ -21,11 +23,24 @@ export async function uploadSpec(
   const stableSourcemapString = stableStringify(opts.spec.sourcemap);
   const spec_checksum = computeChecksum(stableSpecString);
   const sourcemap_checksum = computeChecksum(stableSourcemapString);
-  const result = await opts.client.prepareSpecUpload({
-    api_id: apiId,
-    spec_checksum,
-    sourcemap_checksum,
-  });
+  let result: Awaited<ReturnType<typeof opts.client.prepareSpecUpload>>;
+
+  try {
+    result = await opts.client.prepareSpecUpload({
+      api_id: apiId,
+      spec_checksum,
+      sourcemap_checksum,
+    });
+  } catch (e) {
+    logger.error(chalk.red.bold('Error uploading spec to Optic'));
+    logger.error(
+      chalk.red(
+        `This may be because your login credentials do not have access to the api specified in the x-optic-url. Check the x-optic-url in your spec, or try regenerate your credentials by running optic login.`
+      )
+    );
+    throw new UserError();
+  }
+
   if ('upload_id' in result) {
     await Promise.all([
       uploadFileToS3(result.spec_url, stableSpecString, {
