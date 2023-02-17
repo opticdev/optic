@@ -897,3 +897,10 @@ exports[`examples should default to additional properties false ajv config will 
   "pass": true,
 }
 `;
+
+exports[`examples should default to additional properties false ajv config will work on additional properties with all of 1`] = `
+{
+  "error": "  - data must NOT have additional property 'c'",
+  "pass": false,
+}
+`;
