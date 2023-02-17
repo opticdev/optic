@@ -29,7 +29,7 @@ export class OpticBackendClient extends JsonHttpClient {
     return process.env.OPTIC_ENV === 'staging'
       ? 'https://app.o3c.info'
       : process.env.OPTIC_ENV === 'local'
-      ? 'http://localhost:3000'
+      ? 'http://localhost:3001'
       : 'https://app.useoptic.com';
   }
 
@@ -40,15 +40,17 @@ export class OpticBackendClient extends JsonHttpClient {
   }
 
   public async createRuleset(
+    organizationId: string,
     name: string,
     description: string,
     config_schema: any
   ): Promise<{
     id: string;
+    slug: string;
     upload_url: string;
     ruleset_url: string;
   }> {
-    return this.postJson(`/api/rulesets`, {
+    return this.postJson(`/api/organizations/${organizationId}/rulesets`, {
       name,
       description,
       config_schema,
@@ -56,12 +58,16 @@ export class OpticBackendClient extends JsonHttpClient {
   }
 
   public async patchRuleset(
+    organizationId: string,
     rulesetId: string,
     uploaded: boolean
   ): Promise<void> {
-    return this.patchJson(`/api/rulesets/${rulesetId}`, {
-      uploaded,
-    });
+    return this.patchJson(
+      `/api/organizations/${organizationId}/rulesets/${rulesetId}`,
+      {
+        uploaded,
+      }
+    );
   }
 
   public async getManyRulesetsByName(rulesets: string[]): Promise<{
@@ -155,6 +161,7 @@ export class OpticBackendClient extends JsonHttpClient {
       name: string;
       web_url?: string;
       default_branch: string;
+      default_tag?: string;
     }
   ): Promise<{ id: string }> {
     return this.postJson(`/api/api`, {

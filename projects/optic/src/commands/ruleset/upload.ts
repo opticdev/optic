@@ -9,6 +9,8 @@ import { UserError } from '@useoptic/openapi-utilities';
 import { OpticCliConfig } from '../../config';
 import { uploadFileToS3 } from '../../utils/s3';
 import { errorHandler } from '../../error-handler';
+import { getOrganizationFromToken } from '../../utils/organization';
+import { logger } from '../../logger';
 
 const expectedFileShape = `Expected ruleset file to have a default export with the shape
 {
@@ -35,17 +37,40 @@ This command also requires a token to be provided via the environment variable O
       '<path_to_ruleset>',
       'the path to the javascript ruleset file to upload, typically "./build/main.js".'
     )
+    .option(
+      '--organization-id <organization-id>',
+      'specify an organization to add this to'
+    )
     .action(errorHandler(getUploadAction(config)));
 };
 
-const getUploadAction =
-  (config: OpticCliConfig) => async (filePath: string) => {
-    const maybeToken = process.env.OPTIC_TOKEN;
+type UploadActionOptions = {
+  organizationId?: string;
+};
 
-    if (!maybeToken) {
+const getUploadAction =
+  (config: OpticCliConfig) =>
+  async (filePath: string, options: UploadActionOptions) => {
+    if (!config.isAuthenticated) {
       throw new UserError(
         'No optic token was provided (set the environment variable `OPTIC_TOKEN` with your optic token). Generate an optic token at https://app.useoptic.com.'
       );
+    }
+
+    let organizationId: string;
+    if (options.organizationId) {
+      organizationId = options.organizationId;
+    } else {
+      const orgRes = await getOrganizationFromToken(
+        config.client,
+        'Select the organization you want to upload to'
+      );
+      if (!orgRes.ok) {
+        logger.error(orgRes.error);
+        process.exitCode = 1;
+        return;
+      }
+      organizationId = orgRes.org.id;
     }
 
     const absolutePath = path.join(process.cwd(), filePath);
@@ -69,15 +94,18 @@ const getUploadAction =
 
     const compressedFileBuffer = Buffer.from(compressed);
     const ruleset = await config.client.createRuleset(
+      organizationId,
       name,
       description,
       configSchema
     );
     await uploadFileToS3(ruleset.upload_url, compressedFileBuffer);
-    await config.client.patchRuleset(ruleset.id, true);
+    await config.client.patchRuleset(organizationId, ruleset.id, true);
 
-    console.log('Successfully uploaded the ruleset');
-    console.log(`View this ruleset at ${ruleset.ruleset_url}`);
+    console.log(`Successfully uploaded the ruleset ${ruleset.slug}`);
+    console.log(
+      `You can start using this ruleset by adding the ruleset ${ruleset.slug} in your optic.dev.yml or standards file.`
+    );
   };
 
 const ajv = new Ajv();

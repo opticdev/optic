@@ -55,9 +55,9 @@ export class OperationQueries {
             const parsed = new Url.URL(url, 'https://example.org');
             const pathName = parsed.pathname;
             if (pathName.endsWith('/') && pathName.length > 1) {
-              return pathName.substring(0, pathName.length - 1)
+              return pathName.substring(0, pathName.length - 1);
             } else {
-              return pathName
+              return pathName;
             }
           })
         : ['/'];
@@ -71,7 +71,7 @@ export class OperationQueries {
         })
       ),
     ];
-    
+
     this.patternsAsComponents = this.patterns.map((pattern) => [
       pattern,
       PathComponents.fromPath(pattern),
@@ -181,4 +181,30 @@ export class OperationQueries {
       return Ok(None);
     }
   }
+}
+
+export function specToOperations(spec: OpenAPIV3.Document) {
+  const operations: { pathPattern: string; methods: string[] }[] = [];
+
+  const allowedKeys = [
+    'get',
+    'post',
+    'put',
+    'delete',
+    'patch',
+    'head',
+    'options',
+  ];
+  Object.entries(spec.paths).forEach(([pathPattern, methods]) => {
+    if (methods) {
+      operations.push({
+        pathPattern,
+        methods: Object.keys(methods).filter((key) =>
+          allowedKeys.includes(key)
+        ),
+      });
+    }
+  });
+
+  return operations;
 }
