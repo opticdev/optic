@@ -177,12 +177,12 @@ export const guessRemoteOrigin = async (): Promise<{
     if (/github/i.test(parsed.resource)) {
       return {
         provider: 'github',
-        web_url: urljoin(parsed.resource, parsed.full_name),
+        web_url: `https://${urljoin(parsed.resource, parsed.full_name)}`,
       };
     } else if (/gitlab/i.test(parsed.resource)) {
       return {
         provider: 'gitlab',
-        web_url: urljoin(parsed.resource, parsed.full_name),
+        web_url: `https://${urljoin(parsed.resource, parsed.full_name)}`,
       };
     }
   } catch (e) {
