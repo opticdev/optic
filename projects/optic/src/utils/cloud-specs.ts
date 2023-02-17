@@ -24,6 +24,7 @@ export async function uploadSpec(
   const spec_checksum = computeChecksum(stableSpecString);
   const sourcemap_checksum = computeChecksum(stableSourcemapString);
   let result: Awaited<ReturnType<typeof opts.client.prepareSpecUpload>>;
+  const tags = opts.tags.filter((tag, ndx) => tags.indexOf(tag) === ndx);
 
   try {
     result = await opts.client.prepareSpecUpload({
