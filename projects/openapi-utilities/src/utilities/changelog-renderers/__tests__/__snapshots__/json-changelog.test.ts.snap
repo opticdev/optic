@@ -2092,7 +2092,27 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
       ],
       "change": "changed",
       "name": "GET /example",
-      "parameters": [],
+      "parameters": [
+        {
+          "attributes": [
+            {
+              "after": [
+                "available",
+                "pending",
+                "sold",
+              ],
+              "before": [
+                "available",
+                "sold",
+              ],
+              "change": "changed",
+              "key": "/schema/enum",
+            },
+          ],
+          "change": "changed",
+          "name": "query parameter 'status'",
+        },
+      ],
       "requestBody": undefined,
       "responses": [
         {
