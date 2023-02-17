@@ -59,6 +59,7 @@ export function validateSchema(
 
     const error = `  - ${ajv.errorsText(schemaCompiled.errors, {
       separator: '\n- ',
+      dataVar: 'example ',
     })}`;
 
     return { pass: false, error };
@@ -67,14 +68,14 @@ export function validateSchema(
   return { pass: true };
 }
 
-function strictAdditionalProperties(schema: any, skip: boolean = false) {
+function strictAdditionalProperties(schema: any, inAllOf: boolean = false) {
   if (Array.isArray(schema)) {
     schema.forEach((item) => strictAdditionalProperties(item));
     return;
   }
 
   if (typeof schema === 'object' && schema !== null) {
-    if (!skip) {
+    if (!inAllOf) {
       // make default false
       if (
         schema.hasOwnProperty('type') &&
@@ -93,11 +94,17 @@ function strictAdditionalProperties(schema: any, skip: boolean = false) {
         });
         return;
       }
-
-      Object.values(schema).forEach((s) => {
-        strictAdditionalProperties(s, false);
-      });
+    } else if (
+      schema.hasOwnProperty('type') &&
+      schema.type === 'object' &&
+      !schema.hasOwnProperty('unevaluatedProperties')
+    ) {
+      // schema.unevaluatedProperties = false;
     }
+
+    Object.values(schema).forEach((s) => {
+      strictAdditionalProperties(s, false);
+    });
   }
 }
 

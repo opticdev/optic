@@ -35,7 +35,7 @@ exports[`examples ruleset invalid parameter example errors 1`] = `
     "condition": undefined,
     "docsLink": undefined,
     "error": "query parameter 'invalidExample' example does not match the schema. 
-  - data must be string ",
+  - example  must be string ",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -176,7 +176,7 @@ exports[`examples ruleset invalid property example errors 1`] = `
     "condition": undefined,
     "docsLink": undefined,
     "error": "'wrong' example does not match the schema. 
-  - data must be string ",
+  - example  must be string ",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -360,7 +360,7 @@ exports[`examples ruleset invalid request named example errors 1`] = `
     "condition": undefined,
     "docsLink": undefined,
     "error": "the example named 'main' does not match the schema. 
-  - data must have required property 'world' ",
+  - example  must have required property 'world' ",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -497,7 +497,7 @@ exports[`examples ruleset invalid request top level example errors 1`] = `
     "condition": undefined,
     "docsLink": undefined,
     "error": "the example does not match the schema. 
-  - data must have required property 'world' ",
+  - example  must have required property 'world' ",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -729,7 +729,7 @@ exports[`examples ruleset invalid response named example errors 1`] = `
     "condition": undefined,
     "docsLink": undefined,
     "error": "the example named 'main' does not match the schema. 
-  - data must have required property 'world' ",
+  - example  must have required property 'world' ",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -871,7 +871,7 @@ exports[`examples ruleset invalid response top level example errors 1`] = `
     "condition": undefined,
     "docsLink": undefined,
     "error": "the example does not match the schema. 
-  - data must have required property 'world' ",
+  - example  must have required property 'world' ",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -887,7 +887,7 @@ exports[`examples ruleset invalid response top level example errors 1`] = `
 
 exports[`examples should default to additional properties false ajv config will be strict on additional properties 1`] = `
 {
-  "error": "  - data must NOT have additional property 'c'",
+  "error": "  - example  must NOT have additional property 'c'",
   "pass": false,
 }
 `;
@@ -900,7 +900,14 @@ exports[`examples should default to additional properties false ajv config will 
 
 exports[`examples should default to additional properties false ajv config will work on additional properties with all of 1`] = `
 {
-  "error": "  - data must NOT have additional property 'c'",
+  "error": "  - example  must NOT have additional property 'c'",
+  "pass": false,
+}
+`;
+
+exports[`examples should default to additional properties false ajv config will work on additional properties with all of at different levels of nesting 1`] = `
+{
+  "error": "  - example /b must NOT have additional property 'l'",
   "pass": false,
 }
 `;

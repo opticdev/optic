@@ -18,6 +18,18 @@ Rules file does not match expected format. Expected ruleset file to have a defau
 "
 `;
 
+exports[`optic ruleset upload exits if ruleset file does not have rulesConstructor 2`] = `
+"Rules file does not export a rulesetConstructor that is a function
+Rules file does not match expected format. Expected ruleset file to have a default export with the shape
+{
+  name: string;
+  description: string;
+  configSchema?: any;
+  rulesetConstructor: (config: ConfigSchema) => Ruleset;
+}
+"
+`;
+
 exports[`optic ruleset upload exits if ruleset file shape is not valid 1`] = `
 "Rule file is invalid:
 data/default must have required property 'description'

@@ -40,6 +40,26 @@ Checks
 "
 `;
 
+exports[`lint fails on requirement rule errors 2`] = `
+"Linting spec spec-fails-requirement.yml...
+
+Checks
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
+    requirement rule: response property naming check
+      [31m[31mx[39m[31m id_thing is not camelCase[39m
+      at [4m$workspace$/spec-fails-requirement.yml:18:359[24m
+
+
+
+
+[32m[1m0 checks passed[22m[39m
+[31m[1m1 checks failed[22m[39m
+
+[31m[1mLinting errors found with your OpenAPI spec.[22m[39m
+"
+`;
+
 exports[`lint fails on validation errors 1`] = `
 "Linting spec spec-fails-validation.yml...
 [31minvalid openapi: [39m[1m[31minfo must have required property 'title'[39m[22m
