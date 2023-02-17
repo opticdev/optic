@@ -1,10 +1,13 @@
 import * as Sentry from '@sentry/node';
 import { UserError } from '../errors';
 
-export  { Sentry as SentryClient};
+export { Sentry as SentryClient };
 
 export const initSentry = (sentryUrl: string | undefined, version: string) => {
-  const isSentryDisabled = process.env.OPTIC_TELEMETRY_LEVEL === 'off';
+  const disableTelemetry = process.env.OPTIC_TELEMETRY_LEVEL === 'off';
+  const opticEnvNotProd =
+    process.env.OPTIC_ENV === 'staging' || process.env.OPTIC_ENV === 'local';
+  const isSentryDisabled = disableTelemetry || opticEnvNotProd;
   if (sentryUrl && !isSentryDisabled) {
     Sentry.init({
       dsn: sentryUrl,
