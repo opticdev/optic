@@ -63,6 +63,8 @@ export async function uploadSpec(
     });
     return id;
   } else {
+    await opts.client.tagSpec(result.spec_id, opts.tags);
+
     return result.spec_id;
   }
 }
