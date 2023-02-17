@@ -2,11 +2,11 @@ import { SpecFromInput, SpecVersionFrom } from './compare-input-parser';
 import {
   JsonSchemaSourcemap,
   parseOpenAPIFromRepoWithSourcemap,
-  inGit,
   ParseOpenAPIResult,
   parseOpenAPIWithSourcemap,
 } from '@useoptic/openapi-io';
 import path from 'path';
+import { inGit } from '../utils/git';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 
 export type ParseResult = ParseOpenAPIResult & { isEmptySpec: boolean };
