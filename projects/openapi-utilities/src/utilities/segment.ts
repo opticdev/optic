@@ -42,11 +42,8 @@ export const flushEvents = (): Promise<void> => {
   if (analytics) {
     return new Promise((resolve, reject) => {
       analytics!.flush((err, _batch) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
+        // Don't reject when error, we will silently ignore since it's non-critical code
+        resolve();
       });
     });
   } else {
