@@ -17,7 +17,7 @@
     "release": "gh release create --target=$(git branch --show-current) v$(node -e \"process.stdout.write(require('./package.json').version)\")",
     "version": "yarn run rmStableVersion && yarn workspaces foreach -v version",
     "prepare": "husky install",
-    "rmStableVersion": "./scripts/remove-stableVersion"
+    "rmStableVersion": "./scripts/remove-stableVersion.sh"
   },
   "devDependencies": {
     "@types/prettier": "^2",
