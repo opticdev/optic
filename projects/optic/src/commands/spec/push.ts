@@ -77,13 +77,20 @@ const getSpecPushAction =
     if (config.vcs?.type === VCS.Git) {
       if (config.vcs.status === 'clean') {
         const sha = `git:${config.vcs.sha}`;
+        tagsToAdd.push(sha);
+
         const branch = sanitizeGitTag(
           `gitbranch:${await Git.getCurrentBranchName()}`
         );
-        tagsToAdd.push(sha, branch);
-        logger.info(
-          `Automatically adding the git sha ${sha} and branch ${branch} as tags `
-        );
+
+        if (branch !== 'HEAD') {
+          tagsToAdd.push(branch);
+          logger.info(
+            `Automatically adding the git sha ${sha} and branch ${branch} as tags`
+          );
+        } else {
+          logger.info(`Automatically adding the git sha ${sha} as a tag`);
+        }
       } else {
         logger.info(
           'Not automatically including any git tags because the current working directory has uncommited changes.'
