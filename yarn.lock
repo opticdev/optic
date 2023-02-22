@@ -3779,7 +3779,7 @@ __metadata:
     lodash.sortby: ^4.7.0
     log: ^6.3.1
     log-node: ^8.0.3
-    minimatch: 6.1.6
+    minimatch: 7.0.0
     mockttp: ^3.3.1
     node-fetch: ^2.6.7
     node-forge: ^1.2.1
@@ -8790,12 +8790,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:6.1.6":
-  version: 6.1.6
-  resolution: "minimatch@npm:6.1.6"
+"minimatch@npm:7.0.0":
+  version: 7.0.0
+  resolution: "minimatch@npm:7.0.0"
   dependencies:
     brace-expansion: ^2.0.1
-  checksum: 707b026e0adc610be6c02f24173d84811e5b8cc2e434881e47ef00a72be5fbea9323b7158d7bf065782b1e1d5c50d7d80cd72f2602255f2fddfb1d2f02e9092c
+  checksum: caceffe3489e022c7a8421100b3653ba4c03ebff1e704da8aa5d22c500ec679079163c214eeaf25a52840464fad67ab9a606394ef7302775c5d9d152a76b0ecc
   languageName: node
   linkType: hard
 

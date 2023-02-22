@@ -29,7 +29,7 @@ export class OpticBackendClient extends JsonHttpClient {
     return process.env.OPTIC_ENV === 'staging'
       ? 'https://app.o3c.info'
       : process.env.OPTIC_ENV === 'local'
-      ? 'http://localhost:3000'
+      ? 'http://localhost:3001'
       : 'https://app.useoptic.com';
   }
 
@@ -137,6 +137,12 @@ export class OpticBackendClient extends JsonHttpClient {
     return this.postJson(`/api/specs`, spec);
   }
 
+  public async tagSpec(specId: string, tags: string[]) {
+    return this.patchJson(`/api/specs/${specId}/tags`, {
+      tags,
+    });
+  }
+
   public async prepareRunUpload(body: {
     checksum: string;
     api_id: string;
@@ -161,6 +167,7 @@ export class OpticBackendClient extends JsonHttpClient {
       name: string;
       web_url?: string;
       default_branch: string;
+      default_tag?: string;
     }
   ): Promise<{ id: string }> {
     return this.postJson(`/api/api`, {

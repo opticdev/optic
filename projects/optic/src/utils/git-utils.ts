@@ -23,16 +23,33 @@ export const isInGitRepo = async (): Promise<boolean> =>
     exec(command, cb);
   });
 
-export const getDefaultBranchName = async (): Promise<string | null> =>
-  new Promise((resolve, reject) => {
+export const getDefaultBranchName = async (): Promise<string | null> => {
+  let remote: string;
+  try {
+    const gitRemotes = await remotes();
+    if (gitRemotes.length === 0) {
+      return null;
+    }
+
+    remote = gitRemotes[0];
+  } catch (e) {
+    return null;
+  }
+
+  return new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
       if (err || stderr || !stdout) resolve(null);
-      resolve(path.basename(stdout.trim()));
+
+      const match = stdout.match(/HEAD branch\: (.*)\n/);
+      const defaultBranch = match?.[1] ?? null;
+
+      resolve(defaultBranch);
     };
 
-    const command = 'git rev-parse --abbrev-ref origin/HEAD';
+    const command = `git remote show ${remote}`;
     exec(command, cb);
   });
+};
 
 export const gitShow = async (ref: string, path: string): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -66,11 +83,11 @@ export const getRootPath = async (): Promise<string> =>
     exec(command, cb);
   });
 
-export const isGitStatusClean = async (): Promise<boolean> =>
+export const gitStatus = async (): Promise<string> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
       if (err || stderr) reject(err || stderr);
-      resolve(stdout.trim() === '');
+      resolve(stdout.trim());
     };
     const command = `git status --porcelain`;
     exec(command, cb);
@@ -160,12 +177,12 @@ export const guessRemoteOrigin = async (): Promise<{
     if (/github/i.test(parsed.resource)) {
       return {
         provider: 'github',
-        web_url: urljoin(parsed.resource, parsed.full_name),
+        web_url: `https://${urljoin(parsed.resource, parsed.full_name)}`,
       };
     } else if (/gitlab/i.test(parsed.resource)) {
       return {
         provider: 'gitlab',
-        web_url: urljoin(parsed.resource, parsed.full_name),
+        web_url: `https://${urljoin(parsed.resource, parsed.full_name)}`,
       };
     }
   } catch (e) {

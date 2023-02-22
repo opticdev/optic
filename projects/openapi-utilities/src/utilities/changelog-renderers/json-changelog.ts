@@ -209,19 +209,63 @@ function getEndpointLogs(
 
   const parameterChanges = [];
   for (const [name, diffs] of Object.entries(queryParameters)) {
-    parameterChanges.push(getParameterLogs(specs, 'query', name, diffs));
+    parameterChanges.push(
+      getParameterLogs(
+        specs,
+        {
+          type: 'query',
+          name,
+          method,
+          path,
+        },
+        diffs
+      )
+    );
   }
 
   for (const [name, diffs] of Object.entries(cookieParameters)) {
-    parameterChanges.push(getParameterLogs(specs, 'cookie', name, diffs));
+    parameterChanges.push(
+      getParameterLogs(
+        specs,
+        {
+          type: 'cookie',
+          name,
+          method,
+          path,
+        },
+        diffs
+      )
+    );
   }
 
   for (const [name, diffs] of Object.entries(pathParameters)) {
-    parameterChanges.push(getParameterLogs(specs, 'path', name, diffs));
+    parameterChanges.push(
+      getParameterLogs(
+        specs,
+        {
+          type: 'path',
+          name,
+          method,
+          path,
+        },
+        diffs
+      )
+    );
   }
 
   for (const [name, diffs] of Object.entries(headerParameters)) {
-    parameterChanges.push(getParameterLogs(specs, 'header', name, diffs));
+    parameterChanges.push(
+      getParameterLogs(
+        specs,
+        {
+          type: 'header',
+          name,
+          method,
+          path,
+        },
+        diffs
+      )
+    );
   }
 
   const responseChanges: ChangedNode[] = [];
@@ -337,16 +381,136 @@ function getBodyChangeLogs(
   };
 }
 
+function getParameterIndices(
+  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  location: { operation: string; name: string; type: string }
+) {
+  const beforeParameters = jsonPointerHelpers.tryGet(
+    specs.from,
+    location.operation
+  );
+  const afterParameters = jsonPointerHelpers.tryGet(
+    specs.to,
+    location.operation
+  );
+
+  const before: number = beforeParameters.match
+    ? beforeParameters.value.findIndex(
+        (p: any) => p.name === location.name && p.in === location.type
+      )
+    : -1;
+  const after: number = afterParameters.match
+    ? afterParameters.value.findIndex(
+        (p: any) => p.name === location.name && p.in === location.type
+      )
+    : -1;
+
+  return {
+    before,
+    after,
+  };
+}
+
+function groupParameterDiffs(
+  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  {
+    type,
+    name,
+    operationTrail,
+  }: {
+    type: string;
+    name: string;
+    operationTrail: string;
+  },
+  keysToGroup: string[],
+  diffs: Diff[]
+) {
+  const groupedDiffs: Diff[] = [];
+  const pathsToGroup = new Set<string>();
+  for (const diff of diffs) {
+    const trail = diff.after ?? diff.before;
+    const parts = jsonPointerHelpers.decode(trail);
+    const index = parts.findIndex((p) => keysToGroup.includes(p));
+    if (index !== -1) {
+      // /paths/:path/:method/parameters/:index
+      const key = jsonPointerHelpers.compile(parts.slice(5, index + 1));
+      pathsToGroup.add(key);
+    } else {
+      groupedDiffs.push(diff);
+    }
+  }
+
+  for (const path of pathsToGroup) {
+    // find the enum in both before and after
+    const indices = getParameterIndices(specs, {
+      operation: operationTrail,
+      name,
+      type,
+    });
+
+    const before = jsonPointerHelpers.append(
+      operationTrail,
+      String(indices.before),
+      ...jsonPointerHelpers.decode(path)
+    );
+    const after = jsonPointerHelpers.append(
+      operationTrail,
+      String(indices.after),
+      ...jsonPointerHelpers.decode(path)
+    );
+    const beforeValue = jsonPointerHelpers.tryGet(specs.from, before);
+    const afterValue = jsonPointerHelpers.tryGet(specs.to, after);
+
+    groupedDiffs.push({
+      trail: path,
+      change:
+        beforeValue.match && afterValue.match
+          ? 'changed'
+          : beforeValue.match
+          ? 'removed'
+          : 'added',
+      before: beforeValue.match ? before : undefined,
+      after: afterValue.match ? after : undefined,
+    } as any);
+  }
+  return groupedDiffs;
+}
+
 function getParameterLogs(
   specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
-  type: string,
-  name: string,
+  {
+    type,
+    name,
+    path,
+    method,
+  }: {
+    type: string;
+    name: string;
+    path: string;
+    method: string;
+  },
   diffs: Diff[]
 ): ChangedNode {
+  const operationTrail = jsonPointerHelpers.compile([
+    'paths',
+    path,
+    method.toLowerCase(),
+    'parameters',
+  ]);
+
   return {
     name: `${type} parameter '${name}'`,
     change: typeofV3Diffs(diffs),
-    attributes: diffs.flatMap((diff) => {
+    attributes: groupParameterDiffs(
+      specs,
+      {
+        name,
+        type,
+        operationTrail,
+      },
+      ['enum'],
+      diffs
+    ).flatMap((diff) => {
       const rawChange = getRawChange(diff, specs);
       return getDetailsDiff(rawChange);
     }),

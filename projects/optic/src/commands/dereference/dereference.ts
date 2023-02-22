@@ -31,6 +31,10 @@ export const registerDereference = (cli: Command, config: OpticCliConfig) => {
       '--filter-x-extensions [extensions]',
       'extensions to filter when truthy value set'
     )
+    .option(
+      '--include-x-extensions [extensions]',
+      'extensions to filter when truthy value set'
+    )
     .action(errorHandler(deferenceAction(config)));
 };
 
@@ -52,9 +56,12 @@ const getDereferencedSpec = async (
 
 const deferenceAction =
   (config: OpticCliConfig) => async (filePath: string | undefined, options) => {
-    const { o, filterXExtensions } = options;
+    const { o, filterXExtensions, includeXExtensions } = options;
 
     const filterExtensions = (filterXExtensions || '')
+      .split(/[ ,]+/)
+      .filter((extension) => extension.startsWith('x-'));
+    const includeExtensions = (includeXExtensions || '')
       .split(/[ ,]+/)
       .filter((extension) => extension.startsWith('x-'));
 
@@ -63,6 +70,30 @@ const deferenceAction =
       parsedFile = await getDereferencedSpec(filePath, config);
 
       const specJson = parsedFile.jsonLike;
+
+      if (includeExtensions.length) {
+        Object.entries(specJson.paths).forEach(([path, operations]) => {
+          Object.entries(operations!).forEach(([key, operation]) => {
+            if (key === 'parameters') return;
+            if (
+              operation &&
+              !includeExtensions.some((extension) =>
+                Boolean(operation[extension])
+              )
+            ) {
+              // @ts-ignore
+              delete specJson.paths![path]![key]!;
+              const otherKeys = Object.keys(specJson.paths![path] || {});
+              if (
+                otherKeys.length === 0 ||
+                (otherKeys.length === 1 && otherKeys[0] === 'parameters')
+              ) {
+                delete specJson.paths![path];
+              }
+            }
+          });
+        });
+      }
 
       if (filterExtensions.length) {
         Object.entries(specJson.paths).forEach(([path, operations]) => {

@@ -685,6 +685,6 @@ Checks
 [32m[1m0 checks passed[22m[39m
 [31m[1m1 checks failed[22m[39m
 
-[32m✔[39m Uploaded results of diff to http://localhost:3000/organizations/org-id/apis/api-id/runs/run-id
+[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 "
 `;
