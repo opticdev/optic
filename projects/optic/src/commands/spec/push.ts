@@ -58,7 +58,7 @@ const getSpecPushAction =
       return;
     }
 
-    const tagsToAdd: string[] = [];
+    let tagsToAdd: string[] = [];
     if (options.tag) {
       const tags = options.tag.split(',');
       const invalidTags = tags.filter((tag) => !SPEC_TAG_REGEXP.test(tag));
@@ -97,6 +97,9 @@ const getSpecPushAction =
         );
       }
     }
+
+    // filter tagsToAdd to unique tags
+    tagsToAdd = tagsToAdd.filter((tag, ndx) => tagsToAdd.indexOf(tag) === ndx);
 
     let parseResult: ParseResult;
     try {
