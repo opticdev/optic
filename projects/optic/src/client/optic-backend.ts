@@ -138,7 +138,7 @@ export class OpticBackendClient extends JsonHttpClient {
   }
 
   public async tagSpec(specId: string, tags: string[]) {
-    return this.patchJson(`/api/specs/${specId}/tag`, {
+    return this.patchJson(`/api/specs/${specId}/tags`, {
       tags,
     });
   }
