@@ -441,6 +441,9 @@ const createOpenAPIValidationSchema = (schema: any) => ({
         version: {
           type: 'string',
         },
+        summary: {
+          type: 'string',
+        },
       },
     },
     contact: {
