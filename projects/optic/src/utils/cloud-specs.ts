@@ -55,7 +55,7 @@ export async function uploadSpec(
     const { id } = await opts.client.createSpec({
       upload_id: result.upload_id,
       api_id: apiId,
-      tags: opts.tags,
+      tags: tags,
     });
     trackEvent('spec.added', {
       apiId,

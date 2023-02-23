@@ -147,6 +147,9 @@ const openapi3_0_schema_object = {
     description: {
       type: 'string',
     },
+    summary: {
+      type: 'string',
+    },
     format: {
       type: 'string',
     },
@@ -353,6 +356,9 @@ const openapi3_1_schema_object = {
     description: {
       type: 'string',
     },
+    summary: {
+      type: 'string',
+    },
     format: {
       type: 'string',
     },
@@ -439,6 +445,9 @@ const createOpenAPIValidationSchema = (schema: any) => ({
           $ref: '#/definitions/license',
         },
         version: {
+          type: 'string',
+        },
+        summary: {
           type: 'string',
         },
       },
