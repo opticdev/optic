@@ -1,5 +1,3 @@
-import { inGit, loadSpecFromBranch } from './loaders/file-on-branch';
-import { loadSpecFromFile, loadSpecFromUrl } from './loaders/file';
 import {
   JSONParserError,
   parseOpenAPIFromRepoWithSourcemap,
@@ -22,10 +20,6 @@ export { denormalize } from './denormalizers/denormalize';
 export {
   applyOperationsToYamlString,
   filePathToGitPath,
-  loadSpecFromFile,
-  inGit,
-  loadSpecFromUrl,
-  loadSpecFromBranch,
   parseOpenAPIWithSourcemap,
   parseOpenAPIFromRepoWithSourcemap,
   JsonSchemaSourcemap,
