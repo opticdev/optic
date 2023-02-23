@@ -138,10 +138,10 @@ exports[`diff openapi diff behavior removing a key 1`] = `
 exports[`diff openapi diff behavior removing a key with path reconciliation 1`] = `
 [
   {
-    "before": "/parameters/0/nested/schema/removeme",
+    "before": "/paths/~1me/get/parameters/0/nested/schema/removeme",
     "pathReconciliation": [
       [
-        1,
+        4,
         "2",
       ],
     ],
@@ -152,7 +152,7 @@ exports[`diff openapi diff behavior removing a key with path reconciliation 1`] 
 exports[`diff openapi diff with array values diffs for parameters 1`] = `
 [
   {
-    "before": "/1",
+    "before": "/paths/~1me/get/parameters/1",
     "pathReconciliation": [],
   },
 ]
@@ -176,6 +176,15 @@ exports[`diff openapi diff with array values diffs for primitive values 1`] = `
   {
     "before": "/1",
     "pathReconciliation": [],
+  },
+]
+`;
+
+exports[`diff openapi diff with array values diffs operations even if variable names change  1`] = `
+[
+  {
+    "after": "/paths/~1user~1{user_Id}/get/operationId",
+    "before": "/paths/~1user~1{userId}/get/operationId",
   },
 ]
 `;

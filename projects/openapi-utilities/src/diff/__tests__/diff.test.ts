@@ -1,6 +1,7 @@
 import { describe, test, expect } from '@jest/globals';
 import { diff, ObjectDiff, reconcileDiff } from '../diff';
 import { before, after } from './mock-data';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 describe('diff openapi', () => {
   test('can diff an openapi spec', () => {
@@ -43,7 +44,8 @@ describe('diff openapi', () => {
               nested: { schema: { stillhere: 's' } },
             },
           ],
-        }
+        },
+        jsonPointerHelpers.compile(['paths', '/me', 'get'])
       );
       expect(diffResults.length).toBe(1);
       expect(diffResults).toMatchSnapshot();
@@ -87,7 +89,8 @@ describe('diff openapi', () => {
         [
           { name: 'goodbye', in: 'query' },
           { name: 'hello', in: 'query' },
-        ]
+        ],
+        '/paths/test/get/parameters'
       );
       const diffWithChanges = diff(
         [
@@ -98,7 +101,8 @@ describe('diff openapi', () => {
         [
           { name: 'goodbye', in: 'query' },
           { name: 'hello', in: 'query' },
-        ]
+        ],
+        jsonPointerHelpers.compile(['paths', '/me', 'get', 'parameters'])
       );
       expect(diffNoChanges.length).toBe(0);
 
@@ -126,6 +130,37 @@ describe('diff openapi', () => {
 
       // because we have positional identity, it's expected that a change in array position will result in an extra diff item
       expect(diffWithChanges.length).toBe(2);
+      expect(diffWithChanges).toMatchSnapshot();
+    });
+
+    test('diffs operations even if variable names change ', () => {
+      const diffNoChanges = diff(
+        {
+          paths: {
+            '/user/{userId}': { get: { responses: {} } },
+          },
+        },
+        {
+          paths: {
+            '/user/{user_id}': { get: { responses: {} } },
+          },
+        }
+      );
+      const diffWithChanges = diff(
+        {
+          paths: {
+            '/user/{userId}': { get: { operationId: 'before', responses: {} } },
+          },
+        },
+        {
+          paths: {
+            '/user/{user_Id}': { get: { operationId: 'after', responses: {} } },
+          },
+        }
+      );
+      expect(diffNoChanges.length).toBe(0);
+
+      expect(diffWithChanges.length).toBe(1);
       expect(diffWithChanges).toMatchSnapshot();
     });
   });

@@ -101,3 +101,66 @@ describe('get', () => {
     ).toMatchSnapshot();
   });
 });
+
+describe('matchers', () => {
+  const exampleOperation = jsonPointerHelpers.compile([
+    'paths',
+    '/me/{them}',
+    'get',
+  ]);
+  const info = jsonPointerHelpers.compile(['info']);
+
+  it('can match startsWith when using constants', () => {
+    expect(jsonPointerHelpers.startsWith(exampleOperation, ['info'])).toBe(
+      false
+    );
+    expect(jsonPointerHelpers.startsWith(exampleOperation, ['paths'])).toBe(
+      true
+    );
+
+    expect(
+      jsonPointerHelpers.startsWith(exampleOperation, ['paths', '/me/{them}'])
+    ).toBe(true);
+    expect(
+      jsonPointerHelpers.startsWith(exampleOperation, ['paths', '/me'])
+    ).toBe(false);
+  });
+
+  it('can match startsWith when using globs', () => {
+    expect(jsonPointerHelpers.startsWith(exampleOperation, ['*'])).toBe(true);
+    expect(
+      jsonPointerHelpers.startsWith(exampleOperation, ['paths', '**'])
+    ).toBe(true);
+  });
+  it('can match startsWith at size bounds', () => {
+    expect(jsonPointerHelpers.startsWith(info, ['info', 'contact'])).toBe(
+      false
+    );
+    expect(jsonPointerHelpers.startsWith(info, [])).toBe(true);
+  });
+
+  it('can match endsWith when using constants', () => {
+    expect(jsonPointerHelpers.endsWith(exampleOperation, ['post'])).toBe(false);
+    expect(jsonPointerHelpers.endsWith(exampleOperation, ['get'])).toBe(true);
+
+    expect(
+      jsonPointerHelpers.endsWith(exampleOperation, ['/me/{them}', 'get'])
+    ).toBe(true);
+    expect(
+      jsonPointerHelpers.endsWith(exampleOperation, ['/me/{them}', 'post'])
+    ).toBe(false);
+  });
+
+  it('can match endsWith when using globs', () => {
+    expect(
+      jsonPointerHelpers.endsWith(exampleOperation, ['paths', '**', 'get'])
+    ).toBe(true);
+    expect(
+      jsonPointerHelpers.endsWith(exampleOperation, ['paths', '**', 'post'])
+    ).toBe(false);
+  });
+  it('can match endsWith at size bounds', () => {
+    expect(jsonPointerHelpers.endsWith(info, ['info'])).toBe(true);
+    expect(jsonPointerHelpers.endsWith(info, ['info', 'contact'])).toBe(false);
+  });
+});
