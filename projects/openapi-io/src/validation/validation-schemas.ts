@@ -147,6 +147,9 @@ const openapi3_0_schema_object = {
     description: {
       type: 'string',
     },
+    summary: {
+      type: 'string',
+    },
     format: {
       type: 'string',
     },
@@ -351,6 +354,9 @@ const openapi3_1_schema_object = {
       $ref: '#/definitions/defaultType',
     },
     description: {
+      type: 'string',
+    },
+    summary: {
       type: 'string',
     },
     format: {
