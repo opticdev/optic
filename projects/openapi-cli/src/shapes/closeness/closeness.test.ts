@@ -2,6 +2,40 @@ import { describe, it, expect } from '@jest/globals';
 import { computeCloseness, walkSchema } from './closeness';
 import { FlatOpenAPIV3 } from '@useoptic/openapi-utilities';
 
+const merged: FlatOpenAPIV3.SchemaObject = {
+  type: 'object',
+  required: ['a'],
+  properties: {
+    a: {
+      type: 'string',
+    },
+    b: {
+      type: 'number',
+    },
+  },
+};
+const composed: FlatOpenAPIV3.SchemaObject = {
+  allOf: [
+    {
+      type: 'object',
+      required: ['a'],
+      properties: {
+        a: {
+          type: 'string',
+        },
+      },
+    },
+    {
+      type: 'object',
+      required: ['b'],
+      properties: {
+        b: {
+          type: 'number',
+        },
+      },
+    },
+  ],
+};
 const schemaA: FlatOpenAPIV3.SchemaObject = {
   type: 'object',
   required: ['a', 'c'],
@@ -13,7 +47,6 @@ const schemaA: FlatOpenAPIV3.SchemaObject = {
     b: {
       type: 'number',
     },
-
     c: {
       type: 'array',
       items: {
@@ -73,5 +106,13 @@ describe('compare closeness', () => {
 
   it('far away score for different root types', () => {
     expect(computeCloseness(schemaA, schemaC)).toMatchInlineSnapshot(`0`);
+  });
+
+  it('allOf is walked as a merge', () => {
+    expect(walkSchema(composed)).toMatchSnapshot();
+  });
+
+  it('merged and allOfs look the same', () => {
+    expect(computeCloseness(merged, composed)).toMatchInlineSnapshot(`1`);
   });
 });

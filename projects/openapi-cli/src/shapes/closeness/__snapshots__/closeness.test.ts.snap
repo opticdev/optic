@@ -1,17 +1,68 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`can walk schema works for a basic schema 1`] = `
-{
-  "/properties/a/type": "string",
-  "/properties/b/type": "number",
-  "/properties/c/items": {
-    "type": "string",
-  },
-  "/properties/c/type": "array",
-  "/required": Set {
-    "a",
-    "c",
-  },
-  "/type": "object",
-}
+[
+  [
+    "/properties/a/type",
+    "string",
+  ],
+  [
+    "/properties/b/type",
+    "number",
+  ],
+  [
+    "/properties/c/type",
+    "array",
+  ],
+  [
+    "/properties/c/items",
+    {
+      "type": "string",
+    },
+  ],
+  [
+    "/required",
+    Set {
+      "a",
+      "c",
+    },
+  ],
+  [
+    "/type",
+    "object",
+  ],
+]
+`;
+
+exports[`compare closeness allOf is walked as a merge 1`] = `
+[
+  [
+    "/properties/a/type",
+    "string",
+  ],
+  [
+    "/required",
+    Set {
+      "a",
+    },
+  ],
+  [
+    "/type",
+    "object",
+  ],
+  [
+    "/properties/b/type",
+    "number",
+  ],
+  [
+    "/required",
+    Set {
+      "b",
+    },
+  ],
+  [
+    "/type",
+    "object",
+  ],
+]
 `;

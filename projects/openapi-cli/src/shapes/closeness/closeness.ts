@@ -30,16 +30,25 @@ export function walkSchema(
     });
   }
 
-  if (oneOf || allOf || anyOf) {
+  if (allOf) {
+    allOf.forEach((schema) => {
+      walkSchema(
+        schema,
+        // intentionally do not add allOf to trail
+        trail,
+        tuples
+      );
+    });
   }
 
   if (schema.type === 'object')
-    tuples[jsonPointerHelpers.append(trail, 'required')] = new Set(
-      required || []
-    );
+    tuples.push([
+      jsonPointerHelpers.append(trail, 'required'),
+      new Set(required || []),
+    ]);
 
   Object.entries(other).forEach(([key, value]) => {
-    tuples[jsonPointerHelpers.append(trail, key)] = value;
+    tuples.push([jsonPointerHelpers.append(trail, key), value]);
   });
 
   return tuples;
@@ -52,8 +61,8 @@ export function computeCloseness(
   const a = walkSchema(oneSchema);
   const b = walkSchema(otherSchema);
 
-  const aKeys = new Set(Object.keys(a));
-  const bKeys = new Set(Object.keys(b));
+  const aKeys = new Set(a.map((i) => i[0]));
+  const bKeys = new Set(b.map((i) => i[0]));
   const keyIntersection = new Set([...aKeys].filter((i) => bKeys.has(i)));
   const keyUnion = new Set([...aKeys, ...bKeys]);
 
@@ -65,9 +74,18 @@ export function computeCloseness(
   let matchingIntersectSize = intersectSize;
 
   keyIntersection.forEach((key) => {
-    if (a.hasOwnProperty(key) && b.hasOwnProperty(key)) {
-      if (!equals(a[key], b[key])) matchingIntersectSize--;
-    }
+    const aEntries = new Set(
+      a.filter((i) => i[0] === key).map((i) => JSON.stringify(i[1]))
+    );
+    const bEntries = new Set(
+      b.filter((i) => i[0] === key).map((i) => JSON.stringify(i[1]))
+    );
+
+    const intersection = new Set([...aEntries].filter((i) => bEntries.has(i)));
+    const keyUnion = new Set([...aEntries, ...bEntries]);
+
+    const subtract = keyUnion.size ? 1 - intersection.size / keyUnion.size : 0;
+    matchingIntersectSize = matchingIntersectSize - subtract;
   });
 
   return matchingIntersectSize / keyUnionSize;
