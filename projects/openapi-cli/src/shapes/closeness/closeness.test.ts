@@ -4,7 +4,7 @@ import { FlatOpenAPIV3 } from '@useoptic/openapi-utilities';
 
 const merged: FlatOpenAPIV3.SchemaObject = {
   type: 'object',
-  required: ['a'],
+  required: ['a', 'b'],
   properties: {
     a: {
       type: 'string',
@@ -14,6 +14,14 @@ const merged: FlatOpenAPIV3.SchemaObject = {
     },
   },
 };
+
+const oneOf: FlatOpenAPIV3.SchemaObject = {
+  oneOf: [{ type: 'string' }, { type: 'number' }],
+};
+const oneOfSuperset: FlatOpenAPIV3.SchemaObject = {
+  oneOf: [{ type: 'string' }, { type: 'number' }, { type: 'object' }],
+};
+
 const composed: FlatOpenAPIV3.SchemaObject = {
   allOf: [
     {
@@ -93,9 +101,7 @@ describe('can walk schema', () => {
 
 describe('compare closeness', () => {
   it('close score for a close schema', () => {
-    expect(computeCloseness(schemaA, schemaB)).toMatchInlineSnapshot(
-      `0.7142857142857143`
-    );
+    expect(computeCloseness(schemaA, schemaB)).toMatchInlineSnapshot(`0.6`);
   });
 
   it('scores are always commutative for a close schema', () => {
@@ -110,6 +116,19 @@ describe('compare closeness', () => {
 
   it('allOf is walked as a merge', () => {
     expect(walkSchema(composed)).toMatchSnapshot();
+  });
+
+  it('oneOf shows half if one of its branches is met', () => {
+    expect(computeCloseness(oneOf, { type: 'string' })).toMatchInlineSnapshot(
+      `0.5`
+    );
+    expect(computeCloseness(oneOf, { type: 'number' })).toMatchSnapshot(`.5`);
+  });
+
+  it('oneOf superset of another shows partial', () => {
+    expect(computeCloseness(oneOfSuperset, oneOf)).toMatchInlineSnapshot(
+      `0.6666666666666666`
+    );
   });
 
   it('merged and allOfs look the same', () => {

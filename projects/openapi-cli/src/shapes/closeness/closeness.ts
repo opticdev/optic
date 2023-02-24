@@ -41,11 +41,37 @@ export function walkSchema(
     });
   }
 
-  if (schema.type === 'object')
-    tuples.push([
-      jsonPointerHelpers.append(trail, 'required'),
-      new Set(required || []),
-    ]);
+  if (anyOf) {
+    anyOf.forEach((schema) => {
+      walkSchema(
+        schema,
+        // intentionally do not add allOf to trail
+        trail,
+        tuples
+      );
+    });
+  }
+
+  if (oneOf) {
+    oneOf.forEach((schema) => {
+      walkSchema(
+        schema,
+        // intentionally do not add allOf to trail
+        trail,
+        tuples
+      );
+    });
+  }
+
+  if (schema.type === 'object') {
+    const objectProperties = Object.keys(properties || {}) || [];
+    objectProperties.forEach((property) => {
+      tuples.push([
+        jsonPointerHelpers.append(trail, 'required', property),
+        (schema.required || []).includes(property),
+      ]);
+    });
+  }
 
   Object.entries(other).forEach(([key, value]) => {
     tuples.push([jsonPointerHelpers.append(trail, key), value]);
@@ -71,7 +97,7 @@ export function computeCloseness(
 
   if (keyUnionSize === 0) return 0;
 
-  let matchingIntersectSize = intersectSize;
+  let matchingIntersectSize = 0;
 
   keyIntersection.forEach((key) => {
     const aEntries = new Set(
@@ -80,12 +106,15 @@ export function computeCloseness(
     const bEntries = new Set(
       b.filter((i) => i[0] === key).map((i) => JSON.stringify(i[1]))
     );
-
     const intersection = new Set([...aEntries].filter((i) => bEntries.has(i)));
-    const keyUnion = new Set([...aEntries, ...bEntries]);
+    const union = new Set([...aEntries, ...bEntries]);
 
-    const subtract = keyUnion.size ? 1 - intersection.size / keyUnion.size : 0;
-    matchingIntersectSize = matchingIntersectSize - subtract;
+    if (intersection.size !== union.size) {
+      matchingIntersectSize =
+        matchingIntersectSize + intersection.size / union.size;
+    } else {
+      matchingIntersectSize = matchingIntersectSize + 1;
+    }
   });
 
   return matchingIntersectSize / keyUnionSize;

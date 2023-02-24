@@ -21,11 +21,16 @@ exports[`can walk schema works for a basic schema 1`] = `
     },
   ],
   [
-    "/required",
-    Set {
-      "a",
-      "c",
-    },
+    "/required/a",
+    true,
+  ],
+  [
+    "/required/b",
+    false,
+  ],
+  [
+    "/required/c",
+    true,
   ],
   [
     "/type",
@@ -41,10 +46,8 @@ exports[`compare closeness allOf is walked as a merge 1`] = `
     "string",
   ],
   [
-    "/required",
-    Set {
-      "a",
-    },
+    "/required/a",
+    true,
   ],
   [
     "/type",
@@ -55,10 +58,8 @@ exports[`compare closeness allOf is walked as a merge 1`] = `
     "number",
   ],
   [
-    "/required",
-    Set {
-      "b",
-    },
+    "/required/b",
+    true,
   ],
   [
     "/type",
@@ -66,3 +67,5 @@ exports[`compare closeness allOf is walked as a merge 1`] = `
   ],
 ]
 `;
+
+exports[`compare closeness oneOf shows half if one of its branches is met: .5 1`] = `0.5`;
