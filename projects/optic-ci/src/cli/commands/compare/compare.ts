@@ -31,7 +31,8 @@ import { uploadCiRun } from './upload';
 import { loadCiContext } from '../utils/load-context';
 import { sendGitlabMessage } from './gitlab-comment';
 import { getRelativeRepoPath } from '../utils/path';
-import { inGit, validateOpenApiV3Document } from '@useoptic/openapi-io';
+import { validateOpenApiV3Document } from '@useoptic/openapi-io';
+import { inGit } from '../utils/git';
 import { newExemptionsCount } from '../utils/count-exemptions';
 import OpenAPISchemaValidator from '@useoptic/openapi-io/build/validation/validator';
 

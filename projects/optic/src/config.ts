@@ -14,12 +14,14 @@ export enum VCS {
 
 export const OPTIC_YML_NAME = 'optic.yml';
 export const OPTIC_DEV_YML_NAME = 'optic.dev.yml';
-export const USER_CONFIG_PATH = path.join(
-  os.homedir(),
-  '.config',
-  'optic',
-  'config.json'
-);
+export const USER_CONFIG_DIR = path.join(os.homedir(), '.config', 'optic');
+
+export const USER_CONFIG_PATH =
+  process.env.OPTIC_ENV === 'staging'
+    ? path.join(USER_CONFIG_DIR, 'config.staging.json')
+    : process.env.OPTIC_ENV === 'local'
+    ? path.join(USER_CONFIG_DIR, 'config.local.json')
+    : path.join(USER_CONFIG_DIR, 'config.json');
 
 type ConfigRuleset = { name: string; config: unknown };
 
