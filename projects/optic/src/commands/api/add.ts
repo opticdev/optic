@@ -22,6 +22,7 @@ import {
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { errorHandler } from '../../error-handler';
 import { getOrganizationFromToken } from '../../utils/organization';
+import { sanitizeGitTag } from '@useoptic/openapi-utilities';
 
 function short(sha: string) {
   return sha.slice(0, 8);
@@ -142,43 +143,58 @@ async function crawlCandidateSpecs(
     };
   }
 
-  for await (const sha of shas) {
-    let parseResult: ParseResult;
-    try {
-      parseResult = await getFileFromFsOrGit(
-        `${sha}:${pathRelativeToRoot}`,
-        config,
-        {
-          strict: false,
-          denormalize: true,
-        }
-      );
-    } catch (e) {
-      logger.debug(
-        `${short(
-          sha
-        )}:${pathRelativeToRoot} is not a valid OpenAPI file, skipping sha version`,
-        e
-      );
-      continue;
+  if (config.vcs?.type === VCS.Git) {
+    const specsToTag: [string, string][] = [];
+    for await (const sha of shas) {
+      let parseResult: ParseResult;
+      try {
+        parseResult = await getFileFromFsOrGit(
+          `${sha}:${pathRelativeToRoot}`,
+          config,
+          {
+            strict: false,
+            denormalize: true,
+          }
+        );
+      } catch (e) {
+        logger.debug(
+          `${short(
+            sha
+          )}:${pathRelativeToRoot} is not a valid OpenAPI file, skipping sha version`,
+          e
+        );
+        continue;
+      }
+      if (parseResult.isEmptySpec) {
+        logger.debug(
+          `File ${pathRelativeToRoot} does not exist in sha ${short(
+            sha
+          )}, stopping here`
+        );
+        break;
+      }
+      spinner.text = `${chalk.bold.blue(
+        parseResult.jsonLike.info.title || pathRelativeToRoot
+      )} version ${sha.substring(0, 6)} uploading`;
+      const specId = await uploadSpec(api.id, {
+        spec: parseResult,
+        tags: [`git:${sha}`],
+        client: config.client,
+        orgId,
+      });
+      specsToTag.push([specId, sha]);
     }
-    if (parseResult.isEmptySpec) {
-      logger.debug(
-        `File ${pathRelativeToRoot} does not exist in sha ${short(
-          sha
-        )}, stopping here`
-      );
-      break;
+
+    if (!alreadyTracked) {
+      const branch = await Git.getCurrentBranchName();
+      const tag = [sanitizeGitTag(`gitbranch:${branch}`)];
+      for (const [specId, sha] of [...specsToTag].reverse()) {
+        spinner.text = `${chalk.bold.blue(
+          parseResult.jsonLike.info.title || pathRelativeToRoot
+        )} version ${sha.substring(0, 6)} tagging`;
+        await config.client.tagSpec(specId, tag);
+      }
     }
-    spinner.text = `${chalk.bold.blue(
-      parseResult.jsonLike.info.title || pathRelativeToRoot
-    )} version ${sha.substring(0, 6)} uploading`;
-    await uploadSpec(api.id, {
-      spec: parseResult,
-      tags: [`git:${sha}`],
-      client: config.client,
-      orgId,
-    });
   }
 
   // Write to file only if optic-url is not set or is invalid
