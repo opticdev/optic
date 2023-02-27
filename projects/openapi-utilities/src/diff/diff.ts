@@ -129,12 +129,7 @@ export function diff(
           afterPath,
         });
       }
-    } else if (
-      !Array.isArray(before.value) &&
-      !Array.isArray(after.value) &&
-      Object.prototype.toString.call(before.value) &&
-      Object.prototype.toString.call(after.value)
-    ) {
+    } else if (!Array.isArray(before.value) && !Array.isArray(after.value)) {
       const objectIdFn: (key: string, v: any) => string =
         isPathsMap(before.path) && isPathsMap(after.path)
           ? (key) => normalizeOpenApiPath(key)

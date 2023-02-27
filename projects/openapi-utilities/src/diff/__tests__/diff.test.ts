@@ -163,6 +163,93 @@ describe('diff openapi', () => {
       expect(diffWithChanges.length).toBe(1);
       expect(diffWithChanges).toMatchSnapshot();
     });
+
+    test('diffs operations even if variable names change request body', () => {
+      const diffNoChanges = diff(
+        {
+          paths: {
+            '/user/{userId}': {
+              get: {
+                responses: {},
+                requestBody: {
+                  content: {
+                    'application/json': {
+                      schema: {
+                        type: 'object',
+                        properties: { abc: { type: 'string' } },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
+          paths: {
+            '/user/{user_id}': {
+              get: {
+                responses: {},
+                requestBody: {
+                  content: {
+                    'application/json': {
+                      schema: {
+                        type: 'object',
+                        properties: { abc: { type: 'string' } },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        }
+      );
+      const diffWithChanges = diff(
+        {
+          paths: {
+            '/user/{userId}': {
+              get: {
+                responses: {},
+                requestBody: {
+                  content: {
+                    'application/json': {
+                      schema: {
+                        type: 'object',
+                        properties: { abc: { type: 'string' } },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
+          paths: {
+            '/user/{user_Id}': {
+              get: {
+                responses: {},
+                requestBody: {
+                  content: {
+                    'application/json': {
+                      schema: {
+                        type: 'object',
+                        properties: {},
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        }
+      );
+      expect(diffNoChanges.length).toBe(0);
+
+      expect(diffWithChanges.length).toBe(1);
+      expect(diffWithChanges).toMatchSnapshot();
+    });
   });
 
   test('diff with empty array', () => {

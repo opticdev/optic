@@ -189,6 +189,20 @@ exports[`diff openapi diff with array values diffs operations even if variable n
 ]
 `;
 
+exports[`diff openapi diff with array values diffs operations even if variable names change request body 1`] = `
+[
+  {
+    "before": "/paths/~1user~1{userId}/get/requestBody/content/application~1json/schema/properties/abc",
+    "pathReconciliation": [
+      [
+        1,
+        "/user/{user_Id}",
+      ],
+    ],
+  },
+]
+`;
+
 exports[`diff openapi diff with empty array 1`] = `
 [
   {
