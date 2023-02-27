@@ -23,12 +23,12 @@ Use real API traffic to write your initial OpenAPI specification and correctly p
 2. Then run `optic oas verify` to see a list of "Undocumented" endpoints. Optic is your API version control tool, like git for APIs. "Undocumented" endpoints are like "Untracked" files in git. 
 3. Add operations one at a time or use `--document all` to document all of them at once
 
-**[Documentation: Generate an OpenAPI from traffic](https://www.useoptic.com/docs/document-existing-api)**
+**[Documentation: Generate an OpenAPI from traffic](https://www.useoptic.com/docs/openapi/generate-from-traffic)**
 
 
 https://user-images.githubusercontent.com/5900338/210244068-22540288-1f6d-46a7-a2e9-5b3d19a00f31.mp4
 
-**[Read Documentation](https://www.useoptic.com/docs/document-existing-api)**
+**[Read Documentation](https://www.useoptic.com/docs/openapi/generate-from-traffic)**
 
 ## Prevent breaking changes with API diffs
 
@@ -52,11 +52,11 @@ With Optic you can verify your API behavior in CI and understand your team's API
 optic oas verify openapi.yml
 ```
 
-**[Documentation: Verify your API works as designed](https://www.useoptic.com/verify-api-behaviors)**
+**[Documentation: Verify your API works as designed](https://www.useoptic.com/docs/openapi/verify-openapi)**
 
 https://user-images.githubusercontent.com/5900338/211056700-00163967-12fd-447a-a108-f82bc9c9f0ad.mp4
 
-**[Read Documentation](https://www.useoptic.com/verify-api-behaviors)**
+**[Read Documentation](https://www.useoptic.com/docs/openapi/verify-openapi)**
 
 ## Build a consistent API that follows your team's standards
 Optic makes it easy for everyone on your team to review API changes, and automate your API standards. It makes API linting usable and productive for developers on teams like [Snyk](https://snyk.io/blog/snyk-api-development-shift-left/) because it raises the quality of the APIs without getting in the way of developers. 
@@ -80,7 +80,7 @@ ruleset:
 
 https://user-images.githubusercontent.com/5900338/211058178-6c3c7f76-55be-4e7a-81f0-3aec07253518.mp4
 
-**[Read Documentation](https://www.useoptic.com/docs/api-standards)**
+**[Read Documentation](https://www.useoptic.com/docs/standards)**
 
 
 --- 
