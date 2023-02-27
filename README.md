@@ -63,7 +63,7 @@ Optic makes it easy for everyone on your team to review API changes, and automat
 
 You can read about how Optic goes [beyond simple API Linting](https://www.useoptic.com/blog/beyond-api-linting). 
 
-Here is an example of a [team's automated API standards](https://useoptic.com/standards):
+Here is an example of a [team's automated API standards](https://www.useoptic.com/docs/standards):
 ```yaml
 ruleset:
   - breaking-changes # prevent all breaking changes
