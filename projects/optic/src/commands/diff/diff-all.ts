@@ -79,6 +79,11 @@ comma separated values (e.g. "**/*.yml,**/*.json")'
     .option('--upload', 'upload specs', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
+    .option(
+      '--no-missing-urls',
+      'fail with exit code 1 if there are detected specs missing x-optic-url',
+      false
+    )
     .action(errorHandler(getDiffAllAction(config)));
 };
 
@@ -92,6 +97,7 @@ type DiffAllActionOptions = {
   web: boolean;
   upload: boolean;
   json: boolean;
+  noMissingUrls: boolean;
 };
 
 // Match up the to and from candidates
@@ -319,6 +325,10 @@ function handleWarnings(warnings: Warnings, options: DiffAllActionOptions) {
     logger.info('Run the `optic api add` command to add these specs to optic');
     logger.info(warnings.missingOpticUrl.map((f) => f.path).join('\n'));
     logger.info('');
+
+    if (options.noMissingUrls) {
+      process.exitCode = 1;
+    }
   }
 
   if (warnings.unparseableFromSpec.length > 0) {
