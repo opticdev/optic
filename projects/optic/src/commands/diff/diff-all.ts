@@ -80,8 +80,8 @@ comma separated values (e.g. "**/*.yml,**/*.json")'
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
     .option(
-      '--no-missing-urls',
-      'fail with exit code 1 if there are detected specs missing x-optic-url',
+      '--fail-on-untracked-openapi',
+      'fail with exit code 1 if there are detected untracked apis',
       false
     )
     .action(errorHandler(getDiffAllAction(config)));
@@ -97,7 +97,7 @@ type DiffAllActionOptions = {
   web: boolean;
   upload: boolean;
   json: boolean;
-  noMissingUrls: boolean;
+  failOnUntrackedApi: boolean;
 };
 
 // Match up the to and from candidates
@@ -326,7 +326,7 @@ function handleWarnings(warnings: Warnings, options: DiffAllActionOptions) {
     logger.info(warnings.missingOpticUrl.map((f) => f.path).join('\n'));
     logger.info('');
 
-    if (options.noMissingUrls) {
+    if (options.failOnUntrackedApi) {
       process.exitCode = 1;
     }
   }
