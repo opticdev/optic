@@ -11,6 +11,12 @@ import { loadCliConfig } from '../../config';
 import { logger } from '../../logger';
 import chalk from 'chalk';
 
+const baseRulesets: (Ruleset | ExternalRule)[] = [];
+
+export function setRulesets(rulesets: (Ruleset | ExternalRule)[]) {
+  baseRulesets.push(...rulesets);
+}
+
 const isLocalJsFile = (name: string) => name.endsWith('.js');
 
 type InputPayload = Parameters<typeof prepareRulesets>[0];
@@ -59,7 +65,7 @@ export const generateRuleRunner = async (
     options,
     checksEnabled,
   });
-  let rulesets: (Ruleset | ExternalRule)[] = [];
+  let rulesets: (Ruleset | ExternalRule)[] = [...baseRulesets];
   let ruleNames: string[] = [];
   let warnings: string[] = [];
 
