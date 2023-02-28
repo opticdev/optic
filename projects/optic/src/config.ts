@@ -23,7 +23,7 @@ export const USER_CONFIG_PATH =
     ? path.join(USER_CONFIG_DIR, 'config.local.json')
     : path.join(USER_CONFIG_DIR, 'config.json');
 
-type ConfigRuleset = { name: string; config: unknown };
+export type ConfigRuleset = { name: string; config: unknown };
 
 export type RawYmlConfig = {
   ruleset?: unknown[];
@@ -44,7 +44,7 @@ export type OpticCliConfig = Omit<RawYmlConfig, 'ruleset' | 'extends'> & {
     status: 'clean' | 'dirty';
   };
 
-  ruleset: ConfigRuleset[];
+  ruleset?: ConfigRuleset[];
   isAuthenticated: boolean;
   authenticationType?: 'user' | 'env';
   client: OpticBackendClient;
@@ -55,7 +55,7 @@ export type OpticCliConfig = Omit<RawYmlConfig, 'ruleset' | 'extends'> & {
 const DefaultOpticCliConfig: OpticCliConfig = {
   root: process.cwd(),
   configPath: undefined,
-  ruleset: [{ name: 'breaking-changes', config: {} }],
+  ruleset: undefined,
   isAuthenticated: false,
   client: createOpticClient('no_token'),
   isInCi: process.env.CI === 'true',
