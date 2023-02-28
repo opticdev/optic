@@ -33,6 +33,7 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "jsonpointer": "^5.0.1"
+    "jsonpointer": "^5.0.1",
+    "minimatch": "7.1.0"
   }
 }
