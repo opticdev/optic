@@ -1,5 +1,43 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`diff openapi allOf <> allOf compares properties properly diff when made required properties 1`] = `
+[
+  {
+    "after": "/paths/~1users/get/responses/200/content/application~1json/schema/allOf/0/required/0",
+  },
+]
+`;
+
+exports[`diff openapi allOf <> allOf compares properties properly last property definition wins 1`] = `
+[
+  {
+    "after": "/paths/~1users/get/responses/200/content/application~1json/schema/allOf/1/properties/a/type",
+    "before": "/paths/~1users/get/responses/200/content/application~1json/schema/allOf/1/properties/a/type",
+  },
+]
+`;
+
+exports[`diff openapi allOf <> allOf compares properties properly other properties work when all objects 1`] = `
+[
+  {
+    "after": "/paths/~1users/get/responses/200/content/application~1json/schema/allOf/0/title",
+    "before": "/paths/~1users/get/responses/200/content/application~1json/schema/allOf/0/title",
+  },
+]
+`;
+
+exports[`diff openapi allOf <> allOf compares properties properly works for nested allOf 1`] = `
+[
+  {
+    "after": "/paths/~1users/get/responses/200/content/application~1json/schema/allOf/1",
+  },
+  {
+    "after": "/paths/~1users/get/responses/200/content/application~1json/schema/allOf/1/properties/a/allOf/0/properties/b/type",
+    "before": "/paths/~1users/get/responses/200/content/application~1json/schema/allOf/0/properties/a/allOf/0/properties/b/type",
+  },
+]
+`;
+
 exports[`diff openapi can diff an openapi spec 1`] = `
 [
   {
@@ -213,6 +251,40 @@ exports[`diff openapi diff with empty array 1`] = `
   },
   {
     "after": "/paths",
+  },
+]
+`;
+
+exports[`diff openapi object <> allOf compares properties properly properties made optional 1`] = `
+[
+  {
+    "before": "/paths/~1users/get/responses/200/content/application~1json/schema/required/0",
+    "pathReconciliation": [],
+  },
+  {
+    "before": "/paths/~1users/get/responses/200/content/application~1json/schema/required/1",
+    "pathReconciliation": [],
+  },
+]
+`;
+
+exports[`diff openapi object <> allOf compares properties properly removals of properties 1`] = `
+[
+  {
+    "before": "/paths/~1users/get/responses/200/content/application~1json/schema/required/0",
+    "pathReconciliation": [],
+  },
+  {
+    "before": "/paths/~1users/get/responses/200/content/application~1json/schema/required/1",
+    "pathReconciliation": [],
+  },
+  {
+    "before": "/paths/~1users/get/responses/200/content/application~1json/schema/properties/a",
+    "pathReconciliation": [],
+  },
+  {
+    "before": "/paths/~1users/get/responses/200/content/application~1json/schema/properties/b",
+    "pathReconciliation": [],
   },
 ]
 `;

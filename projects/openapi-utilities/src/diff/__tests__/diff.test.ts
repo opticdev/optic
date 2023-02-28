@@ -2,6 +2,7 @@ import { describe, test, expect } from '@jest/globals';
 import { diff, ObjectDiff, reconcileDiff } from '../diff';
 import { before, after } from './mock-data';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { FlatOpenAPIV3 } from '../../flat-openapi-types';
 
 describe('diff openapi', () => {
   test('can diff an openapi spec', () => {
@@ -254,6 +255,439 @@ describe('diff openapi', () => {
 
   test('diff with empty array', () => {
     expect(diff({}, after)).toMatchSnapshot();
+  });
+
+  describe('object <> allOf compares properties properly', () => {
+    test('no diff on refactor to allOf', () => {
+      const objectBefore: FlatOpenAPIV3.SchemaObject = {
+        type: 'object',
+        properties: {
+          a: { type: 'string' },
+          b: { type: 'number' },
+        },
+      };
+
+      const allOfAfter: FlatOpenAPIV3.SchemaObject = {
+        allOf: [
+          {
+            type: 'object',
+            properties: {
+              b: { type: 'number' },
+            },
+          },
+          {
+            type: 'object',
+            properties: {
+              a: { type: 'string' },
+            },
+          },
+        ],
+      };
+
+      const diffResult = diff(
+        objectBefore,
+        allOfAfter,
+        jsonPointerHelpers.compile([
+          'paths',
+          '/users',
+          'get',
+          'responses',
+          '200',
+          'content',
+          'application/json',
+          'schema',
+        ])
+      );
+
+      expect(diffResult.length).toBe(0);
+    });
+    test('property diff is correct', () => {
+      const objectBefore: FlatOpenAPIV3.SchemaObject = {
+        type: 'object',
+        properties: {
+          a: { type: 'string' },
+          b: { type: 'number' },
+        },
+      };
+
+      const allOfAfter: FlatOpenAPIV3.SchemaObject = {
+        allOf: [
+          {
+            type: 'object',
+            properties: {
+              b: { type: 'number' },
+            },
+          },
+          {
+            type: 'object',
+            required: ['a'],
+            properties: {
+              a: { type: 'number' },
+            },
+          },
+        ],
+      };
+
+      const diffResult = diff(
+        objectBefore,
+        allOfAfter,
+        jsonPointerHelpers.compile([
+          'paths',
+          '/users',
+          'get',
+          'responses',
+          '200',
+          'content',
+          'application/json',
+          'schema',
+        ])
+      );
+
+      expect(diffResult.length).toBe(2);
+    });
+    test('removals of properties', () => {
+      const objectBefore: FlatOpenAPIV3.SchemaObject = {
+        type: 'object',
+        required: ['a', 'b'],
+        properties: {
+          a: { type: 'string' },
+          b: { type: 'number' },
+        },
+      };
+
+      const allOfAfter: FlatOpenAPIV3.SchemaObject = {
+        allOf: [
+          {
+            type: 'object',
+            properties: {},
+          },
+          {
+            type: 'object',
+            properties: {},
+          },
+        ],
+      };
+
+      const diffResult = diff(
+        objectBefore,
+        allOfAfter,
+        jsonPointerHelpers.compile([
+          'paths',
+          '/users',
+          'get',
+          'responses',
+          '200',
+          'content',
+          'application/json',
+          'schema',
+        ])
+      );
+
+      expect(diffResult).toMatchSnapshot();
+      expect(diffResult.length).toBe(4);
+    });
+    test('properties made optional', () => {
+      const objectBefore: FlatOpenAPIV3.SchemaObject = {
+        type: 'object',
+        required: ['a', 'b'],
+        properties: {
+          a: { type: 'string' },
+          b: { type: 'number' },
+        },
+      };
+
+      const allOfAfter: FlatOpenAPIV3.SchemaObject = {
+        allOf: [
+          {
+            type: 'object',
+            properties: {
+              a: { type: 'string' },
+            },
+          },
+          {
+            type: 'object',
+            properties: {
+              b: { type: 'number' },
+            },
+          },
+        ],
+      };
+
+      const diffResult = diff(
+        objectBefore,
+        allOfAfter,
+        jsonPointerHelpers.compile([
+          'paths',
+          '/users',
+          'get',
+          'responses',
+          '200',
+          'content',
+          'application/json',
+          'schema',
+        ])
+      );
+
+      expect(diffResult).toMatchSnapshot();
+      expect(diffResult.length).toBe(2);
+    });
+  });
+  describe('allOf <> allOf compares properties properly', () => {
+    test('no diff when same properties', () => {
+      const before: FlatOpenAPIV3.SchemaObject = {
+        allOf: [
+          {
+            type: 'object',
+            properties: {
+              a: { type: 'string' },
+            },
+          },
+          {
+            type: 'object',
+            properties: {
+              b: { type: 'number' },
+            },
+          },
+        ],
+      };
+
+      const after: FlatOpenAPIV3.SchemaObject = {
+        allOf: [
+          {
+            type: 'object',
+            properties: {
+              b: { type: 'number' },
+            },
+          },
+          {
+            type: 'object',
+            properties: {
+              a: { type: 'string' },
+            },
+          },
+        ],
+      };
+
+      const diffResult = diff(
+        before,
+        after,
+        jsonPointerHelpers.compile([
+          'paths',
+          '/users',
+          'get',
+          'responses',
+          '200',
+          'content',
+          'application/json',
+          'schema',
+        ])
+      );
+
+      expect(diffResult.length).toBe(0);
+    });
+    test('diff when made required properties', () => {
+      const before: FlatOpenAPIV3.SchemaObject = {
+        allOf: [
+          {
+            type: 'object',
+            properties: {
+              a: { type: 'string' },
+            },
+          },
+          {
+            type: 'object',
+            properties: {
+              b: { type: 'number' },
+            },
+          },
+        ],
+      };
+
+      const after: FlatOpenAPIV3.SchemaObject = {
+        allOf: [
+          {
+            required: ['b'],
+            type: 'object',
+            properties: {
+              b: { type: 'number' },
+            },
+          },
+          {
+            type: 'object',
+            properties: {
+              a: { type: 'string' },
+            },
+          },
+        ],
+      };
+
+      const diffResult = diff(
+        before,
+        after,
+        jsonPointerHelpers.compile([
+          'paths',
+          '/users',
+          'get',
+          'responses',
+          '200',
+          'content',
+          'application/json',
+          'schema',
+        ])
+      );
+
+      expect(diffResult).toMatchSnapshot();
+      expect(diffResult.length).toBe(1);
+    });
+    test('last property definition wins', () => {
+      // this is an impossible set of constraints
+      const before: FlatOpenAPIV3.SchemaObject = {
+        allOf: [
+          {
+            type: 'object',
+            properties: {
+              a: { type: 'number' },
+            },
+          },
+          {
+            type: 'object',
+            properties: {
+              b: { type: 'number' },
+              a: { type: 'string' },
+            },
+          },
+        ],
+      };
+
+      const after: FlatOpenAPIV3.SchemaObject = {
+        allOf: [
+          {
+            type: 'object',
+            properties: {},
+          },
+          {
+            type: 'object',
+            properties: {
+              b: { type: 'number' },
+              a: { type: 'number' },
+            },
+          },
+        ],
+      };
+
+      const diffResult = diff(
+        before,
+        after,
+        jsonPointerHelpers.compile([
+          'paths',
+          '/users',
+          'get',
+          'responses',
+          '200',
+          'content',
+          'application/json',
+          'schema',
+        ])
+      );
+
+      expect(diffResult).toMatchSnapshot();
+      expect(diffResult.length).toBe(1);
+    });
+    test('other properties work when all objects', () => {
+      // this is an impossible set of constraints
+      const before: FlatOpenAPIV3.SchemaObject = {
+        allOf: [
+          {
+            title: 'Hello',
+            type: 'object',
+            properties: {
+              a: { type: 'number' },
+            },
+          },
+        ],
+      };
+
+      const after: FlatOpenAPIV3.SchemaObject = {
+        allOf: [
+          {
+            title: 'World',
+            type: 'object',
+            properties: {
+              a: { type: 'number' },
+            },
+          },
+        ],
+      };
+
+      const diffResult = diff(
+        before,
+        after,
+        jsonPointerHelpers.compile([
+          'paths',
+          '/users',
+          'get',
+          'responses',
+          '200',
+          'content',
+          'application/json',
+          'schema',
+        ])
+      );
+
+      expect(diffResult).toMatchSnapshot();
+      expect(diffResult.length).toBe(1);
+    });
+    test('works for nested allOf', () => {
+      // this is an impossible set of constraints
+      const before: FlatOpenAPIV3.SchemaObject = {
+        allOf: [
+          {
+            type: 'object',
+            properties: {
+              a: {
+                allOf: [
+                  { type: 'object', properties: { b: { type: 'string' } } },
+                ],
+              },
+            },
+          },
+        ],
+      };
+
+      const after: FlatOpenAPIV3.SchemaObject = {
+        allOf: [
+          { type: 'object' }, // being sneaky
+          {
+            type: 'object',
+            properties: {
+              a: {
+                allOf: [
+                  { type: 'object', properties: { b: { type: 'number' } } },
+                ],
+              },
+            },
+          },
+        ],
+      };
+
+      const diffResult = diff(
+        before,
+        after,
+        jsonPointerHelpers.compile([
+          'paths',
+          '/users',
+          'get',
+          'responses',
+          '200',
+          'content',
+          'application/json',
+          'schema',
+        ])
+      );
+
+      expect(diffResult).toMatchSnapshot();
+      expect(diffResult.length).toBe(2);
+    });
   });
 });
 

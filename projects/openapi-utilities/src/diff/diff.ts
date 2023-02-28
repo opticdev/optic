@@ -1,6 +1,12 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { getParameterIdentity, isParameterObject } from './array-identifiers';
-import { isPathParameterArray, isPathsMap } from './openapi-matchers';
+import {
+  comparisonsForAllOf,
+  isAllOfDiff,
+  isAnObjectAllOf,
+  isPathParameterArray,
+  isPathsMap,
+} from './openapi-matchers';
 import { normalizeOpenApiPath } from '../openapi3/implementations/openapi3/openapi-traverser';
 
 export type JSONValue =
@@ -130,40 +136,52 @@ export function diff(
         });
       }
     } else if (!Array.isArray(before.value) && !Array.isArray(after.value)) {
-      const objectIdFn: (key: string, v: any) => string =
-        isPathsMap(before.path) && isPathsMap(after.path)
-          ? (key) => normalizeOpenApiPath(key)
-          : (key: string, value) => String(key);
+      if (isAllOfDiff(before, after)) {
+        const allOf = comparisonsForAllOf(before, after);
+        comparisons.push(...allOf.comparisons);
+        diffResults.push(...allOf.requiredDiffResults);
+      } else {
+        const objectIdFn: (key: string, v: any) => string =
+          isPathsMap(before.path) && isPathsMap(after.path)
+            ? (key) => normalizeOpenApiPath(key)
+            : (key: string, value) => String(key);
 
-      const beforeValuesById: Map<string, [JSONValue, string]> = new Map(
-        Object.entries(before.value).map(([k, v]) => [objectIdFn(k, v), [v, k]])
-      );
-      const afterValuesById: Map<string, [JSONValue, string]> = new Map(
-        Object.entries(after.value).map(([k, v]) => [objectIdFn(k, v), [v, k]])
-      );
-
-      const keys = new Set([
-        ...beforeValuesById.keys(),
-        ...afterValuesById.keys(),
-      ]);
-
-      for (const key of keys) {
-        const [beforeValue, beforeId] = beforeValuesById.get(key) ?? [];
-        const beforePath = jsonPointerHelpers.append(
-          before.path,
-          String(beforeId)
+        const beforeValuesById: Map<string, [JSONValue, string]> = new Map(
+          Object.entries(before.value).map(([k, v]) => [
+            objectIdFn(k, v),
+            [v, k],
+          ])
         );
-        const [afterValue, afterId] = afterValuesById.get(key) ?? [];
-        const afterPath = jsonPointerHelpers.append(
-          after.path,
-          String(afterId)
+        const afterValuesById: Map<string, [JSONValue, string]> = new Map(
+          Object.entries(after.value).map(([k, v]) => [
+            objectIdFn(k, v),
+            [v, k],
+          ])
         );
-        comparisons.push({
-          beforeValue,
-          beforePath,
-          afterValue,
-          afterPath,
-        });
+
+        const keys = new Set([
+          ...beforeValuesById.keys(),
+          ...afterValuesById.keys(),
+        ]);
+
+        for (const key of keys) {
+          const [beforeValue, beforeId] = beforeValuesById.get(key) ?? [];
+          const beforePath = jsonPointerHelpers.append(
+            before.path,
+            String(beforeId)
+          );
+          const [afterValue, afterId] = afterValuesById.get(key) ?? [];
+          const afterPath = jsonPointerHelpers.append(
+            after.path,
+            String(afterId)
+          );
+          comparisons.push({
+            beforeValue,
+            beforePath,
+            afterValue,
+            afterPath,
+          });
+        }
       }
     } else {
       throw new Error(
