@@ -124,7 +124,7 @@ export const generateRuleRunner = async (
       hostedRulesets,
     });
 
-    rulesets = results.rulesets;
+    rulesets.push(...results.rulesets);
 
     warnings.push(...results.warnings);
   }
