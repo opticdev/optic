@@ -132,7 +132,7 @@ const openapi3_0_schema_object = {
       },
     },
     additionalProperties: {
-      oneOf: [
+      anyOf: [
         {
           $ref: '#/definitions/schemaOrReference',
         },
@@ -1294,7 +1294,7 @@ const createOpenAPIValidationSchema = (schema: any) => ({
       ],
     },
     schemaOrReference: {
-      oneOf: [
+      anyOf: [
         {
           $ref: '#/definitions/schema',
         },
@@ -1304,7 +1304,7 @@ const createOpenAPIValidationSchema = (schema: any) => ({
       ],
     },
     securitySchemeOrReference: {
-      oneOf: [
+      anyOf: [
         {
           $ref: '#/definitions/securityScheme',
         },

@@ -97,7 +97,7 @@ Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
   registerDereference(cli, cliConfig);
 
   const rulesetSubcommands = cli
-    .command('ruleset')
+    .command('ruleset', { hidden: true })
     .description(
       'Commands to build your own optic rulesets. See `optic ruleset --help`'
     )

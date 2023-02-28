@@ -1,5 +1,7 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { getParameterIdentity, isParameterObject } from './array-identifiers';
+import { isPathParameterArray, isPathsMap } from './openapi-matchers';
+import { normalizeOpenApiPath } from '../openapi3/implementations/openapi3/openapi-traverser';
 
 export type JSONValue =
   | null
@@ -60,12 +62,16 @@ export function typeofDiff(
 }
 
 // Diffs two objects, generating the leaf nodes that have changes
-export function diff(before: any, after: any): ObjectDiff[] {
+export function diff(
+  before: any,
+  after: any,
+  initialPath: string = ''
+): ObjectDiff[] {
   const diffResults: ObjectDiff[] = [];
   const stack: StackItem[] = [
     [
-      { value: before, path: '' },
-      { value: after, path: '' },
+      { value: before, path: initialPath },
+      { value: after, path: initialPath },
     ],
   ];
   while (stack.length > 0) {
@@ -84,13 +90,13 @@ export function diff(before: any, after: any): ObjectDiff[] {
     // for objects, we just use the key
     if (Array.isArray(before.value) && Array.isArray(after.value)) {
       const allValues = [...before.value, ...after.value];
-      const arrayIdFn: (v: any, i: number) => string = allValues.every((v) =>
-        isParameterObject(v)
-      )
-        ? getParameterIdentity
-        : allValues.every((v) => typeof v !== 'object')
-        ? (v: any) => String(v)
-        : (_, i: number) => String(i);
+
+      const arrayIdFn: (v: any, i: number) => string =
+        isPathParameterArray(before.path) && isPathParameterArray(after.path)
+          ? getParameterIdentity
+          : allValues.every((v) => typeof v !== 'object')
+          ? (v: any) => String(v)
+          : (_, i: number) => String(i);
 
       const beforeValuesById: Map<string, [JSONValue, number]> = new Map(
         before.value.map((v, i) => [arrayIdFn(v, i), [v, i]])
@@ -103,6 +109,7 @@ export function diff(before: any, after: any): ObjectDiff[] {
         ...beforeValuesById.keys(),
         ...afterValuesById.keys(),
       ]);
+
       for (const key of keys) {
         const [beforeValue, beforeIdx] = beforeValuesById.get(key) ?? [];
         const [afterValue, afterIdx] = afterValuesById.get(key) ?? [];
@@ -123,16 +130,34 @@ export function diff(before: any, after: any): ObjectDiff[] {
         });
       }
     } else if (!Array.isArray(before.value) && !Array.isArray(after.value)) {
+      const objectIdFn: (key: string, v: any) => string =
+        isPathsMap(before.path) && isPathsMap(after.path)
+          ? (key) => normalizeOpenApiPath(key)
+          : (key: string, value) => String(key);
+
+      const beforeValuesById: Map<string, [JSONValue, string]> = new Map(
+        Object.entries(before.value).map(([k, v]) => [objectIdFn(k, v), [v, k]])
+      );
+      const afterValuesById: Map<string, [JSONValue, string]> = new Map(
+        Object.entries(after.value).map(([k, v]) => [objectIdFn(k, v), [v, k]])
+      );
+
       const keys = new Set([
-        ...Object.keys(before.value),
-        ...Object.keys(after.value),
+        ...beforeValuesById.keys(),
+        ...afterValuesById.keys(),
       ]);
 
       for (const key of keys) {
-        const beforeValue = before.value[key];
-        const beforePath = jsonPointerHelpers.append(before.path, key);
-        const afterValue = after.value[key];
-        const afterPath = jsonPointerHelpers.append(after.path, key);
+        const [beforeValue, beforeId] = beforeValuesById.get(key) ?? [];
+        const beforePath = jsonPointerHelpers.append(
+          before.path,
+          String(beforeId)
+        );
+        const [afterValue, afterId] = afterValuesById.get(key) ?? [];
+        const afterPath = jsonPointerHelpers.append(
+          after.path,
+          String(afterId)
+        );
         comparisons.push({
           beforeValue,
           beforePath,

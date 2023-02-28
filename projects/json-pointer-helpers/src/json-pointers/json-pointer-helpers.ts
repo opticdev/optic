@@ -1,3 +1,5 @@
+import minimatch from 'minimatch';
+
 const escape = (str: string) => str.replace(/~/g, '~0').replace(/\//g, '~1');
 
 const unescape = (str: string) => str.replace(/~0/g, '~').replace(/~1/g, '/');
@@ -55,6 +57,37 @@ function relative(pointer: string, from: string) {
   return compile(targetDecoded.slice(fromDecoded.length));
 }
 
+function startsWith(pointer: string, pattern: string[]): boolean {
+  const components = parse(pointer);
+  const sliced = components.slice(0, pattern.length);
+
+  if (!(sliced.length >= pattern.length)) {
+    return false;
+  }
+
+  return sliced.every((comp, index) => minimatch(comp, pattern[index]));
+}
+
+function matches(pointer: string, pattern: string[]): boolean {
+  const components = parse(pointer);
+
+  if (components.length !== pattern.length) {
+    return false;
+  }
+
+  return components.every((comp, index) => minimatch(comp, pattern[index]));
+}
+function endsWith(pointer: string, pattern: string[]): boolean {
+  const components = parse(pointer);
+  const sliced = components.slice(components.length - pattern.length);
+
+  if (!(sliced.length >= pattern.length)) {
+    return false;
+  }
+
+  return sliced.every((comp, index) => minimatch(comp, pattern[index]));
+}
+
 function tryGet(
   input: any,
   pointer: string
@@ -84,4 +117,7 @@ export default {
   tryGet,
   compile,
   relative,
+  startsWith,
+  matches,
+  endsWith,
 };
