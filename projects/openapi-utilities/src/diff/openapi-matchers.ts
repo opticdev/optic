@@ -183,8 +183,6 @@ export const comparisonsForAllOf = (
     const afterAllOfSchemas =
       (after.value as unknown as FlatOpenAPIV3.SchemaObject).allOf || [];
 
-    Math.max(beforeAllOfSchemas.length, afterAllOfSchemas.length);
-
     const withoutProperties = (obj: FlatOpenAPIV3.SchemaObject | undefined) => {
       if (obj) {
         const { properties, required, ...others } = obj;
