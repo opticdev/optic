@@ -9,6 +9,17 @@ describe('openapi matchers', () => {
         jsonPointerHelpers.compile(['paths', '/me/them', 'get', 'parameters'])
       )
     ).toBe(true);
+
+    expect(
+      isPathParameterArray(
+        jsonPointerHelpers.compile([
+          'paths',
+          '/me/them',
+          'summary',
+          'parameters',
+        ])
+      )
+    ).toBe(false);
     expect(
       isPathParameterArray(
         jsonPointerHelpers.compile(['paths', '/me/them', 'parameters'])
