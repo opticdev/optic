@@ -905,6 +905,836 @@ exports[`breaking changes ruleset - parameter enum change "query" parameter enum
 ]
 `;
 
+exports[`breaking changes ruleset - parameter enum change const changes picked up as breaking "cookie" parameter 1`] = `
+[
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "cookie",
+          "name": "test",
+          "schema": {
+            "const": "b",
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "cookie",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "cookie": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "cannot remove an enum from cookie parameter 'test'. This is a breaking change.",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent cookie parameters enum breaking changes",
+    "passed": false,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users cookie parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "cookie",
+          "name": "test",
+          "schema": {
+            "const": "b",
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "cookie",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "cookie": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent cookie parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users cookie parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "cookie",
+          "name": "test",
+          "schema": {
+            "const": "b",
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "cookie",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "cookie": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent cookie parameters type changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users cookie parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "cookie",
+          "name": "test",
+          "schema": {
+            "const": "b",
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "cookie",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "cookie": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent requiring existing cookie parameters",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users cookie parameter: test",
+  },
+]
+`;
+
+exports[`breaking changes ruleset - parameter enum change const changes picked up as breaking "header" parameter 1`] = `
+[
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "header",
+          "name": "test",
+          "schema": {
+            "const": "b",
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "header",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "header": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "header-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "cannot remove an enum from header parameter 'test'. This is a breaking change.",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent header parameters enum breaking changes",
+    "passed": false,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users header parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "header",
+          "name": "test",
+          "schema": {
+            "const": "b",
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "header",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "header": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "header-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent header parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users header parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "header",
+          "name": "test",
+          "schema": {
+            "const": "b",
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "header",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "header": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "header-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent header parameters type changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users header parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "header",
+          "name": "test",
+          "schema": {
+            "const": "b",
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "header",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "header": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "header-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent requiring existing header parameters",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users header parameter: test",
+  },
+]
+`;
+
+exports[`breaking changes ruleset - parameter enum change const changes picked up as breaking "path" parameter 1`] = `
+[
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "path",
+          "name": "test",
+          "schema": {
+            "const": "b",
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "path",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "path": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "path",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "path-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "cannot remove an enum from path parameter 'test'. This is a breaking change.",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent path parameters enum breaking changes",
+    "passed": false,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users path parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "path",
+          "name": "test",
+          "schema": {
+            "const": "b",
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "path",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "path": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "path",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "path-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent path parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users path parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "path",
+          "name": "test",
+          "schema": {
+            "const": "b",
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "path",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "path": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "path",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "path-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent path parameters type changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users path parameter: test",
+  },
+]
+`;
+
+exports[`breaking changes ruleset - parameter enum change const changes picked up as breaking "query" parameter 1`] = `
+[
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "query",
+          "name": "test",
+          "schema": {
+            "const": "b",
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "query",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "query": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "query-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "cannot remove an enum from query parameter 'test'. This is a breaking change.",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent query parameters enum breaking changes",
+    "passed": false,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users query parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "query",
+          "name": "test",
+          "schema": {
+            "const": "b",
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "query",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "query": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "query-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent query parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users query parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "query",
+          "name": "test",
+          "schema": {
+            "const": "b",
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "query",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "query": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "query-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent query parameters type changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users query parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "query",
+          "name": "test",
+          "schema": {
+            "const": "b",
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "query",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "query": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "query-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent requiring existing query parameters",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users query parameter: test",
+  },
+]
+`;
+
 exports[`breaking changes ruleset - parameter enum change enum added to "cookie" parameter 1`] = `
 [
   {
@@ -1725,6 +2555,866 @@ exports[`breaking changes ruleset - parameter enum change enum added to "query" 
           "in": "query",
           "name": "test",
           "schema": {
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "query": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "query-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent requiring existing query parameters",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users query parameter: test",
+  },
+]
+`;
+
+exports[`breaking changes ruleset - parameter enum change enum converted to const "cookie" parameter 1`] = `
+[
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "cookie",
+          "name": "test",
+          "schema": {
+            "enum": [
+              "a",
+            ],
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "cookie",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "cookie": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent cookie parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users cookie parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "cookie",
+          "name": "test",
+          "schema": {
+            "enum": [
+              "a",
+            ],
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "cookie",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "cookie": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent cookie parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users cookie parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "cookie",
+          "name": "test",
+          "schema": {
+            "enum": [
+              "a",
+            ],
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "cookie",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "cookie": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent cookie parameters type changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users cookie parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "cookie",
+          "name": "test",
+          "schema": {
+            "enum": [
+              "a",
+            ],
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "cookie",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "cookie": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent requiring existing cookie parameters",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users cookie parameter: test",
+  },
+]
+`;
+
+exports[`breaking changes ruleset - parameter enum change enum converted to const "header" parameter 1`] = `
+[
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "header",
+          "name": "test",
+          "schema": {
+            "enum": [
+              "a",
+            ],
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "header",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "header": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "header-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent header parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users header parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "header",
+          "name": "test",
+          "schema": {
+            "enum": [
+              "a",
+            ],
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "header",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "header": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "header-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent header parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users header parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "header",
+          "name": "test",
+          "schema": {
+            "enum": [
+              "a",
+            ],
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "header",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "header": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "header-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent header parameters type changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users header parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "header",
+          "name": "test",
+          "schema": {
+            "enum": [
+              "a",
+            ],
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "header",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "header": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "header-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent requiring existing header parameters",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users header parameter: test",
+  },
+]
+`;
+
+exports[`breaking changes ruleset - parameter enum change enum converted to const "path" parameter 1`] = `
+[
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "path",
+          "name": "test",
+          "schema": {
+            "enum": [
+              "a",
+            ],
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "path",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "path": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "path",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "path-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent path parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users path parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "path",
+          "name": "test",
+          "schema": {
+            "enum": [
+              "a",
+            ],
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "path",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "path": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "path",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "path-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent path parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users path parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "path",
+          "name": "test",
+          "schema": {
+            "enum": [
+              "a",
+            ],
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "path",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "path": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "path",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "path-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent path parameters type changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users path parameter: test",
+  },
+]
+`;
+
+exports[`breaking changes ruleset - parameter enum change enum converted to const "query" parameter 1`] = `
+[
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "query",
+          "name": "test",
+          "schema": {
+            "enum": [
+              "a",
+            ],
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "query",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "query": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "query-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent query parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users query parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "query",
+          "name": "test",
+          "schema": {
+            "enum": [
+              "a",
+            ],
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "query",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "query": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "query-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent query parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users query parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "query",
+          "name": "test",
+          "schema": {
+            "enum": [
+              "a",
+            ],
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "query",
+          "name": "test",
+          "schema": {
+            "const": "a",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "query": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "query-parameter",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent query parameters type changes",
+    "passed": true,
+    "received": undefined,
+    "type": "changed",
+    "where": "GET /api/users query parameter: test",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "in": "query",
+          "name": "test",
+          "schema": {
+            "enum": [
+              "a",
+            ],
+            "type": "string",
+          },
+        },
+        "before": {
+          "in": "query",
+          "name": "test",
+          "schema": {
+            "const": "a",
             "type": "string",
           },
         },
