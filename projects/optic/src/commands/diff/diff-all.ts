@@ -97,7 +97,7 @@ type DiffAllActionOptions = {
   web: boolean;
   upload: boolean;
   json: boolean;
-  failOnUntrackedApi: boolean;
+  failOnUntrackedOpenapi: boolean;
 };
 
 // Match up the to and from candidates
@@ -326,7 +326,7 @@ function handleWarnings(warnings: Warnings, options: DiffAllActionOptions) {
     logger.info(warnings.missingOpticUrl.map((f) => f.path).join('\n'));
     logger.info('');
 
-    if (options.failOnUntrackedApi) {
+    if (options.failOnUntrackedOpenapi) {
       process.exitCode = 1;
     }
   }
