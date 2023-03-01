@@ -495,6 +495,7 @@ export function addOperations(
         documentedInteraction
       );
       let shapePatches = SpecPatches.shapeAdditions(
+        patchedSpec,
         AT.tap((body: DocumentedBody) => {
           observers.documentedInteractionBody(documentedInteraction, body);
         })(documentedBodies)

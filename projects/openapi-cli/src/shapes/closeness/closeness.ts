@@ -6,7 +6,7 @@ export function walkSchema(
   schema: FlatOpenAPIV3_1.SchemaObject,
   trail: string = '',
   tuples: [string, any][] = []
-) {
+): [string, any][] {
   const {
     // special case these
     oneOf,
@@ -80,11 +80,10 @@ export function walkSchema(
   return tuples;
 }
 
-export function computeCloseness(
-  oneSchema: FlatOpenAPIV3_1.SchemaObject | FlatOpenAPIV3.SchemaObject,
+export function computeClosenessCached(
+  a: [string, any][],
   otherSchema: FlatOpenAPIV3_1.SchemaObject | FlatOpenAPIV3.SchemaObject
 ): number {
-  const a = walkSchema(oneSchema);
   const b = walkSchema(otherSchema);
 
   const aKeys = new Set(a.map((i) => i[0]));
@@ -118,4 +117,10 @@ export function computeCloseness(
   });
 
   return matchingIntersectSize / keyUnionSize;
+}
+export function computeCloseness(
+  oneSchema: FlatOpenAPIV3_1.SchemaObject | FlatOpenAPIV3.SchemaObject,
+  otherSchema: FlatOpenAPIV3_1.SchemaObject | FlatOpenAPIV3.SchemaObject
+): number {
+  return computeClosenessCached(walkSchema(oneSchema), otherSchema);
 }

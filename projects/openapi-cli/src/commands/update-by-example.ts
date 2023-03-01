@@ -143,7 +143,7 @@ export async function updateByExample(specPath: string): Promise<
 
   // const capturedBodies = // combined from matched bodies and new bodies generated from patches?
 
-  const bodyPatches = SpecPatches.shapeAdditions(exampleBodies);
+  const bodyPatches = SpecPatches.shapeAdditions(spec, exampleBodies);
 
   // additions only, so we only safely extend the spec
   const specAdditions = observers.observePatches(
