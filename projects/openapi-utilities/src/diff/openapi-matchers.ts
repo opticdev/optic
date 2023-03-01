@@ -47,24 +47,45 @@ export const inJsonSchema = (pointer: string): boolean => {
   );
 };
 
+/*
+Checks if a schema is an allOf with every child as an object. If this is true, we can diff it as-if it is an object
+ */
 export const isAnObjectAllOf = (pointer: string, schema: any) => {
   return (
     inJsonSchema(pointer) &&
     Array.isArray(schema.allOf) &&
     schema.allOf.length &&
-    schema.allOf.every((childSchema: any) => childSchema.type === 'object')
+    schema.allOf.every(
+      (childSchema: any) =>
+        childSchema.type === 'object' ||
+        (Array.isArray(childSchema.type) &&
+          childSchema.type.length === 1 &&
+          childSchema.type[0] === 'object')
+    )
   );
 };
 
+/*
+Checks if a schema is an object
+ */
 export const isAnObject = (pointer: string, schema: any) => {
   return (
-    inJsonSchema(pointer) &&
-    !schema.allOf &&
-    schema.type &&
-    schema.type === 'object'
+    (inJsonSchema(pointer) &&
+      !schema.allOf &&
+      schema.type &&
+      schema.type === 'object') ||
+    (Array.isArray(schema.type) &&
+      schema.type.length === 1 &&
+      schema.type[0] === 'object')
   );
 };
 
+/*
+Checks for the 3 possible allOf diffs
+- was an object before, now it's an allOf object
+- was an allOf object before, now it's an object
+- two allOf objects
+ */
 export const isAllOfDiff = (
   before: { path: string; value: JSONObject | JSONArray },
   after: { path: string; value: JSONObject | JSONArray }
@@ -79,9 +100,15 @@ export const isAllOfDiff = (
   );
 };
 
+/*
+Finds all the properties (unique by name) across all the schemas in an allOf.
+- If the properties overlap the last in the tree wins
+- The property will be required if its parent object has required to be specified
+ */
 export const propertiesForAllOf = (allOfOrObject: {
   path: string;
   value: JSONObject | JSONArray;
+  // key  schema path is required  path of required entry (explicitly required) or null (implicitly option)
 }): Map<string, [any, string, boolean, string | null]> => {
   let keyPathMap = new Map<string, [any, string, boolean, string | null]>();
 
@@ -125,6 +152,12 @@ export const propertiesForAllOf = (allOfOrObject: {
 
   return keyPathMap;
 };
+
+/*
+Walks each of the schemas from before / after
+- computes next comparisons to diff
+- manually diffs the required arrays. There are (n) possible required arrays (one in each schema) so we need alternative logic here
+ */
 export const comparisonsForAllOf = (
   before: { path: string; value: JSONObject | JSONArray },
   after: { path: string; value: JSONObject | JSONArray }
@@ -159,14 +192,14 @@ export const comparisonsForAllOf = (
       afterValue,
     });
 
-    // became optional
+    // if the property became optional, return the correct diff
     if (beforeIsRequired && !afterIsRequired && beforeRequiredPath) {
       requiredDiffResults.push({
         before: beforeRequiredPath,
         pathReconciliation: [],
       });
     }
-    // became required
+    // became required, return the correct diff
     if (afterIsRequired && !beforeIsRequired && afterRequiredPath) {
       requiredDiffResults.push({
         after: afterRequiredPath,
@@ -174,6 +207,10 @@ export const comparisonsForAllOf = (
     }
   }
 
+  /* when both are allOf we can compare the other properties of the object, like summary, description, etc.
+     We ignore these during the transition from object to allOf because it creates conflict and they probably need to refactor anyway. For instance title...what does it mean for all of the sub schemas to have a title? not last one wins, you probably want the title to be compared to the title next to allOf: []
+
+   */
   if (
     isAnObjectAllOf(before.path, before.value) &&
     isAnObjectAllOf(after.path, after.value)
