@@ -26,6 +26,7 @@ import { logger } from './logger';
 import chalk from 'chalk';
 import { registerDereference } from './commands/dereference/dereference';
 import { registerCiSetup } from './commands/ci/setup';
+import { registerLint } from './commands/lint/lint';
 
 const packageJson = require('../package.json');
 
@@ -90,12 +91,13 @@ Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
   oas.addCommand(await clearCommand());
   oas.addCommand(await verifyCommand());
 
+  registerLint(cli, cliConfig);
   registerDiffAll(cli, cliConfig);
   registerLogin(cli, cliConfig);
   registerDereference(cli, cliConfig);
 
   const rulesetSubcommands = cli
-    .command('ruleset')
+    .command('ruleset', { hidden: true })
     .description(
       'Commands to build your own optic rulesets. See `optic ruleset --help`'
     )

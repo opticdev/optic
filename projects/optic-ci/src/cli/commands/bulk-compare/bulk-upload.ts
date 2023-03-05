@@ -9,8 +9,7 @@ import {
   NormalizedCiContext,
 } from '@useoptic/openapi-utilities';
 import { loadAndValidateSpecFiles, uploadRun } from '../utils/shared-upload';
-import {} from '../../types';
-import { inGit } from '@useoptic/openapi-io';
+import { inGit } from '../utils/git';
 import { getRelativeRepoPath } from '../utils/path';
 
 export const bulkUploadCiRun = async (

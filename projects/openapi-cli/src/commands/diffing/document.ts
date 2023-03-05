@@ -9,7 +9,7 @@ import {
   UndocumentedOperationType,
 } from '../../operations';
 import { InferPathStructure } from '../../operations/infer-path-structure';
-import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { FlatOpenAPIV3, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { CapturedInteraction, CapturedInteractions } from '../../captures';
 import * as AT from '../../lib/async-tools';
 import {
@@ -23,11 +23,10 @@ import {
   SpecPatches,
 } from '../../specs';
 import { DocumentedBodies, DocumentedBody } from '../../shapes';
-import { trackCompletion } from '../../segment';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { ApiCoverageCounter } from '../../coverage/api-coverage';
 import { SchemaInventory } from '../../shapes/closeness/schema-inventory';
-import { patch } from 'semver';
+import { specToOperations } from '../../operations/queries';
 
 export async function addIfUndocumented(
   input: string,
@@ -36,9 +35,11 @@ export async function addIfUndocumented(
   spec: OpenAPIV3.Document,
   sourcemap: SpecFilesSourcemap
 ): Promise<Result<RecentlyDocumented, string>> {
+  const operations = specToOperations(spec);
   const operationsOption = await computeOperationsToAdd(
     input,
-    statusObservations
+    statusObservations,
+    operations
   );
 
   if (operationsOption.ok) {
@@ -73,10 +74,14 @@ export async function addIfUndocumented(
 
 async function computeOperationsToAdd(
   input: string,
-  statusObservations: StatusObservations
+  statusObservations: StatusObservations,
+  operations: { pathPattern: string; methods: string[] }[]
 ): Promise<Result<ParsedOperation[], string>> {
   if (input.trim() === 'all') {
-    const undocumented = await observationToUndocumented(statusObservations);
+    const undocumented = await observationToUndocumented(
+      statusObservations,
+      operations
+    );
     return Ok(undocumented.pathsToAdd);
   } else {
     return parseAddOperations(input);
@@ -96,7 +101,7 @@ export function parseAddOperations(
   const components = rawComponents.filter((s) => s.length > 0);
   const pairs: ParsedOperation[] = [];
 
-  const regex = /(get|post|put|delete|patch|options|head)( +)(\/.*)/;
+  const regex = /(get|post|put|delete|patch|options|head)( +)(\/.*)/i;
 
   components.forEach((comp) => {
     const groups = regex.exec(comp);
@@ -126,7 +131,8 @@ export function parseAddOperations(
 // observations to diffs
 
 export async function observationToUndocumented(
-  observations: StatusObservations
+  observations: StatusObservations,
+  operations: { pathPattern: string; methods: string[] }[]
 ) {
   let pathDiffs = {
     interactionsCount: 0,
@@ -181,10 +187,15 @@ export async function observationToUndocumented(
     }
   }
 
-  const inferredPathStructure = new InferPathStructure([]);
+  const inferredPathStructure = new InferPathStructure(operations);
   [...pathDiffs.unmatchedPaths.values()].forEach((observed) =>
     inferredPathStructure.includeObservedUrlPath(observed.method, observed.path)
   );
+  [...pathDiffs.unmatchedMethods.values()].forEach((observed) => {
+    observed.methods.forEach((method) => {
+      inferredPathStructure.includeObservedUrlPath(method, observed.path);
+    });
+  });
   inferredPathStructure.replaceConstantsWithVariables();
   const pathsToAdd = inferredPathStructure.undocumentedPaths();
 

@@ -1,7 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`diff petstore diff 1`] = `
-"
+"[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
+
 specification details:
 - /servers/2 [32madded[39m
 - /info/title [33mchanged[39m
@@ -396,12 +397,12 @@ Checks
 [31m[1m46 checks failed[22m[39m
 
 [34m[1mSee the full history of this API by running "optic api add petstore-base.json --history-depth 0"[22m[39m
-[1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
 
 exports[`diff reads optic.dev.yml for rulesets 1`] = `
-"
+"[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
+
 [1mGET[22m /invalid_name: [32madded[39m
   
 [1mPOST[22m /example: [31mremoved[39m
@@ -447,12 +448,12 @@ Checks
 [31m[1m2 checks failed[22m[39m
 
 [34m[1mSee the full history of this API by running "optic api add example-api-v0.json --history-depth 0"[22m[39m
-[1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
 
 exports[`diff two files, no repo or config 1`] = `
-"
+"[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
+
 [1mPATCH[22m /example: 
   - /operationId [33mchanged[39m
   
@@ -467,12 +468,12 @@ exports[`diff two files, no repo or config 1`] = `
 [1mGET[22m /example: 
   - /operationId [33mchanged[39m
   
-[1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
 
 exports[`diff with --standard arg 1`] = `
-"
+"[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
+
 [1mGET[22m /invalid_name: [32madded[39m
   
 [1mPOST[22m /example: [31mremoved[39m
@@ -518,12 +519,12 @@ Checks
 [31m[1m2 checks failed[22m[39m
 
 [34m[1mSee the full history of this API by running "optic api add example-api-v0.json --history-depth 0"[22m[39m
-[1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
 
 exports[`diff with mock server custom rules 1`] = `
-"
+"[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
+
 [1mGET[22m /invalid_name: [32madded[39m
   
 [1mPOST[22m /example: [31mremoved[39m
@@ -572,12 +573,12 @@ Checks
 [31m[1m2 checks failed[22m[39m
 
 [34m[1mSee the full history of this API by running "optic api add example-api-v0.json --history-depth 0"[22m[39m
-[1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
 
 exports[`diff with mock server extends 1`] = `
 "Extending ruleset from @test-org/ruleset-id
+[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
 
 [1mGET[22m /invalid_name: [32madded[39m
   
@@ -624,12 +625,12 @@ Checks
 [31m[1m2 checks failed[22m[39m
 
 [34m[1mSee the full history of this API by running "optic api add example-api-v0.json --history-depth 0"[22m[39m
-[1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
 
 exports[`diff with mock server ruleset key on api spec 1`] = `
-"
+"[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
+
 specification details:
 - /x-optic-standard [32madded[39m
 
@@ -662,7 +663,6 @@ Checks
 [31m[1m1 checks failed[22m[39m
 
 [34m[1mSee the full history of this API by running "optic api add example-api-v0.json --history-depth 0"[22m[39m
-[1m[34mRerun this command with the --web flag to view the detailed changes in your browser[39m[22m
 "
 `;
 
@@ -685,6 +685,6 @@ Checks
 [32m[1m0 checks passed[22m[39m
 [31m[1m1 checks failed[22m[39m
 
-[32m✔[39m Uploaded results of diff to http://localhost:3000/organizations/org-id/apis/api-id/runs/run-id
+[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 "
 `;

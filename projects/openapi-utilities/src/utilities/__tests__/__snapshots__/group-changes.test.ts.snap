@@ -48,7 +48,57 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
         "hasRules": false,
       },
       "queryParameters": {
-        "changes": Map {},
+        "changes": Map {
+          "status" => {
+            "changeType": "changed",
+            "changed": {
+              "after": {
+                "in": "query",
+                "name": "status",
+                "required": true,
+                "schema": {
+                  "enum": [
+                    "available",
+                    "pending",
+                    "sold",
+                  ],
+                  "type": "string",
+                },
+              },
+              "before": {
+                "in": "query",
+                "name": "status",
+                "required": true,
+                "schema": {
+                  "enum": [
+                    "available",
+                    "sold",
+                  ],
+                  "type": "string",
+                },
+              },
+            },
+            "location": {
+              "conceptualLocation": {
+                "inRequest": {
+                  "query": "status",
+                },
+                "method": "get",
+                "path": "/example",
+              },
+              "conceptualPath": [
+                "operations",
+                "/example",
+                "get",
+                "parameters",
+                "query",
+                "status",
+              ],
+              "jsonPath": "/paths/~1example/get/parameters/1",
+              "kind": "query-parameter",
+            },
+          },
+        },
         "hasRules": false,
       },
       "request": {

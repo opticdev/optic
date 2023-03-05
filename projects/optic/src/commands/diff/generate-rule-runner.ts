@@ -1,5 +1,5 @@
 import path from 'path';
-import { OpticCliConfig } from '../../config';
+import { ConfigRuleset, OpticCliConfig } from '../../config';
 import { StandardRulesets } from '@useoptic/standard-rulesets';
 import {
   RuleRunner,
@@ -9,6 +9,13 @@ import {
 } from '@useoptic/rulesets-base';
 import { loadCliConfig } from '../../config';
 import { logger } from '../../logger';
+import chalk from 'chalk';
+
+const injectedRulesets: (Ruleset | ExternalRule)[] = [];
+
+export function setRulesets(rulesets: (Ruleset | ExternalRule)[]) {
+  injectedRulesets.push(...rulesets);
+}
 
 const isLocalJsFile = (name: string) => name.endsWith('.js');
 
@@ -18,7 +25,7 @@ const getStandardToUse = async (options: {
   specRuleset?: string;
   rulesetArg?: string;
   config: OpticCliConfig;
-}): Promise<OpticCliConfig['ruleset']> => {
+}): Promise<ConfigRuleset[] | undefined> => {
   // We always take the --ruleset arg as priority, then the ruleset on the API spec (from the head), then fallback to the optic.dev.yml config
   if (options.rulesetArg) {
     const config = await loadCliConfig(
@@ -27,10 +34,19 @@ const getStandardToUse = async (options: {
     );
     return config.ruleset;
   } else if (options.specRuleset) {
-    const ruleset = await options.config.client.getStandard(
-      options.specRuleset
-    );
-    return ruleset.config.ruleset;
+    try {
+      const ruleset = await options.config.client.getStandard(
+        options.specRuleset
+      );
+      return ruleset.config.ruleset;
+    } catch (e) {
+      logger.warn(
+        `${chalk.red('Warning:')} Could not download standard ${
+          options.specRuleset
+        }. Please check the ruleset name and whether you are authenticated (run: optic login).`
+      );
+      return [];
+    }
   } else {
     return options.config.ruleset;
   }
@@ -54,7 +70,15 @@ export const generateRuleRunner = async (
   let warnings: string[] = [];
 
   if (checksEnabled) {
-    const standard = await getStandardToUse(options);
+    let defaultStandard: ConfigRuleset[] = [];
+    if (injectedRulesets.length > 0) {
+      logger.debug('Using injected rulesets from CLI bundle');
+      rulesets.push(...injectedRulesets);
+    } else {
+      defaultStandard = [{ name: 'breaking-changes', config: {} }];
+    }
+
+    const standard = (await getStandardToUse(options)) ?? defaultStandard;
     logger.debug({
       standard,
     });
@@ -100,7 +124,7 @@ export const generateRuleRunner = async (
       hostedRulesets,
     });
 
-    rulesets = results.rulesets;
+    rulesets.push(...results.rulesets);
 
     warnings.push(...results.warnings);
   }

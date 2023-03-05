@@ -44,11 +44,11 @@ export async function uploadDiff(
   if (specs.to.context && specDetails) {
     let tags: string[] = [];
     if (specs.to.context.vcs === VCS.Git) {
+      tags.push(`git:${specs.to.context.sha}`);
       const currentBranch = await Git.getCurrentBranchName();
-      tags = [
-        `git:${specs.to.context.sha}`,
-        sanitizeGitTag(`gitbranch:${currentBranch}`),
-      ];
+      if (currentBranch !== 'HEAD') {
+        tags.push(sanitizeGitTag(`gitbranch:${currentBranch}`));
+      }
     }
     headSpecId = await uploadSpec(specDetails.apiId, {
       spec: specs.to,
@@ -67,6 +67,7 @@ export async function uploadDiff(
       client: config.client,
       specResults,
       orgId: specDetails.orgId,
+      ci: config.isInCi,
     });
 
     const url = getRunUrl(

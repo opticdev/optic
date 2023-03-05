@@ -29,7 +29,7 @@ export class OpticBackendClient extends JsonHttpClient {
     return process.env.OPTIC_ENV === 'staging'
       ? 'https://app.o3c.info'
       : process.env.OPTIC_ENV === 'local'
-      ? 'http://localhost:3000'
+      ? 'http://localhost:3001'
       : 'https://app.useoptic.com';
   }
 
@@ -40,15 +40,17 @@ export class OpticBackendClient extends JsonHttpClient {
   }
 
   public async createRuleset(
+    organizationId: string,
     name: string,
     description: string,
     config_schema: any
   ): Promise<{
     id: string;
+    slug: string;
     upload_url: string;
     ruleset_url: string;
   }> {
-    return this.postJson(`/api/rulesets`, {
+    return this.postJson(`/api/organizations/${organizationId}/rulesets`, {
       name,
       description,
       config_schema,
@@ -56,12 +58,16 @@ export class OpticBackendClient extends JsonHttpClient {
   }
 
   public async patchRuleset(
+    organizationId: string,
     rulesetId: string,
     uploaded: boolean
   ): Promise<void> {
-    return this.patchJson(`/api/rulesets/${rulesetId}`, {
-      uploaded,
-    });
+    return this.patchJson(
+      `/api/organizations/${organizationId}/rulesets/${rulesetId}`,
+      {
+        uploaded,
+      }
+    );
   }
 
   public async getManyRulesetsByName(rulesets: string[]): Promise<{
@@ -131,6 +137,12 @@ export class OpticBackendClient extends JsonHttpClient {
     return this.postJson(`/api/specs`, spec);
   }
 
+  public async tagSpec(specId: string, tags: string[]) {
+    return this.patchJson(`/api/specs/${specId}/tags`, {
+      tags,
+    });
+  }
+
   public async prepareRunUpload(body: {
     checksum: string;
     api_id: string;
@@ -144,6 +156,7 @@ export class OpticBackendClient extends JsonHttpClient {
     from_spec_id: string;
     to_spec_id: string;
     ruleset?: Types.StandardConfig;
+    ci?: boolean;
   }): Promise<{ id: string }> {
     return this.postJson(`/api/runs2`, run);
   }
@@ -154,12 +167,20 @@ export class OpticBackendClient extends JsonHttpClient {
       name: string;
       web_url?: string;
       default_branch: string;
+      default_tag?: string;
     }
   ): Promise<{ id: string }> {
     return this.postJson(`/api/api`, {
       ...opts,
       organization_id: organizationId,
     });
+  }
+
+  public async verifyToken(): Promise<{
+    user?: { email: string; userId: string };
+    organization?: { organizationId: string };
+  }> {
+    return this.getJson(`/api/token/verify`);
   }
 }
 

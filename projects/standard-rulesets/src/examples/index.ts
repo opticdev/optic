@@ -1,4 +1,9 @@
-import { Rule, RuleContext, Ruleset } from '@useoptic/rulesets-base';
+import {
+  Rule,
+  RuleContext,
+  Ruleset,
+  RulesetConfig,
+} from '@useoptic/rulesets-base';
 import Ajv from 'ajv';
 import { appliesWhen } from './constants';
 import {
@@ -14,6 +19,8 @@ import {
 } from './requireValidExamples';
 
 type YamlConfig = {
+  exclude_operations_with_extension?: string;
+  docs_link?: string;
   require_request_examples?: boolean;
   require_response_examples?: boolean;
   require_parameter_examples?: boolean;
@@ -24,6 +31,12 @@ const ajv = new Ajv();
 const configSchema = {
   type: 'object',
   properties: {
+    exclude_operations_with_extension: {
+      type: 'string',
+    },
+    docs_link: {
+      type: 'string',
+    },
     require_request_examples: {
       type: 'boolean',
     },
@@ -38,6 +51,11 @@ const configSchema = {
       enum: appliesWhen,
     },
   },
+};
+
+type ExampleConstructor = YamlConfig & {
+  matches?: (context: RuleContext) => boolean;
+  docsLink?: string;
 };
 
 const validateConfigSchema = ajv.compile(configSchema);
@@ -56,16 +74,24 @@ export class ExamplesRuleset extends Ruleset {
     }
 
     const validatedConfig = config as YamlConfig;
+    const constructorConfig: ExampleConstructor = {
+      ...validatedConfig,
+    };
+
+    if (validatedConfig.exclude_operations_with_extension !== undefined) {
+      const extension = validatedConfig.exclude_operations_with_extension;
+      constructorConfig.matches = (context) =>
+        (context.operation.raw as any)[extension] !== true;
+    }
+
+    if (validatedConfig.docs_link !== undefined) {
+      constructorConfig.docsLink = validatedConfig.docs_link;
+    }
 
     return new ExamplesRuleset(validatedConfig);
   }
 
-  constructor(
-    config: YamlConfig & {
-      matches?: (context: RuleContext) => boolean;
-      docsLink?: string;
-    }
-  ) {
+  constructor(config: ExampleConstructor) {
     const rules: Rule[] = [
       requireValidResponseExamples,
       requirePropertyExamplesMatchSchema,

@@ -32,6 +32,8 @@ import Ajv from 'ajv';
 
 type YamlConfig = {
   exclude_operations_with_extension?: string;
+  skip_when_major_version_changes?: boolean;
+  docs_link?: string;
 };
 
 const ajv = new Ajv();
@@ -39,6 +41,12 @@ const configSchema = {
   type: 'object',
   properties: {
     exclude_operations_with_extension: {
+      type: 'string',
+    },
+    skip_when_major_version_changes: {
+      type: 'boolean',
+    },
+    docs_link: {
       type: 'string',
     },
   },
@@ -86,14 +94,32 @@ export class BreakingChangesRuleset extends Ruleset<BreakingChangesRules> {
 
     const validatedConfig = config as YamlConfig;
 
+    const shouldCheckSpecVersion = validatedConfig.hasOwnProperty(
+      'skip_when_major_version_changes'
+    )
+      ? validatedConfig.skip_when_major_version_changes
+      : true;
+
     const constructorConfig: Omit<
       RulesetConfig<BreakingChangesRules>,
       'name' | 'rules'
     > = {};
-    if (validatedConfig.exclude_operations_with_extension !== undefined) {
-      const extension = validatedConfig.exclude_operations_with_extension;
-      constructorConfig.matches = (context) =>
-        (context.operation.raw as any)[extension] !== true;
+    constructorConfig.matches = (context) => {
+      if (
+        shouldCheckSpecVersion &&
+        context.specification.versionChange === 'major'
+      )
+        return false;
+
+      if (validatedConfig.exclude_operations_with_extension) {
+        const extension = validatedConfig.exclude_operations_with_extension;
+        return (context.operation.raw as any)[extension] !== true;
+      }
+
+      return true;
+    };
+    if (validatedConfig.docs_link !== undefined) {
+      constructorConfig.docsLink = validatedConfig.docs_link;
     }
 
     return new BreakingChangesRuleset(constructorConfig);

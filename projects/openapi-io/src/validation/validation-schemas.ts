@@ -132,7 +132,7 @@ const openapi3_0_schema_object = {
       },
     },
     additionalProperties: {
-      oneOf: [
+      anyOf: [
         {
           $ref: '#/definitions/schemaOrReference',
         },
@@ -145,6 +145,9 @@ const openapi3_0_schema_object = {
       $ref: '#/definitions/defaultType',
     },
     description: {
+      type: 'string',
+    },
+    summary: {
       type: 'string',
     },
     format: {
@@ -251,6 +254,13 @@ const openapi3_1_schema_object = {
     enum: {
       $ref: 'http://json-schema.org/draft-07/schema#/properties/enum',
     },
+    const: {},
+    propertyNames: {
+      $ref: '#/definitions/schema',
+    },
+    unevaluatedProperties: {
+      type: 'boolean',
+    },
     type: {
       oneOf: [
         {
@@ -346,6 +356,9 @@ const openapi3_1_schema_object = {
     description: {
       type: 'string',
     },
+    summary: {
+      type: 'string',
+    },
     format: {
       type: 'string',
     },
@@ -432,6 +445,9 @@ const createOpenAPIValidationSchema = (schema: any) => ({
           $ref: '#/definitions/license',
         },
         version: {
+          type: 'string',
+        },
+        summary: {
           type: 'string',
         },
       },
@@ -1278,7 +1294,7 @@ const createOpenAPIValidationSchema = (schema: any) => ({
       ],
     },
     schemaOrReference: {
-      oneOf: [
+      anyOf: [
         {
           $ref: '#/definitions/schema',
         },
@@ -1288,7 +1304,7 @@ const createOpenAPIValidationSchema = (schema: any) => ({
       ],
     },
     securitySchemeOrReference: {
-      oneOf: [
+      anyOf: [
         {
           $ref: '#/definitions/securityScheme',
         },

@@ -12,7 +12,9 @@ try {
 export const initSegment = (key: string | undefined) => {
   const isSegmentDisabled =
     process.env.OPTIC_TELEMETRY_LEVEL === 'off' ||
-    process.env.OPTIC_TELEMETRY_LEVEL === 'error';
+    process.env.OPTIC_TELEMETRY_LEVEL === 'error' ||
+    process.env.OPTIC_ENV === 'staging' ||
+    process.env.OPTIC_ENV === 'local';
   if (key && !isSegmentDisabled) {
     analytics = new Analytics(key, {
       // Handle errors thrown here
@@ -42,14 +44,22 @@ export const flushEvents = (): Promise<void> => {
   if (analytics) {
     return new Promise((resolve, reject) => {
       analytics!.flush((err, _batch) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
+        // Don't reject when error, we will silently ignore since it's non-critical code
+        resolve();
       });
     });
   } else {
     return Promise.resolve();
+  }
+};
+
+export const identify = (email: string) => {
+  if (analytics) {
+    analytics.identify({
+      userId: id,
+      traits: {
+        email,
+      },
+    });
   }
 };

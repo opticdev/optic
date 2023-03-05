@@ -83,11 +83,11 @@ const getBaseAndHeadFromFiles = async (
   try {
     // TODO update function to try download from spec-id cloud
     return await Promise.all([
-      getFileFromFsOrGit(file1, config, { strict: false, denormalize: true }),
+      getFileFromFsOrGit(file1, config, { strict: true, denormalize: true }),
       getFileFromFsOrGit(file2, config, { strict: true, denormalize: true }),
     ]);
   } catch (e) {
-    console.error(e);
+    console.error(e instanceof Error ? e.message : e);
     throw new UserError();
   }
 };
@@ -108,7 +108,7 @@ const getBaseAndHeadFromFileAndBase = async (
     );
     return [baseFile, headFile];
   } catch (e) {
-    console.error(e);
+    console.error(e instanceof Error ? e.message : e);
     throw new UserError();
   }
 };
@@ -220,6 +220,16 @@ const getDiffAction =
       return;
     }
 
+    if (!options.web && !options.json && !config.isInCi) {
+      logger.info(
+        chalk.gray(
+          `Rerun this command with the ${chalk.whiteBright(
+            '--web'
+          )} flag to open a visual changelog your browser`
+        )
+      );
+    }
+
     if (options.ruleset && !options.standard) {
       options.standard = options.ruleset;
     }
@@ -310,14 +320,6 @@ const getDiffAction =
           url: maybeUrl,
         },
       ]);
-    }
-
-    if (!options.web && !options.json && !config.isInCi) {
-      logger.info(
-        chalk.bold.blue(
-          `Rerun this command with the --web flag to view the detailed changes in your browser`
-        )
-      );
     }
 
     if (diffResult.checks.failed > 0 && options.check) process.exitCode = 1;

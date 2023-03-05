@@ -1,5 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`diffOperationWithSpec yields diffs for paths with no methods 1`] = `
+{
+  "kind": "UnmatchedPath",
+  "subject": "/orders/{orderId}/products",
+}
+`;
+
 exports[`diffOperationWithSpec yields diffs for unmatched methods 1`] = `
 {
   "kind": "UnmatchedMethod",

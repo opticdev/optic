@@ -3718,6 +3718,7 @@ __metadata:
     babel-jest: ^29.3.1
     jest: ^29.3.1
     jsonpointer: ^5.0.1
+    minimatch: 7.4.2
     prettier: ^2.4.1
     ts-jest: ^29.0.3
     ts-node: ^10.3.1
@@ -3781,7 +3782,7 @@ __metadata:
     lodash.sortby: ^4.7.0
     log: ^6.3.1
     log-node: ^8.0.3
-    minimatch: 6.1.6
+    minimatch: 7.4.2
     mockttp: ^3.3.1
     node-fetch: ^2.6.7
     node-forge: ^1.2.1
@@ -4062,6 +4063,7 @@ __metadata:
     jest: ^29.3.1
     lodash.pick: ^4.4.0
     node-fetch: ^2.6.7
+    semver: ^7.3.8
     ts-jest: ^29.0.3
     ts-node: ^10.4.0
     typescript: ^4.4.4
@@ -8799,12 +8801,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:6.1.6":
-  version: 6.1.6
-  resolution: "minimatch@npm:6.1.6"
+"minimatch@npm:7.4.2":
+  version: 7.4.2
+  resolution: "minimatch@npm:7.4.2"
   dependencies:
     brace-expansion: ^2.0.1
-  checksum: 707b026e0adc610be6c02f24173d84811e5b8cc2e434881e47ef00a72be5fbea9323b7158d7bf065782b1e1d5c50d7d80cd72f2602255f2fddfb1d2f02e9092c
+  checksum: 9e341b04e69d5ab03e4206dcb61c8a158e3b8709628bf5e1a4eaa9f3b72c0ba925e24ad959b1f6ce6835caa5a927131d5087fae6836b69e7d99d7d5e63ef0bd8
   languageName: node
   linkType: hard
 
@@ -10336,7 +10338,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:7.x, semver@npm:^7.3.4":
+"semver@npm:7.x, semver@npm:^7.3.4, semver@npm:^7.3.8":
   version: 7.3.8
   resolution: "semver@npm:7.3.8"
   dependencies:

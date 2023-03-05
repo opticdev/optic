@@ -6,11 +6,11 @@ import {
   RuleError,
 } from '@useoptic/rulesets-base';
 import { OpenAPIV3 } from 'openapi-types';
-import Ajv, { SchemaObject } from 'ajv';
+import Ajv, { SchemaObject } from 'ajv/dist/2019';
 import addFormats from 'ajv-formats';
 
 const ajv = (() => {
-  const validator = new Ajv({ strict: false });
+  const validator = new Ajv({ strict: false, unevaluated: true });
   addFormats(validator);
   // override pattern keyword when invalid regex
   validator.removeKeyword('pattern');
@@ -40,19 +40,72 @@ export function validateSchema(
   schema: SchemaObject,
   example: unknown
 ): { pass: true } | { pass: false; error: string } {
-  const schemaCompiled = ajv.compile(schema);
+  const copy = JSON.parse(JSON.stringify(schema));
+  strictAdditionalProperties(copy);
+  const schemaCompiled = ajv.compile(copy);
 
   const result = schemaCompiled(example);
 
   if (!result) {
-    const error = `- ${ajv.errorsText(schemaCompiled.errors, {
+    schemaCompiled.errors?.forEach((error) => {
+      if (error.keyword === 'additionalProperties') {
+        error.message = `must NOT have additional property '${error.params.additionalProperty}'`;
+      }
+
+      if (error.keyword === 'unevaluatedProperties') {
+        error.message = `must NOT have additional property '${error.params.unevaluatedProperty}'`;
+      }
+    });
+
+    const error = `  - ${ajv.errorsText(schemaCompiled.errors, {
       separator: '\n- ',
+      dataVar: 'example ',
     })}`;
 
     return { pass: false, error };
   }
 
   return { pass: true };
+}
+
+function strictAdditionalProperties(schema: any, inAllOf: boolean = false) {
+  if (Array.isArray(schema)) {
+    schema.forEach((item) => strictAdditionalProperties(item));
+    return;
+  }
+
+  if (typeof schema === 'object' && schema !== null) {
+    if (!inAllOf) {
+      // make default false
+      if (
+        schema.hasOwnProperty('type') &&
+        schema.type === 'object' &&
+        !schema.hasOwnProperty('additionalProperties')
+      ) {
+        schema.additionalProperties = false;
+      } else if (
+        schema.hasOwnProperty('allOf') &&
+        !schema.hasOwnProperty('additionalProperties') &&
+        !schema.hasOwnProperty('unevaluatedProperties')
+      ) {
+        schema.unevaluatedProperties = false;
+        schema.allOf.forEach((s) => {
+          strictAdditionalProperties(s, true);
+        });
+        return;
+      }
+    } else if (
+      schema.hasOwnProperty('type') &&
+      schema.type === 'object' &&
+      !schema.hasOwnProperty('unevaluatedProperties')
+    ) {
+      // schema.unevaluatedProperties = false;
+    }
+
+    Object.values(schema).forEach((s) => {
+      strictAdditionalProperties(s, false);
+    });
+  }
 }
 
 export const requireValidRequestExamples = new RequestRule({

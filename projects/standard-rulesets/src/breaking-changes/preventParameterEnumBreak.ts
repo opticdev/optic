@@ -12,13 +12,24 @@ const enumWasNarrowed = (before: any[], after: any[]): boolean => {
   return false;
 };
 
-type SchemaWithEnum = OpenAPIV3.SchemaObject & { enum: any[] };
+type SchemaWithEnum = OpenAPIV3.SchemaObject &
+  ({ enum: any[] } | { const: any });
 
 const isSchemaWithEnum = (
   obj: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject | undefined
 ): obj is SchemaWithEnum => {
   if (!obj) return false;
-  return 'enum' in obj && Array.isArray(obj.enum);
+  return ('enum' in obj && Array.isArray(obj.enum)) || 'const' in obj;
+};
+
+const getEnumFromSchema = (schemaWithEnum: SchemaWithEnum): any[] => {
+  if ('enum' in schemaWithEnum && Array.isArray(schemaWithEnum.enum)) {
+    return schemaWithEnum.enum;
+  }
+  if ('const' in schemaWithEnum) {
+    return [schemaWithEnum.const];
+  }
+  return [];
 };
 
 const getRuleName = <P extends ParameterIn>(parameterIn: P) =>
@@ -37,7 +48,10 @@ const getPreventParameterEnumBreak = <P extends ParameterIn>(parameterIn: P) =>
         const enumNarrowed =
           isSchemaWithEnum(before.value?.schema) &&
           isSchemaWithEnum(after.value?.schema) &&
-          enumWasNarrowed(before.value.schema.enum, after.value.schema.enum);
+          enumWasNarrowed(
+            getEnumFromSchema(before.value.schema),
+            getEnumFromSchema(after.value.schema)
+          );
 
         if (enumNarrowed) {
           throw new RuleError({
