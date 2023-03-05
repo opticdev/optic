@@ -28,8 +28,10 @@ export interface SpecPatches extends AsyncIterable<SpecPatch> {}
 
 export class SpecPatches {
   static async *additions(patches: SpecPatches): SpecPatches {
-    yield* filter<SpecPatch>((patch) =>
-      patch.impact.includes(PatchImpact.Addition)
+    yield* filter<SpecPatch>(
+      (patch) =>
+        patch.impact.includes(PatchImpact.Addition) ||
+        patch.impact.includes(PatchImpact.Refactor)
     )(patches);
   }
 
@@ -57,7 +59,6 @@ export class SpecPatches {
   }
 
   static async *shapeAdditions(
-    spec: OpenAPIV3.Document,
     documentedBodies: DocumentedBodies
   ): SpecPatches {
     const updatedSchemasByPath: Map<string, SchemaObject> = new Map();
@@ -69,27 +70,9 @@ export class SpecPatches {
         documentedBody.schema = updatedSchemasByPath.get(specJsonPath)!;
       }
 
-      const inventory = new SchemaInventory();
-      // only inventory the existing component schemas.
-      // you could potentially use sourcemap ones or broaden to other data
-      inventory.addSchemas(
-        jsonPointerHelpers.compile(['components', 'schemas']),
-        (spec.components?.schemas || {}) as any
-      );
-
       for (let patch of ShapePatches.generateBodyAdditions(documentedBody)) {
         documentedBody = DocumentedBody.applyShapePatch(documentedBody, patch);
-
-        const matchingRef = documentedBody.schema
-          ? inventory.findClosest(documentedBody.schema as any)
-          : null;
-
-        if (matchingRef) {
-          // override this with a $ref pointer
-          yield SpecPatch.fromShapePatch(patch, specJsonPath, shapeLocation!);
-        } else {
-          yield SpecPatch.fromShapePatch(patch, specJsonPath, shapeLocation!);
-        }
+        yield SpecPatch.fromShapePatch(patch, specJsonPath, shapeLocation!);
       }
 
       updatedSchemasByPath.set(specJsonPath, documentedBody.schema!);

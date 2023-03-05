@@ -66,6 +66,33 @@ export class SpecPatch {
       }),
     };
   }
+  static fromExistingRef(
+    shapePatch: ShapePatch,
+    bodySpecPath: string,
+    location: ShapeLocation
+  ) {
+    const inComponentSchema = 'inComponentSchema' in location;
+
+    const schemaPath = inComponentSchema
+      ? bodySpecPath
+      : jsonPointerHelpers.append(bodySpecPath, 'schema');
+
+    return {
+      description: shapePatch.description,
+      impact: shapePatch.impact,
+      diff: shapePatch.diff,
+      path: schemaPath,
+      groupedOperations: shapePatch.groupedOperations.map((group) => {
+        return {
+          ...group,
+          operations: group.operations.map((op) => ({
+            ...op,
+            path: jsonPointerHelpers.join(schemaPath, op.path),
+          })),
+        };
+      }),
+    };
+  }
 
   static fromOperationPatch(
     operationPatch: OperationPatch,

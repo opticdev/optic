@@ -82,10 +82,8 @@ export function walkSchema(
 
 export function computeClosenessCached(
   a: [string, any][],
-  otherSchema: FlatOpenAPIV3_1.SchemaObject | FlatOpenAPIV3.SchemaObject
+  b: [string, any][]
 ): number {
-  const b = walkSchema(otherSchema);
-
   const aKeys = new Set(a.map((i) => i[0]));
   const bKeys = new Set(b.map((i) => i[0]));
   const keyIntersection = new Set([...aKeys].filter((i) => bKeys.has(i)));
@@ -122,5 +120,5 @@ export function computeCloseness(
   oneSchema: FlatOpenAPIV3_1.SchemaObject | FlatOpenAPIV3.SchemaObject,
   otherSchema: FlatOpenAPIV3_1.SchemaObject | FlatOpenAPIV3.SchemaObject
 ): number {
-  return computeClosenessCached(walkSchema(oneSchema), otherSchema);
+  return computeClosenessCached(walkSchema(oneSchema), walkSchema(otherSchema));
 }

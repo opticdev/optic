@@ -26,6 +26,8 @@ import { DocumentedBodies, DocumentedBody } from '../../shapes';
 import { trackCompletion } from '../../segment';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { ApiCoverageCounter } from '../../coverage/api-coverage';
+import { SchemaInventory } from '../../shapes/closeness/schema-inventory';
+import { patch } from 'semver';
 
 export async function addIfUndocumented(
   input: string,
@@ -495,13 +497,33 @@ export function addOperations(
         documentedInteraction
       );
       let shapePatches = SpecPatches.shapeAdditions(
-        patchedSpec,
         AT.tap((body: DocumentedBody) => {
           observers.documentedInteractionBody(documentedInteraction, body);
         })(documentedBodies)
       );
 
+      const addedPaths = new Set<string>();
+
       for await (let patch of shapePatches) {
+        // register additions
+        addedPaths.add(patch.path);
+        patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
+        yield patch;
+        observers.interactionPatch(documentedInteraction, patch);
+      }
+
+      const schemaInventory = new SchemaInventory();
+      schemaInventory.addSchemas(
+        jsonPointerHelpers.compile(['components', 'schemas']),
+        patchedSpec.components?.schemas || ({} as any)
+      );
+
+      const refRefactors = schemaInventory.refsForAdditions(
+        addedPaths,
+        patchedSpec
+      );
+
+      for await (let patch of refRefactors) {
         patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
         yield patch;
         observers.interactionPatch(documentedInteraction, patch);
