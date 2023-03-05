@@ -17,6 +17,7 @@ export class SchemaInventory {
     schemas: { [key: string]: FlatOpenAPIV3.SchemaObject | undefined }
   ) {
     Object.entries(schemas).forEach(([name, schema]) => {
+      // this might need to be memoized.
       if (schema)
         this.schemaMap.set(
           jsonPointerHelpers.append(rootJsonpath, name),
