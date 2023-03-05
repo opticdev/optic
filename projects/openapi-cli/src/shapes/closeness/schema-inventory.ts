@@ -3,6 +3,8 @@ import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { computeClosenessCached, walkSchema } from './closeness';
 import { SpecPatch, SpecPatches } from '../../specs';
 import { PatchImpact } from '../../patches';
+import { PathComponents } from '../../operations';
+import { Operation } from 'fast-json-patch';
 
 type ClosestMatch = { ref: string; percent: number } | undefined;
 export class SchemaInventory {
@@ -57,24 +59,47 @@ export class SchemaInventory {
       const addedSchema = jsonPointerHelpers.get(spec, added);
       const arrayItems = arrayItemPaths(addedSchema, added);
 
-      let matchedAChild = false;
+      const isARootSchema =
+        jsonPointerHelpers.matches(added, [
+          'paths',
+          '**',
+          '**',
+          'responses',
+          '**',
+          'content',
+          '**',
+          'schema',
+        ]) ||
+        // is a root request schema
+        jsonPointerHelpers.matches(added, [
+          'paths',
+          '**',
+          '**',
+          'requestBody',
+          'content',
+          '**',
+          'schema',
+        ]);
+      let matchedRoot = false;
+      let matchedSub = false;
 
-      for await (let items of arrayItems) {
-        const match = this.findClosest(jsonPointerHelpers.get(spec, items));
-        if (match && match.percent > this.closeness) {
-          matchedAChild = true;
+      if (isARootSchema) {
+        const match = this.findClosest(addedSchema);
+        // use ref
+        if (match) {
+          matchedRoot = true;
           const patch: SpecPatch = {
             description: `use $ref ${match.ref}`,
-            path: items,
+            path: added,
             impact: [PatchImpact.Refactor],
             diff: undefined,
             groupedOperations: [
               {
-                intent: `use ref at ${items}`,
+                intent: `use ref at ${added}`,
                 operations: [
                   {
                     op: 'replace',
-                    path: items,
+                    path: added,
                     value: {
                       $ref: `#${match.ref}`,
                     },
@@ -87,8 +112,97 @@ export class SchemaInventory {
         }
       }
 
-      if (!matchedAChild) {
-        const rootSchema = this.findClosest(addedSchema);
+      if (!matchedRoot) {
+        for await (let items of arrayItems) {
+          const match = this.findClosest(jsonPointerHelpers.get(spec, items));
+          if (match && match.percent > this.closeness) {
+            matchedSub = true;
+            const patch: SpecPatch = {
+              description: `use $ref ${match.ref}`,
+              path: items,
+              impact: [PatchImpact.Refactor],
+              diff: undefined,
+              groupedOperations: [
+                {
+                  intent: `use ref at ${items}`,
+                  operations: [
+                    {
+                      op: 'replace',
+                      path: items,
+                      value: {
+                        $ref: `#${match.ref}`,
+                      },
+                    },
+                  ],
+                },
+              ],
+            };
+            yield patch;
+          }
+        }
+      }
+      //create a root schema
+      if (!matchedSub && !matchedRoot && isARootSchema) {
+        const refName = refNameGenerator(added);
+        matchedRoot = true;
+        const refPath = jsonPointerHelpers.compile([
+          'components',
+          'schemas',
+          refName,
+        ]);
+        const patch: SpecPatch = {
+          description: `create and use $ref for body`,
+          path: added,
+          impact: [PatchImpact.Refactor],
+          diff: undefined,
+          groupedOperations: [
+            {
+              intent: 'add components.schemas if needed',
+              operations: (() => {
+                const ops: Operation[] = [];
+                if (!spec.components) {
+                  ops.push({
+                    op: 'add',
+                    path: jsonPointerHelpers.compile(['components']),
+                    value: {
+                      schemas: {},
+                    },
+                  });
+                } else if (!spec.components.schemas) {
+                  ops.push({
+                    op: 'add',
+                    path: jsonPointerHelpers.compile(['components', 'schemas']),
+                    value: {},
+                  });
+                }
+                return ops;
+              })(),
+            },
+            {
+              intent: `create ref at ${refPath}`,
+              operations: [
+                {
+                  op: 'add',
+                  path: refPath,
+                  value: addedSchema,
+                },
+              ],
+            },
+            {
+              intent: 'use new $ref',
+              operations: [
+                {
+                  op: 'replace',
+                  path: added,
+                  value: {
+                    $ref: `#${refPath}`,
+                  },
+                },
+              ],
+            },
+          ],
+        };
+        yield patch;
       }
     }
   }
@@ -118,4 +232,31 @@ function arrayItemPaths(
   walk(initialSchema, initialPath);
 
   return results;
+}
+
+function refNameGenerator(rootBodySchemaPath: string) {
+  const [_, path, method, requestBodyOrResponses, ...other] =
+    jsonPointerHelpers.decode(rootBodySchemaPath);
+
+  const components = PathComponents.fromPath(path);
+  const pathName = components
+    .filter((i) => i.kind === 'literal')
+    .map((i) => capitalizeFirstLetter(i.name))
+    .join('');
+
+  if (requestBodyOrResponses === 'responses') {
+    const statusCode = other[0];
+
+    return `${capitalizeFirstLetter(
+      method
+    )}${pathName}${statusCode.toString()}ResponseBody`;
+  } else if (requestBodyOrResponses === 'requestBody') {
+    return `${capitalizeFirstLetter(method)}${pathName}RequestBody`;
+  } else {
+    return 'SharedComponent_' + String(Math.floor(Math.random() * 100));
+  }
+}
+
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }

@@ -201,7 +201,7 @@ export async function verifyCommand(): Promise<Command> {
         console.log(
           chalk.gray(
             `Share a link to your API documentation with ${chalk.whiteBright(
-              'optic api add ${specPath}'
+              `optic api add ${specPath}`
             )}`
           )
         );
