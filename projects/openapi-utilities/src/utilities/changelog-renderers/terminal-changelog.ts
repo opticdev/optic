@@ -9,7 +9,7 @@ import type {
 } from '../../openapi3/group-diff';
 import { typeofV3Diffs } from '../../openapi3/group-diff';
 import { Instance as Chalk } from 'chalk';
-import { getLocation, getRaw } from '../../openapi3/traverser';
+import { getLocation } from '../../openapi3/traverser';
 import { interpretFieldLevelDiffs } from './common';
 
 const chalk = new Chalk();
