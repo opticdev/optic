@@ -146,11 +146,21 @@ export class SchemaInventory {
       if (!matchedSub && !matchedRoot && isARootSchema) {
         const refName = refNameGenerator(added);
         matchedRoot = true;
-        const refPath = jsonPointerHelpers.compile([
+        let refPath = jsonPointerHelpers.compile([
           'components',
           'schemas',
           refName,
         ]);
+
+        // ensure randomness if we hit a conflict
+        while (this.schemaMap.has(refPath)) {
+          refPath = jsonPointerHelpers.compile([
+            'components',
+            'schemas',
+            refName + '_' + String(Math.floor(Math.random() * 300)),
+          ]);
+        }
+
         const patch: SpecPatch = {
           description: `create and use $ref for body`,
           path: added,
