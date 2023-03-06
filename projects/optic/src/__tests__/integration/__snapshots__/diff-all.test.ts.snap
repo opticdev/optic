@@ -54,6 +54,8 @@ specification details:
 
 [1mPOST[22m /filler_route: [31mremoved[39m
   
+[1mPOST[22m /api/filler-route: [31mremoved[39m
+  
 Checks
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
@@ -71,9 +73,24 @@ Checks
 
 
 
-1 operation removed
+  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /api/filler-route
+    removed rule: prevent operation removal
+      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
+      at [4m$workspace$/mvspec.yml:24:593[24m
+
+    removed rule: prevent removing response property
+      [31m[31mx[39m[31m cannot remove response property 'id'. This is a breaking change.[39m
+      at [4m$workspace$/mvspec.yml:34:847[24m
+
+    removed rule: prevent response status code removal
+      [31m[31mx[39m[31m must not remove response status code 201. This is a breaking change.[39m
+      at [4m$workspace$/mvspec.yml:27:650[24m
+
+
+
+2 operations removed
 [32m[1m0 checks passed[22m[39m
-[31m[1m3 checks failed[22m[39m
+[31m[1m6 checks failed[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 [34mDiffing HEAD~1:specwithkey.json to specwithkey.json[39m
@@ -123,6 +140,8 @@ specification details:
 
 [1mPOST[22m /filler_route: [32madded[39m
   
+[1mPOST[22m /api/filler-route: [32madded[39m
+  
 Checks
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
@@ -132,9 +151,16 @@ Checks
 
 
 
-1 operation added
+  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /api/filler-route
+    requirement rule: operation path component naming check
+      [31m[31mx[39m[31m filler-route is not camelCase[39m
+      at [4m$workspace$/movedspec.yml:24:593[24m
+
+
+
+2 operations added
 [32m[1m0 checks passed[22m[39m
-[31m[1m1 checks failed[22m[39m
+[31m[1m2 checks failed[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 [33mWarning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. \`optic diff-all\` only runs on specs that include \`x-optic-url\` keys that point to specs uploaded to optic.[39m
@@ -147,6 +173,6 @@ specwithoutkey.yml
 `;
 
 exports[`diff-all diffs all files with --json 1`] = `
-"{"results":{"mvspec.yml":{"operations":[{"name":"POST /filler_route","change":"removed","attributes":[{"key":"","before":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}}}}},"change":"removed"}],"parameters":[],"responses":[]}]},"specwithkey.json":{"operations":[]},"specwithkey.yml":{"operations":[]},"movedspec.yml":{"operations":[{"name":"POST /filler_route","change":"added","attributes":[{"key":"","after":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}}}}},"change":"added"}],"parameters":[],"responses":[]}]}},"warnings":{"missingOpticUrl":[{"path":"spec-with-invalid-url.yml"},{"path":"specwithoutkey.json"},{"path":"specwithoutkey.yml"}],"unparseableFromSpec":[],"unparseableToSpec":[]}}
+"{"results":{"mvspec.yml":{"operations":[{"name":"POST /filler_route","change":"removed","attributes":[{"key":"","before":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}}}}},"change":"removed"}],"parameters":[],"responses":[]},{"name":"POST /api/filler-route","change":"removed","attributes":[{"key":"","before":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}}}}},"change":"removed"}],"parameters":[],"responses":[]}]},"specwithkey.json":{"operations":[]},"specwithkey.yml":{"operations":[]},"movedspec.yml":{"operations":[{"name":"POST /filler_route","change":"added","attributes":[{"key":"","after":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}}}}},"change":"added"}],"parameters":[],"responses":[]},{"name":"POST /api/filler-route","change":"added","attributes":[{"key":"","after":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}}}}},"change":"added"}],"parameters":[],"responses":[]}]}},"warnings":{"missingOpticUrl":[{"path":"spec-with-invalid-url.yml"},{"path":"specwithoutkey.json"},{"path":"specwithoutkey.yml"}],"unparseableFromSpec":[],"unparseableToSpec":[]}}
 "
 `;

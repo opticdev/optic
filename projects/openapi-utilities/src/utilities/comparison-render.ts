@@ -19,6 +19,8 @@ import { getLocation } from '../openapi3/traverser';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { GroupedDiffs } from '../openapi3/group-diff';
 
+const SEPARATOR = `~_-_~`;
+
 // raw string value
 const formatRawValue = (value: string, indent: string): string => {
   try {
@@ -257,9 +259,9 @@ export function* generateComparisonLogsV2(
       if (
         Object.values(OpenAPIV3.HttpMethods).includes(location.method as any)
       ) {
-        return `${location.pathPattern}-${location.method}`;
+        return `${location.pathPattern}${SEPARATOR}${location.method}`;
       } else {
-        return `${location.pathPattern}-`;
+        return `${location.pathPattern}${SEPARATOR}`;
       }
     } else {
       return 'Specification';
@@ -280,7 +282,7 @@ export function* generateComparisonLogsV2(
     if (location === 'specification') {
       yield `${getIndent(1)}${resultNode} ${bold('Specification')}`;
     } else {
-      const [path, method] = location.split('-');
+      const [path, method] = location.split(SEPARATOR);
       if (!method) {
         yield `${getIndent(1)}${resultNode} ${path}`;
       } else {
