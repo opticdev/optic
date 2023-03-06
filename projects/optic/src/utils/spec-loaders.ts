@@ -79,9 +79,19 @@ export async function loadRaw(filePathOrRef: string): Promise<any> {
     return input.value;
   }
 
-  return /\.json$/i.test(filePathOrRef)
-    ? JSON.parse(rawString)
-    : loadYaml(rawString);
+  try {
+    return /\.json$/i.test(filePathOrRef)
+      ? JSON.parse(rawString)
+      : loadYaml(rawString);
+  } catch (e) {
+    if (e instanceof Error) {
+      if (rawString.match(/x-optic-url/)) {
+        e['probablySpec'] = true;
+      }
+    }
+
+    throw e;
+  }
 }
 
 async function parseSpecAndDereference(
