@@ -158,16 +158,32 @@ async function computeAll(
     // Cases we run the comparison:
     // - if to spec has x-optic-url
     // - if from spec has x-optic-url AND to spec is empty
+    const specPathToLoad = candidate.to ?? candidate.from;
+    if (!specPathToLoad) {
+      logger.debug(
+        `Skipping comparison from ${candidate.from} to ${candidate.to} both are undefined`
+      );
+      continue;
+    }
+
+    let rawSpec;
     try {
-      const specPathToLoad = candidate.to ?? candidate.from;
-      if (!specPathToLoad) {
-        logger.debug(
-          `Skipping comparison from ${candidate.from} to ${candidate.to} both are undefined`
-        );
-        continue;
+      rawSpec = await loadRaw(specPathToLoad);
+    } catch (e) {
+      if (e instanceof Error && e['probablySpec']) {
+        logger.error(`Error parsing ${specPathToLoad}:`);
+        logger.error(e.message);
+        process.exitCode = 1;
       }
 
-      const rawSpec = await loadRaw(specPathToLoad);
+      logger.debug(
+        `Skipping comparison from ${candidate.from} to ${candidate.to} because parsing failed`
+      );
+      logger.debug(e);
+      continue;
+    }
+
+    try {
       const hasOpticUrl = getApiFromOpticUrl(rawSpec[OPTIC_URL_KEY]);
       checkOpenAPIVersion(rawSpec);
       if (!hasOpticUrl) {
@@ -184,6 +200,7 @@ async function computeAll(
         `Skipping comparison from ${candidate.from} to ${candidate.to} because of error: `
       );
       logger.debug(e);
+
       continue;
     }
 
