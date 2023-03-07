@@ -3,7 +3,7 @@ import { readDeferencedSpec, SpecFacts } from '../../specs';
 
 const petstorePath = Path.join(
   __dirname,
-  '../../../../openapi-utilities/inputs/openapi3/petstore0.json.flattened-without-sourcemap.json'
+  '../../../../../../openapi-utilities/inputs/openapi3/petstore0.json.flattened-without-sourcemap.json'
 );
 
 export async function* petstore(): SpecFacts {

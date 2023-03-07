@@ -77,7 +77,7 @@
     "fs-extra": "^11.1.0",
     "git-url-parse": "^13.1.0",
     "har-schema": "^2.0.0",
-    "is-elevated": "^4.0.0",
+    "is-elevated": "^3.0.0",
     "is-url": "^1.2.4",
     "js-yaml": "^4.1.0",
     "json-schema-traverse": "^1.0.0",

@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import { exec } from 'child_process';
+import isElevated from 'is-elevated';
 
 export const platform: 'mac' | 'windows' | 'linux' =
   process.platform === 'win32'
@@ -8,9 +9,7 @@ export const platform: 'mac' | 'windows' | 'linux' =
     ? 'mac'
     : 'linux';
 
-const elevatedModulePromise = import('is-elevated');
 export async function exitIfNotElevated(withError: string) {
-  const isElevated = (await elevatedModulePromise).default;
   const result = await isElevated();
   if (result) {
     return;
