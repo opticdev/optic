@@ -3726,7 +3726,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@useoptic/openapi-cli@workspace:*, @useoptic/openapi-cli@workspace:projects/openapi-cli":
+"@useoptic/openapi-cli@workspace:projects/openapi-cli":
   version: 0.0.0-use.local
   resolution: "@useoptic/openapi-cli@workspace:projects/openapi-cli"
   dependencies:
@@ -3985,54 +3985,85 @@ __metadata:
     "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
     "@babel/runtime": ^7.20.6
+    "@httptoolkit/httpolyglot": ^2.0.1
+    "@jsdevtools/ono": ^7.1.3
     "@octokit/rest": ^19.0.0
     "@sentry/node": ^7.10.0
     "@stoplight/spectral-core": ^1.8.1
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
+    "@types/fs-extra": ^11.0.0
     "@types/git-url-parse": ^9.0.1
     "@types/is-url": ^1.2.30
     "@types/js-yaml": ^4.0.5
     "@types/json-stable-stringify": ^1.0.33
+    "@types/lodash.sortby": ^4.7.7
+    "@types/log": ^6.3.0
     "@types/node": ^18.0.0
     "@types/picomatch": ^2.3.0
     "@types/prompts": ^2
+    "@types/semver": ^7.3.10
+    "@types/slice-ansi": ^4
+    "@types/stream-chain": ^2
+    "@types/stream-json": ^1
     "@types/tar": ^6
     "@types/update-notifier": ^5
     "@types/url-join": ^4.0.1
-    "@types/uuid": ^9.0.0
-    "@useoptic/openapi-cli": "workspace:*"
     "@useoptic/openapi-io": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"
     "@useoptic/rulesets-base": "workspace:*"
     "@useoptic/standard-rulesets": "workspace:*"
     ajv: ^8.6.0
+    ajv-formats: ~2.1.0
+    async-exit-hook: ^2.0.1
+    axax: ^0.2.2
     babel-jest: ^29.3.1
     babel-plugin-transform-inline-environment-variables: ^0.4.3
     bottleneck: ^2.19.5
     chalk: ^4.1.2
     commander: ^10.0.0
+    conf: ^10.2.0
     dotenv: ^16.0.3
+    fast-deep-equal: ^3.1.3
+    fs-extra: ^11.1.0
     git-url-parse: ^13.1.0
+    har-schema: ^2.0.0
+    is-elevated: ^4.0.0
     is-url: ^1.2.4
     jest: ^29.3.1
     js-yaml: ^4.1.0
+    json-schema-traverse: ^1.0.0
     json-stable-stringify: ^1.0.1
+    lodash.sortby: ^4.7.0
+    log: ^6.3.1
+    log-node: ^8.0.3
     loglevel: ^1.8.0
+    minimatch: 7.4.2
+    mockttp: ^3.3.1
     node-fetch: ^2.6.7
+    node-forge: ^1.2.1
     node-machine-id: ^1.1.12
     open: ^8.4.0
     ora: 5.4.1
     picomatch: ^2.3.1
+    pluralize: 8.0.0
+    portfinder: ^1.0.28
     prettier: ^2.4.1
     prompts: ^2.4.2
+    semver: ^7.3.7
+    slice-ansi: ^4.0.0
+    stream-chain: ^2.2.5
+    stream-json: ^1.7.4
+    strip-ansi: ^6.0.1
     tar: ^6.1.11
+    ts-invariant: ^0.9.4
     ts-jest: ^29.0.3
     ts-node: ^10.8.0
+    ts-results: ^3.3.0
     typescript: ^4.7.2
     update-notifier: ^5.1.0
     url-join: ^4.0.1
-    uuid: ^9.0.0
+    whatwg-mimetype: ^3.0.0
   bin:
     optic: build/index.js
   languageName: unknown
