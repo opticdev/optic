@@ -1,0 +1,157 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CapturedIntearction.fromHarEntry can create a CapturedInteraction from a HttpArchive.Entry 1`] = `
+{
+  "request": {
+    "body": null,
+    "host": "petstore.swagger.io",
+    "method": "get",
+    "path": "/v2/store/inventory",
+  },
+  "response": {
+    "body": {
+      "contentType": "application/json",
+      "size": 133,
+      "stream": Any<Readable>,
+    },
+    "statusCode": "200",
+  },
+}
+`;
+
+exports[`CapturedIntearction.fromHarEntry includes request bodies 1`] = `
+{
+  "request": {
+    "body": {
+      "contentType": "application/json",
+      "size": 128,
+      "stream": Any<Readable>,
+    },
+    "host": "petstore.swagger.io",
+    "method": "post",
+    "path": "/v2/store/order",
+  },
+  "response": {
+    "body": {
+      "contentType": "application/json",
+      "size": 119,
+      "stream": Any<Readable>,
+    },
+    "statusCode": "200",
+  },
+}
+`;
+
+exports[`CapturedIntearction.fromHarEntry includes response bodies 1`] = `
+{
+  "request": {
+    "body": null,
+    "host": "petstore.swagger.io",
+    "method": "get",
+    "path": "/v2/store/inventory",
+  },
+  "response": {
+    "body": {
+      "contentType": "application/json",
+      "size": 133,
+      "stream": Any<Readable>,
+    },
+    "statusCode": "200",
+  },
+}
+`;
+
+exports[`CapturedIntearction.fromHarEntry supports request body encoding for supported Buffer encodings 1`] = `
+{
+  "request": {
+    "body": {
+      "contentType": "application/json",
+      "size": 128,
+      "stream": Any<Readable>,
+    },
+    "host": "petstore.swagger.io",
+    "method": "post",
+    "path": "/v2/store/order",
+  },
+  "response": {
+    "body": {
+      "contentType": "application/json",
+      "size": 119,
+      "stream": Any<Readable>,
+    },
+    "statusCode": "200",
+  },
+}
+`;
+
+exports[`CapturedIntearction.fromHarEntry supports response body encoding for supported Buffer encodings 1`] = `
+{
+  "request": {
+    "body": null,
+    "host": "petstore.swagger.io",
+    "method": "get",
+    "path": "/v2/store/inventory",
+  },
+  "response": {
+    "body": {
+      "contentType": "application/json",
+      "size": 133,
+      "stream": Any<Readable>,
+    },
+    "statusCode": "200",
+  },
+}
+`;
+
+exports[`CapturedInteraction.fromProxyInteraction can create a CaturedInteraction from a ProxySource.Interaction 1`] = `
+{
+  "request": {
+    "body": null,
+    "host": "localhost",
+    "method": "get",
+    "path": "/test-path",
+  },
+  "response": {
+    "body": null,
+    "statusCode": "200",
+  },
+}
+`;
+
+exports[`CapturedInteraction.fromProxyInteraction includes request bodies 1`] = `
+{
+  "request": {
+    "body": {
+      "contentType": "text/plain",
+      "size": 9,
+      "stream": Any<Readable>,
+    },
+    "host": "localhost",
+    "method": "get",
+    "path": "/test-path",
+  },
+  "response": {
+    "body": null,
+    "statusCode": "200",
+  },
+}
+`;
+
+exports[`CapturedInteraction.fromProxyInteraction includes response bodies 1`] = `
+{
+  "request": {
+    "body": null,
+    "host": "localhost",
+    "method": "get",
+    "path": "/test-path",
+  },
+  "response": {
+    "body": {
+      "contentType": null,
+      "size": 0,
+      "stream": Any<Readable>,
+    },
+    "statusCode": "200",
+  },
+}
+`;

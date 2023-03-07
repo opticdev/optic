@@ -1,0 +1,150 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`requestBodyPatches generates a patch for a missing request body 1`] = `
+[
+  {
+    "description": "make request body optional",
+    "diff": {
+      "kind": "MissingRequestBody",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make request body optional",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/requestBody/required",
+            "value": false,
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+  },
+]
+`;
+
+exports[`requestBodyPatches generates a patch for a missing request body 2`] = `
+{
+  "method": "post",
+  "pathPattern": "/some-path",
+  "requestBody": {
+    "content": {
+      "application/json": {},
+    },
+    "required": false,
+  },
+  "responses": {
+    "200": {
+      "description": "success",
+    },
+  },
+}
+`;
+
+exports[`requestBodyPatches generates a patch for a unmatched request body content type 1`] = `
+[
+  {
+    "description": "add 'text/csv' body as a valid request body type",
+    "diff": {
+      "contentType": "text/csv",
+      "kind": "UnmatchedRequestBody",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add text/csv as content type",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/requestBody/content/text~1csv",
+            "value": {},
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+  },
+]
+`;
+
+exports[`requestBodyPatches generates a patch for a unmatched request body content type 2`] = `
+{
+  "method": "post",
+  "pathPattern": "/some-path",
+  "requestBody": {
+    "content": {
+      "application/json": {},
+      "text/csv": {},
+    },
+    "required": true,
+  },
+  "responses": {
+    "200": {
+      "description": "success",
+    },
+  },
+}
+`;
+
+exports[`requestBodyPatches generates a patch for an unspecified request body 1`] = `
+[
+  {
+    "description": "add 'application/json' body as a valid request body type",
+    "diff": {
+      "contentType": "application/json",
+      "kind": "UnmatchedRequestBody",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add request body to operation",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/requestBody",
+            "value": {
+              "content": {},
+            },
+          },
+        ],
+      },
+      {
+        "intent": "add application/json as content type",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/requestBody/content/application~1json",
+            "value": {},
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+  },
+]
+`;
+
+exports[`requestBodyPatches generates a patch for an unspecified request body 2`] = `
+{
+  "method": "post",
+  "pathPattern": "/some-path",
+  "requestBody": {
+    "content": {
+      "application/json": {},
+    },
+  },
+  "responses": {
+    "200": {
+      "description": "success",
+    },
+  },
+}
+`;

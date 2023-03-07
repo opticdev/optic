@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`one of json schema diff visitor can add an additional branch to a complex one of 1`] = `
+[
+  {
+    "description": "'oneOf' did not match schema",
+    "example": [
+      1,
+      2,
+      3,
+    ],
+    "instancePath": "/location/principality/coordinates",
+    "key": "oneOf",
+    "keyword": "oneOf",
+    "kind": "UnmatchedType",
+    "propertyPath": "/properties/location/properties/principality/properties/coordinates/oneOf",
+  },
+]
+`;
+
+exports[`one of json schema diff visitor when new field in one of object variant of one of 1`] = `
+[
+  {
+    "description": "'hello' is not documented",
+    "example": "world",
+    "instancePath": "/polyProp/hello",
+    "key": "hello",
+    "keyword": "additionalProperties",
+    "kind": "AdditionalProperty",
+    "parentObjectPath": "/properties/polyProp/oneOf/0/properties",
+    "propertyExamplePath": "/polyProp/hello",
+    "propertyPath": "/properties/polyProp/oneOf/0/properties/hello",
+  },
+]
+`;
+
+exports[`one of json schema diff visitor when new primitive types provided to existing one of  1`] = `
+[
+  {
+    "description": "'oneOf' did not match schema",
+    "example": true,
+    "instancePath": "/polyProp",
+    "key": "oneOf",
+    "keyword": "oneOf",
+    "kind": "UnmatchedType",
+    "propertyPath": "/properties/polyProp/oneOf",
+  },
+]
+`;
+
+exports[`one of json schema diff visitor when one of variant is an array with mismatching item 1`] = `
+[
+  {
+    "description": "'oneOf' did not match schema",
+    "example": [
+      "user1",
+      "user2",
+      "user3",
+    ],
+    "instancePath": "",
+    "key": "oneOf",
+    "keyword": "oneOf",
+    "kind": "UnmatchedType",
+    "propertyPath": "/oneOf",
+  },
+]
+`;
+
+exports[`one of json schema diff visitor when root schema is obejct and is shown an array 1`] = `
+[
+  {
+    "description": "'' did not match schema",
+    "example": [],
+    "instancePath": "",
+    "key": "",
+    "keyword": "type",
+    "kind": "UnmatchedType",
+    "propertyPath": "",
+  },
+]
+`;

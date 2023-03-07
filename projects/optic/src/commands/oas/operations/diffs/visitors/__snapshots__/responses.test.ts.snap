@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`visitResponses detects a missing response body 1`] = `
+[
+  {
+    "kind": "MissingResponseBody",
+    "statusCode": "200",
+  },
+]
+`;
+
+exports[`visitResponses detects an unspecified response 1`] = `
+[
+  {
+    "contentType": null,
+    "kind": "UnmatchedResponseStatusCode",
+    "statusCode": "400",
+  },
+]
+`;
+
+exports[`visitResponses detects an unspecified response body 1`] = `
+[
+  {
+    "contentType": "text/plain",
+    "kind": "UnmatchdResponseBody",
+    "statusCode": "200",
+  },
+]
+`;

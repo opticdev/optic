@@ -1,0 +1,130 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`responsesPatches generates a patch for a missing response body 1`] = `
+[
+  {
+    "description": "remove response content for 200",
+    "diff": {
+      "kind": "MissingResponseBody",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove response content (1 bodies)",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/responses/200/content",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "BackwardsIncompatible",
+    ],
+  },
+]
+`;
+
+exports[`responsesPatches generates a patch for a missing response body 2`] = `
+{
+  "method": "post",
+  "pathPattern": "/some-path",
+  "responses": {
+    "200": {
+      "description": "success",
+    },
+  },
+}
+`;
+
+exports[`responsesPatches generates a patch for an unspecified response body 1`] = `
+[
+  {
+    "description": "add text/plain response for 200",
+    "diff": {
+      "contentType": "text/plain",
+      "kind": "UnmatchdResponseBody",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add response body for content type 'text/plain'",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/responses/200/content/text~1plain",
+            "value": {},
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+  },
+]
+`;
+
+exports[`responsesPatches generates a patch for an unspecified response body 2`] = `
+{
+  "method": "post",
+  "pathPattern": "/some-path",
+  "responses": {
+    "200": {
+      "content": {
+        "application/json": {},
+        "text/plain": {},
+      },
+      "description": "success",
+    },
+  },
+}
+`;
+
+exports[`responsesPatches generates a patch for an unspecified response status code 1`] = `
+[
+  {
+    "description": "add 400 response",
+    "diff": {
+      "contentType": null,
+      "kind": "UnmatchedResponseStatusCode",
+      "statusCode": "400",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add response status code",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/responses/400",
+            "value": {
+              "description": "400 response",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+  },
+]
+`;
+
+exports[`responsesPatches generates a patch for an unspecified response status code 2`] = `
+{
+  "method": "post",
+  "pathPattern": "/some-path",
+  "responses": {
+    "200": {
+      "description": "success",
+    },
+    "400": {
+      "description": "400 response",
+    },
+  },
+}
+`;

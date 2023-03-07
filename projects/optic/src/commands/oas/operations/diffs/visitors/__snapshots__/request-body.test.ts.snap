@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`visitRequestBody detects an unspecified request body 1`] = `
+[
+  {
+    "contentType": "application/json",
+    "kind": "UnmatchedRequestBody",
+  },
+]
+`;
+
+exports[`visitRequestBody detects missing required request bodies 1`] = `
+[
+  {
+    "kind": "MissingRequestBody",
+  },
+]
+`;
+
+exports[`visitRequestBody detects request bodies with an undocumented content type 1`] = `
+[
+  {
+    "contentType": "text/csv",
+    "kind": "UnmatchedRequestBody",
+  },
+]
+`;
+
+exports[`visitRequestBody detects request bodies with an undocumented content type 2`] = `
+[
+  {
+    "contentType": null,
+    "kind": "UnmatchedRequestBody",
+  },
+]
+`;
