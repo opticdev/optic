@@ -25,16 +25,6 @@ export type ApiCoverage = {
   };
 };
 
-const allowedMethods = [
-  'get',
-  'post',
-  'put',
-  'delete',
-  'options',
-  'head',
-  'patch',
-];
-
 export class ApiCoverageCounter {
   constructor(spec: OpenAPIV3.Document) {
     this.coverage = {
@@ -50,7 +40,7 @@ export class ApiCoverageCounter {
           OpenAPIV3.OperationObject
         ];
 
-        if (allowedMethods.includes(method)) {
+        if (Object.values(OpenAPIV3.HttpMethods).includes(method as any)) {
           const responses = {};
 
           Object.keys(operation.responses || {}).forEach((res) => {
