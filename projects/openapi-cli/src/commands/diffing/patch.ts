@@ -261,6 +261,7 @@ export function updateByInteractions(
       let documentedBodies = DocumentedBodies.fromDocumentedInteraction(
         documentedInteraction
       );
+
       let shapePatches = SpecPatches.shapeAdditions(
         tap((body: DocumentedBody) => {
           observers.documentedInteractionBody(documentedInteraction, body);

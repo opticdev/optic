@@ -21,13 +21,17 @@ import {
   OperationPatches,
   UndocumentedOperation,
 } from '../../operations';
+import { SchemaInventory } from '../../shapes/closeness/schema-inventory';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 export interface SpecPatches extends AsyncIterable<SpecPatch> {}
 
 export class SpecPatches {
   static async *additions(patches: SpecPatches): SpecPatches {
-    yield* filter<SpecPatch>((patch) =>
-      patch.impact.includes(PatchImpact.Addition)
+    yield* filter<SpecPatch>(
+      (patch) =>
+        patch.impact.includes(PatchImpact.Addition) ||
+        patch.impact.includes(PatchImpact.Refactor)
     )(patches);
   }
 

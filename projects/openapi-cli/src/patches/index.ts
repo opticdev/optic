@@ -12,6 +12,7 @@ export enum PatchImpact {
   BackwardsIncompatible = 'BackwardsIncompatible',
   BackwardsCompatibilityUnknown = 'BackwardsCompatibilityUnknown',
   Addition = 'Addition',
+  Refactor = 'Refactor',
 }
 
 export class PatchOperationGroup {

@@ -21,7 +21,6 @@ export class ShapePatches {
       i++;
       if (!schema || (!schema.type && !Schema.isPolymorphic(schema))) {
         let newSchema = Schema.baseFromValue(body.value);
-
         let patch = newSchemaPatch(newSchema, schema || null, {
           location: shapeLocation || undefined,
         });

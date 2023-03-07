@@ -201,7 +201,7 @@ export async function verifyCommand(): Promise<Command> {
         console.log(
           chalk.gray(
             `Share a link to your API documentation with ${chalk.whiteBright(
-              'optic api add ${specPath}'
+              `optic api add ${specPath}`
             )}`
           )
         );
@@ -334,6 +334,6 @@ function renderUndocumentedPath(
       .padStart(6, ' ')}   ${pathPattern}\n${''.padStart(
       26, // undocumented + method length
       ' '
-    )}${examplePath}`
+    )}${chalk.gray(examplePath)}`
   );
 }
