@@ -2,7 +2,7 @@
   "name": "@useoptic/standard-rulesets",
   "license": "MIT",
   "packageManager": "yarn@3.4.1",
-  "version": "0.39.9",
+  "version": "0.40.0",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
