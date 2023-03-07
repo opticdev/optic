@@ -1,6 +1,6 @@
 import { FlatOpenAPIV3, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { computeClosenessCached, walkSchema } from './closeness';
+import { computeClosenessFromKeyValueTuples, walkSchema } from './closeness';
 import { SpecPatch, SpecPatches } from '../../specs';
 import { PatchImpact } from '../../patches';
 import { PathComponents } from '../../operations';
@@ -31,7 +31,7 @@ export class SchemaInventory {
 
     let closestMatch: ClosestMatch;
     this.schemaMap.forEach((value, path) => {
-      const closeness = computeClosenessCached(thisSchema, value);
+      const closeness = computeClosenessFromKeyValueTuples(thisSchema, value);
       // existing match
       if (closestMatch && closeness >= closestMatch.percent) {
         closestMatch = { ref: path, percent: closeness };
@@ -225,22 +225,24 @@ function arrayItemPaths(
 ): string[] {
   const results: string[] = [];
 
-  function walk(schema: FlatOpenAPIV3.SchemaObject, path: string) {
+  function walk(schema: FlatOpenAPIV3.SchemaObject, path: string, n: number) {
+    if (n > 2) return;
     if (schema.type === 'array' && schema.items) {
-      const itemsPath = jsonPointerHelpers.append(initialPath, 'items');
+      const itemsPath = jsonPointerHelpers.append(path, 'items');
       results.push(itemsPath);
-      walk(schema.items, itemsPath);
+      walk(schema.items, itemsPath, n + 1);
     } else if (schema.type === 'object' && schema.properties) {
       Object.entries(schema.properties).forEach(([prop, propSchema]) => {
         walk(
           propSchema,
-          jsonPointerHelpers.append(initialPath, 'properties', prop)
+          jsonPointerHelpers.append(path, 'properties', prop),
+          n + 1
         );
       });
     }
   }
 
-  walk(initialSchema, initialPath);
+  walk(initialSchema, initialPath, 0);
 
   return results;
 }
@@ -251,8 +253,7 @@ function refNameGenerator(rootBodySchemaPath: string) {
 
   const components = PathComponents.fromPath(path);
   const pathName = components
-    .filter((i) => i.kind === 'literal')
-    .map((i) => capitalizeFirstLetter(i.name))
+    .map((i) => capitalizeFirstLetter(i.name.toLowerCase()))
     .join('');
 
   if (requestBodyOrResponses === 'responses') {

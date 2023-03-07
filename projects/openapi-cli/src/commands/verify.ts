@@ -334,6 +334,6 @@ function renderUndocumentedPath(
       .padStart(6, ' ')}   ${pathPattern}\n${''.padStart(
       26, // undocumented + method length
       ' '
-    )}${examplePath}`
+    )}${chalk.gray(examplePath)}`
   );
 }

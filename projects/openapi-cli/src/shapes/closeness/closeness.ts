@@ -80,7 +80,7 @@ export function walkSchema(
   return tuples;
 }
 
-export function computeClosenessCached(
+export function computeClosenessFromKeyValueTuples(
   a: [string, any][],
   b: [string, any][]
 ): number {
@@ -120,5 +120,8 @@ export function computeCloseness(
   oneSchema: FlatOpenAPIV3_1.SchemaObject | FlatOpenAPIV3.SchemaObject,
   otherSchema: FlatOpenAPIV3_1.SchemaObject | FlatOpenAPIV3.SchemaObject
 ): number {
-  return computeClosenessCached(walkSchema(oneSchema), walkSchema(otherSchema));
+  return computeClosenessFromKeyValueTuples(
+    walkSchema(oneSchema),
+    walkSchema(otherSchema)
+  );
 }
