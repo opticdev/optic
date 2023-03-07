@@ -1,0 +1,508 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generate shapes from bodies arrays [known limitation] -- empty arrays will never learn their types, must be set by user 1`] = `
+{
+  "items": {},
+  "type": "array",
+}
+`;
+
+exports[`generate shapes from bodies arrays can learn an array of object items 1`] = `
+{
+  "items": {
+    "properties": {
+      "field": {
+        "type": "number",
+      },
+    },
+    "required": [
+      "field",
+    ],
+    "type": "object",
+  },
+  "type": "array",
+}
+`;
+
+exports[`generate shapes from bodies arrays can learn an array of object items with polymorphism 1`] = `
+{
+  "items": {
+    "properties": {
+      "field": {
+        "type": "number",
+      },
+      "field2": {
+        "type": "string",
+      },
+    },
+    "required": [
+      "field",
+    ],
+    "type": "object",
+  },
+  "type": "array",
+}
+`;
+
+exports[`generate shapes from bodies arrays can learn an array of primitive items 1`] = `
+{
+  "items": {
+    "type": "string",
+  },
+  "type": "array",
+}
+`;
+
+exports[`generate shapes from bodies arrays can learn an array with polymorphism, that can also be an object 1`] = `
+{
+  "oneOf": [
+    {
+      "items": {
+        "oneOf": [
+          {
+            "properties": {
+              "food": {
+                "type": "string",
+              },
+            },
+            "required": [
+              "food",
+            ],
+            "type": "object",
+          },
+          {
+            "type": "string",
+          },
+        ],
+      },
+      "type": "array",
+    },
+    {
+      "properties": {
+        "nemesis": {
+          "type": "string",
+        },
+      },
+      "required": [
+        "nemesis",
+      ],
+      "type": "object",
+    },
+  ],
+}
+`;
+
+exports[`generate shapes from bodies arrays can learn an object, that can also be an array with polymorphism 1`] = `
+{
+  "oneOf": [
+    {
+      "properties": {
+        "nemesis": {
+          "type": "string",
+        },
+      },
+      "required": [
+        "nemesis",
+      ],
+      "type": "object",
+    },
+    {
+      "items": {
+        "properties": {
+          "food": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "food",
+        ],
+        "type": "object",
+      },
+      "type": "array",
+    },
+  ],
+}
+`;
+
+exports[`generate shapes from bodies objects can learn an object with primitive fields 1`] = `
+{
+  "properties": {
+    "age": {
+      "type": "number",
+    },
+    "hello": {
+      "type": "string",
+    },
+  },
+  "required": [
+    "hello",
+    "age",
+  ],
+  "type": "object",
+}
+`;
+
+exports[`generate shapes from bodies objects can learn nested objects 1`] = `
+{
+  "properties": {
+    "age": {
+      "type": "number",
+    },
+    "hello": {
+      "type": "string",
+    },
+    "nested": {
+      "properties": {
+        "nested2": {
+          "properties": {
+            "nested3": {
+              "properties": {
+                "stringField": {
+                  "type": "string",
+                },
+              },
+              "required": [
+                "stringField",
+              ],
+              "type": "object",
+            },
+          },
+          "required": [
+            "nested3",
+          ],
+          "type": "object",
+        },
+      },
+      "required": [
+        "nested2",
+      ],
+      "type": "object",
+    },
+  },
+  "required": [
+    "hello",
+    "age",
+    "nested",
+  ],
+  "type": "object",
+}
+`;
+
+exports[`generate shapes from bodies objects can learn that an object with primitive fields is polymorphic 1`] = `
+{
+  "properties": {
+    "admin": {
+      "type": "boolean",
+    },
+    "age": {
+      "type": "number",
+    },
+    "hello": {
+      "type": "string",
+    },
+  },
+  "required": [
+    "age",
+  ],
+  "type": "object",
+}
+`;
+
+exports[`generate shapes from bodies oneOfs are built correctly can learn an array of objects 1`] = `
+{
+  "properties": {
+    "name": {
+      "properties": {
+        "first": {
+          "type": "string",
+        },
+        "last": {
+          "type": "string",
+        },
+      },
+      "required": [
+        "first",
+        "last",
+      ],
+      "type": "object",
+    },
+    "rivals": {
+      "items": {
+        "properties": {
+          "food": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "food",
+        ],
+        "type": "object",
+      },
+      "type": "array",
+    },
+    "stats": {
+      "properties": {
+        "rank": {
+          "type": "number",
+        },
+      },
+      "required": [
+        "rank",
+      ],
+      "type": "object",
+    },
+  },
+  "required": [
+    "name",
+    "rivals",
+    "stats",
+  ],
+  "type": "object",
+}
+`;
+
+exports[`generate shapes from bodies oneOfs are built correctly can learn an array of objects with polymorphism 1`] = `
+{
+  "properties": {
+    "name": {
+      "properties": {
+        "first": {
+          "type": "string",
+        },
+        "last": {
+          "type": "string",
+        },
+      },
+      "required": [
+        "first",
+        "last",
+      ],
+      "type": "object",
+    },
+    "rivals": {
+      "items": {
+        "oneOf": [
+          {
+            "properties": {
+              "food": {
+                "type": "string",
+              },
+            },
+            "required": [
+              "food",
+            ],
+            "type": "object",
+          },
+          {
+            "type": "string",
+          },
+        ],
+      },
+      "type": "array",
+    },
+    "stats": {
+      "properties": {
+        "rank": {
+          "type": "number",
+        },
+      },
+      "required": [
+        "rank",
+      ],
+      "type": "object",
+    },
+  },
+  "required": [
+    "name",
+    "rivals",
+    "stats",
+  ],
+  "type": "object",
+}
+`;
+
+exports[`generate shapes from bodies oneOfs are built correctly can learn an array of objects with polymorphism when primitive value seen first 1`] = `
+{
+  "properties": {
+    "name": {
+      "properties": {
+        "first": {
+          "type": "string",
+        },
+        "last": {
+          "type": "string",
+        },
+      },
+      "required": [
+        "first",
+        "last",
+      ],
+      "type": "object",
+    },
+    "rivals": {
+      "items": {
+        "oneOf": [
+          {
+            "type": "string",
+          },
+          {
+            "properties": {
+              "hello": {
+                "type": "string",
+              },
+            },
+            "required": [
+              "hello",
+            ],
+            "type": "object",
+          },
+        ],
+      },
+      "type": "array",
+    },
+    "stats": {
+      "properties": {
+        "rank": {
+          "type": "number",
+        },
+      },
+      "required": [
+        "rank",
+      ],
+      "type": "object",
+    },
+  },
+  "required": [
+    "name",
+    "rivals",
+    "stats",
+  ],
+  "type": "object",
+}
+`;
+
+exports[`generate shapes from bodies oneOfs are built correctly can polymorphism between instances of objects and arrays 1`] = `
+{
+  "properties": {
+    "location": {
+      "properties": {
+        "principality": {
+          "properties": {
+            "city": {
+              "type": "string",
+            },
+            "coordinates": {
+              "oneOf": [
+                {
+                  "items": {
+                    "type": "number",
+                  },
+                  "type": "array",
+                },
+                {
+                  "properties": {
+                    "format": {
+                      "type": "string",
+                    },
+                    "lat": {
+                      "type": "string",
+                    },
+                    "long": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "format",
+                    "lat",
+                    "long",
+                  ],
+                  "type": "object",
+                },
+              ],
+            },
+            "population": {
+              "type": "number",
+            },
+          },
+          "required": [
+            "city",
+            "population",
+            "coordinates",
+          ],
+          "type": "object",
+        },
+      },
+      "required": [
+        "principality",
+      ],
+      "type": "object",
+    },
+  },
+  "required": [
+    "location",
+  ],
+  "type": "object",
+}
+`;
+
+exports[`generate shapes from bodies oneOfs are built correctly one of array or object 1`] = `
+{
+  "oneOf": [
+    {
+      "properties": {
+        "nemesis": {
+          "type": "string",
+        },
+      },
+      "required": [
+        "nemesis",
+      ],
+      "type": "object",
+    },
+    {
+      "items": {
+        "properties": {
+          "food": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "food",
+        ],
+        "type": "object",
+      },
+      "type": "array",
+    },
+    {
+      "items": {
+        "type": "string",
+      },
+      "type": "array",
+    },
+  ],
+}
+`;
+
+exports[`generate shapes from bodies primitives can build JSON from a boolean 1`] = `
+{
+  "type": "boolean",
+}
+`;
+
+exports[`generate shapes from bodies primitives can build JSON from a null 1`] = `
+{
+  "type": "null",
+}
+`;
+
+exports[`generate shapes from bodies primitives can build JSON from a number 1`] = `
+{
+  "type": "number",
+}
+`;
+
+exports[`generate shapes from bodies primitives can build JSON from a string 1`] = `
+{
+  "type": "string",
+}
+`;
