@@ -21,7 +21,6 @@ export type ApiCoverage = {
   };
   counts: {
     total: number;
-    matching: number;
   };
 };
 
@@ -29,7 +28,7 @@ export class ApiCoverageCounter {
   constructor(spec: OpenAPIV3.Document) {
     this.coverage = {
       paths: {},
-      counts: { total: 0, matching: 0 },
+      counts: { total: 0 },
     };
 
     Object.entries(spec.paths).forEach(([path, methods]) => {
@@ -57,10 +56,6 @@ export class ApiCoverageCounter {
     });
   }
   private coverage: ApiCoverage;
-  matching = () => {
-    this.coverage.counts.total++;
-    this.coverage.counts.matching++;
-  };
   unmatched = () => {
     this.coverage.counts.total++;
   };
