@@ -16,6 +16,7 @@ optic-diff-push:
   rules:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
   script:
+    - git checkout -B "$CI_BUILD_REF_NAME" "$CI_BUILD_REF"
     - npm install -g @useoptic/optic
     - optic diff-all --check --upload
 
