@@ -94,6 +94,7 @@ export class ApiCoverageCounter {
     const operation = this.coverage.paths[pathPattern]?.[method];
     if (operation) {
       operation.interactions++;
+      operation.seen = true;
       if (hasRequestBody && operation.requestBody)
         operation.requestBody.seen = true;
 
@@ -187,7 +188,7 @@ export class ApiCoverageCounter {
       Object.entries(methods).forEach(([method, operation]) => {
         const seen = countOperationCoverage(operation, (x) => x.seen);
         const max = countOperationCoverage(operation, () => true);
-        const percentCovered = seen / max;
+        const percentCovered = (seen / max) * 100;
 
         const responses = ` ${percentCovered !== 0 ? '●' : '◌'}${
           percentCovered > 25 ? '●' : '◌'
