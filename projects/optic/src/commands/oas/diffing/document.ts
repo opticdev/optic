@@ -259,7 +259,6 @@ export function matchInteractions(
       if (
         undocumentedOperation.type === UndocumentedOperationType.MissingMethod
       ) {
-        coverage.unmatched();
         yield {
           kind: StatusObservationKind.InteractionUnmatchedMethod,
           path: undocumentedOperation.pathPattern,
@@ -268,7 +267,6 @@ export function matchInteractions(
       } else if (
         undocumentedOperation.type === UndocumentedOperationType.MissingPath
       ) {
-        coverage.unmatched();
         for (let method of undocumentedOperation.methods) {
           yield {
             kind: StatusObservationKind.InteractionUnmatchedPath,

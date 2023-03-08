@@ -60,7 +60,7 @@ export async function verifyCommand(): Promise<Command> {
         if (options.document) {
           const specReadResult = await readDeferencedSpec(absoluteSpecPath);
           if (specReadResult.err) {
-            await feedback.inputError(
+            return await feedback.inputError(
               `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`,
               InputErrors.SPEC_FILE_NOT_READABLE
             );
@@ -104,7 +104,7 @@ export async function verifyCommand(): Promise<Command> {
           feedback.notable('Patching operations...');
           const specReadResult = await readDeferencedSpec(absoluteSpecPath);
           if (specReadResult.err) {
-            await feedback.inputError(
+            return await feedback.inputError(
               `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`,
               InputErrors.SPEC_FILE_NOT_READABLE
             );
@@ -128,7 +128,7 @@ export async function verifyCommand(): Promise<Command> {
       /// Run to verify with the latest specification
       const specReadResult = await readDeferencedSpec(absoluteSpecPath);
       if (specReadResult.err) {
-        await feedback.inputError(
+        return await feedback.inputError(
           `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`,
           InputErrors.SPEC_FILE_NOT_READABLE
         );

@@ -2,106 +2,112 @@ import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import chalk from 'chalk';
 import { statusRangePattern } from '../operations';
 import sortby from 'lodash.sortby';
-export type ApiCoverage = {
-  paths: {
-    [pathPattern: string]: {
-      [methods: string]: {
-        count: number;
-        requestBody: {
-          count: number;
-          expected: boolean;
-        };
-        responses: {
-          [statusCode: string]: {
-            count: number;
-          };
-        };
-      };
-    };
-  };
-  counts: {
-    total: number;
-    matching: number;
+
+type CoverageNode = {
+  seen: boolean;
+  diffs: boolean;
+};
+
+type OperationCoverage = CoverageNode & {
+  interactions: number;
+  requestBody?: CoverageNode;
+  responses: {
+    [statusCode: string]: CoverageNode;
   };
 };
 
-const allowedMethods = [
-  'get',
-  'post',
-  'put',
-  'delete',
-  'options',
-  'head',
-  'patch',
-];
+export type ApiCoverage = {
+  paths: {
+    [pathPattern: string]: {
+      [methods: string]: OperationCoverage;
+    };
+  };
+};
+
+function countOperationCoverage(
+  operation: OperationCoverage,
+  fn: (x: CoverageNode) => boolean
+): number {
+  let coverage = 0;
+
+  if (fn(operation)) {
+    coverage++;
+  }
+  if (operation.requestBody && fn(operation.requestBody)) {
+    coverage++;
+  }
+  for (const response of Object.values(operation.responses)) {
+    if (fn(response)) {
+      coverage++;
+    }
+  }
+
+  return coverage;
+}
 
 export class ApiCoverageCounter {
+  private coverage: ApiCoverage;
   constructor(spec: OpenAPIV3.Document) {
     this.coverage = {
       paths: {},
-      counts: { total: 0, matching: 0 },
     };
 
     Object.entries(spec.paths).forEach(([path, methods]) => {
       this.coverage.paths[path] = {};
       Object.entries(methods || {}).forEach((entry) => {
         const [method, operation] = entry as [
-          string,
+          OpenAPIV3.HttpMethods,
           OpenAPIV3.OperationObject
         ];
 
-        if (allowedMethods.includes(method)) {
-          const responses = {};
+        if (Object.values(OpenAPIV3.HttpMethods).includes(method)) {
+          const responses: {
+            [statusCode: string]: CoverageNode;
+          } = {};
 
           Object.keys(operation.responses || {}).forEach((res) => {
-            responses[res] = { count: 0 };
+            responses[res] = { seen: false, diffs: false };
           });
 
           this.coverage.paths[path][method] = {
+            interactions: 0,
             responses,
-            requestBody: { count: 0, expected: Boolean(operation.requestBody) },
-            count: 0,
+            requestBody: operation.requestBody
+              ? { seen: false, diffs: false }
+              : undefined,
+            seen: false,
+            diffs: false,
           };
         }
       });
     });
   }
-  private coverage: ApiCoverage;
-  matching = () => {
-    this.coverage.counts.total++;
-    this.coverage.counts.matching++;
-  };
-  unmatched = () => {
-    this.coverage.counts.total++;
-  };
+
   operationInteraction = (
     pathPattern: string,
     method: string,
     hasRequestBody: boolean,
     responseStatusCodeMatcher: string
   ) => {
-    if (
-      this.coverage.paths[pathPattern] &&
-      this.coverage.paths[pathPattern][method]
-    ) {
-      this.coverage.counts.total++;
-      const item = this.coverage.paths[pathPattern][method]!;
-      item.count++;
-      if (hasRequestBody) item.requestBody.count++;
+    const operation = this.coverage.paths[pathPattern]?.[method];
+    if (operation) {
+      operation.interactions++;
+      if (hasRequestBody && operation.requestBody)
+        operation.requestBody.seen = true;
 
       let partialMatch;
       // exact match
-      if (item.responses[responseStatusCodeMatcher]) {
-        item.responses[responseStatusCodeMatcher].count++;
+      if (operation.responses[responseStatusCodeMatcher]) {
+        operation.responses[responseStatusCodeMatcher].seen = true;
       } else if (
         (partialMatch = partialMatches(
-          Object.keys(item.responses),
+          Object.keys(operation.responses),
           responseStatusCodeMatcher
         ))
       ) {
-        item.responses[partialMatch].count++;
-      } else if (item.responses['default']) {
-        item.responses['default'].count++;
+        operation.responses[partialMatch].seen = true;
+      } else if (operation.responses['default']) {
+        operation.responses['default'].seen = true;
       }
     }
   };
@@ -109,19 +115,21 @@ export class ApiCoverageCounter {
   calculateCoverage = () => {
     let branches = 0;
     let count = 0;
+    let interactions = 0;
     Object.entries(this.coverage.paths).forEach(([_, methods]) => {
       Object.entries(methods).forEach(([method, operation]) => {
         branches++;
-        if (operation.count > 0) count++;
+        if (operation.seen) count++;
+        interactions += operation.interactions;
 
-        if (operation.requestBody.expected) {
+        if (operation.requestBody) {
           branches++;
-          if (operation.requestBody.count > 0) count++;
+          if (operation.requestBody.seen) count++;
         }
 
-        Object.entries(operation.responses).forEach(([_, resCounter]) => {
+        Object.entries(operation.responses).forEach(([_, response]) => {
           branches++;
-          if (resCounter.count > 0) count++;
+          if (response.seen) count++;
         });
       });
     });
@@ -130,21 +138,12 @@ export class ApiCoverageCounter {
       branches,
       count,
       percent: branches === 0 ? 0 : ((count / branches) * 100).toFixed(1),
-      totalRequests: this.coverage.counts.total,
+      totalRequests: interactions,
     };
   };
 
   renderCoverage = () => {
     const { percent } = this.calculateCoverage();
-
-    const peerCounts: number[] = [];
-    Object.entries(this.coverage.paths).forEach(([path, methods]) => {
-      Object.entries(methods).forEach(([method, operation]) => {
-        peerCounts.push(operation.count);
-      });
-    });
-
-    const max = Math.max(...peerCounts);
 
     console.log(' ' + chalk.bold.underline(`Coverage Report ${percent}%`));
 
@@ -152,33 +151,33 @@ export class ApiCoverageCounter {
 
     Object.entries(this.coverage.paths).forEach(([path, methods]) => {
       Object.entries(methods).forEach(([method, operation]) => {
-        const percentOfLargest = (operation.count / max) * 100;
+        const seen = countOperationCoverage(operation, (x) => x.seen);
+        const max = countOperationCoverage(operation, () => true);
+        const percentCovered = seen / max;
 
-        const responses = ` ${percentOfLargest !== 0 ? '●' : '◌'}${
-          percentOfLargest > 25 ? '●' : '◌'
-        }${percentOfLargest > 50 ? '●' : '◌'}${
-          percentOfLargest > 75 ? '●' : '◌'
-        } `;
+        const responses = ` ${percentCovered !== 0 ? '●' : '◌'}${
+          percentCovered > 25 ? '●' : '◌'
+        }${percentCovered > 50 ? '●' : '◌'}${percentCovered > 75 ? '●' : '◌'} `;
 
         const line1 =
-          operation.count === 0
+          seen === 0
             ? chalk.dim.bold(`${responses}  ${method} ${path}`)
             : chalk.bold(`${responses}  ${method} ${path}`);
         let line2Items: string[] = [
-          ' ' + operation.count.toString().padStart(4, ' ') + '  ',
+          ' ' + operation.interactions.toString().padStart(4, ' ') + '  ',
         ];
 
-        if (operation.requestBody.expected) {
-          if (operation.requestBody.count > 0) {
-            line2Items.push(chalk.green('RequestBody'));
-          } else {
-            line2Items.push(chalk.dim('RequestBody'));
-          }
+        if (operation.requestBody) {
+          line2Items.push(
+            operation.requestBody.seen
+              ? chalk.green('RequestBody')
+              : chalk.dim('RequestBody')
+          );
         }
 
         Object.entries(operation.responses).forEach(
-          ([statusCode, resCounter]) => {
-            if (resCounter.count > 0) {
+          ([statusCode, response]) => {
+            if (response.seen) {
               line2Items.push(chalk.green(statusCode));
             } else {
               line2Items.push(chalk.dim(statusCode));
@@ -186,7 +185,10 @@ export class ApiCoverageCounter {
           }
         );
 
-        toPrint.push([operation.count, `${line1}\n${line2Items.join(' ')}`]);
+        toPrint.push([
+          operation.interactions,
+          `${line1}\n${line2Items.join(' ')}`,
+        ]);
       });
     });
 
