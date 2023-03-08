@@ -18,6 +18,7 @@ import { Subject, tap } from '../lib/async-tools';
 import { DocumentedInteraction, DocumentedInteractions } from '../operations';
 import { DocumentedBodies, DocumentedBody } from '../shapes';
 import { updateReporter } from '../reporters/update';
+import { ApiCoverageCounter } from '../coverage/api-coverage';
 
 export async function patchOperationsAsNeeded(
   patchInteractions: CapturedInteractions,
@@ -46,7 +47,8 @@ export async function patchOperationsAsNeeded(
 export async function renderDiffs(
   sourcemap: JsonSchemaSourcemap,
   spec: OpenAPIV3.Document,
-  patches: SpecPatches
+  patches: SpecPatches,
+  coverage: ApiCoverageCounter
 ) {
   const logger = jsonPointerLogger(sourcemap);
 
@@ -62,6 +64,7 @@ export async function renderDiffs(
     const [_, pathPattern, method] = jsonPointerHelpers.decode(path);
 
     if (!diff || groupedOperations.length === 0) continue;
+    coverage.shapeDiff(patch);
 
     stats.totalDiffCount++;
 
