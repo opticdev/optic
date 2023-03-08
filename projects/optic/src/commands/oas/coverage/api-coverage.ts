@@ -124,6 +124,7 @@ export class ApiCoverageCounter {
         patch.diff?.kind === 'AdditionalProperty' ||
         patch.diff?.kind === 'MissingRequiredProperty'
       ) {
+        operation.diffs = true;
         const isResponse = parts[3] === 'responses';
         if (isResponse) {
           const [, _pathPattern, _method, , statusCode] = parts;
