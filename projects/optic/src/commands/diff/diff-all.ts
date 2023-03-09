@@ -62,7 +62,7 @@ export const registerDiffAll = (cli: Command, config: OpticCliConfig) => {
       'HEAD~1'
     )
     .option(
-      '--tag <tag>',
+      '--head-tag <head-tag>',
       'Adds additional tags to the HEAD spec. Should be used in conjunction with `--upload`'
     )
     .option(
@@ -97,7 +97,7 @@ type DiffAllActionOptions = {
   standard?: string;
   match?: string;
   ignore?: string;
-  tag?: string;
+  headTag?: string;
   check: boolean;
   web: boolean;
   upload: boolean;

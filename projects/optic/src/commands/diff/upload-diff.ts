@@ -14,7 +14,7 @@ export async function uploadDiff(
   specResults: Parameters<typeof uploadRun>['1']['specResults'],
   config: OpticCliConfig,
   options: {
-    tag?: string;
+    headTag?: string;
   } = {}
 ): Promise<string | null> {
   const showSpinner = logger.getLevel() !== 5;
@@ -47,7 +47,7 @@ export async function uploadDiff(
 
   if (specs.to.context && specDetails) {
     let tags: string[] = [];
-    tags.push(...getTagsFromOptions(options.tag));
+    tags.push(...getTagsFromOptions(options.headTag));
     if (specs.to.context.vcs === VCS.Git) {
       tags.push(`git:${specs.to.context.sha}`);
       const currentBranch = await Git.getCurrentBranchName();

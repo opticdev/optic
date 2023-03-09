@@ -68,7 +68,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
       'run comparison with a locally defined standard, if not set, looks for the standard on the [x-optic-standard] key on the spec, and then the optic.dev.yml file.'
     )
     .option(
-      '--tag <tag>',
+      '--head-tag <head-tag>',
       'Adds additional tags to the HEAD spec. Should be used in conjunction with `--upload`'
     )
     .addOption(new Option('--ruleset <ruleset>', '').hideHelp())
@@ -206,7 +206,7 @@ type DiffActionOptions = {
   json: boolean;
   standard?: string;
   ruleset?: string;
-  tag?: string;
+  headTag?: string;
 };
 
 const getDiffAction =
