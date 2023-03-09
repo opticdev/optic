@@ -47,12 +47,16 @@ export async function uploadDiff(
 
   if (specs.to.context && specDetails) {
     let tags: string[] = [];
-    tags.push(...getTagsFromOptions(options.headTag));
+    const tagsFromOptions = getTagsFromOptions(options.headTag);
+    tags.push(...tagsFromOptions);
     if (specs.to.context.vcs === VCS.Git) {
       tags.push(`git:${specs.to.context.sha}`);
-      const currentBranch = await Git.getCurrentBranchName();
-      if (currentBranch !== 'HEAD') {
-        tags.push(sanitizeGitTag(`gitbranch:${currentBranch}`));
+      // If no gitbranch is set, try to add own git branch
+      if (!tagsFromOptions.some((tag) => /^gitbranch\:/.test(tag))) {
+        const currentBranch = await Git.getCurrentBranchName();
+        if (currentBranch !== 'HEAD') {
+          tags.push(sanitizeGitTag(`gitbranch:${currentBranch}`));
+        }
       }
     }
 
