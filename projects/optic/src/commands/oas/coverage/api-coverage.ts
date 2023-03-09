@@ -48,7 +48,7 @@ function countOperationCoverage(
 }
 
 export class ApiCoverageCounter {
-  private coverage: ApiCoverage;
+  coverage: ApiCoverage;
   constructor(spec: OpenAPIV3.Document) {
     this.coverage = {
       paths: {},

@@ -4,7 +4,7 @@ import path from 'path';
 import * as fs from 'fs-extra';
 
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
-import { flushEvents, trackCompletion, trackEvent } from './lib/segment';
+import { flushEvents, trackEvent } from './lib/segment';
 import { trackWarning } from './lib/sentry';
 import * as AT from './lib/async-tools';
 import { OpenAPIV3, readDeferencedSpec } from './specs';
@@ -23,8 +23,13 @@ import {
   updateByInteractions,
 } from './diffing/patch';
 import { specToOperations } from './operations/queries';
+import { OpticCliConfig, VCS } from '../../config';
+import { OPTIC_URL_KEY } from '../../constants';
+import { getApiFromOpticUrl } from '../../utils/cloud-urls';
+import { uploadSpec } from '../../utils/cloud-specs';
+import { getFileFromFsOrGit } from '../../utils/spec-loaders';
 
-export async function verifyCommand(): Promise<Command> {
+export function verifyCommand(config: OpticCliConfig): Command {
   const command = new Command('verify');
   const feedback = createCommandFeedback(command);
 
@@ -38,8 +43,33 @@ export async function verifyCommand(): Promise<Command> {
     .option('--exit0', 'always exit 0')
     .option('--document <operations>', 'HTTP method and path pair(s) to add')
     .option('--patch', 'Patch existing operations to resolve diffs')
+    .option(
+      '--upload',
+      'Upload the verification data to optic cloud. Requires the spec to be in optic',
+      false
+    )
     .action(async (specPath) => {
       const analytics: { event: string; properties: any }[] = [];
+      const options = command.opts();
+
+      if (options.upload) {
+        if (options.document || options.patch) {
+          console.error(
+            'Cannot run upload with --document or --patch options.'
+          );
+          process.exitCode = 1;
+          return;
+        } else if (
+          config.vcs?.type !== VCS.Git ||
+          config.vcs.status === 'dirty'
+        ) {
+          console.error(
+            'Must be run in a git repository and in a working directory without uncommitted changes'
+          );
+          process.exitCode = 1;
+          return;
+        }
+      }
 
       const absoluteSpecPath = Path.resolve(specPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
@@ -50,7 +80,6 @@ export async function verifyCommand(): Promise<Command> {
       }
 
       console.log('');
-      const options = command.opts();
 
       const makeInteractionsIterator = async () =>
         getInteractions(options, specPath, feedback);
@@ -126,17 +155,14 @@ export async function verifyCommand(): Promise<Command> {
       }
 
       /// Run to verify with the latest specification
-      const specReadResult = await readDeferencedSpec(absoluteSpecPath);
-      if (specReadResult.err) {
-        return await feedback.inputError(
-          `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`,
-          InputErrors.SPEC_FILE_NOT_READABLE
-        );
-      }
+      const parseResult = await getFileFromFsOrGit(absoluteSpecPath, config, {
+        strict: false,
+        denormalize: false,
+      });
 
-      const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
+      const { jsonLike: spec, sourcemap } = parseResult;
 
-      const hasOpticUrl = Boolean(spec['x-optic-url']);
+      const opticUrlDetails = getApiFromOpticUrl(spec[OPTIC_URL_KEY]);
 
       const interactions = await makeInteractionsIterator();
 
@@ -188,6 +214,27 @@ export async function verifyCommand(): Promise<Command> {
         },
       });
 
+      if (options.upload) {
+        if (!opticUrlDetails) {
+          console.error(
+            `File ${specPath} does not have an optic url. Files must be added to Optic and have an x-optic-url key before verification data can be uploaded.`
+          );
+          console.error(
+            `${chalk.yellow('Hint: ')} Run optic api add ${specPath}`
+          );
+          process.exitCode = 1;
+          return;
+        }
+        const { orgId, apiId } = opticUrlDetails;
+        const specId = await uploadSpec(apiId, {
+          spec: parseResult,
+          client: config.client,
+          tags: [], // TODO figure out what tags to add
+          orgId,
+        });
+        // todo upload verification data
+      }
+
       analytics.forEach((event) => trackEvent(event.event, event.properties));
 
       await flushEvents();
@@ -199,7 +246,7 @@ export async function verifyCommand(): Promise<Command> {
         await fs.remove(captureStorageDirectory);
       }
 
-      if (Boolean(options.document) && !hasOpticUrl) {
+      if (Boolean(options.document) && !opticUrlDetails) {
         console.log('');
         console.log(
           chalk.gray(
