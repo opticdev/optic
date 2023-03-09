@@ -20,5 +20,5 @@ export function getTagsFromOptions(tag?: string): string[] {
 }
 
 export function getUniqueTags(tags: string[]): string[] {
-  return [...new Set(...tags)];
+  return [...new Set(tags)];
 }
