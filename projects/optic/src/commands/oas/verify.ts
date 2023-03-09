@@ -142,10 +142,7 @@ export async function verifyCommand(): Promise<Command> {
 
       feedback.notable('Verifying API behavior...');
 
-      let { results: updatePatches, observations: updateObservations } =
-        updateByInteractions(spec, interactions);
-
-      const diffResults = await renderDiffs(sourcemap, spec, updatePatches);
+      let { results: updatePatches } = updateByInteractions(spec, interactions);
 
       let { observations, coverage } = matchInteractions(
         spec,
@@ -156,6 +153,13 @@ export async function verifyCommand(): Promise<Command> {
         observations,
         spec,
         feedback
+      );
+
+      const diffResults = await renderDiffs(
+        sourcemap,
+        spec,
+        updatePatches,
+        coverage
       );
 
       const coverageStats = coverage.calculateCoverage();

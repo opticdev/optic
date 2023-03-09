@@ -2,6 +2,8 @@ import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import chalk from 'chalk';
 import { statusRangePattern } from '../operations';
 import sortby from 'lodash.sortby';
+import { SpecPatch } from '../specs';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 type CoverageNode = {
   seen: boolean;
@@ -92,6 +94,7 @@ export class ApiCoverageCounter {
     const operation = this.coverage.paths[pathPattern]?.[method];
     if (operation) {
       operation.interactions++;
+      operation.seen = true;
       if (hasRequestBody && operation.requestBody)
         operation.requestBody.seen = true;
 
@@ -108,6 +111,43 @@ export class ApiCoverageCounter {
         operation.responses[partialMatch].seen = true;
       } else if (operation.responses['default']) {
         operation.responses['default'].seen = true;
+      }
+    }
+  };
+
+  shapeDiff = (patch: SpecPatch) => {
+    const parts = jsonPointerHelpers.decode(patch.path);
+    const [_, pathPattern, method] = parts;
+    const operation = this.coverage.paths[pathPattern]?.[method];
+    if (operation) {
+      if (
+        patch.diff?.kind === 'UnmatchedType' ||
+        patch.diff?.kind === 'AdditionalProperty' ||
+        patch.diff?.kind === 'MissingRequiredProperty'
+      ) {
+        operation.diffs = true;
+        const isResponse = jsonPointerHelpers.startsWith(patch.path, [
+          'paths',
+          '**',
+          '**',
+          'responses',
+        ]);
+        if (isResponse) {
+          const [, _pathPattern, _method, , statusCode] = parts;
+          if (operation.responses[statusCode]) {
+            operation.responses[statusCode].diffs = true;
+          }
+        } else {
+          if (operation.requestBody) {
+            operation.requestBody.diffs = true;
+          }
+        }
+      } else if (
+        patch.diff?.kind === 'UnmatchdResponseBody' ||
+        patch.diff?.kind === 'UnmatchedRequestBody' ||
+        patch.diff?.kind === 'UnmatchedResponseStatusCode'
+      ) {
+        operation.diffs = true;
       }
     }
   };
@@ -153,7 +193,7 @@ export class ApiCoverageCounter {
       Object.entries(methods).forEach(([method, operation]) => {
         const seen = countOperationCoverage(operation, (x) => x.seen);
         const max = countOperationCoverage(operation, () => true);
-        const percentCovered = seen / max;
+        const percentCovered = (seen / max) * 100;
 
         const responses = ` ${percentCovered !== 0 ? '●' : '◌'}${
           percentCovered > 25 ? '●' : '◌'
