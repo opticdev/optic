@@ -62,6 +62,10 @@ export const registerDiffAll = (cli: Command, config: OpticCliConfig) => {
       'HEAD~1'
     )
     .option(
+      '--head-tag <head-tag>',
+      'Adds additional tags to the HEAD spec. Should be used in conjunction with `--upload`'
+    )
+    .option(
       '--match <match>',
       'a glob to match specs (e.g. "**/*.yml" or "**/specifications/*.json"). Also takes \
       comma separated values (e.g. "**/*.yml,**/*.json")'
@@ -93,6 +97,7 @@ type DiffAllActionOptions = {
   standard?: string;
   match?: string;
   ignore?: string;
+  headTag?: string;
   check: boolean;
   web: boolean;
   upload: boolean;
@@ -291,7 +296,8 @@ async function computeAll(
           to: toParseResults,
         },
         specResults,
-        config
+        config,
+        options
       );
     }
 

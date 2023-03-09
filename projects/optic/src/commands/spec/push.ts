@@ -11,6 +11,7 @@ import chalk from 'chalk';
 import { uploadSpec } from '../../utils/cloud-specs';
 import { getApiFromOpticUrl, getSpecUrl } from '../../utils/cloud-urls';
 import { errorHandler } from '../../error-handler';
+import { getTagsFromOptions, getUniqueTags } from '../../utils/tags';
 
 const usage = () => `
   optic spec push <path_to_spec.yml>
@@ -58,21 +59,7 @@ const getSpecPushAction =
       return;
     }
 
-    let tagsToAdd: string[] = [];
-    if (options.tag) {
-      const tags = options.tag.split(',');
-      const invalidTags = tags.filter((tag) => !SPEC_TAG_REGEXP.test(tag));
-      if (invalidTags.length > 0) {
-        logger.error(
-          `The following tags were invalid: ${invalidTags.join(
-            ', '
-          )}. Tags must only include alphanumeric characters, dashes (-, _) or colons (:)`
-        );
-        process.exitCode = 1;
-        return;
-      }
-      tagsToAdd.push(...tags);
-    }
+    let tagsToAdd: string[] = getTagsFromOptions(options.tag);
 
     if (config.vcs?.type === VCS.Git) {
       if (config.vcs.status === 'clean') {
@@ -98,8 +85,7 @@ const getSpecPushAction =
       }
     }
 
-    // filter tagsToAdd to unique tags
-    tagsToAdd = tagsToAdd.filter((tag, ndx) => tagsToAdd.indexOf(tag) === ndx);
+    tagsToAdd = getUniqueTags(tagsToAdd);
 
     let parseResult: ParseResult;
     try {

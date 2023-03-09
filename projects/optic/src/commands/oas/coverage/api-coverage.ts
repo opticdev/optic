@@ -126,7 +126,12 @@ export class ApiCoverageCounter {
         patch.diff?.kind === 'MissingRequiredProperty'
       ) {
         operation.diffs = true;
-        const isResponse = parts[3] === 'responses';
+        const isResponse = jsonPointerHelpers.startsWith(patch.path, [
+          'paths',
+          '**',
+          '**',
+          'responses',
+        ]);
         if (isResponse) {
           const [, _pathPattern, _method, , statusCode] = parts;
           if (operation.responses[statusCode]) {
