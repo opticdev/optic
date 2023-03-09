@@ -7,11 +7,15 @@ import { EMPTY_SPEC_ID, uploadRun, uploadSpec } from '../../utils/cloud-specs';
 import * as Git from '../../utils/git-utils';
 import { logger } from '../../logger';
 import { sanitizeGitTag } from '@useoptic/openapi-utilities';
+import { getTagsFromOptions, getUniqueTags } from '../../utils/tags';
 
 export async function uploadDiff(
   specs: { from: ParseResult; to: ParseResult },
   specResults: Parameters<typeof uploadRun>['1']['specResults'],
-  config: OpticCliConfig
+  config: OpticCliConfig,
+  options: {
+    tag?: string;
+  } = {}
 ): Promise<string | null> {
   const showSpinner = logger.getLevel() !== 5;
   const spinner = showSpinner
@@ -43,6 +47,7 @@ export async function uploadDiff(
 
   if (specs.to.context && specDetails) {
     let tags: string[] = [];
+    tags.push(...getTagsFromOptions(options.tag));
     if (specs.to.context.vcs === VCS.Git) {
       tags.push(`git:${specs.to.context.sha}`);
       const currentBranch = await Git.getCurrentBranchName();
@@ -50,6 +55,8 @@ export async function uploadDiff(
         tags.push(sanitizeGitTag(`gitbranch:${currentBranch}`));
       }
     }
+
+    tags = getUniqueTags(tags);
     headSpecId = await uploadSpec(specDetails.apiId, {
       spec: specs.to,
       client: config.client,
