@@ -7,6 +7,7 @@ import { ParseResult } from './spec-loaders';
 import { trackEvent } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { logger } from '../logger';
 import chalk from 'chalk';
+import { ApiCoverage } from '../commands/oas/coverage/api-coverage';
 
 export const EMPTY_SPEC_ID = 'EMPTY';
 
@@ -110,4 +111,31 @@ export async function uploadRun(
   });
 
   return run;
+}
+
+export async function uploadSpecVerification(
+  specId: string,
+  opts: {
+    client: OpticBackendClient;
+    verificationData: ApiCoverage;
+  }
+) {
+  const stableResultsString = stableStringify(opts.verificationData);
+  const checksum = computeChecksum(stableResultsString);
+
+  const { upload_id, url } = await opts.client.prepareVerification(
+    specId,
+    checksum
+  );
+
+  await uploadFileToS3(url, Buffer.from(stableResultsString), {
+    'x-amz-checksum-sha256': checksum,
+  });
+
+  const { id } = await opts.client.createVerification({
+    spec_id: specId,
+    upload_id,
+  });
+
+  return id;
 }

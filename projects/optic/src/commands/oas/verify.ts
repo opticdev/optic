@@ -26,7 +26,7 @@ import { specToOperations } from './operations/queries';
 import { OpticCliConfig, VCS } from '../../config';
 import { OPTIC_URL_KEY } from '../../constants';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
-import { uploadSpec } from '../../utils/cloud-specs';
+import { uploadSpec, uploadSpecVerification } from '../../utils/cloud-specs';
 import { getFileFromFsOrGit } from '../../utils/spec-loaders';
 
 export function verifyCommand(config: OpticCliConfig): Command {
@@ -225,14 +225,19 @@ export function verifyCommand(config: OpticCliConfig): Command {
           process.exitCode = 1;
           return;
         }
+
         const { orgId, apiId } = opticUrlDetails;
         const specId = await uploadSpec(apiId, {
           spec: parseResult,
           client: config.client,
-          tags: [], // TODO figure out what tags to add
+          tags: [], // git tag, git branch, other tags - todo should we also add in `--tag`
           orgId,
         });
-        // todo upload verification data
+
+        await uploadSpecVerification(specId, {
+          client: config.client,
+          verificationData: coverage.coverage,
+        });
       }
 
       analytics.forEach((event) => trackEvent(event.event, event.properties));

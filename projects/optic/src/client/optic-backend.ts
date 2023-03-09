@@ -176,6 +176,25 @@ export class OpticBackendClient extends JsonHttpClient {
     });
   }
 
+  public async prepareVerification(specId: string, checksum: string) {
+    return this.postJson<{
+      upload_id: string;
+      url: string;
+    }>(`/api/verifications/prepare`, {
+      spec_id: specId,
+      checksum,
+    });
+  }
+
+  public async createVerification(opts: {
+    spec_id: string;
+    upload_id: string;
+  }) {
+    return this.postJson<{ id: string }>(`/api/verifications`, {
+      ...opts,
+    });
+  }
+
   public async verifyToken(): Promise<{
     user?: { email: string; userId: string };
     organization?: { organizationId: string };
