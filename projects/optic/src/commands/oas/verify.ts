@@ -28,6 +28,8 @@ import { OPTIC_URL_KEY } from '../../constants';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { uploadSpec, uploadSpecVerification } from '../../utils/cloud-specs';
 import { getFileFromFsOrGit } from '../../utils/spec-loaders';
+import * as Git from '../../utils/git-utils';
+import { sanitizeGitTag } from '@useoptic/openapi-utilities';
 
 export function verifyCommand(config: OpticCliConfig): Command {
   const command = new Command('verify');
@@ -227,10 +229,16 @@ export function verifyCommand(config: OpticCliConfig): Command {
         }
 
         const { orgId, apiId } = opticUrlDetails;
+        const tags: string[] = [];
+        if (config.vcs?.type === VCS.Git) {
+          tags.push(`git:${config.vcs.sha}`);
+          const currentBranch = await Git.getCurrentBranchName();
+          tags.push(sanitizeGitTag(`gitbranch:${currentBranch}`));
+        }
         const specId = await uploadSpec(apiId, {
           spec: parseResult,
           client: config.client,
-          tags: [], // git tag, git branch, other tags - todo should we also add in `--tag`
+          tags,
           orgId,
         });
 
@@ -312,9 +320,6 @@ async function renderOperationStatus(
   }
 
   return { undocumentedPaths };
-  function operationId({ path, method }: { path: string; method: string }) {
-    return `${method}${path}`;
-  }
 }
 
 async function getInteractions(
