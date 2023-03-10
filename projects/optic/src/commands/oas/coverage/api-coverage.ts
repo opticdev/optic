@@ -1,51 +1,14 @@
-import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  OpenAPIV3,
+  CoverageNode,
+  ApiCoverage,
+  countOperationCoverage,
+} from '@useoptic/openapi-utilities';
 import chalk from 'chalk';
 import { statusRangePattern } from '../operations';
 import sortby from 'lodash.sortby';
 import { SpecPatch } from '../specs';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-
-type CoverageNode = {
-  seen: boolean;
-  diffs: boolean;
-};
-
-type OperationCoverage = CoverageNode & {
-  interactions: number;
-  requestBody?: CoverageNode;
-  responses: {
-    [statusCode: string]: CoverageNode;
-  };
-};
-
-export type ApiCoverage = {
-  paths: {
-    [pathPattern: string]: {
-      [methods: string]: OperationCoverage;
-    };
-  };
-};
-
-function countOperationCoverage(
-  operation: OperationCoverage,
-  fn: (x: CoverageNode) => boolean
-): number {
-  let coverage = 0;
-
-  if (fn(operation)) {
-    coverage++;
-  }
-  if (operation.requestBody && fn(operation.requestBody)) {
-    coverage++;
-  }
-  for (const response of Object.values(operation.responses)) {
-    if (fn(response)) {
-      coverage++;
-    }
-  }
-
-  return coverage;
-}
 
 export class ApiCoverageCounter {
   private coverage: ApiCoverage;
