@@ -118,6 +118,7 @@ export async function uploadSpecVerification(
   opts: {
     client: OpticBackendClient;
     verificationData: ApiCoverage;
+    message?: string;
   }
 ) {
   const stableResultsString = stableStringify(opts.verificationData);
@@ -135,6 +136,7 @@ export async function uploadSpecVerification(
   const { id } = await opts.client.createVerification({
     spec_id: specId,
     upload_id,
+    message: opts.message,
   });
 
   return id;

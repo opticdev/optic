@@ -50,6 +50,10 @@ export function verifyCommand(config: OpticCliConfig): Command {
       'Upload the verification data to optic cloud. Requires the spec to be in optic',
       false
     )
+    .option(
+      '--message',
+      'Used in conjunction with `--upload`, sets a message on an uploaded verification.'
+    )
     .action(async (specPath) => {
       const analytics: { event: string; properties: any }[] = [];
       const options = command.opts();
@@ -245,6 +249,7 @@ export function verifyCommand(config: OpticCliConfig): Command {
         await uploadSpecVerification(specId, {
           client: config.client,
           verificationData: coverage.coverage,
+          message: options.message,
         });
       }
 
