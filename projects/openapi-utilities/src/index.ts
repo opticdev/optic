@@ -147,6 +147,7 @@ export {
   isFactOrChangeVariant,
   OpenApiRequestFact,
 };
+export * from './coverage/coverage';
 
 export * from './types';
 
