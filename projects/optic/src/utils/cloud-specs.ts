@@ -1,5 +1,9 @@
 import stableStringify from 'json-stable-stringify';
-import { CompareSpecResults, UserError } from '@useoptic/openapi-utilities';
+import {
+  CompareSpecResults,
+  UserError,
+  ApiCoverage,
+} from '@useoptic/openapi-utilities';
 import { OpticBackendClient } from '../client';
 import { computeChecksum } from './checksum';
 import { uploadFileToS3 } from './s3';
@@ -7,7 +11,6 @@ import { ParseResult } from './spec-loaders';
 import { trackEvent } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { logger } from '../logger';
 import chalk from 'chalk';
-import { ApiCoverage } from '../commands/oas/coverage/api-coverage';
 
 export const EMPTY_SPEC_ID = 'EMPTY';
 
