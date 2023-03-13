@@ -71,10 +71,10 @@ const getSpecPushAction =
         if (branch !== 'HEAD') {
           tagsToAdd.push(sanitizeGitTag(`gitbranch:${branch}`));
           logger.info(
-            `Automatically adding the git sha ${sha} and branch ${branch} as tags`
+            `Automatically adding the git sha 'git:${sha}' and branch 'gitbranch:${branch}' as tags`
           );
         } else {
-          logger.info(`Automatically adding the git sha ${sha} as a tag`);
+          logger.info(`Automatically adding the git sha 'git:${sha}' as a tag`);
         }
       } else {
         logger.info(
