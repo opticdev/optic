@@ -63,15 +63,13 @@ const getSpecPushAction =
 
     if (config.vcs?.type === VCS.Git) {
       if (config.vcs.status === 'clean') {
-        const sha = `git:${config.vcs.sha}`;
-        tagsToAdd.push(sha);
+        const sha = config.vcs.sha;
+        tagsToAdd.push(`git:${sha}`);
 
-        const branch = sanitizeGitTag(
-          `gitbranch:${await Git.getCurrentBranchName()}`
-        );
+        const branch = await Git.getCurrentBranchName();
 
         if (branch !== 'HEAD') {
-          tagsToAdd.push(branch);
+          tagsToAdd.push(sanitizeGitTag(`gitbranch:${branch}`));
           logger.info(
             `Automatically adding the git sha ${sha} and branch ${branch} as tags`
           );
