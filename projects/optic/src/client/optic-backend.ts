@@ -190,6 +190,7 @@ export class OpticBackendClient extends JsonHttpClient {
     spec_id: string;
     upload_id: string;
     message?: string;
+    endpoint_hashes: { [path: string]: { [method: string]: string } };
   }) {
     return this.postJson<{ id: string }>(`/api/verifications`, {
       ...opts,
