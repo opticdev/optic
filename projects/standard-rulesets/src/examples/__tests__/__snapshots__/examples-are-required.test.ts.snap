@@ -92,6 +92,53 @@ exports[`examples are required ruleset parameters need examples 1`] = `
       "location": {
         "conceptualLocation": {
           "inRequest": {
+            "query": "otherOne",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "otherOne",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/2",
+        "kind": "query-parameter",
+      },
+      "value": {
+        "examples": {
+          "XYZ": {
+            "value": "123",
+          },
+        },
+        "in": "query",
+        "name": "otherOne",
+        "schema": {
+          "type": "string",
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter examples must match schemas",
+    "passed": true,
+    "received": undefined,
+    "type": "requirement",
+    "where": "GET /api/users query parameter: otherOne",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
             "query": "validExample",
           },
           "method": "get",
@@ -171,6 +218,53 @@ exports[`examples are required ruleset parameters need examples 1`] = `
     "received": undefined,
     "type": "requirement",
     "where": "GET /api/users query parameter: notSet",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "query": "otherOne",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "otherOne",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/2",
+        "kind": "query-parameter",
+      },
+      "value": {
+        "examples": {
+          "XYZ": {
+            "value": "123",
+          },
+        },
+        "in": "query",
+        "name": "otherOne",
+        "schema": {
+          "type": "string",
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require parameter examples",
+    "passed": true,
+    "received": undefined,
+    "type": "requirement",
+    "where": "GET /api/users query parameter: otherOne",
   },
 ]
 `;

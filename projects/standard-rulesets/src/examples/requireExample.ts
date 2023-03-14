@@ -102,21 +102,33 @@ export const requireParameterExamples = (applies: typeof appliesWhen[number]) =>
       }
 
       operation.headerParameter[lifecycle]((header) => {
-        if (!header.raw.example && !schemaHasExample(header.raw.schema)) {
+        if (
+          !header.raw.example &&
+          Object.keys(header.raw.examples || {}).length === 0 &&
+          !schemaHasExample(header.raw.schema)
+        ) {
           throw new RuleError({
             message: `a valid example is required for ${errorMessageType} header`,
           });
         }
       });
-      operation.queryParameter[lifecycle]((header) => {
-        if (!header.raw.example && !schemaHasExample(header.raw.schema)) {
+      operation.queryParameter[lifecycle]((query) => {
+        if (
+          !query.raw.example &&
+          Object.keys(query.raw.examples || {}).length === 0 &&
+          !schemaHasExample(query.raw.schema)
+        ) {
           throw new RuleError({
             message: `a valid example is required for ${errorMessageType} query parameter`,
           });
         }
       });
-      operation.cookieParameter[lifecycle]((header) => {
-        if (!header.raw.example && !schemaHasExample(header.raw.schema)) {
+      operation.cookieParameter[lifecycle]((cookie) => {
+        if (
+          !cookie.raw.example &&
+          Object.keys(cookie.raw.examples || {}).length === 0 &&
+          !schemaHasExample(cookie.raw.schema)
+        ) {
           throw new RuleError({
             message: `a valid example is required for ${errorMessageType} cookie parameter`,
           });
