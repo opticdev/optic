@@ -46,10 +46,13 @@ export async function setupTlsCommand(): Promise<Command> {
         ca = maybeCa.val;
       }
 
-      const certPath = path.join('.', 'optic.local.cert');
-      let absoluteFilePath = Path.resolve(certPath);
-      const destination: Writable = fs.createWriteStream(absoluteFilePath);
-      await writeCert(ca, destination);
+      async function writeCertNamed(name: string) {
+        const certPath = path.join('.', name);
+        let absoluteFilePath = Path.resolve(certPath);
+        const destination: Writable = fs.createWriteStream(absoluteFilePath);
+        await writeCert(ca, destination);
+        return absoluteFilePath;
+      }
 
       console.log(
         'Hey Optic here. We take privacy seriously so we wanted to let you know how intercepting TLS traffic works: A self-signed certificate generated on your machine (we do not have it) is added to your trust chain. That allows the Optic proxy to read TLS traffic that is sent through it. The CLI will save TLS traffic to the target host (your API) in the tmp directory. It is never sent to us and all the processing happens locally. All the code is Open Source https://github.com/opticdev/optic'
@@ -60,6 +63,7 @@ export async function setupTlsCommand(): Promise<Command> {
           await exitIfNotElevated(
             'Run this command with sudo to trust the certificate'
           );
+          const certFilePath = await writeCertNamed('optic.local.cert');
 
           console.log(
             'Trusting Cert. This may take a few seconds. If you see a Keychain prompt appear, enter your password'
@@ -67,41 +71,47 @@ export async function setupTlsCommand(): Promise<Command> {
 
           try {
             await runCommand(
-              `security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${absoluteFilePath}`
+              `security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${certFilePath}`
             );
             console.log(
               chalk.green(
                 "Certificate trusted. 'oas capture' can now see traffic sent to https hosts when Optic is running"
               )
             );
-            await fs.unlink(absoluteFilePath);
+            await fs.unlink(certFilePath);
           } catch (e) {
             console.error(chalk.red('Error trusting certificate ' + e));
             console.error(
               chalk.red(
                 'Try trusting it manually. It has been written to  ' +
-                  absoluteFilePath
+                  certFilePath
               )
             );
           }
 
           break;
         }
-        case 'windows':
+        case 'windows': {
+          const certFilePath = await writeCertNamed('optic.local.crt');
+
           console.log(
-            `Certificate written to ${absoluteFilePath}. 
+            `Certificate written to ${certFilePath}. Right-click and choose "Install" 
              Trust it: https://techcommunity.microsoft.com/t5/windows-server-essentials-and/installing-a-self-signed-certificate-as-a-trusted-root-ca-in/ba-p/396105
 
 Once added, you can run 'capture' with TLS targets ie https://api.github.com`
           );
           break;
-        case 'linux':
+        }
+        case 'linux': {
+          const certFilePath = await writeCertNamed('optic.local.cert');
+
           console.log(
-            `Certificate written to ${absoluteFilePath}. Depending on your distro, the commands to trust the certificate are different.
+            `Certificate written to ${certFilePath}. Depending on your distro, the commands to trust the certificate are different.
 
 Once added, you can run 'capture' with TLS targets ie https://api.github.com`
           );
           break;
+        }
       }
       process.exit(0);
     });
