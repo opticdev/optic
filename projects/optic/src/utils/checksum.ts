@@ -4,7 +4,7 @@ import { ParseResult } from './spec-loaders';
 import stableStringify from 'json-stable-stringify';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 
-export function computeChecksum(file: string): string {
+export function computeChecksumForAws(file: string): string {
   const hash = createHash('sha256');
 
   hash.update(file);
