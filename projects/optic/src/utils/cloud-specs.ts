@@ -122,7 +122,6 @@ export async function uploadSpecVerification(
     client: OpticBackendClient;
     verificationData: ApiCoverage;
     message?: string;
-    endpointHashes: { [path: string]: { [method: string]: string } };
   }
 ) {
   const stableResultsString = stableStringify(opts.verificationData);
@@ -141,7 +140,6 @@ export async function uploadSpecVerification(
     spec_id: specId,
     upload_id,
     message: opts.message,
-    endpoint_hashes: opts.endpointHashes,
   });
 
   return id;

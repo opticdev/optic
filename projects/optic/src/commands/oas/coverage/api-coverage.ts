@@ -9,6 +9,7 @@ import { statusRangePattern } from '../operations';
 import sortby from 'lodash.sortby';
 import { SpecPatch } from '../specs';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { computeEndpointChecksum } from '../../../utils/checksum';
 
 export class ApiCoverageCounter {
   coverage: ApiCoverage;
@@ -34,7 +35,14 @@ export class ApiCoverageCounter {
             responses[res] = { seen: false, diffs: false };
           });
 
+          const endpointChecksum = computeEndpointChecksum(
+            path,
+            method,
+            operation
+          );
+
           this.coverage.paths[path][method] = {
+            checksum: endpointChecksum,
             interactions: 0,
             responses,
             requestBody: operation.requestBody

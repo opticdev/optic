@@ -4,6 +4,7 @@ export type CoverageNode = {
 };
 
 export type OperationCoverage = CoverageNode & {
+  checksum: string;
   interactions: number;
   requestBody?: CoverageNode;
   responses: {

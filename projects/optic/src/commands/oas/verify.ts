@@ -247,33 +247,10 @@ export function verifyCommand(config: OpticCliConfig): Command {
           orgId,
         });
 
-        const endpointHashes = {};
-        for (const [path, pathObj] of Object.entries(
-          parseResult.jsonLike.paths
-        )) {
-          if (pathObj) {
-            for (const [method, methodObj] of Object.entries(pathObj)) {
-              if (
-                Object.values(OpenAPIV3.HttpMethods).includes(method as any)
-              ) {
-                const endpointChecksum = computeEndpointChecksum(
-                  path,
-                  method,
-                  methodObj as OpenAPIV3.OperationObject
-                );
-                const pathHashes = endpointHashes[path] ?? {};
-                pathHashes[method] = endpointChecksum;
-                endpointHashes[path] = pathHashes;
-              }
-            }
-          }
-        }
-
         await uploadSpecVerification(specId, {
           client: config.client,
           verificationData: coverage.coverage,
           message: options.message,
-          endpointHashes,
         });
       }
 

@@ -16,7 +16,7 @@ export function computeEndpointChecksum(
   path: string,
   method: string,
   endpointContent: OpenAPIV3.OperationObject
-): string | null {
+): string {
   const hash = createHash('sha256');
 
   const normalizedUrlPath = normalizeOpenApiPath(path);
