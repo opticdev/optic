@@ -1,24 +1,6 @@
 import { it, expect } from '@jest/globals';
 import { validateSchema } from './advanced-validation';
 
-it('a polymorphic schema cannot have type', () => {
-  expect(() =>
-    validateSchema({ oneOf: [], type: 'string' })
-  ).toThrowErrorMatchingInlineSnapshot(
-    `"schema with oneOf cannot also include keywords: type"`
-  );
-  expect(() =>
-    validateSchema({ anyOf: [], type: 'string' })
-  ).toThrowErrorMatchingInlineSnapshot(
-    `"schema with anyOf cannot also include keywords: type"`
-  );
-  expect(() =>
-    validateSchema({ allOf: [], type: 'string' })
-  ).toThrowErrorMatchingInlineSnapshot(
-    `"schema with anyOf cannot also include keywords: type"`
-  );
-});
-
 it('a polymorphic schema have overlapping keywords type', () => {
   expect(() =>
     validateSchema({ oneOf: [], anyOf: [], allOf: [] })

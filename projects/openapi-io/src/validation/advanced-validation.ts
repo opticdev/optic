@@ -34,31 +34,31 @@ export function validateSchema(schema: SchemaUnion) {
   if (schema.type === 'object') {
     checkForDisallowedKeywords(
       'schema with type "object" cannot also include keywords: ',
-      ['allOf', 'anyOf', 'oneOf', 'items'],
+      ['items'],
       schema
     );
   } else if (schema.type === 'array') {
     checkForDisallowedKeywords(
       'schema with type "array" cannot also include keywords: ',
-      ['allOf', 'anyOf', 'oneOf', 'properties', 'required'],
+      ['properties', 'required'],
       schema
     );
   } else if (schema.oneOf) {
     checkForDisallowedKeywords(
       'schema with oneOf cannot also include keywords: ',
-      ['allOf', 'anyOf', 'type', 'items', 'properties', 'required'],
+      ['allOf', 'anyOf'],
       schema
     );
   } else if (schema.anyOf) {
     checkForDisallowedKeywords(
       'schema with anyOf cannot also include keywords: ',
-      ['allOf', 'oneOf', 'type', 'items', 'properties', 'required'],
+      ['allOf', 'oneOf'],
       schema
     );
   } else if (schema.allOf) {
     checkForDisallowedKeywords(
       'schema with anyOf cannot also include keywords: ',
-      ['anyOf', 'oneOf', 'type', 'items', 'properties', 'required'],
+      ['anyOf', 'oneOf'],
       schema
     );
   }
