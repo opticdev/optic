@@ -170,6 +170,7 @@ function bundleMatchingRefsAsComponents(
     [key: string]: {
       component: any;
       componentPath: string;
+      originalPath: string;
       usages: string[];
     };
   } = {};
@@ -193,6 +194,7 @@ function bundleMatchingRefsAsComponents(
         decodedKey[decodedKey.length - 1];
 
       refs[refKey] = {
+        originalPath: key,
         componentPath: leaseComponentPath(nameOptions),
         component,
         usages: [key],
@@ -200,8 +202,37 @@ function bundleMatchingRefsAsComponents(
     }
   });
 
-  // create patches
-  Object.values(refs).forEach((ref) => {
+  const refArray = Object.values(refs);
+
+  refArray.forEach((ref) => {
+    const nestedRefs = refArray.filter((i) =>
+      i.usages.some((i) => i.startsWith(ref.originalPath))
+    );
+
+    const nestedRefUsageUpdates: Operation[] = [];
+    nestedRefs.forEach((nestedRef) => {
+      nestedRef.usages
+        .filter((i) => i.startsWith(ref.originalPath) && i !== ref.originalPath)
+        .map((i) => i.split(ref.originalPath)[1])
+        .forEach((i) => {
+          nestedRefUsageUpdates.push({
+            op: 'replace',
+            path: i,
+            value: { $ref: '#' + nestedRef.componentPath },
+          });
+        });
+
+      nestedRef.usages = nestedRef.usages.filter(
+        (i) => !(i.startsWith(ref.originalPath) && i !== ref.originalPath)
+      );
+    });
+    const copy = JSON.parse(JSON.stringify(ref.component));
+    jsonpatch.applyPatch(copy, nestedRefUsageUpdates, true);
+    ref.component = copy;
+  });
+
+  // to patches
+  refArray.forEach((ref) => {
     addComponentOperations.push({
       op: 'add',
       path: ref.componentPath,
@@ -221,13 +252,12 @@ function bundleMatchingRefsAsComponents(
   let specCopy = JSON.parse(JSON.stringify(spec));
   jsonpatch.applyPatch(specCopy, addComponentOperations, true);
 
-  console.log(JSON.stringify(specCopy.components, null, 2));
-  // const sortedUpdateOperations = sortby(
-  //   updateUsagesOperations,
-  //   (op) => jsonPointerHelpers.decode(op.path).length
-  // );
-  //
-  // specCopy = jsonpatch.applyPatch(specCopy, sortedUpdateOperations);
+  const sortedUpdateOperations = sortby(
+    updateUsagesOperations,
+    (op) => jsonPointerHelpers.decode(op.path).length
+  );
+
+  jsonpatch.applyPatch(specCopy, sortedUpdateOperations, true);
 
   return specCopy;
 }
