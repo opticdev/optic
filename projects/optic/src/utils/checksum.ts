@@ -28,5 +28,4 @@ export function computeEndpointChecksum(
   hash.update(stableStringify(normalizedContent));
 
   return hash.digest('hex');
-  return null;
 }
