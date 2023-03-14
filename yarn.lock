@@ -4051,6 +4051,7 @@ __metadata:
     prompts: ^2.4.2
     semver: ^7.3.7
     slice-ansi: ^4.0.0
+    slugify: ^1.6.5
     stream-chain: ^2.2.5
     stream-json: ^1.7.4
     strip-ansi: ^6.0.1
@@ -10637,6 +10638,13 @@ __metadata:
     ansi-styles: ^6.0.0
     is-fullwidth-code-point: ^4.0.0
   checksum: 7e600a2a55e333a21ef5214b987c8358fe28bfb03c2867ff2cbf919d62143d1812ac27b4297a077fdaf27a03da3678e49551c93e35f9498a3d90221908a1180e
+  languageName: node
+  linkType: hard
+
+"slugify@npm:^1.6.5":
+  version: 1.6.5
+  resolution: "slugify@npm:1.6.5"
+  checksum: a955a1b600201030f4c1daa9bb74a17d4402a0693fc40978bbd17e44e64fd72dad3bac4037422aa8aed55b5170edd57f3f4cd8f59ba331f5cf0f10f1a7795609
   languageName: node
   linkType: hard
 
