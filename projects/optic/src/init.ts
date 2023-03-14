@@ -89,7 +89,7 @@ Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
   oas.addCommand(await newCommand());
   oas.addCommand(await setupTlsCommand());
   oas.addCommand(await clearCommand());
-  oas.addCommand(await verifyCommand());
+  oas.addCommand(verifyCommand(cliConfig));
 
   registerLint(cli, cliConfig);
   registerDiffAll(cli, cliConfig);

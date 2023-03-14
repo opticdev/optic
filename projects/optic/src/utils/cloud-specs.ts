@@ -1,7 +1,11 @@
 import stableStringify from 'json-stable-stringify';
-import { CompareSpecResults, UserError } from '@useoptic/openapi-utilities';
+import {
+  CompareSpecResults,
+  UserError,
+  ApiCoverage,
+} from '@useoptic/openapi-utilities';
 import { OpticBackendClient } from '../client';
-import { computeChecksum } from './checksum';
+import { computeChecksumForAws } from './checksum';
 import { uploadFileToS3 } from './s3';
 import { ParseResult } from './spec-loaders';
 import { trackEvent } from '@useoptic/openapi-utilities/build/utilities/segment';
@@ -21,8 +25,8 @@ export async function uploadSpec(
 ): Promise<string> {
   const stableSpecString = stableStringify(opts.spec.jsonLike);
   const stableSourcemapString = stableStringify(opts.spec.sourcemap);
-  const spec_checksum = computeChecksum(stableSpecString);
-  const sourcemap_checksum = computeChecksum(stableSourcemapString);
+  const spec_checksum = computeChecksumForAws(stableSpecString);
+  const sourcemap_checksum = computeChecksumForAws(stableSourcemapString);
   let result: Awaited<ReturnType<typeof opts.client.prepareSpecUpload>>;
   const tags = opts.tags.filter((tag, ndx) => opts.tags.indexOf(tag) === ndx);
 
@@ -82,7 +86,7 @@ export async function uploadRun(
   }
 ) {
   const stableResultsString = stableStringify(opts.specResults);
-  const checksum = computeChecksum(stableResultsString);
+  const checksum = computeChecksumForAws(stableResultsString);
   const result = await opts.client.prepareRunUpload({
     api_id: apiId,
     checksum,
@@ -110,4 +114,33 @@ export async function uploadRun(
   });
 
   return run;
+}
+
+export async function uploadSpecVerification(
+  specId: string,
+  opts: {
+    client: OpticBackendClient;
+    verificationData: ApiCoverage;
+    message?: string;
+  }
+) {
+  const stableResultsString = stableStringify(opts.verificationData);
+  const checksum = computeChecksumForAws(stableResultsString);
+
+  const { upload_id, url } = await opts.client.prepareVerification(
+    specId,
+    checksum
+  );
+
+  await uploadFileToS3(url, Buffer.from(stableResultsString), {
+    'x-amz-checksum-sha256': checksum,
+  });
+
+  const { id } = await opts.client.createVerification({
+    spec_id: specId,
+    upload_id,
+    message: opts.message,
+  });
+
+  return id;
 }
