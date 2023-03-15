@@ -227,8 +227,10 @@ function bundleMatchingRefsAsComponents<T>(
   );
   const leaseComponentPath = (name: string): string => {
     let componentName = name;
+    let trailingNumber = 0;
     while (usedNames.has(componentName)) {
-      componentName = name + '_' + String(Math.floor(Math.random() * 100000));
+      componentName = name + '_' + trailingNumber;
+      trailingNumber++;
     }
 
     usedNames.add(componentName);
