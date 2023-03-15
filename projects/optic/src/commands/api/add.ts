@@ -261,6 +261,18 @@ export const getApiAddAction =
       );
       process.exitCode = 1;
       return;
+    } else if (config.vcs?.type === VCS.Git && config.vcs.status === 'dirty') {
+      logger.error(
+        chalk.red(
+          'Error: optic api add only tracks OpenAPI files that have been committed to git history.'
+        )
+      );
+
+      logger.error(
+        chalk.red('Commit your changes and then run optic api add again')
+      );
+      process.exitCode = 1;
+      return;
     }
 
     let file: {
