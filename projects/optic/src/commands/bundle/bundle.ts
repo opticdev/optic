@@ -261,7 +261,7 @@ function bundleMatchingRefsAsComponents<T>(
       const decodedKey = jsonPointerHelpers.decode(key);
       const nameOptions =
         naming(component as T) ||
-        slugify(decodedKey.join(' '), { replacement: '_', lower: true }) ||
+        slugify(decodedKey.join('_'), { replacement: '_', lower: true }) ||
         decodedKey[decodedKey.length - 1];
 
       // already in the root components file for example.
