@@ -64,24 +64,26 @@ const bundleAction =
     if (filePath) {
       parsedFile = await getSpec(filePath, config);
 
-      bundle(parsedFile.jsonLike, parsedFile.sourcemap);
+      const updatedSpec = bundle(parsedFile.jsonLike, parsedFile.sourcemap);
 
-      // if (o) {
-      //   // write to file
-      //   const outputPath = path.resolve(o);
-      //   await fs.writeFile(
-      //     outputPath,
-      //     isYaml(o) ? writeYaml(specJson) : JSON.stringify(specJson, null, 2)
-      //   );
-      //   console.log('wrote bundled spec to ' + path.resolve(o));
-      // } else {
-      //   // assume pipe >
-      //   if (isYaml(filePath)) {
-      //     console.log(writeYaml(specJson));
-      //   } else {
-      //     console.log(JSON.stringify(specJson, null, 2));
-      //   }
-      // }
+      if (o) {
+        // write to file
+        const outputPath = path.resolve(o);
+        await fs.writeFile(
+          outputPath,
+          isYaml(o)
+            ? writeYaml(updatedSpec)
+            : JSON.stringify(updatedSpec, null, 2)
+        );
+        console.log('wrote bundled spec to ' + path.resolve(o));
+      } else {
+        // assume pipe >
+        if (isYaml(filePath)) {
+          console.log(writeYaml(updatedSpec));
+        } else {
+          console.log(JSON.stringify(updatedSpec, null, 2));
+        }
+      }
     } else {
       console.error('No specification found');
       process.exitCode = 1;
@@ -110,34 +112,101 @@ const matches = {
     '**/**',
     'schema',
   ],
-  inOperationParameterSchema: [
+  inOperationParameter: ['paths', '**', methods, 'parameters', '**'],
+  inPathParameter: ['paths', '**', 'parameters', '**'],
+  inRequestExamples: [
     'paths',
     '**',
     methods,
-    'parameters',
+    'requestBody',
+    'content',
+    '**/**',
+    'examples',
     '**',
-    'schema',
   ],
-  inOperationParameter: ['paths', '**', methods, 'parameters', '**'],
-  inPathParametersSchema: ['paths', '**', 'parameters', '**', 'schema'],
-  inPathParameter: ['paths', '**', 'parameters', '**'],
+  inResponseExamples: [
+    'paths',
+    '**',
+    methods,
+    'responses',
+    '**',
+    'content',
+    '**/**',
+    'examples',
+    '**',
+  ],
+  inRequestExample: [
+    'paths',
+    '**',
+    methods,
+    'requestBody',
+    'content',
+    '**/**',
+    'example',
+  ],
+  inResponseExample: [
+    'paths',
+    '**',
+    methods,
+    'responses',
+    '**',
+    'content',
+    '**/**',
+    'example',
+  ],
 };
 function bundle(spec: OpenAPIV3.Document, sourcemap: JsonSchemaSourcemap) {
+  if (!spec.components) spec.components = {};
+  if (!spec.components.schemas) spec.components.schemas = {};
+  if (!spec.components.parameters) spec.components.parameters = {};
+  if (!spec.components.examples) spec.components.examples = {};
   // ensure component paths you're using first
-  bundleMatchingRefsAsComponents(
-    spec,
+
+  let updatedSpec = spec;
+
+  updatedSpec = bundleMatchingRefsAsComponents<OpenAPIV3.SchemaObject>(
+    updatedSpec,
     sourcemap,
     [matches.inRequestSchema, matches.inResponseSchema],
-    jsonPointerHelpers.compile(['components', 'schemas'])
+    jsonPointerHelpers.compile(['components', 'schemas']),
+    (schema) => schema.title
   );
+
+  updatedSpec = bundleMatchingRefsAsComponents(
+    updatedSpec,
+    sourcemap,
+    [matches.inPathParameter, matches.inOperationParameter],
+    jsonPointerHelpers.compile(['components', 'parameters']),
+    (parameter) => `${parameter.name}_${parameter.in}`
+  );
+
+  updatedSpec = bundleMatchingRefsAsComponents(
+    updatedSpec,
+    sourcemap,
+    [
+      matches.inRequestExample,
+      matches.inRequestExamples,
+      matches.inResponseExample,
+      matches.inResponseExamples,
+    ],
+    jsonPointerHelpers.compile(['components', 'examples']),
+    (example) => ''
+  );
+
+  return updatedSpec;
 }
 
-function bundleMatchingRefsAsComponents(
+function bundleMatchingRefsAsComponents<T>(
   spec: OpenAPIV3.Document,
   sourcemap: JsonSchemaSourcemap,
   matchers: string[][],
-  targetPath: string
+  targetPath: string,
+  naming: (T) => string
 ) {
+  const rootFileIndex = sourcemap.files.find(
+    (i) => i.path === sourcemap.rootFilePath
+  )!.index;
+
   const matchingKeys = Object.keys(sourcemap.refMappings).filter(
     (flatSpecPath) => {
       return matchers.some((matcher) => {
@@ -171,6 +240,7 @@ function bundleMatchingRefsAsComponents(
       component: any;
       componentPath: string;
       originalPath: string;
+      skipAddingToComponents: boolean;
       usages: string[];
     };
   } = {};
@@ -186,16 +256,26 @@ function bundleMatchingRefsAsComponents(
       foundRef.usages.push(key);
     } else {
       /// we need a special case for Refs that are already is this SLOT...
+
       const component = jsonPointerHelpers.get(spec, key);
       const decodedKey = jsonPointerHelpers.decode(key);
       const nameOptions =
-        component.title ||
+        naming(component as T) ||
         slugify(decodedKey.join(' '), { replacement: '_', lower: true }) ||
         decodedKey[decodedKey.length - 1];
 
+      // already in the root components file for example.
+
+      const isAlreadyInPlace = refKey.startsWith(
+        `${rootFileIndex}-${targetPath}`
+      );
+
       refs[refKey] = {
+        skipAddingToComponents: isAlreadyInPlace,
         originalPath: key,
-        componentPath: leaseComponentPath(nameOptions),
+        componentPath: isAlreadyInPlace
+          ? targetPath
+          : leaseComponentPath(nameOptions),
         component,
         usages: [key],
       };
@@ -233,11 +313,13 @@ function bundleMatchingRefsAsComponents(
 
   // to patches
   refArray.forEach((ref) => {
-    addComponentOperations.push({
-      op: 'add',
-      path: ref.componentPath,
-      value: ref.component,
-    });
+    if (!ref.skipAddingToComponents)
+      addComponentOperations.push({
+        op: 'add',
+        path: ref.componentPath,
+        value: ref.component,
+      });
+
     ref.usages.forEach((usage) => {
       updateUsagesOperations.push({
         op: 'replace',
