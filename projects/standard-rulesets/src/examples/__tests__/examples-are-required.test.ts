@@ -39,6 +39,16 @@ describe('examples are required ruleset', () => {
                 name: 'notSet',
                 schema: { type: 'string' },
               },
+              {
+                in: 'query',
+                name: 'otherOne',
+                schema: { type: 'string' },
+                examples: {
+                  XYZ: {
+                    value: '123',
+                  },
+                },
+              },
             ],
             responses: {},
           },
@@ -50,7 +60,7 @@ describe('examples are required ruleset', () => {
       input,
       input
     );
-    expect(results.length > 0).toBe(true);
+    expect(results.filter((i) => !i.passed).length).toBe(1);
 
     expect(results).toMatchSnapshot();
     expect(results.some((result) => !result.passed)).toBe(true);
