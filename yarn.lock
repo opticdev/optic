@@ -3198,11 +3198,11 @@ __metadata:
   linkType: hard
 
 "@types/bent@npm:^7":
-  version: 7.3.2
-  resolution: "@types/bent@npm:7.3.2"
+  version: 7.3.3
+  resolution: "@types/bent@npm:7.3.3"
   dependencies:
     "@types/node": "*"
-  checksum: af28b4e77fce3de928ac4b90568971b73970351d3167bf89418c363ab207164516745b477ed803c90b2aaf81d46487e298e4fa8febd45b2d109e80872670c75f
+  checksum: b329eb5c417ed9af42cdacd108c7d0a87e0b6386d4ddcf2de33eda6b4b891f9e8b54e05433564768d601450c4773c6e731749984ce71ec6d7f33419c434cfee1
   languageName: node
   linkType: hard
 
