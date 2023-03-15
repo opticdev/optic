@@ -195,6 +195,14 @@ async function crawlCandidateSpecs(
         await config.client.tagSpec(specId, tag);
       }
     }
+  } else {
+    // Outside of a git repo, we should just upload it as a spec without tags
+    await uploadSpec(api.id, {
+      spec: parseResult,
+      tags: [],
+      client: config.client,
+      orgId,
+    });
   }
 
   // Write to file only if optic-url is not set or is invalid
