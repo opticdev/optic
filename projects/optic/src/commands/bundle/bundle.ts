@@ -156,14 +156,15 @@ const matches = {
   ],
 };
 function bundle(spec: OpenAPIV3.Document, sourcemap: JsonSchemaSourcemap) {
+  // create empty component objects if they do not exist
   if (!spec.components) spec.components = {};
   if (!spec.components.schemas) spec.components.schemas = {};
   if (!spec.components.parameters) spec.components.parameters = {};
   if (!spec.components.examples) spec.components.examples = {};
-  // ensure component paths you're using first
 
   let updatedSpec = spec;
 
+  // handle schemas
   updatedSpec = bundleMatchingRefsAsComponents<OpenAPIV3.SchemaObject>(
     updatedSpec,
     sourcemap,
@@ -172,6 +173,7 @@ function bundle(spec: OpenAPIV3.Document, sourcemap: JsonSchemaSourcemap) {
     (schema) => schema.title
   );
 
+  // handle parameters
   updatedSpec = bundleMatchingRefsAsComponents(
     updatedSpec,
     sourcemap,
@@ -180,6 +182,7 @@ function bundle(spec: OpenAPIV3.Document, sourcemap: JsonSchemaSourcemap) {
     (parameter) => `${parameter.name}_${parameter.in}`
   );
 
+  // handle examples
   updatedSpec = bundleMatchingRefsAsComponents(
     updatedSpec,
     sourcemap,
@@ -207,6 +210,7 @@ function bundleMatchingRefsAsComponents<T>(
     (i) => i.path === sourcemap.rootFilePath
   )!.index;
 
+  // find all $ref usages that match the target pattern ie. in a schema?
   const matchingKeys = Object.keys(sourcemap.refMappings).filter(
     (flatSpecPath) => {
       return matchers.some((matcher) => {
@@ -218,13 +222,15 @@ function bundleMatchingRefsAsComponents<T>(
     }
   );
 
+  // build a set of used names -- we don't want conflicts since the namespace is the components.{} object
   const existingComponents = jsonPointerHelpers.tryGet(spec, targetPath);
-
   const usedNames = new Set<string>(
     existingComponents.match
       ? (Object.keys(existingComponents.value) as string[])
       : []
   );
+
+  // when new components are made, ensure the name is unique. If it's not unique try incrementing `_#` until it is.
   const leaseComponentPath = (name: string): string => {
     let componentName = name;
     let trailingNumber = 0;
@@ -253,12 +259,12 @@ function bundleMatchingRefsAsComponents<T>(
   matchingKeys.forEach((key) => {
     const mapping = sourcemap.refMappings[key];
     const refKey = `${mapping[0].toString()}-${mapping[1]}`;
+    // if the $ref has already been named, add a usage
     if (refs.hasOwnProperty(refKey)) {
       const foundRef = refs[refKey];
       foundRef.usages.push(key);
     } else {
-      /// we need a special case for Refs that are already is this SLOT...
-
+      // if the $ref has never been seen before, add it and compute a free name
       const component = jsonPointerHelpers.get(spec, key);
       const decodedKey = jsonPointerHelpers.decode(key);
       const nameOptions =
@@ -266,8 +272,7 @@ function bundleMatchingRefsAsComponents<T>(
         slugify(decodedKey.join('_'), { replacement: '_', lower: true }) ||
         decodedKey[decodedKey.length - 1];
 
-      // already in the root components file for example.
-
+      // this checks if the component is already in the root file of the spec
       const isAlreadyInPlace = refKey.startsWith(
         `${rootFileIndex}-${targetPath}`
       );
@@ -285,7 +290,7 @@ function bundleMatchingRefsAsComponents<T>(
   });
 
   const refArray = Object.values(refs);
-
+  // second pass: Nested schemas. Patch the new components we've created that rely on other newly created components.
   refArray.forEach((ref) => {
     const nestedRefs = refArray.filter((i) =>
       i.usages.some((i) => i.startsWith(ref.originalPath))
@@ -313,7 +318,7 @@ function bundleMatchingRefsAsComponents<T>(
     ref.component = copy;
   });
 
-  // to patches
+  // now generate the actual spec patches
   refArray.forEach((ref) => {
     if (!ref.skipAddingToComponents)
       addComponentOperations.push({
@@ -333,9 +338,11 @@ function bundleMatchingRefsAsComponents<T>(
     });
   });
 
+  // add components first
   let specCopy = JSON.parse(JSON.stringify(spec));
   jsonpatch.applyPatch(specCopy, addComponentOperations, true);
 
+  // then add $refs in reverse depth order (to prevent conflicts).
   const sortedUpdateOperations = sortby(
     updateUsagesOperations,
     (op) => jsonPointerHelpers.decode(op.path).length
