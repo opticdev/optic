@@ -4,7 +4,7 @@ exports[`optic spec push can push a spec to a repo 1`] = `
 "Automatically adding the git sha 'git:COMMIT-HASH' and branch 'gitbranch:master' as tags
 
 Uploading spec for api at https://app.useoptic.com/organizations/org-id/apis/api-id with tags env:production, the-favorite-api, git:COMMIT-HASH, gitbranch:master
-Succesfully uploaded spec to Optic. View the spec here http://localhost:3001/organizations/org-id/apis/api-id/specs/spec-id
+Succesfully uploaded spec to Optic. View the spec here http://localhost:3001/organizations/org-id/apis/api-id?specId=spec-id
 "
 `;
 
@@ -12,7 +12,7 @@ exports[`optic spec push does not automatically add git tags when not clean stat
 "Not automatically including any git tags because the current working directory has uncommited changes.
 
 Uploading spec for api at https://app.useoptic.com/organizations/org-id/apis/api-id 
-Succesfully uploaded spec to Optic. View the spec here http://localhost:3001/organizations/org-id/apis/api-id/specs/spec-id
+Succesfully uploaded spec to Optic. View the spec here http://localhost:3001/organizations/org-id/apis/api-id?specId=spec-id
 "
 `;
 
