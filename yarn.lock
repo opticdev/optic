@@ -3262,15 +3262,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/engine.io@npm:*":
-  version: 3.1.7
-  resolution: "@types/engine.io@npm:3.1.7"
-  dependencies:
-    "@types/node": "*"
-  checksum: 62b129eac3fca625cfae4591d4fab56872c44c1f7bb625af2f9e6c1bb28f8210276026e1007dc2da433ee5943972534078402515168135cc155a18c41dfec6a2
-  languageName: node
-  linkType: hard
-
 "@types/fast-json-patch@npm:^1.1.5":
   version: 1.1.5
   resolution: "@types/fast-json-patch@npm:1.1.5"
@@ -3469,25 +3460,15 @@ __metadata:
   linkType: hard
 
 "@types/micro-cors@npm:^0":
-  version: 0.1.2
-  resolution: "@types/micro-cors@npm:0.1.2"
+  version: 0.1.3
+  resolution: "@types/micro-cors@npm:0.1.3"
   dependencies:
-    "@types/micro": "*"
-  checksum: c6afa8fcd30880413d344dcf4bbb5da8b5ac7cbcabe92597d31f9f9c14f0985b1c19a807785f727ad91cd8da36620bddbb8237f3d69de2d10c67537aea66a84e
+    "@types/micro": ^7.3.7
+  checksum: 65ec964163a294e86be2624d8de6d0efe96729bc629e5e51673bee7c2be287ffeb78786b6b5db17cdd14acbfe37dd193375df9426a26919e96ebf998ae707e8d
   languageName: node
   linkType: hard
 
-"@types/micro@npm:*":
-  version: 7.3.6
-  resolution: "@types/micro@npm:7.3.6"
-  dependencies:
-    "@types/node": "*"
-    "@types/socket.io": 2.1.13
-  checksum: 8389a8827311ab48bc47da8d70b9bd599b062cd933bac2486be4e30e82fdfaf8bd4420720a2d98d3351c7220e0de1db8221347e9076b94027f02ce14251ec1cc
-  languageName: node
-  linkType: hard
-
-"@types/micro@npm:^7.3.6":
+"@types/micro@npm:^7.3.6, @types/micro@npm:^7.3.7":
   version: 7.3.7
   resolution: "@types/micro@npm:7.3.7"
   dependencies:
@@ -3587,26 +3568,6 @@ __metadata:
   version: 4.0.0
   resolution: "@types/slice-ansi@npm:4.0.0"
   checksum: 343086bc4e686349382b386a6fb49d632fb4dd08ecc08f1b9872815199efe8db7648731e56c1d10dc0f596fe77a8fce6136e0067136f8e0cefda6b29797aa4f1
-  languageName: node
-  linkType: hard
-
-"@types/socket.io-parser@npm:*":
-  version: 2.2.1
-  resolution: "@types/socket.io-parser@npm:2.2.1"
-  dependencies:
-    "@types/node": "*"
-  checksum: 4ebe4881725c673fbb8fdbba0f88c7a87fde76e0a590a9de3171adfa999a7f94f9ecca3daafb53414a7d11d5c3fff8592c241562989e28113d7ecd746c799d08
-  languageName: node
-  linkType: hard
-
-"@types/socket.io@npm:2.1.13":
-  version: 2.1.13
-  resolution: "@types/socket.io@npm:2.1.13"
-  dependencies:
-    "@types/engine.io": "*"
-    "@types/node": "*"
-    "@types/socket.io-parser": "*"
-  checksum: 7c4748d30632dd54a7fc36ee1d51edb31014e78a13f2e4cb6a4a37bf5c6415472b2f827b36238d495a47ea677eb95261b1fdee68bfee6d9e4a3bd26077d88ace
   languageName: node
   linkType: hard
 
