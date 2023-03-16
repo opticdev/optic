@@ -144,6 +144,16 @@ async function crawlCandidateSpecs(
   }
 
   if (config.vcs?.type === VCS.Git) {
+    // If the git workspace is dirty, we should upload the spec with changes
+    // such that first use of optic you will have a spec (even without tags)
+    if (config.vcs.status === 'dirty') {
+      await uploadSpec(api.id, {
+        spec: parseResult,
+        tags: [],
+        client: config.client,
+        orgId,
+      });
+    }
     const specsToTag: [string, string][] = [];
     for await (const sha of shas) {
       let parseResult: ParseResult;
@@ -258,18 +268,6 @@ export const getApiAddAction =
         chalk.red(
           'You must be logged in to add APIs to Optic Cloud. Please run "optic login"'
         )
-      );
-      process.exitCode = 1;
-      return;
-    } else if (config.vcs?.type === VCS.Git && config.vcs.status === 'dirty') {
-      logger.error(
-        chalk.red(
-          'Error: optic api add only tracks OpenAPI files that have been committed to git history.'
-        )
-      );
-
-      logger.error(
-        chalk.red('Commit your changes and then run optic api add again')
       );
       process.exitCode = 1;
       return;
