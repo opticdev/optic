@@ -3477,13 +3477,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/micro@npm:*, @types/micro@npm:^7.3.6":
+"@types/micro@npm:*":
   version: 7.3.6
   resolution: "@types/micro@npm:7.3.6"
   dependencies:
     "@types/node": "*"
     "@types/socket.io": 2.1.13
   checksum: 8389a8827311ab48bc47da8d70b9bd599b062cd933bac2486be4e30e82fdfaf8bd4420720a2d98d3351c7220e0de1db8221347e9076b94027f02ce14251ec1cc
+  languageName: node
+  linkType: hard
+
+"@types/micro@npm:^7.3.6":
+  version: 7.3.7
+  resolution: "@types/micro@npm:7.3.7"
+  dependencies:
+    "@types/node": "*"
+  checksum: 37766f7637d4499362932499d72dda499b6afcdc2a1e2864fd7e65de4591767ef318a48b32626b472a1c16249d8666697816ae309ebd07a097d981bb8ee9502f
   languageName: node
   linkType: hard
 
