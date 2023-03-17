@@ -12,6 +12,7 @@ import {
   requireResponseExamples,
 } from './requireExample';
 import {
+  defaultAjv,
   requirePropertyExamplesMatchSchema,
   requireValidParameterExamples,
   requireValidRequestExamples,
@@ -91,12 +92,17 @@ export class ExamplesRuleset extends Ruleset {
     return new ExamplesRuleset(validatedConfig);
   }
 
-  constructor(config: ExampleConstructor) {
+  constructor(config: ExampleConstructor, configureAjv?: (ajv: Ajv) => void) {
+    const customAjv = defaultAjv();
+    if (configureAjv) {
+      configureAjv(customAjv);
+    }
+
     const rules: Rule[] = [
-      requireValidResponseExamples,
-      requirePropertyExamplesMatchSchema,
-      requireValidParameterExamples,
-      requireValidRequestExamples,
+      requireValidResponseExamples(customAjv),
+      requirePropertyExamplesMatchSchema(customAjv),
+      requireValidParameterExamples(customAjv),
+      requireValidRequestExamples(customAjv),
     ];
 
     if (config.require_response_examples)
@@ -117,3 +123,7 @@ export class ExamplesRuleset extends Ruleset {
     });
   }
 }
+
+new ExamplesRuleset({}, (ajv) => {
+  ajv.addFormat();
+});
