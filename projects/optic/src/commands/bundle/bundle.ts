@@ -2,8 +2,9 @@ import { Command } from 'commander';
 import { ParseResult, getFileFromFsOrGit } from '../../utils/spec-loaders';
 import { OpticCliConfig } from '../../config';
 import {
-  FlatOpenAPIV3,
+  ILookupFileResult,
   OpenAPIV3,
+  sourcemapReader,
   UserError,
 } from '@useoptic/openapi-utilities';
 import { isYaml, JsonSchemaSourcemap, writeYaml } from '@useoptic/openapi-io';
@@ -169,8 +170,19 @@ function bundle(spec: OpenAPIV3.Document, sourcemap: JsonSchemaSourcemap) {
     updatedSpec,
     sourcemap,
     [matches.inRequestSchema, matches.inResponseSchema],
+    'children',
     jsonPointerHelpers.compile(['components', 'schemas']),
-    (schema) => schema.title
+    (schema, lookup) => {
+      if (schema.title) return toComponentName(schema.title);
+      const inOtherFile = lookup.filePath !== sourcemap.rootFilePath;
+      const components = jsonPointerHelpers.decode(lookup.startsAt);
+      if (inOtherFile && components.length <= 1) {
+        return toComponentName(path.parse(lookup.filePath).name);
+      } else {
+        const last = components[components.length - 1];
+        return toComponentName(last || 'Example');
+      }
+    }
   );
 
   // handle parameters
@@ -178,8 +190,15 @@ function bundle(spec: OpenAPIV3.Document, sourcemap: JsonSchemaSourcemap) {
     updatedSpec,
     sourcemap,
     [matches.inPathParameter, matches.inOperationParameter],
+    'parent',
     jsonPointerHelpers.compile(['components', 'parameters']),
-    (parameter) => `${parameter.name}_${parameter.in}`
+    (parameter, pointer) => {
+      return (
+        toComponentName(
+          `${capitalize(parameter.name)}${capitalize(parameter.in)}`
+        ) || 'Parameter'
+      );
+    }
   );
 
   // handle examples
@@ -192,8 +211,18 @@ function bundle(spec: OpenAPIV3.Document, sourcemap: JsonSchemaSourcemap) {
       matches.inResponseExample,
       matches.inResponseExamples,
     ],
+    'parent',
     jsonPointerHelpers.compile(['components', 'examples']),
-    (example) => ''
+    (example, lookup) => {
+      const inOtherFile = lookup.filePath !== sourcemap.rootFilePath;
+      const components = jsonPointerHelpers.decode(lookup.startsAt);
+      if (inOtherFile && components.length <= 1) {
+        return toComponentName(path.parse(lookup.filePath).name);
+      } else {
+        const last = components[components.length - 1];
+        return toComponentName(last || 'Example');
+      }
+    }
   );
 
   return updatedSpec;
@@ -203,9 +232,11 @@ function bundleMatchingRefsAsComponents<T>(
   spec: OpenAPIV3.Document,
   sourcemap: JsonSchemaSourcemap,
   matchers: string[][],
+  match: 'parent' | 'children',
   targetPath: string,
-  naming: (T) => string
+  naming: (T, lookup: ILookupFileResult) => string
 ) {
+  const reader = sourcemapReader(sourcemap);
   const rootFileIndex = sourcemap.files.find(
     (i) => i.path === sourcemap.rootFilePath
   )!.index;
@@ -214,10 +245,14 @@ function bundleMatchingRefsAsComponents<T>(
   const matchingKeys = Object.keys(sourcemap.refMappings).filter(
     (flatSpecPath) => {
       return matchers.some((matcher) => {
-        return (
-          jsonPointerHelpers.startsWith(flatSpecPath, matcher) ||
-          jsonPointerHelpers.matches(flatSpecPath, matcher)
-        );
+        if (match === 'parent') {
+          return jsonPointerHelpers.matches(flatSpecPath, matcher);
+        } else {
+          return (
+            jsonPointerHelpers.startsWith(flatSpecPath, matcher) ||
+            jsonPointerHelpers.matches(flatSpecPath, matcher)
+          );
+        }
       });
     }
   );
@@ -266,11 +301,7 @@ function bundleMatchingRefsAsComponents<T>(
     } else {
       // if the $ref has never been seen before, add it and compute a free name
       const component = jsonPointerHelpers.get(spec, key);
-      const decodedKey = jsonPointerHelpers.decode(key);
-      const nameOptions =
-        naming(component as T) ||
-        slugify(decodedKey.join('_'), { replacement: '_', lower: true }) ||
-        decodedKey[decodedKey.length - 1];
+      const nameOptions = naming(component as T, reader.findFilePosition(key));
 
       // this checks if the component is already in the root file of the spec
       const isAlreadyInPlace = refKey.startsWith(
@@ -351,4 +382,12 @@ function bundleMatchingRefsAsComponents<T>(
   jsonpatch.applyPatch(specCopy, sortedUpdateOperations, true);
 
   return specCopy;
+}
+
+function toComponentName(input: string) {
+  return input.replaceAll(/-/g, '_').replaceAll(/[^a-zA-Z0-9_]+/g, '');
+}
+
+function capitalize(s: string) {
+  return s[0].toUpperCase() + s.slice(1);
 }
