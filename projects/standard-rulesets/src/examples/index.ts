@@ -57,6 +57,7 @@ const configSchema = {
 type ExampleConstructor = YamlConfig & {
   matches?: (context: RuleContext) => boolean;
   docsLink?: string;
+  configureAjv?: (ajv: Ajv) => void;
 };
 
 const validateConfigSchema = ajv.compile(configSchema);
@@ -92,10 +93,10 @@ export class ExamplesRuleset extends Ruleset {
     return new ExamplesRuleset(validatedConfig);
   }
 
-  constructor(config: ExampleConstructor, configureAjv?: (ajv: Ajv) => void) {
+  constructor(config: ExampleConstructor) {
     const customAjv = defaultAjv();
-    if (configureAjv) {
-      configureAjv(customAjv);
+    if (config.configureAjv) {
+      config.configureAjv(customAjv);
     }
 
     const rules: Rule[] = [
