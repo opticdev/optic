@@ -13,7 +13,6 @@ import path from 'path';
 
 import { errorHandler } from '../../error-handler';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import slugify from 'slugify';
 import { Operation } from 'fast-json-patch';
 import * as jsonpatch from 'fast-json-patch';
 import sortby from 'lodash.sortby';
@@ -173,12 +172,12 @@ function bundle(spec: OpenAPIV3.Document, sourcemap: JsonSchemaSourcemap) {
     'children',
     jsonPointerHelpers.compile(['components', 'schemas']),
     (schema, lookup) => {
-      if (schema.title) return toComponentName(schema.title);
       const inOtherFile = lookup.filePath !== sourcemap.rootFilePath;
       const components = jsonPointerHelpers.decode(lookup.startsAt);
       if (inOtherFile && components.length <= 1) {
         return toComponentName(path.parse(lookup.filePath).name);
       } else {
+        if (schema.title) return toComponentName(schema.title);
         const last = components[components.length - 1];
         return toComponentName(last || 'Example');
       }
