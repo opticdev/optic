@@ -65,13 +65,13 @@ export function typeofDiff(
 export function diff(
   before: any,
   after: any,
-  initialPath: string = ''
+  identityPrefix: string = ''
 ): ObjectDiff[] {
   const diffResults: ObjectDiff[] = [];
   const stack: StackItem[] = [
     [
-      { value: before, path: initialPath },
-      { value: after, path: initialPath },
+      { value: before, path: '' },
+      { value: after, path: '' },
     ],
   ];
   while (stack.length > 0) {
@@ -83,6 +83,15 @@ export function diff(
       afterPath: string;
     }[] = [];
 
+    const beforePathIdentity = jsonPointerHelpers.join(
+      identityPrefix,
+      before.path
+    );
+    const afterPathIdentity = jsonPointerHelpers.join(
+      identityPrefix,
+      after.path
+    );
+
     // TODO in the future, skip adding comparisons based on diff preprocessing step
 
     // Start by matching up values to compare - match up the before and after values by id
@@ -92,7 +101,8 @@ export function diff(
       const allValues = [...before.value, ...after.value];
 
       const arrayIdFn: (v: any, i: number) => string =
-        isPathParameterArray(before.path) && isPathParameterArray(after.path)
+        isPathParameterArray(beforePathIdentity) &&
+        isPathParameterArray(afterPathIdentity)
           ? getParameterIdentity
           : allValues.every((v) => typeof v !== 'object')
           ? (v: any) => String(v)
