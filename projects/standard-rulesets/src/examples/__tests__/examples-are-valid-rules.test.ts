@@ -2,8 +2,9 @@ import { test, expect, describe } from '@jest/globals';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { TestHelpers } from '@useoptic/rulesets-base';
 import { ExamplesRuleset } from '../index';
-import { validateSchema } from '../requireValidExamples';
+import { defaultAjv, validateSchema } from '../requireValidExamples';
 
+const ajvInstance = defaultAjv();
 describe('fromOpticConfig', () => {
   test('invalid configuration', async () => {
     const out = await ExamplesRuleset.fromOpticConfig({
@@ -278,7 +279,8 @@ describe('examples should default to additional properties false', () => {
           b: { type: 'string' },
         },
       },
-      { a: 'abc', b: 'def', c: 'xyz' }
+      { a: 'abc', b: 'def', c: 'xyz' },
+      ajvInstance
     );
     expect(result.pass).toBe(false);
     expect(result).toMatchSnapshot();
@@ -302,7 +304,8 @@ describe('examples should default to additional properties false', () => {
           },
         ],
       },
-      { a: 'abc', b: 'def', c: 'A' }
+      { a: 'abc', b: 'def', c: 'A' },
+      ajvInstance
     );
     expect(result.pass).toBe(false);
     expect(result).toMatchSnapshot();
@@ -326,7 +329,8 @@ describe('examples should default to additional properties false', () => {
           },
         ],
       },
-      { a: 'abc', b: { l: '' }, c: 'A' }
+      { a: 'abc', b: { l: '' }, c: 'A' },
+      ajvInstance
     );
     expect(result.pass).toBe(false);
     expect(result).toMatchSnapshot();
@@ -342,7 +346,8 @@ describe('examples should default to additional properties false', () => {
           b: { type: 'string' },
         },
       },
-      { a: 'abc', b: 'def', c: 'xyz' }
+      { a: 'abc', b: 'def', c: 'xyz' },
+      ajvInstance
     );
     expect(result.pass).toBe(true);
     expect(result).toMatchSnapshot();

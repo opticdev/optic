@@ -12,6 +12,7 @@ import {
   requireResponseExamples,
 } from './requireExample';
 import {
+  defaultAjv,
   requirePropertyExamplesMatchSchema,
   requireValidParameterExamples,
   requireValidRequestExamples,
@@ -56,6 +57,7 @@ const configSchema = {
 type ExampleConstructor = YamlConfig & {
   matches?: (context: RuleContext) => boolean;
   docsLink?: string;
+  configureAjv?: (ajv: Ajv) => void;
 };
 
 const validateConfigSchema = ajv.compile(configSchema);
@@ -92,11 +94,16 @@ export class ExamplesRuleset extends Ruleset {
   }
 
   constructor(config: ExampleConstructor) {
+    const customAjv = defaultAjv();
+    if (config.configureAjv) {
+      config.configureAjv(customAjv);
+    }
+
     const rules: Rule[] = [
-      requireValidResponseExamples,
-      requirePropertyExamplesMatchSchema,
-      requireValidParameterExamples,
-      requireValidRequestExamples,
+      requireValidResponseExamples(customAjv),
+      requirePropertyExamplesMatchSchema(customAjv),
+      requireValidParameterExamples(customAjv),
+      requireValidRequestExamples(customAjv),
     ];
 
     if (config.require_response_examples)
