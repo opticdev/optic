@@ -123,7 +123,3 @@ export class ExamplesRuleset extends Ruleset {
     });
   }
 }
-
-new ExamplesRuleset({}, (ajv) => {
-  ajv.addFormat();
-});
