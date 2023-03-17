@@ -266,6 +266,15 @@ describe('examples ruleset', () => {
     expect(results).toMatchSnapshot();
     expect(results.some((result) => !result.passed)).toBe(true);
   });
+
+  test('iso-4217 format validates', () => {
+    expect(
+      validateSchema({ type: 'string', format: 'iso-4217' }, 'USA').pass
+    ).toBe(false);
+    expect(
+      validateSchema({ type: 'string', format: 'iso-4217' }, 'USD').pass
+    ).toBe(true);
+  });
 });
 
 describe('examples should default to additional properties false', () => {

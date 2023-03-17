@@ -8,10 +8,15 @@ import {
 import { OpenAPIV3 } from 'openapi-types';
 import Ajv, { SchemaObject } from 'ajv/dist/2019';
 import addFormats from 'ajv-formats';
+import { iso4217 } from './constants';
 
 const ajv = (() => {
   const validator = new Ajv({ strict: false, unevaluated: true });
   addFormats(validator);
+
+  validator.addFormat('iso-4217', (value) => {
+    return iso4217.has(value);
+  });
   // override pattern keyword when invalid regex
   validator.removeKeyword('pattern');
   validator.addKeyword({
