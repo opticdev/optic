@@ -163,7 +163,7 @@ export function verifyCommand(config: OpticCliConfig): Command {
       /// Run to verify with the latest specification
       const parseResult = await getFileFromFsOrGit(absoluteSpecPath, config, {
         strict: false,
-        denormalize: false,
+        denormalize: true,
       });
 
       const { jsonLike: spec, sourcemap } = parseResult;
