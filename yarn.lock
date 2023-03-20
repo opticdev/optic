@@ -3519,9 +3519,9 @@ __metadata:
   linkType: hard
 
 "@types/semver@npm:^7.3.10":
-  version: 7.3.10
-  resolution: "@types/semver@npm:7.3.10"
-  checksum: 7047c2822b1759b2b950f39cfcf261f2b9dca47b4b55bdebba0905a8553631f1531eb0f59264ffe4834d1198c8331c8e0010a4cd742f4e0b60abbf399d134364
+  version: 7.3.13
+  resolution: "@types/semver@npm:7.3.13"
+  checksum: 00c0724d54757c2f4bc60b5032fe91cda6410e48689633d5f35ece8a0a66445e3e57fa1d6e07eb780f792e82ac542948ec4d0b76eb3484297b79bd18b8cf1cb0
   languageName: node
   linkType: hard
 
@@ -3804,7 +3804,7 @@ __metadata:
     node-fetch: ^2.6.7
     openapi-types: ^12.0.2
     prettier: ^2.4.1
-    semver: ^7.3.7
+    semver: ^7.3.8
     ts-invariant: ^0.9.3
     ts-jest: ^29.0.3
     ts-node: ^10.3.1
@@ -3837,7 +3837,6 @@ __metadata:
     "@types/lodash.omit": ^4.5.7
     "@types/lodash.sortby": ^4.7.6
     "@types/node": ^18.0.0
-    "@types/semver": ^7.3.10
     "@useoptic/json-pointer-helpers": "workspace:*"
     ajv: ^8.6.0
     ajv-errors: ~3.0.0
@@ -3995,7 +3994,7 @@ __metadata:
     portfinder: ^1.0.28
     prettier: ^2.4.1
     prompts: ^2.4.2
-    semver: ^7.3.7
+    semver: ^7.3.8
     slice-ansi: ^4.0.0
     stream-chain: ^2.2.5
     stream-json: ^1.7.4
@@ -10281,7 +10280,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:7.x, semver@npm:^7.3.4, semver@npm:^7.3.8":
+"semver@npm:7.x, semver@npm:^7.3.4, semver@npm:^7.3.7, semver@npm:^7.3.8":
   version: 7.3.8
   resolution: "semver@npm:7.3.8"
   dependencies:
@@ -10318,17 +10317,6 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 5eafe6102bea2a7439897c1856362e31cc348ccf96efd455c8b5bc2c61e6f7e7b8250dc26b8828c1d76a56f818a7ee907a36ae9fb37a599d3d24609207001d60
-  languageName: node
-  linkType: hard
-
-"semver@npm:^7.3.7":
-  version: 7.3.7
-  resolution: "semver@npm:7.3.7"
-  dependencies:
-    lru-cache: ^6.0.0
-  bin:
-    semver: bin/semver.js
-  checksum: 2fa3e877568cd6ce769c75c211beaed1f9fce80b28338cadd9d0b6c40f2e2862bafd62c19a6cff42f3d54292b7c623277bcab8816a2b5521cf15210d43e75232
   languageName: node
   linkType: hard
 
