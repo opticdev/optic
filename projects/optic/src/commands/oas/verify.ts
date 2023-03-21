@@ -31,6 +31,15 @@ import { getFileFromFsOrGit } from '../../utils/spec-loaders';
 import * as Git from '../../utils/git-utils';
 import { sanitizeGitTag } from '@useoptic/openapi-utilities';
 
+type VerifyOptions = {
+  patch?: boolean;
+  document?: string;
+  exit0?: boolean;
+  har?: string;
+  upload?: boolean;
+  message?: string;
+};
+
 export function verifyCommand(config: OpticCliConfig): Command {
   const command = new Command('verify');
   const feedback = createCommandFeedback(command);
@@ -55,245 +64,252 @@ export function verifyCommand(config: OpticCliConfig): Command {
       'Used in conjunction with `--upload`, sets a message on an uploaded verification.'
     )
     .action(async (specPath) => {
-      const analytics: { event: string; properties: any }[] = [];
       const options = command.opts();
-
-      if (options.upload) {
-        if (options.document || options.patch) {
-          console.error(
-            'Cannot run upload with --document or --patch options.'
-          );
-          process.exitCode = 1;
-          return;
-        } else if (
-          config.vcs?.type !== VCS.Git ||
-          config.vcs.status === 'dirty'
-        ) {
-          console.error(
-            'optic oas verify --upload can only be run in a git repository without uncommitted changes. That ensures reports are properly tagged.'
-          );
-          process.exitCode = 1;
-          return;
-        }
-      }
-
-      const absoluteSpecPath = Path.resolve(specPath);
-      if (!(await fs.pathExists(absoluteSpecPath))) {
-        return await feedback.inputError(
-          'OpenAPI specification file could not be found',
-          InputErrors.SPEC_FILE_NOT_FOUND
-        );
-      }
-
-      console.log('');
-
-      const makeInteractionsIterator = async () =>
-        getInteractions(options, specPath, feedback);
-
-      /// Add if --document or --update options passed
-      if (options.document || options.patch) {
-        if (options.document) {
-          const specReadResult = await readDeferencedSpec(absoluteSpecPath);
-          if (specReadResult.err) {
-            return await feedback.inputError(
-              `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`,
-              InputErrors.SPEC_FILE_NOT_READABLE
-            );
-          }
-          const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
-
-          feedback.notable('Documenting operations...');
-
-          let { observations } = matchInteractions(
-            spec,
-            await makeInteractionsIterator()
-          );
-
-          const result = await addIfUndocumented(
-            options.document,
-            observations,
-            await makeInteractionsIterator(),
-            spec,
-            sourcemap
-          );
-
-          if (result.ok) {
-            analytics.push({
-              event: 'openapi.verify.document',
-              properties: {
-                allFlag: options.document === 'all',
-                numberDocumented: result.val.length,
-              },
-            });
-            result.val.map((operation) => {
-              console.log(
-                `${chalk.green('added')}  ${operation.method} ${
-                  operation.pathPattern
-                }`
-              );
-            });
-          }
-        }
-
-        if (options.patch) {
-          feedback.notable('Patching operations...');
-          const specReadResult = await readDeferencedSpec(absoluteSpecPath);
-          if (specReadResult.err) {
-            return await feedback.inputError(
-              `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`,
-              InputErrors.SPEC_FILE_NOT_READABLE
-            );
-          }
-          const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
-          const patchInteractions = await makeInteractionsIterator();
-          const patchStats = await patchOperationsAsNeeded(
-            patchInteractions,
-            spec,
-            sourcemap
-          );
-          analytics.push({
-            event: 'openapi.verify.patch',
-            properties: patchStats,
-          });
-        }
-
-        console.log(chalk.gray('-'.repeat(process.stdout.columns) + '\n'));
-      }
-
-      /// Run to verify with the latest specification
-      const parseResult = await getFileFromFsOrGit(absoluteSpecPath, config, {
-        strict: false,
-        denormalize: true,
-      });
-
-      const { jsonLike: spec, sourcemap } = parseResult;
-
-      const opticUrlDetails = getApiFromOpticUrl(spec[OPTIC_URL_KEY]);
-
-      const interactions = await makeInteractionsIterator();
-
-      feedback.notable('Verifying API behavior...');
-
-      let { results: updatePatches } = updateByInteractions(spec, interactions);
-
-      let { observations, coverage } = matchInteractions(
-        spec,
-        await makeInteractionsIterator()
-      );
-
-      const renderingStatus = await renderOperationStatus(
-        observations,
-        spec,
+      return await runVerify(
+        specPath,
+        options as VerifyOptions,
+        config,
         feedback
       );
-
-      const diffResults = await renderDiffs(
-        sourcemap,
-        spec,
-        updatePatches,
-        coverage
-      );
-
-      const coverageStats = coverage.calculateCoverage();
-
-      console.log('\n ' + chalk.bold.underline(`API Behavior Report`));
-      console.log(`
- Total Requests          : ${coverageStats.totalRequests}
- Diffs                   : ${diffResults.shapeDiff}
- Undocumented operations : ${renderingStatus.undocumentedPaths}
- Undocumented bodies     : ${diffResults.undocumentedBody}\n`);
-
-      coverage.renderCoverage();
-
-      const hasDiff =
-        diffResults.totalDiffCount + renderingStatus.undocumentedPaths > 0;
-
-      analytics.push({
-        event: 'openapi.verify',
-        properties: {
-          totalInteractions: coverageStats.totalRequests,
-          coverage: coverageStats.percent,
-          diffs: diffResults.totalDiffCount,
-          shapeDiffs: diffResults.shapeDiff,
-          undocumentedOperations: renderingStatus.undocumentedPaths,
-          undocumentedBodies: renderingStatus.undocumentedPaths,
-        },
-      });
-
-      if (options.upload) {
-        if (!opticUrlDetails) {
-          console.error(
-            `File ${specPath} does not have an optic url. Files must be added to Optic and have an x-optic-url key before verification data can be uploaded.`
-          );
-          console.error(
-            `${chalk.yellow('Hint: ')} Run optic api add ${specPath}`
-          );
-          process.exitCode = 1;
-          return;
-        }
-
-        const { orgId, apiId } = opticUrlDetails;
-        const tags: string[] = [];
-        if (config.vcs?.type === VCS.Git) {
-          tags.push(`git:${config.vcs.sha}`);
-          const currentBranch = await Git.getCurrentBranchName();
-          tags.push(sanitizeGitTag(`gitbranch:${currentBranch}`));
-        }
-        const specId = await uploadSpec(apiId, {
-          spec: parseResult,
-          client: config.client,
-          tags,
-          orgId,
-        });
-
-        await uploadSpecVerification(specId, {
-          client: config.client,
-          verificationData: coverage.coverage,
-          message: options.message,
-        });
-      }
-
-      analytics.forEach((event) => trackEvent(event.event, event.properties));
-
-      await flushEvents();
-
-      // clear captures
-      if ((options.document === 'all' || options.patch) && !options.har) {
-        const [, captureStorageDirectory] = await captureStorage(specPath);
-        console.log('Resetting captured traffic');
-        await fs.remove(captureStorageDirectory);
-      }
-
-      if (Boolean(options.document) && !opticUrlDetails) {
-        console.log('');
-        console.log(
-          chalk.gray(
-            `Share a link to your API documentation with ${chalk.whiteBright(
-              `optic api add ${specPath}`
-            )}`
-          )
-        );
-        console.log('');
-      }
-
-      if (!options.exit0 && hasDiff) {
-        console.log(
-          chalk.red('OpenAPI and implementation are out of sync. Exiting 1')
-        );
-        process.exit(1);
-      }
-      if (!hasDiff) {
-        console.log(
-          chalk.green.bold(
-            'No diffs detected. OpenAPI and implementation appear to be in sync.'
-          )
-        );
-      }
     });
 
   return command;
 }
 
+export async function runVerify(
+  specPath: string,
+  options: VerifyOptions,
+  config: OpticCliConfig,
+  feedback: ReturnType<typeof createCommandFeedback>,
+  internalOptions: { printCoverage: boolean } = { printCoverage: true }
+) {
+  const analytics: { event: string; properties: any }[] = [];
+
+  if (options.upload) {
+    if (options.document || options.patch) {
+      console.error('Cannot run upload with --document or --patch options.');
+      process.exitCode = 1;
+      return;
+    } else if (config.vcs?.type !== VCS.Git || config.vcs.status === 'dirty') {
+      console.error(
+        'optic oas verify --upload can only be run in a git repository without uncommitted changes. That ensures reports are properly tagged.'
+      );
+      process.exitCode = 1;
+      return;
+    }
+  }
+
+  const absoluteSpecPath = Path.resolve(specPath);
+  if (!(await fs.pathExists(absoluteSpecPath))) {
+    return await feedback.inputError(
+      'OpenAPI specification file could not be found',
+      InputErrors.SPEC_FILE_NOT_FOUND
+    );
+  }
+
+  console.log('');
+
+  const makeInteractionsIterator = async () =>
+    getInteractions(options, specPath, feedback);
+
+  /// Add if --document or --update options passed
+  if (options.document || options.patch) {
+    if (options.document) {
+      const specReadResult = await readDeferencedSpec(absoluteSpecPath);
+      if (specReadResult.err) {
+        return await feedback.inputError(
+          `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`,
+          InputErrors.SPEC_FILE_NOT_READABLE
+        );
+      }
+      const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
+
+      feedback.notable('Documenting operations...');
+
+      let { observations } = matchInteractions(
+        spec,
+        await makeInteractionsIterator()
+      );
+
+      const result = await addIfUndocumented(
+        options.document,
+        observations,
+        await makeInteractionsIterator(),
+        spec,
+        sourcemap
+      );
+
+      if (result.ok) {
+        analytics.push({
+          event: 'openapi.verify.document',
+          properties: {
+            allFlag: options.document === 'all',
+            numberDocumented: result.val.length,
+          },
+        });
+        result.val.map((operation) => {
+          console.log(
+            `${chalk.green('added')}  ${operation.method} ${
+              operation.pathPattern
+            }`
+          );
+        });
+      }
+    }
+
+    if (options.patch) {
+      feedback.notable('Patching operations...');
+      const specReadResult = await readDeferencedSpec(absoluteSpecPath);
+      if (specReadResult.err) {
+        return await feedback.inputError(
+          `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`,
+          InputErrors.SPEC_FILE_NOT_READABLE
+        );
+      }
+      const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
+      const patchInteractions = await makeInteractionsIterator();
+      const patchStats = await patchOperationsAsNeeded(
+        patchInteractions,
+        spec,
+        sourcemap
+      );
+      analytics.push({
+        event: 'openapi.verify.patch',
+        properties: patchStats,
+      });
+    }
+
+    console.log(chalk.gray('-'.repeat(process.stdout.columns) + '\n'));
+  }
+
+  /// Run to verify with the latest specification
+  const parseResult = await getFileFromFsOrGit(absoluteSpecPath, config, {
+    strict: false,
+    denormalize: true,
+  });
+
+  const { jsonLike: spec, sourcemap } = parseResult;
+
+  const opticUrlDetails = getApiFromOpticUrl(spec[OPTIC_URL_KEY]);
+
+  const interactions = await makeInteractionsIterator();
+
+  feedback.notable('Verifying Diffing behavior...\n');
+
+  let { results: updatePatches } = updateByInteractions(spec, interactions);
+
+  let { observations, coverage } = matchInteractions(
+    spec,
+    await makeInteractionsIterator()
+  );
+
+  const renderingStatus = await renderOperationStatus(
+    observations,
+    spec,
+    feedback
+  );
+
+  const diffResults = await renderDiffs(
+    sourcemap,
+    spec,
+    updatePatches,
+    coverage
+  );
+
+  const coverageStats = coverage.calculateCoverage();
+
+  if (internalOptions.printCoverage) {
+    console.log('\n ' + chalk.bold.underline(`API Behavior Report`));
+    console.log(`
+ Total Requests          : ${coverageStats.totalRequests}
+ Diffs                   : ${diffResults.shapeDiff}
+ Undocumented operations : ${renderingStatus.undocumentedPaths}
+ Undocumented bodies     : ${diffResults.undocumentedBody}\n`);
+
+    coverage.renderCoverage();
+  }
+
+  const hasDiff =
+    diffResults.totalDiffCount + renderingStatus.undocumentedPaths > 0;
+
+  analytics.push({
+    event: 'openapi.verify',
+    properties: {
+      totalInteractions: coverageStats.totalRequests,
+      coverage: coverageStats.percent,
+      diffs: diffResults.totalDiffCount,
+      shapeDiffs: diffResults.shapeDiff,
+      undocumentedOperations: renderingStatus.undocumentedPaths,
+      undocumentedBodies: renderingStatus.undocumentedPaths,
+    },
+  });
+
+  if (options.upload) {
+    if (!opticUrlDetails) {
+      console.error(
+        `File ${specPath} does not have an optic url. Files must be added to Optic and have an x-optic-url key before verification data can be uploaded.`
+      );
+      console.error(`${chalk.yellow('Hint: ')} Run optic api add ${specPath}`);
+      process.exitCode = 1;
+      return;
+    }
+
+    const { orgId, apiId } = opticUrlDetails;
+    const tags: string[] = [];
+    if (config.vcs?.type === VCS.Git) {
+      tags.push(`git:${config.vcs.sha}`);
+      const currentBranch = await Git.getCurrentBranchName();
+      tags.push(sanitizeGitTag(`gitbranch:${currentBranch}`));
+    }
+    const specId = await uploadSpec(apiId, {
+      spec: parseResult,
+      client: config.client,
+      tags,
+      orgId,
+    });
+
+    await uploadSpecVerification(specId, {
+      client: config.client,
+      verificationData: coverage.coverage,
+      message: options.message,
+    });
+  }
+
+  analytics.forEach((event) => trackEvent(event.event, event.properties));
+
+  await flushEvents();
+
+  // clear captures
+  if ((options.document === 'all' || options.patch) && !options.har) {
+    const [, captureStorageDirectory] = await captureStorage(specPath);
+    console.log('Resetting captured traffic');
+    await fs.remove(captureStorageDirectory);
+  }
+
+  if (Boolean(options.document) && !opticUrlDetails) {
+    console.log('');
+    console.log(
+      `Share a link to your API documentation with ${chalk.bold(
+        `optic api add ${specPath}`
+      )}`
+    );
+    console.log('');
+  }
+
+  if (!options.exit0 && hasDiff) {
+    console.log(
+      chalk.red('OpenAPI and implementation are out of sync. Exiting 1')
+    );
+    process.exit(1);
+  }
+  if (!hasDiff) {
+    console.log(
+      chalk.green.bold(
+        'No diffs detected. OpenAPI and implementation appear to be in sync.'
+      )
+    );
+  }
+}
 async function renderOperationStatus(
   observations: StatusObservations,
   spec: OpenAPIV3.Document,
@@ -317,6 +333,7 @@ async function renderOperationStatus(
         )
       );
     }
+    console.log('');
     feedback.commandInstruction('--document all', 'to document these paths');
     feedback.commandInstruction(
       `--document "[method] [/path], ..."`,
