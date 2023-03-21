@@ -38,6 +38,14 @@ export const registerBundle = (cli: Command, config: OpticCliConfig) => {
     .description(description)
     .argument('[file_path]', 'openapi file to bundle')
     .option('-o [output]', 'output file name')
+    .option(
+      '--filter-x-extensions [extensions]',
+      'extensions to filter when truthy value set'
+    )
+    .option(
+      '--include-x-extensions [extensions]',
+      'extensions to filter when truthy value set'
+    )
     .action(errorHandler(bundleAction(config)));
 };
 
@@ -59,13 +67,69 @@ const getSpec = async (
 
 const bundleAction =
   (config: OpticCliConfig) => async (filePath: string | undefined, options) => {
-    const { o } = options;
+    const { o, filterXExtensions, includeXExtensions } = options;
+
+    const filterExtensions = (filterXExtensions || '')
+      .split(/[ ,]+/)
+      .filter((extension) => extension.startsWith('x-'));
+    const includeExtensions = (includeXExtensions || '')
+      .split(/[ ,]+/)
+      .filter((extension) => extension.startsWith('x-'));
 
     let parsedFile: ParseResult;
     if (filePath) {
       parsedFile = await getSpec(filePath, config);
 
       const updatedSpec = bundle(parsedFile.jsonLike, parsedFile.sourcemap);
+
+      if (includeExtensions.length) {
+        Object.entries(updatedSpec.paths).forEach(([path, operations]) => {
+          Object.entries(operations!).forEach(([key, operation]) => {
+            if (key === 'parameters') return;
+            if (
+              operation &&
+              !includeExtensions.some((extension) =>
+                Boolean(operation[extension])
+              )
+            ) {
+              // @ts-ignore
+              delete updatedSpec.paths![path]![key]!;
+              const otherKeys = Object.keys(updatedSpec.paths![path] || {});
+              if (
+                otherKeys.length === 0 ||
+                (otherKeys.length === 1 && otherKeys[0] === 'parameters')
+              ) {
+                delete updatedSpec.paths![path];
+              }
+            }
+          });
+        });
+      }
+
+      if (filterExtensions.length) {
+        Object.entries(updatedSpec.paths).forEach(([path, operations]) => {
+          Object.entries(operations!).forEach(([key, operation]) => {
+            if (key === 'parameters') return;
+            // should filter
+            if (
+              operation &&
+              filterExtensions.some((extension) =>
+                Boolean(operation[extension])
+              )
+            ) {
+              // @ts-ignore
+              delete updatedSpec.paths![path]![key]!;
+              const otherKeys = Object.keys(updatedSpec.paths![path] || {});
+              if (
+                otherKeys.length === 0 ||
+                (otherKeys.length === 1 && otherKeys[0] === 'parameters')
+              ) {
+                delete updatedSpec.paths![path];
+              }
+            }
+          });
+        });
+      }
 
       const yamlOut = () =>
         yaml.stringify(updatedSpec, {
