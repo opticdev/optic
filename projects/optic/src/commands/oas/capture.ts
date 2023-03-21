@@ -196,7 +196,7 @@ export async function captureCommand(): Promise<Command> {
                 feedback.success(`Wrote har traffic to ${completedName}`);
                 feedback.log(
                   chalk.gray(
-                    `\nRun ${chalk.whiteBright(
+                    `\nRun ${chalk.bold(
                       `optic oas verify ${filePath}`
                     )} to diff the captured traffic`
                   )
