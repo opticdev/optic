@@ -311,7 +311,13 @@ function bundleMatchingRefsAsComponents<T>(
         skipAddingToComponents: isAlreadyInPlace,
         originalPath: key,
         componentPath: isAlreadyInPlace
-          ? targetPath
+          ? (() => {
+              const [, lastKey] = jsonPointerHelpers.splitParentChild(
+                mapping[1]
+              );
+              usedNames.add(lastKey);
+              return mapping[1];
+            })()
           : leaseComponentPath(nameOptions),
         component,
         usages: [key],
