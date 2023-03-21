@@ -9,7 +9,7 @@ import { OpenAPIV3 } from 'openapi-types';
 import Ajv, { SchemaObject } from 'ajv/dist/2019';
 import addFormats from 'ajv-formats';
 
-const ajv = (() => {
+export function defaultAjv() {
   const validator = new Ajv({ strict: false, unevaluated: true });
   addFormats(validator);
   // override pattern keyword when invalid regex
@@ -34,11 +34,12 @@ const ajv = (() => {
     },
   });
   return validator;
-})();
+}
 
 export function validateSchema(
   schema: SchemaObject,
-  example: unknown
+  example: unknown,
+  ajv: Ajv
 ): { pass: true } | { pass: false; error: string } {
   const copy = JSON.parse(JSON.stringify(schema));
   strictAdditionalProperties(copy);
@@ -108,50 +109,16 @@ function strictAdditionalProperties(schema: any, inAllOf: boolean = false) {
   }
 }
 
-export const requireValidRequestExamples = new RequestRule({
-  name: 'request body examples must match schema',
-  rule: (requestAssertions) => {
-    requestAssertions.body.requirement((value) => {
-      const { schema, examples, example } =
-        value.raw as OpenAPIV3.MediaTypeObject;
+export const requireValidRequestExamples = (ajv: Ajv) =>
+  new RequestRule({
+    name: 'request body examples must match schema',
+    rule: (requestAssertions) => {
+      requestAssertions.body.requirement((value) => {
+        const { schema, examples, example } =
+          value.raw as OpenAPIV3.MediaTypeObject;
 
-      if (example) {
-        const result = validateSchema(schema || {}, example);
-        if (!result.pass) {
-          throw new RuleError({
-            message: `the example does not match the schema. \n${result.error} `,
-          });
-        }
-      }
-
-      if (examples) {
-        Object.entries(examples).forEach((example) => {
-          const [exampleName, exampleValue] = example as [
-            string,
-            OpenAPIV3.ExampleObject
-          ];
-          const result = validateSchema(schema || {}, exampleValue.value);
-          if (!result.pass) {
-            throw new RuleError({
-              message: `the example named '${exampleName}' does not match the schema. \n${result.error} `,
-            });
-          }
-        });
-      }
-    });
-  },
-});
-
-export const requireValidResponseExamples = new ResponseRule({
-  name: 'response body examples must match schemas',
-  rule: (responseAssertions) => {
-    responseAssertions.requirement((value) => {
-      value.bodies.forEach((body) => {
-        if (body.raw.example) {
-          const result = validateSchema(
-            body.raw.schema || {},
-            body.raw.example
-          );
+        if (example) {
+          const result = validateSchema(schema || {}, example, ajv);
           if (!result.pass) {
             throw new RuleError({
               message: `the example does not match the schema. \n${result.error} `,
@@ -159,15 +126,16 @@ export const requireValidResponseExamples = new ResponseRule({
           }
         }
 
-        if (body.raw.examples) {
-          Object.entries(body.raw.examples).forEach((example) => {
+        if (examples) {
+          Object.entries(examples).forEach((example) => {
             const [exampleName, exampleValue] = example as [
               string,
               OpenAPIV3.ExampleObject
             ];
             const result = validateSchema(
-              body.raw.schema || {},
-              exampleValue.value
+              schema || {},
+              exampleValue.value,
+              ajv
             );
             if (!result.pass) {
               throw new RuleError({
@@ -177,101 +145,150 @@ export const requireValidResponseExamples = new ResponseRule({
           });
         }
       });
-    });
-  },
-});
+    },
+  });
 
-export const requireValidParameterExamples = new OperationRule({
-  name: 'parameter examples must match schemas',
-  rule: (operation) => {
-    operation.headerParameter.requirement((header) => {
-      if (header.raw.example) {
-        const result = validateSchema(
-          header.raw.schema || {},
-          header.raw.example
-        );
-        if (!result.pass) {
-          throw new RuleError({
-            message: `header '${header.value.name}' example does not match the schema. \n${result.error} `,
-          });
-        }
-      }
-      if (header.raw.schema && 'example' in header.raw.schema) {
-        const result = validateSchema(
-          header.raw.schema || {},
-          header.raw.schema.example
-        );
-        if (!result.pass) {
-          throw new RuleError({
-            message: `header '${header.value.name}' example does not match the schema. \n${result.error} `,
-          });
-        }
-      }
-    });
-    operation.queryParameter.requirement((query) => {
-      if (query.raw.example) {
-        const result = validateSchema(
-          query.raw.schema || {},
-          query.raw.example
-        );
-        if (!result.pass) {
-          throw new RuleError({
-            message: `query parameter '${query.value.name}' example does not match the schema. \n${result.error} `,
-          });
-        }
-      }
-      if (query.raw.schema && 'example' in query.raw.schema) {
-        const result = validateSchema(
-          query.raw.schema || {},
-          query.raw.schema.example
-        );
-        if (!result.pass) {
-          throw new RuleError({
-            message: `query parameter '${query.value.name}' example does not match the schema. \n${result.error} `,
-          });
-        }
-      }
-    });
-    operation.cookieParameter.requirement((cookie) => {
-      if (cookie.raw.example) {
-        const result = validateSchema(
-          cookie.raw.schema || {},
-          cookie.raw.example
-        );
-        if (!result.pass) {
-          throw new RuleError({
-            message: `cookie '${cookie.value.name}' example does not match the schema. \n${result.error} `,
-          });
-        }
-      }
-      if (cookie.raw.schema && 'example' in cookie.raw.schema) {
-        const result = validateSchema(
-          cookie.raw.schema || {},
-          cookie.raw.schema.example
-        );
-        if (!result.pass) {
-          throw new RuleError({
-            message: `cookie '${cookie.value.name}' example does not match the schema. \n${result.error} `,
-          });
-        }
-      }
-    });
-  },
-});
+export const requireValidResponseExamples = (ajv: Ajv) =>
+  new ResponseRule({
+    name: 'response body examples must match schemas',
+    rule: (responseAssertions) => {
+      responseAssertions.requirement((value) => {
+        value.bodies.forEach((body) => {
+          if (body.raw.example) {
+            const result = validateSchema(
+              body.raw.schema || {},
+              body.raw.example,
+              ajv
+            );
+            if (!result.pass) {
+              throw new RuleError({
+                message: `the example does not match the schema. \n${result.error} `,
+              });
+            }
+          }
 
-export const requirePropertyExamplesMatchSchema = new PropertyRule({
-  name: 'require property examples match schemas',
-  rule: (property) => {
-    property.requirement((property) => {
-      const flatSchema = property.value.flatSchema;
-      if (property.raw.example) {
-        const result = validateSchema(flatSchema, property.raw.example);
-        if (!result.pass) {
-          throw new RuleError({
-            message: `'${property.value.key}' example does not match the schema. \n${result.error} `,
-          });
+          if (body.raw.examples) {
+            Object.entries(body.raw.examples).forEach((example) => {
+              const [exampleName, exampleValue] = example as [
+                string,
+                OpenAPIV3.ExampleObject
+              ];
+              const result = validateSchema(
+                body.raw.schema || {},
+                exampleValue.value,
+                ajv
+              );
+              if (!result.pass) {
+                throw new RuleError({
+                  message: `the example named '${exampleName}' does not match the schema. \n${result.error} `,
+                });
+              }
+            });
+          }
+        });
+      });
+    },
+  });
+
+export const requireValidParameterExamples = (ajv: Ajv) =>
+  new OperationRule({
+    name: 'parameter examples must match schemas',
+    rule: (operation) => {
+      operation.headerParameter.requirement((header) => {
+        if (header.raw.example) {
+          const result = validateSchema(
+            header.raw.schema || {},
+            header.raw.example,
+            ajv
+          );
+          if (!result.pass) {
+            throw new RuleError({
+              message: `header '${header.value.name}' example does not match the schema. \n${result.error} `,
+            });
+          }
         }
-      }
-    });
-  },
-});
+        if (header.raw.schema && 'example' in header.raw.schema) {
+          const result = validateSchema(
+            header.raw.schema || {},
+            header.raw.schema.example,
+            ajv
+          );
+          if (!result.pass) {
+            throw new RuleError({
+              message: `header '${header.value.name}' example does not match the schema. \n${result.error} `,
+            });
+          }
+        }
+      });
+      operation.queryParameter.requirement((query) => {
+        if (query.raw.example) {
+          const result = validateSchema(
+            query.raw.schema || {},
+            query.raw.example,
+            ajv
+          );
+          if (!result.pass) {
+            throw new RuleError({
+              message: `query parameter '${query.value.name}' example does not match the schema. \n${result.error} `,
+            });
+          }
+        }
+        if (query.raw.schema && 'example' in query.raw.schema) {
+          const result = validateSchema(
+            query.raw.schema || {},
+            query.raw.schema.example,
+            ajv
+          );
+          if (!result.pass) {
+            throw new RuleError({
+              message: `query parameter '${query.value.name}' example does not match the schema. \n${result.error} `,
+            });
+          }
+        }
+      });
+      operation.cookieParameter.requirement((cookie) => {
+        if (cookie.raw.example) {
+          const result = validateSchema(
+            cookie.raw.schema || {},
+            cookie.raw.example,
+            ajv
+          );
+          if (!result.pass) {
+            throw new RuleError({
+              message: `cookie '${cookie.value.name}' example does not match the schema. \n${result.error} `,
+            });
+          }
+        }
+        if (cookie.raw.schema && 'example' in cookie.raw.schema) {
+          const result = validateSchema(
+            cookie.raw.schema || {},
+            cookie.raw.schema.example,
+            ajv
+          );
+          if (!result.pass) {
+            throw new RuleError({
+              message: `cookie '${cookie.value.name}' example does not match the schema. \n${result.error} `,
+            });
+          }
+        }
+      });
+    },
+  });
+
+export const requirePropertyExamplesMatchSchema = (ajv: Ajv) =>
+  new PropertyRule({
+    name: 'require property examples match schemas',
+    rule: (property) => {
+      property.requirement((property) => {
+        const flatSchema = property.value.flatSchema;
+        if (property.raw.example) {
+          const result = validateSchema(flatSchema, property.raw.example, ajv);
+          if (!result.pass) {
+            throw new RuleError({
+              message: `'${property.value.key}' example does not match the schema. \n${result.error} `,
+            });
+          }
+        }
+      });
+    },
+  });

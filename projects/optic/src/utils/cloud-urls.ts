@@ -50,7 +50,7 @@ export function getSpecUrl(
 ): string {
   return urljoin(
     baseUrl,
-    `organizations/${orgId}/apis/${apiId}/specs/${specId}`
+    `organizations/${orgId}/apis/${apiId}?specId=${specId}`
   );
 }
 

@@ -144,6 +144,16 @@ async function crawlCandidateSpecs(
   }
 
   if (config.vcs?.type === VCS.Git) {
+    // If the git workspace is dirty, we should upload the spec with changes
+    // such that first use of optic you will have a spec (even without tags)
+    if (config.vcs.status === 'dirty') {
+      await uploadSpec(api.id, {
+        spec: parseResult,
+        tags: [],
+        client: config.client,
+        orgId,
+      });
+    }
     const specsToTag: [string, string][] = [];
     for await (const sha of shas) {
       let parseResult: ParseResult;
@@ -195,6 +205,14 @@ async function crawlCandidateSpecs(
         await config.client.tagSpec(specId, tag);
       }
     }
+  } else {
+    // Outside of a git repo, we should just upload it as a spec without tags
+    await uploadSpec(api.id, {
+      spec: parseResult,
+      tags: [],
+      client: config.client,
+      orgId,
+    });
   }
 
   // Write to file only if optic-url is not set or is invalid

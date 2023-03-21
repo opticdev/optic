@@ -30,7 +30,6 @@ import { uploadSpec, uploadSpecVerification } from '../../utils/cloud-specs';
 import { getFileFromFsOrGit } from '../../utils/spec-loaders';
 import * as Git from '../../utils/git-utils';
 import { sanitizeGitTag } from '@useoptic/openapi-utilities';
-import { computeEndpointChecksum } from '../../utils/checksum';
 
 export function verifyCommand(config: OpticCliConfig): Command {
   const command = new Command('verify');
@@ -71,7 +70,7 @@ export function verifyCommand(config: OpticCliConfig): Command {
           config.vcs.status === 'dirty'
         ) {
           console.error(
-            'Must be run in a git repository and in a working directory without uncommitted changes'
+            'optic oas verify --upload can only be run in a git repository without uncommitted changes. That ensures reports are properly tagged.'
           );
           process.exitCode = 1;
           return;
@@ -164,7 +163,7 @@ export function verifyCommand(config: OpticCliConfig): Command {
       /// Run to verify with the latest specification
       const parseResult = await getFileFromFsOrGit(absoluteSpecPath, config, {
         strict: false,
-        denormalize: false,
+        denormalize: true,
       });
 
       const { jsonLike: spec, sourcemap } = parseResult;
