@@ -51,16 +51,14 @@ export class SystemProxy {
         ),
       ]);
 
-      this.feedback.notable(
-        `Proxy running on ${this.proxyUrl}. System proxy updated`
-      );
+      this.feedback.notable(`Proxy running on ${this.proxyUrl}.`);
 
       this.stopCommand = async () => {
         await Promise.all([
           runCommand(`networksetup -setwebproxystate "${name}" off`),
           runCommand(`networksetup -setsecurewebproxystate "${name}" off`),
         ]);
-        this.feedback.notable(`Mac System Proxy settings cleared`);
+        this.feedback.notable(`System Proxy settings restored`);
       };
     } else {
       this.feedback.notable(

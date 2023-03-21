@@ -22,8 +22,10 @@ import { captureStorage } from './captures/capture-storage';
 import { RunCommand } from './captures/run-command';
 import { platform } from './lib/shell-utils';
 import chalk from 'chalk';
+import { runVerify } from './verify';
+import { OpticCliConfig } from '../../config';
 
-export async function captureCommand(): Promise<Command> {
+export async function captureCommand(config: OpticCliConfig): Promise<Command> {
   const command = new Command('capture');
 
   const feedback = createCommandFeedback(command);
@@ -125,6 +127,7 @@ export async function captureCommand(): Promise<Command> {
       }
 
       let destination: Writable = fs.createWriteStream(inProgressName);
+      let enterPressed = false;
 
       const commandRunner = new RunCommand(proxyUrl, feedback);
 
@@ -145,6 +148,8 @@ export async function captureCommand(): Promise<Command> {
             lines.close();
           };
           if (runningCommand) await commandRunner.kill();
+          enterPressed = true;
+
           sourcesController.signal.addEventListener('abort', onAbort);
 
           for await (let line of lines) {
@@ -193,15 +198,22 @@ export async function captureCommand(): Promise<Command> {
                   feedback.success(`Wrote har to ${outputPath}`);
                   return fs.move(inProgressName, outputPath);
                 }
-                feedback.success(`Wrote har traffic to ${completedName}`);
-                feedback.log(
-                  chalk.gray(
-                    `\nRun ${chalk.whiteBright(
+                await fs.move(inProgressName, completedName);
+
+                if (enterPressed)
+                  await runVerify(filePath, { exit0: true }, config, feedback, {
+                    printCoverage: false,
+                  });
+
+                if (!enterPressed) {
+                  // Log next steps
+                  feedback.success(`Wrote har traffic to ${completedName}`);
+                  feedback.log(
+                    `\nRun "${chalk.bold(
                       `optic oas verify ${filePath}`
-                    )} to diff the captured traffic`
-                  )
-                );
-                return fs.move(inProgressName, completedName);
+                    )}" to diff the captured traffic`
+                  );
+                }
               })(),
             ])
           )
@@ -299,13 +311,31 @@ async function renderCaptureProgress(
   });
   spinner.start();
 
+  let timer;
+  if (config.interactiveCapture) {
+    timer = setTimeout(() => {
+      if (interactionCount === 0) {
+        console.clear();
+        console.log(
+          '\nNot seeing any traffic captured? Make sure your HTTP Client is using the proxy: ' +
+            chalk.underline.blue(
+              'https://www.useoptic.com/docs/oas-reference/client-guides'
+            )
+        );
+      }
+    }, 13000);
+  }
+
   for await (let observation of observations) {
     if (observation.kind === CaptureObservationKind.InteractionCaptured) {
+      if (interactionCount === 0) clearTimeout(timer);
       interactionCount += 1;
       spinner.text = `${interactionCount} requests captured`;
     } else if (observation.kind === CaptureObservationKind.CaptureWritten) {
     }
   }
+
+  clearTimeout(timer);
 
   if (interactionCount === 0) {
     spinner.info('No requests captured');
