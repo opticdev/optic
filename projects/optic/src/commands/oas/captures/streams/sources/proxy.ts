@@ -370,11 +370,12 @@ class TransparentProxy {
 
     this.tlsEnabled = !!options.https;
 
+    events.setMaxListeners(Infinity);
+    events.defaultMaxListeners = Infinity;
     const tunnelAbort = (this.tunnelAbort = new AbortController()); // control aborting of tunnels separately
     // small hack to prevent warnings, because the AbortController polyfill doesn't setup EventEmitter according to spec
     // @ts-ignore
     if (tunnelAbort.signal.eventEmitter) {
-      events.setMaxListeners(Infinity);
       // @ts-ignore
       (tunnelAbort.signal.eventEmitter as EventEmitter).setMaxListeners(
         Infinity

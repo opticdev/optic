@@ -149,6 +149,7 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
           };
           if (runningCommand) await commandRunner.kill();
           enterPressed = true;
+
           sourcesController.signal.addEventListener('abort', onAbort);
 
           for await (let line of lines) {
@@ -309,6 +310,21 @@ async function renderCaptureProgress(
   });
   spinner.start();
 
+  let timer;
+  if (config.interactiveCapture) {
+    timer = setTimeout(() => {
+      if (interactionCount === 0) {
+        console.clear();
+        console.log(
+          '\nNot seeing any traffic captured? Make sure your HTTP Client is using the proxy: ' +
+            chalk.underline.blue(
+              'https://www.useoptic.com/docs/oas-reference/client-guides'
+            )
+        );
+      }
+    }, 13000);
+  }
+
   for await (let observation of observations) {
     if (observation.kind === CaptureObservationKind.InteractionCaptured) {
       interactionCount += 1;
@@ -317,6 +333,7 @@ async function renderCaptureProgress(
     }
   }
 
+  clearTimeout(timer);
   if (interactionCount === 0) {
     spinner.info('No requests captured');
   } else {
