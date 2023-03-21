@@ -198,6 +198,13 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
                   feedback.success(`Wrote har to ${outputPath}`);
                   return fs.move(inProgressName, outputPath);
                 }
+                await fs.move(inProgressName, completedName);
+
+                if (enterPressed)
+                  await runVerify(filePath, { exit0: true }, config, feedback, {
+                    printCoverage: false,
+                  });
+
                 if (!enterPressed) {
                   // Log next steps
                   feedback.success(`Wrote har traffic to ${completedName}`);
@@ -207,12 +214,6 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
                     )}" to diff the captured traffic`
                   );
                 }
-                await fs.move(inProgressName, completedName);
-
-                if (enterPressed)
-                  await runVerify(filePath, { exit0: true }, config, feedback, {
-                    printCoverage: false,
-                  });
               })(),
             ])
           )
@@ -327,6 +328,7 @@ async function renderCaptureProgress(
 
   for await (let observation of observations) {
     if (observation.kind === CaptureObservationKind.InteractionCaptured) {
+      if (interactionCount === 0) clearTimeout(timer);
       interactionCount += 1;
       spinner.text = `${interactionCount} requests captured`;
     } else if (observation.kind === CaptureObservationKind.CaptureWritten) {
@@ -334,6 +336,7 @@ async function renderCaptureProgress(
   }
 
   clearTimeout(timer);
+
   if (interactionCount === 0) {
     spinner.info('No requests captured');
   } else {
