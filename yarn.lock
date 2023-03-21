@@ -2021,11 +2021,11 @@ __metadata:
   linkType: hard
 
 "@httptoolkit/httpolyglot@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "@httptoolkit/httpolyglot@npm:2.0.1"
+  version: 2.1.0
+  resolution: "@httptoolkit/httpolyglot@npm:2.1.0"
   dependencies:
     "@types/node": ^16.7.10
-  checksum: d5209dcaba13c11a82833306ee64e19f5a4516590297dbb9e9f11cbaad1e56b1f958576c4d2562fbc56d4ff3a532a8bc660715a4ff9f688f5640d23229337163
+  checksum: b2471d15a2df9511b92a5c84513115898c811cb74056a93e281b4434f38f25c05ee20d81e3fc15ce57c285edf0a29304c1306644da3a2e94fefdcd3046c53562
   languageName: node
   linkType: hard
 
