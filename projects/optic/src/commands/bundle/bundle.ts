@@ -10,6 +10,7 @@ import {
 import { isYaml, JsonSchemaSourcemap, writeYaml } from '@useoptic/openapi-io';
 import fs from 'node:fs/promises';
 import path from 'path';
+import yaml from 'yaml';
 
 import { errorHandler } from '../../error-handler';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
@@ -66,20 +67,23 @@ const bundleAction =
 
       const updatedSpec = bundle(parsedFile.jsonLike, parsedFile.sourcemap);
 
+      const yamlOut = () =>
+        yaml.stringify(updatedSpec, {
+          defaultStringType: 'QUOTE_DOUBLE',
+        });
+
       if (o) {
         // write to file
         const outputPath = path.resolve(o);
         await fs.writeFile(
           outputPath,
-          isYaml(o)
-            ? writeYaml(updatedSpec)
-            : JSON.stringify(updatedSpec, null, 2)
+          isYaml(o) ? yamlOut() : JSON.stringify(updatedSpec, null, 2)
         );
         console.log('wrote bundled spec to ' + path.resolve(o));
       } else {
         // assume pipe >
         if (isYaml(filePath)) {
-          console.log(writeYaml(updatedSpec));
+          console.log(yamlOut());
         } else {
           console.log(JSON.stringify(updatedSpec, null, 2));
         }

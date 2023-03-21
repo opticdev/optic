@@ -72,7 +72,7 @@
     "semver": "^7.3.7",
     "ts-invariant": "^0.9.3",
     "upath": "^2.0.1",
-    "yaml": "^2.2.0",
+    "yaml": "^2.2.1",
     "yaml-ast-parser": "^0.0.43"
   },
   "stableVersion": "0.40.4"
