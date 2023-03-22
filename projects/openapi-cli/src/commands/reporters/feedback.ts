@@ -46,7 +46,7 @@ export function createCommandFeedback(
   }
   function commandInstruction(command: string, action: string) {
     destination.write(
-      chalk.gray(` (use "${chalk.whiteBright(command)}" to ${action})`) + '\n'
+      chalk.gray(` (use "${chalk.bold(command)}" to ${action})`) + '\n'
     );
   }
 
