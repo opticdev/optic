@@ -1,7 +1,10 @@
 import yaml from 'yaml';
 
-export function writeYaml(document: any, indent: 2 | 4 = 2) {
-  return yaml.stringify(document, { aliasDuplicateObjects: false });
+export function writeYaml(document: any) {
+  return yaml.stringify(document, {
+    aliasDuplicateObjects: false,
+    lineWidth: 0,
+  });
 }
 
 export function loadYaml(contents: string) {
