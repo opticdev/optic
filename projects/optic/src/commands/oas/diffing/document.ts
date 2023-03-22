@@ -29,7 +29,8 @@ import { SchemaInventory } from '../shapes/closeness/schema-inventory';
 import { specToOperations } from '../operations/queries';
 
 export async function addIfUndocumented(
-  input: string,
+  operationsToAdd: ParsedOperation[],
+  isAddAll: boolean,
   statusObservations: StatusObservations,
   interactions: CapturedInteractions,
   spec: OpenAPIV3.Document,
@@ -37,7 +38,8 @@ export async function addIfUndocumented(
 ): Promise<Result<RecentlyDocumented, string>> {
   const operations = specToOperations(spec);
   const operationsOption = await computeOperationsToAdd(
-    input,
+    operationsToAdd,
+    isAddAll,
     statusObservations,
     operations
   );
@@ -73,18 +75,19 @@ export async function addIfUndocumented(
 }
 
 async function computeOperationsToAdd(
-  input: string,
+  operationsToAdd: ParsedOperation[],
+  isAddAll: boolean,
   statusObservations: StatusObservations,
   operations: { pathPattern: string; methods: string[] }[]
 ): Promise<Result<ParsedOperation[], string>> {
-  if (input.trim() === 'all') {
+  if (isAddAll) {
     const undocumented = await observationToUndocumented(
       statusObservations,
       operations
     );
     return Ok(undocumented.pathsToAdd);
   } else {
-    return parseAddOperations(input);
+    return Ok(operationsToAdd);
   }
 }
 
@@ -94,11 +97,9 @@ interface ParsedOperation {
 }
 
 export function parseAddOperations(
-  input: string
+  input: string[]
 ): Result<ParsedOperation[], string> {
-  const rawComponents = input.split(',').map((i) => i.trim());
-
-  const components = rawComponents.filter((s) => s.length > 0);
+  const components = input.filter((s) => s.length > 0);
   const pairs: ParsedOperation[] = [];
 
   const regex = /(get|post|put|delete|patch|options|head)( +)(\/.*)/i;
@@ -118,12 +119,6 @@ export function parseAddOperations(
       });
     }
   });
-
-  if (pairs.length === 0) {
-    return Err(
-      'Invalid input to --document. example: "get /todos, post /todos/{todoId}"'
-    );
-  }
 
   return Ok(pairs);
 }

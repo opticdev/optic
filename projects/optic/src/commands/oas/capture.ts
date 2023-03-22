@@ -127,7 +127,6 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
       }
 
       let destination: Writable = fs.createWriteStream(inProgressName);
-      let enterPressed = false;
 
       const commandRunner = new RunCommand(proxyUrl, feedback);
 
@@ -148,7 +147,6 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
             lines.close();
           };
           if (runningCommand) await commandRunner.kill();
-          enterPressed = true;
 
           sourcesController.signal.addEventListener('abort', onAbort);
 
@@ -196,16 +194,26 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
                 if (options.output) {
                   const outputPath = path.resolve(options.output);
                   feedback.success(`Wrote har to ${outputPath}`);
-                  return fs.move(inProgressName, outputPath);
+                  return await fs.move(inProgressName, outputPath);
                 }
                 await fs.move(inProgressName, completedName);
 
-                if (enterPressed)
-                  await runVerify(filePath, { exit0: true }, config, feedback, {
+                await runVerify(
+                  filePath,
+                  {
+                    exit0: true,
+                    har: options.output
+                      ? path.resolve(options.output)
+                      : undefined,
+                  },
+                  config,
+                  feedback,
+                  {
                     printCoverage: false,
-                  });
+                  }
+                );
 
-                if (!enterPressed) {
+                if (!interactiveCapture) {
                   // Log next steps
                   feedback.success(`Wrote har traffic to ${completedName}`);
                   feedback.log(

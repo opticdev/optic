@@ -33,7 +33,6 @@ import { sanitizeGitTag } from '@useoptic/openapi-utilities';
 
 type VerifyOptions = {
   patch?: boolean;
-  document?: string;
   exit0?: boolean;
   har?: string;
   upload?: boolean;
@@ -86,8 +85,8 @@ export async function runVerify(
   const analytics: { event: string; properties: any }[] = [];
 
   if (options.upload) {
-    if (options.document || options.patch) {
-      console.error('Cannot run upload with --document or --patch options.');
+    if (options.patch) {
+      console.error('Cannot run upload with --patch options.');
       process.exitCode = 1;
       return;
     } else if (config.vcs?.type !== VCS.Git || config.vcs.status === 'dirty') {
@@ -109,54 +108,15 @@ export async function runVerify(
 
   console.log('');
 
+  const [, captureStorageDirectory, capturesCount] = await captureStorage(
+    specPath
+  );
+
   const makeInteractionsIterator = async () =>
     getInteractions(options, specPath, feedback);
 
   /// Add if --document or --update options passed
-  if (options.document || options.patch) {
-    if (options.document) {
-      const specReadResult = await readDeferencedSpec(absoluteSpecPath);
-      if (specReadResult.err) {
-        return await feedback.inputError(
-          `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`,
-          InputErrors.SPEC_FILE_NOT_READABLE
-        );
-      }
-      const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
-
-      feedback.notable('Documenting operations...');
-
-      let { observations } = matchInteractions(
-        spec,
-        await makeInteractionsIterator()
-      );
-
-      const result = await addIfUndocumented(
-        options.document,
-        observations,
-        await makeInteractionsIterator(),
-        spec,
-        sourcemap
-      );
-
-      if (result.ok) {
-        analytics.push({
-          event: 'openapi.verify.document',
-          properties: {
-            allFlag: options.document === 'all',
-            numberDocumented: result.val.length,
-          },
-        });
-        result.val.map((operation) => {
-          console.log(
-            `${chalk.green('added')}  ${operation.method} ${
-              operation.pathPattern
-            }`
-          );
-        });
-      }
-    }
-
+  if (options.patch) {
     if (options.patch) {
       feedback.notable('Patching operations...');
       const specReadResult = await readDeferencedSpec(absoluteSpecPath);
@@ -194,7 +154,18 @@ export async function runVerify(
 
   const interactions = await makeInteractionsIterator();
 
-  feedback.notable('Verifying Diffing behavior...\n');
+  feedback.notable(
+    `Verifying API behavior with traffic ${
+      options.har
+        ? 'from har'
+        : `from last ${chalk.blue.underline(capturesCount.toString())} capture${
+            capturesCount === 1 ? '' : 's'
+          }. Reset captures with "optic oas clear ${path.relative(
+            process.cwd(),
+            specPath
+          )}"\``
+    } \n`
+  );
 
   let { results: updatePatches } = updateByInteractions(spec, interactions);
 
@@ -206,6 +177,7 @@ export async function runVerify(
   const renderingStatus = await renderOperationStatus(
     observations,
     spec,
+    specPath,
     feedback
   );
 
@@ -280,20 +252,10 @@ export async function runVerify(
   await flushEvents();
 
   // clear captures
-  if ((options.document === 'all' || options.patch) && !options.har) {
+  if (options.patch && !options.har) {
     const [, captureStorageDirectory] = await captureStorage(specPath);
     console.log('Resetting captured traffic');
     await fs.remove(captureStorageDirectory);
-  }
-
-  if (Boolean(options.document) && !opticUrlDetails) {
-    console.log('');
-    console.log(
-      `Share a link to your API documentation with ${chalk.bold(
-        `optic api add ${specPath}`
-      )}`
-    );
-    console.log('');
   }
 
   if (!options.exit0 && hasDiff) {
@@ -313,6 +275,7 @@ export async function runVerify(
 async function renderOperationStatus(
   observations: StatusObservations,
   spec: OpenAPIV3.Document,
+  specPath: string,
   feedback: ReturnType<typeof createCommandFeedback>
 ) {
   const { pathsToAdd } = await observationToUndocumented(
@@ -334,17 +297,23 @@ async function renderOperationStatus(
       );
     }
     console.log('');
-    feedback.commandInstruction('--document all', 'to document these paths');
     feedback.commandInstruction(
-      `--document "[method] [/path], ..."`,
-      'to document one or more operations'
+      `optic oas document ${path.relative(process.cwd(), specPath)} --all`,
+      'to document all new paths'
+    );
+    feedback.commandInstruction(
+      `optic oas document ${path.relative(
+        process.cwd(),
+        specPath
+      )} "[method] /[path]" ...`,
+      'to document one or more operations. ie "get /user/{userId}"'
     );
   }
 
   return { undocumentedPaths };
 }
 
-async function getInteractions(
+export async function getInteractions(
   options: { har?: string },
   specPath: string,
   feedback: any
