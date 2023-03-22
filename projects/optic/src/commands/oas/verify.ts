@@ -51,7 +51,6 @@ export function verifyCommand(config: OpticCliConfig): Command {
     )
     .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
     .option('--exit0', 'always exit 0')
-    .option('--document <operations>', 'HTTP method and path pair(s) to add')
     .option('--patch', 'Patch existing operations to resolve diffs')
     .option(
       '--upload',
