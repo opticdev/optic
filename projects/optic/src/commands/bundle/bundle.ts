@@ -351,6 +351,7 @@ function bundleMatchingRefsAsComponents<T>(
     [key: string]: {
       component: any;
       componentPath: string;
+      circular: boolean;
       originalPath: string;
       skipAddingToComponents: boolean;
       usages: string[];
@@ -366,6 +367,12 @@ function bundleMatchingRefsAsComponents<T>(
     // if the $ref has already been named, add a usage
     if (refs.hasOwnProperty(refKey)) {
       const foundRef = refs[refKey];
+      // the first entry was circular, replace it
+      if (foundRef && foundRef.circular) {
+        foundRef.component = jsonPointerHelpers.get(spec, key);
+        foundRef.originalPath = key;
+        foundRef.circular = false;
+      }
       foundRef.usages.push(key);
     } else {
       // if the $ref has never been seen before, add it and compute a free name
@@ -384,6 +391,7 @@ function bundleMatchingRefsAsComponents<T>(
       refs[refKey] = {
         skipAddingToComponents: isAlreadyInPlace,
         originalPath: key,
+        circular: component.hasOwnProperty('$ref'),
         componentPath: isAlreadyInPlace
           ? (() => {
               const [, lastKey] = jsonPointerHelpers.splitParentChild(
