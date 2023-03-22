@@ -27,10 +27,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@asyncapi/specs@npm:^3.2.0":
-  version: 3.2.1
-  resolution: "@asyncapi/specs@npm:3.2.1"
-  checksum: 6392d0aaa658905f67553160c725bb0b535e187a120fb2305eb1a223460244a43eea804c00f4985ecbaddb2b04527ce9db51e72117dbe694db547b734f8082dd
+"@asyncapi/specs@npm:^4.1.0":
+  version: 4.2.0
+  resolution: "@asyncapi/specs@npm:4.2.0"
+  dependencies:
+    "@types/json-schema": ^7.0.11
+  checksum: 1eae980e1d7754469cf079bfbbaa2f1185b5fd0293f5bf5d7903014c81fb1c8658ef463a09f6dcca58081f87c0e98b3e0c13b09e3858c738bf209182472763e0
   languageName: node
   linkType: hard
 
@@ -2940,15 +2942,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stoplight/spectral-formats@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "@stoplight/spectral-formats@npm:1.4.0"
+"@stoplight/spectral-formats@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "@stoplight/spectral-formats@npm:1.5.0"
   dependencies:
     "@stoplight/json": ^3.17.0
     "@stoplight/spectral-core": ^1.8.0
     "@types/json-schema": ^7.0.7
     tslib: ^2.3.1
-  checksum: 2478a2a6da424bc19fe88ce7e79e27256ddb6c0c5e90569284173af8c523da7edf84fc1b69543f74a52353cd026161aae7dbc921ec66ff36b33e5149edf6a0e4
+  checksum: dc80c0ee37ff5708b2078aa588d3c8c895ba36b18e52f5813cd7f91d1a476629aa36f1ceaf62e8bd96987c0f7c51537bdb6780a08d32be982db230be5634c93e
   languageName: node
   linkType: hard
 
@@ -2998,14 +3000,14 @@ __metadata:
   linkType: hard
 
 "@stoplight/spectral-rulesets@npm:^1.14.1":
-  version: 1.14.1
-  resolution: "@stoplight/spectral-rulesets@npm:1.14.1"
+  version: 1.15.0
+  resolution: "@stoplight/spectral-rulesets@npm:1.15.0"
   dependencies:
-    "@asyncapi/specs": ^3.2.0
+    "@asyncapi/specs": ^4.1.0
     "@stoplight/better-ajv-errors": 1.0.3
     "@stoplight/json": ^3.17.0
     "@stoplight/spectral-core": ^1.8.1
-    "@stoplight/spectral-formats": ^1.4.0
+    "@stoplight/spectral-formats": ^1.5.0
     "@stoplight/spectral-functions": ^1.5.1
     "@stoplight/spectral-runtime": ^1.1.1
     "@stoplight/types": ^13.6.0
@@ -3015,7 +3017,7 @@ __metadata:
     json-schema-traverse: ^1.0.0
     lodash: ~4.17.21
     tslib: ^2.3.0
-  checksum: 382744c4ec2b49614a5799c384828ece4cbc0cab9036c63b3bdf85d493af3c6ef4a54a5a44a662fb8228e33d6775ba70086d86c77c31f0800d1184de13c2f944
+  checksum: e2fe40e584285cc76d4ab3c6f7ce80d4b3e2c3be752b242a439a8552407cd407bb3b64f19e9856e1405afc06659c9c3039eb2a5b84541ec46128faeae0e65617
   languageName: node
   linkType: hard
 
@@ -3338,6 +3340,13 @@ __metadata:
   version: 3.0.0
   resolution: "@types/json-buffer@npm:3.0.0"
   checksum: 6b0a371dd603f0eec9d00874574bae195382570e832560dadf2193ee0d1062b8e0694bbae9798bc758632361c227b1e3b19e3bd914043b498640470a2da38b77
+  languageName: node
+  linkType: hard
+
+"@types/json-schema@npm:^7.0.11":
+  version: 7.0.11
+  resolution: "@types/json-schema@npm:7.0.11"
+  checksum: 527bddfe62db9012fccd7627794bd4c71beb77601861055d87e3ee464f2217c85fca7a4b56ae677478367bbd248dbde13553312b7d4dbc702a2f2bbf60c4018d
   languageName: node
   linkType: hard
 
