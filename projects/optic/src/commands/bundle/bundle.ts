@@ -396,6 +396,11 @@ function bundleMatchingRefsAsComponents<T>(
         component,
         usages: [key],
       };
+
+      if (nameOptions === 'CompanionDetailsResponseData') {
+        console.log(refs[refKey]);
+        throw new Error('ABC');
+      }
     }
   });
 
