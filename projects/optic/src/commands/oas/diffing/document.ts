@@ -120,6 +120,10 @@ export function parseAddOperations(
     }
   });
 
+  if (pairs.length !== input.length) {
+    return Err('Invalid format for endpoint documentation');
+  }
+
   return Ok(pairs);
 }
 
