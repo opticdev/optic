@@ -14,6 +14,7 @@ import * as fs from 'fs-extra';
 import { getInteractions } from './verify';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { OPTIC_URL_KEY } from '../../constants';
+import path from 'node:path';
 
 type DocumentOptions = {
   all?: string;
@@ -49,6 +50,17 @@ export function documentCommand(): Command {
         );
       }
       const isAddAll = Boolean(options.all);
+
+      if (
+        !isAddAll &&
+        operationsToAdd.val &&
+        operationsToAdd.val.length === 0
+      ) {
+        return feedback.inputError(
+          `Please pass in operations to document.\nDocument all paths using the "--all" flag\nDocument individual paths by passing them as arguments i.e "get /users/{userId}"`,
+          InputErrors.DOCUMENT_OPERATION_FORMAT
+        );
+      }
 
       const absoluteSpecPath = Path.resolve(specPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
