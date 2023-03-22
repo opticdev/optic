@@ -36,6 +36,8 @@ type VerifyOptions = {
   exit0?: boolean;
   har?: string;
   upload?: boolean;
+  //deprecated
+  document?: any;
   message?: string;
 };
 
@@ -51,6 +53,7 @@ export function verifyCommand(config: OpticCliConfig): Command {
     )
     .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
     .option('--exit0', 'always exit 0')
+    .option('--document <operations>', '(removed) see document command')
     .option('--patch', 'Patch existing operations to resolve diffs')
     .option(
       '--upload',
@@ -63,6 +66,16 @@ export function verifyCommand(config: OpticCliConfig): Command {
     )
     .action(async (specPath) => {
       const options = command.opts();
+
+      if (options.document) {
+        return console.log(
+          `--document flag has been removed. You are looking for "optic oas document ${path.relative(
+            process.cwd(),
+            specPath
+          )}"`
+        );
+      }
+
       return await runVerify(
         specPath,
         options as VerifyOptions,
