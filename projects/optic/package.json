@@ -2,7 +2,7 @@
   "name": "@useoptic/optic",
   "license": "MIT",
   "packageManager": "yarn@3.5.0",
-  "version": "0.40.8",
+  "version": "0.40.9-3",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -108,5 +108,6 @@
     "update-notifier": "^5.1.0",
     "url-join": "^4.0.1",
     "whatwg-mimetype": "^3.0.0"
-  }
+  },
+  "stableVersion": "0.40.8"
 }
