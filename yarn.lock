@@ -1942,22 +1942,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cspotcode/source-map-consumer@npm:0.8.0":
-  version: 0.8.0
-  resolution: "@cspotcode/source-map-consumer@npm:0.8.0"
-  checksum: c0c16ca3d2f58898f1bd74c4f41a189dbcc202e642e60e489cbcc2e52419c4e89bdead02c886a12fb13ea37798ede9e562b2321df997ebc210ae9bd881561b4e
-  languageName: node
-  linkType: hard
-
-"@cspotcode/source-map-support@npm:0.7.0":
-  version: 0.7.0
-  resolution: "@cspotcode/source-map-support@npm:0.7.0"
-  dependencies:
-    "@cspotcode/source-map-consumer": 0.8.0
-  checksum: 9faddda7757cd778b5fd6812137b2cc265810043680d6399acc20441668fafcdc874053be9dccd0d9110087287bfad27eb3bf342f72bceca9aa9059f5d0c4be8
-  languageName: node
-  linkType: hard
-
 "@cspotcode/source-map-support@npm:^0.8.0":
   version: 0.8.1
   resolution: "@cspotcode/source-map-support@npm:0.8.1"
@@ -3738,7 +3722,7 @@ __metadata:
     minimatch: 7.4.2
     prettier: ^2.4.1
     ts-jest: ^29.0.3
-    ts-node: ^10.3.1
+    ts-node: ^10.8.1
     typescript: ^4.4.4
   languageName: unknown
   linkType: soft
@@ -3877,7 +3861,7 @@ __metadata:
     semver: ^7.3.8
     ts-invariant: ^0.9.3
     ts-jest: ^29.0.3
-    ts-node: ^10.3.1
+    ts-node: ^10.8.1
     typescript: ^4.4.4
     upath: ^2.0.1
     yaml: ^2.2.0
@@ -3929,7 +3913,7 @@ __metadata:
     prettier: ^2.4.1
     ts-invariant: ^0.9.3
     ts-jest: ^29.0.3
-    ts-node: ^10.3.1
+    ts-node: ^10.8.1
     typescript: ^4.4.4
     yaml-ast-parser: ^0.0.43
   languageName: unknown
@@ -3979,7 +3963,7 @@ __metadata:
     picomatch: ^2.3.1
     prettier: ^2.4.1
     ts-jest: ^29.0.3
-    ts-node: ^10.8.0
+    ts-node: ^10.8.1
     typescript: ^4.7.2
     url-join: ^4.0.1
     uuid: ^9.0.0
@@ -4072,7 +4056,7 @@ __metadata:
     tar: ^6.1.11
     ts-invariant: ^0.9.4
     ts-jest: ^29.0.3
-    ts-node: ^10.8.0
+    ts-node: ^10.8.1
     ts-results: ^3.3.0
     typescript: ^4.7.2
     update-notifier: ^5.1.0
@@ -4107,7 +4091,7 @@ __metadata:
     node-fetch: ^2.6.7
     semver: ^7.3.8
     ts-jest: ^29.0.3
-    ts-node: ^10.4.0
+    ts-node: ^10.8.1
     typescript: ^4.4.4
   bin:
     rulesets-base: build/index.js
@@ -4136,7 +4120,7 @@ __metadata:
     jest: ^29.3.1
     prettier: ^2.4.1
     ts-jest: ^29.0.3
-    ts-node: ^10.4.0
+    ts-node: ^10.8.1
     typescript: ^4.4.4
     whatwg-mimetype: ^3.0.0
   bin:
@@ -11495,80 +11479,6 @@ __metadata:
   bin:
     ts-jest: cli.js
   checksum: f60f129c2287f4c963d9ee2677132496c5c5a5d39c27ad234199a1140c26318a7d5bda34890ab0e30636ec42a8de28f84487c09e9dcec639c9c67812b3a38373
-  languageName: node
-  linkType: hard
-
-"ts-node@npm:^10.3.1, ts-node@npm:^10.4.0":
-  version: 10.4.0
-  resolution: "ts-node@npm:10.4.0"
-  dependencies:
-    "@cspotcode/source-map-support": 0.7.0
-    "@tsconfig/node10": ^1.0.7
-    "@tsconfig/node12": ^1.0.7
-    "@tsconfig/node14": ^1.0.0
-    "@tsconfig/node16": ^1.0.2
-    acorn: ^8.4.1
-    acorn-walk: ^8.1.1
-    arg: ^4.1.0
-    create-require: ^1.1.0
-    diff: ^4.0.1
-    make-error: ^1.1.1
-    yn: 3.1.1
-  peerDependencies:
-    "@swc/core": ">=1.2.50"
-    "@swc/wasm": ">=1.2.50"
-    "@types/node": "*"
-    typescript: ">=2.7"
-  peerDependenciesMeta:
-    "@swc/core":
-      optional: true
-    "@swc/wasm":
-      optional: true
-  bin:
-    ts-node: dist/bin.js
-    ts-node-cwd: dist/bin-cwd.js
-    ts-node-script: dist/bin-script.js
-    ts-node-transpile-only: dist/bin-transpile.js
-    ts-script: dist/bin-script-deprecated.js
-  checksum: 3933ac0a937d33c45e04a6750fcdd3e765eb2897d1da1307cd97ac52af093bcfb632ec0453a75000a65c8b5b7bdb32b1077050a186dcc556e62657cb592e6d49
-  languageName: node
-  linkType: hard
-
-"ts-node@npm:^10.8.0":
-  version: 10.8.0
-  resolution: "ts-node@npm:10.8.0"
-  dependencies:
-    "@cspotcode/source-map-support": ^0.8.0
-    "@tsconfig/node10": ^1.0.7
-    "@tsconfig/node12": ^1.0.7
-    "@tsconfig/node14": ^1.0.0
-    "@tsconfig/node16": ^1.0.2
-    acorn: ^8.4.1
-    acorn-walk: ^8.1.1
-    arg: ^4.1.0
-    create-require: ^1.1.0
-    diff: ^4.0.1
-    make-error: ^1.1.1
-    v8-compile-cache-lib: ^3.0.1
-    yn: 3.1.1
-  peerDependencies:
-    "@swc/core": ">=1.2.50"
-    "@swc/wasm": ">=1.2.50"
-    "@types/node": "*"
-    typescript: ">=2.7"
-  peerDependenciesMeta:
-    "@swc/core":
-      optional: true
-    "@swc/wasm":
-      optional: true
-  bin:
-    ts-node: dist/bin.js
-    ts-node-cwd: dist/bin-cwd.js
-    ts-node-esm: dist/bin-esm.js
-    ts-node-script: dist/bin-script.js
-    ts-node-transpile-only: dist/bin-transpile.js
-    ts-script: dist/bin-script-deprecated.js
-  checksum: 1c22dc8dd80d0ba4dd4250b82cc032b63f6fbe8c87f8197cef43e7f9e2d43f5b333b445ed712e3006e24119257b4bff2c46605f7da61ab6f5e9514885d296f0c
   languageName: node
   linkType: hard
 
