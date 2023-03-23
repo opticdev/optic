@@ -106,14 +106,30 @@ export async function setupWorkspace(
   return dir;
 }
 
+async function getTsNodePath() {
+  const tsNodeAtRoot = path.join(
+    root,
+    '../..',
+    'node_modules',
+    '.bin',
+    'ts-node'
+  );
+  const tsNodeAtSubproject = path.join(root, 'node_modules', '.bin', 'ts-node');
+  try {
+    await fs.access(tsNodeAtRoot);
+    return tsNodeAtRoot;
+  } catch (e) {
+    return tsNodeAtSubproject;
+  }
+}
+
 export async function runOptic(
   workspace: string,
   cmd: string
 ): Promise<ProcessResult> {
   const src = path.join(root, 'src', 'index.ts');
-  const tsNode = path.join(root, 'node_modules', '.bin', 'ts-node');
-
-  const result = await run(`${tsNode}  ${src} ${cmd}`, false, workspace);
+  const tsNode = await getTsNodePath();
+  const result = await run(`${tsNode} ${src} ${cmd}`, false, workspace);
 
   return result;
 }
