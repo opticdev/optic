@@ -104,9 +104,7 @@ export async function runVerify(
 
   console.log('');
 
-  const [, captureStorageDirectory, capturesCount] = await captureStorage(
-    specPath
-  );
+  const { trafficDirectory, existingCaptures } = await captureStorage(specPath);
 
   const makeInteractionsIterator = async () =>
     getInteractions(options, specPath, feedback);
@@ -127,9 +125,9 @@ export async function runVerify(
     `Verifying API behavior with traffic ${
       options.har
         ? 'from har'
-        : `from last ${chalk.blue.underline(capturesCount.toString())} capture${
-            capturesCount === 1 ? '' : 's'
-          }. ${nextCommand(
+        : `from last ${chalk.blue.underline(
+            existingCaptures.toString()
+          )} capture${existingCaptures === 1 ? '' : 's'}. ${nextCommand(
             'Reset captures',
             `optic oas capture clear ${path.relative(process.cwd(), specPath)}`
           )}\``
@@ -287,11 +285,9 @@ export async function getInteractions(
 ) {
   const sources: CapturedInteractions[] = [];
 
-  const [, captureStorageDirectory] = await captureStorage(specPath);
+  const { trafficDirectory } = await captureStorage(specPath);
 
-  const captureDirectoryContents = (
-    await fs.readdir(captureStorageDirectory)
-  ).sort();
+  const captureDirectoryContents = (await fs.readdir(trafficDirectory)).sort();
 
   // if HAR provided, only pullf rom there
   if (options.har) {
@@ -317,7 +313,7 @@ export async function getInteractions(
       // completed captures only
       if (potentialCapture.endsWith('.har')) {
         let harFile = fs.createReadStream(
-          path.join(captureStorageDirectory, potentialCapture)
+          path.join(trafficDirectory, potentialCapture)
         );
         let harEntryResults = HarEntries.fromReadable(harFile);
         let harEntries = AT.unwrapOr(harEntryResults, (err) => {

@@ -52,8 +52,8 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
               InputErrors.SPEC_FILE_NOT_FOUND
             );
           }
-          const [, captureStorageDirectory] = await captureStorage(specPath);
-          await fs.remove(captureStorageDirectory);
+          const { trafficDirectory } = await captureStorage(specPath);
+          await fs.remove(trafficDirectory);
           feedback.success(
             'Cleared capture folder for ' +
               path.relative(process.cwd(), absoluteSpecPath)
@@ -88,7 +88,9 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
     )
     .option('-o, --output <output>', 'file name for output')
     .action(async (filePath: string, targetUrl: string) => {
-      const [openApiExists, trafficDirectory] = await captureStorage(filePath);
+      const { openApiExists, trafficDirectory } = await captureStorage(
+        filePath
+      );
 
       if (!openApiExists) {
         return await feedback.inputError(
