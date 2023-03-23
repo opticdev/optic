@@ -14,7 +14,7 @@ import * as fs from 'fs-extra';
 import { getInteractions } from './verify';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { OPTIC_URL_KEY } from '../../constants';
-import path from 'node:path';
+import { patchOperationsAsNeeded } from './diffing/patch';
 
 type DocumentOptions = {
   all?: string;
@@ -22,22 +22,15 @@ type DocumentOptions = {
 };
 
 export function documentCommand(): Command {
-  const command = new Command('document');
+  const command = new Command('update');
   const feedback = createCommandFeedback(command);
 
   command
-    .description('document a new operation in the OpenAPI')
-    .argument(
-      '<openapi-file>',
-      'an OpenAPI spec to match up to observed traffic'
-    )
+    .description('patch OpenAPI spec to match captured traffic')
+    .argument('<openapi-file>', 'an OpenAPI spec')
     .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
-    .option('--all', 'Patch existing operations to resolve diffs')
-    .argument(
-      '[operations...]',
-      'the paths to document format "get /path/{id}"',
-      []
-    )
+    .option('--all', 'patch all operations')
+    .argument('[operations...]', 'operations in format "get /path/{id}"', [])
     .action(async (specPath, operations) => {
       const analytics: { event: string; properties: any }[] = [];
       const options: DocumentOptions = command.opts();
@@ -87,14 +80,14 @@ export function documentCommand(): Command {
 
       const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
 
-      feedback.notable('Documenting operations...');
+      feedback.notable('Documenting new operations...');
 
       let { observations } = matchInteractions(
         spec,
         await makeInteractionsIterator()
       );
 
-      const result = await addIfUndocumented(
+      const documentResult = await addIfUndocumented(
         operationsToAdd.val,
         isAddAll,
         observations,
@@ -103,15 +96,15 @@ export function documentCommand(): Command {
         sourcemap
       );
 
-      if (result.ok) {
+      if (documentResult.ok) {
         analytics.push({
           event: 'openapi.verify.document',
           properties: {
             allFlag: isAddAll,
-            numberDocumented: result.val.length,
+            numberDocumented: documentResult.val.length,
           },
         });
-        result.val.map((operation) => {
+        documentResult.val.map((operation) => {
           console.log(
             `  ${chalk.green('added')}  ${operation.method} ${
               operation.pathPattern
@@ -119,6 +112,20 @@ export function documentCommand(): Command {
           );
         });
       }
+
+      const {
+        jsonLike: specAfterAdditions,
+        sourcemap: sourcemapAfterAdditions,
+      } = specReadResult.unwrap();
+
+      const patchInteractions = await makeInteractionsIterator();
+      const patchStats = await patchOperationsAsNeeded(
+        patchInteractions,
+        specAfterAdditions,
+        sourcemapAfterAdditions,
+        isAddAll,
+        operationsToAdd.ok ? operationsToAdd.val : []
+      );
 
       if (!opticUrlDetails) {
         console.log('');

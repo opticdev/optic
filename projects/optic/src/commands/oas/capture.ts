@@ -198,20 +198,24 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
                 }
                 await fs.move(inProgressName, completedName);
 
-                await runVerify(
-                  filePath,
-                  {
-                    exit0: true,
-                    har: options.output
-                      ? path.resolve(options.output)
-                      : undefined,
-                  },
-                  config,
-                  feedback,
-                  {
-                    printCoverage: false,
-                  }
-                );
+                try {
+                  await runVerify(
+                    filePath,
+                    {
+                      exit0: true,
+                      har: options.output
+                        ? path.resolve(options.output)
+                        : undefined,
+                    },
+                    config,
+                    feedback,
+                    {
+                      printCoverage: false,
+                    }
+                  );
+                } catch (e) {
+                  console.log(e);
+                }
 
                 if (!interactiveCapture) {
                   // Log next steps

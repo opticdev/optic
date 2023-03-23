@@ -91,7 +91,7 @@ async function computeOperationsToAdd(
   }
 }
 
-interface ParsedOperation {
+export interface ParsedOperation {
   methods: Array<HttpMethod>;
   pathPattern: string;
 }

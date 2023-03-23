@@ -30,14 +30,13 @@ import { uploadSpec, uploadSpecVerification } from '../../utils/cloud-specs';
 import { getFileFromFsOrGit } from '../../utils/spec-loaders';
 import * as Git from '../../utils/git-utils';
 import { sanitizeGitTag } from '@useoptic/openapi-utilities';
+import { nextCommand } from './reporters/next-command';
 
 type VerifyOptions = {
-  patch?: boolean;
   exit0?: boolean;
   har?: string;
   upload?: boolean;
   //deprecated
-  document?: any;
   message?: string;
 };
 
@@ -53,8 +52,6 @@ export function verifyCommand(config: OpticCliConfig): Command {
     )
     .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
     .option('--exit0', 'always exit 0')
-    .option('--document <operations>', '(removed) see document command')
-    .option('--patch', 'Patch existing operations to resolve diffs')
     .option(
       '--upload',
       'Upload the verification data to optic cloud. Requires the spec to be in optic',
@@ -66,15 +63,6 @@ export function verifyCommand(config: OpticCliConfig): Command {
     )
     .action(async (specPath) => {
       const options = command.opts();
-
-      if (options.document) {
-        return console.log(
-          `--document flag has been removed. You are looking for "optic oas document ${path.relative(
-            process.cwd(),
-            specPath
-          )}"`
-        );
-      }
 
       return await runVerify(
         specPath,
@@ -97,11 +85,7 @@ export async function runVerify(
   const analytics: { event: string; properties: any }[] = [];
 
   if (options.upload) {
-    if (options.patch) {
-      console.error('Cannot run upload with --patch options.');
-      process.exitCode = 1;
-      return;
-    } else if (config.vcs?.type !== VCS.Git || config.vcs.status === 'dirty') {
+    if (config.vcs?.type !== VCS.Git || config.vcs.status === 'dirty') {
       console.error(
         'optic oas verify --upload can only be run in a git repository without uncommitted changes. That ensures reports are properly tagged.'
       );
@@ -126,33 +110,6 @@ export async function runVerify(
 
   const makeInteractionsIterator = async () =>
     getInteractions(options, specPath, feedback);
-
-  /// Add if --document or --update options passed
-  if (options.patch) {
-    if (options.patch) {
-      feedback.notable('Patching operations...');
-      const specReadResult = await readDeferencedSpec(absoluteSpecPath);
-      if (specReadResult.err) {
-        return await feedback.inputError(
-          `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`,
-          InputErrors.SPEC_FILE_NOT_READABLE
-        );
-      }
-      const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
-      const patchInteractions = await makeInteractionsIterator();
-      const patchStats = await patchOperationsAsNeeded(
-        patchInteractions,
-        spec,
-        sourcemap
-      );
-      analytics.push({
-        event: 'openapi.verify.patch',
-        properties: patchStats,
-      });
-    }
-
-    console.log(chalk.gray('-'.repeat(process.stdout.columns) + '\n'));
-  }
 
   /// Run to verify with the latest specification
   const parseResult = await getFileFromFsOrGit(absoluteSpecPath, config, {
@@ -263,13 +220,6 @@ export async function runVerify(
 
   await flushEvents();
 
-  // clear captures
-  if (options.patch && !options.har) {
-    const [, captureStorageDirectory] = await captureStorage(specPath);
-    console.log('Resetting captured traffic');
-    await fs.remove(captureStorageDirectory);
-  }
-
   if (!options.exit0 && hasDiff) {
     console.log(
       chalk.red('OpenAPI and implementation are out of sync. Exiting 1')
@@ -309,16 +259,21 @@ async function renderOperationStatus(
       );
     }
     console.log('');
-    feedback.commandInstruction(
-      `optic oas document ${path.relative(process.cwd(), specPath)} --all`,
-      'to document all new paths'
+    console.log(
+      nextCommand(
+        'Document all new operations with',
+        `optic oas document ${path.relative(process.cwd(), specPath)} --all`
+      )
     );
-    feedback.commandInstruction(
-      `optic oas document ${path.relative(
-        process.cwd(),
-        specPath
-      )} "[method] /[path]" ...`,
-      'to document one or more operations. ie "get /user/{userId}"'
+
+    console.log(
+      nextCommand(
+        'Document individual operations with',
+        `optic oas document ${path.relative(
+          process.cwd(),
+          specPath
+        )} "[method] /[path]" ...`
+      )
     );
   }
 
