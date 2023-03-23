@@ -168,7 +168,7 @@ ${logger.log(pathToHighlight, {
   highlightColor: 'yellow',
   observation: error,
 })}
-${nextCommand(`fix schema by running`, `optic oas update `)}\n`;
+${nextCommand(`fix schema by running`, `optic update `)}\n`;
   console.log(lines);
 }
 
@@ -179,7 +179,7 @@ function renderBodyDiff(
 ) {
   const lines = `${chalk.bgYellow('  Undocumented  ')} ${description}
   operation: ${chalk.bold(`${method} ${pathPattern}`)}  
-${nextCommand(`document new body by running`, `optic oas update `)}\n`;
+${nextCommand(`document new body by running`, `optic update `)}\n`;
   console.log(lines);
 }
 

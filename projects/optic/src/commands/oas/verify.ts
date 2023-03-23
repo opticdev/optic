@@ -259,14 +259,14 @@ async function renderOperationStatus(
     console.log(
       nextCommand(
         'Document all new operations with',
-        `optic oas update ${path.relative(process.cwd(), specPath)} --all`
+        `optic update ${path.relative(process.cwd(), specPath)} --all`
       )
     );
 
     console.log(
       nextCommand(
         'Document individual operations with',
-        `optic oas update ${path.relative(
+        `optic update ${path.relative(
           process.cwd(),
           specPath
         )} "[method] /[path]" ...`
