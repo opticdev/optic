@@ -16,7 +16,6 @@ import { registerApiAdd } from './commands/api/add';
 import { captureCommand } from './commands/oas/capture';
 import { newCommand } from './commands/oas/new';
 import { setupTlsCommand } from './commands/oas/setup-tls';
-import { clearCommand } from './commands/oas/clear';
 import { verifyCommand } from './commands/oas/verify';
 import { registerDiffAll } from './commands/diff/diff-all';
 import { registerSpecPush } from './commands/spec/push';
@@ -81,17 +80,12 @@ Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
 
   registerDiff(cli, cliConfig);
 
-  const oas = cli.command('oas');
-  oas.description(
-    'generate OpenAPI operations and patches based on API traffic. See `optic oas --help`'
-  );
   // commands for tracking changes with openapi
-  oas.addCommand(await captureCommand(cliConfig));
-  oas.addCommand(await updateCommand());
-  oas.addCommand(await newCommand());
-  oas.addCommand(await setupTlsCommand());
-  oas.addCommand(await clearCommand());
-  oas.addCommand(verifyCommand(cliConfig));
+  cli.addCommand(await captureCommand(cliConfig));
+  cli.addCommand(await newCommand());
+  cli.addCommand(await setupTlsCommand());
+  cli.addCommand(verifyCommand(cliConfig));
+  cli.addCommand(updateCommand());
 
   registerLint(cli, cliConfig);
   registerDiffAll(cli, cliConfig);

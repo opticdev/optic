@@ -129,10 +129,10 @@ export async function runVerify(
         ? 'from har'
         : `from last ${chalk.blue.underline(capturesCount.toString())} capture${
             capturesCount === 1 ? '' : 's'
-          }. Reset captures with "optic oas clear ${path.relative(
-            process.cwd(),
-            specPath
-          )}"\``
+          }. ${nextCommand(
+            'Reset captures',
+            `optic oas capture clear ${path.relative(process.cwd(), specPath)}`
+          )}\``
     } \n`
   );
 

@@ -24,9 +24,43 @@ import { platform } from './lib/shell-utils';
 import chalk from 'chalk';
 import { runVerify } from './verify';
 import { OpticCliConfig } from '../../config';
+import Path from 'path';
+import os from 'os';
+const tmpDirectory = os.tmpdir();
 
 export async function captureCommand(config: OpticCliConfig): Promise<Command> {
   const command = new Command('capture');
+
+  const clear = new Command('clear');
+  command.addCommand(
+    clear
+      .description('clear captures for the OpenAPI file')
+      .argument('[openapi-file]', 'an OpenAPI spec file to add an operation to')
+      .option('--all', 'clear all captured traffic')
+      .action(async (specPath) => {
+        const options = clear.opts();
+        if (options.all) {
+          const allCaptures = path.join(tmpDirectory, 'optic', 'captures');
+          await fs.remove(allCaptures);
+          feedback.success('Cleared all captures ' + allCaptures);
+        }
+        if (specPath) {
+          const absoluteSpecPath = Path.resolve(specPath);
+          if (!(await fs.pathExists(absoluteSpecPath))) {
+            return await feedback.inputError(
+              'OpenAPI specification file could not be found',
+              InputErrors.SPEC_FILE_NOT_FOUND
+            );
+          }
+          const [, captureStorageDirectory] = await captureStorage(specPath);
+          await fs.remove(captureStorageDirectory);
+          feedback.success(
+            'Cleared capture folder for ' +
+              path.relative(process.cwd(), absoluteSpecPath)
+          );
+        }
+      })
+  );
 
   const feedback = createCommandFeedback(command);
 
@@ -352,7 +386,7 @@ async function renderCaptureProgress(
   if (interactionCount === 0) {
     spinner.info('No requests captured');
   } else {
-    spinner.succeed(`${interactionCount} requests written`);
+    spinner.succeed(`${interactionCount} requests captured`);
   }
 }
 
