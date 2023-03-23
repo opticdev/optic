@@ -36,7 +36,6 @@ type VerifyOptions = {
   exit0?: boolean;
   har?: string;
   upload?: boolean;
-  //deprecated
   message?: string;
 };
 
@@ -260,14 +259,14 @@ async function renderOperationStatus(
     console.log(
       nextCommand(
         'Document all new operations with',
-        `optic oas document ${path.relative(process.cwd(), specPath)} --all`
+        `optic oas update ${path.relative(process.cwd(), specPath)} --all`
       )
     );
 
     console.log(
       nextCommand(
         'Document individual operations with',
-        `optic oas document ${path.relative(
+        `optic oas update ${path.relative(
           process.cwd(),
           specPath
         )} "[method] /[path]" ...`

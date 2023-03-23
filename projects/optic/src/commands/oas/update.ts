@@ -29,8 +29,12 @@ export function updateCommand(): Command {
     .description('patch OpenAPI spec to match captured traffic')
     .argument('<openapi-file>', 'an OpenAPI spec')
     .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
-    .option('--all', 'patch all operations')
-    .argument('[operations...]', 'operations in format "get /path/{id}"', [])
+    .option('--all', 'update all operations')
+    .argument(
+      '[operations...]',
+      'update specific operations in format "get /path/{id}"',
+      []
+    )
     .action(async (specPath, operations) => {
       const analytics: { event: string; properties: any }[] = [];
       const options: UpdateOptions = command.opts();
@@ -38,7 +42,7 @@ export function updateCommand(): Command {
       const operationsToAdd = parseAddOperations(operations);
       if (operationsToAdd.err) {
         return feedback.inputError(
-          'To document an operation you must use the format "get /path/{id}"...',
+          'use the format "get /path/{id}"... to specify which operations should be added/updated',
           InputErrors.DOCUMENT_OPERATION_FORMAT
         );
       }
