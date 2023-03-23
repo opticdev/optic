@@ -16,12 +16,12 @@ import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { OPTIC_URL_KEY } from '../../constants';
 import { patchOperationsAsNeeded } from './diffing/patch';
 
-type DocumentOptions = {
+type UpdateOptions = {
   all?: string;
   har?: string;
 };
 
-export function documentCommand(): Command {
+export function updateCommand(): Command {
   const command = new Command('update');
   const feedback = createCommandFeedback(command);
 
@@ -33,7 +33,7 @@ export function documentCommand(): Command {
     .argument('[operations...]', 'operations in format "get /path/{id}"', [])
     .action(async (specPath, operations) => {
       const analytics: { event: string; properties: any }[] = [];
-      const options: DocumentOptions = command.opts();
+      const options: UpdateOptions = command.opts();
 
       const operationsToAdd = parseAddOperations(operations);
       if (operationsToAdd.err) {

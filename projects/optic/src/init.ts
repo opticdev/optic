@@ -27,7 +27,7 @@ import chalk from 'chalk';
 import { registerDereference } from './commands/dereference/dereference';
 import { registerCiSetup } from './commands/ci/setup';
 import { registerLint } from './commands/lint/lint';
-import { documentCommand } from './commands/oas/document';
+import { updateCommand } from './commands/oas/update';
 
 const packageJson = require('../package.json');
 
@@ -87,7 +87,7 @@ Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
   );
   // commands for tracking changes with openapi
   oas.addCommand(await captureCommand(cliConfig));
-  oas.addCommand(await documentCommand());
+  oas.addCommand(await updateCommand());
   oas.addCommand(await newCommand());
   oas.addCommand(await setupTlsCommand());
   oas.addCommand(await clearCommand());
