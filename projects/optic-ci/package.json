@@ -2,7 +2,7 @@
   "name": "@useoptic/optic-ci",
   "license": "MIT",
   "packageManager": "yarn@3.4.1",
-  "version": "0.40.9-1",
+  "version": "0.41.1-0",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -67,5 +67,5 @@
     "url-join": "^4.0.1",
     "uuid": "^9.0.0"
   },
-  "stableVersion": "0.40.8"
+  "stableVersion": "0.41.0"
 }
