@@ -368,8 +368,9 @@ function bundleMatchingRefsAsComponents<T>(
     if (refs.hasOwnProperty(refKey)) {
       const foundRef = refs[refKey];
       // the first entry was circular, replace it
-      if (foundRef && foundRef.circular) {
-        foundRef.component = jsonPointerHelpers.get(spec, key);
+      const component = jsonPointerHelpers.get(spec, key);
+      if (foundRef && foundRef.circular && !component.hasOwnProperty('$ref')) {
+        foundRef.component = component;
         foundRef.originalPath = key;
         foundRef.circular = false;
       }
