@@ -29,8 +29,8 @@
     "jest": "^29.3.1",
     "prettier": "^2.4.1",
     "ts-jest": "^29.0.3",
-    "ts-node": "^10.3.1",
-    "typescript": "^4.4.4"
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
   },
   "dependencies": {
     "jsonpointer": "^5.0.1",
