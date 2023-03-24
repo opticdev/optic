@@ -19,14 +19,18 @@ import { DocumentedInteraction, DocumentedInteractions } from '../operations';
 import { DocumentedBodies, DocumentedBody } from '../shapes';
 import { updateReporter } from '../reporters/update';
 import { ApiCoverageCounter } from '../coverage/api-coverage';
+import { ParsedOperation } from './document';
+import { nextCommand } from '../reporters/next-command';
 
 export async function patchOperationsAsNeeded(
   patchInteractions: CapturedInteractions,
   spec: OpenAPIV3.Document,
-  sourcemap: JsonSchemaSourcemap
+  sourcemap: JsonSchemaSourcemap,
+  isAddAll: boolean = true,
+  filterToOperations: ParsedOperation[] = []
 ) {
   let { results: updatePatches, observations: updateObservations } =
-    updateByInteractions(spec, patchInteractions);
+    updateByInteractions(spec, patchInteractions, isAddAll, filterToOperations);
 
   let { results: updatedSpecFiles, observations: fileObservations } =
     updateSpecFiles(updatePatches, sourcemap);
@@ -164,7 +168,7 @@ ${logger.log(pathToHighlight, {
   highlightColor: 'yellow',
   observation: error,
 })}
-  ${chalk.blue.bold(`(use "--patch" to update) \n\n`)}`;
+${nextCommand(`fix schema by running`, `optic update `)}\n`;
   console.log(lines);
 }
 
@@ -175,13 +179,15 @@ function renderBodyDiff(
 ) {
   const lines = `${chalk.bgYellow('  Undocumented  ')} ${description}
   operation: ${chalk.bold(`${method} ${pathPattern}`)}  
-  ${chalk.blue.bold(`(use "--patch" to update) \n\n`)}`;
+${nextCommand(`document new body by running`, `optic update `)}\n`;
   console.log(lines);
 }
 
 export function updateByInteractions(
   spec: OpenAPIV3.Document,
-  interactions: CapturedInteractions
+  interactions: CapturedInteractions,
+  isAddAll: boolean = true,
+  filterToOperations: ParsedOperation[] = []
 ): { results: SpecPatches; observations: UpdateObservations } {
   const updatingSpec = new Subject<OpenAPIV3.Document>();
   const specUpdates = updatingSpec.iterator;
@@ -232,7 +238,9 @@ export function updateByInteractions(
     DocumentedInteractions.fromCapturedInteractions(
       tap(observers.capturedInteraction)(interactions),
       spec,
-      specUpdates
+      specUpdates,
+      isAddAll,
+      filterToOperations
     );
 
   const specPatches = (async function* (): SpecPatches {
@@ -388,6 +396,7 @@ export interface UpdateObservations extends AsyncIterable<UpdateObservation> {}
 export async function renderUpdateStats(
   updateObservations: UpdateObservations
 ): Promise<{ interactions: number; patched: number; fileUpdates: number }> {
+  console.log(chalk.blueBright('» ') + 'Updating operations...');
   const reporter = await updateReporter(process.stderr, process.cwd());
 
   let interactions = 0,

@@ -19,9 +19,8 @@ npm install -g @useoptic/optic
 ## Document your existing APIs in minutes 
 Use real API traffic to write your initial OpenAPI specification and correctly patch the spec whenever an API changes. 
 
-1. Use the CLI to magically capture traffic `optic oas capture https://api.github.com` OR provide a HAR (HTTP Archive format). 
-2. Then run `optic oas verify` to see a list of "Undocumented" endpoints. Optic is your API version control tool, like git for APIs. "Undocumented" endpoints are like "Untracked" files in git. 
-3. Add operations one at a time or use `--document all` to document all of them at once
+1. Use the CLI to magically capture traffic `optic capture openapi.yaml https://api.github.com` OR provide a HAR (HTTP Archive format). 
+2. Optic is your API version control tool, like git for APIs. "Undocumented" endpoints are like "Untracked" files in git. Add operations one at a time or use `optic update openapi.yaml --all` to document all of them at once
 
 **[Documentation: Generate an OpenAPI from traffic](https://www.useoptic.com/docs/openapi/generate-from-traffic)**
 
@@ -46,10 +45,10 @@ https://user-images.githubusercontent.com/5900338/211033179-86d5021f-17d1-4391-a
 
 ## Verify your API is working-as-designed
 
-With Optic you can verify your API behavior in CI and understand your team's API Test Coverage (the % of your API functionality your testing covered). If `optic oas verify` detects no diffs, and you have high API Coverage, you can be very confident your API is working as designed.
+With Optic you can verify your API behavior in CI and understand your team's API Test Coverage (the % of your API functionality your testing covered). If `optic verify` detects no diffs, and you have high API Coverage, you can be very confident your API is working as designed.
 
 ```bash
-optic oas verify openapi.yml
+optic verify openapi.yml
 ```
 
 **[Documentation: Verify your API works as designed](https://www.useoptic.com/docs/openapi/verify-openapi)**

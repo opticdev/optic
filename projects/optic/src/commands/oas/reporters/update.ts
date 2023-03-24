@@ -217,7 +217,7 @@ export async function updateReporter(stream: WriteStream, cwd: string) {
                 `patch${patchCount > 1 ? 'es' : ''} applied`
               )}`;
         let icon =
-          patchCount <= 0 ? chalk.greenBright(' ✓') : chalk.blueBright(' »');
+          patchCount <= 0 ? chalk.greenBright(' ✓') : chalk.yellowBright(' ✓');
 
         line.icon = icon;
         line.spinner = false;
