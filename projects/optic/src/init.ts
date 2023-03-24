@@ -1,4 +1,4 @@
-import { program as cli } from 'commander';
+import { Command, program as cli } from 'commander';
 import updateNotifier from 'update-notifier';
 import { initSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import {
@@ -79,6 +79,19 @@ Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
   cli.addHelpCommand(false);
 
   registerDiff(cli, cliConfig);
+
+  //@todo by 2023/5/10
+  cli.addCommand(
+    new Command('oas')
+      .description('[Renamed] to optic capture/new/verify/update')
+      .action(() =>
+        console.log(
+          `[Renamed] to optic capture/new/verify/update. See ${chalk.blue.underline(
+            'https://www.useoptic.com/docs/openapi/update-from-traffic'
+          )}`
+        )
+      )
+  );
 
   // commands for tracking changes with openapi
   cli.addCommand(await captureCommand(cliConfig));
