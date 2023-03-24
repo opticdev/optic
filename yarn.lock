@@ -2006,39 +2006,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@httptoolkit/httpolyglot@npm:^2.0.1":
+"@httptoolkit/httpolyglot@npm:^2.0.1, @httptoolkit/httpolyglot@npm:^2.1.0":
   version: 2.1.0
   resolution: "@httptoolkit/httpolyglot@npm:2.1.0"
   dependencies:
     "@types/node": ^16.7.10
   checksum: b2471d15a2df9511b92a5c84513115898c811cb74056a93e281b4434f38f25c05ee20d81e3fc15ce57c285edf0a29304c1306644da3a2e94fefdcd3046c53562
-  languageName: node
-  linkType: hard
-
-"@httptoolkit/proxy-agent@npm:^5.0.1-socks-lookup-fix.0":
-  version: 5.0.1-socks-lookup-fix.0
-  resolution: "@httptoolkit/proxy-agent@npm:5.0.1-socks-lookup-fix.0"
-  dependencies:
-    "@httptoolkit/socks-proxy-agent": ^6.1.1-use-request-lookup-fix.0
-    agent-base: ^6.0.0
-    debug: 4
-    http-proxy-agent: ^4.0.0
-    https-proxy-agent: ^5.0.0
-    lru-cache: ^5.1.1
-    pac-proxy-agent: ^5.0.0
-    proxy-from-env: ^1.0.0
-  checksum: c73df5e2017224948498415e39eb51751690de2f47b252d5852133a4b3e9ec9c9395b37c89fe1dae5966cd930f6c1793dda3cb0949075e9ace0f0ebf925fefe0
-  languageName: node
-  linkType: hard
-
-"@httptoolkit/socks-proxy-agent@npm:^6.1.1-use-request-lookup-fix.0":
-  version: 6.1.1-use-request-lookup-fix.0
-  resolution: "@httptoolkit/socks-proxy-agent@npm:6.1.1-use-request-lookup-fix.0"
-  dependencies:
-    agent-base: ^6.0.2
-    debug: ^4.3.1
-    socks: ^2.6.1
-  checksum: 1cad011e9338130d7540e29b888fe37efd8ce09ea91bf097c89f62ffc4ac4f61c1169a690f3f78be1a4baf08b877758619e191bec87a8876744eb117cc9c1bd2
   languageName: node
   linkType: hard
 
@@ -4179,7 +4152,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"agent-base@npm:6, agent-base@npm:^6.0.0, agent-base@npm:^6.0.2":
+"agent-base@npm:6, agent-base@npm:^6.0.2":
   version: 6.0.2
   resolution: "agent-base@npm:6.0.2"
   dependencies:
@@ -5730,7 +5703,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:^4.3.4":
+"debug@npm:^4.3.3, debug@npm:^4.3.4":
   version: 4.3.4
   resolution: "debug@npm:4.3.4"
   dependencies:
@@ -5886,6 +5859,15 @@ __metadata:
   version: 1.2.0
   resolution: "destroy@npm:1.2.0"
   checksum: 0acb300b7478a08b92d810ab229d5afe0d2f4399272045ab22affa0d99dbaf12637659411530a6fcd597a9bdac718fc94373a61a95b4651bbc7b83684a565e38
+  languageName: node
+  linkType: hard
+
+"destroyable-server@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "destroyable-server@npm:1.0.0"
+  dependencies:
+    "@types/node": "*"
+  checksum: ac81b26f616a9d0aaa9cb759fa5a5a186f887025362329f7ddc909f53090f4aea0d1b75c4dda23e210faee536e2d7352de017261e1625b7b18108f0e630efa1f
   languageName: node
   linkType: hard
 
@@ -7159,7 +7141,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"http-proxy-agent@npm:^4.0.0, http-proxy-agent@npm:^4.0.1":
+"http-proxy-agent@npm:^4.0.1":
   version: 4.0.1
   resolution: "http-proxy-agent@npm:4.0.1"
   dependencies:
@@ -7167,16 +7149,6 @@ __metadata:
     agent-base: 6
     debug: 4
   checksum: c6a5da5a1929416b6bbdf77b1aca13888013fe7eb9d59fc292e25d18e041bb154a8dfada58e223fc7b76b9b2d155a87e92e608235201f77d34aa258707963a82
-  languageName: node
-  linkType: hard
-
-"http2-wrapper@npm:2.0.5":
-  version: 2.0.5
-  resolution: "http2-wrapper@npm:2.0.5"
-  dependencies:
-    quick-lru: ^5.1.1
-    resolve-alpn: ^1.1.1
-  checksum: a42b40d0ff48516fd48ff91cc99fa2ef55968ac7bc2046feec8dcacc78d0a4e920ceed48bab7fa9a0ea433f689bcc31adeae332da77f4f410710cae7d27fa00a
   languageName: node
   linkType: hard
 
@@ -7190,7 +7162,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"https-proxy-agent@npm:5":
+"http2-wrapper@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "http2-wrapper@npm:2.2.0"
+  dependencies:
+    quick-lru: ^5.1.1
+    resolve-alpn: ^1.2.0
+  checksum: 6fd20e5cb6a58151715b3581e06a62a47df943187d2d1f69e538a50cccb7175dd334ecfde7900a37d18f3e13a1a199518a2c211f39860e81e9a16210c199cfaa
+  languageName: node
+  linkType: hard
+
+"https-proxy-agent@npm:5, https-proxy-agent@npm:^5.0.1":
   version: 5.0.1
   resolution: "https-proxy-agent@npm:5.0.1"
   dependencies:
@@ -7367,6 +7349,13 @@ __metadata:
   version: 1.1.5
   resolution: "ip@npm:1.1.5"
   checksum: 30133981f082a060a32644f6a7746e9ba7ac9e2bc07ecc8bbdda3ee8ca9bec1190724c390e45a1ee7695e7edfd2a8f7dda2c104ec5f7ac5068c00648504c7e5a
+  languageName: node
+  linkType: hard
+
+"ip@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "ip@npm:2.0.0"
+  checksum: cfcfac6b873b701996d71ec82a7dd27ba92450afdb421e356f44044ed688df04567344c36cbacea7d01b1c39a4c732dc012570ebe9bebfb06f27314bca625349
   languageName: node
   linkType: hard
 
@@ -8877,6 +8866,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lru-cache@npm:^7.14.0":
+  version: 7.18.3
+  resolution: "lru-cache@npm:7.18.3"
+  checksum: e550d772384709deea3f141af34b6d4fa392e2e418c1498c078de0ee63670f1f46f5eee746e8ef7e69e1c895af0d4224e62ee33e66a543a14763b0f2e74c1356
+  languageName: node
+  linkType: hard
+
 "lru-queue@npm:^0.1.0":
   version: 0.1.0
   resolution: "lru-queue@npm:0.1.0"
@@ -9262,13 +9258,12 @@ __metadata:
   linkType: hard
 
 "mockttp@npm:^3.3.1":
-  version: 3.3.1
-  resolution: "mockttp@npm:3.3.1"
+  version: 3.7.0
+  resolution: "mockttp@npm:3.7.0"
   dependencies:
     "@graphql-tools/schema": ^8.5.0
     "@graphql-tools/utils": ^8.8.0
-    "@httptoolkit/httpolyglot": ^2.0.1
-    "@httptoolkit/proxy-agent": ^5.0.1-socks-lookup-fix.0
+    "@httptoolkit/httpolyglot": ^2.1.0
     "@httptoolkit/subscriptions-transport-ws": ^0.11.2
     "@httptoolkit/websocket-stream": ^6.0.1
     "@types/cors": ^2.8.6
@@ -9281,26 +9276,32 @@ __metadata:
     cors: ^2.8.4
     cors-gate: ^1.1.3
     cross-fetch: ^3.1.5
+    destroyable-server: ^1.0.0
     express: ^4.14.0
     express-graphql: ^0.11.0
     graphql: ^14.0.2 || ^15.5
     graphql-subscriptions: ^1.1.0
     graphql-tag: ^2.12.6
     http-encoding: ^1.5.1
-    http2-wrapper: 2.0.5
+    http2-wrapper: ^2.2.0
+    https-proxy-agent: ^5.0.1
     isomorphic-ws: ^4.0.1
     lodash: ^4.16.4
+    lru-cache: ^7.14.0
     native-duplexpair: ^1.0.0
     node-forge: ^1.2.1
-    parse-multipart-data: ^1.3.0
+    pac-proxy-agent: ^5.0.0
+    parse-multipart-data: ^1.4.0
     performance-now: ^2.1.0
     portfinder: 1.0.28
+    read-tls-client-hello: ^1.0.0
+    socks-proxy-agent: ^7.0.0
     typed-error: ^3.0.2
     uuid: ^8.3.2
     ws: ^8.8.0
   bin:
     mockttp: dist/admin/admin-bin.js
-  checksum: 99eca146b9588e9795aa7a9d663e3cbdf8f0bd49694ff41c95092f7a1bfc290168daf93a2e50489da3bf2ac17cbf6f713567f850f0a0d194b222fc08dd4ca6d2
+  checksum: 53b9cc9259ac48e5a3f658b1605f6ce760f226ab2e98527b6a3e7843382fe0b05f8025111d05e341e8cc6192ab2a421cdf237ac909a53bedea45dd9f3e4d2c27
   languageName: node
   linkType: hard
 
@@ -9898,10 +9899,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"parse-multipart-data@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "parse-multipart-data@npm:1.3.0"
-  checksum: 83a95aea72a8b573e17b94eaa2be24df5df91a41482851d05c2e0b3b8a2fac8516a67fd13ce25f09d3ae07b65a1dfc0d35e1086371ec4584572f41f7491213e3
+"parse-multipart-data@npm:^1.4.0":
+  version: 1.5.0
+  resolution: "parse-multipart-data@npm:1.5.0"
+  checksum: a385fb6609a7b393ee7e82042d5f923beaa7fb7d81d430db560869b719574f62f39a30e77fd711fbfa6fe3e212a8e6f81fd2126a80876a3c13dc1ae975eb5d91
   languageName: node
   linkType: hard
 
@@ -10192,13 +10193,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"proxy-from-env@npm:^1.0.0":
-  version: 1.1.0
-  resolution: "proxy-from-env@npm:1.1.0"
-  checksum: ed7fcc2ba0a33404958e34d95d18638249a68c430e30fcb6c478497d72739ba64ce9810a24f53a7d921d0c065e5b78e3822759800698167256b04659366ca4d4
-  languageName: node
-  linkType: hard
-
 "pump@npm:^3.0.0":
   version: 3.0.0
   resolution: "pump@npm:3.0.0"
@@ -10306,6 +10300,15 @@ __metadata:
   version: 18.2.0
   resolution: "react-is@npm:18.2.0"
   checksum: e72d0ba81b5922759e4aff17e0252bd29988f9642ed817f56b25a3e217e13eea8a7f2322af99a06edb779da12d5d636e9fda473d620df9a3da0df2a74141d53e
+  languageName: node
+  linkType: hard
+
+"read-tls-client-hello@npm:^1.0.0":
+  version: 1.0.1
+  resolution: "read-tls-client-hello@npm:1.0.1"
+  dependencies:
+    "@types/node": "*"
+  checksum: 532c1c32ef049c245b59473ad7a06ad5db61bd22258ccfb54923be24173e8cafbb1a6a17bcc783884dce9b98db15db76a9569ea9c95b2b9b729be990439b931b
   languageName: node
   linkType: hard
 
@@ -10541,7 +10544,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resolve-alpn@npm:^1.1.1, resolve-alpn@npm:^1.2.0":
+"resolve-alpn@npm:^1.2.0":
   version: 1.2.1
   resolution: "resolve-alpn@npm:1.2.1"
   checksum: f558071fcb2c60b04054c99aebd572a2af97ef64128d59bef7ab73bd50d896a222a056de40ffc545b633d99b304c259ea9d0c06830d5c867c34f0bfa60b8eae0
@@ -10994,6 +10997,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"socks-proxy-agent@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "socks-proxy-agent@npm:7.0.0"
+  dependencies:
+    agent-base: ^6.0.2
+    debug: ^4.3.3
+    socks: ^2.6.2
+  checksum: 720554370154cbc979e2e9ce6a6ec6ced205d02757d8f5d93fe95adae454fc187a5cbfc6b022afab850a5ce9b4c7d73e0f98e381879cf45f66317a4895953846
+  languageName: node
+  linkType: hard
+
 "socks@npm:^2.3.3":
   version: 2.6.2
   resolution: "socks@npm:2.6.2"
@@ -11011,6 +11025,16 @@ __metadata:
     ip: ^1.1.5
     smart-buffer: ^4.1.0
   checksum: 2ca9d616e424f645838ebaabb04f85d94ea999e0f8393dc07f86c435af22ed88cb83958feeabd1bb7bc537c635ed47454255635502c6808a6df61af1f41af750
+  languageName: node
+  linkType: hard
+
+"socks@npm:^2.6.2":
+  version: 2.7.1
+  resolution: "socks@npm:2.7.1"
+  dependencies:
+    ip: ^2.0.0
+    smart-buffer: ^4.2.0
+  checksum: 259d9e3e8e1c9809a7f5c32238c3d4d2a36b39b83851d0f573bfde5f21c4b1288417ce1af06af1452569cd1eb0841169afd4998f0e04ba04656f6b7f0e46d748
   languageName: node
   linkType: hard
 
