@@ -47,6 +47,11 @@ export const initCli = async () => {
       args,
       isInCi: process.env.CI === 'true',
     });
+    trackEvent(`optic.cli`, {
+      commandName,
+      args,
+      isInCi: process.env.CI === 'true',
+    });
   });
 
   const notifier = updateNotifier({
