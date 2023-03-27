@@ -38,7 +38,7 @@
     "@types/log": "^6.3.0",
     "@types/node": "^18.0.0",
     "@types/semver": "^7.3.10",
-    "@types/slice-ansi": "^4",
+    "@types/slice-ansi": "^5.0.0",
     "@types/stream-chain": "^2",
     "@types/stream-json": "^1",
     "@types/tunnel": "^0",
