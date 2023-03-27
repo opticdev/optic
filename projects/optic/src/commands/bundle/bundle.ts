@@ -2,7 +2,6 @@ import { Command } from 'commander';
 import { ParseResult, getFileFromFsOrGit } from '../../utils/spec-loaders';
 import { OpticCliConfig } from '../../config';
 import {
-  ILookupFileResult,
   OpenAPIV3,
   sourcemapReader,
   UserError,
@@ -180,6 +179,14 @@ const matches = {
     '**/**',
     'schema',
   ],
+  inOperationParameterSchema: [
+    'paths',
+    '**',
+    methods,
+    'parameters',
+    '**',
+    'schema',
+  ],
   inOperationParameter: ['paths', '**', methods, 'parameters', '**'],
   inPathParameter: ['paths', '**', 'parameters', '**'],
   inRequestExamples: [
@@ -236,7 +243,11 @@ function bundle(spec: OpenAPIV3.Document, sourcemap: JsonSchemaSourcemap) {
   updatedSpec = bundleMatchingRefsAsComponents<OpenAPIV3.SchemaObject>(
     updatedSpec,
     sourcemap,
-    [matches.inRequestSchema, matches.inResponseSchema],
+    [
+      matches.inRequestSchema,
+      matches.inResponseSchema,
+      matches.inOperationParameterSchema,
+    ],
     'children',
     jsonPointerHelpers.compile(['components', 'schemas']),
     (schema, filePath, pathInFile) => {
