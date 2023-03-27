@@ -24,6 +24,7 @@ function logPointer(
   }
 }
 
+// TODO this does not handle allOf: [{type:'object'...}, {allOf: [type:'object']}]
 function mergeAllOf(
   allOf: FlatOpenAPIV3.SchemaObject[],
   sourcemap: JsonSchemaSourcemap,
@@ -37,13 +38,13 @@ function mergeAllOf(
   };
   for (const [index, polymorphicItem] of allOf.entries()) {
     const effectiveProperties = effectiveObject.properties!;
-    for (const [key, property] of Object.entries(effectiveProperties)) {
+    for (const [key, property] of Object.entries(
+      polymorphicItem.properties ?? {}
+    )) {
       // For duplicates, choose the first instance of this key
       if (!effectiveProperties[key]) {
-        const beforeRequiredIdx = polymorphicItem.required?.findIndex(
-          (s) => s === key
-        );
-        effectiveProperties.key = property;
+        const beforeRequiredIdx =
+          polymorphicItem.required?.findIndex((s) => s === key) ?? -1;
         if (beforeRequiredIdx !== -1) {
           const oldRequired = jsonPointerHelpers.append(
             pointers.old,
@@ -78,6 +79,7 @@ function mergeAllOf(
         });
 
         logPointer(sourcemap, { old: oldProperty, new: newProperty });
+        effectiveProperties[key] = property;
       }
     }
   }
@@ -213,11 +215,14 @@ export function denormalize<T extends ParseOpenAPIResult>(parse: T): T {
               'requestBody',
               'content',
               contentType,
+              'schema',
             ]);
-            denormalizeProperty(body, parse.sourcemap, {
-              old: pointer,
-              new: pointer,
-            });
+            if (body.schema) {
+              denormalizeProperty(body.schema, parse.sourcemap, {
+                old: pointer,
+                new: pointer,
+              });
+            }
           }
         }
         for (const [statusCode, response] of Object.entries(
@@ -234,11 +239,14 @@ export function denormalize<T extends ParseOpenAPIResult>(parse: T): T {
               statusCode,
               'content',
               contentType,
+              'schema',
             ]);
-            denormalizeProperty(body, parse.sourcemap, {
-              old: pointer,
-              new: pointer,
-            });
+            if (body.schema) {
+              denormalizeProperty(body.schema, parse.sourcemap, {
+                old: pointer,
+                new: pointer,
+              });
+            }
           }
         }
       }
