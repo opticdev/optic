@@ -210,29 +210,29 @@ paths:
       },
     ],
     "refMappings": {
-      "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/0/properties/a": [
+      "/paths/~1example/get/responses/200/content/application~1json/schema/properties/a": [
         0,
-        "/paths/~1example/get/responses/200/content/application~1json/schema/properties/a",
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/0/properties/a",
       ],
-      "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/0/required/0": [
+      "/paths/~1example/get/responses/200/content/application~1json/schema/properties/b": [
         0,
-        "/paths/~1example/get/responses/200/content/application~1json/schema/required/0",
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/1/properties/b",
       ],
-      "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/1/properties/b": [
+      "/paths/~1example/get/responses/200/content/application~1json/schema/properties/c": [
         0,
-        "/paths/~1example/get/responses/200/content/application~1json/schema/properties/b",
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/1/properties/c",
       ],
-      "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/1/properties/c": [
+      "/paths/~1example/get/responses/200/content/application~1json/schema/properties/d": [
         0,
-        "/paths/~1example/get/responses/200/content/application~1json/schema/properties/c",
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/2/properties/d",
       ],
-      "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/1/required/0": [
+      "/paths/~1example/get/responses/200/content/application~1json/schema/required/0": [
         0,
-        "/paths/~1example/get/responses/200/content/application~1json/schema/required/1",
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/0/required/0",
       ],
-      "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/2/properties/d": [
+      "/paths/~1example/get/responses/200/content/application~1json/schema/required/1": [
         0,
-        "/paths/~1example/get/responses/200/content/application~1json/schema/properties/d",
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/1/required/0",
       ],
     },
     "rootFilePath": "/src/denormalizers/__tests__/specs/allOf/single-allof.yaml",
@@ -345,33 +345,33 @@ paths:
       },
     ],
     "refMappings": {
-      "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/0/properties/a": [
+      "/paths/~1example/get/responses/200/content/application~1json/schema/properties/a": [
         0,
-        "/paths/~1example/get/responses/200/content/application~1json/schema/properties/a",
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/0/properties/a",
       ],
-      "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/1/properties/b": [
+      "/paths/~1example/get/responses/200/content/application~1json/schema/properties/b": [
         0,
-        "/paths/~1example/get/responses/200/content/application~1json/schema/properties/b",
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/1/properties/b",
       ],
-      "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/1/properties/c": [
+      "/paths/~1example/get/responses/200/content/application~1json/schema/properties/c": [
         0,
-        "/paths/~1example/get/responses/200/content/application~1json/schema/properties/c",
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/1/properties/c",
       ],
-      "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/2/properties/d": [
+      "/paths/~1example/get/responses/200/content/application~1json/schema/properties/d": [
         0,
-        "/paths/~1example/get/responses/200/content/application~1json/schema/properties/d",
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/2/properties/d",
       ],
-      "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/2/properties/d/allOf/0/properties/a": [
+      "/paths/~1example/get/responses/200/content/application~1json/schema/properties/d/properties/a": [
         0,
-        "/paths/~1example/get/responses/200/content/application~1json/schema/properties/d/properties/a",
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/2/properties/d/allOf/0/properties/a",
       ],
-      "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/2/properties/d/allOf/1/properties/b": [
+      "/paths/~1example/get/responses/200/content/application~1json/schema/properties/d/properties/b": [
         0,
-        "/paths/~1example/get/responses/200/content/application~1json/schema/properties/d/properties/b",
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/2/properties/d/allOf/1/properties/b",
       ],
-      "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/2/properties/e": [
+      "/paths/~1example/get/responses/200/content/application~1json/schema/properties/e": [
         0,
-        "/paths/~1example/get/responses/200/content/application~1json/schema/properties/e",
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/2/properties/e",
       ],
     },
     "rootFilePath": "/src/denormalizers/__tests__/specs/allOf/nested.yaml",
@@ -564,17 +564,29 @@ paths:
       },
     ],
     "refMappings": {
-      "/paths/~1example/parameters/0": [
+      "/paths/~1example/get/parameters/0": [
         0,
-        "/paths/~1example/get/parameters/0",
+        "/paths/~1example/parameters/0",
       ],
-      "/paths/~1example/parameters/1": [
+      "/paths/~1example/get/parameters/1": [
         0,
-        "/paths/~1example/get/parameters/1",
+        "/paths/~1example/parameters/1",
+      ],
+      "/paths/~1example/get/parameters/2": [
+        1,
+        "/paths/~1example/parameters/2",
       ],
       "/paths/~1example/parameters/2": [
         1,
-        "/paths/~1example/get/parameters/2",
+        "/something",
+      ],
+      "/paths/~1example/post/parameters/1": [
+        0,
+        "/paths/~1example/parameters/0",
+      ],
+      "/paths/~1example/post/parameters/2": [
+        1,
+        "/paths/~1example/parameters/2",
       ],
     },
     "rootFilePath": "/src/denormalizers/__tests__/specs/openapi.yaml",

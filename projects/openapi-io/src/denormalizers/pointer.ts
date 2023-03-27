@@ -14,6 +14,6 @@ export function logPointer(
   const maybeFilePath = getFilePathFromPointer(sourcemap, pointers.old);
 
   if (maybeFilePath) {
-    sourcemap.logPointerInFile(maybeFilePath, pointers.new, pointers.old);
+    sourcemap.logPointerInFile(maybeFilePath, pointers.old, pointers.new);
   }
 }
