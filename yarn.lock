@@ -3778,7 +3778,7 @@ __metadata:
     portfinder: ^1.0.28
     prettier: ^2.4.1
     semver: ^7.3.7
-    slice-ansi: ^4.0.0
+    slice-ansi: ^6.0.0
     stream-chain: ^2.2.5
     stream-json: ^1.7.4
     strip-ansi: ^6.0.1
@@ -4035,7 +4035,7 @@ __metadata:
     prettier: ^2.4.1
     prompts: ^2.4.2
     semver: ^7.3.8
-    slice-ansi: ^4.0.0
+    slice-ansi: ^6.0.0
     stream-chain: ^2.2.5
     stream-json: ^1.7.4
     strip-ansi: ^6.0.1
@@ -4315,7 +4315,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ansi-styles@npm:^6.0.0":
+"ansi-styles@npm:^6.0.0, ansi-styles@npm:^6.2.1":
   version: 6.2.1
   resolution: "ansi-styles@npm:6.2.1"
   checksum: ef940f2f0ced1a6347398da88a91da7930c33ecac3c77b72c5905f8b8fe402c52e6fde304ff5347f616e27a742da3f1dc76de98f6866c69251ad0b07a66776d9
@@ -10978,6 +10978,16 @@ __metadata:
     ansi-styles: ^6.0.0
     is-fullwidth-code-point: ^4.0.0
   checksum: 7e600a2a55e333a21ef5214b987c8358fe28bfb03c2867ff2cbf919d62143d1812ac27b4297a077fdaf27a03da3678e49551c93e35f9498a3d90221908a1180e
+  languageName: node
+  linkType: hard
+
+"slice-ansi@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "slice-ansi@npm:6.0.0"
+  dependencies:
+    ansi-styles: ^6.2.1
+    is-fullwidth-code-point: ^4.0.0
+  checksum: d0510f02af166eff9948e7cf88985c33d9ded6de0e39908b67b5e29f802c88025c27d7e1801ce1d1d1ec311fb539538086cd2a4193d2e8f735e6c5c0e63486dd
   languageName: node
   linkType: hard
 
