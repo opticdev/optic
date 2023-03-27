@@ -34,16 +34,16 @@ describe('denormalize', () => {
     expect(prepSnapshot(denormalized)).toMatchSnapshot();
   });
 
-  describe.only('allOf merging', () => {
+  describe('allOf merging', () => {
     test.each([
-      // [
-      //   'merges allOf when all items are objects',
-      //   'src/denormalizers/__tests__/specs/allOf/single-allof.yaml',
-      // ],
-      // [
-      //   'does not merge allOf when all items are not all objects',
-      //   'src/denormalizers/__tests__/specs/allOf/no-merge.yaml',
-      // ],
+      [
+        'merges allOf when all items are objects',
+        'src/denormalizers/__tests__/specs/allOf/single-allof.yaml',
+      ],
+      [
+        'does not merge allOf when all items are not all objects',
+        'src/denormalizers/__tests__/specs/allOf/no-merge.yaml',
+      ],
       [
         'merges nested allOf',
         'src/denormalizers/__tests__/specs/allOf/nested.yaml',
