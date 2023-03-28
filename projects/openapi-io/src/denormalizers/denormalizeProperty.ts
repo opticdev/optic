@@ -62,6 +62,9 @@ function mergeAllOf(
       }
     }
   }
+  if (effectiveObject.required?.length === 0) {
+    delete effectiveObject.required;
+  }
   return effectiveObject;
 }
 
