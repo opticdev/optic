@@ -3565,10 +3565,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/slice-ansi@npm:^4":
-  version: 4.0.0
-  resolution: "@types/slice-ansi@npm:4.0.0"
-  checksum: 343086bc4e686349382b386a6fb49d632fb4dd08ecc08f1b9872815199efe8db7648731e56c1d10dc0f596fe77a8fce6136e0067136f8e0cefda6b29797aa4f1
+"@types/slice-ansi@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@types/slice-ansi@npm:5.0.0"
+  checksum: 468eb0044d50ba925a677cae301c1a008a03abae36b61e02a3087428f0a1f214177d4255bb1d2632a87a40b9ae98b35d8e8440e9d6e3cd000286e646e0dcf851
   languageName: node
   linkType: hard
 
@@ -3738,7 +3738,7 @@ __metadata:
     "@types/node": ^18.0.0
     "@types/node-forge": ^1.0.4
     "@types/semver": ^7.3.10
-    "@types/slice-ansi": ^4
+    "@types/slice-ansi": ^5.0.0
     "@types/stream-chain": ^2
     "@types/stream-json": ^1
     "@types/tunnel": ^0
@@ -3987,7 +3987,7 @@ __metadata:
     "@types/picomatch": ^2.3.0
     "@types/prompts": ^2
     "@types/semver": ^7.3.10
-    "@types/slice-ansi": ^4
+    "@types/slice-ansi": ^5.0.0
     "@types/stream-chain": ^2
     "@types/stream-json": ^1
     "@types/tar": ^6
