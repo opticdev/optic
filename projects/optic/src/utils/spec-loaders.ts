@@ -23,6 +23,7 @@ export type ParseResult = ParseOpenAPIResult & {
   context: {
     vcs: 'git';
     sha: string;
+    effective_at?: Date;
   } | null;
 };
 
@@ -126,6 +127,10 @@ async function parseSpecAndDereference(
       if (config.vcs?.type !== VCS.Git) {
         throw new Error(`${workingDir} is not a git repo`);
       }
+
+      const sha = await Git.resolveGitRef(input.branch);
+      const effective_at = await Git.commitTime(sha);
+
       return {
         ...(await parseOpenAPIFromRepoWithSourcemap(
           input.name,
@@ -135,7 +140,8 @@ async function parseSpecAndDereference(
         isEmptySpec: false,
         context: {
           vcs: 'git',
-          sha: await Git.resolveGitRef(input.branch),
+          sha,
+          effective_at,
         },
       };
     }
@@ -150,6 +156,7 @@ async function parseSpecAndDereference(
             ? {
                 vcs: 'git',
                 sha: config.vcs.sha,
+                effective_at: await Git.commitTime(config.vcs.sha),
               }
             : null,
       };
