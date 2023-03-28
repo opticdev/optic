@@ -1,4 +1,4 @@
-import { Command, program as cli } from 'commander';
+import { Command, program as cliInstance } from 'commander';
 import updateNotifier from 'update-notifier';
 import { initSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import {
@@ -30,7 +30,7 @@ import { updateCommand } from './commands/oas/update';
 
 const packageJson = require('../package.json');
 
-export const initCli = async () => {
+export const initCli = async (cli: Command = cliInstance): Promise<Command> => {
   initSentry(process.env.SENTRY_URL, packageJson.version);
   initSegment(process.env.SEGMENT_KEY);
   cli.hook('preAction', async (command) => {
