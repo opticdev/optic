@@ -134,18 +134,9 @@ export class RuleRunner {
       currentJsonLike: beforeApiSpec,
       nextJsonLike: afterApiSpec,
     } = inputs;
-    const externalRules = this.rules.filter((rule) =>
-      ExternalRuleBase.isInstance(rule)
-    ) as ExternalRule[];
     const rulesOrRulesets = this.rules.filter(
       (rule) => !ExternalRuleBase.isInstance(rule)
     ) as (Ruleset | Rule)[];
-
-    const externalResults: Result[] = [];
-    for (const externalRule of externalRules) {
-      const results = await externalRule.runRules(inputs);
-      externalResults.push(...results);
-    }
 
     // Groups the flat list of beforefacts, afterfacts and changes by location (e.g. operation, query parameter, response, response property, etc).
     // A node can contain a before fact, after fact and or change.
@@ -213,7 +204,7 @@ export class RuleRunner {
       }
     }
 
-    return [...externalResults, ...specificationResults, ...endpointResults];
+    return [...specificationResults, ...endpointResults];
   }
 
   async runRules(inputs: {
