@@ -19,6 +19,17 @@ export class ExternalRuleBase {
     return v?.type === 'external-rule';
   }
 
+  runRules(inputs: {
+    context: any;
+    nextFacts: IFact[];
+    currentFacts: IFact[];
+    changelog: IChange[];
+    nextJsonLike: OpenAPIV3.Document;
+    currentJsonLike: OpenAPIV3.Document;
+  }): Promise<Result[]> {
+    throw new NotImplementedError();
+  }
+
   runRulesV2(inputs: {
     context: any;
     diffs: ObjectDiff[];

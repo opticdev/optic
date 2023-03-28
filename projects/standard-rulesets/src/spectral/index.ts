@@ -45,6 +45,56 @@ export class SpectralRulesets extends ExternalRuleBase {
     super();
   }
 
+  async runRules(inputs: {
+    context: any;
+    nextFacts: IFact[];
+    currentFacts: IFact[];
+    changelog: IChange[];
+    nextJsonLike: OpenAPIV3.Document<{}>;
+    currentJsonLike: OpenAPIV3.Document<{}>;
+  }): Promise<Result[]> {
+    const absolutePathTmpSpec = path.join(
+      os.tmpdir(),
+      `optic-next-spec-${Math.floor(Math.random() * 100000)}.json`
+    );
+
+    // write one tmp spec for all the spectral runs to use
+    await fs.writeFile(
+      absolutePathTmpSpec,
+      JSON.stringify(inputs.nextJsonLike)
+    );
+
+    const added = this.options.added.map((ruleInput) => {
+      return new SpectralRule({
+        name:
+          'Spectral Rules applied to additions to the specification: ' +
+          ruleInput,
+        flatSpecFile: absolutePathTmpSpec,
+        applies: 'added',
+        rulesetPointer: ruleInput,
+      });
+    });
+    const always = this.options.always.map((ruleInput) => {
+      return new SpectralRule({
+        name: 'Spectral Rules applied to entire specification: ' + ruleInput,
+        flatSpecFile: absolutePathTmpSpec,
+        applies: 'always',
+        rulesetPointer: ruleInput,
+      });
+    });
+
+    const allRulesets = [...always, ...added];
+
+    const allResults = await Promise.all(
+      allRulesets.map((ruleset) => ruleset.runRules(inputs))
+    );
+
+    // remove tmp spec
+    await fs.unlink(absolutePathTmpSpec);
+
+    return allResults.flat(1);
+  }
+
   async runRulesV2(inputs: {
     context: any;
     diffs: ObjectDiff[];
