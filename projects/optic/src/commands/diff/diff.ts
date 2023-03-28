@@ -120,7 +120,8 @@ const getBaseAndHeadFromFileAndBase = async (
 const runDiff = async (
   [baseFile, headFile]: [ParseResult, ParseResult],
   config: OpticCliConfig,
-  options: DiffActionOptions
+  options: DiffActionOptions,
+  filepath: string
 ): Promise<{
   checks: { passed: number; failed: number; total: number };
   specResults: Awaited<ReturnType<typeof compute>>['specResults'];
@@ -130,7 +131,7 @@ const runDiff = async (
   const { specResults, checks, changelogData, warnings } = await compute(
     [baseFile, headFile],
     config,
-    options
+    { ...options, path: filepath }
   );
   const diffResults = { checks, specResults, changelogData, warnings };
 
@@ -264,7 +265,7 @@ const getDiffAction =
       return;
     }
 
-    const diffResult = await runDiff(parsedFiles, config, options);
+    const diffResult = await runDiff(parsedFiles, config, options, file1);
     let maybeUrl: string | null = null;
     const [baseParseResult, headParseResult] = parsedFiles;
     if (options.upload) {
