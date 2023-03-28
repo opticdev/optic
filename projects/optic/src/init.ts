@@ -86,17 +86,16 @@ Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
   registerDiff(cli, cliConfig);
 
   //@todo by 2023/5/10
-  cli.addCommand(
-    new Command('oas')
-      .description('[Renamed] to optic capture/new/verify/update')
-      .action(() =>
-        console.log(
-          `[Renamed] to optic capture/new/verify/update. See ${chalk.blue.underline(
-            'https://www.useoptic.com/docs/openapi/update-from-traffic'
-          )}`
-        )
-      )
+  const oas = new Command('oas').description(
+    '[Deprecated] capture/verify/update are now top-level commands'
   );
+  oas.addCommand(await captureCommand(cliConfig));
+  oas.addCommand(await newCommand());
+  oas.addCommand(await setupTlsCommand());
+  oas.addCommand(verifyCommand(cliConfig));
+  oas.addCommand(updateCommand());
+
+  cli.addCommand(oas);
 
   // commands for tracking changes with openapi
   cli.addCommand(await captureCommand(cliConfig));
