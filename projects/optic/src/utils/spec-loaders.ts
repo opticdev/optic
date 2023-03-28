@@ -41,7 +41,7 @@ type SpecFromInput =
       value: OpenAPIV3.Document;
     };
 
-function parseSpecVersion(raw: string | undefined): SpecFromInput {
+export function parseSpecVersion(raw?: string | null): SpecFromInput {
   if (raw) {
     if (raw.includes(':') && !(raw.startsWith('C:') || raw.startsWith('D:'))) {
       const index = raw.indexOf(':');

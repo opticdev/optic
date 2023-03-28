@@ -4,7 +4,11 @@ import {
 } from '@useoptic/openapi-utilities';
 import { generateRuleRunner } from './generate-rule-runner';
 import { OPTIC_STANDARD_KEY } from '../../constants';
-import { ParseResult } from '../../utils/spec-loaders';
+import {
+  getFileFromFsOrGit,
+  ParseResult,
+  parseSpecVersion,
+} from '../../utils/spec-loaders';
 import { OpticCliConfig } from '../../config';
 import { trackEvent } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { logger } from '../../logger';
@@ -40,9 +44,16 @@ export async function compute(
   });
 
   let context = {};
-  if (options.path) {
+  const parsed = parseSpecVersion(options.path);
+  const filePath =
+    parsed.from === 'git'
+      ? parsed.name
+      : parsed.from === 'file'
+      ? parsed.filePath
+      : null;
+  if (filePath) {
     try {
-      context = generateContext(options.path);
+      context = generateContext(filePath);
     } catch (e) {
       logger.error('Error generating context');
       logger.error(e);
