@@ -66,7 +66,6 @@ describe('diff', () => {
       workspace,
       'diff petstore-base.json petstore-updated.json --check --standard ./ruleset.yml'
     );
-    console.log(combined);
 
     expect(code).toBe(1);
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
