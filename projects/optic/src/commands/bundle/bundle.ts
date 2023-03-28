@@ -430,7 +430,11 @@ function bundleMatchingRefsAsComponents<T>(
     nestedRefs.forEach((nestedRef) => {
       nestedRef.usages
         .filter((i) => i.startsWith(ref.originalPath) && i !== ref.originalPath)
-        .map((i) => i.split(ref.originalPath)[1])
+        .map((i) => {
+          const original = jsonPointerHelpers.decode(ref.originalPath);
+          const newRef = jsonPointerHelpers.decode(i);
+          return jsonPointerHelpers.compile(newRef.slice(original.length));
+        })
         .forEach((i) => {
           nestedRefUsageUpdates.push({
             op: 'replace',
