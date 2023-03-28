@@ -85,12 +85,18 @@ export class SpectralRule extends ExternalRuleBase {
   private rulesetPointer: string;
   private flatSpecFile: string;
   public docsLink?: string;
+  private spectral?: {
+    run: (json: any) => Promise<SpectralResult[]>;
+  };
   constructor(options: {
     name: string;
     applies?: Lifecycle;
     rulesetPointer: string;
     flatSpecFile: string;
     docsLink?: string;
+    spectral?: {
+      run: (json: any) => Promise<SpectralResult[]>;
+    };
   }) {
     super();
     this.name = options.name;
@@ -98,6 +104,7 @@ export class SpectralRule extends ExternalRuleBase {
     this.rulesetPointer = options.rulesetPointer;
     this.lifecycle = options.applies ?? 'always';
     this.docsLink = options.docsLink;
+    this.spectral = options.spectral;
   }
 
   async runRulesV2(inputs: {
@@ -121,13 +128,24 @@ export class SpectralRule extends ExternalRuleBase {
     );
 
     let spectralResults: SpectralResult[];
-    try {
-      const output = await runSpectral(this.rulesetPointer, this.flatSpecFile);
-      // sometimes first line has a message
-      const withoutLeading = output.substring(output.indexOf('[')).trim();
-      spectralResults = JSON.parse(withoutLeading) as SpectralResult[];
-    } catch (e: any) {
-      throw new Error(e.message ? e.message : e);
+    if (this.spectral) {
+      try {
+        spectralResults = await this.spectral.run(this.flatSpecFile);
+      } catch (e: any) {
+        throw new Error(e.message ? e.message : e);
+      }
+    } else {
+      try {
+        const output = await runSpectral(
+          this.rulesetPointer,
+          this.flatSpecFile
+        );
+        // sometimes first line has a message
+        const withoutLeading = output.substring(output.indexOf('[')).trim();
+        spectralResults = JSON.parse(withoutLeading) as SpectralResult[];
+      } catch (e: any) {
+        throw new Error(e.message ? e.message : e);
+      }
     }
 
     const results: RuleResult[] = [];
