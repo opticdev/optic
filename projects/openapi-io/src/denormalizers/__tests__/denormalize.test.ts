@@ -33,4 +33,29 @@ describe('denormalize', () => {
 
     expect(prepSnapshot(denormalized)).toMatchSnapshot();
   });
+
+  describe('allOf merging', () => {
+    test.each([
+      [
+        'merges allOf when all items are objects',
+        'src/denormalizers/__tests__/specs/allOf/single-allof.yaml',
+      ],
+      [
+        'does not merge allOf when all items are not all objects',
+        'src/denormalizers/__tests__/specs/allOf/no-merge.yaml',
+      ],
+      [
+        'merges nested allOf',
+        'src/denormalizers/__tests__/specs/allOf/nested.yaml',
+      ],
+    ])('%s', async (_, openapiFilePath) => {
+      const spec = await parseOpenAPIWithSourcemap(
+        path.resolve(openapiFilePath)
+      );
+
+      const denormalized = denormalize(spec);
+
+      expect(prepSnapshot(denormalized)).toMatchSnapshot();
+    });
+  });
 });

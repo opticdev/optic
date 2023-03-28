@@ -1,0 +1,33 @@
+openapi: '3.0.1'
+info:
+  title: 'some thing'
+  version: 'v0'
+paths:
+  /example:
+    get:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                a:
+                  type: string
+                b:
+                  type: number
+                c:
+                  type: boolean
+                d:
+                  allOf:
+                    - type: object
+                      properties:
+                        a:
+                          type: string
+                    - type: string
+      responses:
+        200:
+          description: 'some thing'
+          content:
+            application/json:
+              schema:
+                type: 'string'

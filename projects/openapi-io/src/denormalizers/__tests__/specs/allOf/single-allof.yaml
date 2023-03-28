@@ -1,0 +1,39 @@
+openapi: '3.0.1'
+info:
+  title: 'some thing'
+  version: 'v0'
+paths:
+  /example:
+    get:
+      requestBody:
+      responses:
+        200:
+          description: 'some thing'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    required:
+                      - a
+                    properties:
+                      a:
+                        type: object
+                        properties:
+                          e:
+                            type: string
+                  - type: object
+                    required:
+                      - c
+                    properties:
+                      a:
+                        type: number
+                        description: 'should not show up because this is after a previous key'
+                      b:
+                        type: number
+                      c:
+                        type: string
+                  - type: object
+                    properties:
+                      d:
+                        type: string
