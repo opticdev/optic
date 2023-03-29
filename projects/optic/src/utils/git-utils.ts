@@ -106,10 +106,13 @@ export const resolveGitRef = async (ref: string): Promise<string> =>
 export const commitTime = async (ref: string): Promise<Date> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
-      if (err || stderr || !stdout) reject(err || stderr);
+      if (err || stderr || !stdout) {
+        reject(err || stderr);
+      }
+
       resolve(new Date(parseInt(stdout.trim()) * 1000));
     };
-    const command = `git show --date=iso-strict --format=%ct ${ref}`;
+    const command = `git show -s --date=iso-strict --format=%ct ${ref}`;
     exec(command, cb);
   });
 
