@@ -44,19 +44,28 @@ export async function compute(
   });
 
   let context = {};
-  const parsed = parseSpecVersion(options.path);
-  const filePath =
-    parsed.from === 'git'
-      ? parsed.name
-      : parsed.from === 'file'
-      ? parsed.filePath
-      : null;
-  if (filePath) {
+  if (process.env.OPTIC_DIFF_CONTEXT) {
     try {
-      context = generateContext(filePath);
+      context = JSON.parse(process.env.OPTIC_DIFF_CONTEXT);
     } catch (e) {
       logger.error('Error generating context');
       logger.error(e);
+    }
+  } else {
+    const parsed = parseSpecVersion(options.path);
+    const filePath =
+      parsed.from === 'git'
+        ? parsed.name
+        : parsed.from === 'file'
+        ? parsed.filePath
+        : null;
+    if (filePath) {
+      try {
+        context = generateContext(filePath);
+      } catch (e) {
+        logger.error('Error generating context');
+        logger.error(e);
+      }
     }
   }
   const specResults = await compareSpecs(baseFile, headFile, runner, context);
