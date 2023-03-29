@@ -286,35 +286,36 @@ const getDiffAction =
         (!options.check || diffResult.specResults.results.length === 0)
       ) {
         logger.info('Empty changelog: not opening web view');
-      }
-      const analyticsData: Record<string, any> = {
-        isInCi: config.isInCi,
-      };
-
-      if (!maybeUrl) {
-        const meta = {
-          createdAt: new Date(),
-          command: ['optic', ...process.argv.slice(2)].join(' '),
-          file1,
-          file2,
-          base: options.base,
+      } else {
+        const analyticsData: Record<string, any> = {
+          isInCi: config.isInCi,
         };
 
-        const compressedData = compressDataV2(
-          baseParseResult,
-          headParseResult,
-          diffResult.specResults,
-          meta
-        );
-        analyticsData.compressedDataLength = compressedData.length;
-        logger.info('Opening up diff in web view');
-        maybeUrl = `${config.client.getWebBase()}/cli/diff#${compressedData}`;
-        await flushEvents();
+        if (!maybeUrl) {
+          const meta = {
+            createdAt: new Date(),
+            command: ['optic', ...process.argv.slice(2)].join(' '),
+            file1,
+            file2,
+            base: options.base,
+          };
+
+          const compressedData = compressDataV2(
+            baseParseResult,
+            headParseResult,
+            diffResult.specResults,
+            meta
+          );
+          analyticsData.compressedDataLength = compressedData.length;
+          logger.info('Opening up diff in web view');
+          maybeUrl = `${config.client.getWebBase()}/cli/diff#${compressedData}`;
+          await flushEvents();
+        }
+        trackEvent('optic.diff.view_web', analyticsData);
+        await open(maybeUrl, {
+          wait: false,
+        });
       }
-      trackEvent('optic.diff.view_web', analyticsData);
-      await open(maybeUrl, {
-        wait: false,
-      });
     }
 
     if (config.isInCi) {
