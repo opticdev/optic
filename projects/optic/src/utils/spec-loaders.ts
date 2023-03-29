@@ -42,27 +42,29 @@ type SpecFromInput =
     };
 
 export function parseSpecVersion(raw?: string | null): SpecFromInput {
-  if (raw) {
-    if (raw.includes(':') && !(raw.startsWith('C:') || raw.startsWith('D:'))) {
-      const index = raw.indexOf(':');
-      const rev = raw.substring(0, index);
-      const name = raw.substring(index + 1);
-
-      return {
-        from: 'git',
-        name: name.startsWith('/') ? name.substring(1) : name,
-        branch: rev,
-      };
-    } else {
-      return {
-        from: 'file',
-        filePath: raw,
-      };
-    }
-  } else {
+  raw = raw ?? 'null:';
+  if (raw === 'null:') {
     return {
       from: 'empty',
       value: defaultEmptySpec,
+    };
+  } else if (
+    raw.includes(':') &&
+    !(raw.startsWith('C:') || raw.startsWith('D:'))
+  ) {
+    const index = raw.indexOf(':');
+    const rev = raw.substring(0, index);
+    const name = raw.substring(index + 1);
+
+    return {
+      from: 'git',
+      name: name.startsWith('/') ? name.substring(1) : name,
+      branch: rev,
+    };
+  } else {
+    return {
+      from: 'file',
+      filePath: raw,
     };
   }
 }
