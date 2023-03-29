@@ -33,12 +33,13 @@ type RuleRunner = {
 export const compareSpecs = async (
   from: InputSpec,
   to: InputSpec,
-  ruleRunner: RuleRunner
+  ruleRunner: RuleRunner,
+  context: any
 ): Promise<CompareSpecResults> => {
   const diffs = diff(from.jsonLike, to.jsonLike);
 
   const results = await ruleRunner.runRules({
-    context: {}, // TODO
+    context,
     diffs,
     fromSpec: from.jsonLike,
     toSpec: to.jsonLike,

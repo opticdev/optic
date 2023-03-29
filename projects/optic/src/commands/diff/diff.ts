@@ -120,7 +120,8 @@ const getBaseAndHeadFromFileAndBase = async (
 const runDiff = async (
   [baseFile, headFile]: [ParseResult, ParseResult],
   config: OpticCliConfig,
-  options: DiffActionOptions
+  options: DiffActionOptions,
+  filepath: string
 ): Promise<{
   checks: { passed: number; failed: number; total: number };
   specResults: Awaited<ReturnType<typeof compute>>['specResults'];
@@ -130,7 +131,7 @@ const runDiff = async (
   const { specResults, checks, changelogData, warnings } = await compute(
     [baseFile, headFile],
     config,
-    options
+    { ...options, path: filepath }
   );
   const diffResults = { checks, specResults, changelogData, warnings };
 
@@ -264,7 +265,7 @@ const getDiffAction =
       return;
     }
 
-    const diffResult = await runDiff(parsedFiles, config, options);
+    const diffResult = await runDiff(parsedFiles, config, options, file1);
     let maybeUrl: string | null = null;
     const [baseParseResult, headParseResult] = parsedFiles;
     if (options.upload) {
@@ -285,35 +286,36 @@ const getDiffAction =
         (!options.check || diffResult.specResults.results.length === 0)
       ) {
         logger.info('Empty changelog: not opening web view');
-      }
-      const analyticsData: Record<string, any> = {
-        isInCi: config.isInCi,
-      };
-
-      if (!maybeUrl) {
-        const meta = {
-          createdAt: new Date(),
-          command: ['optic', ...process.argv.slice(2)].join(' '),
-          file1,
-          file2,
-          base: options.base,
+      } else {
+        const analyticsData: Record<string, any> = {
+          isInCi: config.isInCi,
         };
 
-        const compressedData = compressDataV2(
-          baseParseResult,
-          headParseResult,
-          diffResult.specResults,
-          meta
-        );
-        analyticsData.compressedDataLength = compressedData.length;
-        logger.info('Opening up diff in web view');
-        maybeUrl = `${config.client.getWebBase()}/cli/diff#${compressedData}`;
-        await flushEvents();
+        if (!maybeUrl) {
+          const meta = {
+            createdAt: new Date(),
+            command: ['optic', ...process.argv.slice(2)].join(' '),
+            file1,
+            file2,
+            base: options.base,
+          };
+
+          const compressedData = compressDataV2(
+            baseParseResult,
+            headParseResult,
+            diffResult.specResults,
+            meta
+          );
+          analyticsData.compressedDataLength = compressedData.length;
+          logger.info('Opening up diff in web view');
+          maybeUrl = `${config.client.getWebBase()}/cli/diff#${compressedData}`;
+          await flushEvents();
+        }
+        trackEvent('optic.diff.view_web', analyticsData);
+        await open(maybeUrl, {
+          wait: false,
+        });
       }
-      trackEvent('optic.diff.view_web', analyticsData);
-      await open(maybeUrl, {
-        wait: false,
-      });
     }
 
     if (config.isInCi) {
