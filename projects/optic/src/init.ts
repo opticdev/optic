@@ -1,4 +1,4 @@
-import { program as cli } from 'commander';
+import { Command, program as cliInstance } from 'commander';
 import updateNotifier from 'update-notifier';
 import { initSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import {
@@ -16,7 +16,6 @@ import { registerApiAdd } from './commands/api/add';
 import { captureCommand } from './commands/oas/capture';
 import { newCommand } from './commands/oas/new';
 import { setupTlsCommand } from './commands/oas/setup-tls';
-import { clearCommand } from './commands/oas/clear';
 import { verifyCommand } from './commands/oas/verify';
 import { registerDiffAll } from './commands/diff/diff-all';
 import { registerSpecPush } from './commands/spec/push';
@@ -28,10 +27,11 @@ import { registerDereference } from './commands/dereference/dereference';
 import { registerCiSetup } from './commands/ci/setup';
 import { registerLint } from './commands/lint/lint';
 import { registerBundle } from './commands/bundle/bundle';
+import { updateCommand } from './commands/oas/update';
 
 const packageJson = require('../package.json');
 
-export const initCli = async () => {
+export const initCli = async (cli: Command = cliInstance): Promise<Command> => {
   initSentry(process.env.SENTRY_URL, packageJson.version);
   initSegment(process.env.SEGMENT_KEY);
   cli.hook('preAction', async (command) => {
@@ -45,6 +45,11 @@ export const initCli = async () => {
       [commandName, ...args] = command.args;
     }
     trackEvent(`optic.${commandName}`, {
+      args,
+      isInCi: process.env.CI === 'true',
+    });
+    trackEvent(`optic.cli`, {
+      commandName,
       args,
       isInCi: process.env.CI === 'true',
     });
@@ -81,16 +86,24 @@ Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
 
   registerDiff(cli, cliConfig);
 
-  const oas = cli.command('oas');
-  oas.description(
-    'generate OpenAPI operations and patches based on API traffic. See `optic oas --help`'
+  //@todo by 2023/5/10
+  const oas = new Command('oas').description(
+    '[Deprecated] capture/verify/update are now top-level commands'
   );
-  // commands for tracking changes with openapi
   oas.addCommand(await captureCommand(cliConfig));
   oas.addCommand(await newCommand());
   oas.addCommand(await setupTlsCommand());
-  oas.addCommand(await clearCommand());
   oas.addCommand(verifyCommand(cliConfig));
+  oas.addCommand(updateCommand());
+
+  cli.addCommand(oas);
+
+  // commands for tracking changes with openapi
+  cli.addCommand(await captureCommand(cliConfig));
+  cli.addCommand(await newCommand());
+  cli.addCommand(await setupTlsCommand());
+  cli.addCommand(verifyCommand(cliConfig));
+  cli.addCommand(updateCommand());
 
   registerLint(cli, cliConfig);
   registerDiffAll(cli, cliConfig);

@@ -147,7 +147,7 @@ specification details:
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 
       - /schema/properties/requiredKeys/properties/addedRequiredKey [32madded[39m
-      - /schema/properties/toTypeArrays, /schema/properties/fromTypeArrays, /schema/properties/requiredKeys/properties/requiredToOptional, /schema/properties/requiredKeys/properties/optionalToRequired, /schema/properties/expandableObject, /schema/properties/composedObject/allOf/0/properties/orderId, /schema/properties/stringOrNumberOrObject [33mchanged[39m
+      - /schema/properties/toTypeArrays, /schema/properties/fromTypeArrays, /schema/properties/requiredKeys/properties/requiredToOptional, /schema/properties/requiredKeys/properties/optionalToRequired, /schema/properties/expandableObject, /schema/properties/composedObject/properties/orderId, /schema/properties/stringOrNumberOrObject [33mchanged[39m
       - /schema/properties/requiredKeys/properties/deletedRequiredKey [31mremoved[39m
       
 Checks
@@ -198,6 +198,7 @@ Checks
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /parameters_at_path
     added rule: prevent new required query parameters
       [31m[31mx[39m[31m cannot add required query parameter query_in_path to an existing operation. This is a breaking change.[39m
+      at [4m$workspace$/petstore-updated.json:143:4710[24m
 
 
 
@@ -393,7 +394,7 @@ Checks
 
 
 5 operations added, 15 changed, 1 removed
-[32m[1m154 checks passed[22m[39m
+[32m[1m152 checks passed[22m[39m
 [31m[1m46 checks failed[22m[39m
 
 [34m[1mSee the full history of this API by running "optic api add petstore-base.json --history-depth 0"[22m[39m

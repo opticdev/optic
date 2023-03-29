@@ -1,19 +1,11 @@
 import { ParseOpenAPIResult } from '../parser/openapi-sourcemap-parser';
-import {
-  OpenAPIV3,
-  SerializedSourcemap,
-  sourcemapReader,
-} from '@useoptic/openapi-utilities';
+import { FlatOpenAPIV3, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { logPointer } from './pointer';
+import { denormalizeProperty } from './denormalizeProperty';
 
-function getFilePathFromPointer(sourcemap: SerializedSourcemap, path: string) {
-  const maybePath = sourcemapReader(sourcemap).findFile(path);
-
-  return maybePath?.filePath ?? null;
-}
-
-// Denormalizes a dereferenced openapi spec
-// For now, this function only denormalizes shared path parameters
+// Denormalizes a dereferenced openapi spec - mutates in place
+// For now, this function only denormalizes shared path parameters and flattens allOf
 export function denormalize<T extends ParseOpenAPIResult>(parse: T): T {
   for (const [pathKey, path] of Object.entries(parse.jsonLike.paths)) {
     if (path && path.parameters) {
@@ -51,18 +43,8 @@ export function denormalize<T extends ParseOpenAPIResult>(parse: T): T {
                 String(operation.parameters.length),
               ]);
 
-              const maybeFilePath = getFilePathFromPointer(
-                parse.sourcemap,
-                oldPointer
-              );
+              logPointer(parse.sourcemap, { old: oldPointer, new: newPointer });
 
-              if (maybeFilePath) {
-                parse.sourcemap.logPointerInFile(
-                  maybeFilePath,
-                  newPointer,
-                  oldPointer
-                );
-              }
               operation.parameters.push(parameter);
             }
           }
@@ -71,6 +53,62 @@ export function denormalize<T extends ParseOpenAPIResult>(parse: T): T {
 
       // Finally, we remove the parameter on the path level
       delete path.parameters;
+    }
+  }
+
+  // For all schemas, flatten allOfs
+  for (const [pathKey, path] of Object.entries(parse.jsonLike.paths)) {
+    for (const method of Object.values(OpenAPIV3.HttpMethods)) {
+      const operation = path?.[method] as
+        | FlatOpenAPIV3.OperationObject
+        | undefined;
+      if (operation) {
+        if (operation.requestBody) {
+          for (const [contentType, body] of Object.entries(
+            operation.requestBody.content ?? {}
+          )) {
+            const pointer = jsonPointerHelpers.compile([
+              'paths',
+              pathKey,
+              method,
+              'requestBody',
+              'content',
+              contentType,
+              'schema',
+            ]);
+            if (body.schema) {
+              denormalizeProperty(body.schema, parse.sourcemap, {
+                old: pointer,
+                new: pointer,
+              });
+            }
+          }
+        }
+        for (const [statusCode, response] of Object.entries(
+          operation.responses
+        )) {
+          for (const [contentType, body] of Object.entries(
+            response.content ?? {}
+          )) {
+            const pointer = jsonPointerHelpers.compile([
+              'paths',
+              pathKey,
+              method,
+              'responses',
+              statusCode,
+              'content',
+              contentType,
+              'schema',
+            ]);
+            if (body.schema) {
+              denormalizeProperty(body.schema, parse.sourcemap, {
+                old: pointer,
+                new: pointer,
+              });
+            }
+          }
+        }
+      }
     }
   }
 

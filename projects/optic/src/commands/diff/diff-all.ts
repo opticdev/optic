@@ -248,7 +248,7 @@ async function computeAll(
     const { specResults, checks, changelogData, warnings } = await compute(
       [fromParseResults, toParseResults],
       config,
-      options
+      { ...options, path: candidate.to ?? candidate.from ?? null }
     );
 
     for (const warning of warnings) {

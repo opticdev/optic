@@ -6,7 +6,11 @@ import crypto from 'crypto';
 
 export async function captureStorage(
   filePath: string
-): Promise<[boolean, string]> {
+): Promise<{
+  openApiExists: boolean;
+  trafficDirectory: string;
+  existingCaptures: number;
+}> {
   const resolvedFilepath = Path.resolve(filePath);
   const openApiExists: boolean = await fs.pathExists(resolvedFilepath);
 
@@ -24,5 +28,9 @@ export async function captureStorage(
 
   if (openApiExists) await fs.ensureDir(trafficDirectory);
 
-  return [openApiExists, trafficDirectory];
+  return {
+    openApiExists,
+    trafficDirectory,
+    existingCaptures: (await fs.readdir(trafficDirectory)).length,
+  };
 }

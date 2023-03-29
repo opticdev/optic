@@ -48,6 +48,7 @@ const getLintAction =
       config,
       {
         check: true,
+        path,
       }
     );
 

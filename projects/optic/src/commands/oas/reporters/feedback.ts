@@ -49,7 +49,7 @@ export function createCommandFeedback(
   }
 
   function notable(message: string) {
-    destination.write(chalk.blueBright(' » ') + message + '\n');
+    destination.write(chalk.blueBright('» ') + message + '\n');
   }
 
   function warning(message: string) {
@@ -109,5 +109,6 @@ export enum InputErrors {
   HAR_FILE_NOT_FOUND = 'har-file-not-found',
   PROXY_IN_NON_TTY = 'proxy-in-non-tty',
   SPEC_FILE_NOT_FOUND = 'spec-file-not-found',
+  DOCUMENT_OPERATION_FORMAT = 'document-operation-format',
   SPEC_FILE_NOT_READABLE = 'spec-file-not-readable',
 }

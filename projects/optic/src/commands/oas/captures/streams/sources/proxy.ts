@@ -161,7 +161,7 @@ export class ProxyInteractions {
         alreadyLoggedTlsError = true;
         console.error(
           chalk.red(
-            '\nYou are trying to intercept a https host without a trusted certificate for the Optic Proxy.\nYou need to run "optic oas setup-tls" to generate and trust a certificate'
+            '\nYou are trying to intercept a https host without a trusted certificate for the Optic Proxy.\nYou need to run "optic setup-tls" to generate and trust a certificate'
           )
         );
       }

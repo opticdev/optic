@@ -24,11 +24,16 @@ import { platform } from './lib/shell-utils';
 import chalk from 'chalk';
 import { runVerify } from './verify';
 import { OpticCliConfig } from '../../config';
+import Path from 'path';
+import os from 'os';
+import { clearCommand } from './capture-clear';
+const tmpDirectory = os.tmpdir();
 
 export async function captureCommand(config: OpticCliConfig): Promise<Command> {
   const command = new Command('capture');
-
   const feedback = createCommandFeedback(command);
+
+  command.addCommand(clearCommand());
 
   command
     .argument('<openapi-file>', 'an OpenAPI spec file to add an operation to')
@@ -54,7 +59,9 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
     )
     .option('-o, --output <output>', 'file name for output')
     .action(async (filePath: string, targetUrl: string) => {
-      const [openApiExists, trafficDirectory] = await captureStorage(filePath);
+      const { openApiExists, trafficDirectory } = await captureStorage(
+        filePath
+      );
 
       if (!openApiExists) {
         return await feedback.inputError(
@@ -127,7 +134,6 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
       }
 
       let destination: Writable = fs.createWriteStream(inProgressName);
-      let enterPressed = false;
 
       const commandRunner = new RunCommand(proxyUrl, feedback);
 
@@ -148,7 +154,6 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
             lines.close();
           };
           if (runningCommand) await commandRunner.kill();
-          enterPressed = true;
 
           sourcesController.signal.addEventListener('abort', onAbort);
 
@@ -196,16 +201,30 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
                 if (options.output) {
                   const outputPath = path.resolve(options.output);
                   feedback.success(`Wrote har to ${outputPath}`);
-                  return fs.move(inProgressName, outputPath);
+                  return await fs.move(inProgressName, outputPath);
                 }
                 await fs.move(inProgressName, completedName);
 
-                if (enterPressed)
-                  await runVerify(filePath, { exit0: true }, config, feedback, {
-                    printCoverage: false,
-                  });
+                try {
+                  await runVerify(
+                    filePath,
+                    {
+                      exit0: true,
+                      har: options.output
+                        ? path.resolve(options.output)
+                        : undefined,
+                    },
+                    config,
+                    feedback,
+                    {
+                      printCoverage: false,
+                    }
+                  );
+                } catch (e) {
+                  console.log(e);
+                }
 
-                if (!enterPressed) {
+                if (!interactiveCapture) {
                   // Log next steps
                   feedback.success(`Wrote har traffic to ${completedName}`);
                   feedback.log(
@@ -340,7 +359,7 @@ async function renderCaptureProgress(
   if (interactionCount === 0) {
     spinner.info('No requests captured');
   } else {
-    spinner.succeed(`${interactionCount} requests written`);
+    spinner.succeed(`${interactionCount} requests captured`);
   }
 }
 
