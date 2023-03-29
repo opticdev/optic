@@ -113,6 +113,9 @@ export class SpectralRule extends ExternalRuleBase {
     fromSpec: OpenAPIV3.Document;
     toSpec: OpenAPIV3.Document;
   }): Promise<RuleResult[]> {
+    if ((inputs.toSpec as any)['x-optic-ci-empty-spec'] === true) {
+      return [];
+    }
     const traverser = new OpenApiV3Traverser();
     traverser.traverse(inputs.toSpec);
 
@@ -239,6 +242,9 @@ export class SpectralRule extends ExternalRuleBase {
     nextJsonLike: OpenAPIV3.Document<{}>;
     currentJsonLike: OpenAPIV3.Document<{}>;
   }): Promise<Result[]> {
+    if ((inputs.nextJsonLike as any)['x-optic-ci-empty-spec'] === true) {
+      return [];
+    }
     const factTree = constructFactTree(inputs.nextFacts);
 
     const changesByJsonPath: Record<string, IChange> = inputs.changelog.reduce(
