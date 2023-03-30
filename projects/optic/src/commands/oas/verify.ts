@@ -93,17 +93,16 @@ export async function runVerify(
     }
   }
 
-  const absoluteSpecPath = Path.resolve(specPath);
-  if (!(await fs.pathExists(absoluteSpecPath))) {
+  console.log('');
+
+  const { existingCaptures, openApiExists } = await captureStorage(specPath);
+  if (!openApiExists) {
     return await feedback.inputError(
       'OpenAPI specification file could not be found',
       InputErrors.SPEC_FILE_NOT_FOUND
     );
   }
-
-  console.log('');
-
-  const { trafficDirectory, existingCaptures } = await captureStorage(specPath);
+  const absoluteSpecPath = Path.resolve(specPath);
 
   const makeInteractionsIterator = async () =>
     getInteractions(options, specPath, feedback);

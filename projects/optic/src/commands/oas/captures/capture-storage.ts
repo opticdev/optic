@@ -4,9 +4,7 @@ import os from 'os';
 const tmpDirectory = os.tmpdir();
 import crypto from 'crypto';
 
-export async function captureStorage(
-  filePath: string
-): Promise<{
+export async function captureStorage(filePath: string): Promise<{
   openApiExists: boolean;
   trafficDirectory: string;
   existingCaptures: number;
@@ -26,7 +24,7 @@ export async function captureStorage(
     specPathHash
   );
 
-  if (openApiExists) await fs.ensureDir(trafficDirectory);
+  await fs.ensureDir(trafficDirectory);
 
   return {
     openApiExists,
