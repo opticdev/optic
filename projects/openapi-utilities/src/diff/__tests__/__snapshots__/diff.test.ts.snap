@@ -126,6 +126,17 @@ exports[`diff openapi diff behavior changing a key value 1`] = `
 ]
 `;
 
+exports[`diff openapi diff behavior diff for objects with falsy values 1`] = `
+[
+  {
+    "after": "/value",
+  },
+  {
+    "after": "/a",
+  },
+]
+`;
+
 exports[`diff openapi diff behavior removing a key 1`] = `
 [
   {
