@@ -55,7 +55,6 @@
     "node-fetch": "^2.6.7",
     "openapi-types": "^12.0.2",
     "semver": "^7.3.8",
-    "ts-invariant": "^0.9.3",
     "upath": "^2.0.1",
     "yaml": "^2.2.0",
     "yaml-ast-parser": "^0.0.43"
