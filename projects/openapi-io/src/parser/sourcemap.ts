@@ -1,4 +1,4 @@
-import * as fs from 'fs-extra';
+import fs from 'node:fs/promises';
 import { createHash } from 'crypto';
 
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
