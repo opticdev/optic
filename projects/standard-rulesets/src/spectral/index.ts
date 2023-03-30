@@ -107,7 +107,7 @@ export class SpectralRulesets extends ExternalRuleBase {
     );
 
     // write one tmp spec for all the spectral runs to use
-    await fs.writeFile(absolutePathTmpSpec, JSON.stringify(inputs.fromSpec));
+    await fs.writeFile(absolutePathTmpSpec, JSON.stringify(inputs.toSpec));
 
     const added = this.options.added.map((ruleInput) => {
       return new SpectralRule({
