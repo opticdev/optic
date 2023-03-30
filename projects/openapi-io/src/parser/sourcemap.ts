@@ -1,7 +1,5 @@
 import * as fs from 'fs-extra';
-// @ts-ignore
-import sha256 from 'crypto-js/sha256';
-import Hex from 'crypto-js/enc-hex';
+import { createHash } from 'crypto';
 
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
@@ -9,6 +7,14 @@ export type JsonPath = string;
 export type FileReference = number;
 
 export type ToSource = [FileReference, JsonPath];
+
+function getsha256(contents: string): string {
+  const hash = createHash('sha256');
+
+  hash.update(contents);
+
+  return hash.digest('hex');
+}
 
 export class JsonSchemaSourcemap {
   constructor(public rootFilePath: string) {}
@@ -28,7 +34,7 @@ export class JsonSchemaSourcemap {
 
       this.files.push({
         path: filePath,
-        sha256: Hex.stringify(sha256(contents)),
+        sha256: getsha256(contents),
         contents,
         index: fileIndex,
       });
@@ -45,7 +51,7 @@ export class JsonSchemaSourcemap {
         path: filePath,
         index: fileIndex,
         contents,
-        sha256: Hex.stringify(sha256(contents)),
+        sha256: getsha256(contents),
       });
     }
   }
