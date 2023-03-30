@@ -16,6 +16,7 @@ import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { Operation } from 'fast-json-patch';
 import * as jsonpatch from 'fast-json-patch';
 import sortby from 'lodash.sortby';
+import { logger } from '@useoptic/optic-ci/build/logger';
 const description = `dereference an OpenAPI specification`;
 
 const usage = () => `
@@ -84,7 +85,8 @@ const bundleAction =
       if (includeExtensions.length) {
         Object.entries(updatedSpec.paths).forEach(([path, operations]) => {
           Object.entries(operations!).forEach(([key, operation]) => {
-            if (key === 'parameters') return;
+            if (!Object.values(OpenAPIV3.HttpMethods).includes(key as any))
+              return;
             if (
               operation &&
               !includeExtensions.some((extension) =>
@@ -108,7 +110,8 @@ const bundleAction =
       if (filterExtensions.length) {
         Object.entries(updatedSpec.paths).forEach(([path, operations]) => {
           Object.entries(operations!).forEach(([key, operation]) => {
-            if (key === 'parameters') return;
+            if (!Object.values(OpenAPIV3.HttpMethods).includes(key as any))
+              return;
             // should filter
             if (
               operation &&
@@ -142,7 +145,7 @@ const bundleAction =
           outputPath,
           isYaml(o) ? yamlOut() : JSON.stringify(updatedSpec, null, 2)
         );
-        console.log('wrote bundled spec to ' + path.resolve(o));
+        logger.log('wrote bundled spec to ' + path.resolve(o));
       } else {
         // assume pipe >
         if (isYaml(filePath)) {
@@ -158,7 +161,7 @@ const bundleAction =
     }
   };
 
-const methods = `{get,post,put,delete,patch,head,options}`;
+const methods = `{${Object.values(OpenAPIV3.HttpMethods).join(',')}`;
 const matches = {
   inResponseSchema: [
     'paths',
