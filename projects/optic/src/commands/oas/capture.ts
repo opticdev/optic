@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import path from 'path';
-import * as fs from 'fs-extra';
+import fsNonPromise from 'fs';
+import fs from 'node:fs/promises';
 import readline from 'readline';
 import { Writable } from 'stream';
 import exitHook from 'async-exit-hook';
@@ -8,6 +9,7 @@ import * as AT from './lib/async-tools';
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { trackCompletion } from './lib/segment';
 import logNode from 'log-node';
+import { isJson, isYaml, writeYaml } from '@useoptic/openapi-io';
 
 import { getCertStore } from './setup-tls';
 import {
@@ -24,9 +26,10 @@ import { platform } from './lib/shell-utils';
 import chalk from 'chalk';
 import { runVerify } from './verify';
 import { OpticCliConfig } from '../../config';
-import Path from 'path';
 import os from 'os';
 import { clearCommand } from './capture-clear';
+import { createNewSpecFile } from '../../utils/specs';
+import { logger } from '../../logger';
 const tmpDirectory = os.tmpdir();
 
 export async function captureCommand(config: OpticCliConfig): Promise<Command> {
@@ -40,10 +43,6 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
     .argument('<target-url>', 'the url to capture...')
 
     .description('capture observed traffic as a HAR (HttpArchive v1.3) file')
-    // .option(
-    //   '--proxy <target-url>',
-    //   'accept traffic over a proxy targeting the actual service'
-    // )
     .option(
       '--no-tls',
       'disable TLS support for --proxy and prevent generation of new CA certificates'
@@ -64,10 +63,19 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
       );
 
       if (!openApiExists) {
-        return await feedback.inputError(
-          'OpenAPI file not found',
-          InputErrors.SPEC_FILE_NOT_FOUND
-        );
+        const specFile = createNewSpecFile('3.1.0');
+        if (isJson(filePath)) {
+          logger.info(`Initializing OpenAPI file at ${filePath}`);
+          await fs.writeFile(filePath, JSON.stringify(specFile, null, 2));
+        } else if (isYaml(filePath)) {
+          logger.info(`Initializing OpenAPI file at ${filePath}`);
+          await fs.writeFile(filePath, writeYaml(specFile));
+        } else {
+          return await feedback.inputError(
+            'OpenAPI file not found',
+            InputErrors.SPEC_FILE_NOT_FOUND
+          );
+        }
       }
 
       const timestamp = Date.now().toString();
@@ -133,7 +141,8 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
         );
       }
 
-      let destination: Writable = fs.createWriteStream(inProgressName);
+      let destination: Writable =
+        fsNonPromise.createWriteStream(inProgressName);
 
       const commandRunner = new RunCommand(proxyUrl, feedback);
 
@@ -201,9 +210,9 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
                 if (options.output) {
                   const outputPath = path.resolve(options.output);
                   feedback.success(`Wrote har to ${outputPath}`);
-                  return await fs.move(inProgressName, outputPath);
+                  return await fs.rename(inProgressName, outputPath);
                 }
-                await fs.move(inProgressName, completedName);
+                await fs.rename(inProgressName, completedName);
 
                 try {
                   await runVerify(
