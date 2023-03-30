@@ -24,13 +24,15 @@ export function clearCommand(): Command {
       }
       if (specPath) {
         const absoluteSpecPath = Path.resolve(specPath);
-        if (!(await fs.pathExists(absoluteSpecPath))) {
+        const { trafficDirectory, openApiExists } = await captureStorage(
+          specPath
+        );
+        if (!openApiExists) {
           return await feedback.inputError(
             'OpenAPI specification file could not be found',
             InputErrors.SPEC_FILE_NOT_FOUND
           );
         }
-        const { trafficDirectory } = await captureStorage(specPath);
         await fs.remove(trafficDirectory);
         feedback.success(
           'Cleared capture folder for ' +
