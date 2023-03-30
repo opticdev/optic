@@ -11,12 +11,9 @@
   ],
   "bin": "build/index.js",
   "scripts": {
-    "dev:test": "jest --colors",
     "build": "yarn tsc --build --verbose",
-    "ws:build": "yarn build",
-    "ws:clean": "rm -rf build",
-    "ws:test": "yarn dev:test",
-    "compare": "yarn ts-node src/index.tsx compare"
+    "clean": "rm -rf build",
+    "test": "jest --colors"
   },
   "dependencies": {
     "@useoptic/openapi-utilities": "workspace:*",
