@@ -63,3 +63,12 @@ export const identify = (email: string) => {
     });
   }
 };
+
+export const alias = (externalId: string) => {
+  if (analytics) {
+    analytics.alias({
+      userId: externalId,
+      previousId: id,
+    });
+  }
+};

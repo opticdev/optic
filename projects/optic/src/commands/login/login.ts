@@ -13,6 +13,7 @@ import { createOpticClient } from '../../client';
 import {
   flushEvents,
   identify,
+  alias,
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 export const registerLogin = (cli: Command, config: OpticCliConfig) => {
@@ -71,6 +72,7 @@ Create an account and generate a personal access token at ${chalk.underline.blue
     const result = await newClient.verifyToken();
 
     if (result.user) {
+      alias(result.user.userId);
       identify(result.user.email);
       trackEvent('cli.login');
       await flushEvents();
