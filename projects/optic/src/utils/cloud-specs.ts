@@ -56,10 +56,13 @@ export async function uploadSpec(
       }),
     ]);
 
+    const effective_at = opts.spec.context?.effective_at;
+
     const { id } = await opts.client.createSpec({
       upload_id: result.upload_id,
       api_id: apiId,
       tags: tags,
+      effective_at,
     });
     trackEvent('spec.added', {
       apiId,

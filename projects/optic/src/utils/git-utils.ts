@@ -103,6 +103,19 @@ export const resolveGitRef = async (ref: string): Promise<string> =>
     exec(command, cb);
   });
 
+export const commitTime = async (ref: string): Promise<Date> =>
+  new Promise((resolve, reject) => {
+    const cb = (err: unknown, stdout: string, stderr: string) => {
+      if (err || stderr || !stdout) {
+        reject(err || stderr);
+      }
+
+      resolve(new Date(parseInt(stdout.trim()) * 1000));
+    };
+    const command = `git show -s --date=iso-strict --format=%ct ${ref}`;
+    exec(command, cb);
+  });
+
 export const findOpenApiSpecsCandidates = async (
   ref?: string
 ): Promise<string[]> =>
