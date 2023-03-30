@@ -1,4 +1,4 @@
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 import { ParseResult, getFileFromFsOrGit } from '../../utils/spec-loaders';
 import { OpticCliConfig } from '../../config';
 import {
@@ -29,6 +29,15 @@ Example usage:
   `;
 
 export const registerBundle = (cli: Command, config: OpticCliConfig) => {
+  const filterXExtensions = new Option(
+    '--filter-x-extensions [extensions]',
+    'extensions to filter when truthy value set'
+  ).hideHelp(true);
+  const includeXExtensions = new Option(
+    '--include-x-extensions [extensions]',
+    'extensions to filter when truthy value set'
+  ).hideHelp(true);
+
   cli
     .command('bundle')
     .configureHelp({
@@ -38,14 +47,8 @@ export const registerBundle = (cli: Command, config: OpticCliConfig) => {
     .description(description)
     .argument('[file_path]', 'openapi file to bundle')
     .option('-o [output]', 'output file name')
-    .option(
-      '--filter-x-extensions [extensions]',
-      'extensions to filter when truthy value set'
-    )
-    .option(
-      '--include-x-extensions [extensions]',
-      'extensions to filter when truthy value set'
-    )
+    .addOption(filterXExtensions)
+    .addOption(includeXExtensions)
     .action(errorHandler(bundleAction(config)));
 };
 
