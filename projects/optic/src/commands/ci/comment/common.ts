@@ -66,7 +66,9 @@ ${s.opticWebUrl ? `[${s.apiName}](${s.opticWebUrl})` : s.apiName}
 
 </td>
 <td>
+
   ${s.specUrl ? `([view documentation](${s.specUrl}))` : ''}
+
 </td>
 <td>
 
