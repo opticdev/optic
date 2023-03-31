@@ -40,7 +40,7 @@ module.exports = {
    * @param {*}      file.data      - The file contents. This will be whatever data type was returned by the resolver
    * @returns {Promise}
    */
-  async parse(file) {
+  async parse(file: any) {
     // eslint-disable-line require-await
     let data = file.data;
     if (Buffer.isBuffer(data)) {
@@ -50,7 +50,7 @@ module.exports = {
     if (typeof data === 'string') {
       try {
         return yaml.load(data, { schema: core });
-      } catch (e) {
+      } catch (e: any) {
         throw new ParserError(e.message, file.url);
       }
     } else {

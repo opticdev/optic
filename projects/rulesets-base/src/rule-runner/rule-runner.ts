@@ -237,8 +237,14 @@ export class RuleRunner {
     }
 
     // TODO reimplement the rule runner so we don't need to generate legacy fact types here
-    const beforeFacts = traverseSpec(inputs.fromSpec);
-    const afterFacts = traverseSpec(inputs.toSpec);
+    const beforeFacts =
+      inputs.fromSpec['x-optic-ci-empty-spec'] === true
+        ? []
+        : traverseSpec(inputs.fromSpec);
+    const afterFacts =
+      inputs.toSpec['x-optic-ci-empty-spec'] === true
+        ? []
+        : traverseSpec(inputs.toSpec);
     const changelog = factsToChangelog(beforeFacts, afterFacts);
 
     const openApiFactNodes = groupFacts({

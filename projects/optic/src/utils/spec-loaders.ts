@@ -23,6 +23,7 @@ export type ParseResult = ParseOpenAPIResult & {
   context: {
     vcs: 'git';
     sha: string;
+    effective_at?: Date;
   } | null;
 };
 
@@ -42,27 +43,29 @@ type SpecFromInput =
     };
 
 export function parseSpecVersion(raw?: string | null): SpecFromInput {
-  if (raw) {
-    if (raw.includes(':') && !(raw.startsWith('C:') || raw.startsWith('D:'))) {
-      const index = raw.indexOf(':');
-      const rev = raw.substring(0, index);
-      const name = raw.substring(index + 1);
-
-      return {
-        from: 'git',
-        name: name.startsWith('/') ? name.substring(1) : name,
-        branch: rev,
-      };
-    } else {
-      return {
-        from: 'file',
-        filePath: raw,
-      };
-    }
-  } else {
+  raw = raw ?? 'null:';
+  if (raw === 'null:') {
     return {
       from: 'empty',
       value: defaultEmptySpec,
+    };
+  } else if (
+    raw.includes(':') &&
+    !(raw.startsWith('C:') || raw.startsWith('D:'))
+  ) {
+    const index = raw.indexOf(':');
+    const rev = raw.substring(0, index);
+    const name = raw.substring(index + 1);
+
+    return {
+      from: 'git',
+      name: name.startsWith('/') ? name.substring(1) : name,
+      branch: rev,
+    };
+  } else {
+    return {
+      from: 'file',
+      filePath: raw,
     };
   }
 }
@@ -126,6 +129,10 @@ async function parseSpecAndDereference(
       if (config.vcs?.type !== VCS.Git) {
         throw new Error(`${workingDir} is not a git repo`);
       }
+
+      const sha = await Git.resolveGitRef(input.branch);
+      const effective_at = await Git.commitTime(sha);
+
       return {
         ...(await parseOpenAPIFromRepoWithSourcemap(
           input.name,
@@ -135,7 +142,8 @@ async function parseSpecAndDereference(
         isEmptySpec: false,
         context: {
           vcs: 'git',
-          sha: await Git.resolveGitRef(input.branch),
+          sha,
+          effective_at,
         },
       };
     }
@@ -150,6 +158,7 @@ async function parseSpecAndDereference(
             ? {
                 vcs: 'git',
                 sha: config.vcs.sha,
+                effective_at: await Git.commitTime(config.vcs.sha),
               }
             : null,
       };

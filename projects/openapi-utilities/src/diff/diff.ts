@@ -189,7 +189,7 @@ export function diff(
       afterValue,
       afterPath,
     } of comparisons) {
-      if (beforeValue && afterValue === undefined) {
+      if (beforeValue !== undefined && afterValue === undefined) {
         // Because before + after paths can change diverge due to array rearrangement, we need to track this to determine from where something was removed in an after spec
         // We don't need to look at the last key to see path differences since
         const beforeParts = jsonPointerHelpers.decode(beforePath).slice(0, -1);
@@ -207,7 +207,7 @@ export function diff(
           before: beforePath,
           pathReconciliation,
         });
-      } else if (beforeValue === undefined && afterValue) {
+      } else if (beforeValue === undefined && afterValue !== undefined) {
         diffResults.push({
           after: afterPath,
         });

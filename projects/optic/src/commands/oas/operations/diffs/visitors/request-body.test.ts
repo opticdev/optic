@@ -10,6 +10,8 @@ describe('visitRequestBody', () => {
       path: '/some-path',
       method: HttpMethods.POST,
       body: null,
+      headers: [],
+      query: [],
     };
 
     const requestWithBody = {
@@ -40,6 +42,8 @@ describe('visitRequestBody', () => {
       path: '/some-path',
       method: HttpMethods.POST,
       body: null,
+      headers: [],
+      query: [],
     };
 
     const results = [...visitRequestBody(requestWithoutBody, requestBodySpec)];
@@ -60,16 +64,22 @@ describe('visitRequestBody', () => {
       path: '/some-path',
       method: HttpMethods.POST,
       body: CapturedBody.fromJSON({}, 'application/json'),
+      headers: [],
+      query: [],
     };
 
     const csvRequest = {
       ...jsonRequest,
       body: CapturedBody.from('item1,item2', 'text/csv'),
+      headers: [],
+      query: [],
     };
 
     const missingContentTypeRequest = {
       ...jsonRequest,
       body: CapturedBody.from('test-body'),
+      headers: [],
+      query: [],
     };
 
     const jsonResults = [...visitRequestBody(jsonRequest, requestBodySpec)];
@@ -99,6 +109,8 @@ describe('visitRequestBody', () => {
       path: '/some-path',
       method: HttpMethods.POST,
       body: CapturedBody.fromJSON({}, 'application/json'),
+      headers: [],
+      query: [],
     };
 
     const parameterMismatch = {
@@ -106,6 +118,8 @@ describe('visitRequestBody', () => {
       path: '/some-path',
       method: HttpMethods.POST,
       body: CapturedBody.fromJSON({}, 'application/json; charset=utf-8'),
+      headers: [],
+      query: [],
     };
 
     const subtypeMisMatch = {
@@ -113,6 +127,8 @@ describe('visitRequestBody', () => {
       path: '/some-path',
       method: HttpMethods.POST,
       body: CapturedBody.fromJSON({}, 'application/gzip'),
+      headers: [],
+      query: [],
     };
 
     const typeMismatch = {
@@ -120,6 +136,8 @@ describe('visitRequestBody', () => {
       path: '/some-path',
       method: HttpMethods.POST,
       body: CapturedBody.fromJSON({}, 'text/json'),
+      headers: [],
+      query: [],
     };
 
     expect([...visitRequestBody(exactMatch, requestBodySpec)]).toHaveLength(0);
@@ -149,6 +167,8 @@ describe('visitRequestBody', () => {
       path: '/some-path',
       method: HttpMethods.POST,
       body: CapturedBody.from('a-plain-text-body', 'text/plain'),
+      headers: [],
+      query: [],
     };
 
     const typeRangeMatch = {
@@ -156,6 +176,8 @@ describe('visitRequestBody', () => {
       path: '/some-path',
       method: HttpMethods.POST,
       body: CapturedBody.from('a,csv,body', 'text/csv'),
+      headers: [],
+      query: [],
     };
 
     const mismatchingType = {
@@ -163,6 +185,8 @@ describe('visitRequestBody', () => {
       path: '/some-path',
       method: HttpMethods.POST,
       body: CapturedBody.fromJSON({}, 'application/xml'),
+      headers: [],
+      query: [],
     };
 
     expect([...visitRequestBody(exactMatch, requestBodySpec)]).toHaveLength(0);

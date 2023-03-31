@@ -2,7 +2,7 @@
   "name": "@useoptic/openapi-utilities",
   "license": "MIT",
   "packageManager": "yarn@3.5.0",
-  "version": "0.42.0",
+  "version": "0.41.4",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -10,12 +10,9 @@
     "/src"
   ],
   "scripts": {
-    "dev:test": "jest --colors",
     "build": "yarn tsc --build --verbose",
-    "resolver:start": "yarn build && micro -l tcp://localhost:5001 build/entry-points/servers/resolver.js",
-    "ws:build": "yarn build",
-    "ws:test": "yarn dev:test",
-    "ws:clean": "rm -rf build"
+    "test": "ENVIRONMENT=test jest --colors",
+    "clean": "rm -rf build"
   },
   "devDependencies": {
     "@babel/core": "^7.17.0",

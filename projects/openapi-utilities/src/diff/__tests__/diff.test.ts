@@ -77,6 +77,19 @@ describe('diff openapi', () => {
       expect(diffResults.length).toBe(1);
       expect(diffResults).toMatchSnapshot();
     });
+
+    test('diff for objects with falsy values', () => {
+      const diffs = diff(
+        {},
+        {
+          value: null,
+          a: 2,
+        }
+      );
+
+      expect(diffs.length).toBe(2);
+      expect(diffs).toMatchSnapshot();
+    });
   });
 
   describe('diff with array values', () => {

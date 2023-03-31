@@ -1,10 +1,16 @@
 'use strict';
 
-const $Ref = require('@apidevtools/json-schema-ref-parser/lib/ref');
-const Pointer = require('@apidevtools/json-schema-ref-parser/lib/pointer');
-const { ono } = require('@jsdevtools/ono');
-const url = require('@apidevtools/json-schema-ref-parser/lib/util/url');
-const clonedeep = require('lodash.clonedeep');
+// @ts-ignore
+import $Ref from '@apidevtools/json-schema-ref-parser/lib/ref';
+import $RefParser from '@apidevtools/json-schema-ref-parser';
+// @ts-ignore
+import Pointer from '@apidevtools/json-schema-ref-parser/lib/pointer';
+// @ts-ignore
+import { ono } from '@jsdevtools/ono';
+// @ts-ignore
+import url from '@apidevtools/json-schema-ref-parser/lib/util/url';
+import clonedeep from 'lodash.clonedeep';
+import { JsonSchemaSourcemap } from './sourcemap';
 
 module.exports = { dereference };
 
@@ -15,11 +21,15 @@ module.exports = { dereference };
  * @param {$RefParser} parser
  * @param {$RefParserOptions} options
  */
-function dereference(parser, options, sourcemap) {
+function dereference(
+  parser: $RefParser,
+  options: $RefParser.Options,
+  sourcemap: JsonSchemaSourcemap
+) {
   // console.log('Dereferencing $ref pointers in %s', parser.$refs._root$Ref.path);
   let dereferenced = crawl(
     parser.schema,
-    parser.$refs._root$Ref.path,
+    (parser.$refs as any)._root$Ref.path,
     '#',
     new Set(),
     new Set(),
@@ -47,15 +57,15 @@ function dereference(parser, options, sourcemap) {
  * @returns {{value: object, circular: boolean}}
  */
 function crawl(
-  obj,
-  path,
-  pathFromRoot,
-  parents,
-  processedObjects,
-  dereferencedCache,
-  $refs,
-  sourcemap,
-  options
+  obj: any,
+  path: string,
+  pathFromRoot: string,
+  parents: Set<any>,
+  processedObjects: Set<any>,
+  dereferencedCache: Map<string, any>,
+  $refs: any,
+  sourcemap: JsonSchemaSourcemap,
+  options: any
 ) {
   let dereferenced;
   let result = {
@@ -160,15 +170,15 @@ function crawl(
  * @returns {{value: object, circular: boolean}}
  */
 function dereference$Ref(
-  $ref,
-  path,
-  pathFromRoot,
-  parents,
-  processedObjects,
-  dereferencedCache,
-  $refs,
-  sourcemap,
-  options
+  $ref: any,
+  path: string,
+  pathFromRoot: string,
+  parents: Set<any>,
+  processedObjects: Set<any>,
+  dereferencedCache: Map<string, any>,
+  $refs: any,
+  sourcemap: JsonSchemaSourcemap,
+  options: any
 ) {
   // console.log('Dereferencing $ref pointer "%s" \n at %s', $ref.$ref, path);
 
@@ -181,7 +191,7 @@ function dereference$Ref(
   if (cache && !cache.circular) {
     const refKeys = Object.keys($ref);
     if (refKeys.length > 1) {
-      const extraKeys = {};
+      const extraKeys: any = {};
       for (let key of refKeys) {
         if (key !== '$ref' && !(key in cache.value)) {
           extraKeys[key] = $ref[key];
@@ -273,7 +283,7 @@ function dereference$Ref(
  * @param {$RefParserOptions} options
  * @returns {boolean} - always returns true, to indicate that a circular reference was found
  */
-function foundCircularReference(keyPath, $refs, options) {
+function foundCircularReference(keyPath: string, $refs: any, options: any) {
   $refs.circular = true;
   if (!options.dereference.circular) {
     throw ono.reference(`Circular $ref pointer found at ${keyPath}`);

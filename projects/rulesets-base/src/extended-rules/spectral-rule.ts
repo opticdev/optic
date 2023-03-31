@@ -82,8 +82,8 @@ function toOpticRuleResult(
 export class SpectralRule extends ExternalRuleBase {
   private lifecycle: Lifecycle;
   public name: string;
-  private rulesetPointer: string;
-  private flatSpecFile: string;
+  private rulesetPointer?: string;
+  private flatSpecFile?: string;
   public docsLink?: string;
   private spectral?: {
     run: (json: any) => Promise<SpectralResult[]>;
@@ -91,8 +91,8 @@ export class SpectralRule extends ExternalRuleBase {
   constructor(options: {
     name: string;
     applies?: Lifecycle;
-    rulesetPointer: string;
-    flatSpecFile: string;
+    rulesetPointer?: string;
+    flatSpecFile?: string;
     docsLink?: string;
     spectral?: {
       run: (json: any) => Promise<SpectralResult[]>;
@@ -113,6 +113,9 @@ export class SpectralRule extends ExternalRuleBase {
     fromSpec: OpenAPIV3.Document;
     toSpec: OpenAPIV3.Document;
   }): Promise<RuleResult[]> {
+    if ((inputs.toSpec as any)['x-optic-ci-empty-spec'] === true) {
+      return [];
+    }
     const traverser = new OpenApiV3Traverser();
     traverser.traverse(inputs.toSpec);
 
@@ -130,11 +133,11 @@ export class SpectralRule extends ExternalRuleBase {
     let spectralResults: SpectralResult[];
     if (this.spectral) {
       try {
-        spectralResults = await this.spectral.run(this.flatSpecFile);
+        spectralResults = await this.spectral.run(inputs.toSpec);
       } catch (e: any) {
         throw new Error(e.message ? e.message : e);
       }
-    } else {
+    } else if (this.rulesetPointer && this.flatSpecFile) {
       try {
         const output = await runSpectral(
           this.rulesetPointer,
@@ -146,6 +149,10 @@ export class SpectralRule extends ExternalRuleBase {
       } catch (e: any) {
         throw new Error(e.message ? e.message : e);
       }
+    } else {
+      throw new Error(
+        'Invalid configuration for spectral rules - must provide rulesetPointer and flatSpecFile or a spectral instance'
+      );
     }
 
     const results: RuleResult[] = [];
@@ -235,6 +242,9 @@ export class SpectralRule extends ExternalRuleBase {
     nextJsonLike: OpenAPIV3.Document<{}>;
     currentJsonLike: OpenAPIV3.Document<{}>;
   }): Promise<Result[]> {
+    if ((inputs.nextJsonLike as any)['x-optic-ci-empty-spec'] === true) {
+      return [];
+    }
     const factTree = constructFactTree(inputs.nextFacts);
 
     const changesByJsonPath: Record<string, IChange> = inputs.changelog.reduce(
@@ -246,13 +256,28 @@ export class SpectralRule extends ExternalRuleBase {
     );
 
     let spectralResults: SpectralResult[];
-    try {
-      const output = await runSpectral(this.rulesetPointer, this.flatSpecFile);
-      // sometimes first line has a message
-      const withoutLeading = output.substring(output.indexOf('[')).trim();
-      spectralResults = JSON.parse(withoutLeading) as SpectralResult[];
-    } catch (e: any) {
-      throw new Error(e.message ? e.message : e);
+    if (this.spectral) {
+      try {
+        spectralResults = await this.spectral.run(inputs.nextJsonLike);
+      } catch (e: any) {
+        throw new Error(e.message ? e.message : e);
+      }
+    } else if (this.rulesetPointer && this.flatSpecFile) {
+      try {
+        const output = await runSpectral(
+          this.rulesetPointer,
+          this.flatSpecFile
+        );
+        // sometimes first line has a message
+        const withoutLeading = output.substring(output.indexOf('[')).trim();
+        spectralResults = JSON.parse(withoutLeading) as SpectralResult[];
+      } catch (e: any) {
+        throw new Error(e.message ? e.message : e);
+      }
+    } else {
+      throw new Error(
+        'Invalid configuration for spectral rules - must provide rulesetPointer and flatSpecFile or a spectral instance'
+      );
     }
 
     const results: Result[] = [];
