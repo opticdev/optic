@@ -1,26 +1,29 @@
 import { test, expect, describe } from '@jest/globals';
-import fs from 'fs-extra';
+import fs from 'node:fs/promises';
 
 import { validateOpenApiV3Document } from './validator';
-import { parseOpenAPIWithSourcemap } from '@useoptic/openapi-io';
+import { parseOpenAPIWithSourcemap } from '../parser/openapi-sourcemap-parser';
 import path from 'path';
 import { defaultEmptySpec } from '@useoptic/openapi-utilities';
+
+async function readJson(p: string) {
+  const contents = await fs.readFile(p, 'utf-8');
+  return JSON.parse(contents);
+}
 
 test('valid open api document should not raise errors', async () => {
   validateOpenApiV3Document(defaultEmptySpec);
   validateOpenApiV3Document(
-    (await fs.readJson('./inputs/openapi3/petstore0.json.flattened.json'))
-      .jsonLike
+    (await readJson('./inputs/openapi3/petstore0.json.flattened.json')).jsonLike
   );
 });
 
 test('valid open 3.1 api document should not raise errors', async () => {
   validateOpenApiV3Document(defaultEmptySpec);
   validateOpenApiV3Document(
-    await fs.readJson('./inputs/openapi3/todo-api-3_1.json')
+    await readJson('./inputs/openapi3/todo-api-3_1.json')
   );
 });
-
 
 describe('error cases with messages', () => {
   test('open api doc with no path should throw an error', () => {
@@ -31,7 +34,7 @@ describe('error cases with messages', () => {
       });
     }).toThrowErrorMatchingSnapshot();
   });
-  
+
   test('open api doc with no description in response', () => {
     expect(() => {
       validateOpenApiV3Document({
@@ -41,33 +44,33 @@ describe('error cases with messages', () => {
           '/example': {
             get: {
               response: {
-                '200': {}
-              }
-            }
-          }
-        }
+                '200': {},
+              },
+            },
+          },
+        },
       });
     }).toThrowErrorMatchingSnapshot();
-  })
+  });
 
   test('additional properties in invalid place', () => {
     expect(() => {
       validateOpenApiV3Document({
         openapi: '3.1.3',
-        info: { version: '0.0.0', title: 'Empty', badproperty: ':('},
+        info: { version: '0.0.0', title: 'Empty', badproperty: ':(' },
         paths: {
           '/example': {
             get: {
               response: {
-                '200': {}
-              }
-            }
-          }
-        }
+                '200': {},
+              },
+            },
+          },
+        },
       });
     }).toThrowErrorMatchingSnapshot();
-  })
-})
+  });
+});
 
 test('open api doc with extra custom parameters', () => {
   validateOpenApiV3Document({

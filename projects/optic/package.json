@@ -12,11 +12,9 @@
   ],
   "bin": "build/index.js",
   "scripts": {
-    "dev:test": "ENVIRONMENT=test jest --colors",
     "build": "yarn tsc --build --verbose && yarn babel ./src --out-dir ./build --extensions \".ts\",\".tsx\"",
-    "ws:build": "yarn build",
-    "ws:clean": "rm -rf build",
-    "ws:test": "yarn dev:test",
+    "clean": "rm -rf build",
+    "test": "ENVIRONMENT=test jest --colors",
     "local:run": "yarn ts-node src/index.ts"
   },
   "devDependencies": {
