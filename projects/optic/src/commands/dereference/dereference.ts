@@ -18,6 +18,7 @@ Example usage:
   `;
 
 export const registerDereference = (cli: Command, config: OpticCliConfig) => {
+  // TODO remove june 2023
   const filterXExtensions = new Option(
     '--filter-x-extensions [extensions]',
     'extensions to filter when truthy value set'
@@ -57,8 +58,14 @@ const getDereferencedSpec = async (
   }
 };
 
+type DereferenceActionOptions = {
+  o: string;
+  filterXExtensions: string;
+  includeXExtensions: string;
+};
 const deferenceAction =
-  (config: OpticCliConfig) => async (filePath: string | undefined, options) => {
+  (config: OpticCliConfig) =>
+  async (filePath: string | undefined, options: DereferenceActionOptions) => {
     const { o, filterXExtensions, includeXExtensions } = options;
 
     const filterExtensions = (filterXExtensions || '')

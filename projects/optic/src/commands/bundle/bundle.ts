@@ -29,6 +29,7 @@ Example usage:
   `;
 
 export const registerBundle = (cli: Command, config: OpticCliConfig) => {
+  // TODO remove june 2023
   const filterXExtensions = new Option(
     '--filter-x-extensions [extensions]',
     'extensions to filter when truthy value set'
@@ -68,8 +69,15 @@ const getSpec = async (
   }
 };
 
+type BundleActionOptions = {
+  o: string;
+  filterXExtensions: string;
+  includeXExtensions: string;
+};
+
 const bundleAction =
-  (config: OpticCliConfig) => async (filePath: string | undefined, options) => {
+  (config: OpticCliConfig) =>
+  async (filePath: string | undefined, options: BundleActionOptions) => {
     const { o, filterXExtensions, includeXExtensions } = options;
 
     const filterExtensions = (filterXExtensions || '')
