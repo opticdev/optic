@@ -61,7 +61,7 @@ ${results.completed
       `<tr>
 <td>
 
-${s.opticWebUrl ? `[${s.apiName}](${s.opticWebUrl})` : s.apiName}
+${s.apiName} ${s.specUrl ? `([preview](${s.specUrl}))` : ''}
 
 </td>
 <td>

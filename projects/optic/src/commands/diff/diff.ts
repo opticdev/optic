@@ -266,10 +266,12 @@ const getDiffAction =
     }
 
     const diffResult = await runDiff(parsedFiles, config, options, file1);
-    let maybeUrl: string | null = null;
+    let maybeChangelogUrl: string | null = null;
+    let specUrl: string | null = null;
+
     const [baseParseResult, headParseResult] = parsedFiles;
     if (options.upload) {
-      maybeUrl = await uploadDiff(
+      const uploadResults = await uploadDiff(
         {
           from: baseParseResult,
           to: headParseResult,
@@ -278,6 +280,8 @@ const getDiffAction =
         config,
         options
       );
+      specUrl = uploadResults?.headSpecUrl ?? null;
+      maybeChangelogUrl = uploadResults?.changelogUrl ?? null;
     }
 
     if (options.web) {
@@ -291,7 +295,7 @@ const getDiffAction =
           isInCi: config.isInCi,
         };
 
-        if (!maybeUrl) {
+        if (!maybeChangelogUrl) {
           const meta = {
             createdAt: new Date(),
             command: ['optic', ...process.argv.slice(2)].join(' '),
@@ -308,11 +312,11 @@ const getDiffAction =
           );
           analyticsData.compressedDataLength = compressedData.length;
           logger.info('Opening up diff in web view');
-          maybeUrl = `${config.client.getWebBase()}/cli/diff#${compressedData}`;
+          maybeChangelogUrl = `${config.client.getWebBase()}/cli/diff#${compressedData}`;
           await flushEvents();
         }
         trackEvent('optic.diff.view_web', analyticsData);
-        await open(maybeUrl, {
+        await open(maybeChangelogUrl, {
           wait: false,
         });
       }
@@ -325,7 +329,8 @@ const getDiffAction =
           groupedDiffs: diffResult.changelogData,
           name: file1,
           results: diffResult.specResults.results,
-          url: maybeUrl,
+          specUrl,
+          changelogUrl: maybeChangelogUrl,
         },
       ]);
     }

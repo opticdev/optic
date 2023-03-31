@@ -1,7 +1,11 @@
 import ora from 'ora';
 import { OpticCliConfig, VCS } from '../../config';
 import { OPTIC_URL_KEY } from '../../constants';
-import { getApiFromOpticUrl, getRunUrl } from '../../utils/cloud-urls';
+import {
+  getApiFromOpticUrl,
+  getRunUrl,
+  getSpecUrl,
+} from '../../utils/cloud-urls';
 import { ParseResult } from '../../utils/spec-loaders';
 import { EMPTY_SPEC_ID, uploadRun, uploadSpec } from '../../utils/cloud-specs';
 import * as Git from '../../utils/git-utils';
@@ -16,7 +20,11 @@ export async function uploadDiff(
   options: {
     headTag?: string;
   } = {}
-): Promise<string | null> {
+): Promise<{
+  baseSpecUrl: string;
+  headSpecUrl: string;
+  changelogUrl: string;
+} | null> {
   const showSpinner = logger.getLevel() !== 5;
   const spinner = showSpinner
     ? ora({ text: `Uploading diff...`, color: 'blue' })
@@ -88,15 +96,29 @@ export async function uploadDiff(
       ci: config.isInCi,
     });
 
-    const url = getRunUrl(
+    const changelogUrl = getRunUrl(
       config.client.getWebBase(),
       specDetails.orgId,
       specDetails.apiId,
       run.id
     );
-    spinner?.succeed(`Uploaded results of diff to ${url}`);
+    spinner?.succeed(`Uploaded results of diff to ${changelogUrl}`);
 
-    return url;
+    return {
+      changelogUrl,
+      headSpecUrl: getSpecUrl(
+        config.client.getWebBase(),
+        specDetails.orgId,
+        specDetails.apiId,
+        headSpecId
+      ),
+      baseSpecUrl: getSpecUrl(
+        config.client.getWebBase(),
+        specDetails.orgId,
+        specDetails.apiId,
+        baseSpecId
+      ),
+    };
   } else {
     const reason = !specDetails
       ? 'no x-optic-url was set on the spec file'
