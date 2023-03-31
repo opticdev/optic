@@ -144,10 +144,13 @@ function interactionFixture(
       method: HttpMethods.POST,
       path: '/some-path',
       body: null,
+      headers: [],
+      query: [],
     },
     response: {
       statusCode,
       body: responseBody,
+      headers: [],
     },
   };
 }
