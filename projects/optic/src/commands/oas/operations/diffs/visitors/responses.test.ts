@@ -13,11 +13,13 @@ describe('visitResponses', () => {
     const specifiedResponse: CapturedResponse = {
       statusCode: '200',
       body: null,
+      headers: [],
     };
 
     const unspecifiedResponse: CapturedResponse = {
       statusCode: '400',
       body: null,
+      headers: [],
     };
 
     const matchingResults = [...visitResponses(specifiedResponse, responses)];
@@ -43,11 +45,13 @@ describe('visitResponses', () => {
     const specifiedResponse: CapturedResponse = {
       statusCode: '200',
       body: CapturedBody.fromJSON({}, 'application/json'),
+      headers: [],
     };
 
     const unspecifiedResponse: CapturedResponse = {
       statusCode: '200',
       body: CapturedBody.from('test-content', 'text/plain'),
+      headers: [],
     };
 
     const matchingResults = [...visitResponses(specifiedResponse, responses)];
@@ -74,12 +78,18 @@ describe('visitResponses', () => {
     };
 
     const matchingResults = [
-      ...visitResponses({ statusCode: '204', body: null }, responses),
+      ...visitResponses(
+        { statusCode: '204', body: null, headers: [] },
+        responses
+      ),
     ];
     expect(matchingResults).toHaveLength(0);
 
     const unmatchingResults = [
-      ...visitResponses({ statusCode: '200', body: null }, responses),
+      ...visitResponses(
+        { statusCode: '200', body: null, headers: [] },
+        responses
+      ),
     ];
     expect(unmatchingResults).toHaveLength(1);
     expect(unmatchingResults).toMatchSnapshot();
@@ -98,21 +108,25 @@ describe('visitResponses', () => {
     const exactMatch: CapturedResponse = {
       statusCode: '200',
       body: CapturedBody.fromJSON({}, 'application/json'),
+      headers: [],
     };
 
     const parameterMismatch: CapturedResponse = {
       statusCode: '200',
       body: CapturedBody.fromJSON({}, 'application/json; charset=utf-8'),
+      headers: [],
     };
 
     const subtypeMisMatch: CapturedResponse = {
       statusCode: '200',
       body: CapturedBody.fromJSON({}, 'application/gzip'),
+      headers: [],
     };
 
     const typeMismatch: CapturedResponse = {
       statusCode: '200',
       body: CapturedBody.fromJSON({}, 'text/json'),
+      headers: [],
     };
 
     expect([...visitResponses(exactMatch, responses)]).toHaveLength(0);
@@ -136,16 +150,19 @@ describe('visitResponses', () => {
     const exactMatch: CapturedResponse = {
       statusCode: '200',
       body: CapturedBody.from('a-plain-text-body', 'text/plain'),
+      headers: [],
     };
 
     const typeRangeMatch: CapturedResponse = {
       statusCode: '200',
       body: CapturedBody.from('a,csv,body', 'text/csv'),
+      headers: [],
     };
 
     const mismatchingType: CapturedResponse = {
       statusCode: '200',
       body: CapturedBody.fromJSON({}, 'application/xml'),
+      headers: [],
     };
 
     expect([...visitResponses(exactMatch, responses)]).toHaveLength(0);

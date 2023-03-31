@@ -430,10 +430,13 @@ function simpleInteractionFixture(
       method,
       path,
       body: null,
+      headers: [],
+      query: [],
     },
     response: {
       statusCode: '200',
       body: null,
+      headers: [],
     },
   };
 }

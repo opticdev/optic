@@ -4,9 +4,11 @@ exports[`CapturedIntearction.fromHarEntry can create a CapturedInteraction from 
 {
   "request": {
     "body": null,
+    "headers": [],
     "host": "petstore.swagger.io",
     "method": "get",
     "path": "/v2/store/inventory",
+    "query": [],
   },
   "response": {
     "body": {
@@ -14,6 +16,7 @@ exports[`CapturedIntearction.fromHarEntry can create a CapturedInteraction from 
       "size": 133,
       "stream": Any<Readable>,
     },
+    "headers": [],
     "statusCode": "200",
   },
 }
@@ -27,9 +30,11 @@ exports[`CapturedIntearction.fromHarEntry includes request bodies 1`] = `
       "size": 128,
       "stream": Any<Readable>,
     },
+    "headers": [],
     "host": "petstore.swagger.io",
     "method": "post",
     "path": "/v2/store/order",
+    "query": [],
   },
   "response": {
     "body": {
@@ -37,6 +42,7 @@ exports[`CapturedIntearction.fromHarEntry includes request bodies 1`] = `
       "size": 119,
       "stream": Any<Readable>,
     },
+    "headers": [],
     "statusCode": "200",
   },
 }
@@ -46,9 +52,11 @@ exports[`CapturedIntearction.fromHarEntry includes response bodies 1`] = `
 {
   "request": {
     "body": null,
+    "headers": [],
     "host": "petstore.swagger.io",
     "method": "get",
     "path": "/v2/store/inventory",
+    "query": [],
   },
   "response": {
     "body": {
@@ -56,6 +64,7 @@ exports[`CapturedIntearction.fromHarEntry includes response bodies 1`] = `
       "size": 133,
       "stream": Any<Readable>,
     },
+    "headers": [],
     "statusCode": "200",
   },
 }
@@ -69,9 +78,11 @@ exports[`CapturedIntearction.fromHarEntry supports request body encoding for sup
       "size": 128,
       "stream": Any<Readable>,
     },
+    "headers": [],
     "host": "petstore.swagger.io",
     "method": "post",
     "path": "/v2/store/order",
+    "query": [],
   },
   "response": {
     "body": {
@@ -79,6 +90,7 @@ exports[`CapturedIntearction.fromHarEntry supports request body encoding for sup
       "size": 119,
       "stream": Any<Readable>,
     },
+    "headers": [],
     "statusCode": "200",
   },
 }
@@ -88,9 +100,11 @@ exports[`CapturedIntearction.fromHarEntry supports response body encoding for su
 {
   "request": {
     "body": null,
+    "headers": [],
     "host": "petstore.swagger.io",
     "method": "get",
     "path": "/v2/store/inventory",
+    "query": [],
   },
   "response": {
     "body": {
@@ -98,6 +112,7 @@ exports[`CapturedIntearction.fromHarEntry supports response body encoding for su
       "size": 133,
       "stream": Any<Readable>,
     },
+    "headers": [],
     "statusCode": "200",
   },
 }
@@ -107,12 +122,15 @@ exports[`CapturedInteraction.fromProxyInteraction can create a CaturedInteractio
 {
   "request": {
     "body": null,
+    "headers": [],
     "host": "localhost",
     "method": "get",
     "path": "/test-path",
+    "query": [],
   },
   "response": {
     "body": null,
+    "headers": [],
     "statusCode": "200",
   },
 }
@@ -126,12 +144,15 @@ exports[`CapturedInteraction.fromProxyInteraction includes request bodies 1`] = 
       "size": 9,
       "stream": Any<Readable>,
     },
+    "headers": [],
     "host": "localhost",
     "method": "get",
     "path": "/test-path",
+    "query": [],
   },
   "response": {
     "body": null,
+    "headers": [],
     "statusCode": "200",
   },
 }
@@ -141,9 +162,11 @@ exports[`CapturedInteraction.fromProxyInteraction includes response bodies 1`] =
 {
   "request": {
     "body": null,
+    "headers": [],
     "host": "localhost",
     "method": "get",
     "path": "/test-path",
+    "query": [],
   },
   "response": {
     "body": {
@@ -151,6 +174,7 @@ exports[`CapturedInteraction.fromProxyInteraction includes response bodies 1`] =
       "size": 0,
       "stream": Any<Readable>,
     },
+    "headers": [],
     "statusCode": "200",
   },
 }

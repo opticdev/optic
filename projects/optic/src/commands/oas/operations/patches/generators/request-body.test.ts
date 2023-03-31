@@ -205,10 +205,13 @@ function interactionFixture(
       method: HttpMethods.POST,
       path: '/some-path',
       body: requestBody,
+      headers: [],
+      query: [],
     },
     response: {
       statusCode: '200',
       body: null,
+      headers: [],
     },
   };
 }
