@@ -13,7 +13,6 @@ commit_sha: 123
 <thead>
 <tr>
 <th>API</th>
-<th>Preview Documentation</th>
 <th>Operation Changes</th>
 <th>Checks</th>
 
@@ -23,12 +22,7 @@ commit_sha: 123
 <tr>
 <td>
 
-[completed](https://app.useoptic.com/changelog)
-
-</td>
-<td>
-
-  ([view documentation](https://app.useoptic.com/docs))
+completed ([preview](https://app.useoptic.com/docs))
 
 </td>
 <td>
@@ -140,7 +134,6 @@ commit_sha: 123
 <thead>
 <tr>
 <th>API</th>
-<th>Preview Documentation</th>
 <th>Operation Changes</th>
 <th>Checks</th>
 
@@ -150,12 +143,7 @@ commit_sha: 123
 <tr>
 <td>
 
-[completed](https://app.useoptic.com/changelog)
-
-</td>
-<td>
-
-  ([view documentation](https://app.useoptic.com/docs))
+completed ([preview](https://app.useoptic.com/docs))
 
 </td>
 <td>
