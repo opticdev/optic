@@ -87,7 +87,7 @@
     "pluralize": "8.0.0",
     "portfinder": "^1.0.28",
     "semver": "^7.3.7",
-    "slice-ansi": "^4.0.0",
+    "slice-ansi": "^6.0.0",
     "stream-chain": "^2.2.5",
     "stream-json": "^1.7.4",
     "strip-ansi": "^6.0.1",
