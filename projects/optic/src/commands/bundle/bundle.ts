@@ -172,7 +172,7 @@ const bundleAction =
     }
   };
 
-const methods = `{${Object.values(OpenAPIV3.HttpMethods).join(',')}`;
+const methods = `{${Object.values(OpenAPIV3.HttpMethods).join(',')}}`;
 const matches = {
   inResponseSchema: [
     'paths',
@@ -499,7 +499,13 @@ function bundleMatchingRefsAsComponents<T>(
 
   // add components first
   let specCopy = JSON.parse(JSON.stringify(spec));
-  jsonpatch.applyPatch(specCopy, addComponentOperations, true, true);
+
+  specCopy = jsonpatch.applyPatch(
+    specCopy,
+    addComponentOperations,
+    true,
+    true
+  ).newDocument;
 
   // then add $refs in reverse depth order (to prevent conflicts).
   const sortedUpdateOperations = sortby(
@@ -507,7 +513,12 @@ function bundleMatchingRefsAsComponents<T>(
     (op) => jsonPointerHelpers.decode(op.path).length
   );
 
-  jsonpatch.applyPatch(specCopy, sortedUpdateOperations, true, true);
+  specCopy = jsonpatch.applyPatch(
+    specCopy,
+    sortedUpdateOperations,
+    true,
+    true
+  ).newDocument;
 
   return specCopy;
 }
