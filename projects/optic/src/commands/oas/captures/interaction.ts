@@ -14,7 +14,7 @@ type Header = {
 
 type Query = {
   name: string;
-  value: string;
+  value: string | string[];
 };
 
 export interface CapturedInteraction {
