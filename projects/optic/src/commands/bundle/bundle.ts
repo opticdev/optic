@@ -6,7 +6,7 @@ import {
   sourcemapReader,
   UserError,
 } from '@useoptic/openapi-utilities';
-import { isYaml, JsonSchemaSourcemap, writeYaml } from '@useoptic/openapi-io';
+import { isYaml, JsonSchemaSourcemap } from '@useoptic/openapi-io';
 import fs from 'node:fs/promises';
 import path from 'path';
 import yaml from 'yaml';
@@ -16,7 +16,7 @@ import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { Operation } from 'fast-json-patch';
 import * as jsonpatch from 'fast-json-patch';
 import sortby from 'lodash.sortby';
-import { logger } from '@useoptic/optic-ci/build/logger';
+import { logger } from '../../logger';
 const description = `dereference an OpenAPI specification`;
 
 const usage = () => `
@@ -64,7 +64,7 @@ const getSpec = async (
       denormalize: false,
     });
   } catch (e) {
-    console.error(e instanceof Error ? e.message : e);
+    logger.error(e instanceof Error ? e.message : e);
     throw new UserError();
   }
 };
@@ -156,7 +156,7 @@ const bundleAction =
           outputPath,
           isYaml(o) ? yamlOut() : JSON.stringify(updatedSpec, null, 2)
         );
-        logger.log('wrote bundled spec to ' + path.resolve(o));
+        logger.info('wrote bundled spec to ' + path.resolve(o));
       } else {
         // assume pipe >
         if (isYaml(filePath)) {
@@ -166,7 +166,7 @@ const bundleAction =
         }
       }
     } else {
-      console.error('No specification found');
+      logger.error('No specification found');
       process.exitCode = 1;
       return;
     }
