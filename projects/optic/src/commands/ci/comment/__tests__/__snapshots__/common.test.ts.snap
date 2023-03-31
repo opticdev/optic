@@ -1,0 +1,177 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generateCompareSummaryMarkdown generates md output for passed, failed and noop 1`] = `
+"
+<!--
+DO NOT MODIFY
+app_id: optic-comment-3UsoJCz_Z0SpGLo5Vjw6o
+commit_sha: 123
+-->
+### APIs Changed
+
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Preview Documentation</th>
+<th>Operation Changes</th>
+<th>Checks</th>
+
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+[completed](https://app.useoptic.com/changelog)
+
+</td>
+<td>
+  ([view documentation](https://app.useoptic.com/docs))
+</td>
+<td>
+
+1 operation added ([view changelog](https://app.useoptic.com/changelog))
+
+</td>
+<td>
+
+ℹ️ No automated checks have run
+
+</td>
+
+</tr>
+</tbody>
+</table>
+
+### Errors running optic
+
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Error</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>failed</td>
+<td>
+
+\`\`\`
+blahblahblah
+\`\`\`
+
+</td>
+</tr>
+</tbody>
+</table>
+
+
+Summary of API changes for commit (123)
+
+1 API had no changes."
+`;
+
+exports[`generateCompareSummaryMarkdown only failed 1`] = `
+"
+<!--
+DO NOT MODIFY
+app_id: optic-comment-3UsoJCz_Z0SpGLo5Vjw6o
+commit_sha: 123
+-->
+
+### Errors running optic
+
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Error</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>failed</td>
+<td>
+
+\`\`\`
+blahblahblah
+\`\`\`
+
+</td>
+</tr>
+</tbody>
+</table>
+
+
+Summary of API changes for commit (123)
+
+"
+`;
+
+exports[`generateCompareSummaryMarkdown only noop 1`] = `
+"
+<!--
+DO NOT MODIFY
+app_id: optic-comment-3UsoJCz_Z0SpGLo5Vjw6o
+commit_sha: 123
+-->
+
+
+
+Summary of API changes for commit (123)
+
+1 API had no changes."
+`;
+
+exports[`generateCompareSummaryMarkdown only passed 1`] = `
+"
+<!--
+DO NOT MODIFY
+app_id: optic-comment-3UsoJCz_Z0SpGLo5Vjw6o
+commit_sha: 123
+-->
+### APIs Changed
+
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Preview Documentation</th>
+<th>Operation Changes</th>
+<th>Checks</th>
+
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+[completed](https://app.useoptic.com/changelog)
+
+</td>
+<td>
+  ([view documentation](https://app.useoptic.com/docs))
+</td>
+<td>
+
+1 operation added ([view changelog](https://app.useoptic.com/changelog))
+
+</td>
+<td>
+
+ℹ️ No automated checks have run
+
+</td>
+
+</tr>
+</tbody>
+</table>
+
+
+
+Summary of API changes for commit (123)
+
+"
+`;

@@ -49,6 +49,7 @@ ${
 <thead>
 <tr>
 <th>API</th>
+<th>Preview Documentation</th>
 <th>Operation Changes</th>
 <th>Checks</th>
 ${anyCompletedHasWarning ? '<th>Warnings</th>' : ''}
@@ -63,6 +64,9 @@ ${results.completed
 
 ${s.opticWebUrl ? `[${s.apiName}](${s.opticWebUrl})` : s.apiName}
 
+</td>
+<td>
+  ${s.specUrl ? `([view documentation](${s.specUrl}))` : ''}
 </td>
 <td>
 
