@@ -7,31 +7,18 @@ import { HttpMethods, Operation } from '../operations';
 import invariant from 'ts-invariant';
 import { Buffer } from 'buffer';
 
-type Header = {
-  name: string;
-  value: string;
-};
-
-type Query = {
-  name: string;
-  value: string;
-};
-
 export interface CapturedInteraction {
   request: {
     host: string;
     method: OpenAPIV3.HttpMethods;
     path: string;
     body: CapturedBody | null;
-    // TODO implement support for headers / queries
-    headers: Header[];
-    query: Query[];
+    // TODO: add support for headers and query params
   };
   response: {
     statusCode: string;
     body: CapturedBody | null;
-    // TODO implement support for response headers
-    headers: Header[];
+    // TODO: add support headers
   };
 }
 export class CapturedInteraction {
@@ -85,13 +72,10 @@ export class CapturedInteraction {
         method,
         path: url.pathname,
         body: requestBody,
-        headers: [],
-        query: [],
       },
       response: {
         statusCode: '' + entry.response.status,
         body: responseBody,
-        headers: [],
       },
     };
   }
@@ -140,13 +124,10 @@ export class CapturedInteraction {
         method,
         path: url.pathname,
         body: requestBody,
-        headers: [],
-        query: [],
       },
       response: {
         statusCode: '' + proxyInteraction.response.statusCode,
         body: responseBody,
-        headers: [],
       },
     };
   }
