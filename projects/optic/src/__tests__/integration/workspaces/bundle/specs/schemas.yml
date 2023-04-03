@@ -1,0 +1,17 @@
+TodoRead:
+  type: object
+  title: Todo
+  properties:
+    name:
+      type: string
+    status:
+      type: string
+    created_at:
+      $ref: 'anotherschema.yml#/CreatedAt'
+    todos:
+      type: array
+      items: 
+        $ref: "#/TodoRead"
+  required:
+    - name
+    - status

@@ -6,7 +6,6 @@ export function writeYaml(document: any) {
     lineWidth: 0,
   });
 }
-
 export function loadYaml(contents: string) {
   return yaml.parse(contents);
 }

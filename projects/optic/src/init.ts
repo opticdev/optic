@@ -26,6 +26,7 @@ import chalk from 'chalk';
 import { registerDereference } from './commands/dereference/dereference';
 import { registerCiSetup } from './commands/ci/setup';
 import { registerLint } from './commands/lint/lint';
+import { registerBundle } from './commands/bundle/bundle';
 import { updateCommand } from './commands/oas/update';
 
 const packageJson = require('../package.json');
@@ -108,6 +109,7 @@ Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
   registerDiffAll(cli, cliConfig);
   registerLogin(cli, cliConfig);
   registerDereference(cli, cliConfig);
+  registerBundle(cli, cliConfig);
 
   const rulesetSubcommands = cli
     .command('ruleset', { hidden: true })

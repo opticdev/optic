@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`bundle bundles components together 1`] = `
+""openapi": "3.0.1"
+"info":
+  "title": "TodoAPI"
+  "version": "1.1"
+"paths":
+  "/todos":
+    "get":
+      "parameters":
+        - "name": "limit"
+          "in": "query"
+          "description": "abc"
+          "schema":
+            "type": "string"
+          "required": true
+        - "name": "created_before"
+          "in": "query"
+          "schema":
+            "type": "string"
+            "format": "date-time"
+          "required": true
+        - "name": "created_after"
+          "in": "query"
+          "schema":
+            "type": "string"
+            "format": "date-time"
+          "required": true
+      "responses":
+        "200":
+          "description": "ok"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/schemas"
+"components":
+  "schemas":
+    "schemas":
+      "type": "object"
+      "title": "Todo"
+      "properties":
+        "name":
+          "type": "string"
+        "status":
+          "type": "string"
+        "created_at":
+          "$ref": "#/components/schemas/anotherschema"
+        "todos":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/schemas"
+      "required":
+        - "name"
+        - "status"
+    "anotherschema":
+      "type": "string"
+  "parameters": {}
+  "examples": {}
+
+"
+`;
