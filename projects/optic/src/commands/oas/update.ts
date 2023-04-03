@@ -11,7 +11,7 @@ import {
 } from './diffing/document';
 import Path from 'path';
 import * as fs from 'fs-extra';
-import { getInteractions } from './verify';
+import { getInteractions } from './captures';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { OPTIC_URL_KEY } from '../../constants';
 import { patchOperationsAsNeeded } from './diffing/patch';
@@ -79,23 +79,20 @@ export function updateCommand(): Command {
         specReadResult.val.jsonLike[OPTIC_URL_KEY]
       );
 
-      const makeInteractionsIterator = async () =>
-        getInteractions(options, specPath, feedback);
-
       const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
 
       feedback.notable('Documenting new operations...');
 
       let { observations } = matchInteractions(
         spec,
-        await makeInteractionsIterator()
+        await getInteractions(options, specPath, feedback)
       );
 
       const documentResult = await addIfUndocumented(
         operationsToAdd.val,
         isAddAll,
         observations,
-        await makeInteractionsIterator(),
+        await getInteractions(options, specPath, feedback),
         spec,
         sourcemap
       );
@@ -122,7 +119,11 @@ export function updateCommand(): Command {
         sourcemap: sourcemapAfterAdditions,
       } = specReadResult.unwrap();
 
-      const patchInteractions = await makeInteractionsIterator();
+      const patchInteractions = await getInteractions(
+        options,
+        specPath,
+        feedback
+      );
       const patchStats = await patchOperationsAsNeeded(
         patchInteractions,
         specAfterAdditions,

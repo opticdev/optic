@@ -1,27 +1,18 @@
 import { Command } from 'commander';
 import Path from 'path';
 import path from 'path';
-import * as fs from 'fs-extra';
 
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { flushEvents, trackEvent } from './lib/segment';
-import { trackWarning } from './lib/sentry';
-import * as AT from './lib/async-tools';
-import { OpenAPIV3, readDeferencedSpec } from './specs';
-import { CapturedInteractions, HarEntries } from './captures';
+import { OpenAPIV3 } from './specs';
 import { captureStorage } from './captures/capture-storage';
 import chalk from 'chalk';
 import {
-  addIfUndocumented,
   matchInteractions,
   observationToUndocumented,
   StatusObservations,
 } from './diffing/document';
-import {
-  patchOperationsAsNeeded,
-  renderDiffs,
-  updateByInteractions,
-} from './diffing/patch';
+import { renderDiffs, updateByInteractions } from './diffing/patch';
 import { specToOperations } from './operations/queries';
 import { OpticCliConfig, VCS } from '../../config';
 import { OPTIC_URL_KEY } from '../../constants';
@@ -31,6 +22,7 @@ import { getFileFromFsOrGit } from '../../utils/spec-loaders';
 import * as Git from '../../utils/git-utils';
 import { sanitizeGitTag } from '@useoptic/openapi-utilities';
 import { nextCommand } from './reporters/next-command';
+import { getInteractions } from './captures';
 
 type VerifyOptions = {
   exit0?: boolean;
@@ -104,9 +96,6 @@ export async function runVerify(
   }
   const absoluteSpecPath = Path.resolve(specPath);
 
-  const makeInteractionsIterator = async () =>
-    getInteractions(options, specPath, feedback);
-
   /// Run to verify with the latest specification
   const parseResult = await getFileFromFsOrGit(absoluteSpecPath, config, {
     strict: false,
@@ -117,7 +106,7 @@ export async function runVerify(
 
   const opticUrlDetails = getApiFromOpticUrl(spec[OPTIC_URL_KEY]);
 
-  const interactions = await makeInteractionsIterator();
+  const interactions = await getInteractions(options, specPath, feedback);
 
   feedback.notable(
     `Verifying API behavior with traffic ${
@@ -136,7 +125,7 @@ export async function runVerify(
 
   let { observations, coverage } = matchInteractions(
     spec,
-    await makeInteractionsIterator()
+    await getInteractions(options, specPath, feedback)
   );
 
   const renderingStatus = await renderOperationStatus(
@@ -274,65 +263,6 @@ async function renderOperationStatus(
   }
 
   return { undocumentedPaths };
-}
-
-export async function getInteractions(
-  options: { har?: string },
-  specPath: string,
-  feedback: any
-) {
-  const sources: CapturedInteractions[] = [];
-
-  const { trafficDirectory } = await captureStorage(specPath);
-
-  const captureDirectoryContents = (await fs.readdir(trafficDirectory)).sort();
-
-  // if HAR provided, only pullf rom there
-  if (options.har) {
-    // override with a har
-    let absoluteHarPath = Path.resolve(options.har);
-    if (!(await fs.pathExists(absoluteHarPath))) {
-      return await feedback.inputError(
-        'HAR file could not be found at given path',
-        InputErrors.HAR_FILE_NOT_FOUND
-      );
-    }
-    let harFile = fs.createReadStream(absoluteHarPath);
-    let harEntryResults = HarEntries.fromReadable(harFile);
-    let harEntries = AT.unwrapOr(harEntryResults, (err) => {
-      let message = `HAR entry skipped: ${err.message}`;
-      console.warn(message); // warn, skip and keep going
-      trackWarning(message, err);
-    });
-    sources.push(CapturedInteractions.fromHarEntries(harEntries));
-  } else {
-    // default is capture directory
-    captureDirectoryContents.forEach((potentialCapture) => {
-      // completed captures only
-      if (potentialCapture.endsWith('.har')) {
-        let harFile = fs.createReadStream(
-          path.join(trafficDirectory, potentialCapture)
-        );
-        let harEntryResults = HarEntries.fromReadable(harFile);
-        let harEntries = AT.unwrapOr(harEntryResults, (err) => {
-          let message = `HAR entry skipped: ${err.message}`;
-          console.warn(message); // warn, skip and keep going
-          trackWarning(message, err);
-        });
-
-        sources.push(CapturedInteractions.fromHarEntries(harEntries));
-      }
-    });
-  }
-
-  if (sources.length < 1) {
-    return await feedback.inputError(
-      'no traffic captured for this OpenAPI spec. Run "oas capture" command',
-      InputErrors.CAPTURE_METHOD_MISSING
-    );
-  }
-
-  return AT.merge(...sources);
 }
 
 function renderUndocumentedPath(
