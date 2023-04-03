@@ -3518,15 +3518,6 @@ __metadata:
   linkType: hard
 
 "@types/lodash.sortby@npm:^4.7.6":
-  version: 4.7.6
-  resolution: "@types/lodash.sortby@npm:4.7.6"
-  dependencies:
-    "@types/lodash": "*"
-  checksum: d7ec1aad2de3cf839c2572f331859e229b6aae25da198bf8452c544aae4c8756e1aa5af293e878e6ff4d7504a336b0ccf208cab7ff0ef6fd6fc236a101370b09
-  languageName: node
-  linkType: hard
-
-"@types/lodash.sortby@npm:^4.7.7":
   version: 4.7.7
   resolution: "@types/lodash.sortby@npm:4.7.7"
   dependencies:
@@ -3804,7 +3795,7 @@ __metadata:
     "@types/fs-extra": ^11.0.0
     "@types/is-url": ^1.2.30
     "@types/json-stable-stringify": ^1.0.33
-    "@types/lodash.sortby": ^4.7.7
+    "@types/lodash.sortby": ^4.7.6
     "@types/log": ^6.3.0
     "@types/node": ^18.0.0
     "@types/node-forge": ^1.0.4
@@ -4041,7 +4032,7 @@ __metadata:
     "@types/is-url": ^1.2.30
     "@types/js-yaml": ^4.0.5
     "@types/json-stable-stringify": ^1.0.33
-    "@types/lodash.sortby": ^4.7.7
+    "@types/lodash.sortby": ^4.7.6
     "@types/log": ^6.3.0
     "@types/node": ^18.0.0
     "@types/picomatch": ^2.3.0
