@@ -33,23 +33,28 @@ exports[`bundle bundles components together 1`] = `
           "content":
             "application/json":
               "schema":
-                "type": "object"
-                "properties":
-                  "name":
-                    "type": "string"
-                  "status":
-                    "type": "string"
-                  "created_at":
-                    "type": "string"
-                  "todos":
-                    "type": "array"
-                    "items":
-                      "$ref": "#/TodoRead"
-                "required":
-                  - "name"
-                  - "status"
+                "$ref": "#/components/schemas/schemas"
 "components":
-  "schemas": {}
+  "schemas":
+    "schemas":
+      "type": "object"
+      "title": "Todo"
+      "properties":
+        "name":
+          "type": "string"
+        "status":
+          "type": "string"
+        "created_at":
+          "$ref": "#/components/schemas/anotherschema"
+        "todos":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/schemas"
+      "required":
+        - "name"
+        - "status"
+    "anotherschema":
+      "type": "string"
   "parameters": {}
   "examples": {}
 
