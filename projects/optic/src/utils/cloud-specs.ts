@@ -10,6 +10,7 @@ import { uploadFileToS3 } from './s3';
 import { ParseResult } from './spec-loaders';
 import { trackEvent } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { logger } from '../logger';
+import { NotFoundError } from '../client/errors';
 import chalk from 'chalk';
 
 export const EMPTY_SPEC_ID = 'EMPTY';
@@ -37,13 +38,18 @@ export async function uploadSpec(
       sourcemap_checksum,
     });
   } catch (e) {
-    logger.error(chalk.red.bold('Error uploading spec to Optic'));
-    logger.error(
-      chalk.red(
-        `This may be because your login credentials do not have access to the api specified in the x-optic-url. Check the x-optic-url in your spec, or try regenerate your credentials by running optic login.`
-      )
-    );
-    throw new UserError();
+    if (e instanceof NotFoundError && e.source === 'optic') {
+      logger.debug(e);
+      logger.error(chalk.red.bold('Error uploading spec to Optic'));
+      logger.error(
+        chalk.red(
+          `This may be because your login credentials do not have access to the api specified in the x-optic-url. Check the x-optic-url in your spec, or try regenerate your credentials by running optic login.`
+        )
+      );
+      throw new UserError();
+    } else {
+      throw e;
+    }
   }
 
   if ('upload_id' in result) {
