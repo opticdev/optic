@@ -209,7 +209,7 @@ describe('non-strict validation', () => {
   });
 
   describe('should fail', () => {
-    test.only('open api doc without responses', () => {
+    test('open api doc without responses', () => {
       expect(() => {
         validateOpenApiV3Document(
           {
