@@ -17,6 +17,7 @@ export type CiRunDetails = {
     apiName: string;
     opticWebUrl?: string | null;
     comparison: Comparison;
+    specUrl?: string | null;
   }[];
   failed: { apiName: string; error: string }[];
   noop: { apiName: string }[];
@@ -30,7 +31,8 @@ export async function writeDataForCi(
         warnings: string[];
         results: RuleResult[];
         groupedDiffs: ReturnType<typeof groupDiffsByEndpoint>;
-        url?: string | null;
+        changelogUrl?: string | null;
+        specUrl?: string | null;
         name: string;
       }
     | {
@@ -64,7 +66,7 @@ export async function writeDataForCi(
         data.completed.push({
           apiName: spec.name,
           warnings: spec.warnings,
-          opticWebUrl: spec.url,
+          opticWebUrl: spec.changelogUrl,
           comparison: {
             groupedDiffs: spec.groupedDiffs,
             results: spec.results,

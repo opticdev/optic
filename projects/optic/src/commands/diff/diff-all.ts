@@ -288,9 +288,10 @@ async function computeAll(
       logger.info('');
     }
 
-    let url: string | null = null;
+    let changelogUrl: string | null = null;
+    let specUrl: string | null = null;
     if (options.upload) {
-      url = await uploadDiff(
+      const uploadResults = await uploadDiff(
         {
           from: fromParseResults,
           to: toParseResults,
@@ -299,6 +300,8 @@ async function computeAll(
         config,
         options
       );
+      specUrl = uploadResults?.headSpecUrl ?? null;
+      changelogUrl = uploadResults?.changelogUrl ?? null;
     }
 
     results.push({
@@ -310,7 +313,8 @@ async function computeAll(
       changelogData,
       from: candidate.from,
       to: candidate.to,
-      url,
+      changelogUrl,
+      specUrl,
     });
   }
   return {
@@ -324,7 +328,8 @@ type Result = Awaited<ReturnType<typeof compute>> & {
   toParseResults: ParseResult;
   from?: string;
   to?: string;
-  url: string | null;
+  specUrl: string | null;
+  changelogUrl: string | null;
 };
 
 type Warnings = {
@@ -521,13 +526,13 @@ const getDiffAllAction =
     );
 
     for (const result of results) {
-      const { specResults, url } = result;
+      const { specResults, changelogUrl } = result;
       if (
         options.web &&
         (specResults.diffs.length > 0 ||
           (!options.check && specResults.results.length > 0))
       ) {
-        openWebpage(url, result, config);
+        openWebpage(changelogUrl, result, config);
       }
     }
 
@@ -570,7 +575,8 @@ ${(spec.error as Error).message}`,
         groupedDiffs: result.changelogData,
         results: result.specResults.results,
         name: result.to ?? result.from ?? 'Unknown comparison',
-        url: result.url,
+        specUrl: result.specUrl,
+        changelogUrl: result.changelogUrl,
       }));
       await writeDataForCi([...completedComparisons, ...errors]);
     }
