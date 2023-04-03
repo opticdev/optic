@@ -3517,7 +3517,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.sortby@npm:^4.7.6":
+"@types/lodash.sortby@npm:^4.7.7":
   version: 4.7.7
   resolution: "@types/lodash.sortby@npm:4.7.7"
   dependencies:
@@ -3795,7 +3795,7 @@ __metadata:
     "@types/fs-extra": ^11.0.0
     "@types/is-url": ^1.2.30
     "@types/json-stable-stringify": ^1.0.33
-    "@types/lodash.sortby": ^4.7.6
+    "@types/lodash.sortby": ^4.7.7
     "@types/log": ^6.3.0
     "@types/node": ^18.0.0
     "@types/node-forge": ^1.0.4
@@ -3874,7 +3874,7 @@ __metadata:
     "@types/fast-json-patch": ^1.1.5
     "@types/is-url": ^1.2.30
     "@types/lodash.clonedeep": ^4
-    "@types/lodash.sortby": ^4.7.6
+    "@types/lodash.sortby": ^4.7.7
     "@types/node": ^18.0.0
     "@types/node-fetch": 2.6.3
     "@types/semver": ^7.3.10
@@ -3926,7 +3926,6 @@ __metadata:
     "@types/lodash.groupby": ^4.6.6
     "@types/lodash.isequal": ^4.5.6
     "@types/lodash.omit": ^4.5.7
-    "@types/lodash.sortby": ^4.7.6
     "@types/node": ^18.0.0
     "@useoptic/json-pointer-helpers": "workspace:*"
     ajv: ^8.6.0
@@ -3944,7 +3943,6 @@ __metadata:
     lodash.groupby: ^4.6.0
     lodash.isequal: ^4.5.0
     lodash.omit: ^4.5.0
-    lodash.sortby: ^4.7.0
     node-machine-id: ^1.1.12
     openapi-types: ^12.0.2
     prettier: ^2.8.1
@@ -4032,7 +4030,7 @@ __metadata:
     "@types/is-url": ^1.2.30
     "@types/js-yaml": ^4.0.5
     "@types/json-stable-stringify": ^1.0.33
-    "@types/lodash.sortby": ^4.7.6
+    "@types/lodash.sortby": ^4.7.7
     "@types/log": ^6.3.0
     "@types/node": ^18.0.0
     "@types/picomatch": ^2.3.0
