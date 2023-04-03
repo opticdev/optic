@@ -1,11 +1,12 @@
 import { OpenAPIV3, OpenAPI } from 'openapi-types';
-import ajv, { ValidateFunction, ErrorObject } from 'ajv';
+import ajv, { ErrorObject, ValidateFunction } from 'ajv';
 
 import addFormats from 'ajv-formats';
 
 import {
   openapi3_1_json_schema,
   openapi3_0_json_schema,
+  basic3openapi_schema,
 } from './validation-schemas';
 import { checkOpenAPIVersion } from './openapi-versions';
 import ajvErrors from 'ajv-errors';
@@ -29,11 +30,17 @@ export default class OpenAPISchemaValidator {
     const ajvInstance = new ajv({ allErrors: true, strict: false });
     ajvErrors(ajvInstance);
     addFormats(ajvInstance);
-    attachAdvancedValidators(ajvInstance);
-    ajvInstance.addSchema(openapi3_0_json_schema);
-    const validator = ajvInstance.compile(openapi3_0_json_schema);
+    let validator: ValidateFunction;
+    if (this.options.strictOpenAPI) {
+      attachAdvancedValidators(ajvInstance);
+      ajvInstance.addSchema(openapi3_0_json_schema);
+      validator = ajvInstance.compile(openapi3_0_json_schema);
+    } else {
+      ajvInstance.addSchema(basic3openapi_schema);
+      validator = ajvInstance.compile(basic3openapi_schema);
+    }
 
-    if (validator(openapiDoc) && validator.errors) {
+    if (!validator(openapiDoc) && validator.errors) {
       return { errors: validator.errors };
     } else {
       return { errors: [] };
@@ -45,11 +52,17 @@ export default class OpenAPISchemaValidator {
     const ajvInstance = new ajv({ allErrors: true, strict: false });
     ajvErrors(ajvInstance);
     addFormats(ajvInstance);
-    attachAdvancedValidators(ajvInstance);
-    ajvInstance.addSchema(openapi3_1_json_schema);
-    const validator = ajvInstance.compile(openapi3_1_json_schema);
+    let validator: ValidateFunction;
+    if (this.options.strictOpenAPI) {
+      attachAdvancedValidators(ajvInstance);
+      ajvInstance.addSchema(openapi3_1_json_schema);
+      validator = ajvInstance.compile(openapi3_1_json_schema);
+    } else {
+      ajvInstance.addSchema(basic3openapi_schema);
+      validator = ajvInstance.compile(basic3openapi_schema);
+    }
 
-    if (validator(openapiDoc) && validator.errors) {
+    if (!validator(openapiDoc) && validator.errors) {
       return { errors: validator.errors };
     } else {
       return { errors: [] };
