@@ -195,7 +195,7 @@ describe('non-strict validation', () => {
           paths: {
             '/example': {
               get: {
-                response: {
+                responses: {
                   '200': {},
                 },
               },
