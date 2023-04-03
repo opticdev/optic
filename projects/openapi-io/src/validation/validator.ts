@@ -21,25 +21,20 @@ type Options = {
 };
 
 export default class OpenAPISchemaValidator {
-  private v3_0Validator: ValidateFunction | undefined;
-  private v3_1Validator: ValidateFunction | undefined;
-
   constructor(private options: Options) {}
 
   public validate3_0(openapiDoc: OpenAPI.Document): {
     errors: ErrorObject[];
   } {
-    if (!this.v3_0Validator) {
-      const v = new ajv({ allErrors: true, strict: false });
-      ajvErrors(v);
-      addFormats(v);
-      if (this.options.strictOpenAPI) attachAdvancedValidators(v);
-      v.addSchema(openapi3_0_json_schema);
-      this.v3_0Validator = v.compile(openapi3_0_json_schema);
-    }
+    const ajvInstance = new ajv({ allErrors: true, strict: false });
+    ajvErrors(ajvInstance);
+    addFormats(ajvInstance);
+    attachAdvancedValidators(ajvInstance);
+    ajvInstance.addSchema(openapi3_0_json_schema);
+    const validator = ajvInstance.compile(openapi3_0_json_schema);
 
-    if (!this.v3_0Validator(openapiDoc) && this.v3_0Validator.errors) {
-      return { errors: this.v3_0Validator.errors };
+    if (validator(openapiDoc) && validator.errors) {
+      return { errors: validator.errors };
     } else {
       return { errors: [] };
     }
@@ -47,17 +42,15 @@ export default class OpenAPISchemaValidator {
   public validate3_1(openapiDoc: OpenAPI.Document): {
     errors: ErrorObject[];
   } {
-    if (!this.v3_1Validator) {
-      const v = new ajv({ allErrors: true, strict: false });
-      ajvErrors(v);
-      addFormats(v);
-      if (this.options.strictOpenAPI) attachAdvancedValidators(v);
-      v.addSchema(openapi3_1_json_schema);
-      this.v3_1Validator = v.compile(openapi3_1_json_schema);
-    }
+    const ajvInstance = new ajv({ allErrors: true, strict: false });
+    ajvErrors(ajvInstance);
+    addFormats(ajvInstance);
+    attachAdvancedValidators(ajvInstance);
+    ajvInstance.addSchema(openapi3_1_json_schema);
+    const validator = ajvInstance.compile(openapi3_1_json_schema);
 
-    if (!this.v3_1Validator(openapiDoc) && this.v3_1Validator.errors) {
-      return { errors: this.v3_1Validator.errors };
+    if (validator(openapiDoc) && validator.errors) {
+      return { errors: validator.errors };
     } else {
       return { errors: [] };
     }
