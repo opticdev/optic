@@ -6,6 +6,7 @@ import { URL } from 'url';
 import { HttpMethods, Operation } from '../operations';
 import invariant from 'ts-invariant';
 import { Buffer } from 'buffer';
+import { PostmanEntry } from './streams/sources/postman';
 
 type Header = {
   name: string;
@@ -149,6 +150,14 @@ export class CapturedInteraction {
         headers: [],
       },
     };
+  }
+
+  static fromPostmanCollection(
+    postmanEntry: PostmanEntry
+  ): CapturedInteraction {
+    // TODO convert postman entry to interaction
+    //
+    return {};
   }
 }
 

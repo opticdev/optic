@@ -7,9 +7,10 @@ import { InputErrors } from '../reporters/feedback';
 import { HarEntries } from './streams/sources/har';
 import { trackWarning } from '../lib/sentry';
 import * as AT from '../lib/async-tools';
+import { PostmanCollectionEntries } from './streams/sources/postman';
 
 export async function getInteractions(
-  options: { har?: string },
+  options: { har?: string; postman?: string },
   specPath: string,
   feedback: any
 ) {
@@ -19,7 +20,7 @@ export async function getInteractions(
 
   const captureDirectoryContents = (await fs.readdir(trafficDirectory)).sort();
 
-  // if HAR provided, only pullf rom there
+  // check
   if (options.har) {
     // override with a har
     let absoluteHarPath = path.resolve(options.har);
@@ -37,6 +38,21 @@ export async function getInteractions(
       trackWarning(message, err);
     });
     sources.push(CapturedInteractions.fromHarEntries(harEntries));
+  } else if (options.postman) {
+    const absolutePath = path.resolve(options.postman);
+    if (!fsSync.existsSync(absolutePath)) {
+      return await feedback.inputError(
+        'Postman collection file could not be found at given path',
+        InputErrors.POSTMAN_FILE_NOT_FOUND
+      );
+    }
+    let harFile = fsSync.createReadStream(absolutePath);
+    let postmanEntryResults = PostmanCollectionEntries.fromReadable(harFile);
+    let postmanEntries = AT.unwrapOr(postmanEntryResults, (err) => {
+      let message = `Postman collection entry skipped: ${err.message}`;
+      console.warn(message); // warn, skip and keep going
+    });
+    sources.push(CapturedInteractions.fromPostmanCollection(postmanEntries));
   } else {
     // default is capture directory
     captureDirectoryContents.forEach((potentialCapture) => {
