@@ -513,12 +513,18 @@ function bundleMatchingRefsAsComponents<T>(
     (op) => jsonPointerHelpers.decode(op.path).length
   );
 
-  specCopy = jsonpatch.applyPatch(
-    specCopy,
-    sortedUpdateOperations,
-    true,
-    true
-  ).newDocument;
+  sortedUpdateOperations.forEach((patch) => {
+    const error = jsonpatch.validate([patch], specCopy);
+
+    if (!error) {
+      specCopy = jsonpatch.applyPatch(
+        specCopy,
+        [patch],
+        true,
+        true
+      ).newDocument;
+    }
+  });
 
   return specCopy;
 }
