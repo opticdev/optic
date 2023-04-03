@@ -4,6 +4,7 @@ exports[`optic api add git - no cli interaction discover all files in a folder 1
 "
 
 [1m[90mLooking for OpenAPI specs in directory $workspace$/nested[39m[22m
+- Found OpenAPI at nested/speccopy2.yml
 [32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 
@@ -17,10 +18,13 @@ exports[`optic api add git - no cli interaction discover all files in repo 1`] =
 "
 
 [1m[90mLooking for OpenAPI specs in directory $workspace$[39m[22m
+- Found OpenAPI at example-api-v0.json
 [32m✔[39m [1m[34mEmpty[39m[22m is now being tracked.
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
+- Found OpenAPI at nested/speccopy2.yml
 [32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
+- Found OpenAPI at spec.yml
 [32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 
@@ -34,10 +38,13 @@ exports[`optic api add git - no cli interaction discover all files in repo using
 "
 
 [1m[90mLooking for OpenAPI specs in directory $workspace$[39m[22m
+- Found OpenAPI at example-api-v0.json
 [32m✔[39m [1m[34mEmpty[39m[22m is now being tracked.
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
+- Found OpenAPI at nested/speccopy2.yml
 [32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
+- Found OpenAPI at spec.yml
 [32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 
@@ -51,6 +58,7 @@ exports[`optic api add git - no cli interaction discover one file with history d
 "
 
 [1m[90mAdding API $workspace$/spec.yml[39m[22m
+- Found OpenAPI at spec.yml
 [32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 
@@ -90,6 +98,7 @@ exports[`optic api add no vcs - no cli interaction discover all files in a folde
 "
 
 [1m[90mLooking for OpenAPI specs in directory $workspace$/nested[39m[22m
+- Found OpenAPI at nested/speccopy2.yml
 [32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 
@@ -103,10 +112,13 @@ exports[`optic api add no vcs - no cli interaction discover all files in repo 1`
 "
 
 [1m[90mLooking for OpenAPI specs in directory $workspace$[39m[22m
+- Found OpenAPI at example-api-v0.json
 [32m✔[39m [1m[34mEmpty[39m[22m is now being tracked.
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
+- Found OpenAPI at spec.yml
 [32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
+- Found OpenAPI at nested/speccopy2.yml
 [32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 
@@ -120,10 +132,13 @@ exports[`optic api add no vcs - no cli interaction discover all files in repo us
 "
 
 [1m[90mLooking for OpenAPI specs in directory $workspace$[39m[22m
+- Found OpenAPI at example-api-v0.json
 [32m✔[39m [1m[34mEmpty[39m[22m is now being tracked.
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
+- Found OpenAPI at spec.yml
 [32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
+- Found OpenAPI at nested/speccopy2.yml
 [32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 
@@ -137,6 +152,7 @@ exports[`optic api add no vcs - no cli interaction discover one file with histor
 "
 
 [1m[90mAdding API $workspace$/spec.yml[39m[22m
+- Found OpenAPI at spec.yml
 [32m✔[39m [1m[34ma spec[39m[22m is now being tracked.
   [1mView history: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 
