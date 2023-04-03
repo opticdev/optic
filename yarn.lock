@@ -3688,23 +3688,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/update-notifier@npm:^5":
-  version: 5.1.0
-  resolution: "@types/update-notifier@npm:5.1.0"
-  dependencies:
-    "@types/configstore": "*"
-    boxen: ^4.2.0
-  checksum: 388474cd534efd4ccbd5dbdda8b584becd75e0ecb0c53ce645f9848e8d959b2bbfbcf0205970190fcc158dbb92015582642949dbaded26239abddd33368da631
-  languageName: node
-  linkType: hard
-
 "@types/update-notifier@npm:^6":
-  version: 6.0.1
-  resolution: "@types/update-notifier@npm:6.0.1"
+  version: 6.0.2
+  resolution: "@types/update-notifier@npm:6.0.2"
   dependencies:
     "@types/configstore": "*"
     boxen: ^7.0.0
-  checksum: fb531d27c4edbd246d47511faf241bef8a64d7c1cf63f5ae44503f7443dcf6acc220390dfc06f9a126a84e760ed300d04c8609ed170a3ffad3b81f3fe36beff6
+  checksum: 186ee9238e23fdd294732997f8415baf94eebda0875cfa81a8446423489fb8119ab74b26cb5a56fefbb972a6fd5ee4600d754f77aa6cd1589e2f8cb485d0eb06
   languageName: node
   linkType: hard
 
@@ -4051,7 +4041,7 @@ __metadata:
     "@types/stream-chain": ^2
     "@types/stream-json": ^1
     "@types/tar": ^6
-    "@types/update-notifier": ^5
+    "@types/update-notifier": ^6
     "@types/url-join": ^4.0.1
     "@useoptic/openapi-io": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"
@@ -4798,22 +4788,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"boxen@npm:^4.2.0":
-  version: 4.2.0
-  resolution: "boxen@npm:4.2.0"
-  dependencies:
-    ansi-align: ^3.0.0
-    camelcase: ^5.3.1
-    chalk: ^3.0.0
-    cli-boxes: ^2.2.0
-    string-width: ^4.1.0
-    term-size: ^2.1.0
-    type-fest: ^0.8.1
-    widest-line: ^3.1.0
-  checksum: ce2b565a2e44b33d11336155675cf4f7f0e13dbf7412928845aefd6a2cf65e0da2dbb0a2cb198b7620a2ae714416a2eb710926b780f15d19f6250a19633b29af
-  languageName: node
-  linkType: hard
-
 "boxen@npm:^5.0.0":
   version: 5.1.2
   resolution: "boxen@npm:5.1.2"
@@ -5147,16 +5121,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "chalk@npm:3.0.0"
-  dependencies:
-    ansi-styles: ^4.1.0
-    supports-color: ^7.1.0
-  checksum: 8e3ddf3981c4da405ddbd7d9c8d91944ddf6e33d6837756979f7840a29272a69a5189ecae0ff84006750d6d1e92368d413335eab4db5476db6e6703a1d1e0505
-  languageName: node
-  linkType: hard
-
 "chalk@npm:^5.0.0, chalk@npm:^5.0.1":
   version: 5.0.1
   resolution: "chalk@npm:5.0.1"
@@ -5232,7 +5196,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cli-boxes@npm:^2.2.0, cli-boxes@npm:^2.2.1":
+"cli-boxes@npm:^2.2.1":
   version: 2.2.1
   resolution: "cli-boxes@npm:2.2.1"
   checksum: be79f8ec23a558b49e01311b39a1ea01243ecee30539c880cf14bf518a12e223ef40c57ead0cb44f509bffdffc5c129c746cd50d863ab879385370112af4f585
@@ -11320,13 +11284,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"term-size@npm:^2.1.0":
-  version: 2.2.1
-  resolution: "term-size@npm:2.2.1"
-  checksum: 1ed981335483babc1e8206f843e06bd2bf89b85f0bf5a9a9d928033a0fcacdba183c03ba7d91814643015543ba002f1339f7112402a21da8f24b6c56b062a5a9
-  languageName: node
-  linkType: hard
-
 "test-exclude@npm:^6.0.0":
   version: 6.0.0
   resolution: "test-exclude@npm:6.0.0"
@@ -11548,13 +11505,6 @@ __metadata:
   version: 0.21.3
   resolution: "type-fest@npm:0.21.3"
   checksum: e6b32a3b3877f04339bae01c193b273c62ba7bfc9e325b8703c4ee1b32dc8fe4ef5dfa54bf78265e069f7667d058e360ae0f37be5af9f153b22382cd55a9afe0
-  languageName: node
-  linkType: hard
-
-"type-fest@npm:^0.8.1":
-  version: 0.8.1
-  resolution: "type-fest@npm:0.8.1"
-  checksum: d61c4b2eba24009033ae4500d7d818a94fd6d1b481a8111612ee141400d5f1db46f199c014766b9fa9b31a6a7374d96fc748c6d688a78a3ce5a33123839becb7
   languageName: node
   linkType: hard
 
