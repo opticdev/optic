@@ -3776,7 +3776,7 @@ __metadata:
     babel-jest: ^29.3.1
     jest: ^29.3.1
     jsonpointer: ^5.0.1
-    minimatch: 7.4.4
+    minimatch: 7.4.5
     prettier: ^2.8.1
     ts-jest: ^29.0.3
     ts-node: ^10.9.1
@@ -3838,7 +3838,7 @@ __metadata:
     lodash.sortby: ^4.7.0
     log: ^6.3.1
     log-node: ^8.0.3
-    minimatch: 7.4.4
+    minimatch: 7.4.5
     mockttp: ^3.3.1
     node-fetch: ^2.6.7
     node-forge: ^1.2.1
@@ -4082,7 +4082,7 @@ __metadata:
     log: ^6.3.1
     log-node: ^8.0.3
     loglevel: ^1.8.0
-    minimatch: 7.4.4
+    minimatch: 7.4.5
     mockttp: ^3.3.1
     node-fetch: ^2.6.7
     node-forge: ^1.2.1
@@ -9139,12 +9139,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:7.4.4":
-  version: 7.4.4
-  resolution: "minimatch@npm:7.4.4"
+"minimatch@npm:7.4.5":
+  version: 7.4.5
+  resolution: "minimatch@npm:7.4.5"
   dependencies:
     brace-expansion: ^2.0.1
-  checksum: a96494db558cda25cf2f75c25b136f6c91543d72871d92b8b251691dcf578b5e64b679d64427cee609a1bf6a63cf233e171cb9d04d04c3c9ec3b6100c3b72f8e
+  checksum: dfb82497bd9007d3dde3f5e033ea4e314e221186ece26863521a8fa955e73f58f0fd11704b79eec37ba29be460be0cf92a7a6455dd41d5763b5b12072c6013c3
   languageName: node
   linkType: hard
 
