@@ -19,6 +19,7 @@ import { patchOperationsAsNeeded } from './diffing/patch';
 type UpdateOptions = {
   all?: string;
   har?: string;
+  postman?: string;
 };
 
 export function updateCommand(): Command {
@@ -29,6 +30,7 @@ export function updateCommand(): Command {
     .description('patch OpenAPI spec to match captured traffic')
     .argument('<openapi-file>', 'an OpenAPI spec')
     .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
+    .option('--postman <postman-collection-file>', 'path to postman collection')
     .option('--all', 'update all operations')
     .argument(
       '[operations...]',

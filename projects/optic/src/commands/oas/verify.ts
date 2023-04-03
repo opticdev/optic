@@ -27,6 +27,7 @@ import { getInteractions } from './captures';
 type VerifyOptions = {
   exit0?: boolean;
   har?: string;
+  postman?: string;
   upload?: boolean;
   message?: string;
 };
@@ -42,6 +43,7 @@ export function verifyCommand(config: OpticCliConfig): Command {
       'an OpenAPI spec to match up to observed traffic'
     )
     .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
+    .option('--postman <postman-collection-file>', 'path to postman collection')
     .option('--exit0', 'always exit 0')
     .option(
       '--upload',
