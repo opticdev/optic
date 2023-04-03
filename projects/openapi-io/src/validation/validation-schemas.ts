@@ -1456,6 +1456,66 @@ const createOpenAPIValidationSchema = (schema: any) => ({
   },
 });
 
+export const basic3openapi_schema = {
+  $id: 'http://openapis.org/v3/schema.json#',
+  $schema: 'http://json-schema.org/draft-07/schema#',
+  type: 'object',
+  required: ['openapi', 'info', 'paths'],
+  properties: {
+    openapi: {
+      type: 'string',
+    },
+    info: {
+      type: 'object',
+    },
+    paths: {
+      type: 'object',
+      patternProperties: {
+        '^/': {
+          type: 'object',
+          properties: {
+            get: {
+              $ref: '#/definitions/operation',
+            },
+            put: {
+              $ref: '#/definitions/operation',
+            },
+            post: {
+              $ref: '#/definitions/operation',
+            },
+            delete: {
+              $ref: '#/definitions/operation',
+            },
+            options: {
+              $ref: '#/definitions/operation',
+            },
+            head: {
+              $ref: '#/definitions/operation',
+            },
+            patch: {
+              $ref: '#/definitions/operation',
+            },
+            trace: {
+              $ref: '#/definitions/operation',
+            },
+          },
+        },
+      },
+    },
+  },
+  definitions: {
+    operation: {
+      type: 'object',
+      required: ['responses'],
+      properties: {
+        responses: {
+          type: 'object',
+        },
+      },
+    },
+  },
+};
+
 export const openapi3_0_json_schema = createOpenAPIValidationSchema(
   openapi3_0_schema_object
 );
