@@ -496,7 +496,10 @@ function bundleMatchingRefsAsComponents<T>(
 
     ref.component = jsonpatch.applyPatch(
       copy,
-      nestedRefUsageUpdates,
+      sortby(
+        nestedRefUsageUpdates,
+        (i) => -jsonPointerHelpers.decode(i.path).length
+      ),
       true,
       true
     ).newDocument;
