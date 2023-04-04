@@ -30,7 +30,6 @@ import os from 'os';
 import { clearCommand } from './capture-clear';
 import { createNewSpecFile } from '../../utils/specs';
 import { logger } from '../../logger';
-const tmpDirectory = os.tmpdir();
 
 export async function captureCommand(config: OpticCliConfig): Promise<Command> {
   const command = new Command('capture');
@@ -343,13 +342,14 @@ async function renderCaptureProgress(
   if (config.interactiveCapture) {
     timer = setTimeout(() => {
       if (interactionCount === 0) {
-        console.clear();
+        spinner.clear();
         console.log(
           '\nNot seeing any traffic captured? Make sure your HTTP Client is using the proxy: ' +
             chalk.underline.blue(
               'https://www.useoptic.com/docs/oas-reference/client-guides'
             )
         );
+        spinner.start();
       }
     }, 13000);
   }
