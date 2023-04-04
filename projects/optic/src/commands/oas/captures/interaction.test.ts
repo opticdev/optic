@@ -3,6 +3,10 @@ import { CapturedInteraction } from './interaction';
 import { CapturedBody } from './body';
 import { HarEntries, HttpArchive } from './streams/sources/har';
 import { ProxyInteractions, ProxySource } from './streams/sources/proxy';
+import {
+  PostmanCollectionEntries,
+  PostmanEntry,
+} from './streams/sources/postman';
 import { collect, unwrap } from '../lib/async-tools';
 import fs from 'fs';
 import Path from 'path';
@@ -153,6 +157,69 @@ describe('CapturedInteraction.fromProxyInteraction', () => {
 
     let parsingBody = CapturedBody.json(interaction.response.body);
     expect(parsingBody).resolves.toMatchObject(testBody);
+  });
+});
+
+describe('CapturedInteraction.fromPostmanEntry', () => {
+  let testEntries: PostmanEntry[];
+
+  beforeAll(async () => {
+    let source = fs.createReadStream(
+      Path.join(__dirname, '../tests/inputs/echo.postman_collection.json')
+    );
+
+    testEntries = await collect(
+      unwrap(PostmanCollectionEntries.fromReadable(source))
+    );
+  });
+
+  it('can create a CapturedInteraction from a PostmanEntry', () => {
+    let testEntry = testEntries[1];
+    let interaction = CapturedInteraction.fromPostmanCollection(testEntry);
+
+    expect(interaction).toMatchSnapshot({
+      response: { body: matchBody() },
+    });
+  });
+
+  it('includes request bodies', () => {
+    let testEntry = testEntries.find(
+      (entry) =>
+        entry.request.body &&
+        entry.request.body.raw?.length &&
+        entry.request.headers
+          .get('Content-Type')
+          ?.startsWith('application/json')
+    )!;
+    expect(testEntry).toBeTruthy();
+
+    let interaction = CapturedInteraction.fromPostmanCollection(testEntry);
+    expect(interaction).toMatchSnapshot({
+      request: { body: matchBody() },
+    });
+
+    let parsingBody = CapturedBody.json(interaction.request.body);
+    expect(parsingBody).resolves.toMatchObject({});
+  });
+
+  it('includes response bodies', () => {
+    let testEntry = testEntries.find(
+      (entry) =>
+        entry.response &&
+        entry.response.body &&
+        entry.response.headers
+          .get('Content-Type')
+          ?.startsWith('application/json')
+    )!;
+    expect(testEntry).toBeTruthy();
+
+    let interaction = CapturedInteraction.fromPostmanCollection(testEntry);
+    expect(interaction).toMatchSnapshot({
+      response: { body: matchBody() },
+    });
+
+    let parsingBody = CapturedBody.json(interaction.response.body);
+    expect(parsingBody).resolves.toMatchObject({});
   });
 });
 

@@ -155,9 +155,49 @@ export class CapturedInteraction {
   static fromPostmanCollection(
     postmanEntry: PostmanEntry
   ): CapturedInteraction {
-    // TODO convert postman entry to interaction
-    //
-    return {};
+    const { request, response } = postmanEntry;
+    const query = request.url.query.map((query) => ({
+      key: query.key,
+      value: query.value,
+    }));
+
+    const requestMethod = request.method?.toUpperCase();
+    const method = HttpMethods[requestMethod || 'GET'];
+    invariant(
+      Operation.isHttpMethod(method),
+      `expect Postman collection request to have a valid request method`
+    );
+
+    const requestBodySource = request.body?.toString() || '';
+    const requestBody = CapturedBody.from(
+      requestBodySource,
+      request.headers.get('Content-Type'),
+      requestBodySource.length
+    );
+
+    const responseBody = response
+      ? CapturedBody.from(
+          response.body || '',
+          response.headers.get('Content-Type'),
+          response.body?.length || 0
+        )
+      : null;
+
+    return {
+      request: {
+        host: request.url.getHost(),
+        method,
+        path: request.url.getPath(),
+        query,
+        headers: request.headers.all(),
+        body: requestBody,
+      },
+      response: {
+        statusCode: response?.code.toString() || '200',
+        headers: response?.headers.all() || [],
+        body: responseBody,
+      },
+    };
   }
 }
 
