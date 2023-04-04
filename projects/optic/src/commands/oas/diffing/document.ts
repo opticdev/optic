@@ -241,7 +241,7 @@ export function matchInteractions(
         documentedInteraction.operation.pathPattern,
         documentedInteraction.operation.method,
         Boolean(documentedInteraction.interaction.request.body),
-        documentedInteraction.interaction.response.statusCode
+        documentedInteraction.interaction.response?.statusCode
       );
 
       yield {
