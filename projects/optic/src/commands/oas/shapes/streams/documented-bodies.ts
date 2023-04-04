@@ -103,14 +103,12 @@ export class DocumentedBodies {
     specJsonPath,
     operation,
   }: DocumentedInteraction): AsyncIterable<DocumentedBody> {
-    const capturedStatusCode = interaction.response
-      ? parseInt(interaction.response.statusCode, 10)
-      : null;
+    const capturedStatusCode = parseInt(interaction.response.statusCode, 10);
 
     if (
       interaction.request.body &&
-      (!capturedStatusCode ||
-        (capturedStatusCode >= 200 && capturedStatusCode < 400))
+      capturedStatusCode >= 200 &&
+      capturedStatusCode < 400
     ) {
       // TODO: consider whether this belongs here, and not in something more specific to patches
       // (as it decides basically what and what not to generate patches for  from)
@@ -170,9 +168,7 @@ export class DocumentedBodies {
     }
 
     if (
-      interaction.response &&
       interaction.response.body &&
-      capturedStatusCode &&
       capturedStatusCode >= 200 &&
       capturedStatusCode < 500
     ) {
