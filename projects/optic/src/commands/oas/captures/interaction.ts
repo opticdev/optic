@@ -155,48 +155,89 @@ export class CapturedInteraction {
   static fromPostmanCollection(
     postmanEntry: PostmanEntry
   ): CapturedInteraction {
-    const { request, response } = postmanEntry;
+    const { request, response, variableScope } = postmanEntry;
+    const resolve = (str: string) => variableScope.replaceIn(str);
     const query = request.url.query.map((query) => ({
-      key: query.key,
-      value: query.value,
+      name: resolve(query.key || ''),
+      value: resolve(query.value || ''),
     }));
 
-    const requestMethod = request.method?.toUpperCase();
-    const method = HttpMethods[requestMethod || 'GET'];
+    const method = HttpMethods[request.method?.toUpperCase() || 'GET'];
     invariant(
       Operation.isHttpMethod(method),
       `expect Postman collection request to have a valid request method`
     );
 
-    const requestBodySource = request.body?.toString() || '';
-    const requestBody = CapturedBody.from(
-      requestBodySource,
-      request.headers.get('Content-Type'),
-      requestBodySource.length
-    );
+    const languageMap = {
+      json: 'application/json',
+      xml: 'application/xml',
+      html: 'text/html',
+      javascript: 'text/javascript',
+    };
 
-    const responseBody = response
-      ? CapturedBody.from(
-          response.body || '',
-          response.headers.get('Content-Type'),
-          response.body?.length || 0
-        )
+    const language = request.body?.options?.raw?.language;
+    const modeMap = {
+      urlencoded: 'application/x-www-form-urlencoded',
+      formdata: 'multipart/formdata',
+      graphql: 'application/json',
+      raw: language && languageMap[language],
+    };
+
+    const mode = request.body?.mode;
+    const requestContentTypeHeader = request.headers.get('Content-Type');
+
+    // Postman doesn't always include a Content-Type header
+    // in the request.  When no Content-Type header exists,
+    // the content type may be inferred using other hints in
+    // the format.
+    const requestContentType = requestContentTypeHeader?.length
+      ? resolve(requestContentTypeHeader)
+      : (mode && modeMap[mode]) || 'text/plain';
+
+    const requestBodySource = request.body
+      ? resolve(request.body.toString())
+      : '';
+
+    const responseBodySource = response?.body
+      ? resolve(response.body.toString())
       : null;
 
     return {
       request: {
-        host: request.url.getHost(),
+        host: resolve(request.url.getHost()),
         method,
-        path: request.url.getPath(),
+        path: resolve(request.url.getPath()),
         query,
-        headers: request.headers.all(),
-        body: requestBody,
+        headers: request.headers.all().map(({ key, value }) => ({
+          name: resolve(key),
+          value: resolve(value),
+        })),
+        body: requestBodySource.length
+          ? CapturedBody.from(
+              requestBodySource,
+              requestContentType,
+              requestBodySource.length
+            )
+          : null,
       },
-      response: {
-        statusCode: response?.code.toString() || '200',
-        headers: response?.headers.all() || [],
-        body: responseBody,
-      },
+      response: response
+        ? {
+            statusCode: response.code.toString(),
+            headers: response.headers
+              .all()
+              .map(({ key, value }) => ({
+                name: resolve(key),
+                value: resolve(value),
+              })),
+            body: response.body
+              ? CapturedBody.from(
+                  responseBodySource,
+                  response.contentInfo().contentType,
+                  responseBodySource?.length || 0
+                )
+              : null,
+          }
+        : undefined,
     };
   }
 }

@@ -121,109 +121,63 @@ exports[`CapturedIntearction.fromHarEntry supports response body encoding for su
 exports[`CapturedInteraction.fromPostmanEntry can create a CapturedInteraction from a PostmanEntry 1`] = `
 {
   "request": {
-    "body": {
-      "contentType": null,
-      "size": 0,
-      "stream": Readable {
-        "_events": {},
-        "_eventsCount": 0,
-        "_maxListeners": undefined,
-        "_read": [Function],
-        "_readableState": ReadableState {
-          "autoDestroy": true,
-          "awaitDrainWriters": null,
-          "buffer": BufferList {
-            "head": null,
-            "length": 0,
-            "tail": null,
-          },
-          "closeEmitted": false,
-          "closed": false,
-          "constructed": true,
-          "dataEmitted": false,
-          "decoder": null,
-          "defaultEncoding": "utf8",
-          "destroyed": false,
-          "emitClose": true,
-          "emittedReadable": false,
-          "encoding": null,
-          "endEmitted": false,
-          "ended": false,
-          "errorEmitted": false,
-          "errored": null,
-          "flowing": null,
-          "highWaterMark": 16,
-          "length": 0,
-          "multiAwaitDrain": false,
-          "needReadable": false,
-          "objectMode": true,
-          "pipes": [],
-          "readableListening": false,
-          "reading": false,
-          "readingMore": false,
-          "resumeScheduled": false,
-          "sync": true,
-          Symbol(kPaused): null,
-        },
-        Symbol(kCapture): false,
-      },
-    },
+    "body": null,
     "headers": [],
     "host": "postman-echo.com",
     "method": "get",
     "path": "/get",
     "query": [
       {
-        "key": "foo1",
+        "name": "foo1",
         "value": "bar1",
       },
       {
-        "key": "foo2",
+        "name": "foo2",
         "value": "bar2",
       },
     ],
   },
   "response": {
     "body": {
-      "contentType": "application/json; charset=utf-8",
+      "contentType": "application/json",
       "size": 482,
       "stream": Any<Readable>,
     },
     "headers": [
       {
-        "key": "Content-Encoding",
+        "name": "Content-Encoding",
         "value": "gzip",
       },
       {
-        "key": "Content-Type",
+        "name": "Content-Type",
         "value": "application/json; charset=utf-8",
       },
       {
-        "key": "Date",
+        "name": "Date",
         "value": "Tue, 11 Jun 2019 10:43:13 GMT",
       },
       {
-        "key": "ETag",
+        "name": "ETag",
         "value": "W/"161-aLhNcsGArlgLSKbxPqfBW3viHPI"",
       },
       {
-        "key": "Server",
+        "name": "Server",
         "value": "nginx",
       },
       {
-        "key": "set-cookie",
+        "name": "set-cookie",
         "value": "sails.sid=s%3AGz-wblZgXE8FCDq7aJpx_tUgZUcG3Nsw.LdNEN8L0C7nGWkvGLwvdw6R2s6Syjr%2FzkvyevA8qR0c; Path=/; HttpOnly",
       },
       {
-        "key": "Vary",
+        "name": "Vary",
         "value": "Accept-Encoding",
       },
       {
-        "key": "Content-Length",
+        "name": "Content-Length",
         "value": "249",
       },
       {
-        "key": "Connection",
+        "name": "Connection",
         "value": "keep-alive",
       },
     ],
@@ -232,7 +186,7 @@ exports[`CapturedInteraction.fromPostmanEntry can create a CapturedInteraction f
 }
 `;
 
-exports[`CapturedInteraction.fromPostmanEntry includes request bodies 1`] = `
+exports[`CapturedInteraction.fromPostmanEntry includes request bodies with a Content-Type header 1`] = `
 {
   "request": {
     "body": {
@@ -242,7 +196,7 @@ exports[`CapturedInteraction.fromPostmanEntry includes request bodies 1`] = `
     },
     "headers": [
       {
-        "key": "Content-Type",
+        "name": "Content-Type",
         "value": "application/json",
       },
     ],
@@ -251,129 +205,115 @@ exports[`CapturedInteraction.fromPostmanEntry includes request bodies 1`] = `
     "path": "/transform/collection",
     "query": [
       {
-        "key": "from",
+        "name": "from",
         "value": "1",
       },
       {
-        "key": "to",
+        "name": "to",
         "value": "2",
       },
     ],
   },
-  "response": {
-    "body": null,
+  "response": undefined,
+}
+`;
+
+exports[`CapturedInteraction.fromPostmanEntry includes request bodies with no Content-Type header and a JSON language option 1`] = `
+{
+  "request": {
+    "body": {
+      "contentType": "application/json",
+      "size": 276,
+      "stream": Any<Readable>,
+    },
     "headers": [],
-    "statusCode": "200",
+    "host": "postman-echo.com",
+    "method": "put",
+    "path": "/put",
+    "query": [],
   },
+  "response": undefined,
+}
+`;
+
+exports[`CapturedInteraction.fromPostmanEntry includes request bodies with no Content-Type header, raw mode, and no language option 1`] = `
+{
+  "request": {
+    "body": {
+      "contentType": "text/plain",
+      "size": 58,
+      "stream": Any<Readable>,
+    },
+    "headers": [],
+    "host": "postman-echo.com",
+    "method": "post",
+    "path": "/post",
+    "query": [],
+  },
+  "response": undefined,
 }
 `;
 
 exports[`CapturedInteraction.fromPostmanEntry includes response bodies 1`] = `
 {
   "request": {
-    "body": {
-      "contentType": null,
-      "size": 0,
-      "stream": Readable {
-        "_events": {},
-        "_eventsCount": 0,
-        "_maxListeners": undefined,
-        "_read": [Function],
-        "_readableState": ReadableState {
-          "autoDestroy": true,
-          "awaitDrainWriters": null,
-          "buffer": BufferList {
-            "head": null,
-            "length": 0,
-            "tail": null,
-          },
-          "closeEmitted": false,
-          "closed": false,
-          "constructed": true,
-          "dataEmitted": false,
-          "decoder": null,
-          "defaultEncoding": "utf8",
-          "destroyed": false,
-          "emitClose": true,
-          "emittedReadable": false,
-          "encoding": null,
-          "endEmitted": false,
-          "ended": false,
-          "errorEmitted": false,
-          "errored": null,
-          "flowing": null,
-          "highWaterMark": 16,
-          "length": 0,
-          "multiAwaitDrain": false,
-          "needReadable": false,
-          "objectMode": true,
-          "pipes": [],
-          "readableListening": false,
-          "reading": false,
-          "readingMore": false,
-          "resumeScheduled": false,
-          "sync": true,
-          Symbol(kPaused): null,
-        },
-        Symbol(kCapture): false,
-      },
-    },
+    "body": null,
     "headers": [],
     "host": "postman-echo.com",
     "method": "get",
     "path": "/get",
     "query": [
       {
-        "key": "foo1",
+        "name": "foo1",
         "value": "bar1",
       },
       {
-        "key": "foo2",
+        "name": "foo2",
         "value": "bar2",
       },
     ],
   },
   "response": {
     "body": {
-      "contentType": "application/json; charset=utf-8",
+      "contentType": "application/json",
       "size": 482,
       "stream": Any<Readable>,
     },
     "headers": [
       {
-        "key": "Content-Encoding",
+        "name": "Content-Encoding",
         "value": "gzip",
       },
       {
-        "key": "Content-Type",
+        "name": "Content-Type",
         "value": "application/json; charset=utf-8",
       },
       {
-        "key": "Date",
+        "name": "Date",
         "value": "Tue, 11 Jun 2019 10:43:13 GMT",
       },
       {
-        "key": "ETag",
+        "name": "ETag",
         "value": "W/"161-aLhNcsGArlgLSKbxPqfBW3viHPI"",
       },
       {
-        "key": "Server",
+        "name": "Server",
         "value": "nginx",
       },
       {
-        "key": "set-cookie",
+        "name": "set-cookie",
         "value": "sails.sid=s%3AGz-wblZgXE8FCDq7aJpx_tUgZUcG3Nsw.LdNEN8L0C7nGWkvGLwvdw6R2s6Syjr%2FzkvyevA8qR0c; Path=/; HttpOnly",
       },
       {
-        "key": "Vary",
+        "name": "Vary",
         "value": "Accept-Encoding",
       },
       {
-        "key": "Content-Length",
+        "name": "Content-Length",
         "value": "249",
       },
       {
-        "key": "Connection",
+        "name": "Connection",
         "value": "keep-alive",
       },
     ],

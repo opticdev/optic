@@ -63,7 +63,7 @@ describe('CapturedIntearction.fromHarEntry', () => {
       response: { body: matchBody() },
     });
 
-    let parsingBody = CapturedBody.json(interaction.response.body);
+    let parsingBody = CapturedBody.json(interaction.response?.body);
     expect(parsingBody).resolves.toMatchObject({});
   });
 
@@ -112,7 +112,7 @@ describe('CapturedIntearction.fromHarEntry', () => {
       response: { body: matchBody() },
     });
 
-    let parsingBody = CapturedBody.json(interaction.response.body);
+    let parsingBody = CapturedBody.json(interaction.response?.body);
     expect(parsingBody).resolves.toMatchObject({});
   });
 });
@@ -155,7 +155,7 @@ describe('CapturedInteraction.fromProxyInteraction', () => {
       response: { body: matchBody() },
     });
 
-    let parsingBody = CapturedBody.json(interaction.response.body);
+    let parsingBody = CapturedBody.json(interaction.response?.body);
     expect(parsingBody).resolves.toMatchObject(testBody);
   });
 });
@@ -182,11 +182,10 @@ describe('CapturedInteraction.fromPostmanEntry', () => {
     });
   });
 
-  it('includes request bodies', () => {
+  it('includes request bodies with a Content-Type header', () => {
     let testEntry = testEntries.find(
       (entry) =>
         entry.request.body &&
-        entry.request.body.raw?.length &&
         entry.request.headers
           .get('Content-Type')
           ?.startsWith('application/json')
@@ -199,7 +198,42 @@ describe('CapturedInteraction.fromPostmanEntry', () => {
     });
 
     let parsingBody = CapturedBody.json(interaction.request.body);
-    expect(parsingBody).resolves.toMatchObject({});
+    expect(parsingBody).resolves.toBeTruthy();
+  });
+
+  it('includes request bodies with no Content-Type header and a JSON language option', () => {
+    let testEntry = testEntries.find(
+      (entry) =>
+        entry.request.body?.options?.raw?.language === 'json' &&
+        !entry.request.headers.get('Content-Type')
+    )!;
+    expect(testEntry).toBeTruthy();
+
+    let interaction = CapturedInteraction.fromPostmanCollection(testEntry);
+    expect(interaction).toMatchSnapshot({
+      request: { body: matchBody() },
+    });
+
+    let parsingBody = CapturedBody.json(interaction.request.body);
+    expect(parsingBody).resolves.toBeTruthy();
+  });
+
+  it('includes request bodies with no Content-Type header, raw mode, and no language option', () => {
+    let testEntry = testEntries.find(
+      (entry) =>
+        entry.request.body?.mode === 'raw' &&
+        !entry.request.body?.options?.raw &&
+        !entry.request.headers.get('Content-Type')
+    )!;
+    expect(testEntry).toBeTruthy();
+
+    let interaction = CapturedInteraction.fromPostmanCollection(testEntry);
+    expect(interaction).toMatchSnapshot({
+      request: { body: matchBody() },
+    });
+
+    let parsingBody = CapturedBody.text(interaction.request.body!);
+    expect(parsingBody).resolves.toBeTruthy();
   });
 
   it('includes response bodies', () => {
@@ -218,7 +252,7 @@ describe('CapturedInteraction.fromPostmanEntry', () => {
       response: { body: matchBody() },
     });
 
-    let parsingBody = CapturedBody.json(interaction.response.body);
+    let parsingBody = CapturedBody.json(interaction.response?.body);
     expect(parsingBody).resolves.toMatchObject({});
   });
 });

@@ -7,12 +7,42 @@ import {
   Item,
   ItemGroupDefinition,
   Request,
+  RequestBody,
   Response,
+  VariableScope,
 } from 'postman-collection';
 
+// Fix incorrect type definition
+export type ExtendedRequest = Request & {
+  body?: RequestBody & {
+    options?: {
+      raw?: {
+        language?: string;
+      };
+    };
+  };
+};
+
+// Fix incorrect type definition
+export type ExtendedResponse = Response & {
+  contentInfo(): {
+    contentType: string;
+    mimeType: string;
+    mimeFormat: string;
+    charset: string;
+    extension: string;
+  };
+};
+
+// Fix incorrect type definition
+export type ExtendedVariableScope = VariableScope & {
+  replaceIn(template: string): string;
+};
+
 export type PostmanEntry = {
-  request: Request;
-  response?: Response;
+  request: ExtendedRequest;
+  response?: ExtendedResponse;
+  variableScope: ExtendedVariableScope;
 };
 
 export interface PostmanCollectionEntries extends AsyncIterable<PostmanEntry> {}
@@ -27,7 +57,7 @@ export class PostmanCollectionEntries {
   static async *fromReadable(source: Readable): TryPostmanCollection {
     invariant(
       !source.readableObjectMode,
-      'Expecting raw bytes to parse har entries'
+      'Expecting raw bytes to parse Postman Collection entries'
     );
 
     // Read to end as UTF-8 string
@@ -59,6 +89,9 @@ export class PostmanCollectionEntries {
     }
 
     const collection = new Collection(collectionDefinition);
+    const variableScope = new VariableScope(
+      collection.variables
+    ) as ExtendedVariableScope;
 
     // Recursively iterate through folders.
     const items: Item[] = [];
@@ -67,14 +100,16 @@ export class PostmanCollectionEntries {
     // Yield valid PostmanEntry items.
     for (const item of items) {
       yield Ok({
-        request: item.request,
+        request: item.request as ExtendedRequest,
+        variableScope,
       });
 
-      for (const response of item.responses.all()) {
-        yield Ok({
-          request: response.originalRequest || item.request,
-          response,
-        });
+      for (const res of item.responses.all()) {
+        const request = (res.originalRequest ||
+          item.request) as ExtendedRequest;
+        const response = res as ExtendedResponse;
+
+        yield Ok({ request, response, variableScope });
       }
     }
   }
