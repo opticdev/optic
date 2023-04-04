@@ -115,6 +115,7 @@ async function crawlCandidateSpecs(
   }
 
   const spinner = ora(`Found OpenAPI at ${pathRelativeToRoot}`);
+  spinner.start();
   spinner.color = 'blue';
 
   const existingOpticUrl: string | undefined =
