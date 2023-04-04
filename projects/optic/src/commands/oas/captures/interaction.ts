@@ -27,7 +27,7 @@ export interface CapturedInteraction {
     headers: Header[];
     query: Query[];
   };
-  response: {
+  response?: {
     statusCode: string;
     body: CapturedBody | null;
     // TODO implement support for response headers
