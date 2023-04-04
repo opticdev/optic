@@ -259,6 +259,9 @@ function bundle(spec: OpenAPIV3.Document, sourcemap: JsonSchemaSourcemap) {
     updatedSpec,
     sourcemap,
     [
+      matches.inRequestSchema,
+      matches.inResponseSchema,
+      matches.inOperationParameterSchema,
       matches.inExistingComponent,
     ],
     'children',
