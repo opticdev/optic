@@ -10,7 +10,6 @@
     "projects/rulesets-base",
     "projects/optic",
     "projects/optic-ci",
-    "projects/openapi-cli",
     "projects/standard-rulesets"
   ],
   "scripts": {
