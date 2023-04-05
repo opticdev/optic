@@ -46,8 +46,9 @@ export async function getInteractions(
         InputErrors.POSTMAN_FILE_NOT_FOUND
       );
     }
-    let harFile = fsSync.createReadStream(absolutePath);
-    let postmanEntryResults = PostmanCollectionEntries.fromReadable(harFile);
+    let collectionFile = fsSync.createReadStream(absolutePath);
+    let postmanEntryResults =
+      PostmanCollectionEntries.fromReadable(collectionFile);
     let postmanEntries = AT.unwrapOr(postmanEntryResults, (err) => {
       let message = `Postman collection entry skipped: ${err.message}`;
       console.warn(message); // warn, skip and keep going
