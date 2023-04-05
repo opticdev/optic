@@ -201,6 +201,7 @@ const matches = {
     '**',
     'schema',
   ],
+  inExistingComponent: ['components', 'schemas', '**'],
   inOperationParameter: ['paths', '**', methods, 'parameters', '**'],
   inPathParameter: ['paths', '**', 'parameters', '**'],
   inRequestExamples: [
@@ -261,6 +262,7 @@ function bundle(spec: OpenAPIV3.Document, sourcemap: JsonSchemaSourcemap) {
       matches.inRequestSchema,
       matches.inResponseSchema,
       matches.inOperationParameterSchema,
+      matches.inExistingComponent,
     ],
     'children',
     jsonPointerHelpers.compile(['components', 'schemas']),
@@ -330,7 +332,6 @@ function bundleMatchingRefsAsComponents<T>(
   targetPath: string,
   naming: (T, lookup: string, pathInFile: string) => string
 ) {
-  const reader = sourcemapReader(sourcemap);
   const rootFileIndex = sourcemap.files.find(
     (i) => i.path === sourcemap.rootFilePath
   )!.index;
@@ -513,12 +514,18 @@ function bundleMatchingRefsAsComponents<T>(
     (op) => jsonPointerHelpers.decode(op.path).length
   );
 
-  specCopy = jsonpatch.applyPatch(
-    specCopy,
-    sortedUpdateOperations,
-    true,
-    true
-  ).newDocument;
+  sortedUpdateOperations.forEach((patch) => {
+    const error = jsonpatch.validate([patch], specCopy);
+
+    if (!error) {
+      specCopy = jsonpatch.applyPatch(
+        specCopy,
+        [patch],
+        true,
+        true
+      ).newDocument;
+    }
+  });
 
   return specCopy;
 }

@@ -1,10 +1,10 @@
 import { it, expect, describe } from '@jest/globals';
 import { OpenAPITraverser } from '../openapi-traverser';
-import fs from 'fs-extra';
+import fs from 'node:fs/promises';
 
-const jsonFromFile = async (path: string) => {
-  const bytes = await fs.readJson(path);
-  return bytes;
+const jsonFromFile = async (p: string) => {
+  const contents = await fs.readFile(p, 'utf-8');
+  return JSON.parse(contents);
 };
 
 it('can extract facts from specs', async () => {

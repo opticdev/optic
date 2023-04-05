@@ -6,7 +6,6 @@ import {
   ParseOpenAPIResult,
   parseOpenAPIWithSourcemap,
 } from '../../parser/openapi-sourcemap-parser';
-import sortBy from 'lodash.sortby';
 
 function prepSnapshot(result: ParseOpenAPIResult) {
   const cwd = process.cwd();
@@ -18,8 +17,9 @@ function prepSnapshot(result: ParseOpenAPIResult) {
 
   result.sourcemap.rootFilePath = result.sourcemap.rootFilePath.split(cwd)[1];
 
-  result.sourcemap.files = sortBy(result.sourcemap.files, 'path');
-
+  result.sourcemap.files = result.sourcemap.files.sort((a, b) =>
+    a.path.toLocaleLowerCase().localeCompare(b.path.toLocaleLowerCase())
+  );
   return result;
 }
 describe('denormalize', () => {

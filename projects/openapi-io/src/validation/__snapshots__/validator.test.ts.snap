@@ -1,31 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`advanced validators run and append their results 1`] = `
-"[31minvalid openapi: [39m[1m[31mpaths > /api/users/{userId} > get > responses > 200 > content > application/json > schema > oneOf must NOT have fewer than 1 items[39m[22m
-/paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/oneOf
-[31minvalid openapi: [39m[1m[31mpaths > /api/users/{userId} > get > responses > 200 > content > application/json > schema > anyOf must NOT have fewer than 1 items[39m[22m
-/paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/anyOf
-[31minvalid openapi: [39m[1m[31mpaths > /api/users/{userId} > get > responses > 200 > content > application/json > schema > items must be object[39m[22m
-/paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/items
-[31minvalid openapi: [39m[1m[31mpaths > /api/users/{userId} > get > responses > 200 > content > application/json > schema schema with type "object" cannot also include keywords: items[39m[22m
-/paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema"
-`;
-
-exports[`error cases with messages additional properties in invalid place 1`] = `
-"[31minvalid openapi: [39m[1m[31mpaths > /example > get must have required property 'responses'[39m[22m
-/paths/~1example/get
-[31minvalid openapi: [39m[1m[31minfo must NOT have additional properties[39m[22m
-/info"
-`;
-
-exports[`error cases with messages open api doc with no description in response 1`] = `
-"[31minvalid openapi: [39m[1m[31mpaths > /example > get must have required property 'responses'[39m[22m
-/paths/~1example/get"
-`;
-
-exports[`error cases with messages open api doc with no path should throw an error 1`] = `
+exports[`non-strict validation should fail open api doc with no path should throw an error 1`] = `
 "[31minvalid openapi: [39m[1m[31m must have required property 'paths'[39m[22m
 "
+`;
+
+exports[`non-strict validation should fail open api doc without responses 1`] = `
+"[31minvalid openapi: [39m[1m[31mpaths > /example > get must have required property 'responses'[39m[22m
+/paths/~1example/get"
 `;
 
 exports[`processValidatorErrors 1`] = `
@@ -50,4 +32,20 @@ exports[`processValidatorErrors attaches the sourcemap 1`] = `
 [90m39 |[39m     }
 [90m40 |[39m   }
 [90m41 |[39m }"
+`;
+
+exports[`strict validation advanced validators run and append their results 1`] = `
+"[31minvalid openapi: [39m[1m[31mpaths > /api/users/{userId} > get > responses > 200 > content > application/json > schema > oneOf must NOT have fewer than 1 items[39m[22m
+/paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/oneOf
+[31minvalid openapi: [39m[1m[31mpaths > /api/users/{userId} > get > responses > 200 > content > application/json > schema > anyOf must NOT have fewer than 1 items[39m[22m
+/paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/anyOf
+[31minvalid openapi: [39m[1m[31mpaths > /api/users/{userId} > get > responses > 200 > content > application/json > schema > items must be object[39m[22m
+/paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/items
+[31minvalid openapi: [39m[1m[31mpaths > /api/users/{userId} > get > responses > 200 > content > application/json > schema schema with type "object" cannot also include keywords: items[39m[22m
+/paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema"
+`;
+
+exports[`strict validation open api doc with no description in response should throw 1`] = `
+"[31minvalid openapi: [39m[1m[31mpaths > /example > get > responses > 200 must have required property 'description'[39m[22m
+/paths/~1example/get/responses/200"
 `;
