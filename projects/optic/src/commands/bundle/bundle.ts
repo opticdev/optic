@@ -435,47 +435,74 @@ function bundleMatchingRefsAsComponents<T>(
   });
 
   const refArray = Object.values(refs);
+
   // second pass: Nested schemas. Patch the new components we've created that rely on other newly created components.
   refArray.forEach((ref) => {
     const nestedRefs = refArray.filter((i) =>
-      i.usages.some((i) => i.startsWith(ref.originalPath))
+      i.usages.some(
+        (i) =>
+          jsonPointerHelpers.startsWith(
+            i,
+            jsonPointerHelpers.decode(ref.originalPath),
+            { exact: true }
+          ) && i !== ref.originalPath
+      )
     );
 
     const nestedRefUsageUpdates: Operation[] = [];
+
     nestedRefs.forEach((nestedRef) => {
-      sortby(
-        nestedRef.usages
-          .filter(
-            (i) => i.startsWith(ref.originalPath) && i !== ref.originalPath
-          )
-          .map((i) => {
-            const original = jsonPointerHelpers.decode(ref.originalPath);
-            const newRef = jsonPointerHelpers.decode(i);
-            return jsonPointerHelpers.compile(newRef.slice(original.length));
-          }),
-        (i) => jsonPointerHelpers.decode(i).length
-      ).forEach((i) => {
-        nestedRefUsageUpdates.push({
-          op: 'replace',
-          path: i,
-          value: { $ref: '#' + nestedRef.componentPath },
-        });
+      nestedRef.usages.forEach((i) => {
+        const original = jsonPointerHelpers.decode(ref.originalPath);
+        const newRef = jsonPointerHelpers.decode(i);
+        if (
+          jsonPointerHelpers.startsWith(
+            i,
+            jsonPointerHelpers.decode(ref.originalPath),
+            { exact: true }
+          ) &&
+          i !== ref.originalPath &&
+          newRef.length > original.length
+        ) {
+          const original = jsonPointerHelpers.decode(ref.originalPath);
+          const newRef = jsonPointerHelpers.decode(i);
+          const newPath = jsonPointerHelpers.compile(
+            newRef.slice(original.length)
+          );
+
+          const patch: Operation = {
+            op: 'replace',
+            path: newPath,
+            value: { $ref: '#' + nestedRef.componentPath },
+          };
+
+          nestedRefUsageUpdates.push(patch);
+        }
       });
 
       nestedRef.usages = nestedRef.usages.filter(
-        (i) => !(i.startsWith(ref.originalPath) && i !== ref.originalPath)
+        (i) =>
+          !(
+            jsonPointerHelpers.startsWith(
+              i,
+              jsonPointerHelpers.decode(ref.originalPath),
+              { exact: true }
+            ) && i !== ref.originalPath
+          )
       );
     });
 
-    let copy = JSON.parse(JSON.stringify(ref.component));
+    const copy = JSON.parse(JSON.stringify(ref.component));
 
-    for (const patch of nestedRefUsageUpdates) {
-      if (!jsonpatch.validate([patch], copy)) {
-        copy = jsonpatch.applyOperation(copy, patch, true, true).newDocument;
-      }
-    }
-
-    ref.component = copy;
+    ref.component = jsonpatch.applyPatch(
+      copy,
+      sortby(
+        nestedRefUsageUpdates,
+        (i) => -jsonPointerHelpers.decode(i.path).length
+      ),
+      true,
+      true
+    ).newDocument;
   });
 
   // now generate the actual spec patches
@@ -507,25 +534,19 @@ function bundleMatchingRefsAsComponents<T>(
     true,
     true
   ).newDocument;
-
-  // then add $refs in reverse depth order (to prevent conflicts).
+  //
+  // // then add $refs in reverse depth order (to prevent conflicts).
   const sortedUpdateOperations = sortby(
     updateUsagesOperations,
     (op) => jsonPointerHelpers.decode(op.path).length
   );
 
-  sortedUpdateOperations.forEach((patch) => {
-    const error = jsonpatch.validate([patch], specCopy);
-
-    if (!error) {
-      specCopy = jsonpatch.applyPatch(
-        specCopy,
-        [patch],
-        true,
-        true
-      ).newDocument;
-    }
-  });
+  specCopy = jsonpatch.applyPatch(
+    specCopy,
+    sortedUpdateOperations,
+    true,
+    true
+  ).newDocument;
 
   return specCopy;
 }
