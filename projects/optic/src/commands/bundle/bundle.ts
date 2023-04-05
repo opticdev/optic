@@ -444,7 +444,7 @@ function bundleMatchingRefsAsComponents<T>(
           jsonPointerHelpers.startsWith(
             i,
             jsonPointerHelpers.decode(ref.originalPath),
-            true
+            { exact: true }
           ) && i !== ref.originalPath
       )
     );
@@ -459,7 +459,7 @@ function bundleMatchingRefsAsComponents<T>(
           jsonPointerHelpers.startsWith(
             i,
             jsonPointerHelpers.decode(ref.originalPath),
-            true
+            { exact: true }
           ) &&
           i !== ref.originalPath &&
           newRef.length > original.length
@@ -486,7 +486,7 @@ function bundleMatchingRefsAsComponents<T>(
             jsonPointerHelpers.startsWith(
               i,
               jsonPointerHelpers.decode(ref.originalPath),
-              true
+              { exact: true }
             ) && i !== ref.originalPath
           )
       );

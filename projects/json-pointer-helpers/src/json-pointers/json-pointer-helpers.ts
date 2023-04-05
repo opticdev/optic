@@ -60,7 +60,7 @@ function relative(pointer: string, from: string) {
 function startsWith(
   pointer: string,
   pattern: string[],
-  exact: boolean = false
+  options: { exact: boolean } = { exact: false }
 ): boolean {
   const components = parse(pointer);
   const sliced = components.slice(0, pattern.length);
@@ -70,7 +70,7 @@ function startsWith(
   }
 
   return sliced.every((comp, index) =>
-    !exact ? minimatch(comp, pattern[index]) : comp === pattern[index]
+    !options.exact ? minimatch(comp, pattern[index]) : comp === pattern[index]
   );
 }
 
@@ -86,7 +86,7 @@ function matches(pointer: string, pattern: string[]): boolean {
 function endsWith(
   pointer: string,
   pattern: string[],
-  exact: boolean = false
+  options: { exact: boolean } = { exact: false }
 ): boolean {
   const components = parse(pointer);
   const sliced = components.slice(components.length - pattern.length);
@@ -96,7 +96,7 @@ function endsWith(
   }
 
   return sliced.every((comp, index) =>
-    !exact ? minimatch(comp, pattern[index]) : comp === pattern[index]
+    !options.exact ? minimatch(comp, pattern[index]) : comp === pattern[index]
   );
 }
 
