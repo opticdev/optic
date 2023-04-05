@@ -32,12 +32,12 @@ tasks:
   test:
     desc: Test
     cmds:
-      - yarn workspaces foreach -pv --no-private run test {{.CLI_ARGS}}
+      - yarn workspaces foreach -v --no-private run test {{.CLI_ARGS}}
 
   update-snapshots:
     desc: Update snapshots
     cmds:
-      - yarn workspaces foreach -pv --no-private run test -u
+      - yarn workspaces foreach -v --no-private run test -u
 
   publish:
     desc: "Publish built artifacts. Passes CLI_ARGS to 'npm publish'"
