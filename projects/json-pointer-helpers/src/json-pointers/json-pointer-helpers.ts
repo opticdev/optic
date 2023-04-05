@@ -57,7 +57,11 @@ function relative(pointer: string, from: string) {
   return compile(targetDecoded.slice(fromDecoded.length));
 }
 
-function startsWith(pointer: string, pattern: string[]): boolean {
+function startsWith(
+  pointer: string,
+  pattern: string[],
+  options: { exact: boolean } = { exact: false }
+): boolean {
   const components = parse(pointer);
   const sliced = components.slice(0, pattern.length);
 
@@ -65,7 +69,9 @@ function startsWith(pointer: string, pattern: string[]): boolean {
     return false;
   }
 
-  return sliced.every((comp, index) => minimatch(comp, pattern[index]));
+  return sliced.every((comp, index) =>
+    !options.exact ? minimatch(comp, pattern[index]) : comp === pattern[index]
+  );
 }
 
 function matches(pointer: string, pattern: string[]): boolean {
@@ -77,7 +83,11 @@ function matches(pointer: string, pattern: string[]): boolean {
 
   return components.every((comp, index) => minimatch(comp, pattern[index]));
 }
-function endsWith(pointer: string, pattern: string[]): boolean {
+function endsWith(
+  pointer: string,
+  pattern: string[],
+  options: { exact: boolean } = { exact: false }
+): boolean {
   const components = parse(pointer);
   const sliced = components.slice(components.length - pattern.length);
 
@@ -85,7 +95,9 @@ function endsWith(pointer: string, pattern: string[]): boolean {
     return false;
   }
 
-  return sliced.every((comp, index) => minimatch(comp, pattern[index]));
+  return sliced.every((comp, index) =>
+    !options.exact ? minimatch(comp, pattern[index]) : comp === pattern[index]
+  );
 }
 
 function tryGet(
