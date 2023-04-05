@@ -2,7 +2,7 @@
   "name": "@useoptic/json-pointer-helpers",
   "license": "MIT",
   "packageManager": "yarn@3.5.0",
-  "version": "0.42.2",
+  "version": "0.42.3-0",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -33,5 +33,6 @@
   "dependencies": {
     "jsonpointer": "^5.0.1",
     "minimatch": "8.0.3"
-  }
+  },
+  "stableVersion": "0.42.2"
 }
