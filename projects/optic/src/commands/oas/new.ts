@@ -23,7 +23,7 @@ export async function newCommand(): Promise<Command> {
   command
     .description('create a new OpenAPI spec file')
     .argument(
-      '[file-path]',
+      '<file-path>',
       'path of the new OpenAPI file (written to stdout when not provided)'
     )
     .option(
@@ -31,41 +31,36 @@ export async function newCommand(): Promise<Command> {
       'OpenAPI version number to be used',
       defaultOpenAPIVersion
     )
-    .action(async (filePath?: string) => {
+    .action(async (filePath: string) => {
       let absoluteFilePath: string;
       let destination: Writable;
 
-      if (filePath) {
-        absoluteFilePath = Path.resolve(filePath);
-        let dirPath = Path.dirname(absoluteFilePath);
-        let fileBaseName = Path.basename(filePath);
-        if (await fs.pathExists(absoluteFilePath)) {
-          return await feedback.inputError(
-            `File '${fileBaseName}' already exists at ${dirPath}`,
-            InputErrors.DESTINATION_FILE_ALREADY_EXISTS
-          );
-        }
-        if (!(await fs.pathExists(dirPath))) {
-          return await feedback.inputError(
-            `to create ${fileBaseName}, dir must exist at ${dirPath}`,
-            InputErrors.DESTINATION_FILE_DIR_MISSING
-          );
-        }
-        if (!isJson(filePath) && !isYaml(filePath)) {
-          return await feedback.inputError(
-            `to create a new spec file by filename, either a .yml, .yaml or .json extension is required`,
-            'spec-file-extension-unsupported'
-          );
-        }
-
-        destination = fs.createWriteStream(absoluteFilePath);
-        destination.once('finish', () => {
-          feedback.success(`New spec file created at ${absoluteFilePath}`);
-        });
-      } else {
-        absoluteFilePath = 'stdout.yml';
-        destination = process.stdout;
+      absoluteFilePath = Path.resolve(filePath);
+      let dirPath = Path.dirname(absoluteFilePath);
+      let fileBaseName = Path.basename(filePath);
+      if (await fs.pathExists(absoluteFilePath)) {
+        return await feedback.inputError(
+          `File '${fileBaseName}' already exists at ${dirPath}`,
+          InputErrors.DESTINATION_FILE_ALREADY_EXISTS
+        );
       }
+      if (!(await fs.pathExists(dirPath))) {
+        return await feedback.inputError(
+          `to create ${fileBaseName}, dir must exist at ${dirPath}`,
+          InputErrors.DESTINATION_FILE_DIR_MISSING
+        );
+      }
+      if (!isJson(filePath) && !isYaml(filePath)) {
+        return await feedback.inputError(
+          `to create a new spec file by filename, either a .yml, .yaml or .json extension is required`,
+          'spec-file-extension-unsupported'
+        );
+      }
+
+      destination = fs.createWriteStream(absoluteFilePath);
+      destination.once('finish', () => {
+        feedback.success(`New spec file created at ${absoluteFilePath}`);
+      });
 
       const options = command.opts();
 
