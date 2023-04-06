@@ -1,5 +1,6 @@
 import { CapturedInteraction } from '..';
 import { HarEntries } from './sources/har';
+import { PostmanCollectionEntries } from './sources/postman';
 import { ProxyInteractions } from './sources/proxy';
 
 export interface CapturedInteractions
@@ -17,6 +18,14 @@ export class CapturedInteractions {
   ): CapturedInteractions {
     for await (let interaction of interactions) {
       yield CapturedInteraction.fromProxyInteraction(interaction);
+    }
+  }
+
+  static async *fromPostmanCollection(
+    entries: PostmanCollectionEntries
+  ): CapturedInteractions {
+    for await (let entry of entries) {
+      yield CapturedInteraction.fromPostmanCollection(entry);
     }
   }
 }

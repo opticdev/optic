@@ -11,3 +11,4 @@ export { HarEntries } from './streams/sources/har';
 export type { HttpArchive } from './streams/sources/har';
 
 export { ProxyInteractions, ProxyCertAuthority } from './streams/sources/proxy';
+export { getInteractions } from './getInteractions';

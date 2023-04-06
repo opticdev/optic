@@ -14,7 +14,8 @@ export class OperationPatches {
 
     for (let diff of diffs) {
       let patches = generateOperationPatchesByDiff(diff, operation, {
-        statusCode: interaction.response.statusCode,
+        // assume a 2xx response used for context if no response body is set
+        statusCode: interaction.response?.statusCode ?? '200',
       });
 
       for (let patch of patches) {

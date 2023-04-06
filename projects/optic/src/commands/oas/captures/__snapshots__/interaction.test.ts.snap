@@ -118,6 +118,210 @@ exports[`CapturedIntearction.fromHarEntry supports response body encoding for su
 }
 `;
 
+exports[`CapturedInteraction.fromPostmanEntry can create a CapturedInteraction from a PostmanEntry 1`] = `
+{
+  "request": {
+    "body": null,
+    "headers": [],
+    "host": "postman-echo.com",
+    "method": "get",
+    "path": "/get",
+    "query": [
+      {
+        "name": "foo1",
+        "value": "bar1",
+      },
+      {
+        "name": "foo2",
+        "value": "bar2",
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "contentType": "application/json",
+      "size": 482,
+      "stream": Any<Readable>,
+    },
+    "headers": [
+      {
+        "name": "Content-Encoding",
+        "value": "gzip",
+      },
+      {
+        "name": "Content-Type",
+        "value": "application/json; charset=utf-8",
+      },
+      {
+        "name": "Date",
+        "value": "Tue, 11 Jun 2019 10:43:13 GMT",
+      },
+      {
+        "name": "ETag",
+        "value": "W/"161-aLhNcsGArlgLSKbxPqfBW3viHPI"",
+      },
+      {
+        "name": "Server",
+        "value": "nginx",
+      },
+      {
+        "name": "set-cookie",
+        "value": "sails.sid=s%3AGz-wblZgXE8FCDq7aJpx_tUgZUcG3Nsw.LdNEN8L0C7nGWkvGLwvdw6R2s6Syjr%2FzkvyevA8qR0c; Path=/; HttpOnly",
+      },
+      {
+        "name": "Vary",
+        "value": "Accept-Encoding",
+      },
+      {
+        "name": "Content-Length",
+        "value": "249",
+      },
+      {
+        "name": "Connection",
+        "value": "keep-alive",
+      },
+    ],
+    "statusCode": "200",
+  },
+}
+`;
+
+exports[`CapturedInteraction.fromPostmanEntry includes request bodies with a Content-Type header 1`] = `
+{
+  "request": {
+    "body": {
+      "contentType": "application/json",
+      "size": 1188,
+      "stream": Any<Readable>,
+    },
+    "headers": [
+      {
+        "name": "Content-Type",
+        "value": "application/json",
+      },
+    ],
+    "host": "postman-echo.com",
+    "method": "post",
+    "path": "/transform/collection",
+    "query": [
+      {
+        "name": "from",
+        "value": "1",
+      },
+      {
+        "name": "to",
+        "value": "2",
+      },
+    ],
+  },
+  "response": undefined,
+}
+`;
+
+exports[`CapturedInteraction.fromPostmanEntry includes request bodies with no Content-Type header and a JSON language option 1`] = `
+{
+  "request": {
+    "body": {
+      "contentType": "application/json",
+      "size": 276,
+      "stream": Any<Readable>,
+    },
+    "headers": [],
+    "host": "postman-echo.com",
+    "method": "put",
+    "path": "/put",
+    "query": [],
+  },
+  "response": undefined,
+}
+`;
+
+exports[`CapturedInteraction.fromPostmanEntry includes request bodies with no Content-Type header, raw mode, and no language option 1`] = `
+{
+  "request": {
+    "body": {
+      "contentType": "text/plain",
+      "size": 58,
+      "stream": Any<Readable>,
+    },
+    "headers": [],
+    "host": "postman-echo.com",
+    "method": "post",
+    "path": "/post",
+    "query": [],
+  },
+  "response": undefined,
+}
+`;
+
+exports[`CapturedInteraction.fromPostmanEntry includes response bodies 1`] = `
+{
+  "request": {
+    "body": null,
+    "headers": [],
+    "host": "postman-echo.com",
+    "method": "get",
+    "path": "/get",
+    "query": [
+      {
+        "name": "foo1",
+        "value": "bar1",
+      },
+      {
+        "name": "foo2",
+        "value": "bar2",
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "contentType": "application/json",
+      "size": 482,
+      "stream": Any<Readable>,
+    },
+    "headers": [
+      {
+        "name": "Content-Encoding",
+        "value": "gzip",
+      },
+      {
+        "name": "Content-Type",
+        "value": "application/json; charset=utf-8",
+      },
+      {
+        "name": "Date",
+        "value": "Tue, 11 Jun 2019 10:43:13 GMT",
+      },
+      {
+        "name": "ETag",
+        "value": "W/"161-aLhNcsGArlgLSKbxPqfBW3viHPI"",
+      },
+      {
+        "name": "Server",
+        "value": "nginx",
+      },
+      {
+        "name": "set-cookie",
+        "value": "sails.sid=s%3AGz-wblZgXE8FCDq7aJpx_tUgZUcG3Nsw.LdNEN8L0C7nGWkvGLwvdw6R2s6Syjr%2FzkvyevA8qR0c; Path=/; HttpOnly",
+      },
+      {
+        "name": "Vary",
+        "value": "Accept-Encoding",
+      },
+      {
+        "name": "Content-Length",
+        "value": "249",
+      },
+      {
+        "name": "Connection",
+        "value": "keep-alive",
+      },
+    ],
+    "statusCode": "200",
+  },
+}
+`;
+
 exports[`CapturedInteraction.fromProxyInteraction can create a CaturedInteraction from a ProxySource.Interaction 1`] = `
 {
   "request": {

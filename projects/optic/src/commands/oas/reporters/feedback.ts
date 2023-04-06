@@ -107,6 +107,7 @@ export enum InputErrors {
   DESTINATION_FILE_DIR_MISSING = 'destination-file-dir-missing',
   DESTINATION_FILE_ALREADY_EXISTS = ' destination-file-already-exists',
   HAR_FILE_NOT_FOUND = 'har-file-not-found',
+  POSTMAN_FILE_NOT_FOUND = 'postman-file-not-found',
   PROXY_IN_NON_TTY = 'proxy-in-non-tty',
   SPEC_FILE_NOT_FOUND = 'spec-file-not-found',
   DOCUMENT_OPERATION_FORMAT = 'document-operation-format',

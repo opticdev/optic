@@ -7,36 +7,38 @@ export function* visitResponses(
   capturedResponse: CapturedResponse,
   responses: { [statusCode: string]: OpenAPIV3.ResponseObject }
 ): IterableIterator<OperationDiffResult> {
-  const responseMatch = findResponse(
-    { responses },
-    capturedResponse.statusCode
-  );
+  if (capturedResponse) {
+    const responseMatch = findResponse(
+      { responses },
+      capturedResponse.statusCode
+    );
 
-  if (!responseMatch) {
-    const statusCode = parseInt(capturedResponse.statusCode, 10);
-    yield {
-      kind: OperationDiffResultKind.UnmatchedResponseStatusCode,
-      statusCode: capturedResponse.statusCode,
-      contentType: capturedResponse.body?.contentType || null,
-    };
+    if (!responseMatch) {
+      const statusCode = parseInt(capturedResponse.statusCode, 10);
+      yield {
+        kind: OperationDiffResultKind.UnmatchedResponseStatusCode,
+        statusCode: capturedResponse.statusCode,
+        contentType: capturedResponse.body?.contentType || null,
+      };
 
-    return; // no response, no more to diff
-  }
+      return; // no response, no more to diff
+    }
 
-  const [response] = responseMatch;
+    const [response] = responseMatch;
 
-  const matchedBody = findBody(response, capturedResponse.body?.contentType);
+    const matchedBody = findBody(response, capturedResponse.body?.contentType);
 
-  if (!matchedBody && capturedResponse.body) {
-    yield {
-      kind: OperationDiffResultKind.UnmatchedResponseBody,
-      contentType: capturedResponse.body.contentType,
-      statusCode: capturedResponse.statusCode,
-    };
-  } else if (response.content && !capturedResponse.body) {
-    yield {
-      kind: OperationDiffResultKind.MissingResponseBody,
-      statusCode: capturedResponse.statusCode,
-    };
+    if (!matchedBody && capturedResponse.body) {
+      yield {
+        kind: OperationDiffResultKind.UnmatchedResponseBody,
+        contentType: capturedResponse.body.contentType,
+        statusCode: capturedResponse.statusCode,
+      };
+    } else if (response.content && !capturedResponse.body) {
+      yield {
+        kind: OperationDiffResultKind.MissingResponseBody,
+        statusCode: capturedResponse.statusCode,
+      };
+    }
   }
 }
