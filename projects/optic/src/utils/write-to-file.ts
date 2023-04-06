@@ -6,7 +6,7 @@ import {
   writeYaml,
 } from '@useoptic/openapi-io';
 
-import { OPTIC_STANDARD_KEY, OPTIC_URL_KEY } from '../../constants';
+import { OPTIC_STANDARD_KEY, OPTIC_URL_KEY } from '../constants';
 import { FlatOpenAPIV3 } from '@useoptic/openapi-utilities';
 
 export async function writeJson(
