@@ -26,6 +26,7 @@ exports[`lint fails on requirement rule errors 1`] = `
 Checks
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
+   0/1 checks passed
     requirement rule: response property naming check
       [31m[31mx[39m[31m id_thing is not camelCase[39m
       at [4m$workspace$/spec-fails-requirement.yml:18:359[24m
@@ -58,6 +59,7 @@ exports[`lint passes on valid specs 1`] = `
 Checks
 
   [1m[42m[37m PASS [39m[49m[22m [1mPOST[22m /filler_route
+   1/1 checks passed
 
 
 

@@ -102,7 +102,7 @@ export async function uploadDiff(
       specDetails.apiId,
       run.id
     );
-    spinner?.succeed(`Uploaded results of diff to ${changelogUrl}`);
+    spinner?.succeed(`See detailed changes at ${changelogUrl}`);
 
     return {
       changelogUrl,
