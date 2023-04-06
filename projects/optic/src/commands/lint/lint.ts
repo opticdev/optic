@@ -1,4 +1,4 @@
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 
 import { compute } from '../diff/compute';
 import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
@@ -22,10 +22,17 @@ export const registerLint = (cli: Command, config: OpticCliConfig) => {
     })
     .description(description)
     .argument('<file_path>', 'path to file to lint')
+    .addOption(
+      new Option('--verbosity <verbosity>', 'verbosity level')
+        .choices(['low', 'medium', 'high'])
+        .default('medium')
+    )
     .action(errorHandler(getLintAction(config)));
 };
 
-type LintActionOptions = {};
+type LintActionOptions = {
+  verbosity: 'low' | 'medium' | 'high';
+};
 
 const getLintAction =
   (config: OpticCliConfig) =>
@@ -63,7 +70,7 @@ const getLintAction =
         to: file.sourcemap,
       },
       specResults,
-      { output: 'pretty', verbose: false }
+      { output: 'pretty', verbosity: options.verbosity }
     )) {
       logger.info(log);
     }

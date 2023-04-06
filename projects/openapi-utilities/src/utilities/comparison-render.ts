@@ -210,9 +210,11 @@ export function* generateComparisonLogsV2(
   },
   options: {
     output: 'pretty' | 'plain' | 'md';
-    verbose: boolean;
+    verbosity: 'low' | 'medium' | 'high';
   }
 ) {
+  const verbosity =
+    options.verbosity === 'low' ? 0 : options.verbosity === 'medium' ? 1 : 2;
   const operationsChangedLabel = getOperationsChangedLabel(groupedDiffs);
   const { findFileAndLines: findFileAndLinesFromBefore } = sourcemapReader(
     sourcemap.from
@@ -273,7 +275,7 @@ export function* generateComparisonLogsV2(
       (result) => result.passed || result.exempted
     );
     const renderedResults = operationResults.filter(
-      (result) => options.verbose || (!result.passed && !result.exempted)
+      (result) => verbosity >= 2 || (!result.passed && !result.exempted)
     );
     const resultNode = allPassed
       ? bold(bgGreen(white(mdOutput ? 'PASS' : ' PASS ')))
@@ -291,61 +293,69 @@ export function* generateComparisonLogsV2(
         )} ${path}`;
       }
     }
+    const nodePassedCount = operationResults.filter((r) => r.passed).length;
+    const nodeTotalCount = operationResults.length;
 
-    for (const result of renderedResults) {
-      const icon = result.passed
-        ? mdOutput
-          ? ':heavy_check_mark:'
-          : green('✔')
-        : result.exempted
-        ? mdOutput
-          ? ':heavy_minus_sign:'
-          : white('✔')
-        : mdOutput
-        ? ':x:'
-        : red('x');
+    yield `${getIndent(1)} ${nodePassedCount}/${nodeTotalCount} checks passed`;
 
-      const rulePrefix = result.type ? `${result.type} rule` : 'rule';
-      yield `${getItem()}${getIndent(2)}${rulePrefix}: ${result.name ?? ''}${
-        result.exempted ? ' (exempted)' : ''
-      }`;
+    if (verbosity >= 1) {
+      for (const result of renderedResults) {
+        const icon = result.passed
+          ? mdOutput
+            ? ':heavy_check_mark:'
+            : green('✔')
+          : result.exempted
+          ? mdOutput
+            ? ':heavy_minus_sign:'
+            : white('✔')
+          : mdOutput
+          ? ':x:'
+          : red('x');
 
-      if (!result.passed && !result.exempted) {
-        yield getIndent(3) + red(`${icon} ${result.error}`);
-        if (result.expected && result.received) {
-          yield getIndent(3) + red('Expected Value:');
-          yield formatRawValue(result.expected, getIndent(3));
-          yield getIndent(3) + red('Received Value:');
-          yield formatRawValue(result.received, getIndent(3));
-        }
-      }
-      if (!result.passed && result.exempted) {
-        yield getIndent(3) + `${icon} ${result.error}`;
-        if (result.expected && result.received) {
-          yield getIndent(3) + 'Expected Value:';
-          yield formatRawValue(result.expected, getIndent(3));
-          yield getIndent(3) + 'Received Value:';
-          yield formatRawValue(result.received, getIndent(3));
-        }
-      }
-
-      if (result.docsLink) {
-        yield `${getIndent(3)}Read more in our API Guide (${result.docsLink})`;
-      }
-      const sourcemap =
-        result.location.spec === 'before'
-          ? findFileAndLinesFromBefore(result.location.jsonPath)
-          : findFileAndLinesFromAfter(result.location.jsonPath);
-      if (sourcemap) {
-        yield `${getIndent(3)}at ${
-          isUrl(sourcemap.filePath)
-            ? `${underline(sourcemap.filePath)} line ${sourcemap.startLine}`
-            : underline(
-                `${sourcemap.filePath}:${sourcemap.startLine}:${sourcemap.startPosition}`
-              )
+        const rulePrefix = result.type ? `${result.type} rule` : 'rule';
+        yield `${getItem()}${getIndent(2)}${rulePrefix}: ${result.name ?? ''}${
+          result.exempted ? ' (exempted)' : ''
         }`;
+
+        if (!result.passed && !result.exempted) {
+          yield getIndent(3) + red(`${icon} ${result.error}`);
+          if (result.expected && result.received) {
+            yield getIndent(3) + red('Expected Value:');
+            yield formatRawValue(result.expected, getIndent(3));
+            yield getIndent(3) + red('Received Value:');
+            yield formatRawValue(result.received, getIndent(3));
+          }
+        }
+        if (!result.passed && result.exempted) {
+          yield getIndent(3) + `${icon} ${result.error}`;
+          if (result.expected && result.received) {
+            yield getIndent(3) + 'Expected Value:';
+            yield formatRawValue(result.expected, getIndent(3));
+            yield getIndent(3) + 'Received Value:';
+            yield formatRawValue(result.received, getIndent(3));
+          }
+        }
+
+        if (result.docsLink) {
+          yield `${getIndent(3)}Read more in our API Guide (${
+            result.docsLink
+          })`;
+        }
+        const sourcemap =
+          result.location.spec === 'before'
+            ? findFileAndLinesFromBefore(result.location.jsonPath)
+            : findFileAndLinesFromAfter(result.location.jsonPath);
+        if (sourcemap) {
+          yield `${getIndent(3)}at ${
+            isUrl(sourcemap.filePath)
+              ? `${underline(sourcemap.filePath)} line ${sourcemap.startLine}`
+              : underline(
+                  `${sourcemap.filePath}:${sourcemap.startLine}:${sourcemap.startPosition}`
+                )
+          }`;
+        }
+        yield '';
       }
-      yield '';
     }
     yield '\n';
   }

@@ -1,4 +1,4 @@
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 import pm from 'picomatch';
 import { OpticCliConfig, VCS } from '../../config';
 import { findOpenApiSpecsCandidates } from '../../utils/git-utils';
@@ -79,6 +79,11 @@ comma separated values (e.g. "**/*.yml,**/*.json")'
       '--standard <standard>',
       'run comparison with a locally defined standard, if not set, looks for the standard on the [x-optic-standard] key on the spec, and then the optic.dev.yml file.'
     )
+    .addOption(
+      new Option('--verbosity <verbosity>', 'verbosity level')
+        .choices(['low', 'medium', 'high'])
+        .default('medium')
+    )
     .option('--check', 'enable checks', false)
     .option('--upload', 'upload specs', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
@@ -103,6 +108,7 @@ type DiffAllActionOptions = {
   upload: boolean;
   json: boolean;
   failOnUntrackedOpenapi: boolean;
+  verbosity: 'low' | 'medium' | 'high';
 };
 
 // Match up the to and from candidates
@@ -279,7 +285,7 @@ async function computeAll(
         specResults,
         {
           output: 'pretty',
-          verbose: false,
+          verbosity: options.verbosity,
         }
       )) {
         logger.info(log);

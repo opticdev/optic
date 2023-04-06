@@ -153,6 +153,7 @@ specification details:
 Checks
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /example
+   19/29 checks passed
     added rule: prevent new required query parameters
       [31m[31mx[39m[31m cannot add required query parameter addedQueryParameter to an existing operation. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:60:1906[24m
@@ -196,6 +197,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /parameters_at_path
+   1/2 checks passed
     added rule: prevent new required query parameters
       [31m[31mx[39m[31m cannot add required query parameter query_in_path to an existing operation. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:143:4710[24m
@@ -203,6 +205,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /pet
+   0/3 checks passed
     removed rule: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
       at [4m$workspace$/petstore-base.json:158:4984[24m
@@ -218,6 +221,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPUT[22m /pet
+   1/3 checks passed
     added rule: prevent changing request property to required
       [31m[31mx[39m[31m cannot add a required request property 'number' to an existing operation. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:173:5555[24m
@@ -229,6 +233,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /pet/{petId}/uploadImage
+   10/16 checks passed
     changed rule: prevent cookie parameters enum breaking changes
       [31m[31mx[39m[31m cannot add an enum to restrict possible values for cookie parameter 'debug'. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:740:27031[24m
@@ -256,9 +261,11 @@ Checks
 
 
   [1m[42m[37m PASS [39m[49m[22m [1mPOST[22m /store/order
+   10/10 checks passed
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /store/order/{orderId}
+   10/11 checks passed
     changed rule: prevent making response property optional
       [31m[31mx[39m[31m cannot make required response property 'petId' optional. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:969:34944[24m
@@ -266,9 +273,11 @@ Checks
 
 
   [1m[42m[37m PASS [39m[49m[22m [1mDELETE[22m /store/order/{orderId}
+   3/3 checks passed
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /user
+   6/8 checks passed
     changed rule: prevent changing request property to required
       [31m[31mx[39m[31m cannot make a request property required. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:1077:39015[24m
@@ -280,6 +289,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /user/createWithArray
+   6/8 checks passed
     changed rule: prevent changing request property to required
       [31m[31mx[39m[31m cannot make a request property required. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:1117:40460[24m
@@ -291,6 +301,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /user/createWithList
+   6/8 checks passed
     changed rule: prevent changing request property to required
       [31m[31mx[39m[31m cannot make a request property required. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:1158:41945[24m
@@ -302,6 +313,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /user/login
+   0/1 checks passed
     added rule: header parameter naming check
       [31m[31mx[39m[31m X-Rate-Limit is not snake_case[39m
       at [4m$workspace$/petstore-updated.json:1208:43553[24m
@@ -309,6 +321,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /user/{username}
+   13/19 checks passed
     changed rule: prevent making response property optional
       [31m[31mx[39m[31m cannot make required response property 'lastName' optional. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:1265:45501[24m
@@ -336,6 +349,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPUT[22m /user/{username}
+   6/8 checks passed
     changed rule: prevent changing request property to required
       [31m[31mx[39m[31m cannot make a request property required. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:1342:48332[24m
@@ -347,6 +361,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /pet/findByStatus
+   20/23 checks passed
     added rule: operation path component naming check
       [31m[31mx[39m[31m findByStatus is not snake_case[39m
       at [4m$workspace$/petstore-updated.json:316:10941[24m
@@ -362,6 +377,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /pet/findByTags
+   19/22 checks passed
     added rule: operation path component naming check
       [31m[31mx[39m[31m findByTags is not snake_case[39m
       at [4m$workspace$/petstore-updated.json:446:15966[24m
@@ -377,6 +393,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /pet/{petId}
+   19/21 checks passed
     added rule: response property naming check
       [31m[31mx[39m[31m photoUrls is not snake_case[39m
       at [4m$workspace$/petstore-updated.json:596:21833[24m
@@ -388,9 +405,11 @@ Checks
 
 
   [1m[42m[37m PASS [39m[49m[22m [1mPOST[22m /pet/{petId}
+   1/1 checks passed
 
 
   [1m[42m[37m PASS [39m[49m[22m [1mDELETE[22m /pet/{petId}
+   2/2 checks passed
 
 
 5 operations added, 15 changed, 1 removed
@@ -422,12 +441,15 @@ exports[`diff reads optic.dev.yml for rulesets 1`] = `
 Checks
 
   [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /example
+   1/1 checks passed
 
 
   [1m[42m[37m PASS [39m[49m[22m [1mPATCH[22m /example
+   1/1 checks passed
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /example
+   0/1 checks passed
     removed rule: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
       at [4m$workspace$/example-api-v0.json:9:150[24m
@@ -435,9 +457,11 @@ Checks
 
 
   [1m[42m[37m PASS [39m[49m[22m [1mPUT[22m /example
+   1/1 checks passed
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /invalid_name
+   0/1 checks passed
     requirement rule: operation path component naming check
       [31m[31mx[39m[31m invalid_name is not camelCase[39m
       at [4m$workspace$/example-api-v1.json:31:632[24m
@@ -493,12 +517,15 @@ exports[`diff with --standard arg 1`] = `
 Checks
 
   [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /example
+   1/1 checks passed
 
 
   [1m[42m[37m PASS [39m[49m[22m [1mPATCH[22m /example
+   1/1 checks passed
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /example
+   0/1 checks passed
     removed rule: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
       at [4m$workspace$/example-api-v0.json:9:150[24m
@@ -506,9 +533,11 @@ Checks
 
 
   [1m[42m[37m PASS [39m[49m[22m [1mPUT[22m /example
+   1/1 checks passed
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /invalid_name
+   0/1 checks passed
     requirement rule: operation path component naming check
       [31m[31mx[39m[31m invalid_name is not camelCase[39m
       at [4m$workspace$/example-api-v1.json:31:632[24m
@@ -544,15 +573,19 @@ exports[`diff with mock server custom rules 1`] = `
 Checks
 
   [1m[42m[37m PASS [39m[49m[22m Specification
+   2/2 checks passed
 
 
   [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /example
+   1/1 checks passed
 
 
   [1m[42m[37m PASS [39m[49m[22m [1mPATCH[22m /example
+   1/1 checks passed
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /example
+   0/1 checks passed
     removed rule: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
       at [4m$workspace$/example-api-v0.json:9:150[24m
@@ -560,9 +593,11 @@ Checks
 
 
   [1m[42m[37m PASS [39m[49m[22m [1mPUT[22m /example
+   1/1 checks passed
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /invalid_name
+   0/1 checks passed
     requirement rule: operation path component naming check
       [31m[31mx[39m[31m invalid_name is not camelCase[39m
       at [4m$workspace$/example-api-v1.json:31:632[24m
@@ -599,12 +634,15 @@ exports[`diff with mock server extends 1`] = `
 Checks
 
   [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /example
+   1/1 checks passed
 
 
   [1m[42m[37m PASS [39m[49m[22m [1mPATCH[22m /example
+   1/1 checks passed
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /example
+   0/1 checks passed
     removed rule: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
       at [4m$workspace$/example-api-v0.json:9:150[24m
@@ -612,9 +650,11 @@ Checks
 
 
   [1m[42m[37m PASS [39m[49m[22m [1mPUT[22m /example
+   1/1 checks passed
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /invalid_name
+   0/1 checks passed
     requirement rule: operation path component naming check
       [31m[31mx[39m[31m invalid_name is not camelCase[39m
       at [4m$workspace$/example-api-v1.json:31:632[24m
@@ -653,6 +693,7 @@ specification details:
 Checks
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /example
+   0/1 checks passed
     removed rule: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
       at [4m$workspace$/example-api-v0.json:9:150[24m
@@ -676,6 +717,7 @@ exports[`diff with mock server uploads specs if authenticated and --upload 1`] =
 Checks
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPATCH[22m /example
+   0/1 checks passed
     changed rule: prevent response property type changes
       [31m[31mx[39m[31m expected response body application/json root shape to not change type. This is a breaking change.[39m
       at [4m$workspace$/spec.json:24:565[24m

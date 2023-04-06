@@ -11,6 +11,7 @@ specification details:
 Checks
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
+   0/3 checks passed
     removed rule: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
       at [4m$workspace$/folder-to-run/should-run.yml:9:178[24m
@@ -59,6 +60,7 @@ specification details:
 Checks
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
+   0/3 checks passed
     removed rule: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
       at [4m$workspace$/mvspec.yml:9:178[24m
@@ -74,6 +76,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /api/filler-route
+   0/3 checks passed
     removed rule: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
       at [4m$workspace$/mvspec.yml:24:593[24m
@@ -99,15 +102,19 @@ No changes were detected
 Checks
 
   [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /example
+   1/1 checks passed
 
 
   [1m[42m[37m PASS [39m[49m[22m [1mPATCH[22m /example
+   1/1 checks passed
 
 
   [1m[42m[37m PASS [39m[49m[22m [1mPOST[22m /example
+   1/1 checks passed
 
 
   [1m[42m[37m PASS [39m[49m[22m [1mPUT[22m /example
+   1/1 checks passed
 
 
 
@@ -121,6 +128,7 @@ No changes were detected
 Checks
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
+   0/1 checks passed
     requirement rule: operation path component naming check
       [31m[31mx[39m[31m filler_route is not camelCase[39m
       at [4m$workspace$/specwithkey.yml:9:178[24m
@@ -145,6 +153,7 @@ specification details:
 Checks
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
+   0/1 checks passed
     requirement rule: operation path component naming check
       [31m[31mx[39m[31m filler_route is not camelCase[39m
       at [4m$workspace$/movedspec.yml:9:178[24m
@@ -152,10 +161,110 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /api/filler-route
+   0/1 checks passed
     requirement rule: operation path component naming check
       [31m[31mx[39m[31m filler-route is not camelCase[39m
       at [4m$workspace$/movedspec.yml:24:593[24m
 
+
+
+2 operations added
+[32m[1m0 checks passed[22m[39m
+[31m[1m2 checks failed[22m[39m
+
+[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+[33mWarning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. \`optic diff-all\` only runs on specs that include \`x-optic-url\` keys that point to specs uploaded to optic.[39m
+Run the \`optic api add\` command to add these specs to optic
+spec-with-invalid-url.yml
+specwithoutkey.json
+specwithoutkey.yml
+
+"
+`;
+
+exports[`diff-all diffs all files in an workspace with x-optic-url keys non-verbose 1`] = `
+"[34mDiffing HEAD~1:mvspec.yml to empty spec[39m
+
+specification details:
+- /x-optic-url, /info/description [31mremoved[39m
+
+[1mPOST[22m /filler_route: [31mremoved[39m
+  
+[1mPOST[22m /api/filler-route: [31mremoved[39m
+  
+Checks
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
+   0/3 checks passed
+
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /api/filler-route
+   0/3 checks passed
+
+
+2 operations removed
+[32m[1m0 checks passed[22m[39m
+[31m[1m6 checks failed[22m[39m
+
+[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+[34mDiffing HEAD~1:specwithkey.json to specwithkey.json[39m
+No changes were detected
+
+Checks
+
+  [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /example
+   1/1 checks passed
+
+
+  [1m[42m[37m PASS [39m[49m[22m [1mPATCH[22m /example
+   1/1 checks passed
+
+
+  [1m[42m[37m PASS [39m[49m[22m [1mPOST[22m /example
+   1/1 checks passed
+
+
+  [1m[42m[37m PASS [39m[49m[22m [1mPUT[22m /example
+   1/1 checks passed
+
+
+
+[32m[1m4 checks passed[22m[39m
+[31m[1m0 checks failed[22m[39m
+
+[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+[34mDiffing HEAD~1:specwithkey.yml to specwithkey.yml[39m
+No changes were detected
+
+Checks
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
+   0/1 checks passed
+
+
+
+[32m[1m0 checks passed[22m[39m
+[31m[1m1 checks failed[22m[39m
+
+[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+[34mDiffing empty spec to movedspec.yml[39m
+
+specification details:
+- /x-optic-url, /info/description [32madded[39m
+- /openapi, /info/version, /info/title [33mchanged[39m
+
+[1mPOST[22m /filler_route: [32madded[39m
+  
+[1mPOST[22m /api/filler-route: [32madded[39m
+  
+Checks
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
+   0/1 checks passed
+
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /api/filler-route
+   0/1 checks passed
 
 
 2 operations added

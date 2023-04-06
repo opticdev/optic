@@ -72,6 +72,11 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
       'Adds additional tags to the HEAD spec. Should be used in conjunction with `--upload`'
     )
     .addOption(new Option('--ruleset <ruleset>', '').hideHelp())
+    .addOption(
+      new Option('--verbosity <verbosity>', 'verbosity level')
+        .choices(['low', 'medium', 'high'])
+        .default('medium')
+    )
     .option('--check', 'enable checks', false)
     .option('--upload', 'upload run to cloud', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
@@ -178,7 +183,7 @@ const runDiff = async (
         to: headFile.sourcemap,
       },
       specResults,
-      { output: 'pretty', verbose: false }
+      { output: 'pretty', verbosity: options.verbosity }
     )) {
       logger.info(log);
     }
@@ -205,6 +210,7 @@ type DiffActionOptions = {
   web: boolean;
   upload: boolean;
   json: boolean;
+  verbosity: 'low' | 'medium' | 'high';
   standard?: string;
   ruleset?: string;
   headTag?: string;
