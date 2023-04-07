@@ -3682,7 +3682,7 @@ __metadata:
     prettier: ^2.8.1
     ts-jest: ^29.0.3
     ts-node: ^10.9.1
-    typescript: ^4.9.5
+    typescript: ^5.0.0
   languageName: unknown
   linkType: soft
 
@@ -3727,7 +3727,7 @@ __metadata:
     semver: ^7.3.8
     ts-jest: ^29.0.3
     ts-node: ^10.9.1
-    typescript: ^4.9.5
+    typescript: ^5.0.0
     upath: ^2.0.1
     yaml: ^2.2.0
     yaml-ast-parser: ^0.0.43
@@ -3776,7 +3776,7 @@ __metadata:
     ts-invariant: ^0.9.3
     ts-jest: ^29.0.3
     ts-node: ^10.9.1
-    typescript: ^4.9.5
+    typescript: ^5.0.0
     yaml-ast-parser: ^0.0.43
   languageName: unknown
   linkType: soft
@@ -3826,7 +3826,7 @@ __metadata:
     prettier: ^2.8.1
     ts-jest: ^29.0.3
     ts-node: ^10.9.1
-    typescript: ^4.9.5
+    typescript: ^5.0.0
     url-join: ^4.0.1
     uuid: ^9.0.0
   bin:
@@ -3924,7 +3924,7 @@ __metadata:
     ts-node: ^10.9.1
     ts-results: ^3.3.0
     tunnel: ^0.0.6
-    typescript: ^4.9.5
+    typescript: ^5.0.0
     update-notifier: ^5.1.0
     url-join: ^4.0.1
     whatwg-mimetype: ^3.0.0
@@ -3958,7 +3958,7 @@ __metadata:
     semver: ^7.3.8
     ts-jest: ^29.0.3
     ts-node: ^10.9.1
-    typescript: ^4.9.5
+    typescript: ^5.0.0
   bin:
     rulesets-base: build/index.js
   languageName: unknown
@@ -3987,7 +3987,7 @@ __metadata:
     prettier: ^2.8.1
     ts-jest: ^29.0.3
     ts-node: ^10.9.1
-    typescript: ^4.9.5
+    typescript: ^5.0.0
     whatwg-mimetype: ^3.0.0
   bin:
     standard-rulesets: build/index.js
@@ -11073,23 +11073,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.9.5":
-  version: 4.9.5
-  resolution: "typescript@npm:4.9.5"
+"typescript@npm:^5.0.0":
+  version: 5.0.4
+  resolution: "typescript@npm:5.0.4"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: ee000bc26848147ad423b581bd250075662a354d84f0e06eb76d3b892328d8d4440b7487b5a83e851b12b255f55d71835b008a66cbf8f255a11e4400159237db
+  checksum: 82b94da3f4604a8946da585f7d6c3025fff8410779e5bde2855ab130d05e4fd08938b9e593b6ebed165bda6ad9292b230984f10952cf82f0a0ca07bbeaa08172
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.9.5#~builtin<compat/typescript>":
-  version: 4.9.5
-  resolution: "typescript@patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=23ec76"
+"typescript@patch:typescript@^5.0.0#~builtin<compat/typescript>":
+  version: 5.0.4
+  resolution: "typescript@patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=85af82"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: ab417a2f398380c90a6cf5a5f74badd17866adf57f1165617d6a551f059c3ba0a3e4da0d147b3ac5681db9ac76a303c5876394b13b3de75fdd5b1eaa06181c9d
+  checksum: bb309d320c59a26565fb3793dba550576ab861018ff3fd1b7fccabbe46ae4a35546bc45f342c0a0b6f265c801ccdf64ffd68f548f117ceb7f0eac4b805cd52a9
   languageName: node
   linkType: hard
 
