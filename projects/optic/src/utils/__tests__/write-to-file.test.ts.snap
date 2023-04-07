@@ -1,0 +1,68 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`yaml surgical patching can add extensions to yaml 1`] = `
+"
+openapi: 3.0.1
+x-optic-url: "https://fun.url.example"
+info:
+  title: TodoAPI
+  version: "1.1"
+"x-hello": "testing..."
+paths:
+  /todos/{todoId}:
+    get:
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: number
+          required: true
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  todos:
+                    type: array
+                    items:
+                      $ref: "./schemas.yml#/TodoRead"
+                required:
+                  - todos
+"
+`;
+
+exports[`yaml surgical patching can update extensions already in yaml 1`] = `
+"
+openapi: 3.0.1
+x-hello: "world"
+info:
+  title: TodoAPI
+  version: "1.1"
+paths:
+  /todos/{todoId}:
+    get:
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: number
+          required: true
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  todos:
+                    type: array
+                    items:
+                      $ref: "./schemas.yml#/TodoRead"
+                required:
+                  - todos
+"
+`;
