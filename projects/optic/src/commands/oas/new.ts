@@ -1,17 +1,11 @@
 import { Command } from 'commander';
-import Path from 'path';
 import fs from 'fs-extra';
-import { Writable, finished } from 'stream';
 import Semver from 'semver';
-import { promisify } from 'util';
-import { isJson, isYaml } from '@useoptic/openapi-io';
-
-import * as AT from './lib/async-tools';
+import { isJson, isYaml, writeYaml } from '@useoptic/openapi-io';
 import { trackEvent, flushEvents } from './lib/segment';
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
-import { SpecFile, SpecFiles, SpecFileOperations, SpecPatches } from './specs';
-
-const streamFinished = promisify(finished);
+import { logger } from '../../logger';
+import { createNewSpecFile } from '../../utils/specs';
 
 const defaultOpenAPIVersion = '3.1.0';
 
@@ -23,7 +17,7 @@ export async function newCommand(): Promise<Command> {
   command
     .description('create a new OpenAPI spec file')
     .argument(
-      '[file-path]',
+      '<file-path>',
       'path of the new OpenAPI file (written to stdout when not provided)'
     )
     .option(
@@ -31,40 +25,18 @@ export async function newCommand(): Promise<Command> {
       'OpenAPI version number to be used',
       defaultOpenAPIVersion
     )
-    .action(async (filePath?: string) => {
-      let absoluteFilePath: string;
-      let destination: Writable;
-
-      if (filePath) {
-        absoluteFilePath = Path.resolve(filePath);
-        let dirPath = Path.dirname(absoluteFilePath);
-        let fileBaseName = Path.basename(filePath);
-        if (await fs.pathExists(absoluteFilePath)) {
-          return await feedback.inputError(
-            `File '${fileBaseName}' already exists at ${dirPath}`,
-            InputErrors.DESTINATION_FILE_ALREADY_EXISTS
-          );
-        }
-        if (!(await fs.pathExists(dirPath))) {
-          return await feedback.inputError(
-            `to create ${fileBaseName}, dir must exist at ${dirPath}`,
-            InputErrors.DESTINATION_FILE_DIR_MISSING
-          );
-        }
-        if (!isJson(filePath) && !isYaml(filePath)) {
-          return await feedback.inputError(
-            `to create a new spec file by filename, either a .yml, .yaml or .json extension is required`,
-            'spec-file-extension-unsupported'
-          );
-        }
-
-        destination = fs.createWriteStream(absoluteFilePath);
-        destination.once('finish', () => {
-          feedback.success(`New spec file created at ${absoluteFilePath}`);
-        });
-      } else {
-        absoluteFilePath = 'stdout.yml';
-        destination = process.stdout;
+    .action(async (filePath: string) => {
+      if (await fs.pathExists(filePath)) {
+        return await feedback.inputError(
+          `File  already exists at ${filePath}`,
+          InputErrors.DESTINATION_FILE_ALREADY_EXISTS
+        );
+      }
+      if (!isJson(filePath) && !isYaml(filePath)) {
+        return await feedback.inputError(
+          `to create a new spec file by filename, either a .yml, .yaml or .json extension is required`,
+          'spec-file-extension-unsupported'
+        );
       }
 
       const options = command.opts();
@@ -79,7 +51,6 @@ export async function newCommand(): Promise<Command> {
             { suppliedVersion: options.oasVersion }
           );
         } else if (!Semver.satisfies(semver, '3.0.x || 3.1.x')) {
-          // TODO: track this to get an idea of other versions we should support
           return await feedback.inputError(
             `currently only OpenAPI v3.0.x and v3.1.x spec files can be created`,
             'oas-version-unsupported',
@@ -92,40 +63,24 @@ export async function newCommand(): Promise<Command> {
         oasVersion = defaultOpenAPIVersion;
       }
 
-      let newSpecFile = await createNewSpecFile(absoluteFilePath, oasVersion);
-      let trackingStats = streamFinished(destination).then(() =>
-        trackStats({ oasVersion })
-      );
-      SpecFile.write(newSpecFile, destination);
+      const specFile = createNewSpecFile(oasVersion);
+      if (isJson(filePath)) {
+        logger.info(`Initializing OpenAPI file at ${filePath}`);
+        await fs.writeFile(filePath, JSON.stringify(specFile, null, 2));
+      } else if (isYaml(filePath)) {
+        logger.info(`Initializing OpenAPI file at ${filePath}`);
+        await fs.writeFile(filePath, writeYaml(specFile));
+      } else {
+        return await feedback.inputError(
+          'OpenAPI file not found',
+          InputErrors.SPEC_FILE_NOT_FOUND
+        );
+      }
 
-      await trackingStats;
+      await trackStats({ oasVersion });
+      feedback.success(`New spec file created at ${filePath}`);
     });
-
   return command;
-}
-
-async function createNewSpecFile(
-  absoluteFilePath: string,
-  oasVersion: string = defaultOpenAPIVersion
-): Promise<SpecFile> {
-  let info = {
-    title: 'Untitled service',
-    version: '1.0.0',
-  };
-
-  const newSpecFile = SpecFile.create(absoluteFilePath);
-  const specPatches = SpecPatches.generateForNewSpec(info, oasVersion);
-
-  const fileOperations = SpecFileOperations.fromNewFilePatches(
-    newSpecFile.path,
-    specPatches
-  );
-
-  const [updatedSpecFile] = await AT.collect(
-    SpecFiles.patch([newSpecFile], fileOperations)
-  );
-
-  return updatedSpecFile;
 }
 
 async function trackStats({ oasVersion }: { oasVersion: string }) {
