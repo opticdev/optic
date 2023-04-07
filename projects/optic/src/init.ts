@@ -19,6 +19,7 @@ import { setupTlsCommand } from './commands/oas/setup-tls';
 import { verifyCommand } from './commands/oas/verify';
 import { registerDiffAll } from './commands/diff/diff-all';
 import { registerSpecPush } from './commands/spec/push';
+import { registerSpecAddApiUrl } from './commands/spec/add-api-url';
 import { registerLogin } from './commands/login/login';
 import { registerCiComment } from './commands/ci/comment/comment';
 import { logger } from './logger';
@@ -125,6 +126,7 @@ Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
 
   const specSubcommands = cli.command('spec').addHelpCommand(false);
   registerSpecPush(specSubcommands, cliConfig);
+  registerSpecAddApiUrl(specSubcommands, cliConfig);
 
   const ciSubcommands = cli.command('ci').addHelpCommand(false);
   registerCiComment(ciSubcommands, cliConfig);

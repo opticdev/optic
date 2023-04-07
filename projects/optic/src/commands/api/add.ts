@@ -11,7 +11,7 @@ import { OPTIC_URL_KEY } from '../../constants';
 import chalk from 'chalk';
 import * as GitCandidates from './git-get-file-candidates';
 import * as FsCandidates from './get-file-candidates';
-import { writeJson, writeYml } from './write-to-file';
+import { writeJson, writeYml } from '../../utils/write-to-file';
 import { uploadSpec } from '../../utils/cloud-specs';
 import * as Git from '../../utils/git-utils';
 
