@@ -18,13 +18,17 @@ import * as Git from './git-utils';
 
 const exec = promisify(callbackExec);
 
+export type ParseResultContext = {
+  vcs: 'git';
+  sha: string;
+  effective_at?: Date;
+  name: string;
+  email: string;
+} | null;
+
 export type ParseResult = ParseOpenAPIResult & {
   isEmptySpec: boolean;
-  context: {
-    vcs: 'git';
-    sha: string;
-    effective_at?: Date;
-  } | null;
+  context: ParseResultContext;
 };
 
 type SpecFromInput =
@@ -131,7 +135,7 @@ async function parseSpecAndDereference(
       }
 
       const sha = await Git.resolveGitRef(input.branch);
-      const effective_at = await Git.commitTime(sha);
+      const commitMeta = await Git.commitMeta(sha);
 
       return {
         ...(await parseOpenAPIFromRepoWithSourcemap(
@@ -143,24 +147,32 @@ async function parseSpecAndDereference(
         context: {
           vcs: 'git',
           sha,
-          effective_at,
+          effective_at: commitMeta.date,
+          name: commitMeta.name,
+          email: commitMeta.email,
         },
       };
     }
     case 'file':
+      let context: ParseResultContext = null;
+      if (config.vcs?.type === VCS.Git && config.vcs.status === 'clean') {
+        const commitMeta = await Git.commitMeta(config.vcs.sha);
+
+        context = {
+          vcs: 'git',
+          sha: config.vcs.sha,
+          effective_at: commitMeta.date,
+          name: commitMeta.name,
+          email: commitMeta.email,
+        };
+      }
+
       return {
         ...(await parseOpenAPIWithSourcemap(
           path.resolve(workingDir, input.filePath)
         )),
         isEmptySpec: false,
-        context:
-          config.vcs?.type === VCS.Git && config.vcs.status === 'clean'
-            ? {
-                vcs: 'git',
-                sha: config.vcs.sha,
-                effective_at: await Git.commitTime(config.vcs.sha),
-              }
-            : null,
+        context,
       };
   }
 }
