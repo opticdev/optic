@@ -335,5 +335,11 @@ const getDiffAction =
       ]);
     }
 
+    trackEvent('optic.diff.completed', {
+      diffs: diffResult.specResults.diffs.length,
+      checks: diffResult.specResults.results.length,
+      isInCi: config.isInCi,
+    });
+
     if (diffResult.checks.failed > 0 && options.check) process.exitCode = 1;
   };

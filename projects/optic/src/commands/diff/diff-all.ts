@@ -581,6 +581,17 @@ ${(spec.error as Error).message}`,
       await writeDataForCi([...completedComparisons, ...errors]);
     }
 
+    const comparisonsWithResults = results.filter(
+      (result) =>
+        result.specResults.diffs.length > 0 ||
+        (!options.check && result.specResults.results.length > 0)
+    );
+    trackEvent('optic.diff-all.completed', {
+      numberOfComparisonsWithResults: comparisonsWithResults.length,
+      numberOfComparisons: results.length,
+      isInCi: config.isInCi,
+    });
+
     if (options.json) {
       // Needs to be a console.log call to render over the logger.level
       console.log(
