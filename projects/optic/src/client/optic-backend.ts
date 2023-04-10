@@ -134,6 +134,8 @@ export class OpticBackendClient extends JsonHttpClient {
     upload_id: string;
     api_id: string;
     effective_at?: Date;
+    git_name?: string;
+    git_email?: string;
   }): Promise<{ id: string }> {
     return this.postJson(`/api/specs`, spec);
   }
