@@ -212,6 +212,7 @@ export const parseFilesFromRef = async (
   config: OpticCliConfig,
   options: {
     denormalize: boolean;
+    headStrict: boolean;
   }
 ): Promise<{
   baseFile: ParseResult;
@@ -249,7 +250,7 @@ export const parseFilesFromRef = async (
     ).then((file) => {
       return validateAndDenormalize(file, {
         denormalize: options.denormalize,
-        strict: true,
+        strict: options.headStrict,
       });
     }),
     pathFromGitRoot: gitFileName,
