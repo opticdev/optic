@@ -10,7 +10,7 @@ import { OpenAPIV3 } from '../../specs';
 import { diffOperationWithSpec, OperationDiffResultKind } from '../diffs';
 import * as AT from '../../lib/async-tools';
 import Url from 'url';
-import minimatch from 'minimatch';
+import { minimatch } from 'minimatch';
 
 export interface UndocumentedOperations
   extends AsyncIterable<UndocumentedOperation> {}
