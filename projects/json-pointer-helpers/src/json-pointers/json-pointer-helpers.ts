@@ -1,4 +1,4 @@
-import minimatch from 'minimatch';
+import { minimatch } from 'minimatch';
 
 const escape = (str: string) => str.replace(/~/g, '~0').replace(/\//g, '~1');
 
