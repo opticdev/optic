@@ -227,6 +227,28 @@ describe('non-strict validation', () => {
       }).toThrowErrorMatchingSnapshot();
     });
 
+    test('open api doc with invalid status code shape', () => {
+      expect(() => {
+        validateOpenApiV3Document(
+          {
+            openapi: '3.1.3',
+            info: { version: '0.0.0', title: 'Empty' },
+            paths: {
+              '/example': {
+                get: {
+                  responses: {
+                    '202': null,
+                  },
+                },
+              },
+            },
+          },
+          undefined,
+          { strictOpenAPI: false }
+        );
+      }).toThrowErrorMatchingSnapshot();
+    });
+
     test('open api doc with no path should throw an error', () => {
       expect(() => {
         validateOpenApiV3Document(
