@@ -72,6 +72,14 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
       'Adds additional tags to the HEAD spec. Should be used in conjunction with `--upload`'
     )
     .addOption(new Option('--ruleset <ruleset>', '').hideHelp())
+    .addOption(
+      new Option(
+        '--validation <validation>',
+        'specify the level of validation to run'
+      )
+        .choices(['strict', 'loose'])
+        .default('strict')
+    )
     .option('--check', 'enable checks', false)
     .option('--upload', 'upload run to cloud', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
@@ -82,13 +90,14 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
 const getBaseAndHeadFromFiles = async (
   file1: string,
   file2: string,
-  config: OpticCliConfig
+  config: OpticCliConfig,
+  strict: boolean
 ): Promise<[ParseResult, ParseResult]> => {
   try {
     // TODO update function to try download from spec-id cloud
     return await Promise.all([
-      getFileFromFsOrGit(file1, config, { strict: true, denormalize: true }),
-      getFileFromFsOrGit(file2, config, { strict: true, denormalize: true }),
+      getFileFromFsOrGit(file1, config, { strict, denormalize: true }),
+      getFileFromFsOrGit(file2, config, { strict, denormalize: true }),
     ]);
   } catch (e) {
     console.error(e instanceof Error ? e.message : e);
@@ -100,7 +109,8 @@ const getBaseAndHeadFromFileAndBase = async (
   file1: string,
   base: string,
   root: string,
-  config: OpticCliConfig
+  config: OpticCliConfig,
+  headStrict: boolean
 ): Promise<[ParseResult, ParseResult]> => {
   try {
     const { baseFile, headFile } = await parseFilesFromRef(
@@ -108,7 +118,7 @@ const getBaseAndHeadFromFileAndBase = async (
       base,
       root,
       config,
-      { denormalize: true }
+      { denormalize: true, headStrict: headStrict }
     );
     return [baseFile, headFile];
   } catch (e) {
@@ -208,6 +218,7 @@ type DiffActionOptions = {
   standard?: string;
   ruleset?: string;
   headTag?: string;
+  validation: 'strict' | 'loose';
 };
 
 const getDiffAction =
@@ -241,7 +252,12 @@ const getDiffAction =
     }
     let parsedFiles: [ParseResult, ParseResult];
     if (file1 && file2) {
-      parsedFiles = await getBaseAndHeadFromFiles(file1, file2, config);
+      parsedFiles = await getBaseAndHeadFromFiles(
+        file1,
+        file2,
+        config,
+        options.validation === 'strict'
+      );
     } else if (file1) {
       if (config.vcs?.type !== VCS.Git) {
         const commandVariant = `optic diff <file> --base <ref>`;
@@ -255,7 +271,8 @@ const getDiffAction =
         file1,
         options.base,
         config.root,
-        config
+        config,
+        options.validation === 'strict'
       );
     } else {
       logger.error(

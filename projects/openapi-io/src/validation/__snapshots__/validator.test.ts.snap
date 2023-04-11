@@ -1,5 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`non-strict validation should fail open api doc with invalid status code shape 1`] = `
+"[31minvalid openapi: [39m[1m[31mpaths > /example > get > responses > 202 must be object[39m[22m
+/paths/~1example/get/responses/202"
+`;
+
 exports[`non-strict validation should fail open api doc with no path should throw an error 1`] = `
 "[31minvalid openapi: [39m[1m[31m must have required property 'paths'[39m[22m
 "

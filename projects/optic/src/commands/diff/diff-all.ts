@@ -1,4 +1,4 @@
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 import pm from 'picomatch';
 import { OpticCliConfig, VCS } from '../../config';
 import { findOpenApiSpecsCandidates } from '../../utils/git-utils';
@@ -79,6 +79,14 @@ comma separated values (e.g. "**/*.yml,**/*.json")'
       '--standard <standard>',
       'run comparison with a locally defined standard, if not set, looks for the standard on the [x-optic-standard] key on the spec, and then the optic.dev.yml file.'
     )
+    .addOption(
+      new Option(
+        '--validation <validation>',
+        'specify the level of validation on HEAD specs'
+      )
+        .choices(['strict', 'loose'])
+        .default('strict')
+    )
     .option('--check', 'enable checks', false)
     .option('--upload', 'upload specs', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
@@ -102,6 +110,7 @@ type DiffAllActionOptions = {
   web: boolean;
   upload: boolean;
   json: boolean;
+  validation: 'strict' | 'loose';
   failOnUntrackedOpenapi: boolean;
 };
 
@@ -227,7 +236,7 @@ async function computeAll(
 
     try {
       toParseResults = await getFileFromFsOrGit(candidate.to, config, {
-        strict: true,
+        strict: options.validation === 'strict',
         denormalize: true,
       });
     } catch (e) {

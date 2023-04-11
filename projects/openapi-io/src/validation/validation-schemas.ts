@@ -1510,6 +1510,9 @@ export const basic3openapi_schema = {
       properties: {
         responses: {
           type: 'object',
+          additionalProperties: {
+            type: 'object',
+          },
         },
       },
     },
