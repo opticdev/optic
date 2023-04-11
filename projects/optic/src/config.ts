@@ -110,14 +110,7 @@ export async function loadCliConfig(
   configPath: string,
   client: OpticBackendClient
 ): Promise<OpticCliConfig> {
-  let config: unknown;
-  try {
-    config = yaml.load(await fs.readFile(configPath, 'utf-8'));
-  } catch (e) {
-    logger.error(e);
-    throw new UserError();
-  }
-
+  const config = yaml.load(await fs.readFile(configPath, 'utf-8'));
   validateConfig(config, configPath);
   const rawConfig = config as RawYmlConfig;
   await initializeRules(rawConfig, client);
