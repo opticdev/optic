@@ -346,6 +346,385 @@ specwithoutkey.yml
 "
 `;
 
+exports[`diff-all diffs all files in an workspace with x-optic-url keys 2`] = `
+{
+  "completed": [
+    {
+      "apiName": "folder/in-folder.yml",
+      "comparison": {
+        "groupedDiffs": {
+          "endpoints": {},
+          "specification": [],
+        },
+        "results": [
+          {
+            "error": "filler_route is not camelCase",
+            "exempted": false,
+            "location": {
+              "jsonPath": "/paths/~1filler_route/post",
+              "spec": "after",
+            },
+            "name": "operation path component naming check",
+            "passed": false,
+            "type": "requirement",
+            "where": "POST /filler_route",
+          },
+          {
+            "error": "filler-route is not camelCase",
+            "exempted": false,
+            "location": {
+              "jsonPath": "/paths/~1api~1filler-route/post",
+              "spec": "after",
+            },
+            "name": "operation path component naming check",
+            "passed": false,
+            "type": "requirement",
+            "where": "POST /api/filler-route",
+          },
+        ],
+      },
+      "opticWebUrl": "http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id",
+      "specUrl": "http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded",
+      "warnings": [],
+    },
+    {
+      "apiName": "HEAD~1:mvspec.yml",
+      "comparison": {
+        "groupedDiffs": {
+          "endpoints": {
+            "/api/filler-route-~_~-POST": {
+              "cookieParameters": {},
+              "diffs": [
+                {
+                  "before": "/paths/~1api~1filler-route/post",
+                  "change": "removed",
+                  "trail": "",
+                },
+              ],
+              "headerParameters": {},
+              "method": "POST",
+              "path": "/api/filler-route",
+              "pathParameters": {},
+              "queryParameters": {},
+              "request": {
+                "contents": {},
+                "diffs": [],
+              },
+              "responses": {},
+            },
+            "/filler_route-~_~-POST": {
+              "cookieParameters": {},
+              "diffs": [
+                {
+                  "before": "/paths/~1filler_route/post",
+                  "change": "removed",
+                  "trail": "",
+                },
+              ],
+              "headerParameters": {},
+              "method": "POST",
+              "path": "/filler_route",
+              "pathParameters": {},
+              "queryParameters": {},
+              "request": {
+                "contents": {},
+                "diffs": [],
+              },
+              "responses": {},
+            },
+          },
+          "specification": [
+            {
+              "before": "/x-optic-url",
+              "change": "removed",
+              "pathReconciliation": [],
+              "trail": "/x-optic-url",
+            },
+            {
+              "before": "/info/description",
+              "change": "removed",
+              "pathReconciliation": [],
+              "trail": "/info/description",
+            },
+          ],
+        },
+        "results": [
+          {
+            "error": "cannot remove an operation. This is a breaking change.",
+            "exempted": false,
+            "location": {
+              "jsonPath": "/paths/~1filler_route/post",
+              "spec": "before",
+            },
+            "name": "prevent operation removal",
+            "passed": false,
+            "type": "removed",
+            "where": "POST /filler_route",
+          },
+          {
+            "error": "cannot remove response property 'id'. This is a breaking change.",
+            "exempted": false,
+            "location": {
+              "jsonPath": "/paths/~1filler_route/post/responses/201/content/application~1json/schema/properties/id",
+              "spec": "before",
+            },
+            "name": "prevent removing response property",
+            "passed": false,
+            "type": "removed",
+            "where": "POST /filler_route response 201 response body: application/json property id",
+          },
+          {
+            "error": "must not remove response status code 201. This is a breaking change.",
+            "exempted": false,
+            "location": {
+              "jsonPath": "/paths/~1filler_route/post/responses/201",
+              "spec": "before",
+            },
+            "name": "prevent response status code removal",
+            "passed": false,
+            "type": "removed",
+            "where": "POST /filler_route response 201",
+          },
+          {
+            "error": "cannot remove an operation. This is a breaking change.",
+            "exempted": false,
+            "location": {
+              "jsonPath": "/paths/~1api~1filler-route/post",
+              "spec": "before",
+            },
+            "name": "prevent operation removal",
+            "passed": false,
+            "type": "removed",
+            "where": "POST /api/filler-route",
+          },
+          {
+            "error": "cannot remove response property 'id'. This is a breaking change.",
+            "exempted": false,
+            "location": {
+              "jsonPath": "/paths/~1api~1filler-route/post/responses/201/content/application~1json/schema/properties/id",
+              "spec": "before",
+            },
+            "name": "prevent removing response property",
+            "passed": false,
+            "type": "removed",
+            "where": "POST /api/filler-route response 201 response body: application/json property id",
+          },
+          {
+            "error": "must not remove response status code 201. This is a breaking change.",
+            "exempted": false,
+            "location": {
+              "jsonPath": "/paths/~1api~1filler-route/post/responses/201",
+              "spec": "before",
+            },
+            "name": "prevent response status code removal",
+            "passed": false,
+            "type": "removed",
+            "where": "POST /api/filler-route response 201",
+          },
+        ],
+      },
+      "opticWebUrl": "http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id",
+      "specUrl": null,
+      "warnings": [],
+    },
+    {
+      "apiName": "specwithkey.json",
+      "comparison": {
+        "groupedDiffs": {
+          "endpoints": {},
+          "specification": [],
+        },
+        "results": [
+          {
+            "exempted": false,
+            "location": {
+              "jsonPath": "/paths/~1example/get",
+              "spec": "after",
+            },
+            "name": "operation path component naming check",
+            "passed": true,
+            "type": "requirement",
+            "where": "GET /example",
+          },
+          {
+            "exempted": false,
+            "location": {
+              "jsonPath": "/paths/~1example/patch",
+              "spec": "after",
+            },
+            "name": "operation path component naming check",
+            "passed": true,
+            "type": "requirement",
+            "where": "PATCH /example",
+          },
+          {
+            "exempted": false,
+            "location": {
+              "jsonPath": "/paths/~1example/post",
+              "spec": "after",
+            },
+            "name": "operation path component naming check",
+            "passed": true,
+            "type": "requirement",
+            "where": "POST /example",
+          },
+          {
+            "exempted": false,
+            "location": {
+              "jsonPath": "/paths/~1example/put",
+              "spec": "after",
+            },
+            "name": "operation path component naming check",
+            "passed": true,
+            "type": "requirement",
+            "where": "PUT /example",
+          },
+        ],
+      },
+      "opticWebUrl": "http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id",
+      "specUrl": "http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded",
+      "warnings": [],
+    },
+    {
+      "apiName": "specwithkey.yml",
+      "comparison": {
+        "groupedDiffs": {
+          "endpoints": {},
+          "specification": [],
+        },
+        "results": [
+          {
+            "error": "filler_route is not camelCase",
+            "exempted": false,
+            "location": {
+              "jsonPath": "/paths/~1filler_route/post",
+              "spec": "after",
+            },
+            "name": "operation path component naming check",
+            "passed": false,
+            "type": "requirement",
+            "where": "POST /filler_route",
+          },
+        ],
+      },
+      "opticWebUrl": "http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id",
+      "specUrl": "http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded",
+      "warnings": [],
+    },
+    {
+      "apiName": "movedspec.yml",
+      "comparison": {
+        "groupedDiffs": {
+          "endpoints": {
+            "/api/filler-route-~_~-POST": {
+              "cookieParameters": {},
+              "diffs": [
+                {
+                  "after": "/paths/~1api~1filler-route/post",
+                  "change": "added",
+                  "trail": "",
+                },
+              ],
+              "headerParameters": {},
+              "method": "POST",
+              "path": "/api/filler-route",
+              "pathParameters": {},
+              "queryParameters": {},
+              "request": {
+                "contents": {},
+                "diffs": [],
+              },
+              "responses": {},
+            },
+            "/filler_route-~_~-POST": {
+              "cookieParameters": {},
+              "diffs": [
+                {
+                  "after": "/paths/~1filler_route/post",
+                  "change": "added",
+                  "trail": "",
+                },
+              ],
+              "headerParameters": {},
+              "method": "POST",
+              "path": "/filler_route",
+              "pathParameters": {},
+              "queryParameters": {},
+              "request": {
+                "contents": {},
+                "diffs": [],
+              },
+              "responses": {},
+            },
+          },
+          "specification": [
+            {
+              "after": "/openapi",
+              "before": "/openapi",
+              "change": "changed",
+              "trail": "/openapi",
+            },
+            {
+              "after": "/x-optic-url",
+              "change": "added",
+              "trail": "/x-optic-url",
+            },
+            {
+              "after": "/info/version",
+              "before": "/info/version",
+              "change": "changed",
+              "trail": "/info/version",
+            },
+            {
+              "after": "/info/title",
+              "before": "/info/title",
+              "change": "changed",
+              "trail": "/info/title",
+            },
+            {
+              "after": "/info/description",
+              "change": "added",
+              "trail": "/info/description",
+            },
+          ],
+        },
+        "results": [
+          {
+            "error": "filler_route is not camelCase",
+            "exempted": false,
+            "location": {
+              "jsonPath": "/paths/~1filler_route/post",
+              "spec": "after",
+            },
+            "name": "operation path component naming check",
+            "passed": false,
+            "type": "requirement",
+            "where": "POST /filler_route",
+          },
+          {
+            "error": "filler-route is not camelCase",
+            "exempted": false,
+            "location": {
+              "jsonPath": "/paths/~1api~1filler-route/post",
+              "spec": "after",
+            },
+            "name": "operation path component naming check",
+            "passed": false,
+            "type": "requirement",
+            "where": "POST /api/filler-route",
+          },
+        ],
+      },
+      "opticWebUrl": "http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id",
+      "specUrl": "http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded",
+      "warnings": [],
+    },
+  ],
+  "failed": [],
+  "noop": [],
+}
+`;
+
 exports[`diff-all diffs all files with --json 1`] = `
 "{"results":{"folder/in-folder.yml":{"operations":[]},"mvspec.yml":{"operations":[{"name":"POST /filler_route","change":"removed","attributes":[{"key":"","before":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}}}}},"change":"removed"}],"parameters":[],"responses":[]},{"name":"POST /api/filler-route","change":"removed","attributes":[{"key":"","before":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}}}}},"change":"removed"}],"parameters":[],"responses":[]}]},"specwithkey.json":{"operations":[]},"specwithkey.yml":{"operations":[]},"movedspec.yml":{"operations":[{"name":"POST /filler_route","change":"added","attributes":[{"key":"","after":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}}}}},"change":"added"}],"parameters":[],"responses":[]},{"name":"POST /api/filler-route","change":"added","attributes":[{"key":"","after":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}}}}},"change":"added"}],"parameters":[],"responses":[]}]}},"warnings":{"missingOpticUrl":[{"path":"spec-with-invalid-url.yml"},{"path":"specwithoutkey.json"},{"path":"specwithoutkey.yml"}],"unparseableFromSpec":[],"unparseableToSpec":[]}}
 "

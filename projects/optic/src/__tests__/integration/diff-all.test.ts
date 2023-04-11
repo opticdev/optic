@@ -14,6 +14,7 @@ import {
   run,
 } from './integration';
 import path from 'node:path';
+import fs from 'node:fs/promises';
 
 jest.setTimeout(30000);
 
@@ -67,6 +68,11 @@ describe('diff-all', () => {
     );
 
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(
+      JSON.parse(
+        await fs.readFile(path.join(workspace, 'ci-run-details.json'), 'utf-8')
+      )
+    ).toMatchSnapshot();
     expect(code).toBe(1);
   });
 
