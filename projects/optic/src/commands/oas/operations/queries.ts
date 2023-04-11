@@ -172,7 +172,7 @@ export class OperationQueries {
         let [pattern] = exactMatch;
         return Ok(Some(pattern));
       } else {
-        return Err('Path matched multiple operations');
+        return Ok(Some(qualifiedPatterns[0][0]));
       }
     } else if (qualifiedPatterns.length === 1) {
       let [pattern] = qualifiedPatterns[0];
