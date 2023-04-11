@@ -103,9 +103,6 @@ export async function detectCliConfig(
     return undefined;
   }
 
-  console.warn(
-    'Deprecation warning: optic.yml file is deprecated. Please rename your file to optic.dev.yml'
-  );
   return expectedYmlPath;
 }
 
@@ -113,7 +110,14 @@ export async function loadCliConfig(
   configPath: string,
   client: OpticBackendClient
 ): Promise<OpticCliConfig> {
-  const config = yaml.load(await fs.readFile(configPath, 'utf-8'));
+  let config: unknown;
+  try {
+    config = yaml.load(await fs.readFile(configPath, 'utf-8'));
+  } catch (e) {
+    logger.error(e);
+    throw new UserError();
+  }
+
   validateConfig(config, configPath);
   const rawConfig = config as RawYmlConfig;
   await initializeRules(rawConfig, client);
@@ -237,6 +241,7 @@ export async function initializeConfig(): Promise<OpticCliConfig> {
     const opticYmlPath = await detectCliConfig(gitRoot);
 
     if (opticYmlPath) {
+      logger.debug(`Using config found at ${opticYmlPath}`);
       cliConfig = {
         ...cliConfig,
         ...(await loadCliConfig(opticYmlPath, cliConfig.client)),
