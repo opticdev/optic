@@ -73,7 +73,7 @@ Create an account and generate a personal access token at ${chalk.underline.blue
 
     if (result.user) {
       alias(result.user.userId);
-      identify(result.user.email);
+      identify({ email: result.user.email, userId: result.user.userId });
       trackEvent('cli.login');
       await flushEvents();
     }
