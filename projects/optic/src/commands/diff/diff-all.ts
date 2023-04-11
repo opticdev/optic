@@ -27,6 +27,7 @@ import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { writeDataForCi } from '../../utils/ci-data';
 import { errorHandler } from '../../error-handler';
 import { checkOpenAPIVersion } from '@useoptic/openapi-io';
+import path from 'path';
 
 const usage = () => `
   optic diff-all
@@ -121,7 +122,8 @@ function matchCandidates(
     ref: string;
     paths: string[];
   },
-  to: { ref?: string; paths: string[] }
+  to: { ref?: string; paths: string[] },
+  root: string
 ): Map<
   string,
   {
@@ -130,21 +132,27 @@ function matchCandidates(
   }
 > {
   const results = new Map<string, { from?: string; to?: string }>();
-  for (const path of from.paths) {
-    const strippedPath = path.replace(`${from.ref}:`, '');
-    results.set(strippedPath, {
-      from: path,
+  for (const fromPath of from.paths) {
+    const strippedPath = fromPath.replace(`${from.ref}:`, '');
+    const pathFromRoot = path.relative(root, strippedPath);
+    results.set(pathFromRoot, {
+      from: `${from.ref}:${pathFromRoot}`,
     });
   }
 
-  for (const path of to.paths) {
-    const strippedPath = to.ref ? path.replace(`${to.ref}:`, '') : path;
-    const maybePathObject = results.get(strippedPath);
+  for (const toPath of to.paths) {
+    const hasRef = to.ref && toPath.startsWith(`${to.ref}:`);
+    const strippedPath = hasRef ? toPath.replace(`${to.ref}:`, '') : toPath;
+    const pathFromRoot = path.relative(root, strippedPath);
+    const refAndPathFromRoot = hasRef ? `${to.ref}:${pathFromRoot}` : toPath;
+
+    const maybePathObject = results.get(pathFromRoot);
+
     if (maybePathObject) {
-      maybePathObject.to = path;
+      maybePathObject.to = refAndPathFromRoot;
     } else {
-      results.set(strippedPath, {
-        to: path,
+      results.set(pathFromRoot, {
+        to: refAndPathFromRoot,
       });
     }
   }
@@ -525,7 +533,8 @@ const getDiffAllAction =
           matches: options.match,
           ignores: options.ignore,
         }),
-      }
+      },
+      config.root
     );
 
     const { warnings, results } = await computeAll(
