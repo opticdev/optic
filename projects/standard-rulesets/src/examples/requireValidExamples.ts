@@ -45,7 +45,6 @@ export function validateSchema(
 ): { pass: true } | { pass: false; error: string } {
   const schemaCopy: SchemaObject = JSON.parse(JSON.stringify(schema));
   prepareSchemaForValidation(schemaCopy);
-  console.log(JSON.stringify(schemaCopy));
   const schemaCompiled = ajv.compile(schemaCopy);
 
   const result = schemaCompiled(example);
@@ -60,8 +59,6 @@ export function validateSchema(
         error.message = `must NOT have additional property '${error.params.unevaluatedProperty}'`;
       }
     });
-
-    console.log(schemaCompiled.errors);
 
     const error = `  - ${ajv.errorsText(schemaCompiled.errors, {
       separator: '\n- ',
