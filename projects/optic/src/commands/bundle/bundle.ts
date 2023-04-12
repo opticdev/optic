@@ -536,17 +536,18 @@ function bundleMatchingRefsAsComponents<T>(
   ).newDocument;
   //
   // // then add $refs in reverse depth order (to prevent conflicts).
-  const sortedUpdateOperations = sortby(
+  specCopy = sortby(
     updateUsagesOperations,
     (op) => jsonPointerHelpers.decode(op.path).length
-  );
-
-  specCopy = jsonpatch.applyPatch(
-    specCopy,
-    sortedUpdateOperations,
-    true,
-    true
-  ).newDocument;
+  ).reduce((specCopy, operation) => {
+    const error = jsonpatch.validate([operation], specCopy);
+    if (!error) {
+      return jsonpatch.applyPatch(specCopy, [operation], true, true)
+        .newDocument;
+    } else {
+      return specCopy;
+    }
+  }, specCopy);
 
   return specCopy;
 }
