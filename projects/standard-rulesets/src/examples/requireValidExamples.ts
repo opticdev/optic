@@ -72,49 +72,65 @@ export function validateSchema(
   return { pass: true };
 }
 
+function isRef(
+  obj: SchemaObject | null | undefined | boolean
+): obj is OpenAPIV3.ReferenceObject {
+  return typeof obj === 'object' && obj !== null && '$ref' in obj;
+}
+
 // Sets all strict validation (no additional properties) and removes $refs which could be left behind in circular references
 function prepareSchemaForValidation(
-  schema: SchemaObject | undefined,
+  schema: SchemaObject | undefined | null,
   opts?: { inAllOf?: boolean }
 ) {
   const inAllOf = opts?.inAllOf ?? false;
-  if (Array.isArray(schema)) {
-    schema.forEach((item) => prepareSchemaForValidation(item));
-  } else if (typeof schema === 'object' && schema !== null) {
-    // is an object
-    if ('$ref' in schema) {
-      //
-    } else {
-      // we should check for refs in `additionalProperties`
-      // check for refs in items
-      // allOf, oneOf, anyOf, not
 
-      if (!inAllOf) {
-        // make default false
-        if (
-          schema.hasOwnProperty('type') &&
-          schema.type === 'object' &&
-          !schema.hasOwnProperty('additionalProperties')
-        ) {
-          schema.additionalProperties = false;
-        } else if (
-          schema.allOf &&
-          schema.type !== 'array' &&
-          !schema.hasOwnProperty('additionalProperties') &&
-          !schema.hasOwnProperty('unevaluatedProperties')
-        ) {
-          // Setting a JSON schema
-          (schema as any).unevaluatedProperties = false;
-          schema.allOf.forEach((s) => {
-            prepareSchemaForValidation(s, { inAllOf: true });
-          });
-          return;
-        }
+  if (!schema) {
+    return;
+  }
+
+  if (isRef(schema)) {
+    // @ts-ignore
+    delete schema.$ref;
+    // @ts-ignore
+    schema.type = 'object';
+  } else if (schema.type === 'array') {
+    prepareSchemaForValidation(schema.items);
+  } else if (schema.type === 'object') {
+    if (!inAllOf) {
+      if (!schema.additionalProperties) {
+        schema.additionalProperties = false;
       }
+      if (!(schema as any).unevaluatedProperties) {
+        (schema as any).unevaluatedProperties = false;
+      }
+    }
 
-      Object.values(schema).forEach((s) => {
-        prepareSchemaForValidation(s);
-      });
+    if (isRef(schema.additionalProperties)) {
+      schema.additionalProperties = {
+        type: 'object',
+      };
+    }
+
+    if (schema.properties) {
+      Object.values(schema.properties).forEach((s) =>
+        prepareSchemaForValidation(s)
+      );
+    }
+
+    // Iterate through allOfs, oneOfs, anyOf, not
+    const keys = ['allOf', 'oneOf', 'anyOf', 'not'] as const;
+    for (const key of keys) {
+      const polymorphicSchema = schema[key];
+      if (Array.isArray(polymorphicSchema)) {
+        polymorphicSchema.forEach((s) =>
+          prepareSchemaForValidation(s, { inAllOf: key === 'allOf' })
+        );
+      } else if (isRef(polymorphicSchema)) {
+        // @ts-ignore
+        delete polymorphicSchema.$ref;
+        schema.type = 'object';
+      }
     }
   }
 }
