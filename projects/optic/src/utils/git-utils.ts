@@ -107,6 +107,7 @@ export type CommitMeta = {
   name: string;
   email: string;
   date: Date;
+  message: string;
 };
 
 export const commitMeta = async (ref: string): Promise<CommitMeta> =>
@@ -116,10 +117,20 @@ export const commitMeta = async (ref: string): Promise<CommitMeta> =>
         reject(err || stderr);
       }
 
-      const [name, email, date] = stdout.trim().split('\t');
-      resolve({ name, email, date: new Date(parseInt(date) * 1000) });
+      stdout = stdout.trim();
+      const lines = stdout.split('\n', 2);
+      const [name, email, date] = lines[0]
+        ? lines[0].split('\t')
+        : ['', '', '0'];
+
+      resolve({
+        name,
+        email,
+        date: new Date(parseInt(date) * 1000),
+        message: lines[1] ? lines[1] : '',
+      });
     };
-    const command = `git show -s --date=iso-strict --format="%an\t%ae\t%at" ${ref}`;
+    const command = `git show -s --date=iso-strict --format="%an\t%ae\t%at\n%s" ${ref}`;
     exec(command, cb);
   });
 
