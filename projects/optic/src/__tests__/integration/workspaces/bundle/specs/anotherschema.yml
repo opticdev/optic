@@ -1,5 +1,2 @@
 CreatedAt:
-  type: object
-  properties:
-    example:
-      $ref: "schemas.yml#/TodoRead"
+  type: string

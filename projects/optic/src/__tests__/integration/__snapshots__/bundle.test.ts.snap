@@ -46,6 +46,8 @@ exports[`bundle bundles components together 1`] = `
           "type": "string"
         "created_at":
           "$ref": "#/components/schemas/anotherschema"
+        "firstTodo":
+          "$ref": "#/components/schemas/schemas"
         "todos":
           "type": "array"
           "items":
