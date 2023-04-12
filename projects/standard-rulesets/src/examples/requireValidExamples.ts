@@ -100,10 +100,10 @@ function prepareSchemaForValidation(
   }
 
   if (!inAllOf) {
-    if (!schema.additionalProperties) {
+    if (schema.type === 'object' && !schema.additionalProperties) {
       schema.additionalProperties = false;
     }
-    if (!(schema as any).unevaluatedProperties) {
+    if (schema.allOf && !(schema as any).unevaluatedProperties) {
       (schema as any).unevaluatedProperties = false;
     }
   }

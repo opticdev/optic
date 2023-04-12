@@ -286,7 +286,7 @@ describe('examples should default to additional properties false', () => {
     expect(result).toMatchSnapshot();
   });
 
-  test.only('ajv config will work on additional properties with all of', () => {
+  test('ajv config will work on additional properties with all of', () => {
     const result = validateSchema(
       {
         allOf: [
@@ -329,7 +329,7 @@ describe('examples should default to additional properties false', () => {
           },
         ],
       },
-      { a: 'abc', b: { l: '' }, c: 'A' },
+      { a: 'abc', b: { l: '' } },
       ajvInstance
     );
     expect(result.pass).toBe(false);
