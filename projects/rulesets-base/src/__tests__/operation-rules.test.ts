@@ -1,4 +1,4 @@
-import { jest, test, expect, describe } from '@jest/globals'
+import { jest, test, expect, describe } from '@jest/globals';
 import { defaultEmptySpec, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { RuleError } from '../errors';
 import { RuleRunner, Matchers } from '../rule-runner';
@@ -110,6 +110,7 @@ describe('OperationRule', () => {
       const ruleRunner = new RuleRunner([
         new OperationRule({
           name: ruleName,
+          severity: 'warn',
           rule: (operationAssertions) => {
             operationAssertions.requirement(
               'must contain a description',

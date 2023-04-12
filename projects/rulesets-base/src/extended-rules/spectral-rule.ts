@@ -65,6 +65,7 @@ function toOpticRuleResult(
 ): RuleResult {
   return {
     exempted: opts.exempted,
+    severity: 'error', // TODO update this to look at spectral ruleset
     docsLink: opts.docsLink,
     passed: false,
     error: `Error code: ${spectralResult.code.toString()}: ${

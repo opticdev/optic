@@ -13,6 +13,7 @@ const createSpecificationResult = (
   rule: SpecificationRule
 ): Result => ({
   type: assertionResult.type,
+  severity: assertionResult.severity,
   where: `specification`,
   isMust: true,
   change: assertionResult.changeOrFact,
@@ -76,7 +77,9 @@ export const runSpecificationRules = ({
       );
 
       if (matches) {
-        const specificationAssertions = createSpecificationAssertions();
+        const specificationAssertions = createSpecificationAssertions(
+          specificationRule.severity
+        );
         // Register the user's rule definition, this is collected in the specificationAssertions object
         specificationRule.rule(specificationAssertions, rulesContext);
 
@@ -110,7 +113,9 @@ export const runSpecificationRules = ({
         specificationRule.name
       );
       if (matches) {
-        const specificationAssertions = createSpecificationAssertions();
+        const specificationAssertions = createSpecificationAssertions(
+          specificationRule.severity
+        );
         // Register the user's rule definition, this is collected in the specificationAssertions object
         specificationRule.rule(specificationAssertions, rulesContext);
 

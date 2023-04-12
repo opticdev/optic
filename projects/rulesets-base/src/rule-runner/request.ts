@@ -24,6 +24,7 @@ const createRequestBodyResult = (
   rule: RequestRule
 ): Result => ({
   type: assertionResult.type,
+  severity: assertionResult.severity,
   where: `${operation.method.toUpperCase()} ${operation.path} request body: ${
     request.contentType
   }`,
@@ -48,6 +49,7 @@ const createRequestPropertyResult = (
   rule: RequestRule | PropertyRule
 ): Result => ({
   type: assertionResult.type,
+  severity: assertionResult.severity,
   where: `${operation.method.toUpperCase()} ${operation.path} request body: ${
     request.contentType
   } property: ${property.location.conceptualLocation.jsonSchemaTrail.join(
@@ -124,7 +126,7 @@ export const runRequestRules = ({
         },
         customRuleContext
       );
-      const requestAssertions = createRequestAssertions();
+      const requestAssertions = createRequestAssertions(requestRule.severity);
       // Register the user's rule definition, this is collected in the requestAssertions object
       requestRule.rule(requestAssertions, ruleContext);
 
@@ -200,7 +202,7 @@ export const runRequestRules = ({
         },
         customRuleContext
       );
-      const requestAssertions = createRequestAssertions();
+      const requestAssertions = createRequestAssertions(requestRule.severity);
       // Register the user's rule definition, this is collected in the requestAssertions object
       requestRule.rule(requestAssertions, ruleContext);
       for (const contentType of requestNode.bodies.keys()) {
@@ -291,7 +293,9 @@ export const runRequestRules = ({
         },
         customRuleContext
       );
-      const propertyAssertions = createPropertyAssertions();
+      const propertyAssertions = createPropertyAssertions(
+        propertyRule.severity
+      );
       // // Register the user's rule definition, this is collected in the propertyAssertions object
       propertyRule.rule(propertyAssertions, ruleContext);
 
@@ -347,7 +351,9 @@ export const runRequestRules = ({
         customRuleContext
       );
       // Register the user's rule definition, this is collected in the propertyAssertions object
-      const propertyAssertions = createPropertyAssertions();
+      const propertyAssertions = createPropertyAssertions(
+        propertyRule.severity
+      );
       // Run the user's rules that have been stored in propertyAssertions
       propertyRule.rule(propertyAssertions, ruleContext);
       for (const contentType of requestNode.bodies.keys()) {

@@ -1,4 +1,4 @@
-import { jest, test, expect, describe } from '@jest/globals'
+import { jest, test, expect, describe } from '@jest/globals';
 import { defaultEmptySpec, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { RuleError } from '../errors';
 import { RuleRunner } from '../rule-runner';
@@ -160,6 +160,7 @@ describe('ResponseBodyRule', () => {
       const ruleRunner = new RuleRunner([
         new ResponseBodyRule({
           name: ruleName,
+          severity: 'warn',
           rule: (responseBodyAssertions) => {
             responseBodyAssertions.body.requirement(
               'must contain a type',

@@ -1,5 +1,8 @@
+export type Severity = 'info' | 'warn' | 'error';
+
 export interface RuleResult {
   where: string;
+  severity: Severity;
   error?: string;
   passed: boolean;
   exempted?: boolean;

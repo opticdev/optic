@@ -53,6 +53,7 @@ function resultToRuleResult(r: Result): RuleResult {
     docsLink: r.docsLink,
     expected: r.expected,
     received: r.received,
+    severity: r.severity ?? 'error',
   };
 }
 
