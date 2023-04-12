@@ -1,3 +1,4 @@
+import { Severity } from '@useoptic/openapi-utilities';
 import { Property, PropertyAssertions, RuleContext } from '../types';
 
 type PropertyRuleConfig<RuleName extends string> = {
@@ -5,6 +6,7 @@ type PropertyRuleConfig<RuleName extends string> = {
   docsLink?: string;
   matches?: PropertyRule['matches'];
   rule: PropertyRule['rule'];
+  severity?: Severity;
 };
 
 export class PropertyRule<RuleName extends string = string> {
@@ -13,6 +15,7 @@ export class PropertyRule<RuleName extends string = string> {
   public docsLink?: string;
   public matches?: (property: Property, context: RuleContext) => boolean;
   public rule: (property: PropertyAssertions, context: RuleContext) => void;
+  public severity: Severity;
 
   constructor(config: PropertyRuleConfig<RuleName>) {
     // this could be invoked via javascript so we still to check
@@ -27,6 +30,7 @@ export class PropertyRule<RuleName extends string = string> {
     this.matches = config.matches;
     this.rule = config.rule;
     this.type = 'property-rule';
+    this.severity = config.severity ?? 'error';
   }
 
   static isInstance(v: any): v is PropertyRule {

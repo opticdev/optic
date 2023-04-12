@@ -1,3 +1,4 @@
+import { Severity } from '@useoptic/openapi-utilities';
 import { ResponseBody, ResponseBodyAssertions, RuleContext } from '../types';
 
 type ResponseBodyRuleConfig<RuleName extends string> = {
@@ -5,6 +6,7 @@ type ResponseBodyRuleConfig<RuleName extends string> = {
   docsLink?: string;
   matches?: ResponseBodyRule['matches'];
   rule: ResponseBodyRule['rule'];
+  severity?: Severity;
 };
 
 export class ResponseBodyRule<RuleName extends string = string> {
@@ -13,6 +15,7 @@ export class ResponseBodyRule<RuleName extends string = string> {
   public docsLink?: string;
   public matches?: (response: ResponseBody, context: RuleContext) => boolean;
   public rule: (response: ResponseBodyAssertions, context: RuleContext) => void;
+  public severity: Severity;
 
   constructor(config: ResponseBodyRuleConfig<RuleName>) {
     // this could be invoked via javascript so we still to check
@@ -27,6 +30,7 @@ export class ResponseBodyRule<RuleName extends string = string> {
     this.matches = config.matches;
     this.rule = config.rule;
     this.type = 'response-body-rule';
+    this.severity = config.severity ?? 'error';
   }
 
   static isInstance(v: any): v is ResponseBodyRule {
