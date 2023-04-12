@@ -286,7 +286,7 @@ describe('examples should default to additional properties false', () => {
     expect(result).toMatchSnapshot();
   });
 
-  test('ajv config will work on additional properties with all of', () => {
+  test.only('ajv config will work on additional properties with all of', () => {
     const result = validateSchema(
       {
         allOf: [
@@ -311,7 +311,7 @@ describe('examples should default to additional properties false', () => {
     expect(result).toMatchSnapshot();
   });
 
-  test('ajv config will work on additional properties with all of at different levels of nesting', () => {
+  test.only('ajv config will work on additional properties with all of at different levels of nesting', () => {
     const result = validateSchema(
       {
         allOf: [
