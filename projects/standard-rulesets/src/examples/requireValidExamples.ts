@@ -6,8 +6,10 @@ import {
   RuleError,
 } from '@useoptic/rulesets-base';
 import { OpenAPIV3 } from 'openapi-types';
-import Ajv, { SchemaObject } from 'ajv/dist/2019';
+import Ajv from 'ajv/dist/2019';
 import addFormats from 'ajv-formats';
+
+type SchemaObject = OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject;
 
 export function defaultAjv() {
   const validator = new Ajv({ strict: false, unevaluated: true });
@@ -41,9 +43,9 @@ export function validateSchema(
   example: unknown,
   ajv: Ajv
 ): { pass: true } | { pass: false; error: string } {
-  const copy = JSON.parse(JSON.stringify(schema));
-  strictAdditionalProperties(copy);
-  const schemaCompiled = ajv.compile(copy);
+  const schemaCopy: SchemaObject = JSON.parse(JSON.stringify(schema));
+  prepareSchemaForValidation(schemaCopy);
+  const schemaCompiled = ajv.compile(schemaCopy);
 
   const result = schemaCompiled(example);
 
@@ -69,43 +71,65 @@ export function validateSchema(
   return { pass: true };
 }
 
-function strictAdditionalProperties(schema: any, inAllOf: boolean = false) {
-  if (Array.isArray(schema)) {
-    schema.forEach((item) => strictAdditionalProperties(item));
+function isRef(
+  obj: SchemaObject | null | undefined | boolean
+): obj is OpenAPIV3.ReferenceObject {
+  return typeof obj === 'object' && obj !== null && '$ref' in obj;
+}
+
+// Sets all strict validation (no additional properties) and removes $refs which could be left behind in circular references
+function prepareSchemaForValidation(
+  schema: SchemaObject | undefined | null,
+  opts?: { inAllOf?: boolean }
+) {
+  const inAllOf = opts?.inAllOf ?? false;
+
+  if (!schema) {
     return;
   }
 
-  if (typeof schema === 'object' && schema !== null) {
-    if (!inAllOf) {
-      // make default false
-      if (
-        schema.hasOwnProperty('type') &&
-        schema.type === 'object' &&
-        !schema.hasOwnProperty('additionalProperties')
-      ) {
-        schema.additionalProperties = false;
-      } else if (
-        schema.hasOwnProperty('allOf') &&
-        !schema.hasOwnProperty('additionalProperties') &&
-        !schema.hasOwnProperty('unevaluatedProperties')
-      ) {
-        schema.unevaluatedProperties = false;
-        schema.allOf.forEach((s) => {
-          strictAdditionalProperties(s, true);
-        });
-        return;
-      }
-    } else if (
-      schema.hasOwnProperty('type') &&
-      schema.type === 'object' &&
-      !schema.hasOwnProperty('unevaluatedProperties')
-    ) {
-      // schema.unevaluatedProperties = false;
-    }
+  if (isRef(schema)) {
+    // @ts-ignore
+    delete schema.$ref;
+    return;
+  }
 
-    Object.values(schema).forEach((s) => {
-      strictAdditionalProperties(s, false);
-    });
+  if (!inAllOf) {
+    if (schema.type === 'object' && !schema.additionalProperties) {
+      schema.additionalProperties = false;
+    }
+    if (schema.allOf && !(schema as any).unevaluatedProperties) {
+      (schema as any).unevaluatedProperties = false;
+    }
+  }
+
+  // Iterate through allOfs, oneOfs, anyOf
+  const keys = ['allOf', 'oneOf', 'anyOf'] as const;
+  for (const key of keys) {
+    const polymorphicSchema = schema[key];
+    if (Array.isArray(polymorphicSchema)) {
+      polymorphicSchema.forEach((s) =>
+        prepareSchemaForValidation(s, { inAllOf: key === 'allOf' })
+      );
+    } else if (isRef(polymorphicSchema)) {
+      // @ts-ignore
+      delete polymorphicSchema.$ref;
+    }
+  }
+
+  if (isRef(schema.not)) {
+    schema.not = {};
+  } else if (isRef(schema.additionalProperties)) {
+    schema.additionalProperties = {};
+  }
+
+  // Continue iteration
+  if ('items' in schema) {
+    prepareSchemaForValidation(schema.items);
+  } else if (schema.properties) {
+    Object.values(schema.properties).forEach((s) =>
+      prepareSchemaForValidation(s)
+    );
   }
 }
 
@@ -282,7 +306,11 @@ export const requirePropertyExamplesMatchSchema = (ajv: Ajv) =>
       property.requirement((property) => {
         const flatSchema = property.value.flatSchema;
         if (property.raw.example) {
-          const result = validateSchema(flatSchema, property.raw.example, ajv);
+          const result = validateSchema(
+            flatSchema as SchemaObject,
+            property.raw.example,
+            ajv
+          );
           if (!result.pass) {
             throw new RuleError({
               message: `'${property.value.key}' example does not match the schema. \n${result.error} `,
