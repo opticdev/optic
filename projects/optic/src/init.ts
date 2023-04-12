@@ -10,7 +10,7 @@ import {
 import { registerDiff } from './commands/diff/diff';
 import { registerRulesetUpload } from './commands/ruleset/upload';
 
-import { initializeConfig } from './config';
+import { OpticCliConfig, initializeConfig } from './config';
 import { registerRulesetInit } from './commands/ruleset/init';
 import { registerApiAdd } from './commands/api/add';
 import { captureCommand } from './commands/oas/capture';
@@ -80,7 +80,16 @@ Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
     } catch (e) {}
   });
 
-  const cliConfig = await initializeConfig();
+  let cliConfig: OpticCliConfig;
+
+  try {
+    cliConfig = await initializeConfig();
+  } catch (e) {
+    logger.error(chalk.red('Error initializing the cli config'));
+    logger.error((e as Error).message);
+    process.exitCode = 1;
+    return cli;
+  }
 
   cli.version(packageJson.version);
   cli.addHelpCommand(false);

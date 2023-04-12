@@ -24,6 +24,7 @@ export type ParseResultContext = {
   effective_at?: Date;
   name: string;
   email: string;
+  message: string;
 } | null;
 
 export type ParseResult = ParseOpenAPIResult & {
@@ -150,6 +151,7 @@ async function parseSpecAndDereference(
           effective_at: commitMeta.date,
           name: commitMeta.name,
           email: commitMeta.email,
+          message: commitMeta.message,
         },
       };
     }
@@ -164,6 +166,7 @@ async function parseSpecAndDereference(
           effective_at: commitMeta.date,
           name: commitMeta.name,
           email: commitMeta.email,
+          message: commitMeta.message,
         };
       }
 

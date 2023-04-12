@@ -67,6 +67,7 @@ export async function writeDataForCi(
           apiName: spec.name,
           warnings: spec.warnings,
           opticWebUrl: spec.changelogUrl,
+          specUrl: spec.specUrl,
           comparison: {
             groupedDiffs: spec.groupedDiffs,
             results: spec.results,

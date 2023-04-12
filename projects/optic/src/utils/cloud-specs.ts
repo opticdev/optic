@@ -65,6 +65,7 @@ export async function uploadSpec(
     const effective_at = opts.spec.context?.effective_at;
     const git_name = opts.spec.context?.name;
     const git_email = opts.spec.context?.email;
+    const commit_message = opts.spec.context?.message;
 
     const { id } = await opts.client.createSpec({
       upload_id: result.upload_id,
@@ -73,6 +74,7 @@ export async function uploadSpec(
       effective_at,
       git_name,
       git_email,
+      commit_message,
     });
     trackEvent('spec.added', {
       apiId,
