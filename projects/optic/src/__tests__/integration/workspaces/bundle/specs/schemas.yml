@@ -8,6 +8,8 @@ TodoRead:
       type: string
     created_at:
       $ref: 'anotherschema.yml#/CreatedAt'
+    firstTodo:
+      $ref: "#/TodoRead"
     todos:
       type: array
       items: 
