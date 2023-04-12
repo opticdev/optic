@@ -13,6 +13,8 @@ import {
   setupTestServer,
   run,
 } from './integration';
+import path from 'node:path';
+import fs from 'node:fs/promises';
 
 jest.setTimeout(30000);
 
@@ -66,6 +68,11 @@ describe('diff-all', () => {
     );
 
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(
+      JSON.parse(
+        await fs.readFile(path.join(workspace, 'ci-run-details.json'), 'utf-8')
+      )
+    ).toMatchSnapshot();
     expect(code).toBe(1);
   });
 
@@ -107,6 +114,28 @@ describe('diff-all', () => {
     const { combined, code } = await runOptic(
       workspace,
       'diff-all --check --upload --match "folder-to-run/**" --ignore "folder-to-run/ignore/**"'
+    );
+
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(code).toBe(1);
+  });
+
+  test('diff all not in the root of a repo', async () => {
+    const workspace = await setupWorkspace('diff-all/repo', {
+      repo: true,
+      commit: true,
+    });
+
+    await run(
+      `mv ./mvspec.yml ./movedspec.yml && git add . && git commit -m 'move spec'`,
+      false,
+      workspace
+    );
+    process.env.OPTIC_TOKEN = '123';
+
+    const { combined, code } = await runOptic(
+      path.join(workspace, 'folder'),
+      'diff-all --check --upload'
     );
 
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();

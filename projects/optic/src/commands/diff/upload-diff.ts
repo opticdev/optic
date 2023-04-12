@@ -21,8 +21,8 @@ export async function uploadDiff(
     headTag?: string;
   } = {}
 ): Promise<{
-  baseSpecUrl: string;
-  headSpecUrl: string;
+  baseSpecUrl: string | null;
+  headSpecUrl: string | null;
   changelogUrl: string;
 } | null> {
   const showSpinner = logger.getLevel() !== 5;
@@ -106,18 +106,24 @@ export async function uploadDiff(
 
     return {
       changelogUrl,
-      headSpecUrl: getSpecUrl(
-        config.client.getWebBase(),
-        specDetails.orgId,
-        specDetails.apiId,
-        headSpecId
-      ),
-      baseSpecUrl: getSpecUrl(
-        config.client.getWebBase(),
-        specDetails.orgId,
-        specDetails.apiId,
-        baseSpecId
-      ),
+      headSpecUrl:
+        headSpecId === EMPTY_SPEC_ID
+          ? null
+          : getSpecUrl(
+              config.client.getWebBase(),
+              specDetails.orgId,
+              specDetails.apiId,
+              headSpecId
+            ),
+      baseSpecUrl:
+        baseSpecId === EMPTY_SPEC_ID
+          ? null
+          : getSpecUrl(
+              config.client.getWebBase(),
+              specDetails.orgId,
+              specDetails.apiId,
+              baseSpecId
+            ),
     };
   } else {
     const reason = !specDetails

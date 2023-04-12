@@ -1,0 +1,37 @@
+openapi: 3.0.3
+info:
+  title: a spec
+  description: The API
+  version: 0.1.0
+x-optic-url: 'https://app.useoptic.com/organizations/org-id/apis/api-id'
+paths:
+  /filler_route:
+    post:
+      operationId: create
+      responses:
+        "201":
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2
+  /api/filler-route:
+    post:
+      operationId: create
+      responses:
+        "201":
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2

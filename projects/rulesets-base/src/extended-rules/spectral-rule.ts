@@ -10,6 +10,7 @@ import {
   Result,
   RuleResult,
   typeofDiff,
+  UserError,
 } from '@useoptic/openapi-utilities';
 import { ExternalRuleBase } from '../rules/external-rule-base';
 import { isExempted } from '../rule-runner/utils';
@@ -135,7 +136,7 @@ export class SpectralRule extends ExternalRuleBase {
       try {
         spectralResults = await this.spectral.run(inputs.toSpec);
       } catch (e: any) {
-        throw new Error(e.message ? e.message : e);
+        throw new UserError(e.message ? e.message : e);
       }
     } else if (this.rulesetPointer && this.flatSpecFile) {
       try {
@@ -147,10 +148,10 @@ export class SpectralRule extends ExternalRuleBase {
         const withoutLeading = output.substring(output.indexOf('[')).trim();
         spectralResults = JSON.parse(withoutLeading) as SpectralResult[];
       } catch (e: any) {
-        throw new Error(e.message ? e.message : e);
+        throw new UserError(e.message ? e.message : e);
       }
     } else {
-      throw new Error(
+      throw new UserError(
         'Invalid configuration for spectral rules - must provide rulesetPointer and flatSpecFile or a spectral instance'
       );
     }
@@ -260,7 +261,7 @@ export class SpectralRule extends ExternalRuleBase {
       try {
         spectralResults = await this.spectral.run(inputs.nextJsonLike);
       } catch (e: any) {
-        throw new Error(e.message ? e.message : e);
+        throw new UserError(e.message ? e.message : e);
       }
     } else if (this.rulesetPointer && this.flatSpecFile) {
       try {
@@ -272,10 +273,10 @@ export class SpectralRule extends ExternalRuleBase {
         const withoutLeading = output.substring(output.indexOf('[')).trim();
         spectralResults = JSON.parse(withoutLeading) as SpectralResult[];
       } catch (e: any) {
-        throw new Error(e.message ? e.message : e);
+        throw new UserError(e.message ? e.message : e);
       }
     } else {
-      throw new Error(
+      throw new UserError(
         'Invalid configuration for spectral rules - must provide rulesetPointer and flatSpecFile or a spectral instance'
       );
     }
