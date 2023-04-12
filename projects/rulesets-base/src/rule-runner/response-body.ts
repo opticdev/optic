@@ -24,6 +24,7 @@ const createResponseBodyResult = (
   rule: ResponseBodyRule
 ): Result => ({
   type: assertionResult.type,
+  severity: assertionResult.severity,
   where: `${operation.method.toUpperCase()} ${operation.path} response ${
     response.statusCode
   } response body: ${response.contentType}`,
@@ -48,6 +49,7 @@ const createResponsePropertyResult = (
   rule: ResponseBodyRule | PropertyRule
 ): Result => ({
   type: assertionResult.type,
+  severity: assertionResult.severity,
   where: `${operation.method.toUpperCase()} ${operation.path} response ${
     response.statusCode
   } response body: ${
@@ -127,7 +129,9 @@ export const runResponseBodyRules = ({
         customRuleContext
       );
 
-      const responseAssertions = createResponseBodyAssertions();
+      const responseAssertions = createResponseBodyAssertions(
+        responseRule.severity
+      );
       // Register the user's rule definition, this is collected in the responseAssertions object
       responseRule.rule(responseAssertions, ruleContext);
 
@@ -202,7 +206,9 @@ export const runResponseBodyRules = ({
         customRuleContext
       );
       // Register the user's rule definition, this is collected in the responseAssertions object
-      const responseAssertions = createResponseBodyAssertions();
+      const responseAssertions = createResponseBodyAssertions(
+        responseRule.severity
+      );
       // Run the user's rules that have been stored in responseAssertions
       responseRule.rule(responseAssertions, ruleContext);
 
@@ -295,7 +301,9 @@ export const runResponseBodyRules = ({
         },
         customRuleContext
       );
-      const propertyAssertions = createPropertyAssertions();
+      const propertyAssertions = createPropertyAssertions(
+        propertyRule.severity
+      );
       // // Register the user's rule definition, this is collected in the propertyAssertions object
       propertyRule.rule(propertyAssertions, ruleContext);
       const beforeResponse = createResponse(
@@ -349,7 +357,9 @@ export const runResponseBodyRules = ({
         customRuleContext
       );
       // Register the user's rule definition, this is collected in the propertyAssertions object
-      const propertyAssertions = createPropertyAssertions();
+      const propertyAssertions = createPropertyAssertions(
+        propertyRule.severity
+      );
       // Run the user's rules that have been stored in propertyAssertions
       propertyRule.rule(propertyAssertions, ruleContext);
 

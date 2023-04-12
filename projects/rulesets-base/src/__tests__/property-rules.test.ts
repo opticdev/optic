@@ -1,4 +1,4 @@
-import { jest, test, expect, describe } from '@jest/globals'
+import { jest, test, expect, describe } from '@jest/globals';
 import { defaultEmptySpec, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { RuleError } from '../errors';
 import { RuleRunner } from '../rule-runner';
@@ -192,6 +192,7 @@ describe('PropertyRule', () => {
       const ruleRunner = new RuleRunner([
         new PropertyRule({
           name: 'property',
+          severity: 'info',
           rule: (propertyAssertions) => {
             propertyAssertions.added((property) => {
               if (!property.value.flatSchema.type) {

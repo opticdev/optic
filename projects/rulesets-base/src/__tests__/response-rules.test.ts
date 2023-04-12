@@ -1,4 +1,4 @@
-import { jest, test, expect, describe } from '@jest/globals'
+import { jest, test, expect, describe } from '@jest/globals';
 
 import { defaultEmptySpec, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { RuleError } from '../errors';
@@ -472,6 +472,7 @@ describe('ResponseRule', () => {
       const ruleRunner = new RuleRunner([
         new ResponseRule({
           name: 'response header type',
+          severity: 'warn',
           rule: (responseAssertions) => {
             responseAssertions.header.addedOrChanged(
               'must contain a description',
@@ -496,7 +497,10 @@ describe('ResponseRule', () => {
                   '200': {
                     description: 'hello',
                     headers: {
-                      isgood: { description: 'yes', schema: {type: 'string'} },
+                      isgood: {
+                        description: 'yes',
+                        schema: { type: 'string' },
+                      },
                     },
                     content: {
                       'application/json': {
@@ -518,7 +522,10 @@ describe('ResponseRule', () => {
                   '200': {
                     description: 'hello',
                     headers: {
-                      isgood: { description: 'yes', schema: { type: 'number'} },
+                      isgood: {
+                        description: 'yes',
+                        schema: { type: 'number' },
+                      },
                     },
                     content: {
                       'application/json': {

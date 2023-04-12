@@ -2,6 +2,7 @@ import {
   ChangeType,
   IChange,
   IFact,
+  Severity,
   UserError,
 } from '@useoptic/openapi-utilities';
 import pick from 'lodash.pick';
@@ -27,6 +28,7 @@ type AssertionLifecycle = 'requirement' | 'added' | 'changed' | 'removed';
 export type AssertionResult =
   | {
       passed: true;
+      severity: Severity;
       exempted?: boolean;
       changeOrFact: IChange | IFact;
       condition?: string;
@@ -37,6 +39,7 @@ export type AssertionResult =
     }
   | {
       passed: false;
+      severity: Severity;
       exempted?: boolean;
       changeOrFact: IChange | IFact;
       condition?: string;
@@ -64,7 +67,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
   private changedAssertions: ChangedAssertion<T>[];
   private removedAssertions: Assertion<T>[];
 
-  constructor(private type: T) {
+  constructor(private type: T, private severity: Severity) {
     this.requirementAssertions = [];
     this.addedAssertions = [];
     this.changedAssertions = [];
@@ -200,6 +203,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           assertion(before);
           results.push({
             passed: true,
+            severity: this.severity,
             exempted,
             changeOrFact: sanitizeChange(change),
             type: 'removed',
@@ -208,6 +212,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           if (RuleError.isInstance(e)) {
             results.push({
               passed: false,
+              severity: this.severity,
               exempted,
               changeOrFact: sanitizeChange(change),
               error: e.toString(),
@@ -240,6 +245,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           assertion(after);
           results.push({
             passed: true,
+            severity: this.severity,
             exempted,
             changeOrFact: sanitizeFact(after),
             type: 'requirement',
@@ -248,6 +254,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           if (RuleError.isInstance(e)) {
             results.push({
               passed: false,
+              severity: this.severity,
               exempted,
               changeOrFact: sanitizeFact(after),
               received: JSON.stringify(e.details.received),
@@ -274,6 +281,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           assertion(after);
           results.push({
             passed: true,
+            severity: this.severity,
             exempted,
             changeOrFact: sanitizeChange(change),
             type: 'added',
@@ -282,6 +290,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           if (RuleError.isInstance(e)) {
             results.push({
               passed: false,
+              severity: this.severity,
               exempted,
               changeOrFact: sanitizeChange(change),
               received: JSON.stringify(e.details.received),
@@ -309,6 +318,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           assertion(before, after);
           results.push({
             passed: true,
+            severity: this.severity,
             exempted,
             changeOrFact: sanitizeChange(change),
             type: 'changed',
@@ -317,6 +327,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           if (RuleError.isInstance(e)) {
             results.push({
               passed: false,
+              severity: this.severity,
               exempted,
               changeOrFact: sanitizeChange(change),
               received: JSON.stringify(e.details.received),
@@ -357,17 +368,32 @@ type ResponseBodyAssertionsRunner = {
   property: AssertionRunner<'property'>;
 };
 
-export const createSpecificationAssertions =
-  (): AssertionRunner<'specification'> => {
-    return new AssertionRunner('specification');
-  };
+export const createSpecificationAssertions = (
+  severity: Severity
+): AssertionRunner<'specification'> => {
+  return new AssertionRunner('specification', severity);
+};
 
-export const createOperationAssertions = (): OperationAssertionsRunner => {
-  const operationAssertions: any = new AssertionRunner('operation');
-  const queryParameterAssertions = new AssertionRunner('query-parameter');
-  const headerParameterAssertions = new AssertionRunner('header-parameter');
-  const pathParameterAssertions = new AssertionRunner('path-parameter');
-  const cookieParameterAssertions = new AssertionRunner('cookie-parameter');
+export const createOperationAssertions = (
+  severity: Severity
+): OperationAssertionsRunner => {
+  const operationAssertions: any = new AssertionRunner('operation', severity);
+  const queryParameterAssertions = new AssertionRunner(
+    'query-parameter',
+    severity
+  );
+  const headerParameterAssertions = new AssertionRunner(
+    'header-parameter',
+    severity
+  );
+  const pathParameterAssertions = new AssertionRunner(
+    'path-parameter',
+    severity
+  );
+  const cookieParameterAssertions = new AssertionRunner(
+    'cookie-parameter',
+    severity
+  );
 
   operationAssertions.queryParameter = queryParameterAssertions;
   operationAssertions.headerParameter = headerParameterAssertions;
@@ -377,10 +403,12 @@ export const createOperationAssertions = (): OperationAssertionsRunner => {
   return operationAssertions as OperationAssertionsRunner;
 };
 
-export const createRequestAssertions = (): RequestAssertionsRunner => {
+export const createRequestAssertions = (
+  severity: Severity
+): RequestAssertionsRunner => {
   const requestAssertions: any = {};
-  const bodyAssertions = new AssertionRunner('request-body');
-  const propertyAssertions = new AssertionRunner('property');
+  const bodyAssertions = new AssertionRunner('request-body', severity);
+  const propertyAssertions = new AssertionRunner('property', severity);
 
   requestAssertions.body = bodyAssertions;
   requestAssertions.property = propertyAssertions;
@@ -388,29 +416,34 @@ export const createRequestAssertions = (): RequestAssertionsRunner => {
   return requestAssertions as RequestAssertionsRunner;
 };
 
-export const createResponseAssertions = (): ResponseAssertionsRunner => {
-  const responseAssertions: any = new AssertionRunner('response');
-  const headerAssertions = new AssertionRunner('response-header');
+export const createResponseAssertions = (
+  severity: Severity
+): ResponseAssertionsRunner => {
+  const responseAssertions: any = new AssertionRunner('response', severity);
+  const headerAssertions = new AssertionRunner('response-header', severity);
 
   responseAssertions.header = headerAssertions;
 
   return responseAssertions as ResponseAssertionsRunner;
 };
 
-export const createResponseBodyAssertions =
-  (): ResponseBodyAssertionsRunner => {
-    const responseBodyAssertions: any = {};
-    const headerAssertions = new AssertionRunner('response-header');
-    const bodyAssertions = new AssertionRunner('response-body');
-    const propertyAssertions = new AssertionRunner('property');
+export const createResponseBodyAssertions = (
+  severity: Severity
+): ResponseBodyAssertionsRunner => {
+  const responseBodyAssertions: any = {};
+  const headerAssertions = new AssertionRunner('response-header', severity);
+  const bodyAssertions = new AssertionRunner('response-body', severity);
+  const propertyAssertions = new AssertionRunner('property', severity);
 
-    responseBodyAssertions.header = headerAssertions;
-    responseBodyAssertions.body = bodyAssertions;
-    responseBodyAssertions.property = propertyAssertions;
+  responseBodyAssertions.header = headerAssertions;
+  responseBodyAssertions.body = bodyAssertions;
+  responseBodyAssertions.property = propertyAssertions;
 
-    return responseBodyAssertions as ResponseBodyAssertionsRunner;
-  };
+  return responseBodyAssertions as ResponseBodyAssertionsRunner;
+};
 
-export const createPropertyAssertions = (): AssertionRunner<'property'> => {
-  return new AssertionRunner('property');
+export const createPropertyAssertions = (
+  severity: Severity
+): AssertionRunner<'property'> => {
+  return new AssertionRunner('property', severity);
 };

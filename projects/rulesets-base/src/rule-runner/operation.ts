@@ -1,10 +1,7 @@
 import { OpenApiKind, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
 import { createOperation, createSpecification } from './data-constructors';
 import { EndpointNode, NodeDetail } from './rule-runner-types';
-import {
-  createRuleContextWithOperation,
-  isExempted,
-} from './utils';
+import { createRuleContextWithOperation, isExempted } from './utils';
 
 import { Rule, Ruleset, OperationRule } from '../rules';
 import { createOperationAssertions, AssertionResult } from './assertions';
@@ -17,6 +14,7 @@ const createOperationResult = (
   rule: OperationRule
 ): Result => ({
   type: assertionResult.type,
+  severity: assertionResult.severity,
   where: `${operation.method.toUpperCase()} ${operation.path}`,
   isMust: true,
   change: assertionResult.changeOrFact,
@@ -46,6 +44,7 @@ const createParameterResult = (
   rule: OperationRule
 ): Result => ({
   type: assertionResult.type,
+  severity: assertionResult.severity,
   where: `${parameter.method.toUpperCase()} ${parameter.path} ${
     parameter.type
   }: ${parameter.name}`,
@@ -126,7 +125,9 @@ export const runOperationRules = ({
       const exempted = isExempted(beforeOperation.raw, operationRule.name);
 
       if (matches) {
-        const operationAssertions = createOperationAssertions();
+        const operationAssertions = createOperationAssertions(
+          operationRule.severity
+        );
         // Register the user's rule definition, this is collected in the operationAssertions object
         operationRule.rule(operationAssertions, ruleContext);
 
@@ -271,7 +272,9 @@ export const runOperationRules = ({
       const exempted = isExempted(afterOperation.raw, operationRule.name);
 
       if (matches) {
-        const operationAssertions = createOperationAssertions();
+        const operationAssertions = createOperationAssertions(
+          operationRule.severity
+        );
 
         // Register the user's rule definition, this is collected in the operationAssertions object
         operationRule.rule(operationAssertions, ruleContext);

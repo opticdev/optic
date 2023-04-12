@@ -1,4 +1,4 @@
-import { jest, test, expect, describe } from '@jest/globals'
+import { jest, test, expect, describe } from '@jest/globals';
 import { defaultEmptySpec, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { RuleError } from '../errors';
 import { RuleRunner } from '../rule-runner';
@@ -144,6 +144,7 @@ describe('RequestRule', () => {
       const ruleRunner = new RuleRunner([
         new RequestRule({
           name: ruleName,
+          severity: 'warn',
           rule: (requestAssertions) => {
             requestAssertions.body.requirement(
               'must contain a type',
@@ -328,13 +329,16 @@ describe('RequestRule', () => {
         new RequestRule({
           name: 'request type',
           rule: (requestAssertions) => {
-            requestAssertions.body.addedOrChanged('must contain a type', (request) => {
-              if (!request.value.flatSchema.type) {
-                throw new RuleError({
-                  message: 'request does not have `type`',
-                });
+            requestAssertions.body.addedOrChanged(
+              'must contain a type',
+              (request) => {
+                if (!request.value.flatSchema.type) {
+                  throw new RuleError({
+                    message: 'request does not have `type`',
+                  });
+                }
               }
-            });
+            );
           },
         }),
       ]);
@@ -397,7 +401,7 @@ describe('RequestRule', () => {
                   content: {
                     'application/json': {
                       schema: {
-                        description: "empty"
+                        description: 'empty',
                       },
                     },
                   },
@@ -1264,7 +1268,7 @@ describe('RequestRule', () => {
                         type: 'object',
                         properties: {
                           hello: {
-                            description: "asd"
+                            description: 'asd',
                           },
                         },
                       },

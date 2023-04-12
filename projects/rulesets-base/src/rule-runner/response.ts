@@ -5,15 +5,8 @@ import {
   createResponse,
   createSpecification,
 } from './data-constructors';
-import {
-  EndpointNode,
-  ResponseNode,
-  NodeDetail,
-} from './rule-runner-types';
-import {
-  createRuleContextWithOperation,
-  isExempted,
-} from './utils';
+import { EndpointNode, ResponseNode, NodeDetail } from './rule-runner-types';
+import { createRuleContextWithOperation, isExempted } from './utils';
 
 import { Rule, Ruleset, ResponseRule } from '../rules';
 import { AssertionResult, createResponseAssertions } from './assertions';
@@ -27,6 +20,7 @@ const createResponseResult = (
   rule: ResponseRule
 ): Result => ({
   type: assertionResult.type,
+  severity: assertionResult.severity,
   where: `${operation.method.toUpperCase()} ${operation.path} response ${
     response.statusCode
   }`,
@@ -51,6 +45,7 @@ const createResponseHeaderResult = (
   rule: ResponseRule
 ): Result => ({
   type: assertionResult.type,
+  severity: assertionResult.severity,
   where: `${operation.method.toUpperCase()} ${operation.path} response ${
     response.statusCode
   } response header: ${header}`,
@@ -113,7 +108,7 @@ export const runResponseRules = ({
   // - if yes, run the user's defined `rule`. for responses, this runs against the response and response headers
   for (const responseRule of responseRules) {
     if (beforeOperation && beforeSpecification) {
-      const ruleContext =createRuleContextWithOperation(
+      const ruleContext = createRuleContextWithOperation(
         {
           node: specificationNode,
           before: beforeSpecification,
@@ -131,7 +126,9 @@ export const runResponseRules = ({
         'before',
         beforeApiSpec
       );
-      const responseAssertions = createResponseAssertions();
+      const responseAssertions = createResponseAssertions(
+        responseRule.severity
+      );
       // Register the user's rule definition, this is collected in the responseAssertions object
       responseRule.rule(responseAssertions, ruleContext);
 
@@ -198,7 +195,9 @@ export const runResponseRules = ({
         beforeApiSpec
       );
       const afterResponse = createResponse(responseNode, 'after', afterApiSpec);
-      const responseAssertions = createResponseAssertions();
+      const responseAssertions = createResponseAssertions(
+        responseRule.severity
+      );
       // Register the user's rule definition, this is collected in the responseAssertions object
       responseRule.rule(responseAssertions, ruleContext);
 
