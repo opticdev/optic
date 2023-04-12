@@ -354,4 +354,24 @@ describe('examples should default to additional properties false', () => {
     expect(result.pass).toBe(true);
     expect(result).toMatchSnapshot();
   });
+
+  test('schemas that have existing refs', () => {
+    const result = validateSchema(
+      {
+        type: 'object',
+        properties: {
+          a: { $ref: './not-important.yml' },
+          b: { additionalProperties: { $ref: './not-important.yml' } },
+          c: { type: 'string' },
+          d: { allOf: [{ $ref: './not-important.yml' }] },
+          e: { oneOf: [{ $ref: './not-important.yml' }] },
+          f: { anyOf: [{ $ref: './not-important.yml' }] },
+          g: { not: { $ref: './not-important.yml' } },
+        },
+      },
+      { a: 'abc', b: 'def', c: 'xyz', d: '', e: '', f: '' },
+      ajvInstance
+    );
+    expect(result.pass).toBe(true);
+  });
 });

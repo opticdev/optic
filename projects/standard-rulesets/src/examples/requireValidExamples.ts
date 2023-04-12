@@ -91,8 +91,6 @@ function prepareSchemaForValidation(
   if (isRef(schema)) {
     // @ts-ignore
     delete schema.$ref;
-    // @ts-ignore
-    schema.type = 'object';
     return;
   }
 
@@ -105,35 +103,33 @@ function prepareSchemaForValidation(
     }
   }
 
-  if (schema.type === 'array') {
-    prepareSchemaForValidation(schema.items);
-  } else if (schema.type === 'object') {
-    if (isRef(schema.additionalProperties)) {
-      schema.additionalProperties = {
-        type: 'object',
-      };
-    }
-
-    if (schema.properties) {
-      Object.values(schema.properties).forEach((s) =>
-        prepareSchemaForValidation(s)
+  // Iterate through allOfs, oneOfs, anyOf
+  const keys = ['allOf', 'oneOf', 'anyOf'] as const;
+  for (const key of keys) {
+    const polymorphicSchema = schema[key];
+    if (Array.isArray(polymorphicSchema)) {
+      polymorphicSchema.forEach((s) =>
+        prepareSchemaForValidation(s, { inAllOf: key === 'allOf' })
       );
+    } else if (isRef(polymorphicSchema)) {
+      // @ts-ignore
+      delete polymorphicSchema.$ref;
     }
+  }
 
-    // Iterate through allOfs, oneOfs, anyOf, not
-    const keys = ['allOf', 'oneOf', 'anyOf', 'not'] as const;
-    for (const key of keys) {
-      const polymorphicSchema = schema[key];
-      if (Array.isArray(polymorphicSchema)) {
-        polymorphicSchema.forEach((s) =>
-          prepareSchemaForValidation(s, { inAllOf: key === 'allOf' })
-        );
-      } else if (isRef(polymorphicSchema)) {
-        // @ts-ignore
-        delete polymorphicSchema.$ref;
-        schema.type = 'object';
-      }
-    }
+  if (isRef(schema.not)) {
+    schema.not = {};
+  } else if (isRef(schema.additionalProperties)) {
+    schema.additionalProperties = {};
+  }
+
+  // Continue iteration
+  if ('items' in schema) {
+    prepareSchemaForValidation(schema.items);
+  } else if (schema.properties) {
+    Object.values(schema.properties).forEach((s) =>
+      prepareSchemaForValidation(s)
+    );
   }
 }
 
