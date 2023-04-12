@@ -6,8 +6,10 @@ import {
   RuleError,
 } from '@useoptic/rulesets-base';
 import { OpenAPIV3 } from 'openapi-types';
-import Ajv, { SchemaObject } from 'ajv/dist/2019';
+import Ajv from 'ajv/dist/2019';
 import addFormats from 'ajv-formats';
+
+type SchemaObject = OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject;
 
 export function defaultAjv() {
   const validator = new Ajv({ strict: false, unevaluated: true });
@@ -41,9 +43,10 @@ export function validateSchema(
   example: unknown,
   ajv: Ajv
 ): { pass: true } | { pass: false; error: string } {
-  const copy = JSON.parse(JSON.stringify(schema));
-  strictAdditionalProperties(copy);
-  const schemaCompiled = ajv.compile(copy);
+  const schemaCopy: SchemaObject = JSON.parse(JSON.stringify(schema));
+  prepareSchemaForValidation(schemaCopy);
+
+  const schemaCompiled = ajv.compile(schemaCopy);
 
   const result = schemaCompiled(example);
 
@@ -69,43 +72,50 @@ export function validateSchema(
   return { pass: true };
 }
 
-function strictAdditionalProperties(schema: any, inAllOf: boolean = false) {
+// Sets all strict validation (no additional properties) and removes $refs which could be left behind in circular references
+function prepareSchemaForValidation(
+  schema: SchemaObject | undefined,
+  opts?: { inAllOf?: boolean }
+) {
+  const inAllOf = opts?.inAllOf ?? false;
   if (Array.isArray(schema)) {
-    schema.forEach((item) => strictAdditionalProperties(item));
-    return;
-  }
+    schema.forEach((item) => prepareSchemaForValidation(item));
+  } else if (typeof schema === 'object' && schema !== null) {
+    // is an object
+    if ('$ref' in schema) {
+      //
+    } else {
+      // we should check for refs in `additionalProperties`
+      // check for refs in items
+      // allOf, oneOf, anyOf, not
 
-  if (typeof schema === 'object' && schema !== null) {
-    if (!inAllOf) {
-      // make default false
-      if (
-        schema.hasOwnProperty('type') &&
-        schema.type === 'object' &&
-        !schema.hasOwnProperty('additionalProperties')
-      ) {
-        schema.additionalProperties = false;
-      } else if (
-        schema.hasOwnProperty('allOf') &&
-        !schema.hasOwnProperty('additionalProperties') &&
-        !schema.hasOwnProperty('unevaluatedProperties')
-      ) {
-        schema.unevaluatedProperties = false;
-        schema.allOf.forEach((s) => {
-          strictAdditionalProperties(s, true);
-        });
-        return;
+      if (!inAllOf) {
+        // make default false
+        if (
+          schema.hasOwnProperty('type') &&
+          schema.type === 'object' &&
+          !schema.hasOwnProperty('additionalProperties')
+        ) {
+          schema.additionalProperties = false;
+        } else if (
+          schema.allOf &&
+          schema.type !== 'array' &&
+          !schema.hasOwnProperty('additionalProperties') &&
+          !schema.hasOwnProperty('unevaluatedProperties')
+        ) {
+          // Setting a JSON schema
+          (schema as any).unevaluatedProperties = false;
+          schema.allOf.forEach((s) => {
+            prepareSchemaForValidation(s, { inAllOf: true });
+          });
+          return;
+        }
       }
-    } else if (
-      schema.hasOwnProperty('type') &&
-      schema.type === 'object' &&
-      !schema.hasOwnProperty('unevaluatedProperties')
-    ) {
-      // schema.unevaluatedProperties = false;
-    }
 
-    Object.values(schema).forEach((s) => {
-      strictAdditionalProperties(s, false);
-    });
+      Object.values(schema).forEach((s) => {
+        prepareSchemaForValidation(s);
+      });
+    }
   }
 }
 
@@ -282,7 +292,11 @@ export const requirePropertyExamplesMatchSchema = (ajv: Ajv) =>
       property.requirement((property) => {
         const flatSchema = property.value.flatSchema;
         if (property.raw.example) {
-          const result = validateSchema(flatSchema, property.raw.example, ajv);
+          const result = validateSchema(
+            flatSchema as SchemaObject,
+            property.raw.example,
+            ajv
+          );
           if (!result.pass) {
             throw new RuleError({
               message: `'${property.value.key}' example does not match the schema. \n${result.error} `,
