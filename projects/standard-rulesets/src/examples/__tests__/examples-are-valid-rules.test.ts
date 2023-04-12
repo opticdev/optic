@@ -289,7 +289,6 @@ describe('examples should default to additional properties false', () => {
   test('ajv config will work on additional properties with all of', () => {
     const result = validateSchema(
       {
-        type: 'object',
         allOf: [
           {
             type: 'object',
@@ -315,7 +314,6 @@ describe('examples should default to additional properties false', () => {
   test('ajv config will work on additional properties with all of at different levels of nesting', () => {
     const result = validateSchema(
       {
-        type: 'object',
         allOf: [
           {
             type: 'object',
@@ -373,5 +371,23 @@ describe('examples should default to additional properties false', () => {
       ajvInstance
     );
     expect(result.pass).toBe(true);
+
+    const result2 = validateSchema(
+      {
+        type: 'object',
+        properties: {
+          a: { $ref: './not-important.yml' },
+          b: { additionalProperties: { $ref: './not-important.yml' } },
+          c: { type: 'string' },
+          d: { allOf: [{ $ref: './not-important.yml' }] },
+          e: { oneOf: [{ $ref: './not-important.yml' }] },
+          f: { anyOf: [{ $ref: './not-important.yml' }] },
+          g: { not: { $ref: './not-important.yml' } },
+        },
+      },
+      { c: 'xyz', d: '', e: '', f: '' },
+      ajvInstance
+    );
+    expect(result2.pass).toBe(true);
   });
 });
