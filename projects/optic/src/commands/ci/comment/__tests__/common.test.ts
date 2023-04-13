@@ -53,6 +53,7 @@ const input: CiRunDetails = {
       apiName: 'noop',
     },
   ],
+  severity: 2,
 };
 describe('generateCompareSummaryMarkdown', () => {
   test('generates md output for passed, failed and noop', () => {
@@ -69,6 +70,7 @@ describe('generateCompareSummaryMarkdown', () => {
           completed: input.completed,
           failed: [],
           noop: [],
+          severity: 2,
         }
       )
     ).toMatchSnapshot();
@@ -82,6 +84,7 @@ describe('generateCompareSummaryMarkdown', () => {
           completed: [],
           failed: input.failed,
           noop: [],
+          severity: 2,
         }
       )
     ).toMatchSnapshot();
@@ -95,6 +98,7 @@ describe('generateCompareSummaryMarkdown', () => {
           completed: [],
           failed: [],
           noop: input.noop,
+          severity: 2,
         }
       )
     ).toMatchSnapshot();

@@ -4,6 +4,7 @@ import {
   compareSpecs,
   RuleResult,
   groupDiffsByEndpoint,
+  Severity,
 } from '@useoptic/openapi-utilities';
 
 type Comparison = {
@@ -21,6 +22,7 @@ export type CiRunDetails = {
   }[];
   failed: { apiName: string; error: string }[];
   noop: { apiName: string }[];
+  severity: Severity;
 };
 
 const CI_DETAILS_FILE_PATH = path.join(process.cwd(), 'ci-run-details.json');
@@ -39,12 +41,16 @@ export async function writeDataForCi(
         name: string;
         error: string;
       }
-  )[]
+  )[],
+  options: {
+    severity: Severity;
+  }
 ) {
   const data: CiRunDetails = {
     completed: [],
     failed: [],
     noop: [],
+    severity: options.severity,
   };
 
   for (const spec of specs) {
