@@ -1,4 +1,4 @@
-import { Severity } from '@useoptic/openapi-utilities';
+import { Severity, readSeverity } from '@useoptic/openapi-utilities';
 import { RequestBody, RequestAssertions, RuleContext } from '../types';
 
 type RequestRuleConfig<RuleName extends string> = {
@@ -6,7 +6,7 @@ type RequestRuleConfig<RuleName extends string> = {
   docsLink?: string;
   matches?: RequestRule['matches'];
   rule: RequestRule['rule'];
-  severity?: Severity;
+  severity?: 'info' | 'warn' | 'error';
 };
 
 export class RequestRule<RuleName extends string = string> {
@@ -30,7 +30,9 @@ export class RequestRule<RuleName extends string = string> {
     this.matches = config.matches;
     this.rule = config.rule;
     this.type = 'request-rule';
-    this.severity = config.severity ?? Severity.Error;
+    this.severity = config.severity
+      ? readSeverity(config.severity)
+      : Severity.Error;
   }
 
   static isInstance(v: any): v is RequestRule {
