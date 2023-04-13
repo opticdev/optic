@@ -205,8 +205,21 @@ export class SpectralRule extends ExternalRuleBase {
         );
       } else {
         // find if there is an appropriate change
-        const maybeChange: ObjectDiff | undefined =
+        let maybeChange: ObjectDiff | undefined =
           changesByJsonPath[fact.location.jsonPath];
+
+        if (
+          !maybeChange &&
+          jsonPointerHelpers.matches(fact.location.jsonPath, [
+            'paths',
+            '**',
+            `{${Object.values(OpenAPIV3.HttpMethods).join(',')}}`,
+          ])
+        ) {
+          const pathPointer = jsonPointerHelpers.pop(fact.location.jsonPath);
+          maybeChange = changesByJsonPath[pathPointer];
+        }
+
         if (maybeChange) {
           const changeType = typeofDiff(maybeChange);
           if (this.lifecycle === 'added' && changeType === 'added') {

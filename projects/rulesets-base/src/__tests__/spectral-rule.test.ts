@@ -11,7 +11,9 @@ import { OpenAPIV3, defaultEmptySpec, diff } from '@useoptic/openapi-utilities';
 const spectral = new Spectral();
 spectral.setRuleset({
   extends: [[oas as SpectralRulesetDefinition, 'all']],
-  rules: {},
+  rules: {
+    'operation-description': 'error',
+  },
 });
 
 describe('spectral rule test', () => {
@@ -19,6 +21,7 @@ describe('spectral rule test', () => {
     new SpectralRule({
       name: 'spectral-rules',
       spectral,
+      applies: 'added',
     }),
   ]);
 
@@ -47,7 +50,7 @@ describe('spectral rule test', () => {
     expect(resultsWithChanges).toMatchSnapshot();
 
     const resultsAgainstSelf = await ruleRunner.runRules({
-      diffs,
+      diffs: [],
       fromSpec: after,
       toSpec: after,
       context: {},
