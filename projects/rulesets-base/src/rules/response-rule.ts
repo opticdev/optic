@@ -1,4 +1,4 @@
-import { Severity } from '@useoptic/openapi-utilities';
+import { Severity, readSeverity } from '@useoptic/openapi-utilities';
 import { Response, ResponseAssertions, RuleContext } from '../types';
 
 type ResponseRuleConfig<RuleName extends string> = {
@@ -6,7 +6,7 @@ type ResponseRuleConfig<RuleName extends string> = {
   docsLink?: string;
   matches?: ResponseRule['matches'];
   rule: ResponseRule['rule'];
-  severity?: Severity;
+  severity?: 'info' | 'warn' | 'error';
 };
 
 export class ResponseRule<RuleName extends string = string> {
@@ -30,7 +30,9 @@ export class ResponseRule<RuleName extends string = string> {
     this.matches = config.matches;
     this.rule = config.rule;
     this.type = 'response-rule';
-    this.severity = config.severity ?? 'error';
+    this.severity = config.severity
+      ? readSeverity(config.severity)
+      : Severity.Error;
   }
 
   static isInstance(v: any): v is ResponseRule {

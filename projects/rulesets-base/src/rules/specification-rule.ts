@@ -1,4 +1,4 @@
-import { Severity } from '@useoptic/openapi-utilities';
+import { Severity, readSeverity } from '@useoptic/openapi-utilities';
 import { Specification, SpecificationAssertions, RuleContext } from '../types';
 
 type SpecificationRuleConfig<RuleName extends string> = {
@@ -6,7 +6,7 @@ type SpecificationRuleConfig<RuleName extends string> = {
   docsLink?: string;
   matches?: SpecificationRule['matches'];
   rule: SpecificationRule['rule'];
-  severity?: Severity;
+  severity?: 'info' | 'warn' | 'error';
 };
 
 export class SpecificationRule<RuleName extends string = string> {
@@ -36,7 +36,9 @@ export class SpecificationRule<RuleName extends string = string> {
     this.matches = config.matches;
     this.rule = config.rule;
     this.type = 'specification-rule';
-    this.severity = config.severity ?? 'error';
+    this.severity = config.severity
+      ? readSeverity(config.severity)
+      : Severity.Error;
   }
 
   static isInstance(v: any): v is SpecificationRule {

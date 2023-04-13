@@ -1,6 +1,6 @@
 import { OpenAPIV3 } from 'openapi-types';
 import { ObjectDiff, diff } from '../diff/diff';
-import { RuleResult } from '../new-types';
+import { RuleResult } from '../results';
 const packageJson = require('../../package.json');
 
 type SerializedSourcemap = {

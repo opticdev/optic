@@ -37,7 +37,7 @@ export const registerLint = (cli: Command, config: OpticCliConfig) => {
 };
 
 type LintActionOptions = {
-  severity: Severity;
+  severity: 'info' | 'warn' | 'error';
 };
 
 const getLintAction =

@@ -67,10 +67,10 @@ function toOpticResult(
 // This will treat info + hint as a info in Optic
 function severityToOpticSeverity(spectralSev: DiagnosticSeverity): Severity {
   return spectralSev === DiagnosticSeverity.Error
-    ? 'error'
+    ? Severity.Error
     : spectralSev === DiagnosticSeverity.Warning
-    ? 'warn'
-    : 'info';
+    ? Severity.Warn
+    : Severity.Info;
 }
 
 function toOpticRuleResult(

@@ -40,7 +40,7 @@ exports[`breaking changes ruleset - response status code removal status code rem
     "name": "prevent response status code removal",
     "passed": false,
     "received": undefined,
-    "severity": "error",
+    "severity": 2,
     "type": "removed",
     "where": "GET /api/users response 200",
   },
