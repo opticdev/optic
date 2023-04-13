@@ -85,9 +85,23 @@ export async function compute(
     checks: {
       total: specResults.results.length,
       passed: specResults.results.filter((check) => check.passed).length,
-      failed: specResults.results.filter(
-        (check) => !check.passed && !check.exempted
+      exempted: specResults.results.filter(
+        (check) => !check.passed && check.exempted
       ).length,
+      failed: {
+        info: specResults.results.filter(
+          (check) =>
+            !check.passed && !check.exempted && check.severity === 'info'
+        ).length,
+        error: specResults.results.filter(
+          (check) =>
+            !check.passed && !check.exempted && check.severity === 'error'
+        ).length,
+        warn: specResults.results.filter(
+          (check) =>
+            !check.passed && !check.exempted && check.severity === 'warn'
+        ).length,
+      },
     },
   };
 }
