@@ -228,7 +228,7 @@ type DiffActionOptions = {
   ruleset?: string;
   headTag?: string;
   validation: 'strict' | 'loose';
-  severity: Severity;
+  severity: 'info' | 'warn' | 'error';
 };
 
 const getDiffAction =

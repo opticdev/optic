@@ -10,6 +10,7 @@ import {
   RuleResult,
   traverseSpec,
   factsToChangelog,
+  Severity,
 } from '@useoptic/openapi-utilities';
 import {
   ISpectralDiagnostic,
@@ -53,7 +54,7 @@ function resultToRuleResult(r: Result): RuleResult {
     docsLink: r.docsLink,
     expected: r.expected,
     received: r.received,
-    severity: r.severity ?? 'error',
+    severity: r.severity ?? Severity.Error,
   };
 }
 

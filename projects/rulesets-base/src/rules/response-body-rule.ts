@@ -30,7 +30,7 @@ export class ResponseBodyRule<RuleName extends string = string> {
     this.matches = config.matches;
     this.rule = config.rule;
     this.type = 'response-body-rule';
-    this.severity = config.severity ?? 'error';
+    this.severity = config.severity ?? Severity.Error;
   }
 
   static isInstance(v: any): v is ResponseBodyRule {

@@ -1,4 +1,16 @@
-export type Severity = 'info' | 'warn' | 'error';
+export function readSeverity(sev: 'info' | 'warn' | 'error'): Severity {
+  return sev === 'info'
+    ? Severity.Info
+    : sev === 'warn'
+    ? Severity.Warn
+    : Severity.Error;
+}
+
+export enum Severity {
+  Info = 0,
+  Warn = 1,
+  Error = 2,
+}
 
 export interface RuleResult {
   where: string;

@@ -30,7 +30,7 @@ export class OperationRule<RuleName extends string = string> {
     this.matches = config.matches;
     this.rule = config.rule;
     this.type = 'operation-rule';
-    this.severity = config.severity ?? 'error';
+    this.severity = config.severity ?? Severity.Error;
   }
 
   static isInstance(v: any): v is OperationRule {

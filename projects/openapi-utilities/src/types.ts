@@ -1,4 +1,4 @@
-import { Severity } from './new-types';
+import { Severity } from './results';
 import { IChange, IFact } from './openapi3/sdk/types';
 
 export type LookupLineResult = {

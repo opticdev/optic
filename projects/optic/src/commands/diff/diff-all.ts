@@ -122,7 +122,7 @@ type DiffAllActionOptions = {
   json: boolean;
   validation: 'strict' | 'loose';
   failOnUntrackedOpenapi: boolean;
-  severity: Severity;
+  severity: 'info' | 'warn' | 'error';
 };
 
 // Match up the to and from candidates

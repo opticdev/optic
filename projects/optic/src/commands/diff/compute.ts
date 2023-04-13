@@ -1,6 +1,7 @@
 import {
   groupDiffsByEndpoint,
   compareSpecs,
+  Severity,
 } from '@useoptic/openapi-utilities';
 import { generateRuleRunner } from './generate-rule-runner';
 import { OPTIC_STANDARD_KEY } from '../../constants';
@@ -91,15 +92,17 @@ export async function compute(
       failed: {
         info: specResults.results.filter(
           (check) =>
-            !check.passed && !check.exempted && check.severity === 'info'
+            !check.passed && !check.exempted && check.severity === Severity.Info
         ).length,
         error: specResults.results.filter(
           (check) =>
-            !check.passed && !check.exempted && check.severity === 'error'
+            !check.passed &&
+            !check.exempted &&
+            check.severity === Severity.Error
         ).length,
         warn: specResults.results.filter(
           (check) =>
-            !check.passed && !check.exempted && check.severity === 'warn'
+            !check.passed && !check.exempted && check.severity === Severity.Warn
         ).length,
       },
     },
