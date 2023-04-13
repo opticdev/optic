@@ -18,6 +18,7 @@ import {
 import open from 'open';
 import { compressDataV2 } from './compressResults';
 import {
+  Severity,
   generateComparisonLogsV2,
   jsonChangelog,
   terminalChangelog,
@@ -88,6 +89,14 @@ comma separated values (e.g. "**/*.yml,**/*.json")'
         .choices(['strict', 'loose'])
         .default('strict')
     )
+    .addOption(
+      new Option(
+        '--severity <severity>',
+        'specify the severity level to exit with exit code, options are error, warn and info'
+      )
+        .choices(['error', 'warn', 'info'])
+        .default('error')
+    )
     .option('--check', 'enable checks', false)
     .option('--upload', 'upload specs', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
@@ -113,6 +122,7 @@ type DiffAllActionOptions = {
   json: boolean;
   validation: 'strict' | 'loose';
   failOnUntrackedOpenapi: boolean;
+  severity: Severity;
 };
 
 // Match up the to and from candidates
@@ -641,6 +651,19 @@ ${(spec.error as Error).message}`,
     }
     await flushEvents();
 
-    if (results.some((result) => result.checks.failed > 0) && options.check)
+    if (
+      results.some((result) => {
+        const failures = result.checks.failed;
+        const failuresForSeverity =
+          options.severity === 'error'
+            ? failures.error
+            : options.severity === 'warn'
+            ? failures.warn + failures.error
+            : failures.warn + failures.error + failures.info;
+
+        return failuresForSeverity > 0;
+      }) &&
+      options.check
+    )
       process.exitCode = 1;
   };

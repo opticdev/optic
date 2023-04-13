@@ -1,11 +1,14 @@
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 
 import { compute } from '../diff/compute';
 import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
 import { OpticCliConfig } from '../../config';
 import { errorHandler } from '../../error-handler';
 import { logger } from '../../logger';
-import { generateComparisonLogsV2 } from '@useoptic/openapi-utilities';
+import {
+  generateComparisonLogsV2,
+  Severity,
+} from '@useoptic/openapi-utilities';
 import chalk from 'chalk';
 
 const description = `lints and validates an OpenAPI file`;
@@ -20,12 +23,22 @@ export const registerLint = (cli: Command, config: OpticCliConfig) => {
     .configureHelp({
       commandUsage: usage,
     })
+    .addOption(
+      new Option(
+        '--severity <severity>',
+        'specify the severity level to exit with exit code, options are error, warn and info'
+      )
+        .choices(['error', 'warn', 'info'])
+        .default('error')
+    )
     .description(description)
     .argument('<file_path>', 'path to file to lint')
     .action(errorHandler(getLintAction(config)));
 };
 
-type LintActionOptions = {};
+type LintActionOptions = {
+  severity: Severity;
+};
 
 const getLintAction =
   (config: OpticCliConfig) =>
@@ -69,7 +82,15 @@ const getLintAction =
     }
 
     logger.info('');
-    if (checks.failed > 0) {
+    const failures = checks.failed;
+    const failuresForSeverity =
+      options.severity === 'error'
+        ? failures.error
+        : options.severity === 'warn'
+        ? failures.warn + failures.error
+        : failures.warn + failures.error + failures.info;
+
+    if (failuresForSeverity > 0) {
       logger.info(
         chalk.red.bold('Linting errors found with your OpenAPI spec.')
       );

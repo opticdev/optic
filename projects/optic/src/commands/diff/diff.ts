@@ -6,6 +6,7 @@ import {
   terminalChangelog,
   UserError,
   jsonChangelog,
+  Severity,
 } from '@useoptic/openapi-utilities';
 import {
   parseFilesFromRef,
@@ -74,6 +75,14 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     .addOption(new Option('--ruleset <ruleset>', '').hideHelp())
     .addOption(
       new Option(
+        '--severity <severity>',
+        'specify the severity level to exit with exit code, options are error, warn and info'
+      )
+        .choices(['error', 'warn', 'info'])
+        .default('error')
+    )
+    .addOption(
+      new Option(
         '--validation <validation>',
         'specify the level of validation to run'
       )
@@ -133,7 +142,7 @@ const runDiff = async (
   options: DiffActionOptions,
   filepath: string
 ): Promise<{
-  checks: { passed: number; failed: number; total: number };
+  checks: Awaited<ReturnType<typeof compute>>['checks'];
   specResults: Awaited<ReturnType<typeof compute>>['specResults'];
   changelogData: Awaited<ReturnType<typeof compute>>['changelogData'];
   warnings: string[];
@@ -219,6 +228,7 @@ type DiffActionOptions = {
   ruleset?: string;
   headTag?: string;
   validation: 'strict' | 'loose';
+  severity: Severity;
 };
 
 const getDiffAction =
@@ -358,5 +368,13 @@ const getDiffAction =
       isInCi: config.isInCi,
     });
 
-    if (diffResult.checks.failed > 0 && options.check) process.exitCode = 1;
+    const failures = diffResult.checks.failed;
+    const failuresForSeverity =
+      options.severity === 'error'
+        ? failures.error
+        : options.severity === 'warn'
+        ? failures.warn + failures.error
+        : failures.warn + failures.error + failures.info;
+
+    if (failuresForSeverity > 0 && options.check) process.exitCode = 1;
   };
