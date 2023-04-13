@@ -737,6 +737,7 @@ exports[`diff-all diffs all files in an workspace with x-optic-url keys 2`] = `
   ],
   "failed": [],
   "noop": [],
+  "severity": 2,
 }
 `;
 
