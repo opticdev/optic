@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`spectral rule test runs spectral rules on added 1`] = `
+[
+  {
+    "docsLink": undefined,
+    "error": "Error code: operation-description: Operation "description" must be present and non-empty string.",
+    "exempted": false,
+    "location": {
+      "jsonPath": "/paths/~1api/get",
+      "spec": "before",
+    },
+    "name": "Spectral added rule",
+    "passed": false,
+    "severity": "error",
+    "type": "added",
+    "where": "added ",
+  },
+  {
+    "docsLink": undefined,
+    "error": "Error code: operation-operationId: Operation must have "operationId".",
+    "exempted": false,
+    "location": {
+      "jsonPath": "/paths/~1api/get",
+      "spec": "before",
+    },
+    "name": "Spectral added rule",
+    "passed": false,
+    "severity": "warn",
+    "type": "added",
+    "where": "added ",
+  },
+  {
+    "docsLink": undefined,
+    "error": "Error code: operation-tags: Operation must have non-empty "tags" array.",
+    "exempted": false,
+    "location": {
+      "jsonPath": "/paths/~1api/get",
+      "spec": "before",
+    },
+    "name": "Spectral added rule",
+    "passed": false,
+    "severity": "warn",
+    "type": "added",
+    "where": "added ",
+  },
+  {
+    "docsLink": undefined,
+    "error": "Error code: operation-success-response: Operation must have at least one "2xx" or "3xx" response.",
+    "exempted": false,
+    "location": {
+      "jsonPath": "/paths/~1api/get",
+      "spec": "before",
+    },
+    "name": "Spectral added rule",
+    "passed": false,
+    "severity": "warn",
+    "type": "added",
+    "where": "added ",
+  },
+]
+`;

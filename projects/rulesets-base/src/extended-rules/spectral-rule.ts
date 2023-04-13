@@ -9,6 +9,7 @@ import {
   OpenApiV3Traverser,
   Result,
   RuleResult,
+  Severity,
   typeofDiff,
   UserError,
 } from '@useoptic/openapi-utilities';
@@ -21,11 +22,20 @@ import fs from 'node:fs/promises';
 
 type Lifecycle = 'added' | 'addedOrChanged' | 'changed' | 'always';
 
+// Definition from spectral internals
+enum DiagnosticSeverity {
+  Error = 0,
+  Warning = 1,
+  Information = 2,
+  Hint = 3,
+}
+
 // Spectral results will be returned if they fail
 export interface SpectralResult {
   path: (string | number)[];
   code: string | number;
   message: string;
+  severity: DiagnosticSeverity;
 }
 
 export interface Spectral {
@@ -54,6 +64,15 @@ function toOpticResult(
   };
 }
 
+// This will treat info + hint as a info in Optic
+function severityToOpticSeverity(spectralSev: DiagnosticSeverity): Severity {
+  return spectralSev === DiagnosticSeverity.Error
+    ? 'error'
+    : spectralSev === DiagnosticSeverity.Warning
+    ? 'warn'
+    : 'info';
+}
+
 function toOpticRuleResult(
   spectralResult: SpectralResult,
   lifecycle: Lifecycle,
@@ -65,7 +84,7 @@ function toOpticRuleResult(
 ): RuleResult {
   return {
     exempted: opts.exempted,
-    severity: 'error', // TODO update this to look at spectral ruleset
+    severity: severityToOpticSeverity(spectralResult.severity),
     docsLink: opts.docsLink,
     passed: false,
     error: `Error code: ${spectralResult.code.toString()}: ${
@@ -186,8 +205,21 @@ export class SpectralRule extends ExternalRuleBase {
         );
       } else {
         // find if there is an appropriate change
-        const maybeChange: ObjectDiff | undefined =
+        let maybeChange: ObjectDiff | undefined =
           changesByJsonPath[fact.location.jsonPath];
+
+        if (
+          !maybeChange &&
+          jsonPointerHelpers.matches(fact.location.jsonPath, [
+            'paths',
+            '**',
+            `{${Object.values(OpenAPIV3.HttpMethods).join(',')}}`,
+          ])
+        ) {
+          const pathPointer = jsonPointerHelpers.pop(fact.location.jsonPath);
+          maybeChange = changesByJsonPath[pathPointer];
+        }
+
         if (maybeChange) {
           const changeType = typeofDiff(maybeChange);
           if (this.lifecycle === 'added' && changeType === 'added') {
