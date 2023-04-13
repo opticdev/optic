@@ -1,4 +1,4 @@
-import { Severity, readSeverity } from '@useoptic/openapi-utilities';
+import { Severity, textToSev } from '@useoptic/openapi-utilities';
 import { Operation, OperationAssertions, RuleContext } from '../types';
 
 type OperationRuleConfig<RuleName extends string> = {
@@ -31,7 +31,7 @@ export class OperationRule<RuleName extends string = string> {
     this.rule = config.rule;
     this.type = 'operation-rule';
     this.severity = config.severity
-      ? readSeverity(config.severity)
+      ? textToSev(config.severity)
       : Severity.Error;
   }
 

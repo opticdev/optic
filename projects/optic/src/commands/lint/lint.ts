@@ -5,11 +5,9 @@ import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
 import { OpticCliConfig } from '../../config';
 import { errorHandler } from '../../error-handler';
 import { logger } from '../../logger';
-import {
-  generateComparisonLogsV2,
-  Severity,
-} from '@useoptic/openapi-utilities';
+import { textToSev } from '@useoptic/openapi-utilities';
 import chalk from 'chalk';
+import { generateComparisonLogsV2 } from '../../utils/diff-renderer';
 
 const description = `lints and validates an OpenAPI file`;
 
@@ -76,7 +74,11 @@ const getLintAction =
         to: file.sourcemap,
       },
       specResults,
-      { output: 'pretty', verbose: false }
+      {
+        output: 'pretty',
+        verbose: false,
+        severity: textToSev(options.severity),
+      }
     )) {
       logger.info(log);
     }

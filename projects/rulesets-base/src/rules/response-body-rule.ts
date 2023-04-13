@@ -1,4 +1,4 @@
-import { Severity, readSeverity } from '@useoptic/openapi-utilities';
+import { Severity, textToSev } from '@useoptic/openapi-utilities';
 import { ResponseBody, ResponseBodyAssertions, RuleContext } from '../types';
 
 type ResponseBodyRuleConfig<RuleName extends string> = {
@@ -31,7 +31,7 @@ export class ResponseBodyRule<RuleName extends string = string> {
     this.rule = config.rule;
     this.type = 'response-body-rule';
     this.severity = config.severity
-      ? readSeverity(config.severity)
+      ? textToSev(config.severity)
       : Severity.Error;
   }
 

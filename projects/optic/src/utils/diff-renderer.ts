@@ -1,9 +1,21 @@
-import { ResultWithSourcemap, IChange, OperationLocation } from '..';
+import {
+  RuleResult,
+  ObjectDiff,
+  SerializedSourcemap,
+  sourcemapReader,
+  OpenAPIV3,
+  Severity,
+  getOperationsChangedLabel,
+  sevToText,
+} from '@useoptic/openapi-utilities';
 import groupBy from 'lodash.groupby';
 import isUrl from 'is-url';
 import { Instance as Chalk } from 'chalk';
-import { getOperationsModifsLabel } from './count-changed-operations';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { getLocation } from '@useoptic/openapi-utilities/build/openapi3/traverser';
+import { GroupedDiffs } from '@useoptic/openapi-utilities/build/openapi3/group-diff';
 
+const SEPARATOR = `~_-_~`;
 // raw string value
 const formatRawValue = (value: string, indent: string): string => {
   try {
@@ -21,16 +33,29 @@ const md = {
   bold: (s: string) => `**${s}**`,
 };
 
-export function* generateComparisonLogs(
+export function* generateComparisonLogsV2(
+  groupedDiffs: GroupedDiffs,
+  sourcemap: {
+    from: SerializedSourcemap;
+    to: SerializedSourcemap;
+  },
   comparison: {
-    results: ResultWithSourcemap[];
-    changes: IChange[];
+    results: RuleResult[];
+    diffs: ObjectDiff[];
   },
   options: {
     output: 'pretty' | 'plain' | 'md';
     verbose: boolean;
+    severity: Severity;
   }
 ) {
+  const operationsChangedLabel = getOperationsChangedLabel(groupedDiffs);
+  const { findFileAndLines: findFileAndLinesFromBefore } = sourcemapReader(
+    sourcemap.from
+  );
+  const { findFileAndLines: findFileAndLinesFromAfter } = sourcemapReader(
+    sourcemap.to
+  );
   const mdOutput = options.output === 'md';
   const chalk = new Chalk({
     level: options.output === 'pretty' ? 1 : 0,
@@ -42,6 +67,7 @@ export function* generateComparisonLogs(
   const identity = (s: string) => s;
   const bold = mdOutput ? md.bold : chalk.bold;
   const green = mdOutput ? identity : chalk.green;
+  const yellow = mdOutput ? identity : chalk.yellow;
   const white = mdOutput ? identity : chalk.white;
   const red = mdOutput ? identity : chalk.red;
   const bgRed = mdOutput ? identity : chalk.bgRed;
@@ -56,23 +82,33 @@ export function* generateComparisonLogs(
     (result) => !result.passed && result.exempted
   ).length;
   const passedNumberOfChecks = totalNumberOfChecks - failedNumberOfChecks;
-  const operationsModifsLabel = getOperationsModifsLabel(comparison.changes);
-  const groupedResults = groupBy(
-    comparison.results,
-    (result) =>
-      `${
-        (result.change.location.conceptualLocation as OperationLocation).method
-      }-${
-        (result.change.location.conceptualLocation as OperationLocation).path
-      }`
-  );
+  const groupedResults = groupBy(comparison.results, (result) => {
+    // OpenAPIV3 assumption
+    const parts = jsonPointerHelpers.decode(result.location.jsonPath);
+    if (parts.length >= 3 && parts[0] === 'paths') {
+      const location = getLocation({
+        location: {
+          jsonPath: result.location.jsonPath,
+        },
+        type: 'operation',
+      });
 
-  for (const operationResults of Object.values(groupedResults)) {
-    const conceptualLocation =
-      operationResults[0].change.location.conceptualLocation;
+      if (
+        Object.values(OpenAPIV3.HttpMethods).includes(location.method as any)
+      ) {
+        return `${location.pathPattern}${SEPARATOR}${location.method}`;
+      } else {
+        return `${location.pathPattern}${SEPARATOR}`;
+      }
+    } else {
+      return 'Specification';
+    }
+  });
 
+  for (const [location, operationResults] of Object.entries(groupedResults)) {
     const allPassed = operationResults.every(
-      (result) => result.passed || result.exempted
+      (result) =>
+        result.passed || result.exempted || result.severity < options.severity
     );
     const renderedResults = operationResults.filter(
       (result) => options.verbose || (!result.passed && !result.exempted)
@@ -81,16 +117,27 @@ export function* generateComparisonLogs(
       ? bold(bgGreen(white(mdOutput ? 'PASS' : ' PASS ')))
       : bold(bgRed(white(mdOutput ? 'FAIL' : ' FAIL ')));
 
-    if (!('path' in conceptualLocation)) {
+    if (location === 'specification') {
       yield `${getIndent(1)}${resultNode} ${bold('Specification')}`;
     } else {
-      const { method, path } = conceptualLocation;
-      yield `${getIndent(1)}${resultNode} ${bold(
-        method.toUpperCase()
-      )} ${path}`;
+      const [path, method] = location.split(SEPARATOR);
+      if (!method) {
+        yield `${getIndent(1)}${resultNode} ${path}`;
+      } else {
+        yield `${getIndent(1)}${resultNode} ${bold(
+          method.toUpperCase()
+        )} ${path}`;
+      }
     }
 
     for (const result of renderedResults) {
+      // depending on the severity, use different colors
+      const failedAccent =
+        result.severity === Severity.Info
+          ? identity
+          : result.severity === Severity.Warn
+          ? yellow
+          : red;
       const icon = result.passed
         ? mdOutput
           ? ':heavy_check_mark:'
@@ -101,19 +148,21 @@ export function* generateComparisonLogs(
           : white('✔')
         : mdOutput
         ? ':x:'
-        : red('x');
+        : failedAccent('x');
 
-      const rulePrefix = result.type ? `${result.type} rule` : 'rule';
+      const severity = failedAccent(` (${sevToText(result.severity)})`);
+      const rulePrefix =
+        (result.type ? `${result.type} rule` : 'rule') + severity;
       yield `${getItem()}${getIndent(2)}${rulePrefix}: ${result.name ?? ''}${
         result.exempted ? ' (exempted)' : ''
       }`;
 
       if (!result.passed && !result.exempted) {
-        yield getIndent(3) + red(`${icon} ${result.error}`);
+        yield getIndent(3) + failedAccent(`${icon} ${result.error}`);
         if (result.expected && result.received) {
-          yield getIndent(3) + red('Expected Value:');
+          yield getIndent(3) + failedAccent('Expected Value:');
           yield formatRawValue(result.expected, getIndent(3));
-          yield getIndent(3) + red('Received Value:');
+          yield getIndent(3) + failedAccent('Received Value:');
           yield formatRawValue(result.received, getIndent(3));
         }
       }
@@ -130,14 +179,16 @@ export function* generateComparisonLogs(
       if (result.docsLink) {
         yield `${getIndent(3)}Read more in our API Guide (${result.docsLink})`;
       }
-      if (result.sourcemap) {
+      const sourcemap =
+        result.location.spec === 'before'
+          ? findFileAndLinesFromBefore(result.location.jsonPath)
+          : findFileAndLinesFromAfter(result.location.jsonPath);
+      if (sourcemap) {
         yield `${getIndent(3)}at ${
-          isUrl(result.sourcemap.filePath)
-            ? `${underline(result.sourcemap.filePath)} line ${
-                result.sourcemap.startLine
-              }`
+          isUrl(sourcemap.filePath)
+            ? `${underline(sourcemap.filePath)} line ${sourcemap.startLine}`
             : underline(
-                `${result.sourcemap.filePath}:${result.sourcemap.startLine}:${result.sourcemap.startPosition}`
+                `${sourcemap.filePath}:${sourcemap.startLine}:${sourcemap.startPosition}`
               )
         }`;
       }
@@ -146,7 +197,7 @@ export function* generateComparisonLogs(
     yield '\n';
   }
 
-  yield operationsModifsLabel;
+  yield operationsChangedLabel;
   yield green(bold(`${passedNumberOfChecks} checks passed`));
   yield red(bold(`${failedNumberOfChecks} checks failed`));
 
@@ -154,29 +205,3 @@ export function* generateComparisonLogs(
     yield bold(`${exemptedFailedNumberOfChecks} checks exempted`);
   }
 }
-
-export const getComparisonLogs = (
-  comparison: {
-    results: ResultWithSourcemap[];
-    changes: IChange[];
-  },
-  options: {
-    output: 'pretty' | 'plain' | 'md';
-    verbose: boolean;
-  }
-) => [...generateComparisonLogs(comparison, options)];
-
-export const logComparison = (
-  comparison: {
-    results: ResultWithSourcemap[];
-    changes: IChange[];
-  },
-  options: {
-    output: 'pretty' | 'plain';
-    verbose: boolean;
-  }
-) => {
-  for (const log of generateComparisonLogs(comparison, options)) {
-    console.log(log);
-  }
-};

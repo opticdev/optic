@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generateComparisonLogsV2 renders results 1`] = `
+[
+  "  [1m[41m[37m FAIL [39m[49m[22m Specification",
+  "    requirement rule (info): info",
+  "      x should have been correct but was not",
+  "",
+  "    requirement rule[33m (warn)[39m: warn",
+  "      [33m[33mx[39m[33m should have been correct but was not[39m",
+  "",
+  "    requirement rule[31m (error)[39m: error",
+  "      [31m[31mx[39m[31m should have been correct but was not[39m",
+  "",
+  "
+",
+  "",
+  "[32m[1m0 checks passed[22m[39m",
+  "[31m[1m3 checks failed[22m[39m",
+]
+`;
