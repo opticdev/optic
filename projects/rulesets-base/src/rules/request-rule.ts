@@ -1,4 +1,4 @@
-import { Severity, readSeverity } from '@useoptic/openapi-utilities';
+import { Severity, textToSev } from '@useoptic/openapi-utilities';
 import { RequestBody, RequestAssertions, RuleContext } from '../types';
 
 type RequestRuleConfig<RuleName extends string> = {
@@ -31,7 +31,7 @@ export class RequestRule<RuleName extends string = string> {
     this.rule = config.rule;
     this.type = 'request-rule';
     this.severity = config.severity
-      ? readSeverity(config.severity)
+      ? textToSev(config.severity)
       : Severity.Error;
   }
 

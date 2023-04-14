@@ -1,9 +1,17 @@
-export function readSeverity(sev: 'info' | 'warn' | 'error'): Severity {
+export function textToSev(sev: 'info' | 'warn' | 'error'): Severity {
   return sev === 'info'
     ? Severity.Info
     : sev === 'warn'
     ? Severity.Warn
     : Severity.Error;
+}
+
+export function sevToText(sev: Severity): 'info' | 'warn' | 'error' {
+  return sev === Severity.Info
+    ? 'info'
+    : sev === Severity.Warn
+    ? 'warn'
+    : 'error';
 }
 
 export enum Severity {

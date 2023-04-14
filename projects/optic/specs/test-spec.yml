@@ -20,4 +20,3 @@ paths:
                     format: uuid
                     example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2
 x-optic-url: https://app.o3c.info/organizations/88c4a2a7-b90f-431e-8017-fddcb0d78b46/apis/fuW9bqmOqqYayXYoPpy4B
-x-optic-standard: "@optic-github-staging/2zfz-5jv7hyVXrl4dnVRL"

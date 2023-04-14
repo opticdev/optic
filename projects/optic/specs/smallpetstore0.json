@@ -1,0 +1,218 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Swagger Petstore",
+    "description": "This is a sample server Petstore server.  You can find out more about     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample, you can use the api key `special-key` to test the authorization     filters.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/user": {
+      "post": {
+        "tags": ["user"],
+        "x-maturity": "stable",
+        "summary": "Create user",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "createUser",
+        "requestBody": {
+          "description": "Created user object",
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "default": {
+            "description": "successful operation",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Order": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "petId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "shipDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "description": "Order Status",
+            "enum": ["placed", "approved", "delivered"]
+          },
+          "complete": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "xml": {
+          "name": "Order"
+        }
+      },
+      "Category": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "xml": {
+          "name": "Category"
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "username": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "userStatus": {
+            "type": "integer",
+            "description": "User Status",
+            "format": "int32"
+          }
+        },
+        "xml": {
+          "name": "User"
+        }
+      },
+      "Tag": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "xml": {
+          "name": "Tag"
+        }
+      },
+      "Pet": {
+        "required": ["name", "photoUrls"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "name": {
+            "type": "string",
+            "example": "doggie"
+          },
+          "photoUrls": {
+            "type": "array",
+            "xml": {
+              "name": "photoUrl",
+              "wrapped": true
+            },
+            "items": {
+              "type": "string"
+            }
+          },
+          "tags": {
+            "type": "array",
+            "xml": {
+              "name": "tag",
+              "wrapped": true
+            },
+            "items": {
+              "$ref": "#/components/schemas/Tag"
+            }
+          },
+          "status": {
+            "type": "string",
+            "description": "pet status in the store",
+            "enum": ["available", "pending", "sold"]
+          }
+        },
+        "xml": {
+          "name": "Pet"
+        }
+      },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "petstore_auth": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
+            "scopes": {
+              "write:pets": "modify pets in your account",
+              "read:pets": "read your pets"
+            }
+          }
+        }
+      },
+      "api_key": {
+        "type": "apiKey",
+        "name": "api_key",
+        "in": "header"
+      }
+    }
+  }
+}

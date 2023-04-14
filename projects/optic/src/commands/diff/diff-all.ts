@@ -18,9 +18,8 @@ import {
 import open from 'open';
 import { compressDataV2 } from './compressResults';
 import {
-  Severity,
-  generateComparisonLogsV2,
   jsonChangelog,
+  textToSev,
   terminalChangelog,
 } from '@useoptic/openapi-utilities';
 import { uploadDiff } from './upload-diff';
@@ -28,6 +27,7 @@ import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { writeDataForCi } from '../../utils/ci-data';
 import { errorHandler } from '../../error-handler';
 import { checkOpenAPIVersion } from '@useoptic/openapi-io';
+import { generateComparisonLogsV2 } from '../../utils/diff-renderer';
 import path from 'path';
 
 const usage = () => `
@@ -307,6 +307,7 @@ async function computeAll(
         {
           output: 'pretty',
           verbose: false,
+          severity: textToSev(options.severity),
         }
       )) {
         logger.info(log);

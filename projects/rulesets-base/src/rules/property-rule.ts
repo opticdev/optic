@@ -1,4 +1,4 @@
-import { Severity, readSeverity } from '@useoptic/openapi-utilities';
+import { Severity, textToSev } from '@useoptic/openapi-utilities';
 import { Property, PropertyAssertions, RuleContext } from '../types';
 
 type PropertyRuleConfig<RuleName extends string> = {
@@ -31,7 +31,7 @@ export class PropertyRule<RuleName extends string = string> {
     this.rule = config.rule;
     this.type = 'property-rule';
     this.severity = config.severity
-      ? readSeverity(config.severity)
+      ? textToSev(config.severity)
       : Severity.Error;
   }
 

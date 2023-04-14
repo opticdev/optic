@@ -2,12 +2,13 @@ import { Command, Option } from 'commander';
 import open from 'open';
 
 import {
-  generateComparisonLogsV2,
   terminalChangelog,
   UserError,
   jsonChangelog,
-  Severity,
+  textToSev,
 } from '@useoptic/openapi-utilities';
+import { generateComparisonLogsV2 } from '../../utils/diff-renderer';
+
 import {
   parseFilesFromRef,
   ParseResult,
@@ -197,7 +198,11 @@ const runDiff = async (
         to: headFile.sourcemap,
       },
       specResults,
-      { output: 'pretty', verbose: false }
+      {
+        output: 'pretty',
+        verbose: false,
+        severity: textToSev(options.severity),
+      }
     )) {
       logger.info(log);
     }

@@ -3857,6 +3857,7 @@ __metadata:
     "@types/is-url": ^1.2.30
     "@types/js-yaml": ^4.0.5
     "@types/json-stable-stringify": ^1.0.33
+    "@types/lodash.groupby": ^4.6.6
     "@types/lodash.sortby": ^4.7.7
     "@types/log": ^6.3.0
     "@types/node": ^18.0.0
@@ -3896,6 +3897,7 @@ __metadata:
     js-yaml: ^4.1.0
     json-schema-traverse: ^1.0.0
     json-stable-stringify: ^1.0.1
+    lodash.groupby: ^4.6.0
     lodash.sortby: ^4.7.0
     log: ^6.3.1
     log-node: ^8.0.3
