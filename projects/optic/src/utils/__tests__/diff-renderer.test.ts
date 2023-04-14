@@ -77,7 +77,7 @@ describe('generateComparisonLogsV2', () => {
         severity: Severity.Error,
       }
     )) {
-      all.push(log);
+      all.push(log.replace(process.cwd(), ''));
     }
     expect(all).toMatchSnapshot();
   });

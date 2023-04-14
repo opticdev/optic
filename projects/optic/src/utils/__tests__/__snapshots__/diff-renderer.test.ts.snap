@@ -5,7 +5,7 @@ exports[`generateComparisonLogsV2 renders results 1`] = `
   "  [1m[42m[37m PASS [39m[49m[22m [1mPOST[22m /user",
   "    requirement rule[34m [info][39m: info",
   "      [34m[34mⓘ[39m[34m should have been correct but was not[39m",
-  "      at [4m/Users/nicholaslim/Desktop/repos/optic/projects/optic/specs/smallpetstore1.json:10:436[24m",
+  "      at [4m/specs/smallpetstore1.json:10:436[24m",
   "",
   "
 ",
