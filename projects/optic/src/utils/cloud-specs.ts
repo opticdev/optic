@@ -22,6 +22,8 @@ export async function uploadSpec(
     client: OpticBackendClient;
     tags: string[];
     orgId: string;
+    // Sets spec_tag.effective_at to spec.effective_at instead of current date
+    forward_effective_at_to_tags?: boolean;
   }
 ): Promise<string> {
   const stableSpecString = stableStringify(opts.spec.jsonLike);
@@ -75,6 +77,7 @@ export async function uploadSpec(
       git_name,
       git_email,
       commit_message,
+      forward_effective_at_to_tags: opts.forward_effective_at_to_tags,
     });
     trackEvent('spec.added', {
       apiId,
