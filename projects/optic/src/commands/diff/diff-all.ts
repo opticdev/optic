@@ -607,7 +607,9 @@ ${(spec.error as Error).message}`,
         specUrl: result.specUrl,
         changelogUrl: result.changelogUrl,
       }));
-      await writeDataForCi([...completedComparisons, ...errors]);
+      await writeDataForCi([...completedComparisons, ...errors], {
+        severity: textToSev(options.severity),
+      });
     }
 
     const comparisonsWithResults = results.filter(

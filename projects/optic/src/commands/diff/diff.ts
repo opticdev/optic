@@ -355,16 +355,21 @@ const getDiffAction =
     }
 
     if (config.isInCi) {
-      await writeDataForCi([
+      await writeDataForCi(
+        [
+          {
+            warnings: diffResult.warnings,
+            groupedDiffs: diffResult.changelogData,
+            name: file1,
+            results: diffResult.specResults.results,
+            specUrl,
+            changelogUrl: maybeChangelogUrl,
+          },
+        ],
         {
-          warnings: diffResult.warnings,
-          groupedDiffs: diffResult.changelogData,
-          name: file1,
-          results: diffResult.specResults.results,
-          specUrl,
-          changelogUrl: maybeChangelogUrl,
-        },
-      ]);
+          severity: textToSev(options.severity),
+        }
+      );
     }
 
     trackEvent('optic.diff.completed', {

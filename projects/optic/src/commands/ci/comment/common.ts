@@ -1,8 +1,12 @@
-import { getOperationsChangedLabel } from '@useoptic/openapi-utilities';
+import {
+  Severity,
+  getOperationsChangedLabel,
+} from '@useoptic/openapi-utilities';
 import { CiRunDetails } from '../../../utils/ci-data';
 
 const getChecksLabel = (
-  results: CiRunDetails['completed'][number]['comparison']['results']
+  results: CiRunDetails['completed'][number]['comparison']['results'],
+  severity: Severity
 ) => {
   let totalChecks = results.length;
   let failingChecks = 0;
@@ -10,6 +14,7 @@ const getChecksLabel = (
 
   for (const result of results) {
     if (result.passed) continue;
+    if (result.severity < severity) continue;
     if (result.exempted) exemptedFailingChecks += 1;
     else failingChecks += 1;
   }
@@ -73,7 +78,7 @@ ${getOperationsChangedLabel(s.comparison.groupedDiffs)} ${
 </td>
 <td>
 
-${getChecksLabel(s.comparison.results)}
+${getChecksLabel(s.comparison.results, results.severity)}
 
 </td>
 ${anyCompletedHasWarning ? `<td>${s.warnings.join('\n')}</td>` : ''}
