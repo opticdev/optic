@@ -67,6 +67,7 @@ export function* generateComparisonLogsV2(
   const identity = (s: string) => s;
   const bold = mdOutput ? md.bold : chalk.bold;
   const green = mdOutput ? identity : chalk.green;
+  const blue = mdOutput ? identity : chalk.blue;
   const yellow = mdOutput ? identity : chalk.yellow;
   const white = mdOutput ? identity : chalk.white;
   const red = mdOutput ? identity : chalk.red;
@@ -134,7 +135,7 @@ export function* generateComparisonLogsV2(
       // depending on the severity, use different colors
       const failedAccent =
         result.severity === Severity.Info
-          ? identity
+          ? blue
           : result.severity === Severity.Warn
           ? yellow
           : red;
@@ -146,11 +147,19 @@ export function* generateComparisonLogsV2(
         ? mdOutput
           ? ':heavy_minus_sign:'
           : white('✔')
+        : result.severity === Severity.Info
+        ? mdOutput
+          ? ':information_source:'
+          : failedAccent('ⓘ')
+        : result.severity === Severity.Warn
+        ? mdOutput
+          ? ':warning:'
+          : failedAccent('⚠')
         : mdOutput
         ? ':x:'
         : failedAccent('x');
 
-      const severity = failedAccent(` (${sevToText(result.severity)})`);
+      const severity = failedAccent(` [${sevToText(result.severity)}]`);
       const rulePrefix =
         (result.type ? `${result.type} rule` : 'rule') + severity;
       yield `${getItem()}${getIndent(2)}${rulePrefix}: ${result.name ?? ''}${

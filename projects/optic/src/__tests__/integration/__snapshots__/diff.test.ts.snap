@@ -153,103 +153,103 @@ specification details:
 Checks
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /example
-    added rule[31m (error)[39m: prevent new required query parameters
+    added rule[31m [error][39m: prevent new required query parameters
       [31m[31mx[39m[31m cannot add required query parameter addedQueryParameter to an existing operation. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:60:1906[24m
 
-    changed rule[31m (error)[39m: prevent requiring existing query parameters
+    changed rule[31m [error][39m: prevent requiring existing query parameters
       [31m[31mx[39m[31m cannot make optional query parameter 'optionalToRequired' required. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:47:1494[24m
 
-    added rule[31m (error)[39m: query parameter naming check
+    added rule[31m [error][39m: query parameter naming check
       [31m[31mx[39m[31m addedQueryParameter is not snake_case[39m
       at [4m$workspace$/petstore-updated.json:60:1906[24m
 
-    changed rule[31m (error)[39m: prevent making response property optional
+    changed rule[31m [error][39m: prevent making response property optional
       [31m[31mx[39m[31m cannot make required response property 'requiredToOptional' optional. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:114:3902[24m
 
-    removed rule[31m (error)[39m: prevent removing response property
+    removed rule[31m [error][39m: prevent removing response property
       [31m[31mx[39m[31m cannot remove response property 'orderId'. This is a breaking change.[39m
       at [4m$workspace$/petstore-base.json:81:2600[24m
 
-    removed rule[31m (error)[39m: prevent removing response property
+    removed rule[31m [error][39m: prevent removing response property
       [31m[31mx[39m[31m cannot remove response property 'deletedRequiredKey'. This is a breaking change.[39m
       at [4m$workspace$/petstore-base.json:112:3802[24m
 
-    changed rule[31m (error)[39m: prevent response property type changes
+    changed rule[31m [error][39m: prevent response property type changes
       [31m[31mx[39m[31m expected response body property 'orderId' to not change type. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:83:2701[24m
 
-    changed rule[31m (error)[39m: prevent response property type changes
+    changed rule[31m [error][39m: prevent response property type changes
       [31m[31mx[39m[31m expected response body property 'fromTypeArrays' to not change type. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:120:4226[24m
 
-    changed rule[31m (error)[39m: prevent response property type changes
+    changed rule[31m [error][39m: prevent response property type changes
       [31m[31mx[39m[31m expected response body property 'toTypeArrays' to not change type. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:119:4156[24m
 
-    added rule[31m (error)[39m: response property naming check
+    added rule[31m [error][39m: response property naming check
       [31m[31mx[39m[31m addedRequiredKey is not snake_case[39m
       at [4m$workspace$/petstore-updated.json:115:3970[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /parameters_at_path
-    added rule[31m (error)[39m: prevent new required query parameters
+    added rule[31m [error][39m: prevent new required query parameters
       [31m[31mx[39m[31m cannot add required query parameter query_in_path to an existing operation. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:143:4710[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /pet
-    removed rule[31m (error)[39m: prevent operation removal
+    removed rule[31m [error][39m: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
       at [4m$workspace$/petstore-base.json:158:4984[24m
 
-    removed rule[31m (error)[39m: prevent response status code removal
+    removed rule[31m [error][39m: prevent response status code removal
       [31m[31mx[39m[31m must not remove response status code 404. This is a breaking change.[39m
       at [4m$workspace$/petstore-base.json:160:5026[24m
 
-    removed rule[31m (error)[39m: prevent response status code removal
+    removed rule[31m [error][39m: prevent response status code removal
       [31m[31mx[39m[31m must not remove response status code 405. This is a breaking change.[39m
       at [4m$workspace$/petstore-base.json:161:5094[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPUT[22m /pet
-    added rule[31m (error)[39m: prevent changing request property to required
+    added rule[31m [error][39m: prevent changing request property to required
       [31m[31mx[39m[31m cannot add a required request property 'number' to an existing operation. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:173:5555[24m
 
-    removed rule[31m (error)[39m: prevent response status code removal
+    removed rule[31m [error][39m: prevent response status code removal
       [31m[31mx[39m[31m must not remove response status code 400. This is a breaking change.[39m
       at [4m$workspace$/petstore-base.json:254:8639[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /pet/{petId}/uploadImage
-    changed rule[31m (error)[39m: prevent cookie parameters enum breaking changes
+    changed rule[31m [error][39m: prevent cookie parameters enum breaking changes
       [31m[31mx[39m[31m cannot add an enum to restrict possible values for cookie parameter 'debug'. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:740:27031[24m
 
-    removed rule[31m (error)[39m: prevent removing response property
+    removed rule[31m [error][39m: prevent removing response property
       [31m[31mx[39m[31m cannot remove response property 'code'. This is a breaking change.[39m
       at [4m$workspace$/petstore-base.json:406:14080[24m
 
-    removed rule[31m (error)[39m: prevent removing response property
+    removed rule[31m [error][39m: prevent removing response property
       [31m[31mx[39m[31m cannot remove response property 'type'. This is a breaking change.[39m
       at [4m$workspace$/petstore-base.json:407:14150[24m
 
-    removed rule[31m (error)[39m: prevent removing response property
+    removed rule[31m [error][39m: prevent removing response property
       [31m[31mx[39m[31m cannot remove response property 'message'. This is a breaking change.[39m
       at [4m$workspace$/petstore-base.json:408:14200[24m
 
-    removed rule[31m (error)[39m: prevent response status code removal
+    removed rule[31m [error][39m: prevent response status code removal
       [31m[31mx[39m[31m must not remove response status code 200. This is a breaking change.[39m
       at [4m$workspace$/petstore-base.json:399:13841[24m
 
-    changed rule[31m (error)[39m: prevent response property type changes
+    changed rule[31m [error][39m: prevent response property type changes
       [31m[31mx[39m[31m expected response body property 'type' to not change type. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:806:29115[24m
 
@@ -259,7 +259,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /store/order/{orderId}
-    changed rule[31m (error)[39m: prevent making response property optional
+    changed rule[31m [error][39m: prevent making response property optional
       [31m[31mx[39m[31m cannot make required response property 'petId' optional. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:969:34944[24m
 
@@ -269,119 +269,119 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /user
-    changed rule[31m (error)[39m: prevent changing request property to required
+    changed rule[31m [error][39m: prevent changing request property to required
       [31m[31mx[39m[31m cannot make a request property required. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:1077:39015[24m
 
-    changed rule[31m (error)[39m: prevent request property type changes
+    changed rule[31m [error][39m: prevent request property type changes
       [31m[31mx[39m[31m expected request body property 'userStatus' to not change type. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:1082:39273[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /user/createWithArray
-    changed rule[31m (error)[39m: prevent changing request property to required
+    changed rule[31m [error][39m: prevent changing request property to required
       [31m[31mx[39m[31m cannot make a request property required. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:1117:40460[24m
 
-    changed rule[31m (error)[39m: prevent request property type changes
+    changed rule[31m [error][39m: prevent request property type changes
       [31m[31mx[39m[31m expected request body property 'userStatus' to not change type. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:1122:40728[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /user/createWithList
-    changed rule[31m (error)[39m: prevent changing request property to required
+    changed rule[31m [error][39m: prevent changing request property to required
       [31m[31mx[39m[31m cannot make a request property required. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:1158:41945[24m
 
-    changed rule[31m (error)[39m: prevent request property type changes
+    changed rule[31m [error][39m: prevent request property type changes
       [31m[31mx[39m[31m expected request body property 'userStatus' to not change type. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:1163:42213[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /user/login
-    added rule[31m (error)[39m: header parameter naming check
+    added rule[31m [error][39m: header parameter naming check
       [31m[31mx[39m[31m X-Rate-Limit is not snake_case[39m
       at [4m$workspace$/petstore-updated.json:1208:43553[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /user/{username}
-    changed rule[31m (error)[39m: prevent making response property optional
+    changed rule[31m [error][39m: prevent making response property optional
       [31m[31mx[39m[31m cannot make required response property 'lastName' optional. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:1265:45501[24m
 
-    changed rule[31m (error)[39m: prevent making response property optional
+    changed rule[31m [error][39m: prevent making response property optional
       [31m[31mx[39m[31m cannot make required response property 'lastName' optional. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:1286:46420[24m
 
-    removed rule[31m (error)[39m: prevent removing response property
+    removed rule[31m [error][39m: prevent removing response property
       [31m[31mx[39m[31m cannot remove response property 'phone'. This is a breaking change.[39m
       at [4m$workspace$/petstore-base.json:827:29057[24m
 
-    removed rule[31m (error)[39m: prevent removing response property
+    removed rule[31m [error][39m: prevent removing response property
       [31m[31mx[39m[31m cannot remove response property 'phone'. This is a breaking change.[39m
       at [4m$workspace$/petstore-base.json:848:29942[24m
 
-    changed rule[31m (error)[39m: prevent response property type changes
+    changed rule[31m [error][39m: prevent response property type changes
       [31m[31mx[39m[31m expected response body property 'userStatus' to not change type. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:1268:45660[24m
 
-    changed rule[31m (error)[39m: prevent response property type changes
+    changed rule[31m [error][39m: prevent response property type changes
       [31m[31mx[39m[31m expected response body property 'userStatus' to not change type. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:1289:46579[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPUT[22m /user/{username}
-    changed rule[31m (error)[39m: prevent changing request property to required
+    changed rule[31m [error][39m: prevent changing request property to required
       [31m[31mx[39m[31m cannot make a request property required. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:1342:48332[24m
 
-    changed rule[31m (error)[39m: prevent request property type changes
+    changed rule[31m [error][39m: prevent request property type changes
       [31m[31mx[39m[31m expected request body property 'userStatus' to not change type. This is a breaking change.[39m
       at [4m$workspace$/petstore-updated.json:1347:48590[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /pet/findByStatus
-    added rule[31m (error)[39m: operation path component naming check
+    added rule[31m [error][39m: operation path component naming check
       [31m[31mx[39m[31m findByStatus is not snake_case[39m
       at [4m$workspace$/petstore-updated.json:316:10941[24m
 
-    added rule[31m (error)[39m: response property naming check
+    added rule[31m [error][39m: response property naming check
       [31m[31mx[39m[31m photoUrls is not snake_case[39m
       at [4m$workspace$/petstore-updated.json:367:12791[24m
 
-    added rule[31m (error)[39m: response property naming check
+    added rule[31m [error][39m: response property naming check
       [31m[31mx[39m[31m photoUrls is not snake_case[39m
       at [4m$workspace$/petstore-updated.json:411:14652[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /pet/findByTags
-    added rule[31m (error)[39m: operation path component naming check
+    added rule[31m [error][39m: operation path component naming check
       [31m[31mx[39m[31m findByTags is not snake_case[39m
       at [4m$workspace$/petstore-updated.json:446:15966[24m
 
-    added rule[31m (error)[39m: response property naming check
+    added rule[31m [error][39m: response property naming check
       [31m[31mx[39m[31m photoUrls is not snake_case[39m
       at [4m$workspace$/petstore-updated.json:483:17424[24m
 
-    added rule[31m (error)[39m: response property naming check
+    added rule[31m [error][39m: response property naming check
       [31m[31mx[39m[31m photoUrls is not snake_case[39m
       at [4m$workspace$/petstore-updated.json:527:19285[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /pet/{petId}
-    added rule[31m (error)[39m: response property naming check
+    added rule[31m [error][39m: response property naming check
       [31m[31mx[39m[31m photoUrls is not snake_case[39m
       at [4m$workspace$/petstore-updated.json:596:21833[24m
 
-    added rule[31m (error)[39m: response property naming check
+    added rule[31m [error][39m: response property naming check
       [31m[31mx[39m[31m photoUrls is not snake_case[39m
       at [4m$workspace$/petstore-updated.json:637:23536[24m
 
@@ -428,7 +428,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /example
-    removed rule[31m (error)[39m: prevent operation removal
+    removed rule[31m [error][39m: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
       at [4m$workspace$/example-api-v0.json:9:150[24m
 
@@ -438,7 +438,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /invalid_name
-    requirement rule[31m (error)[39m: operation path component naming check
+    requirement rule[31m [error][39m: operation path component naming check
       [31m[31mx[39m[31m invalid_name is not camelCase[39m
       at [4m$workspace$/example-api-v1.json:31:632[24m
 
@@ -499,7 +499,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /example
-    removed rule[31m (error)[39m: prevent operation removal
+    removed rule[31m [error][39m: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
       at [4m$workspace$/example-api-v0.json:9:150[24m
 
@@ -509,7 +509,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /invalid_name
-    requirement rule[31m (error)[39m: operation path component naming check
+    requirement rule[31m [error][39m: operation path component naming check
       [31m[31mx[39m[31m invalid_name is not camelCase[39m
       at [4m$workspace$/example-api-v1.json:31:632[24m
 
@@ -553,7 +553,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /example
-    removed rule[31m (error)[39m: prevent operation removal
+    removed rule[31m [error][39m: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
       at [4m$workspace$/example-api-v0.json:9:150[24m
 
@@ -563,7 +563,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /invalid_name
-    requirement rule[31m (error)[39m: operation path component naming check
+    requirement rule[31m [error][39m: operation path component naming check
       [31m[31mx[39m[31m invalid_name is not camelCase[39m
       at [4m$workspace$/example-api-v1.json:31:632[24m
 
@@ -605,7 +605,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /example
-    removed rule[31m (error)[39m: prevent operation removal
+    removed rule[31m [error][39m: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
       at [4m$workspace$/example-api-v0.json:9:150[24m
 
@@ -615,7 +615,7 @@ Checks
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /invalid_name
-    requirement rule[31m (error)[39m: operation path component naming check
+    requirement rule[31m [error][39m: operation path component naming check
       [31m[31mx[39m[31m invalid_name is not camelCase[39m
       at [4m$workspace$/example-api-v1.json:31:632[24m
 
@@ -653,7 +653,7 @@ specification details:
 Checks
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /example
-    removed rule[31m (error)[39m: prevent operation removal
+    removed rule[31m [error][39m: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
       at [4m$workspace$/example-api-v0.json:9:150[24m
 
@@ -676,7 +676,7 @@ exports[`diff with mock server uploads specs if authenticated and --upload 1`] =
 Checks
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPATCH[22m /example
-    changed rule[31m (error)[39m: prevent response property type changes
+    changed rule[31m [error][39m: prevent response property type changes
       [31m[31mx[39m[31m expected response body application/json root shape to not change type. This is a breaking change.[39m
       at [4m$workspace$/spec.json:24:565[24m
 

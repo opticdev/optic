@@ -2,14 +2,21 @@
 
 exports[`generateComparisonLogsV2 renders results 1`] = `
 [
-  "  [1m[41m[37m FAIL [39m[49m[22m Specification",
-  "    requirement rule (info): info",
-  "      x should have been correct but was not",
+  "  [1m[42m[37m PASS [39m[49m[22m [1mPOST[22m /user",
+  "    requirement rule[34m [info][39m: info",
+  "      [34m[34mⓘ[39m[34m should have been correct but was not[39m",
+  "      at [4m/specs/smallpetstore1.json:10:436[24m",
   "",
-  "    requirement rule[33m (warn)[39m: warn",
-  "      [33m[33mx[39m[33m should have been correct but was not[39m",
+  "
+",
+  "  [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /user",
+  "    requirement rule[33m [warn][39m: warn",
+  "      [33m[33m⚠[39m[33m should have been correct but was not[39m",
   "",
-  "    requirement rule[31m (error)[39m: error",
+  "
+",
+  "  [1m[41m[37m FAIL [39m[49m[22m [1mPATCH[22m /user",
+  "    requirement rule[31m [error][39m: error",
   "      [31m[31mx[39m[31m should have been correct but was not[39m",
   "",
   "
