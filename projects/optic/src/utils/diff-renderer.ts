@@ -76,13 +76,18 @@ export function* generateComparisonLogsV2(
   const underline = mdOutput ? identity : chalk.underline;
 
   const totalNumberOfChecks = comparison.results.length;
-  const failedNumberOfChecks = comparison.results.filter(
+  const failedChecks = comparison.results.filter(
     (result) => !result.passed && !result.exempted
-  ).length;
+  );
+  const numberOfChecks = {
+    info: failedChecks.filter((r) => r.severity === Severity.Info).length,
+    warn: failedChecks.filter((r) => r.severity === Severity.Warn).length,
+    error: failedChecks.filter((r) => r.severity === Severity.Error).length,
+  };
   const exemptedFailedNumberOfChecks = comparison.results.filter(
     (result) => !result.passed && result.exempted
   ).length;
-  const passedNumberOfChecks = totalNumberOfChecks - failedNumberOfChecks;
+  const passedNumberOfChecks = totalNumberOfChecks - failedChecks.length;
   const groupedResults = groupBy(comparison.results, (result) => {
     // OpenAPIV3 assumption
     const parts = jsonPointerHelpers.decode(result.location.jsonPath);
@@ -207,8 +212,11 @@ export function* generateComparisonLogsV2(
   }
 
   yield operationsChangedLabel;
-  yield green(bold(`${passedNumberOfChecks} checks passed`));
-  yield red(bold(`${failedNumberOfChecks} checks failed`));
+  yield green(bold(`${passedNumberOfChecks} passed`));
+  if (numberOfChecks.info > 0) yield blue(bold(`${numberOfChecks.info} info`));
+  if (numberOfChecks.warn > 0)
+    yield blue(bold(`${numberOfChecks.warn} warnings`));
+  yield red(bold(`${numberOfChecks.error} errors`));
 
   if (exemptedFailedNumberOfChecks > 0) {
     yield bold(`${exemptedFailedNumberOfChecks} checks exempted`);

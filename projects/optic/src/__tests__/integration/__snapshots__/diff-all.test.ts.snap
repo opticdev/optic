@@ -21,8 +21,8 @@ Checks
 
 
 
-[32m[1m0 checks passed[22m[39m
-[31m[1m2 checks failed[22m[39m
+[32m[1m0 passed[22m[39m
+[31m[1m2 errors[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 [34mDiffing HEAD~1:mvspec.yml to empty spec[39m
@@ -67,8 +67,8 @@ Checks
 
 
 2 operations removed
-[32m[1m0 checks passed[22m[39m
-[31m[1m6 checks failed[22m[39m
+[32m[1m0 passed[22m[39m
+[31m[1m6 errors[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 [34mDiffing HEAD~1:specwithkey.json to ../specwithkey.json[39m
@@ -89,8 +89,8 @@ Checks
 
 
 
-[32m[1m4 checks passed[22m[39m
-[31m[1m0 checks failed[22m[39m
+[32m[1m4 passed[22m[39m
+[31m[1m0 errors[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 [34mDiffing HEAD~1:specwithkey.yml to ../specwithkey.yml[39m
@@ -106,8 +106,8 @@ Checks
 
 
 
-[32m[1m0 checks passed[22m[39m
-[31m[1m1 checks failed[22m[39m
+[32m[1m0 passed[22m[39m
+[31m[1m1 errors[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 [34mDiffing empty spec to ../movedspec.yml[39m
@@ -137,8 +137,8 @@ Checks
 
 
 2 operations added
-[32m[1m0 checks passed[22m[39m
-[31m[1m2 checks failed[22m[39m
+[32m[1m0 passed[22m[39m
+[31m[1m2 errors[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 [33mWarning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. \`optic diff-all\` only runs on specs that include \`x-optic-url\` keys that point to specs uploaded to optic.[39m
@@ -176,8 +176,8 @@ Checks
 
 
 1 operation removed
-[32m[1m0 checks passed[22m[39m
-[31m[1m3 checks failed[22m[39m
+[32m[1m0 passed[22m[39m
+[31m[1m3 errors[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 [34mDiffing empty spec to folder-to-run/should-run-mved.yml[39m
@@ -189,8 +189,8 @@ specification details:
 [1mPOST[22m /filler_route: [32madded[39m
   
 1 operation added
-[32m[1m0 checks passed[22m[39m
-[31m[1m0 checks failed[22m[39m
+[32m[1m0 passed[22m[39m
+[31m[1m0 errors[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 "
@@ -217,8 +217,8 @@ Checks
 
 
 
-[32m[1m0 checks passed[22m[39m
-[31m[1m2 checks failed[22m[39m
+[32m[1m0 passed[22m[39m
+[31m[1m2 errors[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 [34mDiffing HEAD~1:mvspec.yml to empty spec[39m
@@ -263,8 +263,8 @@ Checks
 
 
 2 operations removed
-[32m[1m0 checks passed[22m[39m
-[31m[1m6 checks failed[22m[39m
+[32m[1m0 passed[22m[39m
+[31m[1m6 errors[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 [34mDiffing HEAD~1:specwithkey.json to specwithkey.json[39m
@@ -285,8 +285,8 @@ Checks
 
 
 
-[32m[1m4 checks passed[22m[39m
-[31m[1m0 checks failed[22m[39m
+[32m[1m4 passed[22m[39m
+[31m[1m0 errors[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 [34mDiffing HEAD~1:specwithkey.yml to specwithkey.yml[39m
@@ -302,8 +302,8 @@ Checks
 
 
 
-[32m[1m0 checks passed[22m[39m
-[31m[1m1 checks failed[22m[39m
+[32m[1m0 passed[22m[39m
+[31m[1m1 errors[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 [34mDiffing empty spec to movedspec.yml[39m
@@ -333,8 +333,8 @@ Checks
 
 
 2 operations added
-[32m[1m0 checks passed[22m[39m
-[31m[1m2 checks failed[22m[39m
+[32m[1m0 passed[22m[39m
+[31m[1m2 errors[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 [33mWarning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. \`optic diff-all\` only runs on specs that include \`x-optic-url\` keys that point to specs uploaded to optic.[39m
