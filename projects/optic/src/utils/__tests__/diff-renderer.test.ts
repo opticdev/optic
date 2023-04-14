@@ -24,14 +24,13 @@ describe('generateComparisonLogsV2', () => {
       { from: from.jsonLike, to: to.jsonLike },
       diffs
     );
-    const jsonPath = diffs[0].after ?? diffs[0].before;
     const results: RuleResult[] = [
       {
         where: 'blah',
         severity: 0,
         passed: false,
         location: {
-          jsonPath,
+          jsonPath: '/paths/~1user/post',
           spec: 'after',
         },
         name: 'info',
@@ -43,7 +42,7 @@ describe('generateComparisonLogsV2', () => {
         severity: 1,
         passed: false,
         location: {
-          jsonPath,
+          jsonPath: '/paths/~1user/get',
           spec: 'after',
         },
         name: 'warn',
@@ -55,7 +54,7 @@ describe('generateComparisonLogsV2', () => {
         severity: 2,
         passed: false,
         location: {
-          jsonPath,
+          jsonPath: '/paths/~1user/patch',
           spec: 'after',
         },
         name: 'error',
