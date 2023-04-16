@@ -59,6 +59,7 @@ exports[`bundle bundles components together 1`] = `
       "type": "string"
   "parameters": {}
   "examples": {}
+  "requestBodies": {}
 
 "
 `;
