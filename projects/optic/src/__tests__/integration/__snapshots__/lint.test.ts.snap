@@ -33,8 +33,8 @@ Checks
 
 
 
-[32m[1m0 checks passed[22m[39m
-[31m[1m1 checks failed[22m[39m
+[32m[1m0 passed[22m[39m
+[31m[1m1 errors[22m[39m
 
 [31m[1mLinting errors found with your OpenAPI spec.[22m[39m
 "
@@ -61,8 +61,8 @@ Checks
 
 
 
-[32m[1m1 checks passed[22m[39m
-[31m[1m0 checks failed[22m[39m
+[32m[1m1 passed[22m[39m
+[31m[1m0 errors[22m[39m
 
 [32m[1mLinting passed.[22m[39m
 "

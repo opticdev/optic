@@ -22,7 +22,9 @@ exports[`generateComparisonLogsV2 renders results 1`] = `
   "
 ",
   "",
-  "[32m[1m0 checks passed[22m[39m",
-  "[31m[1m3 checks failed[22m[39m",
+  "[32m[1m0 passed[22m[39m",
+  "[34m[1m1 info[22m[39m",
+  "[34m[1m1 warnings[22m[39m",
+  "[31m[1m1 errors[22m[39m",
 ]
 `;
