@@ -50,7 +50,7 @@ jobs:
 
       - name: Login to Amazon ECR Public
         id: login-ecr-public
-        uses: aws-actions/amazon-ecr-login@261a7de32bda11ba01f4d75c4ed6caf3739e54be # v1.5.3
+        uses: aws-actions/amazon-ecr-login@2f9f10ea3fa2eed41ac443fee8bfbd059af2d0a4 # v1.6.0
         with:
           registry-type: public
 
