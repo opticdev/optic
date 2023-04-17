@@ -1,4 +1,5 @@
 import { Command, Option } from 'commander';
+import open from 'open';
 
 import { compute } from '../diff/compute';
 import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
@@ -8,6 +9,11 @@ import { logger } from '../../logger';
 import { textToSev } from '@useoptic/openapi-utilities';
 import chalk from 'chalk';
 import { generateComparisonLogsV2 } from '../../utils/diff-renderer';
+import { compressDataV2 } from '../diff/compressResults';
+import {
+  flushEvents,
+  trackEvent,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
 
 const description = `lints and validates an OpenAPI file`;
 
@@ -29,6 +35,7 @@ export const registerLint = (cli: Command, config: OpticCliConfig) => {
         .choices(['error', 'warn', 'info'])
         .default('error')
     )
+    .option('--web', 'view the lint results in the optic web view', false)
     .description(description)
     .argument('<file_path>', 'path to file to lint')
     .action(errorHandler(getLintAction(config)));
@@ -36,6 +43,7 @@ export const registerLint = (cli: Command, config: OpticCliConfig) => {
 
 type LintActionOptions = {
   severity: 'info' | 'warn' | 'error';
+  web: boolean;
 };
 
 const getLintAction =
@@ -91,6 +99,30 @@ const getLintAction =
         : options.severity === 'warn'
         ? failures.warn + failures.error
         : failures.warn + failures.error + failures.info;
+
+    if (options.web) {
+      if (specResults.results.length > 0) {
+        const analyticsData: Record<string, any> = {
+          isInCi: config.isInCi,
+        };
+
+        const meta = {
+          createdAt: new Date(),
+          command: ['optic', ...process.argv.slice(2)].join(' '),
+          file1: path,
+        };
+
+        const compressedData = compressDataV2(file, file, specResults, meta);
+        analyticsData.compressedDataLength = compressedData.length;
+        logger.info('Opening up lint results in web view');
+
+        trackEvent('optic.lint.view_web', analyticsData);
+        await flushEvents();
+        await open(`${config.client.getWebBase()}/cli/diff#${compressedData}`, {
+          wait: false,
+        });
+      }
+    }
 
     if (failuresForSeverity > 0) {
       logger.info(
