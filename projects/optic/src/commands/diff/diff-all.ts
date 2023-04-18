@@ -218,7 +218,7 @@ async function computeAll(
     try {
       const hasOpticUrl = getApiFromOpticUrl(rawSpec[OPTIC_URL_KEY]);
       checkOpenAPIVersion(rawSpec);
-      if (!hasOpticUrl) {
+      if (!hasOpticUrl && options.upload) {
         logger.debug(
           `Skipping comparison from ${candidate.from} to ${candidate.to} because there was no x-optic-url`
         );
