@@ -202,7 +202,16 @@ const matches = {
     'schema',
   ],
   inExistingComponent: ['components', 'schemas', '**'],
+  inExistingRequestBody: [
+    'components',
+    'requestBodies',
+    '**',
+    'content',
+    '**/**',
+  ],
+  inExistingResponseBody: ['components', 'responses', '**', 'content', '**/**'],
   inRequestBody: ['paths', '**', methods, 'requestBody'],
+  inResponseStatusCode: ['paths', '**', methods, 'responses', '**'],
   inOperationParameter: ['paths', '**', methods, 'parameters', '**'],
   inPathParameter: ['paths', '**', 'parameters', '**'],
   inRequestExamples: [
@@ -253,6 +262,7 @@ function bundle(spec: OpenAPIV3.Document, sourcemap: JsonSchemaSourcemap) {
   if (!spec.components.parameters) spec.components.parameters = {};
   if (!spec.components.examples) spec.components.examples = {};
   if (!spec.components.requestBodies) spec.components.requestBodies = {};
+  if (!spec.components.responses) spec.components.responses = {};
 
   let updatedSpec = spec;
 
@@ -265,6 +275,8 @@ function bundle(spec: OpenAPIV3.Document, sourcemap: JsonSchemaSourcemap) {
       matches.inResponseSchema,
       matches.inOperationParameterSchema,
       matches.inExistingComponent,
+      matches.inExistingRequestBody,
+      matches.inExistingResponseBody,
     ],
     'children',
     jsonPointerHelpers.compile(['components', 'schemas']),
@@ -314,6 +326,24 @@ function bundle(spec: OpenAPIV3.Document, sourcemap: JsonSchemaSourcemap) {
       } else {
         const last = components[components.length - 1];
         return toComponentName(last || 'RequestBody');
+      }
+    }
+  );
+
+  updatedSpec = bundleMatchingRefsAsComponents(
+    updatedSpec,
+    sourcemap,
+    [matches.inResponseStatusCode],
+    'parent',
+    jsonPointerHelpers.compile(['components', 'responses']),
+    (example, filePath, pathInFile) => {
+      const inOtherFile = filePath !== sourcemap.rootFilePath;
+      const components = jsonPointerHelpers.decode(pathInFile);
+      if (inOtherFile && components.length <= 1) {
+        return toComponentName(path.parse(filePath).name);
+      } else {
+        const last = components[components.length - 1];
+        return toComponentName(last || 'ResponseBody');
       }
     }
   );
