@@ -105,11 +105,9 @@ export class PostmanCollectionEntries {
       });
 
       for (const res of item.responses.all()) {
-        const request = (res.originalRequest ||
-          item.request) as ExtendedRequest;
+        const request = res.originalRequest;
         const response = res as ExtendedResponse;
-
-        yield Ok({ request, response, variableScope });
+        if (request && response) yield Ok({ request, response, variableScope });
       }
     }
   }
