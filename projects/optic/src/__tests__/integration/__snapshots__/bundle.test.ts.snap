@@ -60,6 +60,7 @@ exports[`bundle bundles components together 1`] = `
   "parameters": {}
   "examples": {}
   "requestBodies": {}
+  "responses": {}
 
 "
 `;
