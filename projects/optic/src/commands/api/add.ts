@@ -155,7 +155,7 @@ async function crawlCandidateSpecs(
         orgId,
       });
     }
-    const specsToTag: [string, string][] = [];
+    const specsToTag: [string, string, Date | undefined][] = [];
     for await (const sha of shas) {
       let parseResult: ParseResult;
       try {
@@ -192,18 +192,19 @@ async function crawlCandidateSpecs(
         tags: [`git:${sha}`],
         client: config.client,
         orgId,
+        forward_effective_at_to_tags: true,
       });
-      specsToTag.push([specId, sha]);
+      specsToTag.push([specId, sha, parseResult.context?.effective_at]);
     }
 
     if (!alreadyTracked) {
       const branch = await Git.getCurrentBranchName();
       const tag = [sanitizeGitTag(`gitbranch:${branch}`)];
-      for (const [specId, sha] of [...specsToTag].reverse()) {
+      for (const [specId, sha, effective_at] of [...specsToTag].reverse()) {
         spinner.text = `${chalk.bold.blue(
           parseResult.jsonLike.info.title || pathRelativeToRoot
         )} version ${sha.substring(0, 6)} tagging`;
-        await config.client.tagSpec(specId, tag);
+        await config.client.tagSpec(specId, tag, effective_at);
       }
     }
   } else {

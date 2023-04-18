@@ -137,13 +137,15 @@ export class OpticBackendClient extends JsonHttpClient {
     git_name?: string;
     git_email?: string;
     commit_message?: string;
+    forward_effective_at_to_tags?: boolean;
   }): Promise<{ id: string }> {
     return this.postJson(`/api/specs`, spec);
   }
 
-  public async tagSpec(specId: string, tags: string[]) {
+  public async tagSpec(specId: string, tags: string[], effective_at?: Date) {
     return this.patchJson(`/api/specs/${specId}/tags`, {
       tags,
+      effective_at,
     });
   }
 
