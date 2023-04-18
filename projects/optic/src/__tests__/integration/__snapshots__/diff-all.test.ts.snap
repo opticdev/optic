@@ -196,7 +196,7 @@ specification details:
 "
 `;
 
-exports[`diff-all diffs all files in an workspace with x-optic-url keys 1`] = `
+exports[`diff-all diffs all files in a workspace with x-optic-url keys with --upload 1`] = `
 "[34mDiffing HEAD~1:folder/in-folder.yml to folder/in-folder.yml[39m
 No changes were detected
 
@@ -346,7 +346,7 @@ specwithoutkey.yml
 "
 `;
 
-exports[`diff-all diffs all files in an workspace with x-optic-url keys 2`] = `
+exports[`diff-all diffs all files in a workspace with x-optic-url keys with --upload 2`] = `
 {
   "completed": [
     {
@@ -739,6 +739,69 @@ exports[`diff-all diffs all files in an workspace with x-optic-url keys 2`] = `
   "noop": [],
   "severity": 2,
 }
+`;
+
+exports[`diff-all diffs all files in a workspace without --upload 1`] = `
+"[34mDiffing HEAD~1:mvspec.yml to empty spec[39m
+
+specification details:
+- /info/description [31mremoved[39m
+
+[1mPOST[22m /filler_route: [31mremoved[39m
+  
+[1mPOST[22m /api/filler-route: [31mremoved[39m
+  
+Checks
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
+    removed rule[31m [error][39m: prevent operation removal
+      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
+      at [4m$workspace$/mvspec.yml:8:105[24m
+
+    removed rule[31m [error][39m: prevent removing response property
+      [31m[31mx[39m[31m cannot remove response property 'id'. This is a breaking change.[39m
+      at [4m$workspace$/mvspec.yml:18:359[24m
+
+    removed rule[31m [error][39m: prevent response status code removal
+      [31m[31mx[39m[31m must not remove response status code 201. This is a breaking change.[39m
+      at [4m$workspace$/mvspec.yml:11:162[24m
+
+
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /api/filler-route
+    removed rule[31m [error][39m: prevent operation removal
+      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
+      at [4m$workspace$/mvspec.yml:23:520[24m
+
+    removed rule[31m [error][39m: prevent removing response property
+      [31m[31mx[39m[31m cannot remove response property 'id'. This is a breaking change.[39m
+      at [4m$workspace$/mvspec.yml:33:774[24m
+
+    removed rule[31m [error][39m: prevent response status code removal
+      [31m[31mx[39m[31m must not remove response status code 201. This is a breaking change.[39m
+      at [4m$workspace$/mvspec.yml:26:577[24m
+
+
+
+2 operations removed
+[32m[1m0 passed[22m[39m
+[31m[1m6 errors[22m[39m
+
+[34mDiffing empty spec to movedspec.yml[39m
+
+specification details:
+- /info/description [32madded[39m
+- /openapi, /info/version, /info/title [33mchanged[39m
+
+[1mPOST[22m /filler_route: [32madded[39m
+  
+[1mPOST[22m /api/filler-route: [32madded[39m
+  
+2 operations added
+[32m[1m0 passed[22m[39m
+[31m[1m0 errors[22m[39m
+
+"
 `;
 
 exports[`diff-all diffs all files with --json 1`] = `

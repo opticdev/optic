@@ -49,7 +49,24 @@ describe('diff-all', () => {
     process.env = { ...oldEnv };
   });
 
-  test('diffs all files in an workspace with x-optic-url keys', async () => {
+  test('diffs all files in a workspace without --upload', async () => {
+    const workspace = await setupWorkspace('diff-all/without-optic-url', {
+      repo: true,
+      commit: true,
+    });
+
+    await run(
+      `mv ./mvspec.yml ./movedspec.yml && git add . && git commit -m 'move spec'`,
+      false,
+      workspace
+    );
+    const { combined, code } = await runOptic(workspace, 'diff-all --check');
+
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(code).toBe(1);
+  });
+
+  test('diffs all files in a workspace with x-optic-url keys with --upload', async () => {
     const workspace = await setupWorkspace('diff-all/repo', {
       repo: true,
       commit: true,
