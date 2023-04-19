@@ -1,10 +1,5 @@
 import fs from 'node:fs/promises';
-import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import {
-  applyOperationsToYamlString,
-  loadYaml,
-  writeYaml,
-} from '@useoptic/openapi-io';
+import { loadYaml, writeYaml } from '@useoptic/openapi-io';
 
 import { OPTIC_STANDARD_KEY, OPTIC_URL_KEY } from '../constants';
 import { FlatOpenAPIV3 } from '@useoptic/openapi-utilities';
