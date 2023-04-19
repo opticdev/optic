@@ -263,6 +263,8 @@ export function groupDiffsByEndpoint(
         const { pathPattern } = getLocation(fact);
         if (diff.before !== undefined && diff.after === undefined) {
           const rawPathObject = jsonPointerHelpers.get(specs.from, diff.before);
+          if (typeof rawPathObject !== 'object' || rawPathObject === null)
+            continue;
           for (const method of Object.keys(rawPathObject)) {
             if (Object.values(OpenAPIV3.HttpMethods).includes(method as any)) {
               const newDiff: Diff = {
@@ -277,6 +279,8 @@ export function groupDiffsByEndpoint(
           }
         } else if (diff.before === undefined && diff.after !== undefined) {
           const rawPathObject = jsonPointerHelpers.get(specs.to, diff.after);
+          if (typeof rawPathObject !== 'object' || rawPathObject === null)
+            continue;
           for (const method of Object.keys(rawPathObject)) {
             if (Object.values(OpenAPIV3.HttpMethods).includes(method as any)) {
               const newDiff: Diff = {
