@@ -32,7 +32,11 @@ export async function writeJson(
         updated[OPTIC_STANDARD_KEY] = data[OPTIC_STANDARD_KEY];
       }
 
-      return JSON.stringify({ openapi: openapi, ...updated, ...other });
+      return JSON.stringify(
+        { openapi: openapi, ...updated, ...other },
+        null,
+        2
+      );
     })
     .then((file) => fs.writeFile(path, file));
 }
