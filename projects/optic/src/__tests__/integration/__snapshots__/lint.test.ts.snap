@@ -28,7 +28,7 @@ Checks
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
     requirement rule[31m [error][39m: response property naming check
       [31m[31mx[39m[31m id_thing is not camelCase[39m
-      at [4m$workspace$/spec-fails-requirement.yml:18:359[24m
+      at paths > /filler_route > post > responses > 201 > content > application/json > schema > properties > id_thing [4m($workspace$/spec-fails-requirement.yml:18:359)[24m
 
 
 
