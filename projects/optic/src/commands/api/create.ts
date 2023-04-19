@@ -15,7 +15,7 @@ const usage = () => `
 const helpText = `
 Example usage:
   Add an Optic API URL to a spec file.
-  $ optic spec add-api-url <path_to_spec.yml> <optic-api-url>
+  $ optic api create <api_name>
 `;
 
 export const registerApiCreate = (cli: Command, config: OpticCliConfig) => {
