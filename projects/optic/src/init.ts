@@ -13,6 +13,7 @@ import { registerRulesetUpload } from './commands/ruleset/upload';
 import { OpticCliConfig, initializeConfig } from './config';
 import { registerRulesetInit } from './commands/ruleset/init';
 import { registerApiAdd } from './commands/api/add';
+import { registerApiCreate } from './commands/api/create';
 import { captureCommand } from './commands/oas/capture';
 import { newCommand } from './commands/oas/new';
 import { setupTlsCommand } from './commands/oas/setup-tls';
@@ -139,6 +140,7 @@ export const initCli = async (
 
   const apiSubcommands = cli.command('api').addHelpCommand(false);
   registerApiAdd(apiSubcommands, cliConfig);
+  registerApiCreate(apiSubcommands, cliConfig);
 
   const specSubcommands = cli.command('spec').addHelpCommand(false);
   registerSpecPush(specSubcommands, cliConfig);

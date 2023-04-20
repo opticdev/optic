@@ -40,5 +40,5 @@ const getAddApiUrlAction =
       });
     }
 
-    logger.info(chalk.green(`Added x-optic-url to ${spec_path}`));
+    logger.info(chalk.green(`Added ${OPTIC_URL_KEY} to ${spec_path}`));
   };
