@@ -1,4 +1,3 @@
-import invariant from 'ts-invariant';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import pluralize from 'pluralize';
 import { CapturedInteraction, CapturedInteractions } from '../captures';
@@ -401,12 +400,8 @@ function fragmentize(path: string): string[] {
   return path.split('/').slice(1).map(decodePathFragment);
 }
 
-function pathParameterNamesForPathPattern(pathPattern: string): string[] {
-  return fragmentize(pathPattern).filter(isTemplated).map(stripParamBrackets);
-}
-
 function isTemplated(pathFragment: string) {
-  return /{(.+)}/.test(pathFragment);
+  return /^{.+}$/.test(pathFragment);
 }
 
 function decodePathFragment(pathFragment: string) {
@@ -418,8 +413,8 @@ function decodePathFragment(pathFragment: string) {
 }
 
 function stripParamBrackets(input: string): string {
-  invariant(input.startsWith('{'), 'must start with {');
-  invariant(input.endsWith('}'), 'must end with }');
+  if (!input.startsWith('{')) throw new Error('must start with {');
+  if (!input.endsWith('}')) throw new Error('must end with }');
   return input.substring(1, input.length - 1);
 }
 
