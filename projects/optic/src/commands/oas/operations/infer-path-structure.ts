@@ -413,8 +413,8 @@ function decodePathFragment(pathFragment: string) {
 }
 
 function stripParamBrackets(input: string): string {
-  if (input.startsWith('{')) throw new Error('must start with {');
-  if (input.endsWith('}')) throw new Error('must end with }');
+  if (!input.startsWith('{')) throw new Error('must start with {');
+  if (!input.endsWith('}')) throw new Error('must end with }');
   return input.substring(1, input.length - 1);
 }
 
