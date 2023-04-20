@@ -9,14 +9,14 @@ Checks
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
     requirement rule[31m [error][39m: operation path component naming check
       [31m[31mx[39m[31m filler_route is not camelCase[39m
-      at [4m$workspace$/folder/in-folder.yml:9:178[24m
+      at paths > /filler_route > post [4m($workspace$/folder/in-folder.yml:9:178)[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /api/filler-route
     requirement rule[31m [error][39m: operation path component naming check
       [31m[31mx[39m[31m filler-route is not camelCase[39m
-      at [4m$workspace$/folder/in-folder.yml:24:593[24m
+      at paths > /api/filler-route > post [4m($workspace$/folder/in-folder.yml:24:593)[24m
 
 
 
@@ -39,30 +39,30 @@ Checks
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
     removed rule[31m [error][39m: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
-      at [4m$workspace$/mvspec.yml:9:178[24m
+      at paths > /filler_route > post [4m($workspace$/mvspec.yml:9:178)[24m
 
     removed rule[31m [error][39m: prevent removing response property
       [31m[31mx[39m[31m cannot remove response property 'id'. This is a breaking change.[39m
-      at [4m$workspace$/mvspec.yml:19:432[24m
+      at paths > /filler_route > post > responses > 201 > content > application/json > schema > properties > id [4m($workspace$/mvspec.yml:19:432)[24m
 
     removed rule[31m [error][39m: prevent response status code removal
       [31m[31mx[39m[31m must not remove response status code 201. This is a breaking change.[39m
-      at [4m$workspace$/mvspec.yml:12:235[24m
+      at paths > /filler_route > post > responses > 201 [4m($workspace$/mvspec.yml:12:235)[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /api/filler-route
     removed rule[31m [error][39m: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
-      at [4m$workspace$/mvspec.yml:24:593[24m
+      at paths > /api/filler-route > post [4m($workspace$/mvspec.yml:24:593)[24m
 
     removed rule[31m [error][39m: prevent removing response property
       [31m[31mx[39m[31m cannot remove response property 'id'. This is a breaking change.[39m
-      at [4m$workspace$/mvspec.yml:34:847[24m
+      at paths > /api/filler-route > post > responses > 201 > content > application/json > schema > properties > id [4m($workspace$/mvspec.yml:34:847)[24m
 
     removed rule[31m [error][39m: prevent response status code removal
       [31m[31mx[39m[31m must not remove response status code 201. This is a breaking change.[39m
-      at [4m$workspace$/mvspec.yml:27:650[24m
+      at paths > /api/filler-route > post > responses > 201 [4m($workspace$/mvspec.yml:27:650)[24m
 
 
 
@@ -101,7 +101,7 @@ Checks
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
     requirement rule[31m [error][39m: operation path component naming check
       [31m[31mx[39m[31m filler_route is not camelCase[39m
-      at [4m$workspace$/specwithkey.yml:9:178[24m
+      at paths > /filler_route > post [4m($workspace$/specwithkey.yml:9:178)[24m
 
 
 
@@ -125,14 +125,14 @@ Checks
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
     requirement rule[31m [error][39m: operation path component naming check
       [31m[31mx[39m[31m filler_route is not camelCase[39m
-      at [4m$workspace$/movedspec.yml:9:178[24m
+      at paths > /filler_route > post [4m($workspace$/movedspec.yml:9:178)[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /api/filler-route
     requirement rule[31m [error][39m: operation path component naming check
       [31m[31mx[39m[31m filler-route is not camelCase[39m
-      at [4m$workspace$/movedspec.yml:24:593[24m
+      at paths > /api/filler-route > post [4m($workspace$/movedspec.yml:24:593)[24m
 
 
 
@@ -163,15 +163,15 @@ Checks
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
     removed rule[31m [error][39m: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
-      at [4m$workspace$/folder-to-run/should-run.yml:9:178[24m
+      at paths > /filler_route > post [4m($workspace$/folder-to-run/should-run.yml:9:178)[24m
 
     removed rule[31m [error][39m: prevent removing response property
       [31m[31mx[39m[31m cannot remove response property 'id'. This is a breaking change.[39m
-      at [4m$workspace$/folder-to-run/should-run.yml:19:432[24m
+      at paths > /filler_route > post > responses > 201 > content > application/json > schema > properties > id [4m($workspace$/folder-to-run/should-run.yml:19:432)[24m
 
     removed rule[31m [error][39m: prevent response status code removal
       [31m[31mx[39m[31m must not remove response status code 201. This is a breaking change.[39m
-      at [4m$workspace$/folder-to-run/should-run.yml:12:235[24m
+      at paths > /filler_route > post > responses > 201 [4m($workspace$/folder-to-run/should-run.yml:12:235)[24m
 
 
 
@@ -205,14 +205,14 @@ Checks
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
     requirement rule[31m [error][39m: operation path component naming check
       [31m[31mx[39m[31m filler_route is not camelCase[39m
-      at [4m$workspace$/folder/in-folder.yml:9:178[24m
+      at paths > /filler_route > post [4m($workspace$/folder/in-folder.yml:9:178)[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /api/filler-route
     requirement rule[31m [error][39m: operation path component naming check
       [31m[31mx[39m[31m filler-route is not camelCase[39m
-      at [4m$workspace$/folder/in-folder.yml:24:593[24m
+      at paths > /api/filler-route > post [4m($workspace$/folder/in-folder.yml:24:593)[24m
 
 
 
@@ -235,30 +235,30 @@ Checks
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
     removed rule[31m [error][39m: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
-      at [4m$workspace$/mvspec.yml:9:178[24m
+      at paths > /filler_route > post [4m($workspace$/mvspec.yml:9:178)[24m
 
     removed rule[31m [error][39m: prevent removing response property
       [31m[31mx[39m[31m cannot remove response property 'id'. This is a breaking change.[39m
-      at [4m$workspace$/mvspec.yml:19:432[24m
+      at paths > /filler_route > post > responses > 201 > content > application/json > schema > properties > id [4m($workspace$/mvspec.yml:19:432)[24m
 
     removed rule[31m [error][39m: prevent response status code removal
       [31m[31mx[39m[31m must not remove response status code 201. This is a breaking change.[39m
-      at [4m$workspace$/mvspec.yml:12:235[24m
+      at paths > /filler_route > post > responses > 201 [4m($workspace$/mvspec.yml:12:235)[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /api/filler-route
     removed rule[31m [error][39m: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
-      at [4m$workspace$/mvspec.yml:24:593[24m
+      at paths > /api/filler-route > post [4m($workspace$/mvspec.yml:24:593)[24m
 
     removed rule[31m [error][39m: prevent removing response property
       [31m[31mx[39m[31m cannot remove response property 'id'. This is a breaking change.[39m
-      at [4m$workspace$/mvspec.yml:34:847[24m
+      at paths > /api/filler-route > post > responses > 201 > content > application/json > schema > properties > id [4m($workspace$/mvspec.yml:34:847)[24m
 
     removed rule[31m [error][39m: prevent response status code removal
       [31m[31mx[39m[31m must not remove response status code 201. This is a breaking change.[39m
-      at [4m$workspace$/mvspec.yml:27:650[24m
+      at paths > /api/filler-route > post > responses > 201 [4m($workspace$/mvspec.yml:27:650)[24m
 
 
 
@@ -297,7 +297,7 @@ Checks
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
     requirement rule[31m [error][39m: operation path component naming check
       [31m[31mx[39m[31m filler_route is not camelCase[39m
-      at [4m$workspace$/specwithkey.yml:9:178[24m
+      at paths > /filler_route > post [4m($workspace$/specwithkey.yml:9:178)[24m
 
 
 
@@ -321,14 +321,14 @@ Checks
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
     requirement rule[31m [error][39m: operation path component naming check
       [31m[31mx[39m[31m filler_route is not camelCase[39m
-      at [4m$workspace$/movedspec.yml:9:178[24m
+      at paths > /filler_route > post [4m($workspace$/movedspec.yml:9:178)[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /api/filler-route
     requirement rule[31m [error][39m: operation path component naming check
       [31m[31mx[39m[31m filler-route is not camelCase[39m
-      at [4m$workspace$/movedspec.yml:24:593[24m
+      at paths > /api/filler-route > post [4m($workspace$/movedspec.yml:24:593)[24m
 
 
 
@@ -756,30 +756,30 @@ Checks
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
     removed rule[31m [error][39m: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
-      at [4m$workspace$/mvspec.yml:8:105[24m
+      at paths > /filler_route > post [4m($workspace$/mvspec.yml:8:105)[24m
 
     removed rule[31m [error][39m: prevent removing response property
       [31m[31mx[39m[31m cannot remove response property 'id'. This is a breaking change.[39m
-      at [4m$workspace$/mvspec.yml:18:359[24m
+      at paths > /filler_route > post > responses > 201 > content > application/json > schema > properties > id [4m($workspace$/mvspec.yml:18:359)[24m
 
     removed rule[31m [error][39m: prevent response status code removal
       [31m[31mx[39m[31m must not remove response status code 201. This is a breaking change.[39m
-      at [4m$workspace$/mvspec.yml:11:162[24m
+      at paths > /filler_route > post > responses > 201 [4m($workspace$/mvspec.yml:11:162)[24m
 
 
 
   [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /api/filler-route
     removed rule[31m [error][39m: prevent operation removal
       [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
-      at [4m$workspace$/mvspec.yml:23:520[24m
+      at paths > /api/filler-route > post [4m($workspace$/mvspec.yml:23:520)[24m
 
     removed rule[31m [error][39m: prevent removing response property
       [31m[31mx[39m[31m cannot remove response property 'id'. This is a breaking change.[39m
-      at [4m$workspace$/mvspec.yml:33:774[24m
+      at paths > /api/filler-route > post > responses > 201 > content > application/json > schema > properties > id [4m($workspace$/mvspec.yml:33:774)[24m
 
     removed rule[31m [error][39m: prevent response status code removal
       [31m[31mx[39m[31m must not remove response status code 201. This is a breaking change.[39m
-      at [4m$workspace$/mvspec.yml:26:577[24m
+      at paths > /api/filler-route > post > responses > 201 [4m($workspace$/mvspec.yml:26:577)[24m
 
 
 

@@ -197,15 +197,20 @@ export function* generateComparisonLogsV2(
         result.location.spec === 'before'
           ? findFileAndLinesFromBefore(result.location.jsonPath)
           : findFileAndLinesFromAfter(result.location.jsonPath);
-      if (sourcemap) {
-        yield `${getIndent(3)}at ${
-          isUrl(sourcemap.filePath)
-            ? `${underline(sourcemap.filePath)} line ${sourcemap.startLine}`
-            : underline(
-                `${sourcemap.filePath}:${sourcemap.startLine}:${sourcemap.startPosition}`
-              )
-        }`;
-      }
+
+      const sourcemapText = sourcemap
+        ? isUrl(sourcemap.filePath)
+          ? ` (${underline(sourcemap.filePath)} line ${sourcemap.startLine})`
+          : ' ' +
+            underline(
+              `(${sourcemap.filePath}:${sourcemap.startLine}:${sourcemap.startPosition})`
+            )
+        : '';
+
+      const jsonPath = jsonPointerHelpers
+        .decode(result.location.jsonPath)
+        .join(' > ');
+      yield `${getIndent(3)}at ${jsonPath}${sourcemapText}`;
       yield '';
     }
     yield '\n';
