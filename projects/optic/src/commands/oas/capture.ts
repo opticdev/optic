@@ -26,7 +26,6 @@ import { platform } from './lib/shell-utils';
 import chalk from 'chalk';
 import { runVerify } from './verify';
 import { OpticCliConfig } from '../../config';
-import os from 'os';
 import { clearCommand } from './capture-clear';
 import { createNewSpecFile } from '../../utils/specs';
 import { logger } from '../../logger';
@@ -46,7 +45,10 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
       '--no-tls',
       'disable TLS support for --proxy and prevent generation of new CA certificates'
     )
-    .option('--no-system-proxy', 'do not override the system proxy')
+    .option(
+      '--reverse-proxy',
+      'run optic capture in reverse proxy mode - send traffic to a port that gets forwarded to your server'
+    )
     .option(
       '--command <command>',
       'command to run with the http_proxy and http_proxy configured'
@@ -121,7 +123,7 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
       const runningCommand = Boolean(options.command);
 
       const systemProxy = new SystemProxy(proxyUrl, feedback);
-      if (!runningCommand && options.systemProxy) {
+      if (!runningCommand && options.reverseProxy) {
         await systemProxy.start(undefined);
       } else {
         feedback.notable(
