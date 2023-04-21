@@ -67,6 +67,7 @@ export const getApiAddAction =
     const candidates: Map<string, string[]> = new Map(
       files.map((f) => [f, []])
     );
+    let hasUntrackedApis = false;
 
     const results: { path: string; optic_url: string }[] = [];
     for await (const [file_path] of candidates) {
@@ -92,9 +93,22 @@ export const getApiAddAction =
         path: pathRelativeToRoot,
         optic_url: existingOpticUrl ?? '',
       });
+
+      if (!existingOpticUrl) {
+        hasUntrackedApis = true;
+      }
+
+      logger.info(
+        `${pathRelativeToRoot} ${
+          !existingOpticUrl ? chalk.red(` (untracked)`) : ''
+        }`
+      );
     }
 
-    console.table(results);
+    if (hasUntrackedApis) {
+      logger.info('');
+      logger.info(chalk.blue.bold('Run optic api add to add untracked apis'));
+    }
 
     await flushEvents();
   };
