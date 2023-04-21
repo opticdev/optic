@@ -69,9 +69,8 @@ export const getApiAddAction =
     );
     let hasUntrackedApis = false;
 
-    const results: { path: string; optic_url: string }[] = [];
     for await (const [file_path] of candidates) {
-      const pathRelativeToRoot = path.relative(config.root, file_path);
+      const relativePath = path.relative(process.cwd(), file_path);
       let parseResult: ParseResult;
       try {
         // TODO just fs read json or yml instead here - no need to load sourcemap
@@ -89,19 +88,12 @@ export const getApiAddAction =
       const existingOpticUrl: string | undefined =
         parseResult.jsonLike[OPTIC_URL_KEY];
 
-      results.push({
-        path: pathRelativeToRoot,
-        optic_url: existingOpticUrl ?? '',
-      });
-
       if (!existingOpticUrl) {
         hasUntrackedApis = true;
       }
 
       logger.info(
-        `${pathRelativeToRoot} ${
-          !existingOpticUrl ? chalk.red(` (untracked)`) : ''
-        }`
+        `${relativePath} ${!existingOpticUrl ? chalk.red(` (untracked)`) : ''}`
       );
     }
 
