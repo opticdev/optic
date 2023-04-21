@@ -13,6 +13,7 @@ import { registerRulesetUpload } from './commands/ruleset/upload';
 import { OpticCliConfig, initializeConfig } from './config';
 import { registerRulesetInit } from './commands/ruleset/init';
 import { registerApiAdd } from './commands/api/add';
+import { registerApiCreate } from './commands/api/create';
 import { captureCommand } from './commands/oas/capture';
 import { newCommand } from './commands/oas/new';
 import { setupTlsCommand } from './commands/oas/setup-tls';
@@ -32,7 +33,12 @@ import { updateCommand } from './commands/oas/update';
 
 const packageJson = require('../package.json');
 
-export const initCli = async (cli: Command = cliInstance): Promise<Command> => {
+export const initCli = async (
+  cli: Command = cliInstance,
+  options: {
+    hideNotifier?: boolean;
+  } = {}
+): Promise<Command> => {
   initSentry(process.env.SENTRY_URL, packageJson.version);
   initSegment(process.env.SEGMENT_KEY);
   cli.hook('preAction', async (command) => {
@@ -56,29 +62,31 @@ export const initCli = async (cli: Command = cliInstance): Promise<Command> => {
     });
   });
 
-  const notifier = updateNotifier({
-    pkg: {
-      name: packageJson.name,
-      version: packageJson.version,
-    },
-  });
+  if (options.hideNotifier !== true) {
+    const notifier = updateNotifier({
+      pkg: {
+        name: packageJson.name,
+        version: packageJson.version,
+      },
+    });
 
-  cli.hook('postAction', async () => {
-    if (notifier.update) {
-      logger.info(
-        `
-${chalk.green(chalk.bold(`New Optic version available:`))} ${
-          notifier.update.latest
-        } (current ${notifier.update.current})
-
-Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
-      );
-    }
-    try {
-      await flushEvents();
-      // we can ignore non-critical tracking errors
-    } catch (e) {}
-  });
+    cli.hook('postAction', async () => {
+      if (notifier.update) {
+        logger.info(
+          `
+  ${chalk.green(chalk.bold(`New Optic version available:`))} ${
+            notifier.update.latest
+          } (current ${notifier.update.current})
+  
+  Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
+        );
+      }
+      try {
+        await flushEvents();
+        // we can ignore non-critical tracking errors
+      } catch (e) {}
+    });
+  }
 
   let cliConfig: OpticCliConfig;
 
@@ -132,6 +140,7 @@ Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
 
   const apiSubcommands = cli.command('api').addHelpCommand(false);
   registerApiAdd(apiSubcommands, cliConfig);
+  registerApiCreate(apiSubcommands, cliConfig);
 
   const specSubcommands = cli.command('spec').addHelpCommand(false);
   registerSpecPush(specSubcommands, cliConfig);
