@@ -41,7 +41,8 @@ export type OpticCliConfig = Omit<RawYmlConfig, 'ruleset' | 'extends'> & {
   vcs?: {
     type: VCS;
     sha: string;
-    status: 'clean' | 'dirty';
+    // Set of absolute paths
+    diffSet: Set<string>;
   };
 
   ruleset?: ConfigRuleset[];
@@ -205,10 +206,17 @@ export async function readUserConfig(): Promise<UserConfig | null> {
   }
 }
 
-async function hasYmlOrJsonChanges(): Promise<boolean> {
+async function getYmlOrJsonChanges(gitRoot: string): Promise<Set<string>> {
   const status = await Git.gitStatus();
+  const ymlOrJsonWithChanges = status
+    .split('\n')
+    .filter((line) => /\.(json|ya?ml)$/i.test(line))
+    .map((line) => {
+      const file = line.split(' ').slice(-1)[0].trim();
+      return path.join(gitRoot, file);
+    });
 
-  return status.split('\n').some((line) => /\.(json|ya?ml)$/i.test(line));
+  return new Set(ymlOrJsonWithChanges);
 }
 
 export async function initializeConfig(): Promise<OpticCliConfig> {
@@ -247,7 +255,7 @@ export async function initializeConfig(): Promise<OpticCliConfig> {
       cliConfig.vcs = {
         type: VCS.Git,
         sha: await Git.resolveGitRef('HEAD'),
-        status: (await hasYmlOrJsonChanges()) ? 'dirty' : 'clean',
+        diffSet: await getYmlOrJsonChanges(gitRoot),
       };
     } catch (e) {
       // Git command can fail in a repo with no commits, we should treat this as having no commits

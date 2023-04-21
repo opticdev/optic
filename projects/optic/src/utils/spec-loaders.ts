@@ -157,7 +157,14 @@ async function parseSpecAndDereference(
     }
     case 'file':
       let context: ParseResultContext = null;
-      if (config.vcs?.type === VCS.Git && config.vcs.status === 'clean') {
+      const parseResult = await parseOpenAPIWithSourcemap(
+        path.resolve(workingDir, input.filePath)
+      );
+
+      if (
+        config.vcs?.type === VCS.Git &&
+        !specHasUncommittedChanges(parseResult.sourcemap, config.vcs.diffSet)
+      ) {
         const commitMeta = await Git.commitMeta(config.vcs.sha);
 
         context = {
@@ -171,9 +178,7 @@ async function parseSpecAndDereference(
       }
 
       return {
-        ...(await parseOpenAPIWithSourcemap(
-          path.resolve(workingDir, input.filePath)
-        )),
+        ...parseResult,
         isEmptySpec: false,
         context,
       };
@@ -258,4 +263,14 @@ export const parseFilesFromRef = async (
     }),
     pathFromGitRoot: gitFileName,
   };
+};
+
+export const specHasUncommittedChanges = (
+  sourcemap: JsonSchemaSourcemap,
+  diffSet: Set<string>
+): boolean => {
+  // resolve absolute paths - in this case, if the path refers to a url or git ref, we don't care about it
+  // since its outside of the current working directory
+  const specFiles = sourcemap.files.map((f) => path.resolve(f.path));
+  return specFiles.some((f) => diffSet.has(f));
 };
