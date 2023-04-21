@@ -123,7 +123,7 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
       const runningCommand = Boolean(options.command);
 
       const systemProxy = new SystemProxy(proxyUrl, feedback);
-      if (!runningCommand && options.reverseProxy) {
+      if (!runningCommand && !options.reverseProxy) {
         await systemProxy.start(undefined);
       } else {
         feedback.notable(
