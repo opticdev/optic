@@ -1,0 +1,100 @@
+import { Command } from 'commander';
+import path from 'path';
+import fs from 'node:fs/promises';
+import { OpticCliConfig } from '../../config';
+import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
+import { logger } from '../../logger';
+import { OPTIC_URL_KEY } from '../../constants';
+import chalk from 'chalk';
+import * as FsCandidates from './get-file-candidates';
+
+import { flushEvents } from '@useoptic/openapi-utilities/build/utilities/segment';
+import { errorHandler } from '../../error-handler';
+
+const usage = () => `
+  optic api list`;
+
+export const registerApiList = (cli: Command, config: OpticCliConfig) => {
+  cli
+    .command('list')
+    .configureHelp({
+      commandUsage: usage,
+    })
+    .argument('[path_to_spec]', 'path to file or directory to add')
+    .description('Add APIs to Optic')
+    .action(errorHandler(getApiAddAction(config)));
+};
+
+type ApiActionOptions = {};
+
+export const getApiAddAction =
+  (config: OpticCliConfig) =>
+  async (path_to_spec: string | undefined, options: ApiActionOptions) => {
+    let file: {
+      path: string;
+      isDir: boolean;
+    };
+    if (path_to_spec) {
+      try {
+        const isDir = (await fs.lstat(path_to_spec)).isDirectory();
+        file = {
+          path: path.resolve(path_to_spec),
+          isDir,
+        };
+      } catch (e) {
+        logger.error(chalk.red(`${path} is not a file or directory`));
+
+        process.exitCode = 1;
+        return;
+      }
+    } else {
+      file = {
+        path: path.resolve(config.root),
+        isDir: true,
+      };
+    }
+
+    logger.info(
+      chalk.bold.gray(`Looking for OpenAPI specs in directory ${file.path}`)
+    );
+
+    const files = !file.isDir
+      ? [path.resolve(file.path)]
+      : await FsCandidates.getFileCandidates({
+          startsWith: file.path,
+        });
+
+    const candidates: Map<string, string[]> = new Map(
+      files.map((f) => [f, []])
+    );
+
+    const results: { path: string; optic_url: string }[] = [];
+    for await (const [file_path] of candidates) {
+      const pathRelativeToRoot = path.relative(config.root, file_path);
+      let parseResult: ParseResult;
+      try {
+        // TODO just fs read json or yml instead here - no need to load sourcemap
+        parseResult = await getFileFromFsOrGit(file_path, config, {
+          strict: false,
+          denormalize: true,
+        });
+      } catch (e) {
+        continue;
+      }
+      if (parseResult.isEmptySpec) {
+        continue;
+      }
+
+      const existingOpticUrl: string | undefined =
+        parseResult.jsonLike[OPTIC_URL_KEY];
+
+      results.push({
+        path: pathRelativeToRoot,
+        optic_url: existingOpticUrl ?? '',
+      });
+    }
+
+    console.table(results);
+
+    await flushEvents();
+  };
