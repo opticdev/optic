@@ -8,7 +8,11 @@ import {
   SpecPatch,
   SpecPatches,
 } from '../specs';
-import { jsonPointerLogger, JsonSchemaSourcemap } from '@useoptic/openapi-io';
+import {
+  checkOpenAPIVersion,
+  jsonPointerLogger,
+  JsonSchemaSourcemap,
+} from '@useoptic/openapi-io';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import chalk from 'chalk';
 import { ShapeDiffResult } from '../shapes/diffs';
@@ -189,6 +193,7 @@ export function updateByInteractions(
   isAddAll: boolean = true,
   filterToOperations: ParsedOperation[] = []
 ): { results: SpecPatches; observations: UpdateObservations } {
+  const openAPIVersion = checkOpenAPIVersion(spec);
   const updatingSpec = new Subject<OpenAPIV3.Document>();
   const specUpdates = updatingSpec.iterator;
 
@@ -273,7 +278,8 @@ export function updateByInteractions(
       let shapePatches = SpecPatches.shapeAdditions(
         tap((body: DocumentedBody) => {
           observers.documentedInteractionBody(documentedInteraction, body);
-        })(documentedBodies)
+        })(documentedBodies),
+        openAPIVersion
       );
 
       for await (let patch of shapePatches) {
