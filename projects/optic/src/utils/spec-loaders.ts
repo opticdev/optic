@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import fetch from 'node-fetch';
 import path from 'path';
 import { promisify } from 'util';
 import { exec as callbackExec } from 'child_process';
@@ -45,14 +46,30 @@ type SpecFromInput =
   | {
       from: 'empty';
       value: OpenAPIV3.Document;
+    }
+  | {
+      from: 'url';
+      url: string;
     };
 
 export function parseSpecVersion(raw?: string | null): SpecFromInput {
   raw = raw ?? 'null:';
+  let isUrl = false;
+
+  try {
+    new URL(raw);
+    isUrl = true;
+  } catch (e) {}
+
   if (raw === 'null:') {
     return {
       from: 'empty',
       value: defaultEmptySpec,
+    };
+  } else if (isUrl) {
+    return {
+      from: 'url',
+      url: raw,
     };
   } else if (
     raw.includes(':') &&
@@ -76,29 +93,44 @@ export function parseSpecVersion(raw?: string | null): SpecFromInput {
 }
 
 // Loads spec without dereferencing
-export async function loadRaw(filePathOrRef: string): Promise<any> {
-  const input = parseSpecVersion(filePathOrRef);
+export async function loadRaw(opticRef: string): Promise<any> {
+  const input = parseSpecVersion(opticRef);
+  let format: 'json' | 'yml' | 'unknown';
   let rawString: string;
   if (input.from === 'file') {
-    rawString = await fs.readFile(filePathOrRef, 'utf-8');
+    rawString = await fs.readFile(opticRef, 'utf-8');
+    format = /\.json$/i.test(opticRef) ? 'json' : 'yml';
   } else if (input.from === 'git') {
     rawString = await Git.gitShow(input.branch, input.name);
+    format = /\.json$/i.test(opticRef) ? 'json' : 'yml';
+  } else if (input.from === 'url') {
+    rawString = await fetch(input.url).then((res) => res.text());
+    format = 'unknown';
   } else {
     return input.value;
   }
 
-  try {
-    return /\.json$/i.test(filePathOrRef)
-      ? JSON.parse(rawString)
-      : loadYaml(rawString);
-  } catch (e) {
-    if (e instanceof Error) {
-      if (rawString.match(/x-optic-url/)) {
-        e['probablySpec'] = true;
-      }
+  if (format === 'unknown') {
+    // try json, then yml
+    try {
+      return JSON.parse(rawString);
+    } catch (e) {
+      return loadYaml(rawString);
     }
+  } else {
+    try {
+      return /\.json$/i.test(opticRef)
+        ? JSON.parse(rawString)
+        : loadYaml(rawString);
+    } catch (e) {
+      if (e instanceof Error) {
+        if (rawString.match(/x-optic-url/)) {
+          e['probablySpec'] = true;
+        }
+      }
 
-    throw e;
+      throw e;
+    }
   }
 }
 
@@ -153,6 +185,14 @@ async function parseSpecAndDereference(
           email: commitMeta.email,
           message: commitMeta.message,
         },
+      };
+    }
+    case 'url': {
+      const parseResult = await parseOpenAPIWithSourcemap(input.url);
+      return {
+        ...parseResult,
+        isEmptySpec: false,
+        context: null,
       };
     }
     case 'file':
