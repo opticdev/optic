@@ -1,0 +1,27 @@
+{
+  "openapi": "3.0.1",
+  "paths": {
+    "/example": {
+      "get": {
+        "operationId": "my-op-original",
+        "responses": {}
+      },
+      "post": {
+        "operationId": "postOriginal",
+        "responses": {}
+      },
+      "put": {
+        "operationId": "putOriginal",
+        "responses": {}
+      },
+      "patch": {
+        "operationId": "putOriginal",
+        "responses": {}
+      }
+    }
+  },
+  "info": {
+    "version": "0.0.0",
+    "title": "Empty"
+  }
+}
