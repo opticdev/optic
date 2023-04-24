@@ -127,6 +127,13 @@ describe('diff', () => {
         return JSON.stringify({
           id: 'run-id',
         });
+      } else if (method === 'GET' && /my-spec\.yml$/.test(url)) {
+        return `openapi: 3.0.3
+info:
+  title: a spec
+  description: The API
+  version: 0.1.0
+paths: {}`;
       }
       return JSON.stringify({});
     });
@@ -194,6 +201,19 @@ describe('diff', () => {
       );
 
       expect(code).toBe(1);
+      expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    });
+
+    test('with web url', async () => {
+      const workspace = await setupWorkspace('diff/files-no-repo', {
+        repo: false,
+      });
+      const { combined, code } = await runOptic(
+        workspace,
+        `diff null: ${process.env.BWTS_HOST_OVERRIDE}/my-spec.yml --check`
+      );
+
+      expect(code).toBe(0);
       expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     });
   });

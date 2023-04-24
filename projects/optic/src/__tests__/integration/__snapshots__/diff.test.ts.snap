@@ -689,3 +689,18 @@ Checks
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 "
 `;
+
+exports[`diff with mock server with web url 1`] = `
+"[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
+
+specification details:
+- /info/description [32madded[39m
+- /openapi, /info/version, /info/title [33mchanged[39m
+
+
+[32m[1m0 passed[22m[39m
+[31m[1m0 errors[22m[39m
+
+[34m[1mSee the full history of this API by running "optic api add empty.json --history-depth 0"[22m[39m
+"
+`;
