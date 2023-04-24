@@ -2,14 +2,19 @@ import { Command } from 'commander';
 import path from 'path';
 import fs from 'node:fs/promises';
 import { OpticCliConfig } from '../../config';
-import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
+import {
+  getFileFromFsOrGit,
+  loadRaw,
+  ParseResult,
+} from '../../utils/spec-loaders';
 import { logger } from '../../logger';
-import { OPTIC_URL_KEY } from '../../constants';
+import { OPTIC_EMPTY_SPEC_KEY, OPTIC_URL_KEY } from '../../constants';
 import chalk from 'chalk';
 import * as FsCandidates from './get-file-candidates';
 
 import { flushEvents } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { errorHandler } from '../../error-handler';
+import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 
 const usage = () => `
   optic api list`;
@@ -71,22 +76,17 @@ export const getApiAddAction =
 
     for await (const [file_path] of candidates) {
       const relativePath = path.relative(process.cwd(), file_path);
-      let parseResult: ParseResult;
+      let spec: OpenAPIV3.Document;
       try {
-        // TODO just fs read json or yml instead here - no need to load sourcemap
-        parseResult = await getFileFromFsOrGit(file_path, config, {
-          strict: false,
-          denormalize: true,
-        });
+        spec = await loadRaw(file_path);
       } catch (e) {
         continue;
       }
-      if (parseResult.isEmptySpec) {
+      if (spec[OPTIC_EMPTY_SPEC_KEY]) {
         continue;
       }
 
-      const existingOpticUrl: string | undefined =
-        parseResult.jsonLike[OPTIC_URL_KEY];
+      const existingOpticUrl: string | undefined = spec[OPTIC_URL_KEY];
 
       if (!existingOpticUrl) {
         hasUntrackedApis = true;
