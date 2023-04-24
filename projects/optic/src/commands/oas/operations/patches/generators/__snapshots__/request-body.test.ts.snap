@@ -60,7 +60,9 @@ exports[`requestBodyPatches generates a patch for a unmatched request body conte
           {
             "op": "add",
             "path": "/requestBody/content/text~1csv",
-            "value": {},
+            "value": {
+              "schema": {},
+            },
           },
         ],
       },
@@ -80,7 +82,9 @@ exports[`requestBodyPatches generates a patch for a unmatched request body conte
   "requestBody": {
     "content": {
       "application/json": {},
-      "text/csv": {},
+      "text/csv": {
+        "schema": {},
+      },
     },
     "required": true,
   },
