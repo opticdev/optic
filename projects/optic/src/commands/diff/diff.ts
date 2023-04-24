@@ -207,13 +207,14 @@ const runDiff = async (
     }
 
     logger.info('');
-
-    if (!hasOpticUrl) {
+    if ((!hasOpticUrl && headFile.from === 'file') || headFile.from === 'git') {
+      const relativePath = path.relative(
+        process.cwd(),
+        headFile.sourcemap.rootFilePath
+      );
       logger.info(
         chalk.blue.bold(
-          `See the full history of this API by running "optic api add ${
-            path.parse(baseFile.sourcemap.rootFilePath).base
-          } --history-depth 0"`
+          `See the full history of this API by running "optic api add ${relativePath} --history-depth 0"`
         )
       );
     }

@@ -30,6 +30,7 @@ export type ParseResultContext = {
 
 export type ParseResult = ParseOpenAPIResult & {
   isEmptySpec: boolean;
+  from: 'git' | 'file' | 'url' | 'empty';
   context: ParseResultContext;
 };
 
@@ -158,6 +159,7 @@ async function parseSpecAndDereference(
       return {
         jsonLike,
         sourcemap,
+        from: 'empty',
         isEmptySpec: true,
         context: null,
       };
@@ -176,6 +178,7 @@ async function parseSpecAndDereference(
           config.root,
           input.branch
         )),
+        from: 'git',
         isEmptySpec: false,
         context: {
           vcs: 'git',
@@ -191,6 +194,7 @@ async function parseSpecAndDereference(
       const parseResult = await parseOpenAPIWithSourcemap(input.url);
       return {
         ...parseResult,
+        from: 'url',
         isEmptySpec: false,
         context: null,
       };
@@ -219,6 +223,7 @@ async function parseSpecAndDereference(
 
       return {
         ...parseResult,
+        from: 'file',
         isEmptySpec: false,
         context,
       };
