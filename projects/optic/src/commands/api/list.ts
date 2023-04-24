@@ -15,6 +15,7 @@ import * as FsCandidates from './get-file-candidates';
 import { flushEvents } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { errorHandler } from '../../error-handler';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { validateOpenApiV3Document } from '@useoptic/openapi-io';
 
 const usage = () => `
   optic api list`;
@@ -79,6 +80,8 @@ export const getApiAddAction =
       let spec: OpenAPIV3.Document;
       try {
         spec = await loadRaw(file_path);
+        // Checks that the document looks like an openapi document (i.e. has paths, etc )
+        validateOpenApiV3Document(spec, undefined, { strictOpenAPI: false });
       } catch (e) {
         continue;
       }
