@@ -199,16 +199,21 @@ function validateAndDenormalize(
   return options.denormalize ? denormalize(parseResult) : parseResult;
 }
 
-// filePathOrRef can be a path, or a gitref:path (delimited by `:`)
-export const getFileFromFsOrGit = async (
-  filePathOrRef: string | undefined,
+// Optic ref supports
+// - file paths (`./specs/openapi.yml`)
+// - git paths (`git:main`)
+// - public urls (`https://example.com/my-openapi-spec.yml`)
+// - empty files (`null:`)
+// - (in the future): cloud tags (`cloud:apiId@tag`)
+export const loadSpec = async (
+  opticRef: string | undefined,
   config: OpticCliConfig,
   options: {
     strict: boolean;
     denormalize: boolean;
   }
 ): Promise<ParseResult> => {
-  const file = await parseSpecAndDereference(filePathOrRef, config);
+  const file = await parseSpecAndDereference(opticRef, config);
 
   return validateAndDenormalize(file, options);
 };
