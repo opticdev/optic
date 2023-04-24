@@ -18,7 +18,10 @@ import { OpticCliConfig, VCS } from '../../config';
 import { OPTIC_URL_KEY } from '../../constants';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { uploadSpec, uploadSpecVerification } from '../../utils/cloud-specs';
-import { getFileFromFsOrGit } from '../../utils/spec-loaders';
+import {
+  getFileFromFsOrGit,
+  specHasUncommittedChanges,
+} from '../../utils/spec-loaders';
 import * as Git from '../../utils/git-utils';
 import { sanitizeGitTag } from '@useoptic/openapi-utilities';
 import { nextCommand } from './reporters/next-command';
@@ -76,16 +79,6 @@ export async function runVerify(
   internalOptions: { printCoverage: boolean } = { printCoverage: true }
 ) {
   const analytics: { event: string; properties: any }[] = [];
-
-  if (options.upload) {
-    if (config.vcs?.type !== VCS.Git || config.vcs.status === 'dirty') {
-      console.error(
-        'optic oas verify --upload can only be run in a git repository without uncommitted changes. That ensures reports are properly tagged.'
-      );
-      process.exitCode = 1;
-      return;
-    }
-  }
 
   console.log('');
 
@@ -173,6 +166,17 @@ export async function runVerify(
   });
 
   if (options.upload) {
+    if (
+      config.vcs?.type !== VCS.Git ||
+      specHasUncommittedChanges(parseResult.sourcemap, config.vcs.diffSet)
+    ) {
+      console.error(
+        'optic oas verify --upload can only be run in a git repository without uncommitted changes. That ensures reports are properly tagged.'
+      );
+      process.exitCode = 1;
+      return;
+    }
+
     if (!opticUrlDetails) {
       console.error(
         `File ${specPath} does not have an optic url. Files must be added to Optic and have an x-optic-url key before verification data can be uploaded.`
