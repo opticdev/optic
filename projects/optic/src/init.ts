@@ -30,6 +30,7 @@ import { registerCiSetup } from './commands/ci/setup';
 import { registerLint } from './commands/lint/lint';
 import { registerBundle } from './commands/bundle/bundle';
 import { updateCommand } from './commands/oas/update';
+import { registerApiList } from './commands/api/list';
 
 const packageJson = require('../package.json');
 
@@ -141,6 +142,7 @@ export const initCli = async (
   const apiSubcommands = cli.command('api').addHelpCommand(false);
   registerApiAdd(apiSubcommands, cliConfig);
   registerApiCreate(apiSubcommands, cliConfig);
+  registerApiList(apiSubcommands, cliConfig);
 
   const specSubcommands = cli.command('spec').addHelpCommand(false);
   registerSpecPush(specSubcommands, cliConfig);

@@ -1,11 +1,15 @@
 import { Command } from 'commander';
 import prompts from 'prompts';
 import open from 'open';
-import path from 'path';
+import path, { parse } from 'path';
 import fs from 'node:fs/promises';
 import ora from 'ora';
 import { OpticCliConfig, VCS } from '../../config';
-import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
+import {
+  getFileFromFsOrGit,
+  ParseResult,
+  specHasUncommittedChanges,
+} from '../../utils/spec-loaders';
 import { logger } from '../../logger';
 import { OPTIC_URL_KEY } from '../../constants';
 import chalk from 'chalk';
@@ -147,7 +151,7 @@ async function crawlCandidateSpecs(
   if (config.vcs?.type === VCS.Git) {
     // If the git workspace is dirty, we should upload the spec with changes
     // such that first use of optic you will have a spec (even without tags)
-    if (config.vcs.status === 'dirty') {
+    if (specHasUncommittedChanges(parseResult.sourcemap, config.vcs.diffSet)) {
       await uploadSpec(api.id, {
         spec: parseResult,
         tags: [],
