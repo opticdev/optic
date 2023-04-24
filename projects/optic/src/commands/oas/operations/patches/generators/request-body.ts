@@ -72,7 +72,9 @@ function* unmatchedRequestBodyPatches(
     PatchOperationGroup.create(`add ${contentType} as content type`, {
       op: 'add',
       path: jsonPointerHelpers.compile(['requestBody', 'content', contentType]),
-      value: {},
+      value: {
+        schema: {},
+      },
     })
   );
 

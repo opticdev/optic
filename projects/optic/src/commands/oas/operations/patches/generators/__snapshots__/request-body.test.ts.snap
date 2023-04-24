@@ -119,7 +119,9 @@ exports[`requestBodyPatches generates a patch for an unspecified request body 1`
           {
             "op": "add",
             "path": "/requestBody/content/application~1json",
-            "value": {},
+            "value": {
+              "schema": {},
+            },
           },
         ],
       },
@@ -138,7 +140,9 @@ exports[`requestBodyPatches generates a patch for an unspecified request body 2`
   "pathPattern": "/some-path",
   "requestBody": {
     "content": {
-      "application/json": {},
+      "application/json": {
+        "schema": {},
+      },
     },
   },
   "responses": {
