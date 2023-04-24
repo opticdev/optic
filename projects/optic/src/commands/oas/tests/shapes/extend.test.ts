@@ -11,7 +11,7 @@ function patchSchema(
   for (let input of inputs) {
     let body = DocumentedBodyFixtures.jsonBody(input);
     body.schema = schema;
-    let patches = ShapePatches.generateBodyAdditions(body);
+    let patches = ShapePatches.generateBodyAdditions(body, '3.1.x');
 
     for (let patch of patches) {
       schema = Schema.applyShapePatch(schema, patch);

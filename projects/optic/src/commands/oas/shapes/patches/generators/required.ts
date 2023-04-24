@@ -2,13 +2,14 @@ import { ShapeDiffResult, ShapeDiffResultKind } from '../../diffs';
 import { OperationGroup, PatchImpact, ShapePatch } from '..';
 import { SchemaObject } from '../../schema';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { JsonPath } from '@useoptic/openapi-io';
+import { JsonPath, SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 import { ShapeLocation } from '../..';
 
 export function* requiredPatches(
   diff: ShapeDiffResult,
   schema: SchemaObject,
-  shapeContext: { location?: ShapeLocation }
+  shapeContext: { location?: ShapeLocation },
+  openAPIVersion: SupportedOpenAPIVersions
 ): IterableIterator<ShapePatch> {
   if (diff.kind !== ShapeDiffResultKind.MissingRequiredProperty) return;
 

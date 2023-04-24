@@ -242,7 +242,7 @@ exports[`type shape patch generator when provided with another primitive, it can
 exports[`type shape patch generator when provided with null value, it can apply patches 1`] = `
 [
   {
-    "description": "make stringField oneOf",
+    "description": "make stringField null",
     "diff": {
       "description": "'stringField' did not match schema",
       "example": null,
@@ -254,22 +254,14 @@ exports[`type shape patch generator when provided with null value, it can apply 
     },
     "groupedOperations": [
       {
-        "intent": "replace stringField with a one of containing both types",
+        "intent": "make stringField null",
         "operations": [
           {
-            "op": "remove",
+            "op": "replace",
             "path": "/properties/stringField/type",
-          },
-          {
-            "op": "add",
-            "path": "/properties/stringField/oneOf",
             "value": [
-              {
-                "type": "string",
-              },
-              {
-                "type": "null",
-              },
+              "object",
+              "null",
             ],
           },
         ],
@@ -278,35 +270,6 @@ exports[`type shape patch generator when provided with null value, it can apply 
     "impact": [
       "Addition",
       "BackwardsCompatibilityUnknown",
-    ],
-  },
-  {
-    "description": "change type of stringField",
-    "diff": {
-      "description": "'stringField' did not match schema",
-      "example": null,
-      "instancePath": "/stringField",
-      "key": "stringField",
-      "keyword": "type",
-      "kind": "UnmatchedType",
-      "propertyPath": "/properties/stringField",
-    },
-    "groupedOperations": [
-      {
-        "intent": "change stringField type",
-        "operations": [
-          {
-            "op": "replace",
-            "path": "/properties/stringField",
-            "value": {
-              "type": "null",
-            },
-          },
-        ],
-      },
-    ],
-    "impact": [
-      "BackwardsIncompatible",
     ],
   },
 ]
