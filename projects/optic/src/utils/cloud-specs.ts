@@ -14,6 +14,7 @@ import { logger } from '../logger';
 import { NotFoundError } from '../client/errors';
 import chalk from 'chalk';
 import { createNullSpec, createNullSpecSourcemap } from './specs';
+import { JsonSchemaSourcemap } from '@useoptic/openapi-io';
 
 export const EMPTY_SPEC_ID = 'EMPTY';
 
@@ -42,7 +43,9 @@ export async function downloadSpec(
     ]);
     return {
       jsonLike: JSON.parse(specStr),
-      sourcemap: JSON.parse(sourcemapStr), // TODO construct sourcemap
+      sourcemap: JsonSchemaSourcemap.fromSerializedSourcemap(
+        JSON.parse(sourcemapStr)
+      ),
     };
   }
 }
