@@ -16,6 +16,7 @@ import {
 } from '@useoptic/openapi-io';
 import { OpticCliConfig, VCS } from '../config';
 import * as Git from './git-utils';
+import { OPTIC_EMPTY_SPEC_KEY } from '../constants';
 
 const exec = promisify(callbackExec);
 
@@ -65,7 +66,10 @@ export function parseSpecVersion(raw?: string | null): SpecFromInput {
   if (raw === 'null:') {
     return {
       from: 'empty',
-      value: defaultEmptySpec,
+      value: {
+        ...defaultEmptySpec,
+        [OPTIC_EMPTY_SPEC_KEY]: true,
+      } as OpenAPIV3.Document,
     };
   } else if (isUrl) {
     return {
@@ -94,7 +98,7 @@ export function parseSpecVersion(raw?: string | null): SpecFromInput {
 }
 
 // Loads spec without dereferencing
-export async function loadRaw(opticRef: string): Promise<any> {
+export async function loadRaw(opticRef: string): Promise<OpenAPIV3.Document> {
   const input = parseSpecVersion(opticRef);
   let format: 'json' | 'yml' | 'unknown';
   let rawString: string;
@@ -145,19 +149,15 @@ async function parseSpecAndDereference(
   switch (input.from) {
     case 'empty': {
       const emptySpecName = 'empty.json';
-      const jsonLike = {
-        ...input.value,
-        ['x-optic-ci-empty-spec']: true,
-      } as OpenAPIV3.Document;
       const sourcemap = new JsonSchemaSourcemap(emptySpecName);
-      await sourcemap.addFileIfMissingFromContents(
+      sourcemap.addFileIfMissingFromContents(
         emptySpecName,
-        JSON.stringify(jsonLike, null, 2),
+        JSON.stringify(input.value, null, 2),
         0
       );
 
       return {
-        jsonLike,
+        jsonLike: input.value,
         sourcemap,
         from: 'empty',
         isEmptySpec: true,
