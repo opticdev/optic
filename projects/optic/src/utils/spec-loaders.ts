@@ -59,8 +59,9 @@ export function parseSpecVersion(raw?: string | null): SpecFromInput {
   let isUrl = false;
 
   try {
-    new URL(raw);
-    isUrl = true;
+    const url = new URL(raw);
+    // should also check that the protocol is http or https, we won't support anything else
+    isUrl = url.protocol === 'http:' || url.protocol === 'https:';
   } catch (e) {}
 
   if (raw === 'null:') {
