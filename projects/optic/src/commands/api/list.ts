@@ -75,7 +75,7 @@ export const getApiAddAction =
       const relativePath = path.relative(process.cwd(), file_path);
       let spec: OpenAPIV3.Document;
       try {
-        spec = await loadRaw(file_path);
+        spec = await loadRaw(file_path, config);
         // Checks that the document looks like an openapi document (i.e. has paths, etc )
         validateOpenApiV3Document(spec, undefined, { strictOpenAPI: false });
       } catch (e) {

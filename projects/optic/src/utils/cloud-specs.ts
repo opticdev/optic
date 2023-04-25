@@ -3,17 +3,49 @@ import {
   CompareSpecResults,
   UserError,
   ApiCoverage,
+  sourcemapReader,
 } from '@useoptic/openapi-utilities';
 import { OpticBackendClient } from '../client';
 import { computeChecksumForAws } from './checksum';
-import { uploadFileToS3 } from './s3';
+import { downloadFileFromS3, uploadFileToS3 } from './s3';
 import { ParseResult } from './spec-loaders';
 import { trackEvent } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { logger } from '../logger';
 import { NotFoundError } from '../client/errors';
 import chalk from 'chalk';
+import { createNullSpec, createNullSpecSourcemap } from './specs';
 
 export const EMPTY_SPEC_ID = 'EMPTY';
+
+export async function downloadSpec(
+  spec: { apiId: string; tag: string },
+  opts: { client: OpticBackendClient }
+): Promise<{
+  jsonLike: ParseResult['jsonLike'];
+  sourcemap: ParseResult['sourcemap'];
+}> {
+  const response = await opts.client.getSpec(spec.apiId, spec.tag);
+
+  if (response.id === EMPTY_SPEC_ID) {
+    const spec = createNullSpec();
+    const sourcemap = createNullSpecSourcemap(spec);
+
+    return {
+      jsonLike: spec,
+      sourcemap,
+    };
+  } else {
+    // fetch from cloud
+    const [specStr, sourcemapStr] = await Promise.all([
+      downloadFileFromS3(response.specUrl!),
+      downloadFileFromS3(response.sourcemapUrl!),
+    ]);
+    return {
+      jsonLike: JSON.parse(specStr),
+      sourcemap: JSON.parse(sourcemapStr), // TODO construct sourcemap
+    };
+  }
+}
 
 export async function uploadSpec(
   apiId: string,

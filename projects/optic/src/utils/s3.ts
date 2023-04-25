@@ -19,3 +19,21 @@ export const uploadFileToS3 = async (
     }
   });
 };
+
+export const downloadFileFromS3 = async (
+  signedUrl: string,
+  additionalHeaders: Record<string, string> = {}
+) => {
+  return await fetch(signedUrl, {
+    method: 'GET',
+    headers: {
+      ...additionalHeaders,
+    },
+  }).then(async (response) => {
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(`${response.status} ${response.statusText} \n${text}`);
+    }
+    return response.text();
+  });
+};
