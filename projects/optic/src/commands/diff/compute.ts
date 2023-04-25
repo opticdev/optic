@@ -6,7 +6,7 @@ import {
 import { generateRuleRunner } from './generate-rule-runner';
 import { OPTIC_STANDARD_KEY } from '../../constants';
 import {
-  getFileFromFsOrGit,
+  loadSpec,
   ParseResult,
   parseSpecVersion,
 } from '../../utils/spec-loaders';

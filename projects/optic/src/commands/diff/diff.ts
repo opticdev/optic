@@ -12,7 +12,7 @@ import { generateComparisonLogsV2 } from '../../utils/diff-renderer';
 import {
   parseFilesFromRef,
   ParseResult,
-  getFileFromFsOrGit,
+  loadSpec,
 } from '../../utils/spec-loaders';
 import { OpticCliConfig, VCS } from '../../config';
 import chalk from 'chalk';
@@ -104,10 +104,9 @@ const getBaseAndHeadFromFiles = async (
   strict: boolean
 ): Promise<[ParseResult, ParseResult]> => {
   try {
-    // TODO update function to try download from spec-id cloud
     return await Promise.all([
-      getFileFromFsOrGit(file1, config, { strict, denormalize: true }),
-      getFileFromFsOrGit(file2, config, { strict, denormalize: true }),
+      loadSpec(file1, config, { strict, denormalize: true }),
+      loadSpec(file2, config, { strict, denormalize: true }),
     ]);
   } catch (e) {
     console.error(e instanceof Error ? e.message : e);
@@ -208,13 +207,14 @@ const runDiff = async (
     }
 
     logger.info('');
-
-    if (!hasOpticUrl) {
+    if ((!hasOpticUrl && headFile.from === 'file') || headFile.from === 'git') {
+      const relativePath = path.relative(
+        process.cwd(),
+        headFile.sourcemap.rootFilePath
+      );
       logger.info(
         chalk.blue.bold(
-          `See the full history of this API by running "optic api add ${
-            path.parse(baseFile.sourcemap.rootFilePath).base
-          } --history-depth 0"`
+          `See the full history of this API by running "optic api add ${relativePath} --history-depth 0"`
         )
       );
     }

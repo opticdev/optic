@@ -1,5 +1,5 @@
 import { Command, Option } from 'commander';
-import { ParseResult, getFileFromFsOrGit } from '../../utils/spec-loaders';
+import { ParseResult, loadSpec } from '../../utils/spec-loaders';
 import { OpticCliConfig } from '../../config';
 import { UserError } from '@useoptic/openapi-utilities';
 import { isYaml, writeYaml } from '@useoptic/openapi-io';
@@ -47,8 +47,7 @@ const getDereferencedSpec = async (
   config: OpticCliConfig
 ): Promise<ParseResult> => {
   try {
-    // TODO update function to try download from spec-id cloud
-    return getFileFromFsOrGit(file1, config, {
+    return loadSpec(file1, config, {
       strict: false,
       denormalize: false,
     });

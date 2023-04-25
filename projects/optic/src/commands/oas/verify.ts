@@ -18,10 +18,7 @@ import { OpticCliConfig, VCS } from '../../config';
 import { OPTIC_URL_KEY } from '../../constants';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { uploadSpec, uploadSpecVerification } from '../../utils/cloud-specs';
-import {
-  getFileFromFsOrGit,
-  specHasUncommittedChanges,
-} from '../../utils/spec-loaders';
+import { loadSpec, specHasUncommittedChanges } from '../../utils/spec-loaders';
 import * as Git from '../../utils/git-utils';
 import { sanitizeGitTag } from '@useoptic/openapi-utilities';
 import { nextCommand } from './reporters/next-command';
@@ -92,7 +89,7 @@ export async function runVerify(
   const absoluteSpecPath = Path.resolve(specPath);
 
   /// Run to verify with the latest specification
-  const parseResult = await getFileFromFsOrGit(absoluteSpecPath, config, {
+  const parseResult = await loadSpec(absoluteSpecPath, config, {
     strict: false,
     denormalize: true,
   });

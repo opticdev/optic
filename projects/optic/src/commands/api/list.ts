@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import path from 'path';
 import fs from 'node:fs/promises';
 import { OpticCliConfig } from '../../config';
-import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
+import { loadSpec, ParseResult } from '../../utils/spec-loaders';
 import { logger } from '../../logger';
 import { OPTIC_URL_KEY } from '../../constants';
 import chalk from 'chalk';
@@ -74,7 +74,7 @@ export const getApiAddAction =
       let parseResult: ParseResult;
       try {
         // TODO just fs read json or yml instead here - no need to load sourcemap
-        parseResult = await getFileFromFsOrGit(file_path, config, {
+        parseResult = await loadSpec(file_path, config, {
           strict: false,
           denormalize: true,
         });
