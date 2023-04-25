@@ -66,8 +66,9 @@ export function parseOpticRef(raw?: string | null): SpecFromInput {
   const maybeCloudMatch = raw.match(/^cloud:(?<apiId>.+)@(?<tag>.+)$/);
 
   try {
-    new URL(raw);
-    isUrl = true;
+    const url = new URL(raw);
+    // should also check that the protocol is http or https, we won't support anything else
+    isUrl = url.protocol === 'http:' || url.protocol === 'https:';
   } catch (e) {}
 
   if (raw === 'null:') {
