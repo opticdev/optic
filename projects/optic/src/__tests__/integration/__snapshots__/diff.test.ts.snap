@@ -690,6 +690,18 @@ Checks
 "
 `;
 
+exports[`diff with mock server with cloud tag ref 1`] = `
+"[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
+
+[1mGET[22m /api/users: [32madded[39m
+  
+1 operation added
+[32m[1m0 passed[22m[39m
+[31m[1m0 errors[22m[39m
+
+"
+`;
+
 exports[`diff with mock server with web url 1`] = `
 "[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
 
