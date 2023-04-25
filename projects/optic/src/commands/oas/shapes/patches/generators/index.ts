@@ -8,12 +8,14 @@ import { oneOfPatches } from './oneOf';
 import { requiredPatches } from './required';
 import { typePatches } from './type';
 import { newSchemaPatch } from './newSchema';
+import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 
 export interface DiffShapePatchGenerator {
   (
     diff: ShapeDiffResult,
     schema: SchemaObject,
-    shapeContext: { location?: ShapeLocation }
+    shapeContext: { location?: ShapeLocation },
+    openAPIVersion: SupportedOpenAPIVersions
   ): IterableIterator<ShapePatch>;
 }
 

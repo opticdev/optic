@@ -23,6 +23,7 @@ import {
 } from '../../operations';
 import { SchemaInventory } from '../../shapes/closeness/schema-inventory';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 
 export interface SpecPatches extends AsyncIterable<SpecPatch> {}
 
@@ -53,13 +54,14 @@ export class SpecPatches {
 
   static async *generateForNewSpec<T>(
     info: OpenAPIV3.InfoObject,
-    openAPIversion: string = '3.0.3'
+    openAPIVersion: string = '3.0.3'
   ): SpecPatches {
-    yield* newSpecPatches(info, openAPIversion);
+    yield* newSpecPatches(info, openAPIVersion);
   }
 
   static async *shapeAdditions(
-    documentedBodies: DocumentedBodies
+    documentedBodies: DocumentedBodies,
+    openAPIVersion: SupportedOpenAPIVersions
   ): SpecPatches {
     const updatedSchemasByPath: Map<string, SchemaObject> = new Map();
 
@@ -70,7 +72,10 @@ export class SpecPatches {
         documentedBody.schema = updatedSchemasByPath.get(specJsonPath)!;
       }
 
-      for (let patch of ShapePatches.generateBodyAdditions(documentedBody)) {
+      for (let patch of ShapePatches.generateBodyAdditions(
+        documentedBody,
+        openAPIVersion
+      )) {
         documentedBody = DocumentedBody.applyShapePatch(documentedBody, patch);
         yield SpecPatch.fromShapePatch(patch, specJsonPath, shapeLocation!);
       }

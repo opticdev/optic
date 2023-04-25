@@ -4,11 +4,13 @@ import { SchemaObject } from '../../schema';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { Schema } from '../../schema';
 import { ShapeLocation } from '../..';
+import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 
 export function* additionalPropertiesPatches(
   diff: ShapeDiffResult,
   schema: SchemaObject,
-  shapeContext: { location?: ShapeLocation }
+  shapeContext: { location?: ShapeLocation },
+  openAPIVersion: SupportedOpenAPIVersions
 ): IterableIterator<ShapePatch> {
   if (diff.kind !== ShapeDiffResultKind.AdditionalProperty) return;
 
@@ -72,7 +74,7 @@ export function* additionalPropertiesPatches(
         {
           op: 'add',
           path: newPropertyPath,
-          value: Schema.baseFromValue(diff.example),
+          value: Schema.baseFromValue(diff.example, openAPIVersion),
         }
       )
     );

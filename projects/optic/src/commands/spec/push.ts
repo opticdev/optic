@@ -3,7 +3,11 @@ import open from 'open';
 import { sanitizeGitTag, SPEC_TAG_REGEXP } from '@useoptic/openapi-utilities';
 
 import { OpticCliConfig, VCS } from '../../config';
-import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
+import {
+  getFileFromFsOrGit,
+  ParseResult,
+  specHasUncommittedChanges,
+} from '../../utils/spec-loaders';
 import { logger } from '../../logger';
 import { OPTIC_URL_KEY } from '../../constants';
 import * as Git from '../../utils/git-utils';
@@ -59,32 +63,6 @@ const getSpecPushAction =
       return;
     }
 
-    let tagsToAdd: string[] = getTagsFromOptions(options.tag);
-
-    if (config.vcs?.type === VCS.Git) {
-      if (config.vcs.status === 'clean') {
-        const sha = config.vcs.sha;
-        tagsToAdd.push(`git:${sha}`);
-
-        const branch = await Git.getCurrentBranchName();
-
-        if (branch !== 'HEAD') {
-          tagsToAdd.push(sanitizeGitTag(`gitbranch:${branch}`));
-          logger.info(
-            `Automatically adding the git sha 'git:${sha}' and branch 'gitbranch:${branch}' as tags`
-          );
-        } else {
-          logger.info(`Automatically adding the git sha 'git:${sha}' as a tag`);
-        }
-      } else {
-        logger.info(
-          'Not automatically including any git tags because the current working directory has uncommited changes.'
-        );
-      }
-    }
-
-    tagsToAdd = getUniqueTags(tagsToAdd);
-
     let parseResult: ParseResult;
     try {
       parseResult = await getFileFromFsOrGit(spec_path, config, {
@@ -107,6 +85,34 @@ const getSpecPushAction =
       process.exitCode = 1;
       return;
     }
+    let tagsToAdd: string[] = getTagsFromOptions(options.tag);
+
+    if (config.vcs?.type === VCS.Git) {
+      if (
+        !specHasUncommittedChanges(parseResult.sourcemap, config.vcs.diffSet)
+      ) {
+        const sha = config.vcs.sha;
+        tagsToAdd.push(`git:${sha}`);
+
+        const branch = await Git.getCurrentBranchName();
+
+        if (branch !== 'HEAD') {
+          tagsToAdd.push(sanitizeGitTag(`gitbranch:${branch}`));
+          logger.info(
+            `Automatically adding the git sha 'git:${sha}' and branch 'gitbranch:${branch}' as tags`
+          );
+        } else {
+          logger.info(`Automatically adding the git sha 'git:${sha}' as a tag`);
+        }
+      } else {
+        logger.info(
+          'Not automatically including any git tags because the current working directory has uncommited changes.'
+        );
+      }
+    }
+
+    tagsToAdd = getUniqueTags(tagsToAdd);
+
     const opticUrl: string = parseResult.jsonLike[OPTIC_URL_KEY];
     const specDetails = getApiFromOpticUrl(opticUrl);
 

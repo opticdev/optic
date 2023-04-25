@@ -27,6 +27,7 @@ import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { ApiCoverageCounter } from '../coverage/api-coverage';
 import { SchemaInventory } from '../shapes/closeness/schema-inventory';
 import { specToOperations } from '../operations/queries';
+import { checkOpenAPIVersion } from '@useoptic/openapi-io';
 
 export async function addIfUndocumented(
   operationsToAdd: ParsedOperation[],
@@ -337,6 +338,7 @@ export function addOperations(
   requiredOperations: ParsedOperation[],
   interactions: CapturedInteractions
 ): { results: SpecPatches; observations: AsyncIterable<AddObservation> } {
+  const openAPIVersion = checkOpenAPIVersion(spec);
   const observing = new AT.Subject<AddObservation>();
   const observers = {
     // operations
@@ -507,7 +509,8 @@ export function addOperations(
       let shapePatches = SpecPatches.shapeAdditions(
         AT.tap((body: DocumentedBody) => {
           observers.documentedInteractionBody(documentedInteraction, body);
-        })(documentedBodies)
+        })(documentedBodies),
+        openAPIVersion
       );
 
       const addedPaths = new Set<string>();

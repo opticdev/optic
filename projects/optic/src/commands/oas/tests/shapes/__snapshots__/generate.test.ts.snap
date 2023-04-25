@@ -483,6 +483,22 @@ exports[`generate shapes from bodies oneOfs are built correctly one of array or 
 }
 `;
 
+exports[`generate shapes from bodies primitives can become type null in 3.0 1`] = `
+{
+  "nullable": true,
+  "type": "string",
+}
+`;
+
+exports[`generate shapes from bodies primitives can become type null in 3.1 1`] = `
+{
+  "type": [
+    "string",
+    "null",
+  ],
+}
+`;
+
 exports[`generate shapes from bodies primitives can build JSON from a boolean 1`] = `
 {
   "type": "boolean",
@@ -491,7 +507,7 @@ exports[`generate shapes from bodies primitives can build JSON from a boolean 1`
 
 exports[`generate shapes from bodies primitives can build JSON from a null 1`] = `
 {
-  "type": "null",
+  "nullable": true,
 }
 `;
 

@@ -60,7 +60,9 @@ exports[`requestBodyPatches generates a patch for a unmatched request body conte
           {
             "op": "add",
             "path": "/requestBody/content/text~1csv",
-            "value": {},
+            "value": {
+              "schema": {},
+            },
           },
         ],
       },
@@ -80,7 +82,9 @@ exports[`requestBodyPatches generates a patch for a unmatched request body conte
   "requestBody": {
     "content": {
       "application/json": {},
-      "text/csv": {},
+      "text/csv": {
+        "schema": {},
+      },
     },
     "required": true,
   },
@@ -119,7 +123,9 @@ exports[`requestBodyPatches generates a patch for an unspecified request body 1`
           {
             "op": "add",
             "path": "/requestBody/content/application~1json",
-            "value": {},
+            "value": {
+              "schema": {},
+            },
           },
         ],
       },
@@ -138,7 +144,9 @@ exports[`requestBodyPatches generates a patch for an unspecified request body 2`
   "pathPattern": "/some-path",
   "requestBody": {
     "content": {
-      "application/json": {},
+      "application/json": {
+        "schema": {},
+      },
     },
   },
   "responses": {

@@ -6,17 +6,20 @@ import {
 import { OperationGroup, PatchImpact, ShapePatch } from '..';
 import { SchemaObject, Schema } from '../../schema';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { JsonPath } from '@useoptic/openapi-io';
+import { JsonPath, SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 import { ShapeLocation } from '../..';
 
 export function* oneOfPatches(
   diff: ShapeDiffResult,
   schema: SchemaObject,
-  shapeContext: { location?: ShapeLocation }
+  shapeContext: { location?: ShapeLocation },
+  openAPIVersion: SupportedOpenAPIVersions
 ): IterableIterator<ShapePatch> {
   if (
     diff.kind !== ShapeDiffResultKind.UnmatchedType ||
-    diff.keyword !== JsonSchemaKnownKeyword.oneOf
+    diff.keyword !== JsonSchemaKnownKeyword.oneOf ||
+    // @ts-ignore
+    (diff.keyword === JsonSchemaKnownKeyword.type && diff.example === null)
   )
     return;
 
@@ -26,7 +29,7 @@ export function* oneOfPatches(
     OperationGroup.create(`add new oneOf branch to ${diff.key}`, {
       op: 'add',
       path: jsonPointerHelpers.append(diff.propertyPath, '-'), // "-" indicates append to array
-      value: Schema.baseFromValue(diff.example),
+      value: Schema.baseFromValue(diff.example, openAPIVersion),
     })
   );
 
