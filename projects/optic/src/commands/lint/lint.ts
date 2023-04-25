@@ -2,7 +2,7 @@ import { Command, Option } from 'commander';
 import open from 'open';
 
 import { compute } from '../diff/compute';
-import { getFileFromFsOrGit, ParseResult } from '../../utils/spec-loaders';
+import { loadSpec, ParseResult } from '../../utils/spec-loaders';
 import { OpticCliConfig } from '../../config';
 import { errorHandler } from '../../error-handler';
 import { logger } from '../../logger';
@@ -52,7 +52,7 @@ const getLintAction =
     logger.info(`Linting spec ${path}...`);
     let file: ParseResult;
     try {
-      file = await getFileFromFsOrGit(path, config, {
+      file = await loadSpec(path, config, {
         strict: true,
         denormalize: true,
       });

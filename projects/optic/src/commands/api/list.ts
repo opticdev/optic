@@ -2,11 +2,7 @@ import { Command } from 'commander';
 import path from 'path';
 import fs from 'node:fs/promises';
 import { OpticCliConfig } from '../../config';
-import {
-  getFileFromFsOrGit,
-  loadRaw,
-  ParseResult,
-} from '../../utils/spec-loaders';
+import { loadRaw } from '../../utils/spec-loaders';
 import { logger } from '../../logger';
 import { OPTIC_EMPTY_SPEC_KEY, OPTIC_URL_KEY } from '../../constants';
 import chalk from 'chalk';

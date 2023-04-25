@@ -8,11 +8,13 @@ import { SchemaObject } from '../../schema';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { Schema } from '../../schema';
 import { ShapeLocation } from '../..';
+import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 
 export function* typePatches(
   diff: ShapeDiffResult,
   schema: SchemaObject,
-  shapeContext: { location?: ShapeLocation }
+  shapeContext: { location?: ShapeLocation },
+  openAPIVersion: SupportedOpenAPIVersions
 ): IterableIterator<ShapePatch> {
   if (
     diff.kind !== ShapeDiffResultKind.UnmatchedType ||
@@ -29,7 +31,7 @@ export function* typePatches(
   function makeOneOfOperations() {
     const groupedOperations: OperationGroup[] = [];
     if (alreadyOneOf) {
-      let baseSchema = Schema.baseFromValue(diff.example);
+      let baseSchema = Schema.baseFromValue(diff.example, openAPIVersion);
 
       if (
         !currentPropertySchema.oneOf.find((branchSchema) =>
@@ -49,7 +51,7 @@ export function* typePatches(
         ...Schema.mergeOperations(Schema.clone(currentPropertySchema), {
           oneOf: [
             Schema.clone(currentPropertySchema),
-            Schema.baseFromValue(diff.example),
+            Schema.baseFromValue(diff.example, openAPIVersion),
           ],
         }),
       ];
@@ -76,32 +78,108 @@ export function* typePatches(
         // handles removal of keys that are no longer allowed
         value: Schema.merge(
           currentPropertySchema,
-          Schema.baseFromValue(diff.example)
+          Schema.baseFromValue(diff.example, openAPIVersion)
         ),
       }),
     ];
   }
 
-  // option one: convert to a one-off
-  yield {
-    description: `make ${diff.key} oneOf`,
-    diff,
-    impact: [
-      PatchImpact.Addition,
-      !shapeContext.location
-        ? PatchImpact.BackwardsCompatibilityUnknown
-        : 'inRequest' in shapeContext.location
-        ? PatchImpact.BackwardsCompatible
-        : PatchImpact.BackwardsIncompatible,
-    ],
-    groupedOperations: makeOneOfOperations(),
-  };
+  if (openAPIVersion === '3.0.x') {
+    if (diff.example === null) {
+      yield {
+        description: `make ${diff.key} null`,
+        diff,
+        impact: [
+          PatchImpact.Addition,
+          !shapeContext.location
+            ? PatchImpact.BackwardsCompatibilityUnknown
+            : 'inRequest' in shapeContext.location
+            ? PatchImpact.BackwardsCompatible
+            : PatchImpact.BackwardsIncompatible,
+        ],
+        groupedOperations: [
+          OperationGroup.create(`make ${diff.key} nullable`, {
+            op: 'replace',
+            path: jsonPointerHelpers.append(diff.instancePath, 'nullable'),
+            // handles removal of keys that are no longer allowed
+            value: true,
+          }),
+        ],
+      };
+    } else {
+      // option one: convert to a one-off
+      yield {
+        description: `make ${diff.key} oneOf`,
+        diff,
+        impact: [
+          PatchImpact.Addition,
+          !shapeContext.location
+            ? PatchImpact.BackwardsCompatibilityUnknown
+            : 'inRequest' in shapeContext.location
+            ? PatchImpact.BackwardsCompatible
+            : PatchImpact.BackwardsIncompatible,
+        ],
+        groupedOperations: makeOneOfOperations(),
+      };
 
-  // option two: change the type
-  yield {
-    diff,
-    description: `change type of ${diff.key}`,
-    impact: [PatchImpact.BackwardsIncompatible],
-    groupedOperations: changeTypeOperations(),
-  };
+      // option two: change the type
+      yield {
+        diff,
+        description: `change type of ${diff.key}`,
+        impact: [PatchImpact.BackwardsIncompatible],
+        groupedOperations: changeTypeOperations(),
+      };
+    }
+  } else if (openAPIVersion === '3.1.x') {
+    if (diff.example === null) {
+      const schemaType = Array.isArray(schema.type)
+        ? [...schema.type, 'null']
+        : schema.type
+        ? [schema.type, 'null']
+        : ['null'];
+
+      yield {
+        description: `make ${diff.key} null`,
+        diff,
+        impact: [
+          PatchImpact.Addition,
+          !shapeContext.location
+            ? PatchImpact.BackwardsCompatibilityUnknown
+            : 'inRequest' in shapeContext.location
+            ? PatchImpact.BackwardsCompatible
+            : PatchImpact.BackwardsIncompatible,
+        ],
+        groupedOperations: [
+          OperationGroup.create(`make ${diff.key} null`, {
+            op: 'replace',
+            path: jsonPointerHelpers.append(diff.propertyPath, 'type'),
+            // handles removal of keys that are no longer allowed
+            value: schemaType,
+          }),
+        ],
+      };
+    } else {
+      yield {
+        description: `make ${diff.key} oneOf`,
+        diff,
+        impact: [
+          PatchImpact.Addition,
+          !shapeContext.location
+            ? PatchImpact.BackwardsCompatibilityUnknown
+            : 'inRequest' in shapeContext.location
+            ? PatchImpact.BackwardsCompatible
+            : PatchImpact.BackwardsIncompatible,
+        ],
+        groupedOperations: makeOneOfOperations(),
+      };
+
+      // option two: change the type
+      yield {
+        diff,
+        description: `change type of ${diff.key}`,
+        impact: [PatchImpact.BackwardsIncompatible],
+        groupedOperations: changeTypeOperations(),
+      };
+    }
+  }
 }

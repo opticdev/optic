@@ -6,7 +6,7 @@ import fs from 'node:fs/promises';
 import ora from 'ora';
 import { OpticCliConfig, VCS } from '../../config';
 import {
-  getFileFromFsOrGit,
+  loadSpec,
   ParseResult,
   specHasUncommittedChanges,
 } from '../../utils/spec-loaders';
@@ -91,7 +91,7 @@ async function crawlCandidateSpecs(
   const pathRelativeToRoot = path.relative(config.root, file_path);
   let parseResult: ParseResult;
   try {
-    parseResult = await getFileFromFsOrGit(file_path, config, {
+    parseResult = await loadSpec(file_path, config, {
       strict: false,
       denormalize: true,
     });
@@ -163,14 +163,10 @@ async function crawlCandidateSpecs(
     for await (const sha of shas) {
       let parseResult: ParseResult;
       try {
-        parseResult = await getFileFromFsOrGit(
-          `${sha}:${pathRelativeToRoot}`,
-          config,
-          {
-            strict: false,
-            denormalize: true,
-          }
-        );
+        parseResult = await loadSpec(`${sha}:${pathRelativeToRoot}`, config, {
+          strict: false,
+          denormalize: true,
+        });
       } catch (e) {
         logger.debug(
           `${short(

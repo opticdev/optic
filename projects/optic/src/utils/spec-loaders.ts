@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import fetch from 'node-fetch';
 import path from 'path';
 import { promisify } from 'util';
 import { exec as callbackExec } from 'child_process';
@@ -30,6 +31,7 @@ export type ParseResultContext = {
 
 export type ParseResult = ParseOpenAPIResult & {
   isEmptySpec: boolean;
+  from: 'git' | 'file' | 'url' | 'empty';
   context: ParseResultContext;
 };
 
@@ -46,10 +48,21 @@ type SpecFromInput =
   | {
       from: 'empty';
       value: OpenAPIV3.Document;
+    }
+  | {
+      from: 'url';
+      url: string;
     };
 
 export function parseSpecVersion(raw?: string | null): SpecFromInput {
   raw = raw ?? 'null:';
+  let isUrl = false;
+
+  try {
+    new URL(raw);
+    isUrl = true;
+  } catch (e) {}
+
   if (raw === 'null:') {
     return {
       from: 'empty',
@@ -57,6 +70,11 @@ export function parseSpecVersion(raw?: string | null): SpecFromInput {
         ...defaultEmptySpec,
         [OPTIC_EMPTY_SPEC_KEY]: true,
       } as OpenAPIV3.Document,
+    };
+  } else if (isUrl) {
+    return {
+      from: 'url',
+      url: raw,
     };
   } else if (
     raw.includes(':') &&
@@ -80,31 +98,44 @@ export function parseSpecVersion(raw?: string | null): SpecFromInput {
 }
 
 // Loads spec without dereferencing
-export async function loadRaw(
-  filePathOrRef: string
-): Promise<OpenAPIV3.Document> {
-  const input = parseSpecVersion(filePathOrRef);
+export async function loadRaw(opticRef: string): Promise<OpenAPIV3.Document> {
+  const input = parseSpecVersion(opticRef);
+  let format: 'json' | 'yml' | 'unknown';
   let rawString: string;
   if (input.from === 'file') {
-    rawString = await fs.readFile(filePathOrRef, 'utf-8');
+    rawString = await fs.readFile(opticRef, 'utf-8');
+    format = /\.json$/i.test(opticRef) ? 'json' : 'yml';
   } else if (input.from === 'git') {
     rawString = await Git.gitShow(input.branch, input.name);
+    format = /\.json$/i.test(opticRef) ? 'json' : 'yml';
+  } else if (input.from === 'url') {
+    rawString = await fetch(input.url).then((res) => res.text());
+    format = 'unknown';
   } else {
     return input.value;
   }
 
-  try {
-    return /\.json$/i.test(filePathOrRef)
-      ? JSON.parse(rawString)
-      : loadYaml(rawString);
-  } catch (e) {
-    if (e instanceof Error) {
-      if (rawString.match(/x-optic-url/)) {
-        e['probablySpec'] = true;
-      }
+  if (format === 'unknown') {
+    // try json, then yml
+    try {
+      return JSON.parse(rawString);
+    } catch (e) {
+      return loadYaml(rawString);
     }
+  } else {
+    try {
+      return /\.json$/i.test(opticRef)
+        ? JSON.parse(rawString)
+        : loadYaml(rawString);
+    } catch (e) {
+      if (e instanceof Error) {
+        if (rawString.match(/x-optic-url/)) {
+          e['probablySpec'] = true;
+        }
+      }
 
-    throw e;
+      throw e;
+    }
   }
 }
 
@@ -128,6 +159,7 @@ async function parseSpecAndDereference(
       return {
         jsonLike: input.value,
         sourcemap,
+        from: 'empty',
         isEmptySpec: true,
         context: null,
       };
@@ -146,6 +178,7 @@ async function parseSpecAndDereference(
           config.root,
           input.branch
         )),
+        from: 'git',
         isEmptySpec: false,
         context: {
           vcs: 'git',
@@ -155,6 +188,15 @@ async function parseSpecAndDereference(
           email: commitMeta.email,
           message: commitMeta.message,
         },
+      };
+    }
+    case 'url': {
+      const parseResult = await parseOpenAPIWithSourcemap(input.url);
+      return {
+        ...parseResult,
+        from: 'url',
+        isEmptySpec: false,
+        context: null,
       };
     }
     case 'file':
@@ -181,6 +223,7 @@ async function parseSpecAndDereference(
 
       return {
         ...parseResult,
+        from: 'file',
         isEmptySpec: false,
         context,
       };
@@ -201,16 +244,21 @@ function validateAndDenormalize(
   return options.denormalize ? denormalize(parseResult) : parseResult;
 }
 
-// filePathOrRef can be a path, or a gitref:path (delimited by `:`)
-export const getFileFromFsOrGit = async (
-  filePathOrRef: string | undefined,
+// Optic ref supports
+// - file paths (`./specs/openapi.yml`)
+// - git paths (`git:main`)
+// - public urls (`https://example.com/my-openapi-spec.yml`)
+// - empty files (`null:`)
+// - (in the future): cloud tags (`cloud:apiId@tag`)
+export const loadSpec = async (
+  opticRef: string | undefined,
   config: OpticCliConfig,
   options: {
     strict: boolean;
     denormalize: boolean;
   }
 ): Promise<ParseResult> => {
-  const file = await parseSpecAndDereference(filePathOrRef, config);
+  const file = await parseSpecAndDereference(opticRef, config);
 
   return validateAndDenormalize(file, options);
 };

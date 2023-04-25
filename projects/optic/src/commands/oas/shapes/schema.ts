@@ -4,12 +4,16 @@ import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { PatchOperation } from '../patches';
 import JsonPatch from 'fast-json-patch';
 import { OperationPatch } from '../operations';
+import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 
 export type SchemaObject = OpenAPIV3.SchemaObject;
 
 export class Schema {
-  static baseFromValue(value: any): SchemaObject {
-    const rootSchema = initialSchema(value);
+  static baseFromValue(
+    value: any,
+    openAPIVersion: SupportedOpenAPIVersions
+  ): SchemaObject {
+    const rootSchema = initialSchema(value, openAPIVersion);
 
     let schema = rootSchema;
 
@@ -119,14 +123,20 @@ export class Schema {
   }
 }
 
-function initialSchema(rootInput: any): OpenAPIV3.SchemaObject {
+function initialSchema(
+  rootInput: any,
+  openAPIVersion: SupportedOpenAPIVersions
+): OpenAPIV3.SchemaObject {
   if (rootInput === null) {
-    // @ts-ignore, this is ok now.
+    if (openAPIVersion === '3.0.x') return { nullable: true };
+    // @ts-ignore we need to retype this as a union of 3 & 3.1
     return { type: 'null' };
   } else if (Array.isArray(rootInput)) {
     return {
       type: 'array',
-      items: rootInput.length ? initialSchema(rootInput[0]) : {},
+      items: rootInput.length
+        ? initialSchema(rootInput[0], openAPIVersion)
+        : {},
     };
   } else if (typeof rootInput === 'object') {
     return { type: 'object' };
@@ -143,6 +153,7 @@ function initialSchema(rootInput: any): OpenAPIV3.SchemaObject {
 
 export const allowedMetaDataForAll: string[] = [
   'title',
+  'nullable',
   'description',
   'example',
   'examples',

@@ -2,11 +2,7 @@ import { Command, Option } from 'commander';
 import pm from 'picomatch';
 import { OpticCliConfig, VCS } from '../../config';
 import { findOpenApiSpecsCandidates } from '../../utils/git-utils';
-import {
-  getFileFromFsOrGit,
-  loadRaw,
-  ParseResult,
-} from '../../utils/spec-loaders';
+import { loadSpec, loadRaw, ParseResult } from '../../utils/spec-loaders';
 import { logger } from '../../logger';
 import { OPTIC_URL_KEY } from '../../constants';
 import { compute } from './compute';
@@ -240,7 +236,7 @@ async function computeAll(
     let fromParseResults: ParseResult;
     let toParseResults: ParseResult;
     try {
-      fromParseResults = await getFileFromFsOrGit(candidate.from, config, {
+      fromParseResults = await loadSpec(candidate.from, config, {
         strict: false,
         denormalize: true,
       });
@@ -253,7 +249,7 @@ async function computeAll(
     }
 
     try {
-      toParseResults = await getFileFromFsOrGit(candidate.to, config, {
+      toParseResults = await loadSpec(candidate.to, config, {
         strict: options.validation === 'strict',
         denormalize: true,
       });

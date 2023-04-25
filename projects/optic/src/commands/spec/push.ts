@@ -1,10 +1,10 @@
 import { Command } from 'commander';
 import open from 'open';
-import { sanitizeGitTag, SPEC_TAG_REGEXP } from '@useoptic/openapi-utilities';
+import { sanitizeGitTag } from '@useoptic/openapi-utilities';
 
 import { OpticCliConfig, VCS } from '../../config';
 import {
-  getFileFromFsOrGit,
+  loadSpec,
   ParseResult,
   specHasUncommittedChanges,
 } from '../../utils/spec-loaders';
@@ -65,7 +65,7 @@ const getSpecPushAction =
 
     let parseResult: ParseResult;
     try {
-      parseResult = await getFileFromFsOrGit(spec_path, config, {
+      parseResult = await loadSpec(spec_path, config, {
         strict: false,
         denormalize: true,
       });

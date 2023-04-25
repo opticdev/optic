@@ -12,14 +12,16 @@ export { PatchImpact, PatchOperationGroup as OperationGroup };
 
 import { diffShapePatchGenerators, newSchemaPatch } from './generators';
 import { OperationDiffResult } from '../../operations/diffs';
+import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 
 export function* generateShapePatchesByDiff(
   diff: ShapeDiffResult,
   schema: SchemaObject,
-  shapeContext: { location?: ShapeLocation }
+  shapeContext: { location?: ShapeLocation },
+  openAPIVersion: SupportedOpenAPIVersions
 ): IterableIterator<ShapePatch> {
   for (let generator of diffShapePatchGenerators) {
-    yield* generator(diff, schema, shapeContext);
+    yield* generator(diff, schema, shapeContext, openAPIVersion);
   }
 }
 

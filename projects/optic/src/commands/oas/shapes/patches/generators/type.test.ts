@@ -19,7 +19,7 @@ describe('type shape patch generator', () => {
     const diffs = [...diffValueBySchema(input, jsonSchema)];
 
     const patches = diffs.flatMap((diff) => [
-      ...generateShapePatchesByDiff(diff, jsonSchema, {}),
+      ...generateShapePatchesByDiff(diff, jsonSchema, {}, '3.1.x'),
     ]);
 
     expect(patches).toMatchSnapshot();
@@ -33,7 +33,7 @@ describe('type shape patch generator', () => {
     const diffs = [...diffValueBySchema(input, jsonSchema)];
 
     const patches = diffs.flatMap((diff) => [
-      ...generateShapePatchesByDiff(diff, jsonSchema, {}),
+      ...generateShapePatchesByDiff(diff, jsonSchema, {}, '3.1.x'),
     ]);
 
     expect(patches).toMatchSnapshot();
@@ -47,7 +47,7 @@ describe('type shape patch generator', () => {
     const diffs = [...diffValueBySchema(input, jsonSchema)];
 
     const patches = diffs.flatMap((diff) => [
-      ...generateShapePatchesByDiff(diff, jsonSchema, {}),
+      ...generateShapePatchesByDiff(diff, jsonSchema, {}, '3.1.x'),
     ]);
 
     expect(patches).toMatchSnapshot();
@@ -61,7 +61,7 @@ describe('type shape patch generator', () => {
     const diffs = [...diffValueBySchema(input, jsonSchema)];
 
     const patches = diffs.flatMap((diff) => [
-      ...generateShapePatchesByDiff(diff, jsonSchema, {}),
+      ...generateShapePatchesByDiff(diff, jsonSchema, {}, '3.1.x'),
     ]);
 
     expect(patches).toMatchSnapshot();
