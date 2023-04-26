@@ -195,7 +195,6 @@ async function computeAll(
 ): Promise<{
   warnings: Warnings;
   results: Result[];
-  isCloudDiff: boolean;
 }> {
   const allWarnings: Warnings = {
     missingOpticUrl: [],
@@ -204,7 +203,6 @@ async function computeAll(
   };
 
   const results: Result[] = [];
-  let isCloudDiff = false;
 
   for await (const [_, candidate] of candidateMap) {
     // We load the raw spec and discard the comparison if there is no optic url or is in an invalid version
@@ -255,7 +253,6 @@ async function computeAll(
         continue;
       } else if (opticApi && cloudTag) {
         fromRef = `cloud:${opticApi.apiId}@${cloudTag}`;
-        isCloudDiff = true;
       }
     } catch (e) {
       logger.debug(
@@ -378,7 +375,6 @@ async function computeAll(
   return {
     warnings: allWarnings,
     results,
-    isCloudDiff,
   };
 }
 
@@ -410,17 +406,20 @@ function handleWarnings(
   if (warnings.missingOpticUrl.length > 0) {
     logger.info(
       chalk.yellow(
-        `Warning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. 
-
-${
-  isCloudDiff
-    ? `optic diff-all --compare-from cloud:{tag}' can only runs on specs that have been added to optic`
-    : `'optic diff-all --upload' can only runs on specs that have been added to optic`
-}`
+        `Warning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. ${
+          isCloudDiff
+            ? `optic diff-all --compare-from cloud:{tag}' can only runs on specs that have been added to optic`
+            : `'optic diff-all --upload' can only runs on specs that have been added to optic`
+        }`
       )
     );
+    logger.info('');
     logger.info('Run the `optic api add` command to add these specs to optic');
-    logger.info(warnings.missingOpticUrl.map((f) => f.path).join('\n'));
+    logger.info(
+      warnings.missingOpticUrl
+        .map((f) => `${f.path} ${chalk.red('(untracked)')}`)
+        .join('\n')
+    );
     logger.info('');
 
     if (options.failOnUntrackedOpenapi) {
@@ -604,7 +603,7 @@ const getDiffAllAction =
       );
     }
 
-    const { warnings, results, isCloudDiff } = await computeAll(
+    const { warnings, results } = await computeAll(
       candidateMap,
       config,
       options
@@ -620,13 +619,11 @@ const getDiffAllAction =
         openWebpage(changelogUrl, result, config);
       }
     }
-
+    const isCloudDiff = /^cloud:/.test(options.compareFrom);
     handleWarnings(warnings, options, isCloudDiff);
 
     if (results.length === 0) {
-      logger.info(
-        'No comparisons were run between specs - `optic diff-all` will run comparisons on any spec that has an `x-optic-url` key'
-      );
+      logger.info('No comparisons were run between specs');
       logger.info(
         'Get started by running `optic api add` and making a change to an API spec'
       );
