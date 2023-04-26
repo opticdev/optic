@@ -21,6 +21,7 @@ import { downloadSpec } from './cloud-specs';
 import { OpticBackendClient } from '../client';
 import { getApiFromOpticUrl } from './cloud-urls';
 import { OPTIC_URL_KEY } from '../constants';
+import chalk from 'chalk';
 
 const exec = promisify(callbackExec);
 
@@ -366,7 +367,11 @@ export const parseFilesFromCloud = async (
 
   if (!maybeApi) {
     throw new Error(
-      'Must have an `x-optic-url` set on the head spec to be able to compare against a cloud base'
+      `${chalk.bold.red(
+        "Must have an 'x-optic-url' in your OpenAPI spec file to be able to compare against a cloud base."
+      )}.
+
+${chalk.gray(`Get started by running 'optic api add ${filePath}'`)}`
     );
   }
 
