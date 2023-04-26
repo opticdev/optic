@@ -32,6 +32,16 @@ setupTestServer(({ url, method }) => {
     return JSON.stringify({
       id: 'run-id',
     });
+  } else if (method === 'GET' && /spec$/.test(url)) {
+    return `{"openapi":"3.1.0","paths":{ "/api/users": { "get": { "responses":{} }}},"info":{"version":"0.0.0","title":"Empty"}}`;
+  } else if (method === 'GET' && /sourcemap$/.test(url)) {
+    return `{"rootFilePath":"empty.json","files":[{"path":"empty.json","sha256":"815b8e5491a1f491765084f236c741d5073e10fcece23436f2db84a8c788db09","contents":"{'openapi':'3.1.0','paths':{ '/api/users': { 'get': { 'responses':{} }}},'info':{'version':'0.0.0','title':'Empty'}}","index":0}],"refMappings":{}}`;
+  } else if (method === 'GET' && /api\/apis\/.*\/specs\/.*$/.test(url)) {
+    return JSON.stringify({
+      id: 'run-id',
+      specUrl: `${process.env.BWTS_HOST_OVERRIDE}/spec`,
+      sourcemapUrl: `${process.env.BWTS_HOST_OVERRIDE}/sourcemap`,
+    });
   }
   return JSON.stringify({});
 });
@@ -157,5 +167,21 @@ describe('diff-all', () => {
 
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     expect(code).toBe(1);
+  });
+
+  test('diff all against a cloud tag', async () => {
+    const workspace = await setupWorkspace('diff-all/cloud-diff', {
+      repo: true,
+      commit: true,
+    });
+    process.env.OPTIC_TOKEN = '123';
+
+    const { combined, code } = await runOptic(
+      workspace,
+      'diff-all --compare-from cloud:main --check'
+    );
+
+    expect(code).toBe(1);
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
   });
 });
