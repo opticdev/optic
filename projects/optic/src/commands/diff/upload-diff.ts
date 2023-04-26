@@ -39,25 +39,26 @@ export async function uploadDiff(
   let baseSpecId: string | null = null;
   let headSpecId: string | null = null;
   if (specs.from.context && specDetails) {
-    const tags =
-      specs.from.context.vcs === VCS.Git
-        ? [`git:${specs.from.context.sha}`]
-        : [];
-    baseSpecId = await uploadSpec(specDetails.apiId, {
-      spec: specs.from,
-      client: config.client,
-      tags,
-      orgId: specDetails.orgId,
-    });
+    if (specs.from.context.vcs === VCS.Git) {
+      const tags = [`git:${specs.from.context.sha}`];
+      baseSpecId = await uploadSpec(specDetails.apiId, {
+        spec: specs.from,
+        client: config.client,
+        tags,
+        orgId: specDetails.orgId,
+      });
+    } else if (specs.from.context.vcs === VCS.Cloud) {
+      baseSpecId = specs.from.context.specId;
+    }
   } else if (specs.from.isEmptySpec) {
     baseSpecId = EMPTY_SPEC_ID;
   }
 
   if (specs.to.context && specDetails) {
-    let tags: string[] = [];
-    const tagsFromOptions = getTagsFromOptions(options.headTag);
-    tags.push(...tagsFromOptions);
     if (specs.to.context.vcs === VCS.Git) {
+      let tags: string[] = [];
+      const tagsFromOptions = getTagsFromOptions(options.headTag);
+      tags.push(...tagsFromOptions);
       tags.push(`git:${specs.to.context.sha}`);
       // If no gitbranch is set, try to add own git branch
       if (!tagsFromOptions.some((tag) => /^gitbranch\:/.test(tag))) {
@@ -73,15 +74,17 @@ export async function uploadDiff(
           );
         }
       }
-    }
 
-    tags = getUniqueTags(tags);
-    headSpecId = await uploadSpec(specDetails.apiId, {
-      spec: specs.to,
-      client: config.client,
-      tags,
-      orgId: specDetails.orgId,
-    });
+      tags = getUniqueTags(tags);
+      headSpecId = await uploadSpec(specDetails.apiId, {
+        spec: specs.to,
+        client: config.client,
+        tags,
+        orgId: specDetails.orgId,
+      });
+    } else if (specs.to.context.vcs === VCS.Cloud) {
+      headSpecId = specs.to.context.specId;
+    }
   } else if (specs.to.isEmptySpec) {
     headSpecId = EMPTY_SPEC_ID;
   }

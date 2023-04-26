@@ -10,6 +10,7 @@ import { logger } from './logger';
 
 export enum VCS {
   Git = 'git',
+  Cloud = 'cloud', // hosted in optic cloud
 }
 
 export const OPTIC_YML_NAME = 'optic.yml';

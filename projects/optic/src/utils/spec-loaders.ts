@@ -22,14 +22,20 @@ import { OpticBackendClient } from '../client';
 
 const exec = promisify(callbackExec);
 
-export type ParseResultContext = {
-  vcs: 'git';
-  sha: string;
-  effective_at?: Date;
-  name: string;
-  email: string;
-  message: string;
-} | null;
+export type ParseResultContext =
+  | {
+      vcs: 'git';
+      sha: string;
+      effective_at?: Date;
+      name: string;
+      email: string;
+      message: string;
+    }
+  | {
+      vcs: 'cloud';
+      specId: string;
+    }
+  | null;
 
 export type ParseResult = ParseOpenAPIResult & {
   isEmptySpec: boolean;
@@ -183,7 +189,7 @@ async function parseSpecAndDereference(
     case 'cloud': {
       // try fetch from cloud, if 404 return an error
       // todo handle empty spec case
-      const { jsonLike, sourcemap } = await downloadSpec(
+      const { jsonLike, sourcemap, spec } = await downloadSpec(
         { apiId: input.apiId, tag: input.tag },
         config
       );
@@ -192,7 +198,10 @@ async function parseSpecAndDereference(
         sourcemap,
         from: 'cloud',
         isEmptySpec: false,
-        context: null,
+        context: {
+          vcs: 'cloud',
+          specId: spec.id,
+        },
       };
     }
     case 'git': {

@@ -194,7 +194,11 @@ async function crawlCandidateSpecs(
         orgId,
         forward_effective_at_to_tags: true,
       });
-      specsToTag.push([specId, sha, parseResult.context?.effective_at]);
+      const effective_at =
+        parseResult.context?.vcs === 'git'
+          ? parseResult.context.effective_at
+          : undefined;
+      specsToTag.push([specId, sha, effective_at]);
     }
 
     if (!alreadyTracked) {
