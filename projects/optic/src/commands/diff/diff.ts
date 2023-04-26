@@ -94,6 +94,11 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     .option('--upload', 'upload run to cloud', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
+    .option(
+      '--include-uncommited-changes',
+      'include uncommitted changes and tag it against this spec. Use this if you generate specs in CI to upload. This option is generally not recommended for other cases as it means your uploaded spec may not match your git history.',
+      false
+    )
     .action(errorHandler(getDiffAction(config)));
 };
 
@@ -101,12 +106,20 @@ const getBaseAndHeadFromFiles = async (
   file1: string,
   file2: string,
   config: OpticCliConfig,
-  strict: boolean
+  options: DiffActionOptions
 ): Promise<[ParseResult, ParseResult]> => {
   try {
     return await Promise.all([
-      loadSpec(file1, config, { strict, denormalize: true }),
-      loadSpec(file2, config, { strict, denormalize: true }),
+      loadSpec(file1, config, {
+        strict: options.validation === 'strict',
+        denormalize: true,
+        includeUncommittedChanges: options.includeUncommittedChanges,
+      }),
+      loadSpec(file2, config, {
+        strict: options.validation === 'strict',
+        denormalize: true,
+        includeUncommittedChanges: options.includeUncommittedChanges,
+      }),
     ]);
   } catch (e) {
     console.error(e instanceof Error ? e.message : e);
@@ -119,7 +132,7 @@ const getBaseAndHeadFromFileAndBase = async (
   base: string,
   root: string,
   config: OpticCliConfig,
-  headStrict: boolean
+  options: DiffActionOptions
 ): Promise<[ParseResult, ParseResult]> => {
   try {
     const { baseFile, headFile } = await parseFilesFromRef(
@@ -127,7 +140,11 @@ const getBaseAndHeadFromFileAndBase = async (
       base,
       root,
       config,
-      { denormalize: true, headStrict: headStrict }
+      {
+        denormalize: true,
+        headStrict: options.validation === 'strict',
+        includeUncommittedChanges: options.includeUncommittedChanges,
+      }
     );
     return [baseFile, headFile];
   } catch (e) {
@@ -229,6 +246,7 @@ type DiffActionOptions = {
   web: boolean;
   upload: boolean;
   json: boolean;
+  includeUncommittedChanges: boolean;
   standard?: string;
   ruleset?: string;
   headTag?: string;
@@ -271,7 +289,7 @@ const getDiffAction =
         file1,
         file2,
         config,
-        options.validation === 'strict'
+        options
       );
     } else if (file1) {
       if (config.vcs?.type !== VCS.Git) {
@@ -287,7 +305,7 @@ const getDiffAction =
         options.base,
         config.root,
         config,
-        options.validation === 'strict'
+        options
       );
     } else {
       logger.error(

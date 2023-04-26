@@ -160,7 +160,10 @@ export async function loadRaw(
 
 async function parseSpecAndDereference(
   filePathOrRef: string | undefined,
-  config: OpticCliConfig
+  config: OpticCliConfig,
+  options: {
+    includeUncommittedChanges: boolean;
+  } = { includeUncommittedChanges: false }
 ): Promise<ParseResult> {
   const workingDir = process.cwd();
   const input = parseOpticRef(filePathOrRef);
@@ -235,7 +238,8 @@ async function parseSpecAndDereference(
 
       if (
         config.vcs?.type === VCS.Git &&
-        !specHasUncommittedChanges(parseResult.sourcemap, config.vcs.diffSet)
+        (options.includeUncommittedChanges ||
+          !specHasUncommittedChanges(parseResult.sourcemap, config.vcs.diffSet))
       ) {
         const commitMeta = await Git.commitMeta(config.vcs.sha);
 
@@ -284,9 +288,12 @@ export const loadSpec = async (
   options: {
     strict: boolean;
     denormalize: boolean;
+    includeUncommittedChanges?: boolean;
   }
 ): Promise<ParseResult> => {
-  const file = await parseSpecAndDereference(opticRef, config);
+  const file = await parseSpecAndDereference(opticRef, config, {
+    includeUncommittedChanges: options.includeUncommittedChanges ?? false,
+  });
 
   return validateAndDenormalize(file, options);
 };
@@ -299,6 +306,7 @@ export const parseFilesFromRef = async (
   options: {
     denormalize: boolean;
     headStrict: boolean;
+    includeUncommittedChanges: boolean;
   }
 ): Promise<{
   baseFile: ParseResult;
@@ -332,7 +340,10 @@ export const parseFilesFromRef = async (
     }),
     headFile: await parseSpecAndDereference(
       existsOnHead ? absolutePath : undefined,
-      config
+      config,
+      {
+        includeUncommittedChanges: options.includeUncommittedChanges,
+      }
     ).then((file) => {
       return validateAndDenormalize(file, {
         denormalize: options.denormalize,

@@ -98,6 +98,11 @@ comma separated values (e.g. "**/*.yml,**/*.json")'
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
     .option(
+      '--include-uncommited-changes',
+      'include uncommitted changes and tag it against this spec. Use this if you generate specs in CI to upload. This option is generally not recommended for other cases as it means your uploaded spec may not match your git history.',
+      false
+    )
+    .option(
       '--fail-on-untracked-openapi',
       'fail with exit code 1 if there are detected untracked apis',
       false
@@ -113,6 +118,7 @@ type DiffAllActionOptions = {
   ignore?: string;
   headTag?: string;
   check: boolean;
+  includeUncommittedChanges: boolean;
   web: boolean;
   upload: boolean;
   json: boolean;
@@ -252,6 +258,7 @@ async function computeAll(
       toParseResults = await loadSpec(candidate.to, config, {
         strict: options.validation === 'strict',
         denormalize: true,
+        includeUncommittedChanges: options.includeUncommittedChanges,
       });
     } catch (e) {
       allWarnings.unparseableToSpec.push({
