@@ -13,6 +13,7 @@ import {
   parseFilesFromRef,
   ParseResult,
   loadSpec,
+  parseFilesFromCloud,
 } from '../../utils/spec-loaders';
 import { OpticCliConfig, VCS } from '../../config';
 import chalk from 'chalk';
@@ -62,7 +63,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     .argument('[file_to_compare_against]', 'path to file to compare with')
     .option(
       '--base <base>',
-      'the base ref to compare against. Defaults to HEAD',
+      'the base ref to compare against. Defaults to HEAD. Also supports optic cloud tags (cloud:tag_name)',
       'HEAD'
     )
     .option(
@@ -122,14 +123,24 @@ const getBaseAndHeadFromFileAndBase = async (
   headStrict: boolean
 ): Promise<[ParseResult, ParseResult]> => {
   try {
-    const { baseFile, headFile } = await parseFilesFromRef(
-      file1,
-      base,
-      root,
-      config,
-      { denormalize: true, headStrict: headStrict }
-    );
-    return [baseFile, headFile];
+    if (/^cloud:/.test(base)) {
+      const { baseFile, headFile } = await parseFilesFromCloud(
+        file1,
+        base.replace(/^cloud:/, ''),
+        config,
+        { denormalize: true, headStrict: headStrict }
+      );
+      return [baseFile, headFile];
+    } else {
+      const { baseFile, headFile } = await parseFilesFromRef(
+        file1,
+        base,
+        root,
+        config,
+        { denormalize: true, headStrict: headStrict }
+      );
+      return [baseFile, headFile];
+    }
   } catch (e) {
     console.error(e instanceof Error ? e.message : e);
     throw new UserError();
