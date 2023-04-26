@@ -7,8 +7,9 @@ const PATH_NAME_REGEXP =
   /^\/organizations\/([a-zA-Z0-9-_]+)\/apis\/([a-zA-Z0-9-_]+)$/i;
 
 export function getApiFromOpticUrl(
-  opticUrl: string
+  opticUrl: string | undefined
 ): { apiId: string; orgId: string } | null {
+  if (!opticUrl) return null;
   try {
     const url = new URL(opticUrl);
     const match = url.pathname.match(PATH_NAME_REGEXP);

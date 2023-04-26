@@ -56,7 +56,7 @@ export const registerDiffAll = (cli: Command, config: OpticCliConfig) => {
     )
     .option(
       '--compare-from <compare-from>',
-      'the base ref to compare against. Defaults to HEAD~1',
+      'the base ref to compare against. Defaults to HEAD~1. Also supports optic cloud tags (cloud:tag_name)',
       'HEAD~1'
     )
     .option(

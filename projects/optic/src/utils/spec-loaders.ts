@@ -19,6 +19,8 @@ import * as Git from './git-utils';
 import { createNullSpec, createNullSpecSourcemap } from './specs';
 import { downloadSpec } from './cloud-specs';
 import { OpticBackendClient } from '../client';
+import { getApiFromOpticUrl } from './cloud-urls';
+import { OPTIC_URL_KEY } from '../constants';
 
 const exec = promisify(callbackExec);
 
@@ -340,6 +342,41 @@ export const parseFilesFromRef = async (
       });
     }),
     pathFromGitRoot: gitFileName,
+  };
+};
+
+export const parseFilesFromCloud = async (
+  filePath: string,
+  cloudTag: string,
+  config: OpticCliConfig,
+  options: {
+    denormalize: boolean;
+    headStrict: boolean;
+  }
+): Promise<{
+  baseFile: ParseResult;
+  headFile: ParseResult;
+}> => {
+  const headFile = await loadSpec(filePath, config, {
+    denormalize: options.denormalize,
+    strict: options.headStrict,
+  });
+
+  const maybeApi = getApiFromOpticUrl(headFile.jsonLike[OPTIC_URL_KEY]);
+
+  if (!maybeApi) {
+    throw new Error(
+      'Must have an `x-optic-url` set on the head spec to be able to compare against a cloud base'
+    );
+  }
+
+  const baseFile = await parseSpecAndDereference(
+    `cloud:${maybeApi.apiId}@${cloudTag}`,
+    config
+  );
+  return {
+    baseFile,
+    headFile,
   };
 };
 
