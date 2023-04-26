@@ -56,7 +56,7 @@ export const registerDiffAll = (cli: Command, config: OpticCliConfig) => {
     )
     .option(
       '--compare-from <compare-from>',
-      'the base ref to compare against. Defaults to HEAD~1',
+      'the base ref to compare against. Defaults to HEAD~1. Also supports optic cloud tags (cloud:tag_name)',
       'HEAD~1'
     )
     .option(
@@ -127,6 +127,35 @@ type DiffAllActionOptions = {
   severity: 'info' | 'warn' | 'error';
 };
 
+type CandidateMap = Map<
+  string,
+  {
+    from?: string;
+    to?: string;
+  }
+>;
+
+function getCandidatesFromCloudTag(
+  tag: string,
+  to: { ref?: string; paths: string[] },
+  root: string
+): CandidateMap {
+  const results: CandidateMap = new Map();
+  for (const toPath of to.paths) {
+    const hasRef = to.ref && toPath.startsWith(`${to.ref}:`);
+    const strippedPath = hasRef ? toPath.replace(`${to.ref}:`, '') : toPath;
+    const pathFromRoot = path.relative(root, strippedPath);
+    const refAndPathFromRoot = hasRef ? `${to.ref}:${pathFromRoot}` : toPath;
+
+    results.set(pathFromRoot, {
+      from: tag,
+      to: refAndPathFromRoot,
+    });
+  }
+
+  return results;
+}
+
 // Match up the to and from candidates
 // This will return the comparisons we can try to run
 function matchCandidates(
@@ -136,14 +165,8 @@ function matchCandidates(
   },
   to: { ref?: string; paths: string[] },
   root: string
-): Map<
-  string,
-  {
-    from?: string;
-    to?: string;
-  }
-> {
-  const results = new Map<string, { from?: string; to?: string }>();
+): CandidateMap {
+  const results: CandidateMap = new Map();
   for (const fromPath of from.paths) {
     const strippedPath = fromPath.replace(`${from.ref}:`, '');
     const pathFromRoot = path.relative(root, strippedPath);
@@ -172,7 +195,7 @@ function matchCandidates(
 }
 
 async function computeAll(
-  candidatesMap: ReturnType<typeof matchCandidates>,
+  candidateMap: CandidateMap,
   config: OpticCliConfig,
   options: DiffAllActionOptions
 ): Promise<{
@@ -187,11 +210,15 @@ async function computeAll(
 
   const results: Result[] = [];
 
-  for await (const [_, candidate] of candidatesMap) {
+  for await (const [_, candidate] of candidateMap) {
     // We load the raw spec and discard the comparison if there is no optic url or is in an invalid version
     // Cases we run the comparison:
     // - if to spec has x-optic-url
     // - if from spec has x-optic-url AND to spec is empty
+    const cloudTag: string | null =
+      !!candidate.from && /^cloud:/.test(candidate.from)
+        ? candidate.from.replace(/^cloud:/, '')
+        : null;
     const specPathToLoad = candidate.to ?? candidate.from;
     if (!specPathToLoad) {
       logger.debug(
@@ -217,10 +244,12 @@ async function computeAll(
       continue;
     }
 
+    let fromRef = candidate.from;
+
     try {
-      const hasOpticUrl = getApiFromOpticUrl(rawSpec[OPTIC_URL_KEY]);
+      const opticApi = getApiFromOpticUrl(rawSpec[OPTIC_URL_KEY]);
       checkOpenAPIVersion(rawSpec);
-      if (!hasOpticUrl && options.upload) {
+      if (!opticApi && (options.upload || cloudTag)) {
         logger.debug(
           `Skipping comparison from ${candidate.from} to ${candidate.to} because there was no x-optic-url`
         );
@@ -228,6 +257,8 @@ async function computeAll(
           path: candidate.to!,
         });
         continue;
+      } else if (opticApi && cloudTag) {
+        fromRef = `cloud:${opticApi.apiId}@${cloudTag}`;
       }
     } catch (e) {
       logger.debug(
@@ -242,7 +273,7 @@ async function computeAll(
     let fromParseResults: ParseResult;
     let toParseResults: ParseResult;
     try {
-      fromParseResults = await loadSpec(candidate.from, config, {
+      fromParseResults = await loadSpec(fromRef, config, {
         strict: false,
         denormalize: true,
       });
@@ -374,15 +405,28 @@ type Warnings = {
   unparseableToSpec: { path: string; error: unknown }[];
 };
 
-function handleWarnings(warnings: Warnings, options: DiffAllActionOptions) {
+function handleWarnings(
+  warnings: Warnings,
+  options: DiffAllActionOptions,
+  isCloudDiff: boolean
+) {
   if (warnings.missingOpticUrl.length > 0) {
     logger.info(
       chalk.yellow(
-        'Warning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. `optic diff-all` only runs on specs that include `x-optic-url` keys that point to specs uploaded to optic.'
+        `Warning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. ${
+          isCloudDiff
+            ? `optic diff-all --compare-from cloud:{tag}' can only runs on specs that have been added to optic`
+            : `'optic diff-all --upload' can only runs on specs that have been added to optic`
+        }`
       )
     );
+    logger.info('');
     logger.info('Run the `optic api add` command to add these specs to optic');
-    logger.info(warnings.missingOpticUrl.map((f) => f.path).join('\n'));
+    logger.info(
+      warnings.missingOpticUrl
+        .map((f) => `${f.path} ${chalk.red('(untracked)')}`)
+        .join('\n')
+    );
     logger.info('');
 
     if (options.failOnUntrackedOpenapi) {
@@ -506,9 +550,8 @@ const getDiffAllAction =
       logger.setLevel('silent');
     }
 
+    let candidateMap: CandidateMap;
     let compareToCandidates: string[];
-    let compareFromCandidates: string[];
-
     try {
       compareToCandidates = await findOpenApiSpecsCandidates(options.compareTo);
     } catch (e) {
@@ -520,39 +563,55 @@ const getDiffAllAction =
       return;
     }
 
-    try {
-      compareFromCandidates = await findOpenApiSpecsCandidates(
-        options.compareFrom
+    if (/^cloud:/.test(options.compareFrom)) {
+      candidateMap = getCandidatesFromCloudTag(
+        options.compareFrom,
+        {
+          ref: options.compareTo,
+          paths: applyGlobFilter(compareToCandidates, {
+            matches: options.match,
+            ignores: options.ignore,
+          }),
+        },
+        config.root
       );
-    } catch (e) {
-      logger.error(
-        `Error reading files from git history for --compare-from ${options.compareFrom}`
+    } else {
+      let compareFromCandidates: string[];
+
+      try {
+        compareFromCandidates = await findOpenApiSpecsCandidates(
+          options.compareFrom
+        );
+      } catch (e) {
+        logger.error(
+          `Error reading files from git history for --compare-from ${options.compareFrom}`
+        );
+        logger.error(e);
+        process.exitCode = 1;
+        return;
+      }
+
+      candidateMap = matchCandidates(
+        {
+          ref: options.compareFrom,
+          paths: applyGlobFilter(compareFromCandidates, {
+            matches: options.match,
+            ignores: options.ignore,
+          }),
+        },
+        {
+          ref: options.compareTo,
+          paths: applyGlobFilter(compareToCandidates, {
+            matches: options.match,
+            ignores: options.ignore,
+          }),
+        },
+        config.root
       );
-      logger.error(e);
-      process.exitCode = 1;
-      return;
     }
 
-    const candidatesMap = matchCandidates(
-      {
-        ref: options.compareFrom,
-        paths: applyGlobFilter(compareFromCandidates, {
-          matches: options.match,
-          ignores: options.ignore,
-        }),
-      },
-      {
-        ref: options.compareTo,
-        paths: applyGlobFilter(compareToCandidates, {
-          matches: options.match,
-          ignores: options.ignore,
-        }),
-      },
-      config.root
-    );
-
     const { warnings, results } = await computeAll(
-      candidatesMap,
+      candidateMap,
       config,
       options
     );
@@ -567,13 +626,11 @@ const getDiffAllAction =
         openWebpage(changelogUrl, result, config);
       }
     }
-
-    handleWarnings(warnings, options);
+    const isCloudDiff = /^cloud:/.test(options.compareFrom);
+    handleWarnings(warnings, options, isCloudDiff);
 
     if (results.length === 0) {
-      logger.info(
-        'No comparisons were run between specs - `optic diff-all` will run comparisons on any spec that has an `x-optic-url` key'
-      );
+      logger.info('No comparisons were run between specs');
       logger.info(
         'Get started by running `optic api add` and making a change to an API spec'
       );

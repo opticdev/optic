@@ -1,5 +1,38 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`diff-all diff all against a cloud tag 1`] = `
+"[34mDiffing cloud:main to spec.json[39m
+
+specification details:
+- /x-optic-url [32madded[39m
+- /openapi [33mchanged[39m
+
+[1mGET[22m /api/users: [31mremoved[39m
+  
+[1mGET[22m /example: [32madded[39m
+  
+[1mPOST[22m /example: [32madded[39m
+  
+[1mPUT[22m /example: [32madded[39m
+  
+[1mPATCH[22m /example: [32madded[39m
+  
+Checks
+
+  [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /api/users
+    removed rule[31m [error][39m: prevent operation removal
+      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
+      at paths > /api/users > get [4m(empty.json:1:45)[24m
+
+
+
+4 operations added, 1 removed
+[32m[1m0 passed[22m[39m
+[31m[1m1 errors[22m[39m
+
+"
+`;
+
 exports[`diff-all diff all not in the root of a repo 1`] = `
 "[34mDiffing HEAD~1:folder/in-folder.yml to in-folder.yml[39m
 No changes were detected
@@ -141,11 +174,12 @@ Checks
 [31m[1m2 errors[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
-[33mWarning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. \`optic diff-all\` only runs on specs that include \`x-optic-url\` keys that point to specs uploaded to optic.[39m
+[33mWarning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. 'optic diff-all --upload' can only runs on specs that have been added to optic[39m
+
 Run the \`optic api add\` command to add these specs to optic
-../spec-with-invalid-url.yml
-../specwithoutkey.json
-../specwithoutkey.yml
+../spec-with-invalid-url.yml [31m(untracked)[39m
+../specwithoutkey.json [31m(untracked)[39m
+../specwithoutkey.yml [31m(untracked)[39m
 
 "
 `;
@@ -337,11 +371,12 @@ Checks
 [31m[1m2 errors[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
-[33mWarning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. \`optic diff-all\` only runs on specs that include \`x-optic-url\` keys that point to specs uploaded to optic.[39m
+[33mWarning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. 'optic diff-all --upload' can only runs on specs that have been added to optic[39m
+
 Run the \`optic api add\` command to add these specs to optic
-spec-with-invalid-url.yml
-specwithoutkey.json
-specwithoutkey.yml
+spec-with-invalid-url.yml [31m(untracked)[39m
+specwithoutkey.json [31m(untracked)[39m
+specwithoutkey.yml [31m(untracked)[39m
 
 "
 `;
