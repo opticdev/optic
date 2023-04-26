@@ -137,7 +137,7 @@ paths: {}`;
       } else if (method === 'GET' && /spec$/.test(url)) {
         return `{"openapi":"3.1.0","paths":{ "/api/users": { "get": { "responses":{} }}},"info":{"version":"0.0.0","title":"Empty"}}`;
       } else if (method === 'GET' && /sourcemap$/.test(url)) {
-        return `{"rootFilePath":"empty.json","files":[{"path":"empty.json","index":0,"contents":{"openapi": "3.1.0","paths": {},"info": {"version": "0.0.0","title": "Empty"},"x-optic-ci-empty-spec": true},"sha256":"841ad837d9488cb03837e695fd2d7dfacacc708465ba8b4e3d2d811428915016"}],"refMappings":{}}`;
+        return `{"rootFilePath":"empty.json","files":[{"path":"empty.json","sha256":"815b8e5491a1f491765084f236c741d5073e10fcece23436f2db84a8c788db09","contents":"{'openapi':'3.1.0','paths':{ '/api/users': { 'get': { 'responses':{} }}},'info':{'version':'0.0.0','title':'Empty'}}","index":0}],"refMappings":{}}`;
       } else if (method === 'GET' && /api\/apis\/.*\/specs\/.*$/.test(url)) {
         return JSON.stringify({
           id: 'run-id',
@@ -237,6 +237,19 @@ paths: {}`;
       );
 
       expect(code).toBe(0);
+      expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    });
+
+    test('with --base cloud:tag', async () => {
+      const workspace = await setupWorkspace('diff/upload', {
+        repo: false,
+      });
+      const { combined, code } = await runOptic(
+        workspace,
+        `diff spec.json --base cloud:main --check`
+      );
+
+      expect(code).toBe(1);
       expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     });
   });
