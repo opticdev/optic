@@ -15,6 +15,7 @@ import { NotFoundError } from '../client/errors';
 import chalk from 'chalk';
 import { createNullSpec, createNullSpecSourcemap } from './specs';
 import { JsonSchemaSourcemap } from '@useoptic/openapi-io';
+import { ConfigRuleset } from '../config';
 
 export const EMPTY_SPEC_ID = 'EMPTY';
 
@@ -135,6 +136,7 @@ export async function uploadRun(
     orgId: string;
     client: OpticBackendClient;
     specResults: CompareSpecResults;
+    standard: ConfigRuleset[];
     ci: boolean;
   }
 ) {
@@ -158,6 +160,7 @@ export async function uploadRun(
     api_id: apiId,
     from_spec_id: opts.fromSpecId,
     to_spec_id: opts.toSpecId,
+    ruleset: opts.standard,
     ci: opts.ci,
   });
   trackEvent('run.added', {

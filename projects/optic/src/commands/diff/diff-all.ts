@@ -299,11 +299,11 @@ async function computeAll(
         }`
       )
     );
-    const { specResults, checks, changelogData, warnings } = await compute(
-      [fromParseResults, toParseResults],
-      config,
-      { ...options, path: candidate.to ?? candidate.from ?? null }
-    );
+    const { specResults, checks, changelogData, warnings, standard } =
+      await compute([fromParseResults, toParseResults], config, {
+        ...options,
+        path: candidate.to ?? candidate.from ?? null,
+      });
 
     for (const warning of warnings) {
       logger.warn(warning);
@@ -353,7 +353,10 @@ async function computeAll(
         },
         specResults,
         config,
-        options
+        {
+          headTag: options.headTag,
+          standard,
+        }
       );
       specUrl = uploadResults?.headSpecUrl ?? null;
       changelogUrl = uploadResults?.changelogUrl ?? null;
@@ -370,6 +373,7 @@ async function computeAll(
       to: candidate.to,
       changelogUrl,
       specUrl,
+      standard,
     });
   }
   return {

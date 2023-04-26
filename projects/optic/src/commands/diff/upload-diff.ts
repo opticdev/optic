@@ -1,5 +1,5 @@
 import ora from 'ora';
-import { OpticCliConfig, VCS } from '../../config';
+import { ConfigRuleset, OpticCliConfig, VCS } from '../../config';
 import { OPTIC_URL_KEY } from '../../constants';
 import {
   getApiFromOpticUrl,
@@ -19,7 +19,8 @@ export async function uploadDiff(
   config: OpticCliConfig,
   options: {
     headTag?: string;
-  } = {}
+    standard: ConfigRuleset[];
+  }
 ): Promise<{
   baseSpecUrl: string | null;
   headSpecUrl: string | null;
@@ -92,6 +93,7 @@ export async function uploadDiff(
       toSpecId: headSpecId,
       client: config.client,
       specResults,
+      standard: options.standard,
       orgId: specDetails.orgId,
       ci: config.isInCi,
     });
