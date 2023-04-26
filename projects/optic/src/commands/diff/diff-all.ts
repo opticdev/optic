@@ -196,7 +196,7 @@ async function computeAll(
 
     let rawSpec;
     try {
-      rawSpec = await loadRaw(specPathToLoad);
+      rawSpec = await loadRaw(specPathToLoad, config);
     } catch (e) {
       if (e instanceof Error && e['probablySpec']) {
         logger.error(`Error parsing ${specPathToLoad}:`);

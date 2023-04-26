@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import { createHash } from 'crypto';
 
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { SerializedSourcemap } from '@useoptic/openapi-utilities';
 
 export type JsonPath = string;
 export type FileReference = number;
@@ -17,6 +18,15 @@ function getsha256(contents: string): string {
 }
 
 export class JsonSchemaSourcemap {
+  static fromSerializedSourcemap(
+    serialized: SerializedSourcemap
+  ): JsonSchemaSourcemap {
+    const sourcemap = new JsonSchemaSourcemap(serialized.rootFilePath);
+    sourcemap.files = serialized.files;
+    sourcemap.refMappings = serialized.refMappings;
+    return sourcemap;
+  }
+
   constructor(public rootFilePath: string) {}
 
   public files: Array<{

@@ -129,6 +129,17 @@ export class OpticBackendClient extends JsonHttpClient {
     return this.postJson(`/api/specs/prepare`, body);
   }
 
+  public async getSpec(
+    apiId: string,
+    tag: string
+  ): Promise<{
+    id: string;
+    specUrl: string | null;
+    sourcemapUrl: string | null;
+  }> {
+    return this.getJson(`/api/apis/${apiId}/specs/tag:${tag}`);
+  }
+
   public async createSpec(spec: {
     tags: string[];
     upload_id: string;

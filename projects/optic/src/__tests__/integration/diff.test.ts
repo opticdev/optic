@@ -134,6 +134,16 @@ info:
   description: The API
   version: 0.1.0
 paths: {}`;
+      } else if (method === 'GET' && /spec$/.test(url)) {
+        return `{"openapi":"3.1.0","paths":{ "/api/users": { "get": { "responses":{} }}},"info":{"version":"0.0.0","title":"Empty"}}`;
+      } else if (method === 'GET' && /sourcemap$/.test(url)) {
+        return `{"rootFilePath":"empty.json","files":[{"path":"empty.json","index":0,"contents":{"openapi": "3.1.0","paths": {},"info": {"version": "0.0.0","title": "Empty"},"x-optic-ci-empty-spec": true},"sha256":"841ad837d9488cb03837e695fd2d7dfacacc708465ba8b4e3d2d811428915016"}],"refMappings":{}}`;
+      } else if (method === 'GET' && /api\/apis\/.*\/specs\/.*$/.test(url)) {
+        return JSON.stringify({
+          id: 'run-id',
+          specUrl: `${process.env.BWTS_HOST_OVERRIDE}/spec`,
+          sourcemapUrl: `${process.env.BWTS_HOST_OVERRIDE}/sourcemap`,
+        });
       }
       return JSON.stringify({});
     });
@@ -211,6 +221,19 @@ paths: {}`;
       const { combined, code } = await runOptic(
         workspace,
         `diff null: ${process.env.BWTS_HOST_OVERRIDE}/my-spec.yml --check`
+      );
+
+      expect(code).toBe(0);
+      expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    });
+
+    test('with cloud tag ref', async () => {
+      const workspace = await setupWorkspace('diff/files-no-repo', {
+        repo: false,
+      });
+      const { combined, code } = await runOptic(
+        workspace,
+        `diff null: cloud:api-id@main --check`
       );
 
       expect(code).toBe(0);

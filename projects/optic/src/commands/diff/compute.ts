@@ -5,11 +5,7 @@ import {
 } from '@useoptic/openapi-utilities';
 import { generateRuleRunner } from './generate-rule-runner';
 import { OPTIC_STANDARD_KEY } from '../../constants';
-import {
-  loadSpec,
-  ParseResult,
-  parseSpecVersion,
-} from '../../utils/spec-loaders';
+import { ParseResult, parseOpticRef } from '../../utils/spec-loaders';
 import { OpticCliConfig } from '../../config';
 import { trackEvent } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { logger } from '../../logger';
@@ -53,7 +49,7 @@ export async function compute(
       logger.error(e);
     }
   } else {
-    const parsed = parseSpecVersion(options.path);
+    const parsed = parseOpticRef(options.path);
     const filePath =
       parsed.from === 'git'
         ? parsed.name

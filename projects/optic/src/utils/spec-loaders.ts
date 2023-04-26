@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 import path from 'path';
 import { promisify } from 'util';
 import { exec as callbackExec } from 'child_process';
-import { defaultEmptySpec, OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import {
   validateOpenApiV3Document,
   filePathToGitPath,
@@ -16,7 +16,9 @@ import {
 } from '@useoptic/openapi-io';
 import { OpticCliConfig, VCS } from '../config';
 import * as Git from './git-utils';
-import { OPTIC_EMPTY_SPEC_KEY } from '../constants';
+import { createNullSpec, createNullSpecSourcemap } from './specs';
+import { downloadSpec } from './cloud-specs';
+import { OpticBackendClient } from '../client';
 
 const exec = promisify(callbackExec);
 
@@ -31,11 +33,16 @@ export type ParseResultContext = {
 
 export type ParseResult = ParseOpenAPIResult & {
   isEmptySpec: boolean;
-  from: 'git' | 'file' | 'url' | 'empty';
+  from: 'git' | 'file' | 'url' | 'empty' | 'cloud';
   context: ParseResultContext;
 };
 
 type SpecFromInput =
+  | {
+      from: 'cloud';
+      apiId: string;
+      tag: string;
+    }
   | {
       from: 'file';
       filePath: string;
@@ -47,16 +54,16 @@ type SpecFromInput =
     }
   | {
       from: 'empty';
-      value: OpenAPIV3.Document;
     }
   | {
       from: 'url';
       url: string;
     };
 
-export function parseSpecVersion(raw?: string | null): SpecFromInput {
+export function parseOpticRef(raw?: string | null): SpecFromInput {
   raw = raw ?? 'null:';
   let isUrl = false;
+  const maybeCloudMatch = raw.match(/^cloud:(?<apiId>.+)@(?<tag>.+)$/);
 
   try {
     const url = new URL(raw);
@@ -67,15 +74,17 @@ export function parseSpecVersion(raw?: string | null): SpecFromInput {
   if (raw === 'null:') {
     return {
       from: 'empty',
-      value: {
-        ...defaultEmptySpec,
-        [OPTIC_EMPTY_SPEC_KEY]: true,
-      } as OpenAPIV3.Document,
     };
   } else if (isUrl) {
     return {
       from: 'url',
       url: raw,
+    };
+  } else if (maybeCloudMatch?.groups?.apiId && maybeCloudMatch?.groups?.tag) {
+    return {
+      from: 'cloud',
+      apiId: maybeCloudMatch.groups.apiId,
+      tag: maybeCloudMatch.groups.tag,
     };
   } else if (
     raw.includes(':') &&
@@ -99,8 +108,11 @@ export function parseSpecVersion(raw?: string | null): SpecFromInput {
 }
 
 // Loads spec without dereferencing
-export async function loadRaw(opticRef: string): Promise<OpenAPIV3.Document> {
-  const input = parseSpecVersion(opticRef);
+export async function loadRaw(
+  opticRef: string,
+  config: { client: OpticBackendClient }
+): Promise<OpenAPIV3.Document> {
+  const input = parseOpticRef(opticRef);
   let format: 'json' | 'yml' | 'unknown';
   let rawString: string;
   if (input.from === 'file') {
@@ -112,8 +124,14 @@ export async function loadRaw(opticRef: string): Promise<OpenAPIV3.Document> {
   } else if (input.from === 'url') {
     rawString = await fetch(input.url).then((res) => res.text());
     format = 'unknown';
+  } else if (input.from === 'cloud') {
+    const spec = await downloadSpec(
+      { apiId: input.apiId, tag: input.tag },
+      config
+    );
+    return spec.jsonLike;
   } else {
-    return input.value;
+    return createNullSpec();
   }
 
   if (format === 'unknown') {
@@ -145,23 +163,32 @@ async function parseSpecAndDereference(
   config: OpticCliConfig
 ): Promise<ParseResult> {
   const workingDir = process.cwd();
-  const input = parseSpecVersion(filePathOrRef);
+  const input = parseOpticRef(filePathOrRef);
 
   switch (input.from) {
     case 'empty': {
-      const emptySpecName = 'empty.json';
-      const sourcemap = new JsonSchemaSourcemap(emptySpecName);
-      sourcemap.addFileIfMissingFromContents(
-        emptySpecName,
-        JSON.stringify(input.value, null, 2),
-        0
-      );
-
+      const spec = createNullSpec();
+      const sourcemap = createNullSpecSourcemap(spec);
       return {
-        jsonLike: input.value,
+        jsonLike: spec,
         sourcemap,
         from: 'empty',
         isEmptySpec: true,
+        context: null,
+      };
+    }
+    case 'cloud': {
+      // try fetch from cloud, if 404 return an error
+      // todo handle empty spec case
+      const { jsonLike, sourcemap } = await downloadSpec(
+        { apiId: input.apiId, tag: input.tag },
+        config
+      );
+      return {
+        jsonLike,
+        sourcemap,
+        from: 'cloud',
+        isEmptySpec: false,
         context: null,
       };
     }
@@ -250,7 +277,7 @@ function validateAndDenormalize(
 // - git paths (`git:main`)
 // - public urls (`https://example.com/my-openapi-spec.yml`)
 // - empty files (`null:`)
-// - (in the future): cloud tags (`cloud:apiId@tag`)
+// - cloud tags (`cloud:apiId@tag`)
 export const loadSpec = async (
   opticRef: string | undefined,
   config: OpticCliConfig,
