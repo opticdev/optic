@@ -28,6 +28,7 @@ import path from 'path';
 import * as Git from '../../utils/git-utils';
 import { getApiUrl } from '../../utils/cloud-urls';
 import { getOrganizationFromToken } from '../../utils/organization';
+import { getDetailsForGeneration } from '../../utils/generated';
 
 const usage = () => `
   optic diff-all
@@ -284,16 +285,10 @@ async function computeAll(
   }
 
   if (options.generated) {
-    let default_branch: string = 'main';
-    let default_tag: string = 'gitbranch:main';
-    const maybeOrigin = await Git.guessRemoteOrigin();
-    const orgRes = await getOrganizationFromToken(config.client, false);
-    const maybeDefaultBranch = await Git.getDefaultBranchName();
-    if (maybeDefaultBranch) {
-      default_branch = maybeDefaultBranch;
-      default_tag = `gitbranch:${default_branch}`;
-    }
-    if (maybeOrigin && orgRes.ok) {
+    const generatedDetails = await getDetailsForGeneration(config);
+    if (generatedDetails) {
+      const { web_url, organization_id, default_branch, default_tag } =
+        generatedDetails;
       const pathToUrl: Record<string, string | null> = {};
       for (const [path, comparison] of comparisons.entries()) {
         if (!comparison.opticUrl) {
@@ -303,7 +298,7 @@ async function computeAll(
 
       const { apis } = await config.client.getApis(
         Object.keys(pathToUrl),
-        maybeOrigin.web_url
+        web_url
       );
 
       for (const api of apis) {
@@ -317,40 +312,26 @@ async function computeAll(
       }
       for (const [path, url] of Object.entries(pathToUrl)) {
         if (!url) {
-          const api = await config.client.createApi(orgRes.org.id, {
+          const api = await config.client.createApi(organization_id, {
             name: path,
-            web_url: maybeOrigin.web_url,
+            web_url: web_url,
             default_branch,
             default_tag,
           });
           pathToUrl[path] = getApiUrl(
             config.client.getWebBase(),
-            orgRes.org.id,
+            organization_id,
             api.id
           );
         }
       }
-    } else if (!maybeOrigin) {
-      logger.warn(
-        chalk.yellow(
-          'Could not guess the git remote origin - cannot automatically connect untracked apis with optic cloud'
-        )
-      );
-      logger.warn(
-        `To fix this, ensure that the git remote is set, or manually add x-optic-url to the specs you want to track.`
-      );
-    } else if (!orgRes.ok) {
-      logger.error(orgRes.error);
-      logger.error(
-        'skipping automatically connect untracked apis with optic cloud'
-      );
     }
   }
 
   for (const { from, to, opticUrl, cloudTag } of comparisons.values()) {
-    const opticApi = getApiFromOpticUrl(opticUrl);
+    const specDetails = getApiFromOpticUrl(opticUrl);
 
-    if (!opticApi && (options.upload || cloudTag)) {
+    if (!specDetails && (options.upload || cloudTag)) {
       logger.debug(
         `Skipping comparison from ${from} to ${to} because there was no x-optic-url`
       );
@@ -446,6 +427,7 @@ async function computeAll(
         },
         specResults,
         config,
+        specDetails,
         options
       );
       specUrl = uploadResults?.headSpecUrl ?? null;

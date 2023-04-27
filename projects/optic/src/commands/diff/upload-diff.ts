@@ -1,11 +1,6 @@
 import ora from 'ora';
 import { OpticCliConfig, VCS } from '../../config';
-import { OPTIC_URL_KEY } from '../../constants';
-import {
-  getApiFromOpticUrl,
-  getRunUrl,
-  getSpecUrl,
-} from '../../utils/cloud-urls';
+import { getRunUrl, getSpecUrl } from '../../utils/cloud-urls';
 import { ParseResult } from '../../utils/spec-loaders';
 import { EMPTY_SPEC_ID, uploadRun, uploadSpec } from '../../utils/cloud-specs';
 import * as Git from '../../utils/git-utils';
@@ -17,6 +12,10 @@ export async function uploadDiff(
   specs: { from: ParseResult; to: ParseResult },
   specResults: Parameters<typeof uploadRun>['1']['specResults'],
   config: OpticCliConfig,
+  specDetails: {
+    apiId: string;
+    orgId: string;
+  } | null,
   options: {
     headTag?: string;
   } = {}
@@ -30,11 +29,6 @@ export async function uploadDiff(
     ? ora({ text: `Uploading diff...`, color: 'blue' })
     : null;
 
-  const opticUrl: string | null =
-    specs.to.jsonLike[OPTIC_URL_KEY] ??
-    specs.from.jsonLike[OPTIC_URL_KEY] ??
-    null;
-  const specDetails = opticUrl ? getApiFromOpticUrl(opticUrl) : null;
   // We upload a spec if it is unchanged in git and there is an API id on the spec
   let baseSpecId: string | null = null;
   let headSpecId: string | null = null;

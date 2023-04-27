@@ -28,6 +28,11 @@ import { writeDataForCi } from '../../utils/ci-data';
 import { logger } from '../../logger';
 import { errorHandler } from '../../error-handler';
 import path from 'path';
+import { OPTIC_URL_KEY } from '../../constants';
+import { getApiFromOpticUrl, getApiUrl } from '../../utils/cloud-urls';
+import * as Git from '../../utils/git-utils';
+import { getOrganizationFromToken } from '../../utils/organization';
+import { getDetailsForGeneration } from '../../utils/generated';
 
 const description = `run a diff between two API specs`;
 
@@ -332,6 +337,44 @@ const getDiffAction =
 
     const [baseParseResult, headParseResult] = parsedFiles;
     if (options.upload) {
+      const opticUrl: string | null =
+        headParseResult.jsonLike[OPTIC_URL_KEY] ??
+        baseParseResult.jsonLike[OPTIC_URL_KEY] ??
+        null;
+      let specDetails = opticUrl ? getApiFromOpticUrl(opticUrl) : null;
+
+      if (options.generated && !specDetails) {
+        const path = file1;
+        const generatedDetails = await getDetailsForGeneration(config);
+        if (generatedDetails) {
+          const { web_url, organization_id, default_branch, default_tag } =
+            generatedDetails;
+
+          const { apis } = await config.client.getApis([path], web_url);
+          let url: string;
+          if (!apis[0]) {
+            const api = await config.client.createApi(organization_id, {
+              name: path,
+              web_url: web_url,
+              default_branch,
+              default_tag,
+            });
+            url = getApiUrl(
+              config.client.getWebBase(),
+              organization_id,
+              api.id
+            );
+          } else {
+            url = getApiUrl(
+              config.client.getWebBase(),
+              organization_id,
+              apis[0].api_id
+            );
+          }
+          specDetails = getApiFromOpticUrl(url);
+        }
+      }
+
       const uploadResults = await uploadDiff(
         {
           from: baseParseResult,
@@ -339,6 +382,7 @@ const getDiffAction =
         },
         diffResult.specResults,
         config,
+        specDetails,
         options
       );
       specUrl = uploadResults?.headSpecUrl ?? null;
