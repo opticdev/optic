@@ -28,7 +28,14 @@ export async function downloadSpec(
     id: string;
   };
 }> {
-  const response = await opts.client.getSpec(spec.apiId, spec.tag);
+  const response = await opts.client
+    .getSpec(spec.apiId, spec.tag)
+    .catch((e) => {
+      if (e instanceof Error && /spec does not exist/i.test(e.message)) {
+        return { id: EMPTY_SPEC_ID, specUrl: null, sourcemapUrl: null };
+      }
+      throw e;
+    });
 
   if (response.id === EMPTY_SPEC_ID) {
     const spec = createNullSpec();
