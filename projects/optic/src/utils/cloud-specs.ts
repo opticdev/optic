@@ -17,8 +17,6 @@ import { JsonSchemaSourcemap } from '@useoptic/openapi-io';
 
 export const EMPTY_SPEC_ID = 'EMPTY';
 
-export async function getOrCreateApis() {}
-
 export async function downloadSpec(
   spec: { apiId: string; tag: string },
   opts: { client: OpticBackendClient }
