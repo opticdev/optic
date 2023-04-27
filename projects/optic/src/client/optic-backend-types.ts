@@ -11,3 +11,9 @@ export type Standard = {
 };
 
 export type StandardConfig = { name: string; config: any }[];
+
+export type Api = {
+  api_id: string;
+  organization_id: string;
+  path: string;
+};

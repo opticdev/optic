@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import prompts from 'prompts';
 import open from 'open';
-import path, { parse } from 'path';
+import path from 'path';
 import fs from 'node:fs/promises';
 import ora from 'ora';
 import { OpticCliConfig, VCS } from '../../config';
