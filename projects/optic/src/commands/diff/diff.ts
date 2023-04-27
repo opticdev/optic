@@ -95,11 +95,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     .option('--upload', 'upload run to cloud', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
-    .option(
-      '--include-uncommited-changes',
-      'include uncommitted changes and tag it against this spec. Use this if you generate specs in CI to upload. This option is generally not recommended for other cases as it means your uploaded spec may not match your git history.',
-      false
-    )
+    .option('--generated', 'use with --upload with a generated spec', false)
     .action(errorHandler(getDiffAction(config)));
 };
 
@@ -114,12 +110,12 @@ const getBaseAndHeadFromFiles = async (
       loadSpec(file1, config, {
         strict: options.validation === 'strict',
         denormalize: true,
-        includeUncommittedChanges: options.includeUncommittedChanges,
+        includeUncommittedChanges: options.generated,
       }),
       loadSpec(file2, config, {
         strict: options.validation === 'strict',
         denormalize: true,
-        includeUncommittedChanges: options.includeUncommittedChanges,
+        includeUncommittedChanges: options.generated,
       }),
     ]);
   } catch (e) {
@@ -144,7 +140,7 @@ const getBaseAndHeadFromFileAndBase = async (
         {
           denormalize: true,
           headStrict: options.validation === 'strict',
-          includeUncommittedChanges: options.includeUncommittedChanges,
+          includeUncommittedChanges: options.generated,
         }
       );
       return [baseFile, headFile];
@@ -157,7 +153,7 @@ const getBaseAndHeadFromFileAndBase = async (
         {
           denormalize: true,
           headStrict: options.validation === 'strict',
-          includeUncommittedChanges: options.includeUncommittedChanges,
+          includeUncommittedChanges: options.generated,
         }
       );
       return [baseFile, headFile];
@@ -261,7 +257,7 @@ type DiffActionOptions = {
   web: boolean;
   upload: boolean;
   json: boolean;
-  includeUncommittedChanges: boolean;
+  generated: boolean;
   standard?: string;
   ruleset?: string;
   headTag?: string;
