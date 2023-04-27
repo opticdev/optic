@@ -259,11 +259,12 @@ async function computeAll(
       continue;
     }
 
-    const path = candidate.to ?? candidate.from;
+    const p = candidate.to ?? candidate.from;
     // should never happen
-    if (!path) continue;
+    if (!p) continue;
+    const relativePath = path.relative(config.root, path.resolve(p));
 
-    comparisons.set(path, {
+    comparisons.set(relativePath, {
       from: candidate.from,
       to: candidate.to,
       opticUrl,
@@ -277,12 +278,11 @@ async function computeAll(
         generatedDetails;
 
       const pathToUrl: Record<string, string | null> = {};
-      for (const [path, comparison] of comparisons.entries()) {
+      for (const [p, comparison] of comparisons.entries()) {
         if (!comparison.opticUrl) {
-          pathToUrl[path] = null;
+          pathToUrl[p] = null;
         }
       }
-
       const { apis } = await config.client.getApis(
         Object.keys(pathToUrl),
         web_url
@@ -302,6 +302,7 @@ async function computeAll(
         if (!url) {
           const api = await config.client.createApi(organization_id, {
             name: path,
+            path,
             web_url: web_url,
             default_branch,
             default_tag,

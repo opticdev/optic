@@ -193,6 +193,7 @@ export class OpticBackendClient extends JsonHttpClient {
     organizationId: string,
     opts: {
       name: string;
+      path?: string;
       web_url?: string;
       default_branch: string;
       default_tag?: string;
