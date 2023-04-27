@@ -25,9 +25,7 @@ import { errorHandler } from '../../error-handler';
 import { checkOpenAPIVersion } from '@useoptic/openapi-io';
 import { generateComparisonLogsV2 } from '../../utils/diff-renderer';
 import path from 'path';
-import * as Git from '../../utils/git-utils';
 import { getApiUrl } from '../../utils/cloud-urls';
-import { getOrganizationFromToken } from '../../utils/organization';
 import { getDetailsForGeneration } from '../../utils/generated';
 
 const usage = () => `
@@ -215,7 +213,6 @@ async function computeAll(
       from?: string;
       to?: string;
       opticUrl?: string;
-      cloudTag: string | null;
     }
   > = new Map();
 
@@ -224,10 +221,6 @@ async function computeAll(
     // Cases we run the comparison:
     // - if to spec has x-optic-url
     // - if from spec has x-optic-url AND to spec is empty
-    const cloudTag: string | null =
-      !!candidate.from && /^cloud:/.test(candidate.from)
-        ? candidate.from.replace(/^cloud:/, '')
-        : null;
     const specPathToLoad = candidate.to ?? candidate.from;
     if (!specPathToLoad) {
       logger.debug(
@@ -253,16 +246,10 @@ async function computeAll(
       continue;
     }
 
-    let fromRef = candidate.from;
     const opticUrl = rawSpec[OPTIC_URL_KEY];
 
     try {
-      const opticApi = getApiFromOpticUrl(opticUrl);
-
       checkOpenAPIVersion(rawSpec);
-      if (opticApi && cloudTag) {
-        fromRef = `cloud:${opticApi.apiId}@${cloudTag}`;
-      }
     } catch (e) {
       logger.debug(
         `Skipping comparison from ${candidate.from} to ${candidate.to} because of error: `
@@ -277,10 +264,9 @@ async function computeAll(
     if (!path) continue;
 
     comparisons.set(path, {
-      from: fromRef,
+      from: candidate.from,
       to: candidate.to,
       opticUrl,
-      cloudTag,
     });
   }
 
@@ -289,6 +275,7 @@ async function computeAll(
     if (generatedDetails) {
       const { web_url, organization_id, default_branch, default_tag } =
         generatedDetails;
+
       const pathToUrl: Record<string, string | null> = {};
       for (const [path, comparison] of comparisons.entries()) {
         if (!comparison.opticUrl) {
@@ -310,7 +297,8 @@ async function computeAll(
           );
         }
       }
-      for (const [path, url] of Object.entries(pathToUrl)) {
+
+      for (let [path, url] of Object.entries(pathToUrl)) {
         if (!url) {
           const api = await config.client.createApi(organization_id, {
             name: path,
@@ -318,17 +306,18 @@ async function computeAll(
             default_branch,
             default_tag,
           });
-          pathToUrl[path] = getApiUrl(
-            config.client.getWebBase(),
-            organization_id,
-            api.id
-          );
+          url = getApiUrl(config.client.getWebBase(), organization_id, api.id);
         }
+        const comparison = comparisons.get(path);
+        if (comparison) comparison.opticUrl = url;
       }
     }
   }
 
-  for (const { from, to, opticUrl, cloudTag } of comparisons.values()) {
+  for (let { from, to, opticUrl } of comparisons.values()) {
+    const cloudTag: string | null =
+      !!from && /^cloud:/.test(from) ? from.replace(/^cloud:/, '') : null;
+
     const specDetails = getApiFromOpticUrl(opticUrl);
 
     if (!specDetails && (options.upload || cloudTag)) {
@@ -339,7 +328,10 @@ async function computeAll(
         path: to!,
       });
       continue;
+    } else if (specDetails && cloudTag) {
+      from = `cloud:${specDetails.apiId}@${cloudTag}`;
     }
+
     // try load both from + to spec
     let fromParseResults: ParseResult;
     let toParseResults: ParseResult;
