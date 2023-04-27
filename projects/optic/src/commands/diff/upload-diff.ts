@@ -1,6 +1,6 @@
 import ora from 'ora';
-import { OpticCliConfig, VCS } from '../../config';
 import { getRunUrl, getSpecUrl } from '../../utils/cloud-urls';
+import { ConfigRuleset, OpticCliConfig, VCS } from '../../config';
 import { ParseResult } from '../../utils/spec-loaders';
 import { EMPTY_SPEC_ID, uploadRun, uploadSpec } from '../../utils/cloud-specs';
 import * as Git from '../../utils/git-utils';
@@ -18,7 +18,8 @@ export async function uploadDiff(
   } | null,
   options: {
     headTag?: string;
-  } = {}
+    standard: ConfigRuleset[];
+  }
 ): Promise<{
   baseSpecUrl: string | null;
   headSpecUrl: string | null;
@@ -89,6 +90,7 @@ export async function uploadDiff(
       toSpecId: headSpecId,
       client: config.client,
       specResults,
+      standard: options.standard,
       orgId: specDetails.orgId,
       ci: config.isInCi,
     });

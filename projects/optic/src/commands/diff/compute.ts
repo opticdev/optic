@@ -25,7 +25,7 @@ export async function compute(
     path: string | null;
   }
 ) {
-  const { runner, ruleNames, warnings } = await generateRuleRunner(
+  const { runner, ruleNames, warnings, standard } = await generateRuleRunner(
     {
       rulesetArg: options.standard,
       specRuleset: headFile.isEmptySpec
@@ -76,6 +76,7 @@ export async function compute(
   );
 
   return {
+    standard,
     warnings,
     specResults,
     changelogData,

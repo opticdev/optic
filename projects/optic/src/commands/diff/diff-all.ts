@@ -373,11 +373,11 @@ async function computeAll(
     logger.info(
       chalk.blue(`Diffing ${from ?? 'empty spec'} to ${to ?? 'empty spec'}`)
     );
-    const { specResults, checks, changelogData, warnings } = await compute(
-      [fromParseResults, toParseResults],
-      config,
-      { ...options, path: to ?? from ?? null }
-    );
+    const { specResults, checks, changelogData, warnings, standard } =
+      await compute([fromParseResults, toParseResults], config, {
+        ...options,
+        path: to ?? from ?? null,
+      });
 
     for (const warning of warnings) {
       logger.warn(warning);
@@ -428,7 +428,10 @@ async function computeAll(
         specResults,
         config,
         specDetails,
-        options
+        {
+          headTag: options.headTag,
+          standard,
+        }
       );
       specUrl = uploadResults?.headSpecUrl ?? null;
       changelogUrl = uploadResults?.changelogUrl ?? null;
@@ -445,6 +448,7 @@ async function computeAll(
       to,
       changelogUrl,
       specUrl,
+      standard,
     });
   }
   return {

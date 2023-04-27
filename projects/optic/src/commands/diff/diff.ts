@@ -15,7 +15,7 @@ import {
   loadSpec,
   parseFilesFromCloud,
 } from '../../utils/spec-loaders';
-import { OpticCliConfig, VCS } from '../../config';
+import { ConfigRuleset, OpticCliConfig, VCS } from '../../config';
 import chalk from 'chalk';
 import {
   flushEvents,
@@ -179,13 +179,17 @@ const runDiff = async (
   specResults: Awaited<ReturnType<typeof compute>>['specResults'];
   changelogData: Awaited<ReturnType<typeof compute>>['changelogData'];
   warnings: string[];
+  standard: ConfigRuleset[];
 }> => {
-  const { specResults, checks, changelogData, warnings } = await compute(
-    [baseFile, headFile],
-    config,
-    { ...options, path: filepath }
-  );
-  const diffResults = { checks, specResults, changelogData, warnings };
+  const { specResults, checks, changelogData, warnings, standard } =
+    await compute([baseFile, headFile], config, { ...options, path: filepath });
+  const diffResults = {
+    checks,
+    specResults,
+    changelogData,
+    warnings,
+    standard,
+  };
 
   const hasOpticUrl = headFile.jsonLike['x-optic-url'];
 
@@ -383,7 +387,10 @@ const getDiffAction =
         diffResult.specResults,
         config,
         specDetails,
-        options
+        {
+          headTag: options.headTag,
+          standard: diffResult.standard,
+        }
       );
       specUrl = uploadResults?.headSpecUrl ?? null;
       maybeChangelogUrl = uploadResults?.changelogUrl ?? null;
