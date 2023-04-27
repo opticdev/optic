@@ -29,10 +29,7 @@ import { logger } from '../../logger';
 import { errorHandler } from '../../error-handler';
 import path from 'path';
 import { OPTIC_URL_KEY } from '../../constants';
-import { getApiFromOpticUrl, getApiUrl } from '../../utils/cloud-urls';
-import * as Git from '../../utils/git-utils';
-import { getOrganizationFromToken } from '../../utils/organization';
-import { getDetailsForGeneration } from '../../utils/generated';
+import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 
 const description = `run a diff between two API specs`;
 
@@ -104,14 +101,16 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     .action(errorHandler(getDiffAction(config)));
 };
 
+type SpecDetails = { apiId: string; orgId: string } | null;
+
 const getBaseAndHeadFromFiles = async (
   file1: string,
   file2: string,
   config: OpticCliConfig,
   options: DiffActionOptions
-): Promise<[ParseResult, ParseResult]> => {
+): Promise<[ParseResult, ParseResult, SpecDetails]> => {
   try {
-    return await Promise.all([
+    const [baseFile, headFile] = await Promise.all([
       loadSpec(file1, config, {
         strict: options.validation === 'strict',
         denormalize: true,
@@ -123,6 +122,12 @@ const getBaseAndHeadFromFiles = async (
         includeUncommittedChanges: options.generated,
       }),
     ]);
+    const opticUrl: string | null =
+      headFile.jsonLike[OPTIC_URL_KEY] ??
+      baseFile.jsonLike[OPTIC_URL_KEY] ??
+      null;
+    const specDetails = opticUrl ? getApiFromOpticUrl(opticUrl) : null;
+    return [baseFile, headFile, specDetails];
   } catch (e) {
     console.error(e instanceof Error ? e.message : e);
     throw new UserError();
@@ -135,20 +140,20 @@ const getBaseAndHeadFromFileAndBase = async (
   root: string,
   config: OpticCliConfig,
   options: DiffActionOptions
-): Promise<[ParseResult, ParseResult]> => {
+): Promise<[ParseResult, ParseResult, SpecDetails]> => {
   try {
     if (/^cloud:/.test(base)) {
-      const { baseFile, headFile } = await parseFilesFromCloud(
+      const { baseFile, headFile, specDetails } = await parseFilesFromCloud(
         file1,
         base.replace(/^cloud:/, ''),
         config,
         {
           denormalize: true,
           headStrict: options.validation === 'strict',
-          includeUncommittedChanges: options.generated,
+          generated: options.generated,
         }
       );
-      return [baseFile, headFile];
+      return [baseFile, headFile, specDetails];
     } else {
       const { baseFile, headFile } = await parseFilesFromRef(
         file1,
@@ -161,7 +166,12 @@ const getBaseAndHeadFromFileAndBase = async (
           includeUncommittedChanges: options.generated,
         }
       );
-      return [baseFile, headFile];
+      const opticUrl: string | null =
+        headFile.jsonLike[OPTIC_URL_KEY] ??
+        baseFile.jsonLike[OPTIC_URL_KEY] ??
+        null;
+      const specDetails = opticUrl ? getApiFromOpticUrl(opticUrl) : null;
+      return [baseFile, headFile, specDetails];
     }
   } catch (e) {
     console.error(e instanceof Error ? e.message : e);
@@ -170,7 +180,7 @@ const getBaseAndHeadFromFileAndBase = async (
 };
 
 const runDiff = async (
-  [baseFile, headFile]: [ParseResult, ParseResult],
+  [baseFile, headFile]: [ParseResult, ParseResult, SpecDetails],
   config: OpticCliConfig,
   options: DiffActionOptions,
   filepath: string
@@ -303,7 +313,7 @@ const getDiffAction =
     if (options.ruleset && !options.standard) {
       options.standard = options.ruleset;
     }
-    let parsedFiles: [ParseResult, ParseResult];
+    let parsedFiles: [ParseResult, ParseResult, SpecDetails];
     if (file1 && file2) {
       parsedFiles = await getBaseAndHeadFromFiles(
         file1,
@@ -339,46 +349,8 @@ const getDiffAction =
     let maybeChangelogUrl: string | null = null;
     let specUrl: string | null = null;
 
-    const [baseParseResult, headParseResult] = parsedFiles;
+    let [baseParseResult, headParseResult, specDetails] = parsedFiles;
     if (options.upload) {
-      const opticUrl: string | null =
-        headParseResult.jsonLike[OPTIC_URL_KEY] ??
-        baseParseResult.jsonLike[OPTIC_URL_KEY] ??
-        null;
-      let specDetails = opticUrl ? getApiFromOpticUrl(opticUrl) : null;
-
-      if (options.generated && !specDetails) {
-        const path = file1;
-        const generatedDetails = await getDetailsForGeneration(config);
-        if (generatedDetails) {
-          const { web_url, organization_id, default_branch, default_tag } =
-            generatedDetails;
-
-          const { apis } = await config.client.getApis([path], web_url);
-          let url: string;
-          if (!apis[0]) {
-            const api = await config.client.createApi(organization_id, {
-              name: path,
-              web_url: web_url,
-              default_branch,
-              default_tag,
-            });
-            url = getApiUrl(
-              config.client.getWebBase(),
-              organization_id,
-              api.id
-            );
-          } else {
-            url = getApiUrl(
-              config.client.getWebBase(),
-              organization_id,
-              apis[0].api_id
-            );
-          }
-          specDetails = getApiFromOpticUrl(url);
-        }
-      }
-
       const uploadResults = await uploadDiff(
         {
           from: baseParseResult,
