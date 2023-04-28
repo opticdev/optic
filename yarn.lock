@@ -2116,12 +2116,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@httptoolkit/httpolyglot@npm:^2.0.1, @httptoolkit/httpolyglot@npm:^2.1.0":
+"@httptoolkit/httpolyglot@npm:^2.0.1":
   version: 2.1.0
   resolution: "@httptoolkit/httpolyglot@npm:2.1.0"
   dependencies:
     "@types/node": ^16.7.10
   checksum: b2471d15a2df9511b92a5c84513115898c811cb74056a93e281b4434f38f25c05ee20d81e3fc15ce57c285edf0a29304c1306644da3a2e94fefdcd3046c53562
+  languageName: node
+  linkType: hard
+
+"@httptoolkit/httpolyglot@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "@httptoolkit/httpolyglot@npm:2.1.1"
+  dependencies:
+    "@types/node": ^16.7.10
+  checksum: 138ccd61355de334c509e2fc4ac9ade9e1aa6aa770ed2271e0bd1d883ed815eb742d0a4de37837edd03a9a243c05d6da32c5febe970f4518c46e2d76e6ff10d5
   languageName: node
   linkType: hard
 
@@ -3896,7 +3905,7 @@ __metadata:
     log-node: ^8.0.3
     loglevel: ^1.8.0
     minimatch: 9.0.0
-    mockttp: ^3.3.1
+    mockttp: ^3.7.2
     node-fetch: ^2.6.7
     node-forge: ^1.2.1
     node-machine-id: ^1.1.12
@@ -8795,13 +8804,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mockttp@npm:^3.3.1":
-  version: 3.7.1
-  resolution: "mockttp@npm:3.7.1"
+"mockttp@npm:^3.7.2":
+  version: 3.7.2
+  resolution: "mockttp@npm:3.7.2"
   dependencies:
     "@graphql-tools/schema": ^8.5.0
     "@graphql-tools/utils": ^8.8.0
-    "@httptoolkit/httpolyglot": ^2.1.0
+    "@httptoolkit/httpolyglot": ^2.1.1
     "@httptoolkit/subscriptions-transport-ws": ^0.11.2
     "@httptoolkit/websocket-stream": ^6.0.1
     "@types/cors": ^2.8.6
@@ -8839,7 +8848,7 @@ __metadata:
     ws: ^8.8.0
   bin:
     mockttp: dist/admin/admin-bin.js
-  checksum: 23134d3e4055a190f41f3fc4a4fb1acd684abe442a1ebb45cbd2fbd0622db2532485ee0f734fc0482c6cf8f7c80c8f2b7a773b327b2b9c6af4ec11038dfea429
+  checksum: c463bb7b62ab959b7decd67a3281e60687b5efb5b142f141a1a3da7bf6850ae5f6e7411b52fe75ea9b01e1c3652fcb01886adbdeb81d88960113781f81ab4f5f
   languageName: node
   linkType: hard
 
