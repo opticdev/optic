@@ -39,7 +39,7 @@ export class ProxyInteractions {
       targetCA?: Array<{ cert: Buffer | string }>;
     } = {}
   ): Promise<[ProxyInteractions, string, string]> {
-    let { host, protocol, origin: targetOrigin } = new URL(targetHost);
+    let { host, protocol } = new URL(targetHost);
     if (targetHost.includes('/')) {
       // accept urls to be passed in rather than pure hosts
       targetHost = host;
@@ -61,7 +61,7 @@ export class ProxyInteractions {
       },
     });
 
-    let forwardedHosts = [targetOrigin];
+    let forwardedHosts = [targetHost];
     await capturingProxy
       .forAnyRequest()
       .always()
@@ -94,7 +94,7 @@ export class ProxyInteractions {
       .thenPassThrough({
         beforeRequest: onTargetedRequest,
         forwarding: {
-          targetHost: targetOrigin,
+          targetHost: targetHost,
           // bug: updateHostHeader isn't rewriting the request header - we're manually rewriting this in `beforeRequest`
           updateHostHeader: true,
         },
