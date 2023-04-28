@@ -26,7 +26,8 @@ describe('ProxyInteractions', () => {
     const abortController = new AbortController();
     const [interactions, proxyUrl] = await ProxyInteractions.create(
       target.url,
-      abortController.signal
+      abortController.signal,
+      { mode: 'system-proxy' }
     );
 
     const get = bent(proxyUrl);
@@ -47,7 +48,8 @@ describe('ProxyInteractions', () => {
     const abortController = new AbortController();
     const [interactions, proxyUrl] = await ProxyInteractions.create(
       target.url,
-      abortController.signal
+      abortController.signal,
+      { mode: 'system-proxy' }
     );
 
     const requestDelete = bent(proxyUrl, 'DELETE', 204);
@@ -96,6 +98,7 @@ describe('ProxyInteractions with tls', () => {
       {
         ca: proxyCa,
         targetCA: [targetCA],
+        mode: 'system-proxy',
       }
     );
 
@@ -138,6 +141,7 @@ describe('ProxyInteractions with tls', () => {
       {
         ca,
         targetCA: [targetCA],
+        mode: 'system-proxy',
       }
     );
     let transparentPort = parseInt(new URL(proxyUrl).port);

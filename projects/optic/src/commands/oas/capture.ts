@@ -117,7 +117,7 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
       let [proxyInteractions, proxyUrl] = await ProxyInteractions.create(
         targetUrl,
         sourcesController.signal,
-        { ca }
+        { ca, mode: options.reverseProxy ? 'reverse-proxy' : 'system-proxy' }
       );
 
       const runningCommand = Boolean(options.command);
