@@ -95,7 +95,6 @@ export class ProxyInteractions {
         beforeRequest: onTargetedRequest,
         forwarding: {
           targetHost: targetHost,
-          // bug: updateHostHeader isn't rewriting the request header - we're manually rewriting this in `beforeRequest`
           updateHostHeader: true,
         },
         trustAdditionalCAs: options.targetCA || [],
@@ -128,13 +127,6 @@ export class ProxyInteractions {
         timingEvents: timingEvents as TimingEvents,
       };
       requestsById.set(request.id, request);
-
-      return {
-        headers: {
-          ...capturedRequest.headers,
-          host,
-        },
-      };
     }
 
     function onResponse(capturedResponse: CompletedResponse) {
