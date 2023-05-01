@@ -3,7 +3,6 @@ import {
   CompareSpecResults,
   UserError,
   ApiCoverage,
-  sourcemapReader,
 } from '@useoptic/openapi-utilities';
 import { OpticBackendClient } from '../client';
 import { computeChecksumForAws } from './checksum';
@@ -25,8 +24,18 @@ export async function downloadSpec(
 ): Promise<{
   jsonLike: ParseResult['jsonLike'];
   sourcemap: ParseResult['sourcemap'];
+  spec: {
+    id: string;
+  };
 }> {
-  const response = await opts.client.getSpec(spec.apiId, spec.tag);
+  const response = await opts.client
+    .getSpec(spec.apiId, spec.tag)
+    .catch((e) => {
+      if (e instanceof Error && /spec does not exist/i.test(e.message)) {
+        return { id: EMPTY_SPEC_ID, specUrl: null, sourcemapUrl: null };
+      }
+      throw e;
+    });
 
   if (response.id === EMPTY_SPEC_ID) {
     const spec = createNullSpec();
@@ -35,6 +44,9 @@ export async function downloadSpec(
     return {
       jsonLike: spec,
       sourcemap,
+      spec: {
+        id: response.id,
+      },
     };
   } else {
     // fetch from cloud
@@ -47,6 +59,9 @@ export async function downloadSpec(
       sourcemap: JsonSchemaSourcemap.fromSerializedSourcemap(
         JSON.parse(sourcemapStr)
       ),
+      spec: {
+        id: response.id,
+      },
     };
   }
 }
@@ -100,10 +115,19 @@ export async function uploadSpec(
       }),
     ]);
 
-    const effective_at = opts.spec.context?.effective_at;
-    const git_name = opts.spec.context?.name;
-    const git_email = opts.spec.context?.email;
-    const commit_message = opts.spec.context?.message;
+    let effective_at: Date | undefined = undefined;
+    let git_name: string | undefined = undefined;
+    let git_email: string | undefined = undefined;
+    let commit_message: string | undefined = undefined;
+
+    if (opts.spec.context?.vcs === 'git') {
+      ({
+        effective_at,
+        name: git_name,
+        email: git_email,
+        message: commit_message,
+      } = opts.spec.context);
+    }
 
     const { id } = await opts.client.createSpec({
       upload_id: result.upload_id,

@@ -28,6 +28,8 @@ import { writeDataForCi } from '../../utils/ci-data';
 import { logger } from '../../logger';
 import { errorHandler } from '../../error-handler';
 import path from 'path';
+import { OPTIC_URL_KEY } from '../../constants';
+import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 
 const description = `run a diff between two API specs`;
 
@@ -95,20 +97,37 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     .option('--upload', 'upload run to cloud', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
+    .option('--generated', 'use with --upload with a generated spec', false)
     .action(errorHandler(getDiffAction(config)));
 };
+
+type SpecDetails = { apiId: string; orgId: string } | null;
 
 const getBaseAndHeadFromFiles = async (
   file1: string,
   file2: string,
   config: OpticCliConfig,
-  strict: boolean
-): Promise<[ParseResult, ParseResult]> => {
+  options: DiffActionOptions
+): Promise<[ParseResult, ParseResult, SpecDetails]> => {
   try {
-    return await Promise.all([
-      loadSpec(file1, config, { strict, denormalize: true }),
-      loadSpec(file2, config, { strict, denormalize: true }),
+    const [baseFile, headFile] = await Promise.all([
+      loadSpec(file1, config, {
+        strict: options.validation === 'strict',
+        denormalize: true,
+        includeUncommittedChanges: options.generated,
+      }),
+      loadSpec(file2, config, {
+        strict: options.validation === 'strict',
+        denormalize: true,
+        includeUncommittedChanges: options.generated,
+      }),
     ]);
+    const opticUrl: string | null =
+      headFile.jsonLike[OPTIC_URL_KEY] ??
+      baseFile.jsonLike[OPTIC_URL_KEY] ??
+      null;
+    const specDetails = opticUrl ? getApiFromOpticUrl(opticUrl) : null;
+    return [baseFile, headFile, specDetails];
   } catch (e) {
     console.error(e instanceof Error ? e.message : e);
     throw new UserError();
@@ -120,26 +139,39 @@ const getBaseAndHeadFromFileAndBase = async (
   base: string,
   root: string,
   config: OpticCliConfig,
-  headStrict: boolean
-): Promise<[ParseResult, ParseResult]> => {
+  options: DiffActionOptions
+): Promise<[ParseResult, ParseResult, SpecDetails]> => {
   try {
     if (/^cloud:/.test(base)) {
-      const { baseFile, headFile } = await parseFilesFromCloud(
+      const { baseFile, headFile, specDetails } = await parseFilesFromCloud(
         file1,
         base.replace(/^cloud:/, ''),
         config,
-        { denormalize: true, headStrict: headStrict }
+        {
+          denormalize: true,
+          headStrict: options.validation === 'strict',
+          generated: options.generated,
+        }
       );
-      return [baseFile, headFile];
+      return [baseFile, headFile, specDetails];
     } else {
       const { baseFile, headFile } = await parseFilesFromRef(
         file1,
         base,
         root,
         config,
-        { denormalize: true, headStrict: headStrict }
+        {
+          denormalize: true,
+          headStrict: options.validation === 'strict',
+          includeUncommittedChanges: options.generated,
+        }
       );
-      return [baseFile, headFile];
+      const opticUrl: string | null =
+        headFile.jsonLike[OPTIC_URL_KEY] ??
+        baseFile.jsonLike[OPTIC_URL_KEY] ??
+        null;
+      const specDetails = opticUrl ? getApiFromOpticUrl(opticUrl) : null;
+      return [baseFile, headFile, specDetails];
     }
   } catch (e) {
     console.error(e instanceof Error ? e.message : e);
@@ -148,7 +180,7 @@ const getBaseAndHeadFromFileAndBase = async (
 };
 
 const runDiff = async (
-  [baseFile, headFile]: [ParseResult, ParseResult],
+  [baseFile, headFile]: [ParseResult, ParseResult, SpecDetails],
   config: OpticCliConfig,
   options: DiffActionOptions,
   filepath: string
@@ -244,6 +276,7 @@ type DiffActionOptions = {
   web: boolean;
   upload: boolean;
   json: boolean;
+  generated: boolean;
   standard?: string;
   ruleset?: string;
   headTag?: string;
@@ -280,13 +313,13 @@ const getDiffAction =
     if (options.ruleset && !options.standard) {
       options.standard = options.ruleset;
     }
-    let parsedFiles: [ParseResult, ParseResult];
+    let parsedFiles: [ParseResult, ParseResult, SpecDetails];
     if (file1 && file2) {
       parsedFiles = await getBaseAndHeadFromFiles(
         file1,
         file2,
         config,
-        options.validation === 'strict'
+        options
       );
     } else if (file1) {
       if (config.vcs?.type !== VCS.Git) {
@@ -302,7 +335,7 @@ const getDiffAction =
         options.base,
         config.root,
         config,
-        options.validation === 'strict'
+        options
       );
     } else {
       logger.error(
@@ -316,7 +349,7 @@ const getDiffAction =
     let maybeChangelogUrl: string | null = null;
     let specUrl: string | null = null;
 
-    const [baseParseResult, headParseResult] = parsedFiles;
+    let [baseParseResult, headParseResult, specDetails] = parsedFiles;
     if (options.upload) {
       const uploadResults = await uploadDiff(
         {
@@ -325,6 +358,7 @@ const getDiffAction =
         },
         diffResult.specResults,
         config,
+        specDetails,
         {
           headTag: options.headTag,
           standard: diffResult.standard,

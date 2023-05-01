@@ -178,10 +178,22 @@ export class OpticBackendClient extends JsonHttpClient {
     return this.postJson(`/api/runs2`, run);
   }
 
+  public async getApis(
+    paths: string[],
+    web_url: string
+  ): Promise<{ apis: (Types.Api | null)[] }> {
+    return this.getJson<{ apis: (Types.Api | null)[] }>(
+      `/api/apis?paths=${paths
+        .map((p) => encodeURIComponent(p))
+        .join(',')}&web_url=${encodeURIComponent(web_url)}`
+    );
+  }
+
   public async createApi(
     organizationId: string,
     opts: {
       name: string;
+      path?: string;
       web_url?: string;
       default_branch: string;
       default_tag?: string;

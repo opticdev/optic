@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import prompts from 'prompts';
 import open from 'open';
-import path, { parse } from 'path';
+import path from 'path';
 import fs from 'node:fs/promises';
 import ora from 'ora';
 import { OpticCliConfig, VCS } from '../../config';
@@ -194,7 +194,11 @@ async function crawlCandidateSpecs(
         orgId,
         forward_effective_at_to_tags: true,
       });
-      specsToTag.push([specId, sha, parseResult.context?.effective_at]);
+      const effective_at =
+        parseResult.context?.vcs === 'git'
+          ? parseResult.context.effective_at
+          : undefined;
+      specsToTag.push([specId, sha, effective_at]);
     }
 
     if (!alreadyTracked) {

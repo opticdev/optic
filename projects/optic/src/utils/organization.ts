@@ -3,7 +3,7 @@ import { OpticBackendClient } from '../client';
 
 export async function getOrganizationFromToken(
   client: OpticBackendClient,
-  message: string
+  message: string | false
 ): Promise<
   | {
       ok: true;
@@ -18,19 +18,23 @@ export async function getOrganizationFromToken(
 
   const { organizations } = await client.getTokenOrgs();
   if (organizations.length > 1) {
-    const response = await prompts(
-      {
-        type: 'select',
-        name: 'orgId',
-        message,
-        choices: organizations.map((org) => ({
-          title: org.name,
-          value: org.id,
-        })),
-      },
-      { onCancel: () => process.exit(1) }
-    );
-    org = organizations.find((o) => o.id === response.orgId)!;
+    if (message) {
+      const response = await prompts(
+        {
+          type: 'select',
+          name: 'orgId',
+          message,
+          choices: organizations.map((org) => ({
+            title: org.name,
+            value: org.id,
+          })),
+        },
+        { onCancel: () => process.exit(1) }
+      );
+      org = organizations.find((o) => o.id === response.orgId)!;
+    } else {
+      org = organizations[0];
+    }
   } else if (organizations.length === 0) {
     process.exitCode = 1;
     return {
