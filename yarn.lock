@@ -2006,16 +2006,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@httptoolkit/httpolyglot@npm:^2.0.1":
-  version: 2.1.0
-  resolution: "@httptoolkit/httpolyglot@npm:2.1.0"
-  dependencies:
-    "@types/node": ^16.7.10
-  checksum: b2471d15a2df9511b92a5c84513115898c811cb74056a93e281b4434f38f25c05ee20d81e3fc15ce57c285edf0a29304c1306644da3a2e94fefdcd3046c53562
-  languageName: node
-  linkType: hard
-
-"@httptoolkit/httpolyglot@npm:^2.1.1":
+"@httptoolkit/httpolyglot@npm:^2.0.1, @httptoolkit/httpolyglot@npm:^2.1.1":
   version: 2.1.1
   resolution: "@httptoolkit/httpolyglot@npm:2.1.1"
   dependencies:
