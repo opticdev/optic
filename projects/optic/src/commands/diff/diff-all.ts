@@ -25,6 +25,8 @@ import { errorHandler } from '../../error-handler';
 import { checkOpenAPIVersion } from '@useoptic/openapi-io';
 import { generateComparisonLogsV2 } from '../../utils/diff-renderer';
 import path from 'path';
+import { getApiUrl } from '../../utils/cloud-urls';
+import { getDetailsForGeneration } from '../../utils/generated';
 
 const usage = () => `
   optic diff-all
@@ -97,6 +99,7 @@ comma separated values (e.g. "**/*.yml,**/*.json")'
     .option('--upload', 'upload specs', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
+    .option('--generated', 'use with --upload with a generated spec', false)
     .option(
       '--fail-on-untracked-openapi',
       'fail with exit code 1 if there are detected untracked apis',
@@ -113,6 +116,7 @@ type DiffAllActionOptions = {
   ignore?: string;
   headTag?: string;
   check: boolean;
+  generated: boolean;
   web: boolean;
   upload: boolean;
   json: boolean;
@@ -203,16 +207,20 @@ async function computeAll(
   };
 
   const results: Result[] = [];
+  const comparisons: Map<
+    string,
+    {
+      from?: string;
+      to?: string;
+      opticUrl?: string;
+    }
+  > = new Map();
 
   for await (const [_, candidate] of candidateMap) {
     // We load the raw spec and discard the comparison if there is no optic url or is in an invalid version
     // Cases we run the comparison:
     // - if to spec has x-optic-url
     // - if from spec has x-optic-url AND to spec is empty
-    const cloudTag: string | null =
-      !!candidate.from && /^cloud:/.test(candidate.from)
-        ? candidate.from.replace(/^cloud:/, '')
-        : null;
     const specPathToLoad = candidate.to ?? candidate.from;
     if (!specPathToLoad) {
       logger.debug(
@@ -238,22 +246,10 @@ async function computeAll(
       continue;
     }
 
-    let fromRef = candidate.from;
+    const opticUrl = rawSpec[OPTIC_URL_KEY];
 
     try {
-      const opticApi = getApiFromOpticUrl(rawSpec[OPTIC_URL_KEY]);
       checkOpenAPIVersion(rawSpec);
-      if (!opticApi && (options.upload || cloudTag)) {
-        logger.debug(
-          `Skipping comparison from ${candidate.from} to ${candidate.to} because there was no x-optic-url`
-        );
-        allWarnings.missingOpticUrl.push({
-          path: candidate.to!,
-        });
-        continue;
-      } else if (opticApi && cloudTag) {
-        fromRef = `cloud:${opticApi.apiId}@${cloudTag}`;
-      }
     } catch (e) {
       logger.debug(
         `Skipping comparison from ${candidate.from} to ${candidate.to} because of error: `
@@ -263,46 +259,117 @@ async function computeAll(
       continue;
     }
 
+    const p = candidate.to ?? candidate.from;
+    // should never happen
+    if (!p) continue;
+    const relativePath = path.relative(config.root, path.resolve(p));
+
+    comparisons.set(relativePath, {
+      from: candidate.from,
+      to: candidate.to,
+      opticUrl,
+    });
+  }
+
+  if (options.generated) {
+    const generatedDetails = await getDetailsForGeneration(config);
+    if (generatedDetails) {
+      const { web_url, organization_id, default_branch, default_tag } =
+        generatedDetails;
+
+      const pathToUrl: Record<string, string | null> = {};
+      for (const [p, comparison] of comparisons.entries()) {
+        if (!comparison.opticUrl) {
+          pathToUrl[p] = null;
+        }
+      }
+      const { apis } = await config.client.getApis(
+        Object.keys(pathToUrl),
+        web_url
+      );
+
+      for (const api of apis) {
+        if (api) {
+          pathToUrl[api.path] = getApiUrl(
+            config.client.getWebBase(),
+            api.organization_id,
+            api.api_id
+          );
+        }
+      }
+
+      for (let [path, url] of Object.entries(pathToUrl)) {
+        if (!url) {
+          const api = await config.client.createApi(organization_id, {
+            name: path,
+            path,
+            web_url: web_url,
+            default_branch,
+            default_tag,
+          });
+          url = getApiUrl(config.client.getWebBase(), organization_id, api.id);
+        }
+        const comparison = comparisons.get(path);
+        if (comparison) comparison.opticUrl = url;
+      }
+    }
+  }
+
+  for (let { from, to, opticUrl } of comparisons.values()) {
+    const cloudTag: string | null =
+      !!from && /^cloud:/.test(from) ? from.replace(/^cloud:/, '') : null;
+
+    const specDetails = getApiFromOpticUrl(opticUrl);
+
+    if (!specDetails && (options.upload || cloudTag)) {
+      logger.debug(
+        `Skipping comparison from ${from} to ${to} because there was no x-optic-url`
+      );
+      allWarnings.missingOpticUrl.push({
+        path: to!,
+      });
+      continue;
+    } else if (specDetails && cloudTag) {
+      from = `cloud:${specDetails.apiId}@${cloudTag}`;
+    }
+
     // try load both from + to spec
     let fromParseResults: ParseResult;
     let toParseResults: ParseResult;
     try {
-      fromParseResults = await loadSpec(fromRef, config, {
+      fromParseResults = await loadSpec(from, config, {
         strict: false,
         denormalize: true,
       });
     } catch (e) {
       allWarnings.unparseableFromSpec.push({
-        path: candidate.from!,
+        path: from!,
         error: e,
       });
       continue;
     }
 
     try {
-      toParseResults = await loadSpec(candidate.to, config, {
+      toParseResults = await loadSpec(to, config, {
         strict: options.validation === 'strict',
         denormalize: true,
+        includeUncommittedChanges: options.generated,
       });
     } catch (e) {
       allWarnings.unparseableToSpec.push({
-        path: candidate.to!,
+        path: to!,
         error: e,
       });
       continue;
     }
 
     logger.info(
-      chalk.blue(
-        `Diffing ${candidate.from ?? 'empty spec'} to ${
-          candidate.to ?? 'empty spec'
-        }`
-      )
+      chalk.blue(`Diffing ${from ?? 'empty spec'} to ${to ?? 'empty spec'}`)
     );
     const { specResults, checks, changelogData, warnings, standard } =
       await compute([fromParseResults, toParseResults], config, {
         ...options,
-        path: candidate.to ?? candidate.from ?? null,
+        path: to ?? from ?? null,
       });
 
     for (const warning of warnings) {
@@ -353,6 +420,7 @@ async function computeAll(
         },
         specResults,
         config,
+        specDetails,
         {
           headTag: options.headTag,
           standard,
@@ -369,8 +437,8 @@ async function computeAll(
       specResults,
       checks,
       changelogData,
-      from: candidate.from,
-      to: candidate.to,
+      from,
+      to,
       changelogUrl,
       specUrl,
       standard,

@@ -19,20 +19,27 @@ import * as Git from './git-utils';
 import { createNullSpec, createNullSpecSourcemap } from './specs';
 import { downloadSpec } from './cloud-specs';
 import { OpticBackendClient } from '../client';
-import { getApiFromOpticUrl } from './cloud-urls';
+import { getApiFromOpticUrl, getApiUrl } from './cloud-urls';
 import { OPTIC_URL_KEY } from '../constants';
 import chalk from 'chalk';
+import { getDetailsForGeneration } from './generated';
 
 const exec = promisify(callbackExec);
 
-export type ParseResultContext = {
-  vcs: 'git';
-  sha: string;
-  effective_at?: Date;
-  name: string;
-  email: string;
-  message: string;
-} | null;
+export type ParseResultContext =
+  | {
+      vcs: 'git';
+      sha: string;
+      effective_at?: Date;
+      name: string;
+      email: string;
+      message: string;
+    }
+  | {
+      vcs: 'cloud';
+      specId: string;
+    }
+  | null;
 
 export type ParseResult = ParseOpenAPIResult & {
   isEmptySpec: boolean;
@@ -163,7 +170,10 @@ export async function loadRaw(
 
 async function parseSpecAndDereference(
   filePathOrRef: string | undefined,
-  config: OpticCliConfig
+  config: OpticCliConfig,
+  options: {
+    includeUncommittedChanges: boolean;
+  } = { includeUncommittedChanges: false }
 ): Promise<ParseResult> {
   const workingDir = process.cwd();
   const input = parseOpticRef(filePathOrRef);
@@ -183,7 +193,7 @@ async function parseSpecAndDereference(
     case 'cloud': {
       // try fetch from cloud, if 404 return an error
       // todo handle empty spec case
-      const { jsonLike, sourcemap } = await downloadSpec(
+      const { jsonLike, sourcemap, spec } = await downloadSpec(
         { apiId: input.apiId, tag: input.tag },
         config
       );
@@ -192,7 +202,10 @@ async function parseSpecAndDereference(
         sourcemap,
         from: 'cloud',
         isEmptySpec: false,
-        context: null,
+        context: {
+          vcs: 'cloud',
+          specId: spec.id,
+        },
       };
     }
     case 'git': {
@@ -238,7 +251,8 @@ async function parseSpecAndDereference(
 
       if (
         config.vcs?.type === VCS.Git &&
-        !specHasUncommittedChanges(parseResult.sourcemap, config.vcs.diffSet)
+        (options.includeUncommittedChanges ||
+          !specHasUncommittedChanges(parseResult.sourcemap, config.vcs.diffSet))
       ) {
         const commitMeta = await Git.commitMeta(config.vcs.sha);
 
@@ -287,9 +301,12 @@ export const loadSpec = async (
   options: {
     strict: boolean;
     denormalize: boolean;
+    includeUncommittedChanges?: boolean;
   }
 ): Promise<ParseResult> => {
-  const file = await parseSpecAndDereference(opticRef, config);
+  const file = await parseSpecAndDereference(opticRef, config, {
+    includeUncommittedChanges: options.includeUncommittedChanges ?? false,
+  });
 
   return validateAndDenormalize(file, options);
 };
@@ -302,6 +319,7 @@ export const parseFilesFromRef = async (
   options: {
     denormalize: boolean;
     headStrict: boolean;
+    includeUncommittedChanges: boolean;
   }
 ): Promise<{
   baseFile: ParseResult;
@@ -335,7 +353,10 @@ export const parseFilesFromRef = async (
     }),
     headFile: await parseSpecAndDereference(
       existsOnHead ? absolutePath : undefined,
-      config
+      config,
+      {
+        includeUncommittedChanges: options.includeUncommittedChanges,
+      }
     ).then((file) => {
       return validateAndDenormalize(file, {
         denormalize: options.denormalize,
@@ -353,19 +374,47 @@ export const parseFilesFromCloud = async (
   options: {
     denormalize: boolean;
     headStrict: boolean;
+    generated: boolean;
   }
-): Promise<{
-  baseFile: ParseResult;
-  headFile: ParseResult;
-}> => {
+) => {
   const headFile = await loadSpec(filePath, config, {
     denormalize: options.denormalize,
     strict: options.headStrict,
+    includeUncommittedChanges: options.generated,
   });
 
-  const maybeApi = getApiFromOpticUrl(headFile.jsonLike[OPTIC_URL_KEY]);
+  let specDetails = getApiFromOpticUrl(headFile.jsonLike[OPTIC_URL_KEY]);
 
-  if (!maybeApi) {
+  if (options.generated) {
+    const relativePath = path.relative(config.root, path.resolve(filePath));
+    const generatedDetails = await getDetailsForGeneration(config);
+    if (generatedDetails) {
+      const { web_url, organization_id, default_branch, default_tag } =
+        generatedDetails;
+
+      const { apis } = await config.client.getApis([relativePath], web_url);
+      let url: string;
+      if (!apis[0]) {
+        const api = await config.client.createApi(organization_id, {
+          name: relativePath,
+          path: relativePath,
+          web_url: web_url,
+          default_branch,
+          default_tag,
+        });
+        url = getApiUrl(config.client.getWebBase(), organization_id, api.id);
+      } else {
+        url = getApiUrl(
+          config.client.getWebBase(),
+          organization_id,
+          apis[0].api_id
+        );
+      }
+      specDetails = getApiFromOpticUrl(url);
+    }
+  }
+
+  if (!specDetails) {
     throw new Error(
       `${chalk.bold.red(
         "Must have an 'x-optic-url' in your OpenAPI spec file to be able to compare against a cloud base."
@@ -374,14 +423,14 @@ export const parseFilesFromCloud = async (
 ${chalk.gray(`Get started by running 'optic api add ${filePath}'`)}`
     );
   }
-
   const baseFile = await parseSpecAndDereference(
-    `cloud:${maybeApi.apiId}@${cloudTag}`,
+    `cloud:${specDetails.apiId}@${cloudTag}`,
     config
   );
   return {
     baseFile,
     headFile,
+    specDetails,
   };
 };
 

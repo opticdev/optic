@@ -1,11 +1,6 @@
 import ora from 'ora';
+import { getRunUrl, getSpecUrl } from '../../utils/cloud-urls';
 import { ConfigRuleset, OpticCliConfig, VCS } from '../../config';
-import { OPTIC_URL_KEY } from '../../constants';
-import {
-  getApiFromOpticUrl,
-  getRunUrl,
-  getSpecUrl,
-} from '../../utils/cloud-urls';
 import { ParseResult } from '../../utils/spec-loaders';
 import { EMPTY_SPEC_ID, uploadRun, uploadSpec } from '../../utils/cloud-specs';
 import * as Git from '../../utils/git-utils';
@@ -17,6 +12,10 @@ export async function uploadDiff(
   specs: { from: ParseResult; to: ParseResult },
   specResults: Parameters<typeof uploadRun>['1']['specResults'],
   config: OpticCliConfig,
+  specDetails: {
+    apiId: string;
+    orgId: string;
+  } | null,
   options: {
     headTag?: string;
     standard: ConfigRuleset[];
@@ -31,34 +30,30 @@ export async function uploadDiff(
     ? ora({ text: `Uploading diff...`, color: 'blue' })
     : null;
 
-  const opticUrl: string | null =
-    specs.to.jsonLike[OPTIC_URL_KEY] ??
-    specs.from.jsonLike[OPTIC_URL_KEY] ??
-    null;
-  const specDetails = opticUrl ? getApiFromOpticUrl(opticUrl) : null;
   // We upload a spec if it is unchanged in git and there is an API id on the spec
   let baseSpecId: string | null = null;
   let headSpecId: string | null = null;
   if (specs.from.context && specDetails) {
-    const tags =
-      specs.from.context.vcs === VCS.Git
-        ? [`git:${specs.from.context.sha}`]
-        : [];
-    baseSpecId = await uploadSpec(specDetails.apiId, {
-      spec: specs.from,
-      client: config.client,
-      tags,
-      orgId: specDetails.orgId,
-    });
+    if (specs.from.context.vcs === VCS.Git) {
+      const tags = [`git:${specs.from.context.sha}`];
+      baseSpecId = await uploadSpec(specDetails.apiId, {
+        spec: specs.from,
+        client: config.client,
+        tags,
+        orgId: specDetails.orgId,
+      });
+    } else if (specs.from.context.vcs === VCS.Cloud) {
+      baseSpecId = specs.from.context.specId;
+    }
   } else if (specs.from.isEmptySpec) {
     baseSpecId = EMPTY_SPEC_ID;
   }
 
   if (specs.to.context && specDetails) {
-    let tags: string[] = [];
-    const tagsFromOptions = getTagsFromOptions(options.headTag);
-    tags.push(...tagsFromOptions);
     if (specs.to.context.vcs === VCS.Git) {
+      let tags: string[] = [];
+      const tagsFromOptions = getTagsFromOptions(options.headTag);
+      tags.push(...tagsFromOptions);
       tags.push(`git:${specs.to.context.sha}`);
       // If no gitbranch is set, try to add own git branch
       if (!tagsFromOptions.some((tag) => /^gitbranch\:/.test(tag))) {
@@ -74,15 +69,17 @@ export async function uploadDiff(
           );
         }
       }
-    }
 
-    tags = getUniqueTags(tags);
-    headSpecId = await uploadSpec(specDetails.apiId, {
-      spec: specs.to,
-      client: config.client,
-      tags,
-      orgId: specDetails.orgId,
-    });
+      tags = getUniqueTags(tags);
+      headSpecId = await uploadSpec(specDetails.apiId, {
+        spec: specs.to,
+        client: config.client,
+        tags,
+        orgId: specDetails.orgId,
+      });
+    } else if (specs.to.context.vcs === VCS.Cloud) {
+      headSpecId = specs.to.context.specId;
+    }
   } else if (specs.to.isEmptySpec) {
     headSpecId = EMPTY_SPEC_ID;
   }
