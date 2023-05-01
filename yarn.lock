@@ -8805,8 +8805,8 @@ __metadata:
   linkType: hard
 
 "mockttp@npm:^3.7.3":
-  version: 3.7.3
-  resolution: "mockttp@npm:3.7.3"
+  version: 3.7.4
+  resolution: "mockttp@npm:3.7.4"
   dependencies:
     "@graphql-tools/schema": ^8.5.0
     "@graphql-tools/utils": ^8.8.0
@@ -8842,13 +8842,14 @@ __metadata:
     performance-now: ^2.1.0
     portfinder: 1.0.28
     read-tls-client-hello: ^1.0.0
+    semver: ^5.7.1
     socks-proxy-agent: ^7.0.0
     typed-error: ^3.0.2
     uuid: ^8.3.2
     ws: ^8.8.0
   bin:
     mockttp: dist/admin/admin-bin.js
-  checksum: 5a8a9f360445b298376921f577bb6267bcf9d0211dc1edddcca04deb244d8d335a5175a589f8ac25312df16853db32b81918003dbe5d8afb400b659af3503062
+  checksum: 745fc889c7c713e01f7d733abbfd8f68001275dd612c3d689516f6b5385ecd3eef635b28ed23227a92eaaacc4ed3936e2895afcee444a5c1cab19b2ba71d939c
   languageName: node
   linkType: hard
 
@@ -10204,7 +10205,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^5.5.0, semver@npm:^5.6.0":
+"semver@npm:^5.5.0, semver@npm:^5.6.0, semver@npm:^5.7.1":
   version: 5.7.1
   resolution: "semver@npm:5.7.1"
   bin:
