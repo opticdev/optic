@@ -3905,7 +3905,7 @@ __metadata:
     log-node: ^8.0.3
     loglevel: ^1.8.0
     minimatch: 9.0.0
-    mockttp: ^3.7.3
+    mockttp: ^3.7.4
     node-fetch: ^2.6.7
     node-forge: ^1.2.1
     node-machine-id: ^1.1.12
@@ -8804,7 +8804,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mockttp@npm:^3.7.3":
+"mockttp@npm:^3.7.4":
   version: 3.7.4
   resolution: "mockttp@npm:3.7.4"
   dependencies:
