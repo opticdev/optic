@@ -20,7 +20,7 @@ exports[`ProxyInteractions captures requests and responses, proxied to a target 
       "accept-encoding": "br, gzip, deflate",
       "connection": "close",
       "content-length": "6",
-      "host": "localhost:8001",
+      "host": "localhost:8000",
     },
     "httpVersion": "1.1",
     "id": Any<String>,
@@ -35,7 +35,7 @@ exports[`ProxyInteractions captures requests and responses, proxied to a target 
       "startTime": Any<Number>,
       "startTimestamp": Any<Number>,
     },
-    "url": "http://localhost:8001/some-path",
+    "url": "http://localhost:8000/some-path",
   },
   "response": {
     "body": {

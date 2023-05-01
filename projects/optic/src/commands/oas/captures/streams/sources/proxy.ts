@@ -37,13 +37,16 @@ export class ProxyInteractions {
     options: {
       ca?: ProxyCertAuthority;
       targetCA?: Array<{ cert: Buffer | string }>;
-    } = {}
+      mode: 'reverse-proxy' | 'system-proxy';
+    }
   ): Promise<[ProxyInteractions, string, string]> {
-    let { host, protocol } = new URL(targetHost);
+    let { host, protocol, origin } = new URL(targetHost);
     if (targetHost.includes('/')) {
       // accept urls to be passed in rather than pure hosts
       targetHost = host;
     }
+
+    const forwardHost = options.mode === 'reverse-proxy' ? origin : targetHost;
 
     if (protocol)
       invariant(
@@ -61,7 +64,7 @@ export class ProxyInteractions {
       },
     });
 
-    let forwardedHosts = [targetHost];
+    let forwardedHosts = [forwardHost];
     await capturingProxy
       .forAnyRequest()
       .always()
@@ -94,7 +97,7 @@ export class ProxyInteractions {
       .thenPassThrough({
         beforeRequest: onTargetedRequest,
         forwarding: {
-          targetHost: targetHost,
+          targetHost: forwardHost,
           updateHostHeader: true,
         },
         trustAdditionalCAs: options.targetCA || [],
