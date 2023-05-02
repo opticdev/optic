@@ -104,7 +104,7 @@ tasks:
       - setup
     cmds:
       - task: build
-      - pkg package.json {{.CLI_ARGS}}
+      - npx --yes pkg package.json {{.CLI_ARGS}}
 
   pkg:clean:
     cmds:
