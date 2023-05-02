@@ -27,6 +27,7 @@ import { generateComparisonLogsV2 } from '../../utils/diff-renderer';
 import path from 'path';
 import { getApiUrl } from '../../utils/cloud-urls';
 import { getDetailsForGeneration } from '../../utils/generated';
+import * as Types from '../../client/optic-backend-types';
 
 const usage = () => `
   optic diff-all
@@ -283,10 +284,13 @@ async function computeAll(
           pathToUrl[p] = null;
         }
       }
-      const { apis } = await config.client.getApis(
-        Object.keys(pathToUrl),
-        web_url
-      );
+      let apis: (Types.Api | null)[] = [];
+      if (Object.keys(pathToUrl).length > 0) {
+        ({ apis } = await config.client.getApis(
+          Object.keys(pathToUrl),
+          web_url
+        ));
+      }
 
       for (const api of apis) {
         if (api) {
