@@ -112,5 +112,19 @@
     "update-notifier": "^5.1.0",
     "url-join": "^4.0.1",
     "whatwg-mimetype": "^3.0.0"
+  },
+  "pkg": {
+    "scripts": [
+      "build/commands/ruleset/upload.js"
+    ],
+    "assets": [
+      "../../node_modules/open/xdg-open",
+      "../../node_modules/vm2/lib/setup-sandbox.js"
+    ],
+    "targets": [
+      "node18-macos-arm64",
+      "node18-macos-x64"
+    ],
+    "outputPath": "../../dist"
   }
 }
