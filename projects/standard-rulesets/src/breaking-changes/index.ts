@@ -29,11 +29,17 @@ import {
   preventHeaderParameterTypeChange,
 } from './preventParameterTypeChange';
 import Ajv from 'ajv';
+import {
+  SeverityTextOptions,
+  SeverityText,
+  textToSev,
+} from '@useoptic/openapi-utilities';
 
 type YamlConfig = {
   exclude_operations_with_extension?: string;
   skip_when_major_version_changes?: boolean;
   docs_link?: string;
+  severity?: SeverityText;
 };
 
 const ajv = new Ajv();
@@ -48,6 +54,10 @@ const configSchema = {
     },
     docs_link: {
       type: 'string',
+    },
+    severity: {
+      type: 'string',
+      enum: SeverityTextOptions,
     },
   },
 };
@@ -103,7 +113,9 @@ export class BreakingChangesRuleset extends Ruleset<BreakingChangesRules> {
     const constructorConfig: Omit<
       RulesetConfig<BreakingChangesRules>,
       'name' | 'rules'
-    > = {};
+    > = {
+      severity: validatedConfig.severity && textToSev(validatedConfig.severity),
+    };
     constructorConfig.matches = (context) => {
       if (
         shouldCheckSpecVersion &&
@@ -132,6 +144,7 @@ export class BreakingChangesRuleset extends Ruleset<BreakingChangesRules> {
       ...config,
       name: 'Breaking changes ruleset',
       rules: breakingChangesRules,
+      severity: config.severity,
     });
   }
 }

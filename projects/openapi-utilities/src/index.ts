@@ -101,7 +101,14 @@ export {
 } from './compare-specs/compare-specs';
 export { groupDiffsByEndpoint } from './openapi3/group-diff';
 export { ObjectDiff, typeofDiff, diff, reconcileDiff } from './diff/diff';
-export { RuleResult, Severity, textToSev, sevToText } from './results';
+export {
+  RuleResult,
+  Severity,
+  textToSev,
+  sevToText,
+  SeverityTextOptions,
+  SeverityText,
+} from './results';
 export { OpenApiV3Traverser } from './openapi3/traverser';
 
 export {

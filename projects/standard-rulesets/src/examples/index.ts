@@ -1,9 +1,10 @@
+import { Rule, RuleContext, Ruleset } from '@useoptic/rulesets-base';
 import {
-  Rule,
-  RuleContext,
-  Ruleset,
-  RulesetConfig,
-} from '@useoptic/rulesets-base';
+  Severity,
+  SeverityTextOptions,
+  SeverityText,
+  textToSev,
+} from '@useoptic/openapi-utilities';
 import Ajv from 'ajv';
 import { appliesWhen } from './constants';
 import {
@@ -25,7 +26,8 @@ type YamlConfig = {
   require_request_examples?: boolean;
   require_response_examples?: boolean;
   require_parameter_examples?: boolean;
-  required_on?: typeof appliesWhen[number];
+  required_on?: (typeof appliesWhen)[number];
+  severity?: SeverityText;
 };
 
 const ajv = new Ajv();
@@ -34,6 +36,10 @@ const configSchema = {
   properties: {
     exclude_operations_with_extension: {
       type: 'string',
+    },
+    severity: {
+      type: 'string',
+      enum: SeverityTextOptions,
     },
     docs_link: {
       type: 'string',
@@ -54,10 +60,17 @@ const configSchema = {
   },
 };
 
-type ExampleConstructor = YamlConfig & {
+type ExampleConstructor = {
+  exclude_operations_with_extension?: string;
+  docs_link?: string;
+  require_request_examples?: boolean;
+  require_response_examples?: boolean;
+  require_parameter_examples?: boolean;
+  required_on?: (typeof appliesWhen)[number];
   matches?: (context: RuleContext) => boolean;
   docsLink?: string;
   configureAjv?: (ajv: Ajv) => void;
+  severity?: Severity;
 };
 
 const validateConfigSchema = ajv.compile(configSchema);
@@ -78,6 +91,7 @@ export class ExamplesRuleset extends Ruleset {
     const validatedConfig = config as YamlConfig;
     const constructorConfig: ExampleConstructor = {
       ...validatedConfig,
+      severity: validatedConfig.severity && textToSev(validatedConfig.severity),
     };
 
     if (validatedConfig.exclude_operations_with_extension !== undefined) {
@@ -90,7 +104,7 @@ export class ExamplesRuleset extends Ruleset {
       constructorConfig.docsLink = validatedConfig.docs_link;
     }
 
-    return new ExamplesRuleset(validatedConfig);
+    return new ExamplesRuleset(constructorConfig);
   }
 
   constructor(config: ExampleConstructor) {
@@ -121,6 +135,7 @@ export class ExamplesRuleset extends Ruleset {
       rules: rules,
       matches: config.matches,
       docsLink: config.docsLink,
+      severity: config.severity,
     });
   }
 }

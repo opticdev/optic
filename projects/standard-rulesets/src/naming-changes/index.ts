@@ -7,17 +7,24 @@ import { createResponseHeaderParameterChecks } from './responseHeader';
 import { createCookieParameterChecks } from './cookieParameters';
 import { createPathComponentChecks } from './pathComponents';
 import Ajv from 'ajv';
+import {
+  Severity,
+  SeverityTextOptions,
+  SeverityText,
+  textToSev,
+} from '@useoptic/openapi-utilities';
 
 type RulesetConfig = {
   exclude_operations_with_extension?: string;
   docs_link?: string;
-  required_on?: typeof appliesWhen[number];
-  requestHeaders?: typeof casing[number];
-  queryParameters?: typeof casing[number];
-  responseHeaders?: typeof casing[number];
-  cookieParameters?: typeof casing[number];
-  pathComponents?: typeof casing[number];
-  properties?: typeof casing[number];
+  required_on?: (typeof appliesWhen)[number];
+  requestHeaders?: (typeof casing)[number];
+  queryParameters?: (typeof casing)[number];
+  responseHeaders?: (typeof casing)[number];
+  cookieParameters?: (typeof casing)[number];
+  pathComponents?: (typeof casing)[number];
+  properties?: (typeof casing)[number];
+  severity?: SeverityText;
 };
 
 const ajv = new Ajv();
@@ -33,6 +40,10 @@ const configSchema = {
     },
     docs_link: {
       type: 'string',
+    },
+    severity: {
+      type: 'string',
+      enum: SeverityTextOptions,
     },
     // TODO deprecate applies in naming config
     applies: {
@@ -111,14 +122,16 @@ export class NamingChangesRuleset extends Ruleset<Rule[]> {
       options: namingConfig,
       docsLink: validatedConfig.docs_link,
       matches,
+      severity: validatedConfig.severity && textToSev(validatedConfig.severity),
     });
   }
 
   constructor(config: {
-    required_on: typeof appliesWhen[number];
+    required_on: (typeof appliesWhen)[number];
     options?: NamingConfig;
     docsLink?: string;
     matches?: Ruleset['matches'];
+    severity?: Severity;
   }) {
     if (!config) {
       // TODO silence this from sentry
@@ -186,6 +199,7 @@ export class NamingChangesRuleset extends Ruleset<Rule[]> {
       docsLink,
       matches,
       rules: namingChangeRules,
+      severity: config.severity,
     });
   }
 }
