@@ -1,4 +1,6 @@
-export function textToSev(sev: 'info' | 'warn' | 'error'): Severity {
+export const SeverityTextOptions = ['info', 'warn', 'error'] as const;
+export type SeverityText = (typeof SeverityTextOptions)[number];
+export function textToSev(sev: SeverityText): Severity {
   return sev === 'info'
     ? Severity.Info
     : sev === 'warn'
@@ -6,7 +8,7 @@ export function textToSev(sev: 'info' | 'warn' | 'error'): Severity {
     : Severity.Error;
 }
 
-export function sevToText(sev: Severity): 'info' | 'warn' | 'error' {
+export function sevToText(sev: Severity): SeverityText {
   return sev === Severity.Info
     ? 'info'
     : sev === Severity.Warn

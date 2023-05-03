@@ -6,6 +6,7 @@ import { SpecificationRule } from './specification-rule';
 import { PropertyRule } from './property-rule';
 import { RuleContext } from '../types';
 import { ExternalRuleBase } from './external-rule-base';
+import { Severity } from '@useoptic/openapi-utilities';
 
 export type Rule =
   | SpecificationRule
@@ -49,6 +50,8 @@ export type RulesetConfig<Rules extends Rule[]> = {
    * A subset of rules from the ruleset to use exclusively, by name.
    */
   rulesOnly?: RuleNames<Rules>[];
+
+  severity?: Severity;
 };
 
 export class Ruleset<Rules extends Rule[] = Rule[]> {
@@ -78,6 +81,13 @@ export class Ruleset<Rules extends Rule[] = Rule[]> {
     this.matches = config.matches;
     this.rules = rules;
     this.type = 'ruleset';
+
+    if (config.severity !== undefined) {
+      const sev = config.severity;
+      this.rules.forEach((r) => {
+        r.severity = sev;
+      });
+    }
   }
 
   static isInstance(v: any): v is Ruleset {
