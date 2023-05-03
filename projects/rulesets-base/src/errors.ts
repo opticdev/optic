@@ -1,5 +1,8 @@
+import { Severity } from '@useoptic/openapi-utilities';
+
 type RuleConfig = {
   message: string;
+  severity?: Severity;
 } & (
   | {
       expected?: undefined;
@@ -13,9 +16,11 @@ type RuleConfig = {
 
 export class RuleError extends Error {
   public type: 'rule-error';
+  public severity?: Severity;
   constructor(public details: RuleConfig) {
     super(details.message);
     this.type = 'rule-error';
+    this.severity = details.severity;
     // https://github.com/Microsoft/TypeScript-wiki/blob/main/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work
     Object.setPrototypeOf(this, RuleError.prototype);
   }
