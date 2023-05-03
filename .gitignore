@@ -16,3 +16,6 @@ build
 
 .env
 .husky
+
+# directory where optic binaries are built
+dist/
