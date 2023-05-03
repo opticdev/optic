@@ -35,14 +35,14 @@ const getPreventParameterTypeChange = (parameterIn: ParameterIn) =>
     },
   });
 
-export const preventQueryParameterTypeChange =
+export const preventQueryParameterTypeChange = () =>
   getPreventParameterTypeChange('query');
 
-export const preventCookieParameterTypeChange =
+export const preventCookieParameterTypeChange = () =>
   getPreventParameterTypeChange('cookie');
 
-export const preventPathParameterTypeChange =
+export const preventPathParameterTypeChange = () =>
   getPreventParameterTypeChange('path');
 
-export const preventHeaderParameterTypeChange =
+export const preventHeaderParameterTypeChange = () =>
   getPreventParameterTypeChange('header');

@@ -66,12 +66,14 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
   private addedAssertions: Assertion<T>[];
   private changedAssertions: ChangedAssertion<T>[];
   private removedAssertions: Assertion<T>[];
+  private severity: Severity;
 
-  constructor(private type: T, private severity: Severity) {
+  constructor(private type: T, severity?: Severity) {
     this.requirementAssertions = [];
     this.addedAssertions = [];
     this.changedAssertions = [];
     this.removedAssertions = [];
+    this.severity = severity ?? Severity.Error;
   }
 
   private createAssertionHelpers = (
@@ -369,13 +371,13 @@ type ResponseBodyAssertionsRunner = {
 };
 
 export const createSpecificationAssertions = (
-  severity: Severity
+  severity: Severity | undefined
 ): AssertionRunner<'specification'> => {
   return new AssertionRunner('specification', severity);
 };
 
 export const createOperationAssertions = (
-  severity: Severity
+  severity: Severity | undefined
 ): OperationAssertionsRunner => {
   const operationAssertions: any = new AssertionRunner('operation', severity);
   const queryParameterAssertions = new AssertionRunner(
@@ -404,7 +406,7 @@ export const createOperationAssertions = (
 };
 
 export const createRequestAssertions = (
-  severity: Severity
+  severity: Severity | undefined
 ): RequestAssertionsRunner => {
   const requestAssertions: any = {};
   const bodyAssertions = new AssertionRunner('request-body', severity);
@@ -417,7 +419,7 @@ export const createRequestAssertions = (
 };
 
 export const createResponseAssertions = (
-  severity: Severity
+  severity: Severity | undefined
 ): ResponseAssertionsRunner => {
   const responseAssertions: any = new AssertionRunner('response', severity);
   const headerAssertions = new AssertionRunner('response-header', severity);
@@ -428,7 +430,7 @@ export const createResponseAssertions = (
 };
 
 export const createResponseBodyAssertions = (
-  severity: Severity
+  severity: Severity | undefined
 ): ResponseBodyAssertionsRunner => {
   const responseBodyAssertions: any = {};
   const headerAssertions = new AssertionRunner('response-header', severity);
@@ -443,7 +445,7 @@ export const createResponseBodyAssertions = (
 };
 
 export const createPropertyAssertions = (
-  severity: Severity
+  severity: Severity | undefined
 ): AssertionRunner<'property'> => {
   return new AssertionRunner('property', severity);
 };

@@ -1,4 +1,9 @@
-import { Ruleset, RulesetConfig } from '@useoptic/rulesets-base';
+import {
+  Rule,
+  RuleContext,
+  Ruleset,
+  RulesetConfig,
+} from '@useoptic/rulesets-base';
 import { preventOperationRemoval } from './preventOperationRemoval';
 import { preventRequestPropertyRequired } from './preventRequestPropertyRequired';
 import { preventRequestPropertyTypeChange } from './preventRequestPropertyTypeChange';
@@ -29,11 +34,7 @@ import {
   preventHeaderParameterTypeChange,
 } from './preventParameterTypeChange';
 import Ajv from 'ajv';
-import {
-  SeverityTextOptions,
-  SeverityText,
-  textToSev,
-} from '@useoptic/openapi-utilities';
+import { SeverityTextOptions, SeverityText } from '@useoptic/openapi-utilities';
 
 type YamlConfig = {
   exclude_operations_with_extension?: string;
@@ -63,33 +64,13 @@ const configSchema = {
 };
 const validateConfigSchema = ajv.compile(configSchema);
 
-const breakingChangesRules = [
-  preventCookieParameterEnumBreak,
-  preventCookieParameterTypeChange,
-  preventHeaderParameterEnumBreak,
-  preventHeaderParameterTypeChange,
-  preventNewRequiredCookieParameter,
-  preventNewRequiredHeaderParameter,
-  preventNewRequiredQueryParameter,
-  preventOperationRemoval,
-  preventPathParameterEnumBreak,
-  preventPathParameterTypeChange,
-  preventQueryParameterEnumBreak,
-  preventQueryParameterTypeChange,
-  preventRequestPropertyRequired,
-  preventRequestPropertyTypeChange,
-  preventRequireExistingCookieParameter,
-  preventRequireExistingHeaderParameter,
-  preventRequireExistingQueryParameter,
-  preventResponsePropertyOptional,
-  preventResponsePropertyRemoval,
-  preventResponsePropertyTypeChange,
-  preventResponseStatusCodeRemoval,
-];
+type ConstructorConfig = {
+  severity?: SeverityText;
+  matches?: (context: RuleContext) => boolean;
+  docsLink?: string;
+};
 
-type BreakingChangesRules = typeof breakingChangesRules;
-
-export class BreakingChangesRuleset extends Ruleset<BreakingChangesRules> {
+export class BreakingChangesRuleset extends Ruleset<Rule[]> {
   static async fromOpticConfig(
     config: unknown
   ): Promise<BreakingChangesRuleset | string> {
@@ -110,11 +91,8 @@ export class BreakingChangesRuleset extends Ruleset<BreakingChangesRules> {
       ? validatedConfig.skip_when_major_version_changes
       : true;
 
-    const constructorConfig: Omit<
-      RulesetConfig<BreakingChangesRules>,
-      'name' | 'rules'
-    > = {
-      severity: validatedConfig.severity && textToSev(validatedConfig.severity),
+    const constructorConfig: ConstructorConfig = {
+      severity: validatedConfig.severity,
     };
     constructorConfig.matches = (context) => {
       if (
@@ -137,9 +115,30 @@ export class BreakingChangesRuleset extends Ruleset<BreakingChangesRules> {
     return new BreakingChangesRuleset(constructorConfig);
   }
 
-  constructor(
-    config: Omit<RulesetConfig<BreakingChangesRules>, 'name' | 'rules'> = {}
-  ) {
+  constructor(config: ConstructorConfig = {}) {
+    const breakingChangesRules = [
+      preventCookieParameterEnumBreak(),
+      preventCookieParameterTypeChange(),
+      preventHeaderParameterEnumBreak(),
+      preventHeaderParameterTypeChange(),
+      preventNewRequiredCookieParameter(),
+      preventNewRequiredHeaderParameter(),
+      preventNewRequiredQueryParameter(),
+      preventOperationRemoval(),
+      preventPathParameterEnumBreak(),
+      preventPathParameterTypeChange(),
+      preventQueryParameterEnumBreak(),
+      preventQueryParameterTypeChange(),
+      preventRequestPropertyRequired(),
+      preventRequestPropertyTypeChange(),
+      preventRequireExistingCookieParameter(),
+      preventRequireExistingHeaderParameter(),
+      preventRequireExistingQueryParameter(),
+      preventResponsePropertyOptional(),
+      preventResponsePropertyRemoval(),
+      preventResponsePropertyTypeChange(),
+      preventResponseStatusCodeRemoval(),
+    ];
     super({
       ...config,
       name: 'Breaking changes ruleset',

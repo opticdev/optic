@@ -6,7 +6,7 @@ import { SpecificationRule } from './specification-rule';
 import { PropertyRule } from './property-rule';
 import { RuleContext } from '../types';
 import { ExternalRuleBase } from './external-rule-base';
-import { Severity } from '@useoptic/openapi-utilities';
+import { SeverityText, textToSev } from '@useoptic/openapi-utilities';
 
 export type Rule =
   | SpecificationRule
@@ -51,7 +51,7 @@ export type RulesetConfig<Rules extends Rule[]> = {
    */
   rulesOnly?: RuleNames<Rules>[];
 
-  severity?: Severity;
+  severity?: SeverityText;
 };
 
 export class Ruleset<Rules extends Rule[] = Rule[]> {
@@ -83,9 +83,16 @@ export class Ruleset<Rules extends Rule[] = Rule[]> {
     this.type = 'ruleset';
 
     if (config.severity !== undefined) {
-      const sev = config.severity;
-      this.rules.forEach((r) => {
-        r.severity = sev;
+      const configSev = config.severity;
+      this.rules = this.rules.map((r) => {
+        const sev =
+          r.severity === undefined
+            ? (r.severity = textToSev(configSev))
+            : r.severity;
+        return {
+          ...r,
+          severity: sev,
+        };
       });
     }
   }

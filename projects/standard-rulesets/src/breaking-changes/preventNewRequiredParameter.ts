@@ -26,11 +26,11 @@ const getPreventNewRequiredParameter = (parameterIn: ParameterIn) =>
     },
   });
 
-export const preventNewRequiredQueryParameter =
+export const preventNewRequiredQueryParameter = () =>
   getPreventNewRequiredParameter('query');
 
-export const preventNewRequiredCookieParameter =
+export const preventNewRequiredCookieParameter = () =>
   getPreventNewRequiredParameter('cookie');
 
-export const preventNewRequiredHeaderParameter =
+export const preventNewRequiredHeaderParameter = () =>
   getPreventNewRequiredParameter('header');

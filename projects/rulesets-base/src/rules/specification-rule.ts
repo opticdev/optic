@@ -21,7 +21,7 @@ export class SpecificationRule<RuleName extends string = string> {
     specification: SpecificationAssertions,
     context: RuleContext
   ) => void;
-  public severity: Severity;
+  public severity?: Severity;
 
   constructor(config: SpecificationRuleConfig<RuleName>) {
     // this could be invoked via javascript so we still to check
@@ -36,9 +36,7 @@ export class SpecificationRule<RuleName extends string = string> {
     this.matches = config.matches;
     this.rule = config.rule;
     this.type = 'specification-rule';
-    this.severity = config.severity
-      ? textToSev(config.severity)
-      : Severity.Error;
+    this.severity = config.severity && textToSev(config.severity);
   }
 
   static isInstance(v: any): v is SpecificationRule {

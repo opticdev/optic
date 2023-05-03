@@ -8,6 +8,7 @@ describe('fromOpticConfig', () => {
       properties: 'snake_case',
       exclude_operations_with_extension: 'x-legacy',
       docs_link: 'asdasd.com',
+      severity: 'warn',
     });
     expect(ruleset).toBeInstanceOf(NamingChangesRuleset);
   });

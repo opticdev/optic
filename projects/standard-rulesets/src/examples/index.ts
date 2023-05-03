@@ -1,10 +1,5 @@
 import { Rule, RuleContext, Ruleset } from '@useoptic/rulesets-base';
-import {
-  Severity,
-  SeverityTextOptions,
-  SeverityText,
-  textToSev,
-} from '@useoptic/openapi-utilities';
+import { SeverityTextOptions, SeverityText } from '@useoptic/openapi-utilities';
 import Ajv from 'ajv';
 import { appliesWhen } from './constants';
 import {
@@ -70,7 +65,7 @@ type ExampleConstructor = {
   matches?: (context: RuleContext) => boolean;
   docsLink?: string;
   configureAjv?: (ajv: Ajv) => void;
-  severity?: Severity;
+  severity?: SeverityText;
 };
 
 const validateConfigSchema = ajv.compile(configSchema);
@@ -91,7 +86,7 @@ export class ExamplesRuleset extends Ruleset {
     const validatedConfig = config as YamlConfig;
     const constructorConfig: ExampleConstructor = {
       ...validatedConfig,
-      severity: validatedConfig.severity && textToSev(validatedConfig.severity),
+      severity: validatedConfig.severity,
     };
 
     if (validatedConfig.exclude_operations_with_extension !== undefined) {

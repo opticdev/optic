@@ -7,12 +7,7 @@ import { createResponseHeaderParameterChecks } from './responseHeader';
 import { createCookieParameterChecks } from './cookieParameters';
 import { createPathComponentChecks } from './pathComponents';
 import Ajv from 'ajv';
-import {
-  Severity,
-  SeverityTextOptions,
-  SeverityText,
-  textToSev,
-} from '@useoptic/openapi-utilities';
+import { SeverityTextOptions, SeverityText } from '@useoptic/openapi-utilities';
 
 type RulesetConfig = {
   exclude_operations_with_extension?: string;
@@ -122,7 +117,7 @@ export class NamingChangesRuleset extends Ruleset<Rule[]> {
       options: namingConfig,
       docsLink: validatedConfig.docs_link,
       matches,
-      severity: validatedConfig.severity && textToSev(validatedConfig.severity),
+      severity: validatedConfig.severity,
     });
   }
 
@@ -131,7 +126,7 @@ export class NamingChangesRuleset extends Ruleset<Rule[]> {
     options?: NamingConfig;
     docsLink?: string;
     matches?: Ruleset['matches'];
-    severity?: Severity;
+    severity?: SeverityText;
   }) {
     if (!config) {
       // TODO silence this from sentry
