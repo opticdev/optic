@@ -28,6 +28,7 @@ import path from 'path';
 import { getApiUrl } from '../../utils/cloud-urls';
 import { getDetailsForGeneration } from '../../utils/generated';
 import * as Types from '../../client/optic-backend-types';
+import { getFileCandidates } from '../api/get-file-candidates';
 
 const usage = () => `
   optic diff-all
@@ -622,7 +623,14 @@ const getDiffAllAction =
     let candidateMap: CandidateMap;
     let compareToCandidates: string[];
     try {
-      compareToCandidates = await findOpenApiSpecsCandidates(options.compareTo);
+      if (options.compareTo) {
+        compareToCandidates = await findOpenApiSpecsCandidates(
+          options.compareTo
+        );
+      } else {
+        const paths = await getFileCandidates({ root: config.root });
+        compareToCandidates = paths.map((p) => path.relative(process.cwd(), p));
+      }
     } catch (e) {
       logger.error(
         `Error reading files from git history for --compare-to ${options.compareTo}`
