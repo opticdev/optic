@@ -94,3 +94,18 @@ tasks:
         --builder optic-multiplatform-builder
         --build-arg OPTIC_CLI_VERSION={{.OPTIC_CLI_VERSION}}
         .
+
+  #
+  # SEA packaging
+  #
+  pkg:build:
+    dir: projects/optic
+    deps:
+      - setup
+    cmds:
+      - task: build
+      - npx --yes pkg package.json {{.CLI_ARGS}}
+
+  pkg:clean:
+    cmds:
+      - rm -rf dist/*

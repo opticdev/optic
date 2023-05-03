@@ -23,3 +23,9 @@ jobs:
 
       - name: Test
         run: task default test
+
+      # build optic binaries. we don't do anything with them yet, but we will soon. building them here
+      # to ensure the build process works. since this is a linux-host we only build for linux. eventually,
+      # we'll need something building on macos (and windows?) too.
+      - name: Build SEA
+        run: task pkg:build -- -t node18-linux-x64
