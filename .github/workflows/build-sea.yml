@@ -1,0 +1,36 @@
+name: Build SEA
+on:
+  pull_request:
+  workflow_dispatch:
+  merge_group:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-sea:
+    runs-on: macos-13-xl
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: yarn
+
+      - name: Install Task
+        run: curl -sL https://taskfile.dev/install.sh | sudo bash -s -- -b /usr/local/bin/
+
+      - name: Build
+        run: task default
+
+      # build optic binaries. we don't do anything with them yet since theyre not being signed.
+      - name: Build packages
+        env:
+          # this is necessary while we build on intel macos hosts, since it can't generate arm64 bytecode
+          pkg_args: '--no-bytecode --public --public-packages "*"'
+        run: >
+          task pkg:build -- ${{ env.pkg_args }}
+
+      # sanity check
+      - run: ls -lah dist/
+      - run: dist/optic-macos-x64 --help
