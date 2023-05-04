@@ -212,7 +212,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           if (RuleError.isInstance(e)) {
             results.push({
               passed: false,
-              severity: this.severity,
+              severity: e.severity ?? this.severity,
               exempted,
               changeOrFact: sanitizeChange(change),
               error: e.toString(),
@@ -254,7 +254,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           if (RuleError.isInstance(e)) {
             results.push({
               passed: false,
-              severity: this.severity,
+              severity: e.severity ?? this.severity,
               exempted,
               changeOrFact: sanitizeFact(after),
               received: JSON.stringify(e.details.received),
@@ -290,7 +290,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           if (RuleError.isInstance(e)) {
             results.push({
               passed: false,
-              severity: this.severity,
+              severity: e.severity ?? this.severity,
               exempted,
               changeOrFact: sanitizeChange(change),
               received: JSON.stringify(e.details.received),
@@ -327,7 +327,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           if (RuleError.isInstance(e)) {
             results.push({
               passed: false,
-              severity: this.severity,
+              severity: e.severity ?? this.severity,
               exempted,
               changeOrFact: sanitizeChange(change),
               received: JSON.stringify(e.details.received),
