@@ -24,11 +24,11 @@ const getPreventRequireExistingParameter = (parameterIn: ParameterIn) =>
     },
   });
 
-export const preventRequireExistingQueryParameter =
+export const preventRequireExistingQueryParameter = () =>
   getPreventRequireExistingParameter('query');
 
-export const preventRequireExistingCookieParameter =
+export const preventRequireExistingCookieParameter = () =>
   getPreventRequireExistingParameter('cookie');
 
-export const preventRequireExistingHeaderParameter =
+export const preventRequireExistingHeaderParameter = () =>
   getPreventRequireExistingParameter('header');

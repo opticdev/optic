@@ -1,8 +1,13 @@
-import { jest, test, expect, describe } from '@jest/globals'
-import { defaultEmptySpec, OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { jest, test, expect, describe } from '@jest/globals';
+import {
+  defaultEmptySpec,
+  OpenAPIV3,
+  Severity,
+} from '@useoptic/openapi-utilities';
 import { RuleRunner } from '../rule-runner';
 import { OperationRule, Ruleset } from '../rules';
 import { createRuleInputs } from '../test-helpers';
+import { RuleError } from '../errors';
 
 describe('ruleset', () => {
   test('matches rules based on a combination of ruleset and rule', async () => {
@@ -117,5 +122,53 @@ describe('ruleset', () => {
     });
   });
 
-  // test('exemptions', () => {})
+  describe('severity', () => {
+    test('applies severity to child rules', async () => {
+      const json: OpenAPIV3.Document = {
+        ...defaultEmptySpec,
+        paths: {
+          '/api/users/{userId}': {
+            post: {
+              responses: {},
+            },
+          },
+        },
+      };
+
+      const ruleset = new Ruleset({
+        name: 'ruleset',
+        severity: 'warn',
+        rules: [
+          new OperationRule({
+            name: 'no sev',
+            rule: (operationAssertions) => {
+              operationAssertions.requirement(() => {
+                throw new RuleError({ message: 'asd' });
+              });
+            },
+          }),
+          new OperationRule({
+            name: 'not overridden',
+            severity: 'error',
+            rule: (operationAssertions) => {
+              operationAssertions.requirement(() => {
+                throw new RuleError({ message: 'asd' });
+              });
+            },
+          }),
+        ],
+      });
+      const ruleRunner = new RuleRunner([ruleset]);
+      const results = await ruleRunner.runRulesWithFacts(
+        createRuleInputs(json, json)
+      );
+
+      expect(results.find((r) => r.name === 'no sev')?.severity).toBe(
+        Severity.Warn
+      );
+      expect(results.find((r) => r.name === 'not overridden')?.severity).toBe(
+        Severity.Error
+      );
+    });
+  });
 });

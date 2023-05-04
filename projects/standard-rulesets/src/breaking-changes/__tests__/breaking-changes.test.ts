@@ -1,5 +1,5 @@
 import { test, expect, describe } from '@jest/globals';
-import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { OpenAPIV3, Severity } from '@useoptic/openapi-utilities';
 import { TestHelpers } from '@useoptic/rulesets-base';
 import { BreakingChangesRuleset } from '../index';
 
@@ -17,6 +17,7 @@ describe('fromOpticConfig', () => {
     const out = await BreakingChangesRuleset.fromOpticConfig({
       exclude_operations_with_extension: 'x-legacy',
       docs_link: 'asdasd.com',
+      severity: 'warn',
     });
 
     expect(out).toBeInstanceOf(BreakingChangesRuleset);
@@ -271,7 +272,11 @@ describe('breaking changes ruleset', () => {
       },
     };
     const results = await TestHelpers.runRulesWithInputs(
-      [new BreakingChangesRuleset()],
+      [
+        new BreakingChangesRuleset({
+          severity: 'info',
+        }),
+      ],
       beforeJson,
       TestHelpers.createEmptySpec()
     );

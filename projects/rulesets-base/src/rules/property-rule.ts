@@ -15,7 +15,7 @@ export class PropertyRule<RuleName extends string = string> {
   public docsLink?: string;
   public matches?: (property: Property, context: RuleContext) => boolean;
   public rule: (property: PropertyAssertions, context: RuleContext) => void;
-  public severity: Severity;
+  public severity?: Severity;
 
   constructor(config: PropertyRuleConfig<RuleName>) {
     // this could be invoked via javascript so we still to check
@@ -30,9 +30,7 @@ export class PropertyRule<RuleName extends string = string> {
     this.matches = config.matches;
     this.rule = config.rule;
     this.type = 'property-rule';
-    this.severity = config.severity
-      ? textToSev(config.severity)
-      : Severity.Error;
+    this.severity = config.severity && textToSev(config.severity);
   }
 
   static isInstance(v: any): v is PropertyRule {

@@ -15,7 +15,7 @@ export class OperationRule<RuleName extends string = string> {
   public docsLink?: string;
   public matches?: (operation: Operation, context: RuleContext) => boolean;
   public rule: (operation: OperationAssertions, context: RuleContext) => void;
-  public severity: Severity;
+  public severity?: Severity;
 
   constructor(config: OperationRuleConfig<RuleName>) {
     // this could be invoked via javascript so we still to check
@@ -30,9 +30,7 @@ export class OperationRule<RuleName extends string = string> {
     this.matches = config.matches;
     this.rule = config.rule;
     this.type = 'operation-rule';
-    this.severity = config.severity
-      ? textToSev(config.severity)
-      : Severity.Error;
+    this.severity = config.severity && textToSev(config.severity);
   }
 
   static isInstance(v: any): v is OperationRule {

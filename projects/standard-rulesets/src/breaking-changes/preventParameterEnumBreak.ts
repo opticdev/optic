@@ -74,14 +74,14 @@ const getPreventParameterEnumBreak = <P extends ParameterIn>(parameterIn: P) =>
     },
   });
 
-export const preventQueryParameterEnumBreak =
+export const preventQueryParameterEnumBreak = () =>
   getPreventParameterEnumBreak('query');
 
-export const preventCookieParameterEnumBreak =
+export const preventCookieParameterEnumBreak = () =>
   getPreventParameterEnumBreak('cookie');
 
-export const preventPathParameterEnumBreak =
+export const preventPathParameterEnumBreak = () =>
   getPreventParameterEnumBreak('path');
 
-export const preventHeaderParameterEnumBreak =
+export const preventHeaderParameterEnumBreak = () =>
   getPreventParameterEnumBreak('header');

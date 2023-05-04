@@ -15,7 +15,7 @@ export class ResponseRule<RuleName extends string = string> {
   public docsLink?: string;
   public matches?: (response: Response, context: RuleContext) => boolean;
   public rule: (response: ResponseAssertions, context: RuleContext) => void;
-  public severity: Severity;
+  public severity?: Severity;
 
   constructor(config: ResponseRuleConfig<RuleName>) {
     // this could be invoked via javascript so we still to check
@@ -30,9 +30,7 @@ export class ResponseRule<RuleName extends string = string> {
     this.matches = config.matches;
     this.rule = config.rule;
     this.type = 'response-rule';
-    this.severity = config.severity
-      ? textToSev(config.severity)
-      : Severity.Error;
+    this.severity = config.severity && textToSev(config.severity);
   }
 
   static isInstance(v: any): v is ResponseRule {

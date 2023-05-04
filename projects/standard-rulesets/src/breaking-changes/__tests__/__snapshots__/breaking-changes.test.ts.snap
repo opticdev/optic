@@ -35,7 +35,7 @@ exports[`breaking changes ruleset operation removal 1`] = `
     "name": "prevent operation removal",
     "passed": false,
     "received": undefined,
-    "severity": 2,
+    "severity": 0,
     "type": "removed",
     "where": "GET /api/users",
   },
