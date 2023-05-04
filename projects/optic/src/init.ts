@@ -40,6 +40,7 @@ export const initCli = async (
     hideNotifier?: boolean;
   } = {}
 ): Promise<Command> => {
+  cli.name('optic');
   initSentry(process.env.SENTRY_URL, packageJson.version);
   initSegment(process.env.SEGMENT_KEY);
   cli.hook('preAction', async (command) => {
