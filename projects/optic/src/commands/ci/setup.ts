@@ -66,7 +66,7 @@ const getCiSetupAction = (config: OpticCliConfig) => async () => {
         message: 'Do you use a script to generate your OpenAPI specs?',
         choices: [
           { title: 'Yes', value: true },
-          { title: 'No (most common)', value: false },
+          { title: 'No', value: false },
         ],
         initial: 1,
       },
@@ -151,7 +151,7 @@ async function setupGitLab(
 
   const fromConfig = path.join(
     configsPath,
-    answers.standardsFail ? 'gitlab_fail.yml' : 'gitlab_no_fail.yml'
+    answers.generatedSpecs ? 'gitlab_generated_spec.yml' : 'gitlab.yml'
   );
   let configContent = await fs.readFile(fromConfig, 'utf-8');
   const standardsValue = answers.standardsFail ? '' : '# ';
