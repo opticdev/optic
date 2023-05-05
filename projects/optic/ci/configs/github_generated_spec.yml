@@ -12,6 +12,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Generate Spec
+        # REPLACE THIS LINE WITH YOUR GENERATION SCRIPT
+        run: generate-spec.sh
+
       - uses: opticdev/action@v1
         with:
           # Your Optic Cloud Token
@@ -23,4 +27,8 @@ jobs:
           # If true, standard check failures will cause this action to fail.
           # If false, standard check failures will show in PR comments and
           # in Optic Cloud but will not cause the action to fail
-          standards_fail: true
+          standards_fail: {{%standards_fail}}
+
+          additional_args: --generated
+          compare_from_pr: cloud:default
+          compare_from_push: cloud:default

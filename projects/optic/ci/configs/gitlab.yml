@@ -35,4 +35,4 @@ optic-diff-merge-request:
     - if [ -n "${OPTIC_GITLAB_TOKEN}" ]; then GITLAB_TOKEN=$OPTIC_GITLAB_TOKEN optic ci comment --provider gitlab --project-id $CI_PROJECT_ID --merge-request-id $CI_MERGE_REQUEST_IID --sha $CI_COMMIT_SHA; fi;
 
     # comment out the next line if you don't want to fail CI when checks fail
-    # - if [ $OPTIC_RESULT -ne 0 ]; then exit 1; fi;
+    {{%standards_fail}}- if [ $OPTIC_RESULT -ne 0 ]; then exit 1; fi;

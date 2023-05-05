@@ -32,6 +32,7 @@ export const registerCiSetup = (cli: Command, config: OpticCliConfig) => {
 type PromptAnswers = {
   provider: 'GitHub' | 'GitLab';
   standardsFail: boolean;
+  generatedSpecs: boolean;
 };
 
 const getCiSetupAction = (config: OpticCliConfig) => async () => {
@@ -58,6 +59,16 @@ const getCiSetupAction = (config: OpticCliConfig) => async () => {
           { title: 'Yes - Recommended', value: true },
           { title: 'No', value: false },
         ],
+      },
+      {
+        type: 'select',
+        name: 'generatedSpecs',
+        message: 'Do you use a script to generate your OpenAPI specs?',
+        choices: [
+          { title: 'Yes', value: true },
+          { title: 'No', value: false },
+        ],
+        initial: 1,
       },
     ],
     { onCancel: () => process.exit(1) }
@@ -88,10 +99,13 @@ async function setupGitHub(
 
   const fromConfig = path.join(
     configsPath,
-    answers.standardsFail ? 'github_fail.yml' : 'github_no_fail.yml'
+    answers.generatedSpecs ? 'github_generated_spec.yml' : 'github.yml'
   );
 
-  const configContent = await fs.readFile(fromConfig);
+  let configContent = await fs.readFile(fromConfig, 'utf-8');
+  const standardsValue = answers.standardsFail ? 'true' : 'false';
+  configContent = configContent.replace('{{%standards_fail}}', standardsValue);
+
   await fs.writeFile(path.join(config.root, target), configContent);
 
   console.log();
@@ -137,9 +151,11 @@ async function setupGitLab(
 
   const fromConfig = path.join(
     configsPath,
-    answers.standardsFail ? 'gitlab_fail.yml' : 'gitlab_no_fail.yml'
+    answers.generatedSpecs ? 'gitlab_generated_spec.yml' : 'gitlab.yml'
   );
-  const configContent = await fs.readFile(fromConfig);
+  let configContent = await fs.readFile(fromConfig, 'utf-8');
+  const standardsValue = answers.standardsFail ? '' : '# ';
+  configContent = configContent.replace('{{%standards_fail}}', standardsValue);
 
   if (!exists) {
     await fs.mkdir(targetDir, { recursive: true });

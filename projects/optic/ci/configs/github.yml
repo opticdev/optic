@@ -23,4 +23,4 @@ jobs:
           # If true, standard check failures will cause this action to fail.
           # If false, standard check failures will show in PR comments and
           # in Optic Cloud but will not cause the action to fail
-          standards_fail: false
+          standards_fail: {{%standards_fail}}
