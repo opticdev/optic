@@ -153,7 +153,9 @@ async function setupGitLab(
     configsPath,
     answers.standardsFail ? 'gitlab_fail.yml' : 'gitlab_no_fail.yml'
   );
-  const configContent = await fs.readFile(fromConfig);
+  let configContent = await fs.readFile(fromConfig, 'utf-8');
+  const standardsValue = answers.standardsFail ? '' : '# ';
+  configContent = configContent.replace('{{%standards_fail}}', standardsValue);
 
   if (!exists) {
     await fs.mkdir(targetDir, { recursive: true });
