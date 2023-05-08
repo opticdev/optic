@@ -109,3 +109,12 @@ tasks:
   pkg:clean:
     cmds:
       - rm -rf dist/*
+
+  pkg:archive:
+    cmds:
+      - mkdir -p dist/archives
+      - >
+        for bin in $(find ./dist -name '*-linux-*'); do
+          name=$(basename "$bin")
+          tar -czvf ./dist/archives/${name}.tar.gz -C dist $name
+        done
