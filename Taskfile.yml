@@ -118,3 +118,7 @@ tasks:
           name=$(basename "$bin")
           tar -czvf ./dist/archives/${name}.tar.gz -C dist $name
         done
+
+  pkg:upload:
+    cmds:
+      - gh release upload {{ .RELEASE_TAG }} ./dist/archives/*
