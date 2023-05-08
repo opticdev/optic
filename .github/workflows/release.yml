@@ -130,6 +130,7 @@ jobs:
 
       - name: Publish binaries
         run: |
+          task pkg:build -- -t node18-linux-arm64,node18-linux-x64
           task pkg:archive pkg:upload RELEASE_TAG=${{ github.event.release.tag_name }}
 
       - name: Announce success
