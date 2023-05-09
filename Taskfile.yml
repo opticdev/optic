@@ -114,7 +114,7 @@ tasks:
     cmds:
       - mkdir -p dist/archives
       - |
-        for bin in $(find ./dist -name '*-linux-*'); do
+        for bin in $(find ./dist -name '*-linux-*' -depth 1); do
           name=$(basename "$bin")
           tar -czvf ./dist/archives/${name}.tar.gz -C dist $name
         done
