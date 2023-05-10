@@ -13,7 +13,8 @@
     "projects/standard-rulesets"
   ],
   "scripts": {
-    "build": "yarn turbo run build",
+    "build": "npx turbo run build",
+    "test": "npx turbo run test",
     "release": "gh release create --target=$(git branch --show-current) v$(node -e \"process.stdout.write(require('./package.json').version)\")",
     "version": "yarn workspaces foreach -v version",
     "prepare": "husky install"

@@ -5,41 +5,10 @@
       "dependsOn": ["^build"],
       "outputs": ["build/**"]
     },
-    "@useoptic/json-point-helpers#build": {
-      "dependsOn": ["^build"],
-      "outputs": ["build/**"]
-    },
-    "@useoptic/optic-ci#build": {
-      "dependsOn": ["^build"],
-      "outputs": ["build/**"]
-    },
-    "@useoptic/openapi-io#build": {
-      "dependsOn": ["^build"],
-      "outputs": ["build/**"]
-    },
-    "@useoptic/rulesets-base#build": {
-      "dependsOn": ["^build"],
-      "outputs": ["build/**"]
-    },
-    "@useoptic/standard-rulesets#build": {
-      "dependsOn": ["^build"],
-      "outputs": ["build/**"]
-    },
-    "@useoptic/openapi-utilties#build": {
-      "dependsOn": ["^build"],
-      "outputs": ["build/**"]
-    },
-    "@useoptic/optic#build": {
-      "dependsOn": ["^build"],
-      "outputs": ["build/**"]
-    },
     "test": {
       "dependsOn": ["build"],
       "outputs": [],
       "inputs": ["src/**/__tests__/*.ts"]
-    },
-    "lint": {
-      "outputs": []
     }
   }
 }

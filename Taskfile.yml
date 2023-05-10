@@ -33,7 +33,8 @@ tasks:
   test:
     desc: Test
     cmds:
-      - yarn workspaces foreach -v --no-private run test {{.CLI_ARGS}}
+      - yarn run test
+      # - yarn workspaces foreach -v --no-private run test {{.CLI_ARGS}}
 
   update-snapshots:
     desc: Update snapshots
