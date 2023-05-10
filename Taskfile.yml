@@ -22,7 +22,8 @@ tasks:
   build:
     desc: Build
     cmds:
-      - yarn workspaces foreach -pv --topological-dev --no-private run build
+      - yarn run build
+      # - yarn workspaces foreach -pv --topological-dev --no-private run build
 
   clean:
     desc: Clean
