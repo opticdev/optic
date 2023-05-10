@@ -27,6 +27,8 @@ import {
 import { errorHandler } from '../../error-handler';
 import { getOrganizationFromToken } from '../../utils/organization';
 import { sanitizeGitTag } from '@useoptic/openapi-utilities';
+import stableStringify from 'json-stable-stringify';
+import { computeChecksumForAws } from '../../utils/checksum';
 
 function short(sha: string) {
   return sha.slice(0, 8);
@@ -88,6 +90,7 @@ async function crawlCandidateSpecs(
     web_url?: string;
   }
 ) {
+  const uploadedChecksums = new Set<string>();
   const pathRelativeToRoot = path.relative(config.root, file_path);
   let parseResult: ParseResult;
   try {
@@ -184,6 +187,12 @@ async function crawlCandidateSpecs(
         );
         break;
       }
+      const stableSpecString = stableStringify(parseResult.jsonLike);
+      const checksum = computeChecksumForAws(stableSpecString);
+      if (uploadedChecksums.has(checksum)) {
+        continue;
+      }
+
       spinner.text = `${chalk.bold.blue(
         parseResult.jsonLike.info.title || pathRelativeToRoot
       )} version ${sha.substring(0, 6)} uploading`;
@@ -193,7 +202,12 @@ async function crawlCandidateSpecs(
         client: config.client,
         orgId,
         forward_effective_at_to_tags: true,
+        precomputed: {
+          specString: stableSpecString,
+          specChecksum: checksum,
+        },
       });
+      uploadedChecksums.add(checksum);
       const effective_at =
         parseResult.context?.vcs === 'git'
           ? parseResult.context.effective_at
