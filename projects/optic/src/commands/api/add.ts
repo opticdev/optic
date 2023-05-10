@@ -311,16 +311,6 @@ export const getApiAddAction =
       return;
     }
 
-    if (file.isDir && options.historyDepth !== '1') {
-      logger.error(
-        chalk.red(
-          'Invalid argument combination: Cannot set a history-depth !== 1 when no spec path is provided'
-        )
-      );
-      process.exitCode = 1;
-      return;
-    }
-
     const orgRes = await getOrganizationFromToken(
       config.client,
       'Select the organization you want to add APIs to'
@@ -397,6 +387,7 @@ export const getApiAddAction =
           )
         : await GitCandidates.getPathCandidatesForSha(config.vcs.sha, {
             startsWith: file.path,
+            depth: options.historyDepth,
           });
     } else {
       const files = !file.isDir
