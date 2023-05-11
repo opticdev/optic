@@ -35,4 +35,4 @@ jobs:
         run: git fetch --no-tags --depth=1 origin main
 
       # sanity check
-      - run: dist/optic diff .github/test-specs/petstore.json --base main
+      - run: dist/optic diff .github/test-specs/petstore.json --base origin/main
