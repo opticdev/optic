@@ -221,16 +221,14 @@ async function crawlCandidateSpecs(
       specsToTag.push([specId, sha, effective_at]);
     }
 
-    if (!alreadyTracked) {
-      const branch = await Git.getCurrentBranchName();
-      const tag = [sanitizeGitTag(`gitbranch:${branch}`)];
-      for (const [specId, sha, effective_at] of [...specsToTag].reverse()) {
-        spinner.text = `${chalk.bold.blue(specName)} version ${sha.substring(
-          0,
-          6
-        )} tagging`;
-        await config.client.tagSpec(specId, tag, effective_at);
-      }
+    const branch = await Git.getCurrentBranchName();
+    const tag = [sanitizeGitTag(`gitbranch:${branch}`)];
+    for (const [specId, sha, effective_at] of [...specsToTag].reverse()) {
+      spinner.text = `${chalk.bold.blue(specName)} version ${sha.substring(
+        0,
+        6
+      )} tagging`;
+      await config.client.tagSpec(specId, tag, effective_at);
     }
   } else {
     // Outside of a git repo, we should just upload it as a spec without tags
