@@ -120,5 +120,7 @@ tasks:
         done
 
   pkg:upload:
+    env:
+      GH_TOKEN: ${{ github.token }}
     cmds:
       - gh release upload {{ .RELEASE_TAG }} ./dist/archives/*
