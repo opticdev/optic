@@ -31,5 +31,8 @@ jobs:
         run: >
           task pkg:build -- ${{ env.pkg_args }}
 
+      - name: Checkout smoke test branch
+        run: git fetch --no-tags --depth=1 origin main
+
       # sanity check
       - run: dist/optic diff .github/test-specs/petstore.json --base main
