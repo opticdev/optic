@@ -86,10 +86,9 @@ export async function uploadSpec(
   const stableSpecString =
     opts.precomputed?.specString ?? stableStringify(opts.spec.jsonLike);
   const stableSourcemapString =
-    opts.precomputed?.specChecksum ?? stableStringify(opts.spec.sourcemap);
+    opts.precomputed?.sourcemapString ?? stableStringify(opts.spec.sourcemap);
   const spec_checksum =
-    opts.precomputed?.sourcemapString ??
-    computeChecksumForAws(stableSpecString);
+    opts.precomputed?.specChecksum ?? computeChecksumForAws(stableSpecString);
   const sourcemap_checksum =
     opts.precomputed?.sourcemapChecksum ??
     computeChecksumForAws(stableSourcemapString);
