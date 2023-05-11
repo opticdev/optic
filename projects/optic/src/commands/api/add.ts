@@ -130,6 +130,7 @@ async function crawlCandidateSpecs(
   const maybeParsedUrl = existingOpticUrl
     ? getApiFromOpticUrl(existingOpticUrl)
     : null;
+  const specName = parseResult.jsonLike.info.title || pathRelativeToRoot;
 
   let alreadyTracked = false;
 
@@ -164,6 +165,9 @@ async function crawlCandidateSpecs(
     }
     const specsToTag: [string, string, Date | undefined][] = [];
     for await (const sha of shas) {
+      spinner.text = `${chalk.bold.blue(
+        specName
+      )} checking version ${sha.substring(0, 6)}`;
       let parseResult: ParseResult;
       try {
         parseResult = await loadSpec(`${sha}:${pathRelativeToRoot}`, config, {
@@ -187,15 +191,17 @@ async function crawlCandidateSpecs(
         );
         break;
       }
+
       const stableSpecString = stableStringify(parseResult.jsonLike);
       const checksum = computeChecksumForAws(stableSpecString);
       if (uploadedChecksums.has(checksum)) {
         continue;
       }
 
-      spinner.text = `${chalk.bold.blue(
-        parseResult.jsonLike.info.title || pathRelativeToRoot
-      )} version ${sha.substring(0, 6)} uploading`;
+      spinner.text = `${chalk.bold.blue(specName)} version ${sha.substring(
+        0,
+        6
+      )} uploading`;
       const specId = await uploadSpec(api.id, {
         spec: parseResult,
         tags: [`git:${sha}`],
@@ -219,9 +225,10 @@ async function crawlCandidateSpecs(
       const branch = await Git.getCurrentBranchName();
       const tag = [sanitizeGitTag(`gitbranch:${branch}`)];
       for (const [specId, sha, effective_at] of [...specsToTag].reverse()) {
-        spinner.text = `${chalk.bold.blue(
-          parseResult.jsonLike.info.title || pathRelativeToRoot
-        )} version ${sha.substring(0, 6)} tagging`;
+        spinner.text = `${chalk.bold.blue(specName)} version ${sha.substring(
+          0,
+          6
+        )} tagging`;
         await config.client.tagSpec(specId, tag, effective_at);
       }
     }
@@ -264,9 +271,7 @@ async function crawlCandidateSpecs(
   }
 
   spinner.succeed(
-    `${chalk.bold.blue(
-      parseResult.jsonLike.info.title || pathRelativeToRoot
-    )} ${
+    `${chalk.bold.blue(specName)} ${
       alreadyTracked ? 'already being tracked' : 'is now being tracked'
     }.\n  ${chalk.bold(`View history: ${chalk.underline(api.url)}`)}`
   );
