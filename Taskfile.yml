@@ -124,3 +124,14 @@ tasks:
       GH_TOKEN: ${{ github.token }}
     cmds:
       - gh release upload {{ .RELEASE_TAG }} ./dist/archives/*
+
+
+  version:force:
+    vars:
+      VERSION: '{{default "SET_VERSION" .VERSION}}'
+    cmds:
+      - |
+        for pkgjson in $(find . -maxdepth 3 -name package.json -type f -not -path "./node_modules/*"); do
+          jq '.version |= "{{.VERSION}}"' "$pkgjson" > "${pkgjson}.tmp"
+          mv "${pkgjson}.tmp" "$pkgjson"
+        done
