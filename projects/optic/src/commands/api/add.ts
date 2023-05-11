@@ -27,6 +27,8 @@ import {
 import { errorHandler } from '../../error-handler';
 import { getOrganizationFromToken } from '../../utils/organization';
 import { sanitizeGitTag } from '@useoptic/openapi-utilities';
+import stableStringify from 'json-stable-stringify';
+import { computeChecksumForAws } from '../../utils/checksum';
 
 function short(sha: string) {
   return sha.slice(0, 8);
@@ -88,6 +90,7 @@ async function crawlCandidateSpecs(
     web_url?: string;
   }
 ) {
+  const uploadedChecksums = new Set<string>();
   const pathRelativeToRoot = path.relative(config.root, file_path);
   let parseResult: ParseResult;
   try {
@@ -127,6 +130,7 @@ async function crawlCandidateSpecs(
   const maybeParsedUrl = existingOpticUrl
     ? getApiFromOpticUrl(existingOpticUrl)
     : null;
+  const specName = parseResult.jsonLike.info.title || pathRelativeToRoot;
 
   let alreadyTracked = false;
 
@@ -149,6 +153,20 @@ async function crawlCandidateSpecs(
   }
 
   if (config.vcs?.type === VCS.Git) {
+    const currentBranch = await Git.getCurrentBranchName();
+    let mergeBaseSha: string | null = null;
+    let shouldTag = true;
+    let branchToUseForTag = currentBranch;
+
+    if (options.default_branch !== '') {
+      mergeBaseSha = await Git.getMergeBase(
+        currentBranch,
+        options.default_branch
+      );
+      shouldTag = false;
+      branchToUseForTag = options.default_branch;
+    }
+
     // If the git workspace is dirty, we should upload the spec with changes
     // such that first use of optic you will have a spec (even without tags)
     if (specHasUncommittedChanges(parseResult.sourcemap, config.vcs.diffSet)) {
@@ -161,6 +179,12 @@ async function crawlCandidateSpecs(
     }
     const specsToTag: [string, string, Date | undefined][] = [];
     for await (const sha of shas) {
+      if (mergeBaseSha === sha) {
+        shouldTag = true;
+      }
+      spinner.text = `${chalk.bold.blue(
+        specName
+      )} checking version ${sha.substring(0, 6)}`;
       let parseResult: ParseResult;
       try {
         parseResult = await loadSpec(`${sha}:${pathRelativeToRoot}`, config, {
@@ -184,32 +208,44 @@ async function crawlCandidateSpecs(
         );
         break;
       }
-      spinner.text = `${chalk.bold.blue(
-        parseResult.jsonLike.info.title || pathRelativeToRoot
-      )} version ${sha.substring(0, 6)} uploading`;
+
+      const stableSpecString = stableStringify(parseResult.jsonLike);
+      const checksum = computeChecksumForAws(stableSpecString);
+      if (uploadedChecksums.has(checksum)) {
+        continue;
+      }
+
+      spinner.text = `${chalk.bold.blue(specName)} version ${sha.substring(
+        0,
+        6
+      )} uploading`;
       const specId = await uploadSpec(api.id, {
         spec: parseResult,
         tags: [`git:${sha}`],
         client: config.client,
         orgId,
         forward_effective_at_to_tags: true,
+        precomputed: {
+          specString: stableSpecString,
+          specChecksum: checksum,
+        },
       });
+      uploadedChecksums.add(checksum);
       const effective_at =
         parseResult.context?.vcs === 'git'
           ? parseResult.context.effective_at
           : undefined;
-      specsToTag.push([specId, sha, effective_at]);
+
+      if (shouldTag) specsToTag.push([specId, sha, effective_at]);
     }
 
-    if (!alreadyTracked) {
-      const branch = await Git.getCurrentBranchName();
-      const tag = [sanitizeGitTag(`gitbranch:${branch}`)];
-      for (const [specId, sha, effective_at] of [...specsToTag].reverse()) {
-        spinner.text = `${chalk.bold.blue(
-          parseResult.jsonLike.info.title || pathRelativeToRoot
-        )} version ${sha.substring(0, 6)} tagging`;
-        await config.client.tagSpec(specId, tag, effective_at);
-      }
+    const tags = [sanitizeGitTag(`gitbranch:${branchToUseForTag}`)];
+    for (const [specId, sha, effective_at] of [...specsToTag].reverse()) {
+      spinner.text = `${chalk.bold.blue(specName)} version ${sha.substring(
+        0,
+        6
+      )} tagging`;
+      await config.client.tagSpec(specId, tags, effective_at);
     }
   } else {
     // Outside of a git repo, we should just upload it as a spec without tags
@@ -250,9 +286,7 @@ async function crawlCandidateSpecs(
   }
 
   spinner.succeed(
-    `${chalk.bold.blue(
-      parseResult.jsonLike.info.title || pathRelativeToRoot
-    )} ${
+    `${chalk.bold.blue(specName)} ${
       alreadyTracked ? 'already being tracked' : 'is now being tracked'
     }.\n  ${chalk.bold(`View history: ${chalk.underline(api.url)}`)}`
   );
@@ -305,16 +339,6 @@ export const getApiAddAction =
       logger.error(
         chalk.red(
           'Invalid argument combination, must specify either a `path` or `--all`'
-        )
-      );
-      process.exitCode = 1;
-      return;
-    }
-
-    if (file.isDir && options.historyDepth !== '1') {
-      logger.error(
-        chalk.red(
-          'Invalid argument combination: Cannot set a history-depth !== 1 when no spec path is provided'
         )
       );
       process.exitCode = 1;
@@ -397,6 +421,7 @@ export const getApiAddAction =
           )
         : await GitCandidates.getPathCandidatesForSha(config.vcs.sha, {
             startsWith: file.path,
+            depth: options.historyDepth,
           });
     } else {
       const files = !file.isDir

@@ -72,6 +72,21 @@ export const getCurrentBranchName = async (): Promise<string> =>
     exec(command, cb);
   });
 
+export const getMergeBase = async (
+  branch1: string,
+  branch2: string
+): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const cb = (err: unknown, stdout: string, stderr: string) => {
+      if (err || stderr || !stdout) reject();
+      resolve(stdout.trim());
+    };
+
+    const command = `git merge-base ${branch1} ${branch2}`;
+    exec(command, cb);
+  });
+};
+
 export const getRootPath = async (): Promise<string> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {

@@ -75,12 +75,23 @@ export async function uploadSpec(
     orgId: string;
     // Sets spec_tag.effective_at to spec.effective_at instead of current date
     forward_effective_at_to_tags?: boolean;
+    precomputed?: {
+      specString?: string;
+      specChecksum?: string;
+      sourcemapString?: string;
+      sourcemapChecksum?: string;
+    };
   }
 ): Promise<string> {
-  const stableSpecString = stableStringify(opts.spec.jsonLike);
-  const stableSourcemapString = stableStringify(opts.spec.sourcemap);
-  const spec_checksum = computeChecksumForAws(stableSpecString);
-  const sourcemap_checksum = computeChecksumForAws(stableSourcemapString);
+  const stableSpecString =
+    opts.precomputed?.specString ?? stableStringify(opts.spec.jsonLike);
+  const stableSourcemapString =
+    opts.precomputed?.sourcemapString ?? stableStringify(opts.spec.sourcemap);
+  const spec_checksum =
+    opts.precomputed?.specChecksum ?? computeChecksumForAws(stableSpecString);
+  const sourcemap_checksum =
+    opts.precomputed?.sourcemapChecksum ??
+    computeChecksumForAws(stableSourcemapString);
   let result: Awaited<ReturnType<typeof opts.client.prepareSpecUpload>>;
   const tags = opts.tags.filter((tag, ndx) => opts.tags.indexOf(tag) === ndx);
 
