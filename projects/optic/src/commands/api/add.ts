@@ -119,7 +119,7 @@ async function initializeApi(
     );
     return;
   }
-  const specName = parseResult.jsonLike.info.title || pathRelativeToRoot;
+  const specName = parseResult.jsonLike.info.title || 'Untitled spec';
 
   const existingOpticUrl: string | undefined =
     parseResult.jsonLike[OPTIC_URL_KEY];
@@ -191,6 +191,7 @@ async function initializeApi(
     specName,
     api,
     candidate: [file_path, shas] as [string, string[]],
+    alreadyTracked,
   };
 }
 
@@ -214,7 +215,9 @@ async function backfillHistory(
   const uploadedChecksums = new Set<string>();
   const pathRelativeToRoot = path.relative(config.root, file_path);
 
-  const spinner = ora(`Found OpenAPI at ${pathRelativeToRoot}`);
+  logger.info('');
+  logger.info(chalk.bold.gray(`Backfilling history for ${pathRelativeToRoot}`));
+  const spinner = ora(``);
   spinner.start();
   spinner.color = 'blue';
 
@@ -303,6 +306,8 @@ async function backfillHistory(
       )} tagging`;
       await config.client.tagSpec(specId, tags, effective_at);
     }
+
+    spinner.succeed(`${chalk.bold.blue(specName)} history backfilled`);
   }
 }
 
@@ -446,10 +451,8 @@ export const getApiAddAction =
 
       candidates = new Map(files.map((f) => [f, []]));
     }
-
-    const apisToBackfill: NonNullable<
-      Awaited<ReturnType<typeof initializeApi>>
-    >[] = [];
+    const addedApis: NonNullable<Awaited<ReturnType<typeof initializeApi>>>[] =
+      [];
     for await (const candidate of candidates) {
       const api = await initializeApi(orgRes.org.id, candidate, config, {
         path_to_spec: file?.path,
@@ -459,21 +462,19 @@ export const getApiAddAction =
         web_url,
       });
 
-      if (api && api.candidate[1].length > 0) {
-        apisToBackfill.push(api);
+      if (api) {
+        addedApis.push(api);
       }
     }
+    const apisToBackfill = addedApis.filter(
+      (api) => api.candidate[1].length > 0
+    );
 
     if (apisToBackfill.length > 0) {
       logger.info(``);
       logger.info(
         chalk.blue.bold(
-          `x-optic-url has been added to newly tracked specs. You should commit these changes.`
-        )
-      );
-      logger.info(
-        chalk.blue.bold(
-          'Backfilling API history, you can exit at any time (`ctrl + c`) and fill history later by rerunning this command.'
+          'Backfilling API history, you can exit at any time (`ctrl + c`) and finish this later.'
         )
       );
       for (const api of apisToBackfill) {
@@ -486,6 +487,13 @@ export const getApiAddAction =
         });
       }
     }
+
+    logger.info('');
+    logger.info(
+      chalk.blue.bold(
+        `x-optic-url has been added to newly tracked specs. You should commit these changes.`
+      )
+    );
 
     logger.info('');
     logger.info(chalk.blue.bold(`Setup CI checks by running "optic ci setup"`));
