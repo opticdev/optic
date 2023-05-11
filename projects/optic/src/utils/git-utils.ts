@@ -100,7 +100,8 @@ export const getRootPath = async (): Promise<string> =>
 export const assertRefExists = async (ref: string): Promise<void> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
-      if (err || stderr) reject(err || stderr);
+      if (err || stderr)
+        reject(`ref ${ref} does not exist in current git repository`);
       resolve();
     };
     const command = `git cat-file -t ${ref}`;
