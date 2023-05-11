@@ -56,7 +56,7 @@
     "openapi-types": "^12.0.2",
     "semver": "^7.3.8",
     "upath": "^2.0.1",
-    "yaml": "^2.2.0",
+    "yaml": "^2.2.2",
     "yaml-ast-parser": "^0.0.43"
   }
 }
