@@ -153,6 +153,20 @@ async function crawlCandidateSpecs(
   }
 
   if (config.vcs?.type === VCS.Git) {
+    const currentBranch = await Git.getCurrentBranchName();
+    let mergeBaseSha: string | null = null;
+    let shouldTag = true;
+    let branchToUseForTag = currentBranch;
+
+    if (options.default_branch !== '') {
+      mergeBaseSha = await Git.getMergeBase(
+        currentBranch,
+        options.default_branch
+      );
+      shouldTag = false;
+      branchToUseForTag = options.default_branch;
+    }
+
     // If the git workspace is dirty, we should upload the spec with changes
     // such that first use of optic you will have a spec (even without tags)
     if (specHasUncommittedChanges(parseResult.sourcemap, config.vcs.diffSet)) {
@@ -165,6 +179,9 @@ async function crawlCandidateSpecs(
     }
     const specsToTag: [string, string, Date | undefined][] = [];
     for await (const sha of shas) {
+      if (mergeBaseSha === sha) {
+        shouldTag = true;
+      }
       spinner.text = `${chalk.bold.blue(
         specName
       )} checking version ${sha.substring(0, 6)}`;
@@ -218,17 +235,17 @@ async function crawlCandidateSpecs(
         parseResult.context?.vcs === 'git'
           ? parseResult.context.effective_at
           : undefined;
-      specsToTag.push([specId, sha, effective_at]);
+
+      if (shouldTag) specsToTag.push([specId, sha, effective_at]);
     }
 
-    const branch = await Git.getCurrentBranchName();
-    const tag = [sanitizeGitTag(`gitbranch:${branch}`)];
+    const tags = [sanitizeGitTag(`gitbranch:${branchToUseForTag}`)];
     for (const [specId, sha, effective_at] of [...specsToTag].reverse()) {
       spinner.text = `${chalk.bold.blue(specName)} version ${sha.substring(
         0,
         6
       )} tagging`;
-      await config.client.tagSpec(specId, tag, effective_at);
+      await config.client.tagSpec(specId, tags, effective_at);
     }
   } else {
     // Outside of a git repo, we should just upload it as a spec without tags
