@@ -78,7 +78,7 @@ type ApiAddActionOptions = {
   all: boolean;
 };
 
-async function crawlCandidateSpecs(
+async function initializeApi(
   orgId: string,
   [file_path, shas]: [string, string[]],
   config: OpticCliConfig,
@@ -90,7 +90,6 @@ async function crawlCandidateSpecs(
     web_url?: string;
   }
 ) {
-  const uploadedChecksums = new Set<string>();
   const pathRelativeToRoot = path.relative(config.root, file_path);
   let parseResult: ParseResult;
   try {
@@ -120,17 +119,13 @@ async function crawlCandidateSpecs(
     );
     return;
   }
-
-  const spinner = ora(`Found OpenAPI at ${pathRelativeToRoot}`);
-  spinner.start();
-  spinner.color = 'blue';
+  const specName = parseResult.jsonLike.info.title || 'Untitled spec';
 
   const existingOpticUrl: string | undefined =
     parseResult.jsonLike[OPTIC_URL_KEY];
   const maybeParsedUrl = existingOpticUrl
     ? getApiFromOpticUrl(existingOpticUrl)
     : null;
-  const specName = parseResult.jsonLike.info.title || pathRelativeToRoot;
 
   let alreadyTracked = false;
 
@@ -151,6 +146,80 @@ async function crawlCandidateSpecs(
       url: getApiUrl(config.client.getWebBase(), orgId, id),
     };
   }
+  await uploadSpec(api.id, {
+    spec: parseResult,
+    tags: [],
+    client: config.client,
+    orgId,
+  });
+
+  // Write to file only if optic-url is not set or is invalid
+  if (!existingOpticUrl || !maybeParsedUrl) {
+    if (/.json/i.test(file_path)) {
+      await writeJson(file_path, {
+        [OPTIC_URL_KEY]: api.url,
+      });
+    } else {
+      await writeYml(file_path, {
+        [OPTIC_URL_KEY]: api.url,
+      });
+    }
+    logger.debug(`Added spec ${pathRelativeToRoot} to ${api.url}`);
+
+    trackEvent('api.added', {
+      apiId: api.id,
+      orgId: orgId,
+      url: api.url,
+    });
+
+    if (options.web) {
+      await open(api.url, { wait: false });
+    }
+  } else {
+    logger.debug(
+      `Spec ${pathRelativeToRoot} has already been added at ${api.url}`
+    );
+  }
+
+  logger.info(
+    `${chalk.bold.green('✔')} ${chalk.bold.blue(specName)} ${
+      alreadyTracked ? 'is already being tracked' : 'is now being tracked'
+    }.\n  ${chalk.bold(`View: ${chalk.underline(api.url)}`)}`
+  );
+
+  return {
+    specName,
+    api,
+    candidate: [file_path, shas] as [string, string[]],
+    alreadyTracked,
+  };
+}
+
+async function backfillHistory(
+  orgId: string,
+  apiDetails: NonNullable<Awaited<ReturnType<typeof initializeApi>>>,
+  config: OpticCliConfig,
+  options: {
+    path_to_spec: string | undefined;
+    web?: boolean;
+    default_branch: string;
+    default_tag?: string | undefined;
+    web_url?: string;
+  }
+) {
+  const {
+    api,
+    candidate: [file_path, shas],
+    specName,
+  } = apiDetails;
+  const uploadedChecksums = new Set<string>();
+  const pathRelativeToRoot = path.relative(config.root, file_path);
+
+  logger.info('');
+  logger.info(chalk.bold.gray(`Backfilling history for ${pathRelativeToRoot}`));
+  const spinner = ora(``);
+  spinner.start();
+  spinner.color = 'blue';
 
   if (config.vcs?.type === VCS.Git) {
     const currentBranch = await Git.getCurrentBranchName();
@@ -167,16 +236,6 @@ async function crawlCandidateSpecs(
       branchToUseForTag = options.default_branch;
     }
 
-    // If the git workspace is dirty, we should upload the spec with changes
-    // such that first use of optic you will have a spec (even without tags)
-    if (specHasUncommittedChanges(parseResult.sourcemap, config.vcs.diffSet)) {
-      await uploadSpec(api.id, {
-        spec: parseResult,
-        tags: [],
-        client: config.client,
-        orgId,
-      });
-    }
     const specsToTag: [string, string, Date | undefined][] = [];
     for await (const sha of shas) {
       if (mergeBaseSha === sha) {
@@ -247,49 +306,9 @@ async function crawlCandidateSpecs(
       )} tagging`;
       await config.client.tagSpec(specId, tags, effective_at);
     }
-  } else {
-    // Outside of a git repo, we should just upload it as a spec without tags
-    await uploadSpec(api.id, {
-      spec: parseResult,
-      tags: [],
-      client: config.client,
-      orgId,
-    });
+
+    spinner.succeed(`${chalk.bold.blue(specName)} history backfilled`);
   }
-
-  // Write to file only if optic-url is not set or is invalid
-  if (!existingOpticUrl || !maybeParsedUrl) {
-    if (/.json/i.test(file_path)) {
-      await writeJson(file_path, {
-        [OPTIC_URL_KEY]: api.url,
-      });
-    } else {
-      await writeYml(file_path, {
-        [OPTIC_URL_KEY]: api.url,
-      });
-    }
-    logger.debug(`Added spec ${pathRelativeToRoot} to ${api.url}`);
-
-    trackEvent('api.added', {
-      apiId: api.id,
-      orgId: orgId,
-      url: api.url,
-    });
-
-    if (options.web) {
-      await open(api.url, { wait: false });
-    }
-  } else {
-    logger.debug(
-      `Spec ${pathRelativeToRoot} has already been added at ${api.url}`
-    );
-  }
-
-  spinner.succeed(
-    `${chalk.bold.blue(specName)} ${
-      alreadyTracked ? 'already being tracked' : 'is now being tracked'
-    }.\n  ${chalk.bold(`View history: ${chalk.underline(api.url)}`)}`
-  );
 }
 
 export const getApiAddAction =
@@ -432,15 +451,41 @@ export const getApiAddAction =
 
       candidates = new Map(files.map((f) => [f, []]));
     }
-
+    const addedApis: NonNullable<Awaited<ReturnType<typeof initializeApi>>>[] =
+      [];
     for await (const candidate of candidates) {
-      await crawlCandidateSpecs(orgRes.org.id, candidate, config, {
+      const api = await initializeApi(orgRes.org.id, candidate, config, {
         path_to_spec: file?.path,
         web: options.web,
         default_branch,
         default_tag,
         web_url,
       });
+
+      if (api) {
+        addedApis.push(api);
+      }
+    }
+    const apisToBackfill = addedApis.filter(
+      (api) => api.candidate[1].length > 0
+    );
+
+    if (apisToBackfill.length > 0) {
+      logger.info(``);
+      logger.info(
+        chalk.blue.bold(
+          'Backfilling API history, you can exit at any time (`ctrl + c`) and finish this later.'
+        )
+      );
+      for (const api of apisToBackfill) {
+        await backfillHistory(orgRes.org.id, api, config, {
+          path_to_spec: file?.path,
+          web: options.web,
+          default_branch,
+          default_tag,
+          web_url,
+        });
+      }
     }
 
     logger.info('');
