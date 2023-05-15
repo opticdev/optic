@@ -542,10 +542,8 @@ function bundleMatchingRefsAsComponents<T>(
       );
     });
 
-    const copy = JSON.parse(JSON.stringify(ref.component));
-
     ref.component = jsonpatch.applyPatch(
-      copy,
+      ref.component,
       sortby(
         nestedRefUsageUpdates,
         (i) => -jsonPointerHelpers.decode(i.path).length
