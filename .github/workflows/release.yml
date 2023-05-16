@@ -136,7 +136,7 @@ jobs:
           task pkg:archive
         
       - name: Generate checksums
-        uses: jmgilman/actions-generate-checksum@v1
+        uses: jmgilman/actions-generate-checksum@24a35957fba81c6cbaefeb1e3d59ee56e3db5077 # v1.0.0
         with:
           patterns: |
             dist/archives/*.zip
