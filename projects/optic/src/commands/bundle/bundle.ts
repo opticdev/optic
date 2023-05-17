@@ -17,6 +17,8 @@ import { Operation } from 'fast-json-patch';
 import * as jsonpatch from 'fast-json-patch';
 import sortby from 'lodash.sortby';
 import { logger } from '../../logger';
+import { jsonIterator } from './json-iterator';
+import $RefParser from '@apidevtools/json-schema-ref-parser';
 const description = `dereference an OpenAPI specification`;
 
 const usage = () => `
@@ -90,7 +92,10 @@ const bundleAction =
     if (filePath) {
       parsedFile = await getSpec(filePath, config);
 
-      const updatedSpec = bundle(parsedFile.jsonLike, parsedFile.sourcemap);
+      const updatedSpec = await bundle(
+        parsedFile.jsonLike,
+        parsedFile.sourcemap
+      );
 
       if (includeExtensions.length) {
         Object.entries(updatedSpec.paths).forEach(([path, operations]) => {
@@ -254,7 +259,10 @@ const matches = {
     'example',
   ],
 };
-function bundle(spec: OpenAPIV3.Document, sourcemap: JsonSchemaSourcemap) {
+async function bundle(
+  spec: OpenAPIV3.Document,
+  sourcemap: JsonSchemaSourcemap
+) {
   // create empty component objects if they do not exist
   if (!spec.components) spec.components = {};
   if (!spec.components.schemas) spec.components.schemas = {};
@@ -266,7 +274,7 @@ function bundle(spec: OpenAPIV3.Document, sourcemap: JsonSchemaSourcemap) {
   let updatedSpec = spec;
 
   // handle schemas
-  updatedSpec = bundleMatchingRefsAsComponents<OpenAPIV3.SchemaObject>(
+  updatedSpec = await bundleMatchingRefsAsComponents<OpenAPIV3.SchemaObject>(
     updatedSpec,
     sourcemap,
     [
@@ -291,11 +299,12 @@ function bundle(spec: OpenAPIV3.Document, sourcemap: JsonSchemaSourcemap) {
         const last = components[components.length - 1];
         return toComponentName(last || 'Schema');
       }
-    }
+    },
+    { rewriteMapping: true }
   );
 
   // handle parameters
-  updatedSpec = bundleMatchingRefsAsComponents(
+  updatedSpec = await bundleMatchingRefsAsComponents(
     updatedSpec,
     sourcemap,
     [matches.inPathParameter, matches.inOperationParameter],
@@ -311,7 +320,7 @@ function bundle(spec: OpenAPIV3.Document, sourcemap: JsonSchemaSourcemap) {
   );
 
   // handle requestBodies
-  updatedSpec = bundleMatchingRefsAsComponents(
+  updatedSpec = await bundleMatchingRefsAsComponents(
     updatedSpec,
     sourcemap,
     [matches.inRequestBody],
@@ -329,7 +338,7 @@ function bundle(spec: OpenAPIV3.Document, sourcemap: JsonSchemaSourcemap) {
     }
   );
 
-  updatedSpec = bundleMatchingRefsAsComponents(
+  updatedSpec = await bundleMatchingRefsAsComponents(
     updatedSpec,
     sourcemap,
     [matches.inResponseStatusCode],
@@ -348,7 +357,7 @@ function bundle(spec: OpenAPIV3.Document, sourcemap: JsonSchemaSourcemap) {
   );
 
   // handle examples
-  updatedSpec = bundleMatchingRefsAsComponents(
+  updatedSpec = await bundleMatchingRefsAsComponents(
     updatedSpec,
     sourcemap,
     [
@@ -374,13 +383,14 @@ function bundle(spec: OpenAPIV3.Document, sourcemap: JsonSchemaSourcemap) {
   return updatedSpec;
 }
 
-function bundleMatchingRefsAsComponents<T>(
+async function bundleMatchingRefsAsComponents<T>(
   spec: OpenAPIV3.Document,
   sourcemap: JsonSchemaSourcemap,
   matchers: string[][],
   match: 'parent' | 'children',
   targetPath: string,
-  naming: (T, lookup: string, pathInFile: string) => string
+  naming: (T, lookup: string, pathInFile: string) => string,
+  options: { rewriteMapping: boolean } = { rewriteMapping: false }
 ) {
   const rootFileIndex = sourcemap.files.find(
     (i) => i.path === sourcemap.rootFilePath
@@ -428,6 +438,7 @@ function bundleMatchingRefsAsComponents<T>(
       component: any;
       componentPath: string;
       circular: boolean;
+      aliases: Set<string>;
       originalPath: string;
       skipAddingToComponents: boolean;
       usages: string[];
@@ -465,19 +476,37 @@ function bundleMatchingRefsAsComponents<T>(
         `${rootFileIndex}-${targetPath}`
       );
 
+      const componentPath = isAlreadyInPlace
+        ? (() => {
+            const [, lastKey] = jsonPointerHelpers.splitParentChild(mapping[1]);
+            usedNames.add(lastKey);
+            return mapping[1];
+          })()
+        : leaseComponentPath(nameOptions);
+
+      const aliases = (() => {
+        const set = new Set<string>();
+        // file ref with root schema
+        if (mapping[1] === '/') {
+          set.add(sourcemap.files[mapping[0]].path);
+          set.add(
+            path.relative(
+              path.dirname(sourcemap.rootFilePath),
+              sourcemap.files[mapping[0]].path
+            )
+          );
+        }
+
+        if (isAlreadyInPlace) set.add(componentPath);
+        return set;
+      })();
+
       refs[refKey] = {
+        aliases: aliases,
         skipAddingToComponents: isAlreadyInPlace,
         originalPath: key,
         circular: component.hasOwnProperty('$ref'),
-        componentPath: isAlreadyInPlace
-          ? (() => {
-              const [, lastKey] = jsonPointerHelpers.splitParentChild(
-                mapping[1]
-              );
-              usedNames.add(lastKey);
-              return mapping[1];
-            })()
-          : leaseComponentPath(nameOptions),
+        componentPath,
         component,
         usages: [key],
       };
@@ -542,10 +571,8 @@ function bundleMatchingRefsAsComponents<T>(
       );
     });
 
-    const copy = JSON.parse(JSON.stringify(ref.component));
-
     ref.component = jsonpatch.applyPatch(
-      copy,
+      ref.component,
       sortby(
         nestedRefUsageUpdates,
         (i) => -jsonPointerHelpers.decode(i.path).length
@@ -598,6 +625,49 @@ function bundleMatchingRefsAsComponents<T>(
       return specCopy;
     }
   }, specCopy);
+
+  if (options.rewriteMapping) {
+    let $refs = await $RefParser.resolve(sourcemap.rootFilePath);
+
+    const refKeys = $refs.paths();
+
+    // handle mapping
+    const mappingPattern = [
+      matches.inRequestSchema,
+      matches.inResponseSchema,
+      matches.inOperationParameterSchema,
+      matches.inExistingComponent,
+      matches.inExistingRequestBody,
+      matches.inExistingResponseBody,
+    ];
+    for (const obj of jsonIterator(specCopy)) {
+      if (
+        mappingPattern.some(
+          (pattern) =>
+            jsonPointerHelpers.startsWith(obj.pointer, pattern) &&
+            jsonPointerHelpers.endsWith(obj.pointer, [
+              'discriminator',
+              'mapping',
+              '**',
+            ])
+        )
+      ) {
+        const isRef = refKeys.find((i) => i.endsWith(obj.value));
+        if (isRef) {
+          const refFound = refArray.find((i) => i.aliases.has(isRef));
+          if (refFound) {
+            jsonpatch.applyPatch(specCopy, [
+              {
+                op: 'replace',
+                path: obj.pointer,
+                value: refFound.componentPath,
+              },
+            ]);
+          }
+        }
+      }
+    }
+  }
 
   return specCopy;
 }
