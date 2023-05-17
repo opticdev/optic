@@ -1,13 +1,6 @@
 #!/usr/bin/env bash
 set -eu
 
-# strip path components from a checksums file. given a file containing
-# checkums in the format,
-# > some-checksum some/file.tar.gz
-# each line will be rewritten as,
-# > some-checksum file.tar.gz
-
-
 archive_dir="dist/archives"
 checksums_file="${archive_dir}/checksums.txt"
 
@@ -16,8 +9,11 @@ for file in $(find dist/archives -maxdepth 1  -name '*.tar.gz'); do
   sha256sum "$file" >> "$checksums_file" 
 done
 
-
-# strip pathing from checksums
+# strip path components from a checksums file. given a file containing
+# checkums in the format,
+# > some-checksum some/file.tar.gz
+# each line will be rewritten as,
+# > some-checksum file.tar.gz
 while IFS= read -r line; do
   IFS=' ' read -r checksum filepath <<< "$line"
   filename=$(basename "$filepath")
