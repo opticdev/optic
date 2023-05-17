@@ -118,6 +118,7 @@ tasks:
           name=$(basename "$bin")
           tar -czvf ./dist/archives/${name}.tar.gz -C dist $name
         done
+      - bash .github/scripts/create-checksums.sh
 
   pkg:upload:
     cmds:

@@ -135,15 +135,6 @@ jobs:
             --no-bytecode --public --public-packages "*"
           task pkg:archive
         
-      - name: Generate checksums
-        # uses: jmgilman/actions-generate-checksum@24a35957fba81c6cbaefeb1e3d59ee56e3db5077 # v1.0.0
-        uses: notnmeyer/actions/generate/checksum@feat/strip-path-components
-        with:
-          patterns: |
-            dist/archives/*.zip
-            dist/archives/*.tar.gz
-          output: dist/archives/checksums.txt
-
       - name: Upload binary packages to release
         env:
           GH_TOKEN: ${{ github.token }}
