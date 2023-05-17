@@ -2818,15 +2818,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stoplight/lifecycle@npm:2.3.2":
-  version: 2.3.2
-  resolution: "@stoplight/lifecycle@npm:2.3.2"
-  dependencies:
-    wolfy87-eventemitter: ~5.2.8
-  checksum: ee60a3e5dda82bc2d58a2f2922bae8abd0cb874daa7e17d3b759747bcdf1de20b029524583de69001d5a1640f31fb61a84b322283043e425a4b25b3b682dba00
-  languageName: node
-  linkType: hard
-
 "@stoplight/ordered-object-literal@npm:^1.0.1, @stoplight/ordered-object-literal@npm:^1.0.2":
   version: 1.0.2
   resolution: "@stoplight/ordered-object-literal@npm:1.0.2"
@@ -2848,37 +2839,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stoplight/spectral-core@npm:^1.7.0, @stoplight/spectral-core@npm:^1.8.0":
-  version: 1.8.1
-  resolution: "@stoplight/spectral-core@npm:1.8.1"
-  dependencies:
-    "@stoplight/better-ajv-errors": 1.0.1
-    "@stoplight/json": ~3.17.1
-    "@stoplight/lifecycle": 2.3.2
-    "@stoplight/path": 1.3.2
-    "@stoplight/spectral-parsers": ^1.0.0
-    "@stoplight/spectral-ref-resolver": ^1.0.0
-    "@stoplight/spectral-runtime": ^1.0.0
-    "@stoplight/types": 12.3.0
-    ajv: ^8.6.0
-    ajv-errors: ~3.0.0
-    ajv-formats: ~2.1.0
-    blueimp-md5: 2.18.0
-    json-schema: 0.4.0
-    jsonpath-plus: 6.0.1
-    lodash: ~4.17.21
-    lodash.topath: ^4.5.2
-    minimatch: 3.0.4
-    nimma: 0.1.7
-    simple-eval: 1.0.0
-    tslib: ^2.3.0
-  checksum: 7e7808e0f6c36833d5a1ee9f58d37d0d0ca7b1a4aa84533165e01b8e1ebdc205cfb792ba6f35411a06a8f986672381f7c5ff25783713dc8a4b996f600cf99b69
-  languageName: node
-  linkType: hard
-
-"@stoplight/spectral-core@npm:^1.8.1":
-  version: 1.17.0
-  resolution: "@stoplight/spectral-core@npm:1.17.0"
+"@stoplight/spectral-core@npm:^1.7.0, @stoplight/spectral-core@npm:^1.8.0, @stoplight/spectral-core@npm:^1.8.1":
+  version: 1.18.0
+  resolution: "@stoplight/spectral-core@npm:1.18.0"
   dependencies:
     "@stoplight/better-ajv-errors": 1.0.3
     "@stoplight/json": ~3.20.1
@@ -2901,7 +2864,7 @@ __metadata:
     pony-cause: ^1.0.0
     simple-eval: 1.0.0
     tslib: ^2.3.0
-  checksum: f1f92d6b2119e270c6579b44736900b84fda10936fa3aef1c1f8d3082bda2543d8f3f5879780bbbf20dcf2e14f58eabb0f2614898064f06c0244416b58181f24
+  checksum: 76ff9e2349c035fa2b98556c8bd67bb531f2b9c29e19e33484270d62f30900d36ceb51ef0075255479cc5071b45bcb7249088f568fff9d44cd159b5ee8f07cec
   languageName: node
   linkType: hard
 
@@ -4450,13 +4413,6 @@ __metadata:
     inherits: ^2.0.4
     readable-stream: ^3.4.0
   checksum: 9e8521fa7e83aa9427c6f8ccdcba6e8167ef30cc9a22df26effcc5ab682ef91d2cbc23a239f945d099289e4bbcfae7a192e9c28c84c6202e710a0dfec3722662
-  languageName: node
-  linkType: hard
-
-"blueimp-md5@npm:2.18.0":
-  version: 2.18.0
-  resolution: "blueimp-md5@npm:2.18.0"
-  checksum: 2f4e5c77af0b322dc0679549bb64c8ab0ebaea729544cd860ec5f8ddb56e781ba446ad7782925cf9a4dec790eb465496b960b8a089ae68b39a720fe7c9c7d36d
   languageName: node
   linkType: hard
 
@@ -7885,13 +7841,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-schema@npm:0.4.0":
-  version: 0.4.0
-  resolution: "json-schema@npm:0.4.0"
-  checksum: 66389434c3469e698da0df2e7ac5a3281bcff75e797a5c127db7c5b56270e01ae13d9afa3c03344f76e32e81678337a8c912bdbb75101c62e487dc3778461d72
-  languageName: node
-  linkType: hard
-
 "json-stable-stringify@npm:^1.0.1":
   version: 1.0.2
   resolution: "json-stable-stringify@npm:1.0.2"
@@ -7949,17 +7898,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsonpath-plus@npm:6.0.1, jsonpath-plus@npm:^6.0.1":
-  version: 6.0.1
-  resolution: "jsonpath-plus@npm:6.0.1"
-  checksum: bddec34b742249c5b38077dfcd8eb479fab4e077943253017326503ce4f527ef66938288c728712fd923907493d6eaba69a43015dc3dd9fdf48d89028ae7f466
-  languageName: node
-  linkType: hard
-
 "jsonpath-plus@npm:7.1.0":
   version: 7.1.0
   resolution: "jsonpath-plus@npm:7.1.0"
   checksum: a4005dc860c6b7e339229842537ceb6eb839d87a3447f989792b9c64f2564bbbd40663515f9481fb5a1b6cb0f988afba5b0b150e0285c463b794a45ed1aaf555
+  languageName: node
+  linkType: hard
+
+"jsonpath-plus@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "jsonpath-plus@npm:6.0.1"
+  checksum: bddec34b742249c5b38077dfcd8eb479fab4e077943253017326503ce4f527ef66938288c728712fd923907493d6eaba69a43015dc3dd9fdf48d89028ae7f466
   languageName: node
   linkType: hard
 
@@ -8523,15 +8472,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:3.0.4, minimatch@npm:^3.0.4":
-  version: 3.0.4
-  resolution: "minimatch@npm:3.0.4"
-  dependencies:
-    brace-expansion: ^1.1.7
-  checksum: 66ac295f8a7b59788000ea3749938b0970344c841750abd96694f80269b926ebcafad3deeb3f1da2522978b119e6ae3a5869b63b13a7859a456b3408bd18a078
-  languageName: node
-  linkType: hard
-
 "minimatch@npm:3.1.2, minimatch@npm:^3.1.1":
   version: 3.1.2
   resolution: "minimatch@npm:3.1.2"
@@ -8547,6 +8487,15 @@ __metadata:
   dependencies:
     brace-expansion: ^2.0.1
   checksum: 7bd57899edd1d1b0560f50b5b2d1ea4ad2a366c5a2c8e0a943372cf2f200b64c256bae45a87a80915adbce27fa36526264296ace0da57b600481fe5ea3e372e5
+  languageName: node
+  linkType: hard
+
+"minimatch@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "minimatch@npm:3.0.4"
+  dependencies:
+    brace-expansion: ^1.1.7
+  checksum: 66ac295f8a7b59788000ea3749938b0970344c841750abd96694f80269b926ebcafad3deeb3f1da2522978b119e6ae3a5869b63b13a7859a456b3408bd18a078
   languageName: node
   linkType: hard
 
@@ -8777,25 +8726,6 @@ __metadata:
   version: 1.0.5
   resolution: "nice-try@npm:1.0.5"
   checksum: 0b4af3b5bb5d86c289f7a026303d192a7eb4417231fe47245c460baeabae7277bcd8fd9c728fb6bd62c30b3e15cd6620373e2cf33353b095d8b403d3e8a15aff
-  languageName: node
-  linkType: hard
-
-"nimma@npm:0.1.7":
-  version: 0.1.7
-  resolution: "nimma@npm:0.1.7"
-  dependencies:
-    "@jsep-plugin/regex": ^1.0.1
-    "@jsep-plugin/ternary": ^1.0.2
-    astring: ^1.8.1
-    jsep: ^1.2.0
-    jsonpath-plus: ^6.0.1
-    lodash.topath: ^4.5.2
-  dependenciesMeta:
-    jsonpath-plus:
-      optional: true
-    lodash.topath:
-      optional: true
-  checksum: 6dcf4aa3dd35c714142f04cfde76727202e1aea802cde0584ef35eabf45d217a9352c55e65045ff91956bb348b3b07ede4ca13af5a6bc8e7ce2f3b2ca353f9bd
   languageName: node
   linkType: hard
 
@@ -11296,13 +11226,6 @@ __metadata:
   dependencies:
     string-width: ^4.0.0
   checksum: 03db6c9d0af9329c37d74378ff1d91972b12553c7d72a6f4e8525fe61563fa7adb0b9d6e8d546b7e059688712ea874edd5ded475999abdeedf708de9849310e0
-  languageName: node
-  linkType: hard
-
-"wolfy87-eventemitter@npm:~5.2.8":
-  version: 5.2.9
-  resolution: "wolfy87-eventemitter@npm:5.2.9"
-  checksum: 753b03fb876d5704378b08c02926b2040eb5c4c27288bee66b6d9b6e5bf7b194072d36afd33d80bdd94f3c4316dd72064ef1aa3629a514a6df5473187a304622
   languageName: node
   linkType: hard
 
