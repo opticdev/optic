@@ -326,6 +326,7 @@ export const parseFilesFromRef = async (
   headFile: ParseResult;
   pathFromGitRoot: string;
 }> => {
+  await Git.assertRefExists(base);
   const absolutePath = path.resolve(filePath);
   const gitFileName = filePathToGitPath(rootGitPath, filePath);
   const fileExistsOnBasePromise = exec(`git show ${base}:${gitFileName}`)

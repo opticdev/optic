@@ -111,3 +111,34 @@ tasks:
   pkg:clean:
     cmds:
       - rm -rf dist/*
+
+  pkg:archive:
+    cmds:
+      - mkdir -p dist/archives
+      - |
+        for bin in $(find ./dist -maxdepth 1 -iregex '.*-win-.*' -or -iregex '.*-linux-.*' -or -iregex '.*-alpine-.*'); do
+          name=$(basename "$bin")
+          tar -czvf ./dist/archives/${name}.tar.gz -C dist $name
+        done
+
+  pkg:upload:
+    cmds:
+      - gh release upload {{ .RELEASE_TAG }} ./dist/archives/*
+
+  #
+  # utility tasks
+  #
+
+  # `yarn version prerelease` won't increment the prerelease identifier when its already set
+  # to a prerelease version 🤔. this is our big hammer solution to arbitrarily set the version. 
+  version:force:
+    summary: |
+      Usage: task version:force VERSION=0.0.0-0
+    vars:
+      VERSION: '{{default "SET_VERSION" .VERSION}}'
+    cmds:
+      - |
+        for pkgjson in $(find . -maxdepth 3 -name package.json -type f -not -path "./node_modules/*"); do
+          jq '.version |= "{{.VERSION}}"' "$pkgjson" > "${pkgjson}.tmp"
+          mv "${pkgjson}.tmp" "$pkgjson"
+        done

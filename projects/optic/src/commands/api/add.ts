@@ -27,6 +27,8 @@ import {
 import { errorHandler } from '../../error-handler';
 import { getOrganizationFromToken } from '../../utils/organization';
 import { sanitizeGitTag } from '@useoptic/openapi-utilities';
+import stableStringify from 'json-stable-stringify';
+import { computeChecksumForAws } from '../../utils/checksum';
 
 function short(sha: string) {
   return sha.slice(0, 8);
@@ -76,7 +78,7 @@ type ApiAddActionOptions = {
   all: boolean;
 };
 
-async function crawlCandidateSpecs(
+async function initializeApi(
   orgId: string,
   [file_path, shas]: [string, string[]],
   config: OpticCliConfig,
@@ -117,10 +119,7 @@ async function crawlCandidateSpecs(
     );
     return;
   }
-
-  const spinner = ora(`Found OpenAPI at ${pathRelativeToRoot}`);
-  spinner.start();
-  spinner.color = 'blue';
+  const specName = parseResult.jsonLike.info.title || 'Untitled spec';
 
   const existingOpticUrl: string | undefined =
     parseResult.jsonLike[OPTIC_URL_KEY];
@@ -147,79 +146,12 @@ async function crawlCandidateSpecs(
       url: getApiUrl(config.client.getWebBase(), orgId, id),
     };
   }
-
-  if (config.vcs?.type === VCS.Git) {
-    // If the git workspace is dirty, we should upload the spec with changes
-    // such that first use of optic you will have a spec (even without tags)
-    if (specHasUncommittedChanges(parseResult.sourcemap, config.vcs.diffSet)) {
-      await uploadSpec(api.id, {
-        spec: parseResult,
-        tags: [],
-        client: config.client,
-        orgId,
-      });
-    }
-    const specsToTag: [string, string, Date | undefined][] = [];
-    for await (const sha of shas) {
-      let parseResult: ParseResult;
-      try {
-        parseResult = await loadSpec(`${sha}:${pathRelativeToRoot}`, config, {
-          strict: false,
-          denormalize: true,
-        });
-      } catch (e) {
-        logger.debug(
-          `${short(
-            sha
-          )}:${pathRelativeToRoot} is not a valid OpenAPI file, skipping sha version`,
-          e
-        );
-        continue;
-      }
-      if (parseResult.isEmptySpec) {
-        logger.debug(
-          `File ${pathRelativeToRoot} does not exist in sha ${short(
-            sha
-          )}, stopping here`
-        );
-        break;
-      }
-      spinner.text = `${chalk.bold.blue(
-        parseResult.jsonLike.info.title || pathRelativeToRoot
-      )} version ${sha.substring(0, 6)} uploading`;
-      const specId = await uploadSpec(api.id, {
-        spec: parseResult,
-        tags: [`git:${sha}`],
-        client: config.client,
-        orgId,
-        forward_effective_at_to_tags: true,
-      });
-      const effective_at =
-        parseResult.context?.vcs === 'git'
-          ? parseResult.context.effective_at
-          : undefined;
-      specsToTag.push([specId, sha, effective_at]);
-    }
-
-    if (!alreadyTracked) {
-      const branch = await Git.getCurrentBranchName();
-      const tag = [sanitizeGitTag(`gitbranch:${branch}`)];
-      for (const [specId, sha, effective_at] of [...specsToTag].reverse()) {
-        spinner.text = `${chalk.bold.blue(
-          parseResult.jsonLike.info.title || pathRelativeToRoot
-        )} version ${sha.substring(0, 6)} tagging`;
-        await config.client.tagSpec(specId, tag, effective_at);
-      }
-    }
-  } else {
-    // Outside of a git repo, we should just upload it as a spec without tags
-    await uploadSpec(api.id, {
-      spec: parseResult,
-      tags: [],
-      client: config.client,
-      orgId,
-    });
-  }
+  await uploadSpec(api.id, {
+    spec: parseResult,
+    tags: [],
+    client: config.client,
+    orgId,
+  });
 
   // Write to file only if optic-url is not set or is invalid
   if (!existingOpticUrl || !maybeParsedUrl) {
@@ -249,13 +181,134 @@ async function crawlCandidateSpecs(
     );
   }
 
-  spinner.succeed(
-    `${chalk.bold.blue(
-      parseResult.jsonLike.info.title || pathRelativeToRoot
-    )} ${
-      alreadyTracked ? 'already being tracked' : 'is now being tracked'
-    }.\n  ${chalk.bold(`View history: ${chalk.underline(api.url)}`)}`
+  logger.info(
+    `${chalk.bold.green('✔')} ${chalk.bold.blue(specName)} ${
+      alreadyTracked ? 'is already being tracked' : 'is now being tracked'
+    }.\n  ${chalk.bold(`View: ${chalk.underline(api.url)}`)}`
   );
+
+  return {
+    specName,
+    api,
+    candidate: [file_path, shas] as [string, string[]],
+    alreadyTracked,
+  };
+}
+
+async function backfillHistory(
+  orgId: string,
+  apiDetails: NonNullable<Awaited<ReturnType<typeof initializeApi>>>,
+  config: OpticCliConfig,
+  options: {
+    path_to_spec: string | undefined;
+    web?: boolean;
+    default_branch: string;
+    default_tag?: string | undefined;
+    web_url?: string;
+  }
+) {
+  const {
+    api,
+    candidate: [file_path, shas],
+    specName,
+  } = apiDetails;
+  const uploadedChecksums = new Set<string>();
+  const pathRelativeToRoot = path.relative(config.root, file_path);
+
+  logger.info('');
+  logger.info(chalk.bold.gray(`Backfilling history for ${pathRelativeToRoot}`));
+  const spinner = ora(``);
+  spinner.start();
+  spinner.color = 'blue';
+
+  if (config.vcs?.type === VCS.Git) {
+    const currentBranch = await Git.getCurrentBranchName();
+    let mergeBaseSha: string | null = null;
+    let shouldTag = true;
+    let branchToUseForTag = currentBranch;
+
+    if (options.default_branch !== '') {
+      mergeBaseSha = await Git.getMergeBase(
+        currentBranch,
+        options.default_branch
+      );
+      shouldTag = false;
+      branchToUseForTag = options.default_branch;
+    }
+
+    const specsToTag: [string, string, Date | undefined][] = [];
+    for await (const sha of shas) {
+      if (mergeBaseSha === sha) {
+        shouldTag = true;
+      }
+      spinner.text = `${chalk.bold.blue(
+        specName
+      )} checking version ${sha.substring(0, 6)}`;
+      let parseResult: ParseResult;
+      try {
+        parseResult = await loadSpec(`${sha}:${pathRelativeToRoot}`, config, {
+          strict: false,
+          denormalize: true,
+        });
+      } catch (e) {
+        logger.debug(
+          `${short(
+            sha
+          )}:${pathRelativeToRoot} is not a valid OpenAPI file, skipping sha version`,
+          e
+        );
+        continue;
+      }
+      if (parseResult.isEmptySpec) {
+        logger.debug(
+          `File ${pathRelativeToRoot} does not exist in sha ${short(
+            sha
+          )}, stopping here`
+        );
+        break;
+      }
+
+      const stableSpecString = stableStringify(parseResult.jsonLike);
+      const checksum = computeChecksumForAws(stableSpecString);
+      if (uploadedChecksums.has(checksum)) {
+        continue;
+      }
+
+      spinner.text = `${chalk.bold.blue(specName)} version ${sha.substring(
+        0,
+        6
+      )} uploading`;
+      const specId = await uploadSpec(api.id, {
+        spec: parseResult,
+        tags: [`git:${sha}`],
+        client: config.client,
+        orgId,
+        forward_effective_at_to_tags: true,
+        precomputed: {
+          specString: stableSpecString,
+          specChecksum: checksum,
+        },
+      });
+      uploadedChecksums.add(checksum);
+      const effective_at =
+        parseResult.context?.vcs === 'git'
+          ? parseResult.context.effective_at
+          : undefined;
+
+      if (shouldTag) specsToTag.push([specId, sha, effective_at]);
+    }
+
+    const tags = [sanitizeGitTag(`gitbranch:${branchToUseForTag}`)];
+    for (const [specId, sha, effective_at] of [...specsToTag].reverse()) {
+      spinner.text = `${chalk.bold.blue(specName)} version ${sha.substring(
+        0,
+        6
+      )} tagging`;
+      await config.client.tagSpec(specId, tags, effective_at);
+    }
+
+    spinner.succeed(`${chalk.bold.blue(specName)} history backfilled`);
+  }
 }
 
 export const getApiAddAction =
@@ -305,16 +358,6 @@ export const getApiAddAction =
       logger.error(
         chalk.red(
           'Invalid argument combination, must specify either a `path` or `--all`'
-        )
-      );
-      process.exitCode = 1;
-      return;
-    }
-
-    if (file.isDir && options.historyDepth !== '1') {
-      logger.error(
-        chalk.red(
-          'Invalid argument combination: Cannot set a history-depth !== 1 when no spec path is provided'
         )
       );
       process.exitCode = 1;
@@ -397,6 +440,7 @@ export const getApiAddAction =
           )
         : await GitCandidates.getPathCandidatesForSha(config.vcs.sha, {
             startsWith: file.path,
+            depth: options.historyDepth,
           });
     } else {
       const files = !file.isDir
@@ -407,15 +451,41 @@ export const getApiAddAction =
 
       candidates = new Map(files.map((f) => [f, []]));
     }
-
+    const addedApis: NonNullable<Awaited<ReturnType<typeof initializeApi>>>[] =
+      [];
     for await (const candidate of candidates) {
-      await crawlCandidateSpecs(orgRes.org.id, candidate, config, {
+      const api = await initializeApi(orgRes.org.id, candidate, config, {
         path_to_spec: file?.path,
         web: options.web,
         default_branch,
         default_tag,
         web_url,
       });
+
+      if (api) {
+        addedApis.push(api);
+      }
+    }
+    const apisToBackfill = addedApis.filter(
+      (api) => api.candidate[1].length > 0
+    );
+
+    if (apisToBackfill.length > 0) {
+      logger.info(``);
+      logger.info(
+        chalk.blue.bold(
+          'Backfilling API history, you can exit at any time (`ctrl + c`) and finish this later.'
+        )
+      );
+      for (const api of apisToBackfill) {
+        await backfillHistory(orgRes.org.id, api, config, {
+          path_to_spec: file?.path,
+          web: options.web,
+          default_branch,
+          default_tag,
+          web_url,
+        });
+      }
     }
 
     logger.info('');

@@ -1,7 +1,7 @@
 import { Command, Option } from 'commander';
 import pm from 'picomatch';
 import { OpticCliConfig, VCS } from '../../config';
-import { findOpenApiSpecsCandidates } from '../../utils/git-utils';
+import * as Git from '../../utils/git-utils';
 import { loadSpec, loadRaw, ParseResult } from '../../utils/spec-loaders';
 import { logger } from '../../logger';
 import { OPTIC_URL_KEY } from '../../constants';
@@ -622,7 +622,10 @@ const getDiffAllAction =
     let candidateMap: CandidateMap;
     let compareToCandidates: string[];
     try {
-      compareToCandidates = await findOpenApiSpecsCandidates(options.compareTo);
+      options.compareTo && (await Git.assertRefExists(options.compareTo));
+      compareToCandidates = await Git.findOpenApiSpecsCandidates(
+        options.compareTo
+      );
     } catch (e) {
       logger.error(
         `Error reading files from git history for --compare-to ${options.compareTo}`
@@ -648,7 +651,8 @@ const getDiffAllAction =
       let compareFromCandidates: string[];
 
       try {
-        compareFromCandidates = await findOpenApiSpecsCandidates(
+        await Git.assertRefExists(options.compareFrom);
+        compareFromCandidates = await Git.findOpenApiSpecsCandidates(
           options.compareFrom
         );
       } catch (e) {

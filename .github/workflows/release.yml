@@ -116,7 +116,7 @@ jobs:
           echo "VERSION=$v" >> $GITHUB_ENV
           echo "::set-output name=optic_version::$v"
 
-      - name: Publish
+      - name: Publish NPM
         run: |
           if [ "$SKIP_PUBLISH" = "false" ]
           then
@@ -127,6 +127,15 @@ jobs:
             echo "SKIP_PUBLISH=$SKIP_PUBLISH"
             echo "Would publish $VERSION to the "$RELEASE_CHANNEL" channel"
           fi
+
+      - name: Publish binaries
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          task pkg:build -- \
+            -t node18-linux-arm64,node18-linux-x64,node18-alpine-arm64,node18-alpine-x64,node18-win-arm64,node18-win-x64 \
+            --no-bytecode --public --public-packages "*"
+          task pkg:archive pkg:upload RELEASE_TAG=${{ github.event.release.tag_name }}
 
       - name: Announce success
         uses: Ilshidur/action-slack@689ad44a9c9092315abd286d0e3a9a74d31ab78a # v2.1.0

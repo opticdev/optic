@@ -36,8 +36,25 @@ export async function getPathCandidatesForSha(
   sha: string,
   opts: {
     startsWith: string;
+    depth: string;
   }
 ): Promise<Map<Path, Sha[]>> {
+  let hashes: string[] = [sha];
+  if (opts.depth !== '1') {
+    const command =
+      opts.depth === '0'
+        ? `git rev-list HEAD --first-parent`
+        : `git rev-list HEAD -n ${opts.depth} --first-parent`;
+    try {
+      const commandResults = await exec(command).then(({ stdout }) =>
+        stdout.trim()
+      );
+      hashes = commandResults.split('\n');
+    } catch (e) {
+      // Will fail in an empty git repository
+    }
+  }
+
   const results = new Map();
   // Pull all spec candidates (i.e. specs that have openapi key and are yml/yaml/json)
   // This won't check version / validity of spec and will not look for swagger2 specs
@@ -48,7 +65,7 @@ export async function getPathCandidatesForSha(
       continue;
     }
 
-    results.set(p, [sha]);
+    results.set(p, hashes);
   }
 
   return results;
