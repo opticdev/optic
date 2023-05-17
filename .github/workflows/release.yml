@@ -128,14 +128,15 @@ jobs:
             echo "Would publish $VERSION to the "$RELEASE_CHANNEL" channel"
           fi
 
-      - name: Publish binaries
+      - name: Release binaries
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
           task pkg:build -- \
             -t node18-linux-arm64,node18-linux-x64,node18-alpine-arm64,node18-alpine-x64,node18-win-arm64,node18-win-x64 \
             --no-bytecode --public --public-packages "*"
-          task pkg:archive pkg:upload RELEASE_TAG=${{ github.event.release.tag_name }}
+          task pkg:archive pkg:upload
 
       - name: Announce success
         uses: Ilshidur/action-slack@689ad44a9c9092315abd286d0e3a9a74d31ab78a # v2.1.0
