@@ -127,7 +127,7 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
         await systemProxy.start(undefined);
       } else {
         feedback.notable(
-          `Optic proxy is running at ${proxyUrl} - send traffic to this host. Traffic will be forwarded to ${targetUrl} and will be captured`
+          `Optic proxy is running at ${proxyUrl} - send traffic to this host. Traffic will be forwarded to ${targetUrl} and will be recorded`
         );
       }
 
