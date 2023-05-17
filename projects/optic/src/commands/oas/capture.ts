@@ -127,7 +127,7 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
         await systemProxy.start(undefined);
       } else {
         feedback.notable(
-          `Optic proxy is running at ${proxyUrl}. Route traffic through it and traffic to ${targetUrl} will be captured`
+          `Optic proxy is running at ${proxyUrl} - send traffic to this host. Traffic will be forwarded to ${targetUrl} and will be captured`
         );
       }
 
@@ -145,7 +145,9 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
       let destination: Writable =
         fsNonPromise.createWriteStream(inProgressName);
 
-      const commandRunner = new RunCommand(proxyUrl, feedback);
+      const commandRunner = new RunCommand(proxyUrl, feedback, {
+        reverseProxy: options.reverseProxy,
+      });
 
       let exitCode: number | undefined = undefined;
       if (options.command) {

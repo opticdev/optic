@@ -5,7 +5,8 @@ import url from 'url';
 export class RunCommand {
   constructor(
     private proxyUrl: string,
-    private feedback: ReturnType<typeof createCommandFeedback>
+    private feedback: ReturnType<typeof createCommandFeedback>,
+    private options: { reverseProxy: boolean }
   ) {}
 
   completed: boolean = false;
@@ -20,8 +21,14 @@ export class RunCommand {
       cwd: process.cwd(),
       env: {
         ...process.env,
-        http_proxy: `http://${hostname}:${port}`,
-        https_proxy: `https://${hostname}:${port}`,
+        ...(this.options.reverseProxy
+          ? {
+              OPTIC_HOST: this.proxyUrl,
+            }
+          : {
+              http_proxy: `http://${hostname}:${port}`,
+              https_proxy: `https://${hostname}:${port}`,
+            }),
       },
       shell: true,
     });
