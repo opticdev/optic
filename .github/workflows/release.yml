@@ -114,7 +114,7 @@ jobs:
         run: |
           v=$(jq -r .version < package.json)
           echo "VERSION=$v" >> $GITHUB_ENV
-          echo "::set-output name=optic_version::$v"
+          echo "optic_version=${v}" >> $GITHUB_OUTPUT
 
       - name: Publish NPM
         run: |
