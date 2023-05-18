@@ -660,7 +660,7 @@ async function bundleMatchingRefsAsComponents<T>(
               {
                 op: 'replace',
                 path: obj.pointer,
-                value: refFound.componentPath,
+                value: '#' + refFound.componentPath,
               },
             ]);
           }
