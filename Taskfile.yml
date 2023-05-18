@@ -105,6 +105,35 @@ tasks:
     cmds:
       - task: build
       - npx --yes pkg package.json {{.CLI_ARGS}}
+      - task: pkg:rename
+
+  pkg:rename:
+    cmds:
+      # rename linuxstatic to linux
+      - |
+        for file in $(find ./dist -maxdepth 1 -iname '*linuxstatic*'); do
+          new_name=${file//linuxstatic/linux}
+          mv "$file" "$new_name"
+        done
+      # rename macos to darwin
+      - |
+        for file in $(find ./dist -maxdepth 1 -iname '*macos*'); do
+          new_name=${file//macos/darwin}
+          mv "$file" "$new_name"
+        done
+      # rename win to windows
+      - |
+        for file in $(find ./dist -maxdepth 1 -iname '*-win-*'); do
+          new_name=${file//win/windows}
+          mv "$file" "$new_name"
+        done
+      # rename x64 to amd64
+      - |
+        for file in $(find ./dist -maxdepth 1 -iname '*x64*'); do
+          new_name=${file//x64/amd64}
+          mv "$file" "$new_name"
+        done
+      - ls -l dist
 
   pkg:clean:
     cmds:
@@ -114,7 +143,7 @@ tasks:
     cmds:
       - mkdir -p dist/archives
       - |
-        for bin in $(find ./dist -maxdepth 1 -iregex '.*-win-.*' -or -iregex '.*-linux-.*' -or -iregex '.*-alpine-.*'); do
+        for bin in $(find ./dist -maxdepth 1 -type f); do
           name=$(basename "$bin")
           tar -czvf ./dist/archives/${name}.tar.gz -C dist $name
         done
