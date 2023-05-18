@@ -179,24 +179,42 @@ uname_os() {
   # other fixups here
   echo "$os"
 }
+
+untar() {
+  tarball=$1
+  case "${tarball}" in
+    *.tar.gz | *.tgz) tar -xzf "${tarball}" ;;
+    *.tar) tar -xf "${tarball}" ;;
+    *.zip) unzip "${tarball}" ;;
+    *)
+      log_err "untar unknown archive format for ${tarball}"
+      return 1
+      ;;
+  esac
+}
 #
 # end functions from https://github.com/client9/shlib
 #
 
 OS=$(uname_os)
 ARCH=$(uname_arch)
-GH_RELEASE=$(github_release "$GH_REPO" "latest")
+
+# TODO: move the arg parsing to something more rebust
+GH_TAG="${1-latest}"
+
+GH_RELEASE=$(github_release "$GH_REPO" "$GH_TAG")
+GH_RELEASE_FILENAME="optic-${OS}-${ARCH}.tar.gz"
+DOWNLOAD_URL="${GH_ASSETS_URL}/${GH_RELEASE}/${GH_RELEASE_FILENAME}"
 
 info() {
   echo "Running on ${OS} ${ARCH}"
-  echo "latest release: $GH_RELEASE"
-  echo "${GH_ASSETS_URL}/${GH_RELEASE}/optic-${OS}-${ARCH}.tar.gz"
 }
 
 execute() {
   TMPDIR=$(mktemp -d)
-  http_download "$TMP_DIR" "${GH_ASSETS_URL}/${GH_RELEASE}/optic-${OS}-${ARCH}.tar.gz"
+  http_download "${TMPDIR}/${GH_RELEASE_FILENAME}" "$DOWNLOAD_URL"
+  (cd "$TMPDIR" && untar "$GH_RELEASE_FILENAME")
 }
 
 info
-# execute
+execute
