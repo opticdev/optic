@@ -19,11 +19,11 @@ import sortby from 'lodash.sortby';
 import { logger } from '../../logger';
 import { jsonIterator } from './json-iterator';
 import $RefParser from '@apidevtools/json-schema-ref-parser';
-const description = `dereference an OpenAPI specification`;
+const description = `bundle external references for an OpenAPI specification`;
 
 const usage = () => `
   optic bundle <file_path>
-  optic bundle <file_path> > dereference.yml
+  optic bundle <file_path> > bundled.yml
 `;
 const helpText = `
 Example usage:
