@@ -67,6 +67,7 @@ export function* requiredPatches(
     groupedOperations: [
       ...makeOptionalOperations(requiredArray.indexOf(diff.key)),
     ],
+    shouldRegeneratePatches: false,
   };
   if (makeOptionalPatch.groupedOperations.length > 0) {
     yield makeOptionalPatch;
@@ -87,5 +88,6 @@ export function* requiredPatches(
       ...makeOptionalOperations(requiredArray.indexOf(diff.key)),
       ...removePropertyOperations(diff.parentObjectPath, diff.key),
     ],
+    shouldRegeneratePatches: false,
   };
 }

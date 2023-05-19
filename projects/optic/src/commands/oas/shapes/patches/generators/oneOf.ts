@@ -47,5 +47,6 @@ export function* oneOfPatches(
         : PatchImpact.BackwardsIncompatible,
     ],
     groupedOperations,
+    shouldRegeneratePatches: false,
   };
 }

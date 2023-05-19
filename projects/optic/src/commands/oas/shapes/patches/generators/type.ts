@@ -105,6 +105,7 @@ export function* typePatches(
             value: true,
           }),
         ],
+        shouldRegeneratePatches: false,
       };
     } else {
       // option one: convert to a one-off
@@ -120,6 +121,7 @@ export function* typePatches(
             : PatchImpact.BackwardsIncompatible,
         ],
         groupedOperations: makeOneOfOperations(),
+        shouldRegeneratePatches: true,
       };
 
       // option two: change the type
@@ -128,6 +130,7 @@ export function* typePatches(
         description: `change type of ${diff.key}`,
         impact: [PatchImpact.BackwardsIncompatible],
         groupedOperations: changeTypeOperations(),
+        shouldRegeneratePatches: false,
       };
     }
   } else if (openAPIVersion === '3.1.x') {
@@ -157,6 +160,7 @@ export function* typePatches(
             value: schemaType,
           }),
         ],
+        shouldRegeneratePatches: false,
       };
     } else {
       yield {
@@ -171,6 +175,7 @@ export function* typePatches(
             : PatchImpact.BackwardsIncompatible,
         ],
         groupedOperations: makeOneOfOperations(),
+        shouldRegeneratePatches: true,
       };
 
       // option two: change the type
@@ -179,6 +184,7 @@ export function* typePatches(
         description: `change type of ${diff.key}`,
         impact: [PatchImpact.BackwardsIncompatible],
         groupedOperations: changeTypeOperations(),
+        shouldRegeneratePatches: false,
       };
     }
   }
