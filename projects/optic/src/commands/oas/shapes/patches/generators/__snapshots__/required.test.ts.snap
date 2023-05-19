@@ -29,6 +29,7 @@ exports[`required shape patch generator missing required fields will patch as 'm
       "Addition",
       "BackwardsCompatibilityUnknown",
     ],
+    "shouldRegeneratePatches": false,
   },
   {
     "description": "remove property f3",
@@ -65,6 +66,7 @@ exports[`required shape patch generator missing required fields will patch as 'm
     "impact": [
       "BackwardsCompatibilityUnknown",
     ],
+    "shouldRegeneratePatches": false,
   },
 ]
 `;
