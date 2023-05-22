@@ -53,6 +53,7 @@ export async function patchOperationsAsNeeded(
 }
 
 export async function renderDiffs(
+  specPath: string,
   sourcemap: JsonSchemaSourcemap,
   spec: OpenAPIV3.Document,
   patches: SpecPatches,
@@ -92,7 +93,7 @@ export async function renderDiffs(
           ? `${diff.statusCode} Response ${diff.contentType}`
           : '';
 
-      renderBodyDiff(description, method, pathPattern);
+      renderBodyDiff(specPath, description, method, pathPattern);
     } else if (diff.kind === 'AdditionalProperty') {
       // filter out dependent diffs
       if (
@@ -105,6 +106,7 @@ export async function renderDiffs(
 
       stats.shapeDiff++;
       renderShapeDiff(
+        specPath,
         diff,
         jsonPointerHelpers.join(path, diff.parentObjectPath),
         `Undocumented '${diff.key}'`,
@@ -124,6 +126,7 @@ export async function renderDiffs(
 
       stats.shapeDiff++;
       renderShapeDiff(
+        specPath,
         diff,
         jsonPointerHelpers.join(path, diff.propertyPath),
         `[Actual] ${JSON.stringify(diff.example)}`,
@@ -143,6 +146,7 @@ export async function renderDiffs(
 
       stats.shapeDiff++;
       renderShapeDiff(
+        specPath,
         diff,
         jsonPointerHelpers.join(path, diff.propertyPath),
         `missing`,
@@ -159,6 +163,7 @@ export async function renderDiffs(
 }
 
 function renderShapeDiff(
+  specPath: string,
   diff: ShapeDiffResult,
   pathToHighlight: string,
   error: string,
@@ -172,18 +177,25 @@ ${logger.log(pathToHighlight, {
   highlightColor: 'yellow',
   observation: error,
 })}
-${nextCommand(`fix schema by running`, `optic update `)}\n`;
+${nextCommand(
+  `fix schema by running`,
+  `optic update ${specPath} "${method} ${pathPattern}"`
+)}\n`;
   console.log(lines);
 }
 
 function renderBodyDiff(
+  specPath: string,
   description: string,
   method: string,
   pathPattern: string
 ) {
   const lines = `${chalk.bgYellow('  Undocumented  ')} ${description}
   operation: ${chalk.bold(`${method} ${pathPattern}`)}  
-${nextCommand(`document new body by running`, `optic update `)}\n`;
+${nextCommand(
+  `document new body by running`,
+  `optic update ${specPath} "${method} ${pathPattern}"`
+)}\n`;
   console.log(lines);
 }
 

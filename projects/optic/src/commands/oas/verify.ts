@@ -128,6 +128,7 @@ export async function runVerify(
   );
 
   const diffResults = await renderDiffs(
+    specPath,
     sourcemap,
     spec,
     updatePatches,
