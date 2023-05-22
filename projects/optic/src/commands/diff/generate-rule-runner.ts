@@ -45,6 +45,7 @@ const getStandardToUse = async (options: {
           options.specRuleset
         }. Please check the ruleset name and whether you are authenticated (run: optic login).`
       );
+      process.exitCode = 1;
       return [];
     }
   } else {
