@@ -512,7 +512,7 @@ function handleWarnings(
 
     for (const unparseableFrom of warnings.unparseableFromSpec) {
       logger.error(`spec: ${unparseableFrom.path}`);
-      logger.error(unparseableFrom.error);
+      logger.error((unparseableFrom.error as Error).message);
       logger.error('');
     }
   }
@@ -530,7 +530,7 @@ function handleWarnings(
 
     for (const unparseableTo of warnings.unparseableToSpec) {
       logger.error(`spec: ${unparseableTo.path}`);
-      logger.error(unparseableTo.error);
+      logger.error((unparseableTo.error as Error).message);
       logger.error('');
     }
     process.exitCode = 1;
