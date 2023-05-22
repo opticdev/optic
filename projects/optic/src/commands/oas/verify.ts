@@ -108,7 +108,7 @@ export async function runVerify(
             existingCaptures.toString()
           )} capture${existingCaptures === 1 ? '' : 's'}. ${nextCommand(
             'Reset captures',
-            `optic oas capture clear ${path.relative(process.cwd(), specPath)}`
+            `optic capture clear ${path.relative(process.cwd(), specPath)}`
           )}\``
     } \n`
   );
@@ -168,7 +168,7 @@ export async function runVerify(
       specHasUncommittedChanges(parseResult.sourcemap, config.vcs.diffSet)
     ) {
       console.error(
-        'optic oas verify --upload can only be run in a git repository without uncommitted changes. That ensures reports are properly tagged.'
+        'optic verify --upload can only be run in a git repository without uncommitted changes. That ensures reports are properly tagged.'
       );
       process.exitCode = 1;
       return;
