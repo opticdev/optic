@@ -16,7 +16,7 @@ import { renderDiffs, updateByInteractions } from './diffing/patch';
 import { specToOperations } from './operations/queries';
 import { OpticCliConfig, VCS } from '../../config';
 import { OPTIC_URL_KEY } from '../../constants';
-import { getApiFromOpticUrl } from '../../utils/cloud-urls';
+import { getApiFromOpticUrl, getSpecUrl } from '../../utils/cloud-urls';
 import { uploadSpec, uploadSpecVerification } from '../../utils/cloud-specs';
 import { loadSpec, specHasUncommittedChanges } from '../../utils/spec-loaders';
 import * as Git from '../../utils/git-utils';
@@ -203,6 +203,15 @@ export async function runVerify(
       verificationData: coverage.coverage,
       message: options.message,
     });
+
+    console.log(
+      `Successfully uploaded verification data. View your spec at ${getSpecUrl(
+        config.client.getWebBase(),
+        orgId,
+        apiId,
+        specId
+      )}`
+    );
   }
 
   analytics.forEach((event) => trackEvent(event.event, event.properties));
