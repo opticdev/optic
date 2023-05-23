@@ -6,7 +6,7 @@ checksums_file="${archive_dir}/checksums.txt"
 
 # create the checksums file
 for file in $(find dist/archives -maxdepth 1  -name '*.tar.gz'); do
-  sha256sum "$file" >> "$checksums_file" 
+  shasum -a 256 "$file" >> "$checksums_file"
 done
 
 # strip path components from a checksums file. given a file containing
