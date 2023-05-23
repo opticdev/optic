@@ -147,7 +147,13 @@ tasks:
           name=$(basename "$bin")
           tar -czvf ./dist/archives/${name}.tar.gz -C dist $name
         done
+      # rename windows archives from `optic-windows-amd64.exe.tar.gz` to `optic-windows-amd64.tar.gz`
+      - |
+        for file in ./dist/archives/*; do
+          [[ "$file" =~ "\.exe" ]] && mv "$file" "${file/\.exe/}"
+        done
       - bash .github/scripts/create-checksums.sh
+      - ls -la ./dist/archives
 
   pkg:upload:
     cmds:
