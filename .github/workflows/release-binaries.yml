@@ -1,0 +1,96 @@
+name: release-binaries
+
+on:
+  workflow_dispatch: {}
+  release:
+    types:
+      - published
+
+env:
+  SKIP_ANNOUNCE: 'false'
+  SKIP_PUBLISH: 'false'
+
+jobs:
+  verify-prerelease-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Verify prerelease has a prerelease tag
+        if: github.event.release.prerelease
+        run: |
+          if ! [[ "${{ github.event.release.tag_name }}" =~ ^v[0-9]+.[0-9]+.[0-9]+\-.+ ]]
+          then
+            echo "ERROR: '${{ github.event.release.tag_name }}' is not a valid prerelease tag"
+            exit 1
+          fi
+
+  verify-versions-agree:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Confirm GH release and package.json agree on version
+        if: github.event_name == 'release'
+        run: |
+          # add a 'v' prefix to match the Git tag
+          package_version=v$(jq -r '.version' < package.json)
+
+          if [ "${package_version}" != "${{ github.event.release.tag_name }}" ]
+          then
+            echo "ERROR: package.json version (${package_version}) does not match GitHub release tag (${{ github.event.release.tag_name }})"
+            exit 1
+          fi
+      - name: Confirm all package.json files have the same version
+        run: .github/scripts/version-sync
+
+  verify-version-unpublished:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Confirm release version is unpublished
+        run: |
+          package_version=$(jq -r '.version' < package.json)
+          is_published=$(
+            yarn npm info "@useoptic/openapi-utilities" --json \
+            | jq -rs '.[0]' \
+            | jq ".versions // []" \
+            | jq -r "any(.[]; . == \"$package_version\")"
+          )
+
+          if [ "${is_published}" == "true" ]
+          then
+            echo "ERROR: @useoptic/openapi-utilities@$package_version is already published"
+            exit 1
+          fi
+
+  release:
+    runs-on: macos-latest-xl
+    needs:
+      - verify-prerelease-tag
+      - verify-versions-agree
+      - verify-version-unpublished
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: yarn
+
+      - name: Install Task
+        run: curl -sL https://taskfile.dev/install.sh | sudo bash -s -- -b /usr/local/bin/
+
+      - name: Build
+        env:
+          NODE_ENV: production
+        run: |
+          set -a
+          source projects/optic-ci/.env.production
+          task default
+
+      - name: Release binaries
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          task pkg:build -- --no-bytecode --public --public-packages "*"
+          task pkg:archive pkg:upload
