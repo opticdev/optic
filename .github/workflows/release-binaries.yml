@@ -18,7 +18,7 @@ on:
 
 jobs:
   release:
-    runs-on: macos-latest-xl
+    runs-on: macos-12-xl
     steps:
       - uses: actions/checkout@v3
 
