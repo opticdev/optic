@@ -241,7 +241,7 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
                   feedback.success(`Wrote har traffic to ${completedName}`);
                   feedback.log(
                     `\nRun "${chalk.bold(
-                      `optic oas verify ${filePath}`
+                      `optic verify ${filePath}`
                     )}" to diff the captured traffic`
                   );
                 }

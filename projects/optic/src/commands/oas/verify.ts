@@ -16,7 +16,7 @@ import { renderDiffs, updateByInteractions } from './diffing/patch';
 import { specToOperations } from './operations/queries';
 import { OpticCliConfig, VCS } from '../../config';
 import { OPTIC_URL_KEY } from '../../constants';
-import { getApiFromOpticUrl } from '../../utils/cloud-urls';
+import { getApiFromOpticUrl, getSpecUrl } from '../../utils/cloud-urls';
 import { uploadSpec, uploadSpecVerification } from '../../utils/cloud-specs';
 import { loadSpec, specHasUncommittedChanges } from '../../utils/spec-loaders';
 import * as Git from '../../utils/git-utils';
@@ -108,7 +108,7 @@ export async function runVerify(
             existingCaptures.toString()
           )} capture${existingCaptures === 1 ? '' : 's'}. ${nextCommand(
             'Reset captures',
-            `optic oas capture clear ${path.relative(process.cwd(), specPath)}`
+            `optic capture clear ${path.relative(process.cwd(), specPath)}`
           )}\``
     } \n`
   );
@@ -128,6 +128,7 @@ export async function runVerify(
   );
 
   const diffResults = await renderDiffs(
+    specPath,
     sourcemap,
     spec,
     updatePatches,
@@ -168,7 +169,7 @@ export async function runVerify(
       specHasUncommittedChanges(parseResult.sourcemap, config.vcs.diffSet)
     ) {
       console.error(
-        'optic oas verify --upload can only be run in a git repository without uncommitted changes. That ensures reports are properly tagged.'
+        'optic verify --upload can only be run in a git repository without uncommitted changes. That ensures reports are properly tagged.'
       );
       process.exitCode = 1;
       return;
@@ -202,6 +203,15 @@ export async function runVerify(
       verificationData: coverage.coverage,
       message: options.message,
     });
+
+    console.log(
+      `Successfully uploaded verification data. View your spec at ${getSpecUrl(
+        config.client.getWebBase(),
+        orgId,
+        apiId,
+        specId
+      )}`
+    );
   }
 
   analytics.forEach((event) => trackEvent(event.event, event.properties));
