@@ -38,6 +38,7 @@ exports[`one of shape patch generator can add an additional branch to a complex 
       "Addition",
       "BackwardsCompatibilityUnknown",
     ],
+    "shouldRegeneratePatches": false,
   },
 ]
 `;
@@ -88,6 +89,7 @@ exports[`one of shape patch generator when new field in one of object variant of
       "Addition",
       "BackwardsCompatibilityUnknown",
     ],
+    "shouldRegeneratePatches": false,
   },
 ]
 `;
@@ -123,6 +125,7 @@ exports[`one of shape patch generator when new primitive types provided to exist
       "Addition",
       "BackwardsCompatibilityUnknown",
     ],
+    "shouldRegeneratePatches": false,
   },
 ]
 `;
@@ -177,6 +180,7 @@ exports[`one of shape patch generator when root schema is obejct and is shown an
       "Addition",
       "BackwardsCompatibilityUnknown",
     ],
+    "shouldRegeneratePatches": true,
   },
   {
     "description": "change type of ",
@@ -207,6 +211,7 @@ exports[`one of shape patch generator when root schema is obejct and is shown an
     "impact": [
       "BackwardsIncompatible",
     ],
+    "shouldRegeneratePatches": false,
   },
 ]
 `;

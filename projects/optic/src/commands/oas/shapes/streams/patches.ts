@@ -37,10 +37,9 @@ export class ShapePatches {
       let shapeDiffs = diffBodyBySchema(body, schema);
 
       let patchCount = 0;
+      let shouldRegenerate = false;
 
       for (let shapeDiff of shapeDiffs) {
-        // consuming Result<ShapeDiffs> directly ignores any schema compilation errors
-        // TODO: consider making this more explicit
         let diffPatches = generateShapePatchesByDiff(
           shapeDiff,
           schema,
@@ -57,7 +56,10 @@ export class ShapePatches {
 
           schema = Schema.applyShapePatch(schema, patch);
           yield patch;
+          // If the patch changes the structure of the schema (e.g. removes / replaces with oneOf), we need to regenerate the patches because the target json path could have moved
+          if (patch.shouldRegeneratePatches) shouldRegenerate = true;
         }
+        if (shouldRegenerate) break;
       }
       patchesExhausted = patchCount === 0;
     }

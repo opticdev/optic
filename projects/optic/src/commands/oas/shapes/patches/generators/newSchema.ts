@@ -26,5 +26,6 @@ export function newSchemaPatch(
         : PatchImpact.BackwardsIncompatible, // @acunnife, adding a new body to an existing request is backwards-incompatible, right?
     ],
     groupedOperations,
+    shouldRegeneratePatches: false,
   };
 }

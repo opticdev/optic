@@ -94,5 +94,6 @@ export function* additionalPropertiesPatches(
         : PatchImpact.BackwardsIncompatible,
     ],
     groupedOperations,
+    shouldRegeneratePatches: false,
   };
 }

@@ -32,6 +32,7 @@ export interface ShapePatch {
   diff: ShapeDiffResult | OperationDiffResult | undefined;
   impact: PatchImpact[];
   groupedOperations: PatchOperationGroup[];
+  shouldRegeneratePatches?: boolean;
 }
 
 export class ShapePatch {
