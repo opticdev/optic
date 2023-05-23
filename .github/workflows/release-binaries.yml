@@ -1,0 +1,42 @@
+name: release-binaries
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag_name:
+        required: true
+        type: string
+        description: >
+          The tag that a release has been previously created from. Binaries will be attached to this release.
+  workflow_call:
+    inputs:
+      release_tag_name:
+        required: true
+        type: string
+        description: >
+          The tag that a release has been previously created from. Binaries will be attached to this release.
+
+jobs:
+  release:
+    runs-on: macos-latest-xl
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: yarn
+
+      - name: Install Task
+        run: curl -sL https://taskfile.dev/install.sh | sudo bash -s -- -b /usr/local/bin/
+
+      - name: Release binaries
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag_name }}
+          NODE_ENV: production
+        run: |
+          set -a
+          source projects/optic-ci/.env.production
+          task pkg:build -- --no-bytecode --public --public-packages "*"
+          task pkg:archive pkg:upload
