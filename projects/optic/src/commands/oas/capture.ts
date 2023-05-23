@@ -67,8 +67,10 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
         const specFile = createNewSpecFile('3.1.0');
         if (isJson(filePath)) {
           logger.info(`Initializing OpenAPI file at ${filePath}`);
+          await fs.mkdir(path.dirname(filePath), { recursive: true });
           await fs.writeFile(filePath, JSON.stringify(specFile, null, 2));
         } else if (isYaml(filePath)) {
+          await fs.mkdir(path.dirname(filePath), { recursive: true });
           logger.info(`Initializing OpenAPI file at ${filePath}`);
           await fs.writeFile(filePath, writeYaml(specFile));
         } else {
