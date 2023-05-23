@@ -157,3 +157,10 @@ jobs:
     with:
       optic_version: ${{ needs.release.outputs.optic_version }}
     secrets: inherit
+
+  publish-binaries:
+    needs: release
+    uses: ./.github/workflows/release-binaries.yml
+    with:
+      release_tag_name: ${{ github.event.release.tag_name }}
+    secrets: inherit
