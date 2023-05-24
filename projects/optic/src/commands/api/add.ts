@@ -80,7 +80,7 @@ type ApiAddActionOptions = {
 
 async function initializeApi(
   orgId: string,
-  [file_path, shas]: [string, string[]],
+  file_path: string,
   config: OpticCliConfig,
   options: {
     path_to_spec: string | undefined;
@@ -190,14 +190,15 @@ async function initializeApi(
   return {
     specName,
     api,
-    candidate: [file_path, shas] as [string, string[]],
+    file_path,
     alreadyTracked,
   };
 }
 
 async function backfillHistory(
   orgId: string,
-  apiDetails: NonNullable<Awaited<ReturnType<typeof initializeApi>>>,
+  shas: string[],
+  addedApis: NonNullable<Awaited<ReturnType<typeof initializeApi>>>[],
   config: OpticCliConfig,
   options: {
     path_to_spec: string | undefined;
@@ -207,16 +208,12 @@ async function backfillHistory(
     web_url?: string;
   }
 ) {
-  const {
-    api,
-    candidate: [file_path, shas],
-    specName,
-  } = apiDetails;
-  const uploadedChecksums = new Set<string>();
-  const pathRelativeToRoot = path.relative(config.root, file_path);
+  const specsStatus = new Map<
+    string,
+    { completed: boolean; uploadedChecksums: Set<string> }
+  >();
 
   logger.info('');
-  logger.info(chalk.bold.gray(`Backfilling history for ${pathRelativeToRoot}`));
   const spinner = ora(``);
   spinner.start();
   spinner.color = 'blue';
@@ -236,79 +233,89 @@ async function backfillHistory(
       branchToUseForTag = options.default_branch;
     }
 
-    const specsToTag: [string, string, Date | undefined][] = [];
     for await (const sha of shas) {
       if (mergeBaseSha === sha) {
         shouldTag = true;
       }
-      spinner.text = `${chalk.bold.blue(
-        specName
-      )} checking version ${sha.substring(0, 6)}`;
-      let parseResult: ParseResult;
-      try {
-        parseResult = await loadSpec(`${sha}:${pathRelativeToRoot}`, config, {
-          strict: false,
-          denormalize: true,
+      const baseText = `${chalk.bold.blue(
+        'Backfilling'
+      )} version ${sha.substring(0, 6)}`;
+      spinner.text = baseText;
+
+      for (const { api, file_path } of addedApis) {
+        const pathRelativeToRoot = path.relative(config.root, file_path);
+        const status = specsStatus.get(pathRelativeToRoot) ?? {
+          completed: false,
+          uploadedChecksums: new Set(),
+        };
+
+        if (status.completed) {
+          continue;
+        }
+
+        spinner.text = `${baseText} file ${pathRelativeToRoot}`;
+
+        let parseResult: ParseResult;
+        try {
+          parseResult = await loadSpec(`${sha}:${pathRelativeToRoot}`, config, {
+            strict: false,
+            denormalize: true,
+          });
+        } catch (e) {
+          logger.debug(
+            `${short(
+              sha
+            )}:${pathRelativeToRoot} is not a valid OpenAPI file, skipping sha version`,
+            e
+          );
+          continue;
+        }
+        if (parseResult.isEmptySpec) {
+          logger.debug(
+            `File ${pathRelativeToRoot} does not exist in sha ${short(
+              sha
+            )}, stopping here`
+          );
+          specsStatus.set(pathRelativeToRoot, {
+            ...status,
+            completed: true,
+          });
+          continue;
+        }
+
+        const stableSpecString = stableStringify(parseResult.jsonLike);
+        const checksum = computeChecksumForAws(stableSpecString);
+        if (status.uploadedChecksums.has(checksum)) {
+          continue;
+        }
+
+        const specId = await uploadSpec(api.id, {
+          spec: parseResult,
+          tags: [`git:${sha}`],
+          client: config.client,
+          orgId,
+          forward_effective_at_to_tags: true,
+          precomputed: {
+            specString: stableSpecString,
+            specChecksum: checksum,
+          },
         });
-      } catch (e) {
-        logger.debug(
-          `${short(
-            sha
-          )}:${pathRelativeToRoot} is not a valid OpenAPI file, skipping sha version`,
-          e
-        );
-        continue;
-      }
-      if (parseResult.isEmptySpec) {
-        logger.debug(
-          `File ${pathRelativeToRoot} does not exist in sha ${short(
-            sha
-          )}, stopping here`
-        );
-        break;
-      }
+        status.uploadedChecksums.add(checksum);
+        const effective_at =
+          parseResult.context?.vcs === 'git'
+            ? parseResult.context.effective_at
+            : undefined;
 
-      const stableSpecString = stableStringify(parseResult.jsonLike);
-      const checksum = computeChecksumForAws(stableSpecString);
-      if (uploadedChecksums.has(checksum)) {
-        continue;
+        if (shouldTag) {
+          const tags = [sanitizeGitTag(`gitbranch:${branchToUseForTag}`)];
+          await config.client.tagSpec(specId, tags, effective_at);
+        }
+
+        specsStatus.set(pathRelativeToRoot, status);
       }
-
-      spinner.text = `${chalk.bold.blue(specName)} version ${sha.substring(
-        0,
-        6
-      )} uploading`;
-      const specId = await uploadSpec(api.id, {
-        spec: parseResult,
-        tags: [`git:${sha}`],
-        client: config.client,
-        orgId,
-        forward_effective_at_to_tags: true,
-        precomputed: {
-          specString: stableSpecString,
-          specChecksum: checksum,
-        },
-      });
-      uploadedChecksums.add(checksum);
-      const effective_at =
-        parseResult.context?.vcs === 'git'
-          ? parseResult.context.effective_at
-          : undefined;
-
-      if (shouldTag) specsToTag.push([specId, sha, effective_at]);
     }
-
-    const tags = [sanitizeGitTag(`gitbranch:${branchToUseForTag}`)];
-    for (const [specId, sha, effective_at] of [...specsToTag].reverse()) {
-      spinner.text = `${chalk.bold.blue(specName)} version ${sha.substring(
-        0,
-        6
-      )} tagging`;
-      await config.client.tagSpec(specId, tags, effective_at);
-    }
-
-    spinner.succeed(`${chalk.bold.blue(specName)} history backfilled`);
   }
+  spinner.succeed(`Successfully backfilled history`);
 }
 
 export const getApiAddAction =
@@ -430,7 +437,7 @@ export const getApiAddAction =
       )
     );
 
-    let candidates: Map<string, string[]>;
+    let candidates: { shas: string[]; paths: string[] };
 
     if (config.vcs?.type === VCS.Git) {
       candidates = !file.isDir
@@ -449,12 +456,12 @@ export const getApiAddAction =
             startsWith: file.path,
           });
 
-      candidates = new Map(files.map((f) => [f, []]));
+      candidates = { shas: [], paths: files };
     }
     const addedApis: NonNullable<Awaited<ReturnType<typeof initializeApi>>>[] =
       [];
-    for await (const candidate of candidates) {
-      const api = await initializeApi(orgRes.org.id, candidate, config, {
+    for await (const file_path of candidates.paths) {
+      const api = await initializeApi(orgRes.org.id, file_path, config, {
         path_to_spec: file?.path,
         web: options.web,
         default_branch,
@@ -466,26 +473,29 @@ export const getApiAddAction =
         addedApis.push(api);
       }
     }
-    const apisToBackfill = addedApis.filter(
-      (api) => api.candidate[1].length > 0
-    );
 
-    if (apisToBackfill.length > 0) {
+    if (addedApis.length > 0 && candidates.shas.length > 0) {
       logger.info(``);
-      logger.info(
-        chalk.blue.bold(
-          'Backfilling API history, you can exit at any time (`ctrl + c`) and finish this later.'
-        )
-      );
-      for (const api of apisToBackfill) {
-        await backfillHistory(orgRes.org.id, api, config, {
-          path_to_spec: file?.path,
-          web: options.web,
-          default_branch,
-          default_tag,
-          web_url,
-        });
+      if (candidates.shas.length === 1) {
+        logger.info(
+          chalk.yellow(
+            'Hint: add `--history-depth=0` to backfill the entire history of your API'
+          )
+        );
+      } else {
+        logger.info(
+          chalk.blue.bold(
+            'Backfilling API history, you can exit at any time (`ctrl + c`) and finish this later.'
+          )
+        );
       }
+      await backfillHistory(orgRes.org.id, candidates.shas, addedApis, config, {
+        path_to_spec: file?.path,
+        web: options.web,
+        default_branch,
+        default_tag,
+        web_url,
+      });
     }
 
     logger.info('');

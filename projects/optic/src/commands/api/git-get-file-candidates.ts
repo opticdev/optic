@@ -5,13 +5,12 @@ import path from 'path';
 
 const exec = promisify(callbackExec);
 
-type Path = string;
-type Sha = string;
+type Candidates = { shas: string[]; paths: string[] };
 
 export async function getShasCandidatesForPath(
   path: string,
   depth: string
-): Promise<Map<Path, Sha[]>> {
+): Promise<Candidates> {
   // This should return commits in reverse chronological order
   // first parent treats merge commits as a single depth (not including children in it)
   const command =
@@ -26,10 +25,10 @@ export async function getShasCandidatesForPath(
     hashes = commandResults.split('\n');
   } catch (e) {
     // Will fail in an empty git repository
-    return new Map();
+    return { shas: [], paths: [] };
   }
 
-  return new Map([[path, hashes]]);
+  return { shas: hashes, paths: [path] };
 }
 
 export async function getPathCandidatesForSha(
@@ -38,7 +37,7 @@ export async function getPathCandidatesForSha(
     startsWith: string;
     depth: string;
   }
-): Promise<Map<Path, Sha[]>> {
+): Promise<Candidates> {
   let hashes: string[] = [sha];
   if (opts.depth !== '1') {
     const command =
@@ -55,7 +54,7 @@ export async function getPathCandidatesForSha(
     }
   }
 
-  const results = new Map();
+  const paths: string[] = [];
   // Pull all spec candidates (i.e. specs that have openapi key and are yml/yaml/json)
   // This won't check version / validity of spec and will not look for swagger2 specs
   const relativePaths = await findOpenApiSpecsCandidates();
@@ -65,8 +64,8 @@ export async function getPathCandidatesForSha(
       continue;
     }
 
-    results.set(p, hashes);
+    paths.push(p);
   }
 
-  return results;
+  return { shas: hashes, paths };
 }
