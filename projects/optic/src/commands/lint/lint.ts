@@ -71,7 +71,7 @@ const getLintAction =
       }
     );
 
-    logger.info(chalk.green.bold('✔ Linting passed'));
+    logger.info(chalk.green.bold('✔ OpenAPI is valid'));
 
     if (checks.total > 0) {
       logger.info('');
