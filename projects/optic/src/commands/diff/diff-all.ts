@@ -1,5 +1,6 @@
 import { Command, Option } from 'commander';
 import micromatch from 'micromatch';
+import fg from 'fast-glob';
 import { OpticCliConfig, VCS } from '../../config';
 import * as Git from '../../utils/git-utils';
 import { loadSpec, loadRaw, ParseResult } from '../../utils/spec-loaders';
@@ -569,6 +570,16 @@ function sanitizeRef(maybeGitRef: string): string {
   return maybeGitRef.includes(':') ? maybeGitRef.split(':')[1] : maybeGitRef;
 }
 
+async function matchSpecCandidates(
+  matchesOption?: string,
+  ignoresOption?: string
+): Promise<string[]> {
+  const matches = matchesOption?.split(',').filter((g) => g !== '') ?? [];
+  const ignores = ignoresOption?.split(',').filter((g) => g !== '') ?? [];
+
+  return await fg(matches, { ignore: ignores });
+}
+
 function applyGlobFilter(
   filePaths: string[],
   globs: {
@@ -622,10 +633,17 @@ const getDiffAllAction =
     let candidateMap: CandidateMap;
     let compareToCandidates: string[];
     try {
-      options.compareTo && (await Git.assertRefExists(options.compareTo));
-      compareToCandidates = await Git.findOpenApiSpecsCandidates(
-        options.compareTo
-      );
+      if (!options.compareTo && options.match) {
+        compareToCandidates = await matchSpecCandidates(
+          options.match,
+          options.ignore
+        );
+      } else {
+        options.compareTo && (await Git.assertRefExists(options.compareTo));
+        compareToCandidates = await Git.findOpenApiSpecsCandidates(
+          options.compareTo
+        );
+      }
     } catch (e) {
       logger.error(
         `Error reading files from git history for --compare-to ${options.compareTo}`
