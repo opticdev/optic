@@ -22,7 +22,7 @@ exports[`lint fails on bad formatting 1`] = `
 
 exports[`lint fails on requirement rule errors 1`] = `
 "Linting spec spec-fails-requirement.yml...
-[32m[1m✔ Linting passed[22m[39m
+[32m[1m✔ OpenAPI is valid[22m[39m
 
 Running Optic Checks
 
@@ -55,7 +55,7 @@ exports[`lint fails on validation errors 1`] = `
 
 exports[`lint passes on valid specs 1`] = `
 "Linting spec spec-good-spec.yml...
-[32m[1m✔ Linting passed[22m[39m
+[32m[1m✔ OpenAPI is valid[22m[39m
 
 Running Optic Checks
 
