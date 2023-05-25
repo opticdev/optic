@@ -7,20 +7,20 @@ on:
         required: true
         type: string
         description: >
-          The Optic version to package in the image. Any NPM dist tag or published semver version is technically
-          supported, but this value is also used as the image tag, so avoid using 'latest'.
+          The Optic version to package in the image. This should match a published release tag from
+          https://github.com/opticdev/optic/releases.
   workflow_call:
     inputs:
       optic_version:
         required: true
         type: string
         description: >
-          The Optic version to package in the image. Any NPM dist tag or published semver version is technically
-          supported, but this value is also used as the image tag, so avoid using 'latest'.
+          The Optic version to package in the image. This should match a published release tag from
+          https://github.com/opticdev/optic/releases.
 
 permissions:
   id-token: write # This is required for requesting the JWT
-  contents: read  # This is required for actions/checkout
+  contents: read # This is required for actions/checkout
 
 env:
   SKIP_ANNOUNCE: 'false'

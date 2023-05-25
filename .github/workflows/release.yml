@@ -114,7 +114,7 @@ jobs:
         run: |
           v=$(jq -r .version < package.json)
           echo "VERSION=$v" >> $GITHUB_ENV
-          echo "optic_version=${v}" >> $GITHUB_OUTPUT
+          echo "optic_version=v${v}" >> $GITHUB_OUTPUT
 
       - name: Publish NPM
         run: |
@@ -143,7 +143,7 @@ jobs:
         uses: Ilshidur/action-slack@689ad44a9c9092315abd286d0e3a9a74d31ab78a # v2.1.0
         if: >
           failure()
-          && env.SKIP_ANNOUCE == 'false'
+          && env.SKIP_ANNOUNCE == 'false'
           && env.SKIP_PUBLISH == 'false'
         env:
           SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
