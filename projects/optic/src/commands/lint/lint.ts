@@ -71,37 +71,39 @@ const getLintAction =
       }
     );
 
-    logger.info('');
-    logger.info('Checks');
-    logger.info('');
+    logger.info(chalk.green.bold('✔ OpenAPI is valid'));
 
-    for (const log of generateComparisonLogsV2(
-      changelogData,
-      {
-        from: file.sourcemap,
-        to: file.sourcemap,
-      },
-      specResults,
-      {
-        output: 'pretty',
-        verbose: false,
-        severity: textToSev(options.severity),
+    if (checks.total > 0) {
+      logger.info('');
+      logger.info('Running Optic Checks');
+      logger.info('');
+
+      for (const log of generateComparisonLogsV2(
+        changelogData,
+        {
+          from: file.sourcemap,
+          to: file.sourcemap,
+        },
+        specResults,
+        {
+          output: 'pretty',
+          verbose: false,
+          severity: textToSev(options.severity),
+        }
+      )) {
+        logger.info(log);
       }
-    )) {
-      logger.info(log);
-    }
 
-    logger.info('');
-    const failures = checks.failed;
-    const failuresForSeverity =
-      options.severity === 'error'
-        ? failures.error
-        : options.severity === 'warn'
-        ? failures.warn + failures.error
-        : failures.warn + failures.error + failures.info;
+      logger.info('');
+      const failures = checks.failed;
+      const failuresForSeverity =
+        options.severity === 'error'
+          ? failures.error
+          : options.severity === 'warn'
+          ? failures.warn + failures.error
+          : failures.warn + failures.error + failures.info;
 
-    if (options.web) {
-      if (specResults.results.length > 0) {
+      if (options.web) {
         const analyticsData: Record<string, any> = {
           isInCi: config.isInCi,
         };
@@ -122,14 +124,14 @@ const getLintAction =
           wait: false,
         });
       }
-    }
 
-    if (failuresForSeverity > 0) {
-      logger.info(
-        chalk.red.bold('Linting errors found with your OpenAPI spec.')
-      );
-      process.exitCode = 1;
-    } else {
-      logger.info(chalk.green.bold('Linting passed.'));
+      if (failuresForSeverity > 0) {
+        logger.info(
+          chalk.red.bold('x Check failures detected with your OpenAPI spec.')
+        );
+        process.exitCode = 1;
+      } else {
+        logger.info(chalk.green.bold('✔ Checks passed.'));
+      }
     }
   };
