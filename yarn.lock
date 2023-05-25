@@ -3143,6 +3143,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/braces@npm:*":
+  version: 3.0.1
+  resolution: "@types/braces@npm:3.0.1"
+  checksum: 3749f7673a03d498ddb2f199b222bb403e53e78ac05a599c757c2049703ece802602c78640af0ff826be0fd2ea8b03daff04ce18806ed739592302195b7a569b
+  languageName: node
+  linkType: hard
+
 "@types/configstore@npm:*":
   version: 6.0.0
   resolution: "@types/configstore@npm:6.0.0"
@@ -3344,6 +3351,15 @@ __metadata:
   version: 6.3.0
   resolution: "@types/log@npm:6.3.0"
   checksum: 558a25d8efbec4a084054dd72b2bbe3ea455d78202a3de9edeea7cbe43f670667cb6a58736dc084d4227995e4fe507a3456cfe42cd1eea8dc56f7382a18abaf2
+  languageName: node
+  linkType: hard
+
+"@types/micromatch@npm:^4":
+  version: 4.0.2
+  resolution: "@types/micromatch@npm:4.0.2"
+  dependencies:
+    "@types/braces": "*"
+  checksum: 6c678e9c625d5b422c6d2c1001da1c502ecc4457248343bbd324b79fd798a6563e336a4d79630d80e8202312013dd7cf8b4440afa644d04477abd26fde6fba24
   languageName: node
   linkType: hard
 
@@ -3730,6 +3746,7 @@ __metadata:
     "@types/lodash.groupby": ^4.6.6
     "@types/lodash.sortby": ^4.7.7
     "@types/log": ^6.3.0
+    "@types/micromatch": ^4
     "@types/node": ^18.0.0
     "@types/picomatch": ^2.3.0
     "@types/postman-collection": ^3.5.7
@@ -3772,6 +3789,7 @@ __metadata:
     log: ^6.3.1
     log-node: ^8.0.3
     loglevel: ^1.8.0
+    micromatch: ^4.0.5
     minimatch: 9.0.1
     mockttp: ^3.7.4
     node-fetch: ^2.6.7

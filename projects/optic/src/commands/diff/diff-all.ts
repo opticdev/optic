@@ -1,5 +1,5 @@
 import { Command, Option } from 'commander';
-import pm from 'picomatch';
+import micromatch from 'micromatch';
 import { OpticCliConfig, VCS } from '../../config';
 import * as Git from '../../utils/git-utils';
 import { loadSpec, loadRaw, ParseResult } from '../../utils/spec-loaders';
@@ -579,8 +579,8 @@ function applyGlobFilter(
   const matches = globs.matches?.split(',').filter((g) => g !== '') ?? [];
   const ignores = globs.ignores?.split(',').filter((g) => g !== '') ?? [];
 
-  const globMatchers = matches.map((g) => pm(g));
-  const ignoreMatchers = ignores.map((i) => pm(i));
+  const globMatchers = matches.map((g) => micromatch.matcher(g));
+  const ignoreMatchers = ignores.map((i) => micromatch.matcher(i));
   const matchedFiles = new Set(
     filePaths
       .filter((name) =>
