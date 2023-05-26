@@ -123,9 +123,18 @@ async function setupGitHub(
 
   console.log();
   console.log(chalk.red("Wait, you're not finished yet"));
-  console.log(
-    `Before pushing your new GitHub Actions workflow, follow the instructions at ${instructionsUrl} to set up the required secrets in your repository.`
-  );
+  if (answers.generatedSpecs) {
+    console.log(
+      `Before pushing your new GitHub Actions workflow,, review the commented sections marked TODO in ${target}.`
+    );
+    console.log(
+      `Then, follow the instructions at ${instructionsUrl} to set up the required secrets in your repository.`
+    );
+  } else {
+    console.log(
+      `Before pushing your new GitHub Actions workflow, follow the instructions at ${instructionsUrl} to set up the required secrets in your repository.`
+    );
+  }
 
   console.log();
 
@@ -189,10 +198,19 @@ async function setupGitLab(
 
   console.log();
   console.log(chalk.red("Wait, you're not finished yet"));
-  console.log(
-    'Before pushing your new GitLab CI/CD pipeline, follow the instructions at\n' +
-      `${instructionsUrl} to set up the required secrets in your repository.`
-  );
+  if (answers.generatedSpecs) {
+    console.log(
+      `Before pushing your new GitLab CI/CD pipeline, review the commented sections marked TODO in ${target}.`
+    );
+    console.log(
+      `Then, follow the instructions at ${instructionsUrl} to set up the required secrets in your repository.`
+    );
+  } else {
+    console.log(
+      'Before pushing your new GitLab CI/CD pipeline, follow the instructions at\n' +
+        `${instructionsUrl} to set up the required secrets in your repository.`
+    );
+  }
   console.log();
 
   await openUrlPrompt(instructionsUrl);
