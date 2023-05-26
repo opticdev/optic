@@ -63,10 +63,14 @@ tasks:
 
       Most useful for produce a single-platform build for local use. Builds intended
       for publishing should use `docker:build:release`.
+
+      example:
+       task docker:build:local OPTIC_CLI_VERSION=v0.43.5
     cmds:
       - >
         docker build {{.CLI_ARGS}}
         --tag docker.io/useoptic/optic:local
+        --build-arg OPTIC_CLI_VERSION={{.OPTIC_CLI_VERSION}}
         .
 
   docker:build:release:
@@ -78,7 +82,11 @@ tasks:
       .CLI_ARGS are appended to the command. To publish images to DockerHub include `--push`.
 
       example:
-       task docker:build:release OPTIC_CLI_VERSION=0.28.1 -- --push
+       task docker:build:release OPTIC_CLI_VERSION=v0.43.5 -- --push
+       task docker:build:release OPTIC_CLI_VERSION=latest -- --push
+
+      Note that `OPTIC_CLI_VERSION` should match a tag from a published release at https://github.com/opticdev/optic/releases.
+      The only exception is `latest` which will resolve to the Optic's most recent stable release.
     deps:
       - docker:setup
     vars:

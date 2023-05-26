@@ -1,4 +1,4 @@
-![Optic Logo](https://www.useoptic.com/img/optic-logo.png)
+![Optic Logo](https://www.useoptic.com/logo.svg)
 
 # Quick Reference
 
