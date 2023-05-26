@@ -5,11 +5,7 @@ import path from 'path';
 import fs from 'node:fs/promises';
 import ora from 'ora';
 import { OpticCliConfig, VCS } from '../../config';
-import {
-  loadSpec,
-  ParseResult,
-  specHasUncommittedChanges,
-} from '../../utils/spec-loaders';
+import { loadSpec, ParseResult } from '../../utils/spec-loaders';
 import { logger } from '../../logger';
 import { OPTIC_URL_KEY } from '../../constants';
 import chalk from 'chalk';
