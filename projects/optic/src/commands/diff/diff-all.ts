@@ -720,19 +720,6 @@ const getDiffAllAction =
     const isCloudDiff = /^cloud:/.test(options.compareFrom);
     handleWarnings(warnings, options, isCloudDiff);
 
-    if (results.length === 0) {
-      logger.info('No comparisons were run between specs');
-      logger.info(
-        'Get started by running `optic api add` and making a change to an API spec'
-      );
-    }
-
-    if (options.check && !config.isInCi) {
-      logger.info(
-        `Configure check standards in optic cloud or your local optic.dev.yml file.`
-      );
-    }
-
     if (config.isInCi) {
       const errors: { name: string; error: string }[] = [
         ...warnings.unparseableFromSpec.map((spec) => ({
@@ -801,12 +788,26 @@ ${(spec.error as Error).message}`,
       );
     }
 
-    if (!options.web && !config.isInCi) {
-      logger.info(
-        chalk.blue(
-          `Rerun this command with the --web flag to view the detailed changes in your browser`
+    if (results.length === 0) {
+      logger.error(
+        chalk.red.bold(
+          'No OpenAPI specs were detected - exiting with error code 1'
         )
       );
+      process.exitCode = 1;
+    } else if (!config.isInCi) {
+      if (options.check) {
+        logger.info(
+          `Configure check standards in optic cloud or your local optic.dev.yml file.`
+        );
+      }
+      if (!options.web) {
+        logger.info(
+          chalk.blue(
+            `Rerun this command with the --web flag to view the detailed changes in your browser`
+          )
+        );
+      }
     }
     await flushEvents();
 
