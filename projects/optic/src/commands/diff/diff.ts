@@ -30,6 +30,7 @@ import { errorHandler } from '../../error-handler';
 import path from 'path';
 import { OPTIC_URL_KEY } from '../../constants';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
+import * as Git from '../../utils/git-utils';
 
 const description = `run a diff between two API specs`;
 
@@ -424,10 +425,14 @@ const getDiffAction =
       );
     }
 
+    const maybeOrigin =
+      config.vcs?.type === VCS.Git ? await Git.guessRemoteOrigin() : null;
+
     trackEvent('optic.diff.completed', {
       diffs: diffResult.specResults.diffs.length,
       checks: diffResult.specResults.results.length,
       isInCi: config.isInCi,
+      webUrl: maybeOrigin?.web_url,
     });
 
     const failures = diffResult.checks.failed;

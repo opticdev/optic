@@ -768,10 +768,15 @@ ${(spec.error as Error).message}`,
         result.specResults.diffs.length > 0 ||
         (!options.check && result.specResults.results.length > 0)
     );
+
+    const maybeOrigin =
+      config.vcs?.type === VCS.Git ? await Git.guessRemoteOrigin() : null;
+
     trackEvent('optic.diff-all.completed', {
       numberOfComparisonsWithResults: comparisonsWithResults.length,
       numberOfComparisons: results.length,
       isInCi: config.isInCi,
+      webUrl: maybeOrigin?.web_url,
     });
 
     if (options.json) {
