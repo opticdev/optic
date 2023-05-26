@@ -104,7 +104,7 @@ async function setupGitHub(
 
   let configContent = await fs.readFile(fromConfig, 'utf-8');
   const standardsValue = answers.standardsFail ? 'true' : 'false';
-  configContent = configContent.replace('{{%standards_fail}}', standardsValue);
+  configContent = configContent.replace('%standards_fail', standardsValue);
 
   await fs.writeFile(path.join(config.root, target), configContent);
 
@@ -164,7 +164,7 @@ async function setupGitLab(
   );
   let configContent = await fs.readFile(fromConfig, 'utf-8');
   const standardsValue = answers.standardsFail ? '' : '# ';
-  configContent = configContent.replace('{{%standards_fail}}', standardsValue);
+  configContent = configContent.replace('%standards_fail', standardsValue);
 
   if (!exists) {
     await fs.mkdir(targetDir, { recursive: true });
