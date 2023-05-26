@@ -125,7 +125,7 @@ async function setupGitHub(
   console.log(chalk.red("Wait, you're not finished yet"));
   if (answers.generatedSpecs) {
     console.log(
-      `Before pushing your new GitHub Actions workflow,, review the commented sections marked TODO in ${target}.`
+      `Before pushing your new GitHub Actions workflow, review the commented sections marked TODO in ${target}.`
     );
     console.log(
       `Then, follow the instructions at ${instructionsUrl} to set up the required secrets in your repository.`
