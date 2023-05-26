@@ -164,7 +164,7 @@ export const findOpenApiSpecsCandidates = async (
 ): Promise<string[]> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
-      if (err || stderr || !stdout) reject(err || stderr);
+      if (err || stderr) reject(err || stderr);
       resolve(
         stdout
           .trim()

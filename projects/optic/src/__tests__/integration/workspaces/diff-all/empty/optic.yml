@@ -1,0 +1,4 @@
+ruleset:
+  - breaking-changes
+  - naming:
+      pathComponents: camelCase

@@ -71,6 +71,23 @@ describe('diff-all', () => {
     process.env = { ...oldEnv };
   });
 
+  test('diffs all in an empty folder', async () => {
+    const workspace = await setupWorkspace('diff-all/empty', {
+      repo: true,
+      commit: true,
+    });
+
+    await run(
+      `touch a.yml && git add . && git commit -m 'add empty file'`,
+      false,
+      workspace
+    );
+    const { combined, code } = await runOptic(workspace, 'diff-all --check');
+
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(code).toBe(1);
+  });
+
   test('diffs all files in a workspace without --upload', async () => {
     const workspace = await setupWorkspace('diff-all/without-optic-url', {
       repo: true,
