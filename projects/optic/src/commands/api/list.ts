@@ -22,7 +22,10 @@ export const registerApiList = (cli: Command, config: OpticCliConfig) => {
     .configureHelp({
       commandUsage: usage,
     })
-    .argument('[path_to_spec]', 'path to file or directory to add')
+    .argument(
+      '[path]',
+      'path to directory (defaults to current working directory)'
+    )
     .description('Add APIs to Optic')
     .action(errorHandler(getApiAddAction(config)));
 };
@@ -31,16 +34,16 @@ type ApiActionOptions = {};
 
 export const getApiAddAction =
   (config: OpticCliConfig) =>
-  async (path_to_spec: string | undefined, options: ApiActionOptions) => {
+  async (dir_path: string | undefined, options: ApiActionOptions) => {
     let file: {
       path: string;
       isDir: boolean;
     };
-    if (path_to_spec) {
+    if (dir_path) {
       try {
-        const isDir = (await fs.lstat(path_to_spec)).isDirectory();
+        const isDir = (await fs.lstat(dir_path)).isDirectory();
         file = {
-          path: path.resolve(path_to_spec),
+          path: path.resolve(dir_path),
           isDir,
         };
       } catch (e) {
