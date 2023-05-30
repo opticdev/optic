@@ -11,6 +11,7 @@ const description = `dereference an OpenAPI specification`;
 const usage = () => `
   optic dereference <file_path>
   optic dereference <file_path> > dereference.yml
+  optic dereference <file_path> -o dereference.yml
 `;
 const helpText = `
 Example usage:

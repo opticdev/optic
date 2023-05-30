@@ -22,14 +22,14 @@ export const registerApiList = (cli: Command, config: OpticCliConfig) => {
     .configureHelp({
       commandUsage: usage,
     })
-    .argument('[path_to_spec]', 'path to file or directory to add')
-    .description('Add APIs to Optic')
-    .action(errorHandler(getApiAddAction(config)));
+    .argument('[path_to_specs]', 'path to directory for spec list')
+    .description('List specs within a directory')
+    .action(errorHandler(getApiListAction(config)));
 };
 
 type ApiActionOptions = {};
 
-export const getApiAddAction =
+export const getApiListAction =
   (config: OpticCliConfig) =>
   async (path_to_spec: string | undefined, options: ApiActionOptions) => {
     let file: {
