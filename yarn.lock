@@ -10610,11 +10610,11 @@ __metadata:
   linkType: hard
 
 "stream-json@npm:^1.7.4":
-  version: 1.7.5
-  resolution: "stream-json@npm:1.7.5"
+  version: 1.8.0
+  resolution: "stream-json@npm:1.8.0"
   dependencies:
     stream-chain: ^2.2.5
-  checksum: d6229cd0342cbfb2f0d4be2b289cd2fe283aaa808329ec5c925b9840fc694fa91400f10bbf3275ac39c039f314fe6ab844d380341e738654ce224482f266ad2b
+  checksum: c17ac72228815850fc5226d8c0a80afd6c2ffbfa71c572ad99ad2eac145dc836a3fc6f62a298b3df716f1726cc1ed8a448892ed9fb6123f46abf2f89c908749f
   languageName: node
   linkType: hard
 
