@@ -23,7 +23,10 @@ export const registerApiList = (cli: Command, config: OpticCliConfig) => {
     .configureHelp({
       commandUsage: usage,
     })
-    .argument('[path_to_specs]', 'path to directory for spec list')
+    .argument(
+      '[path_to_specs]',
+      'path to directory for spec list (defaults to the git root or current working directory)'
+    )
     .description('List specs within a directory')
     .action(errorHandler(getApiListAction(config)));
 };
@@ -32,16 +35,16 @@ type ApiActionOptions = {};
 
 export const getApiListAction =
   (config: OpticCliConfig) =>
-  async (path_to_spec: string | undefined, options: ApiActionOptions) => {
+  async (dir_path: string | undefined, options: ApiActionOptions) => {
     let file: {
       path: string;
       isDir: boolean;
     };
-    if (path_to_spec) {
+    if (dir_path) {
       try {
-        const isDir = (await fs.lstat(path_to_spec)).isDirectory();
+        const isDir = (await fs.lstat(dir_path)).isDirectory();
         file = {
-          path: path.resolve(path_to_spec),
+          path: path.resolve(dir_path),
           isDir,
         };
       } catch (e) {
