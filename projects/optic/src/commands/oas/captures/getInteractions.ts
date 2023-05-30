@@ -26,18 +26,28 @@ export async function getInteractions(
     let absoluteHarPath = path.resolve(options.har);
     if (!fsSync.existsSync(absoluteHarPath)) {
       return await feedback.inputError(
-        'HAR file could not be found at given path',
+        'Provided HAR path is invalid',
         InputErrors.HAR_FILE_NOT_FOUND
       );
     }
-    let harFile = fsSync.createReadStream(absoluteHarPath);
-    let harEntryResults = HarEntries.fromReadable(harFile);
-    let harEntries = AT.unwrapOr(harEntryResults, (err) => {
-      let message = `HAR entry skipped: ${err.message}`;
-      console.warn(message); // warn, skip and keep going
-      trackWarning(message, err);
-    });
-    sources.push(CapturedInteractions.fromHarEntries(harEntries));
+    const isDir = fsSync.lstatSync(absoluteHarPath).isDirectory();
+    const harPaths = isDir
+      ? fsSync
+          .readdirSync(absoluteHarPath)
+          .filter((filePath) => path.extname(filePath).toLowerCase() === '.har')
+          .map((filePath) => path.join(absoluteHarPath, filePath))
+      : [absoluteHarPath];
+
+    for (const path of harPaths) {
+      let harFile = fsSync.createReadStream(path);
+      let harEntryResults = HarEntries.fromReadable(harFile);
+      let harEntries = AT.unwrapOr(harEntryResults, (err) => {
+        let message = `HAR entry skipped: ${err.message}`;
+        console.warn(message); // warn, skip and keep going
+        trackWarning(message, err);
+      });
+      sources.push(CapturedInteractions.fromHarEntries(harEntries));
+    }
   } else if (options.postman) {
     const absolutePath = path.resolve(options.postman);
     if (!fsSync.existsSync(absolutePath)) {
