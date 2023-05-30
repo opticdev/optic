@@ -14,7 +14,8 @@ import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { validateOpenApiV3Document } from '@useoptic/openapi-io';
 
 const usage = () => `
-  optic api list`;
+  optic api list
+  optic api list ./specs/`;
 
 export const registerApiList = (cli: Command, config: OpticCliConfig) => {
   cli
@@ -23,16 +24,16 @@ export const registerApiList = (cli: Command, config: OpticCliConfig) => {
       commandUsage: usage,
     })
     .argument(
-      '[path]',
-      'path to directory (defaults to the git root or current working directory)'
+      '[path_to_specs]',
+      'path to directory for spec list (defaults to the git root or current working directory)'
     )
-    .description('Add APIs to Optic')
-    .action(errorHandler(getApiAddAction(config)));
+    .description('List specs within a directory')
+    .action(errorHandler(getApiListAction(config)));
 };
 
 type ApiActionOptions = {};
 
-export const getApiAddAction =
+export const getApiListAction =
   (config: OpticCliConfig) =>
   async (dir_path: string | undefined, options: ApiActionOptions) => {
     let file: {

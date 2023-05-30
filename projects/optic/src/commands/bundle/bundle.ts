@@ -24,6 +24,7 @@ const description = `bundle external references for an OpenAPI specification`;
 const usage = () => `
   optic bundle <file_path>
   optic bundle <file_path> > bundled.yml
+  optic bundle <file_path> -o bundled.yml
 `;
 const helpText = `
 Example usage:
