@@ -14,7 +14,8 @@ import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { validateOpenApiV3Document } from '@useoptic/openapi-io';
 
 const usage = () => `
-  optic api list`;
+  optic api list
+  optic api list ./specs/`;
 
 export const registerApiList = (cli: Command, config: OpticCliConfig) => {
   cli
