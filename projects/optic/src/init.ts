@@ -31,8 +31,18 @@ import { registerLint } from './commands/lint/lint';
 import { registerBundle } from './commands/bundle/bundle';
 import { updateCommand } from './commands/oas/update';
 import { registerApiList } from './commands/api/list';
+import path from 'path';
 
 const packageJson = require('../package.json');
+
+const getInstallInstruction = (): string => {
+  if (process.env.INSTALLATION_METHOD === 'binary') {
+    const binDir = path.dirname(process.execPath);
+    return `sh -c "$(curl -s --location https://install.useoptic.com/install.sh)" -- latest ${binDir}`;
+  } else {
+    return 'npm i -g @useoptic/optic';
+  }
+};
 
 export const initCli = async (
   cli: Command = cliInstance,
@@ -80,7 +90,7 @@ export const initCli = async (
             notifier.update.latest
           } (current ${notifier.update.current})
   
-  Run ${chalk.yellow('npm i -g @useoptic/optic')} to upgrade Optic`
+  Run ${chalk.yellow(getInstallInstruction())} to upgrade Optic`
         );
       }
       try {
