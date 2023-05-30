@@ -24,7 +24,7 @@ export const registerApiList = (cli: Command, config: OpticCliConfig) => {
     })
     .argument(
       '[path]',
-      'path to directory (defaults to current working directory)'
+      'path to directory (defaults to the git root or current working directory)'
     )
     .description('Add APIs to Optic')
     .action(errorHandler(getApiAddAction(config)));
