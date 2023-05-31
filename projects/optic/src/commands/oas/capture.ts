@@ -29,6 +29,9 @@ import { OpticCliConfig } from '../../config';
 import { clearCommand } from './capture-clear';
 import { createNewSpecFile } from '../../utils/specs';
 import { logger } from '../../logger';
+import url from 'url';
+import ora from 'ora';
+import { UserError } from '@useoptic/openapi-utilities';
 
 export async function captureCommand(config: OpticCliConfig): Promise<Command> {
   const command = new Command('capture');
@@ -49,9 +52,11 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
       '--reverse-proxy',
       'run optic capture in reverse proxy mode - send traffic to a port that gets forwarded to your server'
     )
+    .option('--command <command>', 'command to run tests with')
+    .option('--server <server>', 'command to start a server with')
     .option(
-      '--command <command>',
-      'command to run with the http_proxy and http_proxy configured'
+      '--server-ready-check <server-ready-check>',
+      'command to test whether a server is ready'
     )
     .option(
       '-d, --debug',
@@ -147,12 +152,50 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
       let destination: Writable =
         fsNonPromise.createWriteStream(inProgressName);
 
-      const commandRunner = new RunCommand(proxyUrl, feedback, {
-        reverseProxy: options.reverseProxy,
-      });
-
       let exitCode: number | undefined = undefined;
+      let commandRunner: RunCommand | undefined = undefined;
+      let serverRunner: RunCommand | undefined = undefined;
+      if (options.server) {
+        serverRunner = new RunCommand(feedback, 'error');
+        serverRunner.run(options.server);
+        if (options.serverReadyCheck) {
+          const timeout = 10 * 60 * 1_000; // 10 minutes
+          const now = Date.now();
+          const spinner = ora('Waiting for server to come online...');
+          spinner.start();
+          spinner.color = 'blue';
+
+          const checkServer = () =>
+            new RunCommand(feedback, 'silent').run(options.serverReadyCheck);
+
+          let done = false;
+          while (!done) {
+            const { exitCode } = await checkServer();
+            if (exitCode === 0) {
+              spinner.succeed('Server check passed');
+              done = true;
+            } else if (Date.now() > now + timeout) {
+              throw new UserError(
+                'Server check timed out (waited for 10 minutes)'
+              );
+            }
+            await new Promise((r) => setTimeout(() => r(null), 1000));
+          }
+        }
+      }
+
       if (options.command) {
+        const { port, hostname } = url.parse(proxyUrl);
+
+        const commandEnv = options.reverseProxy
+          ? {
+              OPTIC_HOST: proxyUrl,
+            }
+          : {
+              http_proxy: `http://${hostname}:${port}`,
+              https_proxy: `https://${hostname}:${port}`,
+            };
+        commandRunner = new RunCommand(feedback, 'info', commandEnv);
         const runningCommand = await commandRunner.run(options.command);
         exitCode = runningCommand.exitCode;
         sourcesController.abort();
@@ -167,7 +210,6 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
           let onAbort = () => {
             lines.close();
           };
-          if (runningCommand) await commandRunner.kill();
 
           sourcesController.signal.addEventListener('abort', onAbort);
 
@@ -203,62 +245,65 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
         renderingStats,
         trackingStats,
       ]);
+      const complete = async () =>
+        Promise.all([
+          !runningCommand ? await systemProxy.stop() : Promise.resolve(),
+          (async () => {
+            if (options.output) {
+              const outputPath = path.resolve(options.output);
+              feedback.success(`Wrote har to ${outputPath}`);
+              return await fs.rename(inProgressName, outputPath);
+            }
+            await fs.rename(inProgressName, completedName);
 
-      exitHook((callback) => {
-        sourcesController.abort();
-
-        completing
-          .then(async () =>
-            Promise.all([
-              !runningCommand ? await systemProxy.stop() : Promise.resolve(),
-              (async () => {
-                if (options.output) {
-                  const outputPath = path.resolve(options.output);
-                  feedback.success(`Wrote har to ${outputPath}`);
-                  return await fs.rename(inProgressName, outputPath);
+            try {
+              await runVerify(
+                filePath,
+                {
+                  exit0: true,
+                  har: options.output
+                    ? path.resolve(options.output)
+                    : undefined,
+                },
+                config,
+                feedback,
+                {
+                  printCoverage: false,
                 }
-                await fs.rename(inProgressName, completedName);
+              );
+            } catch (e) {
+              console.log(e);
+            }
 
-                try {
-                  await runVerify(
-                    filePath,
-                    {
-                      exit0: true,
-                      har: options.output
-                        ? path.resolve(options.output)
-                        : undefined,
-                    },
-                    config,
-                    feedback,
-                    {
-                      printCoverage: false,
-                    }
-                  );
-                } catch (e) {
-                  console.log(e);
-                }
+            if (!interactiveCapture) {
+              // Log next steps
+              feedback.success(`Wrote har traffic to ${completedName}`);
+              feedback.log(
+                `\nRun "${chalk.bold(
+                  `optic verify ${filePath}`
+                )}" to diff the captured traffic`
+              );
+            }
+          })(),
+        ]);
 
-                if (!interactiveCapture) {
-                  // Log next steps
-                  feedback.success(`Wrote har traffic to ${completedName}`);
-                  feedback.log(
-                    `\nRun "${chalk.bold(
-                      `optic verify ${filePath}`
-                    )}" to diff the captured traffic`
-                  );
-                }
-              })(),
-            ])
-          )
-          .then(
+      await completing;
+      if (serverRunner) serverRunner.kill();
+      if (!interactiveCapture) {
+        await complete();
+        process.exit(exitCode ?? 0);
+      } else {
+        exitHook((callback) => {
+          sourcesController.abort();
+
+          completing.then(complete).then(
             () => {
               callback();
             },
             (err) => callback(err)
           );
-      });
-
-      await completing;
+        });
+      }
       if (exitCode) process.exit(exitCode);
     });
 
@@ -331,8 +376,6 @@ async function renderCaptureProgress(
   observations: CaptureObservations,
   config: { interactiveCapture: boolean; debug: boolean }
 ) {
-  const ora = (await import('ora')).default;
-
   let interactionCount = 0;
 
   if (config.interactiveCapture) {
