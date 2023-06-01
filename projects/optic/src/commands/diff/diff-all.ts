@@ -577,7 +577,8 @@ async function matchSpecCandidates(
   const matches = matchesOption?.split(',').filter((g) => g !== '') ?? [];
   const ignores = ignoresOption?.split(',').filter((g) => g !== '') ?? [];
 
-  return await fg(matches, { ignore: ignores });
+  const candidates = await fg(matches, { ignore: ignores });
+  return candidates.filter((c) => /\.(json|ya?ml)$/i.test(c));
 }
 
 function applyGlobFilter(
