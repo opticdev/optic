@@ -3778,9 +3778,12 @@ __metadata:
     "@types/har-format": ^1.2.10
     "@types/node": ^20.2.5
     "@types/set-cookie-parser": ^2
+    babel-jest: ^29.5.0
     cookie: ^0.5.0
     fastify: ^4.17.0
+    jest: ^29.5.0
     set-cookie-parser: ^2.6.0
+    ts-jest: ^29.1.0
     typescript: ^5.0.4
   languageName: unknown
   linkType: soft
@@ -8150,7 +8153,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest@npm:^29.3.1":
+"jest@npm:^29.3.1, jest@npm:^29.5.0":
   version: 29.5.0
   resolution: "jest@npm:29.5.0"
   dependencies:
@@ -11258,7 +11261,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:^29.0.3":
+"ts-jest@npm:^29.0.3, ts-jest@npm:^29.1.0":
   version: 29.1.0
   resolution: "ts-jest@npm:29.1.0"
   dependencies:
