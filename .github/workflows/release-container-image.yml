@@ -42,7 +42,7 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@e1e17a757e536f70e52b5a12b2e8d1d1c60e04ef # v2.0.0
+        uses: aws-actions/configure-aws-credentials@5727f247b64f324ec403ac56ae05e220fd02b65f # v2.1.0
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_PROD_CI_BASIC }}
           role-session-name: release-container-image-workflow
