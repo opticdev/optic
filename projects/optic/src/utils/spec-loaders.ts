@@ -144,6 +144,10 @@ export async function loadRaw(
     return createNullSpec();
   }
 
+  if (rawString === '') {
+    throw new Error('file is empty');
+  }
+
   if (format === 'unknown') {
     // try json, then yml
     try {
