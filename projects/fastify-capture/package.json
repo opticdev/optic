@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/fastify-capture",
-  "packageManager": "yarn@3.5.0",
+  "packageManager": "yarn@3.6.0",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {

@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/openapi-utilities",
   "license": "MIT",
-  "packageManager": "yarn@3.5.1",
+  "packageManager": "yarn@3.6.0",
   "version": "0.43.6",
   "main": "build/index.js",
   "types": "build/index.d.ts",
