@@ -762,14 +762,16 @@ ${(spec.error as Error).message}`,
 
     for (const result of results) {
       const filePath = result.to ?? result.from;
+      const relativePath = path.relative(config.root, path.resolve(filePath!));
+
       trackEvent('optic.diff.completed', {
-        specPath: filePath,
+        specPath: relativePath,
         diffs: result.specResults.diffs.length,
         checks: result.specResults.results.length,
         isInCi: config.isInCi,
         ...(maybeOrigin?.web_url
           ? {
-              webUrlAndPath: `${maybeOrigin.web_url}.${filePath}`,
+              webUrlAndPath: `${maybeOrigin.web_url}.${relativePath}`,
               webUrl: maybeOrigin.web_url,
             }
           : {}),
