@@ -429,10 +429,16 @@ const getDiffAction =
       config.vcs?.type === VCS.Git ? await Git.guessRemoteOrigin() : null;
 
     trackEvent('optic.diff.completed', {
+      specPath: file1,
       diffs: diffResult.specResults.diffs.length,
       checks: diffResult.specResults.results.length,
       isInCi: config.isInCi,
-      webUrl: maybeOrigin?.web_url,
+      ...(maybeOrigin?.web_url
+        ? {
+            webUrlAndPath: `${maybeOrigin.web_url}.${file1}`,
+            webUrl: maybeOrigin.web_url,
+          }
+        : {}),
     });
 
     const failures = diffResult.checks.failed;

@@ -760,6 +760,22 @@ ${(spec.error as Error).message}`,
     const maybeOrigin =
       config.vcs?.type === VCS.Git ? await Git.guessRemoteOrigin() : null;
 
+    for (const result of results) {
+      const filePath = result.to ?? result.from;
+      trackEvent('optic.diff.completed', {
+        specPath: filePath,
+        diffs: result.specResults.diffs.length,
+        checks: result.specResults.results.length,
+        isInCi: config.isInCi,
+        ...(maybeOrigin?.web_url
+          ? {
+              webUrlAndPath: `${maybeOrigin.web_url}.${filePath}`,
+              webUrl: maybeOrigin.web_url,
+            }
+          : {}),
+      });
+    }
+
     trackEvent('optic.diff-all.completed', {
       numberOfComparisonsWithResults: comparisonsWithResults.length,
       numberOfComparisons: results.length,
