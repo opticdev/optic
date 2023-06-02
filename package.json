@@ -10,7 +10,8 @@
     "projects/rulesets-base",
     "projects/optic",
     "projects/optic-ci",
-    "projects/standard-rulesets"
+    "projects/standard-rulesets",
+    "projects/fastify-capture"
   ],
   "scripts": {
     "release": "gh release create --target=$(git branch --show-current) v$(node -e \"process.stdout.write(require('./package.json').version)\")",
