@@ -1,5 +1,5 @@
 import type { Log, Entry, Header, Cookie } from 'har-format';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import setCookieParser from 'set-cookie-parser';
 import cookieParser from 'cookie';
 import fs from 'fs';
