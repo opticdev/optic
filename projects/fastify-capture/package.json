@@ -1,8 +1,13 @@
 {
   "name": "@useoptic/fastify-capture",
   "packageManager": "yarn@3.6.0",
+  "version": "0.44.0",
   "main": "build/index.js",
   "types": "build/index.d.ts",
+  "files": [
+    "/build",
+    "/src"
+  ],
   "scripts": {
     "build": "yarn tsc --build --verbose && yarn babel ./src --out-dir ./build --extensions \".ts\",\".tsx\"",
     "clean": "rm -rf build",
