@@ -11,20 +11,16 @@ npm install @useoptic/fastify-capture
 
 ## Setup
 ``` Typescript
-// app.ts
-
 import { fastifyCapture } form '@useoptic/fastify-capture'
 
-const app = Fastify({...})
-
 if (env === 'test') {
-  app.addHook('onSend', fastifyCapture({
+  fastify.addHook('onSend', fastifyCapture({
     harOutputDir: 'har-capture'
   }));
 }
 ```
 
 ## Usage
-Use the captured `har` files to generate test coverage from your OpenAPI specifications with the `optic` CLI 🪄
+The `optic` CLI uses the captured `.har` files to measure how much of your OpenAPI specification is covered by your tests 🪄
 
-Learn more about this in [Optic documentation](https://www.useoptic.com/docs).
+Learn more about capture and coverage in [Optic's documentation](https://www.useoptic.com/docs/fastify#get-a-coverage-report).
