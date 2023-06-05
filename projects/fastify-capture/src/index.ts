@@ -8,16 +8,12 @@ import http from 'http';
 
 type FastifyCaptureOptions = {
   harOutputDir?: string;
+  sampleRate?: number;
 };
 
 export const fastifyCapture = (options: FastifyCaptureOptions = {}) => {
   const entries: Entry[] = [];
-
-  const harOutputDir = options.harOutputDir
-    ? path.isAbsolute(options.harOutputDir)
-      ? options.harOutputDir
-      : path.join(process.cwd(), options.harOutputDir)
-    : path.join(process.cwd(), 'har-capture');
+  const harOutputDir = path.resolve(options.harOutputDir ?? 'har-capture');
 
   const save = () => {
     var now = process.hrtime.bigint().toString();
@@ -55,6 +51,12 @@ export const fastifyCapture = (options: FastifyCaptureOptions = {}) => {
     payload: unknown,
     done: () => void
   ) => {
+    if (
+      options.sampleRate === 0 ||
+      (options.sampleRate && Math.random() > options.sampleRate)
+    )
+      return done();
+
     const startTime = Date.now();
     const requestContentType = request.headers['content-type'] ?? '';
     const responseContentType = String(reply.getHeader('content-type') ?? '');
