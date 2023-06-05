@@ -15,7 +15,11 @@ import { fastifyCapture } form '@useoptic/fastify-capture'
 
 if (env === 'test') {
   fastify.addHook('onSend', fastifyCapture({
-    harOutputDir: 'har-capture'
+    // Determines where the captured archives will be exported
+    harOutputDir: 'har-capture',
+
+    // Set to a number between 0 and 1 to sample traffic
+    sampleRate: undefined
   }));
 }
 ```
