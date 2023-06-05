@@ -23,4 +23,4 @@ if (env === 'test') {
 ## Usage
 The `optic` CLI uses the captured `.har` files to measure how much of your OpenAPI specification is covered by your tests 🪄
 
-Learn more about capture and coverage in [Optic's documentation](https://www.useoptic.com/docs).
+Learn more about capture and coverage in [Optic's documentation](https://www.useoptic.com/docs/fastify#get-a-coverage-report).
