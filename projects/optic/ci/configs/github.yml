@@ -24,3 +24,7 @@ jobs:
           # If false, standard check failures will show in PR comments and
           # in Optic Cloud but will not cause the action to fail
           standards_fail: %standards_fail
+
+          # If you have more than one spec, separate matches with commas
+          # (openapi.yml,other.yml)
+          additional_args: --match %match
