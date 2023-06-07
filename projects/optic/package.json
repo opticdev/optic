@@ -120,7 +120,11 @@
     ],
     "assets": [
       "../../node_modules/open/xdg-open",
-      "../../node_modules/vm2/lib/setup-sandbox.js"
+      "../../node_modules/vm2/lib/setup-sandbox.js",
+      "ci/configs/github.yml",
+      "ci/configs/github_generated_spec.yml",
+      "ci/configs/gitlab.yml",
+      "ci/configs/gitlab_generated_spec.yml"
     ],
     "targets": [
       "node18-macos-arm64",
