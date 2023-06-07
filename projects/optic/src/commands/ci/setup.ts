@@ -81,7 +81,7 @@ const getCiSetupAction = (config: OpticCliConfig) => async () => {
         type: 'text',
         name: 'match',
         message:
-          'List your OpenAPI spec files, comma separated (ex: openapi.yml,other.yml)',
+          'Path to your OpenAPI spec files (examples: "first-spec.yml,second-spec.yml" or "**/spec.yml")',
       },
     ],
     { onCancel: () => process.exit(1) }
@@ -144,7 +144,7 @@ async function setupGitHub(config: OpticCliConfig, answers: PromptAnswers) {
     '- Configure your standards and authorize Optic to comment on your PRs: https://useoptic.com/docs/setup-ci, then change your OpenAPI files and submit a PR to see Optic in action!'
   );
   console.log(
-    '- Visit https://www.useoptic.com/cloud to learn about integrating your CI setup with Optic cloud.'
+    '- Visit https://www.useoptic.com/docs/cloud-get-started to learn about integrating your CI setup with Optic cloud.'
   );
 }
 
