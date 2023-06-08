@@ -17,7 +17,7 @@ optic-diff-push:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
   script:
     - npm install -g @useoptic/optic
-    - optic diff-all --check --upload --head-tag "gitbranch:$CI_COMMIT_REF_NAME"
+    - optic diff-all --check --upload --head-tag "gitbranch:$CI_COMMIT_REF_NAME" --match %match
 
 # on merge request, diff with the base and post a comment
 optic-diff-merge-request:
@@ -29,7 +29,7 @@ optic-diff-merge-request:
     - git fetch origin --depth=1 $CI_MERGE_REQUEST_DIFF_BASE_SHA
 
     # run optic diff and record the result, but don't fail if optic fails
-    - export OPTIC_RESULT=0; optic diff-all --check --upload --head-tag "gitbranch:$CI_COMMIT_REF_NAME" --compare-from $CI_MERGE_REQUEST_DIFF_BASE_SHA || export OPTIC_RESULT=$?
+    - export OPTIC_RESULT=0; optic diff-all --check --upload --head-tag "gitbranch:$CI_COMMIT_REF_NAME" --compare-from $CI_MERGE_REQUEST_DIFF_BASE_SHA --match %match || export OPTIC_RESULT=$?
 
     # add a comment on the merge request
     - if [ -n "${OPTIC_GITLAB_TOKEN}" ]; then GITLAB_TOKEN=$OPTIC_GITLAB_TOKEN optic ci comment --provider gitlab --project-id $CI_PROJECT_ID --merge-request-id $CI_MERGE_REQUEST_IID --sha $CI_COMMIT_SHA; fi;
