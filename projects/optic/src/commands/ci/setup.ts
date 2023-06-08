@@ -214,10 +214,7 @@ async function setupGitLab(config: OpticCliConfig, answers: PromptAnswers) {
     '- Configure your standards and authorize Optic to comment on your MRs: https://useoptic.com/docs/setup-ci, then change your OpenAPI files and submit a MR to see Optic in action!'
   );
   console.log(
-    `- Change your OpenAPI files and submit a MR to see Optic in action!`
-  );
-  console.log(
-    '- Visit https://www.useoptic.com/cloud to learn about integrating your CI setup with Optic cloud.'
+    '- Check Optic cloud to get hosted preview documentation, visual changelogs and API history: https://www.useoptic.com/docs/cloud-get-started'
   );
 }
 
