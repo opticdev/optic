@@ -133,7 +133,7 @@ async function setupGitHub(config: OpticCliConfig, answers: PromptAnswers) {
   console.log('Next:');
   if (!answers.match)
     console.log(
-      `- Replace "${matchPlaceholder}" with your OpenAPI paths in the generated file (ex: openapi.yml,other.yml).`
+      `- Replace "${matchPlaceholder}" with your OpenAPI paths in the generated file (examples: "first-spec.yml,second-spec.yml" or "**/spec.yml").`
     );
   if (answers.generatedSpecs && !answers.generateScript)
     console.log(
@@ -144,7 +144,7 @@ async function setupGitHub(config: OpticCliConfig, answers: PromptAnswers) {
     '- Configure your standards and authorize Optic to comment on your PRs: https://useoptic.com/docs/setup-ci, then change your OpenAPI files and submit a PR to see Optic in action!'
   );
   console.log(
-    '- Visit https://www.useoptic.com/docs/cloud-get-started to learn about integrating your CI setup with Optic cloud.'
+    '- Check Optic cloud to get hosted preview documentation, visual changelogs and API history: https://www.useoptic.com/docs/cloud-get-started'
   );
 }
 
