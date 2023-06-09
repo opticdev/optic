@@ -148,11 +148,10 @@ const bundleAction =
 
       //write tmp file
       const tmpOutput = path.join(
-        process.cwd(),
+        path.dirname(filePath),
         `tmp-openapi-${Date.now()}.json`
       );
       await fs.writeFile(tmpOutput, JSON.stringify(updatedSpec, null, 2));
-
       const spec = await getSpec(tmpOutput, config);
       updatedSpec = removeUnusedComponents(spec.jsonLike, spec.sourcemap);
       await fs.unlink(tmpOutput);
@@ -433,7 +432,9 @@ function removeUnusedComponents(
   testComponents('parameters');
   testComponents('headers');
 
-  return jsonpatch.applyPatch(spec, removals, true, true).newDocument;
+  const copied = JSON.parse(JSON.stringify(spec));
+
+  return jsonpatch.applyPatch(copied, removals, true, true).newDocument;
 }
 
 async function bundleMatchingRefsAsComponents<T>(
