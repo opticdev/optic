@@ -93,10 +93,7 @@ const bundleAction =
     if (filePath) {
       parsedFile = await getSpec(filePath, config);
 
-      const updatedSpec = await bundle(
-        parsedFile.jsonLike,
-        parsedFile.sourcemap
-      );
+      let updatedSpec = await bundle(parsedFile.jsonLike, parsedFile.sourcemap);
 
       if (includeExtensions.length) {
         Object.entries(updatedSpec.paths).forEach(([path, operations]) => {
@@ -148,6 +145,16 @@ const bundleAction =
           });
         });
       }
+
+      //write tmp file
+      const tmpOutput = path.join(
+        path.dirname(filePath),
+        `tmp-openapi-${Date.now()}.json`
+      );
+      await fs.writeFile(tmpOutput, JSON.stringify(updatedSpec, null, 2));
+      const spec = await getSpec(tmpOutput, config);
+      updatedSpec = removeUnusedComponents(spec.jsonLike, spec.sourcemap);
+      await fs.unlink(tmpOutput);
 
       const yamlOut = () =>
         yaml.stringify(updatedSpec, {
@@ -382,6 +389,52 @@ async function bundle(
   );
 
   return updatedSpec;
+}
+
+// assumes single file OpenAPI spec
+function removeUnusedComponents(
+  spec: OpenAPIV3.Document,
+  sourcemap: JsonSchemaSourcemap
+) {
+  const removals: Operation[] = [];
+
+  const usages = new Set(
+    Object.values(sourcemap.refMappings)
+      .map((i) => i[1])
+      .flat(1)
+  );
+
+  function testComponents(kind: keyof OpenAPIV3.ComponentsObject) {
+    const components = jsonPointerHelpers.tryGet(
+      spec,
+      jsonPointerHelpers.compile(['components', kind])
+    );
+    const componentNames = Object.keys(
+      components.match ? components.value : {}
+    );
+
+    componentNames.forEach((name) => {
+      const jsonPointer = jsonPointerHelpers.compile([
+        'components',
+        kind,
+        name,
+      ]);
+      if (!usages.has(jsonPointer)) {
+        removals.push({ op: 'remove', path: jsonPointer });
+      }
+    });
+  }
+
+  testComponents('schemas');
+  testComponents('requestBodies');
+  testComponents('responses');
+  testComponents('examples');
+  testComponents('parameters');
+  testComponents('headers');
+
+  const copied = JSON.parse(JSON.stringify(spec));
+
+  return jsonpatch.applyPatch(copied, removals, true, true).newDocument;
 }
 
 async function bundleMatchingRefsAsComponents<T>(

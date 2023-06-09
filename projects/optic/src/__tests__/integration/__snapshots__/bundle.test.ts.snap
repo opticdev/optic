@@ -5,6 +5,33 @@ exports[`bundle bundles components together 1`] = `
 "info":
   "title": "TodoAPI"
   "version": "1.1"
+"components":
+  "schemas":
+    "schemas":
+      "type": "object"
+      "title": "Todo"
+      "properties":
+        "name":
+          "type": "string"
+        "status":
+          "type": "string"
+        "created_at":
+          "type": "string"
+        "firstTodo":
+          "$ref": "#/components/schemas/schemas"
+        "todos":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/schemas"
+      "required":
+        - "name"
+        - "status"
+    "anotherschema":
+      "type": "string"
+  "parameters": {}
+  "examples": {}
+  "requestBodies": {}
+  "responses": {}
 "paths":
   "/todos":
     "get":
@@ -33,34 +60,24 @@ exports[`bundle bundles components together 1`] = `
           "content":
             "application/json":
               "schema":
-                "$ref": "#/components/schemas/schemas"
-"components":
-  "schemas":
-    "schemas":
-      "type": "object"
-      "title": "Todo"
-      "properties":
-        "name":
-          "type": "string"
-        "status":
-          "type": "string"
-        "created_at":
-          "$ref": "#/components/schemas/anotherschema"
-        "firstTodo":
-          "$ref": "#/components/schemas/schemas"
-        "todos":
-          "type": "array"
-          "items":
-            "$ref": "#/components/schemas/schemas"
-      "required":
-        - "name"
-        - "status"
-    "anotherschema":
-      "type": "string"
-  "parameters": {}
-  "examples": {}
-  "requestBodies": {}
-  "responses": {}
+                "type": "object"
+                "title": "Todo"
+                "properties":
+                  "name":
+                    "type": "string"
+                  "status":
+                    "type": "string"
+                  "created_at":
+                    "type": "string"
+                  "firstTodo":
+                    "$ref": "#/components/schemas/schemas"
+                  "todos":
+                    "type": "array"
+                    "items":
+                      "$ref": "#/components/schemas/schemas"
+                "required":
+                  - "name"
+                  - "status"
 
 "
 `;
