@@ -98,7 +98,6 @@ export class ApiCoverageCounter {
         patch.diff?.kind === 'AdditionalProperty' ||
         patch.diff?.kind === 'MissingRequiredProperty'
       ) {
-        operation.diffs = true;
         const isResponse = jsonPointerHelpers.startsWith(patch.path, [
           'paths',
           '**',
@@ -115,12 +114,6 @@ export class ApiCoverageCounter {
             operation.requestBody.diffs = true;
           }
         }
-      } else if (
-        patch.diff?.kind === 'UnmatchdResponseBody' ||
-        patch.diff?.kind === 'UnmatchedRequestBody' ||
-        patch.diff?.kind === 'UnmatchedResponseStatusCode'
-      ) {
-        operation.diffs = true;
       }
     }
   };
