@@ -163,6 +163,12 @@ describe('strict validation', () => {
       { strictOpenAPI: true }
     );
   });
+
+  test('openapi with webhooks', async () => {
+    validateOpenApiV3Document(
+      await readJson('./inputs/openapi3/openapi-webhook.json')
+    );
+  });
 });
 
 describe('non-strict validation', () => {

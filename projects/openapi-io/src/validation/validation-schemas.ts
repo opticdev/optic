@@ -394,6 +394,37 @@ const createOpenAPIValidationSchema = (schema: any) => ({
     paths: {
       $ref: '#/definitions/paths',
     },
+    webhooks: {
+      additionalProperties: {
+        type: 'object',
+        properties: {
+          get: {
+            $ref: '#/definitions/operation',
+          },
+          put: {
+            $ref: '#/definitions/operation',
+          },
+          post: {
+            $ref: '#/definitions/operation',
+          },
+          delete: {
+            $ref: '#/definitions/operation',
+          },
+          options: {
+            $ref: '#/definitions/operation',
+          },
+          head: {
+            $ref: '#/definitions/operation',
+          },
+          patch: {
+            $ref: '#/definitions/operation',
+          },
+          trace: {
+            $ref: '#/definitions/operation',
+          },
+        },
+      },
+    },
     components: {
       $ref: '#/definitions/components',
     },
