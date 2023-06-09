@@ -153,7 +153,7 @@ const bundleAction =
       );
       await fs.writeFile(tmpOutput, JSON.stringify(updatedSpec, null, 2));
       const spec = await getSpec(tmpOutput, config);
-      updatedSpec = removeUnusedComponents(spec.jsonLike, spec.sourcemap);
+      updatedSpec = removeUnusedComponents(updatedSpec, spec.sourcemap);
       await fs.unlink(tmpOutput);
 
       const yamlOut = () =>

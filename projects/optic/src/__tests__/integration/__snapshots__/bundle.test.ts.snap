@@ -16,7 +16,7 @@ exports[`bundle bundles components together 1`] = `
         "status":
           "type": "string"
         "created_at":
-          "type": "string"
+          "$ref": "#/components/schemas/anotherschema"
         "firstTodo":
           "$ref": "#/components/schemas/schemas"
         "todos":
@@ -60,24 +60,7 @@ exports[`bundle bundles components together 1`] = `
           "content":
             "application/json":
               "schema":
-                "type": "object"
-                "title": "Todo"
-                "properties":
-                  "name":
-                    "type": "string"
-                  "status":
-                    "type": "string"
-                  "created_at":
-                    "type": "string"
-                  "firstTodo":
-                    "$ref": "#/components/schemas/schemas"
-                  "todos":
-                    "type": "array"
-                    "items":
-                      "$ref": "#/components/schemas/schemas"
-                "required":
-                  - "name"
-                  - "status"
+                "$ref": "#/components/schemas/schemas"
 
 "
 `;
