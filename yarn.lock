@@ -3407,9 +3407,9 @@ __metadata:
   linkType: hard
 
 "@types/har-format@npm:^1.2.10":
-  version: 1.2.10
-  resolution: "@types/har-format@npm:1.2.10"
-  checksum: 14c0118d809e77a0bac9deec0a87159c28beab21105cfce3aa291b51e28d4c07142851c4e6b93b7ecb4ea237fe07d39ba98a42bb2de2f5891144733411ac76b7
+  version: 1.2.11
+  resolution: "@types/har-format@npm:1.2.11"
+  checksum: f36add1ac253c99b594231783cc9ca75b6226df60ba2924351dcad4d0fcd0d7e62188c530a981b4dad8c2a9fcf10ea312f8c75ebc7ddbfae7e1a979635b04780
   languageName: node
   linkType: hard
 
