@@ -186,10 +186,12 @@ export async function runVerify(
 
     const { orgId, apiId } = opticUrlDetails;
     const tags: string[] = [];
+    let branchTag: string | undefined = undefined;
     if (config.vcs?.type === VCS.Git) {
       tags.push(`git:${config.vcs.sha}`);
       const currentBranch = await Git.getCurrentBranchName();
-      tags.push(sanitizeGitTag(`gitbranch:${currentBranch}`));
+      branchTag = sanitizeGitTag(`gitbranch:${currentBranch}`);
+      tags.push(branchTag);
     }
     const specId = await uploadSpec(apiId, {
       spec: parseResult,
@@ -204,13 +206,17 @@ export async function runVerify(
       message: options.message,
     });
 
+    const specUrl = getSpecUrl(
+      config.client.getWebBase(),
+      orgId,
+      apiId,
+      specId
+    );
+
     console.log(
-      `Successfully uploaded verification data. View your spec at ${getSpecUrl(
-        config.client.getWebBase(),
-        orgId,
-        apiId,
-        specId
-      )}`
+      `Successfully uploaded verification data ${
+        branchTag ? `for tag '${branchTag}'` : ''
+      }. View your spec at ${specUrl}`
     );
   }
 
