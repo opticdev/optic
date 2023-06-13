@@ -1,15 +1,15 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { typeofDiff } from '../../diff/diff';
+import { typeofDiff } from '@useoptic/openapi-utilities';
 import type {
   GroupedDiffs,
   Body,
   Diff,
   Endpoint,
   Response,
-} from '../../openapi3/group-diff';
-import { typeofV3Diffs } from '../../openapi3/group-diff';
+} from '@useoptic/openapi-utilities/build/openapi3/group-diff';
+import { typeofV3Diffs } from '@useoptic/openapi-utilities/build/openapi3/group-diff';
 import { Instance as Chalk } from 'chalk';
-import { getLocation } from '../../openapi3/traverser';
+import { getLocation } from '@useoptic/openapi-utilities/build/openapi3/traverser';
 import { interpretFieldLevelDiffs } from './common';
 
 const chalk = new Chalk();

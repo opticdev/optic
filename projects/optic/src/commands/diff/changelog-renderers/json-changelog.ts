@@ -1,14 +1,15 @@
 import { OpenAPIV3 } from 'openapi-types';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
-import { typeofV3Diffs } from '../../openapi3/group-diff';
+import { typeofV3Diffs } from '@useoptic/openapi-utilities/build/openapi3/group-diff';
 import type {
   GroupedDiffs,
   Body,
   Diff,
   Endpoint,
   Response,
-} from '../../openapi3/group-diff';
+} from '@useoptic/openapi-utilities/build/openapi3/group-diff';
+
 import { interpretFieldLevelDiffs } from './common';
 import isEqual from 'lodash.isequal';
 
@@ -207,7 +208,7 @@ function getEndpointLogs(
 
   const operationChange = typeofV3Diffs(diffs);
 
-  const parameterChanges = [];
+  const parameterChanges: ChangedNode[] = [];
   for (const [name, diffs] of Object.entries(queryParameters)) {
     parameterChanges.push(
       getParameterLogs(

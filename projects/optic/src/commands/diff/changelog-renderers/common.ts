@@ -1,6 +1,6 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { OpenAPIV3 } from 'openapi-types';
-import { Diff } from '../../openapi3/group-diff';
+import { Diff } from '@useoptic/openapi-utilities/build/openapi3/group-diff';
 
 export function getRootBodyPath(path: string): string {
   const parts = jsonPointerHelpers.decode(path);
