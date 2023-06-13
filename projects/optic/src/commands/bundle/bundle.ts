@@ -146,20 +146,7 @@ const bundleAction =
         });
       }
 
-      let noUnused = false;
-      while (!noUnused) {
-        //write tmp file
-        const tmpOutput = path.join(
-          path.dirname(filePath),
-          `tmp-openapi-${Date.now()}.json`
-        );
-        await fs.writeFile(tmpOutput, JSON.stringify(updatedSpec, null, 2));
-        const spec = await getSpec(tmpOutput, config);
-        const result = removeUnusedComponents(updatedSpec, spec.sourcemap);
-        updatedSpec = result.spec;
-        noUnused = result.removals === 0;
-        await fs.unlink(tmpOutput);
-      }
+      updatedSpec = removeUnusedComponents(updatedSpec);
 
       const yamlOut = () =>
         yaml.stringify(updatedSpec, {
@@ -397,52 +384,82 @@ async function bundle(
 }
 
 // assumes single file OpenAPI spec
-function removeUnusedComponents(
-  spec: OpenAPIV3.Document,
-  sourcemap: JsonSchemaSourcemap
-): { spec: OpenAPIV3.Document; removals: number } {
-  const removals: Operation[] = [];
+function removeUnusedComponents(spec: OpenAPIV3.Document): OpenAPIV3.Document {
+  let updatedSpec = spec;
+  let removedCount: number | undefined = undefined;
 
-  const usages = new Set(
-    Object.values(sourcemap.refMappings)
-      .map((i) => i[1])
-      .flat(1)
-  );
+  while (removedCount !== 0) {
+    const removals: Operation[] = [];
 
-  function testComponents(kind: keyof OpenAPIV3.ComponentsObject) {
-    const components = jsonPointerHelpers.tryGet(
-      spec,
-      jsonPointerHelpers.compile(['components', kind])
-    );
-    const componentNames = Object.keys(
-      components.match ? components.value : {}
-    );
+    const refMap: { [key: string]: string } = {};
 
-    componentNames.forEach((name) => {
-      const jsonPointer = jsonPointerHelpers.compile([
-        'components',
-        kind,
-        name,
-      ]);
-      if (!usages.has(jsonPointer)) {
-        removals.push({ op: 'remove', path: jsonPointer });
+    const buildRefMap = (
+      spec: any,
+      pointer: string = jsonPointerHelpers.compile([])
+    ) => {
+      if (Array.isArray(spec)) {
+        spec.forEach((item, index) =>
+          buildRefMap(
+            item,
+            jsonPointerHelpers.append(pointer, index.toString())
+          )
+        );
+      } else if (typeof spec === 'object' && spec !== null) {
+        Object.entries(spec).map(([key, value]) => {
+          if (key === '$ref' && typeof value === 'string') {
+            refMap[pointer] = value.startsWith('#')
+              ? value.substring(1)
+              : value;
+          } else {
+            buildRefMap(value, jsonPointerHelpers.append(pointer, key));
+          }
+        });
       }
-    });
+    };
+
+    buildRefMap(updatedSpec);
+
+    const usages = new Set(Object.values(refMap));
+
+    const testComponents = (kind: keyof OpenAPIV3.ComponentsObject) => {
+      const components = jsonPointerHelpers.tryGet(
+        updatedSpec,
+        jsonPointerHelpers.compile(['components', kind])
+      );
+      const componentNames = Object.keys(
+        components.match ? components.value : {}
+      );
+
+      componentNames.forEach((name) => {
+        const jsonPointer = jsonPointerHelpers.compile([
+          'components',
+          kind,
+          name,
+        ]);
+        if (!usages.has(jsonPointer)) {
+          removals.push({ op: 'remove', path: jsonPointer });
+        }
+      });
+    };
+
+    testComponents('schemas');
+    testComponents('requestBodies');
+    testComponents('responses');
+    testComponents('examples');
+    testComponents('parameters');
+    testComponents('headers');
+
+    const copied = JSON.parse(JSON.stringify(updatedSpec));
+    removedCount = removals.length;
+    updatedSpec = jsonpatch.applyPatch(
+      copied,
+      removals,
+      true,
+      true
+    ).newDocument;
   }
 
-  testComponents('schemas');
-  testComponents('requestBodies');
-  testComponents('responses');
-  testComponents('examples');
-  testComponents('parameters');
-  testComponents('headers');
-
-  const copied = JSON.parse(JSON.stringify(spec));
-
-  return {
-    spec: jsonpatch.applyPatch(copied, removals, true, true).newDocument,
-    removals: removals.length,
-  };
+  return updatedSpec;
 }
 
 async function bundleMatchingRefsAsComponents<T>(
