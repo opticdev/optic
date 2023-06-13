@@ -66,13 +66,19 @@ ${results.completed
       `<tr>
 <td>
 
-${s.apiName} ${s.specUrl ? `([preview](${s.specUrl}))` : ''}
+${s.apiName} ${
+        s.specUrl
+          ? `([preview](${s.specUrl}))`
+          : '([setup preview](https://useoptic.com/docs/cloud-get-started))'
+      }
 
 </td>
 <td>
 
 ${getOperationsChangedLabel(s.comparison.groupedDiffs)} ${
-        s.opticWebUrl ? `([view changelog](${s.opticWebUrl}))` : ''
+        s.opticWebUrl
+          ? `([view changelog](${s.opticWebUrl}))`
+          : '([setup changelog](https://useoptic.com/docs/cloud-get-started))'
       }
 
 </td>
