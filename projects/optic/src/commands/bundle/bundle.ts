@@ -146,15 +146,20 @@ const bundleAction =
         });
       }
 
-      //write tmp file
-      const tmpOutput = path.join(
-        path.dirname(filePath),
-        `tmp-openapi-${Date.now()}.json`
-      );
-      await fs.writeFile(tmpOutput, JSON.stringify(updatedSpec, null, 2));
-      const spec = await getSpec(tmpOutput, config);
-      updatedSpec = removeUnusedComponents(updatedSpec, spec.sourcemap);
-      await fs.unlink(tmpOutput);
+      let noUnused = false;
+      while (!noUnused) {
+        //write tmp file
+        const tmpOutput = path.join(
+          path.dirname(filePath),
+          `tmp-openapi-${Date.now()}.json`
+        );
+        await fs.writeFile(tmpOutput, JSON.stringify(updatedSpec, null, 2));
+        const spec = await getSpec(tmpOutput, config);
+        const result = removeUnusedComponents(updatedSpec, spec.sourcemap);
+        updatedSpec = result.spec;
+        noUnused = result.removals === 0;
+        await fs.unlink(tmpOutput);
+      }
 
       const yamlOut = () =>
         yaml.stringify(updatedSpec, {
@@ -395,7 +400,7 @@ async function bundle(
 function removeUnusedComponents(
   spec: OpenAPIV3.Document,
   sourcemap: JsonSchemaSourcemap
-) {
+): { spec: OpenAPIV3.Document; removals: number } {
   const removals: Operation[] = [];
 
   const usages = new Set(
@@ -434,7 +439,10 @@ function removeUnusedComponents(
 
   const copied = JSON.parse(JSON.stringify(spec));
 
-  return jsonpatch.applyPatch(copied, removals, true, true).newDocument;
+  return {
+    spec: jsonpatch.applyPatch(copied, removals, true, true).newDocument,
+    removals: removals.length,
+  };
 }
 
 async function bundleMatchingRefsAsComponents<T>(
