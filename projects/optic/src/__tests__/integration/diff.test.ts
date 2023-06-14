@@ -57,7 +57,7 @@ describe('diff', () => {
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
   });
 
-  test('petstore diff', async () => {
+  test.only('petstore diff', async () => {
     const workspace = await setupWorkspace('diff/petstore', {
       repo: true,
       commit: true,

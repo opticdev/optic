@@ -18,6 +18,45 @@ describe('groupDiffsByEndpoint', () => {
 
     const diffs = diff(from, to);
 
-    expect(groupDiffsByEndpoint({ from, to }, diffs, [])).toMatchSnapshot();
+    expect(
+      groupDiffsByEndpoint({ from, to }, diffs, [
+        {
+          where: 'blah',
+          severity: 0,
+          passed: false,
+          location: {
+            jsonPath: '/paths/~1user/post',
+            spec: 'after',
+          },
+          name: 'info',
+          type: 'requirement',
+          error: 'should have been correct but was not',
+        },
+        {
+          where: 'blah',
+          severity: 1,
+          passed: false,
+          location: {
+            jsonPath: '/paths/~1user/get',
+            spec: 'after',
+          },
+          name: 'warn',
+          type: 'requirement',
+          error: 'should have been correct but was not',
+        },
+        {
+          where: 'blah',
+          severity: 2,
+          passed: false,
+          location: {
+            jsonPath: '/paths/~1user/patch',
+            spec: 'after',
+          },
+          name: 'error',
+          type: 'requirement',
+          error: 'should have been correct but was not',
+        },
+      ])
+    ).toMatchSnapshot();
   });
 });

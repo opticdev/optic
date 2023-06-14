@@ -290,6 +290,33 @@ export function groupDiffsByEndpoint(
     }
   }
 
+  for (const rule of rules) {
+    const fact =
+      rule.location.spec === 'after'
+        ? getFactForJsonPath(rule.location.jsonPath, toTree)
+        : getFactForJsonPath(rule.location.jsonPath, fromTree);
+
+    const isComponentDiff = /^\/components/i.test(rule.location.jsonPath);
+    if (isComponentDiff) continue;
+    if (fact) {
+      const trail = jsonPointerHelpers.relative(
+        rule.location.jsonPath,
+        fact.location.jsonPath
+      );
+      const specToFetchFrom =
+        rule.location.spec === 'after' ? specs.to : specs.from;
+      diffsAndRulesToAdd.push({
+        type: 'rules',
+        item: {
+          ...rule,
+          trail,
+        },
+        spec: specToFetchFrom,
+        fact,
+      });
+    }
+  }
+
   for (const node of diffsAndRulesToAdd) {
     const { fact, item, type, spec: specToFetchFrom } = node;
     if (fact.type === 'specification') {

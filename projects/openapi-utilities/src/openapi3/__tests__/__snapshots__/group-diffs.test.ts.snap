@@ -141,7 +141,21 @@ GroupedDiffs {
         "rules": [],
       },
       "responses": {},
-      "rules": [],
+      "rules": [
+        {
+          "error": "should have been correct but was not",
+          "location": {
+            "jsonPath": "/paths/~1user/post",
+            "spec": "after",
+          },
+          "name": "info",
+          "passed": false,
+          "severity": 0,
+          "trail": "",
+          "type": "requirement",
+          "where": "blah",
+        },
+      ],
     },
     "/user/login-~_~-GET": {
       "cookieParameters": {},
