@@ -1,5 +1,6 @@
-# Optic ![GitHub Repo stars](https://img.shields.io/github/stars/opticdev/optic?style=social) ![GitHub contributors](https://img.shields.io/github/contributors-anon/opticdev/optic?style=social) ![npm](https://img.shields.io/npm/dm/@useoptic/openapi-io?style=social) ![license](https://img.shields.io/github/license/opticdev/optic?style=social)
----
+# Optic 
+
+![GitHub Repo stars](https://img.shields.io/github/stars/opticdev/optic?style=social) ![GitHub contributors](https://img.shields.io/github/contributors-anon/opticdev/optic?style=social) ![npm](https://img.shields.io/npm/dm/@useoptic/openapi-io?style=social) ![license](https://img.shields.io/github/license/opticdev/optic?style=social)
 
 Optic helps you ship a better API by making OpenAPI easy to use. Prevent breaking changes, publish accurate documentation and improve your the design of your API. 
 
@@ -8,17 +9,33 @@ Optic helps you ship a better API by making OpenAPI easy to use. Prevent breakin
 npm install -g @useoptic/optic
 ```
 
-### Prevent breaking changes using `optic diff`
+## Prevent breaking changes using `optic diff`
 Optic can detect breaking changes between any two versions of an OpenAPI specification. Reference the versions using Git tags and branch names:
 
-**Compares the HEAD to the `main` branch
+**Compares the HEAD to the `main` branch**
 ```
 optic diff openapi.yml --base main --check
 ```
-**Compares two branches by name
+**Compares two branches by name**
 ```
 optic diff feature/example:openapi.yml develop:main --check
 ```
+
+<img src="https://github.com/opticdev/optic/assets/5900338/fd6cdd7f-c147-467b-9517-84232baa898f" width="500" />
+
+## Prevent breaking changes using `optic diff`
+Optic can detect breaking changes between any two versions of an OpenAPI specification. Reference the versions using Git tags and branch names:
+
+**Compares the HEAD to the `main` branch**
+```
+optic diff openapi.yml --base main --check
+```
+**Compares two branches by name**
+```
+optic diff feature/example:openapi.yml develop:main --check
+```
+
+<img src="https://github.com/opticdev/optic/assets/5900338/fd6cdd7f-c147-467b-9517-84232baa898f" width="500" />
 
 
 
