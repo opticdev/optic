@@ -10,7 +10,7 @@ test('json changelog collects changes properly', () => {
     from: petStoreBase,
     to: petStoreUpdated,
   };
-  const groupedDiffs = groupDiffsByEndpoint(specs, diffs);
+  const groupedDiffs = groupDiffsByEndpoint(specs, diffs, []);
   const output = jsonChangelog(
     {
       from: petStoreBase,

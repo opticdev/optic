@@ -6,7 +6,7 @@ import {
   getFactForJsonPath,
 } from './json-path-interpreters';
 import { getLocation, OpenApiV3Traverser } from './traverser';
-import { OpenApiV3TraverserFact } from './types';
+import { OpenApiV3TraverserFact, V3FactType } from './types';
 import { RuleResult } from '../results';
 
 const SEPARATOR = '-~_~-';
@@ -250,12 +250,30 @@ export function groupDiffsByEndpoint(
   const toTree = constructTree(specs.to);
 
   const grouped = new GroupedDiffs();
+  const diffsAndRulesToAdd: (
+    | {
+        type: 'diffs';
+        fact: OpenApiV3TraverserFact<V3FactType>;
+        item: Diff;
+        spec: OpenAPIV3.Document;
+      }
+    | {
+        type: 'rules';
+        item: RuleResult & { trail: string };
+        fact: OpenApiV3TraverserFact<V3FactType>;
+        spec: OpenAPIV3.Document;
+      }
+  )[] = [];
 
   for (const diff of diffs) {
     const fact =
       diff.after !== undefined
         ? getFactForJsonPath(diff.after, toTree)
         : getFactForJsonPath(diff.before, fromTree);
+
+    const isComponentDiff = /^\/components/i.test(diff.after ?? diff.before);
+    if (isComponentDiff) continue;
+
     if (fact) {
       const trail = jsonPointerHelpers.relative(
         diff.after ?? diff.before,
@@ -263,25 +281,34 @@ export function groupDiffsByEndpoint(
       );
       const specToFetchFrom = diff.after !== undefined ? specs.to : specs.from;
       const diffToAdd = { ...diff, trail, change: typeofDiff(diff) };
-      if (fact.type === 'specification') {
-        const isComponentDiff = /^\/components/i.test(
-          diff.after ?? diff.before
-        );
-        if (!isComponentDiff) {
-          grouped.specification.diffs.push(diffToAdd);
-        }
-      } else if (fact.type === 'path') {
-        // We have a path fact, but we don't want to have to keep looking up each diff, so we'll "convert" the raw diff
-        // and just emit endpoint diffs
+      diffsAndRulesToAdd.push({
+        type: 'diffs',
+        item: diffToAdd,
+        spec: specToFetchFrom,
+        fact,
+      });
+    }
+  }
+
+  for (const node of diffsAndRulesToAdd) {
+    const { fact, item, type, spec: specToFetchFrom } = node;
+    if (fact.type === 'specification') {
+      type === 'diffs'
+        ? grouped.specification.diffs.push(item)
+        : grouped.specification.rules.push(item);
+    } else if (fact.type === 'path') {
+      // We have a path fact, but we don't want to have to keep looking up each diff, so we'll "convert" the raw diff
+      // and just emit endpoint diffs
+      if (type === 'diffs') {
         const { pathPattern } = getLocation(fact);
-        if (diff.before !== undefined && diff.after === undefined) {
-          const rawPathObject = jsonPointerHelpers.get(specs.from, diff.before);
+        if (item.before !== undefined && item.after === undefined) {
+          const rawPathObject = jsonPointerHelpers.get(specs.from, item.before);
           if (typeof rawPathObject !== 'object' || rawPathObject === null)
             continue;
           for (const method of Object.keys(rawPathObject)) {
             if (Object.values(OpenAPIV3.HttpMethods).includes(method as any)) {
               const newDiff: Diff = {
-                before: jsonPointerHelpers.append(diff.before, method),
+                before: jsonPointerHelpers.append(item.before, method),
                 trail: '',
                 change: 'removed',
               };
@@ -290,14 +317,14 @@ export function groupDiffsByEndpoint(
               endpoint.diffs.push(newDiff);
             }
           }
-        } else if (diff.before === undefined && diff.after !== undefined) {
-          const rawPathObject = jsonPointerHelpers.get(specs.to, diff.after);
+        } else if (item.before === undefined && item.after !== undefined) {
+          const rawPathObject = jsonPointerHelpers.get(specs.to, item.after);
           if (typeof rawPathObject !== 'object' || rawPathObject === null)
             continue;
           for (const method of Object.keys(rawPathObject)) {
             if (Object.values(OpenAPIV3.HttpMethods).includes(method as any)) {
               const newDiff: Diff = {
-                after: jsonPointerHelpers.append(diff.after, method),
+                after: jsonPointerHelpers.append(item.after, method),
                 trail: '',
                 change: 'added',
               };
@@ -307,98 +334,121 @@ export function groupDiffsByEndpoint(
             }
           }
         }
-      } else if (fact.type === 'operation') {
-        const { pathPattern, method } = getLocation(fact);
-        const endpointId = getEndpointId({ pathPattern, method });
-        const endpoint = grouped.getOrSetEndpoint(endpointId);
-        endpoint.diffs.push(diffToAdd);
-      } else if (
-        fact.type === 'request-header' ||
-        fact.type === 'request-query' ||
-        fact.type === 'request-cookie' ||
-        fact.type === 'request-path'
-      ) {
-        const parameter =
-          fact.type === 'request-header'
-            ? 'headerParameters'
-            : fact.type === 'request-query'
-            ? 'queryParameters'
-            : fact.type === 'request-cookie'
-            ? 'cookieParameters'
-            : 'pathParameters';
-        const { pathPattern, method } = getLocation(fact);
-        const endpointId = getEndpointId({ pathPattern, method });
-        const endpoint = grouped.getOrSetEndpoint(endpointId);
-        const name = getParameterName(
-          specToFetchFrom,
-          diff.after ?? diff.before
-        );
+      }
+    } else if (fact.type === 'operation') {
+      const { pathPattern, method } = getLocation(fact);
+      const endpointId = getEndpointId({ pathPattern, method });
+      const endpoint = grouped.getOrSetEndpoint(endpointId);
+      type === 'diffs' ? endpoint.diffs.push(item) : endpoint.rules.push(item);
+    } else if (
+      fact.type === 'request-header' ||
+      fact.type === 'request-query' ||
+      fact.type === 'request-cookie' ||
+      fact.type === 'request-path'
+    ) {
+      const parameter =
+        fact.type === 'request-header'
+          ? 'headerParameters'
+          : fact.type === 'request-query'
+          ? 'queryParameters'
+          : fact.type === 'request-cookie'
+          ? 'cookieParameters'
+          : 'pathParameters';
+      const { pathPattern, method } = getLocation(fact);
+      const endpointId = getEndpointId({ pathPattern, method });
+      const endpoint = grouped.getOrSetEndpoint(endpointId);
+      const name = getParameterName(specToFetchFrom, fact.location.jsonPath);
 
-        if (endpoint[parameter][name]) {
-          endpoint[parameter][name].diffs.push(diffToAdd);
+      if (endpoint[parameter][name]) {
+        type === 'diffs'
+          ? endpoint[parameter][name].diffs.push(item)
+          : endpoint[parameter][name].rules.push(item);
+      } else {
+        if (type === 'diffs') {
+          endpoint[parameter][name] = { diffs: [item], rules: [] };
         } else {
-          endpoint[parameter][name] = { diffs: [diffToAdd], rules: [] };
+          endpoint[parameter][name] = { diffs: [], rules: [item] };
         }
-      } else if (fact.type === 'requestBody') {
-        const { pathPattern, method } = getLocation(fact);
-        const endpointId = getEndpointId({ pathPattern, method });
-        const endpoint = grouped.getOrSetEndpoint(endpointId);
-        endpoint.request.diffs.push(diffToAdd);
-      } else if (fact.type === 'response') {
-        const { pathPattern, method, statusCode } = getLocation(fact);
-        const endpointId = getEndpointId({ pathPattern, method });
-        const response = grouped.getOrSetResponse(endpointId, statusCode);
-        response.diffs.push(diffToAdd);
-      } else if (fact.type === 'response-header') {
-        const { pathPattern, method, statusCode } = getLocation(fact);
-        const endpointId = getEndpointId({ pathPattern, method });
-        const response = grouped.getOrSetResponse(endpointId, statusCode);
-        response.headers.diffs.push(diffToAdd);
-      } else if (
-        fact.type === 'body-example' ||
-        fact.type === 'body-examples'
-      ) {
-        const location = getLocation(fact);
-        diffToAdd.trail = jsonPointerHelpers.join(
+      }
+    } else if (fact.type === 'requestBody') {
+      const { pathPattern, method } = getLocation(fact);
+      const endpointId = getEndpointId({ pathPattern, method });
+      const endpoint = grouped.getOrSetEndpoint(endpointId);
+      type === 'diffs'
+        ? endpoint.request.diffs.push(item)
+        : endpoint.request.rules.push(item);
+    } else if (fact.type === 'response') {
+      const { pathPattern, method, statusCode } = getLocation(fact);
+      const endpointId = getEndpointId({ pathPattern, method });
+      const response = grouped.getOrSetResponse(endpointId, statusCode);
+      type === 'diffs' ? response.diffs.push(item) : response.rules.push(item);
+    } else if (fact.type === 'response-header') {
+      const { pathPattern, method, statusCode } = getLocation(fact);
+      const endpointId = getEndpointId({ pathPattern, method });
+      const response = grouped.getOrSetResponse(endpointId, statusCode);
+      type === 'diffs'
+        ? response.headers.diffs.push(item)
+        : response.headers.rules.push(item);
+    } else if (fact.type === 'body-example' || fact.type === 'body-examples') {
+      const location = getLocation(fact);
+      if (type === 'diffs') {
+        item.trail = jsonPointerHelpers.join(
           jsonPointerHelpers.compile(location.trail),
-          diffToAdd.trail
+          item.trail
         );
+      }
 
-        const endpointId = getEndpointId(location);
-        const body =
-          location.location === 'request'
-            ? grouped.getOrSetRequestBody(endpointId, location.contentType)
-            : grouped.getOrSetResponseBody(
-                endpointId,
-                location.statusCode,
-                location.contentType
-              );
+      const endpointId = getEndpointId(location);
+      const body =
+        location.location === 'request'
+          ? grouped.getOrSetRequestBody(endpointId, location.contentType)
+          : grouped.getOrSetResponseBody(
+              endpointId,
+              location.statusCode,
+              location.contentType
+            );
 
-        body.examples.diffs.push(diffToAdd);
-      } else if (fact.type === 'body' || fact.type === 'field') {
-        const location = getLocation(fact);
-        const endpointId = getEndpointId(location);
-        const body =
-          location.location === 'request'
-            ? grouped.getOrSetRequestBody(endpointId, location.contentType)
-            : grouped.getOrSetResponseBody(
-                endpointId,
-                location.statusCode,
-                location.contentType
-              );
-
-        let fieldKeys = normalizeRequiredDiff(specToFetchFrom, fact, {
-          absolute: diff.after ?? diff.before,
-          trail,
+      type === 'diffs'
+        ? body.examples.diffs.push(item)
+        : body.examples.rules.push(item);
+    } else if (fact.type === 'body' || fact.type === 'field') {
+      const location = getLocation(fact);
+      const endpointId = getEndpointId(location);
+      const body =
+        location.location === 'request'
+          ? grouped.getOrSetRequestBody(endpointId, location.contentType)
+          : grouped.getOrSetResponseBody(
+              endpointId,
+              location.statusCode,
+              location.contentType
+            );
+      let fieldKeys: string[];
+      if (type === 'diffs') {
+        fieldKeys = normalizeRequiredDiff(specToFetchFrom, fact, {
+          absolute: item.after ?? item.before,
+          trail: item.trail,
         }) ?? [
           'trail' in location ? jsonPointerHelpers.compile(location.trail) : '',
         ];
+      } else {
+        fieldKeys = normalizeRequiredDiff(specToFetchFrom, fact, {
+          absolute: item.location.jsonPath,
+          trail: item.trail,
+        }) ?? [
+          'trail' in location ? jsonPointerHelpers.compile(location.trail) : '',
+        ];
+      }
 
-        for (const fieldKey of fieldKeys) {
-          if (body.fields[fieldKey]) {
-            body.fields[fieldKey].diffs.push(diffToAdd);
+      for (const fieldKey of fieldKeys) {
+        if (body.fields[fieldKey]) {
+          type === 'diffs'
+            ? body.fields[fieldKey].diffs.push(item)
+            : body.fields[fieldKey].rules.push(item);
+        } else {
+          if (type === 'diffs') {
+            body.fields[fieldKey] = { diffs: [item], rules: [] };
           } else {
-            body.fields[fieldKey] = { diffs: [diffToAdd], rules: [] };
+            body.fields[fieldKey] = { diffs: [], rules: [item] };
           }
         }
       }

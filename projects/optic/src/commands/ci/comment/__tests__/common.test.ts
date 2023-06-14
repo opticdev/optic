@@ -36,7 +36,8 @@ const input: CiRunDetails = {
             from,
             to,
           },
-          diff(from, to)
+          diff(from, to),
+          []
         ),
         results: [],
       },
