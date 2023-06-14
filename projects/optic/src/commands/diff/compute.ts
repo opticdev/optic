@@ -72,7 +72,8 @@ export async function compute(
       from: baseFile.jsonLike,
       to: headFile.jsonLike,
     },
-    specResults.diffs
+    specResults.diffs,
+    specResults.results
   );
 
   return {

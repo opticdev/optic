@@ -18,6 +18,6 @@ describe('groupDiffsByEndpoint', () => {
 
     const diffs = diff(from, to);
 
-    expect(groupDiffsByEndpoint({ from, to }, diffs)).toMatchSnapshot();
+    expect(groupDiffsByEndpoint({ from, to }, diffs, [])).toMatchSnapshot();
   });
 });

@@ -1,12 +1,7 @@
 import { Command, Option } from 'commander';
 import open from 'open';
 
-import {
-  terminalChangelog,
-  UserError,
-  jsonChangelog,
-  textToSev,
-} from '@useoptic/openapi-utilities';
+import { UserError, textToSev } from '@useoptic/openapi-utilities';
 import { generateComparisonLogsV2 } from '../../utils/diff-renderer';
 
 import {
@@ -21,6 +16,8 @@ import {
   flushEvents,
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
+import { terminalChangelog } from './changelog-renderers/terminal-changelog';
+import { jsonChangelog } from './changelog-renderers/json-changelog';
 import { compute } from './compute';
 import { compressDataV2 } from './compressResults';
 import { uploadDiff } from './upload-diff';

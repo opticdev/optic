@@ -12,9 +12,9 @@ export function getRootBodyPath(path: string): string {
 }
 export function interpretFieldLevelDiffs(
   specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
-  diffs: Record<string, Diff[]>
+  diffs: Record<string, { diffs: Diff[] }>
 ): Diff[] {
-  return Object.entries(diffs).map(([key, diffs]) => {
+  return Object.entries(diffs).map(([key, { diffs }]) => {
     const firstDiffPath = diffs[0].after ?? diffs[0].before;
 
     // TODO figure out if we need to handle path reconciliation here

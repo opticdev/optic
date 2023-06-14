@@ -14,11 +14,7 @@ import {
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 import open from 'open';
 import { compressDataV2 } from './compressResults';
-import {
-  jsonChangelog,
-  textToSev,
-  terminalChangelog,
-} from '@useoptic/openapi-utilities';
+import { textToSev } from '@useoptic/openapi-utilities';
 import { uploadDiff } from './upload-diff';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { writeDataForCi } from '../../utils/ci-data';
@@ -28,6 +24,8 @@ import { generateComparisonLogsV2 } from '../../utils/diff-renderer';
 import path from 'path';
 import { getApiUrl } from '../../utils/cloud-urls';
 import { getDetailsForGeneration } from '../../utils/generated';
+import { terminalChangelog } from './changelog-renderers/terminal-changelog';
+import { jsonChangelog } from './changelog-renderers/json-changelog';
 import * as Types from '../../client/optic-backend-types';
 
 const usage = () => `

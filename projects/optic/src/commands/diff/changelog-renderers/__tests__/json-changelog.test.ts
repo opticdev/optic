@@ -1,9 +1,8 @@
 import { test, expect } from '@jest/globals';
-import { openAPI as petStoreBase } from '../../../examples/petstore-base';
-import { openAPI as petStoreUpdated } from '../../../examples/petstore-updated';
+import { openAPI as petStoreBase } from '../../../../../../openapi-utilities/src/examples/petstore-base';
+import { openAPI as petStoreUpdated } from '../../../../../../openapi-utilities/src/examples/petstore-updated';
 import { jsonChangelog } from '../json-changelog';
-import { groupDiffsByEndpoint } from '../../../openapi3/group-diff';
-import { diff } from '../../../diff/diff';
+import { diff, groupDiffsByEndpoint } from '@useoptic/openapi-utilities';
 
 test('json changelog collects changes properly', () => {
   const diffs = diff(petStoreBase, petStoreUpdated);

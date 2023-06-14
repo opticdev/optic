@@ -1,5 +1,5 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { typeofDiff } from '@useoptic/openapi-utilities';
+import { RuleResult, typeofDiff } from '@useoptic/openapi-utilities';
 import type {
   GroupedDiffs,
   Body,
@@ -75,7 +75,7 @@ export function* terminalChangelog(
   groupedChanges: GroupedDiffs
 ): Generator<string> {
   const { endpoints, specification } = groupedChanges;
-  yield* getDetailLogs(specification, {
+  yield* getDetailLogs(specification.diffs, {
     label: 'specification details:',
   });
 
@@ -136,7 +136,7 @@ function* getResponseChangeLogs(
 
   if (
     change ||
-    response.headers.length ||
+    response.headers.diffs.length ||
     Object.values(response.contents).length
   ) {
     yield `${label} ${change === 'added' ? added : ''}`;
@@ -145,7 +145,7 @@ function* getResponseChangeLogs(
   if (change) {
     yield* indent(getDetailLogs(response.diffs));
   }
-  for (const diff of response.headers) {
+  for (const diff of response.headers.diffs) {
     yield* indent(getResponseHeaderLogs(diff));
   }
 
@@ -183,7 +183,7 @@ function* getBodyChangeLogs(
   key: string
 ) {
   const fieldDiffs = interpretFieldLevelDiffs(specs, body.fields);
-  const flatDiffs = [...fieldDiffs, ...body.examples];
+  const flatDiffs = [...fieldDiffs, ...body.examples.diffs];
   const change = typeofV3Diffs(flatDiffs);
   const label = `- body ${chalk.bold(key)}:`;
 
@@ -215,9 +215,9 @@ function* getResponseHeaderLogs(diff: Diff) {
 function* getParameterLogs(
   specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
   parameterType: 'query' | 'cookie' | 'path' | 'header',
-  diffByName: Record<string, Diff[]>
+  diffByName: Record<string, { diffs: Diff[]; rules: RuleResult[] }>
 ) {
-  for (const [name, diffsForName] of Object.entries(diffByName)) {
+  for (const [name, { diffs: diffsForName }] of Object.entries(diffByName)) {
     const change = typeofV3Diffs(diffsForName);
     yield `- ${parameterType} parameter ${chalk.italic(
       name

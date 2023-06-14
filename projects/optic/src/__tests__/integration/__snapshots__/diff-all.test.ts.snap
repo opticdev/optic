@@ -457,7 +457,10 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
       "comparison": {
         "groupedDiffs": {
           "endpoints": {},
-          "specification": [],
+          "specification": {
+            "diffs": [],
+            "rules": [],
+          },
         },
         "results": [
           {
@@ -514,8 +517,10 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
               "request": {
                 "contents": {},
                 "diffs": [],
+                "rules": [],
               },
               "responses": {},
+              "rules": [],
             },
             "/filler_route-~_~-POST": {
               "cookieParameters": {},
@@ -534,24 +539,29 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
               "request": {
                 "contents": {},
                 "diffs": [],
+                "rules": [],
               },
               "responses": {},
+              "rules": [],
             },
           },
-          "specification": [
-            {
-              "before": "/x-optic-url",
-              "change": "removed",
-              "pathReconciliation": [],
-              "trail": "/x-optic-url",
-            },
-            {
-              "before": "/info/description",
-              "change": "removed",
-              "pathReconciliation": [],
-              "trail": "/info/description",
-            },
-          ],
+          "specification": {
+            "diffs": [
+              {
+                "before": "/x-optic-url",
+                "change": "removed",
+                "pathReconciliation": [],
+                "trail": "/x-optic-url",
+              },
+              {
+                "before": "/info/description",
+                "change": "removed",
+                "pathReconciliation": [],
+                "trail": "/info/description",
+              },
+            ],
+            "rules": [],
+          },
         },
         "results": [
           {
@@ -643,7 +653,10 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
       "comparison": {
         "groupedDiffs": {
           "endpoints": {},
-          "specification": [],
+          "specification": {
+            "diffs": [],
+            "rules": [],
+          },
         },
         "results": [
           {
@@ -705,7 +718,10 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
       "comparison": {
         "groupedDiffs": {
           "endpoints": {},
-          "specification": [],
+          "specification": {
+            "diffs": [],
+            "rules": [],
+          },
         },
         "results": [
           {
@@ -749,8 +765,10 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
               "request": {
                 "contents": {},
                 "diffs": [],
+                "rules": [],
               },
               "responses": {},
+              "rules": [],
             },
             "/filler_route-~_~-POST": {
               "cookieParameters": {},
@@ -769,40 +787,45 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
               "request": {
                 "contents": {},
                 "diffs": [],
+                "rules": [],
               },
               "responses": {},
+              "rules": [],
             },
           },
-          "specification": [
-            {
-              "after": "/openapi",
-              "before": "/openapi",
-              "change": "changed",
-              "trail": "/openapi",
-            },
-            {
-              "after": "/x-optic-url",
-              "change": "added",
-              "trail": "/x-optic-url",
-            },
-            {
-              "after": "/info/version",
-              "before": "/info/version",
-              "change": "changed",
-              "trail": "/info/version",
-            },
-            {
-              "after": "/info/title",
-              "before": "/info/title",
-              "change": "changed",
-              "trail": "/info/title",
-            },
-            {
-              "after": "/info/description",
-              "change": "added",
-              "trail": "/info/description",
-            },
-          ],
+          "specification": {
+            "diffs": [
+              {
+                "after": "/openapi",
+                "before": "/openapi",
+                "change": "changed",
+                "trail": "/openapi",
+              },
+              {
+                "after": "/x-optic-url",
+                "change": "added",
+                "trail": "/x-optic-url",
+              },
+              {
+                "after": "/info/version",
+                "before": "/info/version",
+                "change": "changed",
+                "trail": "/info/version",
+              },
+              {
+                "after": "/info/title",
+                "before": "/info/title",
+                "change": "changed",
+                "trail": "/info/title",
+              },
+              {
+                "after": "/info/description",
+                "change": "added",
+                "trail": "/info/description",
+              },
+            ],
+            "rules": [],
+          },
         },
         "results": [
           {

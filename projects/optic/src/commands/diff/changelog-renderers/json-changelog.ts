@@ -209,7 +209,7 @@ function getEndpointLogs(
   const operationChange = typeofV3Diffs(diffs);
 
   const parameterChanges: ChangedNode[] = [];
-  for (const [name, diffs] of Object.entries(queryParameters)) {
+  for (const [name, { diffs }] of Object.entries(queryParameters)) {
     parameterChanges.push(
       getParameterLogs(
         specs,
@@ -224,7 +224,7 @@ function getEndpointLogs(
     );
   }
 
-  for (const [name, diffs] of Object.entries(cookieParameters)) {
+  for (const [name, { diffs }] of Object.entries(cookieParameters)) {
     parameterChanges.push(
       getParameterLogs(
         specs,
@@ -239,7 +239,7 @@ function getEndpointLogs(
     );
   }
 
-  for (const [name, diffs] of Object.entries(pathParameters)) {
+  for (const [name, { diffs }] of Object.entries(pathParameters)) {
     parameterChanges.push(
       getParameterLogs(
         specs,
@@ -254,7 +254,7 @@ function getEndpointLogs(
     );
   }
 
-  for (const [name, diffs] of Object.entries(headerParameters)) {
+  for (const [name, { diffs }] of Object.entries(headerParameters)) {
     parameterChanges.push(
       getParameterLogs(
         specs,
@@ -354,7 +354,7 @@ function getBodyChangeLogs(
   contentType: string
 ): ChangedNode {
   const fieldDiffs = interpretFieldLevelDiffs(specs, body.fields);
-  const exampleDiffs = body.examples;
+  const exampleDiffs = body.examples.diffs;
 
   // Group body diffs by trail and then log based on that
 

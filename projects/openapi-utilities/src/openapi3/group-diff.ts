@@ -7,6 +7,7 @@ import {
 } from './json-path-interpreters';
 import { getLocation, OpenApiV3Traverser } from './traverser';
 import { OpenApiV3TraverserFact } from './types';
+import { RuleResult } from '../results';
 
 const SEPARATOR = '-~_~-';
 
@@ -54,14 +55,20 @@ export type Diff = {
     }
 );
 
+type DiffAndRules = {
+  diffs: Diff[];
+  rules: RuleResult[];
+};
+
 export type Body = {
-  fields: Record<string, Diff[]>;
-  examples: Diff[];
+  fields: Record<string, DiffAndRules>;
+  examples: DiffAndRules;
 };
 
 export type Response = {
   diffs: Diff[];
-  headers: Diff[];
+  rules: RuleResult[];
+  headers: DiffAndRules;
   contents: Record<string, Body>;
 };
 
@@ -69,23 +76,25 @@ export type Endpoint = {
   method: string;
   path: string;
   diffs: Diff[];
-  queryParameters: Record<string, Diff[]>;
-  pathParameters: Record<string, Diff[]>;
-  cookieParameters: Record<string, Diff[]>;
-  headerParameters: Record<string, Diff[]>;
+  rules: RuleResult[];
+  queryParameters: Record<string, DiffAndRules>;
+  pathParameters: Record<string, DiffAndRules>;
+  cookieParameters: Record<string, DiffAndRules>;
+  headerParameters: Record<string, DiffAndRules>;
   request: {
     diffs: Diff[];
+    rules: RuleResult[];
     contents: Record<string, Body>;
   };
   responses: Record<string, Response>;
 };
 
 export class GroupedDiffs {
-  public specification: Diff[];
+  public specification: DiffAndRules;
   public endpoints: Record<string, Endpoint>;
   constructor() {
     this.endpoints = {};
-    this.specification = [];
+    this.specification = { diffs: [], rules: [] };
   }
 
   getOrSetEndpoint(endpointId: string): Endpoint {
@@ -97,12 +106,14 @@ export class GroupedDiffs {
         method,
         path,
         diffs: [],
+        rules: [],
         queryParameters: {},
         pathParameters: {},
         cookieParameters: {},
         headerParameters: {},
         request: {
           diffs: [],
+          rules: [],
           contents: {},
         },
         responses: {},
@@ -119,7 +130,7 @@ export class GroupedDiffs {
     } else {
       const requestBody: Body = {
         fields: {},
-        examples: [],
+        examples: { diffs: [], rules: [] },
       };
       endpoint.request.contents[contentType] = requestBody;
       return requestBody;
@@ -134,7 +145,8 @@ export class GroupedDiffs {
     } else {
       const response: Response = {
         diffs: [],
-        headers: [],
+        rules: [],
+        headers: { diffs: [], rules: [] },
         contents: {},
       };
       endpoint.responses[statusCode] = response;
@@ -153,7 +165,7 @@ export class GroupedDiffs {
     } else {
       const responseBody: Body = {
         fields: {},
-        examples: [],
+        examples: { diffs: [], rules: [] },
       };
       response.contents[contentType] = responseBody;
       return responseBody;
@@ -231,7 +243,8 @@ function normalizeRequiredDiff(
 
 export function groupDiffsByEndpoint(
   specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
-  diffs: ObjectDiff[]
+  diffs: ObjectDiff[],
+  rules: RuleResult[]
 ) {
   const fromTree = constructTree(specs.from);
   const toTree = constructTree(specs.to);
@@ -255,7 +268,7 @@ export function groupDiffsByEndpoint(
           diff.after ?? diff.before
         );
         if (!isComponentDiff) {
-          grouped.specification.push(diffToAdd);
+          grouped.specification.diffs.push(diffToAdd);
         }
       } else if (fact.type === 'path') {
         // We have a path fact, but we don't want to have to keep looking up each diff, so we'll "convert" the raw diff
@@ -322,9 +335,9 @@ export function groupDiffsByEndpoint(
         );
 
         if (endpoint[parameter][name]) {
-          endpoint[parameter][name].push(diffToAdd);
+          endpoint[parameter][name].diffs.push(diffToAdd);
         } else {
-          endpoint[parameter][name] = [diffToAdd];
+          endpoint[parameter][name] = { diffs: [diffToAdd], rules: [] };
         }
       } else if (fact.type === 'requestBody') {
         const { pathPattern, method } = getLocation(fact);
@@ -340,7 +353,7 @@ export function groupDiffsByEndpoint(
         const { pathPattern, method, statusCode } = getLocation(fact);
         const endpointId = getEndpointId({ pathPattern, method });
         const response = grouped.getOrSetResponse(endpointId, statusCode);
-        response.headers.push(diffToAdd);
+        response.headers.diffs.push(diffToAdd);
       } else if (
         fact.type === 'body-example' ||
         fact.type === 'body-examples'
@@ -361,7 +374,7 @@ export function groupDiffsByEndpoint(
                 location.contentType
               );
 
-        body.examples.push(diffToAdd);
+        body.examples.diffs.push(diffToAdd);
       } else if (fact.type === 'body' || fact.type === 'field') {
         const location = getLocation(fact);
         const endpointId = getEndpointId(location);
@@ -383,9 +396,9 @@ export function groupDiffsByEndpoint(
 
         for (const fieldKey of fieldKeys) {
           if (body.fields[fieldKey]) {
-            body.fields[fieldKey].push(diffToAdd);
+            body.fields[fieldKey].diffs.push(diffToAdd);
           } else {
-            body.fields[fieldKey] = [diffToAdd];
+            body.fields[fieldKey] = { diffs: [diffToAdd], rules: [] };
           }
         }
       }
