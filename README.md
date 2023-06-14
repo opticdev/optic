@@ -14,7 +14,7 @@ npm install -g @useoptic/optic
 
 ### Prevent breaking changes using `optic diff`
 
-Optic can detect breaking changes between any two versions of an OpenAPI specification. Reference the versions using Git tags and branch names:
+Optic can detect breaking changes between any two versions of an OpenAPI specification. Optic can lookup the versions using Git tags and branch names so you don't need to copy files around.
 
 **Compares the HEAD to the `main` branch**
 ```
