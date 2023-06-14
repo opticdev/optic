@@ -1,12 +1,16 @@
-# Optic ![GitHub Repo stars](https://img.shields.io/github/stars/opticdev/optic?style=social) ![GitHub contributors](https://img.shields.io/github/contributors-anon/opticdev/optic?style=social) ![npm](https://img.shields.io/npm/dm/@useoptic/openapi-io?style=social) ![license](https://img.shields.io/github/license/opticdev/optic?style=social)
----
 
-Optic helps you ship a better API by making OpenAPI easy to use. Prevent breaking changes, publish accurate documentation and improve your the design of your API. 
+# Optic
+
+Optic helps you ship a better API by making OpenAPI easy to use. Prevent breaking changes, publish accurate documentation and improve your the design of your API.
 
 **Install**
 ```bash
 npm install -g @useoptic/optic
 ```
+
+ 
+![GitHub Repo stars](https://img.shields.io/github/stars/opticdev/optic?style=social) ![GitHub contributors](https://img.shields.io/github/contributors-anon/opticdev/optic?style=social) ![npm](https://img.shields.io/npm/dm/@useoptic/openapi-io?style=social) ![license](https://img.shields.io/github/license/opticdev/optic?style=social)
+---
 
 ### Prevent breaking changes using `optic diff`
 Optic can detect breaking changes between any two versions of an OpenAPI specification. Reference the versions using Git tags and branch names:
