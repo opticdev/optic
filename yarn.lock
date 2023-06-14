@@ -2592,59 +2592,59 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry-internal/tracing@npm:7.55.0":
-  version: 7.55.0
-  resolution: "@sentry-internal/tracing@npm:7.55.0"
+"@sentry-internal/tracing@npm:7.55.1":
+  version: 7.55.1
+  resolution: "@sentry-internal/tracing@npm:7.55.1"
   dependencies:
-    "@sentry/core": 7.55.0
-    "@sentry/types": 7.55.0
-    "@sentry/utils": 7.55.0
+    "@sentry/core": 7.55.1
+    "@sentry/types": 7.55.1
+    "@sentry/utils": 7.55.1
     tslib: ^1.9.3
-  checksum: 2600089c1eb6fe473e59eacaccc5d28d050431355564f6d6408e9efdb5511420b23d2500c80e45e783e04b1fdb6ef82bf9296c44f2b752ab86d93a760ace3bf8
+  checksum: b9fafe119b4fd8e0c0c16fe4b68acd57c83391ef28a188a2dda97bfcc037e8f27aa8d60300a6392001a61445c8a2b1abe2870d62242c48dddb1a350a900a2b5e
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:7.55.0":
-  version: 7.55.0
-  resolution: "@sentry/core@npm:7.55.0"
+"@sentry/core@npm:7.55.1":
+  version: 7.55.1
+  resolution: "@sentry/core@npm:7.55.1"
   dependencies:
-    "@sentry/types": 7.55.0
-    "@sentry/utils": 7.55.0
+    "@sentry/types": 7.55.1
+    "@sentry/utils": 7.55.1
     tslib: ^1.9.3
-  checksum: eab1b40aa50314af87cb04491ca43cee967d89b36a27fff9c8bd3bacae7273b90bafd1c97f3e3d3e3de7d43e29fe77abbdeb843cfa4e75bf66b5dcc6351fdafa
+  checksum: 8e923247bc46a273814fb3271b9956316ab607185ee21421d8c080ac6b084623095e63b6f2ffcbe5ab504b942e99107e385e7d558fe7f63eef69d215384e6e68
   languageName: node
   linkType: hard
 
 "@sentry/node@npm:^7.10.0":
-  version: 7.55.0
-  resolution: "@sentry/node@npm:7.55.0"
+  version: 7.55.1
+  resolution: "@sentry/node@npm:7.55.1"
   dependencies:
-    "@sentry-internal/tracing": 7.55.0
-    "@sentry/core": 7.55.0
-    "@sentry/types": 7.55.0
-    "@sentry/utils": 7.55.0
+    "@sentry-internal/tracing": 7.55.1
+    "@sentry/core": 7.55.1
+    "@sentry/types": 7.55.1
+    "@sentry/utils": 7.55.1
     cookie: ^0.4.1
     https-proxy-agent: ^5.0.0
     lru_map: ^0.3.3
     tslib: ^1.9.3
-  checksum: 903758115433a59de097068e5a1a727e6f94fd5bff5ca14fc04d9a0219d107a96fe3358b99bd0af67c81bf7a8e39e29c4e2077fd00a86398201cb5fceb5df404
+  checksum: 8632cbf97be2b4d74d1a9be6e4ee02a972e2d8f42c8f647fcb4f42dfd20f7b2c935c35246d5223c3e29e3075be8dd084fd82f08187719f7792086a02fd414d00
   languageName: node
   linkType: hard
 
-"@sentry/types@npm:7.55.0":
-  version: 7.55.0
-  resolution: "@sentry/types@npm:7.55.0"
-  checksum: e966cb054de931630d8e7a37c8b29d22f65fea169d65769695b4b25b5a7a994231605ccd0cd6d14f7f9210350b6fa713fd5a32a48dd368dcdd06debb4b5f386a
+"@sentry/types@npm:7.55.1":
+  version: 7.55.1
+  resolution: "@sentry/types@npm:7.55.1"
+  checksum: ea38fc4eee362506caeb031d85d0a56b71aaa4e8fefc022d652cd78b5b7511c29a73f2d16a2e622ea1013a11b9426d325e938b046ab15299a0fc6b636c968690
   languageName: node
   linkType: hard
 
-"@sentry/utils@npm:7.55.0":
-  version: 7.55.0
-  resolution: "@sentry/utils@npm:7.55.0"
+"@sentry/utils@npm:7.55.1":
+  version: 7.55.1
+  resolution: "@sentry/utils@npm:7.55.1"
   dependencies:
-    "@sentry/types": 7.55.0
+    "@sentry/types": 7.55.1
     tslib: ^1.9.3
-  checksum: 35a3f4b2fe11cce60ee9640def0cfab6d0f4a46d497e186a13f3dad5dfd226c7486eb6eeb391dfda8ebfe836e3c5dc0bc1dc4f3c2568b944ff91b0e8934f3495
+  checksum: 680667c052c6f884bb231106aeee9422e705ac40c1ef1a0225d8909d2951c0b59c69482fc752f9a4b939c005a5a6b510020dcd1b22c061e08f682720ffab4e7a
   languageName: node
   linkType: hard
 
@@ -3325,13 +3325,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node-fetch@npm:2.6.3":
-  version: 2.6.3
-  resolution: "@types/node-fetch@npm:2.6.3"
+"@types/node-fetch@npm:2.6.4":
+  version: 2.6.4
+  resolution: "@types/node-fetch@npm:2.6.4"
   dependencies:
     "@types/node": "*"
     form-data: ^3.0.0
-  checksum: b68cda58e91535a42dd5337932443c37f8e198ca1e8deeb95bd92a64a9a84d92071867b91c5eb84ee8e13f33d45a70549fe2bc11dd070a894dd561909f4d39f5
+  checksum: f3e1d881bb42269e676ecaf49f0e096ab345e22823a2b2d071d60619414817fe02df48a31a8d05adb23054028a2a65521bdb3906ceb763ab6d3339c8d8775058
   languageName: node
   linkType: hard
 
@@ -3580,7 +3580,7 @@ __metadata:
     "@types/lodash.clonedeep": ^4
     "@types/lodash.sortby": ^4.7.7
     "@types/node": ^18.0.0
-    "@types/node-fetch": 2.6.3
+    "@types/node-fetch": 2.6.4
     "@types/semver": ^7.3.10
     "@useoptic/json-pointer-helpers": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"

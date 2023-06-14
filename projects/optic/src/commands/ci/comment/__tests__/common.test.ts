@@ -103,4 +103,33 @@ describe('generateCompareSummaryMarkdown', () => {
       )
     ).toMatchSnapshot();
   });
+
+  test('when run without optic cloud', () => {
+    expect(
+      generateCompareSummaryMarkdown(
+        { sha: '123' },
+        {
+          completed: [
+            {
+              apiName: 'no-optic-cloud',
+              warnings: [],
+              comparison: {
+                groupedDiffs: groupDiffsByEndpoint(
+                  {
+                    from,
+                    to,
+                  },
+                  diff(from, to)
+                ),
+                results: [],
+              },
+            },
+          ],
+          failed: [],
+          noop: [],
+          severity: 2,
+        }
+      )
+    ).toMatchSnapshot();
+  });
 });
