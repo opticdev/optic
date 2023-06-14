@@ -1,7 +1,9 @@
-![Screenshot 2023-06-14 at 12 55 11 PM](https://github.com/opticdev/optic/assets/5900338/a446bac2-06b6-40bd-a7d4-42f1cc3621ea)
 
 # Optic - the CI tool that improves your APIs
 Optic helps you ship a better API by making it easy for teams to use OpenAPI. Prevent breaking changes, publish accurate documentation and improve the design of your APIs.
+
+![Screenshot 2023-06-14 at 12 55 11 PM](https://github.com/opticdev/optic/assets/5900338/a446bac2-06b6-40bd-a7d4-42f1cc3621ea)
+
 
 **Install**
 ```bash
@@ -11,7 +13,7 @@ npm install -g @useoptic/optic
 ![GitHub Repo stars](https://img.shields.io/github/stars/opticdev/optic?style=social) ![GitHub contributors](https://img.shields.io/github/contributors-anon/opticdev/optic?style=social) ![npm](https://img.shields.io/npm/dm/@useoptic/openapi-io?style=social) ![license](https://img.shields.io/github/license/opticdev/optic?style=social)
 ---
 
-## Start locally
+## Run locally
 
 ### Prevent breaking changes using `optic diff`
 
@@ -96,6 +98,14 @@ ruleset:
       # (optional) allow certain operations do not need examples
       exclude_operations_with_extension: x-legacy-api
 
+```
+
+
+## Start running in CI
+To start using Optic in CI, [follow this guide](https://www.useoptic.com/docs/add-to-project). We provide template workflows for GitHub and GitLab to help you run Optic as a CI check:
+
+```
+optic ci setup
 ```
 
 
