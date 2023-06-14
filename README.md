@@ -1,6 +1,7 @@
-# Optic
+![Screenshot 2023-06-14 at 12 55 11 PM](https://github.com/opticdev/optic/assets/5900338/a446bac2-06b6-40bd-a7d4-42f1cc3621ea)
 
-Optic helps you ship a better API by making OpenAPI easy to use. Prevent breaking changes, publish accurate documentation and improve your the design of your API.
+# Optic - the CI tool that improves your APIs
+Optic helps you ship a better API by making it easy for teams to use OpenAPI. Prevent breaking changes, publish accurate documentation and improve the design of your APIs.
 
 **Install**
 ```bash
@@ -37,14 +38,19 @@ optic capture openapi.yml https://localhost:8080 --command "npm test"
 optic verify openapi.yml
 ```
 
-<img src="https://github.com/opticdev/optic/assets/5900338/fd6cdd7f-c147-467b-9517-84232baa898f" width="500" />
+<img src="https://github.com/opticdev/optic/assets/5900338/a9b36ff3-6f24-42b3-8d0d-16d678852761" width="500" />
+
 
 When Optic detects a diff, you can correct it manually, or run `optic update` to have Optic figures out exactly which lines of OpenAPI need to be updated and make the changes for you.
 
-<img src="https://github.com/opticdev/optic/assets/5900338/fd6cdd7f-c147-467b-9517-84232baa898f" width="500" />
+<img src="https://github.com/opticdev/optic/assets/5900338/5b1c2275-e98c-4832-b284-5fe29894b925" width="500" />
 
 ## Improve your API design with `optic lint` & `optic diff`
 Optic is the first API linter built with the API lifecycle in-mind. When testing your API design, it always considers two versions of your API, for example: the version on the `develop` vs the `latest` release tag. This lets Optic check for all kinds of things [Spectral (and other liners) misses](https://www.useoptic.com/comparisons/spectral) like breaking changes and proper use of your API versioning scheme.
+
+
+<img src="https://github.com/opticdev/optic/assets/5900338/50a43d09-f531-405b-8b53-1c91ff5b8201" width="500" />
+
 
 Because Optic understands API change, it can apply your latest API standards to new API endpoints, and a looser set of standards to legacy endpoints that can’t change. [Teams like Snyk use Optic and this approach to govern all their APIs](https://snyk.io/blog/snyk-api-development-shift-left/). With Optic, developers only get actionable feedback from the tool and they don’t have to turn rules off to get CI to pass.
 
@@ -92,13 +98,12 @@ ruleset:
 
 ```
 
-<img src="https://github.com/opticdev/optic/assets/5900338/fd6cdd7f-c147-467b-9517-84232baa898f" width="500" />
 
+## Resources
+- [Read our full documentation here](https://www.useoptic.com/docs)
+- [Need help? Book office hours](https://calendly.com/optic-onboarding/optic-office-hours)
+- [Join us on Discord](https://discord.com/invite/t9hADkuYjP)
 
----
-
-## [Read our full documentation here](https://www.useoptic.com/docs)
-## [Need help? Book office hours](https://calendly.com/optic-onboarding/optic-office-hours)
 
 ### License
 Optic is MIT Licensed 
