@@ -1,5 +1,11 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { RuleResult, typeofDiff } from '@useoptic/openapi-utilities';
+import {
+  ObjectDiff,
+  RuleResult,
+  Severity,
+  getOperationsChangedLabel,
+  typeofDiff,
+} from '@useoptic/openapi-utilities';
 import type {
   GroupedDiffs,
   Body,
@@ -11,6 +17,7 @@ import { typeofV3Diffs } from '@useoptic/openapi-utilities/build/openapi3/group-
 import { Instance as Chalk } from 'chalk';
 import { getLocation } from '@useoptic/openapi-utilities/build/openapi3/traverser';
 import { interpretFieldLevelDiffs } from './common';
+import { ParseResult } from '../../../utils/spec-loaders';
 
 const chalk = new Chalk();
 
@@ -71,16 +78,87 @@ function* indent(generator: Generator<string>) {
 }
 
 export function* terminalChangelog(
-  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
-  groupedChanges: GroupedDiffs
+  specs: { from: ParseResult; to: ParseResult },
+  groupedDiffs: GroupedDiffs,
+  comparison: {
+    results: RuleResult[];
+    diffs: ObjectDiff[];
+  },
+  options: {
+    path: string;
+    check: boolean;
+    inCi: boolean;
+    output: 'pretty' | 'plain';
+    verbose: boolean;
+    severity: Severity;
+  }
 ): Generator<string> {
-  const { endpoints, specification } = groupedChanges;
+  const specName = specs.to.jsonLike.info.title || 'Unnamed spec';
+  const operationsChangedLabel = getOperationsChangedLabel(groupedDiffs);
+  const totalNumberOfChecks = comparison.results.length;
+  const failedChecks = comparison.results.filter(
+    (result) =>
+      !result.passed && !result.exempted && result.severity <= options.severity
+  );
+  const exemptedFailedNumberOfChecks = comparison.results.filter(
+    (result) =>
+      !result.passed && result.exempted && result.severity <= options.severity
+  ).length;
+  const passedNumberOfChecks = totalNumberOfChecks - failedChecks.length;
+  const failedWarnings = comparison.results.filter(
+    (result) =>
+      !result.passed && !result.exempted && result.severity === Severity.Warn
+  ).length;
+  const failedInfo = comparison.results.filter(
+    (result) =>
+      !result.passed && !result.exempted && result.severity === Severity.Info
+  ).length;
+
+  const icon = options.check
+    ? failedChecks.length === 0
+      ? chalk.green('✔')
+      : chalk.red('x')
+    : '';
+  yield `${icon} ${chalk.bold(specName)} ${chalk.gray(options.path)}`;
+  if (options.inCi) {
+    yield `${chalk.bold('Preview docs')} TODO implement me`;
+  }
+
+  yield `${chalk.bold('Operations: ')}${operationsChangedLabel}`;
+
+  if (options.check) {
+    const exemptLabel =
+      exemptedFailedNumberOfChecks > 0
+        ? chalk.gray(`${exemptedFailedNumberOfChecks} exempted`)
+        : '';
+    const warnLabel =
+      options.severity === Severity.Error && failedWarnings > 0
+        ? chalk.yellow(`${failedWarnings} warnings`)
+        : '';
+    const infoLabel =
+      options.severity > Severity.Info && failedInfo > 0
+        ? chalk.blue(`${failedWarnings} info`)
+        : '';
+    const label = [exemptLabel, warnLabel, infoLabel]
+      .filter((l) => l)
+      .join(', ');
+    yield `${icon} ${chalk.bold(
+      'Checks: '
+    )} ${passedNumberOfChecks}/${totalNumberOfChecks} ${
+      label ? `(${label})` : ''
+    }`;
+  }
+
+  const { endpoints, specification } = groupedDiffs;
   yield* getDetailLogs(specification.diffs, {
     label: 'specification details:',
   });
 
   for (const [, endpoint] of Object.entries(endpoints))
-    yield* getEndpointLogs(specs, endpoint);
+    yield* getEndpointLogs(
+      { from: specs.from.jsonLike, to: specs.to.jsonLike },
+      endpoint
+    );
 }
 
 function* getEndpointLogs(
