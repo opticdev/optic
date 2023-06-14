@@ -20,7 +20,6 @@ import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { writeDataForCi } from '../../utils/ci-data';
 import { errorHandler } from '../../error-handler';
 import { checkOpenAPIVersion } from '@useoptic/openapi-io';
-import { generateComparisonLogsV2 } from '../../utils/diff-renderer';
 import path from 'path';
 import { getApiUrl } from '../../utils/cloud-urls';
 import { getDetailsForGeneration } from '../../utils/generated';
@@ -379,7 +378,7 @@ async function computeAll(
       logger.warn(warning);
     }
 
-    if (specResults.diffs.length === 0) {
+    if (specResults.diffs.length === 0 || specResults.results.length === 0) {
       logger.info('No changes were detected');
     }
     logger.info('');
@@ -389,28 +388,6 @@ async function computeAll(
       changelogData
     )) {
       logger.info(log);
-    }
-
-    if (options.check) {
-      if (specResults.results.length > 0) {
-        logger.info('Checks');
-        logger.info('');
-      }
-
-      for (const log of generateComparisonLogsV2(
-        changelogData,
-        { from: fromParseResults.sourcemap, to: toParseResults.sourcemap },
-        specResults,
-        {
-          output: 'pretty',
-          verbose: false,
-          severity: textToSev(options.severity),
-        }
-      )) {
-        logger.info(log);
-      }
-
-      logger.info('');
     }
 
     let changelogUrl: string | null = null;

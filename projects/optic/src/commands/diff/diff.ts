@@ -216,7 +216,7 @@ const runDiff = async (
       logger.warn(warning);
     }
 
-    if (specResults.diffs.length === 0) {
+    if (specResults.diffs.length === 0 || specResults.results.length === 0) {
       logger.info('No changes were detected');
     } else {
       logger.info('');
@@ -229,40 +229,16 @@ const runDiff = async (
     }
   }
 
-  if (options.check) {
-    if (specResults.results.length > 0) {
-      logger.info('Checks');
-      logger.info('');
-    }
-
-    for (const log of generateComparisonLogsV2(
-      changelogData,
-      {
-        from: baseFile.sourcemap,
-        to: headFile.sourcemap,
-      },
-      specResults,
-      {
-        output: 'pretty',
-        verbose: false,
-        severity: textToSev(options.severity),
-      }
-    )) {
-      logger.info(log);
-    }
-
-    logger.info('');
-    if ((!hasOpticUrl && headFile.from === 'file') || headFile.from === 'git') {
-      const relativePath = path.relative(
-        process.cwd(),
-        headFile.sourcemap.rootFilePath
-      );
-      logger.info(
-        chalk.blue.bold(
-          `See the full history of this API by running "optic api add ${relativePath} --history-depth 0"`
-        )
-      );
-    }
+  if ((!hasOpticUrl && headFile.from === 'file') || headFile.from === 'git') {
+    const relativePath = path.relative(
+      process.cwd(),
+      headFile.sourcemap.rootFilePath
+    );
+    logger.info(
+      chalk.blue.bold(
+        `See the full history of this API by running "optic api add ${relativePath} --history-depth 0"`
+      )
+    );
   }
 
   return diffResults;
