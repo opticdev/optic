@@ -433,6 +433,7 @@ const getDiffAction =
       specPath: relativePath,
       diffs: diffResult.specResults.diffs.length,
       checks: diffResult.specResults.results.length,
+      isCloudRun: options.upload,
       isInCi: config.isInCi,
       ...(maybeOrigin?.web_url
         ? {
