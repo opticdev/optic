@@ -30,6 +30,8 @@ optic diff feature/example:openapi.yml develop:main --check
 
 <img src="https://github.com/opticdev/optic/assets/5900338/fd6cdd7f-c147-467b-9517-84232baa898f" width="500" />
 
+[Read Documentation](https://www.useoptic.com/docs/compare-openapi)
+
 ## Test the accuracy of your documentation using `optic verify`
 It can be difficult to keep an OpenAPI in-sync with your implementation. Optic tests if your OpenAPI is accurate by capturing traffic from your tests and comparing it to the spec.
 
@@ -46,6 +48,8 @@ optic verify openapi.yml
 When Optic detects a diff, you can correct it manually, or run `optic update` to have Optic figures out exactly which lines of OpenAPI need to be updated and make the changes for you.
 
 <img src="https://github.com/opticdev/optic/assets/5900338/5b1c2275-e98c-4832-b284-5fe29894b925" width="500" />
+
+[Read Documentation](https://www.useoptic.com/docs/verify-openapi)
 
 ## Improve your API design with `optic lint` & `optic diff`
 Optic is the first API linter built with the API lifecycle in-mind. When testing your API design, it always considers two versions of your API, for example: the version on the `develop` vs the `latest` release tag. This lets Optic check for all kinds of things [Spectral (and other liners) misses](https://www.useoptic.com/comparisons/spectral) like breaking changes and proper use of your API versioning scheme.
@@ -100,6 +104,8 @@ ruleset:
 
 ```
 
+[Read documentation](https://www.useoptic.com/docs/add-to-project)
+
 
 ## Start running in CI
 To start using Optic in CI, [follow this guide](https://www.useoptic.com/docs/add-to-project). We provide template workflows for GitHub and GitLab to help you run Optic as a CI check:
@@ -107,6 +113,9 @@ To start using Optic in CI, [follow this guide](https://www.useoptic.com/docs/ad
 ```
 optic ci setup
 ```
+
+<img src="https://github.com/opticdev/optic/assets/5900338/18eb381a-59aa-42af-975a-36d1f24a5978" width="500" />
+
 
 
 ## Resources
