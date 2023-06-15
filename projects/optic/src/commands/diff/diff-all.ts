@@ -380,22 +380,6 @@ async function computeAll(
 
     logger.info('');
 
-    for (const log of terminalChangelog(
-      { from: fromParseResults, to: toParseResults },
-      changelogData,
-      specResults,
-      {
-        path: to ?? from ?? '',
-        check: options.check,
-        inCi: config.isInCi,
-        output: 'pretty',
-        verbose: false,
-        severity: textToSev(options.severity),
-      }
-    )) {
-      logger.info(log);
-    }
-
     let changelogUrl: string | null = null;
     let specUrl: string | null = null;
     if (options.upload) {
@@ -414,6 +398,23 @@ async function computeAll(
       );
       specUrl = uploadResults?.headSpecUrl ?? null;
       changelogUrl = uploadResults?.changelogUrl ?? null;
+    }
+
+    for (const log of terminalChangelog(
+      { from: fromParseResults, to: toParseResults },
+      changelogData,
+      specResults,
+      {
+        path: to ?? from ?? '',
+        check: options.check,
+        inCi: config.isInCi,
+        output: 'pretty',
+        verbose: false,
+        severity: textToSev(options.severity),
+        previewDocsLink: specUrl,
+      }
+    )) {
+      logger.info(log);
     }
 
     results.push({

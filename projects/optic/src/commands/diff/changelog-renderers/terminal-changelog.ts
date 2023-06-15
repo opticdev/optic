@@ -259,6 +259,7 @@ export function* terminalChangelog(
     output: 'pretty' | 'plain';
     verbose: boolean;
     severity: Severity;
+    previewDocsLink?: string | null;
   }
 ): Generator<string> {
   const specName = specs.to.jsonLike.info.title || 'Unnamed spec';
@@ -287,12 +288,22 @@ export function* terminalChangelog(
       !result.passed && !result.exempted && result.severity === Severity.Info
   ).length;
 
-  const icon = options.check
-    ? `${getIcon(getRuleStatus(comparison.results, options))} `
-    : '';
+  const specStatus = getRuleStatus(comparison.results, options);
+  const accent = options.check
+    ? specStatus === 'passed'
+      ? chalk.green
+      : specStatus === 'info'
+      ? chalk.blue
+      : specStatus === 'warn'
+      ? chalk.yellow
+      : chalk.red
+    : (i: string) => i;
+  const icon = options.check ? accent(`${getIcon(specStatus)} `) : '';
   yield `${icon}${chalk.bold(specName)} ${chalk.gray(options.path)}`;
   if (options.inCi) {
-    yield `${chalk.bold('Preview docs')} TODO implement me`;
+    const link =
+      options.previewDocsLink || 'https://useoptic.com/docs/cloud-get-started';
+    yield `${chalk.bold('Preview docs: ')} ${link}`;
   }
 
   yield `${chalk.bold('Operations: ')}${operationsChangedLabel}`;
@@ -314,7 +325,7 @@ export function* terminalChangelog(
       .filter((l) => l)
       .join(', ');
     yield `${icon} ${chalk.bold(
-      'Checks: '
+      'Checks:'
     )} ${passedNumberOfChecks}/${totalNumberOfChecks} passed ${
       label ? `(${label})` : ''
     }`;

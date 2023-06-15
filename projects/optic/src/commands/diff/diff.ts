@@ -191,63 +191,14 @@ const runDiff = async (
 }> => {
   const { specResults, checks, changelogData, warnings, standard } =
     await compute([baseFile, headFile], config, { ...options, path: filepath });
-  const diffResults = {
+
+  return {
     checks,
     specResults,
     changelogData,
     warnings,
     standard,
   };
-
-  const hasOpticUrl = headFile.jsonLike['x-optic-url'];
-
-  if (options.json) {
-    console.log(
-      JSON.stringify(
-        jsonChangelog(
-          { from: baseFile.jsonLike, to: headFile.jsonLike },
-          changelogData
-        )
-      )
-    );
-    return diffResults;
-  } else {
-    for (const warning of warnings) {
-      logger.warn(warning);
-    }
-
-    logger.info('');
-
-    for (const log of terminalChangelog(
-      { from: baseFile, to: headFile },
-      changelogData,
-      specResults,
-      {
-        path: filepath,
-        check: options.check,
-        inCi: config.isInCi,
-        output: 'pretty',
-        verbose: false,
-        severity: textToSev(options.severity),
-      }
-    )) {
-      logger.info(log);
-    }
-  }
-
-  if ((!hasOpticUrl && headFile.from === 'file') || headFile.from === 'git') {
-    const relativePath = path.relative(
-      process.cwd(),
-      headFile.sourcemap.rootFilePath
-    );
-    logger.info(
-      chalk.blue.bold(
-        `See the full history of this API by running "optic api add ${relativePath} --history-depth 0"`
-      )
-    );
-  }
-
-  return diffResults;
 };
 
 type DiffActionOptions = {
@@ -346,6 +297,56 @@ const getDiffAction =
       );
       specUrl = uploadResults?.headSpecUrl ?? null;
       maybeChangelogUrl = uploadResults?.changelogUrl ?? null;
+    }
+    const hasOpticUrl = headParseResult.jsonLike['x-optic-url'];
+
+    if (options.json) {
+      console.log(
+        JSON.stringify(
+          jsonChangelog(
+            { from: baseParseResult.jsonLike, to: headParseResult.jsonLike },
+            diffResult.changelogData
+          )
+        )
+      );
+    } else {
+      for (const warning of diffResult.warnings) {
+        logger.warn(warning);
+      }
+
+      logger.info('');
+
+      for (const log of terminalChangelog(
+        { from: baseParseResult, to: headParseResult },
+        diffResult.changelogData,
+        diffResult.specResults,
+        {
+          path: file1,
+          check: options.check,
+          inCi: config.isInCi,
+          output: 'pretty',
+          verbose: false,
+          severity: textToSev(options.severity),
+          previewDocsLink: specUrl,
+        }
+      )) {
+        logger.info(log);
+      }
+    }
+
+    if (
+      (!hasOpticUrl && headParseResult.from === 'file') ||
+      headParseResult.from === 'git'
+    ) {
+      const relativePath = path.relative(
+        process.cwd(),
+        headParseResult.sourcemap.rootFilePath
+      );
+      logger.info(
+        chalk.blue.bold(
+          `See the full history of this API by running "optic api add ${relativePath} --history-depth 0"`
+        )
+      );
     }
 
     if (options.web) {
