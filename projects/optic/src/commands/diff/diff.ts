@@ -222,8 +222,17 @@ const runDiff = async (
       logger.info('');
     }
     for (const log of terminalChangelog(
-      { from: baseFile.jsonLike, to: headFile.jsonLike },
-      changelogData
+      { from: baseFile, to: headFile },
+      changelogData,
+      specResults,
+      {
+        path: filepath,
+        check: options.check,
+        inCi: config.isInCi,
+        output: 'pretty',
+        verbose: false,
+        severity: textToSev(options.severity),
+      }
     )) {
       logger.info(log);
     }

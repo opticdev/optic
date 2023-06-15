@@ -4,6 +4,8 @@ import {
   RuleResult,
   Severity,
   getOperationsChangedLabel,
+  sevToText,
+  sourcemapReader,
   typeofDiff,
 } from '@useoptic/openapi-utilities';
 import type {
@@ -18,14 +20,30 @@ import { Instance as Chalk } from 'chalk';
 import { getLocation } from '@useoptic/openapi-utilities/build/openapi3/traverser';
 import { interpretFieldLevelDiffs } from './common';
 import { ParseResult } from '../../../utils/spec-loaders';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import isUrl from 'is-url';
 
 const chalk = new Chalk();
 
 const added = chalk.green('added');
 const removed = chalk.red('removed');
 const changed = chalk.yellow('changed');
+type SourcemapReaderFindLine = ReturnType<
+  typeof sourcemapReader
+>['findFileAndLines'];
 
 const INDENTATION = '  ';
+const formatRawValue = (value: string, indent: string): string => {
+  try {
+    const parsedValue = JSON.parse(value);
+    return (
+      indent +
+      JSON.stringify(parsedValue, null, 2).replace(/\n/g, '\n' + indent)
+    );
+  } catch (e) {
+    return value;
+  }
+};
 
 const getAddedOrRemovedLabel = (
   change: 'added' | 'changed' | 'removed' | null
@@ -69,6 +87,73 @@ function* getDetailLogs(diffs: Diff[], options: { label?: string } = {}) {
   }
 
   yield '';
+}
+
+function* getRuleLogs(
+  rules: RuleResult[],
+  sourcemapReaders: {
+    before: SourcemapReaderFindLine;
+    after: SourcemapReaderFindLine;
+  }
+) {
+  for (const result of rules) {
+    const failedAccent =
+      result.severity === Severity.Info
+        ? chalk.blue
+        : result.severity === Severity.Warn
+        ? chalk.yellow
+        : chalk.red;
+    const severity = failedAccent(` [${sevToText(result.severity)}]`);
+    const rulePrefix =
+      (result.type ? `${result.type} rule` : 'rule') + severity;
+    yield `${rulePrefix}: ${result.name ?? ''}${
+      result.exempted ? ' (exempted)' : ''
+    }`;
+
+    if (!result.passed && !result.exempted) {
+      yield failedAccent(`${result.error}`);
+      if (result.expected && result.received) {
+        yield failedAccent('Expected Value:');
+        yield formatRawValue(result.expected, INDENTATION.repeat(3));
+        yield failedAccent('Received Value:');
+        yield formatRawValue(result.received, INDENTATION.repeat(3));
+      }
+    }
+    if (!result.passed && result.exempted) {
+      yield `${result.error}`;
+      if (result.expected && result.received) {
+        yield 'Expected Value:';
+        yield formatRawValue(result.expected, INDENTATION.repeat(3));
+        yield 'Received Value:';
+        yield formatRawValue(result.received, INDENTATION.repeat(3));
+      }
+    }
+
+    if (result.docsLink) {
+      yield `Read more in our API Guide (${result.docsLink})`;
+    }
+    const sourcemap =
+      result.location.spec === 'before'
+        ? sourcemapReaders.before(result.location.jsonPath)
+        : sourcemapReaders.after(result.location.jsonPath);
+
+    const sourcemapText = sourcemap
+      ? isUrl(sourcemap.filePath)
+        ? ` (${chalk.underline(sourcemap.filePath)} line ${
+            sourcemap.startLine
+          })`
+        : ' ' +
+          chalk.underline(
+            `(${sourcemap.filePath}:${sourcemap.startLine}:${sourcemap.startPosition})`
+          )
+      : '';
+
+    const jsonPath = jsonPointerHelpers
+      .decode(result.location.jsonPath)
+      .join(' > ');
+    yield `at ${jsonPath}${sourcemapText}`;
+    yield '';
+  }
 }
 
 function* indent(generator: Generator<string>) {
@@ -115,6 +200,10 @@ export function* terminalChangelog(
   }
 ): Generator<string> {
   const specName = specs.to.jsonLike.info.title || 'Unnamed spec';
+  const sourcemapReaders = {
+    before: sourcemapReader(specs.from.sourcemap).findFileAndLines,
+    after: sourcemapReader(specs.to.sourcemap).findFileAndLines,
+  };
   const operationsChangedLabel = getOperationsChangedLabel(groupedDiffs);
   const totalNumberOfChecks = comparison.results.length;
   const failedChecks = comparison.results.filter(
@@ -174,11 +263,13 @@ export function* terminalChangelog(
   yield* getDetailLogs(specification.diffs, {
     label: 'specification details:',
   });
+  yield* getRuleLogs(specification.rules, sourcemapReaders);
 
   for (const [, endpoint] of Object.entries(endpoints))
     yield* getEndpointLogs(
       { from: specs.from.jsonLike, to: specs.to.jsonLike },
-      endpoint
+      endpoint,
+      sourcemapReaders
     );
 
   const otherEndpoints = countUnusedEndpoints(specs.to.jsonLike, groupedDiffs);
@@ -187,7 +278,11 @@ export function* terminalChangelog(
 
 function* getEndpointLogs(
   specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
-  endpointChange: Endpoint
+  endpointChange: Endpoint,
+  sourcemapReaders: {
+    before: SourcemapReaderFindLine;
+    after: SourcemapReaderFindLine;
+  }
 ): Generator<string> {
   const {
     method,
@@ -196,6 +291,7 @@ function* getEndpointLogs(
     responses,
     cookieParameters,
     diffs,
+    rules,
     headerParameters,
     pathParameters,
     queryParameters,
@@ -207,26 +303,33 @@ function* getEndpointLogs(
   }`;
 
   yield* indent(getDetailLogs(diffs));
+  yield* indent(getRuleLogs(rules, sourcemapReaders));
 
-  yield* indent(getParameterLogs(specs, 'query', queryParameters));
+  yield* indent(getParameterLogs('query', queryParameters, sourcemapReaders));
 
-  yield* indent(getParameterLogs(specs, 'cookie', cookieParameters));
+  yield* indent(getParameterLogs('cookie', cookieParameters, sourcemapReaders));
 
-  yield* indent(getParameterLogs(specs, 'path', pathParameters));
+  yield* indent(getParameterLogs('path', pathParameters, sourcemapReaders));
 
-  yield* indent(getParameterLogs(specs, 'header', headerParameters));
+  yield* indent(getParameterLogs('header', headerParameters, sourcemapReaders));
 
-  yield* indent(getRequestChangeLogs(specs, request));
+  yield* indent(getRequestChangeLogs(specs, request, sourcemapReaders));
 
   for (const [statusCode, response] of Object.entries(responses)) {
-    yield* indent(getResponseChangeLogs(specs, response, statusCode));
+    yield* indent(
+      getResponseChangeLogs(specs, response, statusCode, sourcemapReaders)
+    );
   }
 }
 
 function* getResponseChangeLogs(
   specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
   response: Response,
-  statusCode: string
+  statusCode: string,
+  sourcemapReaders: {
+    before: SourcemapReaderFindLine;
+    after: SourcemapReaderFindLine;
+  }
 ) {
   const label = `- response ${chalk.bold(statusCode)}:`;
   const change = typeofV3Diffs(response.diffs);
@@ -247,18 +350,24 @@ function* getResponseChangeLogs(
   if (change) {
     yield* indent(getDetailLogs(response.diffs));
   }
+  yield* indent(getRuleLogs(response.rules, sourcemapReaders));
   for (const diff of response.headers.diffs) {
     yield* indent(getResponseHeaderLogs(diff));
   }
+  yield* indent(getRuleLogs(response.headers.rules, sourcemapReaders));
 
   for (const [key, contentType] of Object.entries(response.contents)) {
-    yield* indent(getBodyChangeLogs(specs, contentType, key));
+    yield* indent(getBodyChangeLogs(specs, contentType, key, sourcemapReaders));
   }
 }
 
 function* getRequestChangeLogs(
   specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
-  request: Endpoint['request']
+  request: Endpoint['request'],
+  sourcemapReaders: {
+    before: SourcemapReaderFindLine;
+    after: SourcemapReaderFindLine;
+  }
 ) {
   const change = typeofV3Diffs(request.diffs);
   const label = `- request:`;
@@ -273,16 +382,21 @@ function* getRequestChangeLogs(
   }
 
   yield* indent(getDetailLogs(request.diffs));
+  yield* indent(getRuleLogs(request.rules, sourcemapReaders));
 
   for (const [key, bodyChange] of Object.entries(request.contents)) {
-    yield* indent(getBodyChangeLogs(specs, bodyChange, key));
+    yield* indent(getBodyChangeLogs(specs, bodyChange, key, sourcemapReaders));
   }
 }
 
 function* getBodyChangeLogs(
   specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
   body: Body,
-  key: string
+  key: string,
+  sourcemapReaders: {
+    before: SourcemapReaderFindLine;
+    after: SourcemapReaderFindLine;
+  }
 ) {
   const fieldDiffs = interpretFieldLevelDiffs(specs, body.fields);
   const flatDiffs = [...fieldDiffs, ...body.examples.diffs];
@@ -297,6 +411,7 @@ function* getBodyChangeLogs(
   yield `${label} ${change === 'added' ? added : ''}`;
 
   yield* indent(getDetailLogs(flatDiffs));
+  // TODO figure out how to render this
 }
 
 function* getResponseHeaderLogs(diff: Diff) {
@@ -315,11 +430,16 @@ function* getResponseHeaderLogs(diff: Diff) {
 }
 
 function* getParameterLogs(
-  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
   parameterType: 'query' | 'cookie' | 'path' | 'header',
-  diffByName: Record<string, { diffs: Diff[]; rules: RuleResult[] }>
+  diffByName: Record<string, { diffs: Diff[]; rules: RuleResult[] }>,
+  sourcemapReaders: {
+    before: SourcemapReaderFindLine;
+    after: SourcemapReaderFindLine;
+  }
 ) {
-  for (const [name, { diffs: diffsForName }] of Object.entries(diffByName)) {
+  for (const [name, { diffs: diffsForName, rules }] of Object.entries(
+    diffByName
+  )) {
     const change = typeofV3Diffs(diffsForName);
     yield `- ${parameterType} parameter ${chalk.italic(
       name
@@ -328,5 +448,6 @@ function* getParameterLogs(
     if (change !== 'removed') {
       yield* indent(getDetailLogs(diffsForName));
     }
+    yield* indent(getRuleLogs(rules, sourcemapReaders));
   }
 }

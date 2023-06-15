@@ -384,8 +384,17 @@ async function computeAll(
     logger.info('');
 
     for (const log of terminalChangelog(
-      { from: fromParseResults.jsonLike, to: toParseResults.jsonLike },
-      changelogData
+      { from: fromParseResults, to: toParseResults },
+      changelogData,
+      specResults,
+      {
+        path: to ?? from ?? '',
+        check: options.check,
+        inCi: config.isInCi,
+        output: 'pretty',
+        verbose: false,
+        severity: textToSev(options.severity),
+      }
     )) {
       logger.info(log);
     }
