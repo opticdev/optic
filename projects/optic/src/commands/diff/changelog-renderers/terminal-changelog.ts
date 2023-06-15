@@ -77,6 +77,27 @@ function* indent(generator: Generator<string>) {
   }
 }
 
+function countUnusedEndpoints(
+  spec: OpenAPIV3.Document,
+  groupedDiffs: GroupedDiffs
+): number {
+  const endpoints = new Set<string>();
+
+  for (const [path, pathObj] of Object.entries(spec.paths)) {
+    for (const method of Object.keys(pathObj ?? {})) {
+      if (Object.values(OpenAPIV3.HttpMethods).includes(method as any)) {
+        endpoints.add(`${path}${method}`);
+      }
+    }
+  }
+
+  for (const { path, method } of Object.values(groupedDiffs.endpoints)) {
+    endpoints.delete(`${path}${method}`);
+  }
+
+  return endpoints.size;
+}
+
 export function* terminalChangelog(
   specs: { from: ParseResult; to: ParseResult },
   groupedDiffs: GroupedDiffs,
@@ -159,6 +180,9 @@ export function* terminalChangelog(
       { from: specs.from.jsonLike, to: specs.to.jsonLike },
       endpoint
     );
+
+  const otherEndpoints = countUnusedEndpoints(specs.to.jsonLike, groupedDiffs);
+  if (otherEndpoints > 0) yield `...and other ${otherEndpoints} endpoints`;
 }
 
 function* getEndpointLogs(
