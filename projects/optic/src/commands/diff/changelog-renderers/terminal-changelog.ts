@@ -3,7 +3,9 @@ import {
   ObjectDiff,
   RuleResult,
   Severity,
+  SeverityText,
   getOperationsChangedLabel,
+  sevToText,
   sourcemapReader,
   typeofDiff,
 } from '@useoptic/openapi-utilities';
@@ -88,6 +90,70 @@ function* getDetailLogs(diffs: Diff[], options: { label?: string } = {}) {
   yield '';
 }
 
+function getRuleStatus(
+  rules: RuleResult[],
+  options: { severity: Severity }
+): 'passed' | SeverityText {
+  if (
+    rules.some(
+      (r) => !r.passed && !r.exempted && r.severity <= options.severity
+    )
+  ) {
+    return 'error';
+  } else if (
+    rules.some((r) => !r.passed && !r.exempted && r.severity === Severity.Warn)
+  ) {
+    return 'warn';
+  } else if (
+    rules.some((r) => !r.passed && !r.exempted && r.severity === Severity.Info)
+  ) {
+    return 'info';
+  } else {
+    return 'passed';
+  }
+}
+
+function getEndpointStatus(
+  endpoint: GroupedDiffs['endpoints'][string],
+  options: {
+    severity: Severity;
+  }
+): 'passed' | SeverityText {
+  const rules = [
+    ...endpoint.rules,
+    ...endpoint.request.rules,
+    ...[
+      ...Object.values(endpoint.queryParameters),
+      ...Object.values(endpoint.cookieParameters),
+      ...Object.values(endpoint.pathParameters),
+      ...Object.values(endpoint.headerParameters),
+    ].flatMap((r) => r.rules),
+  ];
+  for (const content of Object.values(endpoint.request.contents)) {
+    rules.push(...content.examples.rules);
+    rules.push(...Object.values(content.fields).flatMap((r) => r.rules));
+  }
+  for (const response of Object.values(endpoint.responses)) {
+    rules.push(...response.rules, ...response.headers.rules);
+    for (const content of Object.values(response.contents)) {
+      rules.push(...content.examples.rules);
+      rules.push(...Object.values(content.fields).flatMap((r) => r.rules));
+    }
+  }
+
+  return getRuleStatus(rules, options);
+}
+
+function getIcon(status: 'passed' | SeverityText): string {
+  return status === 'passed'
+    ? '✔'
+    : status === 'info'
+    ? 'ⓘ'
+    : status === 'warn'
+    ? '⚠'
+    : 'x';
+}
+
 function* getRuleLogs(
   rules: RuleResult[],
   sourcemapReaders: {
@@ -111,13 +177,7 @@ function* getRuleLogs(
       : result.severity === Severity.Warn
       ? chalk.yellow
       : chalk.red;
-    const icon = result.passed
-      ? '✔'
-      : result.severity === Severity.Info
-      ? 'ⓘ'
-      : result.severity === Severity.Warn
-      ? '⚠'
-      : 'x';
+    const icon = getIcon(result.passed ? 'passed' : sevToText(result.severity));
     yield accent(
       `${chalk.bold(`${icon} ${`[${result.name}]` ?? ''}`)}${
         result.exempted ? ' (exempted)' : ''
@@ -228,9 +288,7 @@ export function* terminalChangelog(
   ).length;
 
   const icon = options.check
-    ? failedChecks.length === 0
-      ? `${chalk.green('✔')} `
-      : `${chalk.red('x')} `
+    ? `${getIcon(getRuleStatus(comparison.results, options))} `
     : '';
   yield `${icon}${chalk.bold(specName)} ${chalk.gray(options.path)}`;
   if (options.inCi) {
@@ -295,6 +353,8 @@ function* getEndpointLogs(
   },
   options: {
     verbose: boolean;
+    check: boolean;
+    severity: Severity;
   }
 ): Generator<string> {
   const {
@@ -311,7 +371,19 @@ function* getEndpointLogs(
   } = endpointChange;
 
   const change = typeofV3Diffs(diffs);
-  yield `${chalk.bold(method.toUpperCase())} ${path}: ${
+  const endpointStatus = getEndpointStatus(endpointChange, options);
+  const icon = options.check ? `${getIcon(endpointStatus)} ` : '';
+  const accent = options.check
+    ? endpointStatus === 'passed'
+      ? chalk.green
+      : endpointStatus === 'info'
+      ? chalk.blue
+      : endpointStatus === 'warn'
+      ? chalk.yellow
+      : chalk.red
+    : (i: string) => i;
+
+  yield `${accent(`${icon}${chalk.bold(method.toUpperCase())} ${path}`)}: ${
     change ? getAddedOrRemovedLabel(change) : ''
   }`;
 
@@ -349,6 +421,7 @@ function* getEndpointLogs(
       )
     );
   }
+  yield '';
 }
 
 function* getResponseChangeLogs(
