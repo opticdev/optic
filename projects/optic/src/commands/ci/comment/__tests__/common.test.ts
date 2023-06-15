@@ -120,7 +120,8 @@ describe('generateCompareSummaryMarkdown', () => {
                     from,
                     to,
                   },
-                  diff(from, to)
+                  diff(from, to),
+                  []
                 ),
                 results: [],
               },
