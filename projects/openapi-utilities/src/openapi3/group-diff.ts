@@ -89,6 +89,56 @@ export type Endpoint = {
   responses: Record<string, Response>;
 };
 
+export function getEndpointDiffs(endpoint: Endpoint) {
+  const items = [
+    ...endpoint.diffs,
+    ...endpoint.request.diffs,
+    ...[
+      ...Object.values(endpoint.queryParameters),
+      ...Object.values(endpoint.cookieParameters),
+      ...Object.values(endpoint.pathParameters),
+      ...Object.values(endpoint.headerParameters),
+    ].flatMap((r) => r.diffs),
+  ];
+  for (const content of Object.values(endpoint.request.contents)) {
+    items.push(...content.examples.diffs);
+    items.push(...Object.values(content.fields).flatMap((r) => r.diffs));
+  }
+  for (const response of Object.values(endpoint.responses)) {
+    items.push(...response.diffs, ...response.headers.diffs);
+    for (const content of Object.values(response.contents)) {
+      items.push(...content.examples.diffs);
+      items.push(...Object.values(content.fields).flatMap((r) => r.diffs));
+    }
+  }
+  return items;
+}
+
+export function getEndpointRules(endpoint: Endpoint) {
+  const items = [
+    ...endpoint.rules,
+    ...endpoint.request.rules,
+    ...[
+      ...Object.values(endpoint.queryParameters),
+      ...Object.values(endpoint.cookieParameters),
+      ...Object.values(endpoint.pathParameters),
+      ...Object.values(endpoint.headerParameters),
+    ].flatMap((r) => r.rules),
+  ];
+  for (const content of Object.values(endpoint.request.contents)) {
+    items.push(...content.examples.rules);
+    items.push(...Object.values(content.fields).flatMap((r) => r.rules));
+  }
+  for (const response of Object.values(endpoint.responses)) {
+    items.push(...response.rules, ...response.headers.rules);
+    for (const content of Object.values(response.contents)) {
+      items.push(...content.examples.rules);
+      items.push(...Object.values(content.fields).flatMap((r) => r.rules));
+    }
+  }
+  return items;
+}
+
 export class GroupedDiffs {
   public specification: DiffAndRules;
   public endpoints: Record<string, Endpoint>;

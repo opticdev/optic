@@ -16,7 +16,10 @@ import type {
   Endpoint,
   Response,
 } from '@useoptic/openapi-utilities/build/openapi3/group-diff';
-import { typeofV3Diffs } from '@useoptic/openapi-utilities/build/openapi3/group-diff';
+import {
+  getEndpointRules,
+  typeofV3Diffs,
+} from '@useoptic/openapi-utilities/build/openapi3/group-diff';
 import { Instance as Chalk } from 'chalk';
 import { getLocation } from '@useoptic/openapi-utilities/build/openapi3/traverser';
 import { interpretFieldLevelDiffs } from './common';
@@ -119,27 +122,7 @@ function getEndpointStatus(
     severity: Severity;
   }
 ): 'passed' | SeverityText {
-  const rules = [
-    ...endpoint.rules,
-    ...endpoint.request.rules,
-    ...[
-      ...Object.values(endpoint.queryParameters),
-      ...Object.values(endpoint.cookieParameters),
-      ...Object.values(endpoint.pathParameters),
-      ...Object.values(endpoint.headerParameters),
-    ].flatMap((r) => r.rules),
-  ];
-  for (const content of Object.values(endpoint.request.contents)) {
-    rules.push(...content.examples.rules);
-    rules.push(...Object.values(content.fields).flatMap((r) => r.rules));
-  }
-  for (const response of Object.values(endpoint.responses)) {
-    rules.push(...response.rules, ...response.headers.rules);
-    for (const content of Object.values(response.contents)) {
-      rules.push(...content.examples.rules);
-      rules.push(...Object.values(content.fields).flatMap((r) => r.rules));
-    }
-  }
+  const rules = getEndpointRules(endpoint);
 
   return getRuleStatus(rules, options);
 }
