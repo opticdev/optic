@@ -270,7 +270,6 @@ specification details:
 [32m✔ [39m[1ma spec[22m [90mfolder-to-run/should-run-mved.yml[39m
 [1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
 [1mOperations: [22m1 operation added
-[32m✔ [39m [1mChecks:[22m 0/0 passed 
 
 specification details:
 - /x-optic-url, /info/description [32madded[39m
@@ -1259,7 +1258,6 @@ specification details:
 [32m✔ [39m[1ma spec[22m [90mmovedspec.yml[39m
 [1mPreview docs: [22m https://useoptic.com/docs/cloud-get-started
 [1mOperations: [22m2 operations added
-[32m✔ [39m [1mChecks:[22m 0/0 passed 
 
 specification details:
 - /info/description [32madded[39m

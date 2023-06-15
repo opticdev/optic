@@ -606,7 +606,6 @@ exports[`diff with mock server with cloud tag ref 1`] = `
 
 [32m✔ [39m[1mEmpty[22m [90mnull:[39m
 [1mOperations: [22m1 operation added
-[32m✔ [39m [1mChecks:[22m 0/0 passed 
 
 [32m✔ [1mGET[22m /api/users[39m: [32madded[39m
   
@@ -621,7 +620,6 @@ exports[`diff with mock server with web url 1`] = `
 
 [32m✔ [39m[1ma spec[22m [90mnull:[39m
 [1mOperations: [22mNo operations changed
-[32m✔ [39m [1mChecks:[22m 0/0 passed 
 
 specification details:
 - /info/description [32madded[39m

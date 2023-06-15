@@ -291,7 +291,7 @@ export function* terminalChangelog(
 
   yield `${chalk.bold('Operations: ')}${operationsChangedLabel}`;
 
-  if (options.check) {
+  if (options.check && totalNumberOfChecks > 0) {
     const exemptLabel =
       exemptedFailedNumberOfChecks > 0
         ? chalk.gray(`${exemptedFailedNumberOfChecks} exempted`)
