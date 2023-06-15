@@ -1,3 +1,5 @@
+ 
+![GitHub Repo stars](https://img.shields.io/github/stars/opticdev/optic?style=social) ![GitHub contributors](https://img.shields.io/github/contributors-anon/opticdev/optic?style=social) ![npm](https://img.shields.io/npm/dm/@useoptic/openapi-io?style=social) ![license](https://img.shields.io/github/license/opticdev/optic?style=social)
 
 # Optic - the CI tool that improves your APIs
 Optic helps you ship a better API by making it easy for teams to use OpenAPI. Prevent breaking changes, publish accurate documentation and improve the design of your APIs.
@@ -9,8 +11,11 @@ Optic helps you ship a better API by making it easy for teams to use OpenAPI. Pr
 ```bash
 npm install -g @useoptic/optic
 ```
- 
-![GitHub Repo stars](https://img.shields.io/github/stars/opticdev/optic?style=social) ![GitHub contributors](https://img.shields.io/github/contributors-anon/opticdev/optic?style=social) ![npm](https://img.shields.io/npm/dm/@useoptic/openapi-io?style=social) ![license](https://img.shields.io/github/license/opticdev/optic?style=social)
+or
+```bash
+sh -c "$(curl -Ls https://install.useoptic.com/install.sh)"
+```
+
 ---
 
 ## Run locally
