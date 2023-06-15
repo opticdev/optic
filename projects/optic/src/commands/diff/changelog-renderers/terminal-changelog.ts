@@ -4,7 +4,6 @@ import {
   RuleResult,
   Severity,
   getOperationsChangedLabel,
-  sevToText,
   sourcemapReader,
   typeofDiff,
 } from '@useoptic/openapi-utilities';
@@ -94,39 +93,42 @@ function* getRuleLogs(
   sourcemapReaders: {
     before: SourcemapReaderFindLine;
     after: SourcemapReaderFindLine;
+  },
+  options: {
+    verbose: boolean;
   }
 ) {
-  for (const result of rules) {
-    const failedAccent =
-      result.severity === Severity.Info
-        ? chalk.blue
-        : result.severity === Severity.Warn
-        ? chalk.yellow
-        : chalk.red;
-    const severity = failedAccent(` [${sevToText(result.severity)}]`);
-    const rulePrefix =
-      (result.type ? `${result.type} rule` : 'rule') + severity;
-    yield `${rulePrefix}: ${result.name ?? ''}${
-      result.exempted ? ' (exempted)' : ''
-    }`;
+  const filteredRules = rules.filter((r) =>
+    options.verbose ? true : !r.passed
+  );
+  for (const result of filteredRules) {
+    const accent = result.passed
+      ? chalk.green
+      : result.exempted
+      ? chalk.gray
+      : result.severity === Severity.Info
+      ? chalk.blue
+      : result.severity === Severity.Warn
+      ? chalk.yellow
+      : chalk.red;
+    const icon = result.passed
+      ? '✔'
+      : result.severity === Severity.Info
+      ? 'ⓘ'
+      : result.severity === Severity.Warn
+      ? '⚠'
+      : 'x';
+    yield accent(
+      `${chalk.bold(`${icon} ${`[${result.name}]` ?? ''}`)}${
+        result.exempted ? ' (exempted)' : ''
+      } ${result.error}`
+    );
 
-    if (!result.passed && !result.exempted) {
-      yield failedAccent(`${result.error}`);
-      if (result.expected && result.received) {
-        yield failedAccent('Expected Value:');
-        yield formatRawValue(result.expected, INDENTATION.repeat(3));
-        yield failedAccent('Received Value:');
-        yield formatRawValue(result.received, INDENTATION.repeat(3));
-      }
-    }
-    if (!result.passed && result.exempted) {
-      yield `${result.error}`;
-      if (result.expected && result.received) {
-        yield 'Expected Value:';
-        yield formatRawValue(result.expected, INDENTATION.repeat(3));
-        yield 'Received Value:';
-        yield formatRawValue(result.received, INDENTATION.repeat(3));
-      }
+    if (result.expected && result.received) {
+      yield accent('Expected Value:');
+      yield formatRawValue(result.expected, INDENTATION.repeat(3));
+      yield accent('Received Value:');
+      yield formatRawValue(result.received, INDENTATION.repeat(3));
     }
 
     if (result.docsLink) {
@@ -204,7 +206,8 @@ export function* terminalChangelog(
     before: sourcemapReader(specs.from.sourcemap).findFileAndLines,
     after: sourcemapReader(specs.to.sourcemap).findFileAndLines,
   };
-  const operationsChangedLabel = getOperationsChangedLabel(groupedDiffs);
+  const operationsChangedLabel =
+    getOperationsChangedLabel(groupedDiffs) || 'No operations changed';
   const totalNumberOfChecks = comparison.results.length;
   const failedChecks = comparison.results.filter(
     (result) =>
@@ -226,10 +229,10 @@ export function* terminalChangelog(
 
   const icon = options.check
     ? failedChecks.length === 0
-      ? chalk.green('✔')
-      : chalk.red('x')
+      ? `${chalk.green('✔')} `
+      : `${chalk.red('x')} `
     : '';
-  yield `${icon} ${chalk.bold(specName)} ${chalk.gray(options.path)}`;
+  yield `${icon}${chalk.bold(specName)} ${chalk.gray(options.path)}`;
   if (options.inCi) {
     yield `${chalk.bold('Preview docs')} TODO implement me`;
   }
@@ -254,26 +257,33 @@ export function* terminalChangelog(
       .join(', ');
     yield `${icon} ${chalk.bold(
       'Checks: '
-    )} ${passedNumberOfChecks}/${totalNumberOfChecks} ${
+    )} ${passedNumberOfChecks}/${totalNumberOfChecks} passed ${
       label ? `(${label})` : ''
     }`;
   }
+
+  yield '';
 
   const { endpoints, specification } = groupedDiffs;
   yield* getDetailLogs(specification.diffs, {
     label: 'specification details:',
   });
-  yield* getRuleLogs(specification.rules, sourcemapReaders);
+  yield* getRuleLogs(specification.rules, sourcemapReaders, options);
 
   for (const [, endpoint] of Object.entries(endpoints))
     yield* getEndpointLogs(
       { from: specs.from.jsonLike, to: specs.to.jsonLike },
       endpoint,
-      sourcemapReaders
+      sourcemapReaders,
+      options
     );
 
   const otherEndpoints = countUnusedEndpoints(specs.to.jsonLike, groupedDiffs);
-  if (otherEndpoints > 0) yield `...and other ${otherEndpoints} endpoints`;
+  if (otherEndpoints > 0 && Object.keys(groupedDiffs.endpoints).length > 0)
+    yield `...and ${otherEndpoints} other ${
+      otherEndpoints === 1 ? 'endpoint' : 'endpoints'
+    }`;
+  yield '';
 }
 
 function* getEndpointLogs(
@@ -282,6 +292,9 @@ function* getEndpointLogs(
   sourcemapReaders: {
     before: SourcemapReaderFindLine;
     after: SourcemapReaderFindLine;
+  },
+  options: {
+    verbose: boolean;
   }
 ): Generator<string> {
   const {
@@ -303,21 +316,37 @@ function* getEndpointLogs(
   }`;
 
   yield* indent(getDetailLogs(diffs));
-  yield* indent(getRuleLogs(rules, sourcemapReaders));
+  yield* indent(getRuleLogs(rules, sourcemapReaders, options));
 
-  yield* indent(getParameterLogs('query', queryParameters, sourcemapReaders));
+  yield* indent(
+    getParameterLogs('query', queryParameters, sourcemapReaders, options)
+  );
 
-  yield* indent(getParameterLogs('cookie', cookieParameters, sourcemapReaders));
+  yield* indent(
+    getParameterLogs('cookie', cookieParameters, sourcemapReaders, options)
+  );
 
-  yield* indent(getParameterLogs('path', pathParameters, sourcemapReaders));
+  yield* indent(
+    getParameterLogs('path', pathParameters, sourcemapReaders, options)
+  );
 
-  yield* indent(getParameterLogs('header', headerParameters, sourcemapReaders));
+  yield* indent(
+    getParameterLogs('header', headerParameters, sourcemapReaders, options)
+  );
 
-  yield* indent(getRequestChangeLogs(specs, request, sourcemapReaders));
+  yield* indent(
+    getRequestChangeLogs(specs, request, sourcemapReaders, options)
+  );
 
   for (const [statusCode, response] of Object.entries(responses)) {
     yield* indent(
-      getResponseChangeLogs(specs, response, statusCode, sourcemapReaders)
+      getResponseChangeLogs(
+        specs,
+        response,
+        statusCode,
+        sourcemapReaders,
+        options
+      )
     );
   }
 }
@@ -329,6 +358,9 @@ function* getResponseChangeLogs(
   sourcemapReaders: {
     before: SourcemapReaderFindLine;
     after: SourcemapReaderFindLine;
+  },
+  options: {
+    verbose: boolean;
   }
 ) {
   const label = `- response ${chalk.bold(statusCode)}:`;
@@ -350,14 +382,16 @@ function* getResponseChangeLogs(
   if (change) {
     yield* indent(getDetailLogs(response.diffs));
   }
-  yield* indent(getRuleLogs(response.rules, sourcemapReaders));
+  yield* indent(getRuleLogs(response.rules, sourcemapReaders, options));
   for (const diff of response.headers.diffs) {
     yield* indent(getResponseHeaderLogs(diff));
   }
-  yield* indent(getRuleLogs(response.headers.rules, sourcemapReaders));
+  yield* indent(getRuleLogs(response.headers.rules, sourcemapReaders, options));
 
   for (const [key, contentType] of Object.entries(response.contents)) {
-    yield* indent(getBodyChangeLogs(specs, contentType, key, sourcemapReaders));
+    yield* indent(
+      getBodyChangeLogs(specs, contentType, key, sourcemapReaders, options)
+    );
   }
 }
 
@@ -367,6 +401,9 @@ function* getRequestChangeLogs(
   sourcemapReaders: {
     before: SourcemapReaderFindLine;
     after: SourcemapReaderFindLine;
+  },
+  options: {
+    verbose: boolean;
   }
 ) {
   const change = typeofV3Diffs(request.diffs);
@@ -382,10 +419,12 @@ function* getRequestChangeLogs(
   }
 
   yield* indent(getDetailLogs(request.diffs));
-  yield* indent(getRuleLogs(request.rules, sourcemapReaders));
+  yield* indent(getRuleLogs(request.rules, sourcemapReaders, options));
 
   for (const [key, bodyChange] of Object.entries(request.contents)) {
-    yield* indent(getBodyChangeLogs(specs, bodyChange, key, sourcemapReaders));
+    yield* indent(
+      getBodyChangeLogs(specs, bodyChange, key, sourcemapReaders, options)
+    );
   }
 }
 
@@ -396,10 +435,17 @@ function* getBodyChangeLogs(
   sourcemapReaders: {
     before: SourcemapReaderFindLine;
     after: SourcemapReaderFindLine;
+  },
+  options: {
+    verbose: boolean;
   }
 ) {
   const fieldDiffs = interpretFieldLevelDiffs(specs, body.fields);
   const flatDiffs = [...fieldDiffs, ...body.examples.diffs];
+  const flatRules = [
+    ...Object.values(body.fields).flatMap((f) => f.rules),
+    ...body.examples.rules,
+  ];
   const change = typeofV3Diffs(flatDiffs);
   const label = `- body ${chalk.bold(key)}:`;
 
@@ -411,7 +457,7 @@ function* getBodyChangeLogs(
   yield `${label} ${change === 'added' ? added : ''}`;
 
   yield* indent(getDetailLogs(flatDiffs));
-  // TODO figure out how to render this
+  yield* indent(getRuleLogs(flatRules, sourcemapReaders, options));
 }
 
 function* getResponseHeaderLogs(diff: Diff) {
@@ -435,6 +481,9 @@ function* getParameterLogs(
   sourcemapReaders: {
     before: SourcemapReaderFindLine;
     after: SourcemapReaderFindLine;
+  },
+  options: {
+    verbose: boolean;
   }
 ) {
   for (const [name, { diffs: diffsForName, rules }] of Object.entries(
@@ -448,6 +497,6 @@ function* getParameterLogs(
     if (change !== 'removed') {
       yield* indent(getDetailLogs(diffsForName));
     }
-    yield* indent(getRuleLogs(rules, sourcemapReaders));
+    yield* indent(getRuleLogs(rules, sourcemapReaders, options));
   }
 }

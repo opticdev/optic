@@ -216,11 +216,8 @@ const runDiff = async (
       logger.warn(warning);
     }
 
-    if (specResults.diffs.length === 0 || specResults.results.length === 0) {
-      logger.info('No changes were detected');
-    } else {
-      logger.info('');
-    }
+    logger.info('');
+
     for (const log of terminalChangelog(
       { from: baseFile, to: headFile },
       changelogData,

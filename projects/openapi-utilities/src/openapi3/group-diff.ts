@@ -57,7 +57,7 @@ export type Diff = {
 
 type DiffAndRules = {
   diffs: Diff[];
-  rules: RuleResult[];
+  rules: (RuleResult & { trail: string })[];
 };
 
 export type Body = {
