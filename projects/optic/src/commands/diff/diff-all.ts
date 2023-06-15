@@ -750,6 +750,7 @@ ${(spec.error as Error).message}`,
         specPath: relativePath,
         diffs: result.specResults.diffs.length,
         checks: result.specResults.results.length,
+        isCloudRun: options.upload,
         isInCi: config.isInCi,
         ...(maybeOrigin?.web_url
           ? {

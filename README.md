@@ -1,162 +1,136 @@
-![GitHub Repo stars](https://img.shields.io/github/stars/opticdev/optic?style=social) ![GitHub contributors](https://img.shields.io/github/contributors-anon/opticdev/optic?style=social) ![npm](https://img.shields.io/npm/dm/@useoptic/openapi-io?style=social) ![license](https://img.shields.io/github/license/opticdev/optic?style=social) 
+ 
+![GitHub Repo stars](https://img.shields.io/github/stars/opticdev/optic?style=social) ![GitHub contributors](https://img.shields.io/github/contributors-anon/opticdev/optic?style=social) ![npm](https://img.shields.io/npm/dm/@useoptic/openapi-io?style=social) ![license](https://img.shields.io/github/license/opticdev/optic?style=social)
 
-# Optic helps you ship a great API
+# Optic - the CI tool that improves your APIs
+Optic helps you ship a better API by making it easy for teams to use OpenAPI. Prevent breaking changes, publish accurate documentation and improve the design of your APIs.
 
-**Shipping an API is easy** -- the REST is hard. We built Optic because every developer/team should be able to get the benefits of OpenAPI, without all the time/effort/costs. 
+![Screenshot 2023-06-14 at 12 55 11 PM](https://github.com/opticdev/optic/assets/5900338/a446bac2-06b6-40bd-a7d4-42f1cc3621ea)
 
-[**📋 Documentation for all your APIs**](#document-your-existing-apis-in-minutes)    ← *write your API promises down*
 
-[**🛑 Prevent breaking changes from shipping**](#prevent-breaking-changes-with-api-diffs)  ← *keep your promises*
-
-[**✅ Verify your API is working-as-designed (the OpenAPI and implementation are in sync)**](#verify-your-api-is-working-as-designed)    ← *make sure the API works as-designed*
-
-[**🎨 Build a consistent API that follows your team's standards**](#build-a-consistent-api-that-follows-your-teams-standards)  ← *raise the quality of your API*
-
+**Install**
 ```bash
 npm install -g @useoptic/optic
 ```
-
-## Document your existing APIs in minutes 
-Use real API traffic to write your initial OpenAPI specification and correctly patch the spec whenever an API changes. 
-
-1. Use the CLI to magically capture traffic `optic capture openapi.yaml https://api.github.com` OR provide a HAR (HTTP Archive format). 
-2. Optic is your API version control tool, like git for APIs. "Undocumented" endpoints are like "Untracked" files in git. Add operations one at a time or use `optic update openapi.yaml --all` to document all of them at once
-
-**[Documentation: Generate an OpenAPI from traffic](https://www.useoptic.com/docs/openapi/generate-from-traffic)**
-
-
-https://user-images.githubusercontent.com/5900338/210244068-22540288-1f6d-46a7-a2e9-5b3d19a00f31.mp4
-
-**[Read Documentation](https://www.useoptic.com/docs/openapi/generate-from-traffic)**
-
-## Prevent breaking changes with API diffs
-
-Breaking changes ruin your API consumer's days. Optic prevents breaking changes from reaching production with its accurate and robust OpenAPI diff. The `diff` command is built to work with Git workflows, and has full support for OpenAPI 3 & 3.1, `$ref`, and complex schema types like `oneOf/allOf/anyOf`. 
-
+or
 ```bash
-optic diff openapi.yaml --base main --check
+sh -c "$(curl -Ls https://install.useoptic.com/install.sh)"
 ```
 
-**[Documentation: Diff OpenAPI and Catch Breaking Changes](https://www.useoptic.com/docs/diff-openapi)**
+---
 
-https://user-images.githubusercontent.com/5900338/211033179-86d5021f-17d1-4391-afc9-77689aa5882f.mp4
+## Run locally
 
-**[Read Documentation](https://www.useoptic.com/docs/diff-openapi)**
+### Prevent breaking changes using `optic diff`
 
-## Verify your API is working-as-designed
+Optic can detect breaking changes between any two versions of an OpenAPI specification. Optic can lookup the versions using Git tags and branch names so you don't need to copy files around.
 
-With Optic you can verify your API behavior in CI and understand your team's API Test Coverage (the % of your API functionality your testing covered). If `optic verify` detects no diffs, and you have high API Coverage, you can be very confident your API is working as designed.
+**Compares the HEAD to the `main` branch**
+```
+optic diff openapi.yml --base main --check
+```
+**Compares two branches by name**
+```
+optic diff feature/example:openapi.yml develop:main --check
+```
 
-```bash
+<img src="https://github.com/opticdev/optic/assets/5900338/fd6cdd7f-c147-467b-9517-84232baa898f" width="500" />
+
+[Read Documentation](https://www.useoptic.com/docs/compare-openapi)
+
+## Test the accuracy of your documentation using `optic verify`
+It can be difficult to keep an OpenAPI in-sync with your implementation. Optic tests if your OpenAPI is accurate by capturing traffic from your tests and comparing it to the spec.
+
+Think of it like Snapshot testing, but for your API's behavior, with OpenAPI as the snapshot. 
+
+```
+optic capture openapi.yml https://localhost:8080 --command "npm test"
 optic verify openapi.yml
 ```
 
-**[Documentation: Verify your API works as designed](https://www.useoptic.com/docs/openapi/verify-openapi)**
+<img src="https://github.com/opticdev/optic/assets/5900338/a9b36ff3-6f24-42b3-8d0d-16d678852761" width="500" />
 
-https://user-images.githubusercontent.com/5900338/211056700-00163967-12fd-447a-a108-f82bc9c9f0ad.mp4
 
-**[Read Documentation](https://www.useoptic.com/docs/openapi/verify-openapi)**
+When Optic detects a diff, you can correct it manually, or run `optic update` to have Optic figures out exactly which lines of OpenAPI need to be updated and make the changes for you.
 
-## Build a consistent API that follows your team's standards
-Optic makes it easy for everyone on your team to review API changes, and automate your API standards. It makes API linting usable and productive for developers on teams like [Snyk](https://snyk.io/blog/snyk-api-development-shift-left/) because it raises the quality of the APIs without getting in the way of developers. 
+<img src="https://github.com/opticdev/optic/assets/5900338/5b1c2275-e98c-4832-b284-5fe29894b925" width="500" />
 
-You can read about how Optic goes [beyond simple API Linting](https://www.useoptic.com/blog/beyond-api-linting). 
+[Read Documentation](https://www.useoptic.com/docs/verify-openapi)
 
-Here is an example of a [team's automated API standards](https://www.useoptic.com/docs/standards):
+## Improve your API design with `optic lint` & `optic diff`
+Optic is the first API linter built with the API lifecycle in-mind. When testing your API design, it always considers two versions of your API, for example: the version on the `develop` vs the `latest` release tag. This lets Optic check for all kinds of things [Spectral (and other liners) misses](https://www.useoptic.com/comparisons/spectral) like breaking changes and proper use of your API versioning scheme.
+
+
+<img src="https://github.com/opticdev/optic/assets/5900338/50a43d09-f531-405b-8b53-1c91ff5b8201" width="500" />
+
+
+Because Optic understands API change, it can apply your latest API standards to new API endpoints, and a looser set of standards to legacy endpoints that can’t change. [Teams like Snyk use Optic and this approach to govern all their APIs](https://snyk.io/blog/snyk-api-development-shift-left/). With Optic, developers only get actionable feedback from the tool and they don’t have to turn rules off to get CI to pass.
+
+Create an `optic.yml` file in your repo and configure some of our built-in rules like using this template as a starting point:
 ```yaml
 ruleset:
-  - breaking-changes # prevent all breaking changes
-  - naming:  # Naming rules apply on added properties, but won't fail on legacy
-      applies: added 
-      pathComponents: camelCase
+  # Prevent breaking changes
+  - breaking-changes:
+      # Pick an extension for your work-in-progress operations.
+      # Breaking changes wil lbe allowed here
+      exclude_operations_with_extension: x-draft
+  # Run any existing spectral ruleset
+  - spectral:
+      # These rules will ony run on things you add to your API
+      # Ie new properties, operations, responses, etc.
+      added:
+        # URLs are supported
+        - https://www.apistyleguides.dev/api/url-style-guides/3ba0b4a
+        # Local files work too.
+      # - ./local-file.js
+      # These rules will ony run on everything in the spec (normal spectral)
+      always:
+        - https://www.apistyleguides.dev/api/url-style-guides/3ba0b4a
+  # Enforce consistent cases in your API
+  - naming:
+      # This will apply the rule to only new names (existing ones will be exempted)
+      # Change to always if you want to fail on legacy names
+      # Change to addedOrChanged if you want it to run on added or changed parts of the spec
+      required_on: added
+      # Different names for different parts of the spec
+      # options = "snake_case" "camelCase" "Capital-Param-Case" "param-case" "PascalCase"
       requestHeaders: Capital-Param-Case
-      queryParameters: Capital-Param-Case
-  - examples: # Examples in the OpenAPI are required and must match the schemas
+      responseHeaders: param-case
+      properties: Capital-Param-Case
+      pathComponents:  param-case
+      queryParameters: snake_case
+  # Require your OpenAPI has examples, and that those examples match the schema
+  - examples:
+      # Turn on/off the parts of the spec that need examples
       require_request_examples: true
       require_response_examples: true
-      require_parameter_examples: true    
+      require_parameter_examples: true
+      # (optional) allow certain operations do not need examples
+      exclude_operations_with_extension: x-legacy-api
+
 ```
 
-https://user-images.githubusercontent.com/5900338/211058178-6c3c7f76-55be-4e7a-81f0-3aec07253518.mp4
-
-**[Read Documentation](https://www.useoptic.com/docs/standards)**
+[Read documentation](https://www.useoptic.com/docs/add-to-project)
 
 
---- 
+## Start running in CI
+To start using Optic in CI, [follow this guide](https://www.useoptic.com/docs/add-to-project). We provide template workflows for GitHub and GitLab to help you run Optic as a CI check:
 
-## Community & Support
-- If you run into bugs, please open [Issues](https://github.com/opticdev/optic/issues). 
-- [Discord](https://discord.gg/cu9keWFxtD)
-- Anyone is welcome to [book office hours](https://calendly.com/optic-onboarding/optic-office-hours) for support or to talk about contributing. 
+```
+optic ci setup
+```
 
-## License
-MIT
+<img src="https://github.com/opticdev/optic/assets/5900338/18eb381a-59aa-42af-975a-36d1f24a5978" width="500" />
 
-## Contributors ✨
 
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+## Resources
+- [Read our full documentation here](https://www.useoptic.com/docs)
+- [Need help? Book office hours](https://calendly.com/optic-onboarding/optic-office-hours)
+- [Join us on Discord](https://discord.com/invite/t9hADkuYjP)
 
-[![All Contributors](https://img.shields.io/badge/all_contributors-34-orange.svg?style=flat-square)](#contributors-)
 
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tr>
-    <td align="center"><a href="http://aidancunniffe.com"><img src="https://avatars1.githubusercontent.com/u/5900338?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Aidan Cunniffe</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=acunniffe" title="Documentation">📖</a> <a href="https://github.com/opticdev/Optic/commits?author=acunniffe" title="Code">💻</a></td>
-    <td align="center"><a href="https://devdoshi.com"><img src="https://avatars1.githubusercontent.com/u/1463179?v=4?s=100" width="100px;" alt=""/><br /><sub><b>devdoshi</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=devdoshi" title="Documentation">📖</a> <a href="https://github.com/opticdev/Optic/commits?author=devdoshi" title="Code">💻</a></td>
-    <td align="center"><a href="https://www.take2.co/consulting-development"><img src="https://avatars2.githubusercontent.com/u/4691748?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Evan Mallory</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=esopian" title="Documentation">📖</a></td>
-    <td align="center"><a href="http://www.jaaprood.nl/"><img src="https://avatars1.githubusercontent.com/u/857549?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jaap van Hardeveld</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=JaapRood" title="Code">💻</a> <a href="https://github.com/opticdev/Optic/commits?author=JaapRood" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://twitter.com/trulyronak"><img src="https://avatars1.githubusercontent.com/u/9388431?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ronak Shah</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=trulyronak" title="Code">💻</a> <a href="https://github.com/opticdev/Optic/commits?author=trulyronak" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/taraedits"><img src="https://avatars1.githubusercontent.com/u/52361229?v=4?s=100" width="100px;" alt=""/><br /><sub><b>taraedits</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=taraedits" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/LouManglass"><img src="https://avatars2.githubusercontent.com/u/241059?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Lou Manglass</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=LouManglass" title="Code">💻</a> <a href="https://github.com/opticdev/Optic/commits?author=LouManglass" title="Documentation">📖</a></td>
-  </tr>
-  <tr>
-    <td align="center"><a href="https://github.com/notnmeyer"><img src="https://avatars3.githubusercontent.com/u/672246?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Nate Meyer</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=notnmeyer" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/timgates42"><img src="https://avatars1.githubusercontent.com/u/47873678?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Tim Gates</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=timgates42" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/matthewhudson"><img src="https://avatars2.githubusercontent.com/u/320194?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Matthew Hudson</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=matthewhudson" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/lvenier"><img src="https://avatars1.githubusercontent.com/u/17571692?v=4?s=100" width="100px;" alt=""/><br /><sub><b>LaV</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=lvenier" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/gaurav-nelson"><img src="https://avatars2.githubusercontent.com/u/23069445?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Gaurav Nelson</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=gaurav-nelson" title="Documentation">📖</a></td>
-    <td align="center"><a href="http://ross-nordstrom.github.io/"><img src="https://avatars0.githubusercontent.com/u/3299155?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ross Nordstrom</b></sub></a><br /><a href="#design-ross-nordstrom" title="Design">🎨</a> <a href="https://github.com/opticdev/Optic/commits?author=ross-nordstrom" title="Code">💻</a> <a href="https://github.com/opticdev/Optic/issues?q=author%3Aross-nordstrom" title="Bug reports">🐛</a></td>
-    <td align="center"><a href="http://kinlane.com/"><img src="https://avatars2.githubusercontent.com/u/56100?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kin Lane</b></sub></a><br /><a href="#ideas-kinlane" title="Ideas, Planning, & Feedback">🤔</a> <a href="#content-kinlane" title="Content">🖋</a></td>
-  </tr>
-  <tr>
-    <td align="center"><a href="https://viljami.io/"><img src="https://avatars3.githubusercontent.com/u/6105650?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Viljami Kuosmanen</b></sub></a><br /><a href="#ideas-anttiviljami" title="Ideas, Planning, & Feedback">🤔</a> <a href="#content-anttiviljami" title="Content">🖋</a></td>
-    <td align="center"><a href="http://rcrowley.org/"><img src="https://avatars0.githubusercontent.com/u/11151?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Richard Crowley</b></sub></a><br /><a href="#research-rcrowley" title="Research">🔬</a> <a href="#ideas-rcrowley" title="Ideas, Planning, & Feedback">🤔</a></td>
-    <td align="center"><a href="https://github.com/danMateer"><img src="https://avatars2.githubusercontent.com/u/34169713?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dnmtr</b></sub></a><br /><a href="https://github.com/opticdev/Optic/pulls?q=is%3Apr+reviewed-by%3AdanMateer" title="Reviewed Pull Requests">👀</a></td>
-    <td align="center"><a href="https://tim.fyi/"><img src="https://avatars.githubusercontent.com/u/1526883?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Tim Perry</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=pimterry" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/jordaniza"><img src="https://avatars.githubusercontent.com/u/45881807?v=4?s=100" width="100px;" alt=""/><br /><sub><b>jordaniza</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=jordaniza" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/svanderbleek"><img src="https://avatars.githubusercontent.com/u/491969?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sandy Vanderbleek</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=svanderbleek" title="Documentation">📖</a></td>
-    <td align="center"><a href="http://blog.urth.org/"><img src="https://avatars.githubusercontent.com/u/50729?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Dave Rolsky</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=autarch" title="Documentation">📖</a></td>
-  </tr>
-  <tr>
-    <td align="center"><a href="https://baptiste.darthenay.fr/"><img src="https://avatars.githubusercontent.com/u/2727048?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Baptiste Darthenay</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=batisteo" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/alexlmiller"><img src="https://avatars.githubusercontent.com/u/5964662?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alex Miller</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=alexlmiller" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/jshearer"><img src="https://avatars.githubusercontent.com/u/4368270?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Joseph Shearer</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=jshearer" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/raybejjani"><img src="https://avatars.githubusercontent.com/u/744312?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ray Bejjani</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=raybejjani" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://twitter.com/adrienbrault"><img src="https://avatars.githubusercontent.com/u/611271?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Adrien Brault</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=adrienbrault" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/niclim"><img src="https://avatars.githubusercontent.com/u/18374483?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Nicholas Lim</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=niclim" title="Documentation">📖</a> <a href="https://github.com/opticdev/Optic/commits?author=niclim" title="Code">💻</a></td>
-    <td align="center"><a href="http://smizell.com/"><img src="https://avatars.githubusercontent.com/u/130959?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Stephen Mizell</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=smizell" title="Code">💻</a> <a href="https://github.com/opticdev/Optic/commits?author=smizell" title="Documentation">📖</a></td>
-  </tr>
-  <tr>
-    <td align="center"><a href="https://github.com/bojan88"><img src="https://avatars.githubusercontent.com/u/1783133?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Bojan Đurđević</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=bojan88" title="Code">💻</a></td>
-    <td align="center"><a href="http://twitter.com/tarasm"><img src="https://avatars.githubusercontent.com/u/74687?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Taras Mankovski</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=taras" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://bandism.net/"><img src="https://avatars.githubusercontent.com/u/22633385?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ikko Ashimine</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=eltociear" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/silentninja"><img src="https://avatars.githubusercontent.com/u/4469754?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Mukesh</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=silentninja" title="Code">💻</a></td>
-    <td align="center"><a href="http://www.aquicore.com/"><img src="https://avatars.githubusercontent.com/u/14347319?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Tony Knight</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=tony-aq" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/rogerd330"><img src="https://avatars.githubusercontent.com/u/1417037?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Roger Dickey, Jr</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=rogerd330" title="Documentation">📖</a></td>
-  </tr>
-</table>
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+### License
+Optic is MIT Licensed 
 
 ### Telemetry
 Optic collects telemetry which is used to help understand how to improve the product. For example, this usage data helps to debug issues and to prioritize features and improvements based on usage. The usage of our telemetry data falls under our [privacy policy](https://www.useoptic.com/privacy-policy). While this information does help us build a great product, we understand that not everyone wants to share their usage data. If you would like to disable telemetry you can add an environment variable that will opt out of sending usage data:

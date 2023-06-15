@@ -5,7 +5,13 @@ info:
 components:
   schemas:
     notUsed:
+      type: object
+      properties:
+        inner:
+          $ref: "#/components/schemas/notUsedInner"
+    notUsedInner:
       type: string
+
 paths:
   /todos:
     get:

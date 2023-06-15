@@ -167,3 +167,50 @@ Summary of API changes for commit (123)
 
 "
 `;
+
+exports[`generateCompareSummaryMarkdown when run without optic cloud 1`] = `
+"
+<!--
+DO NOT MODIFY
+app_id: optic-comment-3UsoJCz_Z0SpGLo5Vjw6o
+commit_sha: 123
+-->
+### APIs Changed
+
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Operation Changes</th>
+<th>Checks</th>
+
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+no-optic-cloud ([setup preview](https://useoptic.com/docs/cloud-get-started))
+
+</td>
+<td>
+
+1 operation added ([setup changelog](https://useoptic.com/docs/cloud-get-started))
+
+</td>
+<td>
+
+ℹ️ No automated checks have run
+
+</td>
+
+</tr>
+</tbody>
+</table>
+
+
+
+Summary of API changes for commit (123)
+
+"
+`;
