@@ -138,6 +138,15 @@ function getIcon(status: 'passed' | SeverityText): string {
     : 'x';
 }
 
+function isRuleVisible(
+  r: RuleResult,
+  options: {
+    verbose: boolean;
+  }
+) {
+  return options.verbose ? true : !r.passed;
+}
+
 function* getRuleLogs(
   rules: RuleResult[],
   sourcemapReaders: {
@@ -148,9 +157,7 @@ function* getRuleLogs(
     verbose: boolean;
   }
 ) {
-  const filteredRules = rules.filter((r) =>
-    options.verbose ? true : !r.passed
-  );
+  const filteredRules = rules.filter((r) => isRuleVisible(r, options));
   for (const result of filteredRules) {
     const accent = result.passed
       ? chalk.green
@@ -198,7 +205,7 @@ function* getRuleLogs(
 
     const jsonPath = jsonPointerHelpers
       .decode(result.location.jsonPath)
-      .join(' > ');
+      .join('/');
     yield `at ${jsonPath}${sourcemapText}`;
     yield '';
   }
@@ -435,32 +442,33 @@ function* getResponseChangeLogs(
 ) {
   const label = `- response ${chalk.bold(statusCode)}:`;
   const change = typeofV3Diffs(response.diffs);
-
-  if (change === 'removed') {
-    yield `${label} ${removed}`;
-    return;
-  }
+  const shouldRenderChildDiffs = !(change && change !== 'removed');
 
   if (
     change ||
     response.headers.diffs.length ||
     Object.values(response.contents).length
   ) {
-    yield `${label} ${change === 'added' ? added : ''}`;
+    yield `${label} ${getAddedOrRemovedLabel(change)}`;
   }
 
-  if (change) {
+  if (shouldRenderChildDiffs) {
     yield* indent(getDetailLogs(response.diffs));
   }
   yield* indent(getRuleLogs(response.rules, sourcemapReaders, options));
   for (const diff of response.headers.diffs) {
-    yield* indent(getResponseHeaderLogs(diff));
+    if (shouldRenderChildDiffs) {
+      yield* indent(getResponseHeaderLogs(diff));
+    }
   }
   yield* indent(getRuleLogs(response.headers.rules, sourcemapReaders, options));
 
   for (const [key, contentType] of Object.entries(response.contents)) {
     yield* indent(
-      getBodyChangeLogs(specs, contentType, key, sourcemapReaders, options)
+      getBodyChangeLogs(specs, contentType, key, sourcemapReaders, {
+        ...options,
+        shouldRenderChildDiffs,
+      })
     );
   }
 }
@@ -478,22 +486,23 @@ function* getRequestChangeLogs(
 ) {
   const change = typeofV3Diffs(request.diffs);
   const label = `- request:`;
-
-  if (change === 'removed') {
-    yield `${label} ${removed}`;
-    return;
-  }
+  const shouldRenderChildDiffs = !(change && change !== 'removed');
 
   if (change || Object.values(request.contents).length) {
-    yield `${label} ${change === 'added' ? added : ''}`;
+    yield `${label} ${getAddedOrRemovedLabel(change)}`;
   }
 
-  yield* indent(getDetailLogs(request.diffs));
+  if (shouldRenderChildDiffs) {
+    yield* indent(getDetailLogs(request.diffs));
+  }
   yield* indent(getRuleLogs(request.rules, sourcemapReaders, options));
 
   for (const [key, bodyChange] of Object.entries(request.contents)) {
     yield* indent(
-      getBodyChangeLogs(specs, bodyChange, key, sourcemapReaders, options)
+      getBodyChangeLogs(specs, bodyChange, key, sourcemapReaders, {
+        ...options,
+        shouldRenderChildDiffs,
+      })
     );
   }
 }
@@ -508,26 +517,64 @@ function* getBodyChangeLogs(
   },
   options: {
     verbose: boolean;
+    shouldRenderChildDiffs?: boolean;
   }
 ) {
   const fieldDiffs = interpretFieldLevelDiffs(specs, body.fields);
   const flatDiffs = [...fieldDiffs, ...body.examples.diffs];
-  const flatRules = [
-    ...Object.values(body.fields).flatMap((f) => f.rules),
-    ...body.examples.rules,
-  ];
-  const change = typeofV3Diffs(flatDiffs);
+  const bodyChange = typeofV3Diffs(flatDiffs);
   const label = `- body ${chalk.bold(key)}:`;
+  const shouldRenderChildDiffs = !(
+    options.shouldRenderChildDiffs === false && bodyChange !== 'removed'
+  );
 
-  if (change === 'removed') {
-    yield `${label} ${removed}`;
-    return;
+  yield `${label} ${getAddedOrRemovedLabel(bodyChange)}`;
+
+  yield* indent(
+    getBodyDetailLogs(body, sourcemapReaders, {
+      ...options,
+      shouldRenderChildDiffs,
+    })
+  );
+}
+function* getBodyDetailLogs(
+  body: Body,
+  sourcemapReaders: {
+    before: SourcemapReaderFindLine;
+    after: SourcemapReaderFindLine;
+  },
+  options: {
+    verbose: boolean;
+    shouldRenderChildDiffs?: boolean;
+  }
+) {
+  for (const [key, { diffs, rules }] of Object.entries(body.fields)) {
+    const change = typeofV3Diffs(diffs);
+    const hasDiffsToRender = diffs.length > 0 && options.shouldRenderChildDiffs;
+    const hasRulesToRender = rules.some((r) => isRuleVisible(r, options));
+    if (!hasDiffsToRender && !hasRulesToRender) {
+      continue;
+    }
+
+    const label = `- property ${chalk.bold(key)}:`;
+    yield `${label} ${
+      change === 'added'
+        ? added
+        : change === 'removed'
+        ? removed
+        : change === 'changed'
+        ? changed
+        : ''
+    }`;
+    if (hasRulesToRender) yield '';
+    yield* indent(getRuleLogs(rules, sourcemapReaders, options));
   }
 
-  yield `${label} ${change === 'added' ? added : ''}`;
+  if (options.shouldRenderChildDiffs) {
+    yield* indent(getDetailLogs(body.examples.diffs));
+  }
 
-  yield* indent(getDetailLogs(flatDiffs));
-  yield* indent(getRuleLogs(flatRules, sourcemapReaders, options));
+  yield* indent(getRuleLogs(body.examples.rules, sourcemapReaders, options));
 }
 
 function* getResponseHeaderLogs(diff: Diff) {
