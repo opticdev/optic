@@ -203,10 +203,7 @@ function* getRuleLogs(
           )
       : '';
 
-    const jsonPath = jsonPointerHelpers
-      .decode(result.location.jsonPath)
-      .join('/');
-    yield `at ${jsonPath}${sourcemapText}`;
+    yield `at ${sourcemapText}`;
     yield '';
   }
 }
