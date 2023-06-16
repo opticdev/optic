@@ -54,7 +54,7 @@
     "ajv": "^8.6.0",
     "bottleneck": "^2.19.5",
     "chalk": "^4.1.2",
-    "commander": "^10.0.0",
+    "commander": "^11.0.0",
     "is-url": "^1.2.4",
     "js-yaml": "^4.1.0",
     "json-stable-stringify": "^1.0.1",
