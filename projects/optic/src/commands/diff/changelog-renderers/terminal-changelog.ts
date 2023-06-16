@@ -1,4 +1,5 @@
 import { OpenAPIV3 } from 'openapi-types';
+import path from 'path';
 import {
   ObjectDiff,
   RuleResult,
@@ -189,7 +190,9 @@ function* getRuleLogs(
           })`
         : ' ' +
           chalk.underline(
-            `(${sourcemap.filePath}:${sourcemap.startLine}:${sourcemap.startPosition})`
+            `(${path.relative(process.cwd(), sourcemap.filePath)}:${
+              sourcemap.startLine
+            }:${sourcemap.startPosition})`
           )
       : '';
 
