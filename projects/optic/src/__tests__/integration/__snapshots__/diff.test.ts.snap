@@ -14,47 +14,59 @@ specification details:
 [31mx [1mGET[22m /pet/findByStatus[39m: [32madded[39m
   
   [31m[1mx [operation path component naming check][22m findByStatus is not snake_case[39m
-  at paths > /pet/findByStatus > get [4m($workspace$/petstore-updated.json:316:10941)[24m
+  at [4mpetstore-updated.json:316:10941[24m
   
   - query parameter [3mstatus[23m: 
   - cookie parameter [3mdebug[23m: 
   - response [1m200[22m: 
     - body [1mapplication/xml[22m: 
-      [31m[1mx [response property naming check][22m photoUrls is not snake_case[39m
-      at paths > /pet/findByStatus > get > responses > 200 > content > application/xml > schema > items > properties > photoUrls [4m($workspace$/petstore-updated.json:367:12791)[24m
+      - property [1m/schema/items/properties/photoUrls[22m: 
       
+        [31m[1mx [response property naming check][22m photoUrls is not snake_case[39m
+        at [4mpetstore-updated.json:367:12791[24m
+        
     - body [1mapplication/json[22m: 
-      [31m[1mx [response property naming check][22m photoUrls is not snake_case[39m
-      at paths > /pet/findByStatus > get > responses > 200 > content > application/json > schema > items > properties > photoUrls [4m($workspace$/petstore-updated.json:411:14652)[24m
+      - property [1m/schema/items/properties/photoUrls[22m: 
       
+        [31m[1mx [response property naming check][22m photoUrls is not snake_case[39m
+        at [4mpetstore-updated.json:411:14652[24m
+        
 
 [31mx [1mGET[22m /pet/findByTags[39m: [32madded[39m
   
   [31m[1mx [operation path component naming check][22m findByTags is not snake_case[39m
-  at paths > /pet/findByTags > get [4m($workspace$/petstore-updated.json:446:15966)[24m
+  at [4mpetstore-updated.json:446:15966[24m
   
   - query parameter [3mtags[23m: 
   - response [1m200[22m: 
     - body [1mapplication/xml[22m: 
-      [31m[1mx [response property naming check][22m photoUrls is not snake_case[39m
-      at paths > /pet/findByTags > get > responses > 200 > content > application/xml > schema > items > properties > photoUrls [4m($workspace$/petstore-updated.json:483:17424)[24m
+      - property [1m/schema/items/properties/photoUrls[22m: 
       
+        [31m[1mx [response property naming check][22m photoUrls is not snake_case[39m
+        at [4mpetstore-updated.json:483:17424[24m
+        
     - body [1mapplication/json[22m: 
-      [31m[1mx [response property naming check][22m photoUrls is not snake_case[39m
-      at paths > /pet/findByTags > get > responses > 200 > content > application/json > schema > items > properties > photoUrls [4m($workspace$/petstore-updated.json:527:19285)[24m
+      - property [1m/schema/items/properties/photoUrls[22m: 
       
+        [31m[1mx [response property naming check][22m photoUrls is not snake_case[39m
+        at [4mpetstore-updated.json:527:19285[24m
+        
 
 [31mx [1mGET[22m /pet/{petId}[39m: [32madded[39m
   
   - response [1m200[22m: 
     - body [1mapplication/xml[22m: 
-      [31m[1mx [response property naming check][22m photoUrls is not snake_case[39m
-      at paths > /pet/{petId} > get > responses > 200 > content > application/xml > schema > properties > photoUrls [4m($workspace$/petstore-updated.json:596:21833)[24m
+      - property [1m/schema/properties/photoUrls[22m: 
       
+        [31m[1mx [response property naming check][22m photoUrls is not snake_case[39m
+        at [4mpetstore-updated.json:596:21833[24m
+        
     - body [1mapplication/json[22m: 
-      [31m[1mx [response property naming check][22m photoUrls is not snake_case[39m
-      at paths > /pet/{petId} > get > responses > 200 > content > application/json > schema > properties > photoUrls [4m($workspace$/petstore-updated.json:637:23536)[24m
+      - property [1m/schema/properties/photoUrls[22m: 
       
+        [31m[1mx [response property naming check][22m photoUrls is not snake_case[39m
+        at [4mpetstore-updated.json:637:23536[24m
+        
 
 [32m✔ [1mPOST[22m /pet/{petId}[39m: [32madded[39m
   
@@ -66,50 +78,61 @@ specification details:
 [31mx [1mPUT[22m /user/{username}[39m: 
   - request: 
     - body [1m*/*[22m: 
-      - /schema/properties/bio [32madded[39m
-      - /schema/properties/userStatus, /schema/properties/lastName, /schema/properties/username [33mchanged[39m
-      - /schema/properties/phone [31mremoved[39m
+      - property [1m/schema/properties/phone[22m: [31mremoved[39m
+      - property [1m/schema/properties/bio[22m: [32madded[39m
+      - property [1m/schema/properties/userStatus[22m: [33mchanged[39m
       
-      [31m[1mx [prevent request property type changes][22m expected request body property 'userStatus' to not change type. This is a breaking change.[39m
-      at paths > /user/{username} > put > requestBody > content > */* > schema > properties > userStatus [4m($workspace$/petstore-updated.json:1347:48590)[24m
+        [31m[1mx [prevent request property type changes][22m expected request body property 'userStatus' to not change type. This is a breaking change.[39m
+        at [4mpetstore-updated.json:1347:48590[24m
+        
+      - property [1m/schema/properties/lastName[22m: [33mchanged[39m
+      - property [1m/schema/properties/username[22m: [33mchanged[39m
       
-      [31m[1mx [prevent changing request property to required][22m cannot make a request property required. This is a breaking change.[39m
-      at paths > /user/{username} > put > requestBody > content > */* > schema > properties > username [4m($workspace$/petstore-updated.json:1342:48332)[24m
-      
+        [31m[1mx [prevent changing request property to required][22m cannot make a request property required. This is a breaking change.[39m
+        at [4mpetstore-updated.json:1342:48332[24m
+        
 
 [31mx [1mGET[22m /user/{username}[39m: 
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 
-      - /schema/properties/bio [32madded[39m
-      - /schema/properties/userStatus, /schema/properties/lastName, /schema/properties/username [33mchanged[39m
-      - /schema/properties/phone [31mremoved[39m
+      - property [1m/schema/properties/phone[22m: [31mremoved[39m
       
-      [31m[1mx [prevent removing response property][22m cannot remove response property 'phone'. This is a breaking change.[39m
-      at paths > /user/{username} > get > responses > 200 > content > application/json > schema > properties > phone [4m($workspace$/petstore-base.json:848:29942)[24m
+        [31m[1mx [prevent removing response property][22m cannot remove response property 'phone'. This is a breaking change.[39m
+        at [4mpetstore-base.json:848:29942[24m
+        
+      - property [1m/schema/properties/bio[22m: [32madded[39m
+      - property [1m/schema/properties/userStatus[22m: [33mchanged[39m
       
-      [31m[1mx [prevent response property type changes][22m expected response body property 'userStatus' to not change type. This is a breaking change.[39m
-      at paths > /user/{username} > get > responses > 200 > content > application/json > schema > properties > userStatus [4m($workspace$/petstore-updated.json:1289:46579)[24m
+        [31m[1mx [prevent response property type changes][22m expected response body property 'userStatus' to not change type. This is a breaking change.[39m
+        at [4mpetstore-updated.json:1289:46579[24m
+        
+      - property [1m/schema/properties/lastName[22m: [33mchanged[39m
       
-      [31m[1mx [prevent making response property optional][22m cannot make required response property 'lastName' optional. This is a breaking change.[39m
-      at paths > /user/{username} > get > responses > 200 > content > application/json > schema > properties > lastName [4m($workspace$/petstore-updated.json:1286:46420)[24m
-      
+        [31m[1mx [prevent making response property optional][22m cannot make required response property 'lastName' optional. This is a breaking change.[39m
+        at [4mpetstore-updated.json:1286:46420[24m
+        
+      - property [1m/schema/properties/username[22m: [33mchanged[39m
     - body [1mapplication/xml[22m: 
-      - /schema/properties/bio [32madded[39m
-      - /schema/properties/userStatus, /schema/properties/lastName, /schema/properties/username [33mchanged[39m
-      - /schema/properties/phone [31mremoved[39m
+      - property [1m/schema/properties/phone[22m: [31mremoved[39m
       
-      [31m[1mx [prevent removing response property][22m cannot remove response property 'phone'. This is a breaking change.[39m
-      at paths > /user/{username} > get > responses > 200 > content > application/xml > schema > properties > phone [4m($workspace$/petstore-base.json:827:29057)[24m
+        [31m[1mx [prevent removing response property][22m cannot remove response property 'phone'. This is a breaking change.[39m
+        at [4mpetstore-base.json:827:29057[24m
+        
+      - property [1m/schema/properties/bio[22m: [32madded[39m
+      - property [1m/schema/properties/userStatus[22m: [33mchanged[39m
       
-      [31m[1mx [prevent response property type changes][22m expected response body property 'userStatus' to not change type. This is a breaking change.[39m
-      at paths > /user/{username} > get > responses > 200 > content > application/xml > schema > properties > userStatus [4m($workspace$/petstore-updated.json:1268:45660)[24m
+        [31m[1mx [prevent response property type changes][22m expected response body property 'userStatus' to not change type. This is a breaking change.[39m
+        at [4mpetstore-updated.json:1268:45660[24m
+        
+      - property [1m/schema/properties/lastName[22m: [33mchanged[39m
       
-      [31m[1mx [prevent making response property optional][22m cannot make required response property 'lastName' optional. This is a breaking change.[39m
-      at paths > /user/{username} > get > responses > 200 > content > application/xml > schema > properties > lastName [4m($workspace$/petstore-updated.json:1265:45501)[24m
-      
+        [31m[1mx [prevent making response property optional][22m cannot make required response property 'lastName' optional. This is a breaking change.[39m
+        at [4mpetstore-updated.json:1265:45501[24m
+        
+      - property [1m/schema/properties/username[22m: [33mchanged[39m
   - response [1m404[22m: 
     - body [1mapplication/json[22m: [32madded[39m
-      
+      - property : [32madded[39m
 
 [31mx [1mGET[22m /user/login[39m: 
   - response [1m200[22m: 
@@ -123,121 +146,147 @@ specification details:
       - /schema/format [32madded[39m
       
     [31m[1mx [header parameter naming check][22m X-Rate-Limit is not snake_case[39m
-    at paths > /user/login > get > responses > 200 > headers > X-Rate-Limit [4m($workspace$/petstore-updated.json:1208:43553)[24m
+    at [4mpetstore-updated.json:1208:43553[24m
     
 
 [31mx [1mPOST[22m /user/createWithList[39m: 
   - request: 
     - body [1m*/*[22m: 
-      - /schema/items/properties/bio [32madded[39m
-      - /schema/items/properties/userStatus [33mchanged[39m
-      - /schema/items/properties/phone [31mremoved[39m
+      - property [1m/schema/items/properties/phone[22m: [31mremoved[39m
+      - property [1m/schema/items/properties/bio[22m: [32madded[39m
+      - property [1m/schema/items/properties/userStatus[22m: [33mchanged[39m
       
-      [31m[1mx [prevent request property type changes][22m expected request body property 'userStatus' to not change type. This is a breaking change.[39m
-      at paths > /user/createWithList > post > requestBody > content > */* > schema > items > properties > userStatus [4m($workspace$/petstore-updated.json:1163:42213)[24m
+        [31m[1mx [prevent request property type changes][22m expected request body property 'userStatus' to not change type. This is a breaking change.[39m
+        at [4mpetstore-updated.json:1163:42213[24m
+        
+      - property : [33mchanged[39m
+      - property [1m/schema/items/properties/username[22m: 
       
-      [31m[1mx [prevent changing request property to required][22m cannot make a request property required. This is a breaking change.[39m
-      at paths > /user/createWithList > post > requestBody > content > */* > schema > items > properties > username [4m($workspace$/petstore-updated.json:1158:41945)[24m
-      
+        [31m[1mx [prevent changing request property to required][22m cannot make a request property required. This is a breaking change.[39m
+        at [4mpetstore-updated.json:1158:41945[24m
+        
 
 [31mx [1mPOST[22m /user/createWithArray[39m: 
   - request: 
     - body [1m*/*[22m: 
-      - /schema/items/properties/bio [32madded[39m
-      - /schema/items/properties/userStatus [33mchanged[39m
-      - /schema/items/properties/phone [31mremoved[39m
+      - property [1m/schema/items/properties/phone[22m: [31mremoved[39m
+      - property [1m/schema/items/properties/bio[22m: [32madded[39m
+      - property [1m/schema/items/properties/userStatus[22m: [33mchanged[39m
       
-      [31m[1mx [prevent request property type changes][22m expected request body property 'userStatus' to not change type. This is a breaking change.[39m
-      at paths > /user/createWithArray > post > requestBody > content > */* > schema > items > properties > userStatus [4m($workspace$/petstore-updated.json:1122:40728)[24m
+        [31m[1mx [prevent request property type changes][22m expected request body property 'userStatus' to not change type. This is a breaking change.[39m
+        at [4mpetstore-updated.json:1122:40728[24m
+        
+      - property : [33mchanged[39m
+      - property [1m/schema/items/properties/username[22m: 
       
-      [31m[1mx [prevent changing request property to required][22m cannot make a request property required. This is a breaking change.[39m
-      at paths > /user/createWithArray > post > requestBody > content > */* > schema > items > properties > username [4m($workspace$/petstore-updated.json:1117:40460)[24m
-      
+        [31m[1mx [prevent changing request property to required][22m cannot make a request property required. This is a breaking change.[39m
+        at [4mpetstore-updated.json:1117:40460[24m
+        
 
 [31mx [1mPOST[22m /user[39m: 
   - request: 
     - body [1m*/*[22m: 
-      - /schema/properties/bio [32madded[39m
-      - /schema/properties/userStatus, /schema/properties/lastName, /schema/properties/username [33mchanged[39m
-      - /schema/properties/phone [31mremoved[39m
+      - property [1m/schema/properties/phone[22m: [31mremoved[39m
+      - property [1m/schema/properties/bio[22m: [32madded[39m
+      - property [1m/schema/properties/userStatus[22m: [33mchanged[39m
       
-      [31m[1mx [prevent request property type changes][22m expected request body property 'userStatus' to not change type. This is a breaking change.[39m
-      at paths > /user > post > requestBody > content > */* > schema > properties > userStatus [4m($workspace$/petstore-updated.json:1082:39273)[24m
+        [31m[1mx [prevent request property type changes][22m expected request body property 'userStatus' to not change type. This is a breaking change.[39m
+        at [4mpetstore-updated.json:1082:39273[24m
+        
+      - property [1m/schema/properties/lastName[22m: [33mchanged[39m
+      - property [1m/schema/properties/username[22m: [33mchanged[39m
       
-      [31m[1mx [prevent changing request property to required][22m cannot make a request property required. This is a breaking change.[39m
-      at paths > /user > post > requestBody > content > */* > schema > properties > username [4m($workspace$/petstore-updated.json:1077:39015)[24m
-      
+        [31m[1mx [prevent changing request property to required][22m cannot make a request property required. This is a breaking change.[39m
+        at [4mpetstore-updated.json:1077:39015[24m
+        
 
 [32m✔ [1mDELETE[22m /store/order/{orderId}[39m: 
   - response [1m404[22m: 
     - body [1mapplication/json[22m: [32madded[39m
-      
+      - property : [32madded[39m
 
 [31mx [1mGET[22m /store/order/{orderId}[39m: 
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 
-      - /schema/properties/summary [32madded[39m
-      - /schema/properties/status [33mchanged[39m
-      
+      - property [1m/schema/properties/summary[22m: [32madded[39m
+      - property [1m/schema/properties/status[22m: [33mchanged[39m
     - body [1mapplication/xml[22m: 
-      - /schema/properties/summary [32madded[39m
-      - /schema/properties/status, /schema/properties/petId [33mchanged[39m
+      - property [1m/schema/properties/summary[22m: [32madded[39m
+      - property [1m/schema/properties/status[22m: [33mchanged[39m
+      - property [1m/schema/properties/petId[22m: [33mchanged[39m
       
-      [31m[1mx [prevent making response property optional][22m cannot make required response property 'petId' optional. This is a breaking change.[39m
-      at paths > /store/order/{orderId} > get > responses > 200 > content > application/xml > schema > properties > petId [4m($workspace$/petstore-updated.json:969:34944)[24m
-      
+        [31m[1mx [prevent making response property optional][22m cannot make required response property 'petId' optional. This is a breaking change.[39m
+        at [4mpetstore-updated.json:969:34944[24m
+        
   - response [1m404[22m: 
     - body [1mapplication/json[22m: [32madded[39m
-      
+      - property : [32madded[39m
 
 [32m✔ [1mPOST[22m /store/order[39m: 
   - request: 
     - body [1m*/*[22m: 
-      - /schema/properties/summary [32madded[39m
-      - /schema/properties/status [33mchanged[39m
-      
+      - property [1m/schema/properties/summary[22m: [32madded[39m
+      - property [1m/schema/properties/status[22m: [33mchanged[39m
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 
-      - /schema/properties/summary, /example [32madded[39m
-      - /schema/properties/status [33mchanged[39m
-      
+      - property [1m/schema/properties/summary[22m: [32madded[39m
+      - property [1m/schema/properties/status[22m: [33mchanged[39m
+        - /example [32madded[39m
+        
     - body [1mapplication/xml[22m: 
-      - /schema/properties/summary [32madded[39m
-      - /schema/properties/status [33mchanged[39m
-      
+      - property [1m/schema/properties/summary[22m: [32madded[39m
+      - property [1m/schema/properties/status[22m: [33mchanged[39m
 
 [31mx [1mPOST[22m /pet/{petId}/uploadImage[39m: 
   - cookie parameter [3mdebug[23m: 
     - /schema/enum [32madded[39m
     
     [31m[1mx [prevent cookie parameters enum breaking changes][22m cannot add an enum to restrict possible values for cookie parameter 'debug'. This is a breaking change.[39m
-    at paths > /pet/{petId}/uploadImage > post > parameters > 1 [4m($workspace$/petstore-updated.json:740:27031)[24m
+    at [4mpetstore-updated.json:740:27031[24m
     
   - response [1m200[22m: [31mremoved[39m
-  - response [1m201[22m: [32madded[39m
+    
+    [31m[1mx [prevent response status code removal][22m must not remove response status code 200. This is a breaking change.[39m
+    at [4mpetstore-base.json:399:13841[24m
     
     - body [1mapplication/json[22m: 
+      - property [1m/schema/properties/code[22m: 
+      
+        [31m[1mx [prevent removing response property][22m cannot remove response property 'code'. This is a breaking change.[39m
+        at [4mpetstore-base.json:406:14080[24m
+        
+      - property [1m/schema/properties/type[22m: 
+      
+        [31m[1mx [prevent removing response property][22m cannot remove response property 'type'. This is a breaking change.[39m
+        at [4mpetstore-base.json:407:14150[24m
+        
+      - property [1m/schema/properties/message[22m: 
+      
+        [31m[1mx [prevent removing response property][22m cannot remove response property 'message'. This is a breaking change.[39m
+        at [4mpetstore-base.json:408:14200[24m
+        
+  - response [1m201[22m: [32madded[39m
+    - body [1mapplication/json[22m: 
   - response [1m404[22m: [32madded[39m
-    
     - body [1mapplication/json[22m: 
   - response [1mdefault[22m: 
     - body [1mapplication/json[22m: 
-      - /schema/properties/type [33mchanged[39m
+      - property [1m/schema/properties/type[22m: [33mchanged[39m
       
-      [31m[1mx [prevent response property type changes][22m expected response body property 'type' to not change type. This is a breaking change.[39m
-      at paths > /pet/{petId}/uploadImage > post > responses > default > content > application/json > schema > properties > type [4m($workspace$/petstore-updated.json:806:29115)[24m
-      
+        [31m[1mx [prevent response property type changes][22m expected response body property 'type' to not change type. This is a breaking change.[39m
+        at [4mpetstore-updated.json:806:29115[24m
+        
 
 [31mx [1mGET[22m /pet[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at paths > /pet > get [4m($workspace$/petstore-base.json:158:4984)[24m
+  at [4mpetstore-base.json:158:4984[24m
   
     [31m[1mx [prevent response status code removal][22m must not remove response status code 404. This is a breaking change.[39m
-    at paths > /pet > get > responses > 404 [4m($workspace$/petstore-base.json:160:5026)[24m
+    at [4mpetstore-base.json:160:5026[24m
     
     [31m[1mx [prevent response status code removal][22m must not remove response status code 405. This is a breaking change.[39m
-    at paths > /pet > get > responses > 405 [4m($workspace$/petstore-base.json:161:5094)[24m
+    at [4mpetstore-base.json:161:5094[24m
     
 
 [32m✔ [1mPOST[22m /pet[39m: 
@@ -247,21 +296,26 @@ specification details:
 [31mx [1mPUT[22m /pet[39m: 
   - request: 
     - body [1mapplication/xml[22m: [31mremoved[39m
+      - property : [31mremoved[39m
     - body [1mapplication/json[22m: 
-      - /schema/properties/number [32madded[39m
-      - /schema/properties/name [31mremoved[39m
+      - property [1m/schema/properties/name[22m: [31mremoved[39m
+      - property [1m/schema/properties/number[22m: [32madded[39m
       
-      [31m[1mx [prevent changing request property to required][22m cannot add a required request property 'number' to an existing operation. This is a breaking change.[39m
-      at paths > /pet > put > requestBody > content > application/json > schema > properties > number [4m($workspace$/petstore-updated.json:173:5555)[24m
-      
+        [31m[1mx [prevent changing request property to required][22m cannot add a required request property 'number' to an existing operation. This is a breaking change.[39m
+        at [4mpetstore-updated.json:173:5555[24m
+        
   - response [1m400[22m: [31mremoved[39m
+    
+    [31m[1mx [prevent response status code removal][22m must not remove response status code 400. This is a breaking change.[39m
+    at [4mpetstore-base.json:254:8639[24m
+    
 
 [31mx [1mGET[22m /parameters_at_path[39m: 
   - /parameters [32madded[39m
   
   - query parameter [3mquery_in_path[23m: 
     [31m[1mx [prevent new required query parameters][22m cannot add required query parameter query_in_path to an existing operation. This is a breaking change.[39m
-    at paths > /parameters_at_path > get > parameters > 0 [4m($workspace$/petstore-updated.json:143:4710)[24m
+    at [4mpetstore-updated.json:143:4710[24m
     
 
 [32m✔ [1mPOST[22m /example[39m: 
@@ -272,10 +326,10 @@ specification details:
   - query parameter [3maddedQueryParameter[23m: [32madded[39m
     
     [31m[1mx [prevent new required query parameters][22m cannot add required query parameter addedQueryParameter to an existing operation. This is a breaking change.[39m
-    at paths > /example > get > parameters > 2 [4m($workspace$/petstore-updated.json:60:1906)[24m
+    at [4mpetstore-updated.json:60:1906[24m
     
     [31m[1mx [query parameter naming check][22m addedQueryParameter is not snake_case[39m
-    at paths > /example > get > parameters > 2 [4m($workspace$/petstore-updated.json:60:1906)[24m
+    at [4mpetstore-updated.json:60:1906[24m
     
   - query parameter [3mrequiredToOptional[23m: 
     - /required [31mremoved[39m
@@ -284,35 +338,48 @@ specification details:
     - /required [32madded[39m
     
     [31m[1mx [prevent requiring existing query parameters][22m cannot make optional query parameter 'optionalToRequired' required. This is a breaking change.[39m
-    at paths > /example > get > parameters > 0 [4m($workspace$/petstore-updated.json:47:1494)[24m
+    at [4mpetstore-updated.json:47:1494[24m
     
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 
-      - /schema/properties/requiredKeys/properties/addedRequiredKey [32madded[39m
-      - /schema/properties/toTypeArrays, /schema/properties/fromTypeArrays, /schema/properties/requiredKeys/properties/requiredToOptional, /schema/properties/requiredKeys/properties/optionalToRequired, /schema/properties/expandableObject, /schema/properties/composedObject/properties/orderId, /schema/properties/stringOrNumberOrObject [33mchanged[39m
-      - /schema/properties/requiredKeys/properties/deletedRequiredKey [31mremoved[39m
+      - property [1m/schema/properties/toTypeArrays[22m: [33mchanged[39m
       
-      [31m[1mx [prevent response property type changes][22m expected response body property 'toTypeArrays' to not change type. This is a breaking change.[39m
-      at paths > /example > get > responses > 200 > content > application/json > schema > properties > toTypeArrays [4m($workspace$/petstore-updated.json:119:4156)[24m
+        [31m[1mx [prevent response property type changes][22m expected response body property 'toTypeArrays' to not change type. This is a breaking change.[39m
+        at [4mpetstore-updated.json:119:4156[24m
+        
+      - property [1m/schema/properties/fromTypeArrays[22m: [33mchanged[39m
       
-      [31m[1mx [prevent response property type changes][22m expected response body property 'fromTypeArrays' to not change type. This is a breaking change.[39m
-      at paths > /example > get > responses > 200 > content > application/json > schema > properties > fromTypeArrays [4m($workspace$/petstore-updated.json:120:4226)[24m
+        [31m[1mx [prevent response property type changes][22m expected response body property 'fromTypeArrays' to not change type. This is a breaking change.[39m
+        at [4mpetstore-updated.json:120:4226[24m
+        
+      - property [1m/schema/properties/requiredKeys/properties/requiredToOptional[22m: [33mchanged[39m
       
-      [31m[1mx [prevent making response property optional][22m cannot make required response property 'requiredToOptional' optional. This is a breaking change.[39m
-      at paths > /example > get > responses > 200 > content > application/json > schema > properties > requiredKeys > properties > requiredToOptional [4m($workspace$/petstore-updated.json:114:3902)[24m
+        [31m[1mx [prevent making response property optional][22m cannot make required response property 'requiredToOptional' optional. This is a breaking change.[39m
+        at [4mpetstore-updated.json:114:3902[24m
+        
+      - property [1m/schema/properties/requiredKeys/properties/deletedRequiredKey[22m: [31mremoved[39m
       
-      [31m[1mx [prevent removing response property][22m cannot remove response property 'deletedRequiredKey'. This is a breaking change.[39m
-      at paths > /example > get > responses > 200 > content > application/json > schema > properties > requiredKeys > properties > deletedRequiredKey [4m($workspace$/petstore-base.json:112:3802)[24m
+        [31m[1mx [prevent removing response property][22m cannot remove response property 'deletedRequiredKey'. This is a breaking change.[39m
+        at [4mpetstore-base.json:112:3802[24m
+        
+      - property [1m/schema/properties/requiredKeys/properties/optionalToRequired[22m: [33mchanged[39m
+      - property [1m/schema/properties/requiredKeys/properties/addedRequiredKey[22m: [32madded[39m
       
-      [31m[1mx [response property naming check][22m addedRequiredKey is not snake_case[39m
-      at paths > /example > get > responses > 200 > content > application/json > schema > properties > requiredKeys > properties > addedRequiredKey [4m($workspace$/petstore-updated.json:115:3970)[24m
+        [31m[1mx [response property naming check][22m addedRequiredKey is not snake_case[39m
+        at [4mpetstore-updated.json:115:3970[24m
+        
+      - property [1m/schema/properties/expandableObject[22m: [33mchanged[39m
+      - property [1m/schema/properties/composedObject/properties/orderId[22m: [33mchanged[39m
       
-      [31m[1mx [prevent response property type changes][22m expected response body property 'orderId' to not change type. This is a breaking change.[39m
-      at paths > /example > get > responses > 200 > content > application/json > schema > properties > composedObject > properties > orderId [4m($workspace$/petstore-updated.json:83:2701)[24m
+        [31m[1mx [prevent response property type changes][22m expected response body property 'orderId' to not change type. This is a breaking change.[39m
+        at [4mpetstore-updated.json:83:2701[24m
+        
+      - property [1m/schema/properties/stringOrNumberOrObject[22m: [33mchanged[39m
+      - property [1m/schema/properties/stringOrNumberOrObject/oneOf/2/properties/orderId[22m: 
       
-      [31m[1mx [prevent removing response property][22m cannot remove response property 'orderId'. This is a breaking change.[39m
-      at paths > /example > get > responses > 200 > content > application/json > schema > properties > stringOrNumberOrObject > oneOf > 2 > properties > orderId [4m($workspace$/petstore-base.json:81:2600)[24m
-      
+        [31m[1mx [prevent removing response property][22m cannot remove response property 'orderId'. This is a breaking change.[39m
+        at [4mpetstore-base.json:81:2600[24m
+        
 
 ...and 23 other endpoints
 
@@ -330,20 +397,19 @@ exports[`diff reads optic.dev.yml for rulesets 1`] = `
 [31mx [1mGET[22m /invalid_name[39m: [32madded[39m
   
   [31m[1mx [operation path component naming check][22m invalid_name is not camelCase[39m
-  at paths > /invalid_name > get [4m($workspace$/example-api-v1.json:31:632)[24m
+  at [4mexample-api-v1.json:31:632[24m
   
 
 [31mx [1mPOST[22m /example[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at paths > /example > post [4m($workspace$/example-api-v0.json:9:150)[24m
+  at [4mexample-api-v0.json:9:150[24m
   
 
 [32m✔ [1mPATCH[22m /example[39m: 
   - /operationId [33mchanged[39m
   
   - response [1m200[22m: [32madded[39m
-    
 
 [32m✔ [1mPUT[22m /example[39m: 
   - /operationId [33mchanged[39m
@@ -369,7 +435,6 @@ exports[`diff two files, no repo or config 1`] = `
   - /operationId [33mchanged[39m
   
   - response [1m200[22m: [32madded[39m
-    
 
 [1mPUT[22m /example: 
   - /operationId [33mchanged[39m
@@ -399,20 +464,19 @@ exports[`diff with --standard arg 1`] = `
 [31mx [1mGET[22m /invalid_name[39m: [32madded[39m
   
   [31m[1mx [operation path component naming check][22m invalid_name is not camelCase[39m
-  at paths > /invalid_name > get [4m($workspace$/example-api-v1.json:31:632)[24m
+  at [4mexample-api-v1.json:31:632[24m
   
 
 [31mx [1mPOST[22m /example[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at paths > /example > post [4m($workspace$/example-api-v0.json:9:150)[24m
+  at [4mexample-api-v0.json:9:150[24m
   
 
 [32m✔ [1mPATCH[22m /example[39m: 
   - /operationId [33mchanged[39m
   
   - response [1m200[22m: [32madded[39m
-    
 
 [32m✔ [1mPUT[22m /example[39m: 
   - /operationId [33mchanged[39m
@@ -438,20 +502,19 @@ exports[`diff with mock server custom rules 1`] = `
 [31mx [1mGET[22m /invalid_name[39m: [32madded[39m
   
   [31m[1mx [operation path component naming check][22m invalid_name is not camelCase[39m
-  at paths > /invalid_name > get [4m($workspace$/example-api-v1.json:31:632)[24m
+  at [4mexample-api-v1.json:31:632[24m
   
 
 [31mx [1mPOST[22m /example[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at paths > /example > post [4m($workspace$/example-api-v0.json:9:150)[24m
+  at [4mexample-api-v0.json:9:150[24m
   
 
 [32m✔ [1mPATCH[22m /example[39m: 
   - /operationId [33mchanged[39m
   
   - response [1m200[22m: [32madded[39m
-    
 
 [32m✔ [1mPUT[22m /example[39m: 
   - /operationId [33mchanged[39m
@@ -478,20 +541,19 @@ exports[`diff with mock server extends 1`] = `
 [31mx [1mGET[22m /invalid_name[39m: [32madded[39m
   
   [31m[1mx [operation path component naming check][22m invalid_name is not camelCase[39m
-  at paths > /invalid_name > get [4m($workspace$/example-api-v1.json:31:632)[24m
+  at [4mexample-api-v1.json:31:632[24m
   
 
 [31mx [1mPOST[22m /example[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at paths > /example > post [4m($workspace$/example-api-v0.json:9:150)[24m
+  at [4mexample-api-v0.json:9:150[24m
   
 
 [32m✔ [1mPATCH[22m /example[39m: 
   - /operationId [33mchanged[39m
   
   - response [1m200[22m: [32madded[39m
-    
 
 [32m✔ [1mPUT[22m /example[39m: 
   - /operationId [33mchanged[39m
@@ -523,14 +585,13 @@ specification details:
 [31mx [1mPOST[22m /example[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at paths > /example > post [4m($workspace$/example-api-v0.json:9:150)[24m
+  at [4mexample-api-v0.json:9:150[24m
   
 
 [32m✔ [1mPATCH[22m /example[39m: 
   - /operationId [33mchanged[39m
   
   - response [1m200[22m: [32madded[39m
-    
 
 [32m✔ [1mPUT[22m /example[39m: 
   - /operationId [33mchanged[39m
@@ -557,10 +618,11 @@ exports[`diff with mock server uploads specs if authenticated and --upload 1`] =
 [31mx [1mPATCH[22m /example[39m: 
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 
+      - property : [33mchanged[39m
       
-      [31m[1mx [prevent response property type changes][22m expected response body application/json root shape to not change type. This is a breaking change.[39m
-      at paths > /example > patch > responses > 200 > content > application/json [4m($workspace$/spec.json:24:565)[24m
-      
+        [31m[1mx [prevent response property type changes][22m expected response body application/json root shape to not change type. This is a breaking change.[39m
+        at [4mspec.json:24:565[24m
+        
 
 ...and 4 other endpoints
 
@@ -581,7 +643,7 @@ specification details:
 [31mx [1mGET[22m /api/users[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at paths > /api/users > get [4m(empty.json:1:45)[24m
+  at [4mempty.json:1:45[24m
   
 
 [32m✔ [1mGET[22m /example[39m: [32madded[39m

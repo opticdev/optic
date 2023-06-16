@@ -192,14 +192,11 @@ function* getRuleLogs(
 
     const sourcemapText = sourcemap
       ? isUrl(sourcemap.filePath)
-        ? ` (${chalk.underline(sourcemap.filePath)} line ${
-            sourcemap.startLine
-          })`
-        : ' ' +
-          chalk.underline(
-            `(${path.relative(process.cwd(), sourcemap.filePath)}:${
+        ? `${chalk.underline(sourcemap.filePath)} line ${sourcemap.startLine}`
+        : chalk.underline(
+            `${path.relative(process.cwd(), sourcemap.filePath)}:${
               sourcemap.startLine
-            }:${sourcemap.startPosition})`
+            }:${sourcemap.startPosition}`
           )
       : '';
 

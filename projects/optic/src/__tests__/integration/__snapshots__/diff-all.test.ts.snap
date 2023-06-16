@@ -15,7 +15,7 @@ specification details:
 [31mx [1mGET[22m /api/users[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at paths > /api/users > get [4m(empty.json:1:45)[24m
+  at [4mempty.json:1:45[24m
   
 
 [32m✔ [1mGET[22m /example[39m: [32madded[39m
@@ -55,7 +55,7 @@ specification details:
 [31mx [1mGET[22m /api/users[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at paths > /api/users > get [4m(empty.json:1:45)[24m
+  at [4mempty.json:1:45[24m
   
 
 [32m✔ [1mGET[22m /example[39m: [32madded[39m
@@ -87,7 +87,7 @@ specification details:
 [31mx [1mGET[22m /api/users[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at paths > /api/users > get [4m(empty.json:1:45)[24m
+  at [4mempty.json:1:45[24m
   
 
 [32m✔ [1mGET[22m /example[39m: [32madded[39m
@@ -118,12 +118,12 @@ exports[`diff-all diff all not in the root of a repo 1`] = `
 
 [31mx [1mPOST[22m /filler_route[39m: 
   [31m[1mx [operation path component naming check][22m filler_route is not camelCase[39m
-  at paths > /filler_route > post [4m($workspace$/folder/in-folder.yml:9:178)[24m
+  at [4min-folder.yml:9:178[24m
   
 
 [31mx [1mPOST[22m /api/filler-route[39m: 
   [31m[1mx [operation path component naming check][22m filler-route is not camelCase[39m
-  at paths > /api/filler-route > post [4m($workspace$/folder/in-folder.yml:24:593)[24m
+  at [4min-folder.yml:24:593[24m
   
 
 ...and 2 other endpoints
@@ -142,30 +142,34 @@ specification details:
 [31mx [1mPOST[22m /filler_route[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at paths > /filler_route > post [4m($workspace$/mvspec.yml:9:178)[24m
+  at [4m../mvspec.yml:9:178[24m
   
   - response [1m201[22m: 
     [31m[1mx [prevent response status code removal][22m must not remove response status code 201. This is a breaking change.[39m
-    at paths > /filler_route > post > responses > 201 [4m($workspace$/mvspec.yml:12:235)[24m
+    at [4m../mvspec.yml:12:235[24m
     
     - body [1mapplication/json[22m: 
-      [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
-      at paths > /filler_route > post > responses > 201 > content > application/json > schema > properties > id [4m($workspace$/mvspec.yml:19:432)[24m
+      - property [1m/schema/properties/id[22m: 
       
+        [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
+        at [4m../mvspec.yml:19:432[24m
+        
 
 [31mx [1mPOST[22m /api/filler-route[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at paths > /api/filler-route > post [4m($workspace$/mvspec.yml:24:593)[24m
+  at [4m../mvspec.yml:24:593[24m
   
   - response [1m201[22m: 
     [31m[1mx [prevent response status code removal][22m must not remove response status code 201. This is a breaking change.[39m
-    at paths > /api/filler-route > post > responses > 201 [4m($workspace$/mvspec.yml:27:650)[24m
+    at [4m../mvspec.yml:27:650[24m
     
     - body [1mapplication/json[22m: 
-      [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
-      at paths > /api/filler-route > post > responses > 201 > content > application/json > schema > properties > id [4m($workspace$/mvspec.yml:34:847)[24m
+      - property [1m/schema/properties/id[22m: 
       
+        [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
+        at [4m../mvspec.yml:34:847[24m
+        
 
 
 [34mDiffing HEAD~1:specwithkey.json to ../specwithkey.json[39m
@@ -196,7 +200,7 @@ specification details:
 
 [31mx [1mPOST[22m /filler_route[39m: 
   [31m[1mx [operation path component naming check][22m filler_route is not camelCase[39m
-  at paths > /filler_route > post [4m($workspace$/specwithkey.yml:9:178)[24m
+  at [4m../specwithkey.yml:9:178[24m
   
 
 ...and 1 other endpoint
@@ -216,13 +220,13 @@ specification details:
 [31mx [1mPOST[22m /filler_route[39m: [32madded[39m
   
   [31m[1mx [operation path component naming check][22m filler_route is not camelCase[39m
-  at paths > /filler_route > post [4m($workspace$/movedspec.yml:9:178)[24m
+  at [4m../movedspec.yml:9:178[24m
   
 
 [31mx [1mPOST[22m /api/filler-route[39m: [32madded[39m
   
   [31m[1mx [operation path component naming check][22m filler-route is not camelCase[39m
-  at paths > /api/filler-route > post [4m($workspace$/movedspec.yml:24:593)[24m
+  at [4m../movedspec.yml:24:593[24m
   
 
 ...and 2 other endpoints
@@ -252,16 +256,18 @@ specification details:
 [31mx [1mPOST[22m /filler_route[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at paths > /filler_route > post [4m($workspace$/folder-to-run/should-run.yml:9:178)[24m
+  at [4mfolder-to-run/should-run.yml:9:178[24m
   
   - response [1m201[22m: 
     [31m[1mx [prevent response status code removal][22m must not remove response status code 201. This is a breaking change.[39m
-    at paths > /filler_route > post > responses > 201 [4m($workspace$/folder-to-run/should-run.yml:12:235)[24m
+    at [4mfolder-to-run/should-run.yml:12:235[24m
     
     - body [1mapplication/json[22m: 
-      [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
-      at paths > /filler_route > post > responses > 201 > content > application/json > schema > properties > id [4m($workspace$/folder-to-run/should-run.yml:19:432)[24m
+      - property [1m/schema/properties/id[22m: 
       
+        [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
+        at [4mfolder-to-run/should-run.yml:19:432[24m
+        
 
 
 [34mDiffing empty spec to folder-to-run/should-run-mved.yml[39m
@@ -294,12 +300,12 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
 
 [31mx [1mPOST[22m /filler_route[39m: 
   [31m[1mx [operation path component naming check][22m filler_route is not camelCase[39m
-  at paths > /filler_route > post [4m($workspace$/folder/in-folder.yml:9:178)[24m
+  at [4mfolder/in-folder.yml:9:178[24m
   
 
 [31mx [1mPOST[22m /api/filler-route[39m: 
   [31m[1mx [operation path component naming check][22m filler-route is not camelCase[39m
-  at paths > /api/filler-route > post [4m($workspace$/folder/in-folder.yml:24:593)[24m
+  at [4mfolder/in-folder.yml:24:593[24m
   
 
 ...and 2 other endpoints
@@ -318,30 +324,34 @@ specification details:
 [31mx [1mPOST[22m /filler_route[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at paths > /filler_route > post [4m($workspace$/mvspec.yml:9:178)[24m
+  at [4mmvspec.yml:9:178[24m
   
   - response [1m201[22m: 
     [31m[1mx [prevent response status code removal][22m must not remove response status code 201. This is a breaking change.[39m
-    at paths > /filler_route > post > responses > 201 [4m($workspace$/mvspec.yml:12:235)[24m
+    at [4mmvspec.yml:12:235[24m
     
     - body [1mapplication/json[22m: 
-      [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
-      at paths > /filler_route > post > responses > 201 > content > application/json > schema > properties > id [4m($workspace$/mvspec.yml:19:432)[24m
+      - property [1m/schema/properties/id[22m: 
       
+        [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
+        at [4mmvspec.yml:19:432[24m
+        
 
 [31mx [1mPOST[22m /api/filler-route[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at paths > /api/filler-route > post [4m($workspace$/mvspec.yml:24:593)[24m
+  at [4mmvspec.yml:24:593[24m
   
   - response [1m201[22m: 
     [31m[1mx [prevent response status code removal][22m must not remove response status code 201. This is a breaking change.[39m
-    at paths > /api/filler-route > post > responses > 201 [4m($workspace$/mvspec.yml:27:650)[24m
+    at [4mmvspec.yml:27:650[24m
     
     - body [1mapplication/json[22m: 
-      [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
-      at paths > /api/filler-route > post > responses > 201 > content > application/json > schema > properties > id [4m($workspace$/mvspec.yml:34:847)[24m
+      - property [1m/schema/properties/id[22m: 
       
+        [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
+        at [4mmvspec.yml:34:847[24m
+        
 
 
 [34mDiffing HEAD~1:specwithkey.json to specwithkey.json[39m
@@ -372,7 +382,7 @@ specification details:
 
 [31mx [1mPOST[22m /filler_route[39m: 
   [31m[1mx [operation path component naming check][22m filler_route is not camelCase[39m
-  at paths > /filler_route > post [4m($workspace$/specwithkey.yml:9:178)[24m
+  at [4mspecwithkey.yml:9:178[24m
   
 
 ...and 1 other endpoint
@@ -392,13 +402,13 @@ specification details:
 [31mx [1mPOST[22m /filler_route[39m: [32madded[39m
   
   [31m[1mx [operation path component naming check][22m filler_route is not camelCase[39m
-  at paths > /filler_route > post [4m($workspace$/movedspec.yml:9:178)[24m
+  at [4mmovedspec.yml:9:178[24m
   
 
 [31mx [1mPOST[22m /api/filler-route[39m: [32madded[39m
   
   [31m[1mx [operation path component naming check][22m filler-route is not camelCase[39m
-  at paths > /api/filler-route > post [4m($workspace$/movedspec.yml:24:593)[24m
+  at [4mmovedspec.yml:24:593[24m
   
 
 ...and 2 other endpoints
@@ -1227,30 +1237,34 @@ specification details:
 [31mx [1mPOST[22m /filler_route[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at paths > /filler_route > post [4m($workspace$/mvspec.yml:8:105)[24m
+  at [4mmvspec.yml:8:105[24m
   
   - response [1m201[22m: 
     [31m[1mx [prevent response status code removal][22m must not remove response status code 201. This is a breaking change.[39m
-    at paths > /filler_route > post > responses > 201 [4m($workspace$/mvspec.yml:11:162)[24m
+    at [4mmvspec.yml:11:162[24m
     
     - body [1mapplication/json[22m: 
-      [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
-      at paths > /filler_route > post > responses > 201 > content > application/json > schema > properties > id [4m($workspace$/mvspec.yml:18:359)[24m
+      - property [1m/schema/properties/id[22m: 
       
+        [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
+        at [4mmvspec.yml:18:359[24m
+        
 
 [31mx [1mPOST[22m /api/filler-route[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at paths > /api/filler-route > post [4m($workspace$/mvspec.yml:23:520)[24m
+  at [4mmvspec.yml:23:520[24m
   
   - response [1m201[22m: 
     [31m[1mx [prevent response status code removal][22m must not remove response status code 201. This is a breaking change.[39m
-    at paths > /api/filler-route > post > responses > 201 [4m($workspace$/mvspec.yml:26:577)[24m
+    at [4mmvspec.yml:26:577[24m
     
     - body [1mapplication/json[22m: 
-      [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
-      at paths > /api/filler-route > post > responses > 201 > content > application/json > schema > properties > id [4m($workspace$/mvspec.yml:33:774)[24m
+      - property [1m/schema/properties/id[22m: 
       
+        [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
+        at [4mmvspec.yml:33:774[24m
+        
 
 
 [34mDiffing empty spec to movedspec.yml[39m
