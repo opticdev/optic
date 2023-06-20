@@ -25,8 +25,8 @@ import { Instance as Chalk } from 'chalk';
 import { getLocation } from '@useoptic/openapi-utilities/build/openapi3/traverser';
 import { interpretFieldLevelDiffs } from './common';
 import { ParseResult } from '../../../utils/spec-loaders';
-import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import isUrl from 'is-url';
+import urljoin from 'url-join';
 
 const chalk = new Chalk();
 
@@ -36,6 +36,48 @@ const changed = chalk.yellow('changed');
 type SourcemapReaderFindLine = ReturnType<
   typeof sourcemapReader
 >['findFileAndLines'];
+
+type SourcemapLine = NonNullable<ReturnType<SourcemapReaderFindLine>>;
+
+export type SourcemapOptions =
+  | {
+      ciProvider: 'github' | 'gitlab';
+      remote: string;
+      sha: string;
+      root: string;
+    }
+  | {
+      ciProvider: undefined;
+    };
+
+function getSourcemapLink(
+  sourcemap: SourcemapLine,
+  options: SourcemapOptions
+): string {
+  if (isUrl(sourcemap.filePath)) {
+    return `${chalk.underline(sourcemap.filePath)} line ${sourcemap.startLine}`;
+  } else if (options.ciProvider) {
+    const pathFromRoot = path.relative(options.root, sourcemap.filePath);
+    return options.ciProvider === 'github'
+      ? urljoin(
+          options.remote,
+          'tree',
+          options.sha,
+          `${pathFromRoot}#L${sourcemap.startLine}`
+        )
+      : urljoin(
+          options.remote,
+          '-/blob',
+          options.sha,
+          `${pathFromRoot}#L${sourcemap.startLine}`
+        );
+  } else {
+    const relativePath = path.relative(process.cwd(), sourcemap.filePath);
+    return chalk.underline(
+      `${relativePath}:${sourcemap.startLine}:${sourcemap.startPosition}`
+    );
+  }
+}
 
 const INDENTATION = '  ';
 const formatRawValue = (value: string, indent: string): string => {
@@ -153,7 +195,7 @@ function* getRuleLogs(
     before: SourcemapReaderFindLine;
     after: SourcemapReaderFindLine;
   },
-  options: {
+  options: SourcemapOptions & {
     verbose: boolean;
   }
 ) {
@@ -190,15 +232,7 @@ function* getRuleLogs(
         ? sourcemapReaders.before(result.location.jsonPath)
         : sourcemapReaders.after(result.location.jsonPath);
 
-    const sourcemapText = sourcemap
-      ? isUrl(sourcemap.filePath)
-        ? `${chalk.underline(sourcemap.filePath)} line ${sourcemap.startLine}`
-        : chalk.underline(
-            `${path.relative(process.cwd(), sourcemap.filePath)}:${
-              sourcemap.startLine
-            }:${sourcemap.startPosition}`
-          )
-      : '';
+    const sourcemapText = sourcemap ? getSourcemapLink(sourcemap, options) : '';
 
     yield `at ${sourcemapText}`;
     yield '';
@@ -239,7 +273,7 @@ export function* terminalChangelog(
     results: RuleResult[];
     diffs: ObjectDiff[];
   },
-  options: {
+  options: SourcemapOptions & {
     path: string;
     check: boolean;
     inCi: boolean;
@@ -349,7 +383,7 @@ function* getEndpointLogs(
     before: SourcemapReaderFindLine;
     after: SourcemapReaderFindLine;
   },
-  options: {
+  options: SourcemapOptions & {
     verbose: boolean;
     check: boolean;
     severity: Severity;
@@ -430,7 +464,7 @@ function* getResponseChangeLogs(
     before: SourcemapReaderFindLine;
     after: SourcemapReaderFindLine;
   },
-  options: {
+  options: SourcemapOptions & {
     verbose: boolean;
   }
 ) {
@@ -474,7 +508,7 @@ function* getRequestChangeLogs(
     before: SourcemapReaderFindLine;
     after: SourcemapReaderFindLine;
   },
-  options: {
+  options: SourcemapOptions & {
     verbose: boolean;
   }
 ) {
@@ -509,7 +543,7 @@ function* getBodyChangeLogs(
     before: SourcemapReaderFindLine;
     after: SourcemapReaderFindLine;
   },
-  options: {
+  options: SourcemapOptions & {
     verbose: boolean;
     shouldRenderChildDiffs?: boolean;
   }
@@ -537,7 +571,7 @@ function* getBodyDetailLogs(
     before: SourcemapReaderFindLine;
     after: SourcemapReaderFindLine;
   },
-  options: {
+  options: SourcemapOptions & {
     verbose: boolean;
     shouldRenderChildDiffs?: boolean;
   }
@@ -593,7 +627,7 @@ function* getParameterLogs(
     before: SourcemapReaderFindLine;
     after: SourcemapReaderFindLine;
   },
-  options: {
+  options: SourcemapOptions & {
     verbose: boolean;
   }
 ) {

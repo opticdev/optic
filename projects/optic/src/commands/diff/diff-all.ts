@@ -23,7 +23,10 @@ import { checkOpenAPIVersion } from '@useoptic/openapi-io';
 import path from 'path';
 import { getApiUrl } from '../../utils/cloud-urls';
 import { getDetailsForGeneration } from '../../utils/generated';
-import { terminalChangelog } from './changelog-renderers/terminal-changelog';
+import {
+  SourcemapOptions,
+  terminalChangelog,
+} from './changelog-renderers/terminal-changelog';
 import { jsonChangelog } from './changelog-renderers/json-changelog';
 import * as Types from '../../client/optic-backend-types';
 
@@ -400,11 +403,27 @@ async function computeAll(
       changelogUrl = uploadResults?.changelogUrl ?? null;
     }
 
+    let sourcemapOptions: SourcemapOptions = {
+      ciProvider: undefined,
+    };
+    if (config.isInCi && config.vcs?.type === VCS.Git) {
+      const remote = await Git.guessRemoteOrigin();
+      if (remote) {
+        sourcemapOptions = {
+          ciProvider: remote.provider,
+          remote: remote.web_url,
+          sha: config.vcs.sha,
+          root: config.root,
+        };
+      }
+    }
+
     for (const log of terminalChangelog(
       { from: fromParseResults, to: toParseResults },
       changelogData,
       specResults,
       {
+        ...sourcemapOptions,
         path: to ?? from ?? '',
         check: options.check,
         inCi: config.isInCi,
