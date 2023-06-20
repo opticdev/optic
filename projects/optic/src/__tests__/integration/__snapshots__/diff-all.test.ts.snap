@@ -3,32 +3,34 @@
 exports[`diff-all diff all against a cloud tag 1`] = `
 "[34mDiffing cloud:api-id@main to spec.json[39m
 
+[31mx [39m[1mEmpty[22m [90mspec.json[39m
+[1mPreview docs: [22m https://useoptic.com/docs/cloud-get-started
+[1mOperations: [22m4 operations added, 1 removed
+[31mx [39m [1mChecks:[22m 0/1 passed 
+
 specification details:
 - /x-optic-url [32madded[39m
 - /openapi [33mchanged[39m
 
-[1mGET[22m /api/users: [31mremoved[39m
+[31mx [1mGET[22m /api/users[39m: [31mremoved[39m
   
-[1mGET[22m /example: [32madded[39m
+  [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
+  at [4mempty.json:1:45[24m
   
-[1mPOST[22m /example: [32madded[39m
-  
-[1mPUT[22m /example: [32madded[39m
-  
-[1mPATCH[22m /example: [32madded[39m
-  
-Checks
 
-  [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /api/users
-    removed rule[31m [error][39m: prevent operation removal
-      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
-      at paths > /api/users > get [4m(empty.json:1:45)[24m
+[32m✔ [1mGET[22m /example[39m: [32madded[39m
+  
 
+[32m✔ [1mPOST[22m /example[39m: [32madded[39m
+  
 
+[32m✔ [1mPUT[22m /example[39m: [32madded[39m
+  
 
-4 operations added, 1 removed
-[32m[1m0 passed[22m[39m
-[31m[1m1 errors[22m[39m
+[32m✔ [1mPATCH[22m /example[39m: [32madded[39m
+  
+
+...and 4 other endpoints
 
 [33mWarning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. optic diff-all --compare-from cloud:{tag}' can only runs on specs that have been added to optic[39m
 
@@ -41,207 +43,194 @@ spec-no-url.json [31m(untracked)[39m
 exports[`diff-all diff all in --generated 1`] = `
 "[34mDiffing cloud:generated-api@main to spec-no-url.json[39m
 
+[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/generated-api/runs/run-id
+[31mx [39m[1mEmpty[22m [90mspec-no-url.json[39m
+[1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/generated-api?specId=already-uploaded
+[1mOperations: [22m4 operations added, 1 removed
+[31mx [39m [1mChecks:[22m 0/1 passed 
+
 specification details:
 - /openapi [33mchanged[39m
 
-[1mGET[22m /api/users: [31mremoved[39m
+[31mx [1mGET[22m /api/users[39m: [31mremoved[39m
   
-[1mGET[22m /example: [32madded[39m
+  [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
+  at [4mempty.json:1:45[24m
   
-[1mPOST[22m /example: [32madded[39m
+
+[32m✔ [1mGET[22m /example[39m: [32madded[39m
   
-[1mPUT[22m /example: [32madded[39m
+
+[32m✔ [1mPOST[22m /example[39m: [32madded[39m
   
-[1mPATCH[22m /example: [32madded[39m
+
+[32m✔ [1mPUT[22m /example[39m: [32madded[39m
   
-Checks
 
-  [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /api/users
-    removed rule[31m [error][39m: prevent operation removal
-      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
-      at paths > /api/users > get [4m(empty.json:1:45)[24m
+[32m✔ [1mPATCH[22m /example[39m: [32madded[39m
+  
 
+...and 4 other endpoints
 
-
-4 operations added, 1 removed
-[32m[1m0 passed[22m[39m
-[31m[1m1 errors[22m[39m
-
-[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/generated-api/runs/run-id
 [34mDiffing cloud:api-id@main to spec.json[39m
+
+[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+[31mx [39m[1mEmpty[22m [90mspec.json[39m
+[1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
+[1mOperations: [22m4 operations added, 1 removed
+[31mx [39m [1mChecks:[22m 0/1 passed 
 
 specification details:
 - /x-optic-url [32madded[39m
 - /openapi [33mchanged[39m
 
-[1mGET[22m /api/users: [31mremoved[39m
+[31mx [1mGET[22m /api/users[39m: [31mremoved[39m
   
-[1mGET[22m /example: [32madded[39m
+  [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
+  at [4mempty.json:1:45[24m
   
-[1mPOST[22m /example: [32madded[39m
+
+[32m✔ [1mGET[22m /example[39m: [32madded[39m
   
-[1mPUT[22m /example: [32madded[39m
+
+[32m✔ [1mPOST[22m /example[39m: [32madded[39m
   
-[1mPATCH[22m /example: [32madded[39m
+
+[32m✔ [1mPUT[22m /example[39m: [32madded[39m
   
-Checks
 
-  [1m[41m[37m FAIL [39m[49m[22m [1mGET[22m /api/users
-    removed rule[31m [error][39m: prevent operation removal
-      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
-      at paths > /api/users > get [4m(empty.json:1:45)[24m
+[32m✔ [1mPATCH[22m /example[39m: [32madded[39m
+  
 
+...and 4 other endpoints
 
-
-4 operations added, 1 removed
-[32m[1m0 passed[22m[39m
-[31m[1m1 errors[22m[39m
-
-[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 "
 `;
 
 exports[`diff-all diff all not in the root of a repo 1`] = `
 "[34mDiffing HEAD~1:folder/in-folder.yml to in-folder.yml[39m
-No changes were detected
-
-Checks
-
-  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
-    requirement rule[31m [error][39m: operation path component naming check
-      [31m[31mx[39m[31m filler_route is not camelCase[39m
-      at paths > /filler_route > post [4m($workspace$/folder/in-folder.yml:9:178)[24m
-
-
-
-  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /api/filler-route
-    requirement rule[31m [error][39m: operation path component naming check
-      [31m[31mx[39m[31m filler-route is not camelCase[39m
-      at paths > /api/filler-route > post [4m($workspace$/folder/in-folder.yml:24:593)[24m
-
-
-
-
-[32m[1m0 passed[22m[39m
-[31m[1m2 errors[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+[31mx [39m[1ma spec[22m [90min-folder.yml[39m
+[1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
+[1mOperations: [22mNo operations changed
+[31mx [39m [1mChecks:[22m 0/2 passed 
+
+[31mx [1mPOST[22m /filler_route[39m: 
+  [31m[1mx [operation path component naming check][22m filler_route is not camelCase[39m
+  at [4min-folder.yml:9:178[24m
+  
+
+[31mx [1mPOST[22m /api/filler-route[39m: 
+  [31m[1mx [operation path component naming check][22m filler-route is not camelCase[39m
+  at [4min-folder.yml:24:593[24m
+  
+
+...and 2 other endpoints
+
 [34mDiffing HEAD~1:mvspec.yml to empty spec[39m
+
+[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+[31mx [39m[1mEmpty[22m [90mHEAD~1:mvspec.yml[39m
+[1mPreview docs: [22m https://useoptic.com/docs/cloud-get-started
+[1mOperations: [22m2 operations removed
+[31mx [39m [1mChecks:[22m 0/6 passed 
 
 specification details:
 - /x-optic-url, /info/description [31mremoved[39m
 
-[1mPOST[22m /filler_route: [31mremoved[39m
+[31mx [1mPOST[22m /filler_route[39m: [31mremoved[39m
   
-[1mPOST[22m /api/filler-route: [31mremoved[39m
+  [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
+  at [4m../mvspec.yml:9:178[24m
   
-Checks
+  - response [1m201[22m: 
+    [31m[1mx [prevent response status code removal][22m must not remove response status code 201. This is a breaking change.[39m
+    at [4m../mvspec.yml:12:235[24m
+    
+    - body [1mapplication/json[22m: 
+      - property [1m/schema/properties/id[22m: 
+      
+        [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
+        at [4m../mvspec.yml:19:432[24m
+        
 
-  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
-    removed rule[31m [error][39m: prevent operation removal
-      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
-      at paths > /filler_route > post [4m($workspace$/mvspec.yml:9:178)[24m
-
-    removed rule[31m [error][39m: prevent removing response property
-      [31m[31mx[39m[31m cannot remove response property 'id'. This is a breaking change.[39m
-      at paths > /filler_route > post > responses > 201 > content > application/json > schema > properties > id [4m($workspace$/mvspec.yml:19:432)[24m
-
-    removed rule[31m [error][39m: prevent response status code removal
-      [31m[31mx[39m[31m must not remove response status code 201. This is a breaking change.[39m
-      at paths > /filler_route > post > responses > 201 [4m($workspace$/mvspec.yml:12:235)[24m
-
-
-
-  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /api/filler-route
-    removed rule[31m [error][39m: prevent operation removal
-      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
-      at paths > /api/filler-route > post [4m($workspace$/mvspec.yml:24:593)[24m
-
-    removed rule[31m [error][39m: prevent removing response property
-      [31m[31mx[39m[31m cannot remove response property 'id'. This is a breaking change.[39m
-      at paths > /api/filler-route > post > responses > 201 > content > application/json > schema > properties > id [4m($workspace$/mvspec.yml:34:847)[24m
-
-    removed rule[31m [error][39m: prevent response status code removal
-      [31m[31mx[39m[31m must not remove response status code 201. This is a breaking change.[39m
-      at paths > /api/filler-route > post > responses > 201 [4m($workspace$/mvspec.yml:27:650)[24m
+[31mx [1mPOST[22m /api/filler-route[39m: [31mremoved[39m
+  
+  [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
+  at [4m../mvspec.yml:24:593[24m
+  
+  - response [1m201[22m: 
+    [31m[1mx [prevent response status code removal][22m must not remove response status code 201. This is a breaking change.[39m
+    at [4m../mvspec.yml:27:650[24m
+    
+    - body [1mapplication/json[22m: 
+      - property [1m/schema/properties/id[22m: 
+      
+        [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
+        at [4m../mvspec.yml:34:847[24m
+        
 
 
-
-2 operations removed
-[32m[1m0 passed[22m[39m
-[31m[1m6 errors[22m[39m
-
-[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 [34mDiffing HEAD~1:specwithkey.json to ../specwithkey.json[39m
-No changes were detected
-
-Checks
-
-  [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /example
-
-
-  [1m[42m[37m PASS [39m[49m[22m [1mPATCH[22m /example
-
-
-  [1m[42m[37m PASS [39m[49m[22m [1mPOST[22m /example
-
-
-  [1m[42m[37m PASS [39m[49m[22m [1mPUT[22m /example
-
-
-
-[32m[1m4 passed[22m[39m
-[31m[1m0 errors[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+[32m✔ [39m[1mAPI 1[22m [90m../specwithkey.json[39m
+[1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
+[1mOperations: [22mNo operations changed
+[32m✔ [39m [1mChecks:[22m 4/4 passed 
+
+[32m✔ [1mGET[22m /example[39m: 
+
+[32m✔ [1mPATCH[22m /example[39m: 
+
+[32m✔ [1mPOST[22m /example[39m: 
+
+[32m✔ [1mPUT[22m /example[39m: 
+
+...and 4 other endpoints
+
 [34mDiffing HEAD~1:specwithkey.yml to ../specwithkey.yml[39m
-No changes were detected
-
-Checks
-
-  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
-    requirement rule[31m [error][39m: operation path component naming check
-      [31m[31mx[39m[31m filler_route is not camelCase[39m
-      at paths > /filler_route > post [4m($workspace$/specwithkey.yml:9:178)[24m
-
-
-
-
-[32m[1m0 passed[22m[39m
-[31m[1m1 errors[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+[31mx [39m[1ma spec[22m [90m../specwithkey.yml[39m
+[1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
+[1mOperations: [22mNo operations changed
+[31mx [39m [1mChecks:[22m 0/1 passed 
+
+[31mx [1mPOST[22m /filler_route[39m: 
+  [31m[1mx [operation path component naming check][22m filler_route is not camelCase[39m
+  at [4m../specwithkey.yml:9:178[24m
+  
+
+...and 1 other endpoint
+
 [34mDiffing empty spec to ../movedspec.yml[39m
+
+[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+[31mx [39m[1ma spec[22m [90m../movedspec.yml[39m
+[1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
+[1mOperations: [22m2 operations added
+[31mx [39m [1mChecks:[22m 0/2 passed 
 
 specification details:
 - /x-optic-url, /info/description [32madded[39m
 - /openapi, /info/version, /info/title [33mchanged[39m
 
-[1mPOST[22m /filler_route: [32madded[39m
+[31mx [1mPOST[22m /filler_route[39m: [32madded[39m
   
-[1mPOST[22m /api/filler-route: [32madded[39m
+  [31m[1mx [operation path component naming check][22m filler_route is not camelCase[39m
+  at [4m../movedspec.yml:9:178[24m
   
-Checks
 
-  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
-    requirement rule[31m [error][39m: operation path component naming check
-      [31m[31mx[39m[31m filler_route is not camelCase[39m
-      at paths > /filler_route > post [4m($workspace$/movedspec.yml:9:178)[24m
+[31mx [1mPOST[22m /api/filler-route[39m: [32madded[39m
+  
+  [31m[1mx [operation path component naming check][22m filler-route is not camelCase[39m
+  at [4m../movedspec.yml:24:593[24m
+  
 
+...and 2 other endpoints
 
-
-  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /api/filler-route
-    requirement rule[31m [error][39m: operation path component naming check
-      [31m[31mx[39m[31m filler-route is not camelCase[39m
-      at paths > /api/filler-route > post [4m($workspace$/movedspec.yml:24:593)[24m
-
-
-
-2 operations added
-[32m[1m0 passed[22m[39m
-[31m[1m2 errors[22m[39m
-
-[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 [33mWarning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. 'optic diff-all --upload' can only runs on specs that have been added to optic[39m
 
 Run the \`optic api add\` command to add these specs to optic
@@ -255,190 +244,175 @@ Run the \`optic api add\` command to add these specs to optic
 exports[`diff-all diff all with glob and ignores 1`] = `
 "[34mDiffing HEAD~1:folder-to-run/should-run.yml to empty spec[39m
 
+[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+[31mx [39m[1mEmpty[22m [90mHEAD~1:folder-to-run/should-run.yml[39m
+[1mPreview docs: [22m https://useoptic.com/docs/cloud-get-started
+[1mOperations: [22m1 operation removed
+[31mx [39m [1mChecks:[22m 0/3 passed 
+
 specification details:
 - /x-optic-url, /info/description [31mremoved[39m
 
-[1mPOST[22m /filler_route: [31mremoved[39m
+[31mx [1mPOST[22m /filler_route[39m: [31mremoved[39m
   
-Checks
-
-  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
-    removed rule[31m [error][39m: prevent operation removal
-      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
-      at paths > /filler_route > post [4m($workspace$/folder-to-run/should-run.yml:9:178)[24m
-
-    removed rule[31m [error][39m: prevent removing response property
-      [31m[31mx[39m[31m cannot remove response property 'id'. This is a breaking change.[39m
-      at paths > /filler_route > post > responses > 201 > content > application/json > schema > properties > id [4m($workspace$/folder-to-run/should-run.yml:19:432)[24m
-
-    removed rule[31m [error][39m: prevent response status code removal
-      [31m[31mx[39m[31m must not remove response status code 201. This is a breaking change.[39m
-      at paths > /filler_route > post > responses > 201 [4m($workspace$/folder-to-run/should-run.yml:12:235)[24m
-
+  [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
+  at [4mfolder-to-run/should-run.yml:9:178[24m
+  
+  - response [1m201[22m: 
+    [31m[1mx [prevent response status code removal][22m must not remove response status code 201. This is a breaking change.[39m
+    at [4mfolder-to-run/should-run.yml:12:235[24m
+    
+    - body [1mapplication/json[22m: 
+      - property [1m/schema/properties/id[22m: 
+      
+        [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
+        at [4mfolder-to-run/should-run.yml:19:432[24m
+        
 
 
-1 operation removed
-[32m[1m0 passed[22m[39m
-[31m[1m3 errors[22m[39m
+[34mDiffing empty spec to folder-to-run/should-run-mved.yml[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
-[34mDiffing empty spec to folder-to-run/should-run-mved.yml[39m
+[32m✔ [39m[1ma spec[22m [90mfolder-to-run/should-run-mved.yml[39m
+[1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
+[1mOperations: [22m1 operation added
 
 specification details:
 - /x-optic-url, /info/description [32madded[39m
 - /openapi, /info/version, /info/title [33mchanged[39m
 
-[1mPOST[22m /filler_route: [32madded[39m
+[32m✔ [1mPOST[22m /filler_route[39m: [32madded[39m
   
-1 operation added
-[32m[1m0 passed[22m[39m
-[31m[1m0 errors[22m[39m
 
-[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+...and 1 other endpoint
+
 "
 `;
 
 exports[`diff-all diffs all files in a workspace with x-optic-url keys with --upload 1`] = `
 "[34mDiffing HEAD~1:folder/in-folder.yml to folder/in-folder.yml[39m
-No changes were detected
-
-Checks
-
-  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
-    requirement rule[31m [error][39m: operation path component naming check
-      [31m[31mx[39m[31m filler_route is not camelCase[39m
-      at paths > /filler_route > post [4m($workspace$/folder/in-folder.yml:9:178)[24m
-
-
-
-  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /api/filler-route
-    requirement rule[31m [error][39m: operation path component naming check
-      [31m[31mx[39m[31m filler-route is not camelCase[39m
-      at paths > /api/filler-route > post [4m($workspace$/folder/in-folder.yml:24:593)[24m
-
-
-
-
-[32m[1m0 passed[22m[39m
-[31m[1m2 errors[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+[31mx [39m[1ma spec[22m [90mfolder/in-folder.yml[39m
+[1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
+[1mOperations: [22mNo operations changed
+[31mx [39m [1mChecks:[22m 0/2 passed 
+
+[31mx [1mPOST[22m /filler_route[39m: 
+  [31m[1mx [operation path component naming check][22m filler_route is not camelCase[39m
+  at [4mfolder/in-folder.yml:9:178[24m
+  
+
+[31mx [1mPOST[22m /api/filler-route[39m: 
+  [31m[1mx [operation path component naming check][22m filler-route is not camelCase[39m
+  at [4mfolder/in-folder.yml:24:593[24m
+  
+
+...and 2 other endpoints
+
 [34mDiffing HEAD~1:mvspec.yml to empty spec[39m
+
+[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+[31mx [39m[1mEmpty[22m [90mHEAD~1:mvspec.yml[39m
+[1mPreview docs: [22m https://useoptic.com/docs/cloud-get-started
+[1mOperations: [22m2 operations removed
+[31mx [39m [1mChecks:[22m 0/6 passed 
 
 specification details:
 - /x-optic-url, /info/description [31mremoved[39m
 
-[1mPOST[22m /filler_route: [31mremoved[39m
+[31mx [1mPOST[22m /filler_route[39m: [31mremoved[39m
   
-[1mPOST[22m /api/filler-route: [31mremoved[39m
+  [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
+  at [4mmvspec.yml:9:178[24m
   
-Checks
+  - response [1m201[22m: 
+    [31m[1mx [prevent response status code removal][22m must not remove response status code 201. This is a breaking change.[39m
+    at [4mmvspec.yml:12:235[24m
+    
+    - body [1mapplication/json[22m: 
+      - property [1m/schema/properties/id[22m: 
+      
+        [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
+        at [4mmvspec.yml:19:432[24m
+        
 
-  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
-    removed rule[31m [error][39m: prevent operation removal
-      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
-      at paths > /filler_route > post [4m($workspace$/mvspec.yml:9:178)[24m
-
-    removed rule[31m [error][39m: prevent removing response property
-      [31m[31mx[39m[31m cannot remove response property 'id'. This is a breaking change.[39m
-      at paths > /filler_route > post > responses > 201 > content > application/json > schema > properties > id [4m($workspace$/mvspec.yml:19:432)[24m
-
-    removed rule[31m [error][39m: prevent response status code removal
-      [31m[31mx[39m[31m must not remove response status code 201. This is a breaking change.[39m
-      at paths > /filler_route > post > responses > 201 [4m($workspace$/mvspec.yml:12:235)[24m
-
-
-
-  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /api/filler-route
-    removed rule[31m [error][39m: prevent operation removal
-      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
-      at paths > /api/filler-route > post [4m($workspace$/mvspec.yml:24:593)[24m
-
-    removed rule[31m [error][39m: prevent removing response property
-      [31m[31mx[39m[31m cannot remove response property 'id'. This is a breaking change.[39m
-      at paths > /api/filler-route > post > responses > 201 > content > application/json > schema > properties > id [4m($workspace$/mvspec.yml:34:847)[24m
-
-    removed rule[31m [error][39m: prevent response status code removal
-      [31m[31mx[39m[31m must not remove response status code 201. This is a breaking change.[39m
-      at paths > /api/filler-route > post > responses > 201 [4m($workspace$/mvspec.yml:27:650)[24m
+[31mx [1mPOST[22m /api/filler-route[39m: [31mremoved[39m
+  
+  [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
+  at [4mmvspec.yml:24:593[24m
+  
+  - response [1m201[22m: 
+    [31m[1mx [prevent response status code removal][22m must not remove response status code 201. This is a breaking change.[39m
+    at [4mmvspec.yml:27:650[24m
+    
+    - body [1mapplication/json[22m: 
+      - property [1m/schema/properties/id[22m: 
+      
+        [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
+        at [4mmvspec.yml:34:847[24m
+        
 
 
-
-2 operations removed
-[32m[1m0 passed[22m[39m
-[31m[1m6 errors[22m[39m
-
-[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 [34mDiffing HEAD~1:specwithkey.json to specwithkey.json[39m
-No changes were detected
-
-Checks
-
-  [1m[42m[37m PASS [39m[49m[22m [1mGET[22m /example
-
-
-  [1m[42m[37m PASS [39m[49m[22m [1mPATCH[22m /example
-
-
-  [1m[42m[37m PASS [39m[49m[22m [1mPOST[22m /example
-
-
-  [1m[42m[37m PASS [39m[49m[22m [1mPUT[22m /example
-
-
-
-[32m[1m4 passed[22m[39m
-[31m[1m0 errors[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+[32m✔ [39m[1mAPI 1[22m [90mspecwithkey.json[39m
+[1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
+[1mOperations: [22mNo operations changed
+[32m✔ [39m [1mChecks:[22m 4/4 passed 
+
+[32m✔ [1mGET[22m /example[39m: 
+
+[32m✔ [1mPATCH[22m /example[39m: 
+
+[32m✔ [1mPOST[22m /example[39m: 
+
+[32m✔ [1mPUT[22m /example[39m: 
+
+...and 4 other endpoints
+
 [34mDiffing HEAD~1:specwithkey.yml to specwithkey.yml[39m
-No changes were detected
-
-Checks
-
-  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
-    requirement rule[31m [error][39m: operation path component naming check
-      [31m[31mx[39m[31m filler_route is not camelCase[39m
-      at paths > /filler_route > post [4m($workspace$/specwithkey.yml:9:178)[24m
-
-
-
-
-[32m[1m0 passed[22m[39m
-[31m[1m1 errors[22m[39m
 
 [32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+[31mx [39m[1ma spec[22m [90mspecwithkey.yml[39m
+[1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
+[1mOperations: [22mNo operations changed
+[31mx [39m [1mChecks:[22m 0/1 passed 
+
+[31mx [1mPOST[22m /filler_route[39m: 
+  [31m[1mx [operation path component naming check][22m filler_route is not camelCase[39m
+  at [4mspecwithkey.yml:9:178[24m
+  
+
+...and 1 other endpoint
+
 [34mDiffing empty spec to movedspec.yml[39m
+
+[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+[31mx [39m[1ma spec[22m [90mmovedspec.yml[39m
+[1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
+[1mOperations: [22m2 operations added
+[31mx [39m [1mChecks:[22m 0/2 passed 
 
 specification details:
 - /x-optic-url, /info/description [32madded[39m
 - /openapi, /info/version, /info/title [33mchanged[39m
 
-[1mPOST[22m /filler_route: [32madded[39m
+[31mx [1mPOST[22m /filler_route[39m: [32madded[39m
   
-[1mPOST[22m /api/filler-route: [32madded[39m
+  [31m[1mx [operation path component naming check][22m filler_route is not camelCase[39m
+  at [4mmovedspec.yml:9:178[24m
   
-Checks
 
-  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
-    requirement rule[31m [error][39m: operation path component naming check
-      [31m[31mx[39m[31m filler_route is not camelCase[39m
-      at paths > /filler_route > post [4m($workspace$/movedspec.yml:9:178)[24m
+[31mx [1mPOST[22m /api/filler-route[39m: [32madded[39m
+  
+  [31m[1mx [operation path component naming check][22m filler-route is not camelCase[39m
+  at [4mmovedspec.yml:24:593[24m
+  
 
+...and 2 other endpoints
 
-
-  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /api/filler-route
-    requirement rule[31m [error][39m: operation path component naming check
-      [31m[31mx[39m[31m filler-route is not camelCase[39m
-      at paths > /api/filler-route > post [4m($workspace$/movedspec.yml:24:593)[24m
-
-
-
-2 operations added
-[32m[1m0 passed[22m[39m
-[31m[1m2 errors[22m[39m
-
-[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
 [33mWarning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. 'optic diff-all --upload' can only runs on specs that have been added to optic[39m
 
 Run the \`optic api add\` command to add these specs to optic
@@ -456,8 +430,74 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
       "apiName": "folder/in-folder.yml",
       "comparison": {
         "groupedDiffs": {
-          "endpoints": {},
-          "specification": [],
+          "endpoints": {
+            "/api/filler-route-~_~-POST": {
+              "cookieParameters": {},
+              "diffs": [],
+              "headerParameters": {},
+              "method": "POST",
+              "path": "/api/filler-route",
+              "pathParameters": {},
+              "queryParameters": {},
+              "request": {
+                "contents": {},
+                "diffs": [],
+                "rules": [],
+              },
+              "responses": {},
+              "rules": [
+                {
+                  "error": "filler-route is not camelCase",
+                  "exempted": false,
+                  "location": {
+                    "jsonPath": "/paths/~1api~1filler-route/post",
+                    "spec": "after",
+                  },
+                  "name": "operation path component naming check",
+                  "passed": false,
+                  "severity": 2,
+                  "trail": "",
+                  "type": "requirement",
+                  "where": "POST /api/filler-route",
+                },
+              ],
+            },
+            "/filler_route-~_~-POST": {
+              "cookieParameters": {},
+              "diffs": [],
+              "headerParameters": {},
+              "method": "POST",
+              "path": "/filler_route",
+              "pathParameters": {},
+              "queryParameters": {},
+              "request": {
+                "contents": {},
+                "diffs": [],
+                "rules": [],
+              },
+              "responses": {},
+              "rules": [
+                {
+                  "error": "filler_route is not camelCase",
+                  "exempted": false,
+                  "location": {
+                    "jsonPath": "/paths/~1filler_route/post",
+                    "spec": "after",
+                  },
+                  "name": "operation path component naming check",
+                  "passed": false,
+                  "severity": 2,
+                  "trail": "",
+                  "type": "requirement",
+                  "where": "POST /filler_route",
+                },
+              ],
+            },
+          },
+          "specification": {
+            "diffs": [],
+            "rules": [],
+          },
         },
         "results": [
           {
@@ -514,8 +554,78 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
               "request": {
                 "contents": {},
                 "diffs": [],
+                "rules": [],
               },
-              "responses": {},
+              "responses": {
+                "201": {
+                  "contents": {
+                    "application/json": {
+                      "examples": {
+                        "diffs": [],
+                        "rules": [],
+                      },
+                      "fields": {
+                        "/schema/properties/id": {
+                          "diffs": [],
+                          "rules": [
+                            {
+                              "error": "cannot remove response property 'id'. This is a breaking change.",
+                              "exempted": false,
+                              "location": {
+                                "jsonPath": "/paths/~1api~1filler-route/post/responses/201/content/application~1json/schema/properties/id",
+                                "spec": "before",
+                              },
+                              "name": "prevent removing response property",
+                              "passed": false,
+                              "severity": 2,
+                              "trail": "",
+                              "type": "removed",
+                              "where": "POST /api/filler-route response 201 response body: application/json property id",
+                            },
+                          ],
+                        },
+                      },
+                    },
+                  },
+                  "diffs": [],
+                  "headers": {
+                    "diffs": [],
+                    "rules": [],
+                  },
+                  "rules": [
+                    {
+                      "error": "must not remove response status code 201. This is a breaking change.",
+                      "exempted": false,
+                      "location": {
+                        "jsonPath": "/paths/~1api~1filler-route/post/responses/201",
+                        "spec": "before",
+                      },
+                      "name": "prevent response status code removal",
+                      "passed": false,
+                      "severity": 2,
+                      "trail": "",
+                      "type": "removed",
+                      "where": "POST /api/filler-route response 201",
+                    },
+                  ],
+                },
+              },
+              "rules": [
+                {
+                  "error": "cannot remove an operation. This is a breaking change.",
+                  "exempted": false,
+                  "location": {
+                    "jsonPath": "/paths/~1api~1filler-route/post",
+                    "spec": "before",
+                  },
+                  "name": "prevent operation removal",
+                  "passed": false,
+                  "severity": 2,
+                  "trail": "",
+                  "type": "removed",
+                  "where": "POST /api/filler-route",
+                },
+              ],
             },
             "/filler_route-~_~-POST": {
               "cookieParameters": {},
@@ -534,24 +644,97 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
               "request": {
                 "contents": {},
                 "diffs": [],
+                "rules": [],
               },
-              "responses": {},
+              "responses": {
+                "201": {
+                  "contents": {
+                    "application/json": {
+                      "examples": {
+                        "diffs": [],
+                        "rules": [],
+                      },
+                      "fields": {
+                        "/schema/properties/id": {
+                          "diffs": [],
+                          "rules": [
+                            {
+                              "error": "cannot remove response property 'id'. This is a breaking change.",
+                              "exempted": false,
+                              "location": {
+                                "jsonPath": "/paths/~1filler_route/post/responses/201/content/application~1json/schema/properties/id",
+                                "spec": "before",
+                              },
+                              "name": "prevent removing response property",
+                              "passed": false,
+                              "severity": 2,
+                              "trail": "",
+                              "type": "removed",
+                              "where": "POST /filler_route response 201 response body: application/json property id",
+                            },
+                          ],
+                        },
+                      },
+                    },
+                  },
+                  "diffs": [],
+                  "headers": {
+                    "diffs": [],
+                    "rules": [],
+                  },
+                  "rules": [
+                    {
+                      "error": "must not remove response status code 201. This is a breaking change.",
+                      "exempted": false,
+                      "location": {
+                        "jsonPath": "/paths/~1filler_route/post/responses/201",
+                        "spec": "before",
+                      },
+                      "name": "prevent response status code removal",
+                      "passed": false,
+                      "severity": 2,
+                      "trail": "",
+                      "type": "removed",
+                      "where": "POST /filler_route response 201",
+                    },
+                  ],
+                },
+              },
+              "rules": [
+                {
+                  "error": "cannot remove an operation. This is a breaking change.",
+                  "exempted": false,
+                  "location": {
+                    "jsonPath": "/paths/~1filler_route/post",
+                    "spec": "before",
+                  },
+                  "name": "prevent operation removal",
+                  "passed": false,
+                  "severity": 2,
+                  "trail": "",
+                  "type": "removed",
+                  "where": "POST /filler_route",
+                },
+              ],
             },
           },
-          "specification": [
-            {
-              "before": "/x-optic-url",
-              "change": "removed",
-              "pathReconciliation": [],
-              "trail": "/x-optic-url",
-            },
-            {
-              "before": "/info/description",
-              "change": "removed",
-              "pathReconciliation": [],
-              "trail": "/info/description",
-            },
-          ],
+          "specification": {
+            "diffs": [
+              {
+                "before": "/x-optic-url",
+                "change": "removed",
+                "pathReconciliation": [],
+                "trail": "/x-optic-url",
+              },
+              {
+                "before": "/info/description",
+                "change": "removed",
+                "pathReconciliation": [],
+                "trail": "/info/description",
+              },
+            ],
+            "rules": [],
+          },
         },
         "results": [
           {
@@ -642,8 +825,132 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
       "apiName": "specwithkey.json",
       "comparison": {
         "groupedDiffs": {
-          "endpoints": {},
-          "specification": [],
+          "endpoints": {
+            "/example-~_~-GET": {
+              "cookieParameters": {},
+              "diffs": [],
+              "headerParameters": {},
+              "method": "GET",
+              "path": "/example",
+              "pathParameters": {},
+              "queryParameters": {},
+              "request": {
+                "contents": {},
+                "diffs": [],
+                "rules": [],
+              },
+              "responses": {},
+              "rules": [
+                {
+                  "exempted": false,
+                  "location": {
+                    "jsonPath": "/paths/~1example/get",
+                    "spec": "after",
+                  },
+                  "name": "operation path component naming check",
+                  "passed": true,
+                  "severity": 2,
+                  "trail": "",
+                  "type": "requirement",
+                  "where": "GET /example",
+                },
+              ],
+            },
+            "/example-~_~-PATCH": {
+              "cookieParameters": {},
+              "diffs": [],
+              "headerParameters": {},
+              "method": "PATCH",
+              "path": "/example",
+              "pathParameters": {},
+              "queryParameters": {},
+              "request": {
+                "contents": {},
+                "diffs": [],
+                "rules": [],
+              },
+              "responses": {},
+              "rules": [
+                {
+                  "exempted": false,
+                  "location": {
+                    "jsonPath": "/paths/~1example/patch",
+                    "spec": "after",
+                  },
+                  "name": "operation path component naming check",
+                  "passed": true,
+                  "severity": 2,
+                  "trail": "",
+                  "type": "requirement",
+                  "where": "PATCH /example",
+                },
+              ],
+            },
+            "/example-~_~-POST": {
+              "cookieParameters": {},
+              "diffs": [],
+              "headerParameters": {},
+              "method": "POST",
+              "path": "/example",
+              "pathParameters": {},
+              "queryParameters": {},
+              "request": {
+                "contents": {},
+                "diffs": [],
+                "rules": [],
+              },
+              "responses": {},
+              "rules": [
+                {
+                  "exempted": false,
+                  "location": {
+                    "jsonPath": "/paths/~1example/post",
+                    "spec": "after",
+                  },
+                  "name": "operation path component naming check",
+                  "passed": true,
+                  "severity": 2,
+                  "trail": "",
+                  "type": "requirement",
+                  "where": "POST /example",
+                },
+              ],
+            },
+            "/example-~_~-PUT": {
+              "cookieParameters": {},
+              "diffs": [],
+              "headerParameters": {},
+              "method": "PUT",
+              "path": "/example",
+              "pathParameters": {},
+              "queryParameters": {},
+              "request": {
+                "contents": {},
+                "diffs": [],
+                "rules": [],
+              },
+              "responses": {},
+              "rules": [
+                {
+                  "exempted": false,
+                  "location": {
+                    "jsonPath": "/paths/~1example/put",
+                    "spec": "after",
+                  },
+                  "name": "operation path component naming check",
+                  "passed": true,
+                  "severity": 2,
+                  "trail": "",
+                  "type": "requirement",
+                  "where": "PUT /example",
+                },
+              ],
+            },
+          },
+          "specification": {
+            "diffs": [],
+            "rules": [],
+          },
         },
         "results": [
           {
@@ -704,8 +1011,43 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
       "apiName": "specwithkey.yml",
       "comparison": {
         "groupedDiffs": {
-          "endpoints": {},
-          "specification": [],
+          "endpoints": {
+            "/filler_route-~_~-POST": {
+              "cookieParameters": {},
+              "diffs": [],
+              "headerParameters": {},
+              "method": "POST",
+              "path": "/filler_route",
+              "pathParameters": {},
+              "queryParameters": {},
+              "request": {
+                "contents": {},
+                "diffs": [],
+                "rules": [],
+              },
+              "responses": {},
+              "rules": [
+                {
+                  "error": "filler_route is not camelCase",
+                  "exempted": false,
+                  "location": {
+                    "jsonPath": "/paths/~1filler_route/post",
+                    "spec": "after",
+                  },
+                  "name": "operation path component naming check",
+                  "passed": false,
+                  "severity": 2,
+                  "trail": "",
+                  "type": "requirement",
+                  "where": "POST /filler_route",
+                },
+              ],
+            },
+          },
+          "specification": {
+            "diffs": [],
+            "rules": [],
+          },
         },
         "results": [
           {
@@ -749,8 +1091,25 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
               "request": {
                 "contents": {},
                 "diffs": [],
+                "rules": [],
               },
               "responses": {},
+              "rules": [
+                {
+                  "error": "filler-route is not camelCase",
+                  "exempted": false,
+                  "location": {
+                    "jsonPath": "/paths/~1api~1filler-route/post",
+                    "spec": "after",
+                  },
+                  "name": "operation path component naming check",
+                  "passed": false,
+                  "severity": 2,
+                  "trail": "",
+                  "type": "requirement",
+                  "where": "POST /api/filler-route",
+                },
+              ],
             },
             "/filler_route-~_~-POST": {
               "cookieParameters": {},
@@ -769,40 +1128,60 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
               "request": {
                 "contents": {},
                 "diffs": [],
+                "rules": [],
               },
               "responses": {},
+              "rules": [
+                {
+                  "error": "filler_route is not camelCase",
+                  "exempted": false,
+                  "location": {
+                    "jsonPath": "/paths/~1filler_route/post",
+                    "spec": "after",
+                  },
+                  "name": "operation path component naming check",
+                  "passed": false,
+                  "severity": 2,
+                  "trail": "",
+                  "type": "requirement",
+                  "where": "POST /filler_route",
+                },
+              ],
             },
           },
-          "specification": [
-            {
-              "after": "/openapi",
-              "before": "/openapi",
-              "change": "changed",
-              "trail": "/openapi",
-            },
-            {
-              "after": "/x-optic-url",
-              "change": "added",
-              "trail": "/x-optic-url",
-            },
-            {
-              "after": "/info/version",
-              "before": "/info/version",
-              "change": "changed",
-              "trail": "/info/version",
-            },
-            {
-              "after": "/info/title",
-              "before": "/info/title",
-              "change": "changed",
-              "trail": "/info/title",
-            },
-            {
-              "after": "/info/description",
-              "change": "added",
-              "trail": "/info/description",
-            },
-          ],
+          "specification": {
+            "diffs": [
+              {
+                "after": "/openapi",
+                "before": "/openapi",
+                "change": "changed",
+                "trail": "/openapi",
+              },
+              {
+                "after": "/x-optic-url",
+                "change": "added",
+                "trail": "/x-optic-url",
+              },
+              {
+                "after": "/info/version",
+                "before": "/info/version",
+                "change": "changed",
+                "trail": "/info/version",
+              },
+              {
+                "after": "/info/title",
+                "before": "/info/title",
+                "change": "changed",
+                "trail": "/info/title",
+              },
+              {
+                "after": "/info/description",
+                "change": "added",
+                "trail": "/info/description",
+              },
+            ],
+            "rules": [],
+          },
         },
         "results": [
           {
@@ -847,62 +1226,64 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
 exports[`diff-all diffs all files in a workspace without --upload 1`] = `
 "[34mDiffing HEAD~1:mvspec.yml to empty spec[39m
 
+[31mx [39m[1mEmpty[22m [90mHEAD~1:mvspec.yml[39m
+[1mPreview docs: [22m https://useoptic.com/docs/cloud-get-started
+[1mOperations: [22m2 operations removed
+[31mx [39m [1mChecks:[22m 0/6 passed 
+
 specification details:
 - /info/description [31mremoved[39m
 
-[1mPOST[22m /filler_route: [31mremoved[39m
+[31mx [1mPOST[22m /filler_route[39m: [31mremoved[39m
   
-[1mPOST[22m /api/filler-route: [31mremoved[39m
+  [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
+  at [4mmvspec.yml:8:105[24m
   
-Checks
+  - response [1m201[22m: 
+    [31m[1mx [prevent response status code removal][22m must not remove response status code 201. This is a breaking change.[39m
+    at [4mmvspec.yml:11:162[24m
+    
+    - body [1mapplication/json[22m: 
+      - property [1m/schema/properties/id[22m: 
+      
+        [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
+        at [4mmvspec.yml:18:359[24m
+        
 
-  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /filler_route
-    removed rule[31m [error][39m: prevent operation removal
-      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
-      at paths > /filler_route > post [4m($workspace$/mvspec.yml:8:105)[24m
+[31mx [1mPOST[22m /api/filler-route[39m: [31mremoved[39m
+  
+  [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
+  at [4mmvspec.yml:23:520[24m
+  
+  - response [1m201[22m: 
+    [31m[1mx [prevent response status code removal][22m must not remove response status code 201. This is a breaking change.[39m
+    at [4mmvspec.yml:26:577[24m
+    
+    - body [1mapplication/json[22m: 
+      - property [1m/schema/properties/id[22m: 
+      
+        [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
+        at [4mmvspec.yml:33:774[24m
+        
 
-    removed rule[31m [error][39m: prevent removing response property
-      [31m[31mx[39m[31m cannot remove response property 'id'. This is a breaking change.[39m
-      at paths > /filler_route > post > responses > 201 > content > application/json > schema > properties > id [4m($workspace$/mvspec.yml:18:359)[24m
-
-    removed rule[31m [error][39m: prevent response status code removal
-      [31m[31mx[39m[31m must not remove response status code 201. This is a breaking change.[39m
-      at paths > /filler_route > post > responses > 201 [4m($workspace$/mvspec.yml:11:162)[24m
-
-
-
-  [1m[41m[37m FAIL [39m[49m[22m [1mPOST[22m /api/filler-route
-    removed rule[31m [error][39m: prevent operation removal
-      [31m[31mx[39m[31m cannot remove an operation. This is a breaking change.[39m
-      at paths > /api/filler-route > post [4m($workspace$/mvspec.yml:23:520)[24m
-
-    removed rule[31m [error][39m: prevent removing response property
-      [31m[31mx[39m[31m cannot remove response property 'id'. This is a breaking change.[39m
-      at paths > /api/filler-route > post > responses > 201 > content > application/json > schema > properties > id [4m($workspace$/mvspec.yml:33:774)[24m
-
-    removed rule[31m [error][39m: prevent response status code removal
-      [31m[31mx[39m[31m must not remove response status code 201. This is a breaking change.[39m
-      at paths > /api/filler-route > post > responses > 201 [4m($workspace$/mvspec.yml:26:577)[24m
-
-
-
-2 operations removed
-[32m[1m0 passed[22m[39m
-[31m[1m6 errors[22m[39m
 
 [34mDiffing empty spec to movedspec.yml[39m
+
+[32m✔ [39m[1ma spec[22m [90mmovedspec.yml[39m
+[1mPreview docs: [22m https://useoptic.com/docs/cloud-get-started
+[1mOperations: [22m2 operations added
 
 specification details:
 - /info/description [32madded[39m
 - /openapi, /info/version, /info/title [33mchanged[39m
 
-[1mPOST[22m /filler_route: [32madded[39m
+[32m✔ [1mPOST[22m /filler_route[39m: [32madded[39m
   
-[1mPOST[22m /api/filler-route: [32madded[39m
+
+[32m✔ [1mPOST[22m /api/filler-route[39m: [32madded[39m
   
-2 operations added
-[32m[1m0 passed[22m[39m
-[31m[1m0 errors[22m[39m
+
+...and 2 other endpoints
 
 "
 `;

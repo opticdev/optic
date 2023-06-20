@@ -1,14 +1,18 @@
 import { OpenAPIV3 } from 'openapi-types';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
-import { typeofV3Diffs } from '../../openapi3/group-diff';
+import {
+  getEndpointDiffs,
+  typeofV3Diffs,
+} from '@useoptic/openapi-utilities/build/openapi3/group-diff';
 import type {
   GroupedDiffs,
   Body,
   Diff,
   Endpoint,
   Response,
-} from '../../openapi3/group-diff';
+} from '@useoptic/openapi-utilities/build/openapi3/group-diff';
+
 import { interpretFieldLevelDiffs } from './common';
 import isEqual from 'lodash.isequal';
 
@@ -32,6 +36,10 @@ type RawChange<T> = { key: string } & (
       removed: T;
     }
 );
+
+function endpointHasDiffs(endpoint: Endpoint) {
+  return getEndpointDiffs(endpoint).length > 0;
+}
 
 function isObject(a: any) {
   return typeof a === 'object' && a !== null && !Array.isArray(a);
@@ -183,8 +191,10 @@ export function jsonChangelog(
 ): JsonChangelog {
   const results: JsonChangelog = { operations: [] };
 
-  for (const endpoint of Object.values(groupedChanges.endpoints))
-    results.operations.push(getEndpointLogs(specs, endpoint));
+  for (const endpoint of Object.values(groupedChanges.endpoints)) {
+    if (endpointHasDiffs(endpoint))
+      results.operations.push(getEndpointLogs(specs, endpoint));
+  }
 
   return results;
 }
@@ -207,70 +217,85 @@ function getEndpointLogs(
 
   const operationChange = typeofV3Diffs(diffs);
 
-  const parameterChanges = [];
-  for (const [name, diffs] of Object.entries(queryParameters)) {
-    parameterChanges.push(
-      getParameterLogs(
-        specs,
-        {
-          type: 'query',
-          name,
-          method,
-          path,
-        },
-        diffs
-      )
-    );
+  const parameterChanges: ChangedNode[] = [];
+  for (const [name, { diffs }] of Object.entries(queryParameters)) {
+    if (diffs.length > 0) {
+      parameterChanges.push(
+        getParameterLogs(
+          specs,
+          {
+            type: 'query',
+            name,
+            method,
+            path,
+          },
+          diffs
+        )
+      );
+    }
   }
 
-  for (const [name, diffs] of Object.entries(cookieParameters)) {
-    parameterChanges.push(
-      getParameterLogs(
-        specs,
-        {
-          type: 'cookie',
-          name,
-          method,
-          path,
-        },
-        diffs
-      )
-    );
+  for (const [name, { diffs }] of Object.entries(cookieParameters)) {
+    if (diffs.length > 0) {
+      parameterChanges.push(
+        getParameterLogs(
+          specs,
+          {
+            type: 'cookie',
+            name,
+            method,
+            path,
+          },
+          diffs
+        )
+      );
+    }
   }
 
-  for (const [name, diffs] of Object.entries(pathParameters)) {
-    parameterChanges.push(
-      getParameterLogs(
-        specs,
-        {
-          type: 'path',
-          name,
-          method,
-          path,
-        },
-        diffs
-      )
-    );
+  for (const [name, { diffs }] of Object.entries(pathParameters)) {
+    if (diffs.length > 0) {
+      parameterChanges.push(
+        getParameterLogs(
+          specs,
+          {
+            type: 'path',
+            name,
+            method,
+            path,
+          },
+          diffs
+        )
+      );
+    }
   }
 
-  for (const [name, diffs] of Object.entries(headerParameters)) {
-    parameterChanges.push(
-      getParameterLogs(
-        specs,
-        {
-          type: 'header',
-          name,
-          method,
-          path,
-        },
-        diffs
-      )
-    );
+  for (const [name, { diffs }] of Object.entries(headerParameters)) {
+    if (diffs.length > 0) {
+      parameterChanges.push(
+        getParameterLogs(
+          specs,
+          {
+            type: 'header',
+            name,
+            method,
+            path,
+          },
+          diffs
+        )
+      );
+    }
   }
 
   const responseChanges: ChangedNode[] = [];
   for (const [statusCode, response] of Object.entries(responses)) {
-    responseChanges.push(getResponseChangeLogs(specs, response, statusCode));
+    const diffs = [...response.diffs, ...response.headers.diffs];
+    for (const content of Object.values(response.contents)) {
+      diffs.push(...content.examples.diffs);
+      diffs.push(...Object.values(content.fields).flatMap((r) => r.diffs));
+    }
+    if (diffs.length > 0) {
+      responseChanges.push(getResponseChangeLogs(specs, response, statusCode));
+    }
   }
   const requestChangelogs = getRequestChangeLogs(specs, request);
 
@@ -304,7 +329,14 @@ function getResponseChangeLogs(
   const responseChange = typeofV3Diffs(response.diffs);
 
   for (const [contentType, body] of Object.entries(response.contents)) {
-    contentTypeChanges.push(getBodyChangeLogs(specs, body, contentType));
+    if (
+      [
+        ...body.examples.diffs,
+        ...Object.values(body.fields).flatMap((r) => r.diffs),
+      ].length > 0
+    ) {
+      contentTypeChanges.push(getBodyChangeLogs(specs, body, contentType));
+    }
   }
 
   // TODO this is missing response-headers
@@ -331,7 +363,14 @@ function getRequestChangeLogs(
   const requestChange = typeofV3Diffs(request.diffs);
 
   for (const [contentType, body] of Object.entries(request.contents)) {
-    contentTypes.push(getBodyChangeLogs(specs, body, contentType));
+    if (
+      [
+        ...body.examples.diffs,
+        ...Object.values(body.fields).flatMap((r) => r.diffs),
+      ].length > 0
+    ) {
+      contentTypes.push(getBodyChangeLogs(specs, body, contentType));
+    }
   }
 
   return {
@@ -353,7 +392,7 @@ function getBodyChangeLogs(
   contentType: string
 ): ChangedNode {
   const fieldDiffs = interpretFieldLevelDiffs(specs, body.fields);
-  const exampleDiffs = body.examples;
+  const exampleDiffs = body.examples.diffs;
 
   // Group body diffs by trail and then log based on that
 

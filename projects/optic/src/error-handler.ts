@@ -29,6 +29,7 @@ export const errorHandler = <Args extends any[], Return extends any>(
         logger.error('');
         logger.error(chalk.green('Run optic login to generate a new token'));
       } else {
+        console.log(e);
         console.error(chalk.red((e as Error).message));
         SentryClient.captureException(e);
         await SentryClient.flush();

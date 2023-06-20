@@ -87,7 +87,7 @@ export const getOperationsChangedLabel = (
       addedOps.add(id);
     } else if (typeofDiffs === 'removed') {
       removedOps.add(id);
-    } else {
+    } else if (typeofDiffs === 'changed') {
       changedOps.add(id);
     }
   }

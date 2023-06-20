@@ -62,7 +62,7 @@ export async function writeDataForCi(
     } else {
       if (
         Object.keys(spec.groupedDiffs.endpoints).length === 0 &&
-        spec.groupedDiffs.specification.length === 0 &&
+        spec.groupedDiffs.specification.diffs.length === 0 &&
         spec.results.length === 0
       ) {
         data.noop.push({

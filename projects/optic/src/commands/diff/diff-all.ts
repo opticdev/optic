@@ -14,20 +14,17 @@ import {
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 import open from 'open';
 import { compressDataV2 } from './compressResults';
-import {
-  jsonChangelog,
-  textToSev,
-  terminalChangelog,
-} from '@useoptic/openapi-utilities';
+import { textToSev } from '@useoptic/openapi-utilities';
 import { uploadDiff } from './upload-diff';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { writeDataForCi } from '../../utils/ci-data';
 import { errorHandler } from '../../error-handler';
 import { checkOpenAPIVersion } from '@useoptic/openapi-io';
-import { generateComparisonLogsV2 } from '../../utils/diff-renderer';
 import path from 'path';
 import { getApiUrl } from '../../utils/cloud-urls';
 import { getDetailsForGeneration } from '../../utils/generated';
+import { terminalChangelog } from './changelog-renderers/terminal-changelog';
+import { jsonChangelog } from './changelog-renderers/json-changelog';
 import * as Types from '../../client/optic-backend-types';
 
 const usage = () => `
@@ -381,39 +378,7 @@ async function computeAll(
       logger.warn(warning);
     }
 
-    if (specResults.diffs.length === 0) {
-      logger.info('No changes were detected');
-    }
     logger.info('');
-
-    for (const log of terminalChangelog(
-      { from: fromParseResults.jsonLike, to: toParseResults.jsonLike },
-      changelogData
-    )) {
-      logger.info(log);
-    }
-
-    if (options.check) {
-      if (specResults.results.length > 0) {
-        logger.info('Checks');
-        logger.info('');
-      }
-
-      for (const log of generateComparisonLogsV2(
-        changelogData,
-        { from: fromParseResults.sourcemap, to: toParseResults.sourcemap },
-        specResults,
-        {
-          output: 'pretty',
-          verbose: false,
-          severity: textToSev(options.severity),
-        }
-      )) {
-        logger.info(log);
-      }
-
-      logger.info('');
-    }
 
     let changelogUrl: string | null = null;
     let specUrl: string | null = null;
@@ -433,6 +398,23 @@ async function computeAll(
       );
       specUrl = uploadResults?.headSpecUrl ?? null;
       changelogUrl = uploadResults?.changelogUrl ?? null;
+    }
+
+    for (const log of terminalChangelog(
+      { from: fromParseResults, to: toParseResults },
+      changelogData,
+      specResults,
+      {
+        path: to ?? from ?? '',
+        check: options.check,
+        inCi: config.isInCi,
+        output: 'pretty',
+        verbose: false,
+        severity: textToSev(options.severity),
+        previewDocsLink: specUrl,
+      }
+    )) {
+      logger.info(log);
     }
 
     results.push({

@@ -36,7 +36,8 @@ const input: CiRunDetails = {
             from,
             to,
           },
-          diff(from, to)
+          diff(from, to),
+          []
         ),
         results: [],
       },
@@ -119,7 +120,8 @@ describe('generateCompareSummaryMarkdown', () => {
                     from,
                     to,
                   },
-                  diff(from, to)
+                  diff(from, to),
+                  []
                 ),
                 results: [],
               },
