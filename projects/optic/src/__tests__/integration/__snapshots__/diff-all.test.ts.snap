@@ -15,7 +15,7 @@ specification details:
 [31mx [1mGET[22m /api/users[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at https://github.com/User/UserRepo/tree/b92fc9cd38a1e4b98febf8ee612c54380e179f8f/empty.json#L1
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/empty.json#L1
   
 
 [32m✔ [1mGET[22m /example[39m: [32madded[39m
@@ -55,7 +55,7 @@ specification details:
 [31mx [1mGET[22m /api/users[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at https://github.com/User/UserRepo/tree/a0d6d1bfb9fe0b1b737616f77d262ca3f4e98a29/empty.json#L1
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/empty.json#L1
   
 
 [32m✔ [1mGET[22m /example[39m: [32madded[39m
@@ -87,7 +87,7 @@ specification details:
 [31mx [1mGET[22m /api/users[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at https://github.com/User/UserRepo/tree/a0d6d1bfb9fe0b1b737616f77d262ca3f4e98a29/empty.json#L1
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/empty.json#L1
   
 
 [32m✔ [1mGET[22m /example[39m: [32madded[39m
@@ -118,12 +118,12 @@ exports[`diff-all diff all not in the root of a repo 1`] = `
 
 [31mx [1mPOST[22m /filler_route[39m: 
   [31m[1mx [operation path component naming check][22m filler_route is not camelCase[39m
-  at https://github.com/User/UserRepo/tree/a7314df4aab74f8eb9e7b00bb5f6422a14fe037d/folder/in-folder.yml#L9
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/folder/in-folder.yml#L9
   
 
 [31mx [1mPOST[22m /api/filler-route[39m: 
   [31m[1mx [operation path component naming check][22m filler-route is not camelCase[39m
-  at https://github.com/User/UserRepo/tree/a7314df4aab74f8eb9e7b00bb5f6422a14fe037d/folder/in-folder.yml#L24
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/folder/in-folder.yml#L24
   
 
 ...and 2 other endpoints
@@ -142,33 +142,33 @@ specification details:
 [31mx [1mPOST[22m /filler_route[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at https://github.com/User/UserRepo/tree/a7314df4aab74f8eb9e7b00bb5f6422a14fe037d/mvspec.yml#L9
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/mvspec.yml#L9
   
   - response [1m201[22m: 
     [31m[1mx [prevent response status code removal][22m must not remove response status code 201. This is a breaking change.[39m
-    at https://github.com/User/UserRepo/tree/a7314df4aab74f8eb9e7b00bb5f6422a14fe037d/mvspec.yml#L12
+    at https://github.com/User/UserRepo/tree/COMMIT-HASH/mvspec.yml#L12
     
     - body [1mapplication/json[22m: 
       - property [1m/schema/properties/id[22m: 
       
         [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
-        at https://github.com/User/UserRepo/tree/a7314df4aab74f8eb9e7b00bb5f6422a14fe037d/mvspec.yml#L19
+        at https://github.com/User/UserRepo/tree/COMMIT-HASH/mvspec.yml#L19
         
 
 [31mx [1mPOST[22m /api/filler-route[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at https://github.com/User/UserRepo/tree/a7314df4aab74f8eb9e7b00bb5f6422a14fe037d/mvspec.yml#L24
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/mvspec.yml#L24
   
   - response [1m201[22m: 
     [31m[1mx [prevent response status code removal][22m must not remove response status code 201. This is a breaking change.[39m
-    at https://github.com/User/UserRepo/tree/a7314df4aab74f8eb9e7b00bb5f6422a14fe037d/mvspec.yml#L27
+    at https://github.com/User/UserRepo/tree/COMMIT-HASH/mvspec.yml#L27
     
     - body [1mapplication/json[22m: 
       - property [1m/schema/properties/id[22m: 
       
         [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
-        at https://github.com/User/UserRepo/tree/a7314df4aab74f8eb9e7b00bb5f6422a14fe037d/mvspec.yml#L34
+        at https://github.com/User/UserRepo/tree/COMMIT-HASH/mvspec.yml#L34
         
 
 
@@ -200,7 +200,7 @@ specification details:
 
 [31mx [1mPOST[22m /filler_route[39m: 
   [31m[1mx [operation path component naming check][22m filler_route is not camelCase[39m
-  at https://github.com/User/UserRepo/tree/a7314df4aab74f8eb9e7b00bb5f6422a14fe037d/specwithkey.yml#L9
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/specwithkey.yml#L9
   
 
 ...and 1 other endpoint
@@ -220,13 +220,13 @@ specification details:
 [31mx [1mPOST[22m /filler_route[39m: [32madded[39m
   
   [31m[1mx [operation path component naming check][22m filler_route is not camelCase[39m
-  at https://github.com/User/UserRepo/tree/a7314df4aab74f8eb9e7b00bb5f6422a14fe037d/movedspec.yml#L9
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/movedspec.yml#L9
   
 
 [31mx [1mPOST[22m /api/filler-route[39m: [32madded[39m
   
   [31m[1mx [operation path component naming check][22m filler-route is not camelCase[39m
-  at https://github.com/User/UserRepo/tree/a7314df4aab74f8eb9e7b00bb5f6422a14fe037d/movedspec.yml#L24
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/movedspec.yml#L24
   
 
 ...and 2 other endpoints
@@ -256,17 +256,17 @@ specification details:
 [31mx [1mPOST[22m /filler_route[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at https://github.com/User/UserRepo/tree/a39e34b47677c1abf1184de1c90530a6e5606cd7/folder-to-run/should-run.yml#L9
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/folder-to-run/should-run.yml#L9
   
   - response [1m201[22m: 
     [31m[1mx [prevent response status code removal][22m must not remove response status code 201. This is a breaking change.[39m
-    at https://github.com/User/UserRepo/tree/a39e34b47677c1abf1184de1c90530a6e5606cd7/folder-to-run/should-run.yml#L12
+    at https://github.com/User/UserRepo/tree/COMMIT-HASH/folder-to-run/should-run.yml#L12
     
     - body [1mapplication/json[22m: 
       - property [1m/schema/properties/id[22m: 
       
         [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
-        at https://github.com/User/UserRepo/tree/a39e34b47677c1abf1184de1c90530a6e5606cd7/folder-to-run/should-run.yml#L19
+        at https://github.com/User/UserRepo/tree/COMMIT-HASH/folder-to-run/should-run.yml#L19
         
 
 
@@ -300,12 +300,12 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
 
 [31mx [1mPOST[22m /filler_route[39m: 
   [31m[1mx [operation path component naming check][22m filler_route is not camelCase[39m
-  at https://github.com/User/UserRepo/tree/75cba4a4b0e17a2e0ea5a99f1169d19eb13ed114/folder/in-folder.yml#L9
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/folder/in-folder.yml#L9
   
 
 [31mx [1mPOST[22m /api/filler-route[39m: 
   [31m[1mx [operation path component naming check][22m filler-route is not camelCase[39m
-  at https://github.com/User/UserRepo/tree/75cba4a4b0e17a2e0ea5a99f1169d19eb13ed114/folder/in-folder.yml#L24
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/folder/in-folder.yml#L24
   
 
 ...and 2 other endpoints
@@ -324,33 +324,33 @@ specification details:
 [31mx [1mPOST[22m /filler_route[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at https://github.com/User/UserRepo/tree/75cba4a4b0e17a2e0ea5a99f1169d19eb13ed114/mvspec.yml#L9
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/mvspec.yml#L9
   
   - response [1m201[22m: 
     [31m[1mx [prevent response status code removal][22m must not remove response status code 201. This is a breaking change.[39m
-    at https://github.com/User/UserRepo/tree/75cba4a4b0e17a2e0ea5a99f1169d19eb13ed114/mvspec.yml#L12
+    at https://github.com/User/UserRepo/tree/COMMIT-HASH/mvspec.yml#L12
     
     - body [1mapplication/json[22m: 
       - property [1m/schema/properties/id[22m: 
       
         [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
-        at https://github.com/User/UserRepo/tree/75cba4a4b0e17a2e0ea5a99f1169d19eb13ed114/mvspec.yml#L19
+        at https://github.com/User/UserRepo/tree/COMMIT-HASH/mvspec.yml#L19
         
 
 [31mx [1mPOST[22m /api/filler-route[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at https://github.com/User/UserRepo/tree/75cba4a4b0e17a2e0ea5a99f1169d19eb13ed114/mvspec.yml#L24
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/mvspec.yml#L24
   
   - response [1m201[22m: 
     [31m[1mx [prevent response status code removal][22m must not remove response status code 201. This is a breaking change.[39m
-    at https://github.com/User/UserRepo/tree/75cba4a4b0e17a2e0ea5a99f1169d19eb13ed114/mvspec.yml#L27
+    at https://github.com/User/UserRepo/tree/COMMIT-HASH/mvspec.yml#L27
     
     - body [1mapplication/json[22m: 
       - property [1m/schema/properties/id[22m: 
       
         [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
-        at https://github.com/User/UserRepo/tree/75cba4a4b0e17a2e0ea5a99f1169d19eb13ed114/mvspec.yml#L34
+        at https://github.com/User/UserRepo/tree/COMMIT-HASH/mvspec.yml#L34
         
 
 
@@ -382,7 +382,7 @@ specification details:
 
 [31mx [1mPOST[22m /filler_route[39m: 
   [31m[1mx [operation path component naming check][22m filler_route is not camelCase[39m
-  at https://github.com/User/UserRepo/tree/75cba4a4b0e17a2e0ea5a99f1169d19eb13ed114/specwithkey.yml#L9
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/specwithkey.yml#L9
   
 
 ...and 1 other endpoint
@@ -402,13 +402,13 @@ specification details:
 [31mx [1mPOST[22m /filler_route[39m: [32madded[39m
   
   [31m[1mx [operation path component naming check][22m filler_route is not camelCase[39m
-  at https://github.com/User/UserRepo/tree/75cba4a4b0e17a2e0ea5a99f1169d19eb13ed114/movedspec.yml#L9
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/movedspec.yml#L9
   
 
 [31mx [1mPOST[22m /api/filler-route[39m: [32madded[39m
   
   [31m[1mx [operation path component naming check][22m filler-route is not camelCase[39m
-  at https://github.com/User/UserRepo/tree/75cba4a4b0e17a2e0ea5a99f1169d19eb13ed114/movedspec.yml#L24
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/movedspec.yml#L24
   
 
 ...and 2 other endpoints
@@ -1237,33 +1237,33 @@ specification details:
 [31mx [1mPOST[22m /filler_route[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at https://github.com/User/UserRepo/tree/df9277cd263f33d6dde36fc5244d80816be5465c/mvspec.yml#L8
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/mvspec.yml#L8
   
   - response [1m201[22m: 
     [31m[1mx [prevent response status code removal][22m must not remove response status code 201. This is a breaking change.[39m
-    at https://github.com/User/UserRepo/tree/df9277cd263f33d6dde36fc5244d80816be5465c/mvspec.yml#L11
+    at https://github.com/User/UserRepo/tree/COMMIT-HASH/mvspec.yml#L11
     
     - body [1mapplication/json[22m: 
       - property [1m/schema/properties/id[22m: 
       
         [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
-        at https://github.com/User/UserRepo/tree/df9277cd263f33d6dde36fc5244d80816be5465c/mvspec.yml#L18
+        at https://github.com/User/UserRepo/tree/COMMIT-HASH/mvspec.yml#L18
         
 
 [31mx [1mPOST[22m /api/filler-route[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at https://github.com/User/UserRepo/tree/df9277cd263f33d6dde36fc5244d80816be5465c/mvspec.yml#L23
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/mvspec.yml#L23
   
   - response [1m201[22m: 
     [31m[1mx [prevent response status code removal][22m must not remove response status code 201. This is a breaking change.[39m
-    at https://github.com/User/UserRepo/tree/df9277cd263f33d6dde36fc5244d80816be5465c/mvspec.yml#L26
+    at https://github.com/User/UserRepo/tree/COMMIT-HASH/mvspec.yml#L26
     
     - body [1mapplication/json[22m: 
       - property [1m/schema/properties/id[22m: 
       
         [31m[1mx [prevent removing response property][22m cannot remove response property 'id'. This is a breaking change.[39m
-        at https://github.com/User/UserRepo/tree/df9277cd263f33d6dde36fc5244d80816be5465c/mvspec.yml#L33
+        at https://github.com/User/UserRepo/tree/COMMIT-HASH/mvspec.yml#L33
         
 
 
