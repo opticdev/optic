@@ -52,7 +52,9 @@ export const registerCiComment = (cli: Command, config: OpticCliConfig) => {
       '(only for enterprise versions of github or gitlab) - the base url to your enterprise github / gitlab instance'
     )
     .description('comment on a pull request / merge request')
-    .action(errorHandler(getCiCommentAction(config)));
+    .action(
+      errorHandler(getCiCommentAction(config), { command: 'ci-comment' })
+    );
 };
 
 type UnvalidatedOptions = {

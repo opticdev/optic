@@ -96,7 +96,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
     .option('--generated', 'use with --upload with a generated spec', false)
-    .action(errorHandler(getDiffAction(config)));
+    .action(errorHandler(getDiffAction(config), { command: 'diff' }));
 };
 
 type SpecDetails = { apiId: string; orgId: string } | null;

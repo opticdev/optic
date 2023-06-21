@@ -53,7 +53,7 @@ export const registerBundle = (cli: Command, config: OpticCliConfig) => {
     .option('-o [output]', 'output file name')
     .addOption(filterXExtensions)
     .addOption(includeXExtensions)
-    .action(errorHandler(bundleAction(config)));
+    .action(errorHandler(bundleAction(config), { command: 'bundle' }));
 };
 
 const getSpec = async (

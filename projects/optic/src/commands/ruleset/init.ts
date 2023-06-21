@@ -18,7 +18,7 @@ export const registerRulesetInit = (cli: Command, config: OpticCliConfig) => {
     .command('init')
     .description('Initializes a new ruleset project')
     .argument('[name]', 'the name of the new ruleset project')
-    .action(errorHandler(getInitAction()));
+    .action(errorHandler(getInitAction(), { command: 'ruleset-init' }));
 };
 
 const getInitAction = () => async (name?: string) => {

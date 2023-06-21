@@ -25,7 +25,7 @@ export const registerCiSetup = (cli: Command, config: OpticCliConfig) => {
     .description(
       'Answer a series of prompts to generate CI configuration for Optic'
     )
-    .action(errorHandler(getCiSetupAction(config)));
+    .action(errorHandler(getCiSetupAction(config), { command: 'ci-setup' }));
 };
 
 type PromptAnswers = {

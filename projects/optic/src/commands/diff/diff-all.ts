@@ -104,7 +104,7 @@ comma separated values (e.g. "**/*.yml,**/*.json")'
       'fail with exit code 1 if there are detected untracked apis',
       false
     )
-    .action(errorHandler(getDiffAllAction(config)));
+    .action(errorHandler(getDiffAllAction(config), { command: 'diff-all' }));
 };
 
 type DiffAllActionOptions = {

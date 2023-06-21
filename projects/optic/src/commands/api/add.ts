@@ -65,7 +65,7 @@ export const registerApiAdd = (cli: Command, config: OpticCliConfig) => {
     )
     .option('--all', 'add all', false)
     .option('--web', 'open to the added API in Optic Cloud', false)
-    .action(errorHandler(getApiAddAction(config)));
+    .action(errorHandler(getApiAddAction(config), { command: 'api-add' }));
 };
 
 type ApiAddActionOptions = {
