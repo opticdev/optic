@@ -19,7 +19,12 @@ import {
 jest.setTimeout(30000);
 
 function sanitizeOutput(out: string) {
-  return out.replace(/tree\/[a-zA-Z0-9]{40}/g, 'tree/COMMIT-HASH');
+  return out
+    .replace(/tree\/[a-zA-Z0-9]{40}/g, 'tree/COMMIT-HASH')
+    .replace(
+      /Found last change at [a-zA-Z0-9]{40}/g,
+      'Found last change at COMMIT-HASH'
+    );
 }
 
 let oldEnv: any;
@@ -93,7 +98,9 @@ describe('diff', () => {
     );
 
     expect(code).toBe(0);
-    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(
+      normalizeWorkspace(workspace, sanitizeOutput(combined))
+    ).toMatchSnapshot();
   });
 
   test('with --standard arg', async () => {

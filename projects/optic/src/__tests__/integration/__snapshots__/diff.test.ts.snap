@@ -457,7 +457,7 @@ exports[`diff two files, no repo or config 1`] = `
 exports[`diff with --last-change arg 1`] = `
 "[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
 - Finding last change...
-[32m✔[39m Found last change at d5fb3aa2b171cc3d9cae9d9da841bf520a366732
+[32m✔[39m Found last change at COMMIT-HASH
 
 [32m✔ [39m[1mEmpty[22m [90mexample-api.json[39m
 [1mOperations: [22mNo operations changed
