@@ -33,5 +33,6 @@
   "dependencies": {
     "jsonpointer": "^5.0.1",
     "minimatch": "9.0.1"
-  }
+  },
+  "stableVersion": "0.46.0"
 }

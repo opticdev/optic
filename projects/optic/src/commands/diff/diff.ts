@@ -118,7 +118,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     .option('--json', 'output as json', false)
     .option('--generated', 'use with --upload with a generated spec', false)
     .option('--last-change', 'find the last change for this spec', false)
-    .action(errorHandler(getDiffAction(config)));
+    .action(errorHandler(getDiffAction(config), { command: 'diff' }));
 };
 
 type SpecDetails = { apiId: string; orgId: string } | null;

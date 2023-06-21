@@ -58,5 +58,6 @@
     "upath": "^2.0.1",
     "yaml": "^2.2.2",
     "yaml-ast-parser": "^0.0.43"
-  }
+  },
+  "stableVersion": "0.46.0"
 }

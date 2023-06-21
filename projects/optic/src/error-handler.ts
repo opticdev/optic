@@ -3,9 +3,17 @@ import { SentryClient } from '@useoptic/openapi-utilities/build/utilities/sentry
 import chalk from 'chalk';
 import { BadRequestError, ForbiddenError } from './client/errors';
 import { logger } from './logger';
+import { OpenAPIVersionError } from '@useoptic/openapi-io/build/validation/errors';
+import {
+  flushEvents,
+  trackEvent,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
 
 export const errorHandler = <Args extends any[], Return extends any>(
-  fn: (...args: Args) => Promise<Return>
+  fn: (...args: Args) => Promise<Return>,
+  meta: {
+    command: string;
+  }
 ): ((...args: Args) => Promise<Return>) => {
   return async (...args) => {
     try {
@@ -28,6 +36,14 @@ export const errorHandler = <Args extends any[], Return extends any>(
         );
         logger.error('');
         logger.error(chalk.green('Run optic login to generate a new token'));
+      } else if (OpenAPIVersionError.isInstance(e) && e.version === '2.x.x') {
+        console.log(e);
+        console.error(chalk.red((e as Error).message));
+        trackEvent('optic.openapi.version_not_supported', {
+          version: e.version,
+          command: meta.command,
+        });
+        await flushEvents();
       } else {
         console.log(e);
         console.error(chalk.red((e as Error).message));

@@ -50,6 +50,10 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
       'run optic capture in reverse proxy mode - send traffic to a port that gets forwarded to your server'
     )
     .option(
+      '--proxy-port <proxy-port>',
+      'specify the port the proxy should be running on'
+    )
+    .option(
       '--command <command>',
       'command to run with the http_proxy and http_proxy configured'
     )
@@ -91,6 +95,14 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
 
       const options = command.opts();
 
+      if (options.proxyPort && isNaN(Number(options.proxyPort))) {
+        logger.error(
+          `--proxy-port must be a number - received ${options.proxyPort}`
+        );
+        process.exitCode = 1;
+        return;
+      }
+
       if (options.debug) {
         logNode();
       }
@@ -119,7 +131,11 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
       let [proxyInteractions, proxyUrl] = await ProxyInteractions.create(
         targetUrl,
         sourcesController.signal,
-        { ca, mode: options.reverseProxy ? 'reverse-proxy' : 'system-proxy' }
+        {
+          ca,
+          mode: options.reverseProxy ? 'reverse-proxy' : 'system-proxy',
+          proxyPort: options.proxyPort && Number(options.proxyPort),
+        }
       );
 
       const runningCommand = Boolean(options.command);
@@ -128,8 +144,13 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
       if (!runningCommand && !options.reverseProxy) {
         await systemProxy.start(undefined);
       } else {
-        feedback.notable(
-          `Optic proxy is running at ${proxyUrl} - send traffic to this host. Traffic will be forwarded to ${targetUrl} and will be recorded`
+        logger.info(
+          `${chalk.blue.bold('Proxy URL:')} ${proxyUrl} (send traffic here)`
+        );
+        logger.info(
+          `${chalk.blue.bold(
+            'Forwarding URL:'
+          )} ${targetUrl} (traffic will be forwarded here)`
         );
       }
 
@@ -190,7 +211,11 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
       const renderingStats = renderCaptureProgress(
         feedback,
         observationsFork.fork(),
-        { interactiveCapture, debug: options.debug }
+        {
+          interactiveCapture,
+          debug: options.debug,
+          reverseProxy: options.reverseProxy,
+        }
       );
       const trackingStats = trackStats(
         observationsFork.fork(),
@@ -329,7 +354,7 @@ export interface CaptureObservations
 async function renderCaptureProgress(
   feedback: ReturnType<typeof createCommandFeedback>,
   observations: CaptureObservations,
-  config: { interactiveCapture: boolean; debug: boolean }
+  config: { interactiveCapture: boolean; debug: boolean; reverseProxy: boolean }
 ) {
   const ora = (await import('ora')).default;
 
@@ -345,7 +370,7 @@ async function renderCaptureProgress(
   spinner.start();
 
   let timer;
-  if (config.interactiveCapture) {
+  if (config.interactiveCapture && !config.reverseProxy) {
     timer = setTimeout(() => {
       if (interactionCount === 0) {
         spinner.clear();

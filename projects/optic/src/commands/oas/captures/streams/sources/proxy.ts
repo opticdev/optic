@@ -38,6 +38,7 @@ export class ProxyInteractions {
       ca?: ProxyCertAuthority;
       targetCA?: Array<{ cert: Buffer | string }>;
       mode: 'reverse-proxy' | 'system-proxy';
+      proxyPort?: number;
     }
   ): Promise<[ProxyInteractions, string, string]> {
     let { host, protocol, origin } = new URL(targetHost);
@@ -185,10 +186,12 @@ export class ProxyInteractions {
       interactions.onCompleted();
     }
 
-    let transparentPort = await portfinder.getPortPromise({
-      port: 8000,
-      stopPort: 8999,
-    });
+    let transparentPort = options.proxyPort
+      ? options.proxyPort
+      : await portfinder.getPortPromise({
+          port: 8000,
+          stopPort: 8999,
+        });
     await capturingProxy.start({
       startPort: transparentPort + 1,
       endPort: transparentPort + 999,
