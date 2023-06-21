@@ -454,6 +454,24 @@ exports[`diff two files, no repo or config 1`] = `
 "
 `;
 
+exports[`diff with --last-change arg 1`] = `
+"[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
+- Finding last change...
+[32m✔[39m Found last change at d5fb3aa2b171cc3d9cae9d9da841bf520a366732
+
+[32m✔ [39m[1mEmpty[22m [90mexample-api.json[39m
+[1mOperations: [22mNo operations changed
+
+[32m✔ [1mPATCH[22m /example[39m: 
+  - response [1m200[22m: 
+    - body [1mapplication/json[22m: 
+
+...and 4 other endpoints
+
+[34m[1mSee the full history of this API by running "optic api add example-api.json --history-depth 0"[22m[39m
+"
+`;
+
 exports[`diff with --standard arg 1`] = `
 "[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
 
