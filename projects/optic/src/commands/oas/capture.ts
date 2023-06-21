@@ -50,6 +50,10 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
       'run optic capture in reverse proxy mode - send traffic to a port that gets forwarded to your server'
     )
     .option(
+      '--proxy-port <proxy-port>',
+      'specify the port the proxy should be running on'
+    )
+    .option(
       '--command <command>',
       'command to run with the http_proxy and http_proxy configured'
     )
@@ -91,6 +95,14 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
 
       const options = command.opts();
 
+      if (options.proxyPort && isNaN(Number(options.proxyPort))) {
+        logger.error(
+          `--proxy-port must be a number - received ${options.proxyPort}`
+        );
+        process.exitCode = 1;
+        return;
+      }
+
       if (options.debug) {
         logNode();
       }
@@ -119,7 +131,11 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
       let [proxyInteractions, proxyUrl] = await ProxyInteractions.create(
         targetUrl,
         sourcesController.signal,
-        { ca, mode: options.reverseProxy ? 'reverse-proxy' : 'system-proxy' }
+        {
+          ca,
+          mode: options.reverseProxy ? 'reverse-proxy' : 'system-proxy',
+          proxyPort: options.proxyPort && Number(options.proxyPort),
+        }
       );
 
       const runningCommand = Boolean(options.command);
