@@ -41,7 +41,9 @@ This command also requires a token to be provided via the environment variable O
       '--organization-id <organization-id>',
       'specify an organization to add this to'
     )
-    .action(errorHandler(getUploadAction(config)));
+    .action(
+      errorHandler(getUploadAction(config), { command: 'ruleset-upload' })
+    );
 };
 
 type UploadActionOptions = {

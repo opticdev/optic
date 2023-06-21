@@ -25,7 +25,9 @@ export const registerSpecAddApiUrl = (cli: Command, config: OpticCliConfig) => {
     .description('Add Optic API URL to a spec file')
     .argument('<spec_path>', 'path to spec file')
     .argument('<api_url>', 'api url to add to spec file')
-    .action(errorHandler(getAddApiUrlAction(config)));
+    .action(
+      errorHandler(getAddApiUrlAction(config), { command: 'spec-add-api-url' })
+    );
 };
 
 const getAddApiUrlAction =

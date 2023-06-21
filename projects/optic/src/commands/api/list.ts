@@ -28,7 +28,7 @@ export const registerApiList = (cli: Command, config: OpticCliConfig) => {
       'path to directory for spec list (defaults to the git root or current working directory)'
     )
     .description('List specs within a directory')
-    .action(errorHandler(getApiListAction(config)));
+    .action(errorHandler(getApiListAction(config), { command: 'api-list' }));
 };
 
 type ApiActionOptions = {};

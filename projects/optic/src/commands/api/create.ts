@@ -27,7 +27,9 @@ export const registerApiCreate = (cli: Command, config: OpticCliConfig) => {
     .addHelpText('after', helpText)
     .description('Generate an optic url to add to your specs')
     .argument('<name>', 'the name of the api')
-    .action(errorHandler(getApiCreateAction(config)));
+    .action(
+      errorHandler(getApiCreateAction(config), { command: 'api-create' })
+    );
 };
 
 const getApiCreateAction = (config: OpticCliConfig) => async (name: string) => {

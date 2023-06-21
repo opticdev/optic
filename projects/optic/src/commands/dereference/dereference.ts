@@ -40,7 +40,7 @@ export const registerDereference = (cli: Command, config: OpticCliConfig) => {
     .option('-o [output]', 'output file name')
     .addOption(filterXExtensions)
     .addOption(includeXExtensions)
-    .action(errorHandler(deferenceAction(config)));
+    .action(errorHandler(deferenceAction(config), { command: 'dereference' }));
 };
 
 const getDereferencedSpec = async (

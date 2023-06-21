@@ -20,7 +20,7 @@ export const registerLogin = (cli: Command, config: OpticCliConfig) => {
   cli
     .command('login')
     .description('Login to Optic')
-    .action(errorHandler(getLoginAction(config)));
+    .action(errorHandler(getLoginAction(config), { command: 'login' }));
 };
 
 const getLoginAction = (config: OpticCliConfig) => async () => {

@@ -38,7 +38,7 @@ export const registerLint = (cli: Command, config: OpticCliConfig) => {
     .option('--web', 'view the lint results in the optic web view', false)
     .description(description)
     .argument('<file_path>', 'path to file to lint')
-    .action(errorHandler(getLintAction(config)));
+    .action(errorHandler(getLintAction(config), { command: 'lint' }));
 };
 
 type LintActionOptions = {
