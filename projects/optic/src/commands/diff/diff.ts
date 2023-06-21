@@ -16,7 +16,10 @@ import {
   flushEvents,
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
-import { terminalChangelog } from './changelog-renderers/terminal-changelog';
+import {
+  SourcemapOptions,
+  terminalChangelog,
+} from './changelog-renderers/terminal-changelog';
 import { jsonChangelog } from './changelog-renderers/json-changelog';
 import { compute } from './compute';
 import { compressDataV2 } from './compressResults';
@@ -316,11 +319,26 @@ const getDiffAction =
 
       logger.info('');
 
+      let sourcemapOptions: SourcemapOptions = {
+        ciProvider: undefined,
+      };
+      if (config.isInCi && config.vcs?.type === VCS.Git) {
+        const remote = await Git.guessRemoteOrigin();
+        if (remote) {
+          sourcemapOptions = {
+            ciProvider: remote.provider,
+            remote: remote.web_url,
+            sha: config.vcs.sha,
+            root: config.root,
+          };
+        }
+      }
       for (const log of terminalChangelog(
         { from: baseParseResult, to: headParseResult },
         diffResult.changelogData,
         diffResult.specResults,
         {
+          ...sourcemapOptions,
           path: file1,
           check: options.check,
           inCi: config.isInCi,

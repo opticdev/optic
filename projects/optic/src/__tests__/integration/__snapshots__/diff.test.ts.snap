@@ -621,7 +621,7 @@ exports[`diff with mock server uploads specs if authenticated and --upload 1`] =
       - property : [33mchanged[39m
       
         [31m[1mx [prevent response property type changes][22m expected response body application/json root shape to not change type. This is a breaking change.[39m
-        at [4mspec.json:24:565[24m
+        at https://github.com/User/UserRepo/tree/COMMIT-HASH/spec.json#L24
         
 
 ...and 4 other endpoints
