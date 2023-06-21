@@ -211,7 +211,11 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
       const renderingStats = renderCaptureProgress(
         feedback,
         observationsFork.fork(),
-        { interactiveCapture, debug: options.debug }
+        {
+          interactiveCapture,
+          debug: options.debug,
+          reverseProxy: options.reverseProxy,
+        }
       );
       const trackingStats = trackStats(
         observationsFork.fork(),
@@ -350,7 +354,7 @@ export interface CaptureObservations
 async function renderCaptureProgress(
   feedback: ReturnType<typeof createCommandFeedback>,
   observations: CaptureObservations,
-  config: { interactiveCapture: boolean; debug: boolean }
+  config: { interactiveCapture: boolean; debug: boolean; reverseProxy: boolean }
 ) {
   const ora = (await import('ora')).default;
 
@@ -366,7 +370,7 @@ async function renderCaptureProgress(
   spinner.start();
 
   let timer;
-  if (config.interactiveCapture) {
+  if (config.interactiveCapture && !config.reverseProxy) {
     timer = setTimeout(() => {
       if (interactionCount === 0) {
         spinner.clear();
