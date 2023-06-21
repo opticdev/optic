@@ -1,4 +1,4 @@
-import { typeofV3Diffs } from '../openapi3/group-diff';
+import { getEndpointDiffs, typeofV3Diffs } from '../openapi3/group-diff';
 import { isChangeVariant } from '../openapi3/sdk/isType';
 import { OpenApiKind, IChange, ChangeType } from '../openapi3/sdk/types';
 import { GroupedDiffs } from '../openapi3/group-diff';
@@ -82,12 +82,13 @@ export const getOperationsChangedLabel = (
   const removedOps = new Set();
   for (const endpoint of Object.values(groupedDiffs.endpoints)) {
     const id = `${endpoint.path}${endpoint.method}`;
+    const diffs = getEndpointDiffs(endpoint);
     const typeofDiffs = typeofV3Diffs(endpoint.diffs);
     if (typeofDiffs === 'added') {
       addedOps.add(id);
     } else if (typeofDiffs === 'removed') {
       removedOps.add(id);
-    } else if (typeofDiffs === 'changed') {
+    } else if (diffs.length > 0) {
       changedOps.add(id);
     }
   }

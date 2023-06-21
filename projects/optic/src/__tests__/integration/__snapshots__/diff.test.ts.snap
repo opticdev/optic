@@ -4,7 +4,7 @@ exports[`diff petstore diff 1`] = `
 "[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
 
 [31mx [39m[1mSwagger Petstore Updated[22m [90mpetstore-base.json[39m
-[1mOperations: [22m5 operations added, 2 changed, 1 removed
+[1mOperations: [22m5 operations added, 15 changed, 1 removed
 [31mx [39m [1mChecks:[22m 152/198 passed 
 
 specification details:
@@ -612,7 +612,7 @@ exports[`diff with mock server uploads specs if authenticated and --upload 1`] =
 
 [31mx [39m[1mEmpty[22m [90mspec.json[39m
 [1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
-[1mOperations: [22mNo operations changed
+[1mOperations: [22m1 operation changed
 [31mx [39m [1mChecks:[22m 0/1 passed 
 
 [31mx [1mPATCH[22m /example[39m: 
