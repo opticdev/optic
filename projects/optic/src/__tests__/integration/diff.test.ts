@@ -19,7 +19,12 @@ import {
 jest.setTimeout(30000);
 
 function sanitizeOutput(out: string) {
-  return out.replace(/tree\/[a-zA-Z0-9]{40}/g, 'tree/COMMIT-HASH');
+  return out
+    .replace(/tree\/[a-zA-Z0-9]{40}/g, 'tree/COMMIT-HASH')
+    .replace(
+      /Found last change at [a-zA-Z0-9]{40}/g,
+      'Found last change at COMMIT-HASH'
+    );
 }
 
 let oldEnv: any;
@@ -73,6 +78,29 @@ describe('diff', () => {
 
     expect(code).toBe(1);
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+  });
+
+  test('with --last-change arg', async () => {
+    const workspace = await setupWorkspace('diff/with-last-change-arg', {
+      repo: true,
+      commit: true,
+    });
+
+    await run(
+      `sed -i.bak 's/hello/goodbye/' example-api.json example-api.json  && git add . && git commit -m 'change spec'`,
+      false,
+      workspace
+    );
+
+    const { combined, code } = await runOptic(
+      workspace,
+      'diff example-api.json --last-change --check'
+    );
+
+    expect(code).toBe(0);
+    expect(
+      normalizeWorkspace(workspace, sanitizeOutput(combined))
+    ).toMatchSnapshot();
   });
 
   test('with --standard arg', async () => {

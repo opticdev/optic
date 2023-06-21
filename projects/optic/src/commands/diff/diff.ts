@@ -2,7 +2,6 @@ import { Command, Option } from 'commander';
 import open from 'open';
 
 import { UserError, textToSev } from '@useoptic/openapi-utilities';
-import { generateComparisonLogsV2 } from '../../utils/diff-renderer';
 
 import {
   parseFilesFromRef,
@@ -31,6 +30,25 @@ import path from 'path';
 import { OPTIC_URL_KEY } from '../../constants';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import * as Git from '../../utils/git-utils';
+import ora from 'ora';
+import * as GitCandidates from '../api/git-get-file-candidates';
+import stableStringify from 'json-stable-stringify';
+import { computeChecksumForAws } from '../../utils/checksum';
+
+type DiffActionOptions = {
+  base: string;
+  check: boolean;
+  web: boolean;
+  upload: boolean;
+  json: boolean;
+  generated: boolean;
+  standard?: string;
+  ruleset?: string;
+  headTag?: string;
+  validation: 'strict' | 'loose';
+  severity: 'info' | 'warn' | 'error';
+  lastChange: boolean;
+};
 
 const description = `run a diff between two API specs`;
 
@@ -99,10 +117,71 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
     .option('--generated', 'use with --upload with a generated spec', false)
+    .option('--last-change', 'find the last change for this spec', false)
     .action(errorHandler(getDiffAction(config), { command: 'diff' }));
 };
 
 type SpecDetails = { apiId: string; orgId: string } | null;
+
+const getHeadAndLastChanged = async (
+  file: string,
+  config: OpticCliConfig,
+  options: DiffActionOptions
+): Promise<{
+  meta: { sha: string | null };
+  specs: [ParseResult, ParseResult, SpecDetails];
+}> => {
+  try {
+    const absolutePath = path.resolve(file);
+    const pathRelativeToRoot = path.relative(config.root, absolutePath);
+    let shaWithChange: string | null = null;
+    let baseFile = await loadSpec('null:', config, {
+      strict: false,
+      denormalize: true,
+      includeUncommittedChanges: options.generated,
+    });
+    const headFile = await loadSpec(file, config, {
+      strict: options.validation === 'strict',
+      denormalize: true,
+      includeUncommittedChanges: options.generated,
+    });
+    const stableSpecString = stableStringify(headFile.jsonLike);
+    const headChecksum = computeChecksumForAws(stableSpecString);
+
+    const candidates = await GitCandidates.getShasCandidatesForPath(file, '0');
+    for (const sha of candidates.shas) {
+      const baseFileForSha = await loadSpec(
+        `${sha}:${pathRelativeToRoot}`,
+        config,
+        {
+          strict: false,
+          denormalize: true,
+          includeUncommittedChanges: options.generated,
+        }
+      );
+      const stableSpecString = stableStringify(baseFileForSha.jsonLike);
+      const baseChecksum = computeChecksumForAws(stableSpecString);
+      if (baseChecksum !== headChecksum) {
+        shaWithChange = sha;
+        baseFile = baseFileForSha;
+        break;
+      }
+    }
+
+    const opticUrl: string | null =
+      headFile.jsonLike[OPTIC_URL_KEY] ??
+      baseFile.jsonLike[OPTIC_URL_KEY] ??
+      null;
+    const specDetails = opticUrl ? getApiFromOpticUrl(opticUrl) : null;
+    return {
+      specs: [baseFile, headFile, specDetails],
+      meta: { sha: shaWithChange },
+    };
+  } catch (e) {
+    console.error(e instanceof Error ? e.message : e);
+    throw new UserError();
+  }
+};
 
 const getBaseAndHeadFromFiles = async (
   file1: string,
@@ -204,20 +283,6 @@ const runDiff = async (
   };
 };
 
-type DiffActionOptions = {
-  base: string;
-  check: boolean;
-  web: boolean;
-  upload: boolean;
-  json: boolean;
-  generated: boolean;
-  standard?: string;
-  ruleset?: string;
-  headTag?: string;
-  validation: 'strict' | 'loose';
-  severity: 'info' | 'warn' | 'error';
-};
-
 const getDiffAction =
   (config: OpticCliConfig) =>
   async (
@@ -248,7 +313,33 @@ const getDiffAction =
       options.standard = options.ruleset;
     }
     let parsedFiles: [ParseResult, ParseResult, SpecDetails];
-    if (file1 && file2) {
+    if (file1 && options.lastChange) {
+      if (config.vcs?.type !== VCS.Git) {
+        const commandVariant = `optic diff <file> --last-change`;
+        logger.error(
+          `Error: ${commandVariant} must be called from a git repository.`
+        );
+        process.exitCode = 1;
+        return;
+      }
+      const showSpinner = logger.getLevel() !== 5;
+      const spinner = showSpinner
+        ? ora({ text: `Finding last change...`, color: 'blue' })
+        : null;
+      spinner?.start();
+
+      const {
+        meta: { sha },
+        specs,
+      } = await getHeadAndLastChanged(file1, config, options);
+      parsedFiles = specs;
+
+      spinner?.succeed(
+        sha
+          ? `Found last change at ${sha}`
+          : 'No changes found, comparing against an empty spec'
+      );
+    } else if (file1 && file2) {
       parsedFiles = await getBaseAndHeadFromFiles(
         file1,
         file2,
