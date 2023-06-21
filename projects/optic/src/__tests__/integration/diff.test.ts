@@ -18,6 +18,10 @@ import {
 
 jest.setTimeout(30000);
 
+function sanitizeOutput(out: string) {
+  return out.replace(/tree\/[a-zA-Z0-9]{40}/g, 'tree/COMMIT-HASH');
+}
+
 let oldEnv: any;
 beforeEach(() => {
   oldEnv = { ...process.env };
@@ -190,7 +194,9 @@ paths: {}`;
       );
 
       expect(code).toBe(1);
-      expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+      expect(
+        normalizeWorkspace(workspace, sanitizeOutput(combined))
+      ).toMatchSnapshot();
     });
 
     test('ruleset key on api spec', async () => {

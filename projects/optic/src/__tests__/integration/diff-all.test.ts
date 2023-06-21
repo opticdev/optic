@@ -58,6 +58,10 @@ setupTestServer(({ url, method }) => {
   return JSON.stringify({});
 });
 
+function sanitizeOutput(out: string) {
+  return out.replace(/tree\/[a-zA-Z0-9]{40}/g, 'tree/COMMIT-HASH');
+}
+
 describe('diff-all', () => {
   let oldEnv: any;
   beforeEach(() => {
@@ -84,7 +88,9 @@ describe('diff-all', () => {
     );
     const { combined, code } = await runOptic(workspace, 'diff-all --check');
 
-    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(
+      normalizeWorkspace(workspace, sanitizeOutput(combined))
+    ).toMatchSnapshot();
     expect(code).toBe(1);
   });
 
@@ -101,7 +107,9 @@ describe('diff-all', () => {
     );
     const { combined, code } = await runOptic(workspace, 'diff-all --check');
 
-    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(
+      normalizeWorkspace(workspace, sanitizeOutput(combined))
+    ).toMatchSnapshot();
     expect(code).toBe(1);
   });
 
@@ -123,7 +131,9 @@ describe('diff-all', () => {
       'diff-all --check --upload'
     );
 
-    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(
+      normalizeWorkspace(workspace, sanitizeOutput(combined))
+    ).toMatchSnapshot();
     expect(
       JSON.parse(
         await fs.readFile(path.join(workspace, 'ci-run-details.json'), 'utf-8')
@@ -150,7 +160,9 @@ describe('diff-all', () => {
       'diff-all --check --json --upload'
     );
 
-    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(
+      normalizeWorkspace(workspace, sanitizeOutput(combined))
+    ).toMatchSnapshot();
     expect(code).toBe(1);
   });
 
@@ -172,7 +184,9 @@ describe('diff-all', () => {
       'diff-all --check --upload --match "folder-to-run/**" --ignore "folder-to-run/ignore/**"'
     );
 
-    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(
+      normalizeWorkspace(workspace, sanitizeOutput(combined))
+    ).toMatchSnapshot();
     expect(code).toBe(1);
   });
 
@@ -194,7 +208,9 @@ describe('diff-all', () => {
       'diff-all --check --upload'
     );
 
-    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(
+      normalizeWorkspace(workspace, sanitizeOutput(combined))
+    ).toMatchSnapshot();
     expect(code).toBe(1);
   });
 
@@ -211,7 +227,9 @@ describe('diff-all', () => {
     );
 
     expect(code).toBe(1);
-    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(
+      normalizeWorkspace(workspace, sanitizeOutput(combined))
+    ).toMatchSnapshot();
   });
 
   test('diff all in --generated', async () => {
@@ -233,6 +251,8 @@ describe('diff-all', () => {
     );
 
     expect(code).toBe(1);
-    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(
+      normalizeWorkspace(workspace, sanitizeOutput(combined))
+    ).toMatchSnapshot();
   });
 });
