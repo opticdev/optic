@@ -1,0 +1,106 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`optic history writes changelog 1`] = `
+"# Swagger Petstore Updated
+### Wed Jun 21 2023
+- \`PUT\` \`/user/{username}\`:
+  - removed \`requestBody\` \`phone\` property
+  - added \`requestBody\` \`bio\` property
+  - changed \`requestBody\` \`userStatus\`.\`type\`
+  - removed \`requestBody\` \`userStatus\`.\`format\`
+  - added \`requestBody\` \`userStatus\`.\`enum\`
+  - removed \`requestBody\` \`required\`.\`2\`
+  - added \`requestBody\` \`required\`.\`2\`
+- \`GET\` \`/user/{username}\`:
+  - added \`404\` response 
+  - removed \`200\` response \`phone\` property
+  - added \`200\` response \`bio\` property
+  - changed \`200\` response \`userStatus\`.\`type\`
+  - removed \`200\` response \`userStatus\`.\`format\`
+  - added \`200\` response \`userStatus\`.\`enum\`
+  - removed \`200\` response \`required\`.\`2\`
+  - added \`200\` response \`required\`.\`2\`
+- \`GET\` \`/user/login\`:
+  - removed \`200\` response 
+  - added \`200\` response 
+  - changed \`200\` response \`type\`
+  - added \`200\` response \`format\`
+- \`POST\` \`/user/createWithList\`:
+  - removed \`requestBody\` \`items\`.\`phone\` property
+  - added \`requestBody\` \`items\`.\`bio\` property
+  - changed \`requestBody\` \`items\`.\`userStatus\`.\`type\`
+  - removed \`requestBody\` \`items\`.\`userStatus\`.\`format\`
+  - added \`requestBody\` \`items\`.\`userStatus\`.\`enum\`
+  - removed \`requestBody\` \`items\`.\`required\`.\`2\`
+  - added \`requestBody\` \`items\`.\`required\`.\`2\`
+- \`POST\` \`/user/createWithArray\`:
+  - removed \`requestBody\` \`items\`.\`phone\` property
+  - added \`requestBody\` \`items\`.\`bio\` property
+  - changed \`requestBody\` \`items\`.\`userStatus\`.\`type\`
+  - removed \`requestBody\` \`items\`.\`userStatus\`.\`format\`
+  - added \`requestBody\` \`items\`.\`userStatus\`.\`enum\`
+  - removed \`requestBody\` \`items\`.\`required\`.\`2\`
+  - added \`requestBody\` \`items\`.\`required\`.\`2\`
+- \`POST\` \`/user\`:
+  - removed \`requestBody\` \`phone\` property
+  - added \`requestBody\` \`bio\` property
+  - changed \`requestBody\` \`userStatus\`.\`type\`
+  - removed \`requestBody\` \`userStatus\`.\`format\`
+  - added \`requestBody\` \`userStatus\`.\`enum\`
+  - removed \`requestBody\` \`required\`.\`2\`
+  - added \`requestBody\` \`required\`.\`2\`
+- \`DELETE\` \`/store/order/{orderId}\`: added \`404\` response 
+- \`GET\` \`/store/order/{orderId}\`:
+  - added \`404\` response 
+  - added \`200\` response \`summary\` property
+  - removed \`200\` response \`status\`.\`enum\`.\`1\`
+  - added \`200\` response \`status\`.\`enum\`.\`2\`
+  - removed \`200\` response \`required\`.\`1\`
+- \`POST\` \`/store/order\`:
+  - added \`200\` response \`example\`
+  - added \`200\` response \`summary\` property
+  - removed \`200\` response \`status\`.\`enum\`.\`1\`
+  - added \`200\` response \`status\`.\`enum\`.\`2\`
+  - added \`requestBody\` \`summary\` property
+  - removed \`requestBody\` \`status\`.\`enum\`.\`1\`
+  - added \`requestBody\` \`status\`.\`enum\`.\`2\`
+- \`POST\` \`/pet/{petId}/uploadImage\`:
+  - removed \`200\` response 
+  - added \`201\` response 
+  - added \`404\` response 
+  - changed \`default\` response \`type\`.\`type\`
+  - added \`debug\` cookie parameter
+- removed \`GET\` \`/pet\`
+- \`POST\` \`/pet\`: 
+- \`PUT\` \`/pet\`:
+  - removed \`400\` response 
+  - removed \`requestBody\` 
+  - removed \`requestBody\` \`name\` property
+  - added \`requestBody\` \`number\` property
+  - removed \`requestBody\` \`required\`.\`0\`
+  - added \`requestBody\` \`required\`.\`0\`
+- \`GET\` \`/parameters_at_path\`: added \`undefined\` undefined parameter
+- \`POST\` \`/example\`: removed \`somethingelse\` query parameter
+- \`GET\` \`/example\`:
+  - changed \`200\` response \`toTypeArrays\`.\`type\`
+  - changed \`200\` response \`fromTypeArrays\`.\`type\`
+  - removed \`200\` response \`requiredKeys\`.\`required\`.\`0\`
+  - removed \`200\` response \`requiredKeys\`.\`required\`.\`1\`
+  - added \`200\` response \`requiredKeys\`.\`required\`.\`0\`
+  - added \`200\` response \`requiredKeys\`.\`required\`.\`1\`
+  - removed \`200\` response \`requiredKeys\`.\`deletedRequiredKey\` property
+  - added \`200\` response \`requiredKeys\`.\`addedRequiredKey\` property
+  - added \`200\` response \`expandableObject\`.\`anyOf\`.\`1\`
+  - changed \`200\` response \`composedObject\`.\`orderId\`.\`type\`
+  - removed \`200\` response \`stringOrNumberOrObject\`.\`oneOf\`.\`2\`
+  - removed \`deletedQueryParameter\` query parameter
+  - added \`addedQueryParameter\` query parameter
+  - removed \`requiredToOptional\` query parameter
+  - added \`optionalToRequired\` query parameter
+- added \`GET\` \`/pet/findByStatus\`
+- added \`GET\` \`/pet/findByTags\`
+- added \`GET\` \`/pet/{petId}\`
+- added \`POST\` \`/pet/{petId}\`
+- added \`DELETE\` \`/pet/{petId}\`
+"
+`;
