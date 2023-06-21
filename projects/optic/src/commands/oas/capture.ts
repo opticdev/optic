@@ -144,8 +144,13 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
       if (!runningCommand && !options.reverseProxy) {
         await systemProxy.start(undefined);
       } else {
-        feedback.notable(
-          `Optic proxy is running at ${proxyUrl} - send traffic to this host. Traffic will be forwarded to ${targetUrl} and will be recorded`
+        logger.info(
+          `${chalk.blue.bold('Proxy URL:')} ${proxyUrl} (send traffic here)`
+        );
+        logger.info(
+          `${chalk.blue.bold(
+            'Forwarding URL:'
+          )} ${targetUrl} (traffic will be forwarded here)`
         );
       }
 
