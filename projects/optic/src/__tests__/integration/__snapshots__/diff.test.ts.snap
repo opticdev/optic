@@ -460,7 +460,7 @@ exports[`diff with --last-change arg 1`] = `
 [32m✔[39m Found last change at COMMIT-HASH
 
 [32m✔ [39m[1mEmpty[22m [90mexample-api.json[39m
-[1mOperations: [22mNo operations changed
+[1mOperations: [22m1 operation changed
 
 [32m✔ [1mPATCH[22m /example[39m: 
   - response [1m200[22m: 
