@@ -12,7 +12,7 @@ exports[`optic history writes changelog 1`] = `
   - removed \`requestBody\` \`required\`.\`2\`
   - added \`requestBody\` \`required\`.\`2\`
 - \`GET\` \`/user/{username}\`:
-  - added \`404\` response 
+  - added \`404\` response
   - removed \`200\` response \`phone\` property
   - added \`200\` response \`bio\` property
   - changed \`200\` response \`userStatus\`.\`type\`
@@ -21,8 +21,8 @@ exports[`optic history writes changelog 1`] = `
   - removed \`200\` response \`required\`.\`2\`
   - added \`200\` response \`required\`.\`2\`
 - \`GET\` \`/user/login\`:
-  - removed \`200\` response 
-  - added \`200\` response 
+  - removed \`200\` response
+  - added \`200\` response
   - changed \`200\` response \`type\`
   - added \`200\` response \`format\`
 - \`POST\` \`/user/createWithList\`:
@@ -49,9 +49,9 @@ exports[`optic history writes changelog 1`] = `
   - added \`requestBody\` \`userStatus\`.\`enum\`
   - removed \`requestBody\` \`required\`.\`2\`
   - added \`requestBody\` \`required\`.\`2\`
-- \`DELETE\` \`/store/order/{orderId}\`: added \`404\` response 
+- \`DELETE\` \`/store/order/{orderId}\`: added \`404\` response
 - \`GET\` \`/store/order/{orderId}\`:
-  - added \`404\` response 
+  - added \`404\` response
   - added \`200\` response \`summary\` property
   - removed \`200\` response \`status\`.\`enum\`.\`1\`
   - added \`200\` response \`status\`.\`enum\`.\`2\`
@@ -65,15 +65,15 @@ exports[`optic history writes changelog 1`] = `
   - removed \`requestBody\` \`status\`.\`enum\`.\`1\`
   - added \`requestBody\` \`status\`.\`enum\`.\`2\`
 - \`POST\` \`/pet/{petId}/uploadImage\`:
-  - removed \`200\` response 
-  - added \`201\` response 
-  - added \`404\` response 
+  - removed \`200\` response
+  - added \`201\` response
+  - added \`404\` response
   - changed \`default\` response \`type\`.\`type\`
   - added \`debug\` cookie parameter
 - removed \`GET\` \`/pet\`
 - \`PUT\` \`/pet\`:
-  - removed \`400\` response 
-  - removed \`requestBody\` 
+  - removed \`400\` response
+  - removed \`requestBody\`
   - removed \`requestBody\` \`name\` property
   - added \`requestBody\` \`number\` property
   - removed \`requestBody\` \`required\`.\`0\`

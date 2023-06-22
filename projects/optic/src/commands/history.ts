@@ -244,15 +244,15 @@ const logEndpointsChanges = (
   };
 
   const getRequestBodyChange = (segments: string[], changeType: string) => {
-    return `${changeType} \`requestBody\` ${getChangeDescription(
-      segments.slice(6)
-    )}`;
+    let changeDescription = getChangeDescription(segments.slice(6));
+    changeDescription = changeDescription ? ` ${changeDescription}` : '';
+    return `${changeType} \`requestBody\`${changeDescription}`;
   };
 
   const getResponseChange = (segments: string[], changeType: string) => {
-    return `${changeType} \`${segments[4]}\` response ${getChangeDescription(
-      segments.slice(7)
-    )}`;
+    let changeDescription = getChangeDescription(segments.slice(7));
+    changeDescription = changeDescription ? ` ${changeDescription}` : '';
+    return `${changeType} \`${segments[4]}\` response${changeDescription}`;
   };
 
   const getChange = (segments: string[], changeType: string) => {
