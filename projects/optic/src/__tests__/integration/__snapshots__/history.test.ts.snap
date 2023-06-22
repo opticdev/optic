@@ -2,7 +2,7 @@
 
 exports[`optic history writes changelog 1`] = `
 "# Swagger Petstore Updated
-### Wed Jun 21 2023
+### Sun Jan 01 2023
 - \`PUT\` \`/user/{username}\`:
   - removed \`requestBody\` \`phone\` property
   - added \`requestBody\` \`bio\` property
@@ -71,7 +71,6 @@ exports[`optic history writes changelog 1`] = `
   - changed \`default\` response \`type\`.\`type\`
   - added \`debug\` cookie parameter
 - removed \`GET\` \`/pet\`
-- \`POST\` \`/pet\`: 
 - \`PUT\` \`/pet\`:
   - removed \`400\` response 
   - removed \`requestBody\` 

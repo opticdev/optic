@@ -10,6 +10,8 @@ function sanitizeOutput(out: string) {
   return out.replace(/[a-zA-Z0-9]{8}:/g, 'COMMIT-HASH:');
 }
 
+const date = new Date('2023-01-01');
+
 describe('optic history', () => {
   test('writes changelog', async () => {
     process.env.OPTIC_TOKEN = 'something';
@@ -19,7 +21,9 @@ describe('optic history', () => {
     });
 
     await run(
-      `cp petstore-updated.json petstore-base.json && git add . && git commit -m 'update petstore'`,
+      `cp petstore-updated.json petstore-base.json && git add . && GIT_COMMITTER_DATE="${formatDateForGitCommit(
+        date
+      )}" git commit -m 'update petstore' `,
       false,
       workspace
     );
@@ -35,3 +39,28 @@ describe('optic history', () => {
     ).toMatchSnapshot();
   }, 20000);
 });
+
+function formatDateForGitCommit(date: Date) {
+  const year = date.getUTCFullYear();
+  const month = padZero(date.getUTCMonth() + 1);
+  const day = padZero(date.getUTCDate());
+  const hours = padZero(date.getUTCHours());
+  const minutes = padZero(date.getUTCMinutes());
+  const seconds = padZero(date.getUTCSeconds());
+  const offset = getTimezoneOffset(date.getTimezoneOffset());
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds} ${offset}`;
+}
+
+function padZero(value: number) {
+  return value.toString().padStart(2, '0');
+}
+
+function getTimezoneOffset(offset: number) {
+  const sign = offset > 0 ? '-' : '+';
+  const absOffset = Math.abs(offset);
+  const hours = padZero(Math.floor(absOffset / 60));
+  const minutes = padZero(absOffset % 60);
+
+  return `${sign}${hours}${minutes}`;
+}
