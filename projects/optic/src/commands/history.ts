@@ -37,7 +37,7 @@ export const registerHistory = (cli: Command, config: OpticCliConfig) => {
       'Sets the depth of how far to crawl through to historic API data. history-depth=0 will crawl the entire history',
       '0'
     )
-    .action(errorHandler(getHistoryAction(config)));
+    .action(errorHandler(getHistoryAction(config), { command: 'history' }));
 };
 
 type HistoryOptions = {
