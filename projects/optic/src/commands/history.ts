@@ -222,16 +222,38 @@ const logEndpointsChanges = (
 ) => {
   const paths = new Map<string, Map<string, Set<string>>>();
 
-  const getChangeDescription = (segments: string[]) => {
+  const getChangeDescription = (
+    segments: string[],
+    spec: any,
+    fullSegments: string[]
+  ) => {
     const parentSegment = segments[segments.length - 2];
     const qualifier = parentSegment === 'properties' ? ' property' : '';
     let outPaths = segments.filter(
       (s) => ['schema', 'properties', 'content', 'paths'].indexOf(s) < 0
     );
-    return outPaths.map((s) => `\`${s}\``).join('.') + `${qualifier}`;
+    if (
+      outPaths[outPaths.length - 2] === 'required' &&
+      !isNaN(Number(outPaths[outPaths.length - 1]))
+    ) {
+      const requiredProperty = jsonPointerHelpers.get(spec, fullSegments);
+      return (
+        outPaths
+          .slice(0, -2)
+          .concat(requiredProperty)
+          .map((s) => `\`${s}\``)
+          .join('.') + ` as required`
+      );
+    } else {
+      return outPaths.map((s) => `\`${s}\``).join('.') + `${qualifier}`;
+    }
   };
 
-  const getParameterChange = (segments: string[], changeType: string) => {
+  const getParameterChange = (
+    segments: string[],
+    changeType: string,
+    spec: any
+  ) => {
     const param = getParameterValue(
       segments.slice(0, 5),
       changeType === 'removed' ? baseSpec : headSpec
@@ -240,28 +262,44 @@ const logEndpointsChanges = (
       ? `${changeType} \`${param?.name}\` ${param?.in} parameter`
       : `${changeType} \`${param?.name}\` ${
           param?.in
-        } parameter ${getChangeDescription(segments.slice(5))}`;
+        } parameter ${getChangeDescription(segments.slice(5), spec, segments)}`;
   };
 
-  const getRequestBodyChange = (segments: string[], changeType: string) => {
-    let changeDescription = getChangeDescription(segments.slice(6));
+  const getRequestBodyChange = (
+    segments: string[],
+    changeType: string,
+    spec: any
+  ) => {
+    let changeDescription = getChangeDescription(
+      segments.slice(6),
+      spec,
+      segments
+    );
     changeDescription = changeDescription ? ` ${changeDescription}` : '';
     return `${changeType} \`requestBody\`${changeDescription}`;
   };
 
-  const getResponseChange = (segments: string[], changeType: string) => {
-    let changeDescription = getChangeDescription(segments.slice(7));
+  const getResponseChange = (
+    segments: string[],
+    changeType: string,
+    spec: any
+  ) => {
+    let changeDescription = getChangeDescription(
+      segments.slice(7),
+      spec,
+      segments
+    );
     changeDescription = changeDescription ? ` ${changeDescription}` : '';
     return `${changeType} \`${segments[4]}\` response${changeDescription}`;
   };
 
-  const getChange = (segments: string[], changeType: string) => {
+  const getChange = (segments: string[], changeType: string, spec: any) => {
     return isRequestChange(segments)
-      ? getRequestBodyChange(segments, changeType)
+      ? getRequestBodyChange(segments, changeType, spec)
       : isResponseChange(segments)
-      ? getResponseChange(segments, changeType)
+      ? getResponseChange(segments, changeType, spec)
       : isMethodParameterChange(segments)
-      ? getParameterChange(segments, changeType)
+      ? getParameterChange(segments, changeType, spec)
       : isMethodExactChange(segments)
       ? `${changeType}`
       : '';
@@ -303,7 +341,9 @@ const logEndpointsChanges = (
     const prevPath = paths.get(path)!;
     const prevMethod = prevPath.get(method) ?? new Set();
 
-    const change = getChange(segments, changeType);
+    const spec = changeType === 'removed' ? baseSpec : headSpec;
+    const change = getChange(segments, changeType, spec);
+
     if (change) prevMethod.add(change);
     prevPath.set(method, prevMethod);
   }

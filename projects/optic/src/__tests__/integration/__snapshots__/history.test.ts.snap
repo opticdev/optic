@@ -9,8 +9,8 @@ exports[`optic history writes changelog 1`] = `
   - changed \`requestBody\` \`userStatus\`.\`type\`
   - removed \`requestBody\` \`userStatus\`.\`format\`
   - added \`requestBody\` \`userStatus\`.\`enum\`
-  - removed \`requestBody\` \`required\`.\`2\`
-  - added \`requestBody\` \`required\`.\`2\`
+  - removed \`requestBody\` \`lastName\` as required
+  - added \`requestBody\` \`username\` as required
 - \`GET\` \`/user/{username}\`:
   - added \`404\` response
   - removed \`200\` response \`phone\` property
@@ -18,8 +18,8 @@ exports[`optic history writes changelog 1`] = `
   - changed \`200\` response \`userStatus\`.\`type\`
   - removed \`200\` response \`userStatus\`.\`format\`
   - added \`200\` response \`userStatus\`.\`enum\`
-  - removed \`200\` response \`required\`.\`2\`
-  - added \`200\` response \`required\`.\`2\`
+  - removed \`200\` response \`lastName\` as required
+  - added \`200\` response \`username\` as required
 - \`GET\` \`/user/login\`:
   - removed \`200\` response
   - added \`200\` response
@@ -31,31 +31,31 @@ exports[`optic history writes changelog 1`] = `
   - changed \`requestBody\` \`items\`.\`userStatus\`.\`type\`
   - removed \`requestBody\` \`items\`.\`userStatus\`.\`format\`
   - added \`requestBody\` \`items\`.\`userStatus\`.\`enum\`
-  - removed \`requestBody\` \`items\`.\`required\`.\`2\`
-  - added \`requestBody\` \`items\`.\`required\`.\`2\`
+  - removed \`requestBody\` \`items\`.\`lastName\` as required
+  - added \`requestBody\` \`items\`.\`username\` as required
 - \`POST\` \`/user/createWithArray\`:
   - removed \`requestBody\` \`items\`.\`phone\` property
   - added \`requestBody\` \`items\`.\`bio\` property
   - changed \`requestBody\` \`items\`.\`userStatus\`.\`type\`
   - removed \`requestBody\` \`items\`.\`userStatus\`.\`format\`
   - added \`requestBody\` \`items\`.\`userStatus\`.\`enum\`
-  - removed \`requestBody\` \`items\`.\`required\`.\`2\`
-  - added \`requestBody\` \`items\`.\`required\`.\`2\`
+  - removed \`requestBody\` \`items\`.\`lastName\` as required
+  - added \`requestBody\` \`items\`.\`username\` as required
 - \`POST\` \`/user\`:
   - removed \`requestBody\` \`phone\` property
   - added \`requestBody\` \`bio\` property
   - changed \`requestBody\` \`userStatus\`.\`type\`
   - removed \`requestBody\` \`userStatus\`.\`format\`
   - added \`requestBody\` \`userStatus\`.\`enum\`
-  - removed \`requestBody\` \`required\`.\`2\`
-  - added \`requestBody\` \`required\`.\`2\`
+  - removed \`requestBody\` \`lastName\` as required
+  - added \`requestBody\` \`username\` as required
 - \`DELETE\` \`/store/order/{orderId}\`: added \`404\` response
 - \`GET\` \`/store/order/{orderId}\`:
   - added \`404\` response
   - added \`200\` response \`summary\` property
   - removed \`200\` response \`status\`.\`enum\`.\`1\`
   - added \`200\` response \`status\`.\`enum\`.\`2\`
-  - removed \`200\` response \`required\`.\`1\`
+  - removed \`200\` response \`petId\` as required
 - \`POST\` \`/store/order\`:
   - added \`200\` response \`example\`
   - added \`200\` response \`summary\` property
@@ -76,17 +76,17 @@ exports[`optic history writes changelog 1`] = `
   - removed \`requestBody\`
   - removed \`requestBody\` \`name\` property
   - added \`requestBody\` \`number\` property
-  - removed \`requestBody\` \`required\`.\`0\`
-  - added \`requestBody\` \`required\`.\`0\`
+  - removed \`requestBody\` \`name\` as required
+  - added \`requestBody\` \`number\` as required
 - \`GET\` \`/parameters_at_path\`: added \`undefined\` undefined parameter
 - \`POST\` \`/example\`: removed \`somethingelse\` query parameter
 - \`GET\` \`/example\`:
   - changed \`200\` response \`toTypeArrays\`.\`type\`
   - changed \`200\` response \`fromTypeArrays\`.\`type\`
-  - removed \`200\` response \`requiredKeys\`.\`required\`.\`0\`
-  - removed \`200\` response \`requiredKeys\`.\`required\`.\`1\`
-  - added \`200\` response \`requiredKeys\`.\`required\`.\`0\`
-  - added \`200\` response \`requiredKeys\`.\`required\`.\`1\`
+  - removed \`200\` response \`requiredKeys\`.\`requiredToOptional\` as required
+  - removed \`200\` response \`requiredKeys\`.\`deletedRequiredKey\` as required
+  - added \`200\` response \`requiredKeys\`.\`optionalToRequired\` as required
+  - added \`200\` response \`requiredKeys\`.\`addedRequiredKey\` as required
   - removed \`200\` response \`requiredKeys\`.\`deletedRequiredKey\` property
   - added \`200\` response \`requiredKeys\`.\`addedRequiredKey\` property
   - added \`200\` response \`expandableObject\`.\`anyOf\`.\`1\`
