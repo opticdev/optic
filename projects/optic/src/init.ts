@@ -31,6 +31,7 @@ import { registerLint } from './commands/lint/lint';
 import { registerBundle } from './commands/bundle/bundle';
 import { updateCommand } from './commands/oas/update';
 import { registerApiList } from './commands/api/list';
+import { registerHistory } from './commands/history';
 import path from 'path';
 
 const packageJson = require('../package.json');
@@ -162,6 +163,8 @@ export const initCli = async (
   const ciSubcommands = cli.command('ci').addHelpCommand(false);
   registerCiComment(ciSubcommands, cliConfig);
   registerCiSetup(ciSubcommands, cliConfig);
+
+  registerHistory(cli, cliConfig);
 
   return cli;
 };
