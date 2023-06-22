@@ -1077,7 +1077,8 @@
           "message": {
             "type": "string"
           }
-        }
+        },
+        "required": ["code"]
       }
     },
     "securitySchemes": {
