@@ -1077,7 +1077,7 @@
                 "type": "string"
               }
             },
-            "required": ["type", "message"]
+            "required": ["type"]
           },
           "type": {
             "type": "string"
