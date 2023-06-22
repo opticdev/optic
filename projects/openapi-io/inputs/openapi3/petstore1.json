@@ -1078,7 +1078,7 @@
             "type": "string"
           }
         },
-        "required": ["code"]
+        "required": ["code", "message"]
       }
     },
     "securitySchemes": {
