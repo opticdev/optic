@@ -304,12 +304,13 @@ const logEndpointsChanges = (
     const prevMethod = prevPath.get(method) ?? new Set();
 
     const change = getChange(segments, changeType);
-    prevMethod.add(change);
+    if (change) prevMethod.add(change);
     prevPath.set(method, prevMethod);
   }
 
   for (const [path, methods] of paths.entries()) {
     for (const [method, changes] of methods.entries()) {
+      if (!changes.size) continue;
       if (changes.size > 1) {
         console.log(`- \`${method.toUpperCase()}\` \`${path}\`:`);
         for (const change of changes) {
