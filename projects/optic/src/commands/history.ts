@@ -215,6 +215,19 @@ const getParameterValue = (segements: string[], spec: OpenAPIV3.Document) => {
   return jsonPointerHelpers.get(spec, segements);
 };
 
+const isExampleChange = (segments: string[]) =>
+  segments.some(
+    (s, ix) =>
+      (s === 'example' || s === 'examples') &&
+      (segments[ix - 1] === 'items' ||
+        segments[ix - 1] === 'components' ||
+        segments[ix - 1] === 'schemas' ||
+        segments[ix - 1] === 'schema' ||
+        segments[ix - 2] === 'content' ||
+        segments[ix - 2] === 'schemas' ||
+        segments[ix - 2] === 'properties')
+  );
+
 const logEndpointsChanges = (
   baseSpec: OpenAPIV3.Document,
   headSpec: OpenAPIV3.Document,
@@ -334,6 +347,7 @@ const logEndpointsChanges = (
     }
 
     if (!isMethodChange(segments)) continue;
+    if (isExampleChange(segments)) continue;
 
     const [, path, method] = segments;
 

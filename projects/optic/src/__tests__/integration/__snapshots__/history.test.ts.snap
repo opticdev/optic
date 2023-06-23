@@ -57,7 +57,6 @@ exports[`optic history writes changelog 1`] = `
   - added \`200\` response \`status\`.\`enum\`.\`2\`
   - removed \`200\` response \`petId\` as required
 - \`POST\` \`/store/order\`:
-  - added \`200\` response \`example\`
   - added \`200\` response \`summary\` property
   - removed \`200\` response \`status\`.\`enum\`.\`1\`
   - added \`200\` response \`status\`.\`enum\`.\`2\`
