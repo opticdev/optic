@@ -19,6 +19,13 @@ const to = {
           },
         },
       },
+      post: {
+        responses: {
+          '200': {
+            description: 'hello',
+          },
+        },
+      },
     },
   },
 };
@@ -59,7 +66,17 @@ const input: CiRunDetails = {
 describe('generateCompareSummaryMarkdown', () => {
   test('generates md output for passed, failed and noop', () => {
     expect(
-      generateCompareSummaryMarkdown({ sha: '123' }, input)
+      generateCompareSummaryMarkdown({ sha: '123' }, input, {
+        verbose: false,
+      })
+    ).toMatchSnapshot();
+  });
+
+  test('generates md output for passed, failed and noop for verbose', () => {
+    expect(
+      generateCompareSummaryMarkdown({ sha: '123' }, input, {
+        verbose: true,
+      })
     ).toMatchSnapshot();
   });
 
@@ -72,6 +89,9 @@ describe('generateCompareSummaryMarkdown', () => {
           failed: [],
           noop: [],
           severity: 2,
+        },
+        {
+          verbose: false,
         }
       )
     ).toMatchSnapshot();
@@ -86,6 +106,9 @@ describe('generateCompareSummaryMarkdown', () => {
           failed: input.failed,
           noop: [],
           severity: 2,
+        },
+        {
+          verbose: false,
         }
       )
     ).toMatchSnapshot();
@@ -100,6 +123,9 @@ describe('generateCompareSummaryMarkdown', () => {
           failed: [],
           noop: input.noop,
           severity: 2,
+        },
+        {
+          verbose: false,
         }
       )
     ).toMatchSnapshot();
@@ -130,6 +156,9 @@ describe('generateCompareSummaryMarkdown', () => {
           failed: [],
           noop: [],
           severity: 2,
+        },
+        {
+          verbose: false,
         }
       )
     ).toMatchSnapshot();

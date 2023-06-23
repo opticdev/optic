@@ -1,8 +1,10 @@
 import {
   Severity,
   getOperationsChangedLabel,
+  getOperationsChanged,
 } from '@useoptic/openapi-utilities';
 import { CiRunDetails } from '../../../utils/ci-data';
+import { GroupedDiffs } from '@useoptic/openapi-utilities/build/openapi3/group-diff';
 
 const getChecksLabel = (
   results: CiRunDetails['completed'][number]['comparison']['results'],
@@ -33,9 +35,33 @@ const getChecksLabel = (
 
 export const COMPARE_SUMMARY_IDENTIFIER = `optic-comment-3UsoJCz_Z0SpGLo5Vjw6o`;
 
+function getOperationsText(
+  groupedDiffs: GroupedDiffs,
+  options: { webUrl?: string | null; verbose: boolean }
+) {
+  const ops = getOperationsChanged(groupedDiffs);
+
+  const operationsText = options.verbose
+    ? [
+        ...[...ops.added].map((o) => `\`${o}\` (added)`),
+        ...[...ops.changed].map((o) => `\`${o}\` (changed)`),
+        ...[...ops.removed].map((o) => `\`${o}\` (removed)`),
+      ].join('\n')
+    : '';
+  return `${getOperationsChangedLabel(groupedDiffs)} ${
+    options.webUrl
+      ? `([view changelog](${options.webUrl}))`
+      : '([setup changelog](https://useoptic.com/docs/cloud-get-started))'
+  }
+
+  ${operationsText}
+`;
+}
+
 export const generateCompareSummaryMarkdown = (
   commit: { sha: string },
-  results: CiRunDetails
+  results: CiRunDetails,
+  options: { verbose: boolean }
 ) => {
   const anyCompletedHasWarning = results.completed.some(
     (s) => s.warnings.length > 0
@@ -75,11 +101,10 @@ ${s.apiName} ${
 </td>
 <td>
 
-${getOperationsChangedLabel(s.comparison.groupedDiffs)} ${
-        s.opticWebUrl
-          ? `([view changelog](${s.opticWebUrl}))`
-          : '([setup changelog](https://useoptic.com/docs/cloud-get-started))'
-      }
+${getOperationsText(s.comparison.groupedDiffs, {
+  webUrl: s.opticWebUrl,
+  verbose: options.verbose,
+})}
 
 </td>
 <td>

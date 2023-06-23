@@ -74,14 +74,18 @@ export const getLabel = (
 export const getOperationsModifsLabel = (changes: IChange[]) =>
   getLabel(countOperationsModifications(changes));
 
-export const getOperationsChangedLabel = (
+export const getOperationsChanged = (
   groupedDiffs: GroupedDiffs
-): string => {
-  const addedOps = new Set();
-  const changedOps = new Set();
-  const removedOps = new Set();
+): {
+  added: Set<string>;
+  changed: Set<string>;
+  removed: Set<string>;
+} => {
+  const addedOps = new Set<string>();
+  const changedOps = new Set<string>();
+  const removedOps = new Set<string>();
   for (const endpoint of Object.values(groupedDiffs.endpoints)) {
-    const id = `${endpoint.path}${endpoint.method}`;
+    const id = `${endpoint.method.toUpperCase()} ${endpoint.path}`;
     const diffs = getEndpointDiffs(endpoint);
     const typeofDiffs = typeofV3Diffs(endpoint.diffs);
     if (typeofDiffs === 'added') {
@@ -93,9 +97,21 @@ export const getOperationsChangedLabel = (
     }
   }
 
+  return {
+    added: addedOps,
+    changed: changedOps,
+    removed: removedOps,
+  };
+};
+
+export const getOperationsChangedLabel = (
+  groupedDiffs: GroupedDiffs
+): string => {
+  const { added, changed, removed } = getOperationsChanged(groupedDiffs);
+
   return getLabel({
-    added: addedOps.size,
-    changed: changedOps.size,
-    removed: removedOps.size,
+    added: added.size,
+    changed: changed.size,
+    removed: removed.size,
   });
 };

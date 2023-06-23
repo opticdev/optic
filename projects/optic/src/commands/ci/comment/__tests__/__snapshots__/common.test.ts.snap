@@ -27,7 +27,83 @@ completed ([preview](https://app.useoptic.com/docs))
 </td>
 <td>
 
-1 operation added ([view changelog](https://app.useoptic.com/changelog))
+2 operations added ([view changelog](https://app.useoptic.com/changelog))
+
+  
+
+
+</td>
+<td>
+
+ℹ️ No automated checks have run
+
+</td>
+
+</tr>
+</tbody>
+</table>
+
+### Errors running optic
+
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Error</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>failed</td>
+<td>
+
+\`\`\`
+blahblahblah
+\`\`\`
+
+</td>
+</tr>
+</tbody>
+</table>
+
+
+Summary of API changes for commit (123)
+
+1 API had no changes."
+`;
+
+exports[`generateCompareSummaryMarkdown generates md output for passed, failed and noop for verbose 1`] = `
+"
+<!--
+DO NOT MODIFY
+app_id: optic-comment-3UsoJCz_Z0SpGLo5Vjw6o
+commit_sha: 123
+-->
+### APIs Changed
+
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Operation Changes</th>
+<th>Checks</th>
+
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+completed ([preview](https://app.useoptic.com/docs))
+
+</td>
+<td>
+
+2 operations added ([view changelog](https://app.useoptic.com/changelog))
+
+  \`GET /api\` (added)
+\`POST /api\` (added)
+
 
 </td>
 <td>
@@ -148,7 +224,10 @@ completed ([preview](https://app.useoptic.com/docs))
 </td>
 <td>
 
-1 operation added ([view changelog](https://app.useoptic.com/changelog))
+2 operations added ([view changelog](https://app.useoptic.com/changelog))
+
+  
+
 
 </td>
 <td>
@@ -195,7 +274,10 @@ no-optic-cloud ([setup preview](https://useoptic.com/docs/cloud-get-started))
 </td>
 <td>
 
-1 operation added ([setup changelog](https://useoptic.com/docs/cloud-get-started))
+2 operations added ([setup changelog](https://useoptic.com/docs/cloud-get-started))
+
+  
+
 
 </td>
 <td>
