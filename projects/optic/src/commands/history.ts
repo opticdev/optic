@@ -25,6 +25,10 @@ Example usage:
   Export api history to changelog.md file
   $ optic history <path_to_spec.yml> > changelog.md`;
 
+function short(sha: string) {
+  return sha.slice(0, 8);
+}
+
 export const registerHistory = (cli: Command, config: OpticCliConfig) => {
   cli
     .command('history')
@@ -134,6 +138,12 @@ export const getHistoryAction =
       options.historyDepth
     );
 
+    const shaPaths = await GitCandidates.followFile(
+      path_to_spec,
+      options.historyDepth
+    );
+    let nextShaPathIndex = 0;
+
     const pathRelativeToRoot = path.relative(config.root, absolutePath);
 
     let headChecksum: string | undefined = undefined;
@@ -141,14 +151,27 @@ export const getHistoryAction =
     let headDate: Date | undefined = undefined;
 
     for (const [ix, baseSha] of candidates.shas.entries()) {
-      const baseSpec = await loadSpec(
-        `${baseSha}:${pathRelativeToRoot}`,
-        config,
-        {
+      let baseSpec: any;
+      const path = shaPaths[nextShaPathIndex]?.[1] ?? pathRelativeToRoot;
+
+      const shaPathIndex = shaPaths.findIndex((p) => p[0] === baseSha);
+      if (shaPathIndex > -1)
+        nextShaPathIndex = Math.min(nextShaPathIndex + 1, shaPaths.length - 1);
+
+      try {
+        baseSpec = await loadSpec(`${baseSha}:${path}`, config, {
           strict: false,
           denormalize: true,
-        }
-      );
+        });
+      } catch (e) {
+        logger.debug(
+          `${short(
+            baseSha
+          )}:${pathRelativeToRoot} is not a valid OpenAPI file, skipping sha version`,
+          e
+        );
+        continue;
+      }
       const stableSpecString = stableStringify(baseSpec.jsonLike);
       const baseChecksum = computeChecksumForAws(stableSpecString);
       const { commitDate: baseDate } = await getCommitInfo(baseSha);
