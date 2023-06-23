@@ -51,13 +51,18 @@ export const registerCiComment = (cli: Command, config: OpticCliConfig) => {
       '--enterprise-base-url <enterprise-base-url>',
       '(only for enterprise versions of github or gitlab) - the base url to your enterprise github / gitlab instance'
     )
+    .option('--verbose', 'show all operations changed in each API', false)
     .description('comment on a pull request / merge request')
     .action(
       errorHandler(getCiCommentAction(config), { command: 'ci-comment' })
     );
 };
 
-type UnvalidatedOptions = {
+type CommonOptions = {
+  verbose: boolean;
+};
+
+type UnvalidatedOptions = CommonOptions & {
   provider: 'github' | 'gitlab';
   owner?: string;
   repo?: string;
@@ -68,22 +73,24 @@ type UnvalidatedOptions = {
   enterpriseBaseUrl?: string;
 };
 
-type CiCommentActionOptions =
-  | {
-      provider: 'github';
-      owner: string;
-      repo: string;
-      pullRequest: string;
-      sha: string;
-      enterpriseBaseUrl?: string;
-    }
-  | {
-      provider: 'gitlab';
-      projectId: string;
-      mergeRequestId: string;
-      sha: string;
-      enterpriseBaseUrl?: string;
-    };
+type CiCommentActionOptions = CommonOptions &
+  (
+    | {
+        provider: 'github';
+        owner: string;
+        repo: string;
+        pullRequest: string;
+        sha: string;
+        enterpriseBaseUrl?: string;
+      }
+    | {
+        provider: 'gitlab';
+        projectId: string;
+        mergeRequestId: string;
+        sha: string;
+        enterpriseBaseUrl?: string;
+      }
+  );
 
 const getCiCommentAction =
   (config: OpticCliConfig) => async (_options: UnvalidatedOptions) => {
@@ -144,7 +151,9 @@ const getCiCommentAction =
 
     const maybeComment: { id: string; body: string } | null =
       await commenter.getComment(COMPARE_SUMMARY_IDENTIFIER);
-    const body = generateCompareSummaryMarkdown({ sha: options.sha }, data);
+    const body = generateCompareSummaryMarkdown({ sha: options.sha }, data, {
+      verbose: options.verbose,
+    });
 
     if (maybeComment) {
       // If there's a comment already, we need to check whether this session newer than the posted comment

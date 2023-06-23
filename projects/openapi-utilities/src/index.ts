@@ -90,6 +90,7 @@ export {
   getOperationsModifsLabel,
   countOperationsModifications,
   getLabel,
+  getOperationsChanged,
   getOperationsChangedLabel,
 } from './utilities/count-changed-operations';
 
