@@ -138,6 +138,12 @@ export const getHistoryAction =
       options.historyDepth
     );
 
+    const shaPaths = await GitCandidates.followFile(
+      path_to_spec,
+      options.historyDepth
+    );
+    let nextShaPathIndex = 0;
+
     const pathRelativeToRoot = path.relative(config.root, absolutePath);
 
     let headChecksum: string | undefined = undefined;
@@ -146,8 +152,14 @@ export const getHistoryAction =
 
     for (const [ix, baseSha] of candidates.shas.entries()) {
       let baseSpec: any;
+      const path = shaPaths[nextShaPathIndex]?.[1] ?? pathRelativeToRoot;
+
+      const shaPathIndex = shaPaths.findIndex((p) => p[0] === baseSha);
+      if (shaPathIndex > -1)
+        nextShaPathIndex = Math.min(nextShaPathIndex + 1, shaPaths.length - 1);
+
       try {
-        baseSpec = await loadSpec(`${baseSha}:${pathRelativeToRoot}`, config, {
+        baseSpec = await loadSpec(`${baseSha}:${path}`, config, {
           strict: false,
           denormalize: true,
         });

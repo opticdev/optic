@@ -19,18 +19,22 @@ describe('optic history', () => {
       repo: true,
       commit: true,
     });
+    const commitDateChanged = formatDateForGitCommit(date);
 
-    await run(
-      `cp petstore-updated.json petstore-base.json && git add . && GIT_COMMITTER_DATE="${formatDateForGitCommit(
-        date
-      )}" git commit -m 'update petstore' `,
-      false,
-      workspace
-    );
+    const command = `
+cp petstore-updated.json petstore-base.json &&\
+git add . &&\
+GIT_COMMITTER_DATE="${commitDateChanged}" git commit -m 'update petstore' &&\
+mv petstore-base.json petstore-base-renamed.json &&\
+git add . &&\
+GIT_COMMITTER_DATE="${commitDateChanged}" git commit -m 'rename petstore'
+`;
+
+    await run(command, false, workspace);
 
     const { combined, code } = await runOptic(
       workspace,
-      'history petstore-base.json'
+      'history petstore-base-renamed.json'
     );
 
     expect(code).toBe(0);

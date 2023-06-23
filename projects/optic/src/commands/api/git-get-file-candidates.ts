@@ -31,6 +31,22 @@ export async function getShasCandidatesForPath(
   return { shas: hashes, paths: [path] };
 }
 
+export async function followFile(path: string, depth: string = '0') {
+  const depthChunk = depth === '0' ? '' : ` -n ${Number(depth) + 1}`;
+  const command = `git log${depthChunk} --follow --name-only --pretty=format:"%H" ${path}`;
+  try {
+    const commandResults = await exec(command).then(({ stdout }) =>
+      stdout.trim()
+    );
+    const entries = commandResults
+      .split('\n\n')
+      .map((group) => group.split('\n'));
+    return entries;
+  } catch (err) {
+    return [];
+  }
+}
+
 export async function getPathCandidatesForSha(
   sha: string,
   opts: {
