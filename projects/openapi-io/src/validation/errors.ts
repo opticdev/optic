@@ -1,7 +1,15 @@
 export class ValidationError extends Error {
+  public type: 'validation-error';
+
   constructor(message?: string) {
     super(message);
+    this.type = 'validation-error';
+
     Object.setPrototypeOf(this, ValidationError.prototype);
+  }
+
+  static isInstance(v: any): v is OpenAPIVersionError {
+    return v?.type === 'validation-error';
   }
 }
 

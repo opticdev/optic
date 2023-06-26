@@ -3,7 +3,10 @@ import { SentryClient } from '@useoptic/openapi-utilities/build/utilities/sentry
 import chalk from 'chalk';
 import { BadRequestError, ForbiddenError } from './client/errors';
 import { logger } from './logger';
-import { OpenAPIVersionError } from '@useoptic/openapi-io/build/validation/errors';
+import {
+  OpenAPIVersionError,
+  ValidationError,
+} from '@useoptic/openapi-io/build/validation/errors';
 import {
   flushEvents,
   trackEvent,
@@ -19,9 +22,7 @@ export const errorHandler = <Args extends any[], Return extends any>(
     try {
       return await fn(...args);
     } catch (e) {
-      if (UserError.isInstance(e)) {
-        console.error(e.message);
-      } else if (
+      if (
         (e instanceof BadRequestError &&
           e.source === 'optic' &&
           /Invalid token/i.test(e.message)) ||
@@ -37,7 +38,7 @@ export const errorHandler = <Args extends any[], Return extends any>(
         logger.error('');
         logger.error(chalk.green('Run optic login to generate a new token'));
       } else if (OpenAPIVersionError.isInstance(e)) {
-        console.log(e);
+        console.error(e);
         console.error(chalk.red((e as Error).message));
         if (e.version) {
           trackEvent('optic.openapi.version_not_supported', {
@@ -46,8 +47,11 @@ export const errorHandler = <Args extends any[], Return extends any>(
           });
           await flushEvents();
         }
+      } else if (ValidationError.isInstance(e) || UserError.isInstance(e)) {
+        console.error(e);
+        console.error(chalk.red((e as Error).message));
       } else {
-        console.log(e);
+        console.error(e);
         console.error(chalk.red((e as Error).message));
         SentryClient.captureException(e);
         await SentryClient.flush();
