@@ -39,7 +39,7 @@ export const errorHandler = <Args extends any[], Return extends any>(
       } else if (OpenAPIVersionError.isInstance(e)) {
         console.log(e);
         console.error(chalk.red((e as Error).message));
-        if (e.version === '2.x.x') {
+        if (e.version) {
           trackEvent('optic.openapi.version_not_supported', {
             version: e.version,
             command: meta.command,
