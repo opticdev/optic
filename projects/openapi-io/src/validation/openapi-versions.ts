@@ -11,7 +11,9 @@ export function checkOpenAPIVersion(spec: {
   if (semver.satisfies(spec.openapi, '3.0.x')) return '3.0.x';
   const isSwagger = spec.swagger && semver.satisfies(spec.swagger, '2.x.x');
   throw new OpenAPIVersionError(
-    `Unsupported OpenAPI version ${spec.openapi}. Optic supports OpenAPI 3.1.x and 3.0.x`,
-    isSwagger ? '2.x.x' : undefined
+    `Unsupported OpenAPI version ${
+      spec.openapi ?? spec.swagger
+    }. Optic supports OpenAPI 3.1.x and 3.0.x`,
+    isSwagger ? '2.x.x' : spec.openapi
   );
 }

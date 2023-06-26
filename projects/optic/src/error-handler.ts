@@ -36,14 +36,16 @@ export const errorHandler = <Args extends any[], Return extends any>(
         );
         logger.error('');
         logger.error(chalk.green('Run optic login to generate a new token'));
-      } else if (OpenAPIVersionError.isInstance(e) && e.version === '2.x.x') {
+      } else if (OpenAPIVersionError.isInstance(e)) {
         console.log(e);
         console.error(chalk.red((e as Error).message));
-        trackEvent('optic.openapi.version_not_supported', {
-          version: e.version,
-          command: meta.command,
-        });
-        await flushEvents();
+        if (e.version === '2.x.x') {
+          trackEvent('optic.openapi.version_not_supported', {
+            version: e.version,
+            command: meta.command,
+          });
+          await flushEvents();
+        }
       } else {
         console.log(e);
         console.error(chalk.red((e as Error).message));
