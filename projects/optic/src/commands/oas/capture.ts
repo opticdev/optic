@@ -46,7 +46,7 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
       'disable TLS support for --proxy and prevent generation of new CA certificates'
     )
     .option(
-      '--reverse-proxy',
+      '-r, --reverse-proxy',
       'run optic capture in reverse proxy mode - send traffic to a port that gets forwarded to your server'
     )
     .option(
