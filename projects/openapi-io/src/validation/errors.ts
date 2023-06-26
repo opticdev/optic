@@ -7,9 +7,9 @@ export class ValidationError extends Error {
 
 export class OpenAPIVersionError extends Error {
   public type: 'oas-version-error';
-  public version: '2.x.x' | undefined;
+  public version: string | undefined;
 
-  constructor(message?: string, version?: '2.x.x') {
+  constructor(message?: string, version?: string) {
     super(message);
     this.type = 'oas-version-error';
     this.version = version;
