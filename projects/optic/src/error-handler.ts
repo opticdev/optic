@@ -48,7 +48,6 @@ export const errorHandler = <Args extends any[], Return extends any>(
           await flushEvents();
         }
       } else if (ValidationError.isInstance(e) || UserError.isInstance(e)) {
-        console.error(e);
         console.error(chalk.red((e as Error).message));
       } else {
         console.error(e);
