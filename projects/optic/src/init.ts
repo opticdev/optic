@@ -36,8 +36,12 @@ import path from 'path';
 
 const packageJson = require('../package.json');
 
+function getInstallMethod(): 'binary' | 'npm/yarn' {
+  return process.env.INSTALLATION_METHOD === 'binary' ? 'binary' : 'npm/yarn';
+}
+
 const getInstallInstruction = (): string => {
-  if (process.env.INSTALLATION_METHOD === 'binary') {
+  if (getInstallMethod() === 'binary') {
     const binDir = path.dirname(process.execPath);
     return `sh -c "$(curl -s --location https://install.useoptic.com/install.sh)" -- latest ${binDir}`;
   } else {
@@ -71,6 +75,7 @@ export const initCli = async (
     trackEvent(`optic.cli`, {
       commandName,
       args,
+      installMethod: getInstallMethod(),
       isInCi: process.env.CI === 'true',
     });
   });
