@@ -25,10 +25,14 @@ import { RunCommand } from './captures/run-command';
 import { platform } from './lib/shell-utils';
 import chalk from 'chalk';
 import { runVerify } from './verify';
-import { OpticCliConfig } from '../../config';
+import {
+  OpticCliConfig,
+  initializeConfig,
+} from '../../config';
 import { clearCommand } from './capture-clear';
 import { createNewSpecFile } from '../../utils/specs';
 import { logger } from '../../logger';
+import { isNullOrUndefined } from 'util';
 
 export async function captureCommand(config: OpticCliConfig): Promise<Command> {
   const command = new Command('capture');
@@ -38,7 +42,7 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
 
   command
     .argument('<openapi-file>', 'an OpenAPI spec file to add an operation to')
-    .argument('<target-url>', 'the url to capture...')
+    .argument('[target-url]', 'the url to capture...')
 
     .description('capture observed traffic as a HAR (HttpArchive v1.3) file')
     .option(
@@ -126,6 +130,15 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
         } else {
           ca = maybeCa.val;
         }
+      }
+
+
+      // capture 2.0
+      if (targetUrl === undefined) {
+        let config = await initializeConfig()
+        console.log(JSON.stringify(config.capture))
+        process.exitCode = 0
+        return
       }
 
       let [proxyInteractions, proxyUrl] = await ProxyInteractions.create(
