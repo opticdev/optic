@@ -1,0 +1,9 @@
+openapi: 3.1.0
+info:
+  title: a spec
+  description: The API
+  version: 0.1.0
+servers:
+  - name: book server
+    url: http://localhost:3030/books
+paths: {}
