@@ -1,5 +1,4 @@
 import { Command, Option } from 'commander';
-import open from 'open';
 
 import { compute } from '../diff/compute';
 import { loadSpec, ParseResult } from '../../utils/spec-loaders';
@@ -14,6 +13,7 @@ import {
   flushEvents,
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
+import { openUrl } from '../../utils/open-url';
 
 const description = `lints and validates an OpenAPI file`;
 
@@ -120,9 +120,9 @@ const getLintAction =
 
         trackEvent('optic.lint.view_web', analyticsData);
         await flushEvents();
-        await open(`${config.client.getWebBase()}/cli/diff#${compressedData}`, {
-          wait: false,
-        });
+        await openUrl(
+          `${config.client.getWebBase()}/cli/diff#${compressedData}`
+        );
       }
 
       if (failuresForSeverity > 0) {
