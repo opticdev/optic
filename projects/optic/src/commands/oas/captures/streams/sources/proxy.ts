@@ -23,6 +23,8 @@ import portfinder from 'portfinder';
 import globalLog from 'log';
 import invariant from 'ts-invariant';
 import chalk from 'chalk';
+import { UserError } from '@useoptic/openapi-utilities';
+import { logger } from '../../../../../logger';
 type Logger = typeof globalLog;
 
 export const log: Logger = globalLog.get('captures:streams:sources:proxy'); // export so it can be enabled in testing
@@ -41,7 +43,19 @@ export class ProxyInteractions {
       proxyPort?: number;
     }
   ): Promise<[ProxyInteractions, string, string]> {
-    let { host, protocol, origin } = new URL(targetHost);
+    let host: string;
+    let protocol: string;
+    let origin: string;
+    try {
+      ({ host, protocol, origin } = new URL(targetHost));
+    } catch (e) {
+      logger.error(
+        `${chalk.red(
+          'Error:'
+        )} Invalid URL. Valid URLs must include the protocol and host, e.g. http://localhost:3030 or https://api.example.com`
+      );
+      throw new UserError();
+    }
     if (targetHost.includes('/')) {
       // accept urls to be passed in rather than pure hosts
       targetHost = host;
