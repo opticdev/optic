@@ -834,7 +834,7 @@ ${(spec.error as Error).message}`,
     }
     await flushEvents();
 
-    if (config.isInCi && !config.isAuthenticated) renderCloudSetup();
+    if (config.isInCi && !options.upload) renderCloudSetup();
 
     if (
       results.some((result) => {
