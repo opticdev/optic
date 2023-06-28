@@ -25,14 +25,11 @@ import { RunCommand } from './captures/run-command';
 import { platform } from './lib/shell-utils';
 import chalk from 'chalk';
 import { runVerify } from './verify';
-import {
-  OpticCliConfig,
-  initializeConfig,
-} from '../../config';
+import { CaptureConfig, OpticCliConfig } from '../../config';
+import { StartCaptureV2Session } from './capturev2';
 import { clearCommand } from './capture-clear';
 import { createNewSpecFile } from '../../utils/specs';
 import { logger } from '../../logger';
-import { isNullOrUndefined } from 'util';
 
 export async function captureCommand(config: OpticCliConfig): Promise<Command> {
   const command = new Command('capture');
@@ -113,9 +110,23 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
 
       let sourcesController = new AbortController();
       const sources: HarEntries[] = []; // this should be CapturedInteractions, but those aren't detailed enough yet to not lose information later
+
       let interactiveCapture = false;
 
       let ca: ProxyCertAuthority | undefined;
+
+      //
+      // capture 2.0
+      //
+      if (targetUrl === undefined && config.capture !== undefined) {
+        StartCaptureV2Session(
+          Object.keys(config.capture[filePath])[0],
+          config.capture[filePath],
+          options.ProxyPort
+        );
+        process.exitCode = 0;
+        return;
+      }
 
       if (options.tls) {
         const certStore = getCertStore();
@@ -130,15 +141,6 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
         } else {
           ca = maybeCa.val;
         }
-      }
-
-
-      // capture 2.0
-      if (targetUrl === undefined) {
-        let config = await initializeConfig()
-        console.log(JSON.stringify(config.capture))
-        process.exitCode = 0
-        return
       }
 
       let [proxyInteractions, proxyUrl] = await ProxyInteractions.create(

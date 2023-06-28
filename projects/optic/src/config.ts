@@ -32,11 +32,13 @@ export type RawYmlConfig = {
 };
 
 export type CaptureConfig = {
-  [filename:string]: {
-    server: ServerConfig;
-    requests: Request[];
-  }
-}
+  [filename: string]: CaptureConfigData;
+};
+
+export type CaptureConfigData = {
+  server: ServerConfig;
+  requests: Request[];
+};
 
 export type ServerConfig = {
   dir?: string;
@@ -44,15 +46,15 @@ export type ServerConfig = {
   url: string;
   ready_endpoint?: string;
   ready_interval?: number;
-}
+};
 
 export type Request = {
   path: string;
   verb?: string;
   data?: {
-    [name:string]: [value:string];
-  }[];
-}
+    [key: string]: any;
+  };
+};
 
 export type OpticCliConfig = Omit<RawYmlConfig, 'ruleset' | 'extends'> & {
   // path to the loaded config, or undefined if it was the default config
