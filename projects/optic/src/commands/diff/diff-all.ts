@@ -29,6 +29,7 @@ import {
 import { jsonChangelog } from './changelog-renderers/json-changelog';
 import * as Types from '../../client/optic-backend-types';
 import { openUrl } from '../../utils/open-url';
+import { renderCloudSetup } from '../../utils/render-cloud';
 
 const usage = () => `
   optic diff-all
@@ -719,6 +720,7 @@ const getDiffAllAction =
         openWebpage(changelogUrl, result, config);
       }
     }
+
     const isCloudDiff = /^cloud:/.test(options.compareFrom);
     handleWarnings(warnings, options, isCloudDiff);
 
@@ -831,6 +833,8 @@ ${(spec.error as Error).message}`,
       }
     }
     await flushEvents();
+
+    if (config.isInCi && !config.isAuthenticated) renderCloudSetup();
 
     if (
       results.some((result) => {
