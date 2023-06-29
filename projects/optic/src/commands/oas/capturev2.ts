@@ -1,17 +1,23 @@
-import { spawn, ChildProcess } from 'child_process';
+import { spawn } from 'child_process';
 import { chdir } from 'process';
-import { dirname } from 'path';
+import path, { dirname } from 'path';
+import fsNonPromise from 'fs';
+import fs from 'node:fs/promises';
 
 import { CaptureConfig, CaptureConfigData, Request } from '../../config';
-import { ProxyInteractions } from './captures';
+import { HarEntries, ProxyInteractions } from './captures';
+import { writeInteractions } from './capture';
 import { RunCommand } from './captures/run-command';
-import http, { IncomingMessage } from 'http';
+import http, { IncomingMessage, RequestOptions } from 'http';
 import { URL } from 'url';
+import * as AT from './lib/async-tools';
+import { Writable } from 'stream';
 
 export async function StartCaptureV2Session(
   openApiSpec: string,
   capture: CaptureConfigData,
-  proxyPort: number
+  proxyPort: number,
+  trafficDirectory: string
 ) {
   if (capture.server.dir === undefined) {
     chdir(dirname(openApiSpec));
@@ -61,11 +67,22 @@ export async function StartCaptureV2Session(
     makeRequest(opts, data);
   });
 
+  // write captured requests to disk
+  const timestamp = Date.now().toString();
+  const sources: HarEntries[] = [];
+  sources.push(HarEntries.fromProxyInteractions(proxyInteractions));
+  const harEntries = AT.merge(...sources);
+  // const timestamp = Date.now().toString();
+  const inProgressName = path.join(trafficDirectory, `${timestamp}.incomplete`);
+  let destination: Writable = fsNonPromise.createWriteStream(inProgressName);
+  const observations = writeInteractions(harEntries, destination);
+  const completedName = path.join(trafficDirectory, `${timestamp}.har`);
+  await fs.rename(inProgressName, completedName);
+  // blarg
 
   // stop app
   // stop proxy
 }
-
 function makeRequest(opts: any, data: string | undefined) {
   if (data) {
     opts['headers'] = {

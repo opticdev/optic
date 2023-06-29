@@ -122,7 +122,8 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
         StartCaptureV2Session(
           Object.keys(config.capture[filePath])[0],
           config.capture[filePath],
-          options.ProxyPort
+          options.ProxyPort,
+          trafficDirectory
         );
         process.exitCode = 0;
         return;
@@ -305,7 +306,7 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
   return command;
 }
 
-function writeInteractions(
+export function writeInteractions(
   harEntries: HarEntries,
   destination: Writable & { fd?: number }
 ): CaptureObservations {
