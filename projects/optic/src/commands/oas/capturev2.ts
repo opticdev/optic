@@ -3,6 +3,7 @@ import { chdir } from 'process';
 import path, { dirname } from 'path';
 import fsNonPromise from 'fs';
 import fs from 'node:fs/promises';
+import fetch from 'node-fetch';
 
 import { CaptureConfig, CaptureConfigData, Request } from '../../config';
 import { HarEntries, ProxyInteractions } from './captures';
@@ -59,26 +60,15 @@ export async function StartCaptureV2Session(
   await new Promise((r) => setTimeout(r, capture.server.ready_interval));
 
   // make requests
-  const proxy = new URL(proxyUrl);
-  capture.requests.forEach((request: Request) => {
-    let opts: RequestOptions = {
-      protocol: proxy.protocol,
-      hostname: proxy.hostname,
-      port: proxy.port,
-      path: request.path,
-      method: request.verb?.toUpperCase() || 'GET',
-    };
-    let data = request.data && JSON.stringify(request.data);
-    // TODO capturev2 - use fetch here
-    makeRequest(opts, data);
-  });
+  // TODO capturev2 - use fetch here
+  console.log(trafficDirectory);
+  const allRequests = makeRequests(capture.requests, proxyUrl);
 
   // write captured requests to disk
   const timestamp = Date.now().toString();
   const sources: HarEntries[] = [];
   sources.push(HarEntries.fromProxyInteractions(proxyInteractions));
   const harEntries = AT.merge(...sources);
-  // const timestamp = Date.now().toString();
   const inProgressName = path.join(trafficDirectory, `${timestamp}.incomplete`);
   let destination: Writable = fsNonPromise.createWriteStream(inProgressName);
   const observations = writeInteractions(harEntries, destination);
@@ -86,34 +76,38 @@ export async function StartCaptureV2Session(
   const completedName = path.join(trafficDirectory, `${timestamp}.har`);
 
   // TODO implement a promise here to wait for requests
+
+  console.log(`NATE: ${allRequests}`);
+  await allRequests;
   sourcesController.abort();
   for await (const observation of observations) {
+    console.log('waiting forever');
+    sourcesController.abort();
   }
   // TODO log finished
+  console.log('gaaaaaaah');
 
-  // blarg
-
-  // stop app
-  // stop proxy
+  app.kill('SIGTERM');
 }
-function makeRequest(opts: any, data: string | undefined) {
-  if (data) {
-    opts['headers'] = {
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(data),
-    };
-  }
-  const req = http.request(opts, (res) => {
-    console.log(`${opts.method} ${opts.path}: ${res.statusCode}`);
-    res.setEncoding('utf8');
-    res.on('data', (chunk) => {
-      console.log(chunk);
-    });
+
+async function makeRequests(
+  requests: Request[],
+  proxyUrl: string
+): Promise<void> {
+  const promises = requests.map((request: Request) => {
+    let verb = request.verb?.toUpperCase() || 'GET';
+    console.log(`${verb} ${proxyUrl}${request.path}`);
+    return fetch(`${proxyUrl}${request.path}`);
   });
 
-  if (data) {
-    req.write(data);
-  }
+  try {
+    const responses: any = await Promise.all(promises);
 
-  req.end();
+    responses.forEach(async (response: Response) => {
+      console.log(response.status);
+      console.log(await response.json());
+    });
+  } catch (error) {
+    console.error(error);
+  }
 }
