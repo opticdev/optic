@@ -91,6 +91,7 @@ const DefaultOpticCliConfig: OpticCliConfig = {
 };
 
 const ajv = new Ajv();
+// TODO capturev2 - run validation for capture
 const configSchema = {
   type: 'object',
   properties: {

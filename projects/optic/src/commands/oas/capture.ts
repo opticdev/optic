@@ -119,10 +119,12 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
       // capture 2.0
       //
       if (targetUrl === undefined && config.capture !== undefined) {
-        StartCaptureV2Session(
+        // TODO capturev2 - handle file does not exist
+        // TODO capturev2 - handle relative path from root (tbd - what do we do when we handle this outside of a git repo)
+        await StartCaptureV2Session(
           Object.keys(config.capture[filePath])[0],
           config.capture[filePath],
-          options.ProxyPort,
+          options.proxyPort,
           trafficDirectory
         );
         process.exitCode = 0;

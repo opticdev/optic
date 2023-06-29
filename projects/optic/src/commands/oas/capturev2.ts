@@ -13,6 +13,11 @@ import { URL } from 'url';
 import * as AT from './lib/async-tools';
 import { Writable } from 'stream';
 
+async function consume(observations: any) {
+  for await (const ob of observations) {
+  }
+}
+
 export async function StartCaptureV2Session(
   openApiSpec: string,
   capture: CaptureConfigData,
@@ -64,6 +69,7 @@ export async function StartCaptureV2Session(
       method: request.verb?.toUpperCase() || 'GET',
     };
     let data = request.data && JSON.stringify(request.data);
+    // TODO capturev2 - use fetch here
     makeRequest(opts, data);
   });
 
@@ -76,8 +82,15 @@ export async function StartCaptureV2Session(
   const inProgressName = path.join(trafficDirectory, `${timestamp}.incomplete`);
   let destination: Writable = fsNonPromise.createWriteStream(inProgressName);
   const observations = writeInteractions(harEntries, destination);
+
   const completedName = path.join(trafficDirectory, `${timestamp}.har`);
-  await fs.rename(inProgressName, completedName);
+
+  // TODO implement a promise here to wait for requests
+  sourcesController.abort();
+  for await (const observation of observations) {
+  }
+  // TODO log finished
+
   // blarg
 
   // stop app
