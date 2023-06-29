@@ -459,42 +459,43 @@ const getDiffAction =
       );
     }
 
-    if (config.isInCi && !options.upload)
-      if (options.web) {
-        if (
-          diffResult.specResults.diffs.length === 0 &&
-          (!options.check || diffResult.specResults.results.length === 0)
-        ) {
-          logger.info('Empty changelog: not opening web view');
-        } else {
-          const analyticsData: Record<string, any> = {
-            isInCi: config.isInCi,
+    if (config.isInCi && !options.upload) renderCloudSetup();
+
+    if (options.web) {
+      if (
+        diffResult.specResults.diffs.length === 0 &&
+        (!options.check || diffResult.specResults.results.length === 0)
+      ) {
+        logger.info('Empty changelog: not opening web view');
+      } else {
+        const analyticsData: Record<string, any> = {
+          isInCi: config.isInCi,
+        };
+
+        if (!maybeChangelogUrl) {
+          const meta = {
+            createdAt: new Date(),
+            command: ['optic', ...process.argv.slice(2)].join(' '),
+            file1,
+            file2,
+            base: options.base,
           };
 
-          if (!maybeChangelogUrl) {
-            const meta = {
-              createdAt: new Date(),
-              command: ['optic', ...process.argv.slice(2)].join(' '),
-              file1,
-              file2,
-              base: options.base,
-            };
-
-            const compressedData = compressDataV2(
-              baseParseResult,
-              headParseResult,
-              diffResult.specResults,
-              meta
-            );
-            analyticsData.compressedDataLength = compressedData.length;
-            logger.info('Opening up diff in web view');
-            maybeChangelogUrl = `${config.client.getWebBase()}/cli/diff#${compressedData}`;
-            await flushEvents();
-          }
-          trackEvent('optic.diff.view_web', analyticsData);
-          await openUrl(maybeChangelogUrl);
+          const compressedData = compressDataV2(
+            baseParseResult,
+            headParseResult,
+            diffResult.specResults,
+            meta
+          );
+          analyticsData.compressedDataLength = compressedData.length;
+          logger.info('Opening up diff in web view');
+          maybeChangelogUrl = `${config.client.getWebBase()}/cli/diff#${compressedData}`;
+          await flushEvents();
         }
+        trackEvent('optic.diff.view_web', analyticsData);
+        await openUrl(maybeChangelogUrl);
       }
+    }
 
     if (config.isInCi) {
       await writeDataForCi(
