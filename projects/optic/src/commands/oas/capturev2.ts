@@ -49,38 +49,41 @@ export async function StartCaptureV2Session(
 
   // make requests
   const proxy = new URL(proxyUrl);
-  capture.requests.forEach((r: Request) => {
-    const verb = r.verb || 'GET';
-    let opts = {
+  capture.requests.forEach((request: Request) => {
+    let opts: RequestOptions = {
       protocol: proxy.protocol,
       hostname: proxy.hostname,
       port: proxy.port,
-      path: r.path,
-      method: verb,
+      path: request.path,
+      method: request.verb?.toUpperCase() || 'GET',
     };
-
-    if (verb === 'POST' || verb === 'post') {
-      opts['headers'] = {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(JSON.stringify(r.data)),
-      };
-    }
-    const req = http.request(opts, (res) => {
-      console.log(`${verb} ${r.path}: ${res.statusCode}`);
-      res.setEncoding('utf8');
-      res.on('data', (chunk) => {
-        console.log(chunk);
-      });
-    });
-
-    if (verb === 'POST' || verb === 'post') {
-      req.write(JSON.stringify(r.data));
-    }
-
-    req.end();
+    let data = request.data && JSON.stringify(request.data);
+    makeRequest(opts, data);
   });
 
-  // stop app
 
+  // stop app
   // stop proxy
+}
+
+function makeRequest(opts: any, data: string | undefined) {
+  if (data) {
+    opts['headers'] = {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(data),
+    };
+  }
+  const req = http.request(opts, (res) => {
+    console.log(`${opts.method} ${opts.path}: ${res.statusCode}`);
+    res.setEncoding('utf8');
+    res.on('data', (chunk) => {
+      console.log(chunk);
+    });
+  });
+
+  if (data) {
+    req.write(data);
+  }
+
+  req.end();
 }
