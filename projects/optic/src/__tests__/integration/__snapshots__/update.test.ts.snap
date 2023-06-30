@@ -217,6 +217,17 @@ exports[`update updates an empty spec 2`] = `
         ],
         "type": "object",
       },
+      "PostAuthorsRequestBody": {
+        "properties": {
+          "name": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "name",
+        ],
+        "type": "object",
+      },
       "PostBooks201ResponseBody": {
         "properties": {
           "author_id": {
@@ -236,6 +247,21 @@ exports[`update updates an empty spec 2`] = `
         ],
         "type": "object",
       },
+      "PostBooksRequestBody": {
+        "properties": {
+          "author_id": {
+            "type": "string",
+          },
+          "name": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "name",
+          "author_id",
+        ],
+        "type": "object",
+      },
     },
   },
   "info": {
@@ -250,7 +276,9 @@ exports[`update updates an empty spec 2`] = `
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {},
+              "schema": {
+                "$ref": "#/components/schemas/PostAuthorsRequestBody",
+              },
             },
           },
         },
@@ -332,7 +360,9 @@ exports[`update updates an empty spec 2`] = `
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {},
+              "schema": {
+                "$ref": "#/components/schemas/PostBooksRequestBody",
+              },
             },
           },
         },
@@ -531,6 +561,17 @@ exports[`update updates an existing spec 2`] = `
         ],
         "type": "object",
       },
+      "PostAuthorsRequestBody": {
+        "properties": {
+          "name": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "name",
+        ],
+        "type": "object",
+      },
       "PostBooks201ResponseBody": {
         "properties": {
           "author_id": {
@@ -550,6 +591,21 @@ exports[`update updates an existing spec 2`] = `
         ],
         "type": "object",
       },
+      "PostBooksRequestBody": {
+        "properties": {
+          "author_id": {
+            "type": "string",
+          },
+          "name": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "name",
+          "author_id",
+        ],
+        "type": "object",
+      },
     },
   },
   "info": {
@@ -564,7 +620,9 @@ exports[`update updates an existing spec 2`] = `
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {},
+              "schema": {
+                "$ref": "#/components/schemas/PostAuthorsRequestBody",
+              },
             },
           },
         },
@@ -646,7 +704,9 @@ exports[`update updates an existing spec 2`] = `
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {},
+              "schema": {
+                "$ref": "#/components/schemas/PostBooksRequestBody",
+              },
             },
           },
         },
