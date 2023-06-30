@@ -17,6 +17,171 @@ Share a link to documentation with your team ([1moptic api add openapi.yml)[22
 
 exports[`update update an existing spec with prefixed server 2`] = `
 {
+  "components": {
+    "schemas": {
+      "GetBooksBook200ResponseBody": {
+        "properties": {
+          "author_id": {
+            "type": "string",
+          },
+          "created_at": {
+            "type": "string",
+          },
+          "id": {
+            "type": "string",
+          },
+          "name": {
+            "type": "string",
+          },
+          "updated_at": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "id",
+          "name",
+          "author_id",
+          "created_at",
+          "updated_at",
+        ],
+        "type": "object",
+      },
+      "GetSomeExample200ResponseBody": {
+        "properties": {
+          "something": {
+            "items": {
+              "properties": {
+                "another": {
+                  "oneOf": [
+                    {
+                      "items": {
+                        "properties": {
+                          "max": {
+                            "type": "number",
+                          },
+                          "min": {
+                            "type": "number",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "max",
+                          "min",
+                        ],
+                        "type": "object",
+                      },
+                      "type": [
+                        "object",
+                        "null",
+                      ],
+                    },
+                    {
+                      "items": {
+                        "properties": {
+                          "max": {
+                            "type": "number",
+                          },
+                          "min": {
+                            "type": "number",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "max",
+                          "min",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                  ],
+                },
+                "name": {
+                  "type": "string",
+                },
+              },
+              "required": [
+                "name",
+                "another",
+              ],
+              "type": "object",
+            },
+            "type": "array",
+          },
+        },
+        "required": [
+          "something",
+        ],
+        "type": "object",
+      },
+      "PostAuthors201ResponseBody": {
+        "properties": {
+          "id": {
+            "type": "string",
+          },
+          "name": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "id",
+          "name",
+        ],
+        "type": "object",
+      },
+      "PostAuthorsRequestBody": {
+        "properties": {
+          "name": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "name",
+        ],
+        "type": "object",
+      },
+      "PostBooks201ResponseBody": {
+        "properties": {
+          "author_id": {
+            "type": "string",
+          },
+          "id": {
+            "type": "string",
+          },
+          "name": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "id",
+          "name",
+          "author_id",
+        ],
+        "type": "object",
+      },
+      "PostBooksRequestBody": {
+        "properties": {
+          "author_id": {
+            "type": "string",
+          },
+          "name": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "name",
+          "author_id",
+        ],
+        "type": "object",
+      },
+    },
+  },
   "info": {
     "description": "The API",
     "title": "a spec",
@@ -26,12 +191,43 @@ exports[`update update an existing spec with prefixed server 2`] = `
   "paths": {
     "/authors": {
       "post": {
-        "responses": {},
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostAuthorsRequestBody",
+              },
+            },
+          },
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostAuthors201ResponseBody",
+                },
+              },
+            },
+            "description": "201 response",
+          },
+        },
       },
     },
     "/authors/{author}": {
       "get": {
-        "responses": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBooksBook200ResponseBody",
+                },
+              },
+            },
+            "description": "200 response",
+          },
+        },
       },
       "parameters": [
         {
@@ -46,15 +242,76 @@ exports[`update update an existing spec with prefixed server 2`] = `
     },
     "/books": {
       "get": {
-        "responses": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/GetBooksBook200ResponseBody",
+                      },
+                      "type": "array",
+                    },
+                    "has_more_data": {
+                      "type": "boolean",
+                    },
+                    "next": {
+                      "type": "null",
+                    },
+                  },
+                  "required": [
+                    "data",
+                    "next",
+                    "has_more_data",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "200 response",
+          },
+        },
       },
       "post": {
-        "responses": {},
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostBooksRequestBody",
+              },
+            },
+          },
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostBooks201ResponseBody",
+                },
+              },
+            },
+            "description": "201 response",
+          },
+        },
       },
     },
     "/books/{book}": {
       "get": {
-        "responses": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBooksBook200ResponseBody",
+                },
+              },
+            },
+            "description": "200 response",
+          },
+        },
       },
       "parameters": [
         {
@@ -69,14 +326,25 @@ exports[`update update an existing spec with prefixed server 2`] = `
     },
     "/some/example": {
       "get": {
-        "responses": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetSomeExample200ResponseBody",
+                },
+              },
+            },
+            "description": "200 response",
+          },
+        },
       },
     },
   },
   "servers": [
     {
       "name": "book server",
-      "url": "http://localhost:3030/books",
+      "url": "http://localhost:3030/api",
     },
   ],
 }
