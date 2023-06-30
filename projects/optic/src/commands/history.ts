@@ -6,7 +6,7 @@ import chalk from 'chalk';
 import * as GitCandidates from './api/git-get-file-candidates';
 import fs from 'fs';
 import path from 'path';
-import { loadSpec } from '../utils/spec-loaders';
+import { ParseResult, loadSpec } from '../utils/spec-loaders';
 import stableStringify from 'json-stable-stringify';
 import { computeChecksumForAws } from '../utils/checksum';
 import { compareSpecs, ObjectDiff } from '@useoptic/openapi-utilities';
@@ -78,7 +78,11 @@ const isSameDay = (date1?: Date, date2?: Date) => {
   return utcDate1 == utcDate2;
 };
 
-const logDiffs = async (baseSpec: any, headSpec: any, headDate?: Date) => {
+const logDiffs = async (
+  baseSpec: ParseResult,
+  headSpec: ParseResult,
+  headDate?: Date
+) => {
   const rulesRunner = new RuleRunner([new BreakingChangesRuleset()]);
   const comparison = await compareSpecs(baseSpec, headSpec, rulesRunner, {});
   console.log(`### ${headDate?.toDateString()}`);
@@ -147,11 +151,11 @@ export const getHistoryAction =
     const pathRelativeToRoot = path.relative(config.root, absolutePath);
 
     let headChecksum: string | undefined = undefined;
-    let headSpec: any;
+    let headSpec: ParseResult | undefined = undefined;
     let headDate: Date | undefined = undefined;
 
     for (const [ix, baseSha] of candidates.shas.entries()) {
-      let baseSpec: any;
+      let baseSpec: ParseResult;
       const path = shaPaths[nextShaPathIndex]?.[1] ?? pathRelativeToRoot;
 
       const shaPathIndex = shaPaths.findIndex((p) => p[0] === baseSha);
@@ -179,7 +183,7 @@ export const getHistoryAction =
       const sameChecksum = baseChecksum === headChecksum;
       const lastCandidate = ix === candidates.shas.length - 1;
 
-      if (lastCandidate && !sameChecksum) {
+      if (lastCandidate && !sameChecksum && headSpec) {
         await logDiffs(baseSpec, headSpec, headDate);
         continue;
       }

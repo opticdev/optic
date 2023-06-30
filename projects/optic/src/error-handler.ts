@@ -11,6 +11,7 @@ import {
   flushEvents,
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
+import { ResolverError } from '@useoptic/openapi-io';
 
 export const errorHandler = <Args extends any[], Return extends any>(
   fn: (...args: Args) => Promise<Return>,
@@ -47,7 +48,11 @@ export const errorHandler = <Args extends any[], Return extends any>(
           });
           await flushEvents();
         }
-      } else if (ValidationError.isInstance(e) || UserError.isInstance(e)) {
+      } else if (
+        ValidationError.isInstance(e) ||
+        UserError.isInstance(e) ||
+        e instanceof ResolverError
+      ) {
         console.error(chalk.red((e as Error).message));
       } else {
         console.error(e);

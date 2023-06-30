@@ -12,7 +12,6 @@ import {
   flushEvents,
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
-import open from 'open';
 import { compressDataV2 } from './compressResults';
 import { textToSev } from '@useoptic/openapi-utilities';
 import { uploadDiff } from './upload-diff';
@@ -29,6 +28,8 @@ import {
 } from './changelog-renderers/terminal-changelog';
 import { jsonChangelog } from './changelog-renderers/json-changelog';
 import * as Types from '../../client/optic-backend-types';
+import { openUrl } from '../../utils/open-url';
+import { renderCloudSetup } from '../../utils/render-cloud';
 
 const usage = () => `
   optic diff-all
@@ -564,7 +565,7 @@ async function openWebpage(
   }
   trackEvent('optic.diff_all.view_web', analyticsData);
 
-  await open(url, { wait: false });
+  await openUrl(url);
 }
 
 function sanitizeRef(maybeGitRef: string): string {
@@ -719,6 +720,7 @@ const getDiffAllAction =
         openWebpage(changelogUrl, result, config);
       }
     }
+
     const isCloudDiff = /^cloud:/.test(options.compareFrom);
     handleWarnings(warnings, options, isCloudDiff);
 
@@ -831,6 +833,8 @@ ${(spec.error as Error).message}`,
       }
     }
     await flushEvents();
+
+    if (config.isInCi && !options.upload) renderCloudSetup();
 
     if (
       results.some((result) => {

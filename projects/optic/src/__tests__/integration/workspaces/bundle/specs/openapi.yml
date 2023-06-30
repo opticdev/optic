@@ -11,7 +11,13 @@ components:
           $ref: "#/components/schemas/notUsedInner"
     notUsedInner:
       type: string
-
+    usedButNotInAnOperation:
+      type: object
+    consumerComponent:
+      type: object
+      properties:
+        example:
+          $ref: "#/components/schemas/usedButNotInAnOperation"
 paths:
   /todos:
     get:
