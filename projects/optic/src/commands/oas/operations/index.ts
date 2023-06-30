@@ -109,8 +109,8 @@ export class PathComponents {
     Copied from https://github.com/stoplightio/prism/blob/0ad49235879ad4f7fcafa7b5badcb763b0c37a6a/packages/http/src/router/matchPath.ts
     under https://github.com/stoplightio/prism/blob/master/LICENSE
    */
-    if (path.length === 0 || !path.startsWith('/')) {
-      return [];
+    if (!path.startsWith('/')) {
+      path = `/${path};`;
     }
     return path
       .split('/')
