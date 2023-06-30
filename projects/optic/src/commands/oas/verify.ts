@@ -244,7 +244,7 @@ async function renderOperationStatus(
   specPath: string,
   feedback: ReturnType<typeof createCommandFeedback>
 ) {
-  const { pathsToAdd } = await observationToUndocumented(
+  const pathsToAdd = await observationToUndocumented(
     observations,
     specToOperations(spec)
   );

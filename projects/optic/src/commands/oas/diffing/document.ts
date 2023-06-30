@@ -29,71 +29,8 @@ import { SchemaInventory } from '../shapes/closeness/schema-inventory';
 import { specToOperations } from '../operations/queries';
 import { checkOpenAPIVersion } from '@useoptic/openapi-io';
 
-export async function addIfUndocumented(
-  operationsToAdd: ParsedOperation[],
-  isAddAll: boolean,
-  statusObservations: StatusObservations,
-  interactions: CapturedInteractions,
-  spec: OpenAPIV3.Document,
-  sourcemap: SpecFilesSourcemap
-): Promise<Result<RecentlyDocumented, string>> {
-  const operations = specToOperations(spec);
-  const operationsOption = await computeOperationsToAdd(
-    operationsToAdd,
-    isAddAll,
-    statusObservations,
-    operations
-  );
-
-  if (operationsOption.ok) {
-    const operations = operationsOption.unwrap();
-    let { results: addPatches, observations: addObservations } = addOperations(
-      spec,
-      operations,
-      interactions
-    );
-
-    let { results: updatedSpecFiles, observations: fileObservations } =
-      updateSpecFiles(addPatches, sourcemap);
-
-    const writingSpecFiles = (async function () {
-      for await (let writtenFilePath of SpecFiles.writeFiles(
-        updatedSpecFiles
-      )) {
-        // console.log(`Updated ${writtenFilePath}`);
-      }
-    })();
-
-    let observations = AT.forkable(AT.merge(addObservations, fileObservations));
-    const stats = collectStats(observations.fork());
-    observations.start();
-
-    await Promise.all([writingSpecFiles]);
-    return Ok(await stats);
-  } else {
-    return Err(operationsOption.val);
-  }
-}
-
-async function computeOperationsToAdd(
-  operationsToAdd: ParsedOperation[],
-  isAddAll: boolean,
-  statusObservations: StatusObservations,
-  operations: { pathPattern: string; methods: string[] }[]
-): Promise<Result<ParsedOperation[], string>> {
-  if (isAddAll) {
-    const undocumented = await observationToUndocumented(
-      statusObservations,
-      operations
-    );
-    return Ok(undocumented.pathsToAdd);
-  } else {
-    return Ok(operationsToAdd);
-  }
-}
-
 export interface ParsedOperation {
-  methods: Array<HttpMethod>;
+  methods: HttpMethod[];
   pathPattern: string;
 }
 
@@ -128,6 +65,39 @@ export function parseAddOperations(
   return Ok(pairs);
 }
 
+export async function addIfUndocumented(
+  operationsToAdd: ParsedOperation[],
+  isAddAll: boolean,
+  statusObservations: StatusObservations,
+  interactions: CapturedInteractions,
+  spec: OpenAPIV3.Document,
+  sourcemap: SpecFilesSourcemap
+): Promise<Result<RecentlyDocumented, string>> {
+  const operationsToUpdate = isAddAll
+    ? await observationToUndocumented(
+        statusObservations,
+        specToOperations(spec)
+      )
+    : operationsToAdd;
+
+  let { results: addPatches, observations: addObservations } = addOperations(
+    spec,
+    operationsToUpdate,
+    interactions
+  );
+
+  let { results: updatedSpecFiles, observations: fileObservations } =
+    updateSpecFiles(addPatches, sourcemap);
+
+  let observations = AT.forkable(AT.merge(addObservations, fileObservations));
+  const stats = collectStats(observations.fork());
+  observations.start();
+
+  for await (let _ of SpecFiles.writeFiles(updatedSpecFiles)) {
+  }
+  return Ok(await stats);
+}
+
 // observations to diffs
 
 export async function observationToUndocumented(
@@ -135,7 +105,6 @@ export async function observationToUndocumented(
   operations: { pathPattern: string; methods: string[] }[]
 ) {
   let pathDiffs = {
-    interactionsCount: 0,
     matchedOperations: new Map<string, { path: string; method: string }>(),
     matchedInteractionCountByOperation: new Map<string, number>(),
     unmatchedMethods: new Map<string, { path: string; methods: string[] }>(),
@@ -143,38 +112,13 @@ export async function observationToUndocumented(
   };
 
   for await (let observation of observations) {
-    if (
-      observation.kind === StatusObservationKind.InteractionMatchedOperation
-    ) {
-      pathDiffs.interactionsCount += 1;
+    if (observation.kind === StatusObservationKind.InteractionUnmatchedPath) {
       let opId = operationId(observation);
-
-      if (!pathDiffs.matchedOperations.has(opId)) {
-        let { path, method } = observation;
-        pathDiffs.matchedOperations.set(opId, { path, method });
-        pathDiffs.matchedInteractionCountByOperation.set(opId, 1);
-      } else {
-        let interactionCount =
-          pathDiffs.matchedInteractionCountByOperation.get(opId)! + 1;
-        pathDiffs.matchedInteractionCountByOperation.set(
-          opId,
-          interactionCount
-        );
-      }
-    } else if (
-      observation.kind === StatusObservationKind.InteractionUnmatchedPath
-    ) {
-      pathDiffs.interactionsCount += 1;
-      let opId = operationId(observation);
-
-      if (!pathDiffs.unmatchedPaths.has(opId)) {
-        const { path, method } = observation;
-        pathDiffs.unmatchedPaths.set(opId, { path, method });
-      }
+      const { path, method } = observation;
+      pathDiffs.unmatchedPaths.set(opId, { path, method });
     } else if (
       observation.kind === StatusObservationKind.InteractionUnmatchedMethod
     ) {
-      pathDiffs.interactionsCount += 1;
       let opId = operationId(observation);
 
       if (!pathDiffs.unmatchedMethods.has(opId)) {
@@ -199,10 +143,7 @@ export async function observationToUndocumented(
   inferredPathStructure.replaceConstantsWithVariables();
   const pathsToAdd = inferredPathStructure.undocumentedPaths();
 
-  return {
-    pathDiffs,
-    pathsToAdd,
-  };
+  return pathsToAdd;
 
   function operationId({ path, method }: { path: string; method: string }) {
     return `${method}${path}`;

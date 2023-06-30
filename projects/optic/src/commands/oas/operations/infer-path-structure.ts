@@ -1,13 +1,5 @@
-import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import pluralize from 'pluralize';
-import { CapturedInteraction, CapturedInteractions } from '../captures';
-import {
-  HttpMethod,
-  UndocumentedOperations,
-  UndocumentedOperationType,
-} from '../operations';
-import { collect, forkable, tap } from '../lib/async-tools';
-import { StatusObservationKind, StatusObservations } from '../diffing/document';
+import { HttpMethod } from '../operations';
 
 const COLLAPSE_CONSTANTS_N = 2;
 
@@ -321,63 +313,6 @@ export class InferPathStructure {
       })
       .filter((i) => i.methods.length > 0);
   };
-}
-
-export async function computeInferredOperations(
-  spec: OpenAPIV3.Document,
-  interactions: CapturedInteractions
-): Promise<{ methods: Array<HttpMethod>; pathPattern: string }[]> {
-  const verifiedOperations = Object.entries(spec.paths).map(([path, ops]) => ({
-    pathPattern: path,
-    methods: Object.keys(ops || {}).filter((k) =>
-      ['get', 'post', 'put', 'patch', 'delete'].includes(k)
-    ),
-  }));
-
-  const interactionsFork = forkable(
-    tap<CapturedInteraction>(() => {})(interactions)
-  );
-  const undocumentedOperations =
-    UndocumentedOperations.fromCapturedInteractions(
-      interactionsFork.fork(),
-      spec
-    );
-
-  interactionsFork.start();
-
-  const unmatchingObservations = (async function* (): StatusObservations {
-    for await (let undocumentedOperation of undocumentedOperations) {
-      if (
-        undocumentedOperation.type === UndocumentedOperationType.MissingMethod
-      ) {
-        yield {
-          kind: StatusObservationKind.InteractionUnmatchedMethod,
-          path: undocumentedOperation.pathPattern,
-          method: undocumentedOperation.method,
-        };
-      } else if (
-        undocumentedOperation.type === UndocumentedOperationType.MissingPath
-      ) {
-        for (let method of undocumentedOperation.methods) {
-          yield {
-            kind: StatusObservationKind.InteractionUnmatchedPath,
-            path: undocumentedOperation.pathPattern,
-            method,
-          };
-        }
-      }
-    }
-  })();
-
-  const inferPaths = new InferPathStructure(verifiedOperations);
-  const undocumentedObservations = await collect(unmatchingObservations);
-
-  undocumentedObservations.forEach((op) =>
-    inferPaths.includeObservedUrlPath(op.method, op.path)
-  );
-
-  inferPaths.replaceConstantsWithVariables();
-  return inferPaths.undocumentedPaths();
 }
 
 function reducePathPattern(component: PathComponentCandidate): string {

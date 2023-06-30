@@ -1,8 +1,5 @@
 import { it, expect } from '@jest/globals';
-import {
-  computeInferredOperations,
-  InferPathStructure,
-} from './infer-path-structure';
+import { InferPathStructure } from './infer-path-structure';
 import * as AT from '../lib/async-tools';
 import { HttpMethods } from './index';
 import { CapturedInteraction } from '../captures';
@@ -390,53 +387,3 @@ it('can infer multiple top level resources under the an API path', () => {
     },
   ]);
 });
-
-it('works with async captured interactions', async () => {
-  const interactions = AT.from([
-    simpleInteractionFixture('/orders/3/products', HttpMethods.POST),
-    simpleInteractionFixture('/orders/3/products', HttpMethods.PATCH),
-    simpleInteractionFixture('/orders', HttpMethods.GET),
-  ]);
-
-  const operationsToAdd = await computeInferredOperations(
-    {
-      openapi: '3.0.3',
-      paths: {},
-      info: {
-        title: 'empty',
-        version: '0',
-      },
-    },
-    interactions
-  );
-
-  expect(operationsToAdd).toEqual([
-    { methods: ['get'], pathPattern: '/orders', examplePath: '/orders' },
-    {
-      methods: ['post', 'patch'],
-      pathPattern: '/orders/{order}/products',
-      examplePath: '/orders/3/products',
-    },
-  ]);
-});
-
-function simpleInteractionFixture(
-  path: string,
-  method: OpenAPIV3.HttpMethods
-): CapturedInteraction {
-  return {
-    request: {
-      host: 'optic.test',
-      method,
-      path,
-      body: null,
-      headers: [],
-      query: [],
-    },
-    response: {
-      statusCode: '200',
-      body: null,
-      headers: [],
-    },
-  };
-}
