@@ -82,7 +82,7 @@ export class CapturedInteraction {
 
     return {
       request: {
-        host: url.hostname,
+        host: url.host,
         method,
         path: url.pathname,
         body: requestBody,
@@ -223,12 +223,10 @@ export class CapturedInteraction {
       response: response
         ? {
             statusCode: response.code.toString(),
-            headers: response.headers
-              .all()
-              .map(({ key, value }) => ({
-                name: resolve(key),
-                value: resolve(value),
-              })),
+            headers: response.headers.all().map(({ key, value }) => ({
+              name: resolve(key),
+              value: resolve(value),
+            })),
             body: response.body
               ? CapturedBody.from(
                   responseBodySource,

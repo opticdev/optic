@@ -17,7 +17,6 @@ export interface UndocumentedOperations
 
 interface OperationPair {
   pathPattern: string;
-  onApiBasePath: boolean;
   methods: OpenAPIV3.HttpMethods[];
 }
 
@@ -42,8 +41,6 @@ export class UndocumentedOperations {
     };
 
     for await (let operation of operations) {
-      if (!operation.onApiBasePath) continue;
-
       // TODO: figure out whether we can create queries once and update it incrementally,
       // recreating these facts constantly can get expens ive
 
@@ -96,36 +93,10 @@ export class UndocumentedOperations {
     spec: OpenAPIV3.Document,
     specUpdates?: AsyncIterable<OpenAPIV3.Document>
   ): UndocumentedOperations {
-    const hostBaseMap: { [key: string]: string } = {};
-
-    spec.servers?.forEach((server) => {
-      // add absolute in case url is relative (valid in OpenAPI, ignored when absolute)
-      const parsed = new Url.URL(server.url, 'https://example.org');
-
-      const pathName = parsed.pathname;
-      if (pathName.endsWith('/') && pathName.length > 1) {
-        hostBaseMap[parsed.host] = pathName.substring(0, pathName.length - 1);
-      } else {
-        hostBaseMap[parsed.host] = pathName;
-      }
-    });
-
     const operations = AT.map<CapturedInteraction, OperationPair>(
       (interaction) => {
-        const basePath: string = hostBaseMap[interaction.request.host] || '/';
-
-        const hasBathPath = basePath !== '/';
-
-        const offset = hasBathPath ? basePath.length : 0;
-
-        const pathPattern =
-          hasBathPath && interaction.request.path.startsWith(basePath)
-            ? interaction.request.path.substring(offset)
-            : interaction.request.path;
-
         return {
-          pathPattern,
-          onApiBasePath: interaction.request.path.startsWith(basePath),
+          pathPattern: interaction.request.path,
           methods: [interaction.request.method],
         };
       }

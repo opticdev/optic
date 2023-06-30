@@ -5,5 +5,5 @@ info:
   version: 0.1.0
 servers:
   - name: book server
-    url: http://localhost:3030/books
+    url: http://localhost:3030/api
 paths: {}

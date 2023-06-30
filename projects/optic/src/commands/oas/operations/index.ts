@@ -110,7 +110,7 @@ export class PathComponents {
     under https://github.com/stoplightio/prism/blob/master/LICENSE
    */
     if (path.length === 0 || !path.startsWith('/')) {
-      throw new Error(`Malformed path '${path}'`);
+      return [];
     }
     return path
       .split('/')

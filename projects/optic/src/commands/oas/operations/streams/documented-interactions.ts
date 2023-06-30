@@ -26,11 +26,13 @@ export class DocumentedInteractions {
       specUpdates && specUpdates[Symbol.asyncIterator]();
 
     for await (let interaction of interactions) {
+      console.log(interaction);
       // find matching interaction operation by matching path and method
       const matchedOperationResult = queries.findOperation(
         interaction.request.path,
         interaction.request.method
       );
+      console.log(matchedOperationResult.val);
 
       if (matchedOperationResult.err) {
         console.warn(

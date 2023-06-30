@@ -4,13 +4,10 @@ import {
   OpenAPIV3,
   SpecFactsIterable,
 } from '../specs';
-import { Err, None, Ok, Option, Result, Some } from 'ts-results';
-import invariant from 'ts-invariant';
+import { None, Ok, Option, Result, Some } from 'ts-results';
 import equals from 'fast-deep-equal';
-import Url from 'url';
 
 import { PathComponentKind, PathComponents } from '.';
-import UrlJoin from 'url-join';
 
 export class OperationQueries {
   static fromFacts(facts: SpecFactsIterable): OperationQueries {
@@ -19,7 +16,6 @@ export class OperationQueries {
       method: OpenAPIV3.HttpMethods;
       specPath: string;
     }> = [];
-    let baseUrls: string[] = [];
 
     for (let fact of facts) {
       if (isFactVariant(fact, FactVariants.Operation)) {
@@ -28,50 +24,25 @@ export class OperationQueries {
           method: fact.value.method as OpenAPIV3.HttpMethods,
           specPath: fact.location.jsonPath,
         });
-      } else if (isFactVariant(fact, FactVariants.Specification)) {
-        baseUrls = fact.value.servers?.map(({ url }) => url) || [];
       }
     }
 
-    return new OperationQueries(operations, baseUrls);
+    return new OperationQueries(operations);
   }
 
   private patterns: string[];
   private patternsAsComponents: [string, PathComponents][];
-  private basePaths: string[];
 
   constructor(
     private operations: Array<{
       pathPattern: string;
       method: OpenAPIV3.HttpMethods;
       specPath: string;
-    }>,
-    baseUrls: string[] = []
+    }>
   ) {
-    this.basePaths =
-      baseUrls.length > 0
-        ? baseUrls.map((url) => {
-            // add absolute in case url is relative (valid in OpenAPI, ignored when absolute)
-            const parsed = new Url.URL(url, 'https://example.org');
-            const pathName = parsed.pathname;
-            if (pathName.endsWith('/') && pathName.length > 1) {
-              return pathName.substring(0, pathName.length - 1);
-            } else {
-              return pathName;
-            }
-          })
-        : ['/'];
-
     this.patterns = [
-      ...new Set(
-        this.basePaths.flatMap((basePath) => {
-          return this.operations.map(({ pathPattern }) =>
-            UrlJoin(basePath, pathPattern)
-          );
-        })
-      ),
+      ...new Set(this.operations.map(({ pathPattern }) => pathPattern)),
     ];
-
     this.patternsAsComponents = this.patterns.map((pattern) => [
       pattern,
       PathComponents.fromPath(pattern),
@@ -89,11 +60,6 @@ export class OperationQueries {
     }>,
     string
   > {
-    invariant(
-      path.startsWith('/'),
-      'operation specPath for can not be found for paths with host and / or protocol'
-    );
-
     const matchedPatternResult = this.matchPathPattern(path);
     if (matchedPatternResult.err) return matchedPatternResult;
 
@@ -101,12 +67,8 @@ export class OperationQueries {
     if (maybeMatchedPattern.none) return Ok(None);
     let matchedPattern = maybeMatchedPattern.unwrap();
 
-    const operation = this.operations.find((op) =>
-      this.basePaths.some(
-        (basePath) =>
-          UrlJoin(basePath, op.pathPattern) == matchedPattern &&
-          op.method == method
-      )
+    const operation = this.operations.find(
+      (op) => matchedPattern === op.pathPattern && op.method == method
     );
 
     if (!operation) return Ok(None);
@@ -115,16 +77,6 @@ export class OperationQueries {
   }
 
   findPathPattern(pathPattern: string): Result<Option<string>, string> {
-    invariant(
-      pathPattern.startsWith('/'),
-      'path pattern for can not be found for paths with host and / or protocol'
-    );
-
-    // path patterns are assumed not have base paths included, but the matcher _does_
-    if (this.basePaths.length > 0) {
-      pathPattern = UrlJoin(this.basePaths[0], pathPattern);
-    }
-
     const matchedPatternResult = this.matchPathPattern(pathPattern);
     if (matchedPatternResult.err) return matchedPatternResult;
 
@@ -132,10 +84,8 @@ export class OperationQueries {
     if (maybeMatchedPattern.none) return Ok(None);
     let matchedPattern = maybeMatchedPattern.unwrap();
 
-    const operation = this.operations.find((op) =>
-      this.basePaths.some(
-        (basePath) => UrlJoin(basePath, op.pathPattern) == matchedPattern
-      )
+    const operation = this.operations.find(
+      (op) => op.pathPattern === matchedPattern
     );
 
     if (!operation) return Ok(None);
