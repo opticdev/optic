@@ -76,6 +76,7 @@ export {
   generateComparisonLogs,
   getComparisonLogs,
 } from './utilities/comparison-render';
+export { getEndpointsChanges } from './utilities/changelog';
 export {
   BodyChange,
   ContentType,
