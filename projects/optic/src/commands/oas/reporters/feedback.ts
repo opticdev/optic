@@ -1,6 +1,9 @@
 import { Command } from 'commander';
 import { Writable } from 'stream';
-import { trackEvent, flushEvents } from '../lib/segment';
+import {
+  trackEvent,
+  flushEvents,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
 import chalk from 'chalk';
 export function createCommandFeedback(
   command: Command,

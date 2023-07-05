@@ -3,7 +3,10 @@ import Path from 'path';
 import path from 'path';
 
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
-import { flushEvents, trackEvent } from './lib/segment';
+import {
+  flushEvents,
+  trackEvent,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
 import { OpenAPIV3 } from './specs';
 import { captureStorage } from './captures/capture-storage';
 import chalk from 'chalk';
@@ -244,7 +247,7 @@ async function renderOperationStatus(
   specPath: string,
   feedback: ReturnType<typeof createCommandFeedback>
 ) {
-  const { pathsToAdd } = await observationToUndocumented(
+  const pathsToAdd = await observationToUndocumented(
     observations,
     specToOperations(spec)
   );

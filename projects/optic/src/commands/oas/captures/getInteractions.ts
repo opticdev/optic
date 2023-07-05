@@ -5,7 +5,6 @@ import { captureStorage } from './capture-storage';
 import { CapturedInteractions } from './streams/captured-interactions';
 import { InputErrors } from '../reporters/feedback';
 import { HarEntries } from './streams/sources/har';
-import { trackWarning } from '../lib/sentry';
 import * as AT from '../lib/async-tools';
 import { PostmanCollectionEntries } from './streams/sources/postman';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
@@ -90,11 +89,7 @@ export async function getInteractions(
     for (const path of harPaths) {
       let harFile = fsSync.createReadStream(path);
       let harEntryResults = HarEntries.fromReadable(harFile);
-      let harEntries = AT.unwrapOr(harEntryResults, (err) => {
-        let message = `HAR entry skipped: ${err.message}`;
-        console.warn(message); // warn, skip and keep going
-        trackWarning(message, err);
-      });
+      let harEntries = AT.unwrapOr(harEntryResults, (err) => {});
       sources.push(CapturedInteractions.fromHarEntries(harEntries));
     }
   } else if (options.postman) {
@@ -122,11 +117,7 @@ export async function getInteractions(
           path.join(trafficDirectory, potentialCapture)
         );
         let harEntryResults = HarEntries.fromReadable(harFile);
-        let harEntries = AT.unwrapOr(harEntryResults, (err) => {
-          let message = `HAR entry skipped: ${err.message}`;
-          console.warn(message); // warn, skip and keep going
-          trackWarning(message, err);
-        });
+        let harEntries = AT.unwrapOr(harEntryResults, (err) => {});
 
         sources.push(CapturedInteractions.fromHarEntries(harEntries));
       }
