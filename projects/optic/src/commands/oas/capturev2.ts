@@ -5,19 +5,11 @@ import fsNonPromise from 'fs';
 import fs from 'node:fs/promises';
 import fetch from 'node-fetch';
 
-import { CaptureConfig, CaptureConfigData, Request } from '../../config';
+import { CaptureConfigData, Request } from '../../config';
 import { HarEntries, ProxyInteractions } from './captures';
 import { writeInteractions, CaptureObservations } from './capture';
-import { RunCommand } from './captures/run-command';
-import http, { IncomingMessage, RequestOptions } from 'http';
-import { URL } from 'url';
 import * as AT from './lib/async-tools';
 import { Writable } from 'stream';
-
-async function consume(observations: any) {
-  for await (const ob of observations) {
-  }
-}
 
 export async function StartCaptureV2Session(
   openApiSpec: string,
