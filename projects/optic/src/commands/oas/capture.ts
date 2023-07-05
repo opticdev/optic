@@ -25,7 +25,7 @@ import { RunCommand } from './captures/run-command';
 import { platform } from './lib/shell-utils';
 import chalk from 'chalk';
 import { runVerify } from './verify';
-import { CaptureConfig, OpticCliConfig } from '../../config';
+import { OpticCliConfig } from '../../config';
 import { StartCaptureV2Session } from './capturev2';
 import { clearCommand } from './capture-clear';
 import { createNewSpecFile } from '../../utils/specs';

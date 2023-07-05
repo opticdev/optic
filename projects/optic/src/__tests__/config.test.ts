@@ -5,7 +5,7 @@ import {
   detectCliConfig,
   initializeRules,
   validateConfig,
-  RawYmlConfig,
+  ProjectYmlConfig,
 } from '../config';
 
 jest.mock('../client');
@@ -61,14 +61,14 @@ describe('validateConfig', () => {
 
 describe('initializeRules', () => {
   test('empty ruleset', async () => {
-    const config: RawYmlConfig = {};
+    const config: ProjectYmlConfig = {};
     await initializeRules(config, createOpticClient(''));
 
-    expect(config.ruleset).toEqual([]);
+    expect(config.ruleset).toEqual(undefined);
   });
 
   test('valid rules', async () => {
-    const config: RawYmlConfig = {
+    const config: ProjectYmlConfig = {
       ruleset: ['some-rule', { 'complex-rule': { withConfig: true } }],
     };
 
@@ -82,7 +82,7 @@ describe('initializeRules', () => {
   });
 
   test('empty rule', async () => {
-    const config: RawYmlConfig = {
+    const config: ProjectYmlConfig = {
       ruleset: [{}],
     };
 
@@ -107,7 +107,7 @@ describe('initializeRules', () => {
       () => mockClient
     );
 
-    const config: RawYmlConfig = {
+    const config: ProjectYmlConfig = {
       ruleset: [{ 'should-be-overwritten': { goodbye: false } }],
       extends: '@orgslug/rulesetconfigid',
     };
