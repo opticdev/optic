@@ -7,6 +7,7 @@ import path from 'node:path';
 import { createOpticClient, OpticBackendClient } from './client';
 import * as Git from './utils/git-utils';
 import { logger } from './logger';
+import { Static, Type } from '@sinclair/typebox';
 
 export enum VCS {
   Git = 'git',
@@ -24,14 +25,63 @@ export const USER_CONFIG_PATH =
     ? path.join(USER_CONFIG_DIR, 'config.local.json')
     : path.join(USER_CONFIG_DIR, 'config.json');
 
-export type ConfigRuleset = { name: string; config: unknown };
-
-export type RawYmlConfig = {
-  ruleset?: unknown[];
-  extends?: string;
+const DefaultOpticCliConfig: OpticCliConfig = {
+  root: process.cwd(),
+  configPath: undefined,
+  ruleset: undefined,
+  isAuthenticated: false,
+  client: createOpticClient('no_token'),
+  isInCi: process.env.CI === 'true',
 };
 
-export type OpticCliConfig = Omit<RawYmlConfig, 'ruleset' | 'extends'> & {
+const CaptureConfigData = Type.Object({
+  server: Type.Object({
+    dir: Type.Optional(Type.String()),
+    command: Type.String(),
+    url: Type.String(),
+    ready_endpoint: Type.String(),
+    ready_interval: Type.Number(),
+  }),
+  requests: Type.Array(
+    Type.Object({
+      path: Type.String(),
+      verb: Type.Optional(
+        Type.String({
+          enum: ['GET', 'POST', 'PATCH', 'DELETE'],
+        })
+      ),
+      data: Type.Optional(Type.Object({})),
+    })
+  ),
+});
+export type CaptureConfigData = Static<typeof CaptureConfigData>;
+export type ServerConfig = CaptureConfigData['server'];
+export type Request = CaptureConfigData['requests'][number];
+
+export const ProjectYmlConfig = Type.Object({
+  extends: Type.Optional(Type.String()),
+  ruleset: Type.Optional(
+    Type.Array(
+      Type.Union([
+        Type.String(),
+        Type.Object(
+          {},
+          {
+            minProperties: 1,
+            maxProperties: 1,
+          }
+        ),
+      ])
+    )
+  ),
+  capture: Type.Optional(Type.Record(Type.String(), CaptureConfigData)),
+});
+export type ProjectYmlConfig = Static<typeof ProjectYmlConfig>;
+export type ConfigRuleset = { name: string; config: unknown };
+
+export type OpticCliConfig = Omit<ProjectYmlConfig, 'ruleset'> & {
+  ruleset?: ConfigRuleset[];
+
   // path to the loaded config, or undefined if it was the default config
   configPath?: string;
 
@@ -46,7 +96,6 @@ export type OpticCliConfig = Omit<RawYmlConfig, 'ruleset' | 'extends'> & {
     diffSet: Set<string>;
   };
 
-  ruleset?: ConfigRuleset[];
   isAuthenticated: boolean;
   authenticationType?: 'user' | 'env';
   client: OpticBackendClient;
@@ -54,38 +103,8 @@ export type OpticCliConfig = Omit<RawYmlConfig, 'ruleset' | 'extends'> & {
   isInCi: boolean;
 };
 
-const DefaultOpticCliConfig: OpticCliConfig = {
-  root: process.cwd(),
-  configPath: undefined,
-  ruleset: undefined,
-  isAuthenticated: false,
-  client: createOpticClient('no_token'),
-  isInCi: process.env.CI === 'true',
-};
-
 const ajv = new Ajv();
-const configSchema = {
-  type: 'object',
-  properties: {
-    extends: {
-      type: 'string',
-    },
-    ruleset: {
-      type: 'array',
-      items: {
-        anyOf: [
-          { type: 'string' },
-          {
-            type: 'object',
-            minProperties: 1,
-            maxProperties: 1,
-          },
-        ],
-      },
-    },
-  },
-};
-const validateConfigSchema = ajv.compile(configSchema);
+const validateConfigSchema = ajv.compile(ProjectYmlConfig);
 
 // attempt to find an optic.yml file, or return undefined if none can be found
 export async function detectCliConfig(
@@ -114,8 +133,7 @@ export async function loadCliConfig(
 ): Promise<OpticCliConfig> {
   const config = yaml.load(await fs.readFile(configPath, 'utf-8'));
   validateConfig(config, configPath);
-  const rawConfig = config as RawYmlConfig;
-  await initializeRules(rawConfig, client);
+  await initializeRules(config as ProjectYmlConfig, client);
 
   const cliConfig = config as OpticCliConfig;
   cliConfig.root = path.dirname(configPath);
@@ -137,7 +155,7 @@ export const validateConfig = (config: unknown, path: string) => {
 };
 
 export const initializeRules = async (
-  config: RawYmlConfig,
+  config: ProjectYmlConfig,
   client: OpticBackendClient
 ) => {
   let rulesetMap: Map<string, ConfigRuleset> = new Map();
@@ -157,25 +175,28 @@ export const initializeRules = async (
     }
   }
 
-  const rulesets = config.ruleset || [];
-  for (const ruleset of rulesets) {
-    if (typeof ruleset === 'string') {
-      rulesetMap.set(ruleset, { name: ruleset, config: {} });
-    } else if (typeof ruleset === 'object' && ruleset !== null) {
-      const keys = Object.keys(ruleset);
-      if (keys.length !== 1) {
-        throw new UserError(`Configuration error: empty ruleset configuration`);
+  if (config.ruleset) {
+    for (const ruleset of config.ruleset) {
+      if (typeof ruleset === 'string') {
+        rulesetMap.set(ruleset, { name: ruleset, config: {} });
+      } else if (typeof ruleset === 'object' && ruleset !== null) {
+        const keys = Object.keys(ruleset);
+        if (keys.length !== 1) {
+          throw new UserError(
+            `Configuration error: empty ruleset configuration`
+          );
+        } else {
+          const name = keys[0];
+          const config = ruleset[name] || {};
+          rulesetMap.set(name, { name, config });
+        }
       } else {
-        const name = keys[0];
-        const config = ruleset[name] || {};
-        rulesetMap.set(name, { name, config });
+        throw new UserError('Configuration error: unexpected ruleset format');
       }
-    } else {
-      throw new UserError('Configuration error: unexpected ruleset format');
     }
-  }
 
-  config.ruleset = [...rulesetMap.values()];
+    config.ruleset = [...rulesetMap.values()];
+  }
 };
 
 type UserConfig = {
