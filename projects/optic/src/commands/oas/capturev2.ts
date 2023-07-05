@@ -47,10 +47,7 @@ export async function StartCaptureV2Session(
   const args = capture.server.command.split(' ').slice(1);
   const app = spawn(cmd, args);
 
-  // app.stdout.on('data', (data) => {
-  //   console.log(data.toString());
-  // });
-
+  // log error output from the app
   app.stderr.on('data', (data) => {
     console.log(data.toString());
   });
@@ -60,9 +57,27 @@ export async function StartCaptureV2Session(
   await new Promise((r) => setTimeout(r, capture.server.ready_interval));
 
   // make requests
-  // TODO capturev2 - use fetch here
   console.log(trafficDirectory);
-  const allRequests = makeRequests(capture.requests, proxyUrl);
+  const requests = capture.requests.map(async (r) => {
+    let verb = r.verb || 'GET';
+    let opts = { method: verb };
+
+    if (verb === 'POST') {
+      opts['headers'] = {
+        'content-type': 'application/json;charset=UTF-8',
+      };
+      opts['body'] = JSON.stringify(r.data || '{}');
+    }
+
+    return fetch(`${proxyUrl}${r.path}`, opts)
+      .then((response) => response.json())
+      .then((responseData) => {
+        console.log(responseData);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  });
 
   // write captured requests to disk
   const timestamp = Date.now().toString();
@@ -73,41 +88,21 @@ export async function StartCaptureV2Session(
   let destination: Writable = fsNonPromise.createWriteStream(inProgressName);
   const observations = writeInteractions(harEntries, destination);
 
-  const completedName = path.join(trafficDirectory, `${timestamp}.har`);
-
-  // TODO implement a promise here to wait for requests
-
-  console.log(`NATE: ${allRequests}`);
-  await allRequests;
-  sourcesController.abort();
-  for await (const observation of observations) {
-    console.log('waiting forever');
-    sourcesController.abort();
-  }
-  // TODO log finished
-  console.log('gaaaaaaah');
-
-  app.kill('SIGTERM');
-}
-
-async function makeRequests(
-  requests: Request[],
-  proxyUrl: string
-): Promise<void> {
-  const promises = requests.map((request: Request) => {
-    let verb = request.verb?.toUpperCase() || 'GET';
-    console.log(`${verb} ${proxyUrl}${request.path}`);
-    return fetch(`${proxyUrl}${request.path}`);
-  });
-
-  try {
-    const responses: any = await Promise.all(promises);
-
-    responses.forEach(async (response: Response) => {
-      console.log(response.status);
-      console.log(await response.json());
+  Promise.all(requests)
+    .then(() => {
+      sourcesController.abort();
+      const completedName = path.join(trafficDirectory, `${timestamp}.har`);
+      fs.rename(inProgressName, completedName);
+    })
+    .catch((error) => {
+      console.error(error);
     });
-  } catch (error) {
-    console.error(error);
+
+  for await (const observation of observations) {
   }
+
+  // TODO log finished
+  console.log(
+    'Requests captured. Run `optic update --all` to document updates.'
+  );
 }
