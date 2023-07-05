@@ -45,7 +45,7 @@ export async function StartCaptureV2Session(
   // start app
   const cmd = capture.server.command.split(' ')[0];
   const args = capture.server.command.split(' ').slice(1);
-  const app = spawn(cmd, args);
+  const app = spawn(cmd, args, { detached: true });
 
   // log error output from the app
   app.stderr.on('data', (data) => {
