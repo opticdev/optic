@@ -58,7 +58,7 @@ export async function StartCaptureV2Session(
   if (capture.server.ready_endpoint) {
     const readyEndpoint = capture.server.ready_endpoint;
     const readyInterval = capture.server.ready_interval || 1000;
-    const readyUrl = urljoin(proxyUrl, readyEndpoint);
+    const readyUrl = urljoin(capture.server.url, readyEndpoint);
 
     const timeout = 10 * 60 * 1_000; // 10 minutes
     const now = Date.now();
