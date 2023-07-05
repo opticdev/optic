@@ -7,7 +7,7 @@ import fetch from 'node-fetch';
 
 import { CaptureConfig, CaptureConfigData, Request } from '../../config';
 import { HarEntries, ProxyInteractions } from './captures';
-import { writeInteractions } from './capture';
+import { writeInteractions, CaptureObservations } from './capture';
 import { RunCommand } from './captures/run-command';
 import http, { IncomingMessage, RequestOptions } from 'http';
 import { URL } from 'url';
@@ -58,7 +58,45 @@ export async function StartCaptureV2Session(
 
   // make requests
   console.log(trafficDirectory);
-  const requests = capture.requests.map(async (r) => {
+  const requests = makeRequests(capture.requests, proxyUrl);
+
+  // write captured requests to disk
+  const timestamp = Date.now().toString();
+  const tmpName = path.join(trafficDirectory, `${timestamp}.incomplete`);
+  const observations = writeHar(proxyInteractions, tmpName);
+
+  Promise.all(requests)
+    .then(() => {
+      // sourcesController.abort();
+      const completedName = path.join(trafficDirectory, `${timestamp}.har`);
+      fs.rename(tmpName, completedName);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+
+  for await (const observation of observations) {
+  }
+
+  // TODO log finished
+  console.log(
+    'Requests captured. Run `optic update --all` to document updates.'
+  );
+}
+
+function writeHar(
+  proxyInteractions: ProxyInteractions,
+  harFile: string
+): CaptureObservations {
+  const sources: HarEntries[] = [];
+  sources.push(HarEntries.fromProxyInteractions(proxyInteractions));
+  const harEntries = AT.merge(...sources);
+  let destination: Writable = fsNonPromise.createWriteStream(harFile);
+  return writeInteractions(harEntries, destination);
+}
+
+function makeRequests(reqs: Request[], proxyUrl: string): Promise<void>[] {
+  return reqs.map(async (r) => {
     let verb = r.verb || 'GET';
     let opts = { method: verb };
 
@@ -78,31 +116,4 @@ export async function StartCaptureV2Session(
         console.error(error);
       });
   });
-
-  // write captured requests to disk
-  const timestamp = Date.now().toString();
-  const sources: HarEntries[] = [];
-  sources.push(HarEntries.fromProxyInteractions(proxyInteractions));
-  const harEntries = AT.merge(...sources);
-  const inProgressName = path.join(trafficDirectory, `${timestamp}.incomplete`);
-  let destination: Writable = fsNonPromise.createWriteStream(inProgressName);
-  const observations = writeInteractions(harEntries, destination);
-
-  Promise.all(requests)
-    .then(() => {
-      sourcesController.abort();
-      const completedName = path.join(trafficDirectory, `${timestamp}.har`);
-      fs.rename(inProgressName, completedName);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-
-  for await (const observation of observations) {
-  }
-
-  // TODO log finished
-  console.log(
-    'Requests captured. Run `optic update --all` to document updates.'
-  );
 }
