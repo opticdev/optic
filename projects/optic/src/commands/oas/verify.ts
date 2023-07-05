@@ -98,7 +98,7 @@ export async function runVerify(
 
   const opticUrlDetails = getApiFromOpticUrl(spec[OPTIC_URL_KEY]);
 
-  const interactions = await getInteractions(options, specPath, feedback);
+  const interactions = await getInteractions(options, spec, specPath, feedback);
 
   feedback.notable(
     `Verifying API behavior with traffic ${
@@ -117,7 +117,7 @@ export async function runVerify(
 
   let { observations, coverage } = matchInteractions(
     spec,
-    await getInteractions(options, specPath, feedback)
+    await getInteractions(options, spec, specPath, feedback)
   );
 
   const renderingStatus = await renderOperationStatus(

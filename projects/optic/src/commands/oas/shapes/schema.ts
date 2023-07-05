@@ -114,12 +114,7 @@ export class Schema {
   }
 
   static isPolymorphic(schema: SchemaObject) {
-    for (let key of Object.keys(schema)) {
-      if (!allowedKeysForOneOf.includes(key) && !isExtension(key)) {
-        return false;
-      }
-    }
-    return true;
+    return !!(schema.allOf || schema.anyOf || schema.oneOf);
   }
 }
 
