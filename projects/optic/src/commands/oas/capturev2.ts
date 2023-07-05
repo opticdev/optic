@@ -7,7 +7,11 @@ import fetch from 'node-fetch';
 
 import { CaptureConfigData, Request } from '../../config';
 import { HarEntries, ProxyInteractions } from './captures';
-import { writeInteractions, CaptureObservations } from './capture';
+import {
+  writeInteractions,
+  CaptureObservations,
+  CaptureObservationKind,
+} from './capture';
 import * as AT from './lib/async-tools';
 import { Writable } from 'stream';
 
@@ -68,9 +72,11 @@ export async function StartCaptureV2Session(
     });
 
   for await (const observation of observations) {
+    if (observation.kind === CaptureObservationKind.InteractionCaptured) {
+      console.log(`Captured ${observation.path}`);
+    }
   }
 
-  // TODO log finished
   console.log(
     'Requests captured. Run `optic update --all` to document updates.'
   );
@@ -99,13 +105,15 @@ function makeRequests(reqs: Request[], proxyUrl: string): Promise<void>[] {
       opts['body'] = JSON.stringify(r.data || '{}');
     }
 
-    return fetch(`${proxyUrl}${r.path}`, opts)
-      .then((response) => response.json())
-      .then((responseData) => {
-        console.log(responseData);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    return (
+      fetch(`${proxyUrl}${r.path}`, opts)
+        .then((response) => response.json())
+        // .then((responseData) => {
+        //   console.log(responseData);
+        // })
+        .catch((error) => {
+          console.error(error);
+        })
+    );
   });
 }
