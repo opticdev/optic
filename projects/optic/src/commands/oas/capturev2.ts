@@ -4,7 +4,9 @@ import path, { dirname } from 'path';
 import fsNonPromise from 'fs';
 import fs from 'node:fs/promises';
 import fetch from 'node-fetch';
-
+import ora from 'ora';
+import urljoin from 'url-join';
+import { UserError } from '@useoptic/openapi-utilities';
 import { CaptureConfigData, Request } from '../../config';
 import { HarEntries, ProxyInteractions } from './captures';
 import {
@@ -14,6 +16,8 @@ import {
 } from './capture';
 import * as AT from './lib/async-tools';
 import { Writable } from 'stream';
+const wait = (time: number) =>
+  new Promise((r) => setTimeout(() => r(null), time));
 
 export async function StartCaptureV2Session(
   openApiSpec: string,
@@ -49,8 +53,36 @@ export async function StartCaptureV2Session(
   });
 
   // wait until server is ready
-  // todo: check the ready_endpoint
   await new Promise((r) => setTimeout(r, capture.server.ready_interval));
+
+  if (capture.server.ready_endpoint) {
+    const readyEndpoint = capture.server.ready_endpoint;
+    const readyInterval = capture.server.ready_interval || 1000;
+    const readyUrl = urljoin(proxyUrl, readyEndpoint);
+
+    const timeout = 10 * 60 * 1_000; // 10 minutes
+    const now = Date.now();
+    const spinner = ora('Waiting for server to come online...');
+    spinner.start();
+    spinner.color = 'blue';
+
+    const checkServer = (): Promise<boolean> =>
+      fetch(readyUrl)
+        .then((res) => String(res.status).startsWith('2'))
+        .catch(() => false);
+
+    let done = false;
+    while (!done) {
+      const isReady = await checkServer();
+      if (isReady) {
+        spinner.succeed('Server check passed');
+        done = true;
+      } else if (Date.now() > now + timeout) {
+        throw new UserError('Server check timed out (waited for 10 minutes)');
+      }
+      await wait(readyInterval);
+    }
+  }
 
   // make requests
   console.log(trafficDirectory);
