@@ -1,6 +1,4 @@
 import { Command, Option } from 'commander';
-import open from 'open';
-
 import { UserError, textToSev } from '@useoptic/openapi-utilities';
 
 import {
@@ -34,6 +32,8 @@ import ora from 'ora';
 import * as GitCandidates from '../api/git-get-file-candidates';
 import stableStringify from 'json-stable-stringify';
 import { computeChecksumForAws } from '../../utils/checksum';
+import { openUrl } from '../../utils/open-url';
+import { renderCloudSetup } from '../../utils/render-cloud';
 
 type DiffActionOptions = {
   base: string;
@@ -444,8 +444,9 @@ const getDiffAction =
     }
 
     if (
-      (!hasOpticUrl && headParseResult.from === 'file') ||
-      headParseResult.from === 'git'
+      !config.isInCi &&
+      ((!hasOpticUrl && headParseResult.from === 'file') ||
+        headParseResult.from === 'git')
     ) {
       const relativePath = path.relative(
         process.cwd(),
@@ -457,6 +458,8 @@ const getDiffAction =
         )
       );
     }
+
+    if (config.isInCi && !options.upload) renderCloudSetup();
 
     if (options.web) {
       if (
@@ -490,9 +493,7 @@ const getDiffAction =
           await flushEvents();
         }
         trackEvent('optic.diff.view_web', analyticsData);
-        await open(maybeChangelogUrl, {
-          wait: false,
-        });
+        await openUrl(maybeChangelogUrl);
       }
     }
 

@@ -3,7 +3,10 @@ import Path from 'path';
 import path from 'path';
 
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
-import { flushEvents, trackEvent } from './lib/segment';
+import {
+  flushEvents,
+  trackEvent,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
 import { OpenAPIV3 } from './specs';
 import { captureStorage } from './captures/capture-storage';
 import chalk from 'chalk';
@@ -98,7 +101,7 @@ export async function runVerify(
 
   const opticUrlDetails = getApiFromOpticUrl(spec[OPTIC_URL_KEY]);
 
-  const interactions = await getInteractions(options, specPath, feedback);
+  const interactions = await getInteractions(options, spec, specPath, feedback);
 
   feedback.notable(
     `Verifying API behavior with traffic ${
@@ -117,7 +120,7 @@ export async function runVerify(
 
   let { observations, coverage } = matchInteractions(
     spec,
-    await getInteractions(options, specPath, feedback)
+    await getInteractions(options, spec, specPath, feedback)
   );
 
   const renderingStatus = await renderOperationStatus(
@@ -244,7 +247,7 @@ async function renderOperationStatus(
   specPath: string,
   feedback: ReturnType<typeof createCommandFeedback>
 ) {
-  const { pathsToAdd } = await observationToUndocumented(
+  const pathsToAdd = await observationToUndocumented(
     observations,
     specToOperations(spec)
   );

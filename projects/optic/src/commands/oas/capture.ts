@@ -7,7 +7,10 @@ import { Writable } from 'stream';
 import exitHook from 'async-exit-hook';
 import * as AT from './lib/async-tools';
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
-import { trackCompletion } from './lib/segment';
+import {
+  trackEvent,
+  flushEvents,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
 import logNode from 'log-node';
 import { isJson, isYaml, writeYaml } from '@useoptic/openapi-io';
 
@@ -280,6 +283,7 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
                 } catch (e) {
                   console.log(e);
                 }
+                await flushEvents();
 
                 if (!interactiveCapture) {
                   // Log next steps
@@ -428,18 +432,11 @@ async function trackStats(
   const stats = {
     capturedInteractionsCount: 0,
   };
+  for await (let observation of observations) {
+    if (observation.kind === CaptureObservationKind.InteractionCaptured) {
+      stats.capturedInteractionsCount += 1;
+    }
+  }
 
-  await trackCompletion(
-    'openapi_cli.capture',
-    stats,
-    async function* () {
-      for await (let observation of observations) {
-        if (observation.kind === CaptureObservationKind.InteractionCaptured) {
-          stats.capturedInteractionsCount += 1;
-          yield stats;
-        }
-      }
-    },
-    { abort }
-  );
+  trackEvent('openapi_cli.capture.completed', stats);
 }

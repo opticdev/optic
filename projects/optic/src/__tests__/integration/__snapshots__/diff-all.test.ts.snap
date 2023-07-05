@@ -37,6 +37,11 @@ specification details:
 Run the \`optic api add\` command to add these specs to optic
 spec-no-url.json [31m(untracked)[39m
 
+
+
+ [1m[33mFinish setting up Optic by adding your OPTIC_TOKEN. Create one here: [39m[22m[34m[4mhttps://app.useoptic.com/[24m[39m
+ → Add API Review Tools to your Pull Requests 
+[2m   Preview Docs | Visual Diffs | Notify Consumers | Sharable links | API Changelogs | Stats[22m
 "
 `;
 
@@ -1285,6 +1290,11 @@ specification details:
 
 ...and 2 other endpoints
 
+
+
+ [1m[33mFinish setting up Optic by adding your OPTIC_TOKEN. Create one here: [39m[22m[34m[4mhttps://app.useoptic.com/[24m[39m
+ → Add API Review Tools to your Pull Requests 
+[2m   Preview Docs | Visual Diffs | Notify Consumers | Sharable links | API Changelogs | Stats[22m
 "
 `;
 
@@ -1295,5 +1305,10 @@ exports[`diff-all diffs all files with --json 1`] = `
 
 exports[`diff-all diffs all in an empty folder 1`] = `
 "[31m[1mNo OpenAPI specs were detected - exiting with error code 1[22m[39m
+
+
+ [1m[33mFinish setting up Optic by adding your OPTIC_TOKEN. Create one here: [39m[22m[34m[4mhttps://app.useoptic.com/[24m[39m
+ → Add API Review Tools to your Pull Requests 
+[2m   Preview Docs | Visual Diffs | Notify Consumers | Sharable links | API Changelogs | Stats[22m
 "
 `;

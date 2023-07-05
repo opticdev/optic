@@ -407,9 +407,19 @@ function removeUnusedComponents(spec: OpenAPIV3.Document): OpenAPIV3.Document {
       } else if (typeof spec === 'object' && spec !== null) {
         Object.entries(spec).map(([key, value]) => {
           if (key === '$ref' && typeof value === 'string') {
-            refMap[pointer] = value.startsWith('#')
+            const componentPath = value.startsWith('#')
               ? value.substring(1)
               : value;
+
+            // remove circular references from count
+            if (
+              !jsonPointerHelpers.startsWith(
+                pointer,
+                jsonPointerHelpers.decode(componentPath)
+              )
+            ) {
+              refMap[pointer] = componentPath;
+            }
           } else {
             buildRefMap(value, jsonPointerHelpers.append(pointer, key));
           }
@@ -420,6 +430,44 @@ function removeUnusedComponents(spec: OpenAPIV3.Document): OpenAPIV3.Document {
     buildRefMap(updatedSpec);
 
     const usages = new Set(Object.values(refMap));
+
+    const refMapEntries = Object.entries(refMap);
+
+    const hasPathToOperation = (
+      componentPath: string,
+      parents: string[] = []
+    ) => {
+      const usages = refMapEntries.filter(
+        ([usage, component]) => component === componentPath
+      );
+
+      // used directly in a path
+      const usedDirectlyInAnOperation = usages.some(([usage]) => {
+        return jsonPointerHelpers.startsWith(usage, ['paths'], { exact: true });
+      });
+
+      if (usedDirectlyInAnOperation) return true;
+
+      const parentsUsedInOperation = usages.some(([usage, component]) => {
+        if (
+          jsonPointerHelpers.startsWith(usage, ['components'], { exact: true })
+        ) {
+          const parentComponent = jsonPointerHelpers.compile(
+            jsonPointerHelpers.decode(usage).slice(0, 3)
+          );
+          // console.log('checking parent: ' + parentComponent);
+          if (parents.includes(parentComponent)) return false;
+          return hasPathToOperation(parentComponent, [
+            ...parents,
+            componentPath,
+          ]);
+        }
+      });
+
+      if (parentsUsedInOperation) return true;
+
+      return false;
+    };
 
     const testComponents = (kind: keyof OpenAPIV3.ComponentsObject) => {
       const components = jsonPointerHelpers.tryGet(
@@ -436,7 +484,10 @@ function removeUnusedComponents(spec: OpenAPIV3.Document): OpenAPIV3.Document {
           kind,
           name,
         ]);
-        if (!usages.has(jsonPointer)) {
+
+        const isUsedInOperation = hasPathToOperation(jsonPointer);
+
+        if (!usages.has(jsonPointer) || !isUsedInOperation) {
           removals.push({ op: 'remove', path: jsonPointer });
         }
       });

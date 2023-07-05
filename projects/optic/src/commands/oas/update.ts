@@ -87,14 +87,14 @@ export function updateCommand(): Command {
 
       let { observations } = matchInteractions(
         spec,
-        await getInteractions(options, specPath, feedback)
+        await getInteractions(options, spec, specPath, feedback)
       );
 
       const documentResult = await addIfUndocumented(
         operationsToAdd.val,
         isAddAll,
         observations,
-        await getInteractions(options, specPath, feedback),
+        await getInteractions(options, spec, specPath, feedback),
         spec,
         sourcemap
       );
@@ -123,6 +123,7 @@ export function updateCommand(): Command {
 
       const patchInteractions = await getInteractions(
         options,
+        spec,
         specPath,
         feedback
       );
