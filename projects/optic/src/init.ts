@@ -14,7 +14,8 @@ import { OpticCliConfig, initializeConfig } from './config';
 import { registerRulesetInit } from './commands/ruleset/init';
 import { registerApiAdd } from './commands/api/add';
 import { registerApiCreate } from './commands/api/create';
-import { captureCommand } from './commands/oas/capture';
+import { registerCaptureCommand } from './commands/capture/capture';
+import { captureCommand as captureV1Command } from './commands/oas/capture';
 import { newCommand } from './commands/oas/new';
 import { setupTlsCommand } from './commands/oas/setup-tls';
 import { verifyCommand } from './commands/oas/verify';
@@ -122,11 +123,14 @@ export const initCli = async (
 
   registerDiff(cli, cliConfig);
 
+  const betaSubcommands = cli.command('beta', { hidden: true });
+  registerCaptureCommand(betaSubcommands, cliConfig);
+
   //@todo by 2023/5/10
   const oas = new Command('oas').description(
     '[Deprecated] capture/verify/update are now top-level commands'
   );
-  oas.addCommand(await captureCommand(cliConfig));
+  oas.addCommand(await captureV1Command(cliConfig));
   oas.addCommand(await newCommand());
   oas.addCommand(await setupTlsCommand());
   oas.addCommand(verifyCommand(cliConfig));
@@ -135,7 +139,7 @@ export const initCli = async (
   cli.addCommand(oas);
 
   // commands for tracking changes with openapi
-  cli.addCommand(await captureCommand(cliConfig));
+  cli.addCommand(await captureV1Command(cliConfig));
   cli.addCommand(await newCommand());
   cli.addCommand(await setupTlsCommand());
   cli.addCommand(verifyCommand(cliConfig));
