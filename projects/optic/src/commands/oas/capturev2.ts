@@ -67,7 +67,7 @@ export async function StartCaptureV2Session(
 
   Promise.all(requests)
     .then(() => {
-      // sourcesController.abort();
+      sourcesController.abort();
       const completedName = path.join(trafficDirectory, `${timestamp}.har`);
       fs.rename(tmpName, completedName);
     })
