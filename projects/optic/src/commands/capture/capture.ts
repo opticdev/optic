@@ -5,6 +5,7 @@ import path from 'path';
 import fs from 'node:fs/promises';
 import fsNonPromise from 'fs';
 import fetch from 'node-fetch';
+import Bottleneck from 'bottleneck';
 
 import { isJson, isYaml, writeYaml } from '@useoptic/openapi-io';
 import ora from 'ora';
@@ -182,7 +183,12 @@ const getCaptureAction =
 
     // make requests
     console.log(trafficDirectory);
-    const requests = makeRequests(captureConfig.requests, proxyUrl);
+    const concurrency = captureConfig.config?.request_concurrency || 5;
+    const requests = makeRequests(
+      captureConfig.requests,
+      proxyUrl,
+      concurrency
+    );
 
     // write captured requests to disk
     const timestamp = Date.now().toString();
@@ -239,7 +245,16 @@ function writeHar(
   return writeInteractions(harEntries, destination);
 }
 
-function makeRequests(reqs: Request[], proxyUrl: string): Promise<void>[] {
+function makeRequests(
+  reqs: Request[],
+  proxyUrl: string,
+  concurrency: number
+): Promise<void>[] {
+  const limiter = new Bottleneck({
+    maxConcurrent: concurrency,
+    minTime: 0,
+  });
+
   return reqs.map(async (r) => {
     let verb = r.verb || 'GET';
     let opts = { method: verb };
@@ -251,10 +266,12 @@ function makeRequests(reqs: Request[], proxyUrl: string): Promise<void>[] {
       opts['body'] = JSON.stringify(r.data || '{}');
     }
 
-    return fetch(`${proxyUrl}${r.path}`, opts)
-      .then((response) => response.json())
-      .catch((error) => {
-        console.error(error);
-      });
+    return limiter.schedule(() =>
+      fetch(`${proxyUrl}${r.path}`, opts)
+        .then((response) => response.json())
+        .catch((error) => {
+          console.error(error);
+        })
+    );
   });
 }
