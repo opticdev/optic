@@ -257,11 +257,12 @@ function makeRequests(reqs: Request[], proxyUrl: string): Promise<void>[] {
       opts['body'] = JSON.stringify(r.data || '{}');
     }
 
-    return limiter
-      .schedule(() => fetch(`${proxyUrl}${r.path}`, opts))
-      .then((response) => response.json())
-      .catch((error) => {
-        console.error(error);
-      });
+    return limiter.schedule(() =>
+      fetch(`${proxyUrl}${r.path}`, opts)
+        .then((response) => response.json())
+        .catch((error) => {
+          console.error(error);
+        })
+    );
   });
 }
