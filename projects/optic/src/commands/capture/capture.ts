@@ -5,6 +5,7 @@ import path from 'path';
 import fs from 'node:fs/promises';
 import fsNonPromise from 'fs';
 import fetch from 'node-fetch';
+import Bottleneck from 'bottleneck';
 
 import { isJson, isYaml, writeYaml } from '@useoptic/openapi-io';
 import ora from 'ora';
@@ -240,6 +241,11 @@ function writeHar(
 }
 
 function makeRequests(reqs: Request[], proxyUrl: string): Promise<void>[] {
+  const limiter = new Bottleneck({
+    maxConcurrent: 4,
+    minTime: 0,
+  });
+
   return reqs.map(async (r) => {
     let verb = r.verb || 'GET';
     let opts = { method: verb };
@@ -251,7 +257,8 @@ function makeRequests(reqs: Request[], proxyUrl: string): Promise<void>[] {
       opts['body'] = JSON.stringify(r.data || '{}');
     }
 
-    return fetch(`${proxyUrl}${r.path}`, opts)
+    return limiter
+      .schedule(() => fetch(`${proxyUrl}${r.path}`, opts))
       .then((response) => response.json())
       .catch((error) => {
         console.error(error);
