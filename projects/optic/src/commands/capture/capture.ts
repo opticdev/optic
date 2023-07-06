@@ -77,6 +77,12 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
     .addOption(
       new Option('-o, --output <output>', 'file name for output').hideHelp()
     )
+    .addOption(
+      new Option(
+        '-s, --server-override <url>',
+        'Skip executing `capture[].server.command` and forward proxy traffic to this URL instead'
+      )
+    )
     .action(
       errorHandler(getCaptureAction(config, command), { command: 'capture' })
     );
@@ -85,6 +91,7 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
 }
 type CaptureActionOptions = {
   proxyPort?: string;
+  serverOverride?: string;
 };
 
 const getCaptureAction =
@@ -127,9 +134,10 @@ const getCaptureAction =
     } else {
       chdir(captureConfig.server.dir);
     }
+    const serverUrl = options.serverOverride || captureConfig.server.url;
     let sourcesController = new AbortController();
     let [proxyInteractions, proxyUrl] = await ProxyInteractions.create(
-      captureConfig.server.url,
+      serverUrl,
       sourcesController.signal,
       {
         mode: 'reverse-proxy',
@@ -137,15 +145,17 @@ const getCaptureAction =
       }
     );
 
-    // start app
-    const cmd = captureConfig.server.command.split(' ')[0];
-    const args = captureConfig.server.command.split(' ').slice(1);
-    const app = spawn(cmd, args, { detached: true });
+    let app;
+    if (!options.serverOverride) {
+      const cmd = captureConfig.server.command.split(' ')[0];
+      const args = captureConfig.server.command.split(' ').slice(1);
+      app = spawn(cmd, args, { detached: true });
 
-    // log error output from the app
-    app.stderr.on('data', (data) => {
-      console.log(data.toString());
-    });
+      // log error output from the app
+      app.stderr.on('data', (data) => {
+        console.log(data.toString());
+      });
+    }
 
     // wait until server is ready
     await new Promise((r) =>
@@ -155,7 +165,7 @@ const getCaptureAction =
     if (captureConfig.server.ready_endpoint) {
       const readyEndpoint = captureConfig.server.ready_endpoint;
       const readyInterval = captureConfig.server.ready_interval || 1000;
-      const readyUrl = urljoin(captureConfig.server.url, readyEndpoint);
+      const readyUrl = urljoin(serverUrl, readyEndpoint);
 
       const timeout = 10 * 60 * 1_000; // 10 minutes
       const now = Date.now();
@@ -197,7 +207,9 @@ const getCaptureAction =
 
     Promise.all(requests)
       .then(() => {
-        process.kill(-app.pid!);
+        if (!options.serverOverride) {
+          process.kill(-app.pid!);
+        }
         sourcesController.abort();
         const completedName = path.join(trafficDirectory, `${timestamp}.har`);
         fs.rename(tmpName, completedName);
