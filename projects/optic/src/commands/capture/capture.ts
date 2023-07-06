@@ -183,7 +183,12 @@ const getCaptureAction =
 
     // make requests
     console.log(trafficDirectory);
-    const requests = makeRequests(captureConfig.requests, proxyUrl);
+    const concurrency = captureConfig.config?.request_concurrency || 25;
+    const requests = makeRequests(
+      captureConfig.requests,
+      proxyUrl,
+      concurrency
+    );
 
     // write captured requests to disk
     const timestamp = Date.now().toString();
@@ -240,9 +245,13 @@ function writeHar(
   return writeInteractions(harEntries, destination);
 }
 
-function makeRequests(reqs: Request[], proxyUrl: string): Promise<void>[] {
+function makeRequests(
+  reqs: Request[],
+  proxyUrl: string,
+  concurrency: number
+): Promise<void>[] {
   const limiter = new Bottleneck({
-    maxConcurrent: 4,
+    maxConcurrent: concurrency,
     minTime: 0,
   });
 
