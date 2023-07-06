@@ -183,7 +183,7 @@ const getCaptureAction =
 
     // make requests
     console.log(trafficDirectory);
-    const concurrency = captureConfig.config?.request_concurrency || 25;
+    const concurrency = captureConfig.config?.request_concurrency || 5;
     const requests = makeRequests(
       captureConfig.requests,
       proxyUrl,
