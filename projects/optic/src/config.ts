@@ -37,7 +37,7 @@ const DefaultOpticCliConfig: OpticCliConfig = {
 const CaptureConfigData = Type.Object({
   config: Type.Optional(
     Type.Object({
-      request_concurrency: Type.Number(),
+      request_concurrency: Type.Optional(Type.Number()),
     })
   ),
   server: Type.Object({
