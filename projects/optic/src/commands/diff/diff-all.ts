@@ -1,6 +1,7 @@
 import { Command, Option } from 'commander';
 import micromatch from 'micromatch';
 import fg from 'fast-glob';
+import chunk from 'lodash.chunk';
 import { OpticCliConfig, VCS } from '../../config';
 import * as Git from '../../utils/git-utils';
 import { loadSpec, loadRaw, ParseResult } from '../../utils/spec-loaders';
@@ -287,11 +288,10 @@ async function computeAll(
         }
       }
       let apis: (Types.Api | null)[] = [];
-      if (Object.keys(pathToUrl).length > 0) {
-        ({ apis } = await config.client.getApis(
-          Object.keys(pathToUrl),
-          web_url
-        ));
+      const chunks = chunk(Object.keys(pathToUrl), 20);
+      for (const chunk of chunks) {
+        const { apis: apiChunk } = await config.client.getApis(chunk, web_url);
+        apis.push(...apiChunk);
       }
 
       for (const api of apis) {
