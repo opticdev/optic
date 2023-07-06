@@ -22,7 +22,7 @@
     "@types/prettier": "^2",
     "husky": "^8.0.0",
     "lint-staged": "^13.1.0",
-    "prettier": "^2.8.1"
+    "prettier": "^3.0.0"
   },
   "lint-staged": {
     "**/*.+(js|jsx|ts|tsx|json|css)": [
