@@ -795,6 +795,84 @@ describe('naming changes', () => {
           }
         });
       });
+      describe('operationId', () => {
+        const namingChangeRuleset = new NamingChangesRuleset({
+          required_on: applies as any,
+          options: {
+            operationId: 'camelCase',
+          },
+        });
+        test('passing assertion', async () => {
+          const before: OpenAPIV3.Document = {
+            ...TestHelpers.createEmptySpec(),
+            paths: {
+              '/api/user-list/{userId}': {
+                get: { responses: {}, operationId: 'getUserById' },
+              },
+            },
+          };
+          const after: OpenAPIV3.Document = {
+            ...TestHelpers.createEmptySpec(),
+            paths: {
+              '/api/users-list/{userId}': {
+                get: { responses: {}, operationId: 'getUserById' },
+              },
+            },
+          };
+          const beforeJson =
+            applies === 'always'
+              ? after
+              : applies === 'added'
+              ? TestHelpers.createEmptySpec()
+              : before;
+          const afterJson = after;
+          const results = await TestHelpers.runRulesWithInputs(
+            [namingChangeRuleset],
+            beforeJson,
+            afterJson
+          );
+          expect(results.length > 0).toBe(true);
+
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(true);
+          }
+        });
+
+        test('failing assertion', async () => {
+          const before: OpenAPIV3.Document = {
+            ...TestHelpers.createEmptySpec(),
+            paths: {},
+          };
+          const after: OpenAPIV3.Document = {
+            ...TestHelpers.createEmptySpec(),
+            paths: {
+              '/api/usersList/{userId}': {
+                get: { responses: {}, operationId: '__abc' },
+              },
+            },
+          };
+          const beforeJson =
+            applies === 'always'
+              ? after
+              : applies === 'added'
+              ? TestHelpers.createEmptySpec()
+              : before;
+          const afterJson = after;
+          const results = await TestHelpers.runRulesWithInputs(
+            [namingChangeRuleset],
+            beforeJson,
+            afterJson
+          );
+
+          expect(results.length > 0).toBe(true);
+
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(false);
+          }
+        });
+      });
     }
   );
 });

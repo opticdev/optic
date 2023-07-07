@@ -14,5 +14,6 @@ export type NamingConfig = {
   responseHeaders?: (typeof casing)[number];
   cookieParameters?: (typeof casing)[number];
   pathComponents?: (typeof casing)[number];
+  operationId?: (typeof casing)[number];
   properties?: (typeof casing)[number];
 };

@@ -8,6 +8,7 @@ import { createCookieParameterChecks } from './cookieParameters';
 import { createPathComponentChecks } from './pathComponents';
 import Ajv from 'ajv';
 import { SeverityTextOptions, SeverityText } from '@useoptic/openapi-utilities';
+import { createOperationIdRule } from './operationIds';
 
 type RulesetConfig = {
   exclude_operations_with_extension?: string;
@@ -17,6 +18,7 @@ type RulesetConfig = {
   queryParameters?: (typeof casing)[number];
   responseHeaders?: (typeof casing)[number];
   cookieParameters?: (typeof casing)[number];
+  operationId?: (typeof casing)[number];
   pathComponents?: (typeof casing)[number];
   properties?: (typeof casing)[number];
   severity?: SeverityText;
@@ -65,6 +67,10 @@ const configSchema = {
       type: 'string',
       enum: casing,
     },
+    operationId: {
+      type: 'string',
+      enum: casing,
+    },
     properties: {
       type: 'string',
       enum: casing,
@@ -101,6 +107,7 @@ export class NamingChangesRuleset extends Ruleset<Rule[]> {
       'cookieParameters',
       'pathComponents',
       'properties',
+      'operationId',
     ]) {
       if (validatedConfig[key]) {
         namingConfig[key] = validatedConfig[key];
@@ -173,6 +180,11 @@ export class NamingChangesRuleset extends Ruleset<Rule[]> {
     if (options.cookieParameters) {
       namingChangeRules.push(
         createCookieParameterChecks(required_on, options.cookieParameters)
+      );
+    }
+    if (options.operationId) {
+      namingChangeRules.push(
+        createOperationIdRule(required_on, options.operationId)
       );
     }
     if (options.responseHeaders) {
