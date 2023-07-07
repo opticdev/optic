@@ -17,7 +17,7 @@
     "release": "gh release create --target=$(git branch --show-current) v$(node -e \"process.stdout.write(require('./package.json').version)\")",
     "version": "yarn workspaces foreach -v version",
     "prepare": "husky install",
-    "check": "prettier --check 'projects/*/src/**/*.(js|jsx|ts|tsx|json|css)'"
+    "lint": "prettier --check 'projects/*/src/**/*.(js|jsx|ts|tsx|json|css)'"
   },
   "devDependencies": {
     "husky": "^8.0.0",
