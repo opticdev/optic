@@ -8,14 +8,25 @@ describe('fromOpticConfig', () => {
     const out = await BreakingChangesRuleset.fromOpticConfig({
       exclude_operations_with_extension: 12,
     });
-    expect(out).toEqual(
-      '- ruleset/breaking-changes/exclude_operations_with_extension must be string'
-    );
+    expect(out)
+      .toEqual(`- ruleset/breaking-changes/exclude_operations_with_extension must be string
+- ruleset/breaking-changes/exclude_operations_with_extension must be array
+- ruleset/breaking-changes/exclude_operations_with_extension must match exactly one schema in oneOf`);
   });
 
   test('valid config', async () => {
     const out = await BreakingChangesRuleset.fromOpticConfig({
       exclude_operations_with_extension: 'x-legacy',
+      docs_link: 'asdasd.com',
+      severity: 'warn',
+    });
+
+    expect(out).toBeInstanceOf(BreakingChangesRuleset);
+  });
+
+  test('valid config with array', async () => {
+    const out = await BreakingChangesRuleset.fromOpticConfig({
+      exclude_operations_with_extension: ['x-legacy', 'x-meta'],
       docs_link: 'asdasd.com',
       severity: 'warn',
     });
