@@ -8,8 +8,8 @@ import { isCase } from './isCase';
 import { OperationAssertions } from '@useoptic/rulesets-base';
 
 export const createCookieParameterChecks = (
-  applies: typeof appliesWhen[number],
-  format: typeof casing[number]
+  applies: (typeof appliesWhen)[number],
+  format: (typeof casing)[number]
 ) => {
   const parameterTest = (parameter: CookieParameter) => {
     if (!isCase(parameter.value.name, format)) {

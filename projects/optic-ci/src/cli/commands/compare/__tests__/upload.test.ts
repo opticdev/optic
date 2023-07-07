@@ -1,4 +1,4 @@
-import { jest, test, expect, beforeEach, afterEach } from '@jest/globals'
+import { jest, test, expect, beforeEach, afterEach } from '@jest/globals';
 
 import { v4 as uuidv4 } from 'uuid';
 

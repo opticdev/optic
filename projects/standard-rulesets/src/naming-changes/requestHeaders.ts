@@ -7,8 +7,8 @@ import { casing, appliesWhen } from './constants';
 import { isCase } from './isCase';
 
 export const createRequestHeaderParameterChecks = (
-  applies: typeof appliesWhen[number],
-  format: typeof casing[number]
+  applies: (typeof appliesWhen)[number],
+  format: (typeof casing)[number]
 ) => {
   const parameterTest = (parameter: HeaderParameter) => {
     if (!isCase(parameter.value.name, format)) {

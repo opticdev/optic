@@ -300,9 +300,11 @@ const logEndpointsChanges = (
     );
     return changeType === 'added' || changeType === 'removed'
       ? `${changeType} \`${param?.name}\` ${param?.in} parameter`
-      : `${changeType} \`${param?.name}\` ${
-          param?.in
-        } parameter ${getChangeDescription(segments.slice(5), spec, segments)}`;
+      : `${changeType} \`${param?.name}\` ${param?.in} parameter ${getChangeDescription(
+          segments.slice(5),
+          spec,
+          segments
+        )}`;
   };
 
   const getRequestBodyChange = (

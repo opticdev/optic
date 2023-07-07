@@ -1,4 +1,4 @@
-import { jest, test, expect, describe } from '@jest/globals'
+import { jest, test, expect, describe } from '@jest/globals';
 import path from 'path';
 import { downloadRuleset } from '../download-ruleset';
 import { prepareRulesets } from '../prepare-rulesets';
