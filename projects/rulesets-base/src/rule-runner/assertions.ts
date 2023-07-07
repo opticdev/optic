@@ -68,7 +68,10 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
   private removedAssertions: Assertion<T>[];
   private severity: Severity;
 
-  constructor(private type: T, severity?: Severity) {
+  constructor(
+    private type: T,
+    severity?: Severity
+  ) {
     this.requirementAssertions = [];
     this.addedAssertions = [];
     this.changedAssertions = [];

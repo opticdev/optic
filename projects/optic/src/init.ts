@@ -94,8 +94,8 @@ export const initCli = async (
         logger.info(
           `
   ${chalk.green(chalk.bold(`New Optic version available:`))} ${
-            notifier.update.latest
-          } (current ${notifier.update.current})
+    notifier.update.latest
+  } (current ${notifier.update.current})
   
   Run ${chalk.yellow(getInstallInstruction())} to upgrade Optic`
         );

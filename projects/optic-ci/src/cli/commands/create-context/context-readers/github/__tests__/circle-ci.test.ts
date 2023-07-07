@@ -1,4 +1,4 @@
-import { test, expect, afterAll } from '@jest/globals'
+import { test, expect, afterAll } from '@jest/globals';
 import { UserError } from '@useoptic/openapi-utilities';
 import { getContextFromCircleCiEnvironment } from '../circle-ci';
 

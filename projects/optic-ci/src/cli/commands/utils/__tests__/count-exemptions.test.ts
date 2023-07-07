@@ -1,4 +1,4 @@
-import { jest, test, expect, describe } from '@jest/globals'
+import { jest, test, expect, describe } from '@jest/globals';
 import { ChangeType, IChange } from '@useoptic/openapi-utilities';
 import { newExemptionsCount } from '../count-exemptions';
 

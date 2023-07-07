@@ -6,7 +6,7 @@ import invariant from 'ts-invariant';
 import { Result, Ok, Err } from 'ts-results';
 
 export const applyPatch: SpecFileReconciler<Config> = async function applyPatch<
-  Config
+  Config,
 >(
   filePath: string,
   fileContents: string,

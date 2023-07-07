@@ -1,4 +1,4 @@
-import { jest, test, expect, describe } from '@jest/globals'
+import { jest, test, expect, describe } from '@jest/globals';
 
 import { defaultEmptySpec, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { RuleError } from '../errors';
@@ -49,7 +49,9 @@ describe('SpecificationRule', () => {
         }),
       ]);
 
-      await ruleRunner.runRulesWithFacts(createRuleInputs(defaultEmptySpec, json));
+      await ruleRunner.runRulesWithFacts(
+        createRuleInputs(defaultEmptySpec, json)
+      );
 
       expect(mockFn.mock.calls.length > 0).toBe(true);
       const ruleContext = mockFn.mock.calls[0][1];

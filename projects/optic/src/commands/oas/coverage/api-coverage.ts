@@ -23,7 +23,7 @@ export class ApiCoverageCounter {
       Object.entries(methods || {}).forEach((entry) => {
         const [method, operation] = entry as [
           OpenAPIV3.HttpMethods,
-          OpenAPIV3.OperationObject
+          OpenAPIV3.OperationObject,
         ];
 
         if (Object.values(OpenAPIV3.HttpMethods).includes(method)) {
