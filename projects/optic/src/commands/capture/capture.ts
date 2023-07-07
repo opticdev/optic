@@ -25,8 +25,8 @@ import { createNewSpecFile } from '../../utils/specs';
 import { logger } from '../../logger';
 import { OpticCliConfig } from '../../config';
 import { clearCommand } from '../oas/capture-clear';
-import { captureStorage } from '../oas/captures/capture-storage';
 import { captureV1 } from '../oas/capture';
+import { getCaptureStorage } from './storage';
 
 const wait = (time: number) =>
   new Promise((r) => setTimeout(() => r(null), time));
@@ -110,8 +110,12 @@ const getCaptureAction =
       process.exitCode = 1;
       return;
     }
-
-    const { openApiExists, trafficDirectory } = await captureStorage(filePath);
+    const resolvedPath = path.resolve(filePath);
+    let openApiExists = false;
+    try {
+      await fs.stat(resolvedPath);
+      openApiExists = true;
+    } catch (e) {}
 
     if (!openApiExists) {
       const fileCreated = await createOpenAPIFile(filePath);
@@ -121,11 +125,15 @@ const getCaptureAction =
         return;
       }
     }
+    const trafficDirectory = await getCaptureStorage(resolvedPath);
+    logger.debug(`Writing captured traffic to ${trafficDirectory}`);
+
     if (captureConfig.server.dir === undefined) {
       chdir(path.dirname(filePath));
     } else {
       chdir(captureConfig.server.dir);
     }
+
     let sourcesController = new AbortController();
     let [proxyInteractions, proxyUrl] = await ProxyInteractions.create(
       captureConfig.server.url,
@@ -146,15 +154,12 @@ const getCaptureAction =
       console.log(data.toString());
     });
 
-    // wait until server is ready
-    await new Promise((r) =>
-      setTimeout(r, captureConfig.server.ready_interval)
-    );
-
     if (captureConfig.server.ready_endpoint) {
-      const readyEndpoint = captureConfig.server.ready_endpoint;
       const readyInterval = captureConfig.server.ready_interval || 1000;
-      const readyUrl = urljoin(captureConfig.server.url, readyEndpoint);
+      const readyUrl = urljoin(
+        captureConfig.server.url,
+        captureConfig.server.ready_endpoint
+      );
 
       const timeout = 10 * 60 * 1_000; // 10 minutes
       const now = Date.now();
@@ -181,20 +186,19 @@ const getCaptureAction =
     }
 
     // make requests
-    console.log(trafficDirectory);
     const requests = makeRequests(captureConfig.requests, proxyUrl);
 
     // write captured requests to disk
     const timestamp = Date.now().toString();
-    const tmpName = path.join(trafficDirectory, `${timestamp}.incomplete`);
+    // const tmpName = path.join(trafficDirectory, `${timestamp}.incomplete`);
     const observations = writeHar(proxyInteractions, tmpName);
 
     Promise.all(requests)
       .then(() => {
         process.kill(-app.pid!);
         sourcesController.abort();
-        const completedName = path.join(trafficDirectory, `${timestamp}.har`);
-        fs.rename(tmpName, completedName);
+        // const completedName = path.join(trafficDirectory, `${timestamp}.har`);
+        // fs.rename(tmpName, completedName);
       })
       .catch((error) => {
         console.error(error);
