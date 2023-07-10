@@ -52,7 +52,7 @@ export function factsToChangelog(past: IFact[], current: IFact[]): IChange[] {
         location: added.location,
         added: added.value,
         changeType: ChangeType.Added,
-      } as IChange)
+      }) as IChange
   );
 
   const removedChanges = removed.map(
@@ -63,7 +63,7 @@ export function factsToChangelog(past: IFact[], current: IFact[]): IChange[] {
           before: removed.value,
         },
         changeType: ChangeType.Removed,
-      } as IChange)
+      }) as IChange
   );
 
   const changedChanges = updated.map((past) => {

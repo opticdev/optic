@@ -1,4 +1,4 @@
-import { test, expect, describe } from '@jest/globals'
+import { test, expect, describe } from '@jest/globals';
 import { valuesMatcher, Matcher, Matchers } from '../utils';
 import { exampleJsonSpec } from './petstore.base';
 

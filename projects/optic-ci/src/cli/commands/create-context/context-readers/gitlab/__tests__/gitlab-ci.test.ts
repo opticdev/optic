@@ -1,4 +1,4 @@
-import { test, expect, afterAll } from '@jest/globals'
+import { test, expect, afterAll } from '@jest/globals';
 import { getContextFromGitlabEnvironment } from '../gitlab-ci';
 
 const originalEnv = {

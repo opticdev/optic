@@ -1,6 +1,6 @@
 import { casing } from './constants';
 
-function regexForRule(format: typeof casing[number]) {
+function regexForRule(format: (typeof casing)[number]) {
   switch (format) {
     case 'camelCase':
       return /^[a-z][a-z0-9]*(?:[A-Z0-9][a-z0-9]+)*$/;
@@ -19,7 +19,7 @@ function regexForRule(format: typeof casing[number]) {
 
 export function isCase(
   example: string,
-  format: typeof casing[number]
+  format: (typeof casing)[number]
 ): boolean {
   return regexForRule(format).test(example);
 }

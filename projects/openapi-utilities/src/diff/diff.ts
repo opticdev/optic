@@ -48,7 +48,7 @@ type StackItem<T extends JSONObject | JSONArray = JSONObject | JSONArray> = [
   {
     value: T;
     path: string;
-  }
+  },
 ];
 
 export function typeofDiff(

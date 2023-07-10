@@ -1,4 +1,4 @@
-import { IFact } from "../sdk/types";
+import { IFact } from '../sdk/types';
 
 export const FactsMock = [
   {

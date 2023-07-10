@@ -1,6 +1,9 @@
 export class Matcher {
   public type: 'matcher';
-  constructor(private matcher: (value: any) => boolean, private name?: string) {
+  constructor(
+    private matcher: (value: any) => boolean,
+    private name?: string
+  ) {
     this.type = 'matcher';
   }
 

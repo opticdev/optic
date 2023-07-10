@@ -2,7 +2,7 @@
   "name": "openapi-workspaces",
   "license": "MIT",
   "private": true,
-  "version": "0.47.7",
+  "version": "0.47.8",
   "workspaces": [
     "projects/json-pointer-helpers",
     "projects/openapi-io",
@@ -16,13 +16,13 @@
   "scripts": {
     "release": "gh release create --target=$(git branch --show-current) v$(node -e \"process.stdout.write(require('./package.json').version)\")",
     "version": "yarn workspaces foreach -v version",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "lint": "prettier --check 'projects/*/src/**/*.(js|jsx|ts|tsx|json|css)'"
   },
   "devDependencies": {
-    "@types/prettier": "^2",
     "husky": "^8.0.0",
     "lint-staged": "^13.1.0",
-    "prettier": "^2.8.1"
+    "prettier": "^3.0.0"
   },
   "lint-staged": {
     "**/*.+(js|jsx|ts|tsx|json|css)": [

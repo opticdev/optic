@@ -240,7 +240,7 @@ export const createOpticClient = (opticToken: string) => {
     : process.env.OPTIC_ENV === 'staging'
     ? 'https://api.o3c.info'
     : process.env.OPTIC_ENV === 'local'
-    ? 'http://localhost:3030'
+    ? 'http://127.0.0.1:3030'
     : 'https://api.useoptic.com';
 
   const opticClient = new OpticBackendClient(backendWebBase, () =>

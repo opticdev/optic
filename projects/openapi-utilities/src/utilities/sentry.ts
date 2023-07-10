@@ -19,7 +19,7 @@ export const initSentry = (sentryUrl: string | undefined, version: string) => {
 
 export const wrapActionHandlerWithSentry = <
   Args extends any[],
-  Return extends any
+  Return extends any,
 >(
   fn: (...args: Args) => Promise<Return>
 ): ((...args: Args) => Promise<Return>) => {

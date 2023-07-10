@@ -5,6 +5,7 @@ import { OpticCliConfig } from '../../config';
 import tar from 'tar';
 import path from 'path';
 import chalk from 'chalk';
+import latestVersion from 'latest-version';
 import { errorHandler } from '../../error-handler';
 
 const DEFAULT_INIT_FOLDER = 'optic-ruleset';
@@ -63,9 +64,15 @@ const getInitAction = () => async (name?: string) => {
     tarWriteStream.on('finish', resolve);
   });
 
-  // update file names
+  // update file names and dependencies
   const rulesFilePath = path.join(folderToCreate, 'src', 'main.ts');
   const packageJsonFilePath = path.join(folderToCreate, 'package.json');
+  const dependencies = [
+    '@useoptic/rulesets-base',
+    '@useoptic/openapi-utilities',
+  ];
+  const version = await latestVersion(dependencies[0]);
+
   await fs
     .readFile(rulesFilePath, 'utf-8')
     .then((file) => file.replaceAll(NAME_PLACEHOLDER, projectName))
@@ -73,6 +80,12 @@ const getInitAction = () => async (name?: string) => {
   await fs
     .readFile(packageJsonFilePath, 'utf-8')
     .then((file) => file.replaceAll(NAME_PLACEHOLDER, projectName))
+    .then((file) =>
+      dependencies.reduce(
+        (f, dep) => f.replace(`"${dep}": "*"`, `"${dep}": "^${version}"`),
+        file
+      )
+    )
     .then((file) => fs.writeFile(packageJsonFilePath, file));
 
   console.log(

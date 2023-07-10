@@ -25,21 +25,24 @@ export function resolveJsonPointerInYamlAst(
 
   if (isEmpty) return node;
 
-  const found: YAMLNode | undefined = decoded.reduce((current, path) => {
-    if (!current) return undefined;
-    const node: YAMLNode = current.key ? current.value : current;
-    const isNumericalKey =
-      !isNaN(Number(path)) && (node as any).hasOwnProperty('items');
+  const found: YAMLNode | undefined = decoded.reduce(
+    (current, path) => {
+      if (!current) return undefined;
+      const node: YAMLNode = current.key ? current.value : current;
+      const isNumericalKey =
+        !isNaN(Number(path)) && (node as any).hasOwnProperty('items');
 
-    if (isNumericalKey) {
-      return (node as YAMLSequence).items[Number(path)];
-    } else {
-      const field = node.mappings.find(
-        (i: YAMLMapping) => i.key.value === path
-      );
-      return field;
-    }
-  }, node as YAMLNode | undefined);
+      if (isNumericalKey) {
+        return (node as YAMLSequence).items[Number(path)];
+      } else {
+        const field = node.mappings.find(
+          (i: YAMLMapping) => i.key.value === path
+        );
+        return field;
+      }
+    },
+    node as YAMLNode | undefined
+  );
 
   return found;
 }

@@ -7,8 +7,8 @@ import { casing, appliesWhen } from './constants';
 import { isCase } from './isCase';
 
 export const createQueryParameterChecks = (
-  applies: typeof appliesWhen[number],
-  format: typeof casing[number]
+  applies: (typeof appliesWhen)[number],
+  format: (typeof casing)[number]
 ) => {
   const parameterTest = (parameter: QueryParameter) => {
     if (!isCase(parameter.value.name, format)) {

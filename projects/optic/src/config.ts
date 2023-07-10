@@ -35,12 +35,18 @@ const DefaultOpticCliConfig: OpticCliConfig = {
 };
 
 const CaptureConfigData = Type.Object({
+  config: Type.Optional(
+    Type.Object({
+      request_concurrency: Type.Optional(Type.Number()),
+    })
+  ),
   server: Type.Object({
     dir: Type.Optional(Type.String()),
-    command: Type.String(),
+    command: Type.Optional(Type.String()),
     url: Type.String(),
-    ready_endpoint: Type.String(),
-    ready_interval: Type.Number(),
+    ready_endpoint: Type.Optional(Type.String()),
+    ready_interval: Type.Optional(Type.Number()),
+    ready_timeout: Type.Optional(Type.Number()),
   }),
   requests: Type.Array(
     Type.Object({
