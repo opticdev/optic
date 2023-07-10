@@ -8,8 +8,8 @@ import { casing, appliesWhen } from './constants';
 import { isCase } from './isCase';
 
 export const createPropertyNamingChecks = (
-  applies: typeof appliesWhen[number],
-  format: typeof casing[number]
+  applies: (typeof appliesWhen)[number],
+  format: (typeof casing)[number]
 ) => {
   const propertyTest = (property: Field) => {
     if (!isCase(property.value.key, format)) {

@@ -4,7 +4,10 @@ import urljoin from 'url-join';
 import { JsonHttpClient } from './JsonHttpClient';
 
 export class GitlabClient extends JsonHttpClient {
-  constructor(private baseUrl: string, private authToken: string) {
+  constructor(
+    private baseUrl: string,
+    private authToken: string
+  ) {
     super();
   }
 

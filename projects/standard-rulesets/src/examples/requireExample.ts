@@ -10,7 +10,9 @@ import { appliesWhen } from './constants';
 import { OpenAPIV3 } from 'openapi-types';
 import { qualifiedContentType } from './qualifiedContentType';
 
-export const requireResponseExamples = (applies: typeof appliesWhen[number]) =>
+export const requireResponseExamples = (
+  applies: (typeof appliesWhen)[number]
+) =>
   new ResponseBodyRule({
     name: 'require response body examples',
     matches: (body) => qualifiedContentType(body.contentType),
@@ -43,7 +45,7 @@ export const requireResponseExamples = (applies: typeof appliesWhen[number]) =>
     },
   });
 
-export const requireRequestExamples = (applies: typeof appliesWhen[number]) =>
+export const requireRequestExamples = (applies: (typeof appliesWhen)[number]) =>
   new RequestRule({
     name: 'require request body examples',
     rule: (requestAssertions) => {
@@ -83,7 +85,9 @@ export const requireRequestExamples = (applies: typeof appliesWhen[number]) =>
     },
   });
 
-export const requireParameterExamples = (applies: typeof appliesWhen[number]) =>
+export const requireParameterExamples = (
+  applies: (typeof appliesWhen)[number]
+) =>
   new OperationRule({
     name: 'require parameter examples',
     rule: (operation) => {

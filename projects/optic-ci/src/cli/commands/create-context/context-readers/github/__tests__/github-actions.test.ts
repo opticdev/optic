@@ -1,4 +1,4 @@
-import { jest, test, expect, afterAll } from '@jest/globals'
+import { jest, test, expect, afterAll } from '@jest/globals';
 import fs from 'fs/promises';
 import { UserError } from '@useoptic/openapi-utilities';
 import { getContextFromGithubEnvironment } from '../github-actions';
@@ -63,21 +63,22 @@ test('get head sha from github context', async () => {
   process.env.GITHUB_SHA = 'asdasd';
   process.env.GITHUB_REPOSITORY = 'optidev/monorail';
   process.env.GITHUB_HEAD_REF = 'feature-1';
-  mockReadFile.mockImplementation(() =>
-    Promise.resolve(
-      Buffer.from(
-        JSON.stringify({
-          pull_request: {
-            head: {
-              user: {
-                login: 'lou',
+  mockReadFile.mockImplementation(
+    () =>
+      Promise.resolve(
+        Buffer.from(
+          JSON.stringify({
+            pull_request: {
+              head: {
+                user: {
+                  login: 'lou',
+                },
+                sha: '7d3736f2b38af7f69fd51e43465fd74375aaca2d',
               },
-              sha: '7d3736f2b38af7f69fd51e43465fd74375aaca2d',
             },
-          },
-        })
-      )
-    ) as any
+          })
+        )
+      ) as any
   );
 
   expect(await getContextFromGithubEnvironment()).toEqual({

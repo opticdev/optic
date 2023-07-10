@@ -59,7 +59,7 @@ export function applyOperationsToYamlString(
     }
   });
 
-  return doc.toString({collectionStyle: 'block'});
+  return doc.toString({ collectionStyle: 'block' });
 }
 
 function insert<T>(arr: T[], index: number, item: any) {

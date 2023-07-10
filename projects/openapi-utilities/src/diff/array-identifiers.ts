@@ -1,4 +1,6 @@
-export const isParameterObject = (value: any): value is { name: string; in: string } =>
+export const isParameterObject = (
+  value: any
+): value is { name: string; in: string } =>
   typeof value === 'object' &&
   !Array.isArray(value) &&
   value !== null &&

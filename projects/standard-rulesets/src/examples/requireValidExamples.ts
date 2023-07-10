@@ -154,7 +154,7 @@ export const requireValidRequestExamples = (ajv: Ajv) =>
           Object.entries(examples).forEach((example) => {
             const [exampleName, exampleValue] = example as [
               string,
-              OpenAPIV3.ExampleObject
+              OpenAPIV3.ExampleObject,
             ];
             const result = validateSchema(
               schema || {},
@@ -195,7 +195,7 @@ export const requireValidResponseExamples = (ajv: Ajv) =>
             Object.entries(body.raw.examples).forEach((example) => {
               const [exampleName, exampleValue] = example as [
                 string,
-                OpenAPIV3.ExampleObject
+                OpenAPIV3.ExampleObject,
               ];
               const result = validateSchema(
                 body.raw.schema || {},

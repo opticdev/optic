@@ -2827,8 +2827,8 @@ __metadata:
   linkType: hard
 
 "@stoplight/spectral-core@npm:^1.7.0, @stoplight/spectral-core@npm:^1.8.0, @stoplight/spectral-core@npm:^1.8.1":
-  version: 1.18.0
-  resolution: "@stoplight/spectral-core@npm:1.18.0"
+  version: 1.18.1
+  resolution: "@stoplight/spectral-core@npm:1.18.1"
   dependencies:
     "@stoplight/better-ajv-errors": 1.0.3
     "@stoplight/json": ~3.20.1
@@ -2851,7 +2851,7 @@ __metadata:
     pony-cause: ^1.0.0
     simple-eval: 1.0.0
     tslib: ^2.3.0
-  checksum: 76ff9e2349c035fa2b98556c8bd67bb531f2b9c29e19e33484270d62f30900d36ceb51ef0075255479cc5071b45bcb7249088f568fff9d44cd159b5ee8f07cec
+  checksum: 6f56224520ede6bf677ba59085fecd744088b87de40148e58154990530bbe2838a135fc1398fc56ce600183485a82926926324226b81becc09637eff4ad8b37c
   languageName: node
   linkType: hard
 
@@ -3406,7 +3406,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/prettier@npm:^2, @types/prettier@npm:^2.1.5":
+"@types/prettier@npm:^2.1.5":
   version: 2.7.3
   resolution: "@types/prettier@npm:2.7.3"
   checksum: 705384209cea6d1433ff6c187c80dcc0b95d99d5c5ce21a46a9a58060c527973506822e428789d842761e0280d25e3359300f017fbe77b9755bc772ab3dc2f83
@@ -3588,8 +3588,8 @@ __metadata:
     babel-jest: ^29.3.1
     jest: ^29.3.1
     jsonpointer: ^5.0.1
-    minimatch: 9.0.2
-    prettier: ^2.8.1
+    minimatch: 9.0.3
+    prettier: ^3.0.0
     ts-jest: ^29.0.3
     ts-node: ^10.9.1
     typescript: ^5.0.0
@@ -3633,7 +3633,7 @@ __metadata:
     lodash.sortby: ^4.7.0
     node-fetch: ^2.6.7
     openapi-types: ^12.0.2
-    prettier: ^2.8.1
+    prettier: ^3.0.0
     semver: ^7.3.8
     ts-jest: ^29.0.3
     ts-node: ^10.9.1
@@ -3682,7 +3682,7 @@ __metadata:
     lodash.omit: ^4.5.0
     node-machine-id: ^1.1.12
     openapi-types: ^12.0.2
-    prettier: ^2.8.1
+    prettier: ^3.0.0
     ts-invariant: ^0.9.3
     ts-jest: ^29.0.3
     ts-node: ^10.9.1
@@ -3733,7 +3733,7 @@ __metadata:
     node-fetch: ^2.6.7
     open: ^8.4.0
     picomatch: ^2.3.1
-    prettier: ^2.8.1
+    prettier: ^3.0.0
     ts-jest: ^29.0.3
     ts-node: ^10.9.1
     typescript: ^5.0.0
@@ -3810,6 +3810,7 @@ __metadata:
     js-yaml: ^4.1.0
     json-schema-traverse: ^1.0.0
     json-stable-stringify: ^1.0.1
+    latest-version: ^5.1.0
     lodash.chunk: ^4.2.0
     lodash.groupby: ^4.6.0
     lodash.sortby: ^4.7.0
@@ -3817,7 +3818,7 @@ __metadata:
     log-node: ^8.0.3
     loglevel: ^1.8.0
     micromatch: ^4.0.5
-    minimatch: 9.0.2
+    minimatch: 9.0.3
     mockttp: ^3.7.4
     node-fetch: ^2.6.7
     node-forge: ^1.2.1
@@ -3827,7 +3828,7 @@ __metadata:
     pluralize: 8.0.0
     portfinder: ^1.0.28
     postman-collection: ^4.1.7
-    prettier: ^2.8.1
+    prettier: ^3.0.0
     prompts: ^2.4.2
     semver: ^7.3.8
     slice-ansi: ^4.0.0
@@ -3900,7 +3901,7 @@ __metadata:
     ajv-formats: ~2.1.0
     babel-jest: ^29.3.1
     jest: ^29.3.1
-    prettier: ^2.8.1
+    prettier: ^3.0.0
     ts-jest: ^29.0.3
     ts-node: ^10.9.1
     typescript: ^5.0.0
@@ -8749,12 +8750,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:9.0.2":
-  version: 9.0.2
-  resolution: "minimatch@npm:9.0.2"
+"minimatch@npm:9.0.3":
+  version: 9.0.3
+  resolution: "minimatch@npm:9.0.3"
   dependencies:
     brace-expansion: ^2.0.1
-  checksum: 2eb12e2047a062fdb973fb51b9803f2455e3a00977858c038d66646d303a5a15bbcbc6ed5a2fc403bc869b1309f829ed3acd881d3246faf044ea7a494974b924
+  checksum: 253487976bf485b612f16bf57463520a14f512662e592e95c571afdab1442a6a6864b6c88f248ce6fc4ff0b6de04ac7aa6c8bb51e868e99d1d65eb0658a708b5
   languageName: node
   linkType: hard
 
@@ -9284,10 +9285,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "openapi-workspaces@workspace:."
   dependencies:
-    "@types/prettier": ^2
     husky: ^8.0.0
     lint-staged: ^13.1.0
-    prettier: ^2.8.1
+    prettier: ^3.0.0
   languageName: unknown
   linkType: soft
 
@@ -9713,12 +9713,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.8.1":
-  version: 2.8.8
-  resolution: "prettier@npm:2.8.8"
+"prettier@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "prettier@npm:3.0.0"
   bin:
-    prettier: bin-prettier.js
-  checksum: b49e409431bf129dd89238d64299ba80717b57ff5a6d1c1a8b1a28b590d998a34e083fa13573bc732bb8d2305becb4c9a4407f8486c81fa7d55100eb08263cf8
+    prettier: bin/prettier.cjs
+  checksum: 6a832876a1552dc58330d2467874e5a0b46b9ccbfc5d3531eb69d15684743e7f83dc9fbd202db6270446deba9c82b79d24383d09924c462b457136a759425e33
   languageName: node
   linkType: hard
 

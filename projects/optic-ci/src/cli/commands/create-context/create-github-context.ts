@@ -35,7 +35,7 @@ export const registerCreateContext = (cli: Command, hideCommand: boolean) => {
         async ({
           provider,
         }: {
-          provider: typeof SUPPORTED_GITHUB_CI_PROVIDERS[number];
+          provider: (typeof SUPPORTED_GITHUB_CI_PROVIDERS)[number];
         }) => {
           console.warn(
             '[DEPRECATION WARNING] - This command will be deprecated in the future, please use `create-github-context` instead'
@@ -86,7 +86,7 @@ export const registerCreateGithubContext = (
         async ({
           provider,
         }: {
-          provider: typeof SUPPORTED_GITHUB_CI_PROVIDERS[number];
+          provider: (typeof SUPPORTED_GITHUB_CI_PROVIDERS)[number];
         }) => {
           if (!provider) {
             throw new UserError('Cannot create context without a provider');
@@ -105,7 +105,7 @@ export const registerCreateGithubContext = (
 };
 
 const createContext = async (
-  provider: typeof SUPPORTED_GITHUB_CI_PROVIDERS[number]
+  provider: (typeof SUPPORTED_GITHUB_CI_PROVIDERS)[number]
 ) => {
   let normalizedContext: NormalizedCiContext;
   if (provider === 'github') {

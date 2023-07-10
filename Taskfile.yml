@@ -29,6 +29,11 @@ tasks:
     cmds:
       - yarn workspaces foreach -pv --no-private run clean
 
+  lint:
+    desc: Lint
+    cmds:
+      - yarn run lint
+
   test:
     desc: Test
     cmds:

@@ -3,8 +3,8 @@ import { casing, appliesWhen } from './constants';
 import { isCase } from './isCase';
 
 export const createPathComponentChecks = (
-  applies: typeof appliesWhen[number],
-  format: typeof casing[number]
+  applies: (typeof appliesWhen)[number],
+  format: (typeof casing)[number]
 ) => {
   const check = (path: string) => {
     const pathComponents = path.split('/').filter(

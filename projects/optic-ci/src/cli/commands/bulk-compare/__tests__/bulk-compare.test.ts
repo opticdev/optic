@@ -1,4 +1,4 @@
-import { jest, test, expect, describe } from '@jest/globals'
+import { jest, test, expect, describe } from '@jest/globals';
 import { parseJsonComparisonInput } from '../input-generators';
 import { loadFile } from '../../utils';
 

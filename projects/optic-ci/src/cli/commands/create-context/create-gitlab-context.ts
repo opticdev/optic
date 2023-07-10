@@ -40,7 +40,7 @@ export const registerCreateGitlabContext = (
         async ({
           provider,
         }: {
-          provider: typeof SUPPORTED_GITLAB_CI_PROVIDERS[number];
+          provider: (typeof SUPPORTED_GITLAB_CI_PROVIDERS)[number];
         }) => {
           if (!provider) {
             throw new UserError('Cannot create context without a provider');
@@ -59,7 +59,7 @@ export const registerCreateGitlabContext = (
 };
 
 const createContext = (
-  provider: typeof SUPPORTED_GITLAB_CI_PROVIDERS[number]
+  provider: (typeof SUPPORTED_GITLAB_CI_PROVIDERS)[number]
 ) => {
   let normalizedContext: NormalizedCiContext;
   if (provider === 'gitlab') {

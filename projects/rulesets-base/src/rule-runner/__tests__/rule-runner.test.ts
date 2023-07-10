@@ -1,4 +1,4 @@
-import { test, expect, describe } from '@jest/globals'
+import { test, expect, describe } from '@jest/globals';
 
 import { OpenAPITraverser, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { RuleRunner } from '../rule-runner';
