@@ -158,32 +158,38 @@ const getCaptureAction =
       });
     }
 
-    // wait until server is ready
-    const readyEndpoint = captureConfig.server.ready_endpoint || '/';
+    // wait until the server is ready
     const readyInterval = captureConfig.server.ready_interval || 1000;
-    const readyUrl = urljoin(serverUrl, readyEndpoint);
 
-    const timeout = 10 * 60 * 1_000; // 10 minutes
-    const now = Date.now();
-    const spinner = ora('Waiting for server to come online...');
-    spinner.start();
-    spinner.color = 'blue';
+    // since ready_endpoint is not required always wait one interval. without ready_endpoint,
+    // ready_interval must be at least the time it takes to start the server.
+    await wait(readyInterval);
 
-    const checkServer = (): Promise<boolean> =>
-      fetch(readyUrl)
-        .then((res) => String(res.status).startsWith('2'))
-        .catch(() => false);
+    if (captureConfig.server.ready_endpoint) {
+      const readyUrl = urljoin(serverUrl, captureConfig.server.ready_endpoint);
 
-    let done = false;
-    while (!done) {
-      const isReady = await checkServer();
-      if (isReady) {
-        spinner.succeed('Server check passed');
-        done = true;
-      } else if (Date.now() > now + timeout) {
-        throw new UserError('Server check timed out (waited for 10 minutes)');
+      const timeout = 10 * 60 * 1_000; // 10 minutes
+      const now = Date.now();
+      const spinner = ora('Waiting for server to come online...');
+      spinner.start();
+      spinner.color = 'blue';
+
+      const checkServer = (): Promise<boolean> =>
+        fetch(readyUrl)
+          .then((res) => String(res.status).startsWith('2'))
+          .catch(() => false);
+
+      let done = false;
+      while (!done) {
+        const isReady = await checkServer();
+        if (isReady) {
+          spinner.succeed('Server check passed');
+          done = true;
+        } else if (Date.now() > now + timeout) {
+          throw new UserError('Server check timed out (waited for 10 minutes)');
+        }
+        await wait(readyInterval);
       }
-      await wait(readyInterval);
     }
 
     // make requests
