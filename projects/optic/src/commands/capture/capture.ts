@@ -129,7 +129,9 @@ const getCaptureAction =
         return;
       }
     }
-    if (captureConfig.server.dir) {
+    if (captureConfig.server.dir === undefined) {
+      chdir(config.root);
+    } else {
       chdir(captureConfig.server.dir);
     }
     const serverUrl = options.serverOverride || captureConfig.server.url;
