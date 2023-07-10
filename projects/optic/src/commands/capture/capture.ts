@@ -145,6 +145,7 @@ const getCaptureAction =
       }
     );
 
+    // start the app
     let app: ChildProcessWithoutNullStreams;
     if (!options.serverOverride && captureConfig.server.command) {
       const cmd = captureConfig.server.command.split(' ')[0];
