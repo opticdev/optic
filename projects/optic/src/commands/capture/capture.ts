@@ -208,10 +208,6 @@ const getCaptureAction =
 
     Promise.all(requests)
       .then(() => {
-        // stop the app server
-        if (!options.serverOverride && captureConfig.server.command) {
-          process.kill(-app.pid!);
-        }
         // write the hars to their final location
         const completedName = path.join(trafficDirectory, `${timestamp}.har`);
         fs.rename(tmpName, completedName);
@@ -222,6 +218,10 @@ const getCaptureAction =
       .finally(() => {
         // stop the proxy
         sourcesController.abort();
+        // stop the app server
+        if (!options.serverOverride && captureConfig.server.command) {
+          process.kill(-app.pid!);
+        }
       });
 
     for await (const observation of observations) {
