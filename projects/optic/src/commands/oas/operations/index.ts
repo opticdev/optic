@@ -11,7 +11,7 @@ export { UndocumentedOperations } from './streams/undocumented';
 
 export interface Operation extends OpenAPIV3.OperationObject {
   pathPattern: string;
-  method: OpenAPIV3.HttpMethods;
+  method: string;
 
   requestBody?: OpenAPIV3.RequestBodyObject;
   responses: { [code: string]: OpenAPIV3.ResponseObject };
@@ -20,7 +20,7 @@ export interface Operation extends OpenAPIV3.OperationObject {
 export class Operation {
   static fromOperationObject(
     pathPattern: string,
-    method: OpenAPIV3.HttpMethods,
+    method: string,
     operation: OpenAPIV3.OperationObject
   ): Operation {
     const requestBody = operation.requestBody;
