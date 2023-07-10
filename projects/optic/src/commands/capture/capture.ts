@@ -207,10 +207,13 @@ const getCaptureAction =
 
     Promise.all(requests)
       .then(() => {
+        // stop the app server
         if (!options.serverOverride) {
           process.kill(-app.pid!);
         }
+        // stop the proxy
         sourcesController.abort();
+        // write the hars to their final location
         const completedName = path.join(trafficDirectory, `${timestamp}.har`);
         fs.rename(tmpName, completedName);
       })
