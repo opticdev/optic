@@ -158,32 +158,38 @@ const getCaptureAction =
       });
     }
 
-    // wait until server is ready
-    const readyEndpoint = captureConfig.server.ready_endpoint || '/';
+    // wait until the server is ready
     const readyInterval = captureConfig.server.ready_interval || 1000;
-    const readyTimeout = captureConfig.server.ready_timeout || 3 * 60 * 1_000; // 3 minutes
-    const readyUrl = urljoin(serverUrl, readyEndpoint);
 
-    const now = Date.now();
-    const spinner = ora('Waiting for server to come online...');
-    spinner.start();
-    spinner.color = 'blue';
+    // since ready_endpoint is not required always wait one interval. without ready_endpoint,
+    // ready_interval must be at least the time it takes to start the server.
+    await wait(readyInterval);
 
-    const checkServer = (): Promise<boolean> =>
-      fetch(readyUrl)
-        .then((res) => String(res.status).startsWith('2'))
-        .catch(() => false);
+    if (captureConfig.server.ready_endpoint) {
+      const readyUrl = urljoin(serverUrl, captureConfig.server.ready_endpoint);
+      const readyTimeout = captureConfig.server.ready_timeout || 3 * 60 * 1_000; // 3 minutes
 
-    let done = false;
-    while (!done) {
-      const isReady = await checkServer();
-      if (isReady) {
-        spinner.succeed('Server check passed');
-        done = true;
-      } else if (Date.now() > now + readyTimeout) {
-        throw new UserError('Server check timed out.');
+      const now = Date.now();
+      const spinner = ora('Waiting for server to come online...');
+      spinner.start();
+      spinner.color = 'blue';
+
+      const checkServer = (): Promise<boolean> =>
+        fetch(readyUrl)
+          .then((res) => String(res.status).startsWith('2'))
+          .catch(() => false);
+
+      let done = false;
+      while (!done) {
+        const isReady = await checkServer();
+        if (isReady) {
+          spinner.succeed('Server check passed');
+          done = true;
+        } else if (Date.now() > now + readyTimeout) {
+          throw new UserError('Server check timed out.');
+        }
+        await wait(readyInterval);
       }
-      await wait(readyInterval);
     }
 
     // make requests
@@ -202,18 +208,20 @@ const getCaptureAction =
 
     Promise.all(requests)
       .then(() => {
-        // stop the app server
-        if (!options.serverOverride && captureConfig.server.command) {
-          process.kill(-app.pid!);
-        }
-        // stop the proxy
-        sourcesController.abort();
         // write the hars to their final location
         const completedName = path.join(trafficDirectory, `${timestamp}.har`);
         fs.rename(tmpName, completedName);
       })
       .catch((error) => {
         console.error(error);
+      })
+      .finally(() => {
+        // stop the proxy
+        sourcesController.abort();
+        // stop the app server
+        if (!options.serverOverride && captureConfig.server.command) {
+          process.kill(-app.pid!);
+        }
       });
 
     for await (const observation of observations) {
