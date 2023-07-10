@@ -206,14 +206,16 @@ const getCaptureAction =
         if (!options.serverOverride && captureConfig.server.command) {
           process.kill(-app.pid!);
         }
-        // stop the proxy
-        sourcesController.abort();
         // write the hars to their final location
         const completedName = path.join(trafficDirectory, `${timestamp}.har`);
         fs.rename(tmpName, completedName);
       })
       .catch((error) => {
         console.error(error);
+      })
+      .finally(() => {
+        // stop the proxy
+        sourcesController.abort();
       });
 
     for await (const observation of observations) {
