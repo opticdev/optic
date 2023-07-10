@@ -204,7 +204,7 @@ const getCaptureAction =
     Promise.all(requests)
       .then(() => {
         // stop the app server
-        if (!options.serverOverride && app.pid) {
+        if (!options.serverOverride && captureConfig.server.command) {
           process.kill(-app.pid!);
         }
         // stop the proxy
