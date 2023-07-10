@@ -48,16 +48,18 @@ const CaptureConfigData = Type.Object({
     ready_interval: Type.Optional(Type.Number()),
     ready_timeout: Type.Optional(Type.Number()),
   }),
-  requests: Type.Array(
-    Type.Object({
-      path: Type.String(),
-      verb: Type.Optional(
-        Type.String({
-          enum: ['GET', 'POST', 'PATCH', 'DELETE'],
-        })
-      ),
-      data: Type.Optional(Type.Object({})),
-    })
+  requests: Type.Optional(
+    Type.Array(
+      Type.Object({
+        path: Type.String(),
+        verb: Type.Optional(
+          Type.String({
+            enum: ['GET', 'POST', 'PATCH', 'DELETE'],
+          })
+        ),
+        data: Type.Optional(Type.Object({})),
+      })
+    )
   ),
 });
 export type CaptureConfigData = Static<typeof CaptureConfigData>;
