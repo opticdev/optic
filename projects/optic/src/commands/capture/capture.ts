@@ -130,7 +130,7 @@ const getCaptureAction =
     logger.debug(`Writing captured traffic to ${trafficDirectory}`);
 
     if (captureConfig.server.dir === undefined) {
-      chdir(path.dirname(filePath));
+      chdir(config.root);
     } else {
       chdir(captureConfig.server.dir);
     }
