@@ -13,7 +13,7 @@ export class OperationQueries {
   static fromFacts(facts: SpecFactsIterable): OperationQueries {
     const operations: Array<{
       pathPattern: string;
-      method: OpenAPIV3.HttpMethods;
+      method: string;
       specPath: string;
     }> = [];
 
@@ -21,7 +21,7 @@ export class OperationQueries {
       if (isFactVariant(fact, FactVariants.Operation)) {
         operations.push({
           pathPattern: fact.value.pathPattern,
-          method: fact.value.method as OpenAPIV3.HttpMethods,
+          method: fact.value.method,
           specPath: fact.location.jsonPath,
         });
       }
@@ -36,7 +36,7 @@ export class OperationQueries {
   constructor(
     private operations: Array<{
       pathPattern: string;
-      method: OpenAPIV3.HttpMethods;
+      method: string;
       specPath: string;
     }>
   ) {
@@ -51,11 +51,11 @@ export class OperationQueries {
 
   findOperation(
     path: string,
-    method: OpenAPIV3.HttpMethods
+    method: string
   ): Result<
     Option<{
       pathPattern: string;
-      method: OpenAPIV3.HttpMethods;
+      method: string;
       specPath: string;
     }>,
     string

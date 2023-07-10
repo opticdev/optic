@@ -1,4 +1,4 @@
-export const endpointId = (endpoint: {
+export const getEndpointId = (endpoint: {
   method: string;
   path: string;
 }): string => {

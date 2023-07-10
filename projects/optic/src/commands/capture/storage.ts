@@ -1,9 +1,11 @@
 import crypto from 'crypto';
 import fs from 'node:fs/promises';
-import fsNonPromise from 'fs';
 import os from 'os';
 import path from 'path';
-import { Writable } from 'stream';
+import { HttpArchive } from '../oas/captures';
+import { OperationQueries } from '../oas/operations/queries';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { getEndpointId } from '../../utils/id';
 
 const tmpDirectory = os.tmpdir();
 
@@ -31,27 +33,72 @@ export async function getCaptureStorage(filePath: string): Promise<string> {
   return trafficDirectory;
 }
 
-export async function getCaptureStreams(
-  trafficDir: string,
-  endpoints: string[]
-): Promise<Map<string, { stream: Writable; path: string }>> {
-  const streams = new Map<string, { stream: Writable; path: string }>();
-  for (const endpoint of endpoints) {
-    const endpointHash = crypto
-      .createHash('md5')
-      .update(endpoint)
-      .digest('hex');
-    const fPath = path.join(trafficDir, `${endpointHash}.incomplete`);
-    streams.set(endpoint, {
-      stream: fsNonPromise.createWriteStream(fPath),
-      path: fPath,
+export class GroupedCaptures {
+  private paths: Map<string, { path: string; hars: HttpArchive.Entry[] }>;
+  private queries: OperationQueries;
+  constructor(
+    trafficDir: string,
+    endpoints: { path: string; method: string }[]
+  ) {
+    this.queries = new OperationQueries(
+      endpoints.map((e) => ({
+        pathPattern: e.path,
+        method: e.method,
+        specPath: jsonPointerHelpers.compile(['paths', e.path, e.method]),
+      }))
+    );
+    this.paths = new Map();
+    for (const endpoint of endpoints) {
+      const id = getEndpointId(endpoint);
+      const endpointHash = crypto.createHash('md5').update(id).digest('hex');
+
+      const fPath = path.join(trafficDir, `${endpointHash}.har`);
+
+      this.paths.set(id, {
+        path: fPath,
+        hars: [],
+      });
+    }
+
+    const unmatched = path.join(trafficDir, `unmatched.har`);
+    this.paths.set(UNMATCHED_PATH, {
+      path: unmatched,
+      hars: [],
     });
   }
-  const unmatched = path.join(trafficDir, `unmatched.incomplete`);
-  streams.set(UNMATCHED_PATH, {
-    stream: fsNonPromise.createWriteStream(unmatched),
-    path: unmatched,
-  });
 
-  return streams;
+  addHar(har: HttpArchive.Entry) {
+    const opRes = this.queries.findOperation(
+      har.request.url,
+      har.request.method
+    );
+    const operation = opRes.ok && opRes.val.some ? opRes.val.val : null;
+    const pathNode = operation
+      ? this.paths.get(
+          getEndpointId({
+            method: operation.method,
+            path: operation.pathPattern,
+          })
+        )
+      : null;
+
+    if (!pathNode) {
+      this.paths.get(UNMATCHED_PATH)!.hars.push(har);
+    } else {
+      pathNode.hars.push(har);
+    }
+  }
+
+  async writeHarFiles(): Promise<void> {
+    for (const [, file] of this.paths) {
+      const har = {
+        log: {
+          version: '1.3',
+          creator: 'Optic capture command',
+          entries: file.hars,
+        },
+      };
+      await fs.writeFile(file.path, JSON.stringify(har));
+    }
+  }
 }
