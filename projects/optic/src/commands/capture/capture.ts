@@ -129,9 +129,7 @@ const getCaptureAction =
         return;
       }
     }
-    if (captureConfig.server.dir === undefined) {
-      chdir(path.dirname(filePath));
-    } else {
+    if (captureConfig.server.dir) {
       chdir(captureConfig.server.dir);
     }
     const serverUrl = options.serverOverride || captureConfig.server.url;
