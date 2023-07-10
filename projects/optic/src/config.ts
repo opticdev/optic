@@ -46,6 +46,7 @@ const CaptureConfigData = Type.Object({
     url: Type.String(),
     ready_endpoint: Type.Optional(Type.String()),
     ready_interval: Type.Optional(Type.Number()),
+    ready_timeout: Type.Optional(Type.Number()),
   }),
   requests: Type.Array(
     Type.Object({

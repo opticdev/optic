@@ -161,9 +161,9 @@ const getCaptureAction =
     // wait until server is ready
     const readyEndpoint = captureConfig.server.ready_endpoint || '/';
     const readyInterval = captureConfig.server.ready_interval || 1000;
+    const readyTimeout = captureConfig.server.ready_timeout || 3 * 60 * 1_000; // 3 minutes
     const readyUrl = urljoin(serverUrl, readyEndpoint);
 
-    const timeout = 10 * 60 * 1_000; // 10 minutes
     const now = Date.now();
     const spinner = ora('Waiting for server to come online...');
     spinner.start();
@@ -180,8 +180,8 @@ const getCaptureAction =
       if (isReady) {
         spinner.succeed('Server check passed');
         done = true;
-      } else if (Date.now() > now + timeout) {
-        throw new UserError('Server check timed out (waited for 10 minutes)');
+      } else if (Date.now() > now + readyTimeout) {
+        throw new UserError('Server check timed out.');
       }
       await wait(readyInterval);
     }
