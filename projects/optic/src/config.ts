@@ -42,7 +42,7 @@ const CaptureConfigData = Type.Object({
   ),
   server: Type.Object({
     dir: Type.Optional(Type.String()),
-    command: Type.String(),
+    command: Type.Optional(Type.String()),
     url: Type.String(),
     ready_endpoint: Type.String(),
     ready_interval: Type.Number(),

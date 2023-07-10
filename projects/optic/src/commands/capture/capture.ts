@@ -1,5 +1,5 @@
 import { Command, Option } from 'commander';
-import { spawn } from 'child_process';
+import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import { chdir } from 'process';
 import path from 'path';
 import fs from 'node:fs/promises';
@@ -145,8 +145,8 @@ const getCaptureAction =
       }
     );
 
-    let app;
-    if (!options.serverOverride) {
+    let app: ChildProcessWithoutNullStreams;
+    if (!options.serverOverride && captureConfig.server.command) {
       const cmd = captureConfig.server.command.split(' ')[0];
       const args = captureConfig.server.command.split(' ').slice(1);
       app = spawn(cmd, args, { detached: true });
@@ -204,7 +204,7 @@ const getCaptureAction =
     Promise.all(requests)
       .then(() => {
         // stop the app server
-        if (!options.serverOverride) {
+        if (!options.serverOverride && app.pid) {
           process.kill(-app.pid!);
         }
         // stop the proxy
