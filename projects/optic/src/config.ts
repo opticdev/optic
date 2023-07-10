@@ -59,6 +59,7 @@ const CaptureConfigData = Type.Object({
     ready_timeout: Type.Optional(Type.Number()),
   }),
   requests: Type.Optional(Type.Array(Request)),
+  requests_command: Type.Optional(Type.String()),
 });
 
 export type CaptureConfigData = Static<typeof CaptureConfigData>;

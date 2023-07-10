@@ -158,63 +158,92 @@ const getCaptureAction =
       });
     }
 
-    // wait until server is ready
-    const readyEndpoint = captureConfig.server.ready_endpoint || '/';
+    // wait until the server is ready
     const readyInterval = captureConfig.server.ready_interval || 1000;
-    const readyTimeout = captureConfig.server.ready_timeout || 3 * 60 * 1_000; // 3 minutes
-    const readyUrl = urljoin(serverUrl, readyEndpoint);
 
-    const now = Date.now();
-    const spinner = ora('Waiting for server to come online...');
-    spinner.start();
-    spinner.color = 'blue';
+    // since ready_endpoint is not required always wait one interval. without ready_endpoint,
+    // ready_interval must be at least the time it takes to start the server.
+    await wait(readyInterval);
 
-    const checkServer = (): Promise<boolean> =>
-      fetch(readyUrl)
-        .then((res) => String(res.status).startsWith('2'))
-        .catch(() => false);
+    if (captureConfig.server.ready_endpoint) {
+      const readyUrl = urljoin(serverUrl, captureConfig.server.ready_endpoint);
+      const readyTimeout = captureConfig.server.ready_timeout || 3 * 60 * 1_000; // 3 minutes
 
-    let done = false;
-    while (!done) {
-      const isReady = await checkServer();
-      if (isReady) {
-        spinner.succeed('Server check passed');
-        done = true;
-      } else if (Date.now() > now + readyTimeout) {
-        throw new UserError('Server check timed out.');
+      const now = Date.now();
+      const spinner = ora('Waiting for server to come online...');
+      spinner.start();
+      spinner.color = 'blue';
+
+      const checkServer = (): Promise<boolean> =>
+        fetch(readyUrl)
+          .then((res) => String(res.status).startsWith('2'))
+          .catch(() => false);
+
+      let done = false;
+      while (!done) {
+        const isReady = await checkServer();
+        if (isReady) {
+          spinner.succeed('Server check passed');
+          done = true;
+        } else if (Date.now() > now + readyTimeout) {
+          throw new UserError('Server check timed out.');
+        }
+        await wait(readyInterval);
       }
-      await wait(readyInterval);
     }
 
+    console.log(`saving har files to: ${trafficDirectory}`);
+
     // make requests
-    console.log(trafficDirectory);
-    const concurrency = captureConfig.config?.request_concurrency || 5;
-    const requests = makeRequests(
-      captureConfig.requests,
-      proxyUrl,
-      concurrency
-    );
+    let observations: CaptureObservations;
+
+    if (captureConfig.requests) {
+      const concurrency = captureConfig.config?.request_concurrency || 5;
+      const requests = makeRequests(
+        captureConfig.requests,
+        proxyUrl,
+        concurrency
+      );
+
+      Promise.all(requests)
+        .then(() => {
+          // write the hars to their final location
+          const completedName = path.join(trafficDirectory, `${timestamp}.har`);
+          fs.rename(tmpName, completedName);
+        })
+        .catch((error) => {
+          console.error(error);
+        })
+        .finally(() => {
+          // stop the proxy
+          sourcesController.abort();
+          // stop the app server
+          if (!options.serverOverride && captureConfig.server.command) {
+            process.kill(-app.pid!);
+          }
+        });
+    }
+
+    if (captureConfig.requests_command) {
+      const cmd = captureConfig.requests_command.split(' ')[0];
+      const args = captureConfig.requests_command.split(' ').slice(1);
+      const reqCmd = spawn(cmd, args, { detached: true, shell: true });
+
+      // log error output from the app
+      // reqCmd.stdout.on('data', (data) => {
+      //   console.log(data.toString());
+      // });
+
+      // log error output from the app
+      reqCmd.stderr.on('data', (data) => {
+        console.log(data.toString());
+      });
+    }
 
     // write captured requests to disk
     const timestamp = Date.now().toString();
     const tmpName = path.join(trafficDirectory, `${timestamp}.incomplete`);
-    const observations = writeHar(proxyInteractions, tmpName);
-
-    Promise.all(requests)
-      .then(() => {
-        // stop the app server
-        if (!options.serverOverride && captureConfig.server.command) {
-          process.kill(-app.pid!);
-        }
-        // stop the proxy
-        sourcesController.abort();
-        // write the hars to their final location
-        const completedName = path.join(trafficDirectory, `${timestamp}.har`);
-        fs.rename(tmpName, completedName);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    observations = writeHar(proxyInteractions, tmpName);
 
     for await (const observation of observations) {
       if (observation.kind === CaptureObservationKind.InteractionCaptured) {
