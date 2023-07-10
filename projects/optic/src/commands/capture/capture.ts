@@ -3,31 +3,24 @@ import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import { chdir } from 'process';
 import path from 'path';
 import fs from 'node:fs/promises';
-import fsNonPromise from 'fs';
 import fetch from 'node-fetch';
 import Bottleneck from 'bottleneck';
 
 import { isJson, isYaml, writeYaml } from '@useoptic/openapi-io';
 import ora from 'ora';
 import urljoin from 'url-join';
-import { UserError } from '@useoptic/openapi-utilities';
+import { OpenAPIV3, UserError } from '@useoptic/openapi-utilities';
 import { Request } from '../../config';
 import { HarEntries, ProxyInteractions } from '../oas/captures';
-import {
-  writeInteractions,
-  CaptureObservations,
-  CaptureObservationKind,
-} from '../oas/capture';
-import * as AT from '../oas/lib/async-tools';
-import { Writable } from 'stream';
 import { errorHandler } from '../../error-handler';
 
 import { createNewSpecFile } from '../../utils/specs';
 import { logger } from '../../logger';
 import { OpticCliConfig } from '../../config';
 import { clearCommand } from '../oas/capture-clear';
-import { captureStorage } from '../oas/captures/capture-storage';
 import { captureV1 } from '../oas/capture';
+import { getCaptureStorage, GroupedCaptures } from './storage';
+import { loadSpec } from '../../utils/spec-loaders';
 
 const wait = (time: number) =>
   new Promise((r) => setTimeout(() => r(null), time));
@@ -118,8 +111,12 @@ const getCaptureAction =
       process.exitCode = 1;
       return;
     }
-
-    const { openApiExists, trafficDirectory } = await captureStorage(filePath);
+    const resolvedPath = path.resolve(filePath);
+    let openApiExists = false;
+    try {
+      await fs.stat(resolvedPath);
+      openApiExists = true;
+    } catch (e) {}
 
     if (!openApiExists) {
       const fileCreated = await createOpenAPIFile(filePath);
@@ -129,6 +126,9 @@ const getCaptureAction =
         return;
       }
     }
+    const trafficDirectory = await getCaptureStorage(resolvedPath);
+    logger.debug(`Writing captured traffic to ${trafficDirectory}`);
+
     if (captureConfig.server.dir === undefined) {
       chdir(path.dirname(filePath));
     } else {
@@ -144,6 +144,10 @@ const getCaptureAction =
         proxyPort: options.proxyPort ? Number(options.proxyPort) : undefined,
       }
     );
+    const spec = await loadSpec(filePath, config, {
+      strict: false,
+      denormalize: false,
+    });
 
     // start the app
     let app: ChildProcessWithoutNullStreams;
@@ -193,7 +197,6 @@ const getCaptureAction =
     }
 
     // make requests
-    console.log(trafficDirectory);
     const concurrency = captureConfig.config?.request_concurrency || 5;
     const requests = makeRequests(
       captureConfig.requests,
@@ -201,17 +204,13 @@ const getCaptureAction =
       concurrency
     );
 
-    // write captured requests to disk
-    const timestamp = Date.now().toString();
-    const tmpName = path.join(trafficDirectory, `${timestamp}.incomplete`);
-    const observations = writeHar(proxyInteractions, tmpName);
+    const captures = new GroupedCaptures(
+      trafficDirectory,
+      getEndpointsFromSpec(spec.jsonLike)
+    );
+    const harEntries = HarEntries.fromProxyInteractions(proxyInteractions);
 
-    Promise.all(requests)
-      .then(() => {
-        // write the hars to their final location
-        const completedName = path.join(trafficDirectory, `${timestamp}.har`);
-        fs.rename(tmpName, completedName);
-      })
+    await Promise.all(requests)
       .catch((error) => {
         console.error(error);
       })
@@ -224,11 +223,13 @@ const getCaptureAction =
         }
       });
 
-    for await (const observation of observations) {
-      if (observation.kind === CaptureObservationKind.InteractionCaptured) {
-        console.log(`Captured ${observation.path}`);
-      }
+    for await (const har of harEntries) {
+      captures.addHar(har);
     }
+    await captures.writeHarFiles();
+
+    // TODO start running endpoint by endpoint of captures
+    // run update or verify
 
     console.log(
       'Requests captured. Run `optic update --all` to document updates.'
@@ -252,15 +253,19 @@ async function createOpenAPIFile(filePath: string): Promise<boolean> {
   }
 }
 
-function writeHar(
-  proxyInteractions: ProxyInteractions,
-  harFile: string
-): CaptureObservations {
-  const sources: HarEntries[] = [];
-  sources.push(HarEntries.fromProxyInteractions(proxyInteractions));
-  const harEntries = AT.merge(...sources);
-  let destination: Writable = fsNonPromise.createWriteStream(harFile);
-  return writeInteractions(harEntries, destination);
+function getEndpointsFromSpec(
+  spec: OpenAPIV3.Document
+): { method: string; path: string }[] {
+  const endpoints: { method: string; path: string }[] = [];
+  for (const [path, pathObj] of Object.entries(spec.paths)) {
+    for (const method of Object.values(OpenAPIV3.HttpMethods)) {
+      const methodObj = pathObj && pathObj[method as string];
+      if (methodObj) {
+        endpoints.push({ method, path });
+      }
+    }
+  }
+  return endpoints;
 }
 
 function makeRequests(
