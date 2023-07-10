@@ -3,7 +3,6 @@ import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import { chdir } from 'process';
 import path from 'path';
 import fs from 'node:fs/promises';
-import fsNonPromise from 'fs';
 import fetch from 'node-fetch';
 import Bottleneck from 'bottleneck';
 
@@ -13,13 +12,6 @@ import urljoin from 'url-join';
 import { OpenAPIV3, UserError } from '@useoptic/openapi-utilities';
 import { Request } from '../../config';
 import { HarEntries, ProxyInteractions } from '../oas/captures';
-import {
-  writeInteractions,
-  CaptureObservations,
-  CaptureObservationKind,
-} from '../oas/capture';
-import * as AT from '../oas/lib/async-tools';
-import { Writable } from 'stream';
 import { errorHandler } from '../../error-handler';
 
 import { createNewSpecFile } from '../../utils/specs';
