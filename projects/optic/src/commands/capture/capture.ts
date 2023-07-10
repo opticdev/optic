@@ -158,10 +158,6 @@ const getCaptureAction =
     }
 
     // wait until server is ready
-    await new Promise((r) =>
-      setTimeout(r, captureConfig.server.ready_interval)
-    );
-
     if (captureConfig.server.ready_endpoint) {
       const readyEndpoint = captureConfig.server.ready_endpoint;
       const readyInterval = captureConfig.server.ready_interval || 1000;
