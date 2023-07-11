@@ -220,7 +220,10 @@ const getCaptureAction =
       }
 
       if (captureConfig.requests_command) {
-        const cmd = commandSplitter(captureConfig.requests_command);
+        const cmd = commandSplitter(captureConfig.requests_command.command);
+        const proxyVar =
+          captureConfig.requests_command.proxy_variable || 'OPTIC_PROXY';
+        process.env[proxyVar] = proxyUrl;
         const reqCmd = spawn(cmd.cmd, cmd.args, {
           detached: true,
           shell: true,
