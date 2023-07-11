@@ -262,7 +262,7 @@ const getCaptureAction =
     await captures.writeHarFiles();
 
     logger.info(
-      `${count} requests captured. Run \`optic update --all\` to document updates.`
+      `${count} requests captured`
     );
 
     // TODO start running endpoint by endpoint of captures
