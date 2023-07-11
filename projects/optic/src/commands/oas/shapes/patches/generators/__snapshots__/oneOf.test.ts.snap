@@ -11,6 +11,7 @@ exports[`one of shape patch generator can add an additional branch to a complex 
         2,
         3,
       ],
+      "expectedType": "oneOf schema",
       "instancePath": "/location/principality/coordinates",
       "key": "oneOf",
       "keyword": "oneOf",
@@ -101,6 +102,7 @@ exports[`one of shape patch generator when new primitive types provided to exist
     "diff": {
       "description": "'oneOf' did not match schema",
       "example": true,
+      "expectedType": "oneOf schema",
       "instancePath": "/polyProp",
       "key": "oneOf",
       "keyword": "oneOf",
@@ -137,6 +139,7 @@ exports[`one of shape patch generator when root schema is obejct and is shown an
     "diff": {
       "description": "'' did not match schema",
       "example": [],
+      "expectedType": "object",
       "instancePath": "",
       "key": "",
       "keyword": "type",
@@ -187,6 +190,7 @@ exports[`one of shape patch generator when root schema is obejct and is shown an
     "diff": {
       "description": "'' did not match schema",
       "example": [],
+      "expectedType": "object",
       "instancePath": "",
       "key": "",
       "keyword": "type",
