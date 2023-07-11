@@ -226,6 +226,8 @@ const getCaptureAction =
 
       for await (const har of harEntries) {
         captures.addHar(har);
+        // TODO: switch this to debug logging
+        console.log(`Captured ${har.request.url}`);
       }
       await captures.writeHarFiles();
     }
