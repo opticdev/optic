@@ -199,7 +199,6 @@ const getCaptureAction =
         fetch(readyUrl)
           .then((res) => String(res.status).startsWith('2'))
           .catch((e) => {
-            logger.debug(chalk.yellow(`\nDEBUG:`));
             logger.debug(e);
             return false;
           });
@@ -290,8 +289,8 @@ const getCaptureAction =
         );
         !hasDiffs ? spinner.succeed(endpointText) : spinner.fail(endpointText);
       }
-
-      logger.info(indent(1) + getSummaryText(endpointCoverage));
+      const summaryText = getSummaryText(endpointCoverage);
+      summaryText && logger.info(indent(1) + summaryText);
       for (const patchSummary of patchSummaries) {
         logger.info(indent(1) + patchSummary);
       }

@@ -195,6 +195,9 @@ export async function consumeDocumentedInteractions(
     for await (const { path, contents } of updatedSpecFiles) {
       await fs.writeFile(path, contents);
     }
+  } else {
+    for await (const _ of specPatches) {
+    }
   }
 
   return { patchSummaries };

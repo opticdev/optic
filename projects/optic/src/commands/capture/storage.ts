@@ -103,7 +103,8 @@ export class GroupedCaptures {
   }
 
   async writeHarFiles(): Promise<void> {
-    for (const [, file] of this.paths) {
+    for (const file of [...this.paths.values(), this.unmatched]) {
+      if (!file.hars.length) continue;
       const har = {
         log: {
           version: '1.3',
