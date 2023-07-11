@@ -207,6 +207,7 @@ const getCaptureAction =
       getEndpointsFromSpec(spec.jsonLike)
     );
 
+    let errors: any[] = [];
     try {
       let requestsPromise: Promise<any> = Promise.resolve();
       if (captureConfig.requests) {
@@ -244,7 +245,7 @@ const getCaptureAction =
       }
       await Promise.all([requestsPromise, reqCmdPromise]);
     } catch (error) {
-      logger.error(error);
+      errors.push(error);
     } finally {
       sourcesController.abort();
       if (app) {
@@ -262,6 +263,12 @@ const getCaptureAction =
     await captures.writeHarFiles();
 
     logger.info(`${count} requests captured`);
+    if (errors.length > 0) {
+      logger.error('finished with errors:');
+      errors.forEach((error, index) => {
+        logger.error(`${index}:\n${error}`);
+      });
+    }
 
     // TODO start running endpoint by endpoint of captures
     // run update or verify
