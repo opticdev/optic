@@ -216,7 +216,7 @@ const getCaptureAction =
           proxyUrl,
           captureConfig.config?.request_concurrency || 5
         );
-        requestsPromise = Promise.all(requests);
+        requestsPromise = Promise.allSettled(requests);
       }
 
       if (captureConfig.requests_command) {
