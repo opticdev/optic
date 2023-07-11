@@ -9,7 +9,13 @@ import Bottleneck from 'bottleneck';
 import { isJson, isYaml, writeYaml } from '@useoptic/openapi-io';
 import ora from 'ora';
 import urljoin from 'url-join';
-import { OpenAPIV3, UserError } from '@useoptic/openapi-utilities';
+import {
+  countOperationCoverage,
+  CoverageNode,
+  OpenAPIV3,
+  OperationCoverage,
+  UserError,
+} from '@useoptic/openapi-utilities';
 import { Request } from '../../config';
 import { HarEntries, ProxyInteractions } from '../oas/captures';
 import { errorHandler } from '../../error-handler';
@@ -21,7 +27,11 @@ import { clearCommand } from '../oas/capture-clear';
 import { captureV1 } from '../oas/capture';
 import { getCaptureStorage, GroupedCaptures } from './storage';
 import { loadSpec } from '../../utils/spec-loaders';
+import { consumeDocumentedInteractions } from './interactions/consume-documented';
+import { ApiCoverageCounter } from '../oas/coverage/api-coverage';
+import chalk from 'chalk';
 
+const indent = (n: number) => '  '.repeat(n);
 const wait = (time: number) =>
   new Promise((r) => setTimeout(() => r(null), time));
 
@@ -40,6 +50,11 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
     .option(
       '--proxy-port <proxy-port>',
       'specify the port the proxy should be running on'
+    )
+    .option(
+      '-u, --update',
+      'update the OpenAPI spec to match the traffic',
+      false
     )
 
     // TODO deprecate hidden options below
@@ -85,6 +100,7 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
 type CaptureActionOptions = {
   proxyPort?: string;
   serverOverride?: string;
+  update: boolean;
 };
 
 const getCaptureAction =
@@ -101,6 +117,7 @@ const getCaptureAction =
       await captureV1(filePath, targetUrl, config, command);
       return;
     } else if (targetUrl !== undefined || captureConfig === undefined) {
+      logger.error(`no capture config for ${filePath} was found`);
       // TODO log error and run capture init or something - tbd what the first use is
       process.exitCode = 1;
       return;
@@ -181,7 +198,11 @@ const getCaptureAction =
       const checkServer = (): Promise<boolean> =>
         fetch(readyUrl)
           .then((res) => String(res.status).startsWith('2'))
-          .catch(() => false);
+          .catch((e) => {
+            logger.debug(chalk.yellow(`\nDEBUG:`));
+            logger.debug(e);
+            return false;
+          });
 
       let done = false;
       while (!done) {
@@ -228,12 +249,45 @@ const getCaptureAction =
     }
     await captures.writeHarFiles();
 
-    // TODO start running endpoint by endpoint of captures
-    // run update or verify
+    const coverage = new ApiCoverageCounter(spec.jsonLike);
+    // Handle interactions for documented endpoints first
+    for (const {
+      interactions,
+      endpoint,
+    } of captures.getDocumentedEndpointInteractions()) {
+      const endpointText = `${endpoint.method.toUpperCase()} ${endpoint.path}`;
+      const spinner = ora(endpointText);
+      spinner.start();
+      spinner.color = 'blue';
+      const { patchSummaries } = await consumeDocumentedInteractions(
+        interactions,
+        spec,
+        coverage,
+        endpoint,
+        options
+      );
+      const endpointCoverage =
+        coverage.coverage.paths[endpoint.path][endpoint.method];
+      const hasDiffs = countOperationCoverage(endpointCoverage, (x) => x.diffs);
+      options.update || !hasDiffs
+        ? spinner.succeed(endpointText)
+        : spinner.fail(endpointText);
 
-    console.log(
-      'Requests captured. Run `optic update --all` to document updates.'
-    );
+      logger.info(indent(1) + getSummaryText(endpointCoverage));
+      for (const patchSummary of patchSummaries) {
+        logger.info(indent(1) + patchSummary);
+      }
+    }
+    const endpointCounts = captures.counts();
+    if (endpointCounts.total > 0 && endpointCounts.unmatched > 0) {
+      logger.info(
+        chalk.gray(
+          `...and ${endpointCounts.unmatched} other endpoint${
+            endpointCounts.unmatched === 1 ? '' : 's'
+          }`
+        )
+      );
+    }
   };
 
 async function createOpenAPIFile(filePath: string): Promise<boolean> {
@@ -266,6 +320,20 @@ function getEndpointsFromSpec(
     }
   }
   return endpoints;
+}
+function getSummaryText(endpointCoverage: OperationCoverage) {
+  const getIcon = (node: CoverageNode) =>
+    node.seen ? (node.diffs ? chalk.red('× ') : chalk.green('✓ ')) : '';
+  const items: string[] = [];
+  if (endpointCoverage.requestBody) {
+    const icon = getIcon(endpointCoverage.requestBody);
+    items.push(`${icon}Request Body`);
+  }
+  for (const [statusCode, node] of Object.entries(endpointCoverage.responses)) {
+    const icon = getIcon(node);
+    items.push(`${icon}${statusCode}`);
+  }
+  return items.join();
 }
 
 function makeRequests(
