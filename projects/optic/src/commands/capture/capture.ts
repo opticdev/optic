@@ -162,7 +162,6 @@ const getCaptureAction =
       const args = captureConfig.server.command.split(' ').slice(1);
       app = spawn(cmd, args, { detached: true });
 
-      // log error output from the app
       app.stderr.on('data', (data) => {
         logger.error(data.toString());
       });
@@ -234,7 +233,6 @@ const getCaptureAction =
             }
           });
         });
-        // log error output from the app
         reqCmd.stderr.on('data', (data) => {
           logger.error(data.toString());
         });
