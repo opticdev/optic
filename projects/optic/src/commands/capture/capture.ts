@@ -21,6 +21,7 @@ import { clearCommand } from '../oas/capture-clear';
 import { captureV1 } from '../oas/capture';
 import { getCaptureStorage, GroupedCaptures } from './storage';
 import { loadSpec } from '../../utils/spec-loaders';
+import { commandSplitter } from '../../utils/capture';
 
 const wait = (time: number) =>
   new Promise((r) => setTimeout(() => r(null), time));
@@ -158,9 +159,8 @@ const getCaptureAction =
     // start the app
     let app: ChildProcessWithoutNullStreams | undefined = undefined;
     if (!options.serverOverride && captureConfig.server.command) {
-      const cmd = captureConfig.server.command.split(' ')[0];
-      const args = captureConfig.server.command.split(' ').slice(1);
-      app = spawn(cmd, args, { detached: true });
+      const cmd = commandSplitter(captureConfig.server.command);
+      app = spawn(cmd.cmd, cmd.args, { detached: true });
 
       app.stderr.on('data', (data) => {
         logger.error(data.toString());
@@ -220,9 +220,11 @@ const getCaptureAction =
       }
 
       if (captureConfig.requests_command) {
-        const cmd = captureConfig.requests_command.split(' ')[0];
-        const args = captureConfig.requests_command.split(' ').slice(1);
-        const reqCmd = spawn(cmd, args, { detached: true, shell: true });
+        const cmd = commandSplitter(captureConfig.requests_command);
+        const reqCmd = spawn(cmd.cmd, cmd.args, {
+          detached: true,
+          shell: true,
+        });
 
         reqCmdPromise = new Promise((resolve, reject) => {
           reqCmd.on('exit', (code) => {
