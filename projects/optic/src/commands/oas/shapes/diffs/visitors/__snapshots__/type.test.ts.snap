@@ -10,6 +10,7 @@ exports[`type json schema diff visitor when provided with an array 1`] = `
       "3",
       true,
     ],
+    "expectedType": "string",
     "instancePath": "/stringField",
     "key": "stringField",
     "keyword": "type",
@@ -26,6 +27,7 @@ exports[`type json schema diff visitor when provided with an object 1`] = `
     "example": {
       "field": "string",
     },
+    "expectedType": "string",
     "instancePath": "/stringField",
     "key": "stringField",
     "keyword": "type",
@@ -40,6 +42,7 @@ exports[`type json schema diff visitor when provided with another primitive 1`] 
   {
     "description": "'stringField' did not match schema",
     "example": 123,
+    "expectedType": "string",
     "instancePath": "/stringField",
     "key": "stringField",
     "keyword": "type",
@@ -54,6 +57,7 @@ exports[`type json schema diff visitor when provided with null value 1`] = `
   {
     "description": "'stringField' did not match schema",
     "example": null,
+    "expectedType": "string",
     "instancePath": "/stringField",
     "key": "stringField",
     "keyword": "type",

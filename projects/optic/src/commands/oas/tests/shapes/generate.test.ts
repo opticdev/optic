@@ -1,6 +1,6 @@
 import { it, describe, expect } from '@jest/globals';
 import { SchemaObject, ShapePatches, Schema } from '../../shapes';
-import { diffValueBySchema, ShapeDiffResult } from '../../shapes/diffs';
+import { diffBodyBySchema, ShapeDiffResult } from '../../shapes/diffs';
 import * as DocumentedBodyFixtures from '../fixtures/documented-body';
 import { rootObjectOrArray } from '../fixtures/oneof-schemas';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
@@ -33,7 +33,7 @@ function patchSchema(
 function* diffs(schema: SchemaObject | null, ...inputs: any[]) {
   if (!schema) return;
   for (let input of inputs) {
-    yield* diffValueBySchema(input, schema);
+    yield* diffBodyBySchema({ value: input }, schema);
   }
 }
 

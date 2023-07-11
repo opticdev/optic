@@ -27,33 +27,39 @@ export class ApiCoverageCounter {
         ];
 
         if (Object.values(OpenAPIV3.HttpMethods).includes(method)) {
-          const responses: {
-            [statusCode: string]: CoverageNode;
-          } = {};
-
-          Object.keys(operation.responses || {}).forEach((res) => {
-            responses[res] = { seen: false, diffs: false };
-          });
-
-          const endpointChecksum = computeEndpointChecksum(
-            path,
-            method,
-            operation
-          );
-
-          this.coverage.paths[path][method] = {
-            checksum: endpointChecksum,
-            interactions: 0,
-            responses,
-            requestBody: operation.requestBody
-              ? { seen: false, diffs: false }
-              : undefined,
-            seen: false,
-            diffs: false,
-          };
+          this.addEndpoint(operation, path, method, { newlyDocumented: false });
         }
       });
     });
+  }
+
+  addEndpoint(
+    operation: OpenAPIV3.OperationObject,
+    path: string,
+    method: string,
+    options: { newlyDocumented: boolean }
+  ) {
+    const responses: {
+      [statusCode: string]: CoverageNode;
+    } = {};
+    const initialSeen = options.newlyDocumented;
+
+    Object.keys(operation.responses || {}).forEach((res) => {
+      responses[res] = { seen: initialSeen, diffs: false };
+    });
+
+    const endpointChecksum = computeEndpointChecksum(path, method, operation);
+
+    this.coverage.paths[path][method] = {
+      checksum: endpointChecksum,
+      interactions: 0,
+      responses,
+      requestBody: operation.requestBody
+        ? { seen: initialSeen, diffs: false }
+        : undefined,
+      seen: initialSeen,
+      diffs: false,
+    };
   }
 
   operationInteraction = (

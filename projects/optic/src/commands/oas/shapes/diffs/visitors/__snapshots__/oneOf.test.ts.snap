@@ -9,6 +9,7 @@ exports[`one of json schema diff visitor can add an additional branch to a compl
       2,
       3,
     ],
+    "expectedType": "oneOf schema",
     "instancePath": "/location/principality/coordinates",
     "key": "oneOf",
     "keyword": "oneOf",
@@ -39,6 +40,7 @@ exports[`one of json schema diff visitor when new primitive types provided to ex
   {
     "description": "'oneOf' did not match schema",
     "example": true,
+    "expectedType": "oneOf schema",
     "instancePath": "/polyProp",
     "key": "oneOf",
     "keyword": "oneOf",
@@ -57,6 +59,7 @@ exports[`one of json schema diff visitor when one of variant is an array with mi
       "user2",
       "user3",
     ],
+    "expectedType": "oneOf schema",
     "instancePath": "",
     "key": "oneOf",
     "keyword": "oneOf",
@@ -71,6 +74,7 @@ exports[`one of json schema diff visitor when root schema is obejct and is shown
   {
     "description": "'' did not match schema",
     "example": [],
+    "expectedType": "object",
     "instancePath": "",
     "key": "",
     "keyword": "type",

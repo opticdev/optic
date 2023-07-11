@@ -161,7 +161,7 @@ const getCaptureAction =
         proxyPort: options.proxyPort ? Number(options.proxyPort) : undefined,
       }
     );
-    const spec = await loadSpec(filePath, config, {
+    let spec = await loadSpec(filePath, config, {
       strict: false,
       denormalize: false,
     });
@@ -255,7 +255,8 @@ const getCaptureAction =
       interactions,
       endpoint,
     } of captures.getDocumentedEndpointInteractions()) {
-      const endpointText = `${endpoint.method.toUpperCase()} ${endpoint.path}`;
+      const { path, method } = endpoint;
+      const endpointText = `${method.toUpperCase()} ${path}`;
       const spinner = ora(endpointText);
       spinner.start();
       spinner.color = 'blue';
@@ -266,12 +267,29 @@ const getCaptureAction =
         endpoint,
         options
       );
-      const endpointCoverage =
-        coverage.coverage.paths[endpoint.path][endpoint.method];
-      const hasDiffs = countOperationCoverage(endpointCoverage, (x) => x.diffs);
-      options.update || !hasDiffs
-        ? spinner.succeed(endpointText)
-        : spinner.fail(endpointText);
+      let endpointCoverage = coverage.coverage.paths[path][method];
+
+      if (options.update) {
+        // Since we flush each endpoint updates to disk, we should reload the spec to get the latest spec and sourcemap which we both use to generate the next set of patches
+        spec = await loadSpec(filePath, config, {
+          strict: false,
+          denormalize: false,
+        });
+        const operation = spec.jsonLike.paths[path]?.[method];
+        if (operation) {
+          coverage.addEndpoint(operation, path, method, {
+            newlyDocumented: true,
+          });
+          endpointCoverage = coverage.coverage.paths[path][method];
+        }
+        spinner.succeed(endpointText);
+      } else {
+        const hasDiffs = countOperationCoverage(
+          endpointCoverage,
+          (x) => x.diffs
+        );
+        !hasDiffs ? spinner.succeed(endpointText) : spinner.fail(endpointText);
+      }
 
       logger.info(indent(1) + getSummaryText(endpointCoverage));
       for (const patchSummary of patchSummaries) {
@@ -331,7 +349,7 @@ function getSummaryText(endpointCoverage: OperationCoverage) {
   }
   for (const [statusCode, node] of Object.entries(endpointCoverage.responses)) {
     const icon = getIcon(node);
-    items.push(`${icon}${statusCode}`);
+    items.push(`${icon}${statusCode} response`);
   }
   return items.join();
 }
