@@ -156,7 +156,7 @@ const getCaptureAction =
     });
 
     // start the app
-    let app: ChildProcessWithoutNullStreams;
+    let app: ChildProcessWithoutNullStreams | undefined = undefined;
     if (!options.serverOverride && captureConfig.server.command) {
       const cmd = captureConfig.server.command.split(' ')[0];
       const args = captureConfig.server.command.split(' ').slice(1);
@@ -164,7 +164,7 @@ const getCaptureAction =
 
       // log error output from the app
       app.stderr.on('data', (data) => {
-        console.log(data.toString());
+        logger.error(data.toString());
       });
     }
 
@@ -203,63 +203,67 @@ const getCaptureAction =
     }
 
     // make requests
-    if (captureConfig.requests) {
-      const concurrency = captureConfig.config?.request_concurrency || 5;
-      const requests = makeRequests(
-        captureConfig.requests,
-        proxyUrl,
-        concurrency
-      );
+    const captures = new GroupedCaptures(
+      trafficDirectory,
+      getEndpointsFromSpec(spec.jsonLike)
+    );
 
-      const captures = new GroupedCaptures(
-        trafficDirectory,
-        getEndpointsFromSpec(spec.jsonLike)
-      );
-      const harEntries = HarEntries.fromProxyInteractions(proxyInteractions);
-
-      await Promise.all(requests)
-        .catch((error) => {
-          console.error(error);
-        })
-        .finally(() => {
-          // stop the proxy
-          sourcesController.abort();
-          // stop the app server
-          if (!options.serverOverride && captureConfig.server.command) {
-            process.kill(-app.pid!);
-          }
-        });
-
-      for await (const har of harEntries) {
-        captures.addHar(har);
-        // TODO: switch this to debug logging
-        console.log(`Captured ${har.request.url}`);
+    let requestsPromise: Promise<any> = Promise.resolve();
+    let reqCmdPromise: Promise<void> = Promise.resolve();
+    try {
+      if (captureConfig.requests) {
+        const requests = makeRequests(
+          captureConfig.requests,
+          proxyUrl,
+          captureConfig.config?.request_concurrency || 5
+        );
+        requestsPromise = Promise.all(requests);
       }
-      await captures.writeHarFiles();
+
+      if (captureConfig.requests_command) {
+        const cmd = captureConfig.requests_command.split(' ')[0];
+        const args = captureConfig.requests_command.split(' ').slice(1);
+        const reqCmd = spawn(cmd, args, { detached: true, shell: true });
+
+        reqCmdPromise = new Promise((resolve, reject) => {
+          reqCmd.on('exit', (code) => {
+            if (code === 0) {
+              resolve();
+            } else {
+              reject();
+            }
+          });
+        });
+        // log error output from the app
+        reqCmd.stderr.on('data', (data) => {
+          logger.error(data.toString());
+        });
+      }
+    } catch (error) {
+      logger.error(error);
+    } finally {
+      await Promise.all([requestsPromise, reqCmdPromise]);
+      sourcesController.abort();
+      if (app) {
+        process.kill(-app.pid!);
+      }
     }
 
-    // if (captureConfig.requests_command) {
-    //   const cmd = captureConfig.requests_command.split(' ')[0];
-    //   const args = captureConfig.requests_command.split(' ').slice(1);
-    //   const reqCmd = spawn(cmd, args, { detached: true, shell: true });
+    const harEntries = HarEntries.fromProxyInteractions(proxyInteractions);
+    let count = 0;
+    for await (const har of harEntries) {
+      count++;
+      captures.addHar(har);
+      logger.debug(`Captured ${har.request.url}`);
+    }
+    await captures.writeHarFiles();
 
-    //   // log error output from the app
-    //   // reqCmd.stdout.on('data', (data) => {
-    //   //   console.log(data.toString());
-    //   // });
-
-    //   // log error output from the app
-    //   reqCmd.stderr.on('data', (data) => {
-    //     console.log(data.toString());
-    //   });
-    // }
+    logger.info(
+      `${count} requests captured. Run \`optic update --all\` to document updates.`
+    );
 
     // TODO start running endpoint by endpoint of captures
     // run update or verify
-
-    console.log(
-      'Requests captured. Run `optic update --all` to document updates.'
-    );
   };
 
 async function createOpenAPIFile(filePath: string): Promise<boolean> {
@@ -319,7 +323,7 @@ function makeRequests(
       fetch(`${proxyUrl}${r.path}`, opts)
         .then((response) => response.json())
         .catch((error) => {
-          console.error(error);
+          logger.error(error);
         })
     );
   });
