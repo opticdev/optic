@@ -34,6 +34,16 @@ const DefaultOpticCliConfig: OpticCliConfig = {
   isInCi: process.env.CI === 'true',
 };
 
+const Request = Type.Object({
+  path: Type.String(),
+  verb: Type.Optional(
+    Type.String({
+      enum: ['GET', 'POST', 'PATCH', 'DELETE'],
+    })
+  ),
+  data: Type.Optional(Type.Object({})),
+});
+
 const CaptureConfigData = Type.Object({
   config: Type.Optional(
     Type.Object({
@@ -48,21 +58,14 @@ const CaptureConfigData = Type.Object({
     ready_interval: Type.Optional(Type.Number()),
     ready_timeout: Type.Optional(Type.Number()),
   }),
-  requests: Type.Array(
-    Type.Object({
-      path: Type.String(),
-      verb: Type.Optional(
-        Type.String({
-          enum: ['GET', 'POST', 'PATCH', 'DELETE'],
-        })
-      ),
-      data: Type.Optional(Type.Object({})),
-    })
-  ),
+  requests: Type.Optional(Type.Array(Request)),
+  requests_command: Type.Optional(Type.String()),
 });
+
 export type CaptureConfigData = Static<typeof CaptureConfigData>;
 export type ServerConfig = CaptureConfigData['server'];
-export type Request = CaptureConfigData['requests'][number];
+export type Request = Static<typeof Request>;
+export type CaptureConfigConfig = CaptureConfigData['config'];
 
 export const ProjectYmlConfig = Type.Object({
   extends: Type.Optional(Type.String()),

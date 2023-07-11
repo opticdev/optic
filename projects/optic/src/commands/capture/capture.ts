@@ -197,36 +197,54 @@ const getCaptureAction =
     }
 
     // make requests
-    const concurrency = captureConfig.config?.request_concurrency || 5;
-    const requests = makeRequests(
-      captureConfig.requests,
-      proxyUrl,
-      concurrency
-    );
+    if (captureConfig.requests) {
+      const concurrency = captureConfig.config?.request_concurrency || 5;
+      const requests = makeRequests(
+        captureConfig.requests,
+        proxyUrl,
+        concurrency
+      );
 
-    const captures = new GroupedCaptures(
-      trafficDirectory,
-      getEndpointsFromSpec(spec.jsonLike)
-    );
-    const harEntries = HarEntries.fromProxyInteractions(proxyInteractions);
+      const captures = new GroupedCaptures(
+        trafficDirectory,
+        getEndpointsFromSpec(spec.jsonLike)
+      );
+      const harEntries = HarEntries.fromProxyInteractions(proxyInteractions);
 
-    await Promise.all(requests)
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        // stop the proxy
-        sourcesController.abort();
-        // stop the app server
-        if (!options.serverOverride && captureConfig.server.command) {
-          process.kill(-app.pid!);
-        }
-      });
+      await Promise.all(requests)
+        .catch((error) => {
+          console.error(error);
+        })
+        .finally(() => {
+          // stop the proxy
+          sourcesController.abort();
+          // stop the app server
+          if (!options.serverOverride && captureConfig.server.command) {
+            process.kill(-app.pid!);
+          }
+        });
 
-    for await (const har of harEntries) {
-      captures.addHar(har);
+      for await (const har of harEntries) {
+        captures.addHar(har);
+      }
+      await captures.writeHarFiles();
     }
-    await captures.writeHarFiles();
+
+    // if (captureConfig.requests_command) {
+    //   const cmd = captureConfig.requests_command.split(' ')[0];
+    //   const args = captureConfig.requests_command.split(' ').slice(1);
+    //   const reqCmd = spawn(cmd, args, { detached: true, shell: true });
+
+    //   // log error output from the app
+    //   // reqCmd.stdout.on('data', (data) => {
+    //   //   console.log(data.toString());
+    //   // });
+
+    //   // log error output from the app
+    //   reqCmd.stderr.on('data', (data) => {
+    //     console.log(data.toString());
+    //   });
+    // }
 
     // TODO start running endpoint by endpoint of captures
     // run update or verify
