@@ -185,6 +185,7 @@ export async function consumeDocumentedInteractions(
   })(
     generateSpecPatches(interactions, parseResult.jsonLike, endpoint, coverage)
   );
+  let hasDiffs = false;
 
   if (options.update) {
     let { results: updatedSpecFiles } = updateSpecFiles(
@@ -197,8 +198,9 @@ export async function consumeDocumentedInteractions(
     }
   } else {
     for await (const _ of specPatches) {
+      hasDiffs = true;
     }
   }
 
-  return { patchSummaries };
+  return { patchSummaries, hasDiffs };
 }

@@ -259,7 +259,7 @@ const getCaptureAction =
       const spinner = ora(endpointText);
       spinner.start();
       spinner.color = 'blue';
-      const { patchSummaries } = await consumeDocumentedInteractions(
+      const { patchSummaries, hasDiffs } = await consumeDocumentedInteractions(
         interactions,
         spec,
         coverage,
@@ -283,10 +283,6 @@ const getCaptureAction =
         }
         spinner.succeed(endpointText);
       } else {
-        const hasDiffs = countOperationCoverage(
-          endpointCoverage,
-          (x) => x.diffs
-        );
         !hasDiffs ? spinner.succeed(endpointText) : spinner.fail(endpointText);
       }
       const summaryText = getSummaryText(endpointCoverage);
