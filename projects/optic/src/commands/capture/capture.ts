@@ -207,9 +207,8 @@ const getCaptureAction =
       getEndpointsFromSpec(spec.jsonLike)
     );
 
-    let requestsPromise: Promise<any> = Promise.resolve();
-    let reqCmdPromise: Promise<void> = Promise.resolve();
     try {
+      let requestsPromise: Promise<any> = Promise.resolve();
       if (captureConfig.requests) {
         const requests = makeRequests(
           captureConfig.requests,
@@ -219,6 +218,7 @@ const getCaptureAction =
         requestsPromise = Promise.allSettled(requests);
       }
 
+      let reqCmdPromise: Promise<void> = Promise.resolve();
       if (captureConfig.requests_command) {
         const cmd = commandSplitter(captureConfig.requests_command.command);
         const proxyVar =
@@ -242,10 +242,10 @@ const getCaptureAction =
           logger.error(data.toString());
         });
       }
+      await Promise.all([requestsPromise, reqCmdPromise]);
     } catch (error) {
       logger.error(error);
     } finally {
-      await Promise.all([requestsPromise, reqCmdPromise]);
       sourcesController.abort();
       if (app) {
         process.kill(-app.pid!);
@@ -261,9 +261,7 @@ const getCaptureAction =
     }
     await captures.writeHarFiles();
 
-    logger.info(
-      `${count} requests captured`
-    );
+    logger.info(`${count} requests captured`);
 
     // TODO start running endpoint by endpoint of captures
     // run update or verify
