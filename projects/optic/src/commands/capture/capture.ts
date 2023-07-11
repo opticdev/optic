@@ -104,6 +104,12 @@ const getCaptureAction =
       // TODO log error and run capture init or something - tbd what the first use is
       process.exitCode = 1;
       return;
+    } else if (!captureConfig.requests && !captureConfig.requests_command) {
+      logger.error(
+        `"requests" or "requests_command" must be specified in optic.yml`
+      );
+      process.exitCode = 1;
+      return;
     } else if (options.proxyPort && isNaN(Number(options.proxyPort))) {
       logger.error(
         `--proxy-port must be a number - received ${options.proxyPort}`
