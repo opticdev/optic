@@ -10,10 +10,6 @@ export enum ShapeDiffResultKind {
 // The result of matching a body against it's (JSON) schema
 export type ShapeDiffResult = {
   keyword: JsonSchemaKnownKeyword;
-
-  // TODO: figure out if location belongs here, or whether one level up (its just passed
-  // in and attached, not needed for logic)
-  // location: FieldLocation;
   key: string;
   example: any;
   instancePath: JsonPath;
@@ -37,6 +33,7 @@ export type ShapeDiffResult = {
   | {
       kind: ShapeDiffResultKind.UnmatchedType;
       keyword: JsonSchemaKnownKeyword.type | JsonSchemaKnownKeyword.oneOf;
+      expectedType: string;
 
       propertyPath: JsonPath;
     }

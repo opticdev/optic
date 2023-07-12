@@ -1,6 +1,6 @@
 import { it, describe, expect } from '@jest/globals';
 import { SchemaObject, ShapePatches, Schema } from '../../shapes';
-import { diffValueBySchema } from '../../shapes/diffs';
+import { diffBodyBySchema } from '../../shapes/diffs';
 
 import * as DocumentedBodyFixtures from '../fixtures/documented-body';
 
@@ -24,7 +24,7 @@ function patchSchema(
 function* diffs(schema: SchemaObject | null, ...inputs: any[]) {
   if (!schema) return;
   for (let input of inputs) {
-    yield* diffValueBySchema(input, schema);
+    yield* diffBodyBySchema({ value: input }, schema);
   }
 }
 

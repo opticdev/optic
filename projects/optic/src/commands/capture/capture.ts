@@ -9,7 +9,13 @@ import Bottleneck from 'bottleneck';
 import { isJson, isYaml, writeYaml } from '@useoptic/openapi-io';
 import ora from 'ora';
 import urljoin from 'url-join';
-import { OpenAPIV3, UserError } from '@useoptic/openapi-utilities';
+import {
+  countOperationCoverage,
+  CoverageNode,
+  OpenAPIV3,
+  OperationCoverage,
+  UserError,
+} from '@useoptic/openapi-utilities';
 import { Request } from '../../config';
 import { HarEntries, ProxyInteractions } from '../oas/captures';
 import { errorHandler } from '../../error-handler';
@@ -21,8 +27,12 @@ import { clearCommand } from '../oas/capture-clear';
 import { captureV1 } from '../oas/capture';
 import { getCaptureStorage, GroupedCaptures } from './storage';
 import { loadSpec } from '../../utils/spec-loaders';
+import { consumeDocumentedInteractions } from './interactions/consume-documented';
+import { ApiCoverageCounter } from '../oas/coverage/api-coverage';
+import chalk from 'chalk';
 import { commandSplitter } from '../../utils/capture';
 
+const indent = (n: number) => '  '.repeat(n);
 const wait = (time: number) =>
   new Promise((r) => setTimeout(() => r(null), time));
 
@@ -41,6 +51,11 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
     .option(
       '--proxy-port <proxy-port>',
       'specify the port the proxy should be running on'
+    )
+    .option(
+      '-u, --update',
+      'update the OpenAPI spec to match the traffic',
+      false
     )
 
     // TODO deprecate hidden options below
@@ -86,6 +101,7 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
 type CaptureActionOptions = {
   proxyPort?: string;
   serverOverride?: string;
+  update: boolean;
 };
 
 const getCaptureAction =
@@ -102,6 +118,7 @@ const getCaptureAction =
       await captureV1(filePath, targetUrl, config, command);
       return;
     } else if (targetUrl !== undefined || captureConfig === undefined) {
+      logger.error(`no capture config for ${filePath} was found`);
       // TODO log error and run capture init or something - tbd what the first use is
       process.exitCode = 1;
       return;
@@ -151,7 +168,7 @@ const getCaptureAction =
         proxyPort: options.proxyPort ? Number(options.proxyPort) : undefined,
       }
     );
-    const spec = await loadSpec(filePath, config, {
+    let spec = await loadSpec(filePath, config, {
       strict: false,
       denormalize: false,
     });
@@ -186,7 +203,10 @@ const getCaptureAction =
       const checkServer = (): Promise<boolean> =>
         fetch(readyUrl)
           .then((res) => String(res.status).startsWith('2'))
-          .catch(() => false);
+          .catch((e) => {
+            logger.debug(e);
+            return false;
+          });
 
       let done = false;
       while (!done) {
@@ -258,16 +278,72 @@ const getCaptureAction =
     for await (const har of harEntries) {
       count++;
       captures.addHar(har);
-      logger.debug(`Captured ${har.request.url}`);
+      logger.debug(
+        `Captured ${har.request.method.toUpperCase()} ${har.request.url}`
+      );
     }
-    await captures.writeHarFiles();
-
     logger.info(`${count} requests captured`);
     if (errors.length > 0) {
       logger.error('finished with errors:');
       errors.forEach((error, index) => {
         logger.error(`${index}:\n${error}`);
       });
+    }
+
+    await captures.writeHarFiles();
+
+    const coverage = new ApiCoverageCounter(spec.jsonLike);
+    // Handle interactions for documented endpoints first
+    for (const {
+      interactions,
+      endpoint,
+    } of captures.getDocumentedEndpointInteractions()) {
+      const { path, method } = endpoint;
+      const endpointText = `${method.toUpperCase()} ${path}`;
+      const spinner = ora(endpointText);
+      spinner.start();
+      spinner.color = 'blue';
+      const { patchSummaries, hasDiffs } = await consumeDocumentedInteractions(
+        interactions,
+        spec,
+        coverage,
+        endpoint,
+        options
+      );
+      let endpointCoverage = coverage.coverage.paths[path][method];
+
+      if (options.update) {
+        // Since we flush each endpoint updates to disk, we should reload the spec to get the latest spec and sourcemap which we both use to generate the next set of patches
+        spec = await loadSpec(filePath, config, {
+          strict: false,
+          denormalize: false,
+        });
+        const operation = spec.jsonLike.paths[path]?.[method];
+        if (operation) {
+          coverage.addEndpoint(operation, path, method, {
+            newlyDocumented: true,
+          });
+          endpointCoverage = coverage.coverage.paths[path][method];
+        }
+        spinner.succeed(endpointText);
+      } else {
+        !hasDiffs ? spinner.succeed(endpointText) : spinner.fail(endpointText);
+      }
+      const summaryText = getSummaryText(endpointCoverage);
+      summaryText && logger.info(indent(1) + summaryText);
+      for (const patchSummary of patchSummaries) {
+        logger.info(indent(1) + patchSummary);
+      }
+    }
+    const endpointCounts = captures.counts();
+    if (endpointCounts.total > 0 && endpointCounts.unmatched > 0) {
+      logger.info(
+        chalk.gray(
+          `...and ${endpointCounts.unmatched} other endpoint${
+            endpointCounts.unmatched === 1 ? '' : 's'
+          }`
+        )
+      );
     }
 
     // TODO start running endpoint by endpoint of captures
@@ -304,6 +380,20 @@ function getEndpointsFromSpec(
     }
   }
   return endpoints;
+}
+function getSummaryText(endpointCoverage: OperationCoverage) {
+  const getIcon = (node: CoverageNode) =>
+    node.seen ? (node.diffs ? chalk.red('× ') : chalk.green('✓ ')) : '';
+  const items: string[] = [];
+  if (endpointCoverage.requestBody) {
+    const icon = getIcon(endpointCoverage.requestBody);
+    items.push(`${icon}Request Body`);
+  }
+  for (const [statusCode, node] of Object.entries(endpointCoverage.responses)) {
+    const icon = getIcon(node);
+    items.push(`${icon}${statusCode} response`);
+  }
+  return items.join();
 }
 
 function makeRequests(

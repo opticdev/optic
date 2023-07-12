@@ -2,14 +2,13 @@ import crypto from 'crypto';
 import fs from 'node:fs/promises';
 import os from 'os';
 import path from 'path';
-import { HttpArchive } from '../oas/captures';
+import { CapturedInteraction, HttpArchive } from '../oas/captures';
 import { OperationQueries } from '../oas/operations/queries';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { getEndpointId } from '../../utils/id';
+import { logger } from '../../logger';
 
 const tmpDirectory = os.tmpdir();
-
-export const UNMATCHED_PATH = 'unmatched';
 
 export async function getCaptureStorage(filePath: string): Promise<string> {
   const resolvedFilepath = path.resolve(filePath);
@@ -34,7 +33,15 @@ export async function getCaptureStorage(filePath: string): Promise<string> {
 }
 
 export class GroupedCaptures {
-  private paths: Map<string, { path: string; hars: HttpArchive.Entry[] }>;
+  private paths: Map<
+    string,
+    {
+      path: string;
+      hars: HttpArchive.Entry[];
+      endpoint: { method: string; path: string };
+    }
+  >;
+  private unmatched: { path: string; hars: HttpArchive.Entry[] };
   private queries: OperationQueries;
   constructor(
     trafficDir: string,
@@ -57,21 +64,28 @@ export class GroupedCaptures {
       this.paths.set(id, {
         path: fPath,
         hars: [],
+        endpoint,
       });
     }
 
     const unmatched = path.join(trafficDir, `unmatched.har`);
-    this.paths.set(UNMATCHED_PATH, {
+    this.unmatched = {
       path: unmatched,
       hars: [],
-    });
+    };
   }
 
   addHar(har: HttpArchive.Entry) {
-    const opRes = this.queries.findOperation(
-      har.request.url,
-      har.request.method
-    );
+    let pathname: string;
+    try {
+      pathname = new URL(har.request.url).pathname;
+    } catch (e) {
+      logger.debug(`Skipping har entry - invalid URL`);
+      logger.debug(har);
+      logger.debug(e);
+      return;
+    }
+    const opRes = this.queries.findOperation(pathname, har.request.method);
     const operation = opRes.ok && opRes.val.some ? opRes.val.val : null;
     const pathNode = operation
       ? this.paths.get(
@@ -81,16 +95,16 @@ export class GroupedCaptures {
           })
         )
       : null;
-
     if (!pathNode) {
-      this.paths.get(UNMATCHED_PATH)!.hars.push(har);
+      this.unmatched.hars.push(har);
     } else {
       pathNode.hars.push(har);
     }
   }
 
   async writeHarFiles(): Promise<void> {
-    for (const [, file] of this.paths) {
+    for (const file of [...this.paths.values(), this.unmatched]) {
+      if (!file.hars.length) continue;
       const har = {
         log: {
           version: '1.3',
@@ -99,6 +113,49 @@ export class GroupedCaptures {
         },
       };
       await fs.writeFile(file.path, JSON.stringify(har));
+    }
+  }
+
+  counts() {
+    let total = 0;
+    let unmatched = 0;
+    let matched = 0;
+    for (const [, node] of this.paths) {
+      total++;
+      if (node.hars.length === 0) unmatched++;
+      if (node.hars.length !== 0) matched++;
+    }
+
+    return {
+      total,
+      unmatched,
+      matched,
+    };
+  }
+
+  *getDocumentedEndpointInteractions(): Iterable<{
+    endpoint: { path: string; method: string };
+    interactions: AsyncIterable<CapturedInteraction>;
+  }> {
+    for (const [, node] of this.paths) {
+      if (node.hars.length) {
+        yield {
+          endpoint: node.endpoint,
+          interactions: this.getInteractionsIterator(node.hars),
+        };
+      }
+    }
+  }
+
+  getUndocumentedInteractions(): AsyncIterable<CapturedInteraction> {
+    return this.getInteractionsIterator(this.unmatched.hars);
+  }
+
+  private async *getInteractionsIterator(
+    hars: HttpArchive.Entry[]
+  ): AsyncIterable<CapturedInteraction> {
+    for (const har of hars) {
+      yield CapturedInteraction.fromHarEntry(har);
     }
   }
 }

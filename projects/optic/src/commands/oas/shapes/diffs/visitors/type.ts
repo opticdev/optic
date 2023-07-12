@@ -25,6 +25,7 @@ export function* typeKeyword(
 
   yield {
     description: `'${keyName}' did not match schema`,
+    expectedType: `${validationError.params.type}`,
     kind: ShapeDiffResultKind.UnmatchedType,
     keyword: JsonSchemaKnownKeyword.type,
     instancePath: validationError.instancePath,

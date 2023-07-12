@@ -1,5 +1,5 @@
 import { it, describe, expect } from '@jest/globals';
-import { diffValueBySchema } from '..';
+import { diffBodyBySchema } from '..';
 import {
   objectOrStringOneOf,
   rootObjectOrArray,
@@ -20,14 +20,14 @@ describe('one of json schema diff visitor', () => {
     const input = {
       polyProp: 'hello-string',
     };
-    const diffs = diffValueBySchema(input, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
     expect([...diffs]).toHaveLength(0);
   });
   it('when valid case 2, no diff', () => {
     const input = {
       polyProp: 123,
     };
-    const diffs = diffValueBySchema(input, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
     expect([...diffs]).toHaveLength(0);
   });
 
@@ -46,7 +46,7 @@ describe('one of json schema diff visitor', () => {
     };
     const input = { id: 'an-identifier' };
 
-    const diffs = diffValueBySchema(input, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
     expect([...diffs]).toHaveLength(0);
   });
 
@@ -55,7 +55,7 @@ describe('one of json schema diff visitor', () => {
       polyProp: true,
     };
 
-    const diffs = diffValueBySchema(input, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
 
     // expect(result.totalDiffsAfterPatches).toBe(0);
     expect([...diffs]).toMatchSnapshot();
@@ -75,7 +75,7 @@ describe('one of json schema diff visitor', () => {
       polyProp: { hello: 'world' },
     };
 
-    const diffs = diffValueBySchema(input, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
     expect([...diffs]).toMatchSnapshot();
   });
 
@@ -98,7 +98,7 @@ describe('one of json schema diff visitor', () => {
 
     const input = ['user1', 'user2', 'user3'];
 
-    const diffs = [...diffValueBySchema(input, jsonSchema)];
+    const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
     expect(diffs).toHaveLength(1);
     expect(diffs).toMatchSnapshot();
   });
@@ -113,7 +113,7 @@ describe('one of json schema diff visitor', () => {
 
     const input: any = [];
 
-    const diffs = diffValueBySchema(input, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
     expect([...diffs]).toMatchSnapshot();
   });
 
@@ -130,7 +130,7 @@ describe('one of json schema diff visitor', () => {
       },
     };
 
-    const diffs = diffValueBySchema(input, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
     expect([...diffs]).toMatchSnapshot();
   });
 });

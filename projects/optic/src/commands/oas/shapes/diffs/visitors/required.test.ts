@@ -1,5 +1,5 @@
 import { it, describe, expect } from '@jest/globals';
-import { diffValueBySchema } from '..';
+import { diffBodyBySchema } from '..';
 import { SchemaObject } from '../../schema';
 
 describe('required json schema diff visitor', () => {
@@ -23,7 +23,7 @@ describe('required json schema diff visitor', () => {
       hello: { f1: 'value', f2: 122 },
     };
 
-    const diffs = diffValueBySchema(input, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
 
     expect([...diffs]).toMatchSnapshot();
   });

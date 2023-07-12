@@ -110,7 +110,7 @@ export class PathComponents {
     under https://github.com/stoplightio/prism/blob/master/LICENSE
    */
     if (!path.startsWith('/')) {
-      path = `/${path};`;
+      path = `/${path}`;
     }
     return path
       .split('/')

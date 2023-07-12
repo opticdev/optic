@@ -62,13 +62,14 @@ export class OperationQueries {
   > {
     const matchedPatternResult = this.matchPathPattern(path);
     if (matchedPatternResult.err) return matchedPatternResult;
-
     let maybeMatchedPattern = matchedPatternResult.unwrap();
     if (maybeMatchedPattern.none) return Ok(None);
     let matchedPattern = maybeMatchedPattern.unwrap();
 
     const operation = this.operations.find(
-      (op) => matchedPattern === op.pathPattern && op.method == method
+      (op) =>
+        matchedPattern.toLowerCase() === op.pathPattern.toLowerCase() &&
+        op.method.toLowerCase() == method.toLowerCase()
     );
 
     if (!operation) return Ok(None);

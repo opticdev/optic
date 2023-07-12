@@ -330,7 +330,7 @@ function reducePathPattern(component: PathComponentCandidate): string {
 
 function fragmentize(path: string): string[] {
   if (!path.startsWith('/')) {
-    path = `/${path};`;
+    path = `/${path}`;
   }
   return path.split('/').slice(1).map(decodePathFragment);
 }

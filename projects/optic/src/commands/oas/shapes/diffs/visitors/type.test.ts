@@ -1,5 +1,5 @@
 import { it, describe, expect } from '@jest/globals';
-import { diffValueBySchema } from '..';
+import { diffBodyBySchema } from '..';
 import { SchemaObject } from '../../schema';
 
 describe('type json schema diff visitor', () => {
@@ -14,7 +14,7 @@ describe('type json schema diff visitor', () => {
     const input = {
       stringField: 'hello-string',
     };
-    const diffs = diffValueBySchema(input, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
     expect([...diffs]).toHaveLength(0);
   });
 
@@ -22,7 +22,7 @@ describe('type json schema diff visitor', () => {
     const input = {
       // stringField: "hello-string", // commented to show ommitted
     };
-    const diffs = diffValueBySchema(input, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
     expect([...diffs]).toHaveLength(0);
   });
 
@@ -31,7 +31,7 @@ describe('type json schema diff visitor', () => {
       stringField: 123,
     };
 
-    const diffs = diffValueBySchema(input, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
     expect([...diffs]).toMatchSnapshot();
   });
 
@@ -40,7 +40,7 @@ describe('type json schema diff visitor', () => {
       stringField: ['1', '2', '3', true],
     };
 
-    const diffs = diffValueBySchema(input, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
     expect([...diffs]).toMatchSnapshot();
   });
 
@@ -49,7 +49,7 @@ describe('type json schema diff visitor', () => {
       stringField: { field: 'string' },
     };
 
-    const diffs = diffValueBySchema(input, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
     expect([...diffs]).toMatchSnapshot();
   });
 
@@ -58,7 +58,7 @@ describe('type json schema diff visitor', () => {
       stringField: null,
     };
 
-    const diffs = diffValueBySchema(input, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
     expect([...diffs]).toMatchSnapshot();
   });
 });

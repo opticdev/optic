@@ -1,6 +1,6 @@
 import { it, describe, expect } from '@jest/globals';
 import { SchemaObject } from '../..';
-import { diffValueBySchema } from '../../diffs';
+import { diffBodyBySchema } from '../../diffs';
 import { generateShapePatchesByDiff } from '..';
 
 describe('type shape patch generator', () => {
@@ -16,7 +16,7 @@ describe('type shape patch generator', () => {
       stringField: 123,
     };
 
-    const diffs = [...diffValueBySchema(input, jsonSchema)];
+    const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
 
     const patches = diffs.flatMap((diff) => [
       ...generateShapePatchesByDiff(diff, jsonSchema, {}, '3.1.x'),
@@ -30,7 +30,7 @@ describe('type shape patch generator', () => {
       stringField: ['1', '2', '3', true],
     };
 
-    const diffs = [...diffValueBySchema(input, jsonSchema)];
+    const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
 
     const patches = diffs.flatMap((diff) => [
       ...generateShapePatchesByDiff(diff, jsonSchema, {}, '3.1.x'),
@@ -44,7 +44,7 @@ describe('type shape patch generator', () => {
       stringField: { field: 'string' },
     };
 
-    const diffs = [...diffValueBySchema(input, jsonSchema)];
+    const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
 
     const patches = diffs.flatMap((diff) => [
       ...generateShapePatchesByDiff(diff, jsonSchema, {}, '3.1.x'),
@@ -58,7 +58,7 @@ describe('type shape patch generator', () => {
       stringField: null,
     };
 
-    const diffs = [...diffValueBySchema(input, jsonSchema)];
+    const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
 
     const patches = diffs.flatMap((diff) => [
       ...generateShapePatchesByDiff(diff, jsonSchema, {}, '3.1.x'),
