@@ -2,7 +2,7 @@ import {
   UndocumentedOperation,
   UndocumentedOperationType,
 } from '../../../operations';
-import { SpecPatch, OpenAPIV3 } from '../..';
+import { SpecPatch } from '../..';
 import { PatchOperationGroup, PatchImpact } from '../../../patches';
 import { OperationDiffResultKind } from '../../../operations/diffs';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
@@ -13,6 +13,15 @@ export function* missingMethodPatches(
   if (undocumentedOperation.type !== UndocumentedOperationType.MissingMethod)
     return;
 
+  yield createMissingMethodPatch(undocumentedOperation);
+}
+
+export function createMissingMethodPatch(
+  undocumentedOperation: Extract<
+    UndocumentedOperation,
+    { type: UndocumentedOperationType.MissingMethod }
+  >
+): SpecPatch {
   const { specPath, method, pathPattern } = undocumentedOperation;
 
   let groupedOperations: PatchOperationGroup[] = [];
@@ -27,7 +36,7 @@ export function* missingMethodPatches(
     })
   );
 
-  yield {
+  return {
     diff: {
       kind: OperationDiffResultKind.UnmatchedMethod,
       subject: method,

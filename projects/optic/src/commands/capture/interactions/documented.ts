@@ -1,77 +1,14 @@
 import fs from 'node:fs/promises';
 import { ParseResult } from '../../../utils/spec-loaders';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { checkOpenAPIVersion } from '@useoptic/openapi-io';
 
 import { updateSpecFiles } from '../../oas/diffing/document';
-import { SpecPatch, SpecPatches } from '../../oas/specs';
+import { SpecPatch } from '../../oas/specs';
 import { CapturedInteractions } from '../../oas/captures';
-import { DocumentedInteraction, Operation } from '../../oas/operations';
-import { DocumentedBodies } from '../../oas/shapes';
 import { ApiCoverageCounter } from '../../oas/coverage/api-coverage';
 import * as AT from '../../oas/lib/async-tools';
 import chalk from 'chalk';
-
-async function* generateSpecPatches(
-  interactions: CapturedInteractions,
-  spec: ParseResult['jsonLike'],
-  endpoint: { method: string; path: string },
-  coverage: ApiCoverageCounter
-) {
-  const openAPIVersion = checkOpenAPIVersion(spec);
-  let patchedSpec = spec;
-  const jsonPath = jsonPointerHelpers.compile([
-    'paths',
-    endpoint.path,
-    endpoint.method,
-  ]);
-  const operation = Operation.fromOperationObject(
-    endpoint.path,
-    endpoint.method,
-    jsonPointerHelpers.get(spec, jsonPath) as any
-  );
-  for await (const interaction of interactions) {
-    let documentedInteraction: DocumentedInteraction = {
-      interaction,
-      operation,
-      specJsonPath: jsonPath,
-    };
-
-    coverage.operationInteraction(
-      documentedInteraction.operation.pathPattern,
-      documentedInteraction.operation.method,
-      !!documentedInteraction.interaction.request.body,
-      documentedInteraction.interaction.response?.statusCode
-    );
-
-    // phase one: operation patches, making sure all requests / responses are documented
-    let opPatches = SpecPatches.operationAdditions(documentedInteraction);
-
-    for await (let patch of opPatches) {
-      patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
-      yield patch;
-    }
-
-    // phase two: shape patches, describing request / response bodies in detail
-    documentedInteraction = DocumentedInteraction.updateOperation(
-      documentedInteraction,
-      patchedSpec
-    );
-    let documentedBodies = DocumentedBodies.fromDocumentedInteraction(
-      documentedInteraction
-    );
-
-    let shapePatches = SpecPatches.shapeAdditions(
-      documentedBodies,
-      openAPIVersion
-    );
-
-    for await (let patch of shapePatches) {
-      patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
-      yield patch;
-    }
-  }
-}
+import { generateEndpointSpecPatches } from './patches';
 
 function summarizePatch(
   patch: SpecPatch,
@@ -160,7 +97,7 @@ function summarizePatch(
   return null;
 }
 
-export async function consumeDocumentedInteractions(
+export async function updateExistingEndpoint(
   interactions: CapturedInteractions,
   parseResult: ParseResult,
   coverage: ApiCoverageCounter,
@@ -183,7 +120,12 @@ export async function consumeDocumentedInteractions(
     );
     if (summarized) patchSummaries.push(summarized);
   })(
-    generateSpecPatches(interactions, parseResult.jsonLike, endpoint, coverage)
+    generateEndpointSpecPatches(
+      interactions,
+      { spec: parseResult.jsonLike },
+      endpoint,
+      { coverage }
+    )
   );
   let hasDiffs = false;
 
