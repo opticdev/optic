@@ -38,7 +38,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@octokit/rest": "^19.0.0",
+    "@octokit/rest": "^20.0.0",
     "@sentry/node": "^7.10.0",
     "@useoptic/json-pointer-helpers": "workspace:*",
     "ajv": "^8.6.0",

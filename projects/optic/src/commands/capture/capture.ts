@@ -30,6 +30,7 @@ import { loadSpec } from '../../utils/spec-loaders';
 import { consumeDocumentedInteractions } from './interactions/consume-documented';
 import { ApiCoverageCounter } from '../oas/coverage/api-coverage';
 import chalk from 'chalk';
+import { commandSplitter } from '../../utils/capture';
 
 const indent = (n: number) => '  '.repeat(n);
 const wait = (time: number) =>
@@ -121,6 +122,12 @@ const getCaptureAction =
       // TODO log error and run capture init or something - tbd what the first use is
       process.exitCode = 1;
       return;
+    } else if (!captureConfig.requests && !captureConfig.requests_command) {
+      logger.error(
+        `"requests" or "requests_command" must be specified in optic.yml`
+      );
+      process.exitCode = 1;
+      return;
     } else if (options.proxyPort && isNaN(Number(options.proxyPort))) {
       logger.error(
         `--proxy-port must be a number - received ${options.proxyPort}`
@@ -167,15 +174,13 @@ const getCaptureAction =
     });
 
     // start the app
-    let app: ChildProcessWithoutNullStreams;
+    let app: ChildProcessWithoutNullStreams | undefined = undefined;
     if (!options.serverOverride && captureConfig.server.command) {
-      const cmd = captureConfig.server.command.split(' ')[0];
-      const args = captureConfig.server.command.split(' ').slice(1);
-      app = spawn(cmd, args, { detached: true });
+      const cmd = commandSplitter(captureConfig.server.command);
+      app = spawn(cmd.cmd, cmd.args, { detached: true });
 
-      // log error output from the app
       app.stderr.on('data', (data) => {
-        console.log(data.toString());
+        logger.error(data.toString());
       });
     }
 
@@ -217,35 +222,74 @@ const getCaptureAction =
     }
 
     // make requests
-    const concurrency = captureConfig.config?.request_concurrency || 5;
-    const requests = makeRequests(
-      captureConfig.requests,
-      proxyUrl,
-      concurrency
-    );
-
     const captures = new GroupedCaptures(
       trafficDirectory,
       getEndpointsFromSpec(spec.jsonLike)
     );
-    const harEntries = HarEntries.fromProxyInteractions(proxyInteractions);
 
-    await Promise.all(requests)
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        // stop the proxy
-        sourcesController.abort();
-        // stop the app server
-        if (!options.serverOverride && captureConfig.server.command) {
-          process.kill(-app.pid!);
-        }
-      });
+    let errors: any[] = [];
+    try {
+      let requestsPromise: Promise<any> = Promise.resolve();
+      if (captureConfig.requests) {
+        const requests = makeRequests(
+          captureConfig.requests,
+          proxyUrl,
+          captureConfig.config?.request_concurrency || 5
+        );
+        requestsPromise = Promise.allSettled(requests);
+      }
 
-    for await (const har of harEntries) {
-      captures.addHar(har);
+      let reqCmdPromise: Promise<void> = Promise.resolve();
+      if (captureConfig.requests_command) {
+        const cmd = commandSplitter(captureConfig.requests_command.command);
+        const proxyVar =
+          captureConfig.requests_command.proxy_variable || 'OPTIC_PROXY';
+        process.env[proxyVar] = proxyUrl;
+        const reqCmd = spawn(cmd.cmd, cmd.args, {
+          detached: true,
+          shell: true,
+        });
+
+        reqCmdPromise = new Promise((resolve, reject) => {
+          reqCmd.on('exit', (code) => {
+            if (code === 0) {
+              resolve();
+            } else {
+              reject();
+            }
+          });
+        });
+        reqCmd.stderr.on('data', (data) => {
+          logger.error(data.toString());
+        });
+      }
+      await Promise.all([requestsPromise, reqCmdPromise]);
+    } catch (error) {
+      errors.push(error);
+    } finally {
+      sourcesController.abort();
+      if (app) {
+        process.kill(-app.pid!);
+      }
     }
+
+    const harEntries = HarEntries.fromProxyInteractions(proxyInteractions);
+    let count = 0;
+    for await (const har of harEntries) {
+      count++;
+      captures.addHar(har);
+      logger.debug(
+        `Captured ${har.request.method.toUpperCase()} ${har.request.url}`
+      );
+    }
+    logger.info(`${count} requests captured`);
+    if (errors.length > 0) {
+      logger.error('finished with errors:');
+      errors.forEach((error, index) => {
+        logger.error(`${index}:\n${error}`);
+      });
+    }
+
     await captures.writeHarFiles();
 
     const coverage = new ApiCoverageCounter(spec.jsonLike);
@@ -301,6 +345,9 @@ const getCaptureAction =
         )
       );
     }
+
+    // TODO start running endpoint by endpoint of captures
+    // run update or verify
   };
 
 async function createOpenAPIFile(filePath: string): Promise<boolean> {
@@ -374,7 +421,7 @@ function makeRequests(
       fetch(`${proxyUrl}${r.path}`, opts)
         .then((response) => response.json())
         .catch((error) => {
-          console.error(error);
+          logger.error(error);
         })
     );
   });
