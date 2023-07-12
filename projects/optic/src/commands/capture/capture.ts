@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import { Command, Option } from 'commander';
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import { chdir } from 'process';
@@ -10,7 +11,6 @@ import { isJson, isYaml, writeYaml } from '@useoptic/openapi-io';
 import ora from 'ora';
 import urljoin from 'url-join';
 import {
-  countOperationCoverage,
   CoverageNode,
   OpenAPIV3,
   OperationCoverage,
@@ -29,8 +29,11 @@ import { getCaptureStorage, GroupedCaptures } from './storage';
 import { loadSpec } from '../../utils/spec-loaders';
 import { consumeDocumentedInteractions } from './interactions/consume-documented';
 import { ApiCoverageCounter } from '../oas/coverage/api-coverage';
-import chalk from 'chalk';
 import { commandSplitter } from '../../utils/capture';
+import {
+  consumeUndocumentedInteractions,
+  promptUserForPathPattern,
+} from './interactions/consume-undocumented';
 
 const indent = (n: number) => '  '.repeat(n);
 const wait = (time: number) =>
@@ -55,6 +58,11 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
     .option(
       '-u, --update',
       'update the OpenAPI spec to match the traffic',
+      false
+    )
+    .option(
+      '-i, --interactive',
+      'add new endpoints in interactive mode. must be run with --update',
       false
     )
 
@@ -102,6 +110,7 @@ type CaptureActionOptions = {
   proxyPort?: string;
   serverOverride?: string;
   update: boolean;
+  interactive: boolean;
 };
 
 const getCaptureAction =
@@ -291,6 +300,7 @@ const getCaptureAction =
     }
 
     await captures.writeHarFiles();
+    let hasAnyEndpointDiffs = false;
 
     const coverage = new ApiCoverageCounter(spec.jsonLike);
     // Handle interactions for documented endpoints first
@@ -310,8 +320,8 @@ const getCaptureAction =
         endpoint,
         options
       );
+      hasAnyEndpointDiffs = hasAnyEndpointDiffs || hasDiffs;
       let endpointCoverage = coverage.coverage.paths[path][method];
-
       if (options.update) {
         // Since we flush each endpoint updates to disk, we should reload the spec to get the latest spec and sourcemap which we both use to generate the next set of patches
         spec = await loadSpec(filePath, config, {
@@ -346,8 +356,49 @@ const getCaptureAction =
       );
     }
 
-    // TODO start running endpoint by endpoint of captures
-    // run update or verify
+    if (options.update && options.interactive) {
+      logger.info('');
+      logger.info(
+        chalk.bold.gray('Learning path patterns for unmatched requests...')
+      );
+      const {
+        interactions: filteredInteractions,
+        ignorePaths,
+        endpointsToAdd,
+      } = await promptUserForPathPattern(
+        captures.getUndocumentedInteractions(),
+        spec.jsonLike
+      );
+
+      logger.info(chalk.bold.gray('Documenting new operations:'));
+    } else if (captures.unmatched.hars.length) {
+      logger.info('');
+      logger.info(`${captures.unmatched.hars.length} unmatched interactions`);
+    }
+
+    if (
+      captures.unmatched.hars.length &&
+      !(options.update && options.interactive)
+    ) {
+      logger.info(
+        chalk.yellow('New endpoints are only added in interactive mode.')
+      );
+      logger.info(
+        chalk.blue('Run with `--update --interactive` to add new endpoints')
+      );
+      logger.info(
+        chalk.yellow(`optic capture ${filePath} --update --interactive`)
+      );
+    } else if (
+      !options.update &&
+      (captures.unmatched.hars.length || hasAnyEndpointDiffs)
+    ) {
+      logger.info(chalk.blue('Run with `--update --interactive` to update'));
+      logger.info(
+        chalk.yellow(`optic capture ${filePath} --update --interactive`)
+      );
+      process.exitCode = 1;
+    }
   };
 
 async function createOpenAPIFile(filePath: string): Promise<boolean> {
