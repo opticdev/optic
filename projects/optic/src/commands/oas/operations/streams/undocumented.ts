@@ -11,6 +11,7 @@ import { diffOperationWithSpec, OperationDiffResultKind } from '../diffs';
 import * as AT from '../../lib/async-tools';
 import Url from 'url';
 import { minimatch } from 'minimatch';
+import { getIgnorePaths } from '../../../../utils/specs';
 
 export interface UndocumentedOperations
   extends AsyncIterable<UndocumentedOperation> {}
@@ -29,12 +30,16 @@ export class UndocumentedOperations {
     const specUpdatesIterator =
       specUpdates && specUpdates[Symbol.asyncIterator]();
 
-    const ignorePatterns: string[] = Array.isArray(spec['x-optic-path-ignore'])
-      ? spec['x-optic-path-ignore'].map((i) => i.toString())
-      : []; // default ignore patterns
+    const ignorePatterns = getIgnorePaths(spec);
 
-    const shouldBeIgnored = (path: string) =>
-      ignorePatterns.some((ignore) => minimatch(path, ignore));
+    const shouldBeIgnored = (path: string, method?: string) =>
+      ignorePatterns.some((ignore) => {
+        if (method && ignore.method) {
+          return method === ignore.method && minimatch(path, ignore.path);
+        } else {
+          return minimatch(path, ignore.path);
+        }
+      });
 
     const filterMethods = (methods: OpenAPIV3.HttpMethods[]) => {
       return methods.filter((i) => i !== 'options' && i !== 'head');
@@ -64,7 +69,7 @@ export class UndocumentedOperations {
             specPath: jsonPointerHelpers.compile(['paths', diff.subject]),
           };
         } else if (diff.kind === OperationDiffResultKind.UnmatchedMethod) {
-          if (shouldBeIgnored(diff.subject)) continue;
+          if (shouldBeIgnored(diff.pathPattern, diff.subject)) continue;
           if (filterMethods([diff.subject]).length === 0) continue;
 
           yieldedResult = true;

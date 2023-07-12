@@ -74,7 +74,7 @@ export class InferPathStructure {
       - did not match other urls
    */
 
-  includeObservedUrlPath = (method: string, urlPath: string) => {
+  includeObservedUrlPath = (method: string, urlPath: string): string | null => {
     const findMatch = (
       parent: PathComponentCandidate | null,
       inferred: PathComponentCandidate['inferred'],
@@ -89,6 +89,7 @@ export class InferPathStructure {
     };
 
     const fragments = fragmentize(urlPath);
+    let first: PathComponentCandidate | null = null;
     let parent: PathComponentCandidate | null = null;
     fragments.forEach((fragment, index) => {
       const isLast = fragments.length - 1 === index;
@@ -106,6 +107,7 @@ export class InferPathStructure {
           match.examplePath = urlPath;
         }
         parent = match;
+        if (isFirst) first = match;
       } else if (!match) {
         const isConfidentVariable = !isFirst && looksLikeAVariable(fragment);
         const name = isConfidentVariable
@@ -123,8 +125,11 @@ export class InferPathStructure {
         };
         this.paths.push(insert);
         parent = insert;
+        if (isFirst) first = insert;
       }
     });
+
+    return first && reducePathPattern(first);
   };
 
   replaceConstantsWithVariables = () => {

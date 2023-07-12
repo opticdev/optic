@@ -41,7 +41,7 @@ export class GroupedCaptures {
       endpoint: { method: string; path: string };
     }
   >;
-  private unmatched: { path: string; hars: HttpArchive.Entry[] };
+  public unmatched: { path: string; hars: HttpArchive.Entry[] };
   private queries: OperationQueries;
   constructor(
     trafficDir: string,
