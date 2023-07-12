@@ -182,6 +182,13 @@ const getCaptureAction =
       app.stderr.on('data', (data) => {
         logger.error(data.toString());
       });
+
+      app.on('error', (err) => {
+        logger.error(
+          `"server.command" exited unexpectedly with status ${app?.exitCode}.`
+        );
+        process.exit(1);
+      });
     }
 
     // wait until the server is ready
