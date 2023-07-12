@@ -104,6 +104,55 @@ type CaptureActionOptions = {
   update: boolean;
 };
 
+class ProxyInstance {
+  interactions!: ProxyInteractions;
+  url!: string;
+  targetUrl: string;
+  private abortController: AbortController;
+
+  constructor(target: string) {
+    this.abortController = new AbortController();
+    this.targetUrl = target;
+  }
+
+  public async init(port: number | undefined) {
+    [this.interactions, this.url] = await ProxyInteractions.create(
+      this.targetUrl,
+      this.abortController.signal,
+      {
+        mode: 'reverse-proxy',
+        proxyPort: port,
+      }
+    );
+  }
+
+  stop() {
+    this.abortController.abort();
+  }
+}
+
+async function specExists(filePath: string): Promise<boolean> {
+  try {
+    await fs.stat(filePath);
+  } catch {
+    return false;
+  }
+  return true;
+}
+
+async function setup(filePath: string): Promise<string> {
+  const resolvedPath = path.resolve(filePath);
+  const oasSpecExists = await specExists(resolvedPath);
+  if (!oasSpecExists) {
+    const fileCreated = await createOpenAPIFile(filePath);
+    if (!fileCreated) {
+      logger.error('Could not create OpenAPI file');
+      process.exit(1);
+    }
+  }
+  return await getCaptureStorage(resolvedPath);
+}
+
 const getCaptureAction =
   (config: OpticCliConfig, command: Command) =>
   async (
@@ -135,45 +184,33 @@ const getCaptureAction =
       process.exitCode = 1;
       return;
     }
-    const resolvedPath = path.resolve(filePath);
-    let openApiExists = false;
-    try {
-      await fs.stat(resolvedPath);
-      openApiExists = true;
-    } catch (e) {}
 
-    if (!openApiExists) {
-      const fileCreated = await createOpenAPIFile(filePath);
-      if (!fileCreated) {
-        process.exitCode = 1;
-        logger.error('Could not find OpenAPI file');
-        return;
-      }
-    }
-    const trafficDirectory = await getCaptureStorage(resolvedPath);
+    const trafficDirectory = await setup(filePath);
     logger.debug(`Writing captured traffic to ${trafficDirectory}`);
 
-    if (captureConfig.server.dir === undefined) {
-      chdir(config.root);
-    } else {
-      chdir(captureConfig.server.dir);
-    }
-    const serverUrl = options.serverOverride || captureConfig.server.url;
-    let sourcesController = new AbortController();
-    let [proxyInteractions, proxyUrl] = await ProxyInteractions.create(
-      serverUrl,
-      sourcesController.signal,
-      {
-        mode: 'reverse-proxy',
-        proxyPort: options.proxyPort ? Number(options.proxyPort) : undefined,
-      }
+    captureConfig.server.dir === undefined
+      ? chdir(config.root)
+      : chdir(captureConfig.server.dir);
+
+    //
+    // start proxy
+    //
+    const proxy = new ProxyInstance(
+      options.serverOverride || captureConfig.server.url
     );
+    await proxy.init(options.proxyPort ? Number(options.proxyPort) : undefined);
+
+    //
+    // parse optic.yml
+    //
     let spec = await loadSpec(filePath, config, {
       strict: false,
       denormalize: false,
     });
 
-    // start the app
+    //
+    // start app
+    //
     let app: ChildProcessWithoutNullStreams | undefined = undefined;
     if (!options.serverOverride && captureConfig.server.command) {
       const cmd = commandSplitter(captureConfig.server.command);
@@ -191,8 +228,14 @@ const getCaptureAction =
     // ready_interval must be at least the time it takes to start the server.
     await wait(readyInterval);
 
+    //
+    // readyCheck()
+    //
     if (captureConfig.server.ready_endpoint) {
-      const readyUrl = urljoin(serverUrl, captureConfig.server.ready_endpoint);
+      const readyUrl = urljoin(
+        proxy.targetUrl,
+        captureConfig.server.ready_endpoint
+      );
       const readyTimeout = captureConfig.server.ready_timeout || 3 * 60 * 1_000; // 3 minutes
 
       const now = Date.now();
@@ -233,7 +276,7 @@ const getCaptureAction =
       if (captureConfig.requests) {
         const requests = makeRequests(
           captureConfig.requests,
-          proxyUrl,
+          proxy.url,
           captureConfig.config?.request_concurrency || 5
         );
         requestsPromise = Promise.allSettled(requests);
@@ -244,7 +287,7 @@ const getCaptureAction =
         const cmd = commandSplitter(captureConfig.requests_command.command);
         const proxyVar =
           captureConfig.requests_command.proxy_variable || 'OPTIC_PROXY';
-        process.env[proxyVar] = proxyUrl;
+        process.env[proxyVar] = proxy.url;
         const reqCmd = spawn(cmd.cmd, cmd.args, {
           detached: true,
           shell: true,
@@ -267,13 +310,13 @@ const getCaptureAction =
     } catch (error) {
       errors.push(error);
     } finally {
-      sourcesController.abort();
+      proxy.stop();
       if (app) {
         process.kill(-app.pid!);
       }
     }
 
-    const harEntries = HarEntries.fromProxyInteractions(proxyInteractions);
+    const harEntries = HarEntries.fromProxyInteractions(proxy.interactions);
     let count = 0;
     for await (const har of harEntries) {
       count++;
