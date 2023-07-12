@@ -1,3 +1,4 @@
+import fs from 'node:fs/promises';
 import prompts from 'prompts';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { matchPathPattern } from '../../../utils/pathPatterns';
@@ -9,6 +10,12 @@ import { getIgnorePaths } from '../../../utils/specs';
 import { CapturedInteraction, CapturedInteractions } from '../../oas/captures';
 import { InferPathStructure } from '../../oas/operations/infer-path-structure';
 import { specToOperations } from '../../oas/operations/queries';
+import { updateSpecFiles } from '../../oas/diffing/document';
+import {
+  generateEndpointSpecPatches,
+  generatePathAndMethodSpecPatches,
+} from './patches';
+import { SpecPatches } from '../../oas/specs';
 
 type MethodMap = Map<string, { add: Set<string>; ignore: Set<string> }>;
 
@@ -134,14 +141,39 @@ export async function promptUserForPathPattern(
   };
 }
 
-export async function consumeUndocumentedInteractions(
-  interactions: CapturedInteractions,
-  totalInteractions: number,
-  parseResult: ParseResult
+export async function documentNewEndpoint(
+  interactions: CapturedInteraction[],
+  parseResult: ParseResult,
+  endpoint: { method: string; path: string }
 ) {
-  for await (const a of interactions) {
-  }
+  const interactionsAsAsyncIterator = (async function* () {
+    for (const interaction of interactions) {
+      yield interaction;
+    }
+  })();
 
-  // TODO write ignore paths back to spec
-  // TODO use add paths to add by paths
+  // generate patches to add the endpoint if doesn't exist
+  const specPatches = (async function* (): SpecPatches {
+    // Holds the same reference so we can mutate the spec in place and pass it to different generators
+    const specHolder = {
+      spec: parseResult.jsonLike,
+    };
+
+    yield* generatePathAndMethodSpecPatches(specHolder, endpoint);
+
+    yield* generateEndpointSpecPatches(
+      interactionsAsAsyncIterator,
+      specHolder,
+      endpoint
+    );
+  })();
+
+  let { results: updatedSpecFiles } = updateSpecFiles(
+    specPatches,
+    parseResult.sourcemap
+  );
+
+  for await (const { path, contents } of updatedSpecFiles) {
+    await fs.writeFile(path, contents);
+  }
 }

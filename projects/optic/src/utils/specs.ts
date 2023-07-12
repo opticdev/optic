@@ -1,5 +1,5 @@
 import { OpenAPIV3, defaultEmptySpec } from '@useoptic/openapi-utilities';
-import { OPTIC_EMPTY_SPEC_KEY, OPTIC_PATH_IGNORE } from '../constants';
+import { OPTIC_EMPTY_SPEC_KEY, OPTIC_PATH_IGNORE_KEY } from '../constants';
 import { JsonSchemaSourcemap } from '@useoptic/openapi-io';
 import { logger } from '../logger';
 
@@ -12,7 +12,7 @@ export function getIgnorePaths(
         method?: string;
         path?: string;
       }
-  )[] = spec[OPTIC_PATH_IGNORE];
+  )[] = spec[OPTIC_PATH_IGNORE_KEY];
   const paths: { path: string; method?: string }[] = [];
   if (!Array.isArray(ignorePaths)) {
     return [];
