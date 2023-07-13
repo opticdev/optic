@@ -214,14 +214,21 @@ const getCaptureAction =
       const timeout = captureConfig.server.ready_timeout || 3 * 60 * 1_000; // 3 minutes
       const readyInterval = captureConfig.server.ready_interval || 1000;
 
-      app = await startApp(
-        captureConfig.server.command,
-        serverDir,
-        captureConfig.server.ready_endpoint,
-        readyInterval,
-        timeout,
-        proxy.targetUrl
-      );
+      try {
+        app = await startApp(
+          captureConfig.server.command,
+          serverDir,
+          captureConfig.server.ready_endpoint,
+          readyInterval,
+          timeout,
+          proxy.targetUrl
+        );
+      } catch (err) {
+        proxy.stop();
+        logger.error(err);
+        process.exitCode = 1;
+        return;
+      }
     }
 
     // make requests
