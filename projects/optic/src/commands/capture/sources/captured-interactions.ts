@@ -1,17 +1,8 @@
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 
-import {
-  HttpArchive,
-  HarEntries,
-} from '../../oas/captures/streams/sources/har';
-import {
-  PostmanEntry,
-  PostmanCollectionEntries,
-} from '../../oas/captures/streams/sources/postman';
-import {
-  ProxySource,
-  ProxyInteractions,
-} from '../../oas/captures/streams/sources/proxy';
+import { HttpArchive, HarEntries } from './har';
+import { PostmanEntry, PostmanCollectionEntries } from './postman';
+import { ProxySource, ProxyInteractions } from './proxy';
 
 import { URL } from 'url';
 import { Buffer } from 'buffer';

@@ -2,12 +2,12 @@ import fs from 'node:fs/promises';
 import fsSync from 'fs';
 import path from 'path';
 import { captureStorage } from './capture-storage';
-import { CapturedInteractions } from '../../capture/interactions/captured-interactions';
 import { InputErrors } from '../reporters/feedback';
-import { HarEntries } from './streams/sources/har';
 import * as AT from '../lib/async-tools';
-import { PostmanCollectionEntries } from './streams/sources/postman';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { CapturedInteractions } from '../../capture/sources/captured-interactions';
+import { PostmanCollectionEntries } from '../../capture/sources/postman';
+import { HarEntries } from '../../capture/sources/har';
 
 async function* handleServerPathPrefix(
   interactions: CapturedInteractions,

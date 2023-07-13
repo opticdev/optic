@@ -1,9 +1,9 @@
 import { it, describe, expect } from '@jest/globals';
-import { HarEntries, HttpArchive } from './har';
+import { HarEntries, HttpArchive } from '../har';
 import fs from 'fs';
 import Path from 'path';
 import { Readable } from 'stream';
-import { collect, take, unwrap } from '../../../lib/async-tools';
+import { collect, take, unwrap } from '../../../oas/lib/async-tools';
 
 describe('HarEntries', () => {
   it('can be constructed from a readable', async () => {

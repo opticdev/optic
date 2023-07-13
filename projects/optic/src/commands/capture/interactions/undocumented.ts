@@ -7,7 +7,10 @@ import { logger } from '../../../logger';
 import { ParseResult } from '../../../utils/spec-loaders';
 import { getIgnorePaths } from '../../../utils/specs';
 
-import { CapturedInteraction, CapturedInteractions } from '../../oas/captures';
+import {
+  CapturedInteraction,
+  CapturedInteractions,
+} from '../sources/captured-interactions';
 import { InferPathStructure } from '../../oas/operations/infer-path-structure';
 import { specToOperations } from '../../oas/operations/queries';
 import { updateSpecFiles } from '../../oas/diffing/document';

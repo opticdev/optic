@@ -1,4 +1,4 @@
-import { Readable, Writable } from 'stream';
+import { Readable } from 'stream';
 import invariant from 'ts-invariant';
 import { withParser as pickWithParser } from 'stream-json/filters/Pick';
 import { streamArray } from 'stream-json/streamers/StreamArray';

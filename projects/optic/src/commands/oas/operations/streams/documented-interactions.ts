@@ -1,11 +1,11 @@
 import { DocumentedInteraction, Operation } from '..';
-import { CapturedInteractions } from '../../captures';
 import { OpenAPIV3, SpecFacts } from '../../specs';
 import { OperationQueries } from '../queries';
 import { collect } from '../../lib/async-tools';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { Option, Some, None } from 'ts-results';
 import { ParsedOperation } from '../../diffing/document';
+import { CapturedInteractions } from '../../../capture/sources/captured-interactions';
 
 export interface DocumentedInteractions
   extends AsyncIterable<DocumentedInteraction> {}

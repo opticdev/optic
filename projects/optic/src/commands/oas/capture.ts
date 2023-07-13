@@ -15,13 +15,6 @@ import logNode from 'log-node';
 import { isJson, isYaml, writeYaml } from '@useoptic/openapi-io';
 
 import { getCertStore } from './setup-tls';
-import {
-  CapturedInteraction,
-  HarEntries,
-  HttpArchive,
-  ProxyCertAuthority,
-  ProxyInteractions,
-} from './captures';
 import { SystemProxy } from './captures/system-proxy';
 import { captureStorage } from './captures/capture-storage';
 import { RunCommand } from './captures/run-command';
@@ -32,6 +25,12 @@ import { OpticCliConfig } from '../../config';
 import { clearCommand } from './capture-clear';
 import { createNewSpecFile } from '../../utils/specs';
 import { logger } from '../../logger';
+import { HarEntries, HttpArchive } from '../capture/sources/har';
+import {
+  ProxyCertAuthority,
+  ProxyInteractions,
+} from '../capture/sources/proxy';
+import { CapturedInteraction } from '../capture/sources/captured-interactions';
 
 export async function captureV1(
   filePath: string,

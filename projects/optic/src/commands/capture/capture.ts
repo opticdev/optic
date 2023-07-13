@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 import { Command, Option } from 'commander';
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
-import { chdir } from 'process';
 import path from 'path';
 import fs from 'node:fs/promises';
 import fetch from 'node-fetch';
@@ -16,7 +15,6 @@ import {
   UserError,
 } from '@useoptic/openapi-utilities';
 import { CaptureConfigData, Request } from '../../config';
-import { HarEntries, ProxyInteractions } from '../oas/captures';
 import { errorHandler } from '../../error-handler';
 
 import { createNewSpecFile } from '../../utils/specs';
@@ -35,6 +33,8 @@ import {
 } from './interactions/undocumented';
 import { OPTIC_PATH_IGNORE_KEY } from '../../constants';
 import { specToOperations } from '../oas/operations/queries';
+import { ProxyInteractions } from './sources/proxy';
+import { HarEntries } from './sources/har';
 
 const indent = (n: number) => '  '.repeat(n);
 const wait = (time: number) =>

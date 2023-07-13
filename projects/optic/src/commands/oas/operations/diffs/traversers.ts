@@ -1,4 +1,3 @@
-import { CapturedInteraction } from '../../captures';
 import { Operation } from '..';
 import { OperationDiffResult } from './result';
 import { OperationQueries } from '../queries';
@@ -6,6 +5,7 @@ import { OpenAPIV3, SpecFactsIterable } from '../../specs';
 import { visitRequestBody, visitResponses } from './visitors/index';
 import { visitPath, visitMethod } from './visitors/index';
 import { Some, None } from 'ts-results';
+import { CapturedInteraction } from '../../../capture/sources/captured-interactions';
 
 export class OperationInteractionDiffTraverser {
   private interaction?: CapturedInteraction;

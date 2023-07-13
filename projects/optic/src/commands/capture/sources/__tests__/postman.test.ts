@@ -1,8 +1,8 @@
 import { it, describe, expect } from '@jest/globals';
-import { PostmanCollectionEntries, PostmanEntry } from './postman';
+import { PostmanCollectionEntries } from '../postman';
 import fs from 'fs';
 import Path from 'path';
-import { collect } from '../../../lib/async-tools';
+import { collect } from '../../../oas/lib/async-tools';
 
 describe('PostmanCollectionEntries', () => {
   it('can be constructed from a readable', async () => {

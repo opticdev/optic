@@ -10,7 +10,6 @@ import {
 } from '../operations';
 import { InferPathStructure } from '../operations/infer-path-structure';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
-import { CapturedInteraction, CapturedInteractions } from '../captures';
 import * as AT from '../lib/async-tools';
 import {
   SpecFile,
@@ -28,6 +27,10 @@ import { ApiCoverageCounter } from '../../capture/coverage/api-coverage';
 import { SchemaInventory } from '../shapes/closeness/schema-inventory';
 import { specToOperations } from '../operations/queries';
 import { checkOpenAPIVersion } from '@useoptic/openapi-io';
+import {
+  CapturedInteraction,
+  CapturedInteractions,
+} from '../../capture/sources/captured-interactions';
 
 export interface ParsedOperation {
   methods: HttpMethod[];
