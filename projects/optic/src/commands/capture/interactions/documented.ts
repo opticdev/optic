@@ -7,7 +7,7 @@ import { generateEndpointSpecPatches } from '../patches/patches';
 import { updateSpecFiles } from '../../oas/diffing/document';
 import { SpecPatch } from '../../oas/specs';
 import { CapturedInteractions } from '../../oas/captures';
-import { ApiCoverageCounter } from '../../oas/coverage/api-coverage';
+import { ApiCoverageCounter } from '../coverage/api-coverage';
 import * as AT from '../../oas/lib/async-tools';
 
 function summarizePatch(

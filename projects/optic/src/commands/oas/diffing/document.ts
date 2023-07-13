@@ -24,7 +24,7 @@ import {
 } from '../specs';
 import { DocumentedBodies, DocumentedBody } from '../shapes';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { ApiCoverageCounter } from '../coverage/api-coverage';
+import { ApiCoverageCounter } from '../../capture/coverage/api-coverage';
 import { SchemaInventory } from '../shapes/closeness/schema-inventory';
 import { specToOperations } from '../operations/queries';
 import { checkOpenAPIVersion } from '@useoptic/openapi-io';

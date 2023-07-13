@@ -22,7 +22,7 @@ import { Subject, tap } from '../lib/async-tools';
 import { DocumentedInteraction, DocumentedInteractions } from '../operations';
 import { DocumentedBodies, DocumentedBody } from '../shapes';
 import { updateReporter } from '../reporters/update';
-import { ApiCoverageCounter } from '../coverage/api-coverage';
+import { ApiCoverageCounter } from '../../capture/coverage/api-coverage';
 import { ParsedOperation } from './document';
 import { nextCommand } from '../reporters/next-command';
 

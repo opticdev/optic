@@ -2,7 +2,7 @@ import { ParseResult } from '../../../utils/spec-loaders';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { checkOpenAPIVersion } from '@useoptic/openapi-io';
 
-import { ApiCoverageCounter } from '../../oas/coverage/api-coverage';
+import { ApiCoverageCounter } from '../coverage/api-coverage';
 import { OpenAPIV3, SpecPatch, SpecPatches } from '../../oas/specs';
 import { CapturedInteractions } from '../../oas/captures';
 import { DocumentedInteraction, Operation } from '../../oas/operations';

@@ -27,7 +27,7 @@ import { captureV1 } from '../oas/capture';
 import { getCaptureStorage, GroupedCaptures } from './storage';
 import { loadSpec } from '../../utils/spec-loaders';
 import { updateExistingEndpoint } from './interactions/documented';
-import { ApiCoverageCounter } from '../oas/coverage/api-coverage';
+import { ApiCoverageCounter } from './coverage/api-coverage';
 import { commandSplitter } from '../../utils/capture';
 import {
   documentNewEndpoint,
