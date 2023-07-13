@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import fsSync from 'fs';
 import path from 'path';
 import { captureStorage } from './capture-storage';
-import { CapturedInteractions } from './streams/captured-interactions';
+import { CapturedInteractions } from '../../capture/interactions/captured-interactions';
 import { InputErrors } from '../reporters/feedback';
 import { HarEntries } from './streams/sources/har';
 import * as AT from '../lib/async-tools';

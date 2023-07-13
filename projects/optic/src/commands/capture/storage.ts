@@ -155,7 +155,8 @@ export class GroupedCaptures {
     hars: HttpArchive.Entry[]
   ): AsyncIterable<CapturedInteraction> {
     for (const har of hars) {
-      yield CapturedInteraction.fromHarEntry(har);
+      const interaction = CapturedInteraction.fromHarEntry(har);
+      if (interaction) yield interaction;
     }
   }
 }

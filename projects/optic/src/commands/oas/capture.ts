@@ -307,11 +307,12 @@ export function writeInteractions(
   const observers = {
     captureHarEntry(entry: HttpArchive.Entry) {
       const interaction = CapturedInteraction.fromHarEntry(entry); // inefficient, but okay until CapturedInteraction becomes the common source type
-      observing.onNext({
-        kind: CaptureObservationKind.InteractionCaptured,
-        path: interaction.request.path,
-        method: interaction.request.method,
-      });
+      interaction &&
+        observing.onNext({
+          kind: CaptureObservationKind.InteractionCaptured,
+          path: interaction.request.path,
+          method: interaction.request.method,
+        });
     },
   };
 

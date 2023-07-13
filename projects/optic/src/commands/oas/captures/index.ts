@@ -1,11 +1,13 @@
-import { CapturedBody } from './body';
-import { CapturedBodies } from './streams/captured-bodies';
+import { CapturedBody } from '../../capture/interactions/body';
 
-export { CapturedBody, CapturedBodies };
-export { CapturedInteractions } from './streams/captured-interactions';
+export { CapturedBody };
+export { CapturedInteractions } from '../../capture/interactions/captured-interactions';
 
-export { CapturedInteraction } from './interaction';
-export type { CapturedRequest, CapturedResponse } from './interaction';
+export { CapturedInteraction } from '../../capture/interactions/captured-interactions';
+export type {
+  CapturedRequest,
+  CapturedResponse,
+} from '../../capture/interactions/captured-interactions';
 
 export { HarEntries } from './streams/sources/har';
 export type { HttpArchive } from './streams/sources/har';

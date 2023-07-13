@@ -1,5 +1,5 @@
 import { BodyLocation } from '@useoptic/openapi-utilities';
-import { CapturedBody } from '../captures/body';
+import { CapturedBody } from '../../capture/interactions/body';
 import { ShapePatch } from '.';
 import { SchemaObject, Schema } from './schema';
 import { Option } from 'ts-results';

@@ -1,13 +1,16 @@
 import { beforeAll, it, describe, expect } from '@jest/globals';
-import { CapturedInteraction } from './interaction';
-import { CapturedBody } from './body';
-import { HarEntries, HttpArchive } from './streams/sources/har';
-import { ProxyInteractions, ProxySource } from './streams/sources/proxy';
+import { CapturedInteraction } from '../captured-interactions';
+import { CapturedBody } from '../../../oas/captures/body';
+import {
+  HarEntries,
+  HttpArchive,
+} from '../../../oas/captures/streams/sources/har';
+import { ProxySource } from '../../../oas/captures/streams/sources/proxy';
 import {
   PostmanCollectionEntries,
   PostmanEntry,
-} from './streams/sources/postman';
-import { collect, unwrap } from '../lib/async-tools';
+} from '../../../oas/captures/streams/sources/postman';
+import { collect, unwrap } from '../../../oas/lib/async-tools';
 import fs from 'fs';
 import Path from 'path';
 import { Readable } from 'stream';

@@ -5,11 +5,11 @@ import {
   countOperationCoverage,
 } from '@useoptic/openapi-utilities';
 import chalk from 'chalk';
-import { statusRangePattern } from '../../oas/operations';
 import sortby from 'lodash.sortby';
-import { SpecPatch } from '../../oas/specs';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { computeEndpointChecksum } from '../../../utils/checksum';
+import { statusRangePattern } from '../../oas/operations';
+import { SpecPatch } from '../../oas/specs';
 
 export class ApiCoverageCounter {
   coverage: ApiCoverage;
