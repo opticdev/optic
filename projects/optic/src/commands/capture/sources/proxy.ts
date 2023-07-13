@@ -196,6 +196,7 @@ export class ProxyInteractions {
     });
 
     function onAbort(e) {
+      capturingProxy.reset();
       capturingProxy.stop();
       transparentProxy.stop();
       interactions.onCompleted();
@@ -243,7 +244,6 @@ export class ProxyInteractions {
 
     const stream = (async function* () {
       yield* interactions.iterator;
-      capturingProxy.reset();
     })();
 
     return [stream, transparentProxy.url!, capturingProxy.url];
