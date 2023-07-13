@@ -541,19 +541,16 @@ async function serverReady(
   }
 }
 
-async function specExists(filePath: string): Promise<boolean> {
-  try {
-    await fs.stat(filePath);
-  } catch {
-    return false;
-  }
-  return true;
-}
-
 async function setup(filePath: string): Promise<string> {
   const resolvedPath = path.resolve(filePath);
-  const oasSpecExists = await specExists(resolvedPath);
-  if (!oasSpecExists) {
+  let openApiExists = false;
+
+  try {
+    await fs.stat(resolvedPath);
+    openApiExists = true;
+  } catch (e) {}
+
+  if (!openApiExists) {
     const fileCreated = await createOpenAPIFile(filePath);
     if (!fileCreated) {
       logger.error('Could not create OpenAPI file');
