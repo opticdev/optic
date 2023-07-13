@@ -243,7 +243,6 @@ const getCaptureAction =
       // catch the bailout promise rejection when we shutdown the app
       bailout.promise.catch((e) => {});
     } catch (e) {
-      logger.error(e);
       // Meaning either the requests threw an uncaught exception or the app server randomly quit
       process.exitCode = 1;
       // The finally block will run before we return from the fn call
