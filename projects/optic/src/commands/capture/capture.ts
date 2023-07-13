@@ -17,7 +17,7 @@ import {
   OperationCoverage,
   UserError,
 } from '@useoptic/openapi-utilities';
-import { Request } from '../../config';
+import { CaptureConfigData, Request } from '../../config';
 import { HarEntries, ProxyInteractions } from '../oas/captures';
 import { errorHandler } from '../../error-handler';
 
@@ -118,6 +118,33 @@ type CaptureActionOptions = {
   interactive: boolean;
 };
 
+class ProxyInstance {
+  interactions!: ProxyInteractions;
+  url!: string;
+  targetUrl: string;
+  private abortController: AbortController;
+
+  constructor(target: string) {
+    this.abortController = new AbortController();
+    this.targetUrl = target;
+  }
+
+  public async start(port: number | undefined) {
+    [this.interactions, this.url] = await ProxyInteractions.create(
+      this.targetUrl,
+      this.abortController.signal,
+      {
+        mode: 'reverse-proxy',
+        proxyPort: port,
+      }
+    );
+  }
+
+  stop() {
+    this.abortController.abort();
+  }
+}
+
 const getCaptureAction =
   (config: OpticCliConfig, command: Command) =>
   async (
@@ -128,187 +155,124 @@ const getCaptureAction =
     // TODO capturev2 - handle relative path from root (tbd - what do we do when we handle this outside of a git repo)
     const captureConfig = config.capture?.[filePath];
 
+    // capture v1
     if (targetUrl !== undefined) {
       await captureV1(filePath, targetUrl, config, command);
       return;
-    } else if (targetUrl !== undefined || captureConfig === undefined) {
+    }
+
+    // verify capture v2 config is present
+    if (targetUrl !== undefined || captureConfig === undefined) {
       logger.error(`no capture config for ${filePath} was found`);
       // TODO log error and run capture init or something - tbd what the first use is
       process.exitCode = 1;
       return;
-    } else if (!captureConfig.requests && !captureConfig.requests_command) {
+    }
+
+    // verify that capture.requests or capture.requests_command is set
+    if (!captureConfig.requests && !captureConfig.requests_command) {
       logger.error(
         `"requests" or "requests_command" must be specified in optic.yml`
       );
       process.exitCode = 1;
       return;
-    } else if (options.proxyPort && isNaN(Number(options.proxyPort))) {
+    }
+
+    // verify port number is valid
+    if (options.proxyPort && isNaN(Number(options.proxyPort))) {
       logger.error(
         `--proxy-port must be a number - received ${options.proxyPort}`
       );
       process.exitCode = 1;
       return;
     }
-    const resolvedPath = path.resolve(filePath);
-    let openApiExists = false;
-    try {
-      await fs.stat(resolvedPath);
-      openApiExists = true;
-    } catch (e) {}
 
-    if (!openApiExists) {
-      const fileCreated = await createOpenAPIFile(filePath);
-      if (!fileCreated) {
-        process.exitCode = 1;
-        logger.error('Could not find OpenAPI file');
-        return;
-      }
-    }
-    const trafficDirectory = await getCaptureStorage(resolvedPath);
+    const trafficDirectory = await setup(filePath);
     logger.debug(`Writing captured traffic to ${trafficDirectory}`);
 
-    if (captureConfig.server.dir === undefined) {
-      chdir(config.root);
-    } else {
-      chdir(captureConfig.server.dir);
-    }
-    const serverUrl = options.serverOverride || captureConfig.server.url;
-    let sourcesController = new AbortController();
-    let [proxyInteractions, proxyUrl] = await ProxyInteractions.create(
-      serverUrl,
-      sourcesController.signal,
-      {
-        mode: 'reverse-proxy',
-        proxyPort: options.proxyPort ? Number(options.proxyPort) : undefined,
-      }
+    // start proxy
+    const proxy = new ProxyInstance(
+      options.serverOverride || captureConfig.server.url
     );
+    await proxy.start(
+      options.proxyPort ? Number(options.proxyPort) : undefined
+    );
+
+    // parse spec
     let spec = await loadSpec(filePath, config, {
       strict: false,
       denormalize: false,
     });
 
-    // start the app
-    let app: ChildProcessWithoutNullStreams | undefined = undefined;
+    // start app
+    let app: ChildProcessWithoutNullStreams | undefined;
     if (!options.serverOverride && captureConfig.server.command) {
-      const cmd = commandSplitter(captureConfig.server.command);
-      app = spawn(cmd.cmd, cmd.args, { detached: true });
+      const serverDir =
+        captureConfig.server.dir === undefined
+          ? config.root
+          : captureConfig.server.dir;
+      const timeout = captureConfig.server.ready_timeout || 3 * 60 * 1_000; // 3 minutes
+      const readyInterval = captureConfig.server.ready_interval || 1000;
 
-      app.stderr.on('data', (data) => {
-        logger.error(data.toString());
-      });
-    }
-
-    // wait until the server is ready
-    const readyInterval = captureConfig.server.ready_interval || 1000;
-
-    // since ready_endpoint is not required always wait one interval. without ready_endpoint,
-    // ready_interval must be at least the time it takes to start the server.
-    await wait(readyInterval);
-
-    if (captureConfig.server.ready_endpoint) {
-      const readyUrl = urljoin(serverUrl, captureConfig.server.ready_endpoint);
-      const readyTimeout = captureConfig.server.ready_timeout || 3 * 60 * 1_000; // 3 minutes
-
-      const now = Date.now();
-      const spinner = ora('Waiting for server to come online...');
-      spinner.start();
-      spinner.color = 'blue';
-
-      const checkServer = (): Promise<boolean> =>
-        fetch(readyUrl)
-          .then((res) => String(res.status).startsWith('2'))
-          .catch((e) => {
-            logger.debug(e);
-            return false;
-          });
-
-      let done = false;
-      while (!done) {
-        const isReady = await checkServer();
-        if (isReady) {
-          spinner.succeed('Server check passed');
-          done = true;
-        } else if (Date.now() > now + readyTimeout) {
-          throw new UserError('Server check timed out.');
-        }
-        await wait(readyInterval);
+      try {
+        app = await startApp(
+          captureConfig.server.command,
+          serverDir,
+          captureConfig.server.ready_endpoint,
+          readyInterval,
+          timeout,
+          proxy.targetUrl
+        );
+      } catch (err) {
+        proxy.stop();
+        logger.error(err);
+        process.exitCode = 1;
+        return;
       }
     }
 
     // make requests
+    let errors: any[] = [];
+    try {
+      let [sendRequestsPromise, runRequestsPromise] = makeAllRequests(
+        captureConfig,
+        proxy
+      );
+      await Promise.all([sendRequestsPromise, runRequestsPromise]);
+    } catch (error) {
+      errors.push(error);
+    } finally {
+      proxy.stop();
+      if (app) {
+        process.kill(-app.pid!);
+      }
+
+      if (errors.length > 0) {
+        logger.error('finished with errors:');
+        errors.forEach((error, index) => {
+          logger.error(`${index}:\n${error}`);
+        });
+      }
+    }
+
+    // process proxy interactions into hars
+    const harEntries = HarEntries.fromProxyInteractions(proxy.interactions);
     const captures = new GroupedCaptures(
       trafficDirectory,
       specToOperations(spec.jsonLike).flatMap((o) =>
         o.methods.map((m) => ({ method: m, path: o.pathPattern }))
       )
     );
-
-    let errors: any[] = [];
-    try {
-      let requestsPromise: Promise<any> = Promise.resolve();
-      if (captureConfig.requests) {
-        const requests = makeRequests(
-          captureConfig.requests,
-          proxyUrl,
-          captureConfig.config?.request_concurrency || 5
-        );
-        requestsPromise = Promise.allSettled(requests);
-      }
-
-      let reqCmdPromise: Promise<void> = Promise.resolve();
-      if (captureConfig.requests_command) {
-        const cmd = commandSplitter(captureConfig.requests_command.command);
-        const proxyVar =
-          captureConfig.requests_command.proxy_variable || 'OPTIC_PROXY';
-        process.env[proxyVar] = proxyUrl;
-        const reqCmd = spawn(cmd.cmd, cmd.args, {
-          detached: true,
-          shell: true,
-        });
-
-        reqCmdPromise = new Promise((resolve, reject) => {
-          reqCmd.on('exit', (code) => {
-            if (code === 0) {
-              resolve();
-            } else {
-              reject();
-            }
-          });
-        });
-        reqCmd.stderr.on('data', (data) => {
-          logger.error(data.toString());
-        });
-      }
-      await Promise.all([requestsPromise, reqCmdPromise]);
-    } catch (error) {
-      errors.push(error);
-    } finally {
-      sourcesController.abort();
-      if (app) {
-        process.kill(-app.pid!);
-      }
-    }
-
-    const harEntries = HarEntries.fromProxyInteractions(proxyInteractions);
-    let count = 0;
     for await (const har of harEntries) {
-      count++;
       captures.addHar(har);
       logger.debug(
         `Captured ${har.request.method.toUpperCase()} ${har.request.url}`
       );
     }
-    logger.info(`${count} requests captured`);
-    if (errors.length > 0) {
-      logger.error('finished with errors:');
-      errors.forEach((error, index) => {
-        logger.error(`${index}:\n${error}`);
-      });
-    }
-
     await captures.writeHarFiles();
-    let hasAnyEndpointDiffs = false;
 
+    // update existing endpoints
+    let hasAnyEndpointDiffs = false;
     const coverage = new ApiCoverageCounter(spec.jsonLike);
     // Handle interactions for documented endpoints first
     for (const {
@@ -361,6 +325,7 @@ const getCaptureAction =
       );
     }
 
+    // document new endpoints
     if (options.update && options.interactive) {
       logger.info('');
       logger.info(
@@ -462,7 +427,7 @@ function getSummaryText(endpointCoverage: OperationCoverage) {
   return items.join();
 }
 
-function makeRequests(
+function sendRequests(
   reqs: Request[],
   proxyUrl: string,
   concurrency: number
@@ -491,4 +456,152 @@ function makeRequests(
         })
     );
   });
+}
+
+async function runRequestsCommand(
+  command: string,
+  proxyVar: string,
+  proxyUrl: string
+): Promise<void> {
+  const cmd = commandSplitter(command);
+  process.env[proxyVar] = proxyUrl;
+  const reqCmd = spawn(cmd.cmd, cmd.args, {
+    detached: true,
+    shell: true,
+  });
+
+  let reqCmdPromise: Promise<void>;
+  reqCmdPromise = new Promise((resolve, reject) => {
+    reqCmd.on('exit', (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject();
+      }
+    });
+  });
+  reqCmd.stderr.on('data', (data) => {
+    logger.error(data.toString());
+  });
+  return reqCmdPromise;
+}
+
+function makeAllRequests(
+  captureConfig: CaptureConfigData,
+  proxy: ProxyInstance
+) {
+  // send requests
+  let sendRequestsPromise: Promise<any> = Promise.resolve();
+  if (captureConfig.requests) {
+    const requests = sendRequests(
+      captureConfig.requests,
+      proxy.url,
+      captureConfig.config?.request_concurrency || 5
+    );
+    sendRequestsPromise = Promise.allSettled(requests);
+  }
+
+  // run requests command
+  let runRequestsPromise: Promise<void> = Promise.resolve();
+  if (captureConfig.requests_command) {
+    const proxyVar =
+      captureConfig.requests_command.proxy_variable || 'OPTIC_PROXY';
+
+    runRequestsPromise = runRequestsCommand(
+      captureConfig.requests_command.command,
+      proxyVar,
+      proxy.url
+    );
+  }
+
+  return [sendRequestsPromise, runRequestsPromise];
+}
+
+async function serverReady(
+  checkUrl: string,
+  interval: number,
+  timeout: number
+) {
+  const now = Date.now();
+  const spinner = ora('Waiting for server to come online...');
+  spinner.start();
+  spinner.color = 'blue';
+
+  const checkServer = (): Promise<boolean> =>
+    fetch(checkUrl)
+      .then((res) => String(res.status).startsWith('2'))
+      .catch((e) => {
+        logger.debug(e);
+        return false;
+      });
+
+  let done = false;
+  while (!done) {
+    const isReady = await checkServer();
+    if (isReady) {
+      spinner.succeed('Server check passed');
+      done = true;
+    } else if (Date.now() > now + timeout) {
+      throw new UserError('Server check timed out.');
+    }
+    await wait(interval);
+  }
+}
+
+async function setup(filePath: string): Promise<string> {
+  const resolvedPath = path.resolve(filePath);
+  let openApiExists = false;
+
+  try {
+    await fs.stat(resolvedPath);
+    openApiExists = true;
+  } catch (e) {}
+
+  if (!openApiExists) {
+    const fileCreated = await createOpenAPIFile(filePath);
+    if (!fileCreated) {
+      logger.error('Could not create OpenAPI file');
+      process.exit(1);
+    }
+  }
+  return await getCaptureStorage(resolvedPath);
+}
+
+async function startApp(
+  command: string,
+  dir: string,
+  readyEndpoint: string | undefined,
+  readyInterval: number,
+  readyTimeout: number,
+  targetUrl: string
+): Promise<ChildProcessWithoutNullStreams> {
+  const cmd = commandSplitter(command);
+  const app = spawn(cmd.cmd, cmd.args, { detached: true, cwd: dir });
+
+  app.stderr.on('data', (data) => {
+    logger.error(data.toString());
+  });
+
+  // TODO: this doesn't get caught by the calller but doesn't seem to leave the proxy hanging.
+  // lets find a better way.
+  app.on('exit', (code) => {
+    if (code! > 0) {
+      throw Error(`Unexpected exit from the server with exit code: ${code}`);
+    }
+  });
+
+  // since ready_endpoint is not required always wait one interval. without ready_endpoint,
+  // ready_interval must be at least the time it takes to start the server.
+  await wait(readyInterval);
+
+  //
+  // wait for the app to be ready
+  //
+  if (readyEndpoint) {
+    const url = urljoin(targetUrl, readyEndpoint);
+    const timeout = readyTimeout || 3 * 60 * 1_000; // 3 minutes
+    await serverReady(url, readyInterval, timeout);
+  }
+
+  return app;
 }
