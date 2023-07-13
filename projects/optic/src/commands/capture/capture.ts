@@ -581,6 +581,13 @@ async function startApp(
   app.stderr.on('data', (data) => {
     logger.error(data.toString());
   });
+
+  app.on('exit', (code) => {
+    if (code! > 0) {
+      throw `Unexpected exit from the server with exit code: ${code}`;
+    }
+  });
+
   // since ready_endpoint is not required always wait one interval. without ready_endpoint,
   // ready_interval must be at least the time it takes to start the server.
   await wait(readyInterval);
