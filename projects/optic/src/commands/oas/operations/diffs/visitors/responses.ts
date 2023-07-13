@@ -1,7 +1,7 @@
-import { CapturedResponse } from '../../../captures';
 import { OpenAPIV3 } from '../../../specs';
 import { OperationDiffResult, OperationDiffResultKind } from '../result';
 import { findResponse, findBody } from '../..';
+import { CapturedResponse } from '../../../../capture/sources/captured-interactions';
 
 export function* visitResponses(
   capturedResponse: CapturedResponse,

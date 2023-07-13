@@ -1,11 +1,13 @@
 import { DocumentedInteraction, Operation } from '..';
-import { CapturedInteractions } from '../../captures';
-import { OpenAPIV3, SpecFacts } from '../../specs';
-import { OperationQueries } from '../queries';
-import { collect } from '../../lib/async-tools';
+import { OpenAPIV3 } from '../../specs';
+import {
+  OperationQueries,
+  specToOperations,
+} from '../../../capture/operations/queries';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { Option, Some, None } from 'ts-results';
 import { ParsedOperation } from '../../diffing/document';
+import { CapturedInteractions } from '../../../capture/sources/captured-interactions';
 
 export interface DocumentedInteractions
   extends AsyncIterable<DocumentedInteraction> {}
@@ -19,8 +21,7 @@ export class DocumentedInteractions {
     filterToOperations: ParsedOperation[] = []
   ): AsyncIterable<Option<DocumentedInteraction>> {
     // assumption: no new operations will be added over the life-time of this stream
-    const facts = await collect(SpecFacts.fromOpenAPISpec(spec));
-    const queries = OperationQueries.fromFacts(facts);
+    const queries = new OperationQueries(specToOperations(spec));
 
     const specUpdatesIterator =
       specUpdates && specUpdates[Symbol.asyncIterator]();
@@ -44,10 +45,14 @@ export class DocumentedInteractions {
         continue; // no match
       }
       const matchedOperation = matchedOperationResult.unwrap().unwrap();
-
+      const specPath = jsonPointerHelpers.compile([
+        'paths',
+        matchedOperation.pathPattern,
+        matchedOperation.method,
+      ]);
       let operationObject = jsonPointerHelpers.get(
         spec,
-        matchedOperation.specPath
+        specPath
       ) as OpenAPIV3.OperationObject; // given the validation we've done above, this should be safe
 
       if (
@@ -66,7 +71,7 @@ export class DocumentedInteractions {
             matchedOperation.method,
             operationObject
           ),
-          specJsonPath: matchedOperation.specPath,
+          specJsonPath: specPath,
         });
       } else {
         yield None;

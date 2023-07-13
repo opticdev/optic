@@ -2,8 +2,9 @@ import crypto from 'crypto';
 import fs from 'node:fs/promises';
 import os from 'os';
 import path from 'path';
-import { CapturedInteraction, HttpArchive } from '../oas/captures';
-import { OperationQueries } from '../oas/operations/queries';
+import { CapturedInteraction } from './sources/captured-interactions';
+import { HttpArchive } from './sources/har';
+import { OperationQueries } from './operations/queries';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { getEndpointId } from '../../utils/id';
 import { logger } from '../../logger';
@@ -155,7 +156,8 @@ export class GroupedCaptures {
     hars: HttpArchive.Entry[]
   ): AsyncIterable<CapturedInteraction> {
     for (const har of hars) {
-      yield CapturedInteraction.fromHarEntry(har);
+      const interaction = CapturedInteraction.fromHarEntry(har);
+      if (interaction) yield interaction;
     }
   }
 }

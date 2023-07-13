@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import { CapturedBody } from './body';
+import { CapturedBody } from '../body';
 
 describe('CaputeredBody', () => {
   it('can be created and parsed', async () => {

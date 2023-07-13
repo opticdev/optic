@@ -1,8 +1,8 @@
-import { CapturedInteraction } from '../captures';
 import { OpenAPIV3 } from '../specs';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import invariant from 'ts-invariant';
 import MIMEType from 'whatwg-mimetype';
+import { CapturedInteraction } from '../../capture/sources/captured-interactions';
 
 export { DocumentedInteractions } from './streams/documented-interactions';
 export { OperationPatches } from './streams/patches';

@@ -7,14 +7,17 @@ import { logger } from '../../../logger';
 import { ParseResult } from '../../../utils/spec-loaders';
 import { getIgnorePaths } from '../../../utils/specs';
 
-import { CapturedInteraction, CapturedInteractions } from '../../oas/captures';
-import { InferPathStructure } from '../../oas/operations/infer-path-structure';
-import { specToOperations } from '../../oas/operations/queries';
+import {
+  CapturedInteraction,
+  CapturedInteractions,
+} from '../sources/captured-interactions';
+import { InferPathStructure } from '../operations/infer-path-structure';
+import { specToPaths } from '../operations/queries';
 import { updateSpecFiles } from '../../oas/diffing/document';
 import {
   generateEndpointSpecPatches,
   generatePathAndMethodSpecPatches,
-} from './patches';
+} from '../patches/patches';
 import { SpecPatches } from '../../oas/specs';
 
 type MethodMap = Map<string, { add: Set<string>; ignore: Set<string> }>;
@@ -49,7 +52,7 @@ export async function promptUserForPathPattern(
       maybeNode?.ignore.add(ignore.path);
     }
   }
-  const inferredPathStructure = new InferPathStructure(specToOperations(spec));
+  const inferredPathStructure = new InferPathStructure(specToPaths(spec));
 
   for await (const interaction of interactions) {
     const { path, method } = interaction.request;

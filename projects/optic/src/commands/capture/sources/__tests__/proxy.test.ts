@@ -1,9 +1,9 @@
 import { it, describe, expect, beforeAll, afterAll } from '@jest/globals';
 
-import { ProxyCertAuthority, ProxyInteractions } from './proxy';
+import { ProxyCertAuthority, ProxyInteractions } from '../proxy';
 import * as mockttp from 'mockttp';
 import bent from 'bent';
-import { collect } from '../../../lib/async-tools';
+import { collect } from '../../../oas/lib/async-tools';
 import fetch from 'node-fetch';
 import https from 'https';
 import UrlJoin from 'url-join';

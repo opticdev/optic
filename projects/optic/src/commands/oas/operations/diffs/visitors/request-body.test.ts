@@ -1,7 +1,8 @@
 import { it, describe, expect } from '@jest/globals';
 import { visitRequestBody } from './request-body';
-import { Operation, HttpMethods } from '../..';
-import { CapturedBody, CapturedRequest } from '../../../captures';
+import { HttpMethods } from '../..';
+import { CapturedBody } from '../../../../capture/sources/body';
+import { CapturedRequest } from '../../../../capture/sources/captured-interactions';
 
 describe('visitRequestBody', () => {
   it('detects an unspecified request body', () => {

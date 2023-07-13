@@ -1,24 +1,20 @@
 import chalk from 'chalk';
 import { Command, Option } from 'commander';
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
-import { chdir } from 'process';
 import path from 'path';
 import fs from 'node:fs/promises';
 import fetch from 'node-fetch';
 import Bottleneck from 'bottleneck';
-import jsonpatch from 'fast-json-patch';
 
 import { isJson, isYaml, writeYaml } from '@useoptic/openapi-io';
 import ora from 'ora';
 import urljoin from 'url-join';
 import {
   CoverageNode,
-  OpenAPIV3,
   OperationCoverage,
   UserError,
 } from '@useoptic/openapi-utilities';
 import { CaptureConfigData, Request } from '../../config';
-import { HarEntries, ProxyInteractions } from '../oas/captures';
 import { errorHandler } from '../../error-handler';
 
 import { createNewSpecFile } from '../../utils/specs';
@@ -29,16 +25,16 @@ import { captureV1 } from '../oas/capture';
 import { getCaptureStorage, GroupedCaptures } from './storage';
 import { loadSpec } from '../../utils/spec-loaders';
 import { updateExistingEndpoint } from './interactions/documented';
-import { ApiCoverageCounter } from '../oas/coverage/api-coverage';
+import { ApiCoverageCounter } from './coverage/api-coverage';
 import { commandSplitter } from '../../utils/capture';
 import {
   documentNewEndpoint,
   promptUserForPathPattern,
 } from './interactions/undocumented';
 import { OPTIC_PATH_IGNORE_KEY } from '../../constants';
-import { specToOperations } from '../oas/operations/queries';
-import { SpecFiles } from '../oas/specs';
-import { updateSpecFiles } from '../oas/diffing/document';
+import { specToOperations } from './operations/queries';
+import { ProxyInteractions } from './sources/proxy';
+import { HarEntries } from './sources/har';
 
 const indent = (n: number) => '  '.repeat(n);
 const wait = (time: number) =>
@@ -265,9 +261,10 @@ const getCaptureAction =
     const harEntries = HarEntries.fromProxyInteractions(proxy.interactions);
     const captures = new GroupedCaptures(
       trafficDirectory,
-      specToOperations(spec.jsonLike).flatMap((o) =>
-        o.methods.map((m) => ({ method: m, path: o.pathPattern }))
-      )
+      specToOperations(spec.jsonLike).map((p) => ({
+        ...p,
+        path: p.pathPattern,
+      }))
     );
     for await (const har of harEntries) {
       captures.addHar(har);

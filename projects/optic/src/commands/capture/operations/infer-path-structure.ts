@@ -1,5 +1,5 @@
 import pluralize from 'pluralize';
-import { HttpMethod } from '../operations';
+import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 
 const COLLAPSE_CONSTANTS_N = 2;
 
@@ -293,7 +293,7 @@ export class InferPathStructure {
   // };
 
   undocumentedPaths: () => {
-    methods: Array<HttpMethod>;
+    methods: Array<OpenAPIV3.HttpMethods>;
     pathPattern: string;
     examplePath: string;
   }[] = () => {
@@ -308,7 +308,7 @@ export class InferPathStructure {
               (i) => i.pathPattern === pathPattern && i.methods.includes(method)
             );
           }
-        ) as Array<HttpMethod>;
+        ) as Array<OpenAPIV3.HttpMethods>;
 
         return {
           methods,
