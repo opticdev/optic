@@ -1,13 +1,13 @@
 import { it, describe, expect } from '@jest/globals';
-import { PostmanCollectionEntries, PostmanEntry } from './postman';
+import { PostmanCollectionEntries } from '../postman';
 import fs from 'fs';
 import Path from 'path';
-import { collect } from '../../../lib/async-tools';
+import { collect } from '../../../oas/lib/async-tools';
 
 describe('PostmanCollectionEntries', () => {
   it('can be constructed from a readable', async () => {
     let source = fs.createReadStream(
-      Path.join(__dirname, '../../../tests/inputs/echo.postman_collection.json')
+      Path.join(__dirname, './fixtures/echo.postman_collection.json')
     );
 
     let entries = PostmanCollectionEntries.fromReadable(source);
@@ -33,7 +33,7 @@ describe('PostmanCollectionEntries', () => {
   describe('will only read Postman Collection files', () => {
     it('will not produce any entries when they do not exist at expected path', async () => {
       let source = fs.createReadStream(
-        Path.join(__dirname, '../../../tests/inputs/githubpaths.json')
+        Path.join(__dirname, './fixtures/githubpaths.json')
       );
 
       let entries = await collect(

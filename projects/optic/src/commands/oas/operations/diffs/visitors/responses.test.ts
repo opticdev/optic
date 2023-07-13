@@ -1,6 +1,7 @@
 import { it, describe, expect } from '@jest/globals';
 import { visitResponses } from './responses';
-import { CapturedBody, CapturedResponse } from '../../../captures';
+import { CapturedResponse } from '../../../../capture/sources/captured-interactions';
+import { CapturedBody } from '../../../../capture/sources/body';
 
 describe('visitResponses', () => {
   it('detects an unspecified response', () => {

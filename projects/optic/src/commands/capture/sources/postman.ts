@@ -1,5 +1,5 @@
 import { Readable } from 'stream';
-import { Result, Ok, Err } from 'ts-results';
+import { Result, Ok } from 'ts-results';
 import invariant from 'ts-invariant';
 import {
   Collection,

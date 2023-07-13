@@ -1,12 +1,13 @@
-import { CapturedBody } from './body';
-import { OpenAPIV3 } from '../specs';
-import { HttpArchive } from './streams/sources/har';
-import { ProxySource } from './streams/sources/proxy';
+import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+
+import { HttpArchive, HarEntries } from './har';
+import { PostmanEntry, PostmanCollectionEntries } from './postman';
+import { ProxySource, ProxyInteractions } from './proxy';
+
 import { URL } from 'url';
-import { HttpMethods, Operation } from '../operations';
-import invariant from 'ts-invariant';
 import { Buffer } from 'buffer';
-import { PostmanEntry } from './streams/sources/postman';
+import { CapturedBody } from './body';
+import { logger } from '../../../logger';
 
 type Header = {
   name: string;
@@ -36,14 +37,13 @@ export interface CapturedInteraction {
   };
 }
 export class CapturedInteraction {
-  static fromHarEntry(entry: HttpArchive.Entry): CapturedInteraction {
+  static fromHarEntry(entry: HttpArchive.Entry): CapturedInteraction | null {
     const url = new URL(entry.request.url);
 
-    const method = HttpMethods[entry.request.method];
-    invariant(
-      Operation.isHttpMethod(method),
-      `expect HAR entry to have a valid request method`
-    );
+    const method = OpenAPIV3.HttpMethods[entry.request.method];
+    if (!method) {
+      return null;
+    }
 
     let requestBody: CapturedBody | null = null;
     let responseBody: CapturedBody | null = null;
@@ -99,14 +99,13 @@ export class CapturedInteraction {
 
   static fromProxyInteraction(
     proxyInteraction: ProxySource.Interaction
-  ): CapturedInteraction {
+  ): CapturedInteraction | null {
     const url = new URL(proxyInteraction.request.url);
 
-    const method = HttpMethods[proxyInteraction.request.method];
-    invariant(
-      Operation.isHttpMethod(method),
-      `expect proxy interaction to have a valid request method`
-    );
+    const method = OpenAPIV3.HttpMethods[proxyInteraction.request.method];
+    if (!method) {
+      return null;
+    }
 
     let requestBody: CapturedBody | null = null;
     let responseBody: CapturedBody | null = null;
@@ -154,7 +153,7 @@ export class CapturedInteraction {
 
   static fromPostmanCollection(
     postmanEntry: PostmanEntry
-  ): CapturedInteraction {
+  ): CapturedInteraction | null {
     const { request, response, variableScope } = postmanEntry;
     const resolve = (str: string) => variableScope.replaceIn(str);
     const query = request.url.query.map((query) => ({
@@ -162,11 +161,11 @@ export class CapturedInteraction {
       value: resolve(query.value || ''),
     }));
 
-    const method = HttpMethods[request.method?.toUpperCase() || 'GET'];
-    invariant(
-      Operation.isHttpMethod(method),
-      `expect Postman collection request to have a valid request method`
-    );
+    const method =
+      OpenAPIV3.HttpMethods[request.method?.toUpperCase() || 'GET'];
+    if (!method) {
+      return null;
+    }
 
     const languageMap = {
       json: 'application/json',
@@ -242,3 +241,47 @@ export class CapturedInteraction {
 
 export type CapturedRequest = CapturedInteraction['request'];
 export type CapturedResponse = CapturedInteraction['response'];
+
+export interface CapturedInteractions
+  extends AsyncIterable<CapturedInteraction> {}
+
+export class CapturedInteractions {
+  static async *fromHarEntries(entries: HarEntries): CapturedInteractions {
+    for await (let entry of entries) {
+      const capturedInteraction = CapturedInteraction.fromHarEntry(entry);
+      if (capturedInteraction) {
+        yield capturedInteraction;
+      } else {
+        logger.debug(`skipping entry ${JSON.stringify(entry)}`);
+      }
+    }
+  }
+
+  static async *fromProxyInteractions(
+    interactions: ProxyInteractions
+  ): CapturedInteractions {
+    for await (let interaction of interactions) {
+      const capturedInteraction =
+        CapturedInteraction.fromProxyInteraction(interaction);
+      if (capturedInteraction) {
+        yield capturedInteraction;
+      } else {
+        logger.debug(`skipping entry ${JSON.stringify(interaction)}`);
+      }
+    }
+  }
+
+  static async *fromPostmanCollection(
+    entries: PostmanCollectionEntries
+  ): CapturedInteractions {
+    for await (let entry of entries) {
+      const capturedInteraction =
+        CapturedInteraction.fromPostmanCollection(entry);
+      if (capturedInteraction) {
+        yield capturedInteraction;
+      } else {
+        logger.debug(`skipping entry ${JSON.stringify(entry)}`);
+      }
+    }
+  }
+}

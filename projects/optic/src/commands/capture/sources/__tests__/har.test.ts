@@ -1,14 +1,14 @@
 import { it, describe, expect } from '@jest/globals';
-import { HarEntries, HttpArchive } from './har';
+import { HarEntries, HttpArchive } from '../har';
 import fs from 'fs';
 import Path from 'path';
 import { Readable } from 'stream';
-import { collect, take, unwrap } from '../../../lib/async-tools';
+import { collect, take, unwrap } from '../../../oas/lib/async-tools';
 
 describe('HarEntries', () => {
   it('can be constructed from a readable', async () => {
     let source = fs.createReadStream(
-      Path.join(__dirname, '../../../tests/inputs/petstore.swagger.io.har')
+      Path.join(__dirname, './fixtures/petstore.swagger.io.har')
     );
 
     let entries = HarEntries.fromReadable(source);
@@ -34,7 +34,7 @@ describe('HarEntries', () => {
   describe('will only read HAR files', () => {
     it('will not produce any entries when they do not exist at expected path', async () => {
       let source = fs.createReadStream(
-        Path.join(__dirname, '../../../tests/inputs/githubpaths.json')
+        Path.join(__dirname, './fixtures/githubpaths.json')
       );
 
       let entries = await collect(HarEntries.fromReadable(source));
@@ -42,7 +42,7 @@ describe('HarEntries', () => {
     });
 
     it('throws an error when file isnt json', async () => {
-      let source = fs.createReadStream(Path.join(__dirname, './har.ts'));
+      let source = fs.createReadStream(Path.join(__dirname, '../har.ts'));
 
       const getEntries = async () => {
         await collect(HarEntries.fromReadable(source));
@@ -68,7 +68,7 @@ describe('HarEntries', () => {
 
   it('can be encoded as Readable JSON stream', async () => {
     let source = fs.createReadStream(
-      Path.join(__dirname, '../../../tests/inputs/petstore.swagger.io.har')
+      Path.join(__dirname, './fixtures/petstore.swagger.io.har')
     );
 
     let entries = take<HttpArchive.Entry>(2)(

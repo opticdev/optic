@@ -3,8 +3,6 @@ import {
   BodyLocation,
   BodyExampleLocation,
   ComponentSchemaLocation,
-  IFact,
-  OpenApiFact,
 } from '@useoptic/openapi-utilities';
 import { Result, Ok, Err, Option, Some, None } from 'ts-results';
 import MIMEType from 'whatwg-mimetype';
@@ -12,12 +10,12 @@ import MIMEType from 'whatwg-mimetype';
 import { BodyExampleFacts, ComponentSchemaExampleFacts } from '../../specs';
 import { OpenAPIV3 } from '../../specs';
 import { Body, DocumentedBody } from '../body';
-import { CapturedBody, CapturedBodies } from '../../captures';
 import {
   DocumentedInteraction,
   findResponse,
   findBody,
 } from '../../operations';
+import { CapturedBody } from '../../../capture/sources/body';
 
 export type { DocumentedBody };
 

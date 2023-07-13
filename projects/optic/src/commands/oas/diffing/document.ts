@@ -8,9 +8,8 @@ import {
   UndocumentedOperations,
   UndocumentedOperationType,
 } from '../operations';
-import { InferPathStructure } from '../operations/infer-path-structure';
+import { InferPathStructure } from '../../capture/operations/infer-path-structure';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
-import { CapturedInteraction, CapturedInteractions } from '../captures';
 import * as AT from '../lib/async-tools';
 import {
   SpecFile,
@@ -24,10 +23,14 @@ import {
 } from '../specs';
 import { DocumentedBodies, DocumentedBody } from '../shapes';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { ApiCoverageCounter } from '../coverage/api-coverage';
+import { ApiCoverageCounter } from '../../capture/coverage/api-coverage';
 import { SchemaInventory } from '../shapes/closeness/schema-inventory';
-import { specToOperations } from '../operations/queries';
+import { specToPaths } from '../../capture/operations/queries';
 import { checkOpenAPIVersion } from '@useoptic/openapi-io';
+import {
+  CapturedInteraction,
+  CapturedInteractions,
+} from '../../capture/sources/captured-interactions';
 
 export interface ParsedOperation {
   methods: HttpMethod[];
@@ -74,10 +77,7 @@ export async function addIfUndocumented(
   sourcemap: SpecFilesSourcemap
 ): Promise<Result<RecentlyDocumented, string>> {
   const operationsToUpdate = isAddAll
-    ? await observationToUndocumented(
-        statusObservations,
-        specToOperations(spec)
-      )
+    ? await observationToUndocumented(statusObservations, specToPaths(spec))
     : operationsToAdd;
 
   let { results: addPatches, observations: addObservations } = addOperations(

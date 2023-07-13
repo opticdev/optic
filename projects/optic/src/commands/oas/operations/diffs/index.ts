@@ -1,6 +1,6 @@
 import { Operation } from '..';
+import { CapturedInteraction } from '../../../capture/sources/captured-interactions';
 import { OpenAPIV3 } from '../../specs';
-import { CapturedInteraction } from '../../captures';
 import { OperationDiffResult, OperationDiffResultKind } from './result';
 import {
   OperationInteractionDiffTraverser,

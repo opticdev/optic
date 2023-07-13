@@ -5,13 +5,15 @@ import {
   PathComponents,
   PathComponent,
 } from '..';
-import { CapturedInteraction, CapturedInteractions } from '../../captures';
 import { OpenAPIV3 } from '../../specs';
 import { diffOperationWithSpec, OperationDiffResultKind } from '../diffs';
 import * as AT from '../../lib/async-tools';
-import Url from 'url';
 import { minimatch } from 'minimatch';
 import { getIgnorePaths } from '../../../../utils/specs';
+import {
+  CapturedInteraction,
+  CapturedInteractions,
+} from '../../../capture/sources/captured-interactions';
 
 export interface UndocumentedOperations
   extends AsyncIterable<UndocumentedOperation> {}

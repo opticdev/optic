@@ -6,8 +6,9 @@ import {
 } from '../../diffs';
 import { OpenAPIV3 } from '../../../specs';
 import { Operation, HttpMethods } from '../../';
-import { CapturedInteraction, CapturedBody } from '../../../captures';
 import { OperationPatch } from '..';
+import { CapturedBody } from '../../../../capture/sources/body';
+import { CapturedInteraction } from '../../../../capture/sources/captured-interactions';
 
 describe('requestBodyPatches', () => {
   it('generates a patch for an unspecified request body', () => {
