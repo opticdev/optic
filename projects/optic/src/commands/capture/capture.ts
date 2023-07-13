@@ -145,28 +145,6 @@ class ProxyInstance {
   }
 }
 
-async function specExists(filePath: string): Promise<boolean> {
-  try {
-    await fs.stat(filePath);
-  } catch {
-    return false;
-  }
-  return true;
-}
-
-async function setup(filePath: string): Promise<string> {
-  const resolvedPath = path.resolve(filePath);
-  const oasSpecExists = await specExists(resolvedPath);
-  if (!oasSpecExists) {
-    const fileCreated = await createOpenAPIFile(filePath);
-    if (!fileCreated) {
-      logger.error('Could not create OpenAPI file');
-      process.exit(1);
-    }
-  }
-  return await getCaptureStorage(resolvedPath);
-}
-
 const getCaptureAction =
   (config: OpticCliConfig, command: Command) =>
   async (
@@ -212,10 +190,6 @@ const getCaptureAction =
     const trafficDirectory = await setup(filePath);
     logger.debug(`Writing captured traffic to ${trafficDirectory}`);
 
-    captureConfig.server.dir === undefined
-      ? chdir(config.root)
-      : chdir(captureConfig.server.dir);
-
     //
     // start proxy
     //
@@ -235,60 +209,28 @@ const getCaptureAction =
     //
     // start app
     //
-    let app: ChildProcessWithoutNullStreams | undefined = undefined;
+    let app: ChildProcessWithoutNullStreams | undefined;
     if (!options.serverOverride && captureConfig.server.command) {
-      const cmd = commandSplitter(captureConfig.server.command);
-      app = spawn(cmd.cmd, cmd.args, { detached: true });
+      const serverDir =
+        captureConfig.server.dir === undefined
+          ? config.root
+          : captureConfig.server.dir;
+      const timeout = captureConfig.server.ready_timeout || 3 * 60 * 1_000; // 3 minutes
+      const readyInterval = captureConfig.server.ready_interval || 1000;
 
-      app.stderr.on('data', (data) => {
-        logger.error(data.toString());
-      });
-    }
-
-    // wait until the server is ready
-    const readyInterval = captureConfig.server.ready_interval || 1000;
-
-    // since ready_endpoint is not required always wait one interval. without ready_endpoint,
-    // ready_interval must be at least the time it takes to start the server.
-    await wait(readyInterval);
-
-    //
-    // readyCheck()
-    //
-    if (captureConfig.server.ready_endpoint) {
-      const readyUrl = urljoin(
-        proxy.targetUrl,
-        captureConfig.server.ready_endpoint
+      app = await startApp(
+        captureConfig.server.command,
+        serverDir,
+        captureConfig.server.ready_endpoint,
+        readyInterval,
+        timeout,
+        proxy.targetUrl
       );
-      const readyTimeout = captureConfig.server.ready_timeout || 3 * 60 * 1_000; // 3 minutes
-
-      const now = Date.now();
-      const spinner = ora('Waiting for server to come online...');
-      spinner.start();
-      spinner.color = 'blue';
-
-      const checkServer = (): Promise<boolean> =>
-        fetch(readyUrl)
-          .then((res) => String(res.status).startsWith('2'))
-          .catch((e) => {
-            logger.debug(e);
-            return false;
-          });
-
-      let done = false;
-      while (!done) {
-        const isReady = await checkServer();
-        if (isReady) {
-          spinner.succeed('Server check passed');
-          done = true;
-        } else if (Date.now() > now + readyTimeout) {
-          throw new UserError('Server check timed out.');
-        }
-        await wait(readyInterval);
-      }
     }
 
+    //
     // make requests
+    //
     const captures = new GroupedCaptures(
       trafficDirectory,
       specToOperations(spec.jsonLike).flatMap((o) =>
@@ -544,4 +486,87 @@ function makeRequests(
         })
     );
   });
+}
+
+async function serverReady(
+  checkUrl: string,
+  interval: number,
+  timeout: number
+) {
+  const now = Date.now();
+  const spinner = ora('Waiting for server to come online...');
+  spinner.start();
+  spinner.color = 'blue';
+
+  const checkServer = (): Promise<boolean> =>
+    fetch(checkUrl)
+      .then((res) => String(res.status).startsWith('2'))
+      .catch((e) => {
+        logger.debug(e);
+        return false;
+      });
+
+  let done = false;
+  while (!done) {
+    const isReady = await checkServer();
+    if (isReady) {
+      spinner.succeed('Server check passed');
+      done = true;
+    } else if (Date.now() > now + timeout) {
+      throw new UserError('Server check timed out.');
+    }
+    await wait(interval);
+  }
+}
+
+async function specExists(filePath: string): Promise<boolean> {
+  try {
+    await fs.stat(filePath);
+  } catch {
+    return false;
+  }
+  return true;
+}
+
+async function setup(filePath: string): Promise<string> {
+  const resolvedPath = path.resolve(filePath);
+  const oasSpecExists = await specExists(resolvedPath);
+  if (!oasSpecExists) {
+    const fileCreated = await createOpenAPIFile(filePath);
+    if (!fileCreated) {
+      logger.error('Could not create OpenAPI file');
+      process.exit(1);
+    }
+  }
+  return await getCaptureStorage(resolvedPath);
+}
+
+async function startApp(
+  command: string,
+  dir: string,
+  readyEndpoint: string | undefined,
+  readyInterval: number,
+  readyTimeout: number,
+  targetUrl: string
+): Promise<ChildProcessWithoutNullStreams | undefined> {
+  const cmd = commandSplitter(command);
+  const app = spawn(cmd.cmd, cmd.args, { detached: true, cwd: dir });
+
+  app.stderr.on('data', (data) => {
+    logger.error(data.toString());
+  });
+  // since ready_endpoint is not required always wait one interval. without ready_endpoint,
+  // ready_interval must be at least the time it takes to start the server.
+  await wait(readyInterval);
+
+  //
+  // wait for the app to be ready
+  //
+  if (readyEndpoint) {
+    const url = urljoin(targetUrl, readyEndpoint);
+    const timeout = readyTimeout || 3 * 60 * 1_000; // 3 minutes
+    await serverReady(url, readyInterval, timeout);
+  }
+
+  return app;
 }
