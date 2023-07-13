@@ -190,9 +190,7 @@ const getCaptureAction =
     const trafficDirectory = await setup(filePath);
     logger.debug(`Writing captured traffic to ${trafficDirectory}`);
 
-    //
     // start proxy
-    //
     const proxy = new ProxyInstance(
       options.serverOverride || captureConfig.server.url
     );
@@ -200,17 +198,13 @@ const getCaptureAction =
       options.proxyPort ? Number(options.proxyPort) : undefined
     );
 
-    //
     // parse optic.yml
-    //
     let spec = await loadSpec(filePath, config, {
       strict: false,
       denormalize: false,
     });
 
-    //
     // start app
-    //
     let app: ChildProcessWithoutNullStreams | undefined;
     if (!options.serverOverride && captureConfig.server.command) {
       const serverDir =
@@ -230,9 +224,7 @@ const getCaptureAction =
       );
     }
 
-    //
     // make requests
-    //
     let errors: any[] = [];
     try {
       let [sendRequestsPromise, runRequestsPromise] = makeAllRequests(
@@ -256,9 +248,7 @@ const getCaptureAction =
       }
     }
 
-    //
     // process proxy interactions into hars
-    //
     const harEntries = HarEntries.fromProxyInteractions(proxy.interactions);
     const captures = new GroupedCaptures(
       trafficDirectory,
@@ -273,8 +263,9 @@ const getCaptureAction =
       );
     }
     await captures.writeHarFiles();
-    let hasAnyEndpointDiffs = false;
 
+    // update existing endpoints
+    let hasAnyEndpointDiffs = false;
     const coverage = new ApiCoverageCounter(spec.jsonLike);
     // Handle interactions for documented endpoints first
     for (const {
@@ -327,7 +318,7 @@ const getCaptureAction =
       );
     }
 
-    // learn path patterns
+    // document new endpoints
     if (options.update && options.interactive) {
       logger.info('');
       logger.info(
