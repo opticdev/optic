@@ -477,6 +477,34 @@ function sendRequests(
   });
 }
 
+async function runRequestsCommand(
+  command: string,
+  proxyVar: string,
+  proxyUrl: string
+): Promise<void> {
+  const cmd = commandSplitter(command);
+  process.env[proxyVar] = proxyUrl;
+  const reqCmd = spawn(cmd.cmd, cmd.args, {
+    detached: true,
+    shell: true,
+  });
+
+  let reqCmdPromise: Promise<void>;
+  reqCmdPromise = new Promise((resolve, reject) => {
+    reqCmd.on('exit', (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject();
+      }
+    });
+  });
+  reqCmd.stderr.on('data', (data) => {
+    logger.error(data.toString());
+  });
+  return reqCmdPromise;
+}
+
 async function serverReady(
   checkUrl: string,
   interval: number,
@@ -560,30 +588,4 @@ async function startApp(
   return app;
 }
 
-async function runRequestsCommand(
-  command: string,
-  proxyVar: string,
-  proxyUrl: string
-): Promise<void> {
-  const cmd = commandSplitter(command);
-  process.env[proxyVar] = proxyUrl;
-  const reqCmd = spawn(cmd.cmd, cmd.args, {
-    detached: true,
-    shell: true,
-  });
-
-  let reqCmdPromise: Promise<void>;
-  reqCmdPromise = new Promise((resolve, reject) => {
-    reqCmd.on('exit', (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject();
-      }
-    });
-  });
-  reqCmd.stderr.on('data', (data) => {
-    logger.error(data.toString());
-  });
-  return reqCmdPromise;
-}
+function makeAllRequests() {}
