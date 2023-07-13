@@ -233,39 +233,12 @@ const getCaptureAction =
     //
     // make requests
     //
-    const captures = new GroupedCaptures(
-      trafficDirectory,
-      specToOperations(spec.jsonLike).flatMap((o) =>
-        o.methods.map((m) => ({ method: m, path: o.pathPattern }))
-      )
-    );
-
     let errors: any[] = [];
     try {
-      // send requests
-      let sendRequestsPromise: Promise<any> = Promise.resolve();
-      if (captureConfig.requests) {
-        const requests = sendRequests(
-          captureConfig.requests,
-          proxy.url,
-          captureConfig.config?.request_concurrency || 5
-        );
-        sendRequestsPromise = Promise.allSettled(requests);
-      }
-
-      // run requests command
-      let runRequestsPromise: Promise<void> = Promise.resolve();
-      if (captureConfig.requests_command) {
-        const proxyVar =
-          captureConfig.requests_command.proxy_variable || 'OPTIC_PROXY';
-
-        runRequestsPromise = runRequestsCommand(
-          captureConfig.requests_command.command,
-          proxyVar,
-          proxy.url
-        );
-      }
-
+      let [sendRequestsPromise, runRequestsPromise] = makeAllRequests(
+        captureConfig,
+        proxy
+      );
       await Promise.all([sendRequestsPromise, runRequestsPromise]);
     } catch (error) {
       errors.push(error);
@@ -277,6 +250,12 @@ const getCaptureAction =
     }
 
     const harEntries = HarEntries.fromProxyInteractions(proxy.interactions);
+    const captures = new GroupedCaptures(
+      trafficDirectory,
+      specToOperations(spec.jsonLike).flatMap((o) =>
+        o.methods.map((m) => ({ method: m, path: o.pathPattern }))
+      )
+    );
     for await (const har of harEntries) {
       captures.addHar(har);
       logger.debug(
@@ -505,6 +484,37 @@ async function runRequestsCommand(
   return reqCmdPromise;
 }
 
+function makeAllRequests(
+  captureConfig: CaptureConfigData,
+  proxy: ProxyInstance
+) {
+  // send requests
+  let sendRequestsPromise: Promise<any> = Promise.resolve();
+  if (captureConfig.requests) {
+    const requests = sendRequests(
+      captureConfig.requests,
+      proxy.url,
+      captureConfig.config?.request_concurrency || 5
+    );
+    sendRequestsPromise = Promise.allSettled(requests);
+  }
+
+  // run requests command
+  let runRequestsPromise: Promise<void> = Promise.resolve();
+  if (captureConfig.requests_command) {
+    const proxyVar =
+      captureConfig.requests_command.proxy_variable || 'OPTIC_PROXY';
+
+    runRequestsPromise = runRequestsCommand(
+      captureConfig.requests_command.command,
+      proxyVar,
+      proxy.url
+    );
+  }
+
+  return [sendRequestsPromise, runRequestsPromise];
+}
+
 async function serverReady(
   checkUrl: string,
   interval: number,
@@ -587,5 +597,3 @@ async function startApp(
 
   return app;
 }
-
-function makeAllRequests() {}
