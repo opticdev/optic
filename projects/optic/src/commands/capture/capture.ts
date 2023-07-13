@@ -582,6 +582,8 @@ async function startApp(
     logger.error(data.toString());
   });
 
+  // TODO: this doesn't get caught by the calller but doesn't seem to leave the proxy hanging.
+  // lets find a better way.
   app.on('exit', (code) => {
     if (code! > 0) {
       throw `Unexpected exit from the server with exit code: ${code}`;
