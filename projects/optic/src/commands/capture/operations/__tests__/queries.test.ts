@@ -1,16 +1,13 @@
-import { it, beforeEach, describe, expect } from '@jest/globals';
-import { OperationQueries } from './queries';
-import { SpecFacts, OpenAPIV3 } from '../specs';
-import { collect } from '../lib/async-tools';
-import { petstore } from '../tests/fixtures/facts';
+import { it, describe, expect } from '@jest/globals';
+import { OperationQueries, specToOperations } from '../queries';
+import { OpenAPIV3 } from '../../../oas/specs';
+import { petstore } from '../../../oas/tests/fixtures/facts';
 
 const { HttpMethods } = OpenAPIV3;
 
 describe('OperationsQueries', () => {
   it('can be created from operation facts', async () => {
-    const operationFacts = await collect(SpecFacts.operationFacts(petstore()));
-
-    OperationQueries.fromFacts(operationFacts);
+    new OperationQueries(specToOperations(await petstore()));
   });
 
   describe('findSpecPath', () => {

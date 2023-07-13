@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OperationsQueries findPathPattern can match / 1`] = `"/"`;
+
+exports[`OperationsQueries findPathPattern will match a parameterised pattern 1`] = `"/orgs/{org}/actions/runner-groups/{runner_group_id}/repositories/{repository_id}"`;
+
+exports[`OperationsQueries findPathPattern will match concrete paths in set 1`] = `"/app/hook/config"`;
+
+exports[`OperationsQueries findPathPattern will match concrete paths with parameters set 1`] = `"/orgs/{org}/actions/runner-groups/{runner_group_id}/repositories/{repository_id}"`;
+
+exports[`OperationsQueries findSpecPath ambigious paths will match exact matches 1`] = `
+{
+  "method": "get",
+  "pathPattern": "/venues/top",
+  "specPath": "debug-path-3-get",
+}
+`;
+
+exports[`OperationsQueries findSpecPath ambigious paths will match parameterized path 1`] = `
+{
+  "method": "get",
+  "pathPattern": "/venues/{venueId}",
+  "specPath": "debug-path-5-get",
+}
+`;
+
+exports[`OperationsQueries findSpecPath can match / 1`] = `
+{
+  "method": "get",
+  "pathPattern": "/",
+  "specPath": "debug-path-0-get",
+}
+`;
+
+exports[`OperationsQueries findSpecPath will match concrete paths in set 1`] = `
+{
+  "method": "get",
+  "pathPattern": "/app/hook/config",
+  "specPath": "debug-path-1-get",
+}
+`;
+
+exports[`OperationsQueries findSpecPath will match concrete paths with parameters set 1`] = `
+{
+  "method": "get",
+  "pathPattern": "/orgs/{org}/actions/runner-groups/{runner_group_id}/repositories/{repository_id}",
+  "specPath": "debug-path-2-get",
+}
+`;
+
+exports[`OperationsQueries findSpecPath will match method 1`] = `
+{
+  "method": "post",
+  "pathPattern": "/app/hook/config",
+  "specPath": "debug-path-1-post",
+}
+`;

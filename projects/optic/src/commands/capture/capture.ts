@@ -32,7 +32,7 @@ import {
   promptUserForPathPattern,
 } from './interactions/undocumented';
 import { OPTIC_PATH_IGNORE_KEY } from '../../constants';
-import { specToOperations } from '../oas/operations/queries';
+import { specToOperations } from './operations/queries';
 import { ProxyInteractions } from './sources/proxy';
 import { HarEntries } from './sources/har';
 
@@ -255,9 +255,10 @@ const getCaptureAction =
     const harEntries = HarEntries.fromProxyInteractions(proxy.interactions);
     const captures = new GroupedCaptures(
       trafficDirectory,
-      specToOperations(spec.jsonLike).flatMap((o) =>
-        o.methods.map((m) => ({ method: m, path: o.pathPattern }))
-      )
+      specToOperations(spec.jsonLike).map((p) => ({
+        ...p,
+        path: p.pathPattern,
+      }))
     );
     for await (const har of harEntries) {
       captures.addHar(har);

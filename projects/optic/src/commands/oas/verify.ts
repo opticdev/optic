@@ -16,7 +16,7 @@ import {
   StatusObservations,
 } from './diffing/document';
 import { renderDiffs, updateByInteractions } from './diffing/patch';
-import { specToOperations } from './operations/queries';
+import { specToPaths } from '../capture/operations/queries';
 import { OpticCliConfig, VCS } from '../../config';
 import { OPTIC_URL_KEY } from '../../constants';
 import { getApiFromOpticUrl, getSpecUrl } from '../../utils/cloud-urls';
@@ -249,7 +249,7 @@ async function renderOperationStatus(
 ) {
   const pathsToAdd = await observationToUndocumented(
     observations,
-    specToOperations(spec)
+    specToPaths(spec)
   );
 
   let undocumentedPaths: number = 0;

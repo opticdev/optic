@@ -4,7 +4,7 @@ import os from 'os';
 import path from 'path';
 import { CapturedInteraction } from './sources/captured-interactions';
 import { HttpArchive } from './sources/har';
-import { OperationQueries } from '../oas/operations/queries';
+import { OperationQueries } from './operations/queries';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { getEndpointId } from '../../utils/id';
 import { logger } from '../../logger';

@@ -1,9 +1,5 @@
 import { it, expect } from '@jest/globals';
-import { InferPathStructure } from './infer-path-structure';
-import * as AT from '../lib/async-tools';
-import { HttpMethods } from './index';
-import { CapturedInteraction } from '../captures';
-import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { InferPathStructure } from '../infer-path-structure';
 
 const gitHubExample = [
   { pathPattern: '/users/{username}/events/public', methods: ['get'] },
