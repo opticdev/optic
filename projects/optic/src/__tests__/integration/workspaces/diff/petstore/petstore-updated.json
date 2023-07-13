@@ -136,6 +136,18 @@
           }
         ],
         "responses": {}
+      },
+      "patch": {
+        "parameters": [
+          {
+            "name": "seomthing",
+            "in": "query",
+            "description": "something",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {}
       }
     },
     "/parameters_at_path": {
