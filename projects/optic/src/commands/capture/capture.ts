@@ -242,41 +242,31 @@ const getCaptureAction =
 
     let errors: any[] = [];
     try {
-      let requestsPromise: Promise<any> = Promise.resolve();
+      // send requests
+      let sendRequestsPromise: Promise<any> = Promise.resolve();
       if (captureConfig.requests) {
-        const requests = makeRequests(
+        const requests = sendRequests(
           captureConfig.requests,
           proxy.url,
           captureConfig.config?.request_concurrency || 5
         );
-        requestsPromise = Promise.allSettled(requests);
+        sendRequestsPromise = Promise.allSettled(requests);
       }
 
-      let reqCmdPromise: Promise<void> = Promise.resolve();
+      // run requests command
+      let runRequestsPromise: Promise<void> = Promise.resolve();
       if (captureConfig.requests_command) {
-        const cmd = commandSplitter(captureConfig.requests_command.command);
         const proxyVar =
           captureConfig.requests_command.proxy_variable || 'OPTIC_PROXY';
-        process.env[proxyVar] = proxy.url;
-        const reqCmd = spawn(cmd.cmd, cmd.args, {
-          detached: true,
-          shell: true,
-        });
 
-        reqCmdPromise = new Promise((resolve, reject) => {
-          reqCmd.on('exit', (code) => {
-            if (code === 0) {
-              resolve();
-            } else {
-              reject();
-            }
-          });
-        });
-        reqCmd.stderr.on('data', (data) => {
-          logger.error(data.toString());
-        });
+        runRequestsPromise = runRequestsCommand(
+          captureConfig.requests_command.command,
+          proxyVar,
+          proxy.url
+        );
       }
-      await Promise.all([requestsPromise, reqCmdPromise]);
+
+      await Promise.all([sendRequestsPromise, runRequestsPromise]);
     } catch (error) {
       errors.push(error);
     } finally {
@@ -287,15 +277,12 @@ const getCaptureAction =
     }
 
     const harEntries = HarEntries.fromProxyInteractions(proxy.interactions);
-    let count = 0;
     for await (const har of harEntries) {
-      count++;
       captures.addHar(har);
       logger.debug(
         `Captured ${har.request.method.toUpperCase()} ${har.request.url}`
       );
     }
-    logger.info(`${count} requests captured`);
     if (errors.length > 0) {
       logger.error('finished with errors:');
       errors.forEach((error, index) => {
@@ -459,7 +446,7 @@ function getSummaryText(endpointCoverage: OperationCoverage) {
   return items.join();
 }
 
-function makeRequests(
+function sendRequests(
   reqs: Request[],
   proxyUrl: string,
   concurrency: number
@@ -571,4 +558,32 @@ async function startApp(
   }
 
   return app;
+}
+
+async function runRequestsCommand(
+  command: string,
+  proxyVar: string,
+  proxyUrl: string
+): Promise<void> {
+  const cmd = commandSplitter(command);
+  process.env[proxyVar] = proxyUrl;
+  const reqCmd = spawn(cmd.cmd, cmd.args, {
+    detached: true,
+    shell: true,
+  });
+
+  let reqCmdPromise: Promise<void>;
+  reqCmdPromise = new Promise((resolve, reject) => {
+    reqCmd.on('exit', (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject();
+      }
+    });
+  });
+  reqCmd.stderr.on('data', (data) => {
+    logger.error(data.toString());
+  });
+  return reqCmdPromise;
 }
