@@ -129,7 +129,7 @@ class ProxyInstance {
     this.targetUrl = target;
   }
 
-  public async init(port: number | undefined) {
+  public async start(port: number | undefined) {
     [this.interactions, this.url] = await ProxyInteractions.create(
       this.targetUrl,
       this.abortController.signal,
@@ -196,7 +196,9 @@ const getCaptureAction =
     const proxy = new ProxyInstance(
       options.serverOverride || captureConfig.server.url
     );
-    await proxy.init(options.proxyPort ? Number(options.proxyPort) : undefined);
+    await proxy.start(
+      options.proxyPort ? Number(options.proxyPort) : undefined
+    );
 
     //
     // parse optic.yml
