@@ -586,7 +586,7 @@ async function startApp(
   // lets find a better way.
   app.on('exit', (code) => {
     if (code! > 0) {
-      throw `Unexpected exit from the server with exit code: ${code}`;
+      throw Error(`Unexpected exit from the server with exit code: ${code}`);
     }
   });
 
