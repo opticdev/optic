@@ -570,7 +570,7 @@ async function startApp(
   readyInterval: number,
   readyTimeout: number,
   targetUrl: string
-): Promise<ChildProcessWithoutNullStreams | undefined> {
+): Promise<ChildProcessWithoutNullStreams> {
   const cmd = commandSplitter(command);
   const app = spawn(cmd.cmd, cmd.args, { detached: true, cwd: dir });
 
