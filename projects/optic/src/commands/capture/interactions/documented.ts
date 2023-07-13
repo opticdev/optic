@@ -1,14 +1,14 @@
 import fs from 'node:fs/promises';
-import { ParseResult } from '../../../utils/spec-loaders';
+import chalk from 'chalk';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { ParseResult } from '../../../utils/spec-loaders';
+import { generateEndpointSpecPatches } from '../patches/patches';
 
 import { updateSpecFiles } from '../../oas/diffing/document';
 import { SpecPatch } from '../../oas/specs';
 import { CapturedInteractions } from '../../oas/captures';
 import { ApiCoverageCounter } from '../../oas/coverage/api-coverage';
 import * as AT from '../../oas/lib/async-tools';
-import chalk from 'chalk';
-import { generateEndpointSpecPatches } from './patches';
 
 function summarizePatch(
   patch: SpecPatch,

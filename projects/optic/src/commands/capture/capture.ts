@@ -6,14 +6,12 @@ import path from 'path';
 import fs from 'node:fs/promises';
 import fetch from 'node-fetch';
 import Bottleneck from 'bottleneck';
-import jsonpatch from 'fast-json-patch';
 
 import { isJson, isYaml, writeYaml } from '@useoptic/openapi-io';
 import ora from 'ora';
 import urljoin from 'url-join';
 import {
   CoverageNode,
-  OpenAPIV3,
   OperationCoverage,
   UserError,
 } from '@useoptic/openapi-utilities';
@@ -37,8 +35,6 @@ import {
 } from './interactions/undocumented';
 import { OPTIC_PATH_IGNORE_KEY } from '../../constants';
 import { specToOperations } from '../oas/operations/queries';
-import { SpecFiles } from '../oas/specs';
-import { updateSpecFiles } from '../oas/diffing/document';
 
 const indent = (n: number) => '  '.repeat(n);
 const wait = (time: number) =>

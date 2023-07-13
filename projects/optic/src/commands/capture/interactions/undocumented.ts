@@ -14,7 +14,7 @@ import { updateSpecFiles } from '../../oas/diffing/document';
 import {
   generateEndpointSpecPatches,
   generatePathAndMethodSpecPatches,
-} from './patches';
+} from '../patches/patches';
 import { SpecPatches } from '../../oas/specs';
 
 type MethodMap = Map<string, { add: Set<string>; ignore: Set<string> }>;
