@@ -206,6 +206,7 @@ const getCaptureAction =
 
     // start app
     let app: ChildProcessWithoutNullStreams | undefined;
+    let expectAppRunning = true;
     if (!options.serverOverride && captureConfig.server.command) {
       const serverDir =
         captureConfig.server.dir === undefined
@@ -223,6 +224,13 @@ const getCaptureAction =
           timeout,
           proxy.targetUrl
         );
+        // TODO: this doesn't get caught by the calller but doesn't seem to leave the proxy hanging.
+        // lets find a better way.
+        app.on('exit', (code) => {
+          if (expectAppRunning) {
+            throw Error(`Server unexpectedly exited with error code ${code}`);
+          }
+        });
       } catch (err) {
         proxy.stop();
         logger.error(err);
@@ -243,6 +251,7 @@ const getCaptureAction =
       errors.push(error);
     } finally {
       proxy.stop();
+      expectAppRunning = false;
       if (app) {
         process.kill(-app.pid!);
       }
@@ -580,14 +589,6 @@ async function startApp(
 
   app.stderr.on('data', (data) => {
     logger.error(data.toString());
-  });
-
-  // TODO: this doesn't get caught by the calller but doesn't seem to leave the proxy hanging.
-  // lets find a better way.
-  app.on('exit', (code) => {
-    if (code! > 0) {
-      throw Error(`Unexpected exit from the server with exit code: ${code}`);
-    }
   });
 
   // since ready_endpoint is not required always wait one interval. without ready_endpoint,
