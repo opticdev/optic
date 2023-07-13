@@ -206,7 +206,7 @@ const getCaptureAction =
 
     // start app
     let app: ChildProcessWithoutNullStreams | undefined;
-    let expectAppRunning = true;
+    let appPromise = Promise.resolve();
     if (!options.serverOverride && captureConfig.server.command) {
       const serverDir =
         captureConfig.server.dir === undefined
@@ -224,12 +224,10 @@ const getCaptureAction =
           timeout,
           proxy.targetUrl
         );
-        // TODO: this doesn't get caught by the calller but doesn't seem to leave the proxy hanging.
-        // lets find a better way.
-        app.on('exit', (code) => {
-          if (expectAppRunning) {
-            throw Error(`Server unexpectedly exited with error code ${code}`);
-          }
+        appPromise = new Promise((resolve, reject) => {
+          app!.on('exit', (code) => {
+            reject(`Server unexpectedly exited with error code ${code}`);
+          });
         });
       } catch (err) {
         proxy.stop();
@@ -242,16 +240,25 @@ const getCaptureAction =
     // make requests
     let errors: any[] = [];
     try {
+      // TODO handle error handling properly
       let [sendRequestsPromise, runRequestsPromise] = makeAllRequests(
         captureConfig,
         proxy
       );
-      await Promise.all([sendRequestsPromise, runRequestsPromise]);
-    } catch (error) {
-      errors.push(error);
+      const requestsPromises = Promise.all([
+        sendRequestsPromise,
+        runRequestsPromise,
+      ]);
+      // Wait for either all the requests to complete (or reject), or for the app to shutdown prematurely
+      await Promise.race([appPromise, requestsPromises]);
+    } catch (e) {
+      logger.error(e);
+      // Meaning either the requests threw an uncaught exception or the app server randomly quit
+      process.exitCode = 1;
+      // The finally block will run before we return from the fn call
+      return;
     } finally {
       proxy.stop();
-      expectAppRunning = false;
       if (app) {
         process.kill(-app.pid!);
       }
