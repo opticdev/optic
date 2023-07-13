@@ -204,42 +204,31 @@ const getCaptureAction =
       denormalize: false,
     });
 
+    const serverDir =
+      captureConfig.server.dir === undefined
+        ? config.root
+        : captureConfig.server.dir;
+    const timeout = captureConfig.server.ready_timeout || 3 * 60 * 1_000; // 3 minutes
+    const readyInterval = captureConfig.server.ready_interval || 1000;
     // start app
     let app: ChildProcessWithoutNullStreams | undefined;
-    let appPromise = Promise.resolve();
-    if (!options.serverOverride && captureConfig.server.command) {
-      const serverDir =
-        captureConfig.server.dir === undefined
-          ? config.root
-          : captureConfig.server.dir;
-      const timeout = captureConfig.server.ready_timeout || 3 * 60 * 1_000; // 3 minutes
-      const readyInterval = captureConfig.server.ready_interval || 1000;
 
-      try {
-        app = await startApp(
-          captureConfig.server.command,
-          serverDir,
-          captureConfig.server.ready_endpoint,
-          readyInterval,
-          timeout,
-          proxy.targetUrl
-        );
-        appPromise = new Promise((resolve, reject) => {
-          app!.on('exit', (code) => {
-            reject(`Server unexpectedly exited with error code ${code}`);
-          });
-        });
-      } catch (err) {
-        proxy.stop();
-        logger.error(err);
-        process.exitCode = 1;
-        return;
-      }
-    }
-
-    // make requests
     let errors: any[] = [];
     try {
+      let bailout: Bailout = { didBailout: false, promise: Promise.resolve() };
+      if (!options.serverOverride && captureConfig.server.command) {
+        [app, bailout] = startApp(captureConfig.server.command, serverDir);
+        // If we don't bail out (i.e. the server is still running), we need the promise to be passed down to the next request
+        if (captureConfig.server.ready_endpoint) {
+          await waitForServer(
+            bailout,
+            captureConfig.server.ready_endpoint,
+            readyInterval,
+            timeout,
+            proxy.targetUrl
+          );
+        }
+      }
       // TODO handle error handling properly
       let [sendRequestsPromise, runRequestsPromise] = makeAllRequests(
         captureConfig,
@@ -250,7 +239,9 @@ const getCaptureAction =
         runRequestsPromise,
       ]);
       // Wait for either all the requests to complete (or reject), or for the app to shutdown prematurely
-      await Promise.race([appPromise, requestsPromises]);
+      await Promise.race([bailout.promise, requestsPromises]);
+      // catch the bailout promise rejection when we shutdown the app
+      bailout.promise.catch((e) => {});
     } catch (e) {
       logger.error(e);
       // Meaning either the requests threw an uncaught exception or the app server randomly quit
@@ -259,8 +250,8 @@ const getCaptureAction =
       return;
     } finally {
       proxy.stop();
-      if (app) {
-        process.kill(-app.pid!);
+      if (app && app.pid && app.exitCode === null) {
+        process.kill(-app.pid);
       }
 
       if (errors.length > 0) {
@@ -397,7 +388,7 @@ const getCaptureAction =
         chalk.blue('Run with `--update --interactive` to add new endpoints')
       );
       logger.info(
-        chalk.yellow(`optic capture ${filePath} --update --interactive`)
+        chalk.yellow(`Hint: optic capture ${filePath} --update --interactive`)
       );
     } else if (
       !options.update &&
@@ -533,37 +524,6 @@ function makeAllRequests(
   return [sendRequestsPromise, runRequestsPromise];
 }
 
-async function serverReady(
-  checkUrl: string,
-  interval: number,
-  timeout: number
-) {
-  const now = Date.now();
-  const spinner = ora('Waiting for server to come online...');
-  spinner.start();
-  spinner.color = 'blue';
-
-  const checkServer = (): Promise<boolean> =>
-    fetch(checkUrl)
-      .then((res) => String(res.status).startsWith('2'))
-      .catch((e) => {
-        logger.debug(e);
-        return false;
-      });
-
-  let done = false;
-  while (!done) {
-    const isReady = await checkServer();
-    if (isReady) {
-      spinner.succeed('Server check passed');
-      done = true;
-    } else if (Date.now() > now + timeout) {
-      throw new UserError('Server check timed out.');
-    }
-    await wait(interval);
-  }
-}
-
 async function setup(filePath: string): Promise<string> {
   const resolvedPath = path.resolve(filePath);
   let openApiExists = false;
@@ -583,14 +543,11 @@ async function setup(filePath: string): Promise<string> {
   return await getCaptureStorage(resolvedPath);
 }
 
-async function startApp(
+type Bailout = { didBailout: boolean; promise: Promise<any> };
+function startApp(
   command: string,
-  dir: string,
-  readyEndpoint: string | undefined,
-  readyInterval: number,
-  readyTimeout: number,
-  targetUrl: string
-): Promise<ChildProcessWithoutNullStreams> {
+  dir: string
+): [ChildProcessWithoutNullStreams, Bailout] {
   const cmd = commandSplitter(command);
   const app = spawn(cmd.cmd, cmd.args, { detached: true, cwd: dir });
 
@@ -598,6 +555,25 @@ async function startApp(
     logger.error(data.toString());
   });
 
+  const bailout: Bailout = {
+    didBailout: false,
+    promise: new Promise((resolve, reject) => {
+      app!.on('exit', (code) => {
+        bailout.didBailout = true;
+        reject(`Server unexpectedly exited with error code ${code}`);
+      });
+    }),
+  };
+  return [app, bailout];
+}
+
+async function waitForServer(
+  bailout: Bailout,
+  readyEndpoint: string,
+  readyInterval: number,
+  readyTimeout: number,
+  targetUrl: string
+) {
   // since ready_endpoint is not required always wait one interval. without ready_endpoint,
   // ready_interval must be at least the time it takes to start the server.
   await wait(readyInterval);
@@ -605,11 +581,40 @@ async function startApp(
   //
   // wait for the app to be ready
   //
-  if (readyEndpoint) {
-    const url = urljoin(targetUrl, readyEndpoint);
-    const timeout = readyTimeout || 3 * 60 * 1_000; // 3 minutes
-    await serverReady(url, readyInterval, timeout);
-  }
 
-  return app;
+  const url = urljoin(targetUrl, readyEndpoint);
+  const timeout = readyTimeout || 3 * 60 * 1_000; // 3 minutes
+  const now = Date.now();
+  const spinner = ora('Waiting for server to come online...');
+  spinner.start();
+  spinner.color = 'blue';
+
+  const checkServer = (): Promise<boolean> =>
+    fetch(url)
+      .then((res) => String(res.status).startsWith('2'))
+      .catch((e) => {
+        logger.debug(e);
+        return false;
+      });
+
+  const serverReadyPromise = new Promise(async (resolve) => {
+    let done = false;
+    // We need to bail out if the server shut down, otherwise we never conclude this promise chain
+    while (!done && !bailout.didBailout) {
+      const isReady = await checkServer();
+
+      if (isReady) {
+        done = true;
+      } else if (Date.now() > now + timeout) {
+        spinner.fail('Server check timed out');
+        throw new UserError('Server check timed out.');
+      }
+      await wait(readyInterval);
+    }
+    if (bailout.didBailout) spinner.fail('Server unexpectedly exited');
+    else spinner.succeed('Server check passed');
+    resolve(null);
+  });
+
+  await Promise.race([serverReadyPromise, bailout.promise]);
 }
