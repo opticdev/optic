@@ -198,7 +198,7 @@ const getCaptureAction =
       options.proxyPort ? Number(options.proxyPort) : undefined
     );
 
-    // parse optic.yml
+    // parse spec
     let spec = await loadSpec(filePath, config, {
       strict: false,
       denormalize: false,
