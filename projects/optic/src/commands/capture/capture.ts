@@ -247,8 +247,18 @@ const getCaptureAction =
       if (app) {
         process.kill(-app.pid!);
       }
+
+      if (errors.length > 0) {
+        logger.error('finished with errors:');
+        errors.forEach((error, index) => {
+          logger.error(`${index}:\n${error}`);
+        });
+      }
     }
 
+    //
+    // process proxy interactions into hars
+    //
     const harEntries = HarEntries.fromProxyInteractions(proxy.interactions);
     const captures = new GroupedCaptures(
       trafficDirectory,
@@ -262,13 +272,6 @@ const getCaptureAction =
         `Captured ${har.request.method.toUpperCase()} ${har.request.url}`
       );
     }
-    if (errors.length > 0) {
-      logger.error('finished with errors:');
-      errors.forEach((error, index) => {
-        logger.error(`${index}:\n${error}`);
-      });
-    }
-
     await captures.writeHarFiles();
     let hasAnyEndpointDiffs = false;
 
@@ -324,6 +327,7 @@ const getCaptureAction =
       );
     }
 
+    // learn path patterns
     if (options.update && options.interactive) {
       logger.info('');
       logger.info(
