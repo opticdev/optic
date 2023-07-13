@@ -17,7 +17,7 @@ import {
   OperationCoverage,
   UserError,
 } from '@useoptic/openapi-utilities';
-import { Request } from '../../config';
+import { CaptureConfigData, Request } from '../../config';
 import { HarEntries, ProxyInteractions } from '../oas/captures';
 import { errorHandler } from '../../error-handler';
 
