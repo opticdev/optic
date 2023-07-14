@@ -1,10 +1,14 @@
+import * as Sentry from '@sentry/node';
 import fs from 'node:fs/promises';
 import {
   SerializedSourcemap,
+  UserError,
   sourcemapReader,
 } from '@useoptic/openapi-utilities';
 import { isYaml, loadYaml, writeYaml } from '@useoptic/openapi-io';
 import jsonpatch, { Operation } from 'fast-json-patch';
+import { logger } from '../../../logger';
+import chalk from 'chalk';
 
 export async function writePatchesToFiles(
   jsonPatches: Operation[],
@@ -28,11 +32,26 @@ export async function writePatchesToFiles(
     const file = sourcemap.files.find(({ path }) => path === filePath)!;
 
     const parsed = parse(filePath, file.contents);
-    const patchedContents = jsonpatch.applyPatch(
-      parsed.val || {},
-      operations
-    ).newDocument;
-    const stringified = stringify(filePath, patchedContents);
+    let stringified: string;
+    try {
+      const patchedContents = jsonpatch.applyPatch(
+        parsed || {},
+        operations
+      ).newDocument;
+      stringified = stringify(filePath, patchedContents);
+    } catch (e) {
+      logger.error('');
+      logger.error(
+        chalk.red.bold(`Error: Failed writing patches to ${filePath}`)
+      );
+      Sentry.captureException(e, {
+        extra: {
+          operations,
+          parsed,
+        },
+      });
+      throw new UserError();
+    }
 
     await fs.writeFile(filePath, stringified);
   }
