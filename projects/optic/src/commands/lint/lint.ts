@@ -14,6 +14,7 @@ import {
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { openUrl } from '../../utils/open-url';
+import { fileExists } from '../../utils/file';
 
 const description = `lints and validates an OpenAPI file`;
 
@@ -50,6 +51,12 @@ const getLintAction =
   (config: OpticCliConfig) =>
   async (path: string, options: LintActionOptions) => {
     logger.info(`Linting spec ${path}...`);
+    if (!(await fileExists(path))) {
+      logger.error(chalk.red.bold(`Error: Could not open ${path}`));
+      process.exitCode = 1;
+      return;
+    }
+
     let file: ParseResult;
     try {
       file = await loadSpec(path, config, {
