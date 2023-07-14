@@ -4,8 +4,8 @@ exports[`diff petstore diff 1`] = `
 "[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
 
 [31mx [39m[1mSwagger Petstore Updated[22m [90mpetstore-base.json[39m
-[1mOperations: [22m5 operations added, 15 changed, 1 removed
-[31mx [39m [1mChecks:[22m 152/198 passed 
+[1mOperations: [22m5 operations added, 16 changed, 1 removed
+[31mx [39m [1mChecks:[22m 153/200 passed 
 
 specification details:
 - /servers/2 [32madded[39m
@@ -14,7 +14,7 @@ specification details:
 [31mx [1mGET[22m /pet/findByStatus[39m: [32madded[39m
   
   [31m[1mx [operation path component naming check][22m findByStatus is not snake_case[39m
-  at [4mpetstore-updated.json:316:10941[24m
+  at [4mpetstore-updated.json:328:11223[24m
   
   - query parameter [3mstatus[23m: 
   - cookie parameter [3mdebug[23m: 
@@ -23,19 +23,19 @@ specification details:
       - property [1m/schema/items/properties/photoUrls[22m: 
       
         [31m[1mx [response property naming check][22m photoUrls is not snake_case[39m
-        at [4mpetstore-updated.json:367:12791[24m
+        at [4mpetstore-updated.json:379:13073[24m
         
     - body [1mapplication/json[22m: 
       - property [1m/schema/items/properties/photoUrls[22m: 
       
         [31m[1mx [response property naming check][22m photoUrls is not snake_case[39m
-        at [4mpetstore-updated.json:411:14652[24m
+        at [4mpetstore-updated.json:423:14934[24m
         
 
 [31mx [1mGET[22m /pet/findByTags[39m: [32madded[39m
   
   [31m[1mx [operation path component naming check][22m findByTags is not snake_case[39m
-  at [4mpetstore-updated.json:446:15966[24m
+  at [4mpetstore-updated.json:458:16248[24m
   
   - query parameter [3mtags[23m: 
   - response [1m200[22m: 
@@ -43,13 +43,13 @@ specification details:
       - property [1m/schema/items/properties/photoUrls[22m: 
       
         [31m[1mx [response property naming check][22m photoUrls is not snake_case[39m
-        at [4mpetstore-updated.json:483:17424[24m
+        at [4mpetstore-updated.json:495:17706[24m
         
     - body [1mapplication/json[22m: 
       - property [1m/schema/items/properties/photoUrls[22m: 
       
         [31m[1mx [response property naming check][22m photoUrls is not snake_case[39m
-        at [4mpetstore-updated.json:527:19285[24m
+        at [4mpetstore-updated.json:539:19567[24m
         
 
 [31mx [1mGET[22m /pet/{petId}[39m: [32madded[39m
@@ -59,13 +59,13 @@ specification details:
       - property [1m/schema/properties/photoUrls[22m: 
       
         [31m[1mx [response property naming check][22m photoUrls is not snake_case[39m
-        at [4mpetstore-updated.json:596:21833[24m
+        at [4mpetstore-updated.json:608:22115[24m
         
     - body [1mapplication/json[22m: 
       - property [1m/schema/properties/photoUrls[22m: 
       
         [31m[1mx [response property naming check][22m photoUrls is not snake_case[39m
-        at [4mpetstore-updated.json:637:23536[24m
+        at [4mpetstore-updated.json:649:23818[24m
         
 
 [32m✔ [1mPOST[22m /pet/{petId}[39m: [32madded[39m
@@ -83,13 +83,13 @@ specification details:
       - property [1m/schema/properties/userStatus[22m: [33mchanged[39m
       
         [31m[1mx [prevent request property type changes][22m expected request body property 'userStatus' to not change type. This is a breaking change.[39m
-        at [4mpetstore-updated.json:1347:48590[24m
+        at [4mpetstore-updated.json:1359:48872[24m
         
       - property [1m/schema/properties/lastName[22m: [33mchanged[39m
       - property [1m/schema/properties/username[22m: [33mchanged[39m
       
         [31m[1mx [prevent changing request property to required][22m cannot make a request property required. This is a breaking change.[39m
-        at [4mpetstore-updated.json:1342:48332[24m
+        at [4mpetstore-updated.json:1354:48614[24m
         
 
 [31mx [1mGET[22m /user/{username}[39m: 
@@ -98,36 +98,36 @@ specification details:
       - property [1m/schema/properties/phone[22m: [31mremoved[39m
       
         [31m[1mx [prevent removing response property][22m cannot remove response property 'phone'. This is a breaking change.[39m
-        at [4mpetstore-base.json:848:29942[24m
+        at [4mpetstore-base.json:851:29992[24m
         
       - property [1m/schema/properties/bio[22m: [32madded[39m
       - property [1m/schema/properties/userStatus[22m: [33mchanged[39m
       
         [31m[1mx [prevent response property type changes][22m expected response body property 'userStatus' to not change type. This is a breaking change.[39m
-        at [4mpetstore-updated.json:1289:46579[24m
+        at [4mpetstore-updated.json:1301:46861[24m
         
       - property [1m/schema/properties/lastName[22m: [33mchanged[39m
       
         [31m[1mx [prevent making response property optional][22m cannot make required response property 'lastName' optional. This is a breaking change.[39m
-        at [4mpetstore-updated.json:1286:46420[24m
+        at [4mpetstore-updated.json:1298:46702[24m
         
       - property [1m/schema/properties/username[22m: [33mchanged[39m
     - body [1mapplication/xml[22m: 
       - property [1m/schema/properties/phone[22m: [31mremoved[39m
       
         [31m[1mx [prevent removing response property][22m cannot remove response property 'phone'. This is a breaking change.[39m
-        at [4mpetstore-base.json:827:29057[24m
+        at [4mpetstore-base.json:830:29107[24m
         
       - property [1m/schema/properties/bio[22m: [32madded[39m
       - property [1m/schema/properties/userStatus[22m: [33mchanged[39m
       
         [31m[1mx [prevent response property type changes][22m expected response body property 'userStatus' to not change type. This is a breaking change.[39m
-        at [4mpetstore-updated.json:1268:45660[24m
+        at [4mpetstore-updated.json:1280:45942[24m
         
       - property [1m/schema/properties/lastName[22m: [33mchanged[39m
       
         [31m[1mx [prevent making response property optional][22m cannot make required response property 'lastName' optional. This is a breaking change.[39m
-        at [4mpetstore-updated.json:1265:45501[24m
+        at [4mpetstore-updated.json:1277:45783[24m
         
       - property [1m/schema/properties/username[22m: [33mchanged[39m
   - response [1m404[22m: 
@@ -146,7 +146,7 @@ specification details:
       - /schema/format [32madded[39m
       
     [31m[1mx [header parameter naming check][22m X-Rate-Limit is not snake_case[39m
-    at [4mpetstore-updated.json:1208:43553[24m
+    at [4mpetstore-updated.json:1220:43835[24m
     
 
 [31mx [1mPOST[22m /user/createWithList[39m: 
@@ -157,13 +157,13 @@ specification details:
       - property [1m/schema/items/properties/userStatus[22m: [33mchanged[39m
       
         [31m[1mx [prevent request property type changes][22m expected request body property 'userStatus' to not change type. This is a breaking change.[39m
-        at [4mpetstore-updated.json:1163:42213[24m
+        at [4mpetstore-updated.json:1175:42495[24m
         
       - property : [33mchanged[39m
       - property [1m/schema/items/properties/username[22m: 
       
         [31m[1mx [prevent changing request property to required][22m cannot make a request property required. This is a breaking change.[39m
-        at [4mpetstore-updated.json:1158:41945[24m
+        at [4mpetstore-updated.json:1170:42227[24m
         
 
 [31mx [1mPOST[22m /user/createWithArray[39m: 
@@ -174,13 +174,13 @@ specification details:
       - property [1m/schema/items/properties/userStatus[22m: [33mchanged[39m
       
         [31m[1mx [prevent request property type changes][22m expected request body property 'userStatus' to not change type. This is a breaking change.[39m
-        at [4mpetstore-updated.json:1122:40728[24m
+        at [4mpetstore-updated.json:1134:41010[24m
         
       - property : [33mchanged[39m
       - property [1m/schema/items/properties/username[22m: 
       
         [31m[1mx [prevent changing request property to required][22m cannot make a request property required. This is a breaking change.[39m
-        at [4mpetstore-updated.json:1117:40460[24m
+        at [4mpetstore-updated.json:1129:40742[24m
         
 
 [31mx [1mPOST[22m /user[39m: 
@@ -191,13 +191,13 @@ specification details:
       - property [1m/schema/properties/userStatus[22m: [33mchanged[39m
       
         [31m[1mx [prevent request property type changes][22m expected request body property 'userStatus' to not change type. This is a breaking change.[39m
-        at [4mpetstore-updated.json:1082:39273[24m
+        at [4mpetstore-updated.json:1094:39555[24m
         
       - property [1m/schema/properties/lastName[22m: [33mchanged[39m
       - property [1m/schema/properties/username[22m: [33mchanged[39m
       
         [31m[1mx [prevent changing request property to required][22m cannot make a request property required. This is a breaking change.[39m
-        at [4mpetstore-updated.json:1077:39015[24m
+        at [4mpetstore-updated.json:1089:39297[24m
         
 
 [32m✔ [1mDELETE[22m /store/order/{orderId}[39m: 
@@ -216,7 +216,7 @@ specification details:
       - property [1m/schema/properties/petId[22m: [33mchanged[39m
       
         [31m[1mx [prevent making response property optional][22m cannot make required response property 'petId' optional. This is a breaking change.[39m
-        at [4mpetstore-updated.json:969:34944[24m
+        at [4mpetstore-updated.json:981:35226[24m
         
   - response [1m404[22m: 
     - body [1mapplication/json[22m: [32madded[39m
@@ -242,28 +242,28 @@ specification details:
     - /schema/enum [32madded[39m
     
     [31m[1mx [prevent cookie parameters enum breaking changes][22m cannot add an enum to restrict possible values for cookie parameter 'debug'. This is a breaking change.[39m
-    at [4mpetstore-updated.json:740:27031[24m
+    at [4mpetstore-updated.json:752:27313[24m
     
   - response [1m200[22m: [31mremoved[39m
     
     [31m[1mx [prevent response status code removal][22m must not remove response status code 200. This is a breaking change.[39m
-    at [4mpetstore-base.json:399:13841[24m
+    at [4mpetstore-base.json:402:13891[24m
     
     - body [1mapplication/json[22m: 
       - property [1m/schema/properties/code[22m: 
       
         [31m[1mx [prevent removing response property][22m cannot remove response property 'code'. This is a breaking change.[39m
-        at [4mpetstore-base.json:406:14080[24m
+        at [4mpetstore-base.json:409:14130[24m
         
       - property [1m/schema/properties/type[22m: 
       
         [31m[1mx [prevent removing response property][22m cannot remove response property 'type'. This is a breaking change.[39m
-        at [4mpetstore-base.json:407:14150[24m
+        at [4mpetstore-base.json:410:14200[24m
         
       - property [1m/schema/properties/message[22m: 
       
         [31m[1mx [prevent removing response property][22m cannot remove response property 'message'. This is a breaking change.[39m
-        at [4mpetstore-base.json:408:14200[24m
+        at [4mpetstore-base.json:411:14250[24m
         
   - response [1m201[22m: [32madded[39m
     - body [1mapplication/json[22m: 
@@ -274,19 +274,19 @@ specification details:
       - property [1m/schema/properties/type[22m: [33mchanged[39m
       
         [31m[1mx [prevent response property type changes][22m expected response body property 'type' to not change type. This is a breaking change.[39m
-        at [4mpetstore-updated.json:806:29115[24m
+        at [4mpetstore-updated.json:818:29397[24m
         
 
 [31mx [1mGET[22m /pet[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at [4mpetstore-base.json:158:4984[24m
+  at [4mpetstore-base.json:161:5034[24m
   
     [31m[1mx [prevent response status code removal][22m must not remove response status code 404. This is a breaking change.[39m
-    at [4mpetstore-base.json:160:5026[24m
+    at [4mpetstore-base.json:163:5076[24m
     
     [31m[1mx [prevent response status code removal][22m must not remove response status code 405. This is a breaking change.[39m
-    at [4mpetstore-base.json:161:5094[24m
+    at [4mpetstore-base.json:164:5144[24m
     
 
 [32m✔ [1mPOST[22m /pet[39m: 
@@ -302,20 +302,26 @@ specification details:
       - property [1m/schema/properties/number[22m: [32madded[39m
       
         [31m[1mx [prevent changing request property to required][22m cannot add a required request property 'number' to an existing operation. This is a breaking change.[39m
-        at [4mpetstore-updated.json:173:5555[24m
+        at [4mpetstore-updated.json:185:5837[24m
         
   - response [1m400[22m: [31mremoved[39m
     
     [31m[1mx [prevent response status code removal][22m must not remove response status code 400. This is a breaking change.[39m
-    at [4mpetstore-base.json:254:8639[24m
+    at [4mpetstore-base.json:257:8689[24m
     
 
 [31mx [1mGET[22m /parameters_at_path[39m: 
-  - /parameters [32madded[39m
-  
-  - query parameter [3mquery_in_path[23m: 
+  - query parameter [3mquery_in_path[23m: [32madded[39m
+    
     [31m[1mx [prevent new required query parameters][22m cannot add required query parameter query_in_path to an existing operation. This is a breaking change.[39m
-    at [4mpetstore-updated.json:143:4710[24m
+    at [4mpetstore-updated.json:155:4992[24m
+    
+
+[31mx [1mPATCH[22m /example[39m: 
+  - query parameter [3mseomthing[23m: [32madded[39m
+    
+    [31m[1mx [prevent new required query parameters][22m cannot add required query parameter seomthing to an existing operation. This is a breaking change.[39m
+    at [4mpetstore-updated.json:142:4696[24m
     
 
 [32m✔ [1mPOST[22m /example[39m: 
@@ -381,7 +387,7 @@ specification details:
         at [4mpetstore-base.json:81:2600[24m
         
 
-...and 23 other endpoints
+...and 24 other endpoints
 
 [34m[1mSee the full history of this API by running "optic api add petstore-updated.json --history-depth 0"[22m[39m
 "
@@ -451,6 +457,11 @@ exports[`diff two files, no repo or config 1`] = `
 ...and 4 other endpoints
 
 [34m[1mSee the full history of this API by running "optic api add example-api-v1.json --history-depth 0"[22m[39m
+"
+`;
+
+exports[`diff with --json arg 1`] = `
+"{"operations":[{"name":"GET /pet/findByStatus","change":"added","attributes":[{"key":"","after":{"tags":["pet"],"summary":"Finds Pets by status","description":"Multiple status values can be provided with comma separated strings","operationId":"findPetsByStatus","parameters":[{"name":"status","in":"query","description":"Status values that need to be considered for filter","required":true,"style":"form","explode":true,"schema":{"type":"array","items":{"type":"string","default":"available","enum":["available","pending","sold"]}}},{"name":"debug","in":"cookie","description":"A debug token","required":false,"schema":{"type":"integer","enum":[0,1]}}],"responses":{"200":{"description":"successful operation","content":{"application/xml":{"schema":{"type":"array","items":{"required":["name","photoUrls"],"type":"object","properties":{"id":{"type":"integer","format":"int64"},"category":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"name":{"type":"string"}},"xml":{"name":"Category"}},"name":{"type":"string","example":"doggie"},"photoUrls":{"type":"array","xml":{"name":"photoUrl","wrapped":true},"items":{"type":"string"}},"tags":{"type":"array","xml":{"name":"tag","wrapped":true},"items":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"name":{"type":"string"}},"xml":{"name":"Tag"}}},"status":{"type":"string","description":"pet status in the store","enum":["available","pending","sold"]}},"xml":{"name":"Pet"}}}},"application/json":{"schema":{"type":"array","items":{"required":["name","photoUrls"],"type":"object","properties":{"id":{"type":"integer","format":"int64"},"category":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"name":{"type":"string"}},"xml":{"name":"Category"}},"name":{"type":"string","example":"doggie"},"photoUrls":{"type":"array","xml":{"name":"photoUrl","wrapped":true},"items":{"type":"string"}},"tags":{"type":"array","xml":{"name":"tag","wrapped":true},"items":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"name":{"type":"string"}},"xml":{"name":"Tag"}}},"status":{"type":"string","description":"pet status in the store","enum":["available","pending","sold"]}},"xml":{"name":"Pet"}}}}}},"400":{"description":"Invalid status value","content":{}}},"security":[{"petstore_auth":["write:pets","read:pets"]}]},"change":"added"}],"parameters":[],"responses":[]},{"name":"GET /pet/findByTags","change":"added","attributes":[{"key":"","after":{"tags":["pet"],"summary":"Finds Pets by tags","description":"Muliple tags can be provided with comma separated strings. Use         tag1, tag2, tag3 for testing.","operationId":"findPetsByTags","parameters":[{"name":"tags","in":"query","description":"Tags to filter by","required":true,"style":"form","explode":true,"schema":{"type":"array","items":{"type":"string"}}}],"responses":{"200":{"description":"successful operation","content":{"application/xml":{"schema":{"type":"array","items":{"required":["name","photoUrls"],"type":"object","properties":{"id":{"type":"integer","format":"int64"},"category":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"name":{"type":"string"}},"xml":{"name":"Category"}},"name":{"type":"string","example":"doggie"},"photoUrls":{"type":"array","xml":{"name":"photoUrl","wrapped":true},"items":{"type":"string"}},"tags":{"type":"array","xml":{"name":"tag","wrapped":true},"items":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"name":{"type":"string"}},"xml":{"name":"Tag"}}},"status":{"type":"string","description":"pet status in the store","enum":["available","pending","sold"]}},"xml":{"name":"Pet"}}}},"application/json":{"schema":{"type":"array","items":{"required":["name","photoUrls"],"type":"object","properties":{"id":{"type":"integer","format":"int64"},"category":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"name":{"type":"string"}},"xml":{"name":"Category"}},"name":{"type":"string","example":"doggie"},"photoUrls":{"type":"array","xml":{"name":"photoUrl","wrapped":true},"items":{"type":"string"}},"tags":{"type":"array","xml":{"name":"tag","wrapped":true},"items":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"name":{"type":"string"}},"xml":{"name":"Tag"}}},"status":{"type":"string","description":"pet status in the store","enum":["available","pending","sold"]}},"xml":{"name":"Pet"}}}}}},"400":{"description":"Invalid tag value","content":{}}},"deprecated":true,"security":[{"petstore_auth":["write:pets","read:pets"]}]},"change":"added"}],"parameters":[],"responses":[]},{"name":"GET /pet/{petId}","change":"added","attributes":[{"key":"","after":{"tags":["pet"],"summary":"Find pet by ID","description":"Returns a single pet","operationId":"getPetById","parameters":[{"name":"petId","in":"path","description":"ID of pet to return","required":true,"schema":{"type":"integer","format":"int64"}}],"responses":{"200":{"description":"successful operation","content":{"application/xml":{"schema":{"required":["name","photoUrls"],"type":"object","properties":{"id":{"type":"integer","format":"int64"},"category":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"name":{"type":"string"}},"xml":{"name":"Category"}},"name":{"type":"string","example":"doggie"},"photoUrls":{"type":"array","xml":{"name":"photoUrl","wrapped":true},"items":{"type":"string"}},"tags":{"type":"array","xml":{"name":"tag","wrapped":true},"items":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"name":{"type":"string"}},"xml":{"name":"Tag"}}},"status":{"type":"string","description":"pet status in the store","enum":["available","pending","sold"]}},"xml":{"name":"Pet"}}},"application/json":{"schema":{"required":["name","photoUrls"],"type":"object","properties":{"id":{"type":"integer","format":"int64"},"category":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"name":{"type":"string"}},"xml":{"name":"Category"}},"name":{"type":"string","example":"doggie"},"photoUrls":{"type":"array","xml":{"name":"photoUrl","wrapped":true},"items":{"type":"string"}},"tags":{"type":"array","xml":{"name":"tag","wrapped":true},"items":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"name":{"type":"string"}},"xml":{"name":"Tag"}}},"status":{"type":"string","description":"pet status in the store","enum":["available","pending","sold"]}},"xml":{"name":"Pet"}}}}},"400":{"description":"Invalid ID supplied","content":{}},"404":{"description":"Pet not found","content":{}}},"security":[{"api_key":[]}]},"change":"added"}],"parameters":[],"responses":[]},{"name":"POST /pet/{petId}","change":"added","attributes":[{"key":"","after":{"tags":["pet"],"summary":"Updates a pet in the store with form data","operationId":"updatePetWithForm","parameters":[{"name":"petId","in":"path","description":"ID of pet that needs to be updated","required":true,"schema":{"type":"integer","format":"int64"}}],"requestBody":{"content":{"application/x-www-form-urlencoded":{"schema":{"properties":{"name":{"type":"string","description":"Updated name of the pet"},"status":{"type":"string","description":"Updated status of the pet"}}}}}},"responses":{"405":{"description":"Invalid input","content":{}}},"security":[{"petstore_auth":["write:pets","read:pets"]}]},"change":"added"}],"parameters":[],"responses":[]},{"name":"DELETE /pet/{petId}","change":"added","attributes":[{"key":"","after":{"tags":["pet"],"summary":"Deletes a pet","operationId":"deletePet","parameters":[{"name":"api_key","in":"header","schema":{"type":"string"}},{"name":"petId","in":"path","description":"Pet id to delete","required":true,"schema":{"type":"integer","format":"int64"}}],"responses":{"400":{"description":"Invalid ID supplied","content":{}},"404":{"description":"Pet not found","content":{}}},"security":[{"petstore_auth":["write:pets","read:pets"]}]},"change":"added"}],"parameters":[],"responses":[]},{"name":"PUT /user/{username}","change":"changed","attributes":[],"parameters":[],"requestBody":{"name":"Request Body","change":"changed","attributes":[],"contentTypes":[{"name":"*/*","change":"changed","attributes":[{"key":"/schema/properties/phone","before":{"type":"string","required":false},"change":"removed"},{"key":"/schema/properties/bio","after":{"type":"string","required":false},"change":"added"},{"key":"/schema/properties/userStatus","change":"changed","before":{"type":"integer","format":"int32"},"after":{"type":"string","enum":["activation-pending","activated","blocked"]}},{"key":"/schema/properties/lastName","change":"changed","before":{"required":true},"after":{"required":false}},{"key":"/schema/properties/username","change":"changed","before":{"required":false},"after":{"required":true}}]}]},"responses":[]},{"name":"GET /user/{username}","change":"changed","attributes":[],"parameters":[],"responses":[{"name":"200 response","change":"changed","attributes":[],"contentTypes":[{"name":"application/json","change":"changed","attributes":[{"key":"/schema/properties/phone","before":{"type":"string","required":false},"change":"removed"},{"key":"/schema/properties/bio","after":{"type":"string","required":false},"change":"added"},{"key":"/schema/properties/userStatus","change":"changed","before":{"type":"integer","format":"int32"},"after":{"type":"string","enum":["activation-pending","activated","blocked"]}},{"key":"/schema/properties/lastName","change":"changed","before":{"required":true},"after":{"required":false}},{"key":"/schema/properties/username","change":"changed","before":{"required":false},"after":{"required":true}}]},{"name":"application/xml","change":"changed","attributes":[{"key":"/schema/properties/phone","before":{"type":"string","required":false},"change":"removed"},{"key":"/schema/properties/bio","after":{"type":"string","required":false},"change":"added"},{"key":"/schema/properties/userStatus","change":"changed","before":{"type":"integer","format":"int32"},"after":{"type":"string","enum":["activation-pending","activated","blocked"]}},{"key":"/schema/properties/lastName","change":"changed","before":{"required":true},"after":{"required":false}},{"key":"/schema/properties/username","change":"changed","before":{"required":false},"after":{"required":true}}]}]},{"name":"404 response","change":"changed","attributes":[],"contentTypes":[{"name":"application/json","change":"added","attributes":[{"key":"","after":{"schema":{"type":"object","properties":{"code":{"type":"integer","format":"int32"},"type":{"type":"string"},"message":{"type":"string"}}}},"change":"added"}]}]}]},{"name":"GET /user/login","change":"changed","attributes":[],"parameters":[],"responses":[{"name":"200 response","change":"changed","attributes":[],"contentTypes":[]}]},{"name":"POST /user/createWithList","change":"changed","attributes":[],"parameters":[],"requestBody":{"name":"Request Body","change":"changed","attributes":[],"contentTypes":[{"name":"*/*","change":"changed","attributes":[{"key":"/schema/items/properties/phone","before":{"type":"string","required":false},"change":"removed"},{"key":"/schema/items/properties/bio","after":{"type":"string","required":false},"change":"added"},{"key":"/schema/items/properties/userStatus","change":"changed","before":{"type":"integer","format":"int32"},"after":{"type":"string","enum":["activation-pending","activated","blocked"]}},{"key":"","change":"changed","before":{"schema":{"items":{"required":["id","email","lastName","userStatus"],"properties":{"phone":{"type":"string"},"userStatus":{"type":"integer","format":"int32"}}}}},"after":{"schema":{"items":{"required":["id","email","username","userStatus"],"properties":{"userStatus":{"type":"string","enum":["activation-pending","activated","blocked"]},"bio":{"type":"string"}}}}}}]}]},"responses":[]},{"name":"POST /user/createWithArray","change":"changed","attributes":[],"parameters":[],"requestBody":{"name":"Request Body","change":"changed","attributes":[],"contentTypes":[{"name":"*/*","change":"changed","attributes":[{"key":"/schema/items/properties/phone","before":{"type":"string","required":false},"change":"removed"},{"key":"/schema/items/properties/bio","after":{"type":"string","required":false},"change":"added"},{"key":"/schema/items/properties/userStatus","change":"changed","before":{"type":"integer","format":"int32"},"after":{"type":"string","enum":["activation-pending","activated","blocked"]}},{"key":"","change":"changed","before":{"schema":{"items":{"required":["id","email","lastName","userStatus"],"properties":{"phone":{"type":"string"},"userStatus":{"type":"integer","format":"int32"}}}}},"after":{"schema":{"items":{"required":["id","email","username","userStatus"],"properties":{"userStatus":{"type":"string","enum":["activation-pending","activated","blocked"]},"bio":{"type":"string"}}}}}}]}]},"responses":[]},{"name":"POST /user","change":"changed","attributes":[],"parameters":[],"requestBody":{"name":"Request Body","change":"changed","attributes":[],"contentTypes":[{"name":"*/*","change":"changed","attributes":[{"key":"/schema/properties/phone","before":{"type":"string","required":false},"change":"removed"},{"key":"/schema/properties/bio","after":{"type":"string","required":false},"change":"added"},{"key":"/schema/properties/userStatus","change":"changed","before":{"type":"integer","format":"int32"},"after":{"type":"string","enum":["activation-pending","activated","blocked"]}},{"key":"/schema/properties/lastName","change":"changed","before":{"required":true},"after":{"required":false}},{"key":"/schema/properties/username","change":"changed","before":{"required":false},"after":{"required":true}}]}]},"responses":[]},{"name":"DELETE /store/order/{orderId}","change":"changed","attributes":[],"parameters":[],"responses":[{"name":"404 response","change":"changed","attributes":[],"contentTypes":[{"name":"application/json","change":"added","attributes":[{"key":"","after":{"schema":{"type":"object","properties":{"code":{"type":"integer","format":"int32"},"type":{"type":"string"},"message":{"type":"string"}}}},"change":"added"}]}]}]},{"name":"GET /store/order/{orderId}","change":"changed","attributes":[],"parameters":[],"responses":[{"name":"200 response","change":"changed","attributes":[],"contentTypes":[{"name":"application/json","change":"changed","attributes":[{"key":"/schema/properties/summary","after":{"type":"string","description":"Human readable summary of order","required":false},"change":"added"},{"key":"/schema/properties/status","change":"changed","before":{"enum":["placed","approved","delivered"]},"after":{"enum":["placed","delivered","canceled"]}}]},{"name":"application/xml","change":"changed","attributes":[{"key":"/schema/properties/summary","after":{"type":"string","description":"Human readable summary of order","required":false},"change":"added"},{"key":"/schema/properties/status","change":"changed","before":{"enum":["placed","approved","delivered"]},"after":{"enum":["placed","delivered","canceled"]}},{"key":"/schema/properties/petId","change":"changed","before":{"required":true},"after":{"required":false}}]}]},{"name":"404 response","change":"changed","attributes":[],"contentTypes":[{"name":"application/json","change":"added","attributes":[{"key":"","after":{"schema":{"type":"object","properties":{"code":{"type":"integer","format":"int32"},"type":{"type":"string"},"message":{"type":"string"}}}},"change":"added"}]}]}]},{"name":"POST /store/order","change":"changed","attributes":[],"parameters":[],"requestBody":{"name":"Request Body","change":"changed","attributes":[],"contentTypes":[{"name":"*/*","change":"changed","attributes":[{"key":"/schema/properties/summary","after":{"type":"string","description":"Human readable summary of order","required":false},"change":"added"},{"key":"/schema/properties/status","change":"changed","before":{"enum":["placed","approved","delivered"]},"after":{"enum":["placed","delivered","canceled"]}}]}]},"responses":[{"name":"200 response","change":"changed","attributes":[],"contentTypes":[{"name":"application/json","change":"changed","attributes":[{"key":"/schema/properties/summary","after":{"type":"string","description":"Human readable summary of order","required":false},"change":"added"},{"key":"/schema/properties/status","change":"changed","before":{"enum":["placed","approved","delivered"]},"after":{"enum":["placed","delivered","canceled"]}},{"key":"/example","after":{"id":458102,"petId":581231,"quantity":31,"shipDate":"2022-03-04T22:54:32.631Z","status":"delivered","summary":"31 boxes of dog food","complete":false},"change":"added"}]},{"name":"application/xml","change":"changed","attributes":[{"key":"/schema/properties/summary","after":{"type":"string","description":"Human readable summary of order","required":false},"change":"added"},{"key":"/schema/properties/status","change":"changed","before":{"enum":["placed","approved","delivered"]},"after":{"enum":["placed","delivered","canceled"]}}]}]}]},{"name":"POST /pet/{petId}/uploadImage","change":"changed","attributes":[],"parameters":[{"name":"cookie parameter 'debug'","change":"changed","attributes":[{"key":"/schema/enum","after":[0,1],"change":"added"}]}],"responses":[{"name":"200 response","change":"removed","attributes":[{"key":"","before":{"description":"successful operation","content":{"application/json":{"schema":{"type":"object","properties":{"code":{"type":"integer","format":"int32"},"type":{"type":"string"},"message":{"type":"string"}}}}}},"change":"removed"}],"contentTypes":[]},{"name":"201 response","change":"added","attributes":[{"key":"","after":{"description":"successful operation","content":{"application/json":{"schema":{"type":"object","properties":{"code":{"type":"integer","format":"int32"},"type":{"type":"string"},"message":{"type":"string"}}}}}},"change":"added"}],"contentTypes":[]},{"name":"404 response","change":"added","attributes":[{"key":"","after":{"description":"Pet not found","content":{"application/json":{"schema":{"type":"object","properties":{"code":{"type":"integer","format":"int32"},"type":{"type":"string"},"message":{"type":"string"}}}}}},"change":"added"}],"contentTypes":[]},{"name":"default response","change":"changed","attributes":[],"contentTypes":[{"name":"application/json","change":"changed","attributes":[{"key":"/schema/properties/type","change":"changed","before":{"type":"string"},"after":{"type":"integer"}}]}]}]},{"name":"GET /pet","change":"removed","attributes":[{"key":"","before":{"responses":{"404":{"description":"Pet not found","content":{}},"405":{"description":"Validation exception","content":{}}},"parameters":[]},"change":"removed"}],"parameters":[],"responses":[]},{"name":"POST /pet","change":"changed","attributes":[{"key":"/operationId","change":"changed","before":"addPet","after":"addPet-change"}],"parameters":[],"responses":[]},{"name":"PUT /pet","change":"changed","attributes":[],"parameters":[],"requestBody":{"name":"Request Body","change":"changed","attributes":[],"contentTypes":[{"name":"application/xml","change":"removed","attributes":[{"key":"","before":{"schema":{"required":["name","photoUrls"],"type":"object","properties":{"id":{"type":"integer","format":"int64"},"category":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"name":{"type":"string"}},"xml":{"name":"Category"}},"name":{"type":"string","example":"doggie"},"photoUrls":{"type":"array","xml":{"name":"photoUrl","wrapped":true},"items":{"type":"string"}},"tags":{"type":"array","xml":{"name":"tag","wrapped":true},"items":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"name":{"type":"string"}},"xml":{"name":"Tag"}}},"status":{"type":"string","description":"pet status in the store","enum":["available","pending","sold"]}},"xml":{"name":"Pet"}}},"change":"removed"}]},{"name":"application/json","change":"changed","attributes":[{"key":"/schema/properties/name","before":{"type":"string","example":"doggie","required":true},"change":"removed"},{"key":"/schema/properties/number","after":{"type":"string","required":true},"change":"added"}]}]},"responses":[{"name":"400 response","change":"removed","attributes":[{"key":"","before":{"description":"Invalid ID supplied","content":{}},"change":"removed"}],"contentTypes":[]}]},{"name":"GET /parameters_at_path","change":"changed","attributes":[],"parameters":[{"name":"query parameter 'query_in_path'","change":"added","attributes":[{"key":"","after":{"name":"query_in_path","in":"query","description":"asada","required":true,"schema":{"type":"string"}},"change":"added"}]}],"responses":[]},{"name":"PATCH /example","change":"changed","attributes":[],"parameters":[{"name":"query parameter 'seomthing'","change":"added","attributes":[{"key":"","after":{"name":"seomthing","in":"query","description":"something","required":true,"schema":{"type":"string"}},"change":"added"}]}],"responses":[]},{"name":"POST /example","change":"changed","attributes":[],"parameters":[{"name":"query parameter 'somethingelse'","change":"removed","attributes":[{"key":"","before":{"name":"somethingelse","in":"query","description":"something","required":true,"schema":{"type":"string"}},"change":"removed"}]}],"responses":[]},{"name":"GET /example","change":"changed","attributes":[],"parameters":[{"name":"query parameter 'deletedQueryParameter'","change":"removed","attributes":[{"key":"","before":{"name":"deletedQueryParameter","in":"query","description":"The user name for login","required":true,"schema":{"type":"string"}},"change":"removed"}]},{"name":"query parameter 'addedQueryParameter'","change":"added","attributes":[{"key":"","after":{"name":"addedQueryParameter","in":"query","description":"The user name for login","required":true,"schema":{"type":"string"}},"change":"added"}]},{"name":"query parameter 'requiredToOptional'","change":"changed","attributes":[{"key":"/required","before":true,"change":"removed"}]},{"name":"query parameter 'optionalToRequired'","change":"changed","attributes":[{"key":"/required","after":true,"change":"added"}]}],"responses":[{"name":"200 response","change":"changed","attributes":[],"contentTypes":[{"name":"application/json","change":"changed","attributes":[{"key":"/schema/properties/toTypeArrays","change":"changed","before":{"type":"string"},"after":{"type":["string","number"]}},{"key":"/schema/properties/fromTypeArrays","change":"changed","before":{"type":["string","number"]},"after":{"type":"string"}},{"key":"/schema/properties/requiredKeys/properties/requiredToOptional","change":"changed","before":{"required":true},"after":{"required":false}},{"key":"/schema/properties/requiredKeys/properties/deletedRequiredKey","before":{"type":"string","required":true},"change":"removed"},{"key":"/schema/properties/requiredKeys/properties/optionalToRequired","change":"changed","before":{"required":false},"after":{"required":true}},{"key":"/schema/properties/requiredKeys/properties/addedRequiredKey","after":{"type":"string","required":true},"change":"added"},{"key":"/schema/properties/expandableObject","change":"changed","before":{"anyOf":[{"type":"object","properties":{"orderId":{"type":"string"}}}]},"after":{"anyOf":[{"type":"object","properties":{"orderId":{"type":"string"}}},{"type":"object","properties":{"order":{"type":"object","properties":{"id":{"type":"string"}}}}}]}},{"key":"/schema/properties/composedObject/properties/orderId","change":"changed","before":{"type":"string"},"after":{"type":"number"}},{"key":"/schema/properties/stringOrNumberOrObject","change":"changed","before":{"oneOf":[{"type":"string"},{"type":"number"},{"type":"object","properties":{"orderId":{"type":"string"}}}]},"after":{"oneOf":[{"type":"string"},{"type":"number"}]}}]}]}]}]}
 "
 `;
 

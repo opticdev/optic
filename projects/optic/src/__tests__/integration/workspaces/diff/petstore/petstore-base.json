@@ -140,6 +140,9 @@
           }
         ],
         "responses": {}
+      },
+      "patch": {
+        "responses": {}
       }
     },
     "/parameters_at_path": {
