@@ -19,6 +19,7 @@ import {
   generatePathAndMethodSpecPatches,
 } from '../patches/patches';
 import { SpecPatches } from '../../oas/specs';
+import chalk from 'chalk';
 
 type MethodMap = Map<string, { add: Set<string>; ignore: Set<string> }>;
 
@@ -79,12 +80,15 @@ export async function promptUserForPathPattern(
     } else {
       const guessedPattern =
         inferredPathStructure.includeObservedUrlPath(method, path) ?? path;
+      logger.info(`> ` + chalk.bold.blue(guessedPattern));
       const results = await prompts(
         [
           {
             type: 'select',
             name: 'action',
-            message: `Is ${guessedPattern} the right pattern for ${method.toUpperCase()} ${path}`,
+            message: `Is this the right pattern for ${chalk.green(
+              `${method.toUpperCase()} ${path}`
+            )}`,
             choices: [
               {
                 title: 'yes',
@@ -107,7 +111,9 @@ export async function promptUserForPathPattern(
           {
             type: (pre) => (pre === 'no' ? 'text' : null),
             name: 'newPath',
-            message: 'Provide the correct path (e.g. /api/users/{userId)',
+            message: `Provide the correct path (e.g. ${chalk.gray(
+              '/api/users/{userId}'
+            )})`,
             validate: (pattern) =>
               matchPathPattern(pattern, interaction.request.path).match
                 ? true
