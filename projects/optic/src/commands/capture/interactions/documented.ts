@@ -1,14 +1,16 @@
-import fs from 'node:fs/promises';
 import chalk from 'chalk';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { ParseResult } from '../../../utils/spec-loaders';
-import { generateEndpointSpecPatches } from '../patches/patches';
+import {
+  generateEndpointSpecPatches,
+  jsonOpsFromSpecPatches,
+} from '../patches/patches';
 
-import { updateSpecFiles } from '../../oas/diffing/document';
 import { SpecPatch } from '../../oas/specs';
 import { CapturedInteractions } from '../sources/captured-interactions';
 import { ApiCoverageCounter } from '../coverage/api-coverage';
 import * as AT from '../../oas/lib/async-tools';
+import { writePatchesToFiles } from '../write/file';
 
 function summarizePatch(
   patch: SpecPatch,
@@ -130,14 +132,8 @@ export async function updateExistingEndpoint(
   let hasDiffs = false;
 
   if (options.update) {
-    let { results: updatedSpecFiles } = updateSpecFiles(
-      specPatches,
-      parseResult.sourcemap
-    );
-
-    for await (const { path, contents } of updatedSpecFiles) {
-      await fs.writeFile(path, contents);
-    }
+    const operations = await jsonOpsFromSpecPatches(specPatches);
+    await writePatchesToFiles(operations, parseResult.sourcemap);
   } else {
     for await (const _ of specPatches) {
       hasDiffs = true;

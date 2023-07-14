@@ -1,4 +1,3 @@
-import fs from 'node:fs/promises';
 import prompts from 'prompts';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { matchPathPattern } from '../../../utils/pathPatterns';
@@ -13,13 +12,14 @@ import {
 } from '../sources/captured-interactions';
 import { InferPathStructure } from '../operations/infer-path-structure';
 import { specToPaths } from '../operations/queries';
-import { updateSpecFiles } from '../../oas/diffing/document';
 import {
   generateEndpointSpecPatches,
   generatePathAndMethodSpecPatches,
+  jsonOpsFromSpecPatches,
 } from '../patches/patches';
 import { SpecPatches } from '../../oas/specs';
 import chalk from 'chalk';
+import { writePatchesToFiles } from '../write/file';
 
 type MethodMap = Map<string, { add: Set<string>; ignore: Set<string> }>;
 
@@ -183,12 +183,6 @@ export async function documentNewEndpoint(
     );
   })();
 
-  let { results: updatedSpecFiles } = updateSpecFiles(
-    specPatches,
-    parseResult.sourcemap
-  );
-
-  for await (const { path, contents } of updatedSpecFiles) {
-    await fs.writeFile(path, contents);
-  }
+  const operations = await jsonOpsFromSpecPatches(specPatches);
+  await writePatchesToFiles(operations, parseResult.sourcemap);
 }
