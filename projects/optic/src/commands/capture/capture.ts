@@ -468,8 +468,11 @@ async function runRequestsCommand(
   proxyUrl: string
 ): Promise<void> {
   const cmd = commandSplitter(command);
-  process.env[proxyVar] = proxyUrl;
   const reqCmd = spawn(cmd.cmd, cmd.args, {
+    env: {
+      ...process.env,
+      [proxyVar]: proxyUrl,
+    },
     detached: true,
     shell: true,
   });
