@@ -178,8 +178,10 @@ const getHeadAndLastChanged = async (
       meta: { sha: shaWithChange },
     };
   } catch (e) {
-    console.error(e instanceof Error ? e.message : e);
-    throw new UserError({ initialError: e instanceof Error ? e : undefined });
+    throw new UserError({
+      initialError: e instanceof Error ? e : undefined,
+      message: e instanceof Error ? e.message : undefined,
+    });
   }
 };
 
@@ -209,8 +211,10 @@ const getBaseAndHeadFromFiles = async (
     const specDetails = opticUrl ? getApiFromOpticUrl(opticUrl) : null;
     return [baseFile, headFile, specDetails];
   } catch (e) {
-    console.error(e instanceof Error ? e.message : e);
-    throw new UserError({ initialError: e instanceof Error ? e : undefined });
+    throw new UserError({
+      initialError: e instanceof Error ? e : undefined,
+      message: e instanceof Error ? e.message : undefined,
+    });
   }
 };
 
@@ -254,8 +258,10 @@ const getBaseAndHeadFromFileAndBase = async (
       return [baseFile, headFile, specDetails];
     }
   } catch (e) {
-    console.error(e instanceof Error ? e.message : e);
-    throw new UserError({ initialError: e instanceof Error ? e : undefined });
+    throw new UserError({
+      initialError: e instanceof Error ? e : undefined,
+      message: e instanceof Error ? e.message : undefined,
+    });
   }
 };
 

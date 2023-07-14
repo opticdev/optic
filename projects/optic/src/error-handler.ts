@@ -20,6 +20,9 @@ export const errorHandler = <Args extends any[], Return extends any>(
     try {
       return await fn(...args);
     } catch (e) {
+      const maybeOriginalError =
+        UserError.isInstance(e) && e.initialError ? e.initialError : null;
+
       if (
         (e instanceof BadRequestError &&
           e.source === 'optic' &&
@@ -35,12 +38,18 @@ export const errorHandler = <Args extends any[], Return extends any>(
         );
         logger.error('');
         logger.error(chalk.green('Run optic login to generate a new token'));
-      } else if (OpenAPIVersionError.isInstance(e)) {
-        console.error(e);
-        console.error(chalk.red((e as Error).message));
-        if (e.version) {
+      } else if (
+        OpenAPIVersionError.isInstance(e) ||
+        (maybeOriginalError &&
+          OpenAPIVersionError.isInstance(maybeOriginalError))
+      ) {
+        const versionError = OpenAPIVersionError.isInstance(e)
+          ? e
+          : (maybeOriginalError as OpenAPIVersionError);
+        logger.error(chalk.red(versionError.message));
+        if (versionError.version) {
           trackEvent('optic.openapi.version_not_supported', {
-            version: e.version,
+            version: versionError.version,
             command: meta.command,
           });
           await flushEvents();
@@ -50,10 +59,10 @@ export const errorHandler = <Args extends any[], Return extends any>(
         UserError.isInstance(e) ||
         e instanceof ResolverError
       ) {
-        console.error(chalk.red((e as Error).message));
+        logger.error(chalk.red((e as Error).message));
       } else {
         console.error(e);
-        console.error(chalk.red((e as Error).message));
+        logger.error(chalk.red((e as Error).message));
         SentryClient.captureException(e);
         await SentryClient.flush();
       }

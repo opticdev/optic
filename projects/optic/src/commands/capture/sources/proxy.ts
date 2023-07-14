@@ -54,7 +54,7 @@ export class ProxyInteractions {
           'Error:'
         )} Invalid URL. Valid URLs must include the protocol and host, e.g. http://localhost:3030 or https://api.example.com`
       );
-      throw new UserError({ initialError: e instanceof Error ? e : undefined });
+      throw new UserError();
     }
     if (targetHost.includes('/')) {
       // accept urls to be passed in rather than pure hosts

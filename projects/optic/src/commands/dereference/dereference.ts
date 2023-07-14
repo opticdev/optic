@@ -54,7 +54,7 @@ const getDereferencedSpec = async (
     });
   } catch (e) {
     console.error(e instanceof Error ? e.message : e);
-    throw new UserError({ initialError: e instanceof Error ? e : undefined });
+    throw new UserError();
   }
 };
 
