@@ -157,7 +157,13 @@ export async function documentNewEndpoint(
 ) {
   const interactionsAsAsyncIterator = (async function* () {
     for (const interaction of interactions) {
-      yield interaction;
+      const { path, method } = interaction.request;
+      if (
+        matchPathPattern(endpoint.path, path).match &&
+        endpoint.method === method
+      ) {
+        yield interaction;
+      }
     }
   })();
 

@@ -427,7 +427,7 @@ function getSummaryText(endpointCoverage: OperationCoverage) {
     const icon = getIcon(node);
     items.push(`${icon}${statusCode} response`);
   }
-  return items.join();
+  return items.join(', ');
 }
 
 function sendRequests(
