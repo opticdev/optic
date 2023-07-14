@@ -1,12 +1,13 @@
 import { Command, Option } from 'commander';
 import { UserError, textToSev } from '@useoptic/openapi-utilities';
+
 import {
   parseFilesFromRef,
   ParseResult,
   loadSpec,
   parseFilesFromCloud,
 } from '../../utils/spec-loaders';
-import { OpticCliConfig, VCS } from '../../config';
+import { ConfigRuleset, OpticCliConfig, VCS } from '../../config';
 import chalk from 'chalk';
 import {
   flushEvents,
@@ -33,7 +34,6 @@ import stableStringify from 'json-stable-stringify';
 import { computeChecksumForAws } from '../../utils/checksum';
 import { openUrl } from '../../utils/open-url';
 import { renderCloudSetup } from '../../utils/render-cloud';
-import { fileExists } from '../../utils/file';
 
 type DiffActionOptions = {
   base: string;
@@ -259,6 +259,30 @@ const getBaseAndHeadFromFileAndBase = async (
   }
 };
 
+const runDiff = async (
+  [baseFile, headFile]: [ParseResult, ParseResult, SpecDetails],
+  config: OpticCliConfig,
+  options: DiffActionOptions,
+  filepath: string
+): Promise<{
+  checks: Awaited<ReturnType<typeof compute>>['checks'];
+  specResults: Awaited<ReturnType<typeof compute>>['specResults'];
+  changelogData: Awaited<ReturnType<typeof compute>>['changelogData'];
+  warnings: string[];
+  standard: ConfigRuleset[];
+}> => {
+  const { specResults, checks, changelogData, warnings, standard } =
+    await compute([baseFile, headFile], config, { ...options, path: filepath });
+
+  return {
+    checks,
+    specResults,
+    changelogData,
+    warnings,
+    standard,
+  };
+};
+
 const getDiffAction =
   (config: OpticCliConfig) =>
   async (
@@ -276,14 +300,6 @@ const getDiffAction =
           'Error: Must be logged in to upload results. Run optic login to authenticate.'
         )
       );
-      return;
-    } else if (file1 && !(await fileExists(file1))) {
-      logger.error(chalk.red.bold(`Error: Could not open ${file1}`));
-      process.exitCode = 1;
-      return;
-    } else if (file2 && !(await fileExists(file2))) {
-      logger.error(chalk.red.bold(`Error: Could not open ${file2}`));
-      process.exitCode = 1;
       return;
     }
 
@@ -357,15 +373,12 @@ const getDiffAction =
       process.exitCode = 1;
       return;
     }
-    let [baseParseResult, headParseResult, specDetails] = parsedFiles;
-    const diffResult = await compute(
-      [baseParseResult, headParseResult],
-      config,
-      { ...options, path: file1 }
-    );
+
+    const diffResult = await runDiff(parsedFiles, config, options, file1);
     let maybeChangelogUrl: string | null = null;
     let specUrl: string | null = null;
 
+    let [baseParseResult, headParseResult, specDetails] = parsedFiles;
     if (options.upload) {
       const uploadResults = await uploadDiff(
         {
