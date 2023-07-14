@@ -148,8 +148,8 @@ const getCaptureAction =
     targetUrl: string | undefined,
     options: CaptureActionOptions
   ) => {
-    // TODO capturev2 - handle relative path from root (tbd - what do we do when we handle this outside of a git repo)
-    const captureConfig = config.capture?.[filePath];
+    const pathFromRoot = path.relative(config.root, path.resolve(filePath));
+    const captureConfig = config.capture?.[pathFromRoot];
 
     // capture v1
     if (targetUrl !== undefined) {
@@ -230,7 +230,8 @@ const getCaptureAction =
         captureConfig,
         proxy
       );
-      const requestsPromises = Promise.all([
+      // Here we continue even if some of the requests failed - we log out the requests errors but use the rest to query
+      const requestsPromises = Promise.allSettled([
         sendRequestsPromise,
         runRequestsPromise,
       ]);
@@ -427,7 +428,7 @@ function getSummaryText(endpointCoverage: OperationCoverage) {
     const icon = getIcon(node);
     items.push(`${icon}${statusCode} response`);
   }
-  return items.join();
+  return items.join(', ');
 }
 
 function sendRequests(
@@ -467,8 +468,11 @@ async function runRequestsCommand(
   proxyUrl: string
 ): Promise<void> {
   const cmd = commandSplitter(command);
-  process.env[proxyVar] = proxyUrl;
   const reqCmd = spawn(cmd.cmd, cmd.args, {
+    env: {
+      ...process.env,
+      [proxyVar]: proxyUrl,
+    },
     detached: true,
     shell: true,
   });
@@ -501,7 +505,21 @@ function makeAllRequests(
       proxy.url,
       captureConfig.config?.request_concurrency || 5
     );
-    sendRequestsPromise = Promise.allSettled(requests);
+    sendRequestsPromise = Promise.allSettled(requests).then((results) => {
+      let hasError = false;
+      results.forEach((result, idx) => {
+        if (result.status === 'rejected') {
+          const req = captureConfig.requests![idx];
+          logger.error(
+            `Request ${req.verb ?? 'GET'} ${req.path} failed with ${
+              result.reason
+            }`
+          );
+          hasError = true;
+        }
+      });
+      if (hasError) throw new Error('Some requests failed');
+    });
   }
 
   // run requests command
