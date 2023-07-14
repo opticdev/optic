@@ -41,7 +41,7 @@ export async function promptUserForPathPattern(
   );
 
   const ignorePaths = getIgnorePaths(spec);
-  const newIgnorePaths: { method: string; pattern: string }[] = [];
+  const newIgnorePaths: { method: string; path: string }[] = [];
 
   for (const ignore of ignorePaths) {
     if (!ignore.method) {
@@ -133,7 +133,7 @@ export async function promptUserForPathPattern(
         continue;
       } else {
         ignore.add(path);
-        newIgnorePaths.push({ method, pattern: path });
+        newIgnorePaths.push({ method, path });
       }
     }
   }

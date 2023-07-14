@@ -99,7 +99,7 @@ function summarizePatch(
   return null;
 }
 
-export async function updateExistingEndpoint(
+export async function diffExistingEndpoint(
   interactions: CapturedInteractions,
   parseResult: ParseResult,
   coverage: ApiCoverageCounter,

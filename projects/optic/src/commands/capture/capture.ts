@@ -24,17 +24,17 @@ import { clearCommand } from '../oas/capture-clear';
 import { captureV1 } from '../oas/capture';
 import { getCaptureStorage, GroupedCaptures } from './storage';
 import { loadSpec } from '../../utils/spec-loaders';
-import { updateExistingEndpoint } from './interactions/documented';
 import { ApiCoverageCounter } from './coverage/api-coverage';
 import { commandSplitter } from '../../utils/capture';
-import {
-  documentNewEndpoint,
-  promptUserForPathPattern,
-} from './interactions/undocumented';
-import { OPTIC_PATH_IGNORE_KEY } from '../../constants';
 import { specToOperations } from './operations/queries';
 import { ProxyInteractions } from './sources/proxy';
 import { HarEntries } from './sources/har';
+import {
+  addIgnorePaths,
+  documentNewEndpoint,
+  promptUserForPathPattern,
+  diffExistingEndpoint,
+} from './actions';
 
 const indent = (n: number) => '  '.repeat(n);
 const wait = (time: number) =>
@@ -286,7 +286,7 @@ const getCaptureAction =
       const { path, method } = endpoint;
       const endpointText = `${method.toUpperCase()} ${path}`;
       const spinner = ora({ text: endpointText, color: 'blue' }).start();
-      const { patchSummaries, hasDiffs } = await updateExistingEndpoint(
+      const { patchSummaries, hasDiffs } = await diffExistingEndpoint(
         interactions,
         spec,
         coverage,
@@ -361,13 +361,9 @@ const getCaptureAction =
         spinner.succeed();
       }
 
-      const existingIgnorePaths = Array.isArray(
-        spec.jsonLike[OPTIC_PATH_IGNORE_KEY]
-      )
-        ? spec.jsonLike[OPTIC_PATH_IGNORE_KEY]
-        : [];
-      const ignorePaths = existingIgnorePaths.push(...newIgnorePaths);
-
+      if (newIgnorePaths.length) {
+        await addIgnorePaths(spec, newIgnorePaths);
+      }
       // TODO Write the ignore paths to the spec
     } else if (captures.unmatched.hars.length) {
       logger.info('');
