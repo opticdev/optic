@@ -41,11 +41,11 @@ const parseContextObject = (context?: string): any => {
     const parsedContext = context ? JSON.parse(context) : {};
     return parsedContext;
   } catch (e) {
-    throw new UserError(
-      `Could not parse the context object provided at --context ${context}. Got an error: ${
+    throw new UserError({
+      message: `Could not parse the context object provided at --context ${context}. Got an error: ${
         (e as Error).message
-      }`
-    );
+      }`,
+    });
   }
 };
 
