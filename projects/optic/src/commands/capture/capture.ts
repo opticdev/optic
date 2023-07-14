@@ -148,8 +148,8 @@ const getCaptureAction =
     targetUrl: string | undefined,
     options: CaptureActionOptions
   ) => {
-    // TODO capturev2 - handle relative path from root (tbd - what do we do when we handle this outside of a git repo)
-    const captureConfig = config.capture?.[filePath];
+    const pathFromRoot = path.relative(config.root, path.resolve(filePath));
+    const captureConfig = config.capture?.[pathFromRoot];
 
     // capture v1
     if (targetUrl !== undefined) {
