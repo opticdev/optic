@@ -3,10 +3,7 @@ import { SentryClient } from '@useoptic/openapi-utilities/build/utilities/sentry
 import chalk from 'chalk';
 import { BadRequestError, ForbiddenError } from './client/errors';
 import { logger } from './logger';
-import {
-  OpenAPIVersionError,
-  ValidationError,
-} from '@useoptic/openapi-io/build/validation/errors';
+import { OpenAPIVersionError, ValidationError } from '@useoptic/openapi-io';
 import {
   flushEvents,
   trackEvent,

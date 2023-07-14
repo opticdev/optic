@@ -179,7 +179,7 @@ const getHeadAndLastChanged = async (
     };
   } catch (e) {
     console.error(e instanceof Error ? e.message : e);
-    throw new UserError();
+    throw new UserError({ initialError: e instanceof Error ? e : undefined });
   }
 };
 
@@ -210,7 +210,7 @@ const getBaseAndHeadFromFiles = async (
     return [baseFile, headFile, specDetails];
   } catch (e) {
     console.error(e instanceof Error ? e.message : e);
-    throw new UserError();
+    throw new UserError({ initialError: e instanceof Error ? e : undefined });
   }
 };
 
@@ -255,7 +255,7 @@ const getBaseAndHeadFromFileAndBase = async (
     }
   } catch (e) {
     console.error(e instanceof Error ? e.message : e);
-    throw new UserError();
+    throw new UserError({ initialError: e instanceof Error ? e : undefined });
   }
 };
 

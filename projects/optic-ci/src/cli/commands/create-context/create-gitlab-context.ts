@@ -43,14 +43,16 @@ export const registerCreateGitlabContext = (
           provider: (typeof SUPPORTED_GITLAB_CI_PROVIDERS)[number];
         }) => {
           if (!provider) {
-            throw new UserError('Cannot create context without a provider');
+            throw new UserError({
+              message: 'Cannot create context without a provider',
+            });
           }
           if (!SUPPORTED_GITLAB_CI_PROVIDERS.includes(provider)) {
-            throw new UserError(
-              `Unexpected provider '${provider}', supported ci providers are: ${SUPPORTED_GITLAB_CI_PROVIDERS.join(
+            throw new UserError({
+              message: `Unexpected provider '${provider}', supported ci providers are: ${SUPPORTED_GITLAB_CI_PROVIDERS.join(
                 ', '
-              )}`
-            );
+              )}`,
+            });
           }
           createContext(provider);
         }

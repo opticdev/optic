@@ -160,11 +160,11 @@ export const validateConfig = (config: unknown, path: string) => {
   const result = validateConfigSchema(config);
 
   if (!result) {
-    throw new UserError(
-      `Configuration file \`${path}\` is invalid:\n${ajv.errorsText(
+    throw new UserError({
+      message: `Configuration file \`${path}\` is invalid:\n${ajv.errorsText(
         validateConfigSchema.errors
-      )}`
-    );
+      )}`,
+    });
   }
 };
 
@@ -196,16 +196,18 @@ export const initializeRules = async (
       } else if (typeof ruleset === 'object' && ruleset !== null) {
         const keys = Object.keys(ruleset);
         if (keys.length !== 1) {
-          throw new UserError(
-            `Configuration error: empty ruleset configuration`
-          );
+          throw new UserError({
+            message: `Configuration error: empty ruleset configuration`,
+          });
         } else {
           const name = keys[0];
           const config = ruleset[name] || {};
           rulesetMap.set(name, { name, config });
         }
       } else {
-        throw new UserError('Configuration error: unexpected ruleset format');
+        throw new UserError({
+          message: 'Configuration error: unexpected ruleset format',
+        });
       }
     }
 

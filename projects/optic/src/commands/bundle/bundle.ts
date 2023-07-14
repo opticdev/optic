@@ -67,7 +67,7 @@ const getSpec = async (
     });
   } catch (e) {
     logger.error(e instanceof Error ? e.message : e);
-    throw new UserError();
+    throw new UserError({ initialError: e instanceof Error ? e : undefined });
   }
 };
 

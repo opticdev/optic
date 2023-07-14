@@ -53,14 +53,14 @@ export const registerCreateManualContext = (cli: Command) => {
     .action(
       wrapActionHandlerWithSentry(async (options: ContextOptions) => {
         if (isNaN(Number(options.pull_request))) {
-          throw new UserError(
-            `pull request must be a number, received ${options.pull_request}`
-          );
+          throw new UserError({
+            message: `pull request must be a number, received ${options.pull_request}`,
+          });
         }
         if (isNaN(Number(options.run))) {
-          throw new UserError(
-            `pull request must be a number, received ${options.run}`
-          );
+          throw new UserError({
+            message: `pull request must be a number, received ${options.run}`,
+          });
         }
         createContext(options);
       })

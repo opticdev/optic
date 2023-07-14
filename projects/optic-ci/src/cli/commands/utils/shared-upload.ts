@@ -26,32 +26,35 @@ export const validateUploadRequirements = (
   if (uploadResults) {
     // If uploadResults, we should have a valid optic token, git provider and ciContext
     if (!cliConfig.opticToken) {
-      throw new UserError(
-        'Expected an opticToken to be set in cliOptions when used with --upload-results - check optic.config.js file'
-      );
+      throw new UserError({
+        message:
+          'Expected an opticToken to be set in cliOptions when used with --upload-results - check optic.config.js file',
+      });
     }
 
     if (!cliConfig.ciProvider) {
-      throw new UserError(
-        'Expected an ciProvider to be set in cliOptions when used with --upload-results - check optic.config.js file'
-      );
+      throw new UserError({
+        message:
+          'Expected an ciProvider to be set in cliOptions when used with --upload-results - check optic.config.js file',
+      });
     }
 
     if (!SUPPORTED_GITHUB_CI_PROVIDERS.includes(cliConfig.ciProvider)) {
-      throw new UserError(
-        `Unsupported gitProvider supplied - currently supported git providers are: ${SUPPORTED_GITHUB_CI_PROVIDERS.join(
+      throw new UserError({
+        message: `Unsupported gitProvider supplied - currently supported git providers are: ${SUPPORTED_GITHUB_CI_PROVIDERS.join(
           ', '
-        )}`
-      );
+        )}`,
+      });
     }
 
     if (!cliConfig.gitProvider) {
-      throw new UserError(
-        'Expected an gitProvider to be set in cliOptions when used with --upload-results - check optic.config.js file'
-      );
+      throw new UserError({
+        message:
+          'Expected an gitProvider to be set in cliOptions when used with --upload-results - check optic.config.js file',
+      });
     }
     if (!cliConfig.gitProvider.token) {
-      throw new UserError(`No gitProvider.token was supplied`);
+      throw new UserError({ message: `No gitProvider.token was supplied` });
     }
   }
 };
@@ -114,7 +117,7 @@ export const loadAndValidateSpecFiles = async (from?: string, to?: string) => {
     validateOpenApiV3Document(JSON.parse(fromFileS3Buffer.toString()));
     validateOpenApiV3Document(JSON.parse(toFileS3Buffer.toString()));
   } catch (e) {
-    throw new UserError((e as Error).message);
+    throw new UserError({ message: (e as Error).message });
   }
 
   return {

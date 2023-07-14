@@ -36,6 +36,7 @@ export {
   ResolverError,
   validateOpenApiV3Document,
   ValidationError,
+  OpenAPIVersionError,
   SupportedOpenAPIVersions,
   checkOpenAPIVersion,
 };
