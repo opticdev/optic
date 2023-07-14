@@ -230,7 +230,8 @@ const getCaptureAction =
         captureConfig,
         proxy
       );
-      const requestsPromises = Promise.all([
+      // Here we continue even if some of the requests failed - we log out the requests errors but use the rest to query
+      const requestsPromises = Promise.allSettled([
         sendRequestsPromise,
         runRequestsPromise,
       ]);
@@ -501,7 +502,21 @@ function makeAllRequests(
       proxy.url,
       captureConfig.config?.request_concurrency || 5
     );
-    sendRequestsPromise = Promise.allSettled(requests);
+    sendRequestsPromise = Promise.allSettled(requests).then((results) => {
+      let hasError = false;
+      results.forEach((result, idx) => {
+        if (result.status === 'rejected') {
+          const req = captureConfig.requests![idx];
+          logger.error(
+            `Request ${req.verb ?? 'GET'} ${req.path} failed with ${
+              result.reason
+            }`
+          );
+          hasError = true;
+        }
+      });
+      if (hasError) throw new Error('Some requests failed');
+    });
   }
 
   // run requests command
