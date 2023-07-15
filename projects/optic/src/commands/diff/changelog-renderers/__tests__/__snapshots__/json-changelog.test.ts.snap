@@ -2216,3 +2216,64 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
   ],
 }
 `;
+
+exports[`json changelog with parameter changes: parameters 1`] = `
+{
+  "operations": [
+    {
+      "attributes": [],
+      "change": "changed",
+      "name": "POST /test/set2",
+      "parameters": [
+        {
+          "attributes": [
+            {
+              "after": {
+                "in": "query",
+                "name": "test_test",
+                "schema": {
+                  "type": "string",
+                },
+              },
+              "before": undefined,
+              "change": "added",
+              "key": "",
+            },
+          ],
+          "change": "added",
+          "name": "query parameter 'test_test'",
+        },
+      ],
+      "requestBody": undefined,
+      "responses": [],
+    },
+    {
+      "attributes": [],
+      "change": "changed",
+      "name": "GET /test/set1",
+      "parameters": [
+        {
+          "attributes": [
+            {
+              "after": {
+                "in": "header",
+                "name": "X-username",
+                "schema": {
+                  "type": "string",
+                },
+              },
+              "before": undefined,
+              "change": "added",
+              "key": "",
+            },
+          ],
+          "change": "added",
+          "name": "header parameter 'X-username'",
+        },
+      ],
+      "requestBody": undefined,
+      "responses": [],
+    },
+  ],
+}
+`;

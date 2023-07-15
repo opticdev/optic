@@ -1,23 +1,20 @@
 import { beforeAll, it, describe, expect } from '@jest/globals';
-import { CapturedInteraction } from './interaction';
-import { CapturedBody } from './body';
-import { HarEntries, HttpArchive } from './streams/sources/har';
-import { ProxyInteractions, ProxySource } from './streams/sources/proxy';
-import {
-  PostmanCollectionEntries,
-  PostmanEntry,
-} from './streams/sources/postman';
-import { collect, unwrap } from '../lib/async-tools';
+import { CapturedInteraction } from '../captured-interactions';
+import { collect, unwrap } from '../../../oas/lib/async-tools';
 import fs from 'fs';
 import Path from 'path';
 import { Readable } from 'stream';
+import { HarEntries, HttpArchive } from '../har';
+import { CapturedBody } from '../body';
+import { PostmanCollectionEntries, PostmanEntry } from '../postman';
+import { ProxySource } from '../proxy';
 
 describe('CapturedIntearction.fromHarEntry', () => {
   let testEntries: HttpArchive.Entry[];
 
   beforeAll(async () => {
     let source = fs.createReadStream(
-      Path.join(__dirname, '../tests/inputs/petstore.swagger.io.har')
+      Path.join(__dirname, './fixtures/petstore.swagger.io.har')
     );
 
     testEntries = await collect(unwrap(HarEntries.fromReadable(source)));
@@ -46,7 +43,7 @@ describe('CapturedIntearction.fromHarEntry', () => {
       response: { body: matchBody() },
     });
 
-    let parsingBody = CapturedBody.json(interaction.request.body);
+    let parsingBody = CapturedBody.json(interaction!.request.body);
     expect(parsingBody).resolves.toMatchObject({});
   });
 
@@ -63,7 +60,7 @@ describe('CapturedIntearction.fromHarEntry', () => {
       response: { body: matchBody() },
     });
 
-    let parsingBody = CapturedBody.json(interaction.response?.body);
+    let parsingBody = CapturedBody.json(interaction!.response?.body);
     expect(parsingBody).resolves.toMatchObject({});
   });
 
@@ -88,7 +85,7 @@ describe('CapturedIntearction.fromHarEntry', () => {
       response: { body: matchBody() },
     });
 
-    let parsingBody = CapturedBody.json(interaction.request.body);
+    let parsingBody = CapturedBody.json(interaction!.request.body);
     expect(parsingBody).resolves.toMatchObject({});
   });
 
@@ -112,7 +109,7 @@ describe('CapturedIntearction.fromHarEntry', () => {
       response: { body: matchBody() },
     });
 
-    let parsingBody = CapturedBody.json(interaction.response?.body);
+    let parsingBody = CapturedBody.json(interaction!.response?.body);
     expect(parsingBody).resolves.toMatchObject({});
   });
 });
@@ -155,7 +152,7 @@ describe('CapturedInteraction.fromProxyInteraction', () => {
       response: { body: matchBody() },
     });
 
-    let parsingBody = CapturedBody.json(interaction.response?.body);
+    let parsingBody = CapturedBody.json(interaction!.response?.body);
     expect(parsingBody).resolves.toMatchObject(testBody);
   });
 });
@@ -165,7 +162,7 @@ describe('CapturedInteraction.fromPostmanEntry', () => {
 
   beforeAll(async () => {
     let source = fs.createReadStream(
-      Path.join(__dirname, '../tests/inputs/echo.postman_collection.json')
+      Path.join(__dirname, './fixtures/echo.postman_collection.json')
     );
 
     testEntries = await collect(
@@ -197,7 +194,7 @@ describe('CapturedInteraction.fromPostmanEntry', () => {
       request: { body: matchBody() },
     });
 
-    let parsingBody = CapturedBody.json(interaction.request.body);
+    let parsingBody = CapturedBody.json(interaction!.request.body);
     expect(parsingBody).resolves.toBeTruthy();
   });
 
@@ -214,7 +211,7 @@ describe('CapturedInteraction.fromPostmanEntry', () => {
       request: { body: matchBody() },
     });
 
-    let parsingBody = CapturedBody.json(interaction.request.body);
+    let parsingBody = CapturedBody.json(interaction!.request.body);
     expect(parsingBody).resolves.toBeTruthy();
   });
 
@@ -232,7 +229,7 @@ describe('CapturedInteraction.fromPostmanEntry', () => {
       request: { body: matchBody() },
     });
 
-    let parsingBody = CapturedBody.text(interaction.request.body!);
+    let parsingBody = CapturedBody.text(interaction!.request.body!);
     expect(parsingBody).resolves.toBeTruthy();
   });
 
@@ -252,7 +249,7 @@ describe('CapturedInteraction.fromPostmanEntry', () => {
       response: { body: matchBody() },
     });
 
-    let parsingBody = CapturedBody.json(interaction.response?.body);
+    let parsingBody = CapturedBody.json(interaction!.response?.body);
     expect(parsingBody).resolves.toMatchObject({});
   });
 });

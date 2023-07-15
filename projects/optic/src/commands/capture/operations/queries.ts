@@ -1,74 +1,41 @@
-import {
-  FactVariants,
-  isFactVariant,
-  OpenAPIV3,
-  SpecFactsIterable,
-} from '../specs';
+import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { None, Ok, Option, Result, Some } from 'ts-results';
-import equals from 'fast-deep-equal';
-
-import { PathComponentKind, PathComponents } from '.';
+import { matchPathPattern } from '../../../utils/pathPatterns';
 
 export class OperationQueries {
-  static fromFacts(facts: SpecFactsIterable): OperationQueries {
-    const operations: Array<{
-      pathPattern: string;
-      method: OpenAPIV3.HttpMethods;
-      specPath: string;
-    }> = [];
-
-    for (let fact of facts) {
-      if (isFactVariant(fact, FactVariants.Operation)) {
-        operations.push({
-          pathPattern: fact.value.pathPattern,
-          method: fact.value.method as OpenAPIV3.HttpMethods,
-          specPath: fact.location.jsonPath,
-        });
-      }
-    }
-
-    return new OperationQueries(operations);
-  }
-
   private patterns: string[];
-  private patternsAsComponents: [string, PathComponents][];
 
   constructor(
     private operations: Array<{
       pathPattern: string;
-      method: OpenAPIV3.HttpMethods;
-      specPath: string;
+      method: string;
     }>
   ) {
     this.patterns = [
       ...new Set(this.operations.map(({ pathPattern }) => pathPattern)),
     ];
-    this.patternsAsComponents = this.patterns.map((pattern) => [
-      pattern,
-      PathComponents.fromPath(pattern),
-    ]);
   }
 
   findOperation(
     path: string,
-    method: OpenAPIV3.HttpMethods
+    method: string
   ): Result<
     Option<{
       pathPattern: string;
-      method: OpenAPIV3.HttpMethods;
-      specPath: string;
+      method: string;
     }>,
     string
   > {
     const matchedPatternResult = this.matchPathPattern(path);
     if (matchedPatternResult.err) return matchedPatternResult;
-
     let maybeMatchedPattern = matchedPatternResult.unwrap();
     if (maybeMatchedPattern.none) return Ok(None);
     let matchedPattern = maybeMatchedPattern.unwrap();
 
     const operation = this.operations.find(
-      (op) => matchedPattern === op.pathPattern && op.method == method
+      (op) =>
+        matchedPattern.toLowerCase() === op.pathPattern.toLowerCase() &&
+        op.method.toLowerCase() == method.toLowerCase()
     );
 
     if (!operation) return Ok(None);
@@ -94,38 +61,23 @@ export class OperationQueries {
   }
 
   matchPathPattern(path: string): Result<Option<string>, string> {
-    const componentizedPath = PathComponents.fromPath(path);
-
-    // start with all patterns that match by length
-    let qualifiedPatterns = this.patternsAsComponents.filter(
-      ([, patternComponents]) =>
-        patternComponents.length === componentizedPath.length
+    let qualifiedPatterns = this.patterns.filter(
+      (pattern) => matchPathPattern(pattern, path).match
     );
 
-    // reduce qualified patterns by comparing component by component
-    componentizedPath.forEach((pathComponent, componentIndex) => {
-      qualifiedPatterns = qualifiedPatterns.filter(([, patternComponents]) => {
-        const patternComponent = patternComponents[componentIndex];
-        return (
-          pathComponent.name === patternComponent.name ||
-          patternComponent.kind === PathComponentKind.Template
-        );
-      });
-    });
-
     if (qualifiedPatterns.length > 1) {
-      const exactMatch = qualifiedPatterns.find(([, patternComponents]) =>
-        equals(patternComponents, componentizedPath)
-      );
+      const exactMatch = qualifiedPatterns.find((pattern) => {
+        const match = matchPathPattern(pattern, path);
+        return match.match && match.exact;
+      });
 
       if (exactMatch) {
-        let [pattern] = exactMatch;
-        return Ok(Some(pattern));
+        return Ok(Some(exactMatch));
       } else {
-        return Ok(Some(qualifiedPatterns[0][0]));
+        return Ok(Some(qualifiedPatterns[0]));
       }
     } else if (qualifiedPatterns.length === 1) {
-      let [pattern] = qualifiedPatterns[0];
+      let pattern = qualifiedPatterns[0];
       return Ok(Some(pattern));
     } else {
       return Ok(None);
@@ -134,6 +86,12 @@ export class OperationQueries {
 }
 
 export function specToOperations(spec: OpenAPIV3.Document) {
+  return specToPaths(spec).flatMap((o) =>
+    o.methods.map((m) => ({ method: m, pathPattern: o.pathPattern }))
+  );
+}
+
+export function specToPaths(spec: OpenAPIV3.Document) {
   const operations: { pathPattern: string; methods: string[] }[] = [];
 
   const allowedKeys = [

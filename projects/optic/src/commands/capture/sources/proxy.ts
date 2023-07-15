@@ -6,8 +6,8 @@ import {
   CompletedBody,
   TimingEvents,
 } from 'mockttp';
-// import { getCA, CAOptions } from 'mockttp/dist/util/tls';
-import { Subject } from '../../../lib/async-tools';
+
+import { Subject } from '../../oas/lib/async-tools';
 import { pki, md } from 'node-forge';
 import { randomBytes } from 'crypto';
 import { Readable } from 'stream';
@@ -24,7 +24,7 @@ import globalLog from 'log';
 import invariant from 'ts-invariant';
 import chalk from 'chalk';
 import { UserError } from '@useoptic/openapi-utilities';
-import { logger } from '../../../../../logger';
+import { logger } from '../../../logger';
 type Logger = typeof globalLog;
 
 export const log: Logger = globalLog.get('captures:streams:sources:proxy'); // export so it can be enabled in testing
@@ -197,6 +197,8 @@ export class ProxyInteractions {
 
     function onAbort(e) {
       capturingProxy.reset();
+      capturingProxy.stop();
+      transparentProxy.stop();
       interactions.onCompleted();
     }
 
@@ -242,9 +244,6 @@ export class ProxyInteractions {
 
     const stream = (async function* () {
       yield* interactions.iterator;
-      capturingProxy.reset();
-      await capturingProxy.stop();
-      await transparentProxy.stop();
     })();
 
     return [stream, transparentProxy.url!, capturingProxy.url];

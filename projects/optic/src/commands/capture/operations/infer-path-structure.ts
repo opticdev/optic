@@ -1,5 +1,5 @@
 import pluralize from 'pluralize';
-import { HttpMethod } from '../operations';
+import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 
 const COLLAPSE_CONSTANTS_N = 2;
 
@@ -74,7 +74,7 @@ export class InferPathStructure {
       - did not match other urls
    */
 
-  includeObservedUrlPath = (method: string, urlPath: string) => {
+  includeObservedUrlPath = (method: string, urlPath: string): string | null => {
     const findMatch = (
       parent: PathComponentCandidate | null,
       inferred: PathComponentCandidate['inferred'],
@@ -89,6 +89,7 @@ export class InferPathStructure {
     };
 
     const fragments = fragmentize(urlPath);
+    let last: PathComponentCandidate | null = null;
     let parent: PathComponentCandidate | null = null;
     fragments.forEach((fragment, index) => {
       const isLast = fragments.length - 1 === index;
@@ -106,6 +107,7 @@ export class InferPathStructure {
           match.examplePath = urlPath;
         }
         parent = match;
+        if (isLast) last = match;
       } else if (!match) {
         const isConfidentVariable = !isFirst && looksLikeAVariable(fragment);
         const name = isConfidentVariable
@@ -123,8 +125,11 @@ export class InferPathStructure {
         };
         this.paths.push(insert);
         parent = insert;
+        if (isLast) last = insert;
       }
     });
+
+    return last && reducePathPattern(last);
   };
 
   replaceConstantsWithVariables = () => {
@@ -288,7 +293,7 @@ export class InferPathStructure {
   // };
 
   undocumentedPaths: () => {
-    methods: Array<HttpMethod>;
+    methods: Array<OpenAPIV3.HttpMethods>;
     pathPattern: string;
     examplePath: string;
   }[] = () => {
@@ -303,7 +308,7 @@ export class InferPathStructure {
               (i) => i.pathPattern === pathPattern && i.methods.includes(method)
             );
           }
-        ) as Array<HttpMethod>;
+        ) as Array<OpenAPIV3.HttpMethods>;
 
         return {
           methods,
@@ -330,7 +335,7 @@ function reducePathPattern(component: PathComponentCandidate): string {
 
 function fragmentize(path: string): string[] {
   if (!path.startsWith('/')) {
-    path = `/${path};`;
+    path = `/${path}`;
   }
   return path.split('/').slice(1).map(decodePathFragment);
 }

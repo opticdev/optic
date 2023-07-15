@@ -1,11 +1,14 @@
-import { CapturedInteraction } from '../../captures';
 import { Operation } from '..';
 import { OperationDiffResult } from './result';
-import { OperationQueries } from '../queries';
-import { OpenAPIV3, SpecFactsIterable } from '../../specs';
+import {
+  OperationQueries,
+  specToOperations,
+} from '../../../capture/operations/queries';
+import { OpenAPIV3 } from '../../specs';
 import { visitRequestBody, visitResponses } from './visitors/index';
 import { visitPath, visitMethod } from './visitors/index';
 import { Some, None } from 'ts-results';
+import { CapturedInteraction } from '../../../capture/sources/captured-interactions';
 
 export class OperationInteractionDiffTraverser {
   private interaction?: CapturedInteraction;
@@ -38,10 +41,7 @@ export class SpecOperationDiffTraverser {
   traverse(operation, spec) {
     this.operation = operation;
     this.spec = spec;
-    // TODO: figure out whether the cost of rebuilding queries from facts for each
-    // traversal is acceptable
-    let facts = SpecFactsIterable.fromOpenAPISpec(spec);
-    this.queries = OperationQueries.fromFacts(facts);
+    this.queries = new OperationQueries(specToOperations(spec));
   }
 
   *results(): IterableIterator<OperationDiffResult> {

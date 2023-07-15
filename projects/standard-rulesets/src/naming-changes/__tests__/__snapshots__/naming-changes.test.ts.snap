@@ -1,5 +1,249 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`naming changes always operationId failing assertion 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "method": "get",
+          "path": "/api/usersList/{userId}",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/usersList/{}",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1usersList~1{userId}/get",
+        "kind": "operation",
+      },
+      "value": {
+        "method": "get",
+        "operationId": "__abc",
+        "pathPattern": "/api/usersList/{userId}",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "__abc is not camelCase",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operationId naming check",
+    "passed": false,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/usersList/{userId}",
+  },
+]
+`;
+
+exports[`naming changes always operationId failing assertion 2`] = `
+[
+  {
+    "change": {
+      "added": {
+        "method": "get",
+        "operationId": "__abc",
+        "pathPattern": "/api/usersList/{userId}",
+      },
+      "changeType": "added",
+      "location": {
+        "conceptualLocation": {
+          "method": "get",
+          "path": "/api/usersList/{userId}",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/usersList/{}",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1usersList~1{userId}/get",
+        "kind": "operation",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "__abc is not camelCase",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operationId naming check",
+    "passed": false,
+    "received": undefined,
+    "severity": 2,
+    "type": "added",
+    "where": "GET /api/usersList/{userId}",
+  },
+]
+`;
+
+exports[`naming changes always operationId failing assertion 3`] = `
+[
+  {
+    "change": {
+      "added": {
+        "method": "get",
+        "operationId": "__abc",
+        "pathPattern": "/api/usersList/{userId}",
+      },
+      "changeType": "added",
+      "location": {
+        "conceptualLocation": {
+          "method": "get",
+          "path": "/api/usersList/{userId}",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/usersList/{}",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1usersList~1{userId}/get",
+        "kind": "operation",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "__abc is not camelCase",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operationId naming check",
+    "passed": false,
+    "received": undefined,
+    "severity": 2,
+    "type": "added",
+    "where": "GET /api/usersList/{userId}",
+  },
+]
+`;
+
+exports[`naming changes always operationId passing assertion 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "method": "get",
+          "path": "/api/users-list/{userId}",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users-list/{}",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users-list~1{userId}/get",
+        "kind": "operation",
+      },
+      "value": {
+        "method": "get",
+        "operationId": "getUserById",
+        "pathPattern": "/api/users-list/{userId}",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operationId naming check",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users-list/{userId}",
+  },
+]
+`;
+
+exports[`naming changes always operationId passing assertion 2`] = `
+[
+  {
+    "change": {
+      "added": {
+        "method": "get",
+        "operationId": "getUserById",
+        "pathPattern": "/api/users-list/{userId}",
+      },
+      "changeType": "added",
+      "location": {
+        "conceptualLocation": {
+          "method": "get",
+          "path": "/api/users-list/{userId}",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users-list/{}",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users-list~1{userId}/get",
+        "kind": "operation",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operationId naming check",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "added",
+    "where": "GET /api/users-list/{userId}",
+  },
+]
+`;
+
+exports[`naming changes always operationId passing assertion 3`] = `
+[
+  {
+    "change": {
+      "added": {
+        "method": "get",
+        "operationId": "getUserById",
+        "pathPattern": "/api/users-list/{userId}",
+      },
+      "changeType": "added",
+      "location": {
+        "conceptualLocation": {
+          "method": "get",
+          "path": "/api/users-list/{userId}",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users-list/{}",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users-list~1{userId}/get",
+        "kind": "operation",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operationId naming check",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "added",
+    "where": "GET /api/users-list/{userId}",
+  },
+]
+`;
+
 exports[`naming changes always pathComponents failing assertion 1`] = `
 [
   {

@@ -1,8 +1,8 @@
-import { CapturedInteraction } from '../captures';
 import { OpenAPIV3 } from '../specs';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import invariant from 'ts-invariant';
 import MIMEType from 'whatwg-mimetype';
+import { CapturedInteraction } from '../../capture/sources/captured-interactions';
 
 export { DocumentedInteractions } from './streams/documented-interactions';
 export { OperationPatches } from './streams/patches';
@@ -11,7 +11,7 @@ export { UndocumentedOperations } from './streams/undocumented';
 
 export interface Operation extends OpenAPIV3.OperationObject {
   pathPattern: string;
-  method: OpenAPIV3.HttpMethods;
+  method: string;
 
   requestBody?: OpenAPIV3.RequestBodyObject;
   responses: { [code: string]: OpenAPIV3.ResponseObject };
@@ -20,7 +20,7 @@ export interface Operation extends OpenAPIV3.OperationObject {
 export class Operation {
   static fromOperationObject(
     pathPattern: string,
-    method: OpenAPIV3.HttpMethods,
+    method: string,
     operation: OpenAPIV3.OperationObject
   ): Operation {
     const requestBody = operation.requestBody;
@@ -110,7 +110,7 @@ export class PathComponents {
     under https://github.com/stoplightio/prism/blob/master/LICENSE
    */
     if (!path.startsWith('/')) {
-      path = `/${path};`;
+      path = `/${path}`;
     }
     return path
       .split('/')

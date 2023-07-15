@@ -5,11 +5,11 @@ import Path from 'path';
 import { Writable } from 'stream';
 import { finished } from 'stream/promises';
 import fs from 'fs-extra';
-import { ProxyCertAuthority } from './captures';
 import { Option, Some, None } from 'ts-results';
 import chalk from 'chalk';
 import path from 'path';
 import { exitIfNotElevated, platform, runCommand } from './lib/shell-utils';
+import { ProxyCertAuthority } from '../capture/sources/proxy';
 
 export async function setupTlsCommand(): Promise<Command> {
   const command = new Command('setup-tls');

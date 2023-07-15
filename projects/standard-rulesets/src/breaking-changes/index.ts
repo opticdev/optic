@@ -48,7 +48,7 @@ const configSchema = {
   type: 'object',
   properties: {
     exclude_operations_with_extension: {
-      type: 'string',
+      oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }],
     },
     skip_when_major_version_changes: {
       type: 'boolean',
@@ -102,8 +102,16 @@ export class BreakingChangesRuleset extends Ruleset<Rule[]> {
         return false;
 
       if (validatedConfig.exclude_operations_with_extension) {
-        const extension = validatedConfig.exclude_operations_with_extension;
-        return (context.operation.raw as any)[extension] !== true;
+        if (Array.isArray(validatedConfig.exclude_operations_with_extension)) {
+          return validatedConfig.exclude_operations_with_extension.some(
+            (extension) => {
+              return (context.operation.raw as any)[extension] !== true;
+            }
+          );
+        } else {
+          const extension = validatedConfig.exclude_operations_with_extension;
+          return (context.operation.raw as any)[extension] !== true;
+        }
       }
 
       return true;

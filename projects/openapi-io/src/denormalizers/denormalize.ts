@@ -112,5 +112,18 @@ export function denormalize<T extends ParseOpenAPIResult>(parse: T): T {
     }
   }
 
+  // Attaches a `parameters` key to all methods
+  for (const [pathKey, path] of Object.entries(parse.jsonLike.paths)) {
+    for (const method of Object.values(OpenAPIV3.HttpMethods)) {
+      const operation = path?.[method] as
+        | FlatOpenAPIV3.OperationObject
+        | undefined;
+
+      if (operation && !operation.parameters) {
+        operation.parameters = [];
+      }
+    }
+  }
+
   return parse;
 }

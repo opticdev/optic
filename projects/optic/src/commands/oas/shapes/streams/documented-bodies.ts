@@ -3,8 +3,6 @@ import {
   BodyLocation,
   BodyExampleLocation,
   ComponentSchemaLocation,
-  IFact,
-  OpenApiFact,
 } from '@useoptic/openapi-utilities';
 import { Result, Ok, Err, Option, Some, None } from 'ts-results';
 import MIMEType from 'whatwg-mimetype';
@@ -12,13 +10,12 @@ import MIMEType from 'whatwg-mimetype';
 import { BodyExampleFacts, ComponentSchemaExampleFacts } from '../../specs';
 import { OpenAPIV3 } from '../../specs';
 import { Body, DocumentedBody } from '../body';
-import { CapturedBody, CapturedBodies } from '../../captures';
 import {
   DocumentedInteraction,
   findResponse,
   findBody,
 } from '../../operations';
-import { logger } from '../../../../logger';
+import { CapturedBody } from '../../../capture/sources/body';
 
 export type { DocumentedBody };
 
@@ -107,6 +104,7 @@ export class DocumentedBodies {
     const capturedStatusCode = interaction.response
       ? parseInt(interaction.response.statusCode, 10)
       : null;
+
     if (
       interaction.request.body &&
       (!capturedStatusCode ||
@@ -120,10 +118,9 @@ export class DocumentedBodies {
       let decodedBodyResult = await decodeCapturedBody(capturedBody);
       if (decodedBodyResult.err) {
         console.warn(
-          'Could not decode request body of captured interaction:',
+          'Could not decode body of captured interaction:',
           decodedBodyResult.val
         );
-        logger.debug('Failing interaction: ' + JSON.stringify(interaction));
       } else if (capturedContentType) {
         let [, matchedContentType] = (operation.requestBody &&
           findBody(operation.requestBody, capturedContentType)) || [null, null];
@@ -189,10 +186,9 @@ export class DocumentedBodies {
       let decodedBodyResult = await decodeCapturedBody(capturedBody);
       if (decodedBodyResult.err) {
         console.warn(
-          'Could not decode response body of captured interaction:',
+          'Could not decode body of captured interaction:',
           decodedBodyResult.val
         );
-        logger.debug('Failing interaction: ' + JSON.stringify(interaction));
       } else if (capturedContentType && matchedResponse) {
         let [response, statusCode] = matchedResponse;
         let [, matchedContentType] = findBody(

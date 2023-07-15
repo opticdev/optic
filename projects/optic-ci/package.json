@@ -2,7 +2,7 @@
   "name": "@useoptic/optic-ci",
   "license": "MIT",
   "packageManager": "yarn@3.6.1",
-  "version": "0.47.8",
+  "version": "0.47.9",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.20.6",
-    "@octokit/rest": "^19.0.0",
+    "@octokit/rest": "^20.0.0",
     "@sentry/node": "^7.10.0",
     "@stoplight/spectral-core": "^1.8.1",
     "@useoptic/openapi-io": "workspace:*",

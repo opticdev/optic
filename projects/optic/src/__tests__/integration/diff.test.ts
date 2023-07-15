@@ -80,6 +80,20 @@ describe('diff', () => {
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
   });
 
+  test('with --json arg', async () => {
+    const workspace = await setupWorkspace('diff/petstore', {
+      repo: true,
+      commit: true,
+    });
+    const { combined, code } = await runOptic(
+      workspace,
+      'diff petstore-base.json petstore-updated.json --check --json --standard ./ruleset.yml'
+    );
+
+    expect(code).toBe(1);
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+  });
+
   test('with --last-change arg', async () => {
     const workspace = await setupWorkspace('diff/with-last-change-arg', {
       repo: true,

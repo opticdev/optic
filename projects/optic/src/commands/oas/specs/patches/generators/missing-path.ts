@@ -17,6 +17,15 @@ export function* missingPathPatches(
   if (undocumentedOperation.type !== UndocumentedOperationType.MissingPath)
     return;
 
+  yield createMissingPathPatches(undocumentedOperation);
+}
+
+export function createMissingPathPatches(
+  undocumentedOperation: Extract<
+    UndocumentedOperation,
+    { type: UndocumentedOperationType.MissingPath }
+  >
+): SpecPatch {
   const { specPath, methods, pathPattern, pathParameters } =
     undocumentedOperation;
 
@@ -63,7 +72,7 @@ export function* missingPathPatches(
     PatchOperationGroup.create('add methods', ...methodOperations)
   );
 
-  yield {
+  return {
     diff: {
       kind: OperationDiffResultKind.UnmatchedPath,
       subject: pathPattern,

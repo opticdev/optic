@@ -11,6 +11,7 @@ exports[`denormalize allOf merging does not merge allOf when all items are not a
     "paths": {
       "/example": {
         "get": {
+          "parameters": [],
           "requestBody": {
             "content": {
               "application/json": {
@@ -121,6 +122,7 @@ exports[`denormalize allOf merging merges allOf when all items are objects 1`] =
     "paths": {
       "/example": {
         "get": {
+          "parameters": [],
           "requestBody": null,
           "responses": {
             "200": {
@@ -251,6 +253,7 @@ exports[`denormalize allOf merging merges nested allOf 1`] = `
     "paths": {
       "/example": {
         "get": {
+          "parameters": [],
           "requestBody": null,
           "responses": {
             "200": {

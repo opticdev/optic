@@ -290,6 +290,10 @@ const getDiffAction =
     file2: string | undefined,
     options: DiffActionOptions
   ) => {
+    if (options.json) {
+      // For json output we only want to render json
+      logger.setLevel('silent');
+    }
     if (options.upload && !config.isAuthenticated) {
       logger.error(
         chalk.bold.red(

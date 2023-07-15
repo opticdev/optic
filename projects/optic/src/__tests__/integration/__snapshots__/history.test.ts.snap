@@ -77,7 +77,7 @@ exports[`optic history writes changelog 1`] = `
   - added \`requestBody\` \`number\` property
   - removed \`requestBody\` \`name\` as required
   - added \`requestBody\` \`number\` as required
-- \`GET\` \`/parameters_at_path\`: added \`undefined\` undefined parameter
+- \`GET\` \`/parameters_at_path\`: added \`query_in_path\` query parameter
 - \`POST\` \`/example\`: removed \`somethingelse\` query parameter
 - \`GET\` \`/example\`:
   - changed \`200\` response \`toTypeArrays\`.\`type\`
