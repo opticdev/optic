@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.20.6",
-    "@octokit/rest": "^20.0.0",
+    "@octokit/rest": "^19.0.0",
     "@sentry/node": "^7.10.0",
     "@stoplight/spectral-core": "^1.8.1",
     "@useoptic/openapi-io": "workspace:*",
