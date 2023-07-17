@@ -6,68 +6,68 @@ exports[`optic history writes changelog 1`] = `
 - \`PUT\` \`/user/{username}\`:
   - \`requestBody\`: removed support for \`phone\` property
   - \`requestBody\`: added support for \`bio\` property
-  - \`requestBody\`: changed \`userStatus\`.\`type\`
+  - \`requestBody\`: changed \`userStatus\`.\`type\` to \`string\`
   - \`requestBody\`: removed \`userStatus\`.\`format\`
   - \`requestBody\`: added \`userStatus\`.\`enum\`
-  - \`requestBody\`: \`lastName\` is not required anymore
+  - \`requestBody\`: \`lastName\` is no longer required
   - \`requestBody\`: \`username\` is now required
 - \`GET\` \`/user/{username}\`:
   - \`404\` response: added \`application/json\`
   - \`200\` response: removed support for \`phone\` property
   - \`200\` response: added support for \`bio\` property
-  - \`200\` response: changed \`userStatus\`.\`type\`
+  - \`200\` response: changed \`userStatus\`.\`type\` to \`string\`
   - \`200\` response: removed \`userStatus\`.\`format\`
   - \`200\` response: added \`userStatus\`.\`enum\`
-  - \`200\` response: \`lastName\` is not required anymore
+  - \`200\` response: \`lastName\` is no longer required
   - \`200\` response: \`username\` is now required
 - \`GET\` \`/user/login\`:
   - \`200\` response: removed \`headers\`.\`content-type\`
   - \`200\` response: added \`headers\`.\`X-Rate-Limit\`
-  - \`200\` response: changed \`headers\`.\`X-Expires-After\`.\`type\`
+  - \`200\` response: changed \`headers\`.\`X-Expires-After\`.\`type\` to \`string\`
   - \`200\` response: added \`headers\`.\`X-Expires-After\`.\`format\`
 - \`POST\` \`/user/createWithList\`:
   - \`requestBody\`: removed support for \`items\`.\`phone\` property
   - \`requestBody\`: added support for \`items\`.\`bio\` property
-  - \`requestBody\`: changed \`items\`.\`userStatus\`.\`type\`
+  - \`requestBody\`: changed \`items\`.\`userStatus\`.\`type\` to \`string\`
   - \`requestBody\`: removed \`items\`.\`userStatus\`.\`format\`
   - \`requestBody\`: added \`items\`.\`userStatus\`.\`enum\`
-  - \`requestBody\`: \`items\`.\`lastName\` is not required anymore
+  - \`requestBody\`: \`items\`.\`lastName\` is no longer required
   - \`requestBody\`: \`items\`.\`username\` is now required
 - \`POST\` \`/user/createWithArray\`:
   - \`requestBody\`: removed support for \`items\`.\`phone\` property
   - \`requestBody\`: added support for \`items\`.\`bio\` property
-  - \`requestBody\`: changed \`items\`.\`userStatus\`.\`type\`
+  - \`requestBody\`: changed \`items\`.\`userStatus\`.\`type\` to \`string\`
   - \`requestBody\`: removed \`items\`.\`userStatus\`.\`format\`
   - \`requestBody\`: added \`items\`.\`userStatus\`.\`enum\`
-  - \`requestBody\`: \`items\`.\`lastName\` is not required anymore
+  - \`requestBody\`: \`items\`.\`lastName\` is no longer required
   - \`requestBody\`: \`items\`.\`username\` is now required
 - \`POST\` \`/user\`:
   - \`requestBody\`: removed support for \`phone\` property
   - \`requestBody\`: added support for \`bio\` property
-  - \`requestBody\`: changed \`userStatus\`.\`type\`
+  - \`requestBody\`: changed \`userStatus\`.\`type\` to \`string\`
   - \`requestBody\`: removed \`userStatus\`.\`format\`
   - \`requestBody\`: added \`userStatus\`.\`enum\`
-  - \`requestBody\`: \`lastName\` is not required anymore
+  - \`requestBody\`: \`lastName\` is no longer required
   - \`requestBody\`: \`username\` is now required
 - \`DELETE\` \`/store/order/{orderId}\`: \`404\` response: added \`application/json\`
 - \`GET\` \`/store/order/{orderId}\`:
   - \`404\` response: added \`application/json\`
   - \`200\` response: added support for \`summary\` property
-  - \`200\` response: removed support for value \`approved\` on enum \`status\`
+  - \`200\` response: removed support for value \`approved\` from enum \`status\`
   - \`200\` response: added support for new value \`canceled\` on enum \`status\`
-  - \`200\` response: \`petId\` is not required anymore
+  - \`200\` response: \`petId\` is no longer required
 - \`POST\` \`/store/order\`:
   - \`200\` response: added support for \`summary\` property
-  - \`200\` response: removed support for value \`approved\` on enum \`status\`
+  - \`200\` response: removed support for value \`approved\` from enum \`status\`
   - \`200\` response: added support for new value \`canceled\` on enum \`status\`
   - \`requestBody\`: added support for \`summary\` property
-  - \`requestBody\`: removed support for value \`approved\` on enum \`status\`
+  - \`requestBody\`: removed support for value \`approved\` from enum \`status\`
   - \`requestBody\`: added support for new value \`canceled\` on enum \`status\`
 - \`POST\` \`/pet/{petId}/uploadImage\`:
   - \`200\` response: removed 
   - \`201\` response: added 
   - \`404\` response: added 
-  - \`default\` response: changed \`type\`.\`type\`
+  - \`default\` response: changed \`type\`.\`type\` to \`integer\`
   - added \`debug\` cookie parameter
 - removed \`GET\` \`/pet\`
 - \`PUT\` \`/pet\`:
@@ -75,22 +75,23 @@ exports[`optic history writes changelog 1`] = `
   - \`requestBody\`: removed 
   - \`requestBody\`: removed support for \`name\` property
   - \`requestBody\`: added support for \`number\` property
-  - \`requestBody\`: \`name\` is not required anymore
+  - \`requestBody\`: \`name\` is no longer required
   - \`requestBody\`: \`number\` is now required
 - \`GET\` \`/parameters_at_path\`: added \`query_in_path\` query parameter
 - \`POST\` \`/example\`: removed \`somethingelse\` query parameter
 - \`GET\` \`/example\`:
   - \`200\` response: changed \`toTypeArrays\`.\`type\`
-  - \`200\` response: changed \`fromTypeArrays\`.\`type\`
-  - \`200\` response: \`requiredKeys\`.\`requiredToOptional\` is not required anymore
-  - \`200\` response: \`requiredKeys\`.\`deletedRequiredKey\` is not required anymore
+  - \`200\` response: changed \`fromTypeArrays\`.\`type\` to \`string\`
+  - \`200\` response: \`requiredKeys\`.\`requiredToOptional\` is no longer required
+  - \`200\` response: \`requiredKeys\`.\`deletedRequiredKey\` is no longer required
   - \`200\` response: \`requiredKeys\`.\`optionalToRequired\` is now required
   - \`200\` response: \`requiredKeys\`.\`addedRequiredKey\` is now required
   - \`200\` response: removed support for \`requiredKeys\`.\`deletedRequiredKey\` property
   - \`200\` response: added support for \`requiredKeys\`.\`addedRequiredKey\` property
-  - \`200\` response: added \`expandableObject\`.\`anyOf\`.\`1\`
-  - \`200\` response: changed \`composedObject\`.\`orderId\`.\`type\`
-  - \`200\` response: removed \`stringOrNumberOrObject\`.\`oneOf\`.\`2\`
+  - \`200\` response: added an item of type \`string\` to \`expandableObject\` \`anyOf\` values
+  - \`200\` response: changed \`expandableObject\`.\`orderId\`.\`type\` to \`string\`
+  - \`200\` response: changed \`composedObject\`.\`orderId\`.\`type\` to \`number\`
+  - \`200\` response: removed an item of type \`object\` from \`stringOrNumberOrObject\` \`oneOf\` values
   - removed \`deletedQueryParameter\` query parameter
   - added \`addedQueryParameter\` query parameter
   - removed \`requiredToOptional\` query parameter

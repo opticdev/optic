@@ -59,6 +59,25 @@ const isExampleChange = (segments: string[]) =>
         segments[ix - 2] === 'properties')
   );
 
+const polymorphicKeywords = ['anyOf', 'oneOf', 'allOf'];
+
+const removePolymorphicPaths = (segments: string[], offset = 0): string[] => {
+  const subIx = segments
+    .slice(offset)
+    .findIndex((s) => polymorphicKeywords.indexOf(s) > -1);
+
+  if (subIx < 0) return segments;
+
+  const ix = subIx + offset;
+
+  if (!isNaN(Number(segments[ix + 1]))) {
+    return removePolymorphicPaths(
+      segments.slice(0, ix).concat(segments.slice(ix + 2)),
+      ix
+    );
+  } else return removePolymorphicPaths(segments, ix + 1);
+};
+
 export function getEndpointsChanges(
   baseSpec: OpenAPIV3.Document,
   headSpec: OpenAPIV3.Document,
@@ -72,16 +91,33 @@ export function getEndpointsChanges(
     fullSegments: string[],
     changeType: string
   ) => {
-    let outPaths = segments.filter(
-      (s) => ['schema', 'properties', 'content', 'paths'].indexOf(s) < 0
+    const isPolymorphicExact =
+      polymorphicKeywords.indexOf(segments[segments.length - 2]) > -1 &&
+      !isNaN(Number(segments[segments.length - 1]));
+
+    let outPaths = removePolymorphicPaths(
+      segments.filter(
+        (s) => ['schema', 'properties', 'content', 'paths'].indexOf(s) < 0
+      )
     );
-    if (
+
+    if (isPolymorphicExact) {
+      const polymorphicValue = jsonPointerHelpers.get(spec, fullSegments);
+      const path = outPaths.map((s) => `\`${s}\``).join('.');
+      const valueType = polymorphicValue?.type;
+      const typeLabel = valueType ? ` of type \`${valueType}\`` : '';
+      const polymorphicType = segments[segments.length - 2];
+
+      return changeType === 'added'
+        ? `added an item${typeLabel} to ${path} \`${polymorphicType}\` values`
+        : `removed an item${typeLabel} from ${path} \`${polymorphicType}\` values`;
+    } else if (
       outPaths[outPaths.length - 2] === 'required' &&
       !isNaN(Number(outPaths[outPaths.length - 1]))
     ) {
       const requiredProperty = jsonPointerHelpers.get(spec, fullSegments);
       const label =
-        changeType === 'added' ? 'is now required' : 'is not required anymore';
+        changeType === 'added' ? 'is now required' : 'is no longer required';
 
       return (
         outPaths
@@ -103,16 +139,20 @@ export function getEndpointsChanges(
       return changeType === 'added'
         ? `added support for new value \`${enumValue}\` on enum ${path}`
         : `removed support for value \`${enumValue}\` from enum ${path}`;
-    } else {
-      const isProperty = segments[segments.length - 2] === 'properties';
+    } else if (segments[segments.length - 2] === 'properties') {
       const path = outPaths.map((s) => `\`${s}\``).join('.');
-      if (isProperty) {
-        if (changeType === 'added' || changeType === 'removed') {
-          return `${changeType} support for ${path} property`;
-        } else return `changed ${path} property`;
-      } else {
-        return `${changeType} ${outPaths.map((s) => `\`${s}\``).join('.')}`;
-      }
+      if (changeType === 'added' || changeType === 'removed') {
+        return `${changeType} support for ${path} property`;
+      } else return `changed ${path} property`;
+    } else {
+      const enumValue = jsonPointerHelpers.get(spec, fullSegments);
+      const changeLabel =
+        changeType === 'changed' && typeof enumValue === 'string'
+          ? ` to \`${enumValue}\``
+          : ``;
+      return `${changeType} ${outPaths
+        .map((s) => `\`${s}\``)
+        .join('.')}${changeLabel}`;
     }
   };
 
