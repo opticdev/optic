@@ -17,6 +17,9 @@ import {
 } from '../../operations';
 import { CapturedBody } from '../../../capture/sources/body';
 import { logger } from '../../../../logger';
+import { ProxySource } from '../../../capture/sources/proxy';
+import Interaction = ProxySource.Interaction;
+import { CapturedInteraction } from '../../../capture/sources/captured-interactions';
 
 export type { DocumentedBody };
 
@@ -122,7 +125,8 @@ export class DocumentedBodies {
           'Could not decode request body of captured interaction:',
           decodedBodyResult.val
         );
-        logger.debug('Failing interaction: ' + JSON.stringify(interaction));
+        if (process.env.LOG_LEVEL === 'debug')
+          await printDebugInteraction(interaction);
       } else if (capturedContentType) {
         let [, matchedContentType] = (operation.requestBody &&
           findBody(operation.requestBody, capturedContentType)) || [null, null];
@@ -191,7 +195,8 @@ export class DocumentedBodies {
           'Could not decode response body of captured interaction:',
           decodedBodyResult.val
         );
-        logger.debug('Failing interaction: ' + JSON.stringify(interaction));
+        if (process.env.LOG_LEVEL === 'debug')
+          await printDebugInteraction(interaction);
       } else if (capturedContentType && matchedResponse) {
         let [response, statusCode] = matchedResponse;
         let [, matchedContentType] = findBody(
@@ -275,4 +280,24 @@ async function decodeCapturedBody(
   } // TODO: consider what to do when there's no content type (happens, as seen in the past)
 
   return Ok(None); // no decoded body available
+}
+
+async function printDebugInteraction(interaction: CapturedInteraction) {
+  let requestBody;
+  let responseBody;
+
+  if (interaction.request && interaction.request.body)
+    requestBody = await CapturedBody.text(interaction.request.body);
+
+  if (interaction.response && interaction.response.body)
+    responseBody = await CapturedBody.text(interaction.response.body);
+
+  logger.debug(
+    'Failed interaction ' +
+      JSON.stringify({
+        ...interaction,
+        request: { ...interaction.request, body: requestBody },
+        response: { ...interaction.response, body: responseBody },
+      })
+  );
 }

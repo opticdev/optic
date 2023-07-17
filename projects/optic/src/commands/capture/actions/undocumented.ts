@@ -20,6 +20,7 @@ import {
 import { SpecPatches } from '../../oas/specs';
 import chalk from 'chalk';
 import { writePatchesToFiles } from '../write/file';
+import { CapturedBody } from '../sources/body';
 
 type MethodMap = Map<string, { add: Set<string>; ignore: Set<string> }>;
 
