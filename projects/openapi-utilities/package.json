@@ -2,7 +2,7 @@
   "name": "@useoptic/openapi-utilities",
   "license": "MIT",
   "packageManager": "yarn@3.6.1",
-  "version": "0.47.11",
+  "version": "0.47.12",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -38,7 +38,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@octokit/rest": "^20.0.0",
+    "@octokit/rest": "^19.0.0",
     "@sentry/node": "^7.10.0",
     "@useoptic/json-pointer-helpers": "workspace:*",
     "ajv": "^8.6.0",
