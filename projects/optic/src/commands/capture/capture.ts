@@ -3,6 +3,7 @@ import { Command, Option } from 'commander';
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import path from 'path';
 import fs from 'node:fs/promises';
+import fsNonPromise from 'node:fs';
 import fetch from 'node-fetch';
 import Bottleneck from 'bottleneck';
 
@@ -66,6 +67,17 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
       'add new endpoints in interactive mode. must be run with --update',
       false
     )
+    .option(
+      '--postman  <postman-collection-file>',
+      'path to postman collection'
+    )
+    .option('--har <har-file>', 'path to har file (v1.2, v1.3)')
+    .addOption(
+      new Option(
+        '-s, --server-override <url>',
+        'Skip executing `capture[].server.command` and forward proxy traffic to this URL instead'
+      )
+    )
 
     // TODO deprecate hidden options below
     .addOption(
@@ -95,12 +107,6 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
     .addOption(
       new Option('-o, --output <output>', 'file name for output').hideHelp()
     )
-    .addOption(
-      new Option(
-        '-s, --server-override <url>',
-        'Skip executing `capture[].server.command` and forward proxy traffic to this URL instead'
-      )
-    )
     .action(
       errorHandler(getCaptureAction(config, command), { command: 'capture' })
     );
@@ -112,6 +118,8 @@ type CaptureActionOptions = {
   serverOverride?: string;
   update: boolean;
   interactive: boolean;
+  postman?: string;
+  har?: string;
 };
 
 class ProxyInstance {
@@ -185,6 +193,37 @@ const getCaptureAction =
 
     const trafficDirectory = await setup(filePath);
     logger.debug(`Writing captured traffic to ${trafficDirectory}`);
+    let spec = await loadSpec(filePath, config, {
+      strict: false,
+      denormalize: false,
+    });
+    const captures = new GroupedCaptures(
+      trafficDirectory,
+      specToOperations(spec.jsonLike).map((p) => ({
+        ...p,
+        path: p.pathPattern,
+      }))
+    );
+
+    if (options.har) {
+      try {
+        const harEntries = HarEntries.fromReadable(
+          fsNonPromise.createReadStream(options.har)
+        );
+        for await (const harOrErr of harEntries) {
+          if (harOrErr.ok) {
+            captures.addHar(harOrErr.val);
+          }
+        }
+      } catch (e) {
+        logger.error(chalk.red(`Error parsing ${options.har}`));
+        logger.error(e);
+        process.exitCode = 1;
+        return;
+      }
+    } else if (options.postman) {
+    } else {
+    }
 
     // start proxy
     const proxy = new ProxyInstance(
@@ -193,12 +232,6 @@ const getCaptureAction =
     await proxy.start(
       options.proxyPort ? Number(options.proxyPort) : undefined
     );
-
-    // parse spec
-    let spec = await loadSpec(filePath, config, {
-      strict: false,
-      denormalize: false,
-    });
 
     const serverDir =
       captureConfig.server.dir === undefined
@@ -260,13 +293,6 @@ const getCaptureAction =
 
     // process proxy interactions into hars
     const harEntries = HarEntries.fromProxyInteractions(proxy.interactions);
-    const captures = new GroupedCaptures(
-      trafficDirectory,
-      specToOperations(spec.jsonLike).map((p) => ({
-        ...p,
-        path: p.pathPattern,
-      }))
-    );
     for await (const har of harEntries) {
       captures.addHar(har);
       logger.debug(
