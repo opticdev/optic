@@ -35,6 +35,7 @@ import { validateOpenApiV3Document } from '@useoptic/openapi-io';
 import { inGit } from '../utils/git';
 import { newExemptionsCount } from '../utils/count-exemptions';
 import OpenAPISchemaValidator from '@useoptic/openapi-io/build/validation/validator';
+import fetch from 'node-fetch';
 
 const parseContextObject = (context?: string): any => {
   try {
@@ -252,6 +253,7 @@ const runCompare = async ({
           const octokit = new Octokit({
             auth: token,
             baseUrl: git_api_url,
+            request: { fetch },
           });
           const compareHash = generateHashForComparison({
             results,
