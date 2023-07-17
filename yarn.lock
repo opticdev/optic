@@ -6201,8 +6201,8 @@ __metadata:
   linkType: hard
 
 "fastify@npm:^4.17.0":
-  version: 4.19.2
-  resolution: "fastify@npm:4.19.2"
+  version: 4.20.0
+  resolution: "fastify@npm:4.20.0"
   dependencies:
     "@fastify/ajv-compiler": ^3.5.0
     "@fastify/error": ^3.2.0
@@ -6220,7 +6220,7 @@ __metadata:
     secure-json-parse: ^2.5.0
     semver: ^7.5.0
     tiny-lru: ^11.0.1
-  checksum: 64bd66dc0fc6b188dd7642af01b08d9010855155910fa158b08a74a1d38dc0908323588d9bd93077e0a9aaa8bb597580de9327ab7240c69370c6059d517e62d5
+  checksum: e3342f4744088f57c673bfa2f43fc429b3ba6b50c250d5a361a7bd2af5fd3bd5b681e602b49228a9f9011706142bcb7c94f37533e96878e49bc5b0a40080535e
   languageName: node
   linkType: hard
 
