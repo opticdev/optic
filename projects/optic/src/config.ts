@@ -36,7 +36,7 @@ const DefaultOpticCliConfig: OpticCliConfig = {
 
 const Request = Type.Object({
   path: Type.String(),
-  verb: Type.Optional(
+  method: Type.Optional(
     Type.String({
       enum: ['GET', 'POST', 'PATCH', 'DELETE'],
     })
