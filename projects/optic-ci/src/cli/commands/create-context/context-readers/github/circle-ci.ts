@@ -12,45 +12,51 @@ export const getContextFromCircleCiEnvironment = (): NormalizedCiContext => {
     (process.env.OPTIC_COMMIT_USER || process.env.CIRCLE_PR_USERNAME) ?? null;
 
   if (!pull_request) {
-    throw new UserError(
-      'Could not extract the pull request from environment `CIRCLE_PULL_REQUEST`'
-    );
+    throw new UserError({
+      message:
+        'Could not extract the pull request from environment `CIRCLE_PULL_REQUEST`',
+    });
   }
 
   if (isNaN(Number(pull_request))) {
-    throw new UserError(
-      `Could not parse PR number from CIRCLE_PULL_REQUEST - expected format - https://github.com/org/project/pull/<pr_number>`
-    );
+    throw new UserError({
+      message: `Could not parse PR number from CIRCLE_PULL_REQUEST - expected format - https://github.com/org/project/pull/<pr_number>`,
+    });
   }
 
   if (!organization) {
-    throw new UserError(
-      'Could not extract the repo owner from environment `CIRCLE_PROJECT_USERNAME`'
-    );
+    throw new UserError({
+      message:
+        'Could not extract the repo owner from environment `CIRCLE_PROJECT_USERNAME`',
+    });
   }
 
   if (!repo) {
-    throw new UserError(
-      'Could not extract the repo name from environment `CIRCLE_PROJECT_REPONAME`'
-    );
+    throw new UserError({
+      message:
+        'Could not extract the repo name from environment `CIRCLE_PROJECT_REPONAME`',
+    });
   }
 
   if (!branch_name) {
-    throw new UserError(
-      'Could not extract the branch name from environment `CIRCLE_BRANCH`'
-    );
+    throw new UserError({
+      message:
+        'Could not extract the branch name from environment `CIRCLE_BRANCH`',
+    });
   }
 
   if (!commit_hash) {
-    throw new UserError(
-      'Could not extract the commit_hash from environment `CIRCLE_SHA1`'
-    );
+    throw new UserError({
+      message:
+        'Could not extract the commit_hash from environment `CIRCLE_SHA1`',
+    });
   }
 
   if (!run) {
-    throw new UserError(
-      'Could not extract the build number from environment `CIRCLE_BUILD_NUM`'
-    );
+    throw new UserError({
+      message:
+        'Could not extract the build number from environment `CIRCLE_BUILD_NUM`',
+    });
   }
 
   return {

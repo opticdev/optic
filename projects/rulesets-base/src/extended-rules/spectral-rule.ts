@@ -156,7 +156,7 @@ export class SpectralRule extends ExternalRuleBase {
       try {
         spectralResults = await this.spectral.run(inputs.toSpec);
       } catch (e: any) {
-        throw new UserError(e.message ? e.message : e);
+        throw new UserError({ message: e.message ? e.message : e });
       }
     } else if (this.rulesetPointer && this.flatSpecFile) {
       try {
@@ -168,12 +168,13 @@ export class SpectralRule extends ExternalRuleBase {
         const withoutLeading = output.substring(output.indexOf('[')).trim();
         spectralResults = JSON.parse(withoutLeading) as SpectralResult[];
       } catch (e: any) {
-        throw new UserError(e.message ? e.message : e);
+        throw new UserError({ message: e.message ? e.message : e });
       }
     } else {
-      throw new UserError(
-        'Invalid configuration for spectral rules - must provide rulesetPointer and flatSpecFile or a spectral instance'
-      );
+      throw new UserError({
+        message:
+          'Invalid configuration for spectral rules - must provide rulesetPointer and flatSpecFile or a spectral instance',
+      });
     }
 
     const results: RuleResult[] = [];
@@ -294,7 +295,7 @@ export class SpectralRule extends ExternalRuleBase {
       try {
         spectralResults = await this.spectral.run(inputs.nextJsonLike);
       } catch (e: any) {
-        throw new UserError(e.message ? e.message : e);
+        throw new UserError({ message: e.message ? e.message : e });
       }
     } else if (this.rulesetPointer && this.flatSpecFile) {
       try {
@@ -306,12 +307,13 @@ export class SpectralRule extends ExternalRuleBase {
         const withoutLeading = output.substring(output.indexOf('[')).trim();
         spectralResults = JSON.parse(withoutLeading) as SpectralResult[];
       } catch (e: any) {
-        throw new UserError(e.message ? e.message : e);
+        throw new UserError({ message: e.message ? e.message : e });
       }
     } else {
-      throw new UserError(
-        'Invalid configuration for spectral rules - must provide rulesetPointer and flatSpecFile or a spectral instance'
-      );
+      throw new UserError({
+        message:
+          'Invalid configuration for spectral rules - must provide rulesetPointer and flatSpecFile or a spectral instance',
+      });
     }
 
     const results: Result[] = [];

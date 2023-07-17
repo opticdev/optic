@@ -141,9 +141,10 @@ comma separated values (e.g. "**/*.yml,**/*.json")'
               spectralConfig,
             });
           } else {
-            throw new UserError(
-              'Expected --input or both --glob and --base to be provided as input'
-            );
+            throw new UserError({
+              message:
+                'Expected --input or both --glob and --base to be provided as input',
+            });
           }
           process.exit(0);
         }
@@ -286,7 +287,7 @@ const runBulkCompare = async ({
     : await getComparisonsFromGlob(glob!, ignore || '', base!, generateContext);
 
   if (initialComparisons.size === 0) {
-    throw new UserError('No comparisons were specified - exiting');
+    throw new UserError({ message: 'No comparisons were specified - exiting' });
   }
 
   console.log(`Bulk comparing ${initialComparisons.size} comparisons`);
@@ -381,9 +382,11 @@ const runBulkCompare = async ({
   }
 
   const maybeError = skippedParsing
-    ? new UserError('Error: Could not read all of the comparison inputs')
+    ? new UserError({
+        message: 'Error: Could not read all of the comparison inputs',
+      })
     : hasError
-    ? new UserError('Error: Could not run all of the comparisons')
+    ? new UserError({ message: 'Error: Could not run all of the comparisons' })
     : undefined;
 
   if (maybeError) {

@@ -11,45 +11,51 @@ export const getContextFromGitlabEnvironment = (): NormalizedCiContext => {
   const user = process.env.GITLAB_USER_ID;
 
   if (!pull_request) {
-    throw new UserError(
-      'Could not extract the merge_request_iid from environment `CI_MERGE_REQUEST_IID`'
-    );
+    throw new UserError({
+      message:
+        'Could not extract the merge_request_iid from environment `CI_MERGE_REQUEST_IID`',
+    });
   }
 
   if (!organization) {
-    throw new UserError(
-      'Could not extract the project namespace from environment `CI_PROJECT_NAMESPACE`'
-    );
+    throw new UserError({
+      message:
+        'Could not extract the project namespace from environment `CI_PROJECT_NAMESPACE`',
+    });
   }
 
   if (!repo) {
-    throw new UserError(
-      'Could not extract the project name from environment `CI_PROJECT_NAME`'
-    );
+    throw new UserError({
+      message:
+        'Could not extract the project name from environment `CI_PROJECT_NAME`',
+    });
   }
 
   if (!branch_name) {
-    throw new UserError(
-      'Could not extract the branch name from environment `CI_MERGE_REQUEST_SOURCE_BRANCH_NAME`'
-    );
+    throw new UserError({
+      message:
+        'Could not extract the branch name from environment `CI_MERGE_REQUEST_SOURCE_BRANCH_NAME`',
+    });
   }
 
   if (!commit_hash) {
-    throw new UserError(
-      'Could not extract the commit_hash from environment `CI_COMMIT_SHA`'
-    );
+    throw new UserError({
+      message:
+        'Could not extract the commit_hash from environment `CI_COMMIT_SHA`',
+    });
   }
 
   if (!run) {
-    throw new UserError(
-      'Could not extract the build number from environment `CI_CONCURRENT_ID`'
-    );
+    throw new UserError({
+      message:
+        'Could not extract the build number from environment `CI_CONCURRENT_ID`',
+    });
   }
 
   if (!user) {
-    throw new UserError(
-      'Could not extract the user from environment `GITLAB_USER_ID`'
-    );
+    throw new UserError({
+      message: 'Could not extract the user from environment `GITLAB_USER_ID`',
+    });
   }
 
   return {

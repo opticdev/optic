@@ -54,9 +54,10 @@ const getUploadAction =
   (config: OpticCliConfig) =>
   async (filePath: string, options: UploadActionOptions) => {
     if (!config.isAuthenticated) {
-      throw new UserError(
-        'No optic token was provided (set the environment variable `OPTIC_TOKEN` with your optic token). Generate an optic token at https://app.useoptic.com.'
-      );
+      throw new UserError({
+        message:
+          'No optic token was provided (set the environment variable `OPTIC_TOKEN` with your optic token). Generate an optic token at https://app.useoptic.com.',
+      });
     }
 
     let organizationId: string;
@@ -82,9 +83,9 @@ const getUploadAction =
     });
 
     if (!fileIsValid(userRuleFile)) {
-      throw new UserError(
-        `Rules file does not match expected format. ${expectedFileShape}`
-      );
+      throw new UserError({
+        message: `Rules file does not match expected format. ${expectedFileShape}`,
+      });
     }
 
     const name = userRuleFile.default.name;

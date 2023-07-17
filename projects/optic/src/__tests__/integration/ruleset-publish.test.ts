@@ -30,6 +30,7 @@ describe('optic ruleset upload', () => {
   let oldEnv: any;
   beforeEach(() => {
     oldEnv = { ...process.env };
+    process.env.LOG_LEVEL = 'info';
   });
 
   afterEach(() => {

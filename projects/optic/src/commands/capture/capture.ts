@@ -617,7 +617,7 @@ async function waitForServer(
         done = true;
       } else if (Date.now() > now + timeout) {
         spinner.fail('Server check timed out');
-        throw new UserError('Server check timed out.');
+        throw new UserError({ message: 'Server check timed out.' });
       }
       await wait(readyInterval);
     }
