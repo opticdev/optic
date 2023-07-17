@@ -1,21 +1,12 @@
 import chalk from 'chalk';
 import { Command, Option } from 'commander';
-import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import path from 'path';
 import fs from 'node:fs/promises';
 import fsNonPromise from 'node:fs';
-import fetch from 'node-fetch';
-import Bottleneck from 'bottleneck';
 
 import { isJson, isYaml, writeYaml } from '@useoptic/openapi-io';
 import ora from 'ora';
-import urljoin from 'url-join';
-import {
-  CoverageNode,
-  OperationCoverage,
-  UserError,
-} from '@useoptic/openapi-utilities';
-import { CaptureConfigData, RequestSend } from '../../config';
+import { CoverageNode, OperationCoverage } from '@useoptic/openapi-utilities';
 import { errorHandler } from '../../error-handler';
 
 import { createNewSpecFile } from '../../utils/specs';
@@ -26,9 +17,7 @@ import { captureV1 } from '../oas/capture';
 import { getCaptureStorage, GroupedCaptures } from './storage';
 import { loadSpec } from '../../utils/spec-loaders';
 import { ApiCoverageCounter } from './coverage/api-coverage';
-import { commandSplitter } from '../../utils/capture';
 import { specToOperations } from './operations/queries';
-import { ProxyInteractions } from './sources/proxy';
 import { HarEntries } from './sources/har';
 import {
   addIgnorePaths,
@@ -37,6 +26,9 @@ import {
   diffExistingEndpoint,
 } from './actions';
 import { captureRequestsFromProxy } from './actions/captureRequests';
+import { PostmanCollectionEntries } from './sources/postman';
+import { CapturedInteractions } from './sources/captured-interactions';
+import * as AT from '../oas/lib/async-tools';
 
 const indent = (n: number) => '  '.repeat(n);
 
@@ -194,7 +186,16 @@ const getCaptureAction =
         return;
       }
     } else if (options.postman) {
-      // TODO
+      const postmanEntryResults = PostmanCollectionEntries.fromReadable(
+        fsNonPromise.createReadStream(options.postman)
+      );
+      let postmanEntries = AT.unwrapOr(postmanEntryResults, (err) => {});
+
+      for await (const interaction of CapturedInteractions.fromPostmanCollection(
+        postmanEntries
+      )) {
+        captures.addInteraction(interaction);
+      }
     } else {
       const harEntries = await captureRequestsFromProxy(
         config,
@@ -303,7 +304,6 @@ const getCaptureAction =
       if (newIgnorePaths.length) {
         await addIgnorePaths(spec, newIgnorePaths);
       }
-      // TODO Write the ignore paths to the spec
     } else if (captures.unmatched.hars.length) {
       logger.info('');
       logger.info(`${captures.unmatched.hars.length} unmatched interactions`);

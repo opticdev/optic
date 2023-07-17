@@ -34,15 +34,23 @@ export async function getCaptureStorage(filePath: string): Promise<string> {
 }
 
 export class GroupedCaptures {
+  // TODO - store interactions over hars - to do this:
+  // - update capture interactions to be serializable (i.e. stop storing CapturedBody as a stream)
+  // - build a read / write storage format for interactions
   private paths: Map<
     string,
     {
       path: string;
       hars: HttpArchive.Entry[];
+      interactions: CapturedInteraction[];
       endpoint: { method: string; path: string };
     }
   >;
-  public unmatched: { path: string; hars: HttpArchive.Entry[] };
+  public unmatched: {
+    path: string;
+    hars: HttpArchive.Entry[];
+    interactions: CapturedInteraction[];
+  };
   private queries: OperationQueries;
   constructor(
     trafficDir: string,
@@ -65,6 +73,7 @@ export class GroupedCaptures {
       this.paths.set(id, {
         path: fPath,
         hars: [],
+        interactions: [],
         endpoint,
       });
     }
@@ -73,7 +82,30 @@ export class GroupedCaptures {
     this.unmatched = {
       path: unmatched,
       hars: [],
+      interactions: [],
     };
+  }
+
+  addInteraction(interaction: CapturedInteraction) {
+    const pathname = interaction.request.path;
+    const opRes = this.queries.findOperation(
+      pathname,
+      interaction.request.method
+    );
+    const operation = opRes.ok && opRes.val.some ? opRes.val.val : null;
+    const pathNode = operation
+      ? this.paths.get(
+          getEndpointId({
+            method: operation.method,
+            path: operation.pathPattern,
+          })
+        )
+      : null;
+    if (!pathNode) {
+      this.unmatched.interactions.push(interaction);
+    } else {
+      pathNode.interactions.push(interaction);
+    }
   }
 
   addHar(har: HttpArchive.Entry) {
@@ -123,8 +155,8 @@ export class GroupedCaptures {
     let matched = 0;
     for (const [, node] of this.paths) {
       total++;
-      if (node.hars.length === 0) unmatched++;
-      if (node.hars.length !== 0) matched++;
+      if (node.hars.length === 0 && node.interactions.length === 0) unmatched++;
+      if (node.hars.length !== 0 || node.interactions.length !== 0) matched++;
     }
 
     return {
@@ -139,25 +171,29 @@ export class GroupedCaptures {
     interactions: AsyncIterable<CapturedInteraction>;
   }> {
     for (const [, node] of this.paths) {
-      if (node.hars.length) {
+      if (node.hars.length || node.interactions.length) {
         yield {
           endpoint: node.endpoint,
-          interactions: this.getInteractionsIterator(node.hars),
+          interactions: this.getInteractionsIterator(node),
         };
       }
     }
   }
 
   getUndocumentedInteractions(): AsyncIterable<CapturedInteraction> {
-    return this.getInteractionsIterator(this.unmatched.hars);
+    return this.getInteractionsIterator(this.unmatched);
   }
 
-  private async *getInteractionsIterator(
-    hars: HttpArchive.Entry[]
-  ): AsyncIterable<CapturedInteraction> {
-    for (const har of hars) {
+  private async *getInteractionsIterator(node: {
+    hars: HttpArchive.Entry[];
+    interactions: CapturedInteraction[];
+  }): AsyncIterable<CapturedInteraction> {
+    for (const har of node.hars) {
       const interaction = CapturedInteraction.fromHarEntry(har);
       if (interaction) yield interaction;
+    }
+    for (const interaction of node.interactions) {
+      yield interaction;
     }
   }
 }
