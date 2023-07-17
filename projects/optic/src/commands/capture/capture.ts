@@ -15,7 +15,7 @@ import {
   OperationCoverage,
   UserError,
 } from '@useoptic/openapi-utilities';
-import { CaptureConfigData, Request } from '../../config';
+import { CaptureConfigData, RequestSend } from '../../config';
 import { errorHandler } from '../../error-handler';
 
 import { createNewSpecFile } from '../../utils/specs';
@@ -174,9 +174,9 @@ const getCaptureAction =
     }
 
     // verify that capture.requests or capture.requests_command is set
-    if (!captureConfig.requests && !captureConfig.requests_command) {
+    if (!captureConfig.requests?.run && !captureConfig.requests?.send) {
       logger.error(
-        `"requests" or "requests_command" must be specified in optic.yml`
+        `"requests.send" or "requests.run" must be specified in optic.yml`
       );
       process.exitCode = 1;
       return;
@@ -239,10 +239,11 @@ const getCaptureAction =
         : captureConfig.server.dir;
     const timeout = captureConfig.server.ready_timeout || 3 * 60 * 1_000; // 3 minutes
     const readyInterval = captureConfig.server.ready_interval || 1000;
-    // start app
-    let app: ChildProcessWithoutNullStreams | undefined;
 
+    let app: ChildProcessWithoutNullStreams | undefined;
     let errors: any[] = [];
+
+    // start app
     try {
       let bailout: Bailout = { didBailout: false, promise: Promise.resolve() };
       if (!options.serverOverride && captureConfig.server.command) {
@@ -454,7 +455,7 @@ function getSummaryText(endpointCoverage: OperationCoverage) {
 }
 
 function sendRequests(
-  reqs: Request[],
+  reqs: RequestSend[],
   proxyUrl: string,
   concurrency: number
 ): Promise<void>[] {
@@ -521,9 +522,9 @@ function makeAllRequests(
 ) {
   // send requests
   let sendRequestsPromise: Promise<any> = Promise.resolve();
-  if (captureConfig.requests) {
+  if (captureConfig.requests && captureConfig.requests.send) {
     const requests = sendRequests(
-      captureConfig.requests,
+      captureConfig.requests.send,
       proxy.url,
       captureConfig.config?.request_concurrency || 5
     );
@@ -546,12 +547,11 @@ function makeAllRequests(
 
   // run requests command
   let runRequestsPromise: Promise<void> = Promise.resolve();
-  if (captureConfig.requests_command) {
-    const proxyVar =
-      captureConfig.requests_command.proxy_variable || 'OPTIC_PROXY';
+  if (captureConfig.requests && captureConfig.requests.run) {
+    const proxyVar = captureConfig.requests.run.proxy_variable || 'OPTIC_PROXY';
 
     runRequestsPromise = runRequestsCommand(
-      captureConfig.requests_command.command,
+      captureConfig.requests.run.command,
       proxyVar,
       proxy.url
     );

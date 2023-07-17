@@ -8929,8 +8929,8 @@ __metadata:
   linkType: hard
 
 "mockttp@npm:^3.7.4":
-  version: 3.8.0
-  resolution: "mockttp@npm:3.8.0"
+  version: 3.9.0
+  resolution: "mockttp@npm:3.9.0"
   dependencies:
     "@graphql-tools/schema": ^8.5.0
     "@graphql-tools/utils": ^8.8.0
@@ -8973,7 +8973,7 @@ __metadata:
     ws: ^8.8.0
   bin:
     mockttp: dist/admin/admin-bin.js
-  checksum: 592948f1f65c7c524cb13bbc66f4f9837be082f6c8e1d9d3868c9fbb7928436b1ae192404ae2361338e16c4105e42399b765bf0ab85d60151003a924f21cbd84
+  checksum: 5e418883b99bc1b6dbb3b8571f16c57fdd41e5298a3a6068da5df6bef3c1c84642ad696e4d08372d86572e4d3a46bf01188a7b7af794e05c287fe272f72d8715
   languageName: node
   linkType: hard
 
