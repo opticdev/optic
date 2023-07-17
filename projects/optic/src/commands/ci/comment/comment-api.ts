@@ -1,6 +1,7 @@
 import { Octokit } from '@octokit/rest';
 import urljoin from 'url-join';
 import { JsonHttpClient } from '../../../client/JsonHttpClient';
+import fetch from 'node-fetch';
 
 export interface CommentApi {
   getComment: (
@@ -25,6 +26,7 @@ export class GithubCommenter implements CommentApi {
     this.octokit = new Octokit({
       auth: options.token,
       baseUrl: options.enterpriseBaseUrl,
+      request: { fetch },
     });
   }
 

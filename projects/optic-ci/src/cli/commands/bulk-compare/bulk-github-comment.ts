@@ -7,6 +7,7 @@ import {
 import { generateHashForComparison } from '@useoptic/openapi-utilities/build/utilities/comparison-hash';
 import { trackEvent } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { createBulkCommentBody } from './comment';
+import fetch from 'node-fetch';
 
 export const sendBulkGithubMessage = async ({
   githubToken,
@@ -34,6 +35,7 @@ export const sendBulkGithubMessage = async ({
   const octokit = new Octokit({
     auth: githubToken,
     baseUrl,
+    request: { fetch },
   });
 
   try {
