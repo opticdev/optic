@@ -65,13 +65,11 @@ const CaptureConfigData = Type.Object({
     ready_interval: Type.Optional(Type.Number()),
     ready_timeout: Type.Optional(Type.Number()),
   }),
-  requests: Type.Optional(
-    Type.Object({
-      // one of these is technically required, but that's enforced at runtime
-      run: Type.Optional(RequestRun),
-      send: Type.Optional(Type.Array(RequestSend)),
-    })
-  ),
+  requests: Type.Object({
+    // one of these is technically required, but that's enforced at runtime
+    run: Type.Optional(RequestRun),
+    send: Type.Optional(Type.Array(RequestSend)),
+  }),
 });
 
 export type CaptureConfigData = Static<typeof CaptureConfigData>;
