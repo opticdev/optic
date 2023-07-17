@@ -97,13 +97,7 @@
                           "properties": { "orderId": { "type": "string" } }
                         },
                         {
-                          "type": "object",
-                          "properties": {
-                            "order": {
-                              "type": "object",
-                              "properties": { "id": { "type": "string" } }
-                            }
-                          }
+                          "type": "string"
                         }
                       ]
                     },

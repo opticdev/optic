@@ -6,10 +6,6 @@ import {
   run,
 } from './integration';
 
-function sanitizeOutput(out: string) {
-  return out.replace(/[a-zA-Z0-9]{8}:/g, 'COMMIT-HASH:');
-}
-
 const date = new Date('2023-01-01');
 
 describe('optic history', () => {
@@ -38,9 +34,7 @@ GIT_COMMITTER_DATE="${commitDateChanged}" git commit -m 'rename petstore'
     );
 
     expect(code).toBe(0);
-    expect(
-      normalizeWorkspace(workspace, sanitizeOutput(combined))
-    ).toMatchSnapshot();
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
   }, 20000);
 });
 

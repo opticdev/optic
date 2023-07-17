@@ -100,7 +100,7 @@
                       "anyOf": [
                         {
                           "type": "object",
-                          "properties": { "orderId": { "type": "string" } }
+                          "properties": { "orderId": { "type": "number" } }
                         }
                       ]
                     },
