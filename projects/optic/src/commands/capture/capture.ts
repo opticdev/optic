@@ -120,38 +120,9 @@ const getCaptureAction =
     targetUrl: string | undefined,
     options: CaptureActionOptions
   ) => {
-    const pathFromRoot = path.relative(config.root, path.resolve(filePath));
-    const captureConfig = config.capture?.[pathFromRoot];
-
     // capture v1
     if (targetUrl !== undefined) {
       await captureV1(filePath, targetUrl, config, command);
-      return;
-    }
-
-    // verify capture v2 config is present
-    if (targetUrl !== undefined || captureConfig === undefined) {
-      logger.error(`no capture config for ${filePath} was found`);
-      // TODO log error and run capture init or something - tbd what the first use is
-      process.exitCode = 1;
-      return;
-    }
-
-    // verify that capture.requests or capture.requests_command is set
-    if (!captureConfig.requests?.run && !captureConfig.requests?.send) {
-      logger.error(
-        `"requests.send" or "requests.run" must be specified in optic.yml`
-      );
-      process.exitCode = 1;
-      return;
-    }
-
-    // verify port number is valid
-    if (options.proxyPort && isNaN(Number(options.proxyPort))) {
-      logger.error(
-        `--proxy-port must be a number - received ${options.proxyPort}`
-      );
-      process.exitCode = 1;
       return;
     }
 
@@ -197,6 +168,35 @@ const getCaptureAction =
         captures.addInteraction(interaction);
       }
     } else {
+      const pathFromRoot = path.relative(config.root, path.resolve(filePath));
+      const captureConfig = config.capture?.[pathFromRoot];
+
+      // verify capture v2 config is present
+      if (targetUrl !== undefined || captureConfig === undefined) {
+        logger.error(`no capture config for ${filePath} was found`);
+        // TODO log error and run capture init or something - tbd what the first use is
+        process.exitCode = 1;
+        return;
+      }
+
+      // verify that capture.requests or capture.requests_command is set
+      if (!captureConfig.requests?.run && !captureConfig.requests?.send) {
+        logger.error(
+          `"requests.send" or "requests.run" must be specified in optic.yml`
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      // verify port number is valid
+      if (options.proxyPort && isNaN(Number(options.proxyPort))) {
+        logger.error(
+          `--proxy-port must be a number - received ${options.proxyPort}`
+        );
+        process.exitCode = 1;
+        return;
+      }
+
       const harEntries = await captureRequestsFromProxy(
         config,
         captureConfig,
