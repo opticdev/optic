@@ -438,7 +438,7 @@ function sendRequests(
   });
 
   return reqs.map(async (r) => {
-    let verb = r.verb || 'GET';
+    let verb = r.method || 'GET';
     let opts = { method: verb };
 
     if (verb === 'POST') {
@@ -507,7 +507,7 @@ function makeAllRequests(
         if (result.status === 'rejected') {
           const req = captureConfig.requests![idx];
           logger.error(
-            `Request ${req.verb ?? 'GET'} ${req.path} failed with ${
+            `Request ${req.method ?? 'GET'} ${req.path} failed with ${
               result.reason
             }`
           );
