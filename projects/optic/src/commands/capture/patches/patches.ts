@@ -1,3 +1,4 @@
+import { Operation as JsonOps } from 'fast-json-patch';
 import { ParseResult } from '../../../utils/spec-loaders';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { checkOpenAPIVersion } from '@useoptic/openapi-io';
@@ -112,4 +113,15 @@ export async function* generateEndpointSpecPatches(
       yield patch;
     }
   }
+}
+
+export async function jsonOpsFromSpecPatches(specPatches: SpecPatches) {
+  const ops: JsonOps[] = [];
+  for await (const patch of specPatches) {
+    for (const { operations } of patch.groupedOperations) {
+      ops.push(...operations);
+    }
+  }
+
+  return ops;
 }
