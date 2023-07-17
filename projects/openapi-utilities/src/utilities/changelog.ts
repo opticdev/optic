@@ -36,6 +36,9 @@ const isRequestChange = (segments: string[]) =>
 const isResponseChange = (segments: string[]) =>
   isMethodChange(segments) && segments[3] === 'responses';
 
+const isResponseContentChange = (segments: string[]) =>
+  isResponseChange(segments) && segments[5] === 'content';
+
 const isMethodParameterChange = (segments: string[]) =>
   isMethodChange(segments) && segments[3] === 'parameters';
 
@@ -66,10 +69,9 @@ export function getEndpointsChanges(
   const getChangeDescription = (
     segments: string[],
     spec: any,
-    fullSegments: string[]
+    fullSegments: string[],
+    changeType: string
   ) => {
-    const parentSegment = segments[segments.length - 2];
-    const qualifier = parentSegment === 'properties' ? ' property' : '';
     let outPaths = segments.filter(
       (s) => ['schema', 'properties', 'content', 'paths'].indexOf(s) < 0
     );
@@ -78,15 +80,39 @@ export function getEndpointsChanges(
       !isNaN(Number(outPaths[outPaths.length - 1]))
     ) {
       const requiredProperty = jsonPointerHelpers.get(spec, fullSegments);
+      const label =
+        changeType === 'added' ? 'is now required' : 'is not required anymore';
+
       return (
         outPaths
           .slice(0, -2)
           .concat(requiredProperty)
           .map((s) => `\`${s}\``)
-          .join('.') + ` as required`
+          .join('.') + ` ${label}`
       );
+    } else if (
+      outPaths[outPaths.length - 2] === 'enum' &&
+      !isNaN(Number(outPaths[outPaths.length - 1]))
+    ) {
+      const enumValue = jsonPointerHelpers.get(spec, fullSegments);
+      const path = outPaths
+        .slice(0, -2)
+        .map((s) => `\`${s}\``)
+        .join('.');
+
+      return changeType === 'added'
+        ? `added support for new value \`${enumValue}\` on enum ${path}`
+        : `removed support for value \`${enumValue}\` from enum ${path}`;
     } else {
-      return outPaths.map((s) => `\`${s}\``).join('.') + `${qualifier}`;
+      const isProperty = segments[segments.length - 2] === 'properties';
+      const path = outPaths.map((s) => `\`${s}\``).join('.');
+      if (isProperty) {
+        if (changeType === 'added' || changeType === 'removed') {
+          return `${changeType} support for ${path} property`;
+        } else return `changed ${path} property`;
+      } else {
+        return `${changeType} ${outPaths.map((s) => `\`${s}\``).join('.')}`;
+      }
     }
   };
 
@@ -101,10 +127,11 @@ export function getEndpointsChanges(
     );
     return changeType === 'added' || changeType === 'removed'
       ? `${changeType} \`${param?.name}\` ${param?.in} parameter`
-      : `${changeType} \`${param?.name}\` ${param?.in} parameter ${getChangeDescription(
+      : `\`${param?.name}\` ${param?.in} parameter: ${getChangeDescription(
           segments.slice(5),
           spec,
-          segments
+          segments,
+          changeType
         )}`;
   };
 
@@ -116,10 +143,12 @@ export function getEndpointsChanges(
     let changeDescription = getChangeDescription(
       segments.slice(6),
       spec,
-      segments
+      segments,
+      changeType
     );
-    changeDescription = changeDescription ? ` ${changeDescription}` : '';
-    return `${changeType} \`requestBody\`${changeDescription}`;
+    changeDescription = changeDescription ? `: ${changeDescription}` : '';
+
+    return `\`requestBody\`${changeDescription}`;
   };
 
   const getResponseChange = (
@@ -127,13 +156,25 @@ export function getEndpointsChanges(
     changeType: string,
     spec: any
   ) => {
-    let changeDescription = getChangeDescription(
-      segments.slice(7),
-      spec,
-      segments
-    );
-    changeDescription = changeDescription ? ` ${changeDescription}` : '';
-    return `${changeType} \`${segments[4]}\` response${changeDescription}`;
+    if (isResponseContentChange(segments)) {
+      let changeDescription = getChangeDescription(
+        segments.slice(Math.min(7, segments.length - 1)),
+        spec,
+        segments,
+        changeType
+      );
+      changeDescription = changeDescription ? `: ${changeDescription}` : '';
+      return `\`${segments[4]}\` response${changeDescription}`;
+    } else {
+      let changeDescription = getChangeDescription(
+        segments.slice(5),
+        spec,
+        segments,
+        changeType
+      );
+      changeDescription = changeDescription ? `: ${changeDescription}` : '';
+      return `\`${segments[4]}\` response${changeDescription}`;
+    }
   };
 
   const getChange = (segments: string[], changeType: string, spec: any) => {
@@ -145,7 +186,7 @@ export function getEndpointsChanges(
       ? getParameterChange(segments, changeType, spec)
       : isMethodExactChange(segments)
       ? `${changeType}`
-      : '';
+      : ``;
   };
 
   for (const diff of diffs) {
