@@ -25,7 +25,8 @@ type MethodMap = Map<string, { add: Set<string>; ignore: Set<string> }>;
 
 export async function promptUserForPathPattern(
   interactions: CapturedInteractions,
-  spec: OpenAPIV3.Document
+  spec: OpenAPIV3.Document,
+  options: { update: 'interactive' | 'automatic' }
 ) {
   const filteredInteractions: CapturedInteraction[] = [];
   const methodMap: MethodMap = new Map(
@@ -71,15 +72,18 @@ export async function promptUserForPathPattern(
     const pathInIgnore = [...ignore.values()].some((ignore) =>
       minimatch(path, ignore)
     );
+    const guessedPattern =
+      inferredPathStructure.includeObservedUrlPath(method, path) ?? path;
 
     if (pathInAdd) {
       filteredInteractions.push(interaction);
     } else if (pathInIgnore) {
       logger.debug(`Skipping ${method} ${path} because is in ignored specs`);
       continue;
+    } else if (options.update === 'automatic') {
+      add.add(guessedPattern);
+      filteredInteractions.push(interaction);
     } else {
-      const guessedPattern =
-        inferredPathStructure.includeObservedUrlPath(method, path) ?? path;
       logger.info(`> ` + chalk.bold.blue(guessedPattern));
       const results = await prompts(
         [
