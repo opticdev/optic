@@ -48,15 +48,14 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
       '--proxy-port <proxy-port>',
       'specify the port the proxy should be running on'
     )
-    .option(
-      '-u, --update',
-      'update the OpenAPI spec to match the traffic',
-      false
-    )
-    .option(
-      '-i, --interactive',
-      'add new endpoints in interactive mode. must be run with --update',
-      false
+    .addOption(
+      new Option(
+        '-u, --update [mode]',
+        'update the OpenAPI spec to match the traffic. specify the mode to change the update behavior on how to handle undocumented endpoints (endpoints not in your spec). \
+ documented will only update documented endpoints. interactive will prompt you for new endpoint paths. automatic will guess the correct path'
+      )
+        .preset('documented')
+        .choices(['interactive', 'automatic', 'documented'])
     )
     .option(
       '--postman  <postman-collection-file>',
@@ -107,10 +106,9 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
 type CaptureActionOptions = {
   proxyPort?: string;
   serverOverride?: string;
-  update: boolean;
-  interactive: boolean;
   postman?: string;
   har?: string;
+  update?: 'documented' | 'interactive' | 'automatic';
 };
 
 const getCaptureAction =
@@ -270,7 +268,7 @@ const getCaptureAction =
     }
 
     // document new endpoints
-    if (options.update && options.interactive) {
+    if (options.update === 'interactive' || options.update === 'automatic') {
       logger.info('');
       logger.info(
         chalk.bold.gray('Learning path patterns for unmatched requests...')
@@ -281,7 +279,8 @@ const getCaptureAction =
         endpointsToAdd,
       } = await promptUserForPathPattern(
         captures.getUndocumentedInteractions(),
-        spec.jsonLike
+        spec.jsonLike,
+        { update: options.update }
       );
 
       logger.info(chalk.bold.gray('Documenting new operations:'));
@@ -311,16 +310,16 @@ const getCaptureAction =
 
     if (
       captures.unmatched.hars.length &&
-      !(options.update && options.interactive)
+      !(options.update && options.update === 'documented')
     ) {
       logger.info(
         chalk.yellow('New endpoints are only added in interactive mode.')
       );
       logger.info(
-        chalk.blue('Run with `--update --interactive` to add new endpoints')
+        chalk.blue('Run with `--update interactive` to add new endpoints')
       );
       logger.info(
-        chalk.yellow(`Hint: optic capture ${filePath} --update --interactive`)
+        chalk.yellow(`Hint: optic capture ${filePath} --update interactive`)
       );
     } else if (
       !options.update &&

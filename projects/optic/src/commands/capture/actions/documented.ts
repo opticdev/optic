@@ -108,7 +108,7 @@ export async function diffExistingEndpoint(
     method: string;
   },
   options: {
-    update: boolean;
+    update?: 'documented' | 'interactive' | 'automatic';
   }
 ) {
   const patchSummaries: string[] = [];
