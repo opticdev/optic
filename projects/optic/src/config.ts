@@ -26,6 +26,7 @@ export const USER_CONFIG_PATH =
     : path.join(USER_CONFIG_DIR, 'config.json');
 
 const DefaultOpticCliConfig: OpticCliConfig = {
+  isDefaultConfig: true,
   root: process.cwd(),
   configPath: undefined,
   ruleset: undefined,
@@ -100,6 +101,8 @@ export type ProjectYmlConfig = Static<typeof ProjectYmlConfig>;
 export type ConfigRuleset = { name: string; config: unknown };
 
 export type OpticCliConfig = Omit<ProjectYmlConfig, 'ruleset'> & {
+  isDefaultConfig: boolean;
+
   ruleset?: ConfigRuleset[];
 
   // path to the loaded config, or undefined if it was the default config
@@ -290,6 +293,7 @@ export async function initializeConfig(): Promise<OpticCliConfig> {
       cliConfig = {
         ...cliConfig,
         ...(await loadCliConfig(opticYmlPath, cliConfig.client)),
+        isDefaultConfig: false,
       };
     } else {
       cliConfig.root = gitRoot;
