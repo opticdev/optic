@@ -316,7 +316,7 @@ const getCaptureAction =
     }
 
     if (options.upload) {
-      if (options.upload && options.update) {
+      if (options.update) {
         logger.error(
           'optic capture --upload cannot be run with the --update flag'
         );

@@ -252,7 +252,8 @@ export async function captureRequestsFromProxy(
   try {
     let bailout: Bailout = {
       didBailout: false,
-      promise: Promise.resolve(),
+      // If no server is started, we never need to bailout so we need a noop promise that never resolves
+      promise: new Promise(() => {}),
     };
     if (!options.serverOverride && captureConfig.server.command) {
       [app, bailout] = startApp(captureConfig.server.command, serverDir);
