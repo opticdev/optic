@@ -12,9 +12,9 @@ exports[`CapturedIntearction.fromHarEntry can create a CapturedInteraction from 
   },
   "response": {
     "body": {
+      "body": Anything,
       "contentType": "application/json",
       "size": 133,
-      "stream": Any<Readable>,
     },
     "headers": [],
     "statusCode": "200",
@@ -26,9 +26,9 @@ exports[`CapturedIntearction.fromHarEntry includes request bodies 1`] = `
 {
   "request": {
     "body": {
+      "body": Anything,
       "contentType": "application/json",
       "size": 128,
-      "stream": Any<Readable>,
     },
     "headers": [],
     "host": "petstore.swagger.io",
@@ -38,9 +38,9 @@ exports[`CapturedIntearction.fromHarEntry includes request bodies 1`] = `
   },
   "response": {
     "body": {
+      "body": Anything,
       "contentType": "application/json",
       "size": 119,
-      "stream": Any<Readable>,
     },
     "headers": [],
     "statusCode": "200",
@@ -60,9 +60,9 @@ exports[`CapturedIntearction.fromHarEntry includes response bodies 1`] = `
   },
   "response": {
     "body": {
+      "body": Anything,
       "contentType": "application/json",
       "size": 133,
-      "stream": Any<Readable>,
     },
     "headers": [],
     "statusCode": "200",
@@ -74,9 +74,9 @@ exports[`CapturedIntearction.fromHarEntry supports request body encoding for sup
 {
   "request": {
     "body": {
+      "body": Anything,
       "contentType": "application/json",
       "size": 128,
-      "stream": Any<Readable>,
     },
     "headers": [],
     "host": "petstore.swagger.io",
@@ -86,9 +86,9 @@ exports[`CapturedIntearction.fromHarEntry supports request body encoding for sup
   },
   "response": {
     "body": {
+      "body": Anything,
       "contentType": "application/json",
       "size": 119,
-      "stream": Any<Readable>,
     },
     "headers": [],
     "statusCode": "200",
@@ -108,9 +108,9 @@ exports[`CapturedIntearction.fromHarEntry supports response body encoding for su
   },
   "response": {
     "body": {
+      "body": Anything,
       "contentType": "application/json",
       "size": 133,
-      "stream": Any<Readable>,
     },
     "headers": [],
     "statusCode": "200",
@@ -139,9 +139,9 @@ exports[`CapturedInteraction.fromPostmanEntry can create a CapturedInteraction f
   },
   "response": {
     "body": {
+      "body": Anything,
       "contentType": "application/json",
       "size": 482,
-      "stream": Any<Readable>,
     },
     "headers": [
       {
@@ -190,9 +190,9 @@ exports[`CapturedInteraction.fromPostmanEntry includes request bodies with a Con
 {
   "request": {
     "body": {
+      "body": Anything,
       "contentType": "application/json",
       "size": 1188,
-      "stream": Any<Readable>,
     },
     "headers": [
       {
@@ -222,9 +222,9 @@ exports[`CapturedInteraction.fromPostmanEntry includes request bodies with no Co
 {
   "request": {
     "body": {
+      "body": Anything,
       "contentType": "application/json",
       "size": 276,
-      "stream": Any<Readable>,
     },
     "headers": [],
     "host": "postman-echo.com",
@@ -240,9 +240,9 @@ exports[`CapturedInteraction.fromPostmanEntry includes request bodies with no Co
 {
   "request": {
     "body": {
+      "body": Anything,
       "contentType": "text/plain",
       "size": 58,
-      "stream": Any<Readable>,
     },
     "headers": [],
     "host": "postman-echo.com",
@@ -275,9 +275,9 @@ exports[`CapturedInteraction.fromPostmanEntry includes response bodies 1`] = `
   },
   "response": {
     "body": {
+      "body": Anything,
       "contentType": "application/json",
       "size": 482,
-      "stream": Any<Readable>,
     },
     "headers": [
       {
@@ -344,9 +344,9 @@ exports[`CapturedInteraction.fromProxyInteraction includes request bodies 1`] = 
 {
   "request": {
     "body": {
+      "body": Anything,
       "contentType": "text/plain",
       "size": 9,
-      "stream": Any<Readable>,
     },
     "headers": [],
     "host": "localhost",
@@ -374,9 +374,9 @@ exports[`CapturedInteraction.fromProxyInteraction includes response bodies 1`] =
   },
   "response": {
     "body": {
+      "body": Anything,
       "contentType": null,
-      "size": 0,
-      "stream": Any<Readable>,
+      "size": 31,
     },
     "headers": [],
     "statusCode": "200",
