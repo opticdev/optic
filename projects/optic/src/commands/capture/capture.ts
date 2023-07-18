@@ -1,33 +1,24 @@
 import chalk from 'chalk';
 import { Command, Option } from 'commander';
-import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import path from 'path';
 import fs from 'node:fs/promises';
-import fetch from 'node-fetch';
-import Bottleneck from 'bottleneck';
+import fsNonPromise from 'node:fs';
 
 import { isJson, isYaml, writeYaml } from '@useoptic/openapi-io';
 import ora from 'ora';
-import urljoin from 'url-join';
-import {
-  CoverageNode,
-  OperationCoverage,
-  UserError,
-} from '@useoptic/openapi-utilities';
-import { CaptureConfigData, Request } from '../../config';
+import { CoverageNode, OperationCoverage } from '@useoptic/openapi-utilities';
 import { errorHandler } from '../../error-handler';
 
 import { createNewSpecFile } from '../../utils/specs';
 import { logger } from '../../logger';
-import { OpticCliConfig } from '../../config';
+import { OpticCliConfig, VCS } from '../../config';
 import { clearCommand } from '../oas/capture-clear';
 import { captureV1 } from '../oas/capture';
-import { getCaptureStorage, GroupedCaptures } from './storage';
-import { loadSpec } from '../../utils/spec-loaders';
+
+import { getCaptureStorage } from './storage';
+import { loadSpec, specHasUncommittedChanges } from '../../utils/spec-loaders';
 import { ApiCoverageCounter } from './coverage/api-coverage';
-import { commandSplitter } from '../../utils/capture';
 import { specToOperations } from './operations/queries';
-import { ProxyInteractions } from './sources/proxy';
 import { HarEntries } from './sources/har';
 import {
   addIgnorePaths,
@@ -35,10 +26,16 @@ import {
   promptUserForPathPattern,
   diffExistingEndpoint,
 } from './actions';
+import { captureRequestsFromProxy } from './actions/captureRequests';
+import { PostmanCollectionEntries } from './sources/postman';
+import { CapturedInteractions } from './sources/captured-interactions';
+import * as AT from '../oas/lib/async-tools';
+import { GroupedCaptures } from './interactions/grouped-interactions';
+import { OPTIC_URL_KEY } from '../../constants';
+import { getApiFromOpticUrl } from '../../utils/cloud-urls';
+import { uploadCoverage } from './actions/upload-coverage';
 
 const indent = (n: number) => '  '.repeat(n);
-const wait = (time: number) =>
-  new Promise((r) => setTimeout(() => r(null), time));
 
 export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
   const command = new Command('capture');
@@ -56,16 +53,27 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
       '--proxy-port <proxy-port>',
       'specify the port the proxy should be running on'
     )
-    .option(
-      '-u, --update',
-      'update the OpenAPI spec to match the traffic',
-      false
+    .addOption(
+      new Option(
+        '-u, --update [mode]',
+        'update the OpenAPI spec to match the traffic. specify the mode to change the update behavior on how to handle undocumented endpoints (endpoints not in your spec). \
+ documented will only update documented endpoints. interactive will prompt you for new endpoint paths. automatic will guess the correct path'
+      )
+        .preset('documented')
+        .choices(['interactive', 'automatic', 'documented'])
     )
     .option(
-      '-i, --interactive',
-      'add new endpoints in interactive mode. must be run with --update',
-      false
+      '--postman  <postman-collection-file>',
+      'path to postman collection'
     )
+    .option('--har <har-file>', 'path to har file (v1.2, v1.3)')
+    .addOption(
+      new Option(
+        '-s, --server-override <url>',
+        'Skip executing `capture[].server.command` and forward proxy traffic to this URL instead'
+      )
+    )
+    .option('--upload', 'upload coverage results to Optic Cloud', false)
 
     // TODO deprecate hidden options below
     .addOption(
@@ -95,12 +103,6 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
     .addOption(
       new Option('-o, --output <output>', 'file name for output').hideHelp()
     )
-    .addOption(
-      new Option(
-        '-s, --server-override <url>',
-        'Skip executing `capture[].server.command` and forward proxy traffic to this URL instead'
-      )
-    )
     .action(
       errorHandler(getCaptureAction(config, command), { command: 'capture' })
     );
@@ -110,36 +112,11 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
 type CaptureActionOptions = {
   proxyPort?: string;
   serverOverride?: string;
-  update: boolean;
-  interactive: boolean;
+  postman?: string;
+  har?: string;
+  update?: 'documented' | 'interactive' | 'automatic';
+  upload: boolean;
 };
-
-class ProxyInstance {
-  interactions!: ProxyInteractions;
-  url!: string;
-  targetUrl: string;
-  private abortController: AbortController;
-
-  constructor(target: string) {
-    this.abortController = new AbortController();
-    this.targetUrl = target;
-  }
-
-  public async start(port: number | undefined) {
-    [this.interactions, this.url] = await ProxyInteractions.create(
-      this.targetUrl,
-      this.abortController.signal,
-      {
-        mode: 'reverse-proxy',
-        proxyPort: port,
-      }
-    );
-  }
-
-  stop() {
-    this.abortController.abort();
-  }
-}
 
 const getCaptureAction =
   (config: OpticCliConfig, command: Command) =>
@@ -148,118 +125,18 @@ const getCaptureAction =
     targetUrl: string | undefined,
     options: CaptureActionOptions
   ) => {
-    const pathFromRoot = path.relative(config.root, path.resolve(filePath));
-    const captureConfig = config.capture?.[pathFromRoot];
-
     // capture v1
     if (targetUrl !== undefined) {
       await captureV1(filePath, targetUrl, config, command);
       return;
     }
 
-    // verify capture v2 config is present
-    if (targetUrl !== undefined || captureConfig === undefined) {
-      logger.error(`no capture config for ${filePath} was found`);
-      // TODO log error and run capture init or something - tbd what the first use is
-      process.exitCode = 1;
-      return;
-    }
-
-    // verify that capture.requests or capture.requests_command is set
-    if (!captureConfig.requests && !captureConfig.requests_command) {
-      logger.error(
-        `"requests" or "requests_command" must be specified in optic.yml`
-      );
-      process.exitCode = 1;
-      return;
-    }
-
-    // verify port number is valid
-    if (options.proxyPort && isNaN(Number(options.proxyPort))) {
-      logger.error(
-        `--proxy-port must be a number - received ${options.proxyPort}`
-      );
-      process.exitCode = 1;
-      return;
-    }
-
     const trafficDirectory = await setup(filePath);
     logger.debug(`Writing captured traffic to ${trafficDirectory}`);
-
-    // start proxy
-    const proxy = new ProxyInstance(
-      options.serverOverride || captureConfig.server.url
-    );
-    await proxy.start(
-      options.proxyPort ? Number(options.proxyPort) : undefined
-    );
-
-    // parse spec
     let spec = await loadSpec(filePath, config, {
       strict: false,
       denormalize: false,
     });
-
-    const serverDir =
-      captureConfig.server.dir === undefined
-        ? config.root
-        : captureConfig.server.dir;
-    const timeout = captureConfig.server.ready_timeout || 3 * 60 * 1_000; // 3 minutes
-    const readyInterval = captureConfig.server.ready_interval || 1000;
-    // start app
-    let app: ChildProcessWithoutNullStreams | undefined;
-
-    let errors: any[] = [];
-    try {
-      let bailout: Bailout = { didBailout: false, promise: Promise.resolve() };
-      if (!options.serverOverride && captureConfig.server.command) {
-        [app, bailout] = startApp(captureConfig.server.command, serverDir);
-        // If we don't bail out (i.e. the server is still running), we need the promise to be passed down to the next request
-        if (captureConfig.server.ready_endpoint) {
-          await waitForServer(
-            bailout,
-            captureConfig.server.ready_endpoint,
-            readyInterval,
-            timeout,
-            proxy.targetUrl
-          );
-        }
-      }
-      // TODO handle error handling properly
-      let [sendRequestsPromise, runRequestsPromise] = makeAllRequests(
-        captureConfig,
-        proxy
-      );
-      // Here we continue even if some of the requests failed - we log out the requests errors but use the rest to query
-      const requestsPromises = Promise.allSettled([
-        sendRequestsPromise,
-        runRequestsPromise,
-      ]);
-      // Wait for either all the requests to complete (or reject), or for the app to shutdown prematurely
-      await Promise.race([bailout.promise, requestsPromises]);
-      // catch the bailout promise rejection when we shutdown the app
-      bailout.promise.catch((e) => {});
-    } catch (e) {
-      // Meaning either the requests threw an uncaught exception or the app server randomly quit
-      process.exitCode = 1;
-      // The finally block will run before we return from the fn call
-      return;
-    } finally {
-      proxy.stop();
-      if (app && app.pid && app.exitCode === null) {
-        process.kill(-app.pid);
-      }
-
-      if (errors.length > 0) {
-        logger.error('finished with errors:');
-        errors.forEach((error, index) => {
-          logger.error(`${index}:\n${error}`);
-        });
-      }
-    }
-
-    // process proxy interactions into hars
-    const harEntries = HarEntries.fromProxyInteractions(proxy.interactions);
     const captures = new GroupedCaptures(
       trafficDirectory,
       specToOperations(spec.jsonLike).map((p) => ({
@@ -267,13 +144,81 @@ const getCaptureAction =
         path: p.pathPattern,
       }))
     );
-    for await (const har of harEntries) {
-      captures.addHar(har);
-      logger.debug(
-        `Captured ${har.request.method.toUpperCase()} ${har.request.url}`
+
+    if (options.har) {
+      try {
+        const harEntries = HarEntries.fromReadable(
+          fsNonPromise.createReadStream(options.har)
+        );
+        for await (const harOrErr of harEntries) {
+          if (harOrErr.ok) {
+            captures.addHar(harOrErr.val);
+          }
+        }
+      } catch (e) {
+        logger.error(chalk.red(`Error parsing ${options.har}`));
+        logger.error(e);
+        process.exitCode = 1;
+        return;
+      }
+    } else if (options.postman) {
+      const postmanEntryResults = PostmanCollectionEntries.fromReadable(
+        fsNonPromise.createReadStream(options.postman)
       );
+      let postmanEntries = AT.unwrapOr(postmanEntryResults, (err) => {});
+
+      for await (const interaction of CapturedInteractions.fromPostmanCollection(
+        postmanEntries
+      )) {
+        captures.addInteraction(interaction);
+      }
+    } else {
+      const pathFromRoot = path.relative(config.root, path.resolve(filePath));
+      const captureConfig = config.capture?.[pathFromRoot];
+
+      // verify capture v2 config is present
+      if (targetUrl !== undefined || captureConfig === undefined) {
+        logger.error(`no capture config for ${filePath} was found`);
+        // TODO log error and run capture init or something - tbd what the first use is
+        process.exitCode = 1;
+        return;
+      }
+
+      // verify that capture.requests or capture.requests_command is set
+      if (!captureConfig.requests?.run && !captureConfig.requests?.send) {
+        logger.error(
+          `"requests.send" or "requests.run" must be specified in optic.yml`
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      // verify port number is valid
+      if (options.proxyPort && isNaN(Number(options.proxyPort))) {
+        logger.error(
+          `--proxy-port must be a number - received ${options.proxyPort}`
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const harEntries = await captureRequestsFromProxy(
+        config,
+        captureConfig,
+        options
+      );
+      if (!harEntries) {
+        // Error thrown where we don't have requests
+        return;
+      }
+      for await (const har of harEntries) {
+        captures.addHar(har);
+        logger.debug(
+          `Captured ${har.request.method.toUpperCase()} ${har.request.url}`
+        );
+      }
+      await captures.writeHarFiles();
     }
-    await captures.writeHarFiles();
 
     // update existing endpoints
     let hasAnyEndpointDiffs = false;
@@ -330,7 +275,7 @@ const getCaptureAction =
     }
 
     // document new endpoints
-    if (options.update && options.interactive) {
+    if (options.update === 'interactive' || options.update === 'automatic') {
       logger.info('');
       logger.info(
         chalk.bold.gray('Learning path patterns for unmatched requests...')
@@ -341,7 +286,8 @@ const getCaptureAction =
         endpointsToAdd,
       } = await promptUserForPathPattern(
         captures.getUndocumentedInteractions(),
-        spec.jsonLike
+        spec.jsonLike,
+        { update: options.update }
       );
 
       logger.info(chalk.bold.gray('Documenting new operations:'));
@@ -364,24 +310,65 @@ const getCaptureAction =
       if (newIgnorePaths.length) {
         await addIgnorePaths(spec, newIgnorePaths);
       }
-      // TODO Write the ignore paths to the spec
     } else if (captures.unmatched.hars.length) {
       logger.info('');
       logger.info(`${captures.unmatched.hars.length} unmatched interactions`);
     }
 
+    if (options.upload) {
+      if (options.upload && options.update) {
+        logger.error(
+          'optic capture --upload cannot be run with the --update flag'
+        );
+        process.exitCode = 1;
+        return;
+      }
+      const opticUrlDetails = getApiFromOpticUrl(spec[OPTIC_URL_KEY]);
+      if (
+        config.vcs?.type !== VCS.Git ||
+        specHasUncommittedChanges(spec.sourcemap, config.vcs.diffSet)
+      ) {
+        logger.error(
+          'optic capture --upload can only be run in a git repository without uncommitted changes. That ensures reports are properly tagged.'
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      if (!opticUrlDetails) {
+        logger.error(
+          `File ${filePath} does not have an optic url. Files must be added to Optic and have an x-optic-url key before verification data can be uploaded.`
+        );
+        logger.error(`${chalk.yellow('Hint: ')} Run optic api add ${filePath}`);
+        process.exitCode = 1;
+        return;
+      }
+
+      const { specUrl, branchTag } = await uploadCoverage(
+        spec,
+        coverage,
+        opticUrlDetails,
+        config
+      );
+      logger.info(
+        `Successfully uploaded verification data ${
+          branchTag ? `for tag '${branchTag}'` : ''
+        }. View your spec at ${specUrl}`
+      );
+    }
+
     if (
       captures.unmatched.hars.length &&
-      !(options.update && options.interactive)
+      !(options.update && options.update === 'documented')
     ) {
       logger.info(
         chalk.yellow('New endpoints are only added in interactive mode.')
       );
       logger.info(
-        chalk.blue('Run with `--update --interactive` to add new endpoints')
+        chalk.blue('Run with `--update interactive` to add new endpoints')
       );
       logger.info(
-        chalk.yellow(`Hint: optic capture ${filePath} --update --interactive`)
+        chalk.yellow(`Hint: optic capture ${filePath} --update interactive`)
       );
     } else if (
       !options.update &&
@@ -427,113 +414,6 @@ function getSummaryText(endpointCoverage: OperationCoverage) {
   return items.join(', ');
 }
 
-function sendRequests(
-  reqs: Request[],
-  proxyUrl: string,
-  concurrency: number
-): Promise<void>[] {
-  const limiter = new Bottleneck({
-    maxConcurrent: concurrency,
-    minTime: 0,
-  });
-
-  return reqs.map(async (r) => {
-    let verb = r.verb || 'GET';
-    let opts = { method: verb };
-
-    if (verb === 'POST') {
-      opts['headers'] = {
-        'content-type': 'application/json;charset=UTF-8',
-      };
-      opts['body'] = JSON.stringify(r.data || '{}');
-    }
-
-    return limiter.schedule(() =>
-      fetch(`${proxyUrl}${r.path}`, opts)
-        .then((response) => response.json())
-        .catch((error) => {
-          logger.error(error);
-        })
-    );
-  });
-}
-
-async function runRequestsCommand(
-  command: string,
-  proxyVar: string,
-  proxyUrl: string
-): Promise<void> {
-  const cmd = commandSplitter(command);
-  const reqCmd = spawn(cmd.cmd, cmd.args, {
-    env: {
-      ...process.env,
-      [proxyVar]: proxyUrl,
-    },
-    detached: true,
-    shell: true,
-  });
-
-  let reqCmdPromise: Promise<void>;
-  reqCmdPromise = new Promise((resolve, reject) => {
-    reqCmd.on('exit', (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject();
-      }
-    });
-  });
-  reqCmd.stderr.on('data', (data) => {
-    logger.error(data.toString());
-  });
-  return reqCmdPromise;
-}
-
-function makeAllRequests(
-  captureConfig: CaptureConfigData,
-  proxy: ProxyInstance
-) {
-  // send requests
-  let sendRequestsPromise: Promise<any> = Promise.resolve();
-  if (captureConfig.requests) {
-    const requests = sendRequests(
-      captureConfig.requests,
-      proxy.url,
-      captureConfig.config?.request_concurrency || 5
-    );
-    sendRequestsPromise = Promise.allSettled(requests).then((results) => {
-      let hasError = false;
-      results.forEach((result, idx) => {
-        if (result.status === 'rejected') {
-          const req = captureConfig.requests![idx];
-          logger.error(
-            `Request ${req.verb ?? 'GET'} ${req.path} failed with ${
-              result.reason
-            }`
-          );
-          hasError = true;
-        }
-      });
-      if (hasError) throw new Error('Some requests failed');
-    });
-  }
-
-  // run requests command
-  let runRequestsPromise: Promise<void> = Promise.resolve();
-  if (captureConfig.requests_command) {
-    const proxyVar =
-      captureConfig.requests_command.proxy_variable || 'OPTIC_PROXY';
-
-    runRequestsPromise = runRequestsCommand(
-      captureConfig.requests_command.command,
-      proxyVar,
-      proxy.url
-    );
-  }
-
-  return [sendRequestsPromise, runRequestsPromise];
-}
-
 async function setup(filePath: string): Promise<string> {
   const resolvedPath = path.resolve(filePath);
   let openApiExists = false;
@@ -551,80 +431,4 @@ async function setup(filePath: string): Promise<string> {
     }
   }
   return await getCaptureStorage(resolvedPath);
-}
-
-type Bailout = { didBailout: boolean; promise: Promise<any> };
-function startApp(
-  command: string,
-  dir: string
-): [ChildProcessWithoutNullStreams, Bailout] {
-  const cmd = commandSplitter(command);
-  const app = spawn(cmd.cmd, cmd.args, { detached: true, cwd: dir });
-
-  app.stderr.on('data', (data) => {
-    logger.error(data.toString());
-  });
-
-  const bailout: Bailout = {
-    didBailout: false,
-    promise: new Promise((resolve, reject) => {
-      app!.on('exit', (code) => {
-        bailout.didBailout = true;
-        reject(`Server unexpectedly exited with error code ${code}`);
-      });
-    }),
-  };
-  return [app, bailout];
-}
-
-async function waitForServer(
-  bailout: Bailout,
-  readyEndpoint: string,
-  readyInterval: number,
-  readyTimeout: number,
-  targetUrl: string
-) {
-  // since ready_endpoint is not required always wait one interval. without ready_endpoint,
-  // ready_interval must be at least the time it takes to start the server.
-  await wait(readyInterval);
-
-  //
-  // wait for the app to be ready
-  //
-
-  const url = urljoin(targetUrl, readyEndpoint);
-  const timeout = readyTimeout || 3 * 60 * 1_000; // 3 minutes
-  const now = Date.now();
-  const spinner = ora('Waiting for server to come online...');
-  spinner.start();
-  spinner.color = 'blue';
-
-  const checkServer = (): Promise<boolean> =>
-    fetch(url)
-      .then((res) => String(res.status).startsWith('2'))
-      .catch((e) => {
-        logger.debug(e);
-        return false;
-      });
-
-  const serverReadyPromise = new Promise(async (resolve) => {
-    let done = false;
-    // We need to bail out if the server shut down, otherwise we never conclude this promise chain
-    while (!done && !bailout.didBailout) {
-      const isReady = await checkServer();
-
-      if (isReady) {
-        done = true;
-      } else if (Date.now() > now + timeout) {
-        spinner.fail('Server check timed out');
-        throw new UserError({ message: 'Server check timed out.' });
-      }
-      await wait(readyInterval);
-    }
-    if (bailout.didBailout) spinner.fail('Server unexpectedly exited');
-    else spinner.succeed('Server check passed');
-    resolve(null);
-  });
-
-  await Promise.race([serverReadyPromise, bailout.promise]);
 }

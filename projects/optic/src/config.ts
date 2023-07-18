@@ -34,15 +34,22 @@ const DefaultOpticCliConfig: OpticCliConfig = {
   isInCi: process.env.CI === 'true',
 };
 
-const Request = Type.Object({
+const RequestSend = Type.Object({
   path: Type.String(),
-  verb: Type.Optional(
+  method: Type.Optional(
     Type.String({
       enum: ['GET', 'POST', 'PATCH', 'DELETE'],
     })
   ),
   data: Type.Optional(Type.Object({})),
 });
+
+const RequestRun = Type.Optional(
+  Type.Object({
+    command: Type.String(),
+    proxy_variable: Type.Optional(Type.String()),
+  })
+);
 
 const CaptureConfigData = Type.Object({
   config: Type.Optional(
@@ -58,18 +65,17 @@ const CaptureConfigData = Type.Object({
     ready_interval: Type.Optional(Type.Number()),
     ready_timeout: Type.Optional(Type.Number()),
   }),
-  requests: Type.Optional(Type.Array(Request)),
-  requests_command: Type.Optional(
-    Type.Object({
-      command: Type.String(),
-      proxy_variable: Type.Optional(Type.String()),
-    })
-  ),
+  requests: Type.Object({
+    // one of these is technically required, but that's enforced at runtime
+    run: Type.Optional(RequestRun),
+    send: Type.Optional(Type.Array(RequestSend)),
+  }),
 });
 
 export type CaptureConfigData = Static<typeof CaptureConfigData>;
 export type ServerConfig = CaptureConfigData['server'];
-export type Request = Static<typeof Request>;
+export type RequestSend = Static<typeof RequestSend>;
+export type RequestRun = Static<typeof RequestRun>;
 export type CaptureConfigConfig = CaptureConfigData['config'];
 
 export const ProjectYmlConfig = Type.Object({
