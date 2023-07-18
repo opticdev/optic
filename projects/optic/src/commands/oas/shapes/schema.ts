@@ -5,6 +5,7 @@ import { PatchOperation } from '../patches';
 import JsonPatch from 'fast-json-patch';
 import { OperationPatch } from '../operations';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
+import { SentryClient } from '@useoptic/openapi-utilities/build/utilities/sentry';
 
 export type SchemaObject = OpenAPIV3.SchemaObject;
 
@@ -103,14 +104,27 @@ export class Schema {
     schema: SchemaObject | null,
     patch: ShapePatch
   ): SchemaObject {
-    const result = JsonPatch.applyPatch(
-      schema,
-      JsonPatch.deepClone([...OperationPatch.operations(patch)]),
-      undefined,
-      false // don't mutate the original schema
-    );
+    const operations = JsonPatch.deepClone([
+      ...OperationPatch.operations(patch),
+    ]);
+    try {
+      const result = JsonPatch.applyPatch(
+        schema,
+        JsonPatch.deepClone([...OperationPatch.operations(patch)]),
+        undefined,
+        false // don't mutate the original schema
+      );
 
-    return result.newDocument!;
+      return result.newDocument!;
+    } catch (e) {
+      SentryClient.captureException(e, {
+        extra: {
+          operations,
+          schema,
+        },
+      });
+      throw e;
+    }
   }
 
   static isPolymorphic(schema: SchemaObject) {
