@@ -57,11 +57,10 @@ export class CapturedInteraction {
         requestPostData.text,
         requestPostData.encoding as BufferEncoding | undefined
       );
-      requestBody = CapturedBody.from(
-        buffer,
-        requestPostData.mimeType,
-        entry.request.bodySize
-      );
+
+      const asText = new TextDecoder().decode(buffer);
+
+      requestBody = CapturedBody.from(asText, requestPostData.mimeType);
     }
 
     const responseContent = entry.response.content;
@@ -73,11 +72,10 @@ export class CapturedInteraction {
         responseContent.text,
         responseContent.encoding as BufferEncoding | undefined
       );
-      responseBody = CapturedBody.from(
-        buffer,
-        responseContent.mimeType,
-        responseContent.size
-      );
+
+      const asText = new TextDecoder().decode(buffer);
+
+      responseBody = CapturedBody.from(asText, responseContent.mimeType);
     }
 
     return {
@@ -116,9 +114,8 @@ export class CapturedInteraction {
       let contentLength = proxyInteraction.request.headers['content-length'];
 
       requestBody = CapturedBody.from(
-        requestBodyBuffer,
-        contentType || null,
-        contentLength ? parseInt(contentLength, 10) : 0
+        new TextDecoder().decode(requestBodyBuffer),
+        contentType || null
       );
     }
 
@@ -128,9 +125,8 @@ export class CapturedInteraction {
       let contentLength = proxyInteraction.response.headers['content-length'];
 
       responseBody = CapturedBody.from(
-        responseBodyBuffer,
-        contentType || null,
-        contentLength ? parseInt(contentLength, 10) : 0
+        new TextDecoder().decode(responseBodyBuffer),
+        contentType || null
       );
     }
 
@@ -212,11 +208,7 @@ export class CapturedInteraction {
           value: resolve(value),
         })),
         body: requestBodySource.length
-          ? CapturedBody.from(
-              requestBodySource,
-              requestContentType,
-              requestBodySource.length
-            )
+          ? CapturedBody.from(requestBodySource, requestContentType)
           : null,
       },
       response: response
@@ -229,8 +221,7 @@ export class CapturedInteraction {
             body: response.body
               ? CapturedBody.from(
                   responseBodySource,
-                  response.contentInfo().contentType,
-                  responseBodySource?.length || 0
+                  response.contentInfo().contentType
                 )
               : null,
           }
