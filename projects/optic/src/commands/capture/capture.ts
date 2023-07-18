@@ -29,6 +29,7 @@ import { captureRequestsFromProxy } from './actions/captureRequests';
 import { PostmanCollectionEntries } from './sources/postman';
 import { CapturedInteractions } from './sources/captured-interactions';
 import * as AT from '../oas/lib/async-tools';
+import { initCaptureConfig } from './init';
 
 const indent = (n: number) => '  '.repeat(n);
 
@@ -68,7 +69,7 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
         'Skip executing `capture[].server.command` and forward proxy traffic to this URL instead'
       )
     )
-
+    .option('--init', 'Add a `capture` block to your Optic.yml')
     // TODO deprecate hidden options below
     .addOption(
       new Option(
@@ -104,6 +105,7 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
   cli.addCommand(command);
 }
 type CaptureActionOptions = {
+  init?: boolean;
   proxyPort?: string;
   serverOverride?: string;
   postman?: string;
@@ -121,6 +123,19 @@ const getCaptureAction =
     // capture v1
     if (targetUrl !== undefined) {
       await captureV1(filePath, targetUrl, config, command);
+      return;
+    }
+
+    if (options.init) {
+      if (config.capture) {
+        // logger.info(
+        //   'Your optic.yml already contains a `capture` block. See the docs (insert-url-here) and edit your optic.yml as desired.'
+        // );
+      } else {
+        await initCaptureConfig(filePath);
+      }
+      // TODO: remove this
+      await initCaptureConfig(filePath);
       return;
     }
 
