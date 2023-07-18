@@ -57,8 +57,11 @@ export class CapturedInteraction {
         requestPostData.text,
         requestPostData.encoding as BufferEncoding | undefined
       );
+
+      const asText = new TextDecoder().decode(buffer);
+
       requestBody = CapturedBody.from(
-        buffer,
+        asText,
         requestPostData.mimeType,
         entry.request.bodySize
       );
@@ -73,8 +76,11 @@ export class CapturedInteraction {
         responseContent.text,
         responseContent.encoding as BufferEncoding | undefined
       );
+
+      const asText = new TextDecoder().decode(buffer);
+
       responseBody = CapturedBody.from(
-        buffer,
+        asText,
         responseContent.mimeType,
         responseContent.size
       );
@@ -116,7 +122,7 @@ export class CapturedInteraction {
       let contentLength = proxyInteraction.request.headers['content-length'];
 
       requestBody = CapturedBody.from(
-        requestBodyBuffer,
+        new TextDecoder().decode(requestBodyBuffer),
         contentType || null,
         contentLength ? parseInt(contentLength, 10) : 0
       );
@@ -127,8 +133,10 @@ export class CapturedInteraction {
       let contentType = proxyInteraction.response.headers['content-type'];
       let contentLength = proxyInteraction.response.headers['content-length'];
 
+      console.log(contentLength);
+
       responseBody = CapturedBody.from(
-        responseBodyBuffer,
+        new TextDecoder().decode(responseBodyBuffer),
         contentType || null,
         contentLength ? parseInt(contentLength, 10) : 0
       );

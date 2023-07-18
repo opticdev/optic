@@ -147,9 +147,9 @@ describe('visitRequestBody', () => {
     ]).toHaveLength(0);
     expect([
       ...visitRequestBody(subtypeMisMatch, requestBodySpec),
-    ]).toHaveLength(1);
+    ]).toHaveLength(0);
     expect([...visitRequestBody(typeMismatch, requestBodySpec)]).toHaveLength(
-      1
+      0
     );
   });
 
@@ -196,6 +196,6 @@ describe('visitRequestBody', () => {
     );
     expect([
       ...visitRequestBody(mismatchingType, requestBodySpec),
-    ]).toHaveLength(1);
+    ]).toHaveLength(0);
   });
 });

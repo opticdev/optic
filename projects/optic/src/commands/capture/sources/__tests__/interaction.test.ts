@@ -148,6 +148,7 @@ describe('CapturedInteraction.fromProxyInteraction', () => {
     };
 
     let interaction = CapturedInteraction.fromProxyInteraction(testInteraction);
+
     expect(interaction).toMatchSnapshot({
       response: { body: matchBody() },
     });
@@ -255,7 +256,7 @@ describe('CapturedInteraction.fromPostmanEntry', () => {
 });
 
 function matchBody() {
-  return { stream: expect.any(Readable) };
+  return { body: expect.anything() };
 }
 
 function proxySourceRequest(
@@ -322,6 +323,9 @@ function proxySourceResponse(
     headers['content-type'] = contentType;
     rawHeaders.push(['Content-Type', contentType]);
   }
+
+  headers['content-length'] = '' + bodyBuffer.length;
+  rawHeaders.push(['Content-Length', '' + bodyBuffer.length]);
 
   return {
     id: 'c37e995e-200b-4962-b880-56dc2193a79e',
