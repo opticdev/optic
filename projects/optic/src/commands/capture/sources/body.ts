@@ -9,23 +9,14 @@ export interface CapturedBody {
 export class CapturedBody {
   static from(
     stringValue: string | null,
-    contentType: string | null = null,
-    size = 0
+    contentType: string | null = null
   ): CapturedBody {
-    if (size > 0 && stringValue !== null) {
-      return { contentType, body: stringValue, size };
-    } else {
-      return { contentType, body: null, size };
-    }
+    return { contentType, body: stringValue, size: stringValue?.length || 0 };
   }
 
   static fromJSON(json: { [key: string]: any }, ...rest) {
     const asJsonString = JSON.stringify(json);
-    return CapturedBody.from(
-      asJsonString,
-      'application/json',
-      asJsonString.length
-    );
+    return CapturedBody.from(asJsonString, 'application/json');
   }
 
   static body(body: CapturedBody) {

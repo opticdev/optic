@@ -4,11 +4,7 @@ import { CapturedBody } from '../body';
 describe('CaputeredBody', () => {
   it('can be created and parsed', async () => {
     const testString = 'any string will do';
-    const justBody = CapturedBody.from(
-      testString,
-      'text/plain',
-      testString.length
-    );
+    const justBody = CapturedBody.from(testString, 'text/plain');
     ('');
     expect(await CapturedBody.text(justBody)).toEqual(testString);
 
