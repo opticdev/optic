@@ -181,13 +181,18 @@ export async function documentNewEndpoint(
 
     yield* generatePathAndMethodSpecPatches(specHolder, endpoint);
 
+    const schemaAdditionsSet = new Set<string>();
+
     yield* generateEndpointSpecPatches(
       interactionsAsAsyncIterator,
       specHolder,
-      endpoint
+      endpoint,
+      {
+        schemaAdditionsSet,
+      }
     );
 
-    yield* generateRefRefactorPatches(specHolder, endpoint);
+    yield* generateRefRefactorPatches(specHolder, schemaAdditionsSet);
   })();
 
   const operations = await jsonOpsFromSpecPatches(specPatches);

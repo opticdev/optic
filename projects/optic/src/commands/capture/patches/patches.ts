@@ -60,6 +60,7 @@ export async function* generateEndpointSpecPatches(
   endpoint: { method: string; path: string },
   opts: {
     coverage?: ApiCoverageCounter;
+    schemaAdditionsSet?: Set<string>;
   } = {}
 ) {
   const openAPIVersion = checkOpenAPIVersion(specHolder.spec);
@@ -110,6 +111,7 @@ export async function* generateEndpointSpecPatches(
     );
 
     for await (let patch of shapePatches) {
+      opts.schemaAdditionsSet?.add(patch.path);
       specHolder.spec = SpecPatch.applyPatch(patch, specHolder.spec);
       yield patch;
     }
@@ -121,7 +123,7 @@ export async function* generateRefRefactorPatches(
   specHolder: {
     spec: ParseResult['jsonLike'];
   },
-  endpoint: { method: string; path: string }
+  schemaAdditionsSet: Set<string>
 ) {
   const schemaInventory = new SchemaInventory();
   schemaInventory.addSchemas(
@@ -130,7 +132,7 @@ export async function* generateRefRefactorPatches(
   );
 
   const refRefactors = schemaInventory.refsForAdditions(
-    new Set([endpoint.path]),
+    schemaAdditionsSet,
     specHolder.spec
   );
 
