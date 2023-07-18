@@ -15,6 +15,7 @@ import { specToPaths } from '../operations/queries';
 import {
   generateEndpointSpecPatches,
   generatePathAndMethodSpecPatches,
+  generateRefRefactorPatches,
   jsonOpsFromSpecPatches,
 } from '../patches/patches';
 import { SpecPatches } from '../../oas/specs';
@@ -185,6 +186,8 @@ export async function documentNewEndpoint(
       specHolder,
       endpoint
     );
+
+    yield* generateRefRefactorPatches(specHolder, endpoint);
   })();
 
   const operations = await jsonOpsFromSpecPatches(specPatches);
