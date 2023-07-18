@@ -270,13 +270,20 @@ const getCaptureAction =
     }
     const endpointCounts = captures.counts();
     if (endpointCounts.total > 0 && endpointCounts.unmatched > 0) {
-      logger.info(
-        chalk.gray(
-          `...and ${endpointCounts.unmatched} other endpoint${
-            endpointCounts.unmatched === 1 ? '' : 's'
-          }`
-        )
-      );
+      const unmatchedEndpointsText = `${endpointCounts.unmatched} endpoint${
+        endpointCounts.unmatched === 1 ? '' : 's'
+      }`;
+      if (endpointCounts.matched > 0) {
+        logger.info(
+          chalk.gray(
+            `...and ${unmatchedEndpointsText} that did not receive traffic`
+          )
+        );
+      } else {
+        logger.info(
+          chalk.gray(`${unmatchedEndpointsText} did not receive traffic`)
+        );
+      }
     }
 
     // document new endpoints
@@ -321,7 +328,7 @@ const getCaptureAction =
     }
 
     if (options.upload) {
-      if (options.upload && options.update) {
+      if (options.update) {
         logger.error(
           'optic capture --upload cannot be run with the --update flag'
         );
