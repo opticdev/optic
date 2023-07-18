@@ -75,7 +75,8 @@ async function waitForServer(
   readyEndpoint: string,
   readyInterval: number,
   readyTimeout: number,
-  targetUrl: string
+  targetUrl: string,
+  spinner: ora.Ora
 ) {
   // since ready_endpoint is not required always wait one interval. without ready_endpoint,
   // ready_interval must be at least the time it takes to start the server.
@@ -88,9 +89,6 @@ async function waitForServer(
   const url = urljoin(targetUrl, readyEndpoint);
   const timeout = readyTimeout || 3 * 60 * 1_000; // 3 minutes
   const now = Date.now();
-  const spinner = ora('Waiting for server to come online...');
-  spinner.start();
-  spinner.color = 'blue';
 
   const checkServer = (): Promise<boolean> =>
     fetch(url)
@@ -115,7 +113,6 @@ async function waitForServer(
       await wait(readyInterval);
     }
     if (bailout.didBailout) spinner.fail('Server unexpectedly exited');
-    else spinner.succeed('Server check passed');
     resolve(null);
   });
 
@@ -233,6 +230,11 @@ export async function captureRequestsFromProxy(
   captureConfig: CaptureConfigData,
   options: { proxyPort?: string; serverOverride?: string }
 ) {
+  const spinner = ora({
+    text: 'Generating traffic to send to server',
+    color: 'blue',
+  }).start();
+
   // start proxy
   const proxy = new ProxyInstance(
     options.serverOverride || captureConfig.server.url
@@ -259,16 +261,19 @@ export async function captureRequestsFromProxy(
       [app, bailout] = startApp(captureConfig.server.command, serverDir);
       // If we don't bail out (i.e. the server is still running), we need the promise to be passed down to the next request
       if (captureConfig.server.ready_endpoint) {
+        spinner.text = 'Waiting for server to come online...';
         await waitForServer(
           bailout,
           captureConfig.server.ready_endpoint,
           readyInterval,
           timeout,
-          proxy.targetUrl
+          proxy.targetUrl,
+          spinner
         );
       }
     }
 
+    spinner.text = 'Sending requests to server';
     let [sendRequestsPromise, runRequestsPromise] = makeAllRequests(
       captureConfig,
       proxy
@@ -300,6 +305,8 @@ export async function captureRequestsFromProxy(
       });
     }
   }
+
+  spinner.succeed('Successfully captured requests');
 
   // process proxy interactions into hars
   return HarEntries.fromProxyInteractions(proxy.interactions);
