@@ -11,6 +11,7 @@ import { OpenAPIV3 } from '..';
 import JsonPatch from 'fast-json-patch';
 import { ShapeDiffResult } from '../../shapes/diffs';
 import { OperationDiffResult } from '../../operations/diffs';
+import { SentryClient } from '@useoptic/openapi-utilities/build/utilities/sentry';
 
 export { newSpecPatches } from './generators/new-spec';
 export { templatePatches } from './generators/template';
@@ -116,14 +117,24 @@ export class SpecPatch {
   }
 
   static applyPatch(patch: SpecPatch, spec: OpenAPIV3.Document) {
-    const result = JsonPatch.applyPatch(
-      spec,
-      JsonPatch.deepClone([...SpecPatch.operations(patch)]),
-      undefined,
-      false // don't mutate the original spec
-    );
+    const operations = JsonPatch.deepClone([...SpecPatch.operations(patch)]);
+    try {
+      const result = JsonPatch.applyPatch(
+        spec,
+        operations,
+        undefined,
+        false // don't mutate the original spec
+      );
 
-    return result.newDocument!;
+      return result.newDocument!;
+    } catch (e) {
+      SentryClient.captureException(e, {
+        extra: {
+          operations,
+        },
+      });
+      throw e;
+    }
   }
 
   static *operations(patch: ShapePatch): IterableIterator<PatchOperation> {
