@@ -474,7 +474,7 @@ function* getResponseChangeLogs(
 
   if (
     change ||
-    response.headers.diffs.length ||
+    Object.values(response.headers).flatMap((r) => r.diffs).length ||
     Object.values(response.contents).length
   ) {
     yield `${label} ${getAddedOrRemovedLabel(change)}`;
@@ -484,12 +484,15 @@ function* getResponseChangeLogs(
     yield* indent(getDetailLogs(response.diffs));
   }
   yield* indent(getRuleLogs(response.rules, sourcemapReaders, options));
-  for (const diff of response.headers.diffs) {
-    if (shouldRenderChildDiffs) {
-      yield* indent(getResponseHeaderLogs(diff));
+  for (const node of Object.values(response.headers)) {
+    for (const diff of node.diffs) {
+      if (shouldRenderChildDiffs) {
+        yield* indent(getResponseHeaderLogs(diff));
+      }
     }
+
+    yield* indent(getRuleLogs(node.rules, sourcemapReaders, options));
   }
-  yield* indent(getRuleLogs(response.headers.rules, sourcemapReaders, options));
 
   for (const [key, contentType] of Object.entries(response.contents)) {
     yield* indent(
