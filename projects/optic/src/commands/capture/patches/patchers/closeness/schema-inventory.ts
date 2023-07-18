@@ -1,9 +1,9 @@
 import { FlatOpenAPIV3, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { computeClosenessFromKeyValueTuples, walkSchema } from './closeness';
-import { SpecPatch, SpecPatches } from '../../specs';
-import { PatchImpact } from '../../patches';
-import { PathComponents } from '../../operations';
+import { SpecPatch, SpecPatches } from '../../../../oas/specs';
+import { PatchImpact } from '../../../../oas/patches';
+import { PathComponents } from '../../../../oas/operations';
 import { Operation } from 'fast-json-patch';
 
 type ClosestMatch = { ref: string; percent: number } | undefined;

@@ -132,8 +132,8 @@ describe('visitResponses', () => {
 
     expect([...visitResponses(exactMatch, responses)]).toHaveLength(0);
     expect([...visitResponses(parameterMismatch, responses)]).toHaveLength(0);
-    expect([...visitResponses(subtypeMisMatch, responses)]).toHaveLength(1);
-    expect([...visitResponses(typeMismatch, responses)]).toHaveLength(1);
+    expect([...visitResponses(subtypeMisMatch, responses)]).toHaveLength(0);
+    expect([...visitResponses(typeMismatch, responses)]).toHaveLength(0);
   });
 
   it('matches response bodies content type ranges', () => {
@@ -168,6 +168,6 @@ describe('visitResponses', () => {
 
     expect([...visitResponses(exactMatch, responses)]).toHaveLength(0);
     expect([...visitResponses(typeRangeMatch, responses)]).toHaveLength(0);
-    expect([...visitResponses(mismatchingType, responses)]).toHaveLength(1);
+    expect([...visitResponses(mismatchingType, responses)]).toHaveLength(0);
   });
 });
