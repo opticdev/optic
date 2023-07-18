@@ -60,11 +60,7 @@ export class CapturedInteraction {
 
       const asText = new TextDecoder().decode(buffer);
 
-      requestBody = CapturedBody.from(
-        asText,
-        requestPostData.mimeType,
-        entry.request.bodySize
-      );
+      requestBody = CapturedBody.from(asText, requestPostData.mimeType);
     }
 
     const responseContent = entry.response.content;
@@ -79,11 +75,7 @@ export class CapturedInteraction {
 
       const asText = new TextDecoder().decode(buffer);
 
-      responseBody = CapturedBody.from(
-        asText,
-        responseContent.mimeType,
-        responseContent.size
-      );
+      responseBody = CapturedBody.from(asText, responseContent.mimeType);
     }
 
     return {
@@ -123,8 +115,7 @@ export class CapturedInteraction {
 
       requestBody = CapturedBody.from(
         new TextDecoder().decode(requestBodyBuffer),
-        contentType || null,
-        contentLength ? parseInt(contentLength, 10) : 0
+        contentType || null
       );
     }
 
@@ -133,12 +124,9 @@ export class CapturedInteraction {
       let contentType = proxyInteraction.response.headers['content-type'];
       let contentLength = proxyInteraction.response.headers['content-length'];
 
-      console.log(contentLength);
-
       responseBody = CapturedBody.from(
         new TextDecoder().decode(responseBodyBuffer),
-        contentType || null,
-        contentLength ? parseInt(contentLength, 10) : 0
+        contentType || null
       );
     }
 
@@ -220,11 +208,7 @@ export class CapturedInteraction {
           value: resolve(value),
         })),
         body: requestBodySource.length
-          ? CapturedBody.from(
-              requestBodySource,
-              requestContentType,
-              requestBodySource.length
-            )
+          ? CapturedBody.from(requestBodySource, requestContentType)
           : null,
       },
       response: response
@@ -237,8 +221,7 @@ export class CapturedInteraction {
             body: response.body
               ? CapturedBody.from(
                   responseBodySource,
-                  response.contentInfo().contentType,
-                  responseBodySource?.length || 0
+                  response.contentInfo().contentType
                 )
               : null,
           }
