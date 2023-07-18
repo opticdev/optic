@@ -179,6 +179,11 @@ const getCaptureAction =
       // verify capture v2 config is present
       if (targetUrl !== undefined || captureConfig === undefined) {
         logger.error(`no capture config for ${filePath} was found`);
+        config.isDefaultConfig
+          ? logger.error('no optic.yml file was detected')
+          : logger.error(
+              `expected an capture config entry for ${pathFromRoot}`
+            );
         // TODO log error and run capture init or something - tbd what the first use is
         process.exitCode = 1;
         return;
