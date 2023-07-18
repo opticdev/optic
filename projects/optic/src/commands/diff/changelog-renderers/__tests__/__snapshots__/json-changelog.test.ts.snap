@@ -1068,6 +1068,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               "name": "application/xml",
             },
           ],
+          "headers": [],
           "name": "200 response",
         },
         {
@@ -1103,6 +1104,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               "name": "application/json",
             },
           ],
+          "headers": [],
           "name": "404 response",
         },
       ],
@@ -1118,6 +1120,61 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
           "attributes": [],
           "change": "changed",
           "contentTypes": [],
+          "headers": [
+            {
+              "attributes": [
+                {
+                  "after": undefined,
+                  "before": {
+                    "description": "the description goes here",
+                    "schema": {
+                      "type": "string",
+                    },
+                  },
+                  "change": "removed",
+                  "key": "",
+                },
+              ],
+              "change": "removed",
+              "name": "response header content-type",
+            },
+            {
+              "attributes": [
+                {
+                  "after": {
+                    "description": "calls per hour allowed by the user",
+                    "schema": {
+                      "format": "int32",
+                      "type": "integer",
+                    },
+                  },
+                  "before": undefined,
+                  "change": "added",
+                  "key": "",
+                },
+              ],
+              "change": "added",
+              "name": "response header X-Rate-Limit",
+            },
+            {
+              "attributes": [
+                {
+                  "after": "string",
+                  "before": "number",
+                  "change": "changed",
+                  "key": "/schema/type",
+                },
+                {
+                  "after": "date-time",
+                  "before": undefined,
+                  "change": "added",
+                  "key": "/schema/format",
+                },
+              ],
+              "change": "changed",
+              "name": "response header X-Expires-After",
+            },
+          ],
           "name": "200 response",
         },
       ],
@@ -1444,6 +1501,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               "name": "application/json",
             },
           ],
+          "headers": [],
           "name": "404 response",
         },
       ],
@@ -1538,6 +1596,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               "name": "application/xml",
             },
           ],
+          "headers": [],
           "name": "200 response",
         },
         {
@@ -1573,6 +1632,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               "name": "application/json",
             },
           ],
+          "headers": [],
           "name": "404 response",
         },
       ],
@@ -1711,6 +1771,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               "name": "application/xml",
             },
           ],
+          "headers": [],
           "name": "200 response",
         },
       ],
@@ -1770,6 +1831,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
           ],
           "change": "removed",
           "contentTypes": [],
+          "headers": [],
           "name": "200 response",
         },
         {
@@ -1804,6 +1866,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
           ],
           "change": "added",
           "contentTypes": [],
+          "headers": [],
           "name": "201 response",
         },
         {
@@ -1838,6 +1901,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
           ],
           "change": "added",
           "contentTypes": [],
+          "headers": [],
           "name": "404 response",
         },
         {
@@ -1861,6 +1925,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               "name": "application/json",
             },
           ],
+          "headers": [],
           "name": "default response",
         },
       ],
@@ -2077,6 +2142,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
           ],
           "change": "removed",
           "contentTypes": [],
+          "headers": [],
           "name": "400 response",
         },
       ],
@@ -2209,6 +2275,7 @@ exports[`json changelog collects changes properly: jsonChangelog 1`] = `
               "name": "application/json",
             },
           ],
+          "headers": [],
           "name": "200 response",
         },
       ],
@@ -2273,6 +2340,205 @@ exports[`json changelog with parameter changes: parameters 1`] = `
       ],
       "requestBody": undefined,
       "responses": [],
+    },
+  ],
+}
+`;
+
+exports[`json changelog with response header changes: response-headers 1`] = `
+{
+  "operations": [
+    {
+      "attributes": [],
+      "change": "changed",
+      "name": "POST /test/set2",
+      "parameters": [
+        {
+          "attributes": [
+            {
+              "after": {
+                "in": "query",
+                "name": "test_test",
+                "schema": {
+                  "type": "string",
+                },
+              },
+              "before": undefined,
+              "change": "added",
+              "key": "",
+            },
+          ],
+          "change": "added",
+          "name": "query parameter 'test_test'",
+        },
+        {
+          "attributes": [
+            {
+              "after": undefined,
+              "before": {
+                "in": "header",
+                "name": "removed_header",
+                "schema": {
+                  "type": "string",
+                },
+              },
+              "change": "removed",
+              "key": "",
+            },
+          ],
+          "change": "removed",
+          "name": "header parameter 'removed_header'",
+        },
+      ],
+      "requestBody": {
+        "attributes": [],
+        "change": "changed",
+        "contentTypes": [
+          {
+            "attributes": [
+              {
+                "after": {
+                  "schema": {
+                    "properties": {
+                      "custrom_property": {
+                        "minLength": 5,
+                        "type": "string",
+                      },
+                    },
+                  },
+                },
+                "before": {
+                  "schema": {
+                    "properties": {
+                      "custom_property": {
+                        "minLength": 5,
+                        "type": "string",
+                      },
+                    },
+                  },
+                },
+                "change": "changed",
+                "key": "",
+              },
+            ],
+            "change": "changed",
+            "name": "application/json",
+          },
+        ],
+        "name": "Request Body",
+      },
+      "responses": [
+        {
+          "attributes": [],
+          "change": "changed",
+          "contentTypes": [],
+          "headers": [
+            {
+              "attributes": [
+                {
+                  "after": {
+                    "description": "asd.",
+                    "schema": {
+                      "type": "string",
+                    },
+                  },
+                  "before": undefined,
+                  "change": "added",
+                  "key": "",
+                },
+              ],
+              "change": "added",
+              "name": "response header Link",
+            },
+          ],
+          "name": "200 response",
+        },
+      ],
+    },
+    {
+      "attributes": [],
+      "change": "changed",
+      "name": "GET /test/set1",
+      "parameters": [
+        {
+          "attributes": [
+            {
+              "after": {
+                "in": "header",
+                "name": "X-username",
+                "schema": {
+                  "type": "string",
+                },
+              },
+              "before": undefined,
+              "change": "added",
+              "key": "",
+            },
+          ],
+          "change": "added",
+          "name": "header parameter 'X-username'",
+        },
+      ],
+      "requestBody": undefined,
+      "responses": [
+        {
+          "attributes": [],
+          "change": "changed",
+          "contentTypes": [
+            {
+              "attributes": [
+                {
+                  "after": {
+                    "required": false,
+                    "type": "string",
+                  },
+                  "before": undefined,
+                  "change": "added",
+                  "key": "/schema/properties/field_2",
+                },
+              ],
+              "change": "changed",
+              "name": "application/json",
+            },
+          ],
+          "headers": [
+            {
+              "attributes": [
+                {
+                  "after": {
+                    "description": "ads",
+                    "schema": {
+                      "type": "string",
+                    },
+                  },
+                  "before": undefined,
+                  "change": "added",
+                  "key": "",
+                },
+              ],
+              "change": "added",
+              "name": "response header Link",
+            },
+            {
+              "attributes": [
+                {
+                  "after": {
+                    "schema": {
+                      "type": "string",
+                    },
+                  },
+                  "before": undefined,
+                  "change": "added",
+                  "key": "",
+                },
+              ],
+              "change": "added",
+              "name": "response header test_header",
+            },
+          ],
+          "name": "200 response",
+        },
+      ],
     },
   ],
 }
