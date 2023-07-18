@@ -14,7 +14,7 @@ import { logger } from '../../logger';
 import { OpticCliConfig } from '../../config';
 import { clearCommand } from '../oas/capture-clear';
 import { captureV1 } from '../oas/capture';
-import { getCaptureStorage, GroupedCaptures } from './storage';
+import { getCaptureStorage } from './storage';
 import { loadSpec } from '../../utils/spec-loaders';
 import { ApiCoverageCounter } from './coverage/api-coverage';
 import { specToOperations } from './operations/queries';
@@ -29,6 +29,7 @@ import { captureRequestsFromProxy } from './actions/captureRequests';
 import { PostmanCollectionEntries } from './sources/postman';
 import { CapturedInteractions } from './sources/captured-interactions';
 import * as AT from '../oas/lib/async-tools';
+import { GroupedCaptures } from './interactions/grouped-interactions';
 
 const indent = (n: number) => '  '.repeat(n);
 
