@@ -308,6 +308,17 @@ export async function initializeConfig(): Promise<OpticCliConfig> {
     } catch (e) {
       // Git command can fail in a repo with no commits, we should treat this as having no commits
     }
+  } else {
+    const opticYmlPath = await detectCliConfig(process.cwd());
+
+    if (opticYmlPath) {
+      logger.debug(`Using config found at ${opticYmlPath}`);
+      cliConfig = {
+        ...cliConfig,
+        ...(await loadCliConfig(opticYmlPath, cliConfig.client)),
+        isDefaultConfig: false,
+      };
+    }
   }
 
   logger.debug(cliConfig);
