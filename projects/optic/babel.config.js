@@ -1,9 +1,5 @@
 module.exports = {
-  presets: [
-    '@babel/preset-env',
-    '@babel/preset-react',
-    '@babel/preset-typescript',
-  ],
+  presets: ['@babel/preset-env', '@babel/preset-typescript'],
   plugins: [
     '@babel/plugin-transform-runtime',
     [
@@ -17,5 +13,8 @@ module.exports = {
     production: {
       ignore: ['**/*.test.ts', '**/*.test.tsx'],
     },
+  },
+  targets: {
+    node: 16,
   },
 };

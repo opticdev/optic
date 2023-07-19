@@ -6,4 +6,7 @@ module.exports = {
       ignore: ['**/*.test.ts', '**/*.test.tsx'],
     },
   },
+  targets: {
+    node: 16,
+  },
 };
