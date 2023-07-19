@@ -53,14 +53,14 @@ type DiffActionOptions = {
 const description = `run a diff between two API specs`;
 
 const usage = () => `
-  optic diff <file_path> --base <base>
-  optic diff <file_path> <file_to_compare_against>
-  optic diff <file_path> <file_to_compare_against> --check`;
+  optic diff --base <base> <file_path>
+  optic diff <file_to_compare_against> <file_path>
+  optic diff <file_to_compare_against> <file_path> --check`;
 
 const helpText = `
 Example usage:
   Diff \`specs/openapi-spec.yml\` against master
-  $ optic diff openapi-spec.yml --base master
+  $ optic diff --base master openapi-spec.yml
 
   Diff \`openapi-spec-v0.yml\` against \`openapi-spec-v1.yml\`
   $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml
@@ -80,8 +80,8 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     })
     .addHelpText('after', helpText)
     .description(description)
-    .argument('[file_path]', 'path to file to compare')
     .argument('[file_to_compare_against]', 'path to file to compare with')
+    .argument('[file_path]', 'path to file to compare')
     .option(
       '--base <base>',
       'the base ref to compare against. Defaults to HEAD. Also supports optic cloud tags (cloud:tag_name)',
