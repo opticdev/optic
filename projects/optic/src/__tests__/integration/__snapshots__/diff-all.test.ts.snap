@@ -30,7 +30,7 @@ specification details:
 [32m✔ [1mPATCH[22m /example[39m: [32madded[39m
   
 
-...and 4 other endpoints
+...and 4 other operations
 
 [33mWarning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. optic diff-all --compare-from cloud:{tag}' can only runs on specs that have been added to optic[39m
 
@@ -75,7 +75,7 @@ specification details:
 [32m✔ [1mPATCH[22m /example[39m: [32madded[39m
   
 
-...and 4 other endpoints
+...and 4 other operations
 
 [34mDiffing cloud:api-id@main to spec.json[39m
 
@@ -107,7 +107,7 @@ specification details:
 [32m✔ [1mPATCH[22m /example[39m: [32madded[39m
   
 
-...and 4 other endpoints
+...and 4 other operations
 
 "
 `;
@@ -131,7 +131,7 @@ exports[`diff-all diff all not in the root of a repo 1`] = `
   at https://github.com/User/UserRepo/tree/COMMIT-HASH/folder/in-folder.yml#L24
   
 
-...and 2 other endpoints
+...and 2 other operations
 
 [34mDiffing HEAD~1:mvspec.yml to empty spec[39m
 
@@ -193,7 +193,7 @@ specification details:
 
 [32m✔ [1mPUT[22m /example[39m: 
 
-...and 4 other endpoints
+...and 4 other operations
 
 [34mDiffing HEAD~1:specwithkey.yml to ../specwithkey.yml[39m
 
@@ -208,7 +208,7 @@ specification details:
   at https://github.com/User/UserRepo/tree/COMMIT-HASH/specwithkey.yml#L9
   
 
-...and 1 other endpoint
+...and 1 other operation
 
 [34mDiffing empty spec to ../movedspec.yml[39m
 
@@ -234,7 +234,7 @@ specification details:
   at https://github.com/User/UserRepo/tree/COMMIT-HASH/movedspec.yml#L24
   
 
-...and 2 other endpoints
+...and 2 other operations
 
 [33mWarning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. 'optic diff-all --upload' can only runs on specs that have been added to optic[39m
 
@@ -289,7 +289,7 @@ specification details:
 [32m✔ [1mPOST[22m /filler_route[39m: [32madded[39m
   
 
-...and 1 other endpoint
+...and 1 other operation
 
 "
 `;
@@ -313,7 +313,7 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
   at https://github.com/User/UserRepo/tree/COMMIT-HASH/folder/in-folder.yml#L24
   
 
-...and 2 other endpoints
+...and 2 other operations
 
 [34mDiffing HEAD~1:mvspec.yml to empty spec[39m
 
@@ -375,7 +375,7 @@ specification details:
 
 [32m✔ [1mPUT[22m /example[39m: 
 
-...and 4 other endpoints
+...and 4 other operations
 
 [34mDiffing HEAD~1:specwithkey.yml to specwithkey.yml[39m
 
@@ -390,7 +390,7 @@ specification details:
   at https://github.com/User/UserRepo/tree/COMMIT-HASH/specwithkey.yml#L9
   
 
-...and 1 other endpoint
+...and 1 other operation
 
 [34mDiffing empty spec to movedspec.yml[39m
 
@@ -416,7 +416,7 @@ specification details:
   at https://github.com/User/UserRepo/tree/COMMIT-HASH/movedspec.yml#L24
   
 
-...and 2 other endpoints
+...and 2 other operations
 
 [33mWarning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. 'optic diff-all --upload' can only runs on specs that have been added to optic[39m
 
@@ -1282,7 +1282,7 @@ specification details:
 [32m✔ [1mPOST[22m /api/filler-route[39m: [32madded[39m
   
 
-...and 2 other endpoints
+...and 2 other operations
 
 
 

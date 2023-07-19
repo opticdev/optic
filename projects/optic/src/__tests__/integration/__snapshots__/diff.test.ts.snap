@@ -387,7 +387,7 @@ specification details:
         at [4mpetstore-base.json:81:2600[24m
         
 
-...and 24 other endpoints
+...and 24 other operations
 
 [34m[1mSee the full history of this API by running "optic api add petstore-updated.json --history-depth 0"[22m[39m
 "
@@ -425,7 +425,7 @@ exports[`diff reads optic.dev.yml for rulesets 1`] = `
   - /operationId [33mchanged[39m
   
 
-...and 4 other endpoints
+...and 4 other operations
 
 [34m[1mSee the full history of this API by running "optic api add example-api-v1.json --history-depth 0"[22m[39m
 "
@@ -454,7 +454,7 @@ exports[`diff two files, no repo or config 1`] = `
   - /operationId [33mchanged[39m
   
 
-...and 4 other endpoints
+...and 4 other operations
 
 [34m[1mSee the full history of this API by running "optic api add example-api-v1.json --history-depth 0"[22m[39m
 "
@@ -477,7 +477,7 @@ exports[`diff with --last-change arg 1`] = `
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 
 
-...and 4 other endpoints
+...and 4 other operations
 
 [34m[1mSee the full history of this API by running "optic api add example-api.json --history-depth 0"[22m[39m
 "
@@ -515,7 +515,7 @@ exports[`diff with --standard arg 1`] = `
   - /operationId [33mchanged[39m
   
 
-...and 4 other endpoints
+...and 4 other operations
 
 [34m[1mSee the full history of this API by running "optic api add example-api-v1.json --history-depth 0"[22m[39m
 "
@@ -553,7 +553,7 @@ exports[`diff with mock server custom rules 1`] = `
   - /operationId [33mchanged[39m
   
 
-...and 4 other endpoints
+...and 4 other operations
 
 [34m[1mSee the full history of this API by running "optic api add example-api-v1.json --history-depth 0"[22m[39m
 "
@@ -592,7 +592,7 @@ exports[`diff with mock server extends 1`] = `
   - /operationId [33mchanged[39m
   
 
-...and 4 other endpoints
+...and 4 other operations
 
 [34m[1mSee the full history of this API by running "optic api add example-api-v1.json --history-depth 0"[22m[39m
 "
@@ -630,7 +630,7 @@ specification details:
   - /operationId [33mchanged[39m
   
 
-...and 4 other endpoints
+...and 4 other operations
 
 [34m[1mSee the full history of this API by running "optic api add example-api-v1.json --history-depth 0"[22m[39m
 "
@@ -653,7 +653,7 @@ exports[`diff with mock server uploads specs if authenticated and --upload 1`] =
         at https://github.com/User/UserRepo/tree/COMMIT-HASH/spec.json#L24
         
 
-...and 4 other endpoints
+...and 4 other operations
 
 "
 `;
@@ -687,7 +687,7 @@ specification details:
 [32m✔ [1mPATCH[22m /example[39m: [32madded[39m
   
 
-...and 4 other endpoints
+...and 4 other operations
 
 "
 `;
@@ -701,7 +701,7 @@ exports[`diff with mock server with cloud tag ref 1`] = `
 [32m✔ [1mGET[22m /api/users[39m: [32madded[39m
   
 
-...and 1 other endpoint
+...and 1 other operation
 
 "
 `;
