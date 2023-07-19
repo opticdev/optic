@@ -19,3 +19,4 @@ build
 
 # directory where optic binaries are built
 dist/
+.DS_Store

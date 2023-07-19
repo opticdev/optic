@@ -1,0 +1,108 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generatePathAndMethodSpecPatches generates a method if the path exists but method does not 1`] = `
+[
+  {
+    "description": "add 'POST' method for '/api/animals'",
+    "diff": {
+      "kind": "UnmatchedMethod",
+      "pathPattern": "/api/animals",
+      "subject": "post",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add method",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post",
+            "value": {
+              "responses": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals",
+  },
+]
+`;
+
+exports[`generatePathAndMethodSpecPatches generates a method if the path exists but method does not 2`] = `
+{
+  "info": {},
+  "paths": {
+    "/api/animals": {
+      "get": {
+        "responses": {},
+      },
+      "post": {
+        "responses": {},
+      },
+    },
+  },
+}
+`;
+
+exports[`generatePathAndMethodSpecPatches generates path and method if endpoint does not exist 1`] = `
+[
+  {
+    "description": "add '/api/users' and method GET",
+    "diff": {
+      "kind": "UnmatchedPath",
+      "subject": "/api/users",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add path with parameters",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1users",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add methods",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1users/get",
+            "value": {
+              "responses": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths",
+  },
+]
+`;
+
+exports[`generatePathAndMethodSpecPatches generates path and method if endpoint does not exist 2`] = `
+{
+  "info": {},
+  "paths": {
+    "/api/animals": {
+      "get": {
+        "responses": {},
+      },
+    },
+    "/api/users": {
+      "get": {
+        "responses": {},
+      },
+    },
+  },
+}
+`;
