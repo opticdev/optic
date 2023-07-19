@@ -1,0 +1,84 @@
+openapi: 3.1.0
+info:
+  title: test
+  version: 1.0.0
+  description: test_description
+paths:
+  /test/set1:
+    get:
+      summary: Test1
+      parameters:
+        - in: header
+          name: X-username
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers:
+            Link:
+              description: 'ads'
+              schema:
+                type: string
+            test_header:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  field_1:
+                    type: string
+                  field_2:
+                    type: string
+  /test/set2:
+    post:
+      summary: Test2
+      responses:
+        '200':
+          headers:
+            Link:
+              description: 'asd.'
+              schema:
+                type: string
+            test_header:
+              schema:
+                type: string
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+      parameters:
+        - in: header
+          name: X-username
+          schema:
+            type: string
+        - in: query
+          name: test_test
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestRequest'
+              required:
+                - property1
+                - property2
+components:
+  schemas:
+    TestRequest:
+      title: Brand-response
+      properties:
+        property1:
+          type: string
+        property2:
+          type: integer
+        custrom_property:
+          type: string
+          minLength: 5
+
+      required:
+        - property1

@@ -219,10 +219,7 @@ GroupedDiffs {
             },
           },
           "diffs": [],
-          "headers": {
-            "diffs": [],
-            "rules": [],
-          },
+          "headers": {},
           "rules": [],
         },
       },
