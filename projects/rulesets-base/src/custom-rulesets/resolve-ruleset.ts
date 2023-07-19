@@ -22,7 +22,7 @@ export async function resolveRuleset(
   ruleset: RulesetDef,
   rulesetPath: string
 ): Promise<Ruleset | string> {
-  const rulesetMod = (await import(rulesetPath)) as RulesetModule;
+  const rulesetMod = (await import(rulesetPath)).default as RulesetModule;
 
   const validate = ajv.compile(rulesetMod.default.configSchema);
   const valid = validate(ruleset.config);
