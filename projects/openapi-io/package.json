@@ -2,7 +2,7 @@
   "name": "@useoptic/openapi-io",
   "license": "MIT",
   "packageManager": "yarn@3.6.1",
-  "version": "0.47.14",
+  "version": "0.47.15-1",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -57,5 +57,6 @@
     "upath": "^2.0.1",
     "yaml": "^2.2.2",
     "yaml-ast-parser": "^0.0.43"
-  }
+  },
+  "stableVersion": "0.47.14"
 }
