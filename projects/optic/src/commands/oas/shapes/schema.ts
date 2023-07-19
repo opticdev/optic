@@ -136,7 +136,7 @@ function initialSchema(
   rootInput: any,
   openAPIVersion: SupportedOpenAPIVersions
 ): OpenAPIV3.SchemaObject {
-  if (rootInput === null) {
+  if (rootInput === null || rootInput === undefined) {
     if (openAPIVersion === '3.0.x') return { nullable: true };
     // @ts-ignore we need to retype this as a union of 3 & 3.1
     return { type: 'null' };
