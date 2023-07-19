@@ -148,9 +148,11 @@ export function getEndpointRules(endpoint: Endpoint) {
 export class GroupedDiffs {
   public specification: DiffAndRules;
   public endpoints: Record<string, Endpoint>;
+  public unmatched: DiffAndRules;
   constructor() {
     this.endpoints = {};
     this.specification = { diffs: [], rules: [] };
+    this.unmatched = { diffs: [], rules: [] };
   }
 
   getOrSetEndpoint(endpointId: string): Endpoint {
@@ -328,14 +330,13 @@ export function groupDiffsByEndpoint(
         : getFactForJsonPath(diff.before, fromTree);
 
     const isComponentDiff = /^\/components/i.test(diff.after ?? diff.before);
-    if (isComponentDiff) continue;
 
-    if (fact) {
+    if (fact && !isComponentDiff) {
+      const specToFetchFrom = diff.after !== undefined ? specs.to : specs.from;
       const trail = jsonPointerHelpers.relative(
         diff.after ?? diff.before,
         fact.location.jsonPath
       );
-      const specToFetchFrom = diff.after !== undefined ? specs.to : specs.from;
       const diffToAdd = { ...diff, trail, change: typeofDiff(diff) };
       diffsAndRulesToAdd.push({
         type: 'diffs',
@@ -343,6 +344,13 @@ export function groupDiffsByEndpoint(
         spec: specToFetchFrom,
         fact,
       });
+    } else {
+      const diffToAdd = {
+        ...diff,
+        trail: diff.after ?? diff.before,
+        change: typeofDiff(diff),
+      };
+      grouped.unmatched.diffs.push(diffToAdd);
     }
   }
 
@@ -353,8 +361,7 @@ export function groupDiffsByEndpoint(
         : getFactForJsonPath(rule.location.jsonPath, fromTree);
 
     const isComponentDiff = /^\/components/i.test(rule.location.jsonPath);
-    if (isComponentDiff) continue;
-    if (fact) {
+    if (fact && !isComponentDiff) {
       const trail = jsonPointerHelpers.relative(
         rule.location.jsonPath,
         fact.location.jsonPath
@@ -370,6 +377,9 @@ export function groupDiffsByEndpoint(
         spec: specToFetchFrom,
         fact,
       });
+    } else {
+      const ruleToAdd = { ...rule, trail: rule.location.jsonPath };
+      grouped.unmatched.rules.push(ruleToAdd);
     }
   }
 

@@ -354,11 +354,13 @@ export function* terminalChangelog(
 
   yield '';
 
-  const { endpoints, specification } = groupedDiffs;
+  const { endpoints, specification, unmatched } = groupedDiffs;
   yield* getDetailLogs(specification.diffs, {
     label: 'specification details:',
   });
   yield* getRuleLogs(specification.rules, sourcemapReaders, options);
+
+  yield* getRuleLogs(unmatched.rules, sourcemapReaders, options);
 
   for (const [, endpoint] of Object.entries(endpoints))
     yield* getEndpointLogs(

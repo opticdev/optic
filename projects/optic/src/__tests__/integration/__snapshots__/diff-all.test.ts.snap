@@ -142,7 +142,7 @@ exports[`diff-all diff all not in the root of a repo 1`] = `
 [31mx [39m [1mChecks:[22m 0/6 passed 
 
 specification details:
-- /x-optic-url, /info/description [31mremoved[39m
+- /openapi, /info, /x-optic-url [31mremoved[39m
 
 [31mx [1mPOST[22m /filler_route[39m: [31mremoved[39m
   
@@ -219,8 +219,7 @@ specification details:
 [31mx [39m [1mChecks:[22m 0/2 passed 
 
 specification details:
-- /x-optic-url, /info/description [32madded[39m
-- /openapi, /info/version, /info/title [33mchanged[39m
+- /openapi, /info, /x-optic-url [32madded[39m
 
 [31mx [1mPOST[22m /filler_route[39m: [32madded[39m
   
@@ -256,7 +255,7 @@ exports[`diff-all diff all with glob and ignores 1`] = `
 [31mx [39m [1mChecks:[22m 0/3 passed 
 
 specification details:
-- /x-optic-url, /info/description [31mremoved[39m
+- /openapi, /info, /x-optic-url [31mremoved[39m
 
 [31mx [1mPOST[22m /filler_route[39m: [31mremoved[39m
   
@@ -283,8 +282,7 @@ specification details:
 [1mOperations: [22m1 operation added
 
 specification details:
-- /x-optic-url, /info/description [32madded[39m
-- /openapi, /info/version, /info/title [33mchanged[39m
+- /openapi, /info, /x-optic-url [32madded[39m
 
 [32m✔ [1mPOST[22m /filler_route[39m: [32madded[39m
   
@@ -324,7 +322,7 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
 [31mx [39m [1mChecks:[22m 0/6 passed 
 
 specification details:
-- /x-optic-url, /info/description [31mremoved[39m
+- /openapi, /info, /x-optic-url [31mremoved[39m
 
 [31mx [1mPOST[22m /filler_route[39m: [31mremoved[39m
   
@@ -401,8 +399,7 @@ specification details:
 [31mx [39m [1mChecks:[22m 0/2 passed 
 
 specification details:
-- /x-optic-url, /info/description [32madded[39m
-- /openapi, /info/version, /info/title [33mchanged[39m
+- /openapi, /info, /x-optic-url [32madded[39m
 
 [31mx [1mPOST[22m /filler_route[39m: [32madded[39m
   
@@ -500,6 +497,10 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
             },
           },
           "specification": {
+            "diffs": [],
+            "rules": [],
+          },
+          "unmatched": {
             "diffs": [],
             "rules": [],
           },
@@ -720,18 +721,28 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
           "specification": {
             "diffs": [
               {
+                "before": "/openapi",
+                "change": "removed",
+                "pathReconciliation": [],
+                "trail": "/openapi",
+              },
+              {
+                "before": "/info",
+                "change": "removed",
+                "pathReconciliation": [],
+                "trail": "/info",
+              },
+              {
                 "before": "/x-optic-url",
                 "change": "removed",
                 "pathReconciliation": [],
                 "trail": "/x-optic-url",
               },
-              {
-                "before": "/info/description",
-                "change": "removed",
-                "pathReconciliation": [],
-                "trail": "/info/description",
-              },
             ],
+            "rules": [],
+          },
+          "unmatched": {
+            "diffs": [],
             "rules": [],
           },
         },
@@ -950,6 +961,10 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
             "diffs": [],
             "rules": [],
           },
+          "unmatched": {
+            "diffs": [],
+            "rules": [],
+          },
         },
         "results": [
           {
@@ -1044,6 +1059,10 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
             },
           },
           "specification": {
+            "diffs": [],
+            "rules": [],
+          },
+          "unmatched": {
             "diffs": [],
             "rules": [],
           },
@@ -1152,33 +1171,24 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
             "diffs": [
               {
                 "after": "/openapi",
-                "before": "/openapi",
-                "change": "changed",
+                "change": "added",
                 "trail": "/openapi",
+              },
+              {
+                "after": "/info",
+                "change": "added",
+                "trail": "/info",
               },
               {
                 "after": "/x-optic-url",
                 "change": "added",
                 "trail": "/x-optic-url",
               },
-              {
-                "after": "/info/version",
-                "before": "/info/version",
-                "change": "changed",
-                "trail": "/info/version",
-              },
-              {
-                "after": "/info/title",
-                "before": "/info/title",
-                "change": "changed",
-                "trail": "/info/title",
-              },
-              {
-                "after": "/info/description",
-                "change": "added",
-                "trail": "/info/description",
-              },
             ],
+            "rules": [],
+          },
+          "unmatched": {
+            "diffs": [],
             "rules": [],
           },
         },
@@ -1231,7 +1241,7 @@ exports[`diff-all diffs all files in a workspace without --upload 1`] = `
 [31mx [39m [1mChecks:[22m 0/6 passed 
 
 specification details:
-- /info/description [31mremoved[39m
+- /openapi, /info [31mremoved[39m
 
 [31mx [1mPOST[22m /filler_route[39m: [31mremoved[39m
   
@@ -1273,8 +1283,7 @@ specification details:
 [1mOperations: [22m2 operations added
 
 specification details:
-- /info/description [32madded[39m
-- /openapi, /info/version, /info/title [33mchanged[39m
+- /openapi, /info [32madded[39m
 
 [32m✔ [1mPOST[22m /filler_route[39m: [32madded[39m
   
