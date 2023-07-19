@@ -11,6 +11,7 @@ import { uploadFileToS3 } from '../../utils/s3';
 import { errorHandler } from '../../error-handler';
 import { getOrganizationFromToken } from '../../utils/organization';
 import { logger } from '../../logger';
+import { loadRuleset } from '@useoptic/rulesets-base';
 
 const expectedFileShape = `Expected ruleset file to have a default export with the shape
 {
@@ -77,10 +78,13 @@ const getUploadAction =
     }
 
     const absolutePath = path.join(process.cwd(), filePath);
-    const userRuleFile = await import(absolutePath).catch((e) => {
+    let userRuleFile: any;
+    try {
+      userRuleFile = loadRuleset(absolutePath);
+    } catch (e) {
       console.error(e);
       throw new UserError();
-    });
+    }
 
     if (!fileIsValid(userRuleFile)) {
       throw new UserError({

@@ -1,5 +1,6 @@
 import * as TestHelpers from './test-helpers';
 export { prepareRulesets } from './custom-rulesets/prepare-rulesets';
+export { loadRuleset } from './custom-rulesets/load-ruleset';
 
 export * from './errors';
 export * from './rules';

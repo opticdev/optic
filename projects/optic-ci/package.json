@@ -2,7 +2,7 @@
   "name": "@useoptic/optic-ci",
   "license": "MIT",
   "packageManager": "yarn@3.6.1",
-  "version": "0.47.14",
+  "version": "0.47.15-1",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -21,7 +21,6 @@
     "@babel/core": "^7.17.0",
     "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-env": "^7.17.0",
-    "@babel/preset-react": "^7.17.0",
     "@babel/preset-typescript": "^7.17.0",
     "@types/babel__core": "^7",
     "@types/babel__preset-env": "^7",
@@ -64,5 +63,6 @@
     "picomatch": "^2.3.1",
     "url-join": "^4.0.1",
     "uuid": "^9.0.0"
-  }
+  },
+  "stableVersion": "0.47.14"
 }

@@ -1403,55 +1403,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-react-display-name@npm:^7.22.5":
-  version: 7.22.5
-  resolution: "@babel/plugin-transform-react-display-name@npm:7.22.5"
-  dependencies:
-    "@babel/helper-plugin-utils": ^7.22.5
-  peerDependencies:
-    "@babel/core": ^7.0.0-0
-  checksum: a12bfd1e4e93055efca3ace3c34722571bda59d9740dca364d225d9c6e3ca874f134694d21715c42cc63d79efd46db9665bd4a022998767f9245f1e29d5d204d
-  languageName: node
-  linkType: hard
-
-"@babel/plugin-transform-react-jsx-development@npm:^7.22.5":
-  version: 7.22.5
-  resolution: "@babel/plugin-transform-react-jsx-development@npm:7.22.5"
-  dependencies:
-    "@babel/plugin-transform-react-jsx": ^7.22.5
-  peerDependencies:
-    "@babel/core": ^7.0.0-0
-  checksum: 36bc3ff0b96bb0ef4723070a50cfdf2e72cfd903a59eba448f9fe92fea47574d6f22efd99364413719e1f3fb3c51b6c9b2990b87af088f8486a84b2a5f9e4560
-  languageName: node
-  linkType: hard
-
-"@babel/plugin-transform-react-jsx@npm:^7.22.5":
-  version: 7.22.5
-  resolution: "@babel/plugin-transform-react-jsx@npm:7.22.5"
-  dependencies:
-    "@babel/helper-annotate-as-pure": ^7.22.5
-    "@babel/helper-module-imports": ^7.22.5
-    "@babel/helper-plugin-utils": ^7.22.5
-    "@babel/plugin-syntax-jsx": ^7.22.5
-    "@babel/types": ^7.22.5
-  peerDependencies:
-    "@babel/core": ^7.0.0-0
-  checksum: c8f93f29f32cf79683ca2b8958fd62f38155674846ef27a7d4b6fbeb8713c37257418391731b58ff8024ec37b888bed5960e615a3f552e28245d2082e7f2a2df
-  languageName: node
-  linkType: hard
-
-"@babel/plugin-transform-react-pure-annotations@npm:^7.22.5":
-  version: 7.22.5
-  resolution: "@babel/plugin-transform-react-pure-annotations@npm:7.22.5"
-  dependencies:
-    "@babel/helper-annotate-as-pure": ^7.22.5
-    "@babel/helper-plugin-utils": ^7.22.5
-  peerDependencies:
-    "@babel/core": ^7.0.0-0
-  checksum: 092021c4f404e267002099ec20b3f12dd730cb90b0d83c5feed3dc00dbe43b9c42c795a18e7c6c7d7bddea20c7dd56221b146aec81b37f2e7eb5137331c61120
-  languageName: node
-  linkType: hard
-
 "@babel/plugin-transform-regenerator@npm:^7.22.5":
   version: 7.22.5
   resolution: "@babel/plugin-transform-regenerator@npm:7.22.5"
@@ -1710,22 +1661,6 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0-0
   checksum: 8430e0e9e9d520b53e22e8c4c6a5a080a12b63af6eabe559c2310b187bd62ae113f3da82ba33e9d1d0f3230930ca702843aae9dd226dec51f7d7114dc1f51c10
-  languageName: node
-  linkType: hard
-
-"@babel/preset-react@npm:^7.17.0":
-  version: 7.22.5
-  resolution: "@babel/preset-react@npm:7.22.5"
-  dependencies:
-    "@babel/helper-plugin-utils": ^7.22.5
-    "@babel/helper-validator-option": ^7.22.5
-    "@babel/plugin-transform-react-display-name": ^7.22.5
-    "@babel/plugin-transform-react-jsx": ^7.22.5
-    "@babel/plugin-transform-react-jsx-development": ^7.22.5
-    "@babel/plugin-transform-react-pure-annotations": ^7.22.5
-  peerDependencies:
-    "@babel/core": ^7.0.0-0
-  checksum: b977c7ee83e93f62d77e61929ca3d97e5291e026e2f025a1b8b7ac9186486ed56c7d5bc36f0becabe0c24e8c42a4e4f2243a3cf841384cfafc3204c5d3e6c619
   languageName: node
   linkType: hard
 
@@ -3629,7 +3564,6 @@ __metadata:
     "@babel/core": ^7.17.0
     "@babel/plugin-transform-runtime": ^7.17.0
     "@babel/preset-env": ^7.17.0
-    "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
@@ -3653,7 +3587,6 @@ __metadata:
     "@babel/core": ^7.17.0
     "@babel/plugin-transform-runtime": ^7.17.0
     "@babel/preset-env": ^7.17.0
-    "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
     "@jsdevtools/ono": ^7.1.3
     "@types/babel__core": ^7
@@ -3700,7 +3633,6 @@ __metadata:
     "@babel/core": ^7.17.0
     "@babel/plugin-transform-runtime": ^7.17.0
     "@babel/preset-env": ^7.17.0
-    "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
     "@octokit/rest": ^19.0.0
     "@sentry/node": ^7.10.0
@@ -3748,7 +3680,6 @@ __metadata:
     "@babel/core": ^7.17.0
     "@babel/plugin-transform-runtime": ^7.17.0
     "@babel/preset-env": ^7.17.0
-    "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
     "@babel/runtime": ^7.20.6
     "@octokit/rest": ^19.0.0
@@ -3801,7 +3732,6 @@ __metadata:
     "@babel/core": ^7.17.0
     "@babel/plugin-transform-runtime": ^7.17.0
     "@babel/preset-env": ^7.17.0
-    "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
     "@babel/runtime": ^7.20.6
     "@httptoolkit/httpolyglot": ^2.0.1
@@ -3906,7 +3836,6 @@ __metadata:
     "@babel/core": ^7.17.0
     "@babel/plugin-transform-runtime": ^7.17.0
     "@babel/preset-env": ^7.17.0
-    "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
     "@stoplight/spectral-core": ^1.8.1
     "@stoplight/spectral-rulesets": ^1.14.1
@@ -3937,7 +3866,6 @@ __metadata:
     "@babel/core": ^7.17.0
     "@babel/plugin-transform-runtime": ^7.17.0
     "@babel/preset-env": ^7.17.0
-    "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7

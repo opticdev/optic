@@ -2,7 +2,7 @@
   "name": "@useoptic/rulesets-base",
   "license": "MIT",
   "packageManager": "yarn@3.6.1",
-  "version": "0.47.14",
+  "version": "0.47.15-1",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -28,7 +28,6 @@
     "@babel/core": "^7.17.0",
     "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-env": "^7.17.0",
-    "@babel/preset-react": "^7.17.0",
     "@babel/preset-typescript": "^7.17.0",
     "@types/babel__core": "^7",
     "@types/babel__preset-env": "^7",
@@ -40,5 +39,6 @@
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.0"
-  }
+  },
+  "stableVersion": "0.47.14"
 }
