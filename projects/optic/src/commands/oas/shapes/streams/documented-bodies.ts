@@ -264,6 +264,7 @@ async function decodeCapturedBody(
     try {
       value = await CapturedBody.json(capturedBody);
     } catch (err) {
+      logger.debug('could not parse json: ' + capturedBody.body);
       SentryClient.captureException(err);
       return Err('Could not parse captured body as json');
     }

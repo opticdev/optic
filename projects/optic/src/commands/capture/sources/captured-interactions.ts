@@ -78,7 +78,7 @@ export class CapturedInteraction {
       responseBody = CapturedBody.from(asText, responseContent.mimeType);
     }
 
-    return {
+    const harInteraction = {
       request: {
         host: url.host,
         method,
@@ -93,6 +93,10 @@ export class CapturedInteraction {
         headers: [],
       },
     };
+
+    logger.debug('loaded har interaction ' + JSON.stringify(harInteraction));
+
+    return harInteraction;
   }
 
   static fromProxyInteraction(

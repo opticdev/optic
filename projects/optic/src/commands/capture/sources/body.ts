@@ -25,9 +25,7 @@ export class CapturedBody {
 
   static async json(body) {
     const text = await CapturedBody.text(body);
-    if (text) {
-      return JSON.parse(text);
-    }
+    return JSON.parse(text!);
   }
 
   // TODO: add support for stream parsing JSON (see stream-json package)
