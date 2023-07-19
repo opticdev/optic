@@ -1,39 +1,72 @@
 import yaml from 'yaml';
 import { CaptureConfigData } from '../../config';
+import { updateOpticConfig } from '../../utils/write-optic-config';
+import { logger } from '../../logger';
 
-export function initCaptureConfig(oasFile: string) {
+export function initCaptureConfig(
+  oasFile: string,
+  skipConfigUpdate: boolean,
+  opticConfigPath: string
+) {
   const captureExample = captureConfigExample(oasFile);
+  const parsedExample = yaml.parseDocument(captureExample);
 
-  console.log(yaml.parseDocument(captureExample).toString());
+  if (skipConfigUpdate) {
+    // console.log() to skip any future formatting changes we might make to logger
+    console.log(yaml.parseDocument.toString());
+    return;
+  }
+  logger.info(`Writing capture config to ${opticConfigPath}`);
+  updateOpticConfig(parsedExample, opticConfigPath);
 }
 
-// returns a complete CaptureConfigData object
+// returns a complete Capture block example
 export function captureConfigExample(oasFile: string) {
   return `
     capture:
-      ${oasFile}: 
+      ${oasFile}:
         config:
-         request_concurrency: 4       # optional, default: 4
+          # the number of parallel requests to make when using 'requests.send'
+          # optional, default: 4
+          request_concurrency: 4
         server:
-          command: go run main.go     # optional, if ommitted Optic assumes the server is running or started elsewhere.
-          url: http://localhost:8080  # required, can be overriden with '--server-override'
-          ready_endpoint: /           # optional, default: /
-          ready_interval: 100         # optional, ms, default: 1000
-          ready_timeout: 60_000       # optional, ms, default 60_000 (1 minute)
+          # a command to run your server
+          # optional, if ommitted Optic assumes the server is running or started elsewhere
+          command: your-server-command
+          # the url where your server can be reached once running
+          # required, can be overridden with '--server-override'
+          url: http://localhost:8080
+          # a readiness endpoint for Optic to validate before sending requests
+          # optional, default: /
+          ready_endpoint: /
+          # the interval to check ready_endpoint in ms
+          # optional, default: 1000
+          ready_interval: 100
+          # the length of time in ms to wait for a successful ready check to occur
+          # optional, default: 60_000 (1 minute)
+          ready_timeout: 60_000
+        # at least one of requests.run or requests.send is required below
         requests:
           # run a command to generate traffic. requests should be sent to the Optic proxy, the address of which is injected
-          # into the 'run.command's env as OPTIC_PROXY or the value of 'run.proxy_variable', if set.
-          run:                               # optional
-            command: hurl hurl/*.hurl        # required if 'run' is specified
-            proxy_variable: HURL_OPTIC_PROXY # optional, default: OPTIC_PROXY
+          # into 'run.command's env as OPTIC_PROXY or the value of 'run.proxy_variable', if set.
+          run:
+            # the command that will generate traffic to the Optic proxy. the commands are running in a shell that supports globbing.
+            # required if specifying requests.run
+            command: your-test-command
+            # the name of the environment variable injected into the env of the command that contains the address of the Optic proxy
+            # default: OPTIC_PROXY
+            proxy_variable: OPTIC_PROXY
           # have Optic generate traffic to the proxy itself by specifying endpoint details. a request's 'data' attribute
           # is converted to JSON and sent along with the request.
           send:
+            # path: required
+            # method: optional, default: GET
             - path: /
-            - path: /users
-            - path: /users/create  # required
-              method: POST         # optional, default: GET
-              data:                # optional, default: {}
-                name: Hank         # converted to {"name:"Hank"}
+              method: GET
+            - path: /users/create
+              method: POST
+              # optional, if omitted on a POST, default: {}
+              data:
+                name: Hank
   `;
 }

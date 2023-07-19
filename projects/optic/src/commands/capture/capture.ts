@@ -70,6 +70,11 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
       )
     )
     .option('--init', 'Add a `capture` block to your Optic.yml')
+    .option(
+      '--stdout',
+      'Use with --init to print the capture config to stdout instead of writing to optic.yml',
+      false
+    )
     // TODO deprecate hidden options below
     .addOption(
       new Option(
@@ -106,6 +111,7 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
 }
 type CaptureActionOptions = {
   init?: boolean;
+  stdout?: boolean;
   proxyPort?: string;
   serverOverride?: string;
   postman?: string;
@@ -127,16 +133,14 @@ const getCaptureAction =
     }
 
     if (options.init) {
-      if (config.capture) {
-        // logger.info(
-        //   'Your optic.yml already contains a `capture` block. See the docs (insert-url-here) and edit your optic.yml as desired.'
-        // );
-      } else {
-        await initCaptureConfig(filePath);
+      if (config.capture && !options.stdout) {
+        logger.info(
+          'Your optic.yml already contains a `capture` block and this command would modify it. If you want to see a complete capture block example, run `optic capture openapi.yml --init --stdout`'
+        );
+        return;
       }
-      // TODO: remove this
-      await initCaptureConfig(filePath);
-      return;
+
+      initCaptureConfig(filePath, options.stdout!, config.configPath!);
     }
 
     const trafficDirectory = await setup(filePath);
