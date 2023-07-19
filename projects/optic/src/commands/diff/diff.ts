@@ -53,14 +53,14 @@ type DiffActionOptions = {
 const description = `run a diff between two API specs`;
 
 const usage = () => `
-  optic diff --base <base> <file_path>
+  optic diff <file_path> --base <base>
   optic diff <file_to_compare_against> <file_path>
   optic diff <file_to_compare_against> <file_path> --check`;
 
 const helpText = `
 Example usage:
   Diff \`specs/openapi-spec.yml\` against master
-  $ optic diff --base master openapi-spec.yml
+  $ optic diff openapi-spec.yml --base master
 
   Diff \`openapi-spec-v0.yml\` against \`openapi-spec-v1.yml\`
   $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml
