@@ -36,6 +36,7 @@ import { OPTIC_URL_KEY } from '../../constants';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { uploadCoverage } from './actions/upload-coverage';
 import { createOpticConfig } from '../../utils/write-optic-config';
+import { resolveRelativePath } from '../../utils/capture';
 
 const indent = (n: number) => '  '.repeat(n);
 
@@ -170,7 +171,12 @@ const getCaptureAction =
       }
 
       try {
-        await initCaptureConfig(filePath, options.stdout!, config.configPath!);
+        const resolvedOasFile = resolveRelativePath(config.root, filePath);
+        await initCaptureConfig(
+          resolvedOasFile,
+          options.stdout!,
+          config.configPath!
+        );
       } catch (err) {
         logger.error(err);
         process.exitCode = 1;
@@ -220,7 +226,7 @@ const getCaptureAction =
         captures.addInteraction(interaction);
       }
     } else {
-      const pathFromRoot = path.relative(config.root, path.resolve(filePath));
+      const pathFromRoot = resolveRelativePath(config.root, filePath);
       const captureConfig = config.capture?.[pathFromRoot];
 
       // verify capture v2 config is present
