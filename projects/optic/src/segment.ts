@@ -1,5 +1,5 @@
 import Analytics from 'analytics-node';
-const packageJson = require('../../package.json');
+const packageJson = require('../package.json');
 import { machineIdSync } from 'node-machine-id';
 
 let analytics: Analytics | null = null;

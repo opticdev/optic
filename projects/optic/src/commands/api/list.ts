@@ -8,7 +8,7 @@ import { OPTIC_EMPTY_SPEC_KEY, OPTIC_URL_KEY } from '../../constants';
 import chalk from 'chalk';
 import * as FsCandidates from './get-file-candidates';
 
-import { flushEvents } from '@useoptic/openapi-utilities/build/utilities/segment';
+import { flushEvents } from '../../segment';
 import { errorHandler } from '../../error-handler';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { validateOpenApiV3Document } from '@useoptic/openapi-io';

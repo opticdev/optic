@@ -11,7 +11,7 @@ import { OpenAPIV3 } from '..';
 import JsonPatch from 'fast-json-patch';
 import { ShapeDiffResult } from '../../shapes/diffs';
 import { OperationDiffResult } from '../../operations/diffs';
-import { SentryClient } from '@useoptic/openapi-utilities/build/utilities/sentry';
+import { SentryClient } from '../../../../sentry';
 
 export { newSpecPatches } from './generators/new-spec';
 export { templatePatches } from './generators/template';

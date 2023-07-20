@@ -3,10 +3,7 @@ import Path from 'path';
 import path from 'path';
 
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
-import {
-  flushEvents,
-  trackEvent,
-} from '@useoptic/openapi-utilities/build/utilities/segment';
+import { flushEvents, trackEvent } from '../../segment';
 import { OpenAPIV3 } from './specs';
 import { captureStorage } from './captures/capture-storage';
 import chalk from 'chalk';
