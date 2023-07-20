@@ -3296,3 +3296,203 @@ exports[`generatePathAndMethodSpecPatches generates path and method if endpoint 
   },
 }
 `;
+
+exports[`generateRefRefactorPatches adds new component schema if no close schema 1`] = `
+[
+  {
+    "description": "create and use $ref for body",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add components.schemas if needed",
+        "operations": [],
+      },
+      {
+        "intent": "create ref at /components/schemas/PostApiAnimals200ResponseBody",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/components/schemas/PostApiAnimals200ResponseBody",
+            "value": {
+              "properties": {
+                "age": {
+                  "type": "number",
+                },
+                "created_at": {
+                  "type": "string",
+                },
+                "id": {
+                  "type": "string",
+                },
+                "name": {
+                  "type": "string",
+                },
+              },
+              "required": [
+                "name",
+                "id",
+              ],
+              "type": "object",
+            },
+          },
+        ],
+      },
+      {
+        "intent": "use new $ref",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+            "value": {
+              "$ref": "#/components/schemas/PostApiAnimals200ResponseBody",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Refactor",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateRefRefactorPatches adds new component schema if no close schema 2`] = `
+{
+  "components": {
+    "schemas": {
+      "MySchema": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "age": {
+                  "type": "number",
+                },
+              },
+              "type": "object",
+            },
+          },
+        },
+      },
+      "PostApiAnimals200ResponseBody": {
+        "properties": {
+          "age": {
+            "type": "number",
+          },
+          "created_at": {
+            "type": "string",
+          },
+          "id": {
+            "type": "string",
+          },
+          "name": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "name",
+          "id",
+        ],
+        "type": "object",
+      },
+    },
+  },
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostApiAnimals200ResponseBody",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateRefRefactorPatches uses existing component schema if close enough 1`] = `
+[
+  {
+    "description": "use $ref /components/schemas/MySchema",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "use ref at /paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+            "value": {
+              "$ref": "#/components/schemas/MySchema",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Refactor",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateRefRefactorPatches uses existing component schema if close enough 2`] = `
+{
+  "components": {
+    "schemas": {
+      "MySchema": {
+        "properties": {
+          "age": {
+            "type": "number",
+          },
+          "created_at": {
+            "type": "string",
+          },
+          "id": {
+            "type": "string",
+          },
+          "name": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "name",
+          "id",
+        ],
+        "type": "object",
+      },
+    },
+  },
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MySchema",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;

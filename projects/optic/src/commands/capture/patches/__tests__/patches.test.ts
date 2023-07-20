@@ -11,6 +11,7 @@ import {
 } from '../../sources/captured-interactions';
 import { CapturedBody } from '../../sources/body';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 async function* GenerateInteractions(
   interactions: CapturedInteraction[]
@@ -329,7 +330,100 @@ describe('generateEndpointSpecPatches', () => {
 });
 
 describe('generateRefRefactorPatches', () => {
-  test('adds new component schema for endpoint', async () => {});
+  const specHolder: any = {};
+  let addedSchemaPaths: Set<string>;
 
-  test('uses existing component schema if close enough', async () => {});
+  beforeEach(() => {
+    addedSchemaPaths = new Set([
+      jsonPointerHelpers.compile([
+        'paths',
+        '/api/animals',
+        'post',
+        'responses',
+        '200',
+        'content',
+        'application/json',
+        'schema',
+      ]),
+    ]);
+    specHolder.spec = {
+      openapi: '3.0.1',
+      info: {},
+      paths: {
+        '/api/animals': {
+          post: {
+            responses: {
+              '200': {
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'object',
+                      properties: {
+                        name: { type: 'string' },
+                        id: { type: 'string' },
+                        age: { type: 'number' },
+                        created_at: { type: 'string' },
+                      },
+                      required: ['name', 'id'],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+  });
+  test('adds new component schema if no close schema', async () => {
+    // Should be different enough
+    specHolder.spec.components = {
+      schemas: {
+        MySchema: {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  age: { type: 'number' },
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const patches = await AT.collect(
+      generateRefRefactorPatches(specHolder, addedSchemaPaths)
+    );
+
+    expect(patches).toMatchSnapshot();
+    expect(specHolder.spec).toMatchSnapshot();
+  });
+
+  test.only('uses existing component schema if close enough', async () => {
+    // Should be close enough
+    specHolder.spec.components = {
+      schemas: {
+        MySchema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            id: { type: 'string' },
+            age: { type: 'number' },
+            created_at: { type: 'string' },
+          },
+          required: ['name', 'id'],
+        },
+      },
+    };
+
+    const patches = await AT.collect(
+      generateRefRefactorPatches(specHolder, addedSchemaPaths)
+    );
+
+    expect(patches).toMatchSnapshot();
+    expect(specHolder.spec).toMatchSnapshot();
+  });
 });
