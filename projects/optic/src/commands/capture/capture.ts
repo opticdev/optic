@@ -171,9 +171,9 @@ const getCaptureAction =
       }
 
       try {
-        const resolvedOasFile = resolveRelativePath(config.root, filePath);
+        const relativeOasFile = resolveRelativePath(config.root, filePath);
         await initCaptureConfig(
-          resolvedOasFile,
+          relativeOasFile,
           options.stdout!,
           config.configPath!
         );
