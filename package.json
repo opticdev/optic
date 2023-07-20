@@ -9,7 +9,6 @@
     "projects/openapi-utilities",
     "projects/rulesets-base",
     "projects/optic",
-    "projects/optic-ci",
     "projects/standard-rulesets",
     "projects/fastify-capture"
   ],

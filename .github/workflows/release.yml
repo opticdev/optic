@@ -86,7 +86,7 @@ jobs:
           NODE_ENV: production
         run: |
           set -a
-          source projects/optic-ci/.env.production
+          source projects/optic/.env.production
           task default
 
       - name: Test
