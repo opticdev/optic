@@ -146,7 +146,7 @@ export function getEndpointsChanges(
       } else return `changed ${path} property`;
     } else {
       const value = jsonPointerHelpers.get(spec, fullSegments);
-      const changeLabel =
+      const changePreview =
         changeType === 'changed' &&
         typeof value === 'string' &&
         ['type', 'format'].indexOf(segments[segments.length - 1]) > -1
@@ -154,7 +154,7 @@ export function getEndpointsChanges(
           : ``;
       return `${changeType} ${outPaths
         .map((s) => `\`${s}\``)
-        .join('.')}${changeLabel}`;
+        .join('.')}${changePreview}`;
     }
   };
 
