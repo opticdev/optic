@@ -181,18 +181,29 @@ export async function documentNewEndpoint(
 
     yield* generatePathAndMethodSpecPatches(specHolder, endpoint);
 
-    const schemaAdditionsSet = new Set<string>();
+    const meta = {
+      schemaAdditionsSet: new Set<string>(),
+      usedExistingRef: false,
+    };
 
     yield* generateEndpointSpecPatches(
       interactionsAsAsyncIterator,
       specHolder,
       endpoint,
-      {
-        schemaAdditionsSet,
-      }
+      meta
     );
 
-    yield* generateRefRefactorPatches(specHolder, schemaAdditionsSet);
+    yield* generateRefRefactorPatches(specHolder, meta);
+
+    // If we use an existing ref, we need to rerun traffic
+    if (meta.usedExistingRef) {
+      yield* generateEndpointSpecPatches(
+        interactionsAsAsyncIterator,
+        specHolder,
+        endpoint,
+        meta
+      );
+    }
   })();
 
   const operations = await jsonOpsFromSpecPatches(specPatches);

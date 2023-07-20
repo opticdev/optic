@@ -393,11 +393,15 @@ describe('generateRefRefactorPatches', () => {
         },
       },
     };
-
+    const meta = {
+      schemaAdditionsSet: addedSchemaPaths,
+      usedExistingRef: false,
+    };
     const patches = await AT.collect(
-      generateRefRefactorPatches(specHolder, addedSchemaPaths)
+      generateRefRefactorPatches(specHolder, meta)
     );
 
+    expect(meta.usedExistingRef).toBe(false);
     expect(patches).toMatchSnapshot();
     expect(specHolder.spec).toMatchSnapshot();
   });
@@ -418,11 +422,15 @@ describe('generateRefRefactorPatches', () => {
         },
       },
     };
-
+    const meta = {
+      schemaAdditionsSet: addedSchemaPaths,
+      usedExistingRef: false,
+    };
     const patches = await AT.collect(
-      generateRefRefactorPatches(specHolder, addedSchemaPaths)
+      generateRefRefactorPatches(specHolder, meta)
     );
 
+    expect(meta.usedExistingRef).toBe(true);
     expect(patches).toMatchSnapshot();
     expect(specHolder.spec).toMatchSnapshot();
   });

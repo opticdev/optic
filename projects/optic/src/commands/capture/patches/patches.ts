@@ -124,7 +124,10 @@ export async function* generateRefRefactorPatches(
   specHolder: {
     spec: ParseResult['jsonLike'];
   },
-  schemaAdditionsSet: Set<string>
+  meta: {
+    schemaAdditionsSet: Set<string>;
+    usedExistingRef: boolean;
+  }
 ) {
   const schemaInventory = new SchemaInventory();
   schemaInventory.addSchemas(
@@ -133,8 +136,9 @@ export async function* generateRefRefactorPatches(
   );
 
   const refRefactors = schemaInventory.refsForAdditions(
-    schemaAdditionsSet,
-    specHolder.spec
+    meta.schemaAdditionsSet,
+    specHolder.spec,
+    meta
   );
 
   for await (let patch of refRefactors) {
