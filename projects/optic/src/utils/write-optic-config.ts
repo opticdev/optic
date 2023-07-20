@@ -27,6 +27,8 @@ export async function updateOpticConfig(
       await fs.readFile(opticConfigPath, 'utf8')
     );
 
+    // the assumption is that the document being merged only has a single top-level key
+    // so we take the first index
     const topLevelKey = Object.keys(newDocument.toJSON())[0];
     opticYml.set(topLevelKey, newDocument.get(topLevelKey));
 
