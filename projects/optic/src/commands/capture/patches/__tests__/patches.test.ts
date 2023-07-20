@@ -402,7 +402,7 @@ describe('generateRefRefactorPatches', () => {
     expect(specHolder.spec).toMatchSnapshot();
   });
 
-  test.only('uses existing component schema if close enough', async () => {
+  test('uses existing component schema if close enough', async () => {
     // Should be close enough
     specHolder.spec.components = {
       schemas: {
