@@ -51,7 +51,10 @@ export class SchemaInventory {
 
   async *refsForAdditions(
     addedPaths: Set<string>,
-    spec: OpenAPIV3.Document
+    spec: OpenAPIV3.Document,
+    meta: {
+      usedExistingRef?: boolean;
+    } = {}
   ): SpecPatches {
     if (addedPaths.size === 0) return [];
     const sorted = Array.from(addedPaths).sort();
@@ -88,6 +91,7 @@ export class SchemaInventory {
         const match = this.findClosest(addedSchema);
         // use ref
         if (match) {
+          meta.usedExistingRef = true;
           matchedRoot = true;
           const patch: SpecPatch = {
             description: `use $ref ${match.ref}`,
@@ -117,6 +121,7 @@ export class SchemaInventory {
         for await (let items of arrayItems) {
           const match = this.findClosest(jsonPointerHelpers.get(spec, items));
           if (match && match.percent > this.closeness) {
+            meta.usedExistingRef = true;
             matchedSub = true;
             const patch: SpecPatch = {
               description: `use $ref ${match.ref}`,
