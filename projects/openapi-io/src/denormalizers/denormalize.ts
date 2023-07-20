@@ -3,6 +3,7 @@ import { FlatOpenAPIV3, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { logPointer } from './pointer';
 import { denormalizeProperty } from './denormalizeProperty';
+import { JsonSchemaSourcemap } from '../parser/sourcemap';
 
 // Denormalizes a dereferenced openapi spec - mutates in place
 // For now, this function only denormalizes shared path parameters and flattens allOf
@@ -56,91 +57,87 @@ export function denormalize<T extends ParseOpenAPIResult>(parse: T): T {
     }
   }
 
-  // For all schemas, flatten allOfs
   for (const [pathKey, path] of Object.entries(parse.jsonLike.paths)) {
     for (const method of Object.values(OpenAPIV3.HttpMethods)) {
       const operation = path?.[method] as
         | FlatOpenAPIV3.OperationObject
         | undefined;
       if (operation) {
-        if (operation.requestBody) {
-          for (const [contentType, body] of Object.entries(
-            operation.requestBody.content ?? {}
-          )) {
-            const pointer = jsonPointerHelpers.compile([
-              'paths',
-              pathKey,
-              method,
-              'requestBody',
-              'content',
-              contentType,
-              'schema',
-            ]);
-            if (body.schema) {
-              denormalizeProperty(body.schema, parse.sourcemap, {
-                old: pointer,
-                new: pointer,
-              });
-            }
-          }
-        }
-        for (const [statusCode, response] of Object.entries(
-          operation.responses
-        )) {
-          for (const [contentType, body] of Object.entries(
-            response.content ?? {}
-          )) {
-            const pointer = jsonPointerHelpers.compile([
-              'paths',
-              pathKey,
-              method,
-              'responses',
-              statusCode,
-              'content',
-              contentType,
-              'schema',
-            ]);
-            if (body.schema) {
-              denormalizeProperty(body.schema, parse.sourcemap, {
-                old: pointer,
-                new: pointer,
-              });
-            }
-          }
-        }
-      }
-    }
-  }
-
-  // Attaches a `parameters` key to all methods
-  for (const [pathKey, path] of Object.entries(parse.jsonLike.paths)) {
-    for (const method of Object.values(OpenAPIV3.HttpMethods)) {
-      const operation = path?.[method] as
-        | FlatOpenAPIV3.OperationObject
-        | undefined;
-
-      if (operation && !operation.parameters) {
-        operation.parameters = [];
-      }
-    }
-  }
-
-  // Attaches a `response.headers` key to all responses
-  for (const [pathKey, path] of Object.entries(parse.jsonLike.paths)) {
-    for (const method of Object.values(OpenAPIV3.HttpMethods)) {
-      const operation = path?.[method] as
-        | FlatOpenAPIV3.OperationObject
-        | undefined;
-
-      if (operation) {
-        for (const responseObj of Object.values(operation.responses)) {
-          if (!responseObj.headers) {
-            responseObj.headers = {};
-          }
-        }
+        denormalizeOperation(
+          operation,
+          { path: pathKey, method },
+          parse.sourcemap
+        );
       }
     }
   }
 
   return parse;
+}
+
+export function denormalizeOperation(
+  operation: FlatOpenAPIV3.OperationObject,
+  {
+    path,
+    method,
+  }: {
+    path: string;
+    method: string;
+  },
+  sourcemap?: JsonSchemaSourcemap
+) {
+  // For all schemas, flatten allOfs
+  if (operation.requestBody) {
+    for (const [contentType, body] of Object.entries(
+      operation.requestBody.content ?? {}
+    )) {
+      const pointer = jsonPointerHelpers.compile([
+        'paths',
+        path,
+        method,
+        'requestBody',
+        'content',
+        contentType,
+        'schema',
+      ]);
+      if (body.schema) {
+        denormalizeProperty(body.schema, sourcemap, {
+          old: pointer,
+          new: pointer,
+        });
+      }
+    }
+  }
+  for (const [statusCode, response] of Object.entries(operation.responses)) {
+    for (const [contentType, body] of Object.entries(response.content ?? {})) {
+      const pointer = jsonPointerHelpers.compile([
+        'paths',
+        path,
+        method,
+        'responses',
+        statusCode,
+        'content',
+        contentType,
+        'schema',
+      ]);
+      if (body.schema) {
+        denormalizeProperty(body.schema, sourcemap, {
+          old: pointer,
+          new: pointer,
+        });
+      }
+    }
+  }
+
+  // Attaches a `parameters` key to all methods
+  if (!operation.parameters) {
+    operation.parameters = [];
+  }
+
+  // Attaches a `response.headers` key to all responses
+  for (const responseObj of Object.values(operation.responses)) {
+    if (!responseObj.headers) {
+      responseObj.headers = {};
+    }
+  }
 }
