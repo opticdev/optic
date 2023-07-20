@@ -133,14 +133,27 @@ const getCaptureAction =
     }
 
     if (options.init) {
-      config.capture &&
-      Object.keys(config.capture).length !== 0 &&
-      !options.stdout
-        ? logger.info(
-            'Your optic.yml already contains a `capture` block with contents and this command would modify it. Make modifications to your capture config by editing optic.yml. If you want to see a complete capture block example, run `optic capture openapi.yml --init --stdout` instead.'
-          )
-        : initCaptureConfig(filePath, options.stdout!, config.configPath!);
+      // no optic.yml is present but the command would attempt to write
+      if (!config.configPath && !options.stdout) {
+        logger.info(
+          'This command would write to your optic.yml, but none was found. If you want to generate an optic.yml in this directory, run `optic beta capture openapi.yml --init --stdout > optic.yml`.'
+        );
+        return;
+      }
 
+      // don't write a capture block when it would be destructive
+      if (
+        config.capture &&
+        Object.keys(config.capture).length !== 0 &&
+        !options.stdout
+      ) {
+        logger.info(
+          'Your optic.yml already contains a `capture` block with contents and this command would modify it. Make modifications to your capture config by editing optic.yml. If you want to see a complete capture block example, run `optic beta capture openapi.yml --init --stdout` instead.'
+        );
+        return;
+      }
+
+      initCaptureConfig(filePath, options.stdout!, config.configPath!);
       return;
     }
 
