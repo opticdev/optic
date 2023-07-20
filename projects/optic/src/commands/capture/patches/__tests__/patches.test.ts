@@ -46,6 +46,43 @@ describe('generatePathAndMethodSpecPatches', () => {
   });
 });
 
-describe('generateEndpointSpecPatches', () => {});
+describe('generateEndpointSpecPatches', () => {
+  const specHolder: any = {};
 
-describe('generateRefRefactorPatches', () => {});
+  describe.each([['3.0.1'], ['3.1.0']])('OAS version %s', (version) => {
+    beforeEach(() => {
+      specHolder.spec = {
+        info: {
+          openapi: version,
+        },
+        paths: {
+          '/api/animals': {
+            post: {
+              responses: {},
+            },
+          },
+        },
+      };
+    });
+
+    test('undocumented request body', () => {});
+
+    test('undocumented response body', () => {});
+
+    test('undocumented property in schema', () => {});
+
+    test('mismatched type in schema', () => {});
+
+    test('mismatched oneOf schema', () => {});
+
+    test('missing required property', () => {});
+
+    test('', () => {});
+  });
+});
+
+describe('generateRefRefactorPatches', () => {
+  test('adds new component schema for endpoint', () => {});
+
+  test('uses existing component schema if close enough', () => {});
+});

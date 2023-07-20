@@ -63,6 +63,7 @@ export async function* generateEndpointSpecPatches(
     schemaAdditionsSet?: Set<string>;
   } = {}
 ) {
+  // TODO move this to the top level
   const openAPIVersion = checkOpenAPIVersion(specHolder.spec);
   const jsonPath = jsonPointerHelpers.compile([
     'paths',
