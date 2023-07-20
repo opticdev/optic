@@ -145,10 +145,12 @@ export function getEndpointsChanges(
         return `${changeType} support for ${path} property`;
       } else return `changed ${path} property`;
     } else {
-      const enumValue = jsonPointerHelpers.get(spec, fullSegments);
+      const value = jsonPointerHelpers.get(spec, fullSegments);
       const changeLabel =
-        changeType === 'changed' && typeof enumValue === 'string'
-          ? ` to \`${enumValue}\``
+        changeType === 'changed' &&
+        typeof value === 'string' &&
+        ['type', 'format'].indexOf(segments[segments.length - 1]) > -1
+          ? ` to \`${value}\``
           : ``;
       return `${changeType} ${outPaths
         .map((s) => `\`${s}\``)
