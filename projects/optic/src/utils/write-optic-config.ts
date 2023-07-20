@@ -16,6 +16,6 @@ export function updateOpticConfig(
 
     fs.writeFileSync(opticConfigPath, opticYml.toString());
   } catch (err) {
-    logger.error(err);
+    throw err;
   }
 }

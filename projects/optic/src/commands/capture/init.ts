@@ -16,7 +16,11 @@ export function initCaptureConfig(
     return;
   }
   logger.info(`Writing capture config to ${opticConfigPath}`);
-  updateOpticConfig(parsedExample, opticConfigPath);
+  try {
+    updateOpticConfig(parsedExample, opticConfigPath);
+  } catch (err) {
+    throw err;
+  }
 }
 
 // returns a complete Capture block example

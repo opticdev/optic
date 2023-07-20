@@ -160,7 +160,12 @@ const getCaptureAction =
         return;
       }
 
-      initCaptureConfig(filePath, options.stdout!, config.configPath!);
+      try {
+        initCaptureConfig(filePath, options.stdout!, config.configPath!);
+      } catch (err) {
+        logger.error(err);
+        process.exitCode = 1;
+      }
       return;
     }
 
