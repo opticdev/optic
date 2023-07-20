@@ -2,7 +2,7 @@ import yaml from 'yaml';
 import { updateOpticConfig } from '../../utils/write-optic-config';
 import { logger } from '../../logger';
 
-export function initCaptureConfig(
+export async function initCaptureConfig(
   oasFile: string,
   skipConfigUpdate: boolean,
   opticConfigPath: string
@@ -17,7 +17,7 @@ export function initCaptureConfig(
   }
   logger.info(`Writing capture config to ${opticConfigPath}`);
   try {
-    updateOpticConfig(parsedExample, opticConfigPath);
+    await updateOpticConfig(parsedExample, opticConfigPath);
   } catch (err) {
     throw err;
   }

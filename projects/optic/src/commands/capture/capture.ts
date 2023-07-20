@@ -161,7 +161,7 @@ const getCaptureAction =
       }
 
       try {
-        initCaptureConfig(filePath, options.stdout!, config.configPath!);
+        await initCaptureConfig(filePath, options.stdout!, config.configPath!);
       } catch (err) {
         logger.error(err);
         process.exitCode = 1;
