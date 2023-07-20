@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES2021",
     "rootDir": "src",
     "declaration": true,
     "declarationMap": true,
@@ -15,7 +15,8 @@
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
     "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "node",
+    "module": "node16",
+    "moduleResolution": "node16",
     "resolveJsonModule": true,
     "noImplicitAny": false,
     "downlevelIteration": true,

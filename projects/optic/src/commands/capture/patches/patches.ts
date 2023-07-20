@@ -11,6 +11,7 @@ import { DocumentedBodies } from '../../oas/shapes';
 import { createMissingMethodPatch } from '../../oas/specs/patches/generators/missing-method';
 import { createMissingPathPatches } from '../../oas/specs/patches/generators/missing-path';
 import { UndocumentedOperationType } from '../../oas/operations';
+import { SchemaInventory } from './patchers/closeness/schema-inventory';
 
 export async function* generatePathAndMethodSpecPatches(
   specHolder: {
@@ -59,8 +60,10 @@ export async function* generateEndpointSpecPatches(
   endpoint: { method: string; path: string },
   opts: {
     coverage?: ApiCoverageCounter;
+    schemaAdditionsSet?: Set<string>;
   } = {}
 ) {
+  // TODO move this to the top level
   const openAPIVersion = checkOpenAPIVersion(specHolder.spec);
   const jsonPath = jsonPointerHelpers.compile([
     'paths',
@@ -109,9 +112,38 @@ export async function* generateEndpointSpecPatches(
     );
 
     for await (let patch of shapePatches) {
+      opts.schemaAdditionsSet?.add(patch.path);
       specHolder.spec = SpecPatch.applyPatch(patch, specHolder.spec);
       yield patch;
     }
+  }
+}
+
+// Creates a new ref or uses an existing ref for added paths
+export async function* generateRefRefactorPatches(
+  specHolder: {
+    spec: ParseResult['jsonLike'];
+  },
+  meta: {
+    schemaAdditionsSet: Set<string>;
+    usedExistingRef: boolean;
+  }
+) {
+  const schemaInventory = new SchemaInventory();
+  schemaInventory.addSchemas(
+    jsonPointerHelpers.compile(['components', 'schemas']),
+    specHolder.spec.components?.schemas || ({} as any)
+  );
+
+  const refRefactors = schemaInventory.refsForAdditions(
+    meta.schemaAdditionsSet,
+    specHolder.spec,
+    meta
+  );
+
+  for await (let patch of refRefactors) {
+    specHolder.spec = SpecPatch.applyPatch(patch, specHolder.spec);
+    yield patch;
   }
 }
 

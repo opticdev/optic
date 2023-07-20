@@ -11,11 +11,12 @@ import { errorHandler } from '../../error-handler';
 
 import { createNewSpecFile } from '../../utils/specs';
 import { logger } from '../../logger';
-import { OpticCliConfig } from '../../config';
+import { OpticCliConfig, VCS } from '../../config';
 import { clearCommand } from '../oas/capture-clear';
 import { captureV1 } from '../oas/capture';
-import { getCaptureStorage, GroupedCaptures } from './storage';
-import { loadSpec } from '../../utils/spec-loaders';
+
+import { getCaptureStorage } from './storage';
+import { loadSpec, specHasUncommittedChanges } from '../../utils/spec-loaders';
 import { ApiCoverageCounter } from './coverage/api-coverage';
 import { specToOperations } from './operations/queries';
 import { HarEntries } from './sources/har';
@@ -30,6 +31,10 @@ import { PostmanCollectionEntries } from './sources/postman';
 import { CapturedInteractions } from './sources/captured-interactions';
 import * as AT from '../oas/lib/async-tools';
 import { initCaptureConfig } from './init';
+import { GroupedCaptures } from './interactions/grouped-interactions';
+import { OPTIC_URL_KEY } from '../../constants';
+import { getApiFromOpticUrl } from '../../utils/cloud-urls';
+import { uploadCoverage } from './actions/upload-coverage';
 
 const indent = (n: number) => '  '.repeat(n);
 
@@ -75,6 +80,7 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
       'Use with --init to print the capture config to stdout instead of writing to optic.yml',
       false
     )
+    .option('--upload', 'upload coverage results to Optic Cloud', false)
     // TODO deprecate hidden options below
     .addOption(
       new Option(
@@ -117,6 +123,7 @@ type CaptureActionOptions = {
   postman?: string;
   har?: string;
   update?: 'documented' | 'interactive' | 'automatic';
+  upload: boolean;
 };
 
 const getCaptureAction =
@@ -205,6 +212,11 @@ const getCaptureAction =
       // verify capture v2 config is present
       if (targetUrl !== undefined || captureConfig === undefined) {
         logger.error(`no capture config for ${filePath} was found`);
+        config.isDefaultConfig
+          ? logger.error('no optic.yml file was detected')
+          : logger.error(
+              `expected an capture config entry for ${pathFromRoot}`
+            );
         // TODO log error and run capture init or something - tbd what the first use is
         process.exitCode = 1;
         return;
@@ -291,13 +303,20 @@ const getCaptureAction =
     }
     const endpointCounts = captures.counts();
     if (endpointCounts.total > 0 && endpointCounts.unmatched > 0) {
-      logger.info(
-        chalk.gray(
-          `...and ${endpointCounts.unmatched} other endpoint${
-            endpointCounts.unmatched === 1 ? '' : 's'
-          }`
-        )
-      );
+      const unmatchedEndpointsText = `${endpointCounts.unmatched} endpoint${
+        endpointCounts.unmatched === 1 ? '' : 's'
+      }`;
+      if (endpointCounts.matched > 0) {
+        logger.info(
+          chalk.gray(
+            `...and ${unmatchedEndpointsText} that did not receive traffic`
+          )
+        );
+      } else {
+        logger.info(
+          chalk.gray(`${unmatchedEndpointsText} did not receive traffic`)
+        );
+      }
     }
 
     // document new endpoints
@@ -339,6 +358,48 @@ const getCaptureAction =
     } else if (captures.unmatched.hars.length) {
       logger.info('');
       logger.info(`${captures.unmatched.hars.length} unmatched interactions`);
+    }
+
+    if (options.upload) {
+      if (options.update) {
+        logger.error(
+          'optic capture --upload cannot be run with the --update flag'
+        );
+        process.exitCode = 1;
+        return;
+      }
+      const opticUrlDetails = getApiFromOpticUrl(spec[OPTIC_URL_KEY]);
+      if (
+        config.vcs?.type !== VCS.Git ||
+        specHasUncommittedChanges(spec.sourcemap, config.vcs.diffSet)
+      ) {
+        logger.error(
+          'optic capture --upload can only be run in a git repository without uncommitted changes. That ensures reports are properly tagged.'
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      if (!opticUrlDetails) {
+        logger.error(
+          `File ${filePath} does not have an optic url. Files must be added to Optic and have an x-optic-url key before verification data can be uploaded.`
+        );
+        logger.error(`${chalk.yellow('Hint: ')} Run optic api add ${filePath}`);
+        process.exitCode = 1;
+        return;
+      }
+
+      const { specUrl, branchTag } = await uploadCoverage(
+        spec,
+        coverage,
+        opticUrlDetails,
+        config
+      );
+      logger.info(
+        `Successfully uploaded verification data ${
+          branchTag ? `for tag '${branchTag}'` : ''
+        }. View your spec at ${specUrl}`
+      );
     }
 
     if (

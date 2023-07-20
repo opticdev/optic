@@ -219,10 +219,7 @@ GroupedDiffs {
             },
           },
           "diffs": [],
-          "headers": {
-            "diffs": [],
-            "rules": [],
-          },
+          "headers": {},
           "rules": [],
         },
       },
@@ -318,6 +315,29 @@ GroupedDiffs {
     },
   },
   "specification": {
+    "diffs": [
+      {
+        "after": "/info/title",
+        "before": "/info/title",
+        "change": "changed",
+        "trail": "/info/title",
+      },
+      {
+        "after": "/info/description",
+        "before": "/info/description",
+        "change": "changed",
+        "trail": "/info/description",
+      },
+      {
+        "after": "/info/version",
+        "before": "/info/version",
+        "change": "changed",
+        "trail": "/info/version",
+      },
+    ],
+    "rules": [],
+  },
+  "unmatched": {
     "diffs": [],
     "rules": [],
   },

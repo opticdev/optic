@@ -21,7 +21,7 @@ import {
   OperationPatches,
   UndocumentedOperation,
 } from '../../operations';
-import { SchemaInventory } from '../../shapes/closeness/schema-inventory';
+import { SchemaInventory } from '../../../capture/patches/patchers/closeness/schema-inventory';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 

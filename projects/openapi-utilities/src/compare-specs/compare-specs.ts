@@ -36,7 +36,9 @@ export const compareSpecs = async (
   ruleRunner: RuleRunner,
   context: any
 ): Promise<CompareSpecResults> => {
-  const diffs = diff(from.jsonLike, to.jsonLike);
+  const adjustedFromSpec = from.isEmptySpec ? { paths: {} } : from.jsonLike;
+  const adjustedToSpec = to.isEmptySpec ? { paths: {} } : to.jsonLike;
+  const diffs = diff(adjustedFromSpec, adjustedToSpec);
 
   const results = await ruleRunner.runRules({
     context,

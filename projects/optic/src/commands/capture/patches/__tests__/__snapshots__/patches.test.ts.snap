@@ -1,0 +1,3498 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 mismatched type in schema 1`] = `
+[
+  {
+    "description": "update response body: make name oneOf",
+    "diff": {
+      "description": "'name' did not match schema",
+      "example": "me",
+      "expectedType": "number",
+      "instancePath": "/name",
+      "key": "name",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "intent": "replace name with a one of containing both types",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/name/type",
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/name/oneOf",
+            "value": [
+              {
+                "type": "number",
+              },
+              {
+                "type": "string",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 mismatched type in schema 2`] = `
+{
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "name": {
+                      "oneOf": [
+                        {
+                          "type": "number",
+                        },
+                        {
+                          "type": "string",
+                        },
+                      ],
+                    },
+                  },
+                  "type": "object",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 missing required property 1`] = `
+[
+  {
+    "description": "update response body: make property name optional",
+    "diff": {
+      "description": "required property 'name' was missing",
+      "example": undefined,
+      "instancePath": "/name",
+      "key": "name",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "",
+      "propertyPath": "/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove name from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required/0",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 missing required property 2`] = `
+{
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [],
+                  "type": "object",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented property in schema 1`] = `
+[
+  {
+    "description": "update response body: add property name",
+    "diff": {
+      "description": "'name' is not documented",
+      "example": "me",
+      "instancePath": "/name",
+      "key": "name",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/name",
+      "propertyPath": "/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add required [] to parent object and make name required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required",
+            "value": [
+              "name",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property name schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/name",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented property in schema 2`] = `
+{
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "name",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body 1`] = `
+[
+  {
+    "description": "operation: add 'application/json' body as a valid request body type",
+    "diff": {
+      "contentType": "application/json",
+      "kind": "UnmatchedRequestBody",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add request body to operation",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody",
+            "value": {
+              "content": {},
+            },
+          },
+        ],
+      },
+      {
+        "intent": "add application/json as content type",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json",
+            "value": {
+              "schema": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "operation: add 200 response",
+    "diff": {
+      "contentType": "application/json",
+      "kind": "UnmatchedResponseStatusCode",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add response status code",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200",
+            "value": {
+              "description": "200 response",
+            },
+          },
+        ],
+      },
+      {
+        "intent": "add response body for content type 'application/json'",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content",
+            "value": {
+              "application/json": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "update request body: add schema object",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add schema object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/type",
+            "value": "object",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: add property name",
+    "diff": {
+      "description": "'name' is not documented",
+      "example": "me",
+      "instancePath": "/name",
+      "key": "name",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/name",
+      "propertyPath": "/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make name required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/required",
+            "value": [
+              "name",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property name schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/name",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: add property age",
+    "diff": {
+      "description": "'age' is not documented",
+      "example": 100,
+      "instancePath": "/age",
+      "key": "age",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/age",
+      "propertyPath": "/properties/age",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property age required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/required/-",
+            "value": "age",
+          },
+        ],
+      },
+      {
+        "intent": "add property age schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/age",
+            "value": {
+              "type": "number",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: add property created_at",
+    "diff": {
+      "description": "'created_at' is not documented",
+      "example": "2023-07-20T14:39:22.184Z",
+      "instancePath": "/created_at",
+      "key": "created_at",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/created_at",
+      "propertyPath": "/properties/created_at",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property created_at required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/required/-",
+            "value": "created_at",
+          },
+        ],
+      },
+      {
+        "intent": "add property created_at schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/created_at",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: add property hobbies",
+    "diff": {
+      "description": "'hobbies' is not documented",
+      "example": [
+        "running",
+        {
+          "name": "fishing",
+          "type": "sport",
+        },
+        {
+          "bad": null,
+          "name": "basketball",
+          "skill": 100,
+          "type": "sport",
+        },
+      ],
+      "instancePath": "/hobbies",
+      "key": "hobbies",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/hobbies",
+      "propertyPath": "/properties/hobbies",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property hobbies required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/required/-",
+            "value": "hobbies",
+          },
+        ],
+      },
+      {
+        "intent": "add property hobbies schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies",
+            "value": {
+              "items": {
+                "type": "string",
+              },
+              "type": "array",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: add property active",
+    "diff": {
+      "description": "'active' is not documented",
+      "example": true,
+      "instancePath": "/active",
+      "key": "active",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/active",
+      "propertyPath": "/properties/active",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property active required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/required/-",
+            "value": "active",
+          },
+        ],
+      },
+      {
+        "intent": "add property active schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/active",
+            "value": {
+              "type": "boolean",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: make items oneOf",
+    "diff": {
+      "description": "'items' did not match schema",
+      "example": {
+        "name": "fishing",
+        "type": "sport",
+      },
+      "expectedType": "string",
+      "instancePath": "/hobbies/1",
+      "key": "items",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/hobbies/items",
+    },
+    "groupedOperations": [
+      {
+        "intent": "replace items with a one of containing both types",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/type",
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf",
+            "value": [
+              {
+                "type": "string",
+              },
+              {
+                "type": "object",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: add property type",
+    "diff": {
+      "description": "'type' is not documented",
+      "example": "sport",
+      "instancePath": "/hobbies/1/type",
+      "key": "type",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1/properties",
+      "propertyExamplePath": "/hobbies/1/type",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/type",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make type required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/required",
+            "value": [
+              "type",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property type schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/properties/type",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: add property name",
+    "diff": {
+      "description": "'name' is not documented",
+      "example": "fishing",
+      "instancePath": "/hobbies/1/name",
+      "key": "name",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1/properties",
+      "propertyExamplePath": "/hobbies/1/name",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property name required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/required/-",
+            "value": "name",
+          },
+        ],
+      },
+      {
+        "intent": "add property name schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/properties/name",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: add property skill",
+    "diff": {
+      "description": "'skill' is not documented",
+      "example": 100,
+      "instancePath": "/hobbies/2/skill",
+      "key": "skill",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1/properties",
+      "propertyExamplePath": "/hobbies/2/skill",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/skill",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property skill required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/required/-",
+            "value": "skill",
+          },
+        ],
+      },
+      {
+        "intent": "add property skill schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/properties/skill",
+            "value": {
+              "type": "number",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: add property bad",
+    "diff": {
+      "description": "'bad' is not documented",
+      "example": null,
+      "instancePath": "/hobbies/2/bad",
+      "key": "bad",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1/properties",
+      "propertyExamplePath": "/hobbies/2/bad",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/bad",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property bad required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/required/-",
+            "value": "bad",
+          },
+        ],
+      },
+      {
+        "intent": "add property bad schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/properties/bad",
+            "value": {
+              "nullable": true,
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add schema object",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add schema object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+            "value": {},
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/type",
+            "value": "object",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body 2`] = `
+{
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "active": {
+                    "type": "boolean",
+                  },
+                  "age": {
+                    "type": "number",
+                  },
+                  "created_at": {
+                    "type": "string",
+                  },
+                  "hobbies": {
+                    "items": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                        },
+                        {
+                          "properties": {
+                            "bad": {
+                              "nullable": true,
+                            },
+                            "name": {
+                              "type": "string",
+                            },
+                            "skill": {
+                              "type": "number",
+                            },
+                            "type": {
+                              "type": "string",
+                            },
+                          },
+                          "required": [
+                            "type",
+                            "name",
+                            "skill",
+                            "bad",
+                          ],
+                          "type": "object",
+                        },
+                      ],
+                    },
+                    "type": "array",
+                  },
+                  "name": {
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "name",
+                  "age",
+                  "created_at",
+                  "hobbies",
+                  "active",
+                ],
+                "type": "object",
+              },
+            },
+          },
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                },
+              },
+            },
+            "description": "200 response",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response body 1`] = `
+[
+  {
+    "description": "operation: add 200 response",
+    "diff": {
+      "contentType": "application/json",
+      "kind": "UnmatchedResponseStatusCode",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add response status code",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200",
+            "value": {
+              "description": "200 response",
+            },
+          },
+        ],
+      },
+      {
+        "intent": "add response body for content type 'application/json'",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content",
+            "value": {
+              "application/json": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "update response body: add schema object",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add schema object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+            "value": {},
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/type",
+            "value": "object",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property name",
+    "diff": {
+      "description": "'name' is not documented",
+      "example": "me",
+      "instancePath": "/name",
+      "key": "name",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/name",
+      "propertyPath": "/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make name required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required",
+            "value": [
+              "name",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property name schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/name",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property age",
+    "diff": {
+      "description": "'age' is not documented",
+      "example": 100,
+      "instancePath": "/age",
+      "key": "age",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/age",
+      "propertyPath": "/properties/age",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property age required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required/-",
+            "value": "age",
+          },
+        ],
+      },
+      {
+        "intent": "add property age schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/age",
+            "value": {
+              "type": "number",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property created_at",
+    "diff": {
+      "description": "'created_at' is not documented",
+      "example": "2023-07-20T14:39:22.184Z",
+      "instancePath": "/created_at",
+      "key": "created_at",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/created_at",
+      "propertyPath": "/properties/created_at",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property created_at required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required/-",
+            "value": "created_at",
+          },
+        ],
+      },
+      {
+        "intent": "add property created_at schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/created_at",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property hobbies",
+    "diff": {
+      "description": "'hobbies' is not documented",
+      "example": [
+        "running",
+        {
+          "name": "fishing",
+          "type": "sport",
+        },
+        {
+          "bad": null,
+          "name": "basketball",
+          "skill": 100,
+          "type": "sport",
+        },
+      ],
+      "instancePath": "/hobbies",
+      "key": "hobbies",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/hobbies",
+      "propertyPath": "/properties/hobbies",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property hobbies required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required/-",
+            "value": "hobbies",
+          },
+        ],
+      },
+      {
+        "intent": "add property hobbies schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies",
+            "value": {
+              "items": {
+                "type": "string",
+              },
+              "type": "array",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property active",
+    "diff": {
+      "description": "'active' is not documented",
+      "example": true,
+      "instancePath": "/active",
+      "key": "active",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/active",
+      "propertyPath": "/properties/active",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property active required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required/-",
+            "value": "active",
+          },
+        ],
+      },
+      {
+        "intent": "add property active schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/active",
+            "value": {
+              "type": "boolean",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make items oneOf",
+    "diff": {
+      "description": "'items' did not match schema",
+      "example": {
+        "name": "fishing",
+        "type": "sport",
+      },
+      "expectedType": "string",
+      "instancePath": "/hobbies/1",
+      "key": "items",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/hobbies/items",
+    },
+    "groupedOperations": [
+      {
+        "intent": "replace items with a one of containing both types",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/type",
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf",
+            "value": [
+              {
+                "type": "string",
+              },
+              {
+                "type": "object",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property type",
+    "diff": {
+      "description": "'type' is not documented",
+      "example": "sport",
+      "instancePath": "/hobbies/1/type",
+      "key": "type",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1/properties",
+      "propertyExamplePath": "/hobbies/1/type",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/type",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make type required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/required",
+            "value": [
+              "type",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property type schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/properties/type",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property name",
+    "diff": {
+      "description": "'name' is not documented",
+      "example": "fishing",
+      "instancePath": "/hobbies/1/name",
+      "key": "name",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1/properties",
+      "propertyExamplePath": "/hobbies/1/name",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property name required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/required/-",
+            "value": "name",
+          },
+        ],
+      },
+      {
+        "intent": "add property name schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/properties/name",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property skill",
+    "diff": {
+      "description": "'skill' is not documented",
+      "example": 100,
+      "instancePath": "/hobbies/2/skill",
+      "key": "skill",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1/properties",
+      "propertyExamplePath": "/hobbies/2/skill",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/skill",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property skill required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/required/-",
+            "value": "skill",
+          },
+        ],
+      },
+      {
+        "intent": "add property skill schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/properties/skill",
+            "value": {
+              "type": "number",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property bad",
+    "diff": {
+      "description": "'bad' is not documented",
+      "example": null,
+      "instancePath": "/hobbies/2/bad",
+      "key": "bad",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1/properties",
+      "propertyExamplePath": "/hobbies/2/bad",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/bad",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property bad required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/required/-",
+            "value": "bad",
+          },
+        ],
+      },
+      {
+        "intent": "add property bad schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/properties/bad",
+            "value": {
+              "nullable": true,
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response body 2`] = `
+{
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "active": {
+                      "type": "boolean",
+                    },
+                    "age": {
+                      "type": "number",
+                    },
+                    "created_at": {
+                      "type": "string",
+                    },
+                    "hobbies": {
+                      "items": {
+                        "oneOf": [
+                          {
+                            "type": "string",
+                          },
+                          {
+                            "properties": {
+                              "bad": {
+                                "nullable": true,
+                              },
+                              "name": {
+                                "type": "string",
+                              },
+                              "skill": {
+                                "type": "number",
+                              },
+                              "type": {
+                                "type": "string",
+                              },
+                            },
+                            "required": [
+                              "type",
+                              "name",
+                              "skill",
+                              "bad",
+                            ],
+                            "type": "object",
+                          },
+                        ],
+                      },
+                      "type": "array",
+                    },
+                    "name": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "name",
+                    "age",
+                    "created_at",
+                    "hobbies",
+                    "active",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "200 response",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 mismatched type in schema 1`] = `
+[
+  {
+    "description": "update response body: make name oneOf",
+    "diff": {
+      "description": "'name' did not match schema",
+      "example": "me",
+      "expectedType": "number",
+      "instancePath": "/name",
+      "key": "name",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "intent": "replace name with a one of containing both types",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/name/type",
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/name/oneOf",
+            "value": [
+              {
+                "type": "number",
+              },
+              {
+                "type": "string",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 mismatched type in schema 2`] = `
+{
+  "info": {},
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "name": {
+                      "oneOf": [
+                        {
+                          "type": "number",
+                        },
+                        {
+                          "type": "string",
+                        },
+                      ],
+                    },
+                  },
+                  "type": "object",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 missing required property 1`] = `
+[
+  {
+    "description": "update response body: make property name optional",
+    "diff": {
+      "description": "required property 'name' was missing",
+      "example": undefined,
+      "instancePath": "/name",
+      "key": "name",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "",
+      "propertyPath": "/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove name from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required/0",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 missing required property 2`] = `
+{
+  "info": {},
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [],
+                  "type": "object",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented property in schema 1`] = `
+[
+  {
+    "description": "update response body: add property name",
+    "diff": {
+      "description": "'name' is not documented",
+      "example": "me",
+      "instancePath": "/name",
+      "key": "name",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/name",
+      "propertyPath": "/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add required [] to parent object and make name required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required",
+            "value": [
+              "name",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property name schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/name",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented property in schema 2`] = `
+{
+  "info": {},
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "name",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented request body 1`] = `
+[
+  {
+    "description": "operation: add 'application/json' body as a valid request body type",
+    "diff": {
+      "contentType": "application/json",
+      "kind": "UnmatchedRequestBody",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add request body to operation",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody",
+            "value": {
+              "content": {},
+            },
+          },
+        ],
+      },
+      {
+        "intent": "add application/json as content type",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json",
+            "value": {
+              "schema": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "operation: add 200 response",
+    "diff": {
+      "contentType": "application/json",
+      "kind": "UnmatchedResponseStatusCode",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add response status code",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200",
+            "value": {
+              "description": "200 response",
+            },
+          },
+        ],
+      },
+      {
+        "intent": "add response body for content type 'application/json'",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content",
+            "value": {
+              "application/json": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "update request body: add schema object",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add schema object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/type",
+            "value": "object",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: add property name",
+    "diff": {
+      "description": "'name' is not documented",
+      "example": "me",
+      "instancePath": "/name",
+      "key": "name",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/name",
+      "propertyPath": "/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make name required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/required",
+            "value": [
+              "name",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property name schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/name",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: add property age",
+    "diff": {
+      "description": "'age' is not documented",
+      "example": 100,
+      "instancePath": "/age",
+      "key": "age",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/age",
+      "propertyPath": "/properties/age",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property age required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/required/-",
+            "value": "age",
+          },
+        ],
+      },
+      {
+        "intent": "add property age schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/age",
+            "value": {
+              "type": "number",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: add property created_at",
+    "diff": {
+      "description": "'created_at' is not documented",
+      "example": "2023-07-20T14:39:22.184Z",
+      "instancePath": "/created_at",
+      "key": "created_at",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/created_at",
+      "propertyPath": "/properties/created_at",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property created_at required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/required/-",
+            "value": "created_at",
+          },
+        ],
+      },
+      {
+        "intent": "add property created_at schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/created_at",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: add property hobbies",
+    "diff": {
+      "description": "'hobbies' is not documented",
+      "example": [
+        "running",
+        {
+          "name": "fishing",
+          "type": "sport",
+        },
+        {
+          "bad": null,
+          "name": "basketball",
+          "skill": 100,
+          "type": "sport",
+        },
+      ],
+      "instancePath": "/hobbies",
+      "key": "hobbies",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/hobbies",
+      "propertyPath": "/properties/hobbies",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property hobbies required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/required/-",
+            "value": "hobbies",
+          },
+        ],
+      },
+      {
+        "intent": "add property hobbies schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies",
+            "value": {
+              "items": {
+                "type": "string",
+              },
+              "type": "array",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: add property active",
+    "diff": {
+      "description": "'active' is not documented",
+      "example": true,
+      "instancePath": "/active",
+      "key": "active",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/active",
+      "propertyPath": "/properties/active",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property active required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/required/-",
+            "value": "active",
+          },
+        ],
+      },
+      {
+        "intent": "add property active schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/active",
+            "value": {
+              "type": "boolean",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: make items oneOf",
+    "diff": {
+      "description": "'items' did not match schema",
+      "example": {
+        "name": "fishing",
+        "type": "sport",
+      },
+      "expectedType": "string",
+      "instancePath": "/hobbies/1",
+      "key": "items",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/hobbies/items",
+    },
+    "groupedOperations": [
+      {
+        "intent": "replace items with a one of containing both types",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/type",
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf",
+            "value": [
+              {
+                "type": "string",
+              },
+              {
+                "type": "object",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: add property type",
+    "diff": {
+      "description": "'type' is not documented",
+      "example": "sport",
+      "instancePath": "/hobbies/1/type",
+      "key": "type",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1/properties",
+      "propertyExamplePath": "/hobbies/1/type",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/type",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make type required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/required",
+            "value": [
+              "type",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property type schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/properties/type",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: add property name",
+    "diff": {
+      "description": "'name' is not documented",
+      "example": "fishing",
+      "instancePath": "/hobbies/1/name",
+      "key": "name",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1/properties",
+      "propertyExamplePath": "/hobbies/1/name",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property name required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/required/-",
+            "value": "name",
+          },
+        ],
+      },
+      {
+        "intent": "add property name schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/properties/name",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: add property skill",
+    "diff": {
+      "description": "'skill' is not documented",
+      "example": 100,
+      "instancePath": "/hobbies/2/skill",
+      "key": "skill",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1/properties",
+      "propertyExamplePath": "/hobbies/2/skill",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/skill",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property skill required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/required/-",
+            "value": "skill",
+          },
+        ],
+      },
+      {
+        "intent": "add property skill schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/properties/skill",
+            "value": {
+              "type": "number",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: add property bad",
+    "diff": {
+      "description": "'bad' is not documented",
+      "example": null,
+      "instancePath": "/hobbies/2/bad",
+      "key": "bad",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1/properties",
+      "propertyExamplePath": "/hobbies/2/bad",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/bad",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property bad required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/required/-",
+            "value": "bad",
+          },
+        ],
+      },
+      {
+        "intent": "add property bad schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/properties/bad",
+            "value": {
+              "type": "null",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: make property skill optional",
+    "diff": {
+      "description": "required property 'skill' was missing",
+      "example": undefined,
+      "instancePath": "/hobbies/1/skill",
+      "key": "skill",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/skill",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove skill from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/required/2",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: make property bad optional",
+    "diff": {
+      "description": "required property 'bad' was missing",
+      "example": undefined,
+      "instancePath": "/hobbies/1/bad",
+      "key": "bad",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/bad",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove bad from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/required/2",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add schema object",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add schema object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+            "value": {},
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/type",
+            "value": "object",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented request body 2`] = `
+{
+  "info": {},
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "active": {
+                    "type": "boolean",
+                  },
+                  "age": {
+                    "type": "number",
+                  },
+                  "created_at": {
+                    "type": "string",
+                  },
+                  "hobbies": {
+                    "items": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                        },
+                        {
+                          "properties": {
+                            "bad": {
+                              "type": "null",
+                            },
+                            "name": {
+                              "type": "string",
+                            },
+                            "skill": {
+                              "type": "number",
+                            },
+                            "type": {
+                              "type": "string",
+                            },
+                          },
+                          "required": [
+                            "type",
+                            "name",
+                          ],
+                          "type": "object",
+                        },
+                      ],
+                    },
+                    "type": "array",
+                  },
+                  "name": {
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "name",
+                  "age",
+                  "created_at",
+                  "hobbies",
+                  "active",
+                ],
+                "type": "object",
+              },
+            },
+          },
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                },
+              },
+            },
+            "description": "200 response",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented response body 1`] = `
+[
+  {
+    "description": "operation: add 200 response",
+    "diff": {
+      "contentType": "application/json",
+      "kind": "UnmatchedResponseStatusCode",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add response status code",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200",
+            "value": {
+              "description": "200 response",
+            },
+          },
+        ],
+      },
+      {
+        "intent": "add response body for content type 'application/json'",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content",
+            "value": {
+              "application/json": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "update response body: add schema object",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add schema object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+            "value": {},
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/type",
+            "value": "object",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property name",
+    "diff": {
+      "description": "'name' is not documented",
+      "example": "me",
+      "instancePath": "/name",
+      "key": "name",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/name",
+      "propertyPath": "/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make name required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required",
+            "value": [
+              "name",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property name schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/name",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property age",
+    "diff": {
+      "description": "'age' is not documented",
+      "example": 100,
+      "instancePath": "/age",
+      "key": "age",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/age",
+      "propertyPath": "/properties/age",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property age required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required/-",
+            "value": "age",
+          },
+        ],
+      },
+      {
+        "intent": "add property age schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/age",
+            "value": {
+              "type": "number",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property created_at",
+    "diff": {
+      "description": "'created_at' is not documented",
+      "example": "2023-07-20T14:39:22.184Z",
+      "instancePath": "/created_at",
+      "key": "created_at",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/created_at",
+      "propertyPath": "/properties/created_at",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property created_at required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required/-",
+            "value": "created_at",
+          },
+        ],
+      },
+      {
+        "intent": "add property created_at schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/created_at",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property hobbies",
+    "diff": {
+      "description": "'hobbies' is not documented",
+      "example": [
+        "running",
+        {
+          "name": "fishing",
+          "type": "sport",
+        },
+        {
+          "bad": null,
+          "name": "basketball",
+          "skill": 100,
+          "type": "sport",
+        },
+      ],
+      "instancePath": "/hobbies",
+      "key": "hobbies",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/hobbies",
+      "propertyPath": "/properties/hobbies",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property hobbies required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required/-",
+            "value": "hobbies",
+          },
+        ],
+      },
+      {
+        "intent": "add property hobbies schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies",
+            "value": {
+              "items": {
+                "type": "string",
+              },
+              "type": "array",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property active",
+    "diff": {
+      "description": "'active' is not documented",
+      "example": true,
+      "instancePath": "/active",
+      "key": "active",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/active",
+      "propertyPath": "/properties/active",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property active required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required/-",
+            "value": "active",
+          },
+        ],
+      },
+      {
+        "intent": "add property active schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/active",
+            "value": {
+              "type": "boolean",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make items oneOf",
+    "diff": {
+      "description": "'items' did not match schema",
+      "example": {
+        "name": "fishing",
+        "type": "sport",
+      },
+      "expectedType": "string",
+      "instancePath": "/hobbies/1",
+      "key": "items",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/hobbies/items",
+    },
+    "groupedOperations": [
+      {
+        "intent": "replace items with a one of containing both types",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/type",
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf",
+            "value": [
+              {
+                "type": "string",
+              },
+              {
+                "type": "object",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property type",
+    "diff": {
+      "description": "'type' is not documented",
+      "example": "sport",
+      "instancePath": "/hobbies/1/type",
+      "key": "type",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1/properties",
+      "propertyExamplePath": "/hobbies/1/type",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/type",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make type required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/required",
+            "value": [
+              "type",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property type schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/properties/type",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property name",
+    "diff": {
+      "description": "'name' is not documented",
+      "example": "fishing",
+      "instancePath": "/hobbies/1/name",
+      "key": "name",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1/properties",
+      "propertyExamplePath": "/hobbies/1/name",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property name required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/required/-",
+            "value": "name",
+          },
+        ],
+      },
+      {
+        "intent": "add property name schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/properties/name",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property skill",
+    "diff": {
+      "description": "'skill' is not documented",
+      "example": 100,
+      "instancePath": "/hobbies/2/skill",
+      "key": "skill",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1/properties",
+      "propertyExamplePath": "/hobbies/2/skill",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/skill",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property skill required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/required/-",
+            "value": "skill",
+          },
+        ],
+      },
+      {
+        "intent": "add property skill schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/properties/skill",
+            "value": {
+              "type": "number",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property bad",
+    "diff": {
+      "description": "'bad' is not documented",
+      "example": null,
+      "instancePath": "/hobbies/2/bad",
+      "key": "bad",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1/properties",
+      "propertyExamplePath": "/hobbies/2/bad",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/bad",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property bad required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/required/-",
+            "value": "bad",
+          },
+        ],
+      },
+      {
+        "intent": "add property bad schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/properties/bad",
+            "value": {
+              "type": "null",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make property skill optional",
+    "diff": {
+      "description": "required property 'skill' was missing",
+      "example": undefined,
+      "instancePath": "/hobbies/1/skill",
+      "key": "skill",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/skill",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove skill from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/required/2",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make property bad optional",
+    "diff": {
+      "description": "required property 'bad' was missing",
+      "example": undefined,
+      "instancePath": "/hobbies/1/bad",
+      "key": "bad",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/bad",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove bad from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/required/2",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented response body 2`] = `
+{
+  "info": {},
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "active": {
+                      "type": "boolean",
+                    },
+                    "age": {
+                      "type": "number",
+                    },
+                    "created_at": {
+                      "type": "string",
+                    },
+                    "hobbies": {
+                      "items": {
+                        "oneOf": [
+                          {
+                            "type": "string",
+                          },
+                          {
+                            "properties": {
+                              "bad": {
+                                "type": "null",
+                              },
+                              "name": {
+                                "type": "string",
+                              },
+                              "skill": {
+                                "type": "number",
+                              },
+                              "type": {
+                                "type": "string",
+                              },
+                            },
+                            "required": [
+                              "type",
+                              "name",
+                            ],
+                            "type": "object",
+                          },
+                        ],
+                      },
+                      "type": "array",
+                    },
+                    "name": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "name",
+                    "age",
+                    "created_at",
+                    "hobbies",
+                    "active",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "200 response",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generatePathAndMethodSpecPatches generates a method if the path exists but method does not 1`] = `
+[
+  {
+    "description": "add 'POST' method for '/api/animals'",
+    "diff": {
+      "kind": "UnmatchedMethod",
+      "pathPattern": "/api/animals",
+      "subject": "post",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add method",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post",
+            "value": {
+              "responses": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals",
+  },
+]
+`;
+
+exports[`generatePathAndMethodSpecPatches generates a method if the path exists but method does not 2`] = `
+{
+  "info": {},
+  "paths": {
+    "/api/animals": {
+      "get": {
+        "responses": {},
+      },
+      "post": {
+        "responses": {},
+      },
+    },
+  },
+}
+`;
+
+exports[`generatePathAndMethodSpecPatches generates path and method if endpoint does not exist 1`] = `
+[
+  {
+    "description": "add '/api/users' and method GET",
+    "diff": {
+      "kind": "UnmatchedPath",
+      "subject": "/api/users",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add path with parameters",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1users",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add methods",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1users/get",
+            "value": {
+              "responses": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths",
+  },
+]
+`;
+
+exports[`generatePathAndMethodSpecPatches generates path and method if endpoint does not exist 2`] = `
+{
+  "info": {},
+  "paths": {
+    "/api/animals": {
+      "get": {
+        "responses": {},
+      },
+    },
+    "/api/users": {
+      "get": {
+        "responses": {},
+      },
+    },
+  },
+}
+`;
+
+exports[`generateRefRefactorPatches adds new component schema if no close schema 1`] = `
+[
+  {
+    "description": "create and use $ref for body",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add components.schemas if needed",
+        "operations": [],
+      },
+      {
+        "intent": "create ref at /components/schemas/PostApiAnimals200ResponseBody",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/components/schemas/PostApiAnimals200ResponseBody",
+            "value": {
+              "properties": {
+                "age": {
+                  "type": "number",
+                },
+                "created_at": {
+                  "type": "string",
+                },
+                "id": {
+                  "type": "string",
+                },
+                "name": {
+                  "type": "string",
+                },
+              },
+              "required": [
+                "name",
+                "id",
+              ],
+              "type": "object",
+            },
+          },
+        ],
+      },
+      {
+        "intent": "use new $ref",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+            "value": {
+              "$ref": "#/components/schemas/PostApiAnimals200ResponseBody",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Refactor",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateRefRefactorPatches adds new component schema if no close schema 2`] = `
+{
+  "components": {
+    "schemas": {
+      "MySchema": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "age": {
+                  "type": "number",
+                },
+              },
+              "type": "object",
+            },
+          },
+        },
+      },
+      "PostApiAnimals200ResponseBody": {
+        "properties": {
+          "age": {
+            "type": "number",
+          },
+          "created_at": {
+            "type": "string",
+          },
+          "id": {
+            "type": "string",
+          },
+          "name": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "name",
+          "id",
+        ],
+        "type": "object",
+      },
+    },
+  },
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostApiAnimals200ResponseBody",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateRefRefactorPatches uses existing component schema if close enough 1`] = `
+[
+  {
+    "description": "use $ref /components/schemas/MySchema",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "use ref at /paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+            "value": {
+              "$ref": "#/components/schemas/MySchema",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Refactor",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateRefRefactorPatches uses existing component schema if close enough 2`] = `
+{
+  "components": {
+    "schemas": {
+      "MySchema": {
+        "properties": {
+          "age": {
+            "type": "number",
+          },
+          "created_at": {
+            "type": "string",
+          },
+          "id": {
+            "type": "string",
+          },
+          "name": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "name",
+          "id",
+        ],
+        "type": "object",
+      },
+    },
+  },
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MySchema",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;

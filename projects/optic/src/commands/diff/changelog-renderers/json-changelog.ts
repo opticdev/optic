@@ -120,8 +120,11 @@ type ChangedNode = {
 
 type OperationChangelog = ChangedNode & {
   parameters: ChangedNode[];
-  requestBody?: ChangedNode;
-  responses: ChangedNode[];
+  requestBody?: ChangedNode & { contentTypes: ChangedNode[] };
+  responses: (ChangedNode & {
+    contentTypes: ChangedNode[];
+    headers: ChangedNode[];
+  })[];
 };
 
 type JsonChangelog = {
@@ -286,9 +289,12 @@ function getEndpointLogs(
     }
   }
 
-  const responseChanges: ChangedNode[] = [];
+  const responseChanges: OperationChangelog['responses'] = [];
   for (const [statusCode, response] of Object.entries(responses)) {
-    const diffs = [...response.diffs, ...response.headers.diffs];
+    const diffs = [
+      ...response.diffs,
+      ...Object.values(response.headers).flatMap((r) => r.diffs),
+    ];
     for (const content of Object.values(response.contents)) {
       diffs.push(...content.examples.diffs);
       diffs.push(...Object.values(content.fields).flatMap((r) => r.diffs));
@@ -322,11 +328,10 @@ function getResponseChangeLogs(
   specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
   response: Response,
   statusCode: string
-): ChangedNode & {
-  contentTypes: ChangedNode[];
-} {
+): OperationChangelog['responses'][number] {
   const contentTypeChanges: ChangedNode[] = [];
-  const responseChange = typeofV3Diffs(response.diffs);
+  const responseLevelDiffs = [...response.diffs];
+  const responseChange = typeofV3Diffs(responseLevelDiffs);
 
   for (const [contentType, body] of Object.entries(response.contents)) {
     if (
@@ -339,26 +344,43 @@ function getResponseChangeLogs(
     }
   }
 
-  // TODO this is missing response-headers
   return {
     name: `${statusCode} response`,
     change: responseChange ?? 'changed',
     attributes: responseChange
-      ? response.diffs.flatMap((diff) => {
+      ? responseLevelDiffs.flatMap((diff) => {
           const rawChange = getRawChange(diff, specs);
           return getDetailsDiff(rawChange);
         })
       : [],
     contentTypes: contentTypeChanges,
+    headers: getResponseHeaderChangelogs(specs, response.headers),
   };
+}
+
+function getResponseHeaderChangelogs(
+  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  node: Response['headers']
+): ChangedNode[] {
+  return Object.entries(node).map(([name, node]) => {
+    const change = typeofV3Diffs(node.diffs) ?? 'changed';
+    return {
+      name: `response header ${name}`,
+      change,
+      attributes: change
+        ? node.diffs.flatMap((d) => {
+            const rawChange = getRawChange(d, specs);
+            return getDetailsDiff(rawChange);
+          })
+        : [],
+    };
+  });
 }
 
 function getRequestChangeLogs(
   specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
   request: Endpoint['request']
-): ChangedNode & {
-  contentTypes: ChangedNode[];
-} {
+): NonNullable<OperationChangelog['requestBody']> {
   const contentTypes: ChangedNode[] = [];
   const requestChange = typeofV3Diffs(request.diffs);
 

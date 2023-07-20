@@ -27,7 +27,7 @@ describe('PostmanCollectionEntries', () => {
       await collect(entries);
     };
 
-    expect(getEntries).rejects.toThrowError('ENOENT');
+    await expect(getEntries).rejects.toThrowError('ENOENT');
   });
 
   describe('will only read Postman Collection files', () => {
@@ -43,13 +43,13 @@ describe('PostmanCollectionEntries', () => {
     });
 
     it('throws an error when file isnt json', async () => {
-      let source = fs.createReadStream(Path.join(__dirname, './postman.ts'));
+      let source = fs.createReadStream(Path.join(__dirname, '../postman.ts'));
 
       const getEntries = async () => {
         await collect(PostmanCollectionEntries.fromReadable(source));
       };
 
-      expect(getEntries).rejects.toThrowError(
+      await expect(getEntries).rejects.toThrowError(
         'could not be read as Postman Collection'
       );
     });

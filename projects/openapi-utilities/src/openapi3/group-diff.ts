@@ -68,7 +68,7 @@ export type Body = {
 export type Response = {
   diffs: Diff[];
   rules: RuleResult[];
-  headers: DiffAndRules;
+  headers: Record<string, DiffAndRules>;
   contents: Record<string, Body>;
 };
 
@@ -105,7 +105,10 @@ export function getEndpointDiffs(endpoint: Endpoint) {
     items.push(...Object.values(content.fields).flatMap((r) => r.diffs));
   }
   for (const response of Object.values(endpoint.responses)) {
-    items.push(...response.diffs, ...response.headers.diffs);
+    items.push(
+      ...response.diffs,
+      ...Object.values(response.headers).flatMap((r) => r.diffs)
+    );
     for (const content of Object.values(response.contents)) {
       items.push(...content.examples.diffs);
       items.push(...Object.values(content.fields).flatMap((r) => r.diffs));
@@ -130,7 +133,10 @@ export function getEndpointRules(endpoint: Endpoint) {
     items.push(...Object.values(content.fields).flatMap((r) => r.rules));
   }
   for (const response of Object.values(endpoint.responses)) {
-    items.push(...response.rules, ...response.headers.rules);
+    items.push(
+      ...response.rules,
+      ...Object.values(response.headers).flatMap((r) => r.rules)
+    );
     for (const content of Object.values(response.contents)) {
       items.push(...content.examples.rules);
       items.push(...Object.values(content.fields).flatMap((r) => r.rules));
@@ -142,9 +148,11 @@ export function getEndpointRules(endpoint: Endpoint) {
 export class GroupedDiffs {
   public specification: DiffAndRules;
   public endpoints: Record<string, Endpoint>;
+  public unmatched: DiffAndRules;
   constructor() {
     this.endpoints = {};
     this.specification = { diffs: [], rules: [] };
+    this.unmatched = { diffs: [], rules: [] };
   }
 
   getOrSetEndpoint(endpointId: string): Endpoint {
@@ -196,7 +204,7 @@ export class GroupedDiffs {
       const response: Response = {
         diffs: [],
         rules: [],
-        headers: { diffs: [], rules: [] },
+        headers: {},
         contents: {},
       };
       endpoint.responses[statusCode] = response;
@@ -322,14 +330,13 @@ export function groupDiffsByEndpoint(
         : getFactForJsonPath(diff.before, fromTree);
 
     const isComponentDiff = /^\/components/i.test(diff.after ?? diff.before);
-    if (isComponentDiff) continue;
 
-    if (fact) {
+    if (fact && !isComponentDiff) {
+      const specToFetchFrom = diff.after !== undefined ? specs.to : specs.from;
       const trail = jsonPointerHelpers.relative(
         diff.after ?? diff.before,
         fact.location.jsonPath
       );
-      const specToFetchFrom = diff.after !== undefined ? specs.to : specs.from;
       const diffToAdd = { ...diff, trail, change: typeofDiff(diff) };
       diffsAndRulesToAdd.push({
         type: 'diffs',
@@ -337,6 +344,13 @@ export function groupDiffsByEndpoint(
         spec: specToFetchFrom,
         fact,
       });
+    } else {
+      const diffToAdd = {
+        ...diff,
+        trail: diff.after ?? diff.before,
+        change: typeofDiff(diff),
+      };
+      grouped.unmatched.diffs.push(diffToAdd);
     }
   }
 
@@ -347,8 +361,7 @@ export function groupDiffsByEndpoint(
         : getFactForJsonPath(rule.location.jsonPath, fromTree);
 
     const isComponentDiff = /^\/components/i.test(rule.location.jsonPath);
-    if (isComponentDiff) continue;
-    if (fact) {
+    if (fact && !isComponentDiff) {
       const trail = jsonPointerHelpers.relative(
         rule.location.jsonPath,
         fact.location.jsonPath
@@ -364,6 +377,9 @@ export function groupDiffsByEndpoint(
         spec: specToFetchFrom,
         fact,
       });
+    } else {
+      const ruleToAdd = { ...rule, trail: rule.location.jsonPath };
+      grouped.unmatched.rules.push(ruleToAdd);
     }
   }
 
@@ -460,12 +476,20 @@ export function groupDiffsByEndpoint(
       const response = grouped.getOrSetResponse(endpointId, statusCode);
       type === 'diffs' ? response.diffs.push(item) : response.rules.push(item);
     } else if (fact.type === 'response-header') {
-      const { pathPattern, method, statusCode } = getLocation(fact);
+      const { pathPattern, method, statusCode, headerName } = getLocation(fact);
       const endpointId = getEndpointId({ pathPattern, method });
       const response = grouped.getOrSetResponse(endpointId, statusCode);
-      type === 'diffs'
-        ? response.headers.diffs.push(item)
-        : response.headers.rules.push(item);
+      if (response.headers[headerName]) {
+        type === 'diffs'
+          ? response.headers[headerName].diffs.push(item)
+          : response.headers[headerName].rules.push(item);
+      } else {
+        if (type === 'diffs') {
+          response.headers[headerName] = { diffs: [item], rules: [] };
+        } else {
+          response.headers[headerName] = { diffs: [], rules: [item] };
+        }
+      }
     } else if (fact.type === 'body-example' || fact.type === 'body-examples') {
       const location = getLocation(fact);
       if (type === 'diffs') {

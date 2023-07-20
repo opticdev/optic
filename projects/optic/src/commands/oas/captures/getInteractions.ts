@@ -8,53 +8,7 @@ import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { CapturedInteractions } from '../../capture/sources/captured-interactions';
 import { PostmanCollectionEntries } from '../../capture/sources/postman';
 import { HarEntries } from '../../capture/sources/har';
-
-async function* handleServerPathPrefix(
-  interactions: CapturedInteractions,
-  spec: OpenAPIV3.Document
-): CapturedInteractions {
-  const hostBaseMap: { [key: string]: string } = {};
-
-  spec.servers?.forEach((server) => {
-    try {
-      // add absolute in case url is relative (valid in OpenAPI, ignored when absolute)
-      const parsed = new URL(server.url);
-
-      const pathName = parsed.pathname;
-      // remove trailing slash
-      if (pathName.endsWith('/') && pathName.length > 1) {
-        hostBaseMap[parsed.host] = pathName.substring(0, pathName.length - 1);
-      } else {
-        hostBaseMap[parsed.host] = pathName;
-      }
-    } catch (e) {}
-  });
-
-  for await (const interaction of interactions) {
-    const host = interaction.request.host;
-    if (hostBaseMap[host] && hostBaseMap[host] !== '/') {
-      const base = hostBaseMap[host];
-      if (interaction.request.path.startsWith(base)) {
-        const adjustedPath =
-          interaction.request.path === base
-            ? '/'
-            : interaction.request.path.replace(base, '');
-        yield {
-          ...interaction,
-          request: {
-            ...interaction.request,
-            path: adjustedPath,
-          },
-        };
-      } else {
-        // Otherwise this is a request we should ignore since it doesn't match the base path for the hostBaseMap
-        continue;
-      }
-    } else {
-      yield interaction;
-    }
-  }
-}
+import { handleServerPathPrefix } from '../../capture/interactions/grouped-interactions';
 
 export async function getInteractions(
   options: { har?: string; postman?: string },

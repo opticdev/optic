@@ -1,9 +1,9 @@
 import { FlatOpenAPIV3, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { computeClosenessFromKeyValueTuples, walkSchema } from './closeness';
-import { SpecPatch, SpecPatches } from '../../specs';
-import { PatchImpact } from '../../patches';
-import { PathComponents } from '../../operations';
+import { SpecPatch, SpecPatches } from '../../../../oas/specs';
+import { PatchImpact } from '../../../../oas/patches';
+import { PathComponents } from '../../../../oas/operations';
 import { Operation } from 'fast-json-patch';
 
 type ClosestMatch = { ref: string; percent: number } | undefined;
@@ -51,7 +51,10 @@ export class SchemaInventory {
 
   async *refsForAdditions(
     addedPaths: Set<string>,
-    spec: OpenAPIV3.Document
+    spec: OpenAPIV3.Document,
+    meta: {
+      usedExistingRef?: boolean;
+    } = {}
   ): SpecPatches {
     if (addedPaths.size === 0) return [];
     const sorted = Array.from(addedPaths).sort();
@@ -88,6 +91,7 @@ export class SchemaInventory {
         const match = this.findClosest(addedSchema);
         // use ref
         if (match) {
+          meta.usedExistingRef = true;
           matchedRoot = true;
           const patch: SpecPatch = {
             description: `use $ref ${match.ref}`,
@@ -117,6 +121,7 @@ export class SchemaInventory {
         for await (let items of arrayItems) {
           const match = this.findClosest(jsonPointerHelpers.get(spec, items));
           if (match && match.percent > this.closeness) {
+            meta.usedExistingRef = true;
             matchedSub = true;
             const patch: SpecPatch = {
               description: `use $ref ${match.ref}`,

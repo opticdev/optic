@@ -15,6 +15,7 @@ import { specToPaths } from '../operations/queries';
 import {
   generateEndpointSpecPatches,
   generatePathAndMethodSpecPatches,
+  generateRefRefactorPatches,
   jsonOpsFromSpecPatches,
 } from '../patches/patches';
 import { SpecPatches } from '../../oas/specs';
@@ -180,11 +181,29 @@ export async function documentNewEndpoint(
 
     yield* generatePathAndMethodSpecPatches(specHolder, endpoint);
 
+    const meta = {
+      schemaAdditionsSet: new Set<string>(),
+      usedExistingRef: false,
+    };
+
     yield* generateEndpointSpecPatches(
       interactionsAsAsyncIterator,
       specHolder,
-      endpoint
+      endpoint,
+      meta
     );
+
+    yield* generateRefRefactorPatches(specHolder, meta);
+
+    // If we use an existing ref, we need to rerun traffic
+    if (meta.usedExistingRef) {
+      yield* generateEndpointSpecPatches(
+        interactionsAsAsyncIterator,
+        specHolder,
+        endpoint,
+        meta
+      );
+    }
   })();
 
   const operations = await jsonOpsFromSpecPatches(specPatches);
