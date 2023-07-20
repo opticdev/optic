@@ -1,5 +1,4 @@
 import yaml from 'yaml';
-import { CaptureConfigData } from '../../config';
 import { updateOpticConfig } from '../../utils/write-optic-config';
 import { logger } from '../../logger';
 
@@ -13,7 +12,7 @@ export function initCaptureConfig(
 
   if (skipConfigUpdate) {
     // console.log() to skip any future formatting changes we might make to logger
-    console.log(yaml.parseDocument.toString());
+    console.log(parsedExample.toString());
     return;
   }
   logger.info(`Writing capture config to ${opticConfigPath}`);

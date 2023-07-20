@@ -133,14 +133,15 @@ const getCaptureAction =
     }
 
     if (options.init) {
-      if (config.capture && !options.stdout) {
-        logger.info(
-          'Your optic.yml already contains a `capture` block and this command would modify it. If you want to see a complete capture block example, run `optic capture openapi.yml --init --stdout`'
-        );
-        return;
-      }
+      config.capture &&
+      Object.keys(config.capture).length !== 0 &&
+      !options.stdout
+        ? logger.info(
+            'Your optic.yml already contains a `capture` block with contents and this command would modify it. Make modifications to your capture config by editing optic.yml. If you want to see a complete capture block example, run `optic capture openapi.yml --init --stdout` instead.'
+          )
+        : initCaptureConfig(filePath, options.stdout!, config.configPath!);
 
-      initCaptureConfig(filePath, options.stdout!, config.configPath!);
+      return;
     }
 
     const trafficDirectory = await setup(filePath);
