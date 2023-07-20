@@ -134,7 +134,7 @@ describe('generateEndpointSpecPatches', () => {
           host: 'localhost:3030',
           method: OpenAPIV3.HttpMethods.POST,
           path: '/api/animals',
-          body: CapturedBody.fromJSON({}),
+          body: null,
           headers: [],
           query: [],
         },
@@ -178,18 +178,158 @@ describe('generateEndpointSpecPatches', () => {
       expect(specHolder.spec).toMatchSnapshot();
     });
 
-    test('undocumented property in schema', () => {});
+    test('undocumented property in schema', async () => {
+      specHolder.spec.paths['/api/animals'].post.responses = {
+        '200': {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {},
+              },
+            },
+          },
+        },
+      };
 
-    test('mismatched type in schema', () => {});
+      const interaction: CapturedInteraction = {
+        request: {
+          host: 'localhost:3030',
+          method: OpenAPIV3.HttpMethods.POST,
+          path: '/api/animals',
+          body: null,
+          headers: [],
+          query: [],
+        },
+        response: {
+          statusCode: '200',
+          body: CapturedBody.fromJSON({
+            name: 'me',
+          }),
+          headers: [],
+        },
+      };
 
-    test('mismatched oneOf schema', () => {});
+      const patches = await AT.collect(
+        generateEndpointSpecPatches(
+          GenerateInteractions([interaction]),
+          specHolder,
+          {
+            method: 'post',
+            path: '/api/animals',
+          }
+        )
+      );
 
-    test('missing required property', () => {});
+      expect(patches).toMatchSnapshot();
+      expect(specHolder.spec).toMatchSnapshot();
+    });
+
+    test('mismatched type in schema', async () => {
+      specHolder.spec.paths['/api/animals'].post.responses = {
+        '200': {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  name: {
+                    type: 'number',
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      const interaction: CapturedInteraction = {
+        request: {
+          host: 'localhost:3030',
+          method: OpenAPIV3.HttpMethods.POST,
+          path: '/api/animals',
+          body: null,
+          headers: [],
+          query: [],
+        },
+        response: {
+          statusCode: '200',
+          body: CapturedBody.fromJSON({
+            name: 'me',
+          }),
+          headers: [],
+        },
+      };
+
+      const patches = await AT.collect(
+        generateEndpointSpecPatches(
+          GenerateInteractions([interaction]),
+          specHolder,
+          {
+            method: 'post',
+            path: '/api/animals',
+          }
+        )
+      );
+
+      expect(patches).toMatchSnapshot();
+      expect(specHolder.spec).toMatchSnapshot();
+    });
+
+    test('missing required property', async () => {
+      specHolder.spec.paths['/api/animals'].post.responses = {
+        '200': {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  name: {
+                    type: 'string',
+                  },
+                },
+                required: ['name'],
+              },
+            },
+          },
+        },
+      };
+
+      const interaction: CapturedInteraction = {
+        request: {
+          host: 'localhost:3030',
+          method: OpenAPIV3.HttpMethods.POST,
+          path: '/api/animals',
+          body: null,
+          headers: [],
+          query: [],
+        },
+        response: {
+          statusCode: '200',
+          body: CapturedBody.fromJSON({}),
+          headers: [],
+        },
+      };
+
+      const patches = await AT.collect(
+        generateEndpointSpecPatches(
+          GenerateInteractions([interaction]),
+          specHolder,
+          {
+            method: 'post',
+            path: '/api/animals',
+          }
+        )
+      );
+
+      expect(patches).toMatchSnapshot();
+      expect(specHolder.spec).toMatchSnapshot();
+    });
   });
 });
 
 describe('generateRefRefactorPatches', () => {
-  test('adds new component schema for endpoint', () => {});
+  test('adds new component schema for endpoint', async () => {});
 
-  test('uses existing component schema if close enough', () => {});
+  test('uses existing component schema if close enough', async () => {});
 });

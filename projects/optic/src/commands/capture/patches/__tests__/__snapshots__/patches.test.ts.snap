@@ -1,5 +1,234 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`generateEndpointSpecPatches OAS version 3.0.1 mismatched type in schema 1`] = `
+[
+  {
+    "description": "update response body: make name oneOf",
+    "diff": {
+      "description": "'name' did not match schema",
+      "example": "me",
+      "expectedType": "number",
+      "instancePath": "/name",
+      "key": "name",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "intent": "replace name with a one of containing both types",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/name/type",
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/name/oneOf",
+            "value": [
+              {
+                "type": "number",
+              },
+              {
+                "type": "string",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 mismatched type in schema 2`] = `
+{
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "name": {
+                      "oneOf": [
+                        {
+                          "type": "number",
+                        },
+                        {
+                          "type": "string",
+                        },
+                      ],
+                    },
+                  },
+                  "type": "object",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 missing required property 1`] = `
+[
+  {
+    "description": "update response body: make property name optional",
+    "diff": {
+      "description": "required property 'name' was missing",
+      "example": undefined,
+      "instancePath": "/name",
+      "key": "name",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "",
+      "propertyPath": "/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove name from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required/0",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 missing required property 2`] = `
+{
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [],
+                  "type": "object",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented property in schema 1`] = `
+[
+  {
+    "description": "update response body: add property name",
+    "diff": {
+      "description": "'name' is not documented",
+      "example": "me",
+      "instancePath": "/name",
+      "key": "name",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/name",
+      "propertyPath": "/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add required [] to parent object and make name required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required",
+            "value": [
+              "name",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property name schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/name",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented property in schema 2`] = `
+{
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "name",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
 exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body 1`] = `
 [
   {
@@ -692,44 +921,6 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body
 exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response body 1`] = `
 [
   {
-    "description": "operation: add 'application/json' body as a valid request body type",
-    "diff": {
-      "contentType": "application/json",
-      "kind": "UnmatchedRequestBody",
-    },
-    "groupedOperations": [
-      {
-        "intent": "add request body to operation",
-        "operations": [
-          {
-            "op": "add",
-            "path": "/paths/~1api~1animals/post/requestBody",
-            "value": {
-              "content": {},
-            },
-          },
-        ],
-      },
-      {
-        "intent": "add application/json as content type",
-        "operations": [
-          {
-            "op": "add",
-            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json",
-            "value": {
-              "schema": {},
-            },
-          },
-        ],
-      },
-    ],
-    "impact": [
-      "Addition",
-      "BackwardsCompatible",
-    ],
-    "path": "/paths/~1api~1animals/post",
-  },
-  {
     "description": "operation: add 200 response",
     "diff": {
       "contentType": "application/json",
@@ -767,27 +958,6 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
       "BackwardsCompatible",
     ],
     "path": "/paths/~1api~1animals/post",
-  },
-  {
-    "description": "update request body: add schema object",
-    "diff": undefined,
-    "groupedOperations": [
-      {
-        "intent": "add schema object",
-        "operations": [
-          {
-            "op": "add",
-            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/type",
-            "value": "object",
-          },
-        ],
-      },
-    ],
-    "impact": [
-      "Addition",
-      "BackwardsIncompatible",
-    ],
-    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
     "description": "update response body: add schema object",
@@ -1297,15 +1467,6 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
   "paths": {
     "/api/animals": {
       "post": {
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-              },
-            },
-          },
-        },
         "responses": {
           "200": {
             "content": {
@@ -1370,6 +1531,235 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
               },
             },
             "description": "200 response",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 mismatched type in schema 1`] = `
+[
+  {
+    "description": "update response body: make name oneOf",
+    "diff": {
+      "description": "'name' did not match schema",
+      "example": "me",
+      "expectedType": "number",
+      "instancePath": "/name",
+      "key": "name",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "intent": "replace name with a one of containing both types",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/name/type",
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/name/oneOf",
+            "value": [
+              {
+                "type": "number",
+              },
+              {
+                "type": "string",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 mismatched type in schema 2`] = `
+{
+  "info": {},
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "name": {
+                      "oneOf": [
+                        {
+                          "type": "number",
+                        },
+                        {
+                          "type": "string",
+                        },
+                      ],
+                    },
+                  },
+                  "type": "object",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 missing required property 1`] = `
+[
+  {
+    "description": "update response body: make property name optional",
+    "diff": {
+      "description": "required property 'name' was missing",
+      "example": undefined,
+      "instancePath": "/name",
+      "key": "name",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "",
+      "propertyPath": "/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove name from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required/0",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 missing required property 2`] = `
+{
+  "info": {},
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [],
+                  "type": "object",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented property in schema 1`] = `
+[
+  {
+    "description": "update response body: add property name",
+    "diff": {
+      "description": "'name' is not documented",
+      "example": "me",
+      "instancePath": "/name",
+      "key": "name",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/name",
+      "propertyPath": "/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add required [] to parent object and make name required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required",
+            "value": [
+              "name",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property name schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/name",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented property in schema 2`] = `
+{
+  "info": {},
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "name",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
           },
         },
       },
@@ -2126,44 +2516,6 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented request body
 exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented response body 1`] = `
 [
   {
-    "description": "operation: add 'application/json' body as a valid request body type",
-    "diff": {
-      "contentType": "application/json",
-      "kind": "UnmatchedRequestBody",
-    },
-    "groupedOperations": [
-      {
-        "intent": "add request body to operation",
-        "operations": [
-          {
-            "op": "add",
-            "path": "/paths/~1api~1animals/post/requestBody",
-            "value": {
-              "content": {},
-            },
-          },
-        ],
-      },
-      {
-        "intent": "add application/json as content type",
-        "operations": [
-          {
-            "op": "add",
-            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json",
-            "value": {
-              "schema": {},
-            },
-          },
-        ],
-      },
-    ],
-    "impact": [
-      "Addition",
-      "BackwardsCompatible",
-    ],
-    "path": "/paths/~1api~1animals/post",
-  },
-  {
     "description": "operation: add 200 response",
     "diff": {
       "contentType": "application/json",
@@ -2201,27 +2553,6 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented response bod
       "BackwardsCompatible",
     ],
     "path": "/paths/~1api~1animals/post",
-  },
-  {
-    "description": "update request body: add schema object",
-    "diff": undefined,
-    "groupedOperations": [
-      {
-        "intent": "add schema object",
-        "operations": [
-          {
-            "op": "add",
-            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/type",
-            "value": "object",
-          },
-        ],
-      },
-    ],
-    "impact": [
-      "Addition",
-      "BackwardsIncompatible",
-    ],
-    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
     "description": "update response body: add schema object",
@@ -2789,15 +3120,6 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented response bod
   "paths": {
     "/api/animals": {
       "post": {
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-              },
-            },
-          },
-        },
         "responses": {
           "200": {
             "content": {
