@@ -145,14 +145,16 @@ export function getEndpointsChanges(
         return `${changeType} support for ${path} property`;
       } else return `changed ${path} property`;
     } else {
-      const enumValue = jsonPointerHelpers.get(spec, fullSegments);
-      const changeLabel =
-        changeType === 'changed' && typeof enumValue === 'string'
-          ? ` to \`${enumValue}\``
+      const value = jsonPointerHelpers.get(spec, fullSegments);
+      const changePreview =
+        changeType === 'changed' &&
+        typeof value === 'string' &&
+        ['type', 'format'].indexOf(segments[segments.length - 1]) > -1
+          ? ` to \`${value}\``
           : ``;
       return `${changeType} ${outPaths
         .map((s) => `\`${s}\``)
-        .join('.')}${changeLabel}`;
+        .join('.')}${changePreview}`;
     }
   };
 
