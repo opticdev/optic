@@ -35,6 +35,7 @@ import { GroupedCaptures } from './interactions/grouped-interactions';
 import { OPTIC_URL_KEY } from '../../constants';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { uploadCoverage } from './actions/upload-coverage';
+import { createOpticConfig } from '../../utils/write-optic-config';
 
 const indent = (n: number) => '  '.repeat(n);
 
@@ -140,12 +141,20 @@ const getCaptureAction =
     }
 
     if (options.init) {
-      // no optic.yml is present but the command would attempt to write
+      // no optic.yml is present but the command would attempt to write.
+      // create an optic.yml with a default capture block.
       if (!config.configPath && !options.stdout) {
-        logger.info(
-          'This command would write to your optic.yml, but none was found. If you want to generate an optic.yml in this directory, run `optic beta capture openapi.yml --init --stdout > optic.yml`.'
-        );
-        return;
+        try {
+          config.configPath = await createOpticConfig(
+            config.root,
+            'capture',
+            {}
+          );
+        } catch (err) {
+          logger.error(err);
+          process.exitCode = 1;
+          return;
+        }
       }
 
       // don't write a capture block when it would be destructive

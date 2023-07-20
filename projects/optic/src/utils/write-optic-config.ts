@@ -1,5 +1,20 @@
 import yaml from 'yaml';
 import fs from 'node:fs/promises';
+import path from 'path';
+
+export async function createOpticConfig(
+  filePath: string,
+  key: string,
+  value: any
+): Promise<string> {
+  const opticYmlPath = path.join(filePath, 'optic.yml');
+  const opticYml = new yaml.Document();
+  opticYml.set(key, value);
+  await fs.writeFile(opticYmlPath, opticYml.toString()).catch((err) => {
+    throw err;
+  });
+  return opticYmlPath;
+}
 
 // merges a yaml document into the existing optic.yml and writes it to disk. if newDocument's top-level
 // key already exists in the Optic config, it is overwritten.
