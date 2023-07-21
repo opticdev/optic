@@ -15,6 +15,7 @@ import { getInteractions } from './captures';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { OPTIC_URL_KEY } from '../../constants';
 import { patchOperationsAsNeeded } from './diffing/patch';
+import { logger } from '../../logger';
 
 type UpdateOptions = {
   all?: string;
@@ -38,6 +39,11 @@ export function updateCommand(): Command {
       []
     )
     .action(async (specPath, operations) => {
+      logger.warn(
+        chalk.yellow.bold(
+          `optic update is deprecated. Start using the new capture flow by running optic capture ${specPath} --update (read the docs <TODO>)`
+        )
+      );
       const analytics: { event: string; properties: any }[] = [];
       const options: UpdateOptions = command.opts();
 

@@ -6,6 +6,7 @@ import { trackEvent, flushEvents } from '../../segment';
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { logger } from '../../logger';
 import { createNewSpecFile } from '../../utils/specs';
+import chalk from 'chalk';
 
 const defaultOpenAPIVersion = '3.1.0';
 
@@ -26,6 +27,11 @@ export async function newCommand(): Promise<Command> {
       defaultOpenAPIVersion
     )
     .action(async (filePath: string) => {
+      logger.warn(
+        chalk.yellow.bold(
+          'optic new is deprecated. You can now run `optic capture <file_name>.yml` which will create a new file for you if it doesnt exist'
+        )
+      );
       if (await fs.pathExists(filePath)) {
         return await feedback.inputError(
           `File  already exists at ${filePath}`,
