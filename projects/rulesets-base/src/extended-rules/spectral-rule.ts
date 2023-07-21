@@ -93,7 +93,7 @@ function toOpticRuleResult(
     where: `${lifecycle} `,
     location: {
       jsonPath,
-      spec: 'before',
+      spec: 'after',
     },
     name: `Spectral ${lifecycle} rule`,
     type: lifecycle === 'always' ? 'requirement' : lifecycle,
