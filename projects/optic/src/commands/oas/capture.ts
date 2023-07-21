@@ -7,10 +7,7 @@ import { Writable } from 'stream';
 import exitHook from 'async-exit-hook';
 import * as AT from './lib/async-tools';
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
-import {
-  trackEvent,
-  flushEvents,
-} from '@useoptic/openapi-utilities/build/utilities/segment';
+import { trackEvent, flushEvents } from '../../segment';
 import logNode from 'log-node';
 import { isJson, isYaml, writeYaml } from '@useoptic/openapi-io';
 

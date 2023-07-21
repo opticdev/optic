@@ -5,7 +5,7 @@ import { PatchOperation } from '../patches';
 import JsonPatch from 'fast-json-patch';
 import { OperationPatch } from '../operations';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
-import { SentryClient } from '@useoptic/openapi-utilities/build/utilities/sentry';
+import { SentryClient } from '../../../sentry';
 
 export type SchemaObject = OpenAPIV3.SchemaObject;
 

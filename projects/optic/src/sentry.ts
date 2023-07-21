@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/node';
-import { UserError } from '../errors';
+import { UserError } from '@useoptic/openapi-utilities';
 
 export { Sentry as SentryClient };
 

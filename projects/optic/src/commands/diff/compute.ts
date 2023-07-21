@@ -7,7 +7,7 @@ import { generateRuleRunner } from './generate-rule-runner';
 import { OPTIC_STANDARD_KEY } from '../../constants';
 import { ParseResult, parseOpticRef } from '../../utils/spec-loaders';
 import { OpticCliConfig } from '../../config';
-import { trackEvent } from '@useoptic/openapi-utilities/build/utilities/segment';
+import { trackEvent } from '../../segment';
 import { logger } from '../../logger';
 
 let generateContext: (file: string) => any = () => ({});

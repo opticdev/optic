@@ -10,12 +10,7 @@ import chalk from 'chalk';
 import { getNewTokenUrl } from '../../utils/cloud-urls';
 import { errorHandler } from '../../error-handler';
 import { createOpticClient } from '../../client';
-import {
-  flushEvents,
-  identify,
-  alias,
-  trackEvent,
-} from '@useoptic/openapi-utilities/build/utilities/segment';
+import { flushEvents, identify, alias, trackEvent } from '../../segment';
 export const registerLogin = (cli: Command, config: OpticCliConfig) => {
   cli
     .command('login')

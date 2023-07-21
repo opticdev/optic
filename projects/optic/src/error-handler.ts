@@ -1,13 +1,10 @@
 import { UserError } from '@useoptic/openapi-utilities';
-import { SentryClient } from '@useoptic/openapi-utilities/build/utilities/sentry';
+import { SentryClient } from './sentry';
 import chalk from 'chalk';
 import { BadRequestError, ForbiddenError } from './client/errors';
 import { logger } from './logger';
 import { OpenAPIVersionError, ValidationError } from '@useoptic/openapi-io';
-import {
-  flushEvents,
-  trackEvent,
-} from '@useoptic/openapi-utilities/build/utilities/segment';
+import { flushEvents, trackEvent } from './segment';
 import { ResolverError } from '@useoptic/openapi-io';
 
 export const errorHandler = <Args extends any[], Return extends any>(
