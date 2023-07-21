@@ -34,6 +34,7 @@ import { GroupedCaptures } from './interactions/grouped-interactions';
 import { OPTIC_URL_KEY } from '../../constants';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { uploadCoverage } from './actions/upload-coverage';
+import { InferPathStructure } from './operations/infer-path-structure';
 
 const indent = (n: number) => '  '.repeat(n);
 
@@ -292,6 +293,11 @@ const getCaptureAction =
       logger.info(
         chalk.bold.gray('Learning path patterns for unmatched requests...')
       );
+      const inferredPathStructure =
+        await InferPathStructure.fromSpecAndInteractions(
+          spec.jsonLike,
+          captures.getUndocumentedInteractions()
+        );
       const {
         interactions: filteredInteractions,
         ignorePaths: newIgnorePaths,
@@ -299,6 +305,7 @@ const getCaptureAction =
       } = await promptUserForPathPattern(
         captures.getUndocumentedInteractions(),
         spec.jsonLike,
+        inferredPathStructure,
         { update: options.update }
       );
 
