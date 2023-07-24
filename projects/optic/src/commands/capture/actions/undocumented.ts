@@ -27,6 +27,7 @@ type MethodMap = Map<string, { add: Set<string>; ignore: Set<string> }>;
 export async function promptUserForPathPattern(
   interactions: CapturedInteractions,
   spec: OpenAPIV3.Document,
+  inferredPathStructure: InferPathStructure,
   options: { update: 'interactive' | 'automatic' }
 ) {
   const filteredInteractions: CapturedInteraction[] = [];
@@ -55,7 +56,6 @@ export async function promptUserForPathPattern(
       maybeNode?.ignore.add(ignore.path);
     }
   }
-  const inferredPathStructure = new InferPathStructure(specToPaths(spec));
 
   for await (const interaction of interactions) {
     const { path, method } = interaction.request;
