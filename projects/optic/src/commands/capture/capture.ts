@@ -13,6 +13,7 @@ import { createNewSpecFile } from '../../utils/specs';
 import { logger } from '../../logger';
 import { OpticCliConfig, VCS } from '../../config';
 import { clearCommand } from '../oas/capture-clear';
+import { initCommand } from './capture-init';
 import { captureV1 } from '../oas/capture';
 
 import { getCaptureStorage } from './storage';
@@ -34,6 +35,7 @@ import { GroupedCaptures } from './interactions/grouped-interactions';
 import { OPTIC_URL_KEY } from '../../constants';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { uploadCoverage } from './actions/upload-coverage';
+import { resolveRelativePath } from '../../utils/capture';
 import { InferPathStructure } from './operations/infer-path-structure';
 
 const indent = (n: number) => '  '.repeat(n);
@@ -42,6 +44,7 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
   const command = new Command('capture');
 
   command.addCommand(clearCommand());
+  command.addCommand(initCommand(config));
 
   command
     .argument('<openapi-file>', 'an OpenAPI spec file to add an operation to')
@@ -75,7 +78,6 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
       )
     )
     .option('--upload', 'upload coverage results to Optic Cloud', false)
-
     // TODO deprecate hidden options below
     .addOption(
       new Option(
@@ -174,7 +176,7 @@ const getCaptureAction =
         captures.addInteraction(interaction);
       }
     } else {
-      const pathFromRoot = path.relative(config.root, path.resolve(filePath));
+      const pathFromRoot = resolveRelativePath(config.root, filePath);
       const captureConfig = config.capture?.[pathFromRoot];
 
       // verify capture v2 config is present
