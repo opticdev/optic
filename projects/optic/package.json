@@ -14,7 +14,7 @@
   "scripts": {
     "build": "yarn tsc --build --verbose && yarn babel ./src --out-dir ./build --extensions \".ts\",\".tsx\"",
     "clean": "rm -rf build",
-    "test": "ENVIRONMENT=test jest --colors --maxConcurrency=2",
+    "test": "ENVIRONMENT=test jest --colors --maxConcurrency=1",
     "local:run": "yarn ts-node src/index.ts"
   },
   "devDependencies": {
