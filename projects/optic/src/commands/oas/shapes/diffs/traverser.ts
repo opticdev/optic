@@ -128,21 +128,27 @@ export class SchemaCompilationError extends Error {
   }
 }
 
-/*
-  Some developers don't set all the JSON Schema properties because it's quite verbose,
-  effectively underspecifing their schemas. Optic tries to apply sensible defaults,
-  which are easy to override by writing your schemas properly
- */
 function prepareSchemaForDiff(input: SchemaObject): SchemaObject {
   const schema: SchemaObject = JSON.parse(JSON.stringify(input));
   jsonSchemaTraverse(schema as OpenAPIV3.SchemaObject, {
     allKeys: true,
     cb: (schema) => {
+      /*
+        Some developers don't set all the JSON Schema properties because it's quite verbose,
+        effectively underspecifing their schemas. Optic tries to apply sensible defaults,
+        which are easy to override by writing your schemas properly
+       */
       if (
         schema.type === 'object' &&
         !schema.hasOwnProperty('additionalProperties')
       ) {
         schema['additionalProperties'] = false;
+      }
+
+      // Fix case where nullable is set and there is no type key
+      if (!schema.type && schema.nullable) {
+        // We set this to string since we're not sure what the actual type is; this should be fine for us since we'll use this schema for diffing purposes and update
+        schema.type = 'string';
       }
     },
   });

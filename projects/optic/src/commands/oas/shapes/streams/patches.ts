@@ -4,6 +4,8 @@ import { diffBodyBySchema } from '../diffs';
 import { newSchemaPatch, generateShapePatchesByDiff } from '../patches';
 import { DocumentedBody } from '../body';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
+import { SentryClient } from '../../../../sentry';
+import { logger } from '../../../../logger';
 
 export interface ShapePatches extends Iterable<ShapePatch> {}
 
@@ -14,7 +16,12 @@ export class ShapePatches {
     documentedBody: DocumentedBody,
     openAPIVersion: SupportedOpenAPIVersions
   ): ShapePatches {
-    let { body: optionalBody, schema, shapeLocation } = documentedBody;
+    let {
+      body: optionalBody,
+      schema,
+      shapeLocation,
+      specJsonPath,
+    } = documentedBody;
 
     if (optionalBody.none) return; // no patches if there is no body
     let body = optionalBody.unwrap();
@@ -34,7 +41,14 @@ export class ShapePatches {
         schema = Schema.applyShapePatch(schema, patch);
       }
 
-      let shapeDiffs = diffBodyBySchema(body, schema);
+      let shapeDiffsOpt = diffBodyBySchema(body, schema);
+      if (shapeDiffsOpt.err) {
+        logger.error(`Could not update body at ${specJsonPath}`);
+        logger.error(shapeDiffsOpt.val);
+        SentryClient.captureException(shapeDiffsOpt.val);
+        break;
+      }
+      let shapeDiffs = shapeDiffsOpt.val;
 
       let patchCount = 0;
       let shouldRegenerate = false;

@@ -326,6 +326,75 @@ describe('generateEndpointSpecPatches', () => {
       expect(patches).toMatchSnapshot();
       expect(specHolder.spec).toMatchSnapshot();
     });
+
+    test('existing schema that does not match', async () => {
+      specHolder.spec.paths['/api/animals'].post.responses = {
+        '200': {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  data: { type: 'array', items: { type: 'object' } },
+                  next: { nullable: true },
+                  has_more_data: { type: 'boolean' },
+                },
+                required: ['data', 'next', 'has_more_data'],
+              },
+            },
+          },
+        },
+      };
+
+      const interaction: CapturedInteraction = {
+        request: {
+          host: 'localhost:3030',
+          method: OpenAPIV3.HttpMethods.POST,
+          path: '/api/animals',
+          body: null,
+          headers: [],
+          query: [],
+        },
+        response: {
+          statusCode: '200',
+          body: CapturedBody.fromJSON({
+            books: [
+              {
+                id: 'WjE9O1d8ELCb8POiOw4pn',
+                name: 'Pride and Prejudice',
+                author_id: '6nTxAFM5ck4Hob77hGQoL',
+                price: 10,
+                created_at: '2023-01-22T17:17:41.326Z',
+                updated_at: '2023-01-22T17:17:41.326Z',
+              },
+              {
+                id: 'vZsYVmzdxtihxQNqCs-3f',
+                name: 'The Great Gatsby',
+                author_id: 'NjpTwgmENj11rGdUgpCQ9',
+                price: 15,
+                created_at: '2022-10-22T10:11:51.421Z',
+                updated_at: '2022-10-22T10:11:51.421Z',
+              },
+            ],
+          }),
+          headers: [],
+        },
+      };
+
+      const patches = await AT.collect(
+        generateEndpointSpecPatches(
+          GenerateInteractions([interaction]),
+          specHolder,
+          {
+            method: 'post',
+            path: '/api/animals',
+          }
+        )
+      );
+
+      expect(patches).toMatchSnapshot();
+      expect(specHolder.spec).toMatchSnapshot();
+    });
   });
 });
 
