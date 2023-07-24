@@ -52,7 +52,7 @@ export class ProxyInteractions {
       logger.error(
         `${chalk.red(
           'Error:'
-        )} Invalid URL. Valid URLs must include the protocol and host, e.g. http://localhost:3030 or https://api.example.com`
+        )} Invalid URL. Valid URLs must include the protocol and host, e.g. http://localhost:3030 or https://api.example.com, received: ${targetHost}`
       );
       throw new UserError();
     }

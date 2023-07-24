@@ -1,0 +1,19 @@
+GetBooksBook200ResponseBody:
+  type: object
+  properties:
+    id:
+      type: string
+    name:
+      type: string
+    author_id:
+      type: string
+    created_at:
+      type: string
+    updated_at:
+      type: string
+  required:
+    - id
+    - name
+    - author_id
+    - created_at
+    - updated_at

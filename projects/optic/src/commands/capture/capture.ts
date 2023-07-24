@@ -220,6 +220,7 @@ const getCaptureAction =
       );
       if (!harEntries) {
         // Error thrown where we don't have requests
+        process.exitCode = 1;
         return;
       }
       for await (const har of harEntries) {

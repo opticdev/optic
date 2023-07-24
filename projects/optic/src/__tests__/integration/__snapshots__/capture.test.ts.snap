@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`capture verify behavior verifies the specification with coverage 1`] = `
+"- Generating traffic to send to server
+[32m✔[39m Successfully captured requests
+- GET /books
+[32m✔[39m GET /books
+  [32m✓ [39m200 response
+
+4 unmatched interactions
+[33mNew endpoints are only added in interactive mode.[39m
+[34mRun with \`--update interactive\` to add new endpoints[39m
+[33mHint: optic capture openapi.yml --update interactive[39m
+"
+`;

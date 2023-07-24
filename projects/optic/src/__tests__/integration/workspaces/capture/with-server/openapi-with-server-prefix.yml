@@ -1,0 +1,18 @@
+openapi: 3.0.3
+info:
+  title: a spec
+  description: The API
+  version: 0.1.0
+servers:
+  - name: server
+    url: http://127.0.0.1:8000/a-prefix
+paths:
+  /books:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/GetBooks200ResponseBody"

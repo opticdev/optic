@@ -128,7 +128,6 @@ function sendRequests(
     maxConcurrent: concurrency,
     minTime: 0,
   });
-
   return reqs.map(async (r) => {
     let verb = r.method || 'GET';
     let opts = { method: verb };
@@ -235,12 +234,7 @@ export async function captureRequestsFromProxy(
     color: 'blue',
   }).start();
 
-  // start proxy
-  const proxy = new ProxyInstance(
-    options.serverOverride || captureConfig.server.url
-  );
-  await proxy.start(options.proxyPort ? Number(options.proxyPort) : undefined);
-
+  const serverUrl = options.serverOverride || captureConfig.server.url;
   const serverDir =
     captureConfig.server.dir === undefined
       ? config.root
@@ -249,6 +243,7 @@ export async function captureRequestsFromProxy(
   const readyInterval = captureConfig.server.ready_interval || 1000;
   // start app
   let app: ChildProcessWithoutNullStreams | undefined;
+  let proxy: ProxyInstance | undefined = undefined;
 
   let errors: any[] = [];
   try {
@@ -267,11 +262,16 @@ export async function captureRequestsFromProxy(
           captureConfig.server.ready_endpoint,
           readyInterval,
           timeout,
-          proxy.targetUrl,
+          serverUrl,
           spinner
         );
       }
     }
+    // start proxy
+    proxy = new ProxyInstance(serverUrl);
+    await proxy.start(
+      options.proxyPort ? Number(options.proxyPort) : undefined
+    );
 
     spinner.text = 'Sending requests to server';
     let [sendRequestsPromise, runRequestsPromise] = makeAllRequests(
@@ -293,7 +293,7 @@ export async function captureRequestsFromProxy(
     // The finally block will run before we return from the fn call
     return;
   } finally {
-    proxy.stop();
+    proxy?.stop();
     if (app && app.pid && app.exitCode === null) {
       process.kill(-app.pid);
     }
