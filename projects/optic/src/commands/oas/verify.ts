@@ -23,6 +23,7 @@ import * as Git from '../../utils/git-utils';
 import { sanitizeGitTag } from '@useoptic/openapi-utilities';
 import { nextCommand } from './reporters/next-command';
 import { getInteractions } from './captures';
+import { logger } from '../../logger';
 
 type VerifyOptions = {
   exit0?: boolean;
@@ -56,6 +57,11 @@ export function verifyCommand(config: OpticCliConfig): Command {
     )
     .action(async (specPath) => {
       const options = command.opts();
+      logger.warn(
+        chalk.yellow.bold(
+          `optic update is deprecated. Start using the new capture flow by running optic capture ${specPath} (read the docs <TODO>)`
+        )
+      );
 
       return await runVerify(
         specPath,

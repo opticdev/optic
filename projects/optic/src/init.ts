@@ -120,7 +120,7 @@ export const initCli = async (
   registerDiff(cli, cliConfig);
 
   const betaSubcommands = cli.command('beta', { hidden: true });
-  registerCaptureCommand(betaSubcommands, cliConfig);
+  registerCaptureCommand(cli, cliConfig);
 
   //@todo by 2023/5/10
   const oas = new Command('oas').description(
@@ -135,7 +135,6 @@ export const initCli = async (
   cli.addCommand(oas);
 
   // commands for tracking changes with openapi
-  cli.addCommand(await captureV1Command(cliConfig));
   cli.addCommand(await newCommand());
   cli.addCommand(await setupTlsCommand());
   cli.addCommand(verifyCommand(cliConfig));
