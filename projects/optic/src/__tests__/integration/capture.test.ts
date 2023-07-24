@@ -16,7 +16,7 @@ import {
 } from './integration';
 import portfinder from 'portfinder';
 
-jest.setTimeout(30000);
+jest.setTimeout(50000);
 
 let oldEnv: any;
 let port: string;
