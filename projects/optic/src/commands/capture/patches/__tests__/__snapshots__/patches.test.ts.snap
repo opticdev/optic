@@ -484,7 +484,6 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 existing schema that does
                     },
                     "next": {
                       "nullable": true,
-                      "type": "string",
                     },
                   },
                   "required": [
@@ -1304,6 +1303,64 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
+    "description": "update request body: make property skill optional",
+    "diff": {
+      "description": "required property 'skill' was missing",
+      "example": undefined,
+      "instancePath": "/hobbies/1/skill",
+      "key": "skill",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/skill",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove skill from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/required/2",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "update request body: make property bad optional",
+    "diff": {
+      "description": "required property 'bad' was missing",
+      "example": undefined,
+      "instancePath": "/hobbies/1/bad",
+      "key": "bad",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/bad",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove bad from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema/properties/hobbies/items/oneOf/1/required/2",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
     "description": "update response body: add schema object",
     "diff": undefined,
     "groupedOperations": [
@@ -1377,8 +1434,6 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body
                           "required": [
                             "type",
                             "name",
-                            "skill",
-                            "bad",
                           ],
                           "type": "object",
                         },
@@ -1959,6 +2014,64 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
     ],
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
+  {
+    "description": "update response body: make property skill optional",
+    "diff": {
+      "description": "required property 'skill' was missing",
+      "example": undefined,
+      "instancePath": "/hobbies/1/skill",
+      "key": "skill",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/skill",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove skill from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/required/2",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make property bad optional",
+    "diff": {
+      "description": "required property 'bad' was missing",
+      "example": undefined,
+      "instancePath": "/hobbies/1/bad",
+      "key": "bad",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "/properties/hobbies/items/oneOf/1",
+      "propertyPath": "/properties/hobbies/items/oneOf/1/properties/bad",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove bad from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/hobbies/items/oneOf/1/required/2",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
 ]
 `;
 
@@ -2008,8 +2121,6 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
                             "required": [
                               "type",
                               "name",
-                              "skill",
-                              "bad",
                             ],
                             "type": "object",
                           },
@@ -2525,7 +2636,6 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 existing schema that does
                     },
                     "next": {
                       "nullable": true,
-                      "type": "string",
                     },
                   },
                   "required": [

@@ -336,7 +336,7 @@ describe('generateEndpointSpecPatches', () => {
                 type: 'object',
                 properties: {
                   data: { type: 'array', items: { type: 'object' } },
-                  next: { type: 'string', nullable: true },
+                  next: { nullable: true },
                   has_more_data: { type: 'boolean' },
                 },
                 required: ['data', 'next', 'has_more_data'],
