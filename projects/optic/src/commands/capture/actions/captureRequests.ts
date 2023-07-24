@@ -54,6 +54,10 @@ function startApp(
   const cmd = commandSplitter(command);
   const app = spawn(cmd.cmd, cmd.args, { detached: true, cwd: dir });
 
+  app.stdout.on('data', (data) => {
+    logger.debug(data.toString());
+  });
+
   app.stderr.on('data', (data) => {
     logger.error(data.toString());
   });
@@ -253,6 +257,9 @@ export async function captureRequestsFromProxy(
       promise: new Promise(() => {}),
     };
     if (!options.serverOverride && captureConfig.server.command) {
+      logger.debug(
+        `Starting app using command ${captureConfig.server.command}`
+      );
       [app, bailout] = startApp(captureConfig.server.command, serverDir);
       // If we don't bail out (i.e. the server is still running), we need the promise to be passed down to the next request
       if (captureConfig.server.ready_endpoint) {

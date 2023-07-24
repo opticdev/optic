@@ -22,7 +22,7 @@ let oldEnv: any;
 let port: string;
 beforeEach(async () => {
   oldEnv = { ...process.env };
-  process.env.LOG_LEVEL = 'info';
+  process.env.LOG_LEVEL = 'debug';
   process.env.OPTIC_ENV = 'local';
   port = String(await portfinder.getPortPromise());
   console.log(`test is using port: `, port);
