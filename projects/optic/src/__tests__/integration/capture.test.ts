@@ -32,20 +32,16 @@ afterEach(() => {
   process.env = { ...oldEnv };
 });
 
-async function setPortInOpticYml(workspace: string) {
+async function setPortInFile(workspace: string, file: string) {
   // Set the port in the optic yml for an available port
-  await run(
-    `sed -i.bak 's/%PORT/${port}/' optic.yml optic.yml`,
-    false,
-    workspace
-  );
+  await run(`sed -i.bak 's/%PORT/${port}/' ${file} ${file}`, false, workspace);
 }
 
 describe('capture', () => {
   describe('verify behavior', () => {
     test('verifies the specification with coverage', async () => {
       const workspace = await setupWorkspace('capture/with-server');
-      await setPortInOpticYml(workspace);
+      await setPortInFile(workspace, 'optic.yml');
 
       const { combined, code } = await runOptic(
         workspace,
@@ -59,7 +55,7 @@ describe('capture', () => {
   describe('update behavior', () => {
     test('updates only existing endpoints by default', async () => {
       const workspace = await setupWorkspace('capture/with-server');
-      await setPortInOpticYml(workspace);
+      await setPortInFile(workspace, 'optic.yml');
 
       const { combined, code } = await runOptic(
         workspace,
@@ -75,7 +71,7 @@ describe('capture', () => {
 
     test('updates all endpoints with --update automatic', async () => {
       const workspace = await setupWorkspace('capture/with-server');
-      await setPortInOpticYml(workspace);
+      await setPortInFile(workspace, 'optic.yml');
 
       const { combined, code } = await runOptic(
         workspace,
@@ -90,7 +86,7 @@ describe('capture', () => {
 
     test('respects x-optic-path-ignore', async () => {
       const workspace = await setupWorkspace('capture/with-server');
-      await setPortInOpticYml(workspace);
+      await setPortInFile(workspace, 'optic.yml');
 
       const { combined, code } = await runOptic(
         workspace,
@@ -107,7 +103,23 @@ describe('capture', () => {
     });
 
     test('handle server path prefixes in spec', async () => {
-      process.env.SERVER_PREFIX = '/a-prefix';
+      process.env.SERVER_PREFIX = '/api';
+      const workspace = await setupWorkspace('capture/with-server');
+      await setPortInFile(workspace, 'optic.yml');
+      await setPortInFile(workspace, 'openapi-with-server-prefix.yml');
+
+      const { combined, code } = await runOptic(
+        workspace,
+        'capture openapi-with-server-prefix.yml --update automatic'
+      );
+      expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+      expect(code).toBe(0);
+      expect(
+        await fs.readFile(
+          path.join(workspace, 'openapi-with-server-prefix.yml'),
+          'utf-8'
+        )
+      ).toMatchSnapshot();
     });
 
     test('handles update in other file', async () => {});

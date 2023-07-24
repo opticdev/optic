@@ -5,7 +5,7 @@ info:
   version: 0.1.0
 servers:
   - name: server
-    url: http://127.0.0.1:8000/a-prefix
+    url: http://127.0.0.1:%PORT/api
 paths:
   /books:
     get:
@@ -13,6 +13,18 @@ paths:
         "200":
           description: 200 response
           content:
-            application/json; charset=utf-8:
+            application/json:
               schema:
                 $ref: "#/components/schemas/GetBooks200ResponseBody"
+components:
+  schemas:
+    GetBooks200ResponseBody:
+      type: object
+      properties:
+        books:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string

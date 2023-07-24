@@ -40,17 +40,17 @@ const books = [
 
 const requestListener = function (req, res) {
   res.setHeader("Content-Type", "application/json");
-  const prefixedUrl = serverPrefix ? req.url.replace(serverPrefix) : req.url
-  if (prefixedUrl === '/books' && req.method === 'GET') {
+  const normalizedUrl = serverPrefix ? req.url.replace(serverPrefix, '') : req.url
+  if (normalizedUrl === '/books' && req.method === 'GET') {
     res.writeHead(200);
     res.end(JSON.stringify({books}));
-  } else if (/^\/books\//i.test(prefixedUrl) && req.method === 'GET') {
+  } else if (/^\/books\//i.test(normalizedUrl) && req.method === 'GET') {
     res.writeHead(200);
     res.end(JSON.stringify(books[0]));
-  } else if (/^\/books\//i.test(prefixedUrl) && req.method === 'POST') {
+  } else if (/^\/books\//i.test(normalizedUrl) && req.method === 'POST') {
     res.writeHead(200);
     res.end(JSON.stringify(books[0]));
-  }else if (prefixedUrl === '/authors' && req.method === 'GET') {
+  }else if (normalizedUrl === '/authors' && req.method === 'GET') {
     res.writeHead(200);
     res.end(JSON.stringify({authors}));
   } else if (req.url === '/healthcheck' && req.method === 'GET') {

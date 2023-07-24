@@ -18,7 +18,6 @@ import { captureV1 } from '../oas/capture';
 import { getCaptureStorage } from './storage';
 import { loadSpec, specHasUncommittedChanges } from '../../utils/spec-loaders';
 import { ApiCoverageCounter } from './coverage/api-coverage';
-import { specToOperations } from './operations/queries';
 import { HarEntries } from './sources/har';
 import {
   addIgnorePaths,
@@ -143,13 +142,7 @@ const getCaptureAction =
       strict: false,
       denormalize: false,
     });
-    const captures = new GroupedCaptures(
-      trafficDirectory,
-      specToOperations(spec.jsonLike).map((p) => ({
-        ...p,
-        path: p.pathPattern,
-      }))
-    );
+    const captures = new GroupedCaptures(trafficDirectory, spec.jsonLike);
 
     if (options.har) {
       try {
