@@ -289,6 +289,11 @@ export async function captureCommand(config: OpticCliConfig): Promise<Command> {
     )
     .option('-o, --output <output>', 'file name for output')
     .action(async (filePath: string, targetUrl: string) => {
+      logger.warn(
+        chalk.yellow.bold(
+          'optic oas capture is deprecated. Use optic capture instead'
+        )
+      );
       await captureV1(filePath, targetUrl, config, command);
     });
 
