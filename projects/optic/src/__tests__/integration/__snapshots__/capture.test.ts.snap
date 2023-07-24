@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`capture update behavior handle server path prefixes in spec 1`] = `
+exports[`capture with requests update behavior handle server path prefixes in spec 1`] = `
 "- Generating traffic to send to server
 [32m✔[39m Successfully captured requests
 [90m1 endpoint did not receive traffic[39m
@@ -18,7 +18,7 @@ exports[`capture update behavior handle server path prefixes in spec 1`] = `
 "
 `;
 
-exports[`capture update behavior handle server path prefixes in spec 2`] = `
+exports[`capture with requests update behavior handle server path prefixes in spec 2`] = `
 "openapi: 3.0.3
 info:
   title: a spec
@@ -165,7 +165,7 @@ components:
 "
 `;
 
-exports[`capture update behavior handles update in other file 1`] = `
+exports[`capture with requests update behavior handles update in other file 1`] = `
 "- Generating traffic to send to server
 [32m✔[39m Successfully captured requests
 - GET /books
@@ -179,7 +179,7 @@ exports[`capture update behavior handles update in other file 1`] = `
 "
 `;
 
-exports[`capture update behavior handles update in other file 2`] = `
+exports[`capture with requests update behavior handles update in other file 2`] = `
 "openapi: 3.0.3
 info:
   title: a spec
@@ -198,7 +198,7 @@ paths:
 "
 `;
 
-exports[`capture update behavior handles update in other file 3`] = `
+exports[`capture with requests update behavior handles update in other file 3`] = `
 "GetBooks200ResponseBody:
   type: object
   properties:
@@ -228,7 +228,7 @@ exports[`capture update behavior handles update in other file 3`] = `
 "
 `;
 
-exports[`capture update behavior respects x-optic-path-ignore 1`] = `
+exports[`capture with requests update behavior respects x-optic-path-ignore 1`] = `
 "- Generating traffic to send to server
 [32m✔[39m Successfully captured requests
 - GET /books
@@ -247,7 +247,7 @@ exports[`capture update behavior respects x-optic-path-ignore 1`] = `
 "
 `;
 
-exports[`capture update behavior respects x-optic-path-ignore 2`] = `
+exports[`capture with requests update behavior respects x-optic-path-ignore 2`] = `
 "openapi: 3.0.3
 info:
   title: a spec
@@ -353,7 +353,7 @@ components:
 "
 `;
 
-exports[`capture update behavior updates all endpoints with --update automatic 1`] = `
+exports[`capture with requests update behavior updates all endpoints with --update automatic 1`] = `
 "- Generating traffic to send to server
 [32m✔[39m Successfully captured requests
 - GET /books
@@ -376,7 +376,7 @@ exports[`capture update behavior updates all endpoints with --update automatic 1
 "
 `;
 
-exports[`capture update behavior updates all endpoints with --update automatic 2`] = `
+exports[`capture with requests update behavior updates all endpoints with --update automatic 2`] = `
 "openapi: 3.0.3
 info:
   title: a spec
@@ -518,7 +518,7 @@ components:
 "
 `;
 
-exports[`capture update behavior updates only existing endpoints by default 1`] = `
+exports[`capture with requests update behavior updates only existing endpoints by default 1`] = `
 "- Generating traffic to send to server
 [32m✔[39m Successfully captured requests
 - GET /books
@@ -537,7 +537,7 @@ exports[`capture update behavior updates only existing endpoints by default 1`] 
 "
 `;
 
-exports[`capture update behavior updates only existing endpoints by default 2`] = `
+exports[`capture with requests update behavior updates only existing endpoints by default 2`] = `
 "openapi: 3.0.3
 info:
   title: a spec
@@ -584,7 +584,7 @@ components:
 "
 `;
 
-exports[`capture verify behavior verifies the specification with coverage 1`] = `
+exports[`capture with requests verify behavior verifies the specification with coverage 1`] = `
 "- Generating traffic to send to server
 [32m✔[39m Successfully captured requests
 - GET /books

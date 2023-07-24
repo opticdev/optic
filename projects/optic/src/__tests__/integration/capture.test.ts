@@ -37,7 +37,7 @@ async function setPortInFile(workspace: string, file: string) {
   await run(`sed -i.bak 's/%PORT/${port}/' ${file} ${file}`, false, workspace);
 }
 
-describe('capture', () => {
+describe('capture with requests', () => {
   describe('verify behavior', () => {
     test('verifies the specification with coverage', async () => {
       const workspace = await setupWorkspace('capture/with-server');
