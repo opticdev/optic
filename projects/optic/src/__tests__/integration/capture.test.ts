@@ -122,6 +122,28 @@ describe('capture', () => {
       ).toMatchSnapshot();
     });
 
-    test('handles update in other file', async () => {});
+    test('handles update in other file', async () => {
+      const workspace = await setupWorkspace('capture/with-server');
+      await setPortInFile(workspace, 'optic.yml');
+
+      const { combined, code } = await runOptic(
+        workspace,
+        'capture openapi-with-external-ref.yml --update'
+      );
+      expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+      expect(code).toBe(0);
+      expect(
+        await fs.readFile(
+          path.join(workspace, 'openapi-with-external-ref.yml'),
+          'utf-8'
+        )
+      ).toMatchSnapshot();
+      expect(
+        await fs.readFile(
+          path.join(workspace, './components/books.yml'),
+          'utf-8'
+        )
+      ).toMatchSnapshot();
+    });
   });
 });
