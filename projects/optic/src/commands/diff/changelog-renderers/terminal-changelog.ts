@@ -373,7 +373,7 @@ export function* terminalChangelog(
   const otherEndpoints = countUnusedEndpoints(specs.to.jsonLike, groupedDiffs);
   if (otherEndpoints > 0 && Object.keys(groupedDiffs.endpoints).length > 0)
     yield `...and ${otherEndpoints} other ${
-      otherEndpoints === 1 ? 'endpoint' : 'endpoints'
+      otherEndpoints === 1 ? 'operation' : 'operations'
     }`;
   yield '';
 }
