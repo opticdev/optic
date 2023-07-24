@@ -1,5 +1,7 @@
 import pluralize from 'pluralize';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { CapturedInteractions } from '../sources/captured-interactions';
+import { specToPaths } from './queries';
 
 const COLLAPSE_CONSTANTS_N = 2;
 
@@ -65,6 +67,22 @@ export class InferPathStructure {
     });
 
     this.paths = paths;
+  }
+
+  static async fromSpecAndInteractions(
+    spec: OpenAPIV3.Document,
+    interactions: CapturedInteractions
+  ): Promise<InferPathStructure> {
+    const inferredPathStructure = new InferPathStructure(specToPaths(spec));
+    for await (const interaction of interactions) {
+      inferredPathStructure.includeObservedUrlPath(
+        interaction.request.method,
+        interaction.request.path
+      );
+    }
+    inferredPathStructure.replaceConstantsWithVariables();
+
+    return inferredPathStructure;
   }
 
   /*
@@ -285,12 +303,6 @@ export class InferPathStructure {
       reduce = findMatchingVariables(null);
     }
   };
-
-  // allPaths = () => {
-  //   return this.paths
-  //     .map((pathComponent) => reducePathPattern(pathComponent))
-  //     .sort();
-  // };
 
   undocumentedPaths: () => {
     methods: Array<OpenAPIV3.HttpMethods>;

@@ -2,10 +2,7 @@ import { Command } from 'commander';
 import fs from 'fs-extra';
 import Semver from 'semver';
 import { isJson, isYaml, writeYaml } from '@useoptic/openapi-io';
-import {
-  trackEvent,
-  flushEvents,
-} from '@useoptic/openapi-utilities/build/utilities/segment';
+import { trackEvent, flushEvents } from '../../segment';
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { logger } from '../../logger';
 import { createNewSpecFile } from '../../utils/specs';

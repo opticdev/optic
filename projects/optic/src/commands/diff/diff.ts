@@ -9,10 +9,7 @@ import {
 } from '../../utils/spec-loaders';
 import { ConfigRuleset, OpticCliConfig, VCS } from '../../config';
 import chalk from 'chalk';
-import {
-  flushEvents,
-  trackEvent,
-} from '@useoptic/openapi-utilities/build/utilities/segment';
+import { flushEvents, trackEvent } from '../../segment';
 import {
   SourcemapOptions,
   terminalChangelog,

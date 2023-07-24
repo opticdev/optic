@@ -63,19 +63,6 @@ export {
 } from './openapi3/json-path-interpreters';
 
 export { UserError } from './errors';
-export {
-  findOpticCommentId,
-  OPTIC_COMMENT_SURVEY_LINK,
-} from './utilities/shared-comment';
-export {
-  createCommentBody,
-  createMultiSessionsCommentBody,
-} from './utilities/compare-comment';
-export {
-  logComparison,
-  generateComparisonLogs,
-  getComparisonLogs,
-} from './utilities/comparison-render';
 export { getEndpointsChanges } from './utilities/changelog';
 export {
   BodyChange,

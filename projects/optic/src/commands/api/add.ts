@@ -16,10 +16,7 @@ import { uploadSpec } from '../../utils/cloud-specs';
 import * as Git from '../../utils/git-utils';
 
 import { getApiFromOpticUrl, getApiUrl } from '../../utils/cloud-urls';
-import {
-  flushEvents,
-  trackEvent,
-} from '@useoptic/openapi-utilities/build/utilities/segment';
+import { flushEvents, trackEvent } from '../../segment';
 import { errorHandler } from '../../error-handler';
 import { getOrganizationFromToken } from '../../utils/organization';
 import { sanitizeGitTag } from '@useoptic/openapi-utilities';

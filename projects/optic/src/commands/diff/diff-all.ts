@@ -9,10 +9,7 @@ import { logger } from '../../logger';
 import { OPTIC_URL_KEY } from '../../constants';
 import { compute } from './compute';
 import chalk from 'chalk';
-import {
-  flushEvents,
-  trackEvent,
-} from '@useoptic/openapi-utilities/build/utilities/segment';
+import { flushEvents, trackEvent } from '../../segment';
 import { compressDataV2 } from './compressResults';
 import { textToSev } from '@useoptic/openapi-utilities';
 import { uploadDiff } from './upload-diff';

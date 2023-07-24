@@ -17,7 +17,7 @@ import {
 } from '../../operations';
 import { CapturedBody } from '../../../capture/sources/body';
 import { logger } from '../../../../logger';
-import { SentryClient } from '@useoptic/openapi-utilities/build/utilities/sentry';
+import { SentryClient } from '../../../../sentry';
 
 export type { DocumentedBody };
 

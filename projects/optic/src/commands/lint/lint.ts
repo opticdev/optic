@@ -9,10 +9,7 @@ import { textToSev } from '@useoptic/openapi-utilities';
 import chalk from 'chalk';
 import { generateComparisonLogsV2 } from '../../utils/diff-renderer';
 import { compressDataV2 } from '../diff/compressResults';
-import {
-  flushEvents,
-  trackEvent,
-} from '@useoptic/openapi-utilities/build/utilities/segment';
+import { flushEvents, trackEvent } from '../../segment';
 import { openUrl } from '../../utils/open-url';
 
 const description = `lints and validates an OpenAPI file`;

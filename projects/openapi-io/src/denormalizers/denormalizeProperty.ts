@@ -6,7 +6,7 @@ import { logPointer } from './pointer';
 // TODO this does not handle allOf: [{type:'object'...}, {allOf: [type:'object']}]
 function mergeAllOf(
   allOf: FlatOpenAPIV3.SchemaObject[],
-  sourcemap: JsonSchemaSourcemap,
+  sourcemap: JsonSchemaSourcemap | undefined,
   pointers: { old: string; new: string }
 ) {
   // Then we should merge this and replace it with an object
@@ -37,7 +37,8 @@ function mergeAllOf(
             'required',
             String(effectiveObject.required!.length)
           );
-          logPointer(sourcemap, { old: oldRequired, new: newRequired });
+          sourcemap &&
+            logPointer(sourcemap, { old: oldRequired, new: newRequired });
           effectiveObject.required!.push(key);
         }
         const oldProperty = jsonPointerHelpers.append(
@@ -57,7 +58,8 @@ function mergeAllOf(
           new: newProperty,
         });
 
-        logPointer(sourcemap, { old: oldProperty, new: newProperty });
+        sourcemap &&
+          logPointer(sourcemap, { old: oldProperty, new: newProperty });
         effectiveProperties[key] = property;
       }
     }
@@ -70,7 +72,7 @@ function mergeAllOf(
 
 export function denormalizeProperty(
   schema: FlatOpenAPIV3.SchemaObject,
-  sourcemap: JsonSchemaSourcemap,
+  sourcemap: JsonSchemaSourcemap | undefined,
   pointers: {
     old: string;
     new: string;

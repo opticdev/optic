@@ -3620,9 +3620,6 @@ __metadata:
     "@babel/plugin-transform-runtime": ^7.17.0
     "@babel/preset-env": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
-    "@octokit/rest": ^19.0.0
-    "@sentry/node": ^7.10.0
-    "@types/analytics-node": ^3.1.10
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
     "@types/is-url": ^1.2.30
@@ -3636,7 +3633,6 @@ __metadata:
     ajv: ^8.6.0
     ajv-errors: ~3.0.0
     ajv-formats: ~2.1.0
-    analytics-node: ^6.2.0
     babel-jest: ^29.3.1
     chalk: ^4.1.2
     fast-deep-equal: ^3.1.3
@@ -3674,6 +3670,7 @@ __metadata:
     "@sentry/node": ^7.10.0
     "@sinclair/typebox": ^0.29.0
     "@stoplight/spectral-core": ^1.8.1
+    "@types/analytics-node": ^3.1.10
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
     "@types/fs-extra": ^11.0.0
@@ -3702,6 +3699,7 @@ __metadata:
     "@useoptic/standard-rulesets": "workspace:*"
     ajv: ^8.6.0
     ajv-formats: ~2.1.0
+    analytics-node: ^6.2.0
     async-exit-hook: ^2.0.1
     axax: ^0.2.2
     babel-jest: ^29.3.1

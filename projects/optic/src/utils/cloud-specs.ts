@@ -8,7 +8,7 @@ import { OpticBackendClient } from '../client';
 import { computeChecksumForAws } from './checksum';
 import { downloadFileFromS3, uploadFileToS3 } from './s3';
 import { ParseResult } from './spec-loaders';
-import { trackEvent } from '@useoptic/openapi-utilities/build/utilities/segment';
+import { trackEvent } from '../segment';
 import { logger } from '../logger';
 import { NotFoundError } from '../client/errors';
 import chalk from 'chalk';
