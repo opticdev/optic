@@ -13,6 +13,7 @@ import { createNewSpecFile } from '../../utils/specs';
 import { logger } from '../../logger';
 import { OpticCliConfig, VCS } from '../../config';
 import { clearCommand } from '../oas/capture-clear';
+import { initCommand } from './capture-init';
 import { captureV1 } from '../oas/capture';
 
 import { getCaptureStorage } from './storage';
@@ -30,12 +31,10 @@ import { captureRequestsFromProxy } from './actions/captureRequests';
 import { PostmanCollectionEntries } from './sources/postman';
 import { CapturedInteractions } from './sources/captured-interactions';
 import * as AT from '../oas/lib/async-tools';
-import { initCaptureConfig } from './init';
 import { GroupedCaptures } from './interactions/grouped-interactions';
 import { OPTIC_URL_KEY } from '../../constants';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { uploadCoverage } from './actions/upload-coverage';
-import { createOpticConfig } from '../../utils/write-optic-config';
 import { resolveRelativePath } from '../../utils/capture';
 
 const indent = (n: number) => '  '.repeat(n);
@@ -44,6 +43,7 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
   const command = new Command('capture');
 
   command.addCommand(clearCommand());
+  command.addCommand(initCommand(config));
 
   command
     .argument('<openapi-file>', 'an OpenAPI spec file to add an operation to')
@@ -75,12 +75,6 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
         '-s, --server-override <url>',
         'Skip executing `capture[].server.command` and forward proxy traffic to this URL instead'
       )
-    )
-    .option('--init', 'Add a `capture` block to your Optic.yml')
-    .option(
-      '--stdout',
-      'Use with --init to print the capture config to stdout instead of writing to optic.yml',
-      false
     )
     .option('--upload', 'upload coverage results to Optic Cloud', false)
     // TODO deprecate hidden options below
@@ -138,49 +132,6 @@ const getCaptureAction =
     // capture v1
     if (targetUrl !== undefined) {
       await captureV1(filePath, targetUrl, config, command);
-      return;
-    }
-
-    if (options.init) {
-      // no optic.yml is present but the command would attempt to write.
-      // create an optic.yml with a default capture block.
-      if (!config.configPath && !options.stdout) {
-        try {
-          config.configPath = await createOpticConfig(
-            config.root,
-            'capture',
-            {}
-          );
-        } catch (err) {
-          logger.error(err);
-          process.exitCode = 1;
-          return;
-        }
-      }
-
-      // don't write a capture block when it would be destructive
-      if (
-        config.capture &&
-        Object.keys(config.capture).length !== 0 &&
-        !options.stdout
-      ) {
-        logger.info(
-          'Your optic.yml already contains a `capture` block with contents and this command would modify it. Make modifications to your capture config by editing optic.yml. If you want to see a complete capture block example, run `optic beta capture openapi.yml --init --stdout` instead.'
-        );
-        return;
-      }
-
-      try {
-        const relativeOasFile = resolveRelativePath(config.root, filePath);
-        await initCaptureConfig(
-          relativeOasFile,
-          options.stdout!,
-          config.configPath!
-        );
-      } catch (err) {
-        logger.error(err);
-        process.exitCode = 1;
-      }
       return;
     }
 
