@@ -25,6 +25,7 @@ beforeEach(async () => {
   process.env.LOG_LEVEL = 'info';
   process.env.OPTIC_ENV = 'local';
   port = String(await portfinder.getPortPromise());
+  console.log(`test is using port: `, port);
   process.env.PORT = port;
 });
 
