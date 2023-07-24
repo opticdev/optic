@@ -1,7 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`update update an existing spec with prefixed server 1`] = `
-"[94m» [39mDocumenting new operations...
+"[33m[1moptic update is deprecated. Start using the new capture flow by running optic capture openapi.yml --update (read the docs <TODO>)[22m[39m
+[94m» [39mDocumenting new operations...
   [32madded[39m  post /books
   [32madded[39m  get /books
   [32madded[39m  post /authors
@@ -351,7 +352,8 @@ exports[`update update an existing spec with prefixed server 2`] = `
 `;
 
 exports[`update updates an empty spec 1`] = `
-"[94m» [39mDocumenting new operations...
+"[33m[1moptic update is deprecated. Start using the new capture flow by running optic capture openapi.yml --update (read the docs <TODO>)[22m[39m
+[94m» [39mDocumenting new operations...
   [32madded[39m  post /books
   [32madded[39m  get /books
   [32madded[39m  post /authors
@@ -695,7 +697,8 @@ exports[`update updates an empty spec 2`] = `
 `;
 
 exports[`update updates an existing spec 1`] = `
-"[94m» [39mDocumenting new operations...
+"[33m[1moptic update is deprecated. Start using the new capture flow by running optic capture openapi.yml --update (read the docs <TODO>)[22m[39m
+[94m» [39mDocumenting new operations...
   [32madded[39m  post /books
   [32madded[39m  get /books
   [32madded[39m  post /authors
