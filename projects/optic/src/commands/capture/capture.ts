@@ -113,8 +113,6 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
   cli.addCommand(command);
 }
 type CaptureActionOptions = {
-  init?: boolean;
-  stdout?: boolean;
   proxyPort?: string;
   serverOverride?: string;
   postman?: string;
