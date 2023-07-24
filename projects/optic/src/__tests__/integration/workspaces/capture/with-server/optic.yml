@@ -2,7 +2,7 @@ capture:
   openapi.yml:
     server:
       command: node server.js
-      url: http://127.0.0.1:%PORT
+      url: http://localhost:%PORT
       ready_endpoint: /healthcheck
     requests:
       send:
@@ -23,7 +23,7 @@ capture:
   openapi-with-external-ref.yml:
     server:
       command: node server.js
-      url: http://127.0.0.1:%PORT
+      url: http://localhost:%PORT
       ready_endpoint: /healthcheck
       ready_timeout: 5000
     requests:
@@ -33,7 +33,7 @@ capture:
   openapi-with-server-prefix.yml:
     server:
       command: node server.js
-      url: http://127.0.0.1:%PORT
+      url: http://localhost:%PORT
       ready_endpoint: /healthcheck
     requests:
       send:
@@ -57,7 +57,7 @@ capture:
   openapi-with-ignore.yml:
     server:
       command: node server.js
-      url: http://127.0.0.1:%PORT
+      url: http://localhost:%PORT
       ready_endpoint: /healthcheck
     requests:
       send:
