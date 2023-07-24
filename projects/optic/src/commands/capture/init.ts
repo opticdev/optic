@@ -34,7 +34,7 @@ export function captureConfigExample(oasFile: string) {
           request_concurrency: 4
         server:
           # a command to run your server
-          # optional, if ommitted Optic assumes the server is running or started elsewhere
+          # optional, if omitted Optic assumes the server is running or started elsewhere
           command: your-server-command
           # the url where your server can be reached once running
           # required, can be overridden with '--server-override'
