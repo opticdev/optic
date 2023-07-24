@@ -25,6 +25,7 @@ capture:
       command: node server.js
       url: http://127.0.0.1:%PORT
       ready_endpoint: /healthcheck
+      ready_timeout: 5000
     requests:
       send:
         - path: /books
