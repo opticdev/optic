@@ -15,12 +15,13 @@ import {
   run,
 } from './integration';
 import portfinder from 'portfinder';
+import os from 'os';
 
 jest.setTimeout(60000);
-
 let oldEnv: any;
 let port: string;
 beforeEach(async () => {
+  console.log('available parallelism', os.availableParallelism);
   oldEnv = { ...process.env };
   process.env.LOG_LEVEL = 'debug';
   process.env.OPTIC_ENV = 'local';
