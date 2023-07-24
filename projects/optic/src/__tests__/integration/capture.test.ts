@@ -16,12 +16,12 @@ import {
 } from './integration';
 import portfinder from 'portfinder';
 
-jest.setTimeout(60000);
+jest.setTimeout(30000);
 let oldEnv: any;
 let port: string;
 beforeEach(async () => {
   oldEnv = { ...process.env };
-  process.env.LOG_LEVEL = 'debug';
+  process.env.LOG_LEVEL = 'info';
   process.env.OPTIC_ENV = 'local';
   port = String(await portfinder.getPortPromise());
   process.env.PORT = port;
