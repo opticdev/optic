@@ -114,10 +114,12 @@ describe('capture with requests', () => {
       expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
       expect(code).toBe(0);
       expect(
-        await fs.readFile(
-          path.join(workspace, 'openapi-with-server-prefix.yml'),
-          'utf-8'
-        )
+        (
+          await fs.readFile(
+            path.join(workspace, 'openapi-with-server-prefix.yml'),
+            'utf-8'
+          )
+        ).replace(`localhost:${port}`, 'localhost:PORT')
       ).toMatchSnapshot();
     });
 
