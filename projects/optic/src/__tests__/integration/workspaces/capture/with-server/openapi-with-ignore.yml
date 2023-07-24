@@ -1,0 +1,31 @@
+openapi: 3.0.3
+info:
+  title: a spec
+  description: The API
+  version: 0.1.0
+x-optic-path-ignore:
+  - method: get
+    path: /books/**
+  - /authors
+paths:
+  /books:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetBooks200ResponseBody"
+components:
+  schemas:
+    GetBooks200ResponseBody:
+      type: object
+      properties:
+        books:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string

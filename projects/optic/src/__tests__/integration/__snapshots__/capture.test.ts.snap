@@ -1,11 +1,372 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`capture verify behavior verifies the specification with coverage 1`] = `
+exports[`capture update behavior respects x-optic-path-ignore 1`] = `
 "- Generating traffic to send to server
 [32m✔[39m Successfully captured requests
 - GET /books
 [32m✔[39m GET /books
   [32m✓ [39m200 response
+  [32m[200 response body] 'name' has been added[39m
+  [32m[200 response body] 'author_id' has been added[39m
+  [32m[200 response body] 'price' has been added[39m
+  [32m[200 response body] 'created_at' has been added[39m
+  [32m[200 response body] 'updated_at' has been added[39m
+
+[1m[90mLearning path patterns for unmatched requests...[39m[22m
+[1m[90mDocumenting new operations:[39m[22m
+- POST /books/{book}
+[32m✔[39m POST /books/{book}
+"
+`;
+
+exports[`capture update behavior respects x-optic-path-ignore 2`] = `
+"openapi: 3.0.3
+info:
+  title: a spec
+  description: The API
+  version: 0.1.0
+x-optic-path-ignore:
+  - method: get
+    path: /books/**
+  - /authors
+paths:
+  /books:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetBooks200ResponseBody"
+  "/books/{book}":
+    parameters:
+      - in: path
+        name: book
+        required: true
+        schema:
+          type: string
+    post:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostBooksBook200ResponseBody"
+      requestBody:
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: "#/components/schemas/PostBooksBookRequestBody"
+components:
+  schemas:
+    GetBooks200ResponseBody:
+      type: object
+      properties:
+        books:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              author_id:
+                type: string
+              price:
+                type: number
+              created_at:
+                type: string
+              updated_at:
+                type: string
+            required:
+              - name
+              - author_id
+              - price
+              - created_at
+              - updated_at
+    PostBooksBookRequestBody:
+      type: object
+      properties:
+        name:
+          type: string
+        price:
+          type: number
+        author_id:
+          type: string
+      required:
+        - name
+        - price
+        - author_id
+    PostBooksBook200ResponseBody:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        author_id:
+          type: string
+        price:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+        - id
+        - name
+        - author_id
+        - price
+        - created_at
+        - updated_at
+"
+`;
+
+exports[`capture update behavior updates all endpoints with --update automatic 1`] = `
+"- Generating traffic to send to server
+[32m✔[39m Successfully captured requests
+- GET /books
+[32m✔[39m GET /books
+  [32m✓ [39m200 response
+  [32m[200 response body] 'name' has been added[39m
+  [32m[200 response body] 'author_id' has been added[39m
+  [32m[200 response body] 'price' has been added[39m
+  [32m[200 response body] 'created_at' has been added[39m
+  [32m[200 response body] 'updated_at' has been added[39m
+
+[1m[90mLearning path patterns for unmatched requests...[39m[22m
+[1m[90mDocumenting new operations:[39m[22m
+- GET /books/{book}
+[32m✔[39m GET /books/{book}
+- GET /authors
+[32m✔[39m GET /authors
+- POST /books/{book}
+[32m✔[39m POST /books/{book}
+"
+`;
+
+exports[`capture update behavior updates all endpoints with --update automatic 2`] = `
+"openapi: 3.0.3
+info:
+  title: a spec
+  description: The API
+  version: 0.1.0
+paths:
+  /books:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetBooks200ResponseBody"
+  "/books/{book}":
+    parameters:
+      - in: path
+        name: book
+        required: true
+        schema:
+          type: string
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetBooksBook200ResponseBody"
+    post:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetBooksBook200ResponseBody"
+      requestBody:
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: "#/components/schemas/PostBooksBookRequestBody"
+  /authors:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAuthors200ResponseBody"
+components:
+  schemas:
+    GetBooks200ResponseBody:
+      type: object
+      properties:
+        books:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              author_id:
+                type: string
+              price:
+                type: number
+              created_at:
+                type: string
+              updated_at:
+                type: string
+            required:
+              - name
+              - author_id
+              - price
+              - created_at
+              - updated_at
+    GetBooksBook200ResponseBody:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        author_id:
+          type: string
+        price:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+        - id
+        - name
+        - author_id
+        - price
+        - created_at
+        - updated_at
+    GetAuthors200ResponseBody:
+      type: object
+      properties:
+        authors:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              created_at:
+                type: string
+              updated_at:
+                type: string
+            required:
+              - id
+              - name
+              - created_at
+              - updated_at
+      required:
+        - authors
+    PostBooksBookRequestBody:
+      type: object
+      properties:
+        name:
+          type: string
+        price:
+          type: number
+        author_id:
+          type: string
+      required:
+        - name
+        - price
+        - author_id
+"
+`;
+
+exports[`capture update behavior updates only existing endpoints by default 1`] = `
+"- Generating traffic to send to server
+[32m✔[39m Successfully captured requests
+- GET /books
+[32m✔[39m GET /books
+  [32m✓ [39m200 response
+  [32m[200 response body] 'name' has been added[39m
+  [32m[200 response body] 'author_id' has been added[39m
+  [32m[200 response body] 'price' has been added[39m
+  [32m[200 response body] 'created_at' has been added[39m
+  [32m[200 response body] 'updated_at' has been added[39m
+
+4 unmatched interactions
+[33mNew endpoints are only added in interactive mode.[39m
+[34mRun with \`--update interactive\` to add new endpoints[39m
+[33mHint: optic capture openapi.yml --update interactive[39m
+"
+`;
+
+exports[`capture update behavior updates only existing endpoints by default 2`] = `
+"openapi: 3.0.3
+info:
+  title: a spec
+  description: The API
+  version: 0.1.0
+paths:
+  /books:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetBooks200ResponseBody"
+components:
+  schemas:
+    GetBooks200ResponseBody:
+      type: object
+      properties:
+        books:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              author_id:
+                type: string
+              price:
+                type: number
+              created_at:
+                type: string
+              updated_at:
+                type: string
+            required:
+              - name
+              - author_id
+              - price
+              - created_at
+              - updated_at
+"
+`;
+
+exports[`capture verify behavior verifies the specification with coverage 1`] = `
+"- Generating traffic to send to server
+[32m✔[39m Successfully captured requests
+- GET /books
+[32m✔[39m GET /books
+  [31m× [39m200 response
+  [31m[200 response body] 'name' is not documented[39m
+  [31m[200 response body] 'author_id' is not documented[39m
+  [31m[200 response body] 'price' is not documented[39m
+  [31m[200 response body] 'created_at' is not documented[39m
+  [31m[200 response body] 'updated_at' is not documented[39m
 
 4 unmatched interactions
 [33mNew endpoints are only added in interactive mode.[39m

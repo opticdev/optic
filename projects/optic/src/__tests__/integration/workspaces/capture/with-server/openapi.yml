@@ -18,12 +18,10 @@ components:
     GetBooks200ResponseBody:
       type: object
       properties:
-        type: object
-        properties:
-          books:
-            type: array
-            items:
-              type: object
-              properties:
-                id:
-                  type: string
+        books:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
