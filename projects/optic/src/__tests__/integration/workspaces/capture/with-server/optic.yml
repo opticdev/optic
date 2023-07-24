@@ -1,0 +1,77 @@
+capture:
+  openapi.yml:
+    server:
+      command: node server.js
+      url: http://localhost:%PORT
+      ready_endpoint: /healthcheck
+    requests:
+      send:
+        - path: /books
+          method: GET
+        - path: /books/asd
+          method: GET
+        - path: /books/def
+          method: GET
+        - path: /books/asd
+          method: POST
+          data:
+            name: asd
+            price: 1
+            author_id: 6nTxAFM5ck4Hob77hGQoL
+        - path: /authors
+          method: GET
+  openapi-with-external-ref.yml:
+    server:
+      command: node server.js
+      url: http://localhost:%PORT
+      ready_endpoint: /healthcheck
+      ready_timeout: 5000
+    requests:
+      send:
+        - path: /books
+          method: GET
+  openapi-with-server-prefix.yml:
+    server:
+      command: node server.js
+      url: http://localhost:%PORT
+      ready_endpoint: /healthcheck
+    requests:
+      send:
+        - path: /api/books
+          method: GET
+        - path: /api/books/asd
+          method: GET
+        - path: /api/books/def
+          method: GET
+        - path: /api/books/asd
+          method: POST
+          data:
+            name: asd
+            price: 1
+            author_id: 6nTxAFM5ck4Hob77hGQoL
+        - path: /api/authors
+          method: GET
+        # should be ignored because healthcheck does not have prefix of /api
+        - path: /healthcheck
+          method: GET
+  openapi-with-ignore.yml:
+    server:
+      command: node server.js
+      url: http://localhost:%PORT
+      ready_endpoint: /healthcheck
+    requests:
+      send:
+        - path: /books
+          method: GET
+        - path: /books/asd
+          method: GET
+        - path: /books/def
+          method: GET
+        - path: /books/asd
+          method: POST
+          data:
+            name: asd
+            price: 1
+            author_id: 6nTxAFM5ck4Hob77hGQoL
+        - path: /authors
+          method: GET

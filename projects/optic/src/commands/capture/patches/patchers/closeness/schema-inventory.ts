@@ -158,12 +158,17 @@ export class SchemaInventory {
         ]);
 
         // ensure randomness if we hit a conflict
+        let counter = 1;
         while (this.schemaMap.has(refPath)) {
           refPath = jsonPointerHelpers.compile([
             'components',
             'schemas',
-            refName + '_' + String(Math.floor(Math.random() * 300)),
+            refName + '_' + String(counter),
           ]);
+          if (counter > 1000) {
+            throw new Error('Could not determine a unique name');
+          }
+          counter++;
         }
 
         const patch: SpecPatch = {
@@ -270,7 +275,7 @@ function refNameGenerator(rootBodySchemaPath: string) {
   } else if (requestBodyOrResponses === 'requestBody') {
     return `${capitalizeFirstLetter(method)}${pathName}RequestBody`;
   } else {
-    return 'SharedComponent_' + String(Math.floor(Math.random() * 100));
+    return 'SharedComponent';
   }
 }
 

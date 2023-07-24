@@ -9,7 +9,7 @@ import {
   CapturedInteractions,
 } from '../sources/captured-interactions';
 import { HttpArchive } from '../sources/har';
-import { OperationQueries } from '../operations/queries';
+import { OperationQueries, specToOperations } from '../operations/queries';
 import { getEndpointId } from '../../../utils/id';
 import { logger } from '../../../logger';
 
@@ -81,8 +81,14 @@ export class GroupedCaptures {
   private queries: OperationQueries;
   constructor(
     trafficDir: string,
-    endpoints: { path: string; method: string }[]
+    private spec: OpenAPIV3.Document
   ) {
+    const endpoints: { path: string; method: string }[] = specToOperations(
+      spec
+    ).map((p) => ({
+      ...p,
+      path: p.pathPattern,
+    }));
     this.queries = new OperationQueries(
       endpoints.map((e) => ({
         pathPattern: e.path,
@@ -201,14 +207,20 @@ export class GroupedCaptures {
       if (node.hars.length || node.interactions.length) {
         yield {
           endpoint: node.endpoint,
-          interactions: this.getInteractionsIterator(node),
+          interactions: handleServerPathPrefix(
+            this.getInteractionsIterator(node),
+            this.spec
+          ),
         };
       }
     }
   }
 
   getUndocumentedInteractions(): AsyncIterable<CapturedInteraction> {
-    return this.getInteractionsIterator(this.unmatched);
+    return handleServerPathPrefix(
+      this.getInteractionsIterator(this.unmatched),
+      this.spec
+    );
   }
 
   private async *getInteractionsIterator(node: {

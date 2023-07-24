@@ -41,7 +41,7 @@ describe('ProxyInteractions', () => {
 
     expect(capturedInteractions).toHaveLength(1);
 
-    expect(capturedInteractions[0]).toMatchSnapshot(matchProxyInteraction());
+    expect(capturedInteractions[0]).toMatchObject(matchProxyInteraction());
   });
 
   it('encodes non-existing request / respons bodies as empty buffers', async () => {

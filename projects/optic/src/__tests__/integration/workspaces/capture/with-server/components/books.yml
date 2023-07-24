@@ -1,0 +1,10 @@
+GetBooks200ResponseBody:
+  type: object
+  properties:
+    books:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string

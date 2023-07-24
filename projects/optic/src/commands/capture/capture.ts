@@ -19,7 +19,6 @@ import { captureV1 } from '../oas/capture';
 import { getCaptureStorage } from './storage';
 import { loadSpec, specHasUncommittedChanges } from '../../utils/spec-loaders';
 import { ApiCoverageCounter } from './coverage/api-coverage';
-import { specToOperations } from './operations/queries';
 import { HarEntries } from './sources/har';
 import {
   addIgnorePaths,
@@ -145,13 +144,7 @@ const getCaptureAction =
       strict: false,
       denormalize: false,
     });
-    const captures = new GroupedCaptures(
-      trafficDirectory,
-      specToOperations(spec.jsonLike).map((p) => ({
-        ...p,
-        path: p.pathPattern,
-      }))
-    );
+    const captures = new GroupedCaptures(trafficDirectory, spec.jsonLike);
 
     if (options.har) {
       try {
@@ -222,6 +215,7 @@ const getCaptureAction =
       );
       if (!harEntries) {
         // Error thrown where we don't have requests
+        process.exitCode = 1;
         return;
       }
       for await (const har of harEntries) {
@@ -234,7 +228,6 @@ const getCaptureAction =
     }
 
     // update existing endpoints
-    let hasAnyEndpointDiffs = false;
     const coverage = new ApiCoverageCounter(spec.jsonLike);
     // Handle interactions for documented endpoints first
     for (const {
@@ -251,7 +244,7 @@ const getCaptureAction =
         endpoint,
         options
       );
-      hasAnyEndpointDiffs = hasAnyEndpointDiffs || hasDiffs;
+
       let endpointCoverage = coverage.coverage.paths[path][method];
       if (options.update) {
         // Since we flush each endpoint updates to disk, we should reload the spec to get the latest spec and sourcemap which we both use to generate the next set of patches
@@ -268,7 +261,12 @@ const getCaptureAction =
         }
         spinner.succeed(endpointText);
       } else {
-        !hasDiffs ? spinner.succeed(endpointText) : spinner.fail(endpointText);
+        if (hasDiffs) {
+          spinner.succeed(endpointText);
+        } else {
+          process.exitCode = 1;
+          spinner.fail(endpointText);
+        }
       }
       const summaryText = getSummaryText(endpointCoverage);
       summaryText && logger.info(indent(1) + summaryText);
@@ -385,7 +383,7 @@ const getCaptureAction =
 
     if (
       captures.unmatched.hars.length &&
-      !(options.update && options.update === 'documented')
+      (options.update === 'documented' || !options.update)
     ) {
       logger.info(
         chalk.yellow('New endpoints are only added in interactive mode.')
@@ -395,14 +393,6 @@ const getCaptureAction =
       );
       logger.info(
         chalk.yellow(`Hint: optic capture ${filePath} --update interactive`)
-      );
-    } else if (
-      !options.update &&
-      (captures.unmatched.hars.length || hasAnyEndpointDiffs)
-    ) {
-      logger.info(chalk.blue('Run with `--update --interactive` to update'));
-      logger.info(
-        chalk.yellow(`optic capture ${filePath} --update --interactive`)
       );
       process.exitCode = 1;
     }

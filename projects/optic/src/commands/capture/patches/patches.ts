@@ -105,7 +105,6 @@ export async function* generateEndpointSpecPatches(
     let documentedBodies = DocumentedBodies.fromDocumentedInteraction(
       documentedInteraction
     );
-
     let shapePatches = SpecPatches.shapeAdditions(
       documentedBodies,
       openAPIVersion
