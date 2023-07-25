@@ -2,68 +2,73 @@ import { it, describe, expect } from '@jest/globals';
 import { SchemaObject } from '../..';
 import { diffBodyBySchema } from '../../diffs';
 import { generateShapePatchesByDiff } from '..';
+import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 
-describe('type shape patch generator', () => {
-  const jsonSchema: SchemaObject = {
-    type: 'object',
-    properties: {
-      stringField: { type: 'string' },
-    },
-  };
-
-  it('when provided with another primitive, it can apply patches', () => {
-    const input = {
-      stringField: 123,
+describe.each(['3.0.x', '3.1.x'])(
+  'type shape patch generator for %s',
+  (v: string) => {
+    const version = v as SupportedOpenAPIVersions;
+    const jsonSchema: SchemaObject = {
+      type: 'object',
+      properties: {
+        stringField: { type: 'string' },
+      },
     };
 
-    const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
+    it('when provided with another primitive, it can apply patches', () => {
+      const input = {
+        stringField: 123,
+      };
 
-    const patches = diffs.flatMap((diff) => [
-      ...generateShapePatchesByDiff(diff, jsonSchema, {}, '3.1.x'),
-    ]);
+      const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
 
-    expect(patches).toMatchSnapshot();
-  });
+      const patches = diffs.flatMap((diff) => [
+        ...generateShapePatchesByDiff(diff, jsonSchema, {}, version),
+      ]);
 
-  it('when provided with an array, it can apply patches', () => {
-    const input = {
-      stringField: ['1', '2', '3', true],
-    };
+      expect(patches).toMatchSnapshot();
+    });
 
-    const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
+    it('when provided with an array, it can apply patches', () => {
+      const input = {
+        stringField: ['1', '2', '3', true],
+      };
 
-    const patches = diffs.flatMap((diff) => [
-      ...generateShapePatchesByDiff(diff, jsonSchema, {}, '3.1.x'),
-    ]);
+      const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
 
-    expect(patches).toMatchSnapshot();
-  });
+      const patches = diffs.flatMap((diff) => [
+        ...generateShapePatchesByDiff(diff, jsonSchema, {}, version),
+      ]);
 
-  it('when provided with an object, it can apply patches', () => {
-    const input = {
-      stringField: { field: 'string' },
-    };
+      expect(patches).toMatchSnapshot();
+    });
 
-    const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
+    it('when provided with an object, it can apply patches', () => {
+      const input = {
+        stringField: { field: 'string' },
+      };
 
-    const patches = diffs.flatMap((diff) => [
-      ...generateShapePatchesByDiff(diff, jsonSchema, {}, '3.1.x'),
-    ]);
+      const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
 
-    expect(patches).toMatchSnapshot();
-  });
+      const patches = diffs.flatMap((diff) => [
+        ...generateShapePatchesByDiff(diff, jsonSchema, {}, version),
+      ]);
 
-  it('when provided with null value, it can apply patches', () => {
-    const input: any = {
-      stringField: null,
-    };
+      expect(patches).toMatchSnapshot();
+    });
 
-    const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
+    it('when provided with null value, it can apply patches', () => {
+      const input: any = {
+        stringField: null,
+      };
 
-    const patches = diffs.flatMap((diff) => [
-      ...generateShapePatchesByDiff(diff, jsonSchema, {}, '3.1.x'),
-    ]);
+      const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
 
-    expect(patches).toMatchSnapshot();
-  });
-});
+      const patches = diffs.flatMap((diff) => [
+        ...generateShapePatchesByDiff(diff, jsonSchema, {}, version),
+      ]);
+
+      expect(patches).toMatchSnapshot();
+    });
+  }
+);

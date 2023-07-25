@@ -100,7 +100,7 @@ export function* typePatches(
         groupedOperations: [
           OperationGroup.create(`make ${diff.key} nullable`, {
             op: 'replace',
-            path: jsonPointerHelpers.append(diff.instancePath, 'nullable'),
+            path: jsonPointerHelpers.append(diff.propertyPath, 'nullable'),
             // handles removal of keys that are no longer allowed
             value: true,
           }),
