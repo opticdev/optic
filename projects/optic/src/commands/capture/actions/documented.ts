@@ -11,6 +11,7 @@ import { CapturedInteractions } from '../sources/captured-interactions';
 import { ApiCoverageCounter } from '../coverage/api-coverage';
 import * as AT from '../../oas/lib/async-tools';
 import { writePatchesToFiles } from '../write/file';
+import { logger } from '../../../logger';
 
 function summarizePatch(
   patch: SpecPatch,
@@ -120,7 +121,12 @@ export async function diffExistingEndpoint(
       parseResult.jsonLike,
       options.update ? 'update' : 'verify'
     );
-    if (summarized) patchSummaries.push(summarized);
+    if (summarized) {
+      patchSummaries.push(summarized);
+    } else {
+      logger.debug(`skipping patch:`);
+      logger.debug(patch);
+    }
   })(
     generateEndpointSpecPatches(
       interactions,
