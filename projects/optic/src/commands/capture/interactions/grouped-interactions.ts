@@ -199,6 +199,10 @@ export class GroupedCaptures {
     };
   }
 
+  unmatchedInteractionsCount(): number {
+    return this.unmatched.hars.length + this.unmatched.interactions.length;
+  }
+
   *getDocumentedEndpointInteractions(): Iterable<{
     endpoint: { path: string; method: string };
     interactions: AsyncIterable<CapturedInteraction>;

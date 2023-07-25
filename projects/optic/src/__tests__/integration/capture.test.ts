@@ -148,3 +148,59 @@ describe('capture with requests', () => {
     });
   });
 });
+
+describe('capture with inputs', () => {
+  describe('--har', () => {
+    test('verifying OpenAPI spec', async () => {
+      const workspace = await setupWorkspace('capture/har');
+
+      const { combined, code } = await runOptic(
+        workspace,
+        'capture openapi.yml --har har.har'
+      );
+      expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+      expect(code).toBe(1);
+    });
+
+    test('updating an OpenAPI spec', async () => {
+      const workspace = await setupWorkspace('capture/har');
+
+      const { combined, code } = await runOptic(
+        workspace,
+        'capture openapi.yml --har har.har --update automatic'
+      );
+      expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+      expect(code).toBe(0);
+      expect(
+        await fs.readFile(path.join(workspace, 'openapi.yml'), 'utf-8')
+      ).toMatchSnapshot();
+    });
+  });
+
+  describe('--postman', () => {
+    test('verifying OpenAPI spec', async () => {
+      const workspace = await setupWorkspace('capture/postman');
+
+      const { combined, code } = await runOptic(
+        workspace,
+        'capture openapi.yml --postman postman_collection.json'
+      );
+      expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+      expect(code).toBe(1);
+    });
+
+    test('updating an OpenAPI spec', async () => {
+      const workspace = await setupWorkspace('capture/postman');
+
+      const { combined, code } = await runOptic(
+        workspace,
+        'capture openapi.yml --postman postman_collection.json --update automatic'
+      );
+      expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+      expect(code).toBe(0);
+      expect(
+        await fs.readFile(path.join(workspace, 'openapi.yml'), 'utf-8')
+      ).toMatchSnapshot();
+    });
+  });
+});
