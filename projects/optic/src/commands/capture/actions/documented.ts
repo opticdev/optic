@@ -129,16 +129,14 @@ export async function diffExistingEndpoint(
       { coverage }
     )
   );
-  let hasDiffs = false;
 
   if (options.update) {
     const operations = await jsonOpsFromSpecPatches(specPatches);
     await writePatchesToFiles(operations, parseResult.sourcemap);
   } else {
     for await (const _ of specPatches) {
-      hasDiffs = true;
     }
   }
 
-  return { patchSummaries, hasDiffs };
+  return { patchSummaries, hasDiffs: patchSummaries.length > 0 };
 }
