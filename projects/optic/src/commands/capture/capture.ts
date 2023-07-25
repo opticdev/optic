@@ -293,52 +293,53 @@ const getCaptureAction =
     }
 
     // document new endpoints
-    if (options.update === 'interactive' || options.update === 'automatic') {
-      logger.info('');
-      logger.info(
-        chalk.bold.gray('Learning path patterns for unmatched requests...')
-      );
-      const inferredPathStructure =
-        await InferPathStructure.fromSpecAndInteractions(
-          spec.jsonLike,
-          captures.getUndocumentedInteractions()
+    const unmatchedInteractions = captures.unmatchedInteractionsCount();
+    if (unmatchedInteractions) {
+      if (options.update === 'interactive' || options.update === 'automatic') {
+        logger.info('');
+        logger.info(
+          chalk.bold.gray('Learning path patterns for unmatched requests...')
         );
-      const {
-        interactions: filteredInteractions,
-        ignorePaths: newIgnorePaths,
-        endpointsToAdd,
-      } = await promptUserForPathPattern(
-        captures.getUndocumentedInteractions(),
-        spec.jsonLike,
-        inferredPathStructure,
-        { update: options.update }
-      );
+        const inferredPathStructure =
+          await InferPathStructure.fromSpecAndInteractions(
+            spec.jsonLike,
+            captures.getUndocumentedInteractions()
+          );
+        const {
+          interactions: filteredInteractions,
+          ignorePaths: newIgnorePaths,
+          endpointsToAdd,
+        } = await promptUserForPathPattern(
+          captures.getUndocumentedInteractions(),
+          spec.jsonLike,
+          inferredPathStructure,
+          { update: options.update }
+        );
 
-      logger.info(chalk.bold.gray('Documenting new operations:'));
+        logger.info(chalk.bold.gray('Documenting new operations:'));
 
-      for (const endpoint of endpointsToAdd) {
-        const { path, method } = endpoint;
-        const endpointText = `${method.toUpperCase()} ${path}`;
-        const spinner = ora({ text: endpointText, color: 'blue' }).start();
+        for (const endpoint of endpointsToAdd) {
+          const { path, method } = endpoint;
+          const endpointText = `${method.toUpperCase()} ${path}`;
+          const spinner = ora({ text: endpointText, color: 'blue' }).start();
 
-        await documentNewEndpoint(filteredInteractions, spec, endpoint);
+          await documentNewEndpoint(filteredInteractions, spec, endpoint);
 
-        // Since we flush each endpoint updates to disk, we should reload the spec to get the latest spec and sourcemap which we both use to generate the next set of patches
-        spec = await loadSpec(filePath, config, {
-          strict: false,
-          denormalize: false,
-        });
-        spinner.succeed();
+          // Since we flush each endpoint updates to disk, we should reload the spec to get the latest spec and sourcemap which we both use to generate the next set of patches
+          spec = await loadSpec(filePath, config, {
+            strict: false,
+            denormalize: false,
+          });
+          spinner.succeed();
+        }
+
+        if (newIgnorePaths.length) {
+          await addIgnorePaths(spec, newIgnorePaths);
+        }
+      } else {
+        logger.info('');
+        logger.info(`${unmatchedInteractions} unmatched interactions`);
       }
-
-      if (newIgnorePaths.length) {
-        await addIgnorePaths(spec, newIgnorePaths);
-      }
-    } else if (captures.unmatchedInteractionsCount()) {
-      logger.info('');
-      logger.info(
-        `${captures.unmatchedInteractionsCount()} unmatched interactions`
-      );
     }
 
     if (options.upload) {
@@ -384,7 +385,7 @@ const getCaptureAction =
     }
 
     if (
-      captures.unmatchedInteractionsCount() &&
+      unmatchedInteractions &&
       (options.update === 'documented' || !options.update)
     ) {
       logger.info(
