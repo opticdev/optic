@@ -59,7 +59,7 @@ export function verifyCommand(config: OpticCliConfig): Command {
       const options = command.opts();
       logger.warn(
         chalk.yellow.bold(
-          `optic update is deprecated. Start using the new capture flow by running optic capture ${specPath} (read the docs <TODO>)`
+          `optic update is deprecated. Start using the new capture flow by running optic capture ${specPath} (get started by running optic capture init ${specPath})`
         )
       );
 

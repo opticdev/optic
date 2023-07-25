@@ -41,7 +41,7 @@ export function updateCommand(): Command {
     .action(async (specPath, operations) => {
       logger.warn(
         chalk.yellow.bold(
-          `optic update is deprecated. Start using the new capture flow by running optic capture ${specPath} --update (read the docs <TODO>)`
+          `optic update is deprecated. Start using the new capture flow by running optic capture ${specPath} --update (get started by running optic capture init ${specPath})`
         )
       );
       const analytics: { event: string; properties: any }[] = [];
