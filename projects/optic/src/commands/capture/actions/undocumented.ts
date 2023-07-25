@@ -91,7 +91,7 @@ export async function promptUserForPathPattern(
           {
             type: 'select',
             name: 'action',
-            message: `Is this the right pattern for ${chalk.green(
+            message: `Is this the right pattern for ${chalk.gray(
               `${method.toUpperCase()} ${path}`
             )}`,
             choices: [
