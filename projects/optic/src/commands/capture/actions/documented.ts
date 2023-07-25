@@ -73,7 +73,7 @@ function summarizePatch(
         action =
           mode === 'update'
             ? `is now type ${diff.expectedType}`
-            : `does not match type ${diff.expectedType}}. Received ${diff.example}`;
+            : `does not match type ${diff.expectedType}. Received ${diff.example}`;
       }
       const color = mode === 'update' ? chalk.yellow : chalk.red;
 
