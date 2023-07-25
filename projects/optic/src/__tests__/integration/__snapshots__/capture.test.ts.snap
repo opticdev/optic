@@ -1,5 +1,876 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`capture with inputs --har updating an OpenAPI spec 1`] = `
+"- GET /books
+[32m✔[39m GET /books
+  [32m✓ [39m200 response
+  [32m[200 response body] 'data' has been added[39m
+  [32m[200 response body] 'next' has been added[39m
+  [32m[200 response body] 'has_more_data' has been added[39m
+
+[1m[90mLearning path patterns for unmatched requests...[39m[22m
+[1m[90mDocumenting new operations:[39m[22m
+- GET /books/{book}
+[32m✔[39m GET /books/{book}
+- GET /authors/{author}
+[32m✔[39m GET /authors/{author}
+- GET /some/example
+[32m✔[39m GET /some/example
+- POST /books
+[32m✔[39m POST /books
+- POST /authors
+[32m✔[39m POST /authors
+"
+`;
+
+exports[`capture with inputs --har updating an OpenAPI spec 2`] = `
+"openapi: 3.0.3
+info:
+  title: a spec
+  description: The API
+  version: 0.1.0
+paths:
+  /books:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetBooks200ResponseBody"
+    post:
+      responses:
+        "201":
+          description: 201 response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/PostBooks201ResponseBody"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostBooksRequestBody"
+  "/books/{book}":
+    parameters:
+      - in: path
+        name: book
+        required: true
+        schema:
+          type: string
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/GetBooksBook200ResponseBody"
+  "/authors/{author}":
+    parameters:
+      - in: path
+        name: author
+        required: true
+        schema:
+          type: string
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/GetBooksBook200ResponseBody"
+  /some/example:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetSomeExample200ResponseBody"
+  /authors:
+    post:
+      responses:
+        "201":
+          description: 201 response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/PostAuthors201ResponseBody"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostAuthorsRequestBody"
+components:
+  schemas:
+    GetBooks200ResponseBody:
+      type: object
+      properties:
+        books:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              author_id:
+                type: string
+              created_at:
+                type: string
+              updated_at:
+                type: string
+            required:
+              - id
+              - name
+              - author_id
+              - created_at
+              - updated_at
+        next:
+          nullable: true
+        has_more_data:
+          type: boolean
+      required:
+        - data
+        - next
+        - has_more_data
+    GetBooksBook200ResponseBody:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        author_id:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+        - id
+        - name
+        - author_id
+        - created_at
+        - updated_at
+    GetSomeExample200ResponseBody:
+      type: object
+      properties:
+        something:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              another:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    path:
+                      type: string
+                    max:
+                      type: number
+                    min:
+                      type: number
+                  required:
+                    - path
+                    - max
+                    - min
+                nullable: true
+            required:
+              - name
+              - another
+      required:
+        - something
+    PostBooksRequestBody:
+      type: object
+      properties:
+        name:
+          type: string
+        author_id:
+          type: string
+      required:
+        - name
+        - author_id
+    PostBooks201ResponseBody:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        author_id:
+          type: string
+      required:
+        - id
+        - name
+        - author_id
+    PostAuthorsRequestBody:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+    PostAuthors201ResponseBody:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+"
+`;
+
+exports[`capture with inputs --har verifying OpenAPI spec 1`] = `
+"- GET /books
+[32m✔[39m GET /books
+  [31m× [39m200 response
+  [31m[200 response body] 'data' is not documented[39m
+  [31m[200 response body] 'next' is not documented[39m
+  [31m[200 response body] 'has_more_data' is not documented[39m
+
+7 unmatched interactions
+[33mNew endpoints are only added in interactive mode.[39m
+[34mRun with \`--update interactive\` to add new endpoints[39m
+[33mHint: optic capture openapi.yml --update interactive[39m
+"
+`;
+
+exports[`capture with inputs --postman updating an OpenAPI spec 1`] = `
+"[90m1 endpoint did not receive traffic[39m
+
+[1m[90mLearning path patterns for unmatched requests...[39m[22m
+[1m[90mDocumenting new operations:[39m[22m
+- GET /get
+[32m✔[39m GET /get
+- GET /headers
+[32m✔[39m GET /headers
+- GET /response-headers
+[32m✔[39m GET /response-headers
+- GET /basic-auth
+[32m✔[39m GET /basic-auth
+- GET /
+[32m✔[39m GET /
+- GET /digest-auth
+[32m✔[39m GET /digest-auth
+- GET /auth/hawk
+[32m✔[39m GET /auth/hawk
+- GET /oauth1
+[32m✔[39m GET /oauth1
+- GET /cookies/{cooky}
+[32m✔[39m GET /cookies/{cooky}
+- GET /cookies
+[32m✔[39m GET /cookies
+- GET /status/{status}
+[32m✔[39m GET /status/{status}
+- GET /stream/{stream}
+[32m✔[39m GET /stream/{stream}
+- GET /delay/{delay}
+[32m✔[39m GET /delay/{delay}
+- GET /encoding/utf8
+[32m✔[39m GET /encoding/utf8
+- GET /gzip
+[32m✔[39m GET /gzip
+- GET /deflate
+[32m✔[39m GET /deflate
+- GET /ip
+[32m✔[39m GET /ip
+- GET /time/{time}
+[32m✔[39m GET /time/{time}
+- GET /get/hello
+[32m✔[39m GET /get/hello
+- PUT /put
+[32m✔[39m PUT /put
+- POST /post
+[32m✔[39m POST /post
+- POST /transform/collection
+[32m✔[39m POST /transform/collection
+- DELETE /delete
+[32m✔[39m DELETE /delete
+- PATCH /patch
+[32m✔[39m PATCH /patch
+"
+`;
+
+exports[`capture with inputs --postman updating an OpenAPI spec 2`] = `
+"openapi: 3.0.3
+info:
+  title: a spec
+  description: The API
+  version: 0.1.0
+paths:
+  /books:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetBooks200ResponseBody"
+  /get:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetGet200ResponseBody"
+  /headers:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetHeaders200ResponseBody"
+  /response-headers:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            text/html: {}
+  /basic-auth:
+    get:
+      responses: {}
+  /:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Get200ResponseBody"
+  /digest-auth:
+    get:
+      responses: {}
+  /auth/hawk:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAuthHawk200ResponseBody"
+  /oauth1:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAuthHawk200ResponseBody"
+        "401":
+          description: 401 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetOauth1401ResponseBody"
+  "/cookies/{cooky}":
+    parameters:
+      - in: path
+        name: cooky
+        required: true
+        schema:
+          type: string
+    get:
+      responses: {}
+  /cookies:
+    get:
+      responses: {}
+  "/status/{status}":
+    parameters:
+      - in: path
+        name: status
+        required: true
+        schema:
+          type: string
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetStatusStatus200ResponseBody"
+  "/stream/{stream}":
+    parameters:
+      - in: path
+        name: stream
+        required: true
+        schema:
+          type: string
+    get:
+      responses: {}
+  "/delay/{delay}":
+    parameters:
+      - in: path
+        name: delay
+        required: true
+        schema:
+          type: string
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetDelayDelay200ResponseBody"
+  /encoding/utf8:
+    get:
+      responses: {}
+  /gzip:
+    get:
+      responses: {}
+  /deflate:
+    get:
+      responses: {}
+  /ip:
+    get:
+      responses: {}
+  "/time/{time}":
+    parameters:
+      - in: path
+        name: time
+        required: true
+        schema:
+          type: string
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetTimeTime200ResponseBody"
+  /get/hello:
+    get:
+      responses: {}
+  /put:
+    put:
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PutPutRequestBody"
+  /post:
+    post:
+      responses: {}
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema: {}
+  /transform/collection:
+    post:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostTransformCollection200ResponseBody"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostTransformCollectionRequestBody"
+  /delete:
+    delete:
+      responses: {}
+      requestBody:
+        content:
+          text/plain:
+            schema: {}
+  /patch:
+    patch:
+      responses: {}
+      requestBody:
+        content:
+          text/plain:
+            schema: {}
+components:
+  schemas:
+    GetBooks200ResponseBody:
+      type: object
+      properties:
+        books:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+    GetGet200ResponseBody:
+      type: object
+      properties:
+        args:
+          type: object
+          properties:
+            foo1:
+              type: string
+            foo2:
+              type: string
+          required:
+            - foo1
+            - foo2
+        headers:
+          type: object
+          properties:
+            x-forwarded-proto:
+              type: string
+            host:
+              type: string
+            accept:
+              type: string
+            accept-encoding:
+              type: string
+            cache-control:
+              type: string
+            postman-token:
+              type: string
+            user-agent:
+              type: string
+            x-forwarded-port:
+              type: string
+          required:
+            - x-forwarded-proto
+            - host
+            - accept
+            - accept-encoding
+            - cache-control
+            - postman-token
+            - user-agent
+            - x-forwarded-port
+        url:
+          type: string
+      required:
+        - args
+        - headers
+        - url
+    GetHeaders200ResponseBody:
+      type: object
+      properties:
+        headers:
+          type: object
+          properties:
+            host:
+              type: string
+            accept:
+              type: string
+            accept-encoding:
+              type: string
+            accept-language:
+              type: string
+            cache-control:
+              type: string
+            my-sample-header:
+              type: string
+            postman-token:
+              type: string
+            user-agent:
+              type: string
+            x-forwarded-port:
+              type: string
+            x-forwarded-proto:
+              type: string
+          required:
+            - host
+            - accept
+            - accept-encoding
+            - accept-language
+            - cache-control
+            - my-sample-header
+            - postman-token
+            - user-agent
+            - x-forwarded-port
+            - x-forwarded-proto
+      required:
+        - headers
+    Get200ResponseBody:
+      type: object
+      properties:
+        cookies:
+          type: object
+          properties:
+            foo2:
+              type: string
+          required:
+            - foo2
+      required:
+        - cookies
+    GetAuthHawk200ResponseBody:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+      required:
+        - status
+        - message
+    GetOauth1401ResponseBody:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+        base_uri:
+          type: string
+        normalized_param_string:
+          type: string
+        base_string:
+          type: string
+        signing_key:
+          type: string
+      required:
+        - status
+        - message
+        - base_uri
+        - normalized_param_string
+        - base_string
+        - signing_key
+    GetStatusStatus200ResponseBody:
+      type: object
+      properties:
+        status:
+          type: number
+      required:
+        - status
+    GetDelayDelay200ResponseBody:
+      type: object
+      properties:
+        delay:
+          type: string
+      required:
+        - delay
+    GetTimeTime200ResponseBody:
+      type: object
+      properties:
+        valid:
+          type: boolean
+      required:
+        - valid
+    PutPutRequestBody:
+      type: array
+      items:
+        type: object
+        properties:
+          hello:
+            type: string
+          my:
+            type: number
+          name:
+            type: boolean
+          is:
+            type: object
+            properties:
+              legally:
+                type: string
+              num:
+                type: number
+              mixed:
+                type: array
+                items:
+                  oneOf:
+                    - type: object
+                      properties:
+                        name:
+                          type: string
+                      required:
+                        - name
+                    - type: boolean
+                    - type: string
+                    - type: number
+            required:
+              - legally
+              - num
+              - mixed
+          authenticated:
+            type: boolean
+        required: []
+    PostTransformCollectionRequestBody:
+      type: object
+      properties:
+        info:
+          type: object
+          properties:
+            name:
+              type: string
+            schema:
+              type: string
+            description:
+              type: string
+          required:
+            - name
+            - schema
+            - description
+        item:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              event:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    listen:
+                      type: string
+                    script:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        exec:
+                          type: array
+                          items:
+                            type: string
+                      required:
+                        - type
+                        - exec
+                  required:
+                    - listen
+                    - script
+              request:
+                type: object
+                properties:
+                  url:
+                    type: string
+                  method:
+                    type: string
+                  header:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        key:
+                          type: string
+                        value:
+                          type: string
+                      required:
+                        - key
+                        - value
+                  body:
+                    type: object
+                    properties:
+                      mode:
+                        type: string
+                      raw:
+                        type: string
+                    required:
+                      - mode
+                      - raw
+                required:
+                  - url
+                  - method
+            required:
+              - name
+              - request
+      required:
+        - info
+        - item
+    PostTransformCollection200ResponseBody:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        order:
+          type: array
+          items:
+            type: string
+        folders:
+          type: array
+          items: {}
+        requests:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              collectionId:
+                type: string
+              method:
+                type: string
+              headers:
+                type: string
+              data:
+                type: array
+                items: {}
+              rawModeData:
+                type: string
+              tests:
+                type: string
+              preRequestScript:
+                type: string
+              url:
+                type: string
+              dataMode:
+                type: string
+            required:
+              - id
+              - name
+              - collectionId
+              - method
+              - headers
+              - data
+              - rawModeData
+              - url
+      required:
+        - id
+        - name
+        - description
+        - order
+        - folders
+        - requests
+"
+`;
+
+exports[`capture with inputs --postman verifying OpenAPI spec 1`] = `
+"[90m1 endpoint did not receive traffic[39m
+
+58 unmatched interactions
+[33mNew endpoints are only added in interactive mode.[39m
+[34mRun with \`--update interactive\` to add new endpoints[39m
+[33mHint: optic capture openapi.yml --update interactive[39m
+"
+`;
+
 exports[`capture with requests update behavior handle server path prefixes in spec 1`] = `
 "- Generating traffic to send to server
 [32m✔[39m Successfully captured requests

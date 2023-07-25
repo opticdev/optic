@@ -334,9 +334,11 @@ const getCaptureAction =
       if (newIgnorePaths.length) {
         await addIgnorePaths(spec, newIgnorePaths);
       }
-    } else if (captures.unmatched.hars.length) {
+    } else if (captures.unmatchedInteractionsCount()) {
       logger.info('');
-      logger.info(`${captures.unmatched.hars.length} unmatched interactions`);
+      logger.info(
+        `${captures.unmatchedInteractionsCount()} unmatched interactions`
+      );
     }
 
     if (options.upload) {
@@ -382,7 +384,7 @@ const getCaptureAction =
     }
 
     if (
-      captures.unmatched.hars.length &&
+      captures.unmatchedInteractionsCount() &&
       (options.update === 'documented' || !options.update)
     ) {
       logger.info(
