@@ -131,7 +131,7 @@ const getCaptureAction =
     if (targetUrl !== undefined) {
       logger.warn(
         chalk.yellow.bold(
-          `optic capture <filepath> <url> is deprecated. Start using the new capture flow by running optic capture ${filePath} (read the docs <TODO>)`
+          `optic capture <filepath> <url> is deprecated. Start using the new capture flow by running optic capture init ${filePath}`
         )
       );
       await captureV1(filePath, targetUrl, config, command);
