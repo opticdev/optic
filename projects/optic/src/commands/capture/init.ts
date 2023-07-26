@@ -29,10 +29,6 @@ export function captureConfigExample(oasFile: string) {
     # Configures the 'optic capture' flow. View the documentation for details about how capture works: DOCS_LINK_HERE
     capture:
       ${oasFile}:
-        config:
-          # The number of parallel requests to make when using 'requests.send'.
-          # Optional: default: 4
-          request_concurrency: 4
         server:
           # The command to run your server.
           # Optional: If omitted, Optic assumes the server is running or started elsewhere.
@@ -73,5 +69,9 @@ export function captureConfigExample(oasFile: string) {
               method: POST
               data:
                 name: Hank
+        config:
+          # The number of parallel requests to make when using 'requests.send'.
+          # Optional: default: 4
+          request_concurrency: 4
   `;
 }
