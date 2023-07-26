@@ -904,6 +904,206 @@ exports[`examples ruleset invalid response top level example errors 1`] = `
 ]
 `;
 
+exports[`examples ruleset passing property example 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": [
+            "correctObj",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "correctObj",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/correctObj",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "example": {
+            "name": "hello",
+          },
+          "type": "object",
+        },
+        "key": "correctObj",
+        "required": false,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property examples match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users response 200 response body: application/json property correctObj",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": [
+            "correctObj",
+            "name",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "correctObj",
+          "name",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/correctObj/properties/name",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "string",
+        },
+        "key": "name",
+        "required": true,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property examples match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users response 200 response body: application/json property correctObj/name",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": [
+            "correctStr",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "correctStr",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/correctStr",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "example": "abcdefg",
+          "type": "string",
+        },
+        "key": "correctStr",
+        "required": false,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property examples match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users response 200 response body: application/json property correctStr",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200",
+        "kind": "response",
+      },
+      "value": {
+        "description": "ok",
+        "statusCode": "200",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "response body examples must match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users response 200",
+  },
+]
+`;
+
 exports[`examples should default to additional properties false ajv config will be strict on additional properties 1`] = `
 {
   "error": "  - example  must NOT have additional property 'c'",

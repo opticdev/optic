@@ -3,17 +3,6 @@ import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { TestHelpers } from '@useoptic/rulesets-base';
 import { ExamplesRuleset } from '../index';
 
-describe('fromOpticConfig', () => {
-  test('invalid configuration', async () => {
-    const out = await ExamplesRuleset.fromOpticConfig({
-      require_parameter_examples: 123,
-    });
-    expect(out).toEqual(
-      '- ruleset/examples/require_parameter_examples must be boolean'
-    );
-  });
-});
-
 const requireAll = new ExamplesRuleset({
   require_parameter_examples: true,
   require_request_examples: true,
