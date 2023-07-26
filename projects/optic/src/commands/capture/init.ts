@@ -31,7 +31,7 @@ export function captureConfigExample(oasFile: string) {
       ${oasFile}:
         config:
           # The number of parallel requests to make when using 'requests.send'.
-          # Optional: default 4
+          # Optional: default: 4
           request_concurrency: 4
         server:
           # The command to run your server.
@@ -65,8 +65,8 @@ export function captureConfigExample(oasFile: string) {
           # is converted to JSON and sent along with the request.
           send:
             # path: Required
-            # method: Optional: default GET
-            # data: Optional: If omitted on a POST request, default {}
+            # method: Optional: default: GET
+            # data: Optional: If omitted on a POST request, default: {}
             - path: /
               method: GET
             - path: /users/create
