@@ -59,7 +59,7 @@ export const errorHandler = <Args extends any[], Return extends any>(
         logger.error(chalk.red((e as Error).message));
       } else {
         console.error(e);
-        logger.error(chalk.red((e as Error).message));
+        if (e instanceof Error) logger.error(chalk.red(e.message));
         SentryClient.captureException(e);
         await SentryClient.flush();
       }
