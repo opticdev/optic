@@ -42,6 +42,7 @@ export function captureConfigExample(oasFile: string) {
           url: http://localhost:8080
           # A readiness endpoint for Optic to validate before sending requests.
           # Optional: If omitted, perform no readiness checking.
+
           ready_endpoint: /
           # The interval to check 'ready_endpoint', in ms.
           # Optional: default: 1000
