@@ -261,7 +261,7 @@ const getCaptureAction =
         }
         spinner.succeed(endpointText);
       } else {
-        if (hasDiffs) {
+        if (!hasDiffs) {
           spinner.succeed(endpointText);
         } else {
           process.exitCode = 1;

@@ -241,7 +241,7 @@ components:
 
 exports[`capture with inputs --har verifying OpenAPI spec 1`] = `
 "- GET /books
-[32m✔[39m GET /books
+[31m✖[39m GET /books
   [31m× [39m200 response
   [31m[200 response body] 'data' is not documented[39m
   [31m[200 response body] 'next' is not documented[39m
@@ -1459,7 +1459,7 @@ exports[`capture with requests verify behavior verifies the specification with c
 "- Generating traffic to send to server
 [32m✔[39m Successfully captured requests
 - GET /books
-[32m✔[39m GET /books
+[31m✖[39m GET /books
   [31m× [39m200 response
   [31m[200 response body] 'name' is not documented[39m
   [31m[200 response body] 'author_id' is not documented[39m
