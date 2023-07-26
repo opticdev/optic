@@ -17,24 +17,16 @@ export async function newCommand(): Promise<Command> {
 
   command
     .description('create a new OpenAPI spec file')
-    .argument(
-      '<file-path>',
-      'path of the new OpenAPI file (written to stdout when not provided)'
-    )
+    .argument('<file-path>', 'path of the new OpenAPI file to create')
     .option(
       '--oas-version <version-number>',
       'OpenAPI version number to be used',
       defaultOpenAPIVersion
     )
     .action(async (filePath: string) => {
-      logger.warn(
-        chalk.yellow.bold(
-          'optic new is deprecated. You can now run `optic capture <file_name>.yml` which will create a new file for you if it doesnt exist'
-        )
-      );
       if (await fs.pathExists(filePath)) {
         return await feedback.inputError(
-          `File  already exists at ${filePath}`,
+          `File already exists at ${filePath}`,
           InputErrors.DESTINATION_FILE_ALREADY_EXISTS
         );
       }
