@@ -34,13 +34,13 @@ export function captureConfigExample(oasFile: string) {
           request_concurrency: 4
         server:
           # a command to run your server
-          # optional. if ommitted Optic assumes the server is running or started elsewhere
+          # optional. if omitted Optic assumes the server is running or started elsewhere
           command: your-server-command
           # the url where your server can be reached once running
           # required, can be overridden with '--server-override'
           url: http://localhost:8080
           # a readiness endpoint for Optic to validate before sending requests
-          # optional. if ommitted perform no readiness checking.
+          # optional. if omitted perform no readiness checking.
           ready_endpoint: /
           # the interval to check ready_endpoint in ms
           # optional, default: 1000
