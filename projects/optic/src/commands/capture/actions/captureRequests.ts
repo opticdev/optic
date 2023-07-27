@@ -139,11 +139,16 @@ function sendRequests(
     let verb = r.method || 'GET';
     let opts = { method: verb };
 
-    if (verb === 'POST') {
-      opts['headers'] = {
-        'content-type': 'application/json;charset=UTF-8',
-      };
-      opts['body'] = JSON.stringify(r.data || '{}');
+    r.data ? (opts['body'] = JSON.stringify(r.data)) : '{}';
+
+    if (r.headers && r.headers.length > 0) {
+      let headers = {};
+      r.headers.forEach((header) => {
+        for (const key in header) {
+          headers[key] = header[key];
+        }
+      });
+      opts['headers'] = headers;
     }
 
     return limiter.schedule(() =>
