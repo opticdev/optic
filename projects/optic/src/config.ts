@@ -43,7 +43,7 @@ const RequestSend = Type.Object({
     })
   ),
   data: Type.Optional(Type.Object({})),
-  headers: Type.Optional(Type.Array(Type.Record(Type.String(), Type.String()))),
+  headers: Type.Optional(Type.Record(Type.String(), Type.String())),
 });
 
 const RequestRun = Type.Optional(

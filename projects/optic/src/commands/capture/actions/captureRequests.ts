@@ -141,15 +141,7 @@ function sendRequests(
 
     r.data ? (opts['body'] = JSON.stringify(r.data)) : '{}';
 
-    if (r.headers && r.headers.length > 0) {
-      let headers = {};
-      r.headers.forEach((header) => {
-        for (const key in header) {
-          headers[key] = header[key];
-        }
-      });
-      opts['headers'] = headers;
-    }
+    if (r.headers) opts['headers'] = r.headers;
 
     return limiter.schedule(() =>
       fetch(`${proxyUrl}${r.path}`, opts)
