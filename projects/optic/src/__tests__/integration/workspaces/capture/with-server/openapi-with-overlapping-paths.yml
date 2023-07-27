@@ -1,0 +1,73 @@
+openapi: 3.0.3
+info:
+  title: a spec
+  description: The API
+  version: 0.1.0
+paths:
+  /books:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetBooks200ResponseBody"
+  /books/status:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+  /books/{bookId}:
+    parameters:
+      - in: path
+        name: book
+        required: true
+        schema:
+          type: string
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/GetBooksBook200ResponseBody"
+components:
+  schemas:
+    GetBooks200ResponseBody:
+      type: object
+      properties:
+        books:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+    GetBooksBook200ResponseBody:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        author_id:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+        - id
+        - name
+        - author_id
+        - created_at
+        - updated_at
