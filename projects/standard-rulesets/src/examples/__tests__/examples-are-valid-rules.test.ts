@@ -5,27 +5,57 @@ import { ExamplesRuleset } from '../index';
 import { defaultAjv, validateSchema } from '../requireValidExamples';
 
 const ajvInstance = defaultAjv();
-describe('fromOpticConfig', () => {
-  test('invalid configuration', async () => {
-    const out = await ExamplesRuleset.fromOpticConfig({
-      require_parameter_examples: 123,
-    });
-    expect(out).toEqual(
-      '- ruleset/examples/require_parameter_examples must be boolean'
-    );
-  });
-
-  test('valid config', async () => {
-    const ruleset = await ExamplesRuleset.fromOpticConfig({
-      require_parameter_examples: true,
-      exclude_operations_with_extension: 'x-legacy',
-      docs_link: 'asdasd.com',
-    });
-    expect(ruleset).toBeInstanceOf(ExamplesRuleset);
-  });
-});
 
 describe('examples ruleset', () => {
+  test('passing property example', async () => {
+    const input: OpenAPIV3.Document = {
+      ...TestHelpers.createEmptySpec(),
+      paths: {
+        '/api/users': {
+          get: {
+            responses: {
+              '200': {
+                description: 'ok',
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'object',
+                      properties: {
+                        correctObj: {
+                          type: 'object',
+                          properties: {
+                            name: { type: 'string' },
+                          },
+                          required: ['name'],
+                          example: {
+                            name: 'hello',
+                          },
+                        },
+                        correctStr: {
+                          type: 'string',
+                          example: 'abcdefg',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+    const results = await TestHelpers.runRulesWithInputs(
+      [new ExamplesRuleset({})],
+      input,
+      input
+    );
+    expect(results.length > 0).toBe(true);
+
+    expect(results).toMatchSnapshot();
+    expect(results.every((result) => result.passed)).toBe(true);
+  });
+
   test('invalid property example errors', async () => {
     const input: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
