@@ -42,7 +42,7 @@ export function captureConfigExample(oasFile: string) {
           ready_endpoint: /
           # The interval to check 'ready_endpoint', in ms.
           # Optional: default: 1000
-          ready_interval: 100
+          ready_interval: 1000
           # The length of time in ms to wait for a successful ready check to occur.
           # Optional: default: 10_000, 10 seconds
           ready_timeout: 10_000
