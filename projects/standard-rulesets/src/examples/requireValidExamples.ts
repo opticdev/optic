@@ -304,10 +304,9 @@ export const requirePropertyExamplesMatchSchema = (ajv: Ajv) =>
     name: 'require property examples match schemas',
     rule: (property) => {
       property.requirement((property) => {
-        const flatSchema = property.value.flatSchema;
         if (property.raw.example) {
           const result = validateSchema(
-            flatSchema as SchemaObject,
+            property.raw,
             property.raw.example,
             ajv
           );
