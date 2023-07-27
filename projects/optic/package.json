@@ -2,7 +2,7 @@
   "name": "@useoptic/optic",
   "license": "MIT",
   "packageManager": "yarn@3.6.1",
-  "version": "0.48.2",
+  "version": "0.48.3",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -96,7 +96,7 @@
     "loglevel": "^1.8.0",
     "micromatch": "^4.0.5",
     "minimatch": "9.0.3",
-    "mockttp": "^3.7.4",
+    "mockttp": "^3.9.1",
     "node-fetch": "^2.6.7",
     "node-forge": "^1.2.1",
     "node-machine-id": "^1.1.12",

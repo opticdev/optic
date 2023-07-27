@@ -95,6 +95,7 @@ async function waitForServer(
   const url = urljoin(targetUrl, readyEndpoint);
   const timeout = readyTimeout || defaultServerReadyTimeout;
   const now = Date.now();
+  let didTimeout = false;
 
   const checkServer = (): Promise<boolean> =>
     fetch(url)
@@ -104,7 +105,7 @@ async function waitForServer(
         return false;
       });
 
-  const serverReadyPromise = new Promise(async (resolve) => {
+  const serverReadyPromise = new Promise(async (resolve, reject) => {
     let done = false;
     // We need to bail out if the server shut down, otherwise we never conclude this promise chain
     while (!done && !bailout.didBailout) {
@@ -113,12 +114,14 @@ async function waitForServer(
       if (isReady) {
         done = true;
       } else if (Date.now() > now + timeout) {
-        spinner.fail('Server check timed out');
-        throw new UserError({ message: 'Server check timed out.' });
+        didTimeout = true;
+        reject(new UserError({ message: 'Server check timed out.' }));
       }
       await wait(readyInterval);
     }
-    if (bailout.didBailout) spinner.fail('Server unexpectedly exited');
+    if (bailout.didBailout && !didTimeout)
+      spinner.fail('Server unexpectedly exited');
+    if (didTimeout) spinner.fail('Server check timed out');
     resolve(null);
   });
 
