@@ -26,7 +26,7 @@ export async function initCaptureConfig(
 // returns a complete Capture block example
 export function captureConfigExample(oasFile: string) {
   return `
-    # Configures the 'optic capture' flow. View the documentation for details about how capture works: DOCS_LINK_HERE
+    # Configures the 'optic capture' flow. View the documentation for details about how capture works: https://www.useoptic.com/docs/capturing-traffic
     capture:
       ${oasFile}:
         server:
