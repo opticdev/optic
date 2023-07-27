@@ -16,6 +16,8 @@ import {
 import { ProxyInteractions } from '../sources/proxy';
 import { HarEntries } from '../sources/har';
 
+const defaultServerReadyTimeout = 10_000; // 10s
+
 const wait = (time: number) =>
   new Promise((r) => setTimeout(() => r(null), time));
 
@@ -91,7 +93,7 @@ async function waitForServer(
   //
 
   const url = urljoin(targetUrl, readyEndpoint);
-  const timeout = readyTimeout || 3 * 60 * 1_000; // 3 minutes
+  const timeout = readyTimeout || defaultServerReadyTimeout;
   const now = Date.now();
   let didTimeout = false;
 
@@ -243,7 +245,8 @@ export async function captureRequestsFromProxy(
     captureConfig.server.dir === undefined
       ? config.root
       : captureConfig.server.dir;
-  const timeout = captureConfig.server.ready_timeout || 3 * 60 * 1_000; // 3 minutes
+  const timeout =
+    captureConfig.server.ready_timeout || defaultServerReadyTimeout;
   const readyInterval = captureConfig.server.ready_interval || 1000;
   // start app
   let app: ChildProcessWithoutNullStreams | undefined;

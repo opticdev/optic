@@ -42,10 +42,10 @@ export function captureConfigExample(oasFile: string) {
           ready_endpoint: /
           # The interval to check 'ready_endpoint', in ms.
           # Optional: default: 1000
-          ready_interval: 100
+          ready_interval: 1000
           # The length of time in ms to wait for a successful ready check to occur.
-          # Optional: default: 60_000, 1 minute
-          ready_timeout: 60_000
+          # Optional: default: 10_000, 10 seconds
+          ready_timeout: 10_000
         # At least one of 'requests.run' or 'requests.send' is required below.
         requests:
           # Run a command to generate traffic. Requests should be sent to the Optic proxy, the address of which is injected
