@@ -5,7 +5,7 @@ exports[`diff petstore diff 1`] = `
 
 [31mx [39m[1mSwagger Petstore Updated[22m [90mpetstore-base.json[39m
 [1mOperations: [22m5 operations added, 16 changed, 1 removed
-[31mx [39m [1mChecks:[22m 153/200 passed 
+[31mx [39m [1mChecks:[22m 159/211 passed 
 
 specification details:
 - /servers/2 [32madded[39m
@@ -210,9 +210,17 @@ specification details:
     - body [1mapplication/json[22m: 
       - property [1m/schema/properties/summary[22m: [32madded[39m
       - property [1m/schema/properties/status[22m: [33mchanged[39m
+      
+        [31m[1mx [request and response property enums][22m cannot remove enum options approved 'status'. This is a breaking change.[39m
+        at [4mpetstore-updated.json:1006:36426[24m
+        
     - body [1mapplication/xml[22m: 
       - property [1m/schema/properties/summary[22m: [32madded[39m
       - property [1m/schema/properties/status[22m: [33mchanged[39m
+      
+        [31m[1mx [request and response property enums][22m cannot remove enum options approved 'status'. This is a breaking change.[39m
+        at [4mpetstore-updated.json:984:35448[24m
+        
       - property [1m/schema/properties/petId[22m: [33mchanged[39m
       
         [31m[1mx [prevent making response property optional][22m cannot make required response property 'petId' optional. This is a breaking change.[39m
@@ -222,20 +230,32 @@ specification details:
     - body [1mapplication/json[22m: [32madded[39m
       - property : [32madded[39m
 
-[32m✔ [1mPOST[22m /store/order[39m: 
+[31mx [1mPOST[22m /store/order[39m: 
   - request: 
     - body [1m*/*[22m: 
       - property [1m/schema/properties/summary[22m: [32madded[39m
       - property [1m/schema/properties/status[22m: [33mchanged[39m
+      
+        [31m[1mx [request and response property enums][22m cannot remove enum options approved 'status'. This is a breaking change.[39m
+        at [4mpetstore-updated.json:870:31049[24m
+        
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 
       - property [1m/schema/properties/summary[22m: [32madded[39m
       - property [1m/schema/properties/status[22m: [33mchanged[39m
+      
+        [31m[1mx [request and response property enums][22m cannot remove enum options approved 'status'. This is a breaking change.[39m
+        at [4mpetstore-updated.json:930:33483[24m
+        
         - /example [32madded[39m
         
     - body [1mapplication/xml[22m: 
       - property [1m/schema/properties/summary[22m: [32madded[39m
       - property [1m/schema/properties/status[22m: [33mchanged[39m
+      
+        [31m[1mx [request and response property enums][22m cannot remove enum options approved 'status'. This is a breaking change.[39m
+        at [4mpetstore-updated.json:899:32168[24m
+        
 
 [31mx [1mPOST[22m /pet/{petId}/uploadImage[39m: 
   - cookie parameter [3mdebug[23m: 
