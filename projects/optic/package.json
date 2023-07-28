@@ -101,7 +101,7 @@
     "node-forge": "^1.2.1",
     "node-machine-id": "^1.1.12",
     "open": "^8.4.0",
-    "ora": "5.4.1",
+    "ora": "7.0.0",
     "pluralize": "8.0.0",
     "portfinder": "^1.0.28",
     "postman-collection": "^4.1.7",
