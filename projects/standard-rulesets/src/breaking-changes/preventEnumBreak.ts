@@ -62,9 +62,9 @@ const getPreventParameterEnumBreak = <P extends ParameterIn>(parameterIn: P) =>
 
         if (enumNarrowed) {
           throw new RuleError({
-            message: `cannot remove enum options "${enumNarrowed.join(
-              ', '
-            )}" from ${parameterIn} parameter '${
+            message: `cannot remove enum option${
+              enumNarrowed.length > 1 ? 's' : ''
+            } '${enumNarrowed.join(', ')}' from ${parameterIn} parameter '${
               after.value.name
             }'. This is a breaking change.`,
           });
@@ -113,9 +113,11 @@ export const preventPropertyEnumBreak = () => {
 
         if (enumNarrowed) {
           throw new RuleError({
-            message: `cannot remove enum options "${enumNarrowed.join(
-              ', '
-            )}" '${after.value.key}'. This is a breaking change.`,
+            message: `cannot remove enum option${
+              enumNarrowed.length > 1 ? 's' : ''
+            } '${enumNarrowed.join(', ')}' from '${
+              after.value.key
+            }' property. This is a breaking change.`,
           });
         }
       });
