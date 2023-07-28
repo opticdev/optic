@@ -16,7 +16,8 @@ import {
   preventCookieParameterEnumBreak,
   preventPathParameterEnumBreak,
   preventHeaderParameterEnumBreak,
-} from './preventParameterEnumBreak';
+  preventPropertyEnumBreak,
+} from './preventEnumBreak';
 import {
   preventNewRequiredQueryParameter,
   preventNewRequiredCookieParameter,
@@ -128,6 +129,7 @@ export class BreakingChangesRuleset extends Ruleset<Rule[]> {
       preventCookieParameterEnumBreak(),
       preventCookieParameterTypeChange(),
       preventHeaderParameterEnumBreak(),
+      preventPropertyEnumBreak(),
       preventHeaderParameterTypeChange(),
       preventNewRequiredCookieParameter(),
       preventNewRequiredHeaderParameter(),
