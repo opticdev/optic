@@ -211,14 +211,14 @@ specification details:
       - property [1m/schema/properties/summary[22m: [32madded[39m
       - property [1m/schema/properties/status[22m: [33mchanged[39m
       
-        [31m[1mx [request and response property enums][22m cannot remove enum options approved 'status'. This is a breaking change.[39m
+        [31m[1mx [request and response property enums][22m cannot remove enum option 'approved' from 'status' property. This is a breaking change.[39m
         at [4mpetstore-updated.json:1006:36426[24m
         
     - body [1mapplication/xml[22m: 
       - property [1m/schema/properties/summary[22m: [32madded[39m
       - property [1m/schema/properties/status[22m: [33mchanged[39m
       
-        [31m[1mx [request and response property enums][22m cannot remove enum options approved 'status'. This is a breaking change.[39m
+        [31m[1mx [request and response property enums][22m cannot remove enum option 'approved' from 'status' property. This is a breaking change.[39m
         at [4mpetstore-updated.json:984:35448[24m
         
       - property [1m/schema/properties/petId[22m: [33mchanged[39m
@@ -236,7 +236,7 @@ specification details:
       - property [1m/schema/properties/summary[22m: [32madded[39m
       - property [1m/schema/properties/status[22m: [33mchanged[39m
       
-        [31m[1mx [request and response property enums][22m cannot remove enum options approved 'status'. This is a breaking change.[39m
+        [31m[1mx [request and response property enums][22m cannot remove enum option 'approved' from 'status' property. This is a breaking change.[39m
         at [4mpetstore-updated.json:870:31049[24m
         
   - response [1m200[22m: 
@@ -244,7 +244,7 @@ specification details:
       - property [1m/schema/properties/summary[22m: [32madded[39m
       - property [1m/schema/properties/status[22m: [33mchanged[39m
       
-        [31m[1mx [request and response property enums][22m cannot remove enum options approved 'status'. This is a breaking change.[39m
+        [31m[1mx [request and response property enums][22m cannot remove enum option 'approved' from 'status' property. This is a breaking change.[39m
         at [4mpetstore-updated.json:930:33483[24m
         
         - /example [32madded[39m
@@ -253,7 +253,7 @@ specification details:
       - property [1m/schema/properties/summary[22m: [32madded[39m
       - property [1m/schema/properties/status[22m: [33mchanged[39m
       
-        [31m[1mx [request and response property enums][22m cannot remove enum options approved 'status'. This is a breaking change.[39m
+        [31m[1mx [request and response property enums][22m cannot remove enum option 'approved' from 'status' property. This is a breaking change.[39m
         at [4mpetstore-updated.json:899:32168[24m
         
 
