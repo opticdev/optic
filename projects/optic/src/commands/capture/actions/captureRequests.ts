@@ -143,7 +143,24 @@ function sendRequests(
 
     r.data ? (opts['body'] = JSON.stringify(r.data)) : '{}';
 
-    if (r.headers) opts['headers'] = r.headers;
+    // add headers to the request
+    if (r.headers) {
+      // convert all map keys to lowercase for ease of use
+      const headers = Object.keys(r.headers).reduce(
+        (acc, key) => {
+          acc[key.toLowerCase()] = r.headers![key];
+          return acc;
+        },
+        {} as { [key: string]: string }
+      );
+
+      opts['headers'] = headers;
+    }
+
+    // if a content-type header is not set, add it
+    if (opts['headers'] && !opts['headers'].hasOwnProperty('content-type')) {
+      opts['headers']['content-type'] = 'application/json;charset=utf-8';
+    }
 
     return limiter.schedule(() =>
       fetch(`${proxyUrl}${r.path}`, opts)
