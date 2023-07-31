@@ -50,7 +50,7 @@ exports[`breaking changes ruleset - parameter enum change "cookie" parameter enu
     },
     "condition": undefined,
     "docsLink": undefined,
-    "error": "cannot remove an enum from cookie parameter 'test'. This is a breaking change.",
+    "error": "cannot remove enum option 'a' from cookie parameter 'test'. This is a breaking change.",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -295,7 +295,7 @@ exports[`breaking changes ruleset - parameter enum change "header" parameter enu
     },
     "condition": undefined,
     "docsLink": undefined,
-    "error": "cannot remove an enum from header parameter 'test'. This is a breaking change.",
+    "error": "cannot remove enum option 'a' from header parameter 'test'. This is a breaking change.",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -540,7 +540,7 @@ exports[`breaking changes ruleset - parameter enum change "path" parameter enum 
     },
     "condition": undefined,
     "docsLink": undefined,
-    "error": "cannot remove an enum from path parameter 'test'. This is a breaking change.",
+    "error": "cannot remove enum option 'a' from path parameter 'test'. This is a breaking change.",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -725,7 +725,7 @@ exports[`breaking changes ruleset - parameter enum change "query" parameter enum
     },
     "condition": undefined,
     "docsLink": undefined,
-    "error": "cannot remove an enum from query parameter 'test'. This is a breaking change.",
+    "error": "cannot remove enum option 'a' from query parameter 'test'. This is a breaking change.",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -965,7 +965,7 @@ exports[`breaking changes ruleset - parameter enum change const changes picked u
     },
     "condition": undefined,
     "docsLink": undefined,
-    "error": "cannot remove an enum from cookie parameter 'test'. This is a breaking change.",
+    "error": "cannot remove enum option 'a' from cookie parameter 'test'. This is a breaking change.",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -1190,7 +1190,7 @@ exports[`breaking changes ruleset - parameter enum change const changes picked u
     },
     "condition": undefined,
     "docsLink": undefined,
-    "error": "cannot remove an enum from header parameter 'test'. This is a breaking change.",
+    "error": "cannot remove enum option 'a' from header parameter 'test'. This is a breaking change.",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -1415,7 +1415,7 @@ exports[`breaking changes ruleset - parameter enum change const changes picked u
     },
     "condition": undefined,
     "docsLink": undefined,
-    "error": "cannot remove an enum from path parameter 'test'. This is a breaking change.",
+    "error": "cannot remove enum option 'a' from path parameter 'test'. This is a breaking change.",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -1585,7 +1585,7 @@ exports[`breaking changes ruleset - parameter enum change const changes picked u
     },
     "condition": undefined,
     "docsLink": undefined,
-    "error": "cannot remove an enum from query parameter 'test'. This is a breaking change.",
+    "error": "cannot remove enum option 'a' from query parameter 'test'. This is a breaking change.",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
@@ -3511,6 +3511,218 @@ exports[`breaking changes ruleset - parameter enum change enum converted to cons
     "severity": 2,
     "type": "changed",
     "where": "GET /api/users query parameter: test",
+  },
+]
+`;
+
+exports[`breaking changes ruleset - parameter enum change enums in bodies 1`] = `
+[
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "flatSchema": {
+            "enum": [
+              "A",
+              "B",
+            ],
+            "type": "string",
+          },
+          "key": "enum",
+          "required": false,
+        },
+        "before": {
+          "flatSchema": {
+            "enum": [
+              "A",
+              "B",
+              "C",
+            ],
+            "type": "string",
+          },
+          "key": "enum",
+          "required": false,
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": [
+            "enum",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "enum",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/enum",
+        "kind": "field",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent making response property optional",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "changed",
+    "where": "GET /api/users response 200 response body: application/json property enum",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "flatSchema": {
+            "enum": [
+              "A",
+              "B",
+            ],
+            "type": "string",
+          },
+          "key": "enum",
+          "required": false,
+        },
+        "before": {
+          "flatSchema": {
+            "enum": [
+              "A",
+              "B",
+              "C",
+            ],
+            "type": "string",
+          },
+          "key": "enum",
+          "required": false,
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": [
+            "enum",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "enum",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/enum",
+        "kind": "field",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent response property type changes",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "changed",
+    "where": "GET /api/users response 200 response body: application/json property enum",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "flatSchema": {
+            "enum": [
+              "A",
+              "B",
+            ],
+            "type": "string",
+          },
+          "key": "enum",
+          "required": false,
+        },
+        "before": {
+          "flatSchema": {
+            "enum": [
+              "A",
+              "B",
+              "C",
+            ],
+            "type": "string",
+          },
+          "key": "enum",
+          "required": false,
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": [
+            "enum",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "enum",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/enum",
+        "kind": "field",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "cannot remove enum option 'C' from 'enum' property. This is a breaking change.",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request and response property enums",
+    "passed": false,
+    "received": undefined,
+    "severity": 2,
+    "type": "changed",
+    "where": "GET /api/users response 200 response body: application/json property enum",
   },
 ]
 `;

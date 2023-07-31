@@ -16,6 +16,8 @@ import {
 import { ProxyInteractions } from '../sources/proxy';
 import { HarEntries } from '../sources/har';
 
+const defaultServerReadyTimeout = 10_000; // 10s
+
 const wait = (time: number) =>
   new Promise((r) => setTimeout(() => r(null), time));
 
@@ -91,8 +93,9 @@ async function waitForServer(
   //
 
   const url = urljoin(targetUrl, readyEndpoint);
-  const timeout = readyTimeout || 3 * 60 * 1_000; // 3 minutes
+  const timeout = readyTimeout || defaultServerReadyTimeout;
   const now = Date.now();
+  let didTimeout = false;
 
   const checkServer = (): Promise<boolean> =>
     fetch(url)
@@ -102,7 +105,7 @@ async function waitForServer(
         return false;
       });
 
-  const serverReadyPromise = new Promise(async (resolve) => {
+  const serverReadyPromise = new Promise(async (resolve, reject) => {
     let done = false;
     // We need to bail out if the server shut down, otherwise we never conclude this promise chain
     while (!done && !bailout.didBailout) {
@@ -111,12 +114,14 @@ async function waitForServer(
       if (isReady) {
         done = true;
       } else if (Date.now() > now + timeout) {
-        spinner.fail('Server check timed out');
-        throw new UserError({ message: 'Server check timed out.' });
+        didTimeout = true;
+        reject(new UserError({ message: 'Server check timed out.' }));
       }
       await wait(readyInterval);
     }
-    if (bailout.didBailout) spinner.fail('Server unexpectedly exited');
+    if (bailout.didBailout && !didTimeout)
+      spinner.fail('Server unexpectedly exited');
+    if (didTimeout) spinner.fail('Server check timed out');
     resolve(null);
   });
 
@@ -243,7 +248,8 @@ export async function captureRequestsFromProxy(
     captureConfig.server.dir === undefined
       ? config.root
       : captureConfig.server.dir;
-  const timeout = captureConfig.server.ready_timeout || 3 * 60 * 1_000; // 3 minutes
+  const timeout =
+    captureConfig.server.ready_timeout || defaultServerReadyTimeout;
   const readyInterval = captureConfig.server.ready_interval || 1000;
   // start app
   let app: ChildProcessWithoutNullStreams | undefined;
