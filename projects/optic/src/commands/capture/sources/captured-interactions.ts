@@ -51,6 +51,7 @@ export class CapturedInteraction {
     const requestPostData = entry.request.postData;
     if (
       requestPostData &&
+      requestPostData.text &&
       (!requestPostData.encoding || Buffer.isEncoding(requestPostData.encoding))
     ) {
       let buffer = Buffer.from(
