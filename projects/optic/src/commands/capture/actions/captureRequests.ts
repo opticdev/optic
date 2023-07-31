@@ -139,27 +139,34 @@ function sendRequests(
   });
   return reqs.map(async (r) => {
     let verb = r.method || 'GET';
-    let opts = { method: verb };
+    let opts = {
+      method: verb,
+      headers: {},
+    };
 
-    r.data ? (opts['body'] = JSON.stringify(r.data)) : '{}';
+    if (r.data) opts['body'] = JSON.stringify(r.data);
 
-    // add headers to the request
-    if (r.headers) {
-      // convert all map keys to lowercase for ease of use
-      const headers = Object.keys(r.headers).reduce(
-        (acc, key) => {
-          acc[key.toLowerCase()] = r.headers![key];
-          return acc;
-        },
-        {} as { [key: string]: string }
-      );
+    try {
+      // add headers to the request
+      if (r.headers) {
+        // convert all map keys to lowercase for ease of use
+        const headers = Object.keys(r.headers).reduce(
+          (acc, key) => {
+            acc[key.toLowerCase()] = r.headers![key];
+            return acc;
+          },
+          {} as { [key: string]: string }
+        );
 
-      opts['headers'] = headers;
-    }
+        opts['headers'] = headers;
+      }
 
-    // if a content-type header is not set, add it
-    if (!opts['headers'].hasOwnProperty('content-type')) {
-      opts['headers']['content-type'] = 'application/json;charset=UTF-8';
+      // if a content-type header is not set, add it
+      if (!opts['headers'].hasOwnProperty('content-type')) {
+        opts['headers']['content-type'] = 'application/json;charset=UTF-8';
+      }
+    } catch (error) {
+      logger.error(error);
     }
 
     return limiter.schedule(() =>
