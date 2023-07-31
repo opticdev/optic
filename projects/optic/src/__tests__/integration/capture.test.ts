@@ -50,7 +50,7 @@ describe('capture with requests', () => {
       expect(code).toBe(1);
     });
 
-    test.only('verifies spec with endpoint specificity', async () => {
+    test('verifies spec with endpoint specificity', async () => {
       const workspace = await setupWorkspace('capture/with-server');
       await setPortInFile(workspace, 'optic.yml');
 
