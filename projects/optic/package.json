@@ -137,6 +137,5 @@
       "node18-win-x64"
     ],
     "outputPath": "../../dist"
-  },
-  "stableVersion": "0.48.2"
+  }
 }
