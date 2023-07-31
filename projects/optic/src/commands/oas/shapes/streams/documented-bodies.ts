@@ -17,7 +17,6 @@ import {
 } from '../../operations';
 import { CapturedBody } from '../../../capture/sources/body';
 import { logger } from '../../../../logger';
-import { SentryClient } from '../../../../sentry';
 
 export type { DocumentedBody };
 
@@ -264,7 +263,7 @@ async function decodeCapturedBody(
     try {
       value = await CapturedBody.json(capturedBody);
     } catch (err) {
-      SentryClient.captureException(err);
+      logger.error(err);
       return Err('Could not parse captured body as json');
     }
 
