@@ -146,26 +146,22 @@ function sendRequests(
 
     if (r.data) opts['body'] = JSON.stringify(r.data);
 
-    try {
-      if (r.headers) {
-        // convert all header keys to lowercase for easier content-type checking below
-        const headers = Object.keys(r.headers).reduce(
-          (acc, key) => {
-            acc[key.toLowerCase()] = r.headers![key];
-            return acc;
-          },
-          {} as { [key: string]: string }
-        );
+    if (r.headers) {
+      // convert all header keys to lowercase for easier content-type checking below
+      const headers = Object.keys(r.headers).reduce(
+        (acc, key) => {
+          acc[key.toLowerCase()] = r.headers![key];
+          return acc;
+        },
+        {} as { [key: string]: string }
+      );
 
-        opts['headers'] = headers;
-      }
+      opts['headers'] = headers;
+    }
 
-      // if a content-type header is not set, add it
-      if (!opts['headers'].hasOwnProperty('content-type')) {
-        opts['headers']['content-type'] = 'application/json;charset=UTF-8';
-      }
-    } catch (error) {
-      logger.error(error);
+    // if a content-type header is not set, add it
+    if (!opts['headers'].hasOwnProperty('content-type')) {
+      opts['headers']['content-type'] = 'application/json;charset=UTF-8';
     }
 
     return limiter.schedule(() =>
@@ -312,7 +308,7 @@ export async function captureRequestsFromProxy(
       proxy
     );
     // Here we continue even if some of the requests failed - we log out the requests errors but use the rest to query
-    const requestsPromises = Promise.allSettled([
+    const requestsPromises = Promise.all([
       sendRequestsPromise,
       runRequestsPromise,
     ]);
@@ -321,6 +317,9 @@ export async function captureRequestsFromProxy(
     // catch the bailout promise rejection when we shutdown the app
     bailout.promise.catch((e) => {});
   } catch (e) {
+    spinner.fail('Some requests failed to send');
+    logger.error(e);
+
     // Meaning either the requests threw an uncaught exception or the app server randomly quit
     process.exitCode = 1;
     // The finally block will run before we return from the fn call
