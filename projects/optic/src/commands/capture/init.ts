@@ -63,10 +63,13 @@ export function captureConfigExample(oasFile: string) {
             # path: Required
             # method: Optional: default: GET
             # data: Optional: If omitted on a POST request, default: {}
+            # headers: Optional: If 'content-type' is omitted, it is set to 'application/json;charset=UTF-8'.
             - path: /
               method: GET
             - path: /users/create
               method: POST
+              headers:
+                content-type: application/json;charset=UTF-8
               data:
                 name: Hank
         config:
