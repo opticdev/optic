@@ -147,9 +147,8 @@ function sendRequests(
     if (r.data) opts['body'] = JSON.stringify(r.data);
 
     try {
-      // add headers to the request
       if (r.headers) {
-        // convert all map keys to lowercase for ease of use
+        // convert all header keys to lowercase for easier content-type checking below
         const headers = Object.keys(r.headers).reduce(
           (acc, key) => {
             acc[key.toLowerCase()] = r.headers![key];
