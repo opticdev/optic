@@ -44,6 +44,9 @@ const requestListener = function (req, res) {
   if (normalizedUrl === '/books' && req.method === 'GET') {
     res.writeHead(200);
     res.end(JSON.stringify({books}));
+  } else if (normalizedUrl === '/books/status' && req.method === 'GET') {
+    res.writeHead(200);
+    res.end(JSON.stringify({ok: true}));
   } else if (/^\/books\//i.test(normalizedUrl) && req.method === 'GET') {
     res.writeHead(200);
     res.end(JSON.stringify(books[0]));

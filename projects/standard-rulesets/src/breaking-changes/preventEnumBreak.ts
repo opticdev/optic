@@ -1,15 +1,22 @@
-import { OperationRule, RuleError } from '@useoptic/rulesets-base';
+import {
+  OperationRule,
+  PropertyRule,
+  RuleError,
+} from '@useoptic/rulesets-base';
 import { getOperationAssertionsParameter } from './helpers/getOperationAssertionsParameter';
 import { ParameterIn } from './helpers/types';
 import { OpenAPIV3 } from 'openapi-types';
 
-const enumWasNarrowed = (before: any[], after: any[]): boolean => {
-  if (after.length < before.length) return true;
-  const afterSet = new Set(after);
-  for (const beforeItem of before.values()) {
-    if (!afterSet.has(beforeItem)) return true;
+const enumWasNarrowed = (before: any[], after: any[]): string[] | false => {
+  let beforeSet = new Set(before);
+  let afterSet = new Set(after);
+  const setDiff = new Set([...beforeSet].filter((x) => !afterSet.has(x)));
+
+  if (setDiff.size) {
+    return [...setDiff];
+  } else {
+    return false;
   }
-  return false;
 };
 
 type SchemaWithEnum = OpenAPIV3.SchemaObject &
@@ -55,7 +62,11 @@ const getPreventParameterEnumBreak = <P extends ParameterIn>(parameterIn: P) =>
 
         if (enumNarrowed) {
           throw new RuleError({
-            message: `cannot remove an enum from ${parameterIn} parameter '${after.value.name}'. This is a breaking change.`,
+            message: `cannot remove enum option${
+              enumNarrowed.length > 1 ? 's' : ''
+            } '${enumNarrowed.join(', ')}' from ${parameterIn} parameter '${
+              after.value.name
+            }'. This is a breaking change.`,
           });
         }
       });
@@ -85,3 +96,31 @@ export const preventPathParameterEnumBreak = () =>
 
 export const preventHeaderParameterEnumBreak = () =>
   getPreventParameterEnumBreak('header');
+
+export const preventPropertyEnumBreak = () => {
+  return new PropertyRule({
+    name: 'request and response property enums',
+    matches: (property, context) => isSchemaWithEnum(property.raw),
+    rule: (property, context) => {
+      property.changed((before, after) => {
+        const enumNarrowed =
+          isSchemaWithEnum(before.raw) &&
+          isSchemaWithEnum(after.raw) &&
+          enumWasNarrowed(
+            getEnumFromSchema(before.raw),
+            getEnumFromSchema(after.raw)
+          );
+
+        if (enumNarrowed) {
+          throw new RuleError({
+            message: `cannot remove enum option${
+              enumNarrowed.length > 1 ? 's' : ''
+            } '${enumNarrowed.join(', ')}' from '${
+              after.value.key
+            }' property. This is a breaking change.`,
+          });
+        }
+      });
+    },
+  });
+};

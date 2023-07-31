@@ -154,6 +154,8 @@ const getCaptureAction =
         for await (const harOrErr of harEntries) {
           if (harOrErr.ok) {
             captures.addHar(harOrErr.val);
+          } else {
+            logger.debug(harOrErr.val);
           }
         }
       } catch (e) {
@@ -166,7 +168,9 @@ const getCaptureAction =
       const postmanEntryResults = PostmanCollectionEntries.fromReadable(
         fsNonPromise.createReadStream(options.postman)
       );
-      let postmanEntries = AT.unwrapOr(postmanEntryResults, (err) => {});
+      let postmanEntries = AT.unwrapOr(postmanEntryResults, (err) => {
+        logger.debug(err);
+      });
 
       for await (const interaction of CapturedInteractions.fromPostmanCollection(
         postmanEntries

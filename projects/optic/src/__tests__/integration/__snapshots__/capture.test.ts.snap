@@ -1455,6 +1455,32 @@ components:
 "
 `;
 
+exports[`capture with requests verify behavior verifies spec with endpoint specificity 1`] = `
+"- Generating traffic to send to server
+[32m✔[39m Successfully captured requests
+- GET /books
+[31m✖[39m GET /books
+  [31m× [39m200 response
+  [31m[200 response body] 'name' is not documented[39m
+  [31m[200 response body] 'author_id' is not documented[39m
+  [31m[200 response body] 'price' is not documented[39m
+  [31m[200 response body] 'created_at' is not documented[39m
+  [31m[200 response body] 'updated_at' is not documented[39m
+- GET /books/status
+[32m✔[39m GET /books/status
+  [32m✓ [39m200 response
+- GET /books/{bookId}
+[31m✖[39m GET /books/{bookId}
+  [31m× [39m200 response
+  [31m[200 response body] 'price' is not documented[39m
+
+2 unmatched interactions
+[33mNew endpoints are only added in interactive mode.[39m
+[34mRun with \`--update interactive\` to add new endpoints[39m
+[33mHint: optic capture openapi-with-overlapping-paths.yml --update interactive[39m
+"
+`;
+
 exports[`capture with requests verify behavior verifies the specification with coverage 1`] = `
 "- Generating traffic to send to server
 [32m✔[39m Successfully captured requests

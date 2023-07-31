@@ -2,7 +2,7 @@
   "name": "@useoptic/optic",
   "license": "MIT",
   "packageManager": "yarn@3.6.1",
-  "version": "0.48.3",
+  "version": "0.48.4",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -106,7 +106,7 @@
     "portfinder": "^1.0.28",
     "postman-collection": "^4.1.7",
     "prompts": "^2.4.2",
-    "semver": "^7.3.8",
+    "semver": "^7.5.4",
     "slice-ansi": "^4.0.0",
     "stream-chain": "^2.2.5",
     "stream-json": "^1.7.4",
