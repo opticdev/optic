@@ -159,7 +159,7 @@ function sendRequests(
 
     // if a content-type header is not set, add it
     if (opts['headers'] && !opts['headers'].hasOwnProperty('content-type')) {
-      opts['headers']['content-type'] = 'application/json;charset=utf-8';
+      opts['headers']['content-type'] = 'application/json;charset=UTF-8';
     }
 
     return limiter.schedule(() =>
