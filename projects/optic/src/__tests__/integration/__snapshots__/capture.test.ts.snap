@@ -1,8 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`capture with inputs --har updating an OpenAPI spec 1`] = `
-"- GET /books
-[32m✔[39m GET /books
+"GET /books
   [32m✓ [39m200 response
   [32m[200 response body] 'data' has been added[39m
   [32m[200 response body] 'next' has been added[39m
@@ -10,16 +9,11 @@ exports[`capture with inputs --har updating an OpenAPI spec 1`] = `
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
-- GET /books/{book}
-[32m✔[39m GET /books/{book}
-- GET /authors/{author}
-[32m✔[39m GET /authors/{author}
-- GET /some/example
-[32m✔[39m GET /some/example
-- POST /books
-[32m✔[39m POST /books
-- POST /authors
-[32m✔[39m POST /authors
+GET /books/{book}
+GET /authors/{author}
+GET /some/example
+POST /books
+POST /authors
 "
 `;
 
@@ -240,8 +234,7 @@ components:
 `;
 
 exports[`capture with inputs --har verifying OpenAPI spec 1`] = `
-"- GET /books
-[31m✖[39m GET /books
+"GET /books
   [31m× [39m200 response
   [31m[200 response body] 'data' is not documented[39m
   [31m[200 response body] 'next' is not documented[39m
@@ -259,54 +252,30 @@ exports[`capture with inputs --postman updating an OpenAPI spec 1`] = `
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
-- GET /get
-[32m✔[39m GET /get
-- GET /headers
-[32m✔[39m GET /headers
-- GET /response-headers
-[32m✔[39m GET /response-headers
-- GET /basic-auth
-[32m✔[39m GET /basic-auth
-- GET /
-[32m✔[39m GET /
-- GET /digest-auth
-[32m✔[39m GET /digest-auth
-- GET /auth/hawk
-[32m✔[39m GET /auth/hawk
-- GET /oauth1
-[32m✔[39m GET /oauth1
-- GET /cookies/{cooky}
-[32m✔[39m GET /cookies/{cooky}
-- GET /cookies
-[32m✔[39m GET /cookies
-- GET /status/{status}
-[32m✔[39m GET /status/{status}
-- GET /stream/{stream}
-[32m✔[39m GET /stream/{stream}
-- GET /delay/{delay}
-[32m✔[39m GET /delay/{delay}
-- GET /encoding/utf8
-[32m✔[39m GET /encoding/utf8
-- GET /gzip
-[32m✔[39m GET /gzip
-- GET /deflate
-[32m✔[39m GET /deflate
-- GET /ip
-[32m✔[39m GET /ip
-- GET /time/{time}
-[32m✔[39m GET /time/{time}
-- GET /get/hello
-[32m✔[39m GET /get/hello
-- PUT /put
-[32m✔[39m PUT /put
-- POST /post
-[32m✔[39m POST /post
-- POST /transform/collection
-[32m✔[39m POST /transform/collection
-- DELETE /delete
-[32m✔[39m DELETE /delete
-- PATCH /patch
-[32m✔[39m PATCH /patch
+GET /get
+GET /headers
+GET /response-headers
+GET /basic-auth
+GET /
+GET /digest-auth
+GET /auth/hawk
+GET /oauth1
+GET /cookies/{cooky}
+GET /cookies
+GET /status/{status}
+GET /stream/{stream}
+GET /delay/{delay}
+GET /encoding/utf8
+GET /gzip
+GET /deflate
+GET /ip
+GET /time/{time}
+GET /get/hello
+PUT /put
+POST /post
+POST /transform/collection
+DELETE /delete
+PATCH /patch
 "
 `;
 
@@ -872,20 +841,15 @@ exports[`capture with inputs --postman verifying OpenAPI spec 1`] = `
 `;
 
 exports[`capture with requests update behavior handle server path prefixes in spec 1`] = `
-"- Generating traffic to send to server
-[32m✔[39m Successfully captured requests
+"Generating traffic to send to server
 [90m1 endpoint did not receive traffic[39m
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
-- GET /books
-[32m✔[39m GET /books
-- GET /books/{book}
-[32m✔[39m GET /books/{book}
-- GET /authors
-[32m✔[39m GET /authors
-- POST /books/{book}
-[32m✔[39m POST /books/{book}
+GET /books
+GET /books/{book}
+GET /authors
+POST /books/{book}
 "
 `;
 
@@ -1037,10 +1001,8 @@ components:
 `;
 
 exports[`capture with requests update behavior handles update in other file 1`] = `
-"- Generating traffic to send to server
-[32m✔[39m Successfully captured requests
-- GET /books
-[32m✔[39m GET /books
+"Generating traffic to send to server
+GET /books
   [32m✓ [39m200 response
   [32m[200 response body] 'name' has been added[39m
   [32m[200 response body] 'author_id' has been added[39m
@@ -1100,10 +1062,8 @@ exports[`capture with requests update behavior handles update in other file 3`] 
 `;
 
 exports[`capture with requests update behavior respects x-optic-path-ignore 1`] = `
-"- Generating traffic to send to server
-[32m✔[39m Successfully captured requests
-- GET /books
-[32m✔[39m GET /books
+"Generating traffic to send to server
+GET /books
   [32m✓ [39m200 response
   [32m[200 response body] 'name' has been added[39m
   [32m[200 response body] 'author_id' has been added[39m
@@ -1113,8 +1073,7 @@ exports[`capture with requests update behavior respects x-optic-path-ignore 1`] 
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
-- POST /books/{book}
-[32m✔[39m POST /books/{book}
+POST /books/{book}
 "
 `;
 
@@ -1225,10 +1184,8 @@ components:
 `;
 
 exports[`capture with requests update behavior updates all endpoints with --update automatic 1`] = `
-"- Generating traffic to send to server
-[32m✔[39m Successfully captured requests
-- GET /books
-[32m✔[39m GET /books
+"Generating traffic to send to server
+GET /books
   [32m✓ [39m200 response
   [32m[200 response body] 'name' has been added[39m
   [32m[200 response body] 'author_id' has been added[39m
@@ -1238,12 +1195,9 @@ exports[`capture with requests update behavior updates all endpoints with --upda
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
-- GET /books/{book}
-[32m✔[39m GET /books/{book}
-- GET /authors
-[32m✔[39m GET /authors
-- POST /books/{book}
-[32m✔[39m POST /books/{book}
+GET /books/{book}
+GET /authors
+POST /books/{book}
 "
 `;
 
@@ -1390,10 +1344,8 @@ components:
 `;
 
 exports[`capture with requests update behavior updates only existing endpoints by default 1`] = `
-"- Generating traffic to send to server
-[32m✔[39m Successfully captured requests
-- GET /books
-[32m✔[39m GET /books
+"Generating traffic to send to server
+GET /books
   [32m✓ [39m200 response
   [32m[200 response body] 'name' has been added[39m
   [32m[200 response body] 'author_id' has been added[39m
@@ -1456,21 +1408,17 @@ components:
 `;
 
 exports[`capture with requests verify behavior verifies spec with endpoint specificity 1`] = `
-"- Generating traffic to send to server
-[32m✔[39m Successfully captured requests
-- GET /books
-[31m✖[39m GET /books
+"Generating traffic to send to server
+GET /books
   [31m× [39m200 response
   [31m[200 response body] 'name' is not documented[39m
   [31m[200 response body] 'author_id' is not documented[39m
   [31m[200 response body] 'price' is not documented[39m
   [31m[200 response body] 'created_at' is not documented[39m
   [31m[200 response body] 'updated_at' is not documented[39m
-- GET /books/status
-[32m✔[39m GET /books/status
+GET /books/status
   [32m✓ [39m200 response
-- GET /books/{bookId}
-[31m✖[39m GET /books/{bookId}
+GET /books/{bookId}
   [31m× [39m200 response
   [31m[200 response body] 'price' is not documented[39m
 
@@ -1482,10 +1430,8 @@ exports[`capture with requests verify behavior verifies spec with endpoint speci
 `;
 
 exports[`capture with requests verify behavior verifies the specification with coverage 1`] = `
-"- Generating traffic to send to server
-[32m✔[39m Successfully captured requests
-- GET /books
-[31m✖[39m GET /books
+"Generating traffic to send to server
+GET /books
   [31m× [39m200 response
   [31m[200 response body] 'name' is not documented[39m
   [31m[200 response body] 'author_id' is not documented[39m

@@ -487,8 +487,7 @@ exports[`diff with --json arg 1`] = `
 
 exports[`diff with --last-change arg 1`] = `
 "[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
-- Finding last change...
-[32m✔[39m Found last change at COMMIT-HASH
+Finding last change...
 
 [32m✔ [39m[1mEmpty[22m [90mexample-api.json[39m
 [1mOperations: [22m1 operation changed
@@ -657,7 +656,7 @@ specification details:
 `;
 
 exports[`diff with mock server uploads specs if authenticated and --upload 1`] = `
-"[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+"Uploading diff...
 
 [31mx [39m[1mEmpty[22m [90mspec.json[39m
 [1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded

@@ -7,6 +7,7 @@ import * as Git from '../../utils/git-utils';
 import { logger } from '../../logger';
 import { sanitizeGitTag } from '@useoptic/openapi-utilities';
 import { getTagsFromOptions, getUniqueTags } from '../../utils/tags';
+import { getSpinner } from '../../utils/spinner';
 
 export async function uploadDiff(
   specs: { from: ParseResult; to: ParseResult },
@@ -25,10 +26,7 @@ export async function uploadDiff(
   headSpecUrl: string | null;
   changelogUrl: string;
 } | null> {
-  const showSpinner = logger.getLevel() !== 5;
-  const spinner = showSpinner
-    ? ora({ text: `Uploading diff...`, color: 'blue' })
-    : null;
+  const spinner = getSpinner({ text: `Uploading diff...`, color: 'blue' });
 
   // We upload a spec if it is unchanged in git and there is an API id on the spec
   let baseSpecId: string | null = null;

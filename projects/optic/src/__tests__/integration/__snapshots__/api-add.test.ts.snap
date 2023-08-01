@@ -9,7 +9,7 @@ exports[`optic api add git - no cli interaction discover all files in a folder 1
 
 [33mHint: add \`--history-depth=0\` to backfill the entire history of your API[39m
 
-[32m✔[39m Successfully backfilled history
+
 
 [34m[1mx-optic-url has been added to newly tracked specs. You should commit these changes.[22m[39m
 
@@ -30,7 +30,7 @@ exports[`optic api add git - no cli interaction discover all files in repo 1`] =
 
 [33mHint: add \`--history-depth=0\` to backfill the entire history of your API[39m
 
-[32m✔[39m Successfully backfilled history
+
 
 [34m[1mx-optic-url has been added to newly tracked specs. You should commit these changes.[22m[39m
 
@@ -51,7 +51,7 @@ exports[`optic api add git - no cli interaction discover all files in repo using
 
 [33mHint: add \`--history-depth=0\` to backfill the entire history of your API[39m
 
-[32m✔[39m Successfully backfilled history
+
 
 [34m[1mx-optic-url has been added to newly tracked specs. You should commit these changes.[22m[39m
 
@@ -68,7 +68,7 @@ exports[`optic api add git - no cli interaction discover one file with history d
 
 [33mHint: add \`--history-depth=0\` to backfill the entire history of your API[39m
 
-[32m✔[39m Successfully backfilled history
+
 
 [34m[1mx-optic-url has been added to newly tracked specs. You should commit these changes.[22m[39m
 

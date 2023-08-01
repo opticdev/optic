@@ -25,12 +25,12 @@ import path from 'path';
 import { OPTIC_URL_KEY } from '../../constants';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import * as Git from '../../utils/git-utils';
-import ora from 'ora';
 import * as GitCandidates from '../api/git-get-file-candidates';
 import stableStringify from 'json-stable-stringify';
 import { computeChecksumForAws } from '../../utils/checksum';
 import { openUrl } from '../../utils/open-url';
 import { renderCloudSetup } from '../../utils/render-cloud';
+import { getSpinner } from '../../utils/spinner';
 
 type DiffActionOptions = {
   base: string;
@@ -329,10 +329,10 @@ const getDiffAction =
         process.exitCode = 1;
         return;
       }
-      const showSpinner = logger.getLevel() !== 5;
-      const spinner = showSpinner
-        ? ora({ text: `Finding last change...`, color: 'blue' })
-        : null;
+      const spinner = getSpinner({
+        text: `Finding last change...`,
+        color: 'blue',
+      });
       spinner?.start();
 
       const {
