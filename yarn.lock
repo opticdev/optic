@@ -2664,10 +2664,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:^0.29.0":
-  version: 0.29.6
-  resolution: "@sinclair/typebox@npm:0.29.6"
-  checksum: 02c2ee9e8bcb4e03a2497fc208a5a2ae4f4991347e6f2b2a217027b33eb8ca2bc74e80bfb2654da537453e9e5c25d59dbad2d32d4fe47ffec357330bf343bf7a
+"@sinclair/typebox@npm:^0.30.0":
+  version: 0.30.0
+  resolution: "@sinclair/typebox@npm:0.30.0"
+  checksum: 0092b3a590c7957d68cb15cc4b2bdd3fc768ae972f5cf5da767a5de59257642a401f2549c5178b14ee56cb0abad65c14f29e702997d0d56645ebb5c2bd46bd4c
   languageName: node
   linkType: hard
 
@@ -3675,7 +3675,7 @@ __metadata:
     "@jsdevtools/ono": ^7.1.3
     "@octokit/rest": ^19.0.0
     "@sentry/node": ^7.10.0
-    "@sinclair/typebox": ^0.29.0
+    "@sinclair/typebox": ^0.30.0
     "@stoplight/spectral-core": ^1.8.1
     "@types/analytics-node": ^3.1.10
     "@types/babel__core": ^7
