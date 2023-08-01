@@ -5,7 +5,6 @@ import fs from 'node:fs/promises';
 import fsNonPromise from 'node:fs';
 
 import { isJson, isYaml, writeYaml } from '@useoptic/openapi-io';
-import ora from 'ora';
 import { CoverageNode, OperationCoverage } from '@useoptic/openapi-utilities';
 import { errorHandler } from '../../error-handler';
 
@@ -36,6 +35,7 @@ import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { uploadCoverage } from './actions/upload-coverage';
 import { resolveRelativePath } from '../../utils/capture';
 import { InferPathStructure } from './operations/infer-path-structure';
+import { getSpinner } from '../../utils/spinner';
 
 const indent = (n: number) => '  '.repeat(n);
 
@@ -240,7 +240,10 @@ const getCaptureAction =
     } of captures.getDocumentedEndpointInteractions()) {
       const { path, method } = endpoint;
       const endpointText = `${method.toUpperCase()} ${path}`;
-      const spinner = ora({ text: endpointText, color: 'blue' }).start();
+      const spinner = getSpinner({
+        text: endpointText,
+        color: 'blue',
+      })?.start();
       const { patchSummaries, hasDiffs } = await diffExistingEndpoint(
         interactions,
         spec,
@@ -263,13 +266,13 @@ const getCaptureAction =
           });
           endpointCoverage = coverage.coverage.paths[path][method];
         }
-        spinner.succeed(endpointText);
+        spinner?.succeed(endpointText);
       } else {
         if (!hasDiffs) {
-          spinner.succeed(endpointText);
+          spinner?.succeed(endpointText);
         } else {
           process.exitCode = 1;
-          spinner.fail(endpointText);
+          spinner?.fail(endpointText);
         }
       }
       const summaryText = getSummaryText(endpointCoverage);
@@ -325,7 +328,10 @@ const getCaptureAction =
         for (const endpoint of endpointsToAdd) {
           const { path, method } = endpoint;
           const endpointText = `${method.toUpperCase()} ${path}`;
-          const spinner = ora({ text: endpointText, color: 'blue' }).start();
+          const spinner = getSpinner({
+            text: endpointText,
+            color: 'blue',
+          })?.start();
 
           await documentNewEndpoint(filteredInteractions, spec, endpoint);
 
@@ -334,7 +340,7 @@ const getCaptureAction =
             strict: false,
             denormalize: false,
           });
-          spinner.succeed();
+          spinner?.succeed();
         }
 
         if (newIgnorePaths.length) {

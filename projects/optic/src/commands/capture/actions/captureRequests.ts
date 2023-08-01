@@ -15,6 +15,7 @@ import {
 } from '../../../config';
 import { ProxyInteractions } from '../sources/proxy';
 import { HarEntries } from '../sources/har';
+import { getSpinner } from '../../../utils/spinner';
 
 const defaultServerReadyTimeout = 10_000; // 10s
 
@@ -82,7 +83,7 @@ async function waitForServer(
   readyInterval: number,
   readyTimeout: number,
   targetUrl: string,
-  spinner: ora.Ora
+  spinner?: ora.Ora
 ) {
   // since ready_endpoint is not required always wait one interval. without ready_endpoint,
   // ready_interval must be at least the time it takes to start the server.
@@ -120,8 +121,8 @@ async function waitForServer(
       await wait(readyInterval);
     }
     if (bailout.didBailout && !didTimeout)
-      spinner.fail('Server unexpectedly exited');
-    if (didTimeout) spinner.fail('Server check timed out');
+      spinner?.fail('Server unexpectedly exited');
+    if (didTimeout) spinner?.fail('Server check timed out');
     resolve(null);
   });
 
@@ -254,10 +255,10 @@ export async function captureRequestsFromProxy(
   captureConfig: CaptureConfigData,
   options: { proxyPort?: string; serverOverride?: string }
 ) {
-  const spinner = ora({
+  const spinner = getSpinner({
     text: 'Generating traffic to send to server',
     color: 'blue',
-  }).start();
+  })?.start();
 
   const serverUrl = options.serverOverride || captureConfig.server.url;
   const serverDir =
@@ -285,7 +286,7 @@ export async function captureRequestsFromProxy(
       [app, bailout] = startApp(captureConfig.server.command, serverDir);
       // If we don't bail out (i.e. the server is still running), we need the promise to be passed down to the next request
       if (captureConfig.server.ready_endpoint) {
-        spinner.text = 'Waiting for server to come online...';
+        if (spinner) spinner.text = 'Waiting for server to come online...';
         await waitForServer(
           bailout,
           captureConfig.server.ready_endpoint,
@@ -302,7 +303,7 @@ export async function captureRequestsFromProxy(
       options.proxyPort ? Number(options.proxyPort) : undefined
     );
 
-    spinner.text = 'Sending requests to server';
+    if (spinner) spinner.text = 'Sending requests to server';
     let [sendRequestsPromise, runRequestsPromise] = makeAllRequests(
       captureConfig,
       proxy
@@ -317,7 +318,7 @@ export async function captureRequestsFromProxy(
     // catch the bailout promise rejection when we shutdown the app
     bailout.promise.catch((e) => {});
   } catch (e) {
-    spinner.fail('Some requests failed to send');
+    spinner?.fail('Some requests failed to send');
     logger.error(e);
 
     // Meaning either the requests threw an uncaught exception or the app server randomly quit
@@ -338,7 +339,7 @@ export async function captureRequestsFromProxy(
     }
   }
 
-  spinner.succeed('Successfully captured requests');
+  spinner?.succeed('Successfully captured requests');
 
   // process proxy interactions into hars
   return HarEntries.fromProxyInteractions(proxy.interactions);

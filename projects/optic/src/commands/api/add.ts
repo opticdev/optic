@@ -3,7 +3,6 @@ import prompts from 'prompts';
 import open from 'open';
 import path from 'path';
 import fs from 'node:fs/promises';
-import ora from 'ora';
 import { OpticCliConfig, VCS } from '../../config';
 import { loadSpec, ParseResult } from '../../utils/spec-loaders';
 import { logger } from '../../logger';
@@ -22,6 +21,7 @@ import { getOrganizationFromToken } from '../../utils/organization';
 import { sanitizeGitTag } from '@useoptic/openapi-utilities';
 import stableStringify from 'json-stable-stringify';
 import { computeChecksumForAws } from '../../utils/checksum';
+import { getSpinner } from '../../utils/spinner';
 
 function short(sha: string) {
   return sha.slice(0, 8);
@@ -207,9 +207,9 @@ async function backfillHistory(
   >();
 
   logger.info('');
-  const spinner = ora(``);
-  spinner.start();
-  spinner.color = 'blue';
+  const spinner = getSpinner(``);
+  spinner?.start();
+  if (spinner) spinner.color = 'blue';
 
   if (config.vcs?.type === VCS.Git) {
     const currentBranch = await Git.getCurrentBranchName();
@@ -233,7 +233,7 @@ async function backfillHistory(
       const baseText = `${chalk.bold.blue(
         'Backfilling'
       )} version ${sha.substring(0, 6)}`;
-      spinner.text = baseText;
+      if (spinner) spinner.text = baseText;
 
       for (const { api, file_path } of addedApis) {
         const pathRelativeToRoot = path.relative(config.root, file_path);
@@ -246,7 +246,7 @@ async function backfillHistory(
           continue;
         }
 
-        spinner.text = `${baseText} file ${pathRelativeToRoot}`;
+        if (spinner) spinner.text = `${baseText} file ${pathRelativeToRoot}`;
 
         let parseResult: ParseResult;
         try {
@@ -308,7 +308,7 @@ async function backfillHistory(
       }
     }
   }
-  spinner.succeed(`Successfully backfilled history`);
+  spinner?.succeed(`Successfully backfilled history`);
 }
 
 export const getApiAddAction =
