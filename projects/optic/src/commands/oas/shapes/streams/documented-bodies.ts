@@ -263,8 +263,9 @@ async function decodeCapturedBody(
     try {
       value = await CapturedBody.json(capturedBody);
     } catch (err) {
-      logger.error(err);
-      return Err('Could not parse captured body as json');
+      return Err(
+        `Could not parse captured body as json, ${err}. Tried to parse ${capturedBody.body} as JSON`
+      );
     }
 
     return Ok(
