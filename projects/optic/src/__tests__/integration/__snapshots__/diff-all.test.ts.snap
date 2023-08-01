@@ -48,7 +48,7 @@ spec-no-url.json [31m(untracked)[39m
 exports[`diff-all diff all in --generated 1`] = `
 "[34mDiffing cloud:generated-api@main to spec-no-url.json[39m
 
-[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/generated-api/runs/run-id
+Uploading diff...
 [31mx [39m[1mEmpty[22m [90mspec-no-url.json[39m
 [1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/generated-api?specId=already-uploaded
 [1mOperations: [22m4 operations added, 1 removed
@@ -79,7 +79,7 @@ specification details:
 
 [34mDiffing cloud:api-id@main to spec.json[39m
 
-[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+Uploading diff...
 [31mx [39m[1mEmpty[22m [90mspec.json[39m
 [1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
 [1mOperations: [22m4 operations added, 1 removed
@@ -115,7 +115,7 @@ specification details:
 exports[`diff-all diff all not in the root of a repo 1`] = `
 "[34mDiffing HEAD~1:folder/in-folder.yml to in-folder.yml[39m
 
-[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+Uploading diff...
 [31mx [39m[1ma spec[22m [90min-folder.yml[39m
 [1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
 [1mOperations: [22mNo operations changed
@@ -135,7 +135,7 @@ exports[`diff-all diff all not in the root of a repo 1`] = `
 
 [34mDiffing HEAD~1:mvspec.yml to empty spec[39m
 
-[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+Uploading diff...
 [31mx [39m[1mEmpty[22m [90mHEAD~1:mvspec.yml[39m
 [1mPreview docs: [22m https://useoptic.com/docs/cloud-get-started
 [1mOperations: [22m2 operations removed
@@ -179,7 +179,7 @@ specification details:
 
 [34mDiffing HEAD~1:specwithkey.json to ../specwithkey.json[39m
 
-[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+Uploading diff...
 [32m✔ [39m[1mAPI 1[22m [90m../specwithkey.json[39m
 [1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
 [1mOperations: [22mNo operations changed
@@ -197,7 +197,7 @@ specification details:
 
 [34mDiffing HEAD~1:specwithkey.yml to ../specwithkey.yml[39m
 
-[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+Uploading diff...
 [31mx [39m[1ma spec[22m [90m../specwithkey.yml[39m
 [1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
 [1mOperations: [22mNo operations changed
@@ -212,7 +212,7 @@ specification details:
 
 [34mDiffing empty spec to ../movedspec.yml[39m
 
-[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+Uploading diff...
 [31mx [39m[1ma spec[22m [90m../movedspec.yml[39m
 [1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
 [1mOperations: [22m2 operations added
@@ -248,7 +248,7 @@ Run the \`optic api add\` command to add these specs to optic
 exports[`diff-all diff all with glob and ignores 1`] = `
 "[34mDiffing HEAD~1:folder-to-run/should-run.yml to empty spec[39m
 
-[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+Uploading diff...
 [31mx [39m[1mEmpty[22m [90mHEAD~1:folder-to-run/should-run.yml[39m
 [1mPreview docs: [22m https://useoptic.com/docs/cloud-get-started
 [1mOperations: [22m1 operation removed
@@ -276,7 +276,7 @@ specification details:
 
 [34mDiffing empty spec to folder-to-run/should-run-mved.yml[39m
 
-[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+Uploading diff...
 [32m✔ [39m[1ma spec[22m [90mfolder-to-run/should-run-mved.yml[39m
 [1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
 [1mOperations: [22m1 operation added
@@ -295,7 +295,7 @@ specification details:
 exports[`diff-all diffs all files in a workspace with x-optic-url keys with --upload 1`] = `
 "[34mDiffing HEAD~1:folder/in-folder.yml to folder/in-folder.yml[39m
 
-[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+Uploading diff...
 [31mx [39m[1ma spec[22m [90mfolder/in-folder.yml[39m
 [1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
 [1mOperations: [22mNo operations changed
@@ -315,7 +315,7 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
 
 [34mDiffing HEAD~1:mvspec.yml to empty spec[39m
 
-[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+Uploading diff...
 [31mx [39m[1mEmpty[22m [90mHEAD~1:mvspec.yml[39m
 [1mPreview docs: [22m https://useoptic.com/docs/cloud-get-started
 [1mOperations: [22m2 operations removed
@@ -359,7 +359,7 @@ specification details:
 
 [34mDiffing HEAD~1:specwithkey.json to specwithkey.json[39m
 
-[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+Uploading diff...
 [32m✔ [39m[1mAPI 1[22m [90mspecwithkey.json[39m
 [1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
 [1mOperations: [22mNo operations changed
@@ -377,7 +377,7 @@ specification details:
 
 [34mDiffing HEAD~1:specwithkey.yml to specwithkey.yml[39m
 
-[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+Uploading diff...
 [31mx [39m[1ma spec[22m [90mspecwithkey.yml[39m
 [1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
 [1mOperations: [22mNo operations changed
@@ -392,7 +392,7 @@ specification details:
 
 [34mDiffing empty spec to movedspec.yml[39m
 
-[32m✔[39m Uploaded results of diff to http://localhost:3001/organizations/org-id/apis/api-id/runs/run-id
+Uploading diff...
 [31mx [39m[1ma spec[22m [90mmovedspec.yml[39m
 [1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
 [1mOperations: [22m2 operations added
