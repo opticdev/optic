@@ -199,9 +199,15 @@ async function runRequestsCommand(
       }
     });
   });
+
+  reqCmd.stdout.on('data', (data) => {
+    logger.debug(data.toString());
+  });
+
   reqCmd.stderr.on('data', (data) => {
     logger.error(data.toString());
   });
+
   return reqCmdPromise;
 }
 
