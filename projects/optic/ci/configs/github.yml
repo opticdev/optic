@@ -12,6 +12,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      # Uncomment to generate your specifications before running Optic:
+      # - name: Generate Spec
+      #   run: ./generate_spec.example.sh
+
       - uses: opticdev/action@v1
         with:
           # Your Optic Cloud Token
@@ -23,8 +27,12 @@ jobs:
           # If true, standard check failures will cause this action to fail.
           # If false, standard check failures will show in PR comments and
           # in Optic Cloud but will not cause the action to fail
-          standards_fail: %standards_fail
+          standards_fail: true
 
           # If you have more than one spec, separate matches with commas
-          # (openapi.yml,other.yml)
-          additional_args: --match %match
+          # Examples of match: "openapi.yml" or "openapi.yml,other.yml" or "*.spec.yml"
+          additional_args: --match ""
+
+          compare_from_pr: cloud:default
+          compare_from_push: cloud:default
+
