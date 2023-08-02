@@ -38,7 +38,6 @@ type DiffActionOptions = {
   web: boolean;
   upload: boolean;
   json: boolean;
-  generated: boolean;
   standard?: string;
   ruleset?: string;
   headTag?: string;
@@ -113,7 +112,6 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     .option('--upload', 'upload run to cloud', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
-    .option('--generated', 'use with --upload with a generated spec', false)
     .option('--last-change', 'find the last change for this spec', false)
     .action(errorHandler(getDiffAction(config), { command: 'diff' }));
 };
@@ -226,7 +224,6 @@ const getBaseAndHeadFromFileAndBase = async (
         {
           denormalize: true,
           headStrict: options.validation === 'strict',
-          generated: options.generated,
         }
       );
       return [baseFile, headFile, specDetails];
