@@ -365,7 +365,6 @@ export const parseFilesFromCloud = async (
   options: {
     denormalize: boolean;
     headStrict: boolean;
-    generated: boolean;
   }
 ) => {
   const headFile = await loadSpec(filePath, config, {
@@ -375,33 +374,31 @@ export const parseFilesFromCloud = async (
 
   let specDetails = getApiFromOpticUrl(headFile.jsonLike[OPTIC_URL_KEY]);
 
-  if (options.generated) {
-    const relativePath = path.relative(config.root, path.resolve(filePath));
-    const generatedDetails = await getDetailsForGeneration(config);
-    if (generatedDetails) {
-      const { web_url, organization_id, default_branch, default_tag } =
-        generatedDetails;
+  const relativePath = path.relative(config.root, path.resolve(filePath));
+  const generatedDetails = await getDetailsForGeneration(config);
+  if (generatedDetails) {
+    const { web_url, organization_id, default_branch, default_tag } =
+      generatedDetails;
 
-      const { apis } = await config.client.getApis([relativePath], web_url);
-      let url: string;
-      if (!apis[0]) {
-        const api = await config.client.createApi(organization_id, {
-          name: relativePath,
-          path: relativePath,
-          web_url: web_url,
-          default_branch,
-          default_tag,
-        });
-        url = getApiUrl(config.client.getWebBase(), organization_id, api.id);
-      } else {
-        url = getApiUrl(
-          config.client.getWebBase(),
-          organization_id,
-          apis[0].api_id
-        );
-      }
-      specDetails = getApiFromOpticUrl(url);
+    const { apis } = await config.client.getApis([relativePath], web_url);
+    let url: string;
+    if (!apis[0]) {
+      const api = await config.client.createApi(organization_id, {
+        name: relativePath,
+        path: relativePath,
+        web_url: web_url,
+        default_branch,
+        default_tag,
+      });
+      url = getApiUrl(config.client.getWebBase(), organization_id, api.id);
+    } else {
+      url = getApiUrl(
+        config.client.getWebBase(),
+        organization_id,
+        apis[0].api_id
+      );
     }
+    specDetails = getApiFromOpticUrl(url);
   }
 
   if (!specDetails) {
