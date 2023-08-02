@@ -174,10 +174,7 @@ export async function loadRaw(
 
 async function parseSpecAndDereference(
   filePathOrRef: string | undefined,
-  config: OpticCliConfig,
-  options: {
-    includeUncommittedChanges: boolean;
-  } = { includeUncommittedChanges: false }
+  config: OpticCliConfig
 ): Promise<ParseResult> {
   const workingDir = process.cwd();
   const input = parseOpticRef(filePathOrRef);
@@ -253,11 +250,7 @@ async function parseSpecAndDereference(
         path.resolve(workingDir, input.filePath)
       );
 
-      if (
-        config.vcs?.type === VCS.Git &&
-        (options.includeUncommittedChanges ||
-          !specHasUncommittedChanges(parseResult.sourcemap, config.vcs.diffSet))
-      ) {
+      if (config.vcs?.type === VCS.Git) {
         const commitMeta = await Git.commitMeta(config.vcs.sha);
 
         context = {
@@ -305,12 +298,9 @@ export const loadSpec = async (
   options: {
     strict: boolean;
     denormalize: boolean;
-    includeUncommittedChanges?: boolean;
   }
 ): Promise<ParseResult> => {
-  const file = await parseSpecAndDereference(opticRef, config, {
-    includeUncommittedChanges: options.includeUncommittedChanges ?? false,
-  });
+  const file = await parseSpecAndDereference(opticRef, config);
 
   return validateAndDenormalize(file, options);
 };
@@ -323,7 +313,6 @@ export const parseFilesFromRef = async (
   options: {
     denormalize: boolean;
     headStrict: boolean;
-    includeUncommittedChanges: boolean;
   }
 ): Promise<{
   baseFile: ParseResult;
@@ -358,10 +347,7 @@ export const parseFilesFromRef = async (
     }),
     headFile: await parseSpecAndDereference(
       existsOnHead ? absolutePath : undefined,
-      config,
-      {
-        includeUncommittedChanges: options.includeUncommittedChanges,
-      }
+      config
     ).then((file) => {
       return validateAndDenormalize(file, {
         denormalize: options.denormalize,
@@ -385,7 +371,6 @@ export const parseFilesFromCloud = async (
   const headFile = await loadSpec(filePath, config, {
     denormalize: options.denormalize,
     strict: options.headStrict,
-    includeUncommittedChanges: options.generated,
   });
 
   let specDetails = getApiFromOpticUrl(headFile.jsonLike[OPTIC_URL_KEY]);

@@ -356,7 +356,6 @@ async function computeAll(
       toParseResults = await loadSpec(to, config, {
         strict: options.validation === 'strict',
         denormalize: true,
-        includeUncommittedChanges: options.generated,
       });
     } catch (e) {
       allWarnings.unparseableToSpec.push({
