@@ -135,12 +135,10 @@ const getHeadAndLastChanged = async (
     let baseFile = await loadSpec('null:', config, {
       strict: false,
       denormalize: true,
-      includeUncommittedChanges: options.generated,
     });
     const headFile = await loadSpec(file, config, {
       strict: options.validation === 'strict',
       denormalize: true,
-      includeUncommittedChanges: options.generated,
     });
     const stableSpecString = stableStringify(headFile.jsonLike);
     const headChecksum = computeChecksumForAws(stableSpecString);
@@ -153,7 +151,6 @@ const getHeadAndLastChanged = async (
         {
           strict: false,
           denormalize: true,
-          includeUncommittedChanges: options.generated,
         }
       );
       const stableSpecString = stableStringify(baseFileForSha.jsonLike);
@@ -192,12 +189,10 @@ const getBaseAndHeadFromFiles = async (
       loadSpec(file1, config, {
         strict: options.validation === 'strict',
         denormalize: true,
-        includeUncommittedChanges: options.generated,
       }),
       loadSpec(file2, config, {
         strict: options.validation === 'strict',
         denormalize: true,
-        includeUncommittedChanges: options.generated,
       }),
     ]);
     const opticUrl: string | null =
@@ -242,7 +237,6 @@ const getBaseAndHeadFromFileAndBase = async (
         {
           denormalize: true,
           headStrict: options.validation === 'strict',
-          includeUncommittedChanges: options.generated,
         }
       );
       const opticUrl: string | null =
