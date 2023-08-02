@@ -324,6 +324,10 @@ async function computeAll(
 
     const specDetails = getApiFromOpticUrl(opticUrl);
 
+    if (!specDetails && options.failOnUntrackedOpenapi) {
+      process.exitCode = 1;
+    }
+
     if (!specDetails && (options.upload || cloudTag)) {
       logger.debug(
         `Skipping comparison from ${from} to ${to} because there was no x-optic-url`
@@ -497,10 +501,6 @@ function handleWarnings(
         .join('\n')
     );
     logger.info('');
-
-    if (options.failOnUntrackedOpenapi) {
-      process.exitCode = 1;
-    }
   }
 
   if (warnings.unparseableFromSpec.length > 0) {
