@@ -100,7 +100,6 @@ comma separated values (e.g. "**/*.yml,**/*.json")'
     .option('--upload', 'upload specs', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
-    .option('--generated', 'use with --upload with a generated spec', false)
     .option(
       '--fail-on-untracked-openapi',
       'fail with exit code 1 if there are detected untracked apis',
@@ -117,7 +116,6 @@ type DiffAllActionOptions = {
   ignore?: string;
   headTag?: string;
   check: boolean;
-  generated: boolean;
   web: boolean;
   upload: boolean;
   json: boolean;
@@ -272,49 +270,47 @@ async function computeAll(
     });
   }
 
-  if (options.generated) {
-    const generatedDetails = await getDetailsForGeneration(config);
-    if (generatedDetails) {
-      const { web_url, organization_id, default_branch, default_tag } =
-        generatedDetails;
+  const generatedDetails = await getDetailsForGeneration(config);
+  if (generatedDetails) {
+    const { web_url, organization_id, default_branch, default_tag } =
+      generatedDetails;
 
-      const pathToUrl: Record<string, string | null> = {};
-      for (const [p, comparison] of comparisons.entries()) {
-        if (!comparison.opticUrl) {
-          pathToUrl[p] = null;
-        }
+    const pathToUrl: Record<string, string | null> = {};
+    for (const [p, comparison] of comparisons.entries()) {
+      if (!comparison.opticUrl) {
+        pathToUrl[p] = null;
       }
-      let apis: (Types.Api | null)[] = [];
-      const chunks = chunk(Object.keys(pathToUrl), 20);
-      for (const chunk of chunks) {
-        const { apis: apiChunk } = await config.client.getApis(chunk, web_url);
-        apis.push(...apiChunk);
-      }
+    }
+    let apis: (Types.Api | null)[] = [];
+    const chunks = chunk(Object.keys(pathToUrl), 20);
+    for (const chunk of chunks) {
+      const { apis: apiChunk } = await config.client.getApis(chunk, web_url);
+      apis.push(...apiChunk);
+    }
 
-      for (const api of apis) {
-        if (api) {
-          pathToUrl[api.path] = getApiUrl(
-            config.client.getWebBase(),
-            api.organization_id,
-            api.api_id
-          );
-        }
+    for (const api of apis) {
+      if (api) {
+        pathToUrl[api.path] = getApiUrl(
+          config.client.getWebBase(),
+          api.organization_id,
+          api.api_id
+        );
       }
+    }
 
-      for (let [path, url] of Object.entries(pathToUrl)) {
-        if (!url) {
-          const api = await config.client.createApi(organization_id, {
-            name: path,
-            path,
-            web_url: web_url,
-            default_branch,
-            default_tag,
-          });
-          url = getApiUrl(config.client.getWebBase(), organization_id, api.id);
-        }
-        const comparison = comparisons.get(path);
-        if (comparison) comparison.opticUrl = url;
+    for (let [path, url] of Object.entries(pathToUrl)) {
+      if (!url) {
+        const api = await config.client.createApi(organization_id, {
+          name: path,
+          path,
+          web_url: web_url,
+          default_branch,
+          default_tag,
+        });
+        url = getApiUrl(config.client.getWebBase(), organization_id, api.id);
       }
+      const comparison = comparisons.get(path);
+      if (comparison) comparison.opticUrl = url;
     }
   }
 
