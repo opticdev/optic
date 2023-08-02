@@ -501,10 +501,6 @@ function handleWarnings(
         .join('\n')
     );
     logger.info('');
-
-    if (options.failOnUntrackedOpenapi) {
-      process.exitCode = 1;
-    }
   }
 
   if (warnings.unparseableFromSpec.length > 0) {
