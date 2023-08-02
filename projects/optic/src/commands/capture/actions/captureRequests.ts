@@ -19,6 +19,25 @@ import { getSpinner } from '../../../utils/spinner';
 
 const defaultServerReadyTimeout = 10_000; // 10s
 
+// Clears logging so that the spinner is always flushed to the bottom until it is completed
+const loggerWhileSpinning = {
+  debug: (spinner?: ora.Ora, ...msg: any[]) => {
+    spinner?.clear();
+    logger.debug(...msg);
+    spinner?.render();
+  },
+  error: (spinner?: ora.Ora, ...msg: any[]) => {
+    spinner?.clear();
+    logger.error(...msg);
+    spinner?.render();
+  },
+  info: (spinner?: ora.Ora, ...msg: any[]) => {
+    spinner?.clear();
+    logger.info(...msg);
+    spinner?.render();
+  },
+};
+
 const wait = (time: number) =>
   new Promise((r) => setTimeout(() => r(null), time));
 
@@ -52,17 +71,18 @@ class ProxyInstance {
 type Bailout = { didBailout: boolean; promise: Promise<any> };
 function startApp(
   command: string,
-  dir: string
+  dir: string,
+  spinner?: ora.Ora
 ): [ChildProcessWithoutNullStreams, Bailout] {
   const cmd = commandSplitter(command);
   const app = spawn(cmd.cmd, cmd.args, { detached: true, cwd: dir });
 
   app.stdout.on('data', (data) => {
-    logger.debug(data.toString());
+    loggerWhileSpinning.debug(spinner, data.toString());
   });
 
   app.stderr.on('data', (data) => {
-    logger.error(data.toString());
+    loggerWhileSpinning.error(spinner, data.toString());
   });
 
   const bailout: Bailout = {
@@ -102,7 +122,7 @@ async function waitForServer(
     fetch(url)
       .then((res) => String(res.status).startsWith('2'))
       .catch((e) => {
-        logger.debug(e);
+        loggerWhileSpinning.debug(spinner, e);
         return false;
       });
 
@@ -132,7 +152,8 @@ async function waitForServer(
 function sendRequests(
   reqs: RequestSend[],
   proxyUrl: string,
-  concurrency: number
+  concurrency: number,
+  spinner?: ora.Ora
 ): Promise<void>[] {
   const limiter = new Bottleneck({
     maxConcurrent: concurrency,
@@ -169,7 +190,7 @@ function sendRequests(
       fetch(`${proxyUrl}${r.path}`, opts)
         .then((response) => response.json())
         .catch((error) => {
-          logger.error(error);
+          loggerWhileSpinning.error(spinner, error);
         })
     );
   });
@@ -178,7 +199,8 @@ function sendRequests(
 async function runRequestsCommand(
   command: string,
   proxyVar: string,
-  proxyUrl: string
+  proxyUrl: string,
+  spinner?: ora.Ora
 ): Promise<void> {
   const cmd = commandSplitter(command);
   const reqCmd = spawn(cmd.cmd, cmd.args, {
@@ -202,11 +224,11 @@ async function runRequestsCommand(
   });
 
   reqCmd.stdout.on('data', (data) => {
-    logger.debug(data.toString());
+    loggerWhileSpinning.info(spinner, data.toString());
   });
 
   reqCmd.stderr.on('data', (data) => {
-    logger.error(data.toString());
+    loggerWhileSpinning.error(spinner, data.toString());
   });
 
   return reqCmdPromise;
@@ -214,7 +236,8 @@ async function runRequestsCommand(
 
 function makeAllRequests(
   captureConfig: CaptureConfigData,
-  proxy: ProxyInstance
+  proxy: ProxyInstance,
+  spinner?: ora.Ora
 ) {
   // send requests
   let sendRequestsPromise: Promise<any> = Promise.resolve();
@@ -222,14 +245,16 @@ function makeAllRequests(
     const requests = sendRequests(
       captureConfig.requests.send,
       proxy.url,
-      captureConfig.config?.request_concurrency || 5
+      captureConfig.config?.request_concurrency || 5,
+      spinner
     );
     sendRequestsPromise = Promise.allSettled(requests).then((results) => {
       let hasError = false;
       results.forEach((result, idx) => {
         if (result.status === 'rejected') {
           const req = captureConfig.requests![idx];
-          logger.error(
+          loggerWhileSpinning.error(
+            spinner,
             `Request ${req.method ?? 'GET'} ${req.path} failed with ${
               result.reason
             }`
@@ -249,7 +274,8 @@ function makeAllRequests(
     runRequestsPromise = runRequestsCommand(
       captureConfig.requests.run.command,
       proxyVar,
-      proxy.url
+      proxy.url,
+      spinner
     );
   }
 
@@ -286,10 +312,15 @@ export async function captureRequestsFromProxy(
       promise: new Promise(() => {}),
     };
     if (!options.serverOverride && captureConfig.server.command) {
-      logger.debug(
+      loggerWhileSpinning.debug(
+        spinner,
         `Starting app using command ${captureConfig.server.command}`
       );
-      [app, bailout] = startApp(captureConfig.server.command, serverDir);
+      [app, bailout] = startApp(
+        captureConfig.server.command,
+        serverDir,
+        spinner
+      );
       // If we don't bail out (i.e. the server is still running), we need the promise to be passed down to the next request
       if (captureConfig.server.ready_endpoint) {
         if (spinner) spinner.text = 'Waiting for server to come online...';
@@ -312,7 +343,8 @@ export async function captureRequestsFromProxy(
     if (spinner) spinner.text = 'Sending requests to server';
     let [sendRequestsPromise, runRequestsPromise] = makeAllRequests(
       captureConfig,
-      proxy
+      proxy,
+      spinner
     );
     // Here we continue even if some of the requests failed - we log out the requests errors but use the rest to query
     const requestsPromises = Promise.all([
