@@ -195,6 +195,10 @@ async function runRequestsCommand(
     reqCmd.on('exit', (code) => {
       if (code === 0) {
         resolve();
+      } else if (code) {
+        process.exitCode = code;
+        logger.error(`command ${command} failed with exit code ${code}`);
+        resolve();
       } else {
         reject();
       }
@@ -202,7 +206,7 @@ async function runRequestsCommand(
   });
 
   reqCmd.stdout.on('data', (data) => {
-    logger.debug(data.toString());
+    logger.info(data.toString());
   });
 
   reqCmd.stderr.on('data', (data) => {
