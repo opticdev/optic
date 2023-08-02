@@ -195,10 +195,6 @@ async function runRequestsCommand(
     reqCmd.on('exit', (code) => {
       if (code === 0) {
         resolve();
-      } else if (code) {
-        process.exitCode = code;
-        logger.error(`command ${command} failed with exit code ${code}`);
-        resolve();
       } else {
         reject();
       }
