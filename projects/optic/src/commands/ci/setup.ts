@@ -17,6 +17,7 @@ type Provider = 'github' | 'gitlab';
 
 type CISetupOptions = {
   provider: Provider;
+  stdout: boolean;
 };
 
 const choices: Provider[] = ['github', 'gitlab'];
@@ -30,6 +31,11 @@ export const registerCiSetup = (cli: Command, config: OpticCliConfig) => {
     .description('Generate a CI configuration for Optic')
     .addOption(
       new Option('-p, --provider <provider>', 'provider').choices(choices)
+    )
+    .option(
+      '--stdout',
+      'Print the CI config to stdout instead of writing to CI config file.',
+      false
     )
     .action(errorHandler(getCiSetupAction(config), { command: 'ci-setup' }));
 };
@@ -60,13 +66,13 @@ const getCiSetupAction =
         ).provider;
 
     if (provider === 'github') {
-      await setupGitHub(config);
+      await setupGitHub(config, options);
     } else if (provider === 'gitlab') {
-      await setupGitLab(config);
+      await setupGitLab(config, options);
     }
   };
 
-async function setupGitHub(config: OpticCliConfig) {
+async function setupGitHub(config: OpticCliConfig, options: CISetupOptions) {
   const target = '.github/workflows/optic.yml';
   const targetPath = path.join(config.root, target);
   const targetDir = path.dirname(targetPath);
@@ -82,22 +88,25 @@ async function setupGitHub(config: OpticCliConfig) {
 
   let configContent = await fs.readFile(fromConfig, 'utf-8');
 
-  await fs.writeFile(path.join(config.root, target), configContent);
+  if (options.stdout) {
+    console.log(configContent);
+  } else {
+    await fs.writeFile(path.join(config.root, target), configContent);
+    console.log(`${chalk.green('✔')} Wrote CI configuration to ${target}`);
 
-  console.log(`${chalk.green('✔')} Wrote CI configuration to ${target}`);
-
-  console.log('');
-  console.log('Next:');
-  console.log('- Edit and commit the generated CI file.');
-  console.log(
-    '- Configure your standards and authorize Optic to comment on your PRs: https://useoptic.com/docs/setup-ci, then make a change to your OpenAPI files and submit a PR to see Optic in action!'
-  );
-  console.log(
-    '- Check Optic cloud to get hosted preview documentation, visual changelogs and API history: https://www.useoptic.com/docs/cloud-get-started'
-  );
+    console.log('');
+    console.log('Next:');
+    console.log('- Edit and commit the generated CI file.');
+    console.log(
+      '- Configure your standards and authorize Optic to comment on your PRs: https://useoptic.com/docs/setup-ci, then make a change to your OpenAPI files and submit a PR to see Optic in action!'
+    );
+    console.log(
+      '- Check Optic cloud to get hosted preview documentation, visual changelogs and API history: https://www.useoptic.com/docs/cloud-get-started'
+    );
+  }
 }
 
-async function setupGitLab(config: OpticCliConfig) {
+async function setupGitLab(config: OpticCliConfig, options: CISetupOptions) {
   const target = '.gitlab-ci.yml';
   const targetPath = path.join(config.root, target);
   const targetDir = path.dirname(targetPath);
@@ -113,34 +122,38 @@ async function setupGitLab(config: OpticCliConfig) {
   const fromConfig = path.join(configsPath, 'gitlab.yml');
   let configContent = await fs.readFile(fromConfig, 'utf-8');
 
-  if (!exists) {
-    await fs.mkdir(targetDir, { recursive: true });
-
-    await fs.writeFile(targetPath, configContent);
-
-    console.log(`${chalk.green('✔')} Wrote CI configuration to ${target}`);
+  if (options.stdout) {
+    console.log(configContent);
   } else {
-    console.log();
-    console.log(
-      chalk.green(
-        "Since you already have a .gitlab-ci.yml file, here's an example of what you'll need to add:"
-      )
-    );
-    console.log();
-    console.log('-- .gitlab-ci.yml -----');
-    console.log(configContent.toString());
-    console.log('-----------------------');
-  }
+    if (!exists) {
+      await fs.mkdir(targetDir, { recursive: true });
 
-  console.log('');
-  console.log('Next:');
-  console.log('- Edit and commit the generated file.');
-  console.log(
-    '- Configure your standards and authorize Optic to comment on your MRs: https://useoptic.com/docs/setup-ci, then make a change to your OpenAPI files and submit a MR to see Optic in action!'
-  );
-  console.log(
-    '- Check Optic cloud to get hosted preview documentation, visual changelogs and API history: https://www.useoptic.com/docs/cloud-get-started'
-  );
+      await fs.writeFile(targetPath, configContent);
+
+      console.log(`${chalk.green('✔')} Wrote CI configuration to ${target}`);
+    } else {
+      console.log();
+      console.log(
+        chalk.green(
+          "Since you already have a .gitlab-ci.yml file, here's an example of what you'll need to add:"
+        )
+      );
+      console.log();
+      console.log('-- .gitlab-ci.yml -----');
+      console.log(configContent.toString());
+      console.log('-----------------------');
+    }
+
+    console.log('');
+    console.log('Next:');
+    console.log('- Edit and commit the generated file.');
+    console.log(
+      '- Configure your standards and authorize Optic to comment on your MRs: https://useoptic.com/docs/setup-ci, then make a change to your OpenAPI files and submit a MR to see Optic in action!'
+    );
+    console.log(
+      '- Check Optic cloud to get hosted preview documentation, visual changelogs and API history: https://www.useoptic.com/docs/cloud-get-started'
+    );
+  }
 }
 
 async function verifyPath(_root: string, target: string): Promise<boolean> {
