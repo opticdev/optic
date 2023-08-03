@@ -32,10 +32,11 @@ import { CapturedInteractions } from './sources/captured-interactions';
 import * as AT from '../oas/lib/async-tools';
 import { GroupedCaptures } from './interactions/grouped-interactions';
 import { OPTIC_URL_KEY } from '../../constants';
-import { getApiFromOpticUrl } from '../../utils/cloud-urls';
+import { getApiFromOpticUrl, getApiUrl } from '../../utils/cloud-urls';
 import { uploadCoverage } from './actions/upload-coverage';
 import { resolveRelativePath } from '../../utils/capture';
 import { InferPathStructure } from './operations/infer-path-structure';
+import { getDetailsForGeneration } from '../../utils/generated';
 
 const indent = (n: number) => '  '.repeat(n);
 
@@ -350,7 +351,23 @@ const getCaptureAction =
         process.exitCode = 1;
         return;
       }
-      const opticUrlDetails = getApiFromOpticUrl(spec[OPTIC_URL_KEY]);
+
+      let opticUrlDetails;
+
+      if (spec[OPTIC_URL_KEY]) {
+        opticUrlDetails = getApiFromOpticUrl(spec[OPTIC_URL_KEY]);
+      } else {
+        const generatedDetails = await getDetailsForGeneration(config);
+        if (generatedDetails) {
+          const { web_url, organization_id } = generatedDetails;
+          const res = await config.client.getApis([filePath], web_url);
+          const api = res?.apis?.[0];
+          if (api) {
+            opticUrlDetails = { apiId: api.api_id, orgId: organization_id };
+          }
+        }
+      }
+
       if (config.vcs?.type !== VCS.Git) {
         logger.error(
           'optic capture --upload can only be run in a git repository.'
