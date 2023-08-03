@@ -199,8 +199,19 @@ export class GroupedCaptures {
     };
   }
 
-  unmatchedInteractionsCount(): number {
-    return this.unmatched.hars.length + this.unmatched.interactions.length;
+  interactionCount() {
+    const unmatched =
+      this.unmatched.hars.length + this.unmatched.interactions.length;
+    let matched = 0;
+    for (const [, node] of this.paths) {
+      matched += node.hars.length + node.interactions.length;
+    }
+    const total = matched + unmatched;
+    return {
+      total,
+      unmatched,
+      matched,
+    };
   }
 
   *getDocumentedEndpointInteractions(): Iterable<{
