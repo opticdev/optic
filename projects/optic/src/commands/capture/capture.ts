@@ -233,6 +233,7 @@ const getCaptureAction =
 
     // update existing endpoints
     const coverage = new ApiCoverageCounter(spec.jsonLike);
+    let diffCount = 0;
     // Handle interactions for documented endpoints first
     for (const {
       interactions,
@@ -280,6 +281,7 @@ const getCaptureAction =
       for (const patchSummary of patchSummaries) {
         logger.info(indent(1) + patchSummary);
       }
+      diffCount += patchSummaries.length;
     }
     const endpointCounts = captures.counts();
     if (endpointCounts.total > 0 && endpointCounts.unmatched > 0) {
@@ -300,7 +302,8 @@ const getCaptureAction =
     }
 
     // document new endpoints
-    const unmatchedInteractions = captures.unmatchedInteractionsCount();
+    const { unmatched: unmatchedInteractions, total: totalInteractions } =
+      captures.interactionCount();
     if (unmatchedInteractions) {
       if (options.update === 'interactive' || options.update === 'automatic') {
         logger.info('');
@@ -346,10 +349,25 @@ const getCaptureAction =
         if (newIgnorePaths.length) {
           await addIgnorePaths(spec, newIgnorePaths);
         }
-      } else {
-        logger.info('');
-        logger.info(`${unmatchedInteractions} unmatched interactions`);
       }
+    }
+
+    if (!options.update) {
+      const coverageStats = coverage.calculateCoverage();
+      const coverageText = `${coverageStats.percent}% coverage of your documented operations.`;
+      const requestsText =
+        unmatchedInteractions === 0
+          ? `All requests matched a documented path (${totalInteractions} total requests)`
+          : `${unmatchedInteractions} requests did not match a documented path (${totalInteractions} total requests).`;
+
+      logger.info();
+      logger.info(`${coverageText} ${requestsText}`);
+      diffCount !== 0 &&
+        logger.info(`${diffCount} diffs detected in documented operations`);
+      logger.info();
+    } else if (options.update === 'documented' && unmatchedInteractions > 0) {
+      logger.info();
+      logger.info(`${unmatchedInteractions} unmatched requests`);
     }
 
     if (options.upload) {
