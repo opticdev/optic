@@ -145,6 +145,8 @@ const getCaptureAction =
       denormalize: false,
     });
     const captures = new GroupedCaptures(trafficDirectory, spec.jsonLike);
+    const pathFromRoot = resolveRelativePath(config.root, filePath);
+    const captureConfig = config.capture?.[pathFromRoot];
 
     if (options.har) {
       try {
@@ -178,9 +180,6 @@ const getCaptureAction =
         captures.addInteraction(interaction);
       }
     } else {
-      const pathFromRoot = resolveRelativePath(config.root, filePath);
-      const captureConfig = config.capture?.[pathFromRoot];
-
       // verify capture v2 config is present
       if (targetUrl !== undefined || captureConfig === undefined) {
         logger.error(`no capture config for ${filePath} was found`);
@@ -229,6 +228,29 @@ const getCaptureAction =
         );
       }
       await captures.writeHarFiles();
+    }
+
+    const { unmatched: unmatchedInteractions, total: totalInteractions } =
+      captures.interactionCount();
+
+    if (totalInteractions === 0) {
+      logger.error(
+        chalk.red('Error: No requests were captured by the Optic proxy')
+      );
+      if (captureConfig?.requests?.run) {
+        logger.error(
+          `Check that you are sending requests to the Optic proxy. You can see where the Optic proxy is running by using the ${
+            captureConfig?.requests?.run.proxy_variable ?? 'OPTIC_PROXY'
+          } environment variable`
+        );
+      } else if (captureConfig?.requests?.send) {
+        logger.error(
+          `Check that you are sending at least one request in your send configuration. Using config`
+        );
+        logger.error(captureConfig?.requests?.send);
+      }
+      process.exitCode = 1;
+      return;
     }
 
     // update existing endpoints
@@ -302,8 +324,6 @@ const getCaptureAction =
     }
 
     // document new endpoints
-    const { unmatched: unmatchedInteractions, total: totalInteractions } =
-      captures.interactionCount();
     if (unmatchedInteractions) {
       if (options.update === 'interactive' || options.update === 'automatic') {
         logger.info('');
