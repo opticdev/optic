@@ -16,7 +16,7 @@ import { initCommand } from './capture-init';
 import { captureV1 } from '../oas/capture';
 
 import { getCaptureStorage } from './storage';
-import { loadSpec, specHasUncommittedChanges } from '../../utils/spec-loaders';
+import { loadSpec } from '../../utils/spec-loaders';
 import { ApiCoverageCounter } from './coverage/api-coverage';
 import { HarEntries } from './sources/har';
 import {
