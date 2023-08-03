@@ -377,7 +377,7 @@ export async function captureRequestsFromProxy(
     }
   }
 
-  spinner?.succeed('Successfully captured requests');
+  spinner?.succeed('Finished running requests');
 
   // process proxy interactions into hars
   return HarEntries.fromProxyInteractions(proxy.interactions);
