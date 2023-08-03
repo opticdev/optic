@@ -90,7 +90,11 @@ function startApp(
     promise: new Promise((resolve, reject) => {
       app!.on('exit', (code) => {
         bailout.didBailout = true;
-        reject(`Server unexpectedly exited with error code ${code}`);
+        reject(
+          new UserError({
+            message: `Server unexpectedly exited with error code ${code}`,
+          })
+        );
       });
     }),
   };
@@ -218,7 +222,11 @@ async function runRequestsCommand(
       if (code === 0) {
         resolve();
       } else {
-        reject();
+        reject(
+          new UserError({
+            message: `command ${cmd} failed with exit code ${code}`,
+          })
+        );
       }
     });
   });

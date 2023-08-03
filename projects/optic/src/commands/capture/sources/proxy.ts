@@ -138,6 +138,13 @@ export class ProxyInteractions {
         timingEvents,
         ...rest
       } = capturedRequest;
+      logger.debug(
+        `Forwarding request ${rest.path} ${
+          rest.url
+        } with headers: ${JSON.stringify(rest.headers)}. id: ${
+          capturedRequest.id
+        }`
+      );
 
       const request = {
         ...rest,
@@ -153,6 +160,7 @@ export class ProxyInteractions {
       if (!request) return;
 
       const { tags, body, timingEvents, ...rest } = capturedResponse;
+      logger.debug(`Received response for request id ${id}`);
 
       const response = {
         ...rest,
