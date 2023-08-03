@@ -3,11 +3,7 @@ import open from 'open';
 import { sanitizeGitTag } from '@useoptic/openapi-utilities';
 
 import { OpticCliConfig, VCS } from '../../config';
-import {
-  loadSpec,
-  ParseResult,
-  specHasUncommittedChanges,
-} from '../../utils/spec-loaders';
+import { loadSpec, ParseResult } from '../../utils/spec-loaders';
 import { logger } from '../../logger';
 import { OPTIC_URL_KEY } from '../../constants';
 import * as Git from '../../utils/git-utils';
@@ -88,26 +84,18 @@ const getSpecPushAction =
     let tagsToAdd: string[] = getTagsFromOptions(options.tag);
 
     if (config.vcs?.type === VCS.Git) {
-      if (
-        !specHasUncommittedChanges(parseResult.sourcemap, config.vcs.diffSet)
-      ) {
-        const sha = config.vcs.sha;
-        tagsToAdd.push(`git:${sha}`);
+      const sha = config.vcs.sha;
+      tagsToAdd.push(`git:${sha}`);
 
-        const branch = await Git.getCurrentBranchName();
+      const branch = await Git.getCurrentBranchName();
 
-        if (branch !== 'HEAD') {
-          tagsToAdd.push(sanitizeGitTag(`gitbranch:${branch}`));
-          logger.info(
-            `Automatically adding the git sha 'git:${sha}' and branch 'gitbranch:${branch}' as tags`
-          );
-        } else {
-          logger.info(`Automatically adding the git sha 'git:${sha}' as a tag`);
-        }
-      } else {
+      if (branch !== 'HEAD') {
+        tagsToAdd.push(sanitizeGitTag(`gitbranch:${branch}`));
         logger.info(
-          'Not automatically including any git tags because the current working directory has uncommited changes.'
+          `Automatically adding the git sha 'git:${sha}' and branch 'gitbranch:${branch}' as tags`
         );
+      } else {
+        logger.info(`Automatically adding the git sha 'git:${sha}' as a tag`);
       }
     }
 

@@ -18,7 +18,7 @@ import { OpticCliConfig, VCS } from '../../config';
 import { OPTIC_URL_KEY } from '../../constants';
 import { getApiFromOpticUrl, getSpecUrl } from '../../utils/cloud-urls';
 import { uploadSpec, uploadSpecVerification } from '../../utils/cloud-specs';
-import { loadSpec, specHasUncommittedChanges } from '../../utils/spec-loaders';
+import { loadSpec } from '../../utils/spec-loaders';
 import * as Git from '../../utils/git-utils';
 import { sanitizeGitTag } from '@useoptic/openapi-utilities';
 import { nextCommand } from './reporters/next-command';
@@ -170,12 +170,9 @@ export async function runVerify(
   });
 
   if (options.upload) {
-    if (
-      config.vcs?.type !== VCS.Git ||
-      specHasUncommittedChanges(parseResult.sourcemap, config.vcs.diffSet)
-    ) {
+    if (config.vcs?.type !== VCS.Git) {
       console.error(
-        'optic verify --upload can only be run in a git repository without uncommitted changes. That ensures reports are properly tagged.'
+        'optic verify --upload can only be run in a git repository.'
       );
       process.exitCode = 1;
       return;

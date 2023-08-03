@@ -420,13 +420,3 @@ ${chalk.gray(`Get started by running 'optic api add ${filePath}'`)}`
     specDetails,
   };
 };
-
-export const specHasUncommittedChanges = (
-  sourcemap: JsonSchemaSourcemap,
-  diffSet: Set<string>
-): boolean => {
-  // resolve absolute paths - in this case, if the path refers to a url or git ref, we don't care about it
-  // since its outside of the current working directory
-  const specFiles = sourcemap.files.map((f) => path.resolve(f.path));
-  return specFiles.some((f) => diffSet.has(f));
-};
