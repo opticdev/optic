@@ -18,7 +18,7 @@ export class ApiCoverageCounter {
       paths: {},
     };
 
-    Object.entries(spec.paths).forEach(([path, methods]) => {
+    Object.entries(spec.paths ?? {}).forEach(([path, methods]) => {
       this.coverage.paths[path] = {};
       Object.entries(methods || {}).forEach((entry) => {
         const [method, operation] = entry as [
