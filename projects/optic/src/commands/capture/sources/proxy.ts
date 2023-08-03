@@ -160,7 +160,13 @@ export class ProxyInteractions {
       if (!request) return;
 
       const { tags, body, timingEvents, ...rest } = capturedResponse;
-      logger.debug(`Received response for request id ${id}`);
+      logger.debug(
+        `Received response for request id ${id} status code: ${
+          rest.statusCode
+        } message: ${rest.statusMessage} headers: ${JSON.stringify(
+          rest.rawHeaders
+        )}`
+      );
 
       const response = {
         ...rest,
