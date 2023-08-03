@@ -360,7 +360,7 @@ const getCaptureAction =
         process.exitCode = 1;
         return;
       }
-      const opticUrlDetails = getApiFromOpticUrl(spec[OPTIC_URL_KEY]);
+      const opticUrlDetails = getApiFromOpticUrl(spec.jsonLike[OPTIC_URL_KEY]);
       if (
         config.vcs?.type !== VCS.Git ||
         specHasUncommittedChanges(spec.sourcemap, config.vcs.diffSet)
