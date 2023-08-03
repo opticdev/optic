@@ -31,12 +31,11 @@ import { CapturedInteractions } from './sources/captured-interactions';
 import * as AT from '../oas/lib/async-tools';
 import { GroupedCaptures } from './interactions/grouped-interactions';
 import { OPTIC_URL_KEY } from '../../constants';
-import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { uploadCoverage } from './actions/upload-coverage';
 import { resolveRelativePath } from '../../utils/capture';
 import { InferPathStructure } from './operations/infer-path-structure';
 import { getSpinner } from '../../utils/spinner';
-import { getDetailsForGeneration } from '../../utils/generated';
+import { getOpticUrlDetails } from '../../utils/cloud-urls';
 
 const indent = (n: number) => '  '.repeat(n);
 
@@ -405,21 +404,10 @@ const getCaptureAction =
         return;
       }
 
-      let opticUrlDetails;
-
-      if (spec[OPTIC_URL_KEY]) {
-        opticUrlDetails = getApiFromOpticUrl(spec.jsonLike[OPTIC_URL_KEY]);
-      } else {
-        const generatedDetails = await getDetailsForGeneration(config);
-        if (generatedDetails) {
-          const { web_url, organization_id } = generatedDetails;
-          const res = await config.client.getApis([filePath], web_url);
-          const api = res?.apis?.[0];
-          if (api) {
-            opticUrlDetails = { apiId: api.api_id, orgId: organization_id };
-          }
-        }
-      }
+      const opticUrlDetails = await getOpticUrlDetails(config, {
+        filePath,
+        xOpticUrl: spec.jsonLike[OPTIC_URL_KEY],
+      });
 
       if (config.vcs?.type !== VCS.Git) {
         logger.error(
@@ -431,7 +419,7 @@ const getCaptureAction =
 
       if (!opticUrlDetails) {
         logger.error(
-          `File ${filePath} does not have an optic url. Files must be added to Optic and have an x-optic-url key before verification data can be uploaded.`
+          `File ${filePath} could not be associated with an Optic API. Files must be added to Optic before verification data can be uploaded.`
         );
         logger.error(`${chalk.yellow('Hint: ')} Run optic api add ${filePath}`);
         process.exitCode = 1;
