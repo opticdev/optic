@@ -14,7 +14,7 @@ export async function getDetailsForGeneration(config: OpticCliConfig): Promise<{
   let default_tag: string = 'gitbranch:main';
   const maybeOrigin = await Git.guessRemoteOrigin();
 
-  const message = `Select the organization that your APIs are attached to. Use an organization token rather than a personal access token to disambiguate and get rid of the prompt.`;
+  const message = `Select the organization that your APIs are attached to. In a non interactive environment, use an organization token.`;
   const orgRes = await getOrganizationFromToken(config.client, message);
 
   const maybeDefaultBranch = await Git.getDefaultBranchName();
