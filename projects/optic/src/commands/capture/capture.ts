@@ -399,12 +399,9 @@ const getCaptureAction =
         return;
       }
       const opticUrlDetails = getApiFromOpticUrl(spec.jsonLike[OPTIC_URL_KEY]);
-      if (
-        config.vcs?.type !== VCS.Git ||
-        specHasUncommittedChanges(spec.sourcemap, config.vcs.diffSet)
-      ) {
+      if (config.vcs?.type !== VCS.Git) {
         logger.error(
-          'optic capture --upload can only be run in a git repository without uncommitted changes. That ensures reports are properly tagged.'
+          'optic capture --upload can only be run in a git repository.'
         );
         process.exitCode = 1;
         return;
