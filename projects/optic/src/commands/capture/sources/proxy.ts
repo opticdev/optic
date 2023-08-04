@@ -21,10 +21,11 @@ import * as httpolyglot from '@httptoolkit/httpolyglot';
 import { Server as ConnectServer } from 'connect';
 import portfinder from 'portfinder';
 import globalLog from 'log';
-import invariant from 'ts-invariant';
 import chalk from 'chalk';
 import { UserError } from '@useoptic/openapi-utilities';
 import { logger } from '../../../logger';
+import urljoin from 'url-join';
+
 type Logger = typeof globalLog;
 
 export const log: Logger = globalLog.get('captures:streams:sources:proxy'); // export so it can be enabled in testing
@@ -43,11 +44,15 @@ export class ProxyInteractions {
       proxyPort?: number;
     }
   ): Promise<[ProxyInteractions, string, string]> {
-    let host: string;
     let protocol: string;
     let origin: string;
+    let serverPathnamePrefix: string;
     try {
-      ({ host, protocol, origin } = new URL(targetHost));
+      ({
+        protocol,
+        origin,
+        pathname: serverPathnamePrefix,
+      } = new URL(targetHost));
     } catch (e) {
       logger.error(
         `${chalk.red(
@@ -56,18 +61,8 @@ export class ProxyInteractions {
       );
       throw new UserError();
     }
-    if (targetHost.includes('/')) {
-      // accept urls to be passed in rather than pure hosts
-      targetHost = host;
-    }
 
     const forwardHost = options.mode === 'reverse-proxy' ? origin : targetHost;
-
-    if (protocol)
-      invariant(
-        targetHost.match(/^([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9\-]+(:\d+)?$/),
-        'targetHost must be a valid host (hostname:port)'
-      ); // port optional
 
     const capturingProxy = mockttp.getLocal({
       cors: false,
@@ -138,10 +133,15 @@ export class ProxyInteractions {
         timingEvents,
         ...rest
       } = capturedRequest;
+      // Sometimes we need to adjust the request url if the server url is not at the hostname root
+      // e.g. `http://example.com/server-lives-here - requests going to the proxy root should be forwarded to `/server-lives-here`
+      const urlObj = new URL(rest.url);
+      urlObj.pathname = urljoin(serverPathnamePrefix, urlObj.pathname);
+      const prefixedUrl = urlObj.toString();
       logger.debug(
-        `Forwarding request ${rest.path} ${
-          rest.url
-        } with headers: ${JSON.stringify(rest.headers)}. id: ${
+        `Forwarding request ${
+          rest.path
+        } ${prefixedUrl} with headers: ${JSON.stringify(rest.headers)}. id: ${
           capturedRequest.id
         }`
       );
@@ -152,6 +152,9 @@ export class ProxyInteractions {
         timingEvents: timingEvents as TimingEvents,
       };
       requestsById.set(request.id, request);
+      return {
+        url: prefixedUrl,
+      };
     }
 
     function onResponse(capturedResponse: CompletedResponse) {
