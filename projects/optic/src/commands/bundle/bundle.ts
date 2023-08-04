@@ -68,7 +68,6 @@ const getSpec = async (
   } catch (e) {
     throw new UserError({
       initialError: e instanceof Error ? e : undefined,
-      message: e instanceof Error ? e.message : undefined,
     });
   }
 };
