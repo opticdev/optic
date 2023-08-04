@@ -78,7 +78,6 @@ exports[`optic api add git - no cli interaction discover one file with history d
 
 exports[`optic api add git - no cli interaction discover one file with history depth 2`] = `
 "openapi: 3.0.3
-x-optic-url: "https://app.useoptic.com/organizations/org-id/apis/api-id"
 info:
   title: a spec
   description: The API
@@ -164,7 +163,6 @@ exports[`optic api add no vcs - no cli interaction discover one file with histor
 
 exports[`optic api add no vcs - no cli interaction discover one file with history depth 2`] = `
 "openapi: 3.0.3
-x-optic-url: "https://app.useoptic.com/organizations/org-id/apis/api-id"
 info:
   title: a spec
   description: The API

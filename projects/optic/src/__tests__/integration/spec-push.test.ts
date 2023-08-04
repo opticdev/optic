@@ -62,39 +62,4 @@ describe('optic spec push', () => {
       normalizeWorkspace(workspace, sanitizeOutput(combined))
     ).toMatchSnapshot();
   });
-
-  test('does not automatically add git tags when not clean state', async () => {
-    const workspace = await setupWorkspace('spec-push/simple', {
-      repo: true,
-      commit: true,
-    });
-    process.env.OPTIC_TOKEN = '123';
-    await run(`touch ./hello.yml`, false, workspace);
-    const { combined, code } = await runOptic(
-      workspace,
-      'spec push ./spec.yml'
-    );
-
-    expect(code).toBe(0);
-    expect(
-      normalizeWorkspace(workspace, sanitizeOutput(combined))
-    ).toMatchSnapshot();
-  });
-
-  test('requires x-optic-url', async () => {
-    const workspace = await setupWorkspace('spec-push/no-x-optic-url', {
-      repo: true,
-      commit: true,
-    });
-    process.env.OPTIC_TOKEN = '123';
-    const { combined, code } = await runOptic(
-      workspace,
-      'spec push ./spec.yml'
-    );
-
-    expect(code).toBe(1);
-    expect(
-      normalizeWorkspace(workspace, sanitizeOutput(combined))
-    ).toMatchSnapshot();
-  });
 });

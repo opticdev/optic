@@ -167,7 +167,7 @@ const getHeadAndLastChanged = async (
 
     const specDetails = await getOpticUrlDetails(config, {
       filePath: file,
-      xOpticUrl: opticUrl,
+      opticUrl,
     });
 
     return {
