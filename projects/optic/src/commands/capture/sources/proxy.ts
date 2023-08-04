@@ -44,11 +44,13 @@ export class ProxyInteractions {
       proxyPort?: number;
     }
   ): Promise<[ProxyInteractions, string, string]> {
+    let host: string;
     let protocol: string;
     let origin: string;
     let serverPathnamePrefix: string;
     try {
       ({
+        host,
         protocol,
         origin,
         pathname: serverPathnamePrefix,
@@ -61,6 +63,7 @@ export class ProxyInteractions {
       );
       throw new UserError();
     }
+    targetHost = host;
 
     const forwardHost = options.mode === 'reverse-proxy' ? origin : targetHost;
 
