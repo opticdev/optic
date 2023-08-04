@@ -113,6 +113,25 @@ describe('capture with requests', () => {
       ).toMatchSnapshot();
     });
 
+    test('handle servers not at root of host', async () => {
+      process.env.SERVER_PREFIX = '/api';
+      const workspace = await setupWorkspace('capture/with-server');
+      await setPortInFile(workspace, 'optic.yml');
+
+      const { combined, code } = await runOptic(
+        workspace,
+        `capture openapi-prefixed-url.yml --update automatic`
+      );
+      expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+      expect(code).toBe(0);
+      expect(
+        await fs.readFile(
+          path.join(workspace, 'openapi-prefixed-url.yml'),
+          'utf-8'
+        )
+      ).toMatchSnapshot();
+    });
+
     test('handle server path prefixes in spec', async () => {
       process.env.SERVER_PREFIX = '/api';
       const workspace = await setupWorkspace('capture/with-server');
