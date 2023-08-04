@@ -36,6 +36,7 @@ import { resolveRelativePath } from '../../utils/capture';
 import { InferPathStructure } from './operations/infer-path-structure';
 import { getSpinner } from '../../utils/spinner';
 import { getOpticUrlDetails } from '../../utils/cloud-urls';
+import sortBy from 'lodash.sortby';
 
 const indent = (n: number) => '  '.repeat(n);
 
@@ -348,7 +349,10 @@ const getCaptureAction =
 
         logger.info(chalk.bold.gray('Documenting new operations:'));
 
-        for (const endpoint of endpointsToAdd) {
+        for (const endpoint of sortBy(
+          endpointsToAdd,
+          (e) => `${e.path}${e.method}`
+        )) {
           const { path, method } = endpoint;
           const endpointText = `${method.toUpperCase()} ${path}`;
           const spinner = getSpinner({
