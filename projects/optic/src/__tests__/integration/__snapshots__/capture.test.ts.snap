@@ -1474,7 +1474,9 @@ operation: [1mget /books[22m
 [90m$workspace$/openapi.yml[39m
 
 
-4 unmatched interactions
+100.0% coverage of your documented operations. 4 requests did not match a documented path (5 total requests).
+7 diffs detected in documented operations
+
 [33mNew endpoints are only added in interactive mode.[39m
 [34mRun with \`--update interactive\` to add new endpoints[39m
 [33mHint: optic capture openapi.yml --update interactive[39m
