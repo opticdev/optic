@@ -4,14 +4,13 @@ exports[`optic api add git - no cli interaction discover all files in a folder 1
 "
 
 [1m[90mLooking for OpenAPI specs in directory $workspace$/nested[39m[22m
+Automatically adding the git sha 'git:621b7c2ffa2d2bda542a3f5974b33f77314a9aa8' and branch 'gCOMMIT-HASH:master' as tags
 [1m[32m✔[39m[22m [1m[34ma spec[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 
 [33mHint: add \`--history-depth=0\` to backfill the entire history of your API[39m
 
 
-
-[34m[1mx-optic-url has been added to newly tracked specs. You should commit these changes.[22m[39m
 
 [34m[1mSetup CI checks by running "optic ci setup"[22m[39m
 "
@@ -21,18 +20,19 @@ exports[`optic api add git - no cli interaction discover all files in repo 1`] =
 "
 
 [1m[90mLooking for OpenAPI specs in directory $workspace$[39m[22m
+Automatically adding the git sha 'git:9355462e65a56b5d96267b172fec3c1099b8d6aa' and branch 'gCOMMIT-HASH:master' as tags
 [1m[32m✔[39m[22m [1m[34mEmpty[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
+Automatically adding the git sha 'git:9355462e65a56b5d96267b172fec3c1099b8d6aa' and branch 'gCOMMIT-HASH:master' as tags
 [1m[32m✔[39m[22m [1m[34ma spec[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
+Automatically adding the git sha 'git:9355462e65a56b5d96267b172fec3c1099b8d6aa' and branch 'gCOMMIT-HASH:master' as tags
 [1m[32m✔[39m[22m [1m[34ma spec[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 
 [33mHint: add \`--history-depth=0\` to backfill the entire history of your API[39m
 
 
-
-[34m[1mx-optic-url has been added to newly tracked specs. You should commit these changes.[22m[39m
 
 [34m[1mSetup CI checks by running "optic ci setup"[22m[39m
 "
@@ -42,18 +42,19 @@ exports[`optic api add git - no cli interaction discover all files in repo using
 "
 
 [1m[90mLooking for OpenAPI specs in directory $workspace$[39m[22m
+Automatically adding the git sha 'git:57c9ec45ea848588dcec7a5c66bd948c32fa91db' and branch 'gCOMMIT-HASH:master' as tags
 [1m[32m✔[39m[22m [1m[34mEmpty[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
+Automatically adding the git sha 'git:57c9ec45ea848588dcec7a5c66bd948c32fa91db' and branch 'gCOMMIT-HASH:master' as tags
 [1m[32m✔[39m[22m [1m[34ma spec[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
+Automatically adding the git sha 'git:57c9ec45ea848588dcec7a5c66bd948c32fa91db' and branch 'gCOMMIT-HASH:master' as tags
 [1m[32m✔[39m[22m [1m[34ma spec[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 
 [33mHint: add \`--history-depth=0\` to backfill the entire history of your API[39m
 
 
-
-[34m[1mx-optic-url has been added to newly tracked specs. You should commit these changes.[22m[39m
 
 [34m[1mSetup CI checks by running "optic ci setup"[22m[39m
 "
@@ -63,14 +64,13 @@ exports[`optic api add git - no cli interaction discover one file with history d
 "
 
 [1m[90mAdding API $workspace$/spec.yml[39m[22m
+Automatically adding the git sha 'git:e6a17cf061f9a2020a917cb41dde83ef5e5d8630' and branch 'gCOMMIT-HASH:master' as tags
 [1m[32m✔[39m[22m [1m[34ma spec[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 
 [33mHint: add \`--history-depth=0\` to backfill the entire history of your API[39m
 
 
-
-[34m[1mx-optic-url has been added to newly tracked specs. You should commit these changes.[22m[39m
 
 [34m[1mSetup CI checks by running "optic ci setup"[22m[39m
 "
@@ -108,8 +108,6 @@ exports[`optic api add no vcs - no cli interaction discover all files in a folde
 [1m[32m✔[39m[22m [1m[34ma spec[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 
-[34m[1mx-optic-url has been added to newly tracked specs. You should commit these changes.[22m[39m
-
 [34m[1mSetup CI checks by running "optic ci setup"[22m[39m
 "
 `;
@@ -124,8 +122,6 @@ exports[`optic api add no vcs - no cli interaction discover all files in repo 1`
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 [1m[32m✔[39m[22m [1m[34ma spec[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
-
-[34m[1mx-optic-url has been added to newly tracked specs. You should commit these changes.[22m[39m
 
 [34m[1mSetup CI checks by running "optic ci setup"[22m[39m
 "
@@ -142,8 +138,6 @@ exports[`optic api add no vcs - no cli interaction discover all files in repo us
 [1m[32m✔[39m[22m [1m[34ma spec[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 
-[34m[1mx-optic-url has been added to newly tracked specs. You should commit these changes.[22m[39m
-
 [34m[1mSetup CI checks by running "optic ci setup"[22m[39m
 "
 `;
@@ -154,8 +148,6 @@ exports[`optic api add no vcs - no cli interaction discover one file with histor
 [1m[90mAdding API $workspace$/spec.yml[39m[22m
 [1m[32m✔[39m[22m [1m[34ma spec[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
-
-[34m[1mx-optic-url has been added to newly tracked specs. You should commit these changes.[22m[39m
 
 [34m[1mSetup CI checks by running "optic ci setup"[22m[39m
 "

@@ -1,4 +1,3 @@
-import { url } from 'node:inspector';
 import { URL } from 'node:url';
 import urljoin from 'url-join';
 import { OpticCliConfig } from '../config';
