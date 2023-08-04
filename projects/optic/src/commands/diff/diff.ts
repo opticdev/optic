@@ -23,7 +23,7 @@ import { logger } from '../../logger';
 import { errorHandler } from '../../error-handler';
 import path from 'path';
 import { OPTIC_URL_KEY } from '../../constants';
-import { getApiFromOpticUrl } from '../../utils/cloud-urls';
+import { getApiFromOpticUrl, getOpticUrlDetails } from '../../utils/cloud-urls';
 import * as Git from '../../utils/git-utils';
 import * as GitCandidates from '../api/git-get-file-candidates';
 import stableStringify from 'json-stable-stringify';
@@ -160,11 +160,16 @@ const getHeadAndLastChanged = async (
       }
     }
 
-    const opticUrl: string | null =
+    const opticUrl =
       headFile.jsonLike[OPTIC_URL_KEY] ??
       baseFile.jsonLike[OPTIC_URL_KEY] ??
-      null;
-    const specDetails = opticUrl ? getApiFromOpticUrl(opticUrl) : null;
+      undefined;
+
+    const specDetails = await getOpticUrlDetails(config, {
+      filePath: file,
+      xOpticUrl: opticUrl,
+    });
+
     return {
       specs: [baseFile, headFile, specDetails],
       meta: { sha: shaWithChange },
@@ -198,6 +203,7 @@ const getBaseAndHeadFromFiles = async (
       headFile.jsonLike[OPTIC_URL_KEY] ??
       baseFile.jsonLike[OPTIC_URL_KEY] ??
       null;
+    // TODO: does this make sense
     const specDetails = opticUrl ? getApiFromOpticUrl(opticUrl) : null;
     return [baseFile, headFile, specDetails];
   } catch (e) {
