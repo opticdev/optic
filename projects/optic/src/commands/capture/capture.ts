@@ -405,7 +405,7 @@ const getCaptureAction =
 
       const opticUrlDetails = await getOpticUrlDetails(config, {
         filePath,
-        xOpticUrl: spec.jsonLike[OPTIC_URL_KEY],
+        opticUrl: spec.jsonLike[OPTIC_URL_KEY],
       });
 
       if (config.vcs?.type !== VCS.Git) {

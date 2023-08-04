@@ -98,14 +98,14 @@ export async function getOpticUrlDetails(
   config: OpticCliConfig,
   {
     filePath,
-    xOpticUrl,
+    opticUrl,
   }: {
-    filePath: string;
-    xOpticUrl: string | undefined;
+    filePath?: string;
+    opticUrl?: string;
   }
 ): Promise<OpticUrlDetails | null> {
-  if (xOpticUrl) return getApiFromOpticUrl(xOpticUrl);
-  else {
+  if (opticUrl) return getApiFromOpticUrl(opticUrl);
+  else if (filePath) {
     const generatedDetails = await getDetailsForGeneration(config);
     if (generatedDetails) {
       const { web_url, organization_id } = generatedDetails;
@@ -115,6 +115,6 @@ export async function getOpticUrlDetails(
         return { apiId: api.api_id, orgId: organization_id };
       }
     }
-    return null;
   }
+  return null;
 }

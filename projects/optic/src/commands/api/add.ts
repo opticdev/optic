@@ -14,7 +14,11 @@ import { writeJson, writeYml } from '../../utils/write-to-file';
 import { uploadSpec } from '../../utils/cloud-specs';
 import * as Git from '../../utils/git-utils';
 
-import { getApiFromOpticUrl, getApiUrl } from '../../utils/cloud-urls';
+import {
+  getApiFromOpticUrl,
+  getApiUrl,
+  getOpticUrlDetails,
+} from '../../utils/cloud-urls';
 import { flushEvents, trackEvent } from '../../segment';
 import { errorHandler } from '../../error-handler';
 import { getOrganizationFromToken } from '../../utils/organization';
@@ -116,20 +120,32 @@ async function initializeApi(
 
   const existingOpticUrl: string | undefined =
     parseResult.jsonLike[OPTIC_URL_KEY];
-  const maybeParsedUrl = existingOpticUrl
-    ? getApiFromOpticUrl(existingOpticUrl)
-    : null;
+
+  const opticUrlDetails = await getOpticUrlDetails(config, {
+    filePath: options.path_to_spec,
+    opticUrl: existingOpticUrl,
+  });
 
   let alreadyTracked = false;
 
   let api: { id: string; url: string };
-  if (existingOpticUrl && maybeParsedUrl) {
+  if (opticUrlDetails) {
     alreadyTracked = true;
-    api = { id: maybeParsedUrl.apiId, url: existingOpticUrl };
+    api = {
+      id: opticUrlDetails.apiId,
+      url:
+        existingOpticUrl ??
+        getApiUrl(
+          config.client.getWebBase(),
+          opticUrlDetails.orgId,
+          opticUrlDetails.apiId
+        ),
+    };
   } else {
     const name = parseResult.jsonLike?.info?.title ?? pathRelativeToRoot;
     const { id } = await config.client.createApi(orgId, {
       name,
+      path: options.path_to_spec,
       default_branch: options.default_branch,
       default_tag: options.default_tag,
       web_url: options.web_url,
@@ -146,17 +162,7 @@ async function initializeApi(
     orgId,
   });
 
-  // Write to file only if optic-url is not set or is invalid
-  if (!existingOpticUrl || !maybeParsedUrl) {
-    if (/.json/i.test(file_path)) {
-      await writeJson(file_path, {
-        [OPTIC_URL_KEY]: api.url,
-      });
-    } else {
-      await writeYml(file_path, {
-        [OPTIC_URL_KEY]: api.url,
-      });
-    }
+  if (!opticUrlDetails) {
     logger.debug(`Added spec ${pathRelativeToRoot} to ${api.url}`);
 
     trackEvent('api.added', {
