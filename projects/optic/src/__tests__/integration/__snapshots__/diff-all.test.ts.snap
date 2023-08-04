@@ -1,7 +1,37 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`diff-all diff all against a cloud tag 1`] = `
-"[34mDiffing cloud:api-id@main to spec.json[39m
+"[34mDiffing cloud:generated-api@main to spec-no-url.json[39m
+
+[31mx [39m[1mEmpty[22m [90mspec-no-url.json[39m
+[1mPreview docs: [22m https://useoptic.com/docs/cloud-get-started
+[1mOperations: [22m4 operations added, 1 removed
+[31mx [39m [1mChecks:[22m 0/1 passed 
+
+specification details:
+- /openapi [33mchanged[39m
+
+[31mx [1mGET[22m /api/users[39m: [31mremoved[39m
+  
+  [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/empty.json#L1
+  
+
+[32m✔ [1mGET[22m /example[39m: [32madded[39m
+  
+
+[32m✔ [1mPOST[22m /example[39m: [32madded[39m
+  
+
+[32m✔ [1mPUT[22m /example[39m: [32madded[39m
+  
+
+[32m✔ [1mPATCH[22m /example[39m: [32madded[39m
+  
+
+...and 4 other operations
+
+[34mDiffing cloud:api-id@main to spec.json[39m
 
 [31mx [39m[1mEmpty[22m [90mspec.json[39m
 [1mPreview docs: [22m https://useoptic.com/docs/cloud-get-started
@@ -32,83 +62,11 @@ specification details:
 
 ...and 4 other operations
 
-[33mWarning - the following OpenAPI specs were detected but did not have valid x-optic-url keys. optic diff-all --compare-from cloud:{tag}' can only runs on specs that have been added to optic[39m
-
-Run the \`optic api add\` command to add these specs to optic
-spec-no-url.json [31m(untracked)[39m
-
 
 
  [1m[33mFinish setting up Optic by adding your OPTIC_TOKEN. Create one here: [39m[22m[34m[4mhttps://app.useoptic.com/[24m[39m
  → Add API Review Tools to your Pull Requests 
 [2m   Preview Docs | Visual Diffs | Notify Consumers | Sharable links | API Changelogs | Stats[22m
-"
-`;
-
-exports[`diff-all diff all in --generated 1`] = `
-"[34mDiffing cloud:generated-api@main to spec-no-url.json[39m
-
-Uploading diff...
-[31mx [39m[1mEmpty[22m [90mspec-no-url.json[39m
-[1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/generated-api?specId=already-uploaded
-[1mOperations: [22m4 operations added, 1 removed
-[31mx [39m [1mChecks:[22m 0/1 passed 
-
-specification details:
-- /openapi [33mchanged[39m
-
-[31mx [1mGET[22m /api/users[39m: [31mremoved[39m
-  
-  [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at https://github.com/User/UserRepo/tree/COMMIT-HASH/empty.json#L1
-  
-
-[32m✔ [1mGET[22m /example[39m: [32madded[39m
-  
-
-[32m✔ [1mPOST[22m /example[39m: [32madded[39m
-  
-
-[32m✔ [1mPUT[22m /example[39m: [32madded[39m
-  
-
-[32m✔ [1mPATCH[22m /example[39m: [32madded[39m
-  
-
-...and 4 other operations
-
-[34mDiffing cloud:api-id@main to spec.json[39m
-
-Uploading diff...
-[31mx [39m[1mEmpty[22m [90mspec.json[39m
-[1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
-[1mOperations: [22m4 operations added, 1 removed
-[31mx [39m [1mChecks:[22m 0/1 passed 
-
-specification details:
-- /x-optic-url [32madded[39m
-- /openapi [33mchanged[39m
-
-[31mx [1mGET[22m /api/users[39m: [31mremoved[39m
-  
-  [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
-  at https://github.com/User/UserRepo/tree/COMMIT-HASH/empty.json#L1
-  
-
-[32m✔ [1mGET[22m /example[39m: [32madded[39m
-  
-
-[32m✔ [1mPOST[22m /example[39m: [32madded[39m
-  
-
-[32m✔ [1mPUT[22m /example[39m: [32madded[39m
-  
-
-[32m✔ [1mPATCH[22m /example[39m: [32madded[39m
-  
-
-...and 4 other operations
-
 "
 `;
 
@@ -210,6 +168,39 @@ Uploading diff...
 
 ...and 1 other operation
 
+[34mDiffing HEAD~1:specwithoutkey.json to ../specwithoutkey.json[39m
+
+Uploading diff...
+[32m✔ [39m[1mAPI 2[22m [90m../specwithoutkey.json[39m
+[1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/generated-api?specId=already-uploaded
+[1mOperations: [22mNo operations changed
+[32m✔ [39m [1mChecks:[22m 4/4 passed 
+
+[32m✔ [1mGET[22m /example[39m: 
+
+[32m✔ [1mPATCH[22m /example[39m: 
+
+[32m✔ [1mPOST[22m /example[39m: 
+
+[32m✔ [1mPUT[22m /example[39m: 
+
+...and 4 other operations
+
+[34mDiffing HEAD~1:specwithoutkey.yml to ../specwithoutkey.yml[39m
+
+Uploading diff...
+[31mx [39m[1ma spec[22m [90m../specwithoutkey.yml[39m
+[1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/generated-api?specId=already-uploaded
+[1mOperations: [22mNo operations changed
+[31mx [39m [1mChecks:[22m 0/1 passed 
+
+[31mx [1mPOST[22m /filler_route[39m: 
+  [31m[1mx [operation path component naming check][22m filler_route is not camelCase[39m
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/specwithoutkey.yml#L8
+  
+
+...and 1 other operation
+
 [34mDiffing empty spec to ../movedspec.yml[39m
 
 Uploading diff...
@@ -239,8 +230,6 @@ specification details:
 
 Run the \`optic api add\` command to add these specs to optic
 ../spec-with-invalid-url.yml [31m(untracked)[39m
-../specwithoutkey.json [31m(untracked)[39m
-../specwithoutkey.yml [31m(untracked)[39m
 
 "
 `;
@@ -390,6 +379,39 @@ Uploading diff...
 
 ...and 1 other operation
 
+[34mDiffing HEAD~1:specwithoutkey.json to specwithoutkey.json[39m
+
+Uploading diff...
+[32m✔ [39m[1mAPI 2[22m [90mspecwithoutkey.json[39m
+[1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/generated-api?specId=already-uploaded
+[1mOperations: [22mNo operations changed
+[32m✔ [39m [1mChecks:[22m 4/4 passed 
+
+[32m✔ [1mGET[22m /example[39m: 
+
+[32m✔ [1mPATCH[22m /example[39m: 
+
+[32m✔ [1mPOST[22m /example[39m: 
+
+[32m✔ [1mPUT[22m /example[39m: 
+
+...and 4 other operations
+
+[34mDiffing HEAD~1:specwithoutkey.yml to specwithoutkey.yml[39m
+
+Uploading diff...
+[31mx [39m[1ma spec[22m [90mspecwithoutkey.yml[39m
+[1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/generated-api?specId=already-uploaded
+[1mOperations: [22mNo operations changed
+[31mx [39m [1mChecks:[22m 0/1 passed 
+
+[31mx [1mPOST[22m /filler_route[39m: 
+  [31m[1mx [operation path component naming check][22m filler_route is not camelCase[39m
+  at https://github.com/User/UserRepo/tree/COMMIT-HASH/specwithoutkey.yml#L8
+  
+
+...and 1 other operation
+
 [34mDiffing empty spec to movedspec.yml[39m
 
 Uploading diff...
@@ -419,8 +441,6 @@ specification details:
 
 Run the \`optic api add\` command to add these specs to optic
 spec-with-invalid-url.yml [31m(untracked)[39m
-specwithoutkey.json [31m(untracked)[39m
-specwithoutkey.yml [31m(untracked)[39m
 
 "
 `;
@@ -1088,6 +1108,262 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
       "warnings": [],
     },
     {
+      "apiName": "specwithoutkey.json",
+      "comparison": {
+        "groupedDiffs": {
+          "endpoints": {
+            "/example-~_~-GET": {
+              "cookieParameters": {},
+              "diffs": [],
+              "headerParameters": {},
+              "method": "GET",
+              "path": "/example",
+              "pathParameters": {},
+              "queryParameters": {},
+              "request": {
+                "contents": {},
+                "diffs": [],
+                "rules": [],
+              },
+              "responses": {},
+              "rules": [
+                {
+                  "exempted": false,
+                  "location": {
+                    "jsonPath": "/paths/~1example/get",
+                    "spec": "after",
+                  },
+                  "name": "operation path component naming check",
+                  "passed": true,
+                  "severity": 2,
+                  "trail": "",
+                  "type": "requirement",
+                  "where": "GET /example",
+                },
+              ],
+            },
+            "/example-~_~-PATCH": {
+              "cookieParameters": {},
+              "diffs": [],
+              "headerParameters": {},
+              "method": "PATCH",
+              "path": "/example",
+              "pathParameters": {},
+              "queryParameters": {},
+              "request": {
+                "contents": {},
+                "diffs": [],
+                "rules": [],
+              },
+              "responses": {},
+              "rules": [
+                {
+                  "exempted": false,
+                  "location": {
+                    "jsonPath": "/paths/~1example/patch",
+                    "spec": "after",
+                  },
+                  "name": "operation path component naming check",
+                  "passed": true,
+                  "severity": 2,
+                  "trail": "",
+                  "type": "requirement",
+                  "where": "PATCH /example",
+                },
+              ],
+            },
+            "/example-~_~-POST": {
+              "cookieParameters": {},
+              "diffs": [],
+              "headerParameters": {},
+              "method": "POST",
+              "path": "/example",
+              "pathParameters": {},
+              "queryParameters": {},
+              "request": {
+                "contents": {},
+                "diffs": [],
+                "rules": [],
+              },
+              "responses": {},
+              "rules": [
+                {
+                  "exempted": false,
+                  "location": {
+                    "jsonPath": "/paths/~1example/post",
+                    "spec": "after",
+                  },
+                  "name": "operation path component naming check",
+                  "passed": true,
+                  "severity": 2,
+                  "trail": "",
+                  "type": "requirement",
+                  "where": "POST /example",
+                },
+              ],
+            },
+            "/example-~_~-PUT": {
+              "cookieParameters": {},
+              "diffs": [],
+              "headerParameters": {},
+              "method": "PUT",
+              "path": "/example",
+              "pathParameters": {},
+              "queryParameters": {},
+              "request": {
+                "contents": {},
+                "diffs": [],
+                "rules": [],
+              },
+              "responses": {},
+              "rules": [
+                {
+                  "exempted": false,
+                  "location": {
+                    "jsonPath": "/paths/~1example/put",
+                    "spec": "after",
+                  },
+                  "name": "operation path component naming check",
+                  "passed": true,
+                  "severity": 2,
+                  "trail": "",
+                  "type": "requirement",
+                  "where": "PUT /example",
+                },
+              ],
+            },
+          },
+          "specification": {
+            "diffs": [],
+            "rules": [],
+          },
+          "unmatched": {
+            "diffs": [],
+            "rules": [],
+          },
+        },
+        "results": [
+          {
+            "exempted": false,
+            "location": {
+              "jsonPath": "/paths/~1example/get",
+              "spec": "after",
+            },
+            "name": "operation path component naming check",
+            "passed": true,
+            "severity": 2,
+            "type": "requirement",
+            "where": "GET /example",
+          },
+          {
+            "exempted": false,
+            "location": {
+              "jsonPath": "/paths/~1example/patch",
+              "spec": "after",
+            },
+            "name": "operation path component naming check",
+            "passed": true,
+            "severity": 2,
+            "type": "requirement",
+            "where": "PATCH /example",
+          },
+          {
+            "exempted": false,
+            "location": {
+              "jsonPath": "/paths/~1example/post",
+              "spec": "after",
+            },
+            "name": "operation path component naming check",
+            "passed": true,
+            "severity": 2,
+            "type": "requirement",
+            "where": "POST /example",
+          },
+          {
+            "exempted": false,
+            "location": {
+              "jsonPath": "/paths/~1example/put",
+              "spec": "after",
+            },
+            "name": "operation path component naming check",
+            "passed": true,
+            "severity": 2,
+            "type": "requirement",
+            "where": "PUT /example",
+          },
+        ],
+      },
+      "opticWebUrl": "http://localhost:3001/organizations/org-id/apis/generated-api/runs/run-id",
+      "specUrl": "http://localhost:3001/organizations/org-id/apis/generated-api?specId=already-uploaded",
+      "warnings": [],
+    },
+    {
+      "apiName": "specwithoutkey.yml",
+      "comparison": {
+        "groupedDiffs": {
+          "endpoints": {
+            "/filler_route-~_~-POST": {
+              "cookieParameters": {},
+              "diffs": [],
+              "headerParameters": {},
+              "method": "POST",
+              "path": "/filler_route",
+              "pathParameters": {},
+              "queryParameters": {},
+              "request": {
+                "contents": {},
+                "diffs": [],
+                "rules": [],
+              },
+              "responses": {},
+              "rules": [
+                {
+                  "error": "filler_route is not camelCase",
+                  "exempted": false,
+                  "location": {
+                    "jsonPath": "/paths/~1filler_route/post",
+                    "spec": "after",
+                  },
+                  "name": "operation path component naming check",
+                  "passed": false,
+                  "severity": 2,
+                  "trail": "",
+                  "type": "requirement",
+                  "where": "POST /filler_route",
+                },
+              ],
+            },
+          },
+          "specification": {
+            "diffs": [],
+            "rules": [],
+          },
+          "unmatched": {
+            "diffs": [],
+            "rules": [],
+          },
+        },
+        "results": [
+          {
+            "error": "filler_route is not camelCase",
+            "exempted": false,
+            "location": {
+              "jsonPath": "/paths/~1filler_route/post",
+              "spec": "after",
+            },
+            "name": "operation path component naming check",
+            "passed": false,
+            "severity": 2,
+            "type": "requirement",
+            "where": "POST /filler_route",
+          },
+        ],
+      },
+      "opticWebUrl": "http://localhost:3001/organizations/org-id/apis/generated-api/runs/run-id",
+      "specUrl": "http://localhost:3001/organizations/org-id/apis/generated-api?specId=already-uploaded",
+      "warnings": [],
+    },
+    {
       "apiName": "movedspec.yml",
       "comparison": {
         "groupedDiffs": {
@@ -1302,7 +1578,7 @@ specification details:
 `;
 
 exports[`diff-all diffs all files with --json 1`] = `
-"{"results":{"folder/in-folder.yml":{"operations":[]},"mvspec.yml":{"operations":[{"name":"POST /filler_route","change":"removed","attributes":[{"key":"","before":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}},"headers":{}}},"parameters":[]},"change":"removed"}],"parameters":[],"responses":[]},{"name":"POST /api/filler-route","change":"removed","attributes":[{"key":"","before":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}},"headers":{}}},"parameters":[]},"change":"removed"}],"parameters":[],"responses":[]}]},"specwithkey.json":{"operations":[]},"specwithkey.yml":{"operations":[]},"movedspec.yml":{"operations":[{"name":"POST /filler_route","change":"added","attributes":[{"key":"","after":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}},"headers":{}}},"parameters":[]},"change":"added"}],"parameters":[],"responses":[]},{"name":"POST /api/filler-route","change":"added","attributes":[{"key":"","after":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}},"headers":{}}},"parameters":[]},"change":"added"}],"parameters":[],"responses":[]}]}},"warnings":{"missingOpticUrl":[{"path":"spec-with-invalid-url.yml"},{"path":"specwithoutkey.json"},{"path":"specwithoutkey.yml"}],"unparseableFromSpec":[],"unparseableToSpec":[]}}
+"{"results":{"folder/in-folder.yml":{"operations":[]},"mvspec.yml":{"operations":[{"name":"POST /filler_route","change":"removed","attributes":[{"key":"","before":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}},"headers":{}}},"parameters":[]},"change":"removed"}],"parameters":[],"responses":[]},{"name":"POST /api/filler-route","change":"removed","attributes":[{"key":"","before":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}},"headers":{}}},"parameters":[]},"change":"removed"}],"parameters":[],"responses":[]}]},"specwithkey.json":{"operations":[]},"specwithkey.yml":{"operations":[]},"specwithoutkey.json":{"operations":[]},"specwithoutkey.yml":{"operations":[]},"movedspec.yml":{"operations":[{"name":"POST /filler_route","change":"added","attributes":[{"key":"","after":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}},"headers":{}}},"parameters":[]},"change":"added"}],"parameters":[],"responses":[]},{"name":"POST /api/filler-route","change":"added","attributes":[{"key":"","after":{"operationId":"create","responses":{"201":{"description":"Created successfully","content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"string","format":"uuid","example":"d5b640e5-d88c-4c17-9bf0-93597b7a1ce2"}}}}},"headers":{}}},"parameters":[]},"change":"added"}],"parameters":[],"responses":[]}]}},"warnings":{"missingOpticUrl":[{"path":"spec-with-invalid-url.yml"}],"unparseableFromSpec":[],"unparseableToSpec":[]}}
 "
 `;
 
