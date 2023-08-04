@@ -10,15 +10,10 @@ import { OPTIC_URL_KEY } from '../../constants';
 import chalk from 'chalk';
 import * as GitCandidates from './git-get-file-candidates';
 import * as FsCandidates from './get-file-candidates';
-import { writeJson, writeYml } from '../../utils/write-to-file';
 import { uploadSpec } from '../../utils/cloud-specs';
 import * as Git from '../../utils/git-utils';
 
-import {
-  getApiFromOpticUrl,
-  getApiUrl,
-  getOpticUrlDetails,
-} from '../../utils/cloud-urls';
+import { getApiUrl, getOpticUrlDetails } from '../../utils/cloud-urls';
 import { flushEvents, trackEvent } from '../../segment';
 import { errorHandler } from '../../error-handler';
 import { getOrganizationFromToken } from '../../utils/organization';
@@ -26,6 +21,7 @@ import { sanitizeGitTag } from '@useoptic/openapi-utilities';
 import stableStringify from 'json-stable-stringify';
 import { computeChecksumForAws } from '../../utils/checksum';
 import { getSpinner } from '../../utils/spinner';
+import { getUniqueTags } from '../../utils/tags';
 
 function short(sha: string) {
   return sha.slice(0, 8);
@@ -122,11 +118,14 @@ async function initializeApi(
     parseResult.jsonLike[OPTIC_URL_KEY];
 
   const opticUrlDetails = await getOpticUrlDetails(config, {
-    filePath: options.path_to_spec,
+    filePath: options.path_to_spec
+      ? path.relative(config.root, path.resolve(options.path_to_spec))
+      : undefined,
     opticUrl: existingOpticUrl,
   });
 
   let alreadyTracked = false;
+  let tagsToAdd: string[] = [];
 
   let api: { id: string; url: string };
   if (opticUrlDetails) {
@@ -142,10 +141,28 @@ async function initializeApi(
         ),
     };
   } else {
+    if (config.vcs?.type === VCS.Git) {
+      const sha = config.vcs.sha;
+      tagsToAdd.push(`git:${sha}`);
+
+      const branch = await Git.getCurrentBranchName();
+      if (branch !== 'HEAD') {
+        tagsToAdd.push(sanitizeGitTag(`gitbranch:${branch}`));
+        logger.info(
+          `Automatically adding the git sha 'git:${sha}' and branch 'gitbranch:${branch}' as tags`
+        );
+      } else {
+        logger.info(`Automatically adding the git sha 'git:${sha}' as a tag`);
+      }
+    }
+
     const name = parseResult.jsonLike?.info?.title ?? pathRelativeToRoot;
     const { id } = await config.client.createApi(orgId, {
       name,
-      path: options.path_to_spec,
+      path: path.relative(
+        config.root,
+        path.resolve(options.path_to_spec ?? '')
+      ),
       default_branch: options.default_branch,
       default_tag: options.default_tag,
       web_url: options.web_url,
@@ -157,7 +174,7 @@ async function initializeApi(
   }
   await uploadSpec(api.id, {
     spec: parseResult,
-    tags: [],
+    tags: getUniqueTags(tagsToAdd),
     client: config.client,
     orgId,
   });
@@ -473,7 +490,9 @@ export const getApiAddAction =
       }
     }
 
-    if (addedApis.length > 0 && candidates.shas.length > 0) {
+    const someTracked = candidates.paths.some((p) => Git.isTracked(p));
+
+    if (addedApis.length > 0 && candidates.shas.length > 0 && someTracked) {
       logger.info(``);
       if (candidates.shas.length === 1) {
         logger.info(
@@ -496,13 +515,6 @@ export const getApiAddAction =
         web_url,
       });
     }
-
-    logger.info('');
-    logger.info(
-      chalk.blue.bold(
-        `x-optic-url has been added to newly tracked specs. You should commit these changes.`
-      )
-    );
 
     logger.info('');
     logger.info(chalk.blue.bold(`Setup CI checks by running "optic ci setup"`));

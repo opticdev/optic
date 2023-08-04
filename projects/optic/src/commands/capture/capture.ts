@@ -409,7 +409,7 @@ const getCaptureAction =
       }
 
       const opticUrlDetails = await getOpticUrlDetails(config, {
-        filePath,
+        filePath: path.relative(config.root, path.resolve(filePath)),
         opticUrl: spec.jsonLike[OPTIC_URL_KEY],
       });
 

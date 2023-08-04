@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import open from 'open';
 import { sanitizeGitTag } from '@useoptic/openapi-utilities';
+import path from 'path';
 
 import { OpticCliConfig, VCS } from '../../config';
 import { loadSpec, ParseResult } from '../../utils/spec-loaders';
@@ -10,7 +11,6 @@ import * as Git from '../../utils/git-utils';
 import chalk from 'chalk';
 import { uploadSpec } from '../../utils/cloud-specs';
 import {
-  getApiFromOpticUrl,
   getApiUrl,
   getOpticUrlDetails,
   getSpecUrl,
@@ -107,7 +107,9 @@ const getSpecPushAction =
     tagsToAdd = getUniqueTags(tagsToAdd);
 
     const specDetails = await getOpticUrlDetails(config, {
-      filePath: spec_path!,
+      filePath: spec_path
+        ? path.relative(config.root, path.resolve(spec_path))
+        : undefined,
       opticUrl: parseResult.jsonLike[OPTIC_URL_KEY],
     });
 
