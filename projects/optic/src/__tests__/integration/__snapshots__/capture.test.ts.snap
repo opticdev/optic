@@ -1188,10 +1188,10 @@ exports[`capture with requests update behavior updates all endpoints with --upda
 GET /books
   [32m✓ [39m200 response
   [32m[200 response body] 'name' has been added[39m
-  [32m[200 response body] 'author_id' has been added[39m
-  [32m[200 response body] 'price' has been added[39m
   [32m[200 response body] 'created_at' has been added[39m
   [32m[200 response body] 'updated_at' has been added[39m
+  [33m[200 response body] 'author_id' is now type number[39m
+  [33m[200 response body] 'price' is now type string[39m
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
@@ -1266,20 +1266,24 @@ components:
             properties:
               id:
                 type: string
+              author_id:
+                oneOf:
+                  - type: number
+                  - type: string
+              price:
+                oneOf:
+                  - type: string
+                  - type: number
               name:
                 type: string
-              author_id:
-                type: string
-              price:
-                type: number
               created_at:
                 type: string
               updated_at:
                 type: string
             required:
-              - name
+              - id
               - author_id
-              - price
+              - name
               - created_at
               - updated_at
     GetBooksBook200ResponseBody:
@@ -1348,10 +1352,10 @@ exports[`capture with requests update behavior updates only existing endpoints b
 GET /books
   [32m✓ [39m200 response
   [32m[200 response body] 'name' has been added[39m
-  [32m[200 response body] 'author_id' has been added[39m
-  [32m[200 response body] 'price' has been added[39m
   [32m[200 response body] 'created_at' has been added[39m
   [32m[200 response body] 'updated_at' has been added[39m
+  [33m[200 response body] 'author_id' is now type number[39m
+  [33m[200 response body] 'price' is now type string[39m
 
 4 unmatched interactions
 [33mNew endpoints are only added in interactive mode.[39m
@@ -1388,20 +1392,24 @@ components:
             properties:
               id:
                 type: string
+              author_id:
+                oneOf:
+                  - type: number
+                  - type: string
+              price:
+                oneOf:
+                  - type: string
+                  - type: number
               name:
                 type: string
-              author_id:
-                type: string
-              price:
-                type: number
               created_at:
                 type: string
               updated_at:
                 type: string
             required:
-              - name
+              - id
               - author_id
-              - price
+              - name
               - created_at
               - updated_at
 "
@@ -1429,15 +1437,54 @@ GET /books/{bookId}
 "
 `;
 
+exports[`capture with requests verify behavior verifies the specification in verbose mode 1`] = `
+"Generating traffic to send to server
+GET /books
+  [31m× [39m200 response
+  [31m[200 response body] 'name' is not documented[39m
+  [31m[200 response body] 'created_at' is not documented[39m
+  [31m[200 response body] 'updated_at' is not documented[39m
+  [31m[200 response body] 'author_id' does not match type number. Received 6nTxAFM5ck4Hob77hGQoL[39m
+  [41m  Diff  [49m 'author_id' did not match schema
+operation: [1mget /books[22m  
+[90m25 |[39m properties:
+[90m26 |[39m   id:
+[90m27 |[39m     type: string
+[90m28 |[39m [1m[33m  author_id:  [41m[Actual] "6nTxAFM5ck4Hob77hGQoL"[49m[39m[22m
+[90m29 |[39m     type: number
+[90m30 |[39m   price:
+[90m31 |[39m     type: string
+[90m$workspace$/openapi.yml[39m
+
+  [31m[200 response body] 'price' does not match type string. Received 10[39m
+  [41m  Diff  [49m 'price' did not match schema
+operation: [1mget /books[22m  
+[90m27 |[39m     type: string
+[90m28 |[39m   author_id:
+[90m29 |[39m     type: number
+[90m30 |[39m [1m[33m  price:  [41m[Actual] 10[49m[39m[22m
+[90m31 |[39m     type: string
+[90m32 |[39m required:
+[90m33 |[39m   - id
+[90m$workspace$/openapi.yml[39m
+
+
+4 unmatched interactions
+[33mNew endpoints are only added in interactive mode.[39m
+[34mRun with \`--update interactive\` to add new endpoints[39m
+[33mHint: optic capture openapi.yml --update interactive[39m
+"
+`;
+
 exports[`capture with requests verify behavior verifies the specification with coverage 1`] = `
 "Generating traffic to send to server
 GET /books
   [31m× [39m200 response
   [31m[200 response body] 'name' is not documented[39m
-  [31m[200 response body] 'author_id' is not documented[39m
-  [31m[200 response body] 'price' is not documented[39m
   [31m[200 response body] 'created_at' is not documented[39m
   [31m[200 response body] 'updated_at' is not documented[39m
+  [31m[200 response body] 'author_id' does not match type number. Received 6nTxAFM5ck4Hob77hGQoL[39m
+  [31m[200 response body] 'price' does not match type string. Received 10[39m
 
 4 unmatched interactions
 [33mNew endpoints are only added in interactive mode.[39m
