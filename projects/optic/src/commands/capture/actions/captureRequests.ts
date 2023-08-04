@@ -75,7 +75,12 @@ function startApp(
   spinner?: ora.Ora
 ): [ChildProcessWithoutNullStreams, Bailout] {
   const cmd = commandSplitter(command);
-  const app = spawn(cmd.cmd, cmd.args, { detached: true, cwd: dir });
+  let app: ChildProcessWithoutNullStreams;
+  try {
+    app = spawn(cmd.cmd, cmd.args, { detached: true, cwd: dir });
+  } catch (e) {
+    throw new UserError({ initialError: e as Error });
+  }
 
   app.stdout.on('data', (data) => {
     loggerWhileSpinning.debug(spinner, data.toString());
@@ -90,7 +95,11 @@ function startApp(
     promise: new Promise((resolve, reject) => {
       app!.on('exit', (code) => {
         bailout.didBailout = true;
-        reject(`Server unexpectedly exited with error code ${code}`);
+        reject(
+          new UserError({
+            message: `Server unexpectedly exited with error code ${code}`,
+          })
+        );
       });
     }),
   };
@@ -203,14 +212,20 @@ async function runRequestsCommand(
   spinner?: ora.Ora
 ): Promise<void> {
   const cmd = commandSplitter(command);
-  const reqCmd = spawn(cmd.cmd, cmd.args, {
-    env: {
-      ...process.env,
-      [proxyVar]: proxyUrl,
-    },
-    detached: true,
-    shell: true,
-  });
+  let reqCmd: ChildProcessWithoutNullStreams;
+
+  try {
+    reqCmd = spawn(cmd.cmd, cmd.args, {
+      env: {
+        ...process.env,
+        [proxyVar]: proxyUrl,
+      },
+      detached: true,
+      shell: true,
+    });
+  } catch (e) {
+    throw new UserError({ initialError: e as Error });
+  }
 
   let reqCmdPromise: Promise<void>;
   reqCmdPromise = new Promise((resolve, reject) => {
@@ -218,7 +233,11 @@ async function runRequestsCommand(
       if (code === 0) {
         resolve();
       } else {
-        reject();
+        reject(
+          new UserError({
+            message: `command ${cmd} failed with exit code ${code}`,
+          })
+        );
       }
     });
   });
@@ -377,7 +396,7 @@ export async function captureRequestsFromProxy(
     }
   }
 
-  spinner?.succeed('Successfully captured requests');
+  spinner?.succeed('Finished running requests');
 
   // process proxy interactions into hars
   return HarEntries.fromProxyInteractions(proxy.interactions);

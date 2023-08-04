@@ -56,7 +56,11 @@ export const errorHandler = <Args extends any[], Return extends any>(
         UserError.isInstance(e) ||
         e instanceof ResolverError
       ) {
-        logger.error(chalk.red((e as Error).message));
+        const message =
+          UserError.isInstance(e) && e.initialError instanceof Error
+            ? e.initialError.message
+            : e.message;
+        logger.error(chalk.red(message));
       } else {
         console.error(e);
         if (e instanceof Error) logger.error(chalk.red(e.message));
