@@ -108,7 +108,7 @@ const getSpecPushAction =
 
     const specDetails = await getOpticUrlDetails(config, {
       filePath: spec_path!,
-      xOpticUrl: parseResult.jsonLike[OPTIC_URL_KEY],
+      opticUrl: parseResult.jsonLike[OPTIC_URL_KEY],
     });
 
     if (!specDetails) {
