@@ -498,7 +498,6 @@ Finding last change...
 
 ...and 4 other operations
 
-[34m[1mSee the full history of this API by running "optic api add example-api.json --history-depth 0"[22m[39m
 "
 `;
 

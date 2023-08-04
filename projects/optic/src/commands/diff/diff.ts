@@ -393,8 +393,6 @@ const getDiffAction =
       specUrl = uploadResults?.headSpecUrl ?? null;
       maybeChangelogUrl = uploadResults?.changelogUrl ?? null;
     }
-    const hasOpticUrl = headParseResult.jsonLike['x-optic-url'];
-
     if (options.json) {
       console.log(
         JSON.stringify(
@@ -446,7 +444,7 @@ const getDiffAction =
 
     if (
       !config.isInCi &&
-      ((!hasOpticUrl && headParseResult.from === 'file') ||
+      ((!specDetails && headParseResult.from === 'file') ||
         headParseResult.from === 'git')
     ) {
       const relativePath = path.relative(

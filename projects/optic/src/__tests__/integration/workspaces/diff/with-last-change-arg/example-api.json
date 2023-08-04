@@ -1,5 +1,6 @@
 {
   "openapi": "3.0.1",
+  "x-optic-url": "https://app.useoptic.com/organizations/org-id/apis/api-id",
   "paths": {
     "/example": {
       "get": {
