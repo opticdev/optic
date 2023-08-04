@@ -75,7 +75,12 @@ function startApp(
   spinner?: ora.Ora
 ): [ChildProcessWithoutNullStreams, Bailout] {
   const cmd = commandSplitter(command);
-  const app = spawn(cmd.cmd, cmd.args, { detached: true, cwd: dir });
+  let app: ChildProcessWithoutNullStreams;
+  try {
+    app = spawn(cmd.cmd, cmd.args, { detached: true, cwd: dir });
+  } catch (e) {
+    throw new UserError({ initialError: e as Error });
+  }
 
   app.stdout.on('data', (data) => {
     loggerWhileSpinning.debug(spinner, data.toString());
@@ -207,14 +212,20 @@ async function runRequestsCommand(
   spinner?: ora.Ora
 ): Promise<void> {
   const cmd = commandSplitter(command);
-  const reqCmd = spawn(cmd.cmd, cmd.args, {
-    env: {
-      ...process.env,
-      [proxyVar]: proxyUrl,
-    },
-    detached: true,
-    shell: true,
-  });
+  let reqCmd: ChildProcessWithoutNullStreams;
+
+  try {
+    reqCmd = spawn(cmd.cmd, cmd.args, {
+      env: {
+        ...process.env,
+        [proxyVar]: proxyUrl,
+      },
+      detached: true,
+      shell: true,
+    });
+  } catch (e) {
+    throw new UserError({ initialError: e as Error });
+  }
 
   let reqCmdPromise: Promise<void>;
   reqCmdPromise = new Promise((resolve, reject) => {
