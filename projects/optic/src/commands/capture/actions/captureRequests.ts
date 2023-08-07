@@ -137,8 +137,6 @@ async function waitForServer(
 
   const serverReadyPromise = new Promise(async (resolve, reject) => {
     let done = false;
-    const timeoutMsg =
-      'The server timed out before a successful healthcheck. Verify the server URL in your optic.yml is correct and your server is reachable.';
 
     // We need to bail out if the server shut down, otherwise we never conclude this promise chain
     while (!done && !bailout.didBailout) {
@@ -148,13 +146,21 @@ async function waitForServer(
         done = true;
       } else if (Date.now() > now + timeout) {
         didTimeout = true;
-        reject(new UserError({ message: timeoutMsg }));
+        reject(
+          new UserError({
+            message: 'The server timed out before a successful healthcheck.',
+          })
+        );
       }
       await wait(readyInterval);
     }
     if (bailout.didBailout && !didTimeout)
       spinner?.fail('Server unexpectedly exited');
-    if (didTimeout) spinner?.fail(timeoutMsg);
+
+    if (didTimeout)
+      spinner?.fail(
+        'Verify the server URL is your optic.yml is correct and your server is reachable.'
+      );
     resolve(null);
   });
 
@@ -378,8 +384,7 @@ export async function captureRequestsFromProxy(
     // catch the bailout promise rejection when we shutdown the app
     bailout.promise.catch((e) => {});
   } catch (e) {
-    spinner?.fail('Some requests failed to send');
-    logger.error((e as Error).message);
+    spinner?.fail((e as Error).message);
 
     // Meaning either the requests threw an uncaught exception or the app server randomly quit
     process.exitCode = 1;
