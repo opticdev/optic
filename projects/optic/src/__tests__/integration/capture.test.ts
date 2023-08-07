@@ -50,6 +50,18 @@ describe('capture with requests', () => {
       expect(code).toBe(1);
     });
 
+    test('verifies the specification in verbose mode', async () => {
+      const workspace = await setupWorkspace('capture/with-server');
+      await setPortInFile(workspace, 'optic.yml');
+
+      const { combined, code } = await runOptic(
+        workspace,
+        'capture openapi.yml --verbose'
+      );
+      expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+      expect(code).toBe(1);
+    });
+
     test('verifies spec with endpoint specificity', async () => {
       const workspace = await setupWorkspace('capture/with-server');
       await setPortInFile(workspace, 'optic.yml');

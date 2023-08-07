@@ -6,21 +6,47 @@ import {
   jsonOpsFromSpecPatches,
 } from '../patches/patches';
 
-import { SpecPatch } from '../../oas/specs';
 import { CapturedInteractions } from '../sources/captured-interactions';
 import { ApiCoverageCounter } from '../coverage/api-coverage';
 import * as AT from '../../oas/lib/async-tools';
 import { writePatchesToFiles } from '../write/file';
 import { logger } from '../../../logger';
+import { SpecPatch } from '../../oas/specs';
+import { ShapeDiffResult } from '../../oas/shapes/diffs';
+import { jsonPointerLogger } from '@useoptic/openapi-io';
+
+function getShapeDiffDetails(
+  diff: ShapeDiffResult,
+  pathToHighlight: string,
+  error: string,
+  pointerLogger: ReturnType<typeof jsonPointerLogger>,
+  method: string,
+  pathPattern: string
+): string {
+  const lines = `${chalk.bgRed('  Diff  ')} ${diff.description}
+operation: ${chalk.bold(`${method} ${pathPattern}`)}  
+${pointerLogger.log(pathToHighlight, {
+  highlightColor: 'yellow',
+  observation: error,
+})}\n`;
+  return lines;
+}
 
 function summarizePatch(
   patch: SpecPatch,
-  spec: ParseResult['jsonLike'],
-  mode: 'update' | 'verify'
-): string | null {
+  parseResult: ParseResult,
+  options: {
+    mode: 'update' | 'verify';
+    verbose: boolean;
+  }
+): string[] {
+  const verbose = options.verbose && options.mode === 'verify';
+  const { jsonLike: spec, sourcemap } = parseResult;
+  const pointerLogger = jsonPointerLogger(sourcemap);
   const { diff, path, groupedOperations } = patch;
   const parts = jsonPointerHelpers.decode(path);
-  if (!diff || groupedOperations.length === 0) return null;
+  const [_, pathPattern, method] = parts;
+  if (!diff || groupedOperations.length === 0) return [];
   if (
     diff.kind === 'UnmatchdResponseBody' ||
     diff.kind === 'UnmatchedRequestBody' ||
@@ -30,9 +56,10 @@ function summarizePatch(
       diff.kind === 'UnmatchedRequestBody'
         ? '[request body]'
         : `[${diff.statusCode} response body]`;
-    const action = mode === 'update' ? 'has been added' : 'is not documented';
-    const color = mode === 'update' ? chalk.green : chalk.red;
-    return color(`${location} body ${action}`);
+    const action =
+      options.mode === 'update' ? 'has been added' : 'is not documented';
+    const color = options.mode === 'update' ? chalk.green : chalk.red;
+    return [color(`${location} body ${action}`)];
   } else {
     // expected patterns:
     // /paths/:path/:method/requestBody
@@ -52,11 +79,14 @@ function summarizePatch(
           jsonPointerHelpers.join(path, diff.parentObjectPath)
         ).match
       )
-        return null;
+        return [];
 
-      const action = mode === 'update' ? 'has been added' : 'is not documented';
-      const color = mode === 'update' ? chalk.green : chalk.red;
-      return color(`${location} '${diff.key}' ${action}`);
+      const action =
+        options.mode === 'update' ? 'has been added' : 'is not documented';
+      const color = options.mode === 'update' ? chalk.green : chalk.red;
+      return [
+        color(`${location} '${diff.key}' (${diff.propertyPath}) ${action}`),
+      ];
     } else if (diff.kind === 'UnmatchedType') {
       // filter out dependent diffs
       if (
@@ -65,20 +95,37 @@ function summarizePatch(
           jsonPointerHelpers.join(path, diff.propertyPath)
         ).match
       )
-        return null;
+        return [];
       let action: string;
       if (diff.keyword === 'oneOf') {
         action =
-          mode === 'update' ? 'now matches schema' : `does not match schema`;
+          options.mode === 'update'
+            ? 'now matches schema'
+            : `does not match schema`;
       } else {
         action =
-          mode === 'update'
+          options.mode === 'update'
             ? `is now type ${diff.expectedType}`
             : `does not match type ${diff.expectedType}. Received ${diff.example}`;
       }
-      const color = mode === 'update' ? chalk.yellow : chalk.red;
+      const color = options.mode === 'update' ? chalk.yellow : chalk.red;
 
-      return color(`${location} '${diff.key}' ${action}`);
+      const lines = [
+        color(`${location} '${diff.key}' (${diff.propertyPath}) ${action}`),
+      ];
+      if (verbose) {
+        lines.push(
+          getShapeDiffDetails(
+            diff,
+            jsonPointerHelpers.join(path, diff.propertyPath),
+            `[Actual] ${JSON.stringify(diff.example)}`,
+            pointerLogger,
+            method,
+            pathPattern
+          )
+        );
+      }
+      return lines;
     } else if (diff.kind === 'MissingRequiredProperty') {
       // filter out dependent diffs
       if (
@@ -87,17 +134,34 @@ function summarizePatch(
           jsonPointerHelpers.join(path, diff.propertyPath)
         ).match
       )
-        return null;
+        return [];
 
       const action =
-        mode === 'update' ? `is now optional` : `is required and missing`;
-      const color = mode === 'update' ? chalk.yellow : chalk.red;
+        options.mode === 'update'
+          ? `is now optional`
+          : `is required and missing`;
+      const color = options.mode === 'update' ? chalk.yellow : chalk.red;
 
-      return color(`${location} '${diff.key}' ${action}`);
+      const lines = [
+        color(`${location} '${diff.key}' (${diff.propertyPath}) ${action}`),
+      ];
+      if (verbose) {
+        lines.push(
+          getShapeDiffDetails(
+            diff,
+            jsonPointerHelpers.join(path, diff.propertyPath),
+            `missing`,
+            pointerLogger,
+            method,
+            pathPattern
+          )
+        );
+      }
+      return lines;
     }
   }
 
-  return null;
+  return [];
 }
 
 export async function diffExistingEndpoint(
@@ -110,19 +174,19 @@ export async function diffExistingEndpoint(
   },
   options: {
     update?: 'documented' | 'interactive' | 'automatic';
+    verbose: boolean;
   }
 ) {
   const patchSummaries: string[] = [];
 
   const specPatches = AT.tap((patch: SpecPatch) => {
     coverage.shapeDiff(patch);
-    const summarized = summarizePatch(
-      patch,
-      parseResult.jsonLike,
-      options.update ? 'update' : 'verify'
-    );
-    if (summarized) {
-      patchSummaries.push(summarized);
+    const summarized = summarizePatch(patch, parseResult, {
+      mode: options.update ? 'update' : 'verify',
+      verbose: options.verbose,
+    });
+    if (summarized.length) {
+      patchSummaries.push(...summarized);
     } else {
       logger.debug(`skipping patch:`);
       logger.debug(patch);

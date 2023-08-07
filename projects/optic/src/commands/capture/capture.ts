@@ -70,6 +70,8 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
       'path to postman collection'
     )
     .option('--har <har-file>', 'path to har file (v1.2, v1.3)')
+    .option('--verbose', 'display verbose diff output', false)
+
     .addOption(
       new Option(
         '-s, --server-override <url>',
@@ -118,6 +120,7 @@ type CaptureActionOptions = {
   har?: string;
   update?: 'documented' | 'interactive' | 'automatic';
   upload: boolean;
+  verbose: boolean;
 };
 
 const getCaptureAction =
