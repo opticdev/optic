@@ -1007,11 +1007,11 @@ exports[`capture with requests update behavior handle servers not at root of hos
 "Generating traffic to send to server
 GET /books
   [32m✓ [39m200 response
-  [32m[200 response body] 'name' has been added[39m
-  [32m[200 response body] 'author_id' has been added[39m
-  [32m[200 response body] 'price' has been added[39m
-  [32m[200 response body] 'created_at' has been added[39m
-  [32m[200 response body] 'updated_at' has been added[39m
+  [32m[200 response body] 'name' (/properties/books/items/properties/name) has been added[39m
+  [32m[200 response body] 'author_id' (/properties/books/items/properties/author_id) has been added[39m
+  [32m[200 response body] 'price' (/properties/books/items/properties/price) has been added[39m
+  [32m[200 response body] 'created_at' (/properties/books/items/properties/created_at) has been added[39m
+  [32m[200 response body] 'updated_at' (/properties/books/items/properties/updated_at) has been added[39m
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
