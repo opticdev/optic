@@ -185,11 +185,13 @@ const getCaptureAction =
     } else {
       // verify capture v2 config is present
       if (targetUrl !== undefined || captureConfig === undefined) {
-        logger.error(`no capture config for ${filePath} was found`);
+        const initSuggestion = `'optic capture init ${filePath}'`;
         config.isDefaultConfig
-          ? logger.error('no optic.yml file was detected')
+          ? logger.error(
+              `An optic.yml file wasn't found. To create an optic.yml file with a default capture block, run ${initSuggestion}.`
+            )
           : logger.error(
-              `expected an capture config entry for ${pathFromRoot}`
+              `Expected a capture config entry for ${pathFromRoot}. To add a capture config entry to your optic.yml, run ${initSuggestion}.`
             );
         // TODO log error and run capture init or something - tbd what the first use is
         process.exitCode = 1;
