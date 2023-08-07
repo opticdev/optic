@@ -56,7 +56,7 @@ const requestListener = function (req, res) {
   }else if (normalizedUrl === '/authors' && req.method === 'GET') {
     res.writeHead(200);
     res.end(JSON.stringify({authors}));
-  } else if (req.url === '/healthcheck' && req.method === 'GET') {
+  } else if (normalizedUrl === '/healthcheck' && req.method === 'GET') {
     res.writeHead(200);
     res.end(JSON.stringify({authors}));
   } else {

@@ -196,7 +196,7 @@ function sendRequests(
     }
 
     return limiter.schedule(() =>
-      fetch(`${proxyUrl}${r.path}`, opts)
+      fetch(urljoin(proxyUrl, r.path), opts)
         .then((response) => response.json())
         .catch((error) => {
           loggerWhileSpinning.error(spinner, error);
