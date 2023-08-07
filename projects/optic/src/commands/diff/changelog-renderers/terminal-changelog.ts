@@ -464,7 +464,7 @@ function* getResponseChangeLogs(
 ) {
   const label = `- response ${chalk.bold(statusCode)}:`;
   const change = typeofV3Diffs(response.diffs);
-  const shouldRenderChildDiffs = change === 'changed';
+  const shouldRenderChildDiffs = !change || change === 'changed';
 
   if (
     change ||
