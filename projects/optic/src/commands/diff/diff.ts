@@ -207,7 +207,6 @@ const getBaseAndHeadFromFiles = async (
       headFile.jsonLike[OPTIC_URL_KEY] ??
       baseFile.jsonLike[OPTIC_URL_KEY] ??
       null;
-    // TODO: does this make sense
     const specDetails = opticUrl ? getApiFromOpticUrl(opticUrl) : null;
     return [baseFile, headFile, specDetails];
   } catch (e) {
