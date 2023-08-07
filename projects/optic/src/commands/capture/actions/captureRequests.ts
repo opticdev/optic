@@ -159,8 +159,9 @@ async function waitForServer(
 
     if (didTimeout)
       spinner?.fail(
-        'Verify the server URL is your optic.yml is correct and your server is reachable.'
+        'Verify the server URL in your optic.yml is correct and your server is reachable.'
       );
+
     resolve(null);
   });
 
