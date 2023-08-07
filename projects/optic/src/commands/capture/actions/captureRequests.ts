@@ -1,6 +1,7 @@
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import fetch from 'node-fetch';
 import Bottleneck from 'bottleneck';
+import exitHook from 'async-exit-hook';
 
 import ora from 'ora';
 import urljoin from 'url-join';
@@ -306,6 +307,18 @@ export async function captureRequestsFromProxy(
   captureConfig: CaptureConfigData,
   options: { proxyPort?: string; serverOverride?: string }
 ) {
+  let app: ChildProcessWithoutNullStreams | undefined = undefined;
+  let proxy: ProxyInstance | undefined = undefined;
+  function cleanup() {
+    proxy?.stop();
+    if (app && app.pid && app.exitCode === null) {
+      process.kill(-app.pid);
+    }
+  }
+  exitHook((cb) => {
+    cleanup();
+    cb();
+  });
   const spinner = getSpinner({
     text: 'Generating traffic to send to server',
     color: 'blue',
@@ -320,8 +333,6 @@ export async function captureRequestsFromProxy(
     captureConfig.server.ready_timeout || defaultServerReadyTimeout;
   const readyInterval = captureConfig.server.ready_interval || 1000;
   // start app
-  let app: ChildProcessWithoutNullStreams | undefined;
-  let proxy: ProxyInstance | undefined = undefined;
 
   let errors: any[] = [];
   try {
@@ -383,10 +394,7 @@ export async function captureRequestsFromProxy(
     // The finally block will run before we return from the fn call
     return;
   } finally {
-    proxy?.stop();
-    if (app && app.pid && app.exitCode === null) {
-      process.kill(-app.pid);
-    }
+    cleanup();
 
     if (errors.length > 0) {
       logger.error('finished with errors:');
