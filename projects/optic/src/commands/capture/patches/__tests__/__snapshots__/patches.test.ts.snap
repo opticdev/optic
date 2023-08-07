@@ -4518,6 +4518,201 @@ exports[`generateRefRefactorPatches adds new component schema if no close schema
   "paths": {
     "/api/animals": {
       "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "id": {
+                    "format": "int64",
+                    "type": "integer",
+                  },
+                },
+                "type": "object",
+              },
+            },
+          },
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostApiAnimals200ResponseBody",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateRefRefactorPatches only tried to add component schema once 1`] = `
+[
+  {
+    "description": "create and use $ref for body",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add components.schemas if needed",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/components",
+            "value": {
+              "schemas": {},
+            },
+          },
+        ],
+      },
+      {
+        "intent": "create ref at /components/schemas/PostApiAnimalsRequestBody",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/components/schemas/PostApiAnimalsRequestBody",
+            "value": {
+              "properties": {
+                "id": {
+                  "format": "int64",
+                  "type": "integer",
+                },
+              },
+              "type": "object",
+            },
+          },
+        ],
+      },
+      {
+        "intent": "use new $ref",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+            "value": {
+              "$ref": "#/components/schemas/PostApiAnimalsRequestBody",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Refactor",
+    ],
+    "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
+  },
+  {
+    "description": "create and use $ref for body",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add components.schemas if needed",
+        "operations": [],
+      },
+      {
+        "intent": "create ref at /components/schemas/PostApiAnimals200ResponseBody",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/components/schemas/PostApiAnimals200ResponseBody",
+            "value": {
+              "properties": {
+                "age": {
+                  "type": "number",
+                },
+                "created_at": {
+                  "type": "string",
+                },
+                "id": {
+                  "type": "string",
+                },
+                "name": {
+                  "type": "string",
+                },
+              },
+              "required": [
+                "name",
+                "id",
+              ],
+              "type": "object",
+            },
+          },
+        ],
+      },
+      {
+        "intent": "use new $ref",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+            "value": {
+              "$ref": "#/components/schemas/PostApiAnimals200ResponseBody",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Refactor",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateRefRefactorPatches only tried to add component schema once 2`] = `
+{
+  "components": {
+    "schemas": {
+      "PostApiAnimals200ResponseBody": {
+        "properties": {
+          "age": {
+            "type": "number",
+          },
+          "created_at": {
+            "type": "string",
+          },
+          "id": {
+            "type": "string",
+          },
+          "name": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "name",
+          "id",
+        ],
+        "type": "object",
+      },
+      "PostApiAnimalsRequestBody": {
+        "properties": {
+          "id": {
+            "format": "int64",
+            "type": "integer",
+          },
+        },
+        "type": "object",
+      },
+    },
+  },
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostApiAnimalsRequestBody",
+              },
+            },
+          },
+        },
         "responses": {
           "200": {
             "content": {
@@ -4594,6 +4789,21 @@ exports[`generateRefRefactorPatches uses existing component schema if close enou
   "paths": {
     "/api/animals": {
       "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "id": {
+                    "format": "int64",
+                    "type": "integer",
+                  },
+                },
+                "type": "object",
+              },
+            },
+          },
+        },
         "responses": {
           "200": {
             "content": {
