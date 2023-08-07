@@ -304,14 +304,14 @@ function makeAllRequests(
 export async function captureRequestsFromProxy(
   config: OpticCliConfig,
   captureConfig: CaptureConfigData,
-  options: { proxyPort?: string; serverOverride?: string }
+  options: { proxyPort?: string; serverOverride?: string; serverUrl: string }
 ) {
   const spinner = getSpinner({
     text: 'Generating traffic to send to server',
     color: 'blue',
   })?.start();
 
-  const serverUrl = options.serverOverride || captureConfig.server.url;
+  const serverUrl = options.serverUrl;
   const serverDir =
     captureConfig.server.dir === undefined
       ? config.root
