@@ -1,5 +1,5 @@
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
-import fetch from 'node-fetch';
+import fetch, { FetchError } from 'node-fetch';
 import Bottleneck from 'bottleneck';
 
 import ora from 'ora';
@@ -198,8 +198,8 @@ function sendRequests(
     return limiter.schedule(() =>
       fetch(urljoin(proxyUrl, r.path), opts)
         .then((response) => response.json())
-        .catch((error) => {
-          loggerWhileSpinning.error(spinner, error);
+        .catch((error: FetchError) => {
+          loggerWhileSpinning.error(spinner, error.message);
         })
     );
   });
