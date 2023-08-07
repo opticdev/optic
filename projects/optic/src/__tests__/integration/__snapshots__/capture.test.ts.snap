@@ -1334,8 +1334,8 @@ GET /books
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
-GET /books/{book}
 GET /authors
+GET /books/{book}
 POST /books/{book}
 "
 `;
@@ -1356,6 +1356,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetBooks200ResponseBody"
+  /authors:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAuthors200ResponseBody"
   "/books/{book}":
     parameters:
       - in: path
@@ -1384,15 +1393,6 @@ paths:
           application/json;charset=UTF-8:
             schema:
               $ref: "#/components/schemas/PostBooksBookRequestBody"
-  /authors:
-    get:
-      responses:
-        "200":
-          description: 200 response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetAuthors200ResponseBody"
 components:
   schemas:
     GetBooks200ResponseBody:
@@ -1425,28 +1425,6 @@ components:
               - name
               - created_at
               - updated_at
-    GetBooksBook200ResponseBody:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        author_id:
-          type: string
-        price:
-          type: number
-        created_at:
-          type: string
-        updated_at:
-          type: string
-      required:
-        - id
-        - name
-        - author_id
-        - price
-        - created_at
-        - updated_at
     GetAuthors200ResponseBody:
       type: object
       properties:
@@ -1470,6 +1448,28 @@ components:
               - updated_at
       required:
         - authors
+    GetBooksBook200ResponseBody:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        author_id:
+          type: string
+        price:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+        - id
+        - name
+        - author_id
+        - price
+        - created_at
+        - updated_at
     PostBooksBookRequestBody:
       type: object
       properties:
@@ -1556,6 +1556,11 @@ components:
 
 exports[`capture with requests verify behavior verifies spec with endpoint specificity 1`] = `
 "Generating traffic to send to server
+GET /books/status
+  [32m✓ [39m200 response
+GET /books/{bookId}
+  [31m× [39m200 response
+  [31m[200 response body] 'price' (/properties/price) is not documented[39m
 GET /books
   [31m× [39m200 response
   [31m[200 response body] 'name' (/properties/books/items/properties/name) is not documented[39m
@@ -1563,11 +1568,6 @@ GET /books
   [31m[200 response body] 'price' (/properties/books/items/properties/price) is not documented[39m
   [31m[200 response body] 'created_at' (/properties/books/items/properties/created_at) is not documented[39m
   [31m[200 response body] 'updated_at' (/properties/books/items/properties/updated_at) is not documented[39m
-GET /books/status
-  [32m✓ [39m200 response
-GET /books/{bookId}
-  [31m× [39m200 response
-  [31m[200 response body] 'price' (/properties/price) is not documented[39m
 
 100.0% coverage of your documented operations. 2 requests did not match a documented path (6 total requests).
 6 diffs detected in documented operations
