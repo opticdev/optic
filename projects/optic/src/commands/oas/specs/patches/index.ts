@@ -139,7 +139,9 @@ export class SpecPatch {
 
   static *operations(patch: ShapePatch): IterableIterator<PatchOperation> {
     for (let group of patch.groupedOperations) {
-      yield* PatchOperationGroup.operations(group);
+      for (const op of group.operations) {
+        yield op;
+      }
     }
   }
 }
