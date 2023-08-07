@@ -101,6 +101,10 @@ comma separated values (e.g. "**/*.yml,**/*.json")'
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
     .option(
+      '--generated',
+      "[deprecated] Optic doesn't make a difference between generated and non generated specifications anymore"
+    )
+    .option(
       '--fail-on-untracked-openapi',
       'fail with exit code 1 if there are detected untracked apis',
       false
@@ -122,6 +126,7 @@ type DiffAllActionOptions = {
   validation: 'strict' | 'loose';
   failOnUntrackedOpenapi: boolean;
   severity: 'info' | 'warn' | 'error';
+  generated?: boolean;
 };
 
 type CandidateMap = Map<
@@ -604,6 +609,9 @@ function applyGlobFilter(
 
 const getDiffAllAction =
   (config: OpticCliConfig) => async (options: DiffAllActionOptions) => {
+    if (options.generated) {
+      logger.warn(chalk.yellow.bold(`the --generated option is deprecated`));
+    }
     if (config.vcs?.type !== VCS.Git) {
       logger.error(
         `Error: optic diff-all must be called from a git repository.`

@@ -44,6 +44,7 @@ type DiffActionOptions = {
   validation: 'strict' | 'loose';
   severity: 'info' | 'warn' | 'error';
   lastChange: boolean;
+  generated?: boolean;
 };
 
 const description = `run a diff between two API specs`;
@@ -112,6 +113,10 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     .option('--upload', 'upload run to cloud', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
+    .option(
+      '--generated',
+      "[deprecated] Optic doesn't make a difference between generated and non generated specifications anymore"
+    )
     .option('--last-change', 'find the last change for this spec', false)
     .action(errorHandler(getDiffAction(config), { command: 'diff' }));
 };
@@ -287,6 +292,9 @@ const getDiffAction =
     file2: string | undefined,
     options: DiffActionOptions
   ) => {
+    if (options.generated) {
+      logger.warn(chalk.yellow.bold(`the --generated option is deprecated`));
+    }
     if (options.json) {
       // For json output we only want to render json
       logger.setLevel('silent');
