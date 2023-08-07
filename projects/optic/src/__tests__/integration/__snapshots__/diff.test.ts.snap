@@ -1,9 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`diff petstore diff 1`] = `
-"[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
-
-[31mx [39m[1mSwagger Petstore Updated[22m [90mpetstore-base.json[39m
+"[31mx [39m[1mSwagger Petstore Updated[22m [90mpetstore-base.json[39m
 [1mOperations: [22m5 operations added, 16 changed, 1 removed
 [31mx [39m [1mChecks:[22m 159/211 passed 
 
@@ -31,7 +29,6 @@ specification details:
         [31m[1mx [response property naming check][22m photoUrls is not snake_case[39m
         at [4mpetstore-updated.json:423:14934[24m
         
-
 [31mx [1mGET[22m /pet/findByTags[39m: [32madded[39m
   
   [31m[1mx [operation path component naming check][22m findByTags is not snake_case[39m
@@ -51,7 +48,6 @@ specification details:
         [31m[1mx [response property naming check][22m photoUrls is not snake_case[39m
         at [4mpetstore-updated.json:539:19567[24m
         
-
 [31mx [1mGET[22m /pet/{petId}[39m: [32madded[39m
   
   - response [1m200[22m: 
@@ -67,14 +63,11 @@ specification details:
         [31m[1mx [response property naming check][22m photoUrls is not snake_case[39m
         at [4mpetstore-updated.json:649:23818[24m
         
-
 [32m✔ [1mPOST[22m /pet/{petId}[39m: [32madded[39m
   
-
 [32m✔ [1mDELETE[22m /pet/{petId}[39m: [32madded[39m
   
   - header parameter [3mapi_key[23m: 
-
 [31mx [1mPUT[22m /user/{username}[39m: 
   - request: 
     - body [1m*/*[22m: 
@@ -91,7 +84,6 @@ specification details:
         [31m[1mx [prevent changing request property to required][22m cannot make a request property required. This is a breaking change.[39m
         at [4mpetstore-updated.json:1354:48614[24m
         
-
 [31mx [1mGET[22m /user/{username}[39m: 
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 
@@ -133,7 +125,6 @@ specification details:
   - response [1m404[22m: 
     - body [1mapplication/json[22m: [32madded[39m
       - property : [32madded[39m
-
 [31mx [1mGET[22m /user/login[39m: 
   - response [1m200[22m: 
     - response header [3mcontent-type[23m: [31mremoved[39m
@@ -148,7 +139,6 @@ specification details:
     - response header [3mX-Expires-After[23m: [32madded[39m
       - /schema/format [32madded[39m
       
-
 [31mx [1mPOST[22m /user/createWithList[39m: 
   - request: 
     - body [1m*/*[22m: 
@@ -165,7 +155,6 @@ specification details:
         [31m[1mx [prevent changing request property to required][22m cannot make a request property required. This is a breaking change.[39m
         at [4mpetstore-updated.json:1170:42227[24m
         
-
 [31mx [1mPOST[22m /user/createWithArray[39m: 
   - request: 
     - body [1m*/*[22m: 
@@ -182,7 +171,6 @@ specification details:
         [31m[1mx [prevent changing request property to required][22m cannot make a request property required. This is a breaking change.[39m
         at [4mpetstore-updated.json:1129:40742[24m
         
-
 [31mx [1mPOST[22m /user[39m: 
   - request: 
     - body [1m*/*[22m: 
@@ -199,12 +187,10 @@ specification details:
         [31m[1mx [prevent changing request property to required][22m cannot make a request property required. This is a breaking change.[39m
         at [4mpetstore-updated.json:1089:39297[24m
         
-
 [32m✔ [1mDELETE[22m /store/order/{orderId}[39m: 
   - response [1m404[22m: 
     - body [1mapplication/json[22m: [32madded[39m
       - property : [32madded[39m
-
 [31mx [1mGET[22m /store/order/{orderId}[39m: 
   - response [1m200[22m: 
     - body [1mapplication/json[22m: 
@@ -229,7 +215,6 @@ specification details:
   - response [1m404[22m: 
     - body [1mapplication/json[22m: [32madded[39m
       - property : [32madded[39m
-
 [31mx [1mPOST[22m /store/order[39m: 
   - request: 
     - body [1m*/*[22m: 
@@ -256,7 +241,6 @@ specification details:
         [31m[1mx [request and response property enums][22m cannot remove enum option 'approved' from 'status' property. This is a breaking change.[39m
         at [4mpetstore-updated.json:899:32168[24m
         
-
 [31mx [1mPOST[22m /pet/{petId}/uploadImage[39m: 
   - cookie parameter [3mdebug[23m: 
     - /schema/enum [32madded[39m
@@ -265,7 +249,6 @@ specification details:
     at [4mpetstore-updated.json:752:27313[24m
     
   - response [1m200[22m: [31mremoved[39m
-    
     [31m[1mx [prevent response status code removal][22m must not remove response status code 200. This is a breaking change.[39m
     at [4mpetstore-base.json:402:13891[24m
     
@@ -296,7 +279,6 @@ specification details:
         [31m[1mx [prevent response property type changes][22m expected response body property 'type' to not change type. This is a breaking change.[39m
         at [4mpetstore-updated.json:818:29397[24m
         
-
 [31mx [1mGET[22m /pet[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
@@ -308,11 +290,9 @@ specification details:
     [31m[1mx [prevent response status code removal][22m must not remove response status code 405. This is a breaking change.[39m
     at [4mpetstore-base.json:164:5144[24m
     
-
 [32m✔ [1mPOST[22m /pet[39m: 
   - /operationId [33mchanged[39m
   
-
 [31mx [1mPUT[22m /pet[39m: 
   - request: 
     - body [1mapplication/xml[22m: [31mremoved[39m
@@ -325,28 +305,23 @@ specification details:
         at [4mpetstore-updated.json:185:5837[24m
         
   - response [1m400[22m: [31mremoved[39m
-    
     [31m[1mx [prevent response status code removal][22m must not remove response status code 400. This is a breaking change.[39m
     at [4mpetstore-base.json:257:8689[24m
     
-
 [31mx [1mGET[22m /parameters_at_path[39m: 
   - query parameter [3mquery_in_path[23m: [32madded[39m
     
     [31m[1mx [prevent new required query parameters][22m cannot add required query parameter query_in_path to an existing operation. This is a breaking change.[39m
     at [4mpetstore-updated.json:155:4992[24m
     
-
 [31mx [1mPATCH[22m /example[39m: 
   - query parameter [3mseomthing[23m: [32madded[39m
     
     [31m[1mx [prevent new required query parameters][22m cannot add required query parameter seomthing to an existing operation. This is a breaking change.[39m
     at [4mpetstore-updated.json:142:4696[24m
     
-
 [32m✔ [1mPOST[22m /example[39m: 
   - query parameter [3msomethingelse[23m: [31mremoved[39m
-
 [31mx [1mGET[22m /example[39m: 
   - query parameter [3mdeletedQueryParameter[23m: [31mremoved[39m
   - query parameter [3maddedQueryParameter[23m: [32madded[39m
@@ -406,17 +381,12 @@ specification details:
         [31m[1mx [prevent removing response property][22m cannot remove response property 'orderId'. This is a breaking change.[39m
         at [4mpetstore-base.json:81:2600[24m
         
-
-...and 24 other operations
-
-[34m[1mSee the full history of this API by running "optic api add petstore-updated.json --history-depth 0"[22m[39m
+[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
 
 exports[`diff reads optic.dev.yml for rulesets 1`] = `
-"[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
-
-[31mx [39m[1mEmpty[22m [90mexample-api-v0.json[39m
+"[31mx [39m[1mEmpty[22m [90mexample-api-v0.json[39m
 [1mOperations: [22m1 operation added, 3 changed, 1 removed
 [31mx [39m [1mChecks:[22m 3/5 passed 
 
@@ -425,58 +395,43 @@ exports[`diff reads optic.dev.yml for rulesets 1`] = `
   [31m[1mx [operation path component naming check][22m invalid_name is not camelCase[39m
   at [4mexample-api-v1.json:31:632[24m
   
-
 [31mx [1mPOST[22m /example[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
   at [4mexample-api-v0.json:9:150[24m
   
-
 [32m✔ [1mPATCH[22m /example[39m: 
   - /operationId [33mchanged[39m
   
   - response [1m200[22m: [32madded[39m
-
 [32m✔ [1mPUT[22m /example[39m: 
   - /operationId [33mchanged[39m
   
-
 [32m✔ [1mGET[22m /example[39m: 
   - /operationId [33mchanged[39m
   
-
-...and 4 other operations
-
-[34m[1mSee the full history of this API by running "optic api add example-api-v1.json --history-depth 0"[22m[39m
+[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
 
 exports[`diff two files, no repo or config 1`] = `
-"[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
-
-[1mEmpty[22m [90mexample-api-v0.json[39m
+"[1mEmpty[22m [90mexample-api-v0.json[39m
 [1mOperations: [22m4 operations changed
 
 [1mPATCH[22m /example: 
   - /operationId [33mchanged[39m
   
   - response [1m200[22m: [32madded[39m
-
 [1mPUT[22m /example: 
   - /operationId [33mchanged[39m
   
-
 [1mPOST[22m /example: 
   - /operationId [33mchanged[39m
   
-
 [1mGET[22m /example: 
   - /operationId [33mchanged[39m
   
-
-...and 4 other operations
-
-[34m[1mSee the full history of this API by running "optic api add example-api-v1.json --history-depth 0"[22m[39m
+[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
 
@@ -486,25 +441,23 @@ exports[`diff with --json arg 1`] = `
 `;
 
 exports[`diff with --last-change arg 1`] = `
-"[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
-Finding last change...
-
+"Finding last change...
 [32m✔ [39m[1mEmpty[22m [90mexample-api.json[39m
 [1mOperations: [22m1 operation changed
 
 [32m✔ [1mPATCH[22m /example[39m: 
   - response [1m200[22m: 
+    - /description [33mchanged[39m
+    
     - body [1mapplication/json[22m: 
-
-...and 4 other operations
-
+        - /example [33mchanged[39m
+        
+[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
 
 exports[`diff with --standard arg 1`] = `
-"[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
-
-[31mx [39m[1mEmpty[22m [90mexample-api-v0.json[39m
+"[31mx [39m[1mEmpty[22m [90mexample-api-v0.json[39m
 [1mOperations: [22m1 operation added, 3 changed, 1 removed
 [31mx [39m [1mChecks:[22m 3/5 passed 
 
@@ -513,36 +466,27 @@ exports[`diff with --standard arg 1`] = `
   [31m[1mx [operation path component naming check][22m invalid_name is not camelCase[39m
   at [4mexample-api-v1.json:31:632[24m
   
-
 [31mx [1mPOST[22m /example[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
   at [4mexample-api-v0.json:9:150[24m
   
-
 [32m✔ [1mPATCH[22m /example[39m: 
   - /operationId [33mchanged[39m
   
   - response [1m200[22m: [32madded[39m
-
 [32m✔ [1mPUT[22m /example[39m: 
   - /operationId [33mchanged[39m
   
-
 [32m✔ [1mGET[22m /example[39m: 
   - /operationId [33mchanged[39m
   
-
-...and 4 other operations
-
-[34m[1mSee the full history of this API by running "optic api add example-api-v1.json --history-depth 0"[22m[39m
+[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
 
 exports[`diff with mock server custom rules 1`] = `
-"[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
-
-[31mx [39m[1mEmpty[22m [90mexample-api-v0.json[39m
+"[31mx [39m[1mEmpty[22m [90mexample-api-v0.json[39m
 [1mOperations: [22m1 operation added, 3 changed, 1 removed
 [31mx [39m [1mChecks:[22m 5/7 passed 
 
@@ -551,36 +495,27 @@ exports[`diff with mock server custom rules 1`] = `
   [31m[1mx [operation path component naming check][22m invalid_name is not camelCase[39m
   at [4mexample-api-v1.json:31:632[24m
   
-
 [31mx [1mPOST[22m /example[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
   at [4mexample-api-v0.json:9:150[24m
   
-
 [32m✔ [1mPATCH[22m /example[39m: 
   - /operationId [33mchanged[39m
   
   - response [1m200[22m: [32madded[39m
-
 [32m✔ [1mPUT[22m /example[39m: 
   - /operationId [33mchanged[39m
   
-
 [32m✔ [1mGET[22m /example[39m: 
   - /operationId [33mchanged[39m
   
-
-...and 4 other operations
-
-[34m[1mSee the full history of this API by running "optic api add example-api-v1.json --history-depth 0"[22m[39m
+[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
 
 exports[`diff with mock server extends 1`] = `
 "Extending ruleset from @test-org/ruleset-id
-[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
-
 [31mx [39m[1mEmpty[22m [90mexample-api-v0.json[39m
 [1mOperations: [22m1 operation added, 3 changed, 1 removed
 [31mx [39m [1mChecks:[22m 3/5 passed 
@@ -590,36 +525,27 @@ exports[`diff with mock server extends 1`] = `
   [31m[1mx [operation path component naming check][22m invalid_name is not camelCase[39m
   at [4mexample-api-v1.json:31:632[24m
   
-
 [31mx [1mPOST[22m /example[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
   at [4mexample-api-v0.json:9:150[24m
   
-
 [32m✔ [1mPATCH[22m /example[39m: 
   - /operationId [33mchanged[39m
   
   - response [1m200[22m: [32madded[39m
-
 [32m✔ [1mPUT[22m /example[39m: 
   - /operationId [33mchanged[39m
   
-
 [32m✔ [1mGET[22m /example[39m: 
   - /operationId [33mchanged[39m
   
-
-...and 4 other operations
-
-[34m[1mSee the full history of this API by running "optic api add example-api-v1.json --history-depth 0"[22m[39m
+[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
 
 exports[`diff with mock server ruleset key on api spec 1`] = `
-"[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
-
-[31mx [39m[1mEmpty[22m [90mexample-api-v0.json[39m
+"[31mx [39m[1mEmpty[22m [90mexample-api-v0.json[39m
 [1mOperations: [22m1 operation added, 3 changed, 1 removed
 [31mx [39m [1mChecks:[22m 0/1 passed 
 
@@ -628,35 +554,27 @@ specification details:
 
 [32m✔ [1mGET[22m /invalid_name[39m: [32madded[39m
   
-
 [31mx [1mPOST[22m /example[39m: [31mremoved[39m
   
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
   at [4mexample-api-v0.json:9:150[24m
   
-
 [32m✔ [1mPATCH[22m /example[39m: 
   - /operationId [33mchanged[39m
   
   - response [1m200[22m: [32madded[39m
-
 [32m✔ [1mPUT[22m /example[39m: 
   - /operationId [33mchanged[39m
   
-
 [32m✔ [1mGET[22m /example[39m: 
   - /operationId [33mchanged[39m
   
-
-...and 4 other operations
-
-[34m[1mSee the full history of this API by running "optic api add example-api-v1.json --history-depth 0"[22m[39m
+[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
 
 exports[`diff with mock server uploads specs if authenticated and --upload 1`] = `
 "Uploading diff...
-
 [31mx [39m[1mEmpty[22m [90mspec.json[39m
 [1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
 [1mOperations: [22m1 operation changed
@@ -670,16 +588,11 @@ exports[`diff with mock server uploads specs if authenticated and --upload 1`] =
         [31m[1mx [prevent response property type changes][22m expected response body application/json root shape to not change type. This is a breaking change.[39m
         at https://github.com/User/UserRepo/tree/COMMIT-HASH/spec.json#L24
         
-
-...and 4 other operations
-
 "
 `;
 
 exports[`diff with mock server with --base cloud:tag 1`] = `
-"[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
-
-[31mx [39m[1mEmpty[22m [90mspec.json[39m
+"[31mx [39m[1mEmpty[22m [90mspec.json[39m
 [1mOperations: [22m4 operations added, 1 removed
 [31mx [39m [1mChecks:[22m 0/1 passed 
 
@@ -692,28 +605,20 @@ specification details:
   [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
   at [4mempty.json:1:45[24m
   
-
 [32m✔ [1mGET[22m /example[39m: [32madded[39m
   
-
 [32m✔ [1mPOST[22m /example[39m: [32madded[39m
   
-
 [32m✔ [1mPUT[22m /example[39m: [32madded[39m
   
-
 [32m✔ [1mPATCH[22m /example[39m: [32madded[39m
   
-
-...and 4 other operations
-
+[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
 
 exports[`diff with mock server with cloud tag ref 1`] = `
-"[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
-
-[32m✔ [39m[1mEmpty[22m [90mnull:[39m
+"[32m✔ [39m[1mEmpty[22m [90mnull:[39m
 [1mOperations: [22m1 operation added
 
 specification details:
@@ -721,21 +626,17 @@ specification details:
 
 [32m✔ [1mGET[22m /api/users[39m: [32madded[39m
   
-
-...and 1 other operation
-
+[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;
 
 exports[`diff with mock server with web url 1`] = `
-"[90mRerun this command with the [97m--web[39m[90m flag to open a visual changelog your browser[39m
-
-[32m✔ [39m[1ma spec[22m [90mnull:[39m
+"[32m✔ [39m[1ma spec[22m [90mnull:[39m
 [1mOperations: [22mNo operations changed
 
 specification details:
 - /openapi, /info [32madded[39m
 
-
+[34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;

@@ -300,16 +300,6 @@ const getDiffAction =
       return;
     }
 
-    if (!options.web && !options.json && !config.isInCi) {
-      logger.info(
-        chalk.gray(
-          `Rerun this command with the ${chalk.whiteBright(
-            '--web'
-          )} flag to open a visual changelog your browser`
-        )
-      );
-    }
-
     if (options.ruleset && !options.standard) {
       options.standard = options.ruleset;
     }
@@ -407,8 +397,6 @@ const getDiffAction =
         logger.warn(warning);
       }
 
-      logger.info('');
-
       let sourcemapOptions: SourcemapOptions = {
         ciProvider: undefined,
       };
@@ -440,22 +428,6 @@ const getDiffAction =
       )) {
         logger.info(log);
       }
-    }
-
-    if (
-      !config.isInCi &&
-      ((!specDetails && headParseResult.from === 'file') ||
-        headParseResult.from === 'git')
-    ) {
-      const relativePath = path.relative(
-        process.cwd(),
-        headParseResult.sourcemap.rootFilePath
-      );
-      logger.info(
-        chalk.blue.bold(
-          `See the full history of this API by running "optic api add ${relativePath} --history-depth 0"`
-        )
-      );
     }
 
     if (config.isInCi && !options.upload) renderCloudSetup();
@@ -511,6 +483,12 @@ const getDiffAction =
         {
           severity: textToSev(options.severity),
         }
+      );
+    } else if (!options.web && !options.json) {
+      logger.info(
+        chalk.blue(
+          `Rerun this command with the --web flag to view the detailed changes in your browser`
+        )
       );
     }
 

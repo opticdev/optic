@@ -148,11 +148,6 @@ async function initializeApi(
       const branch = await Git.getCurrentBranchName();
       if (branch !== 'HEAD') {
         tagsToAdd.push(sanitizeGitTag(`gitbranch:${branch}`));
-        logger.info(
-          `Automatically adding the git sha 'git:${sha}' and branch 'gitbranch:${branch}' as tags`
-        );
-      } else {
-        logger.info(`Automatically adding the git sha 'git:${sha}' as a tag`);
       }
     }
 
@@ -396,13 +391,10 @@ export const getApiAddAction =
       process.exitCode = 1;
       return;
     }
-    logger.info('');
 
     let default_branch: string = '';
     let default_tag: string | undefined = undefined;
     let web_url: string | undefined = undefined;
-
-    logger.info('');
 
     if (config.vcs && config.vcs?.type === VCS.Git) {
       const maybeDefaultBranch = await Git.getDefaultBranchName();
@@ -490,7 +482,11 @@ export const getApiAddAction =
       }
     }
 
-    const someTracked = candidates.paths.some((p) => Git.isTracked(p));
+    const tracked = await Promise.all(
+      candidates.paths.map((p) => Git.isTracked(p))
+    );
+
+    const someTracked = tracked.some((p) => !!p);
 
     if (addedApis.length > 0 && candidates.shas.length > 0 && someTracked) {
       logger.info(``);

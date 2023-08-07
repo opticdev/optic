@@ -96,11 +96,6 @@ const getSpecPushAction =
 
       if (branch !== 'HEAD') {
         tagsToAdd.push(sanitizeGitTag(`gitbranch:${branch}`));
-        logger.info(
-          `Automatically adding the git sha 'git:${sha}' and branch 'gitbranch:${branch}' as tags`
-        );
-      } else {
-        logger.info(`Automatically adding the git sha 'git:${sha}' as a tag`);
       }
     }
 
@@ -128,7 +123,6 @@ const getSpecPushAction =
       specDetails.apiId
     );
 
-    logger.info('');
     logger.info(
       `Uploading spec for api at ${opticUrl} ${
         tagsToAdd.length > 0 ? `with tags ${tagsToAdd.join(', ')}` : ''

@@ -1,10 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`optic api add git - no cli interaction discover all files in a folder 1`] = `
-"
-
-[1m[90mLooking for OpenAPI specs in directory $workspace$/nested[39m[22m
-Automatically adding the git sha 'git:b7174db759083e181bcd4c6d48cc2b9127269e07' and branch 'gCOMMIT-HASH:master' as tags
+"[1m[90mLooking for OpenAPI specs in directory $workspace$/nested[39m[22m
 [1m[32m✔[39m[22m [1m[34ma spec[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 
@@ -17,16 +14,11 @@ Automatically adding the git sha 'git:b7174db759083e181bcd4c6d48cc2b9127269e07' 
 `;
 
 exports[`optic api add git - no cli interaction discover all files in repo 1`] = `
-"
-
-[1m[90mLooking for OpenAPI specs in directory $workspace$[39m[22m
-Automatically adding the git sha 'git:ba8cdf56c85c71fd6e6226b024cecd1594ff2d9d' and branch 'gCOMMIT-HASH:master' as tags
+"[1m[90mLooking for OpenAPI specs in directory $workspace$[39m[22m
 [1m[32m✔[39m[22m [1m[34mEmpty[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
-Automatically adding the git sha 'git:ba8cdf56c85c71fd6e6226b024cecd1594ff2d9d' and branch 'gCOMMIT-HASH:master' as tags
 [1m[32m✔[39m[22m [1m[34ma spec[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
-Automatically adding the git sha 'git:ba8cdf56c85c71fd6e6226b024cecd1594ff2d9d' and branch 'gCOMMIT-HASH:master' as tags
 [1m[32m✔[39m[22m [1m[34ma spec[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 
@@ -39,16 +31,11 @@ Automatically adding the git sha 'git:ba8cdf56c85c71fd6e6226b024cecd1594ff2d9d' 
 `;
 
 exports[`optic api add git - no cli interaction discover all files in repo using --all 1`] = `
-"
-
-[1m[90mLooking for OpenAPI specs in directory $workspace$[39m[22m
-Automatically adding the git sha 'git:214093c44f240aa5d296b8111724048ca6fb5880' and branch 'gCOMMIT-HASH:master' as tags
+"[1m[90mLooking for OpenAPI specs in directory $workspace$[39m[22m
 [1m[32m✔[39m[22m [1m[34mEmpty[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
-Automatically adding the git sha 'git:214093c44f240aa5d296b8111724048ca6fb5880' and branch 'gCOMMIT-HASH:master' as tags
 [1m[32m✔[39m[22m [1m[34ma spec[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
-Automatically adding the git sha 'git:214093c44f240aa5d296b8111724048ca6fb5880' and branch 'gCOMMIT-HASH:master' as tags
 [1m[32m✔[39m[22m [1m[34ma spec[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 
@@ -61,10 +48,7 @@ Automatically adding the git sha 'git:214093c44f240aa5d296b8111724048ca6fb5880' 
 `;
 
 exports[`optic api add git - no cli interaction discover one file with history depth 1`] = `
-"
-
-[1m[90mAdding API $workspace$/spec.yml[39m[22m
-Automatically adding the git sha 'git:e6a17cf061f9a2020a917cb41dde83ef5e5d8630' and branch 'gCOMMIT-HASH:master' as tags
+"[1m[90mAdding API $workspace$/spec.yml[39m[22m
 [1m[32m✔[39m[22m [1m[34ma spec[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 
@@ -102,9 +86,7 @@ paths:
 `;
 
 exports[`optic api add no vcs - no cli interaction discover all files in a folder 1`] = `
-"
-
-[1m[90mLooking for OpenAPI specs in directory $workspace$/nested[39m[22m
+"[1m[90mLooking for OpenAPI specs in directory $workspace$/nested[39m[22m
 [1m[32m✔[39m[22m [1m[34ma spec[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 
@@ -113,9 +95,7 @@ exports[`optic api add no vcs - no cli interaction discover all files in a folde
 `;
 
 exports[`optic api add no vcs - no cli interaction discover all files in repo 1`] = `
-"
-
-[1m[90mLooking for OpenAPI specs in directory $workspace$[39m[22m
+"[1m[90mLooking for OpenAPI specs in directory $workspace$[39m[22m
 [1m[32m✔[39m[22m [1m[34mEmpty[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 [1m[32m✔[39m[22m [1m[34ma spec[39m[22m is now being tracked.
@@ -128,9 +108,7 @@ exports[`optic api add no vcs - no cli interaction discover all files in repo 1`
 `;
 
 exports[`optic api add no vcs - no cli interaction discover all files in repo using --all 1`] = `
-"
-
-[1m[90mLooking for OpenAPI specs in directory $workspace$[39m[22m
+"[1m[90mLooking for OpenAPI specs in directory $workspace$[39m[22m
 [1m[32m✔[39m[22m [1m[34mEmpty[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 [1m[32m✔[39m[22m [1m[34ma spec[39m[22m is now being tracked.
@@ -143,9 +121,7 @@ exports[`optic api add no vcs - no cli interaction discover all files in repo us
 `;
 
 exports[`optic api add no vcs - no cli interaction discover one file with history depth 1`] = `
-"
-
-[1m[90mAdding API $workspace$/spec.yml[39m[22m
+"[1m[90mAdding API $workspace$/spec.yml[39m[22m
 [1m[32m✔[39m[22m [1m[34ma spec[39m[22m is now being tracked.
   [1mView: [4mhttps://app.useoptic.com/organizations/org-id/apis/api-id[24m[22m
 

@@ -1,9 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`optic spec push can push a spec to a repo 1`] = `
-"Automatically adding the git sha 'git:COMMIT-HASH' and branch 'gitbranch:master' as tags
-
-Uploading spec for api at http://localhost:3001/organizations/org-id/apis/api-id with tags env:production, the-favorite-api, git:COMMIT-HASH, gitbranch:master
+"Uploading spec for api at http://localhost:3001/organizations/org-id/apis/api-id with tags env:production, the-favorite-api, git:COMMIT-HASH, gitbranch:master
 Succesfully uploaded spec to Optic. View the spec here http://localhost:3001/organizations/org-id/apis/api-id?specId=spec-id
 "
 `;
