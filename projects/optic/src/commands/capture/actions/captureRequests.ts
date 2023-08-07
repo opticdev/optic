@@ -379,7 +379,7 @@ export async function captureRequestsFromProxy(
     bailout.promise.catch((e) => {});
   } catch (e) {
     spinner?.fail('Some requests failed to send');
-    logger.error(e);
+    logger.error((e as Error).message);
 
     // Meaning either the requests threw an uncaught exception or the app server randomly quit
     process.exitCode = 1;
