@@ -263,10 +263,12 @@ const getCaptureAction =
     const coverage = new ApiCoverageCounter(spec.jsonLike);
     let diffCount = 0;
     // Handle interactions for documented endpoints first
-    for (const {
-      interactions,
-      endpoint,
-    } of captures.getDocumentedEndpointInteractions()) {
+    const interactionsToLog = sortBy(
+      [...captures.getDocumentedEndpointInteractions()],
+      ({ endpoint }) => `${endpoint.path}${endpoint.method}`
+    );
+
+    for (const { interactions, endpoint } of interactionsToLog) {
       const { path, method } = endpoint;
       const endpointText = `${method.toUpperCase()} ${path}`;
       const spinner = getSpinner({
@@ -485,7 +487,11 @@ function getSummaryText(endpointCoverage: OperationCoverage) {
     const icon = getIcon(endpointCoverage.requestBody);
     items.push(`${icon}Request Body`);
   }
-  for (const [statusCode, node] of Object.entries(endpointCoverage.responses)) {
+  const coverageResponses = sortBy(
+    Object.entries(endpointCoverage.responses),
+    ([statusCode]) => statusCode
+  );
+  for (const [statusCode, node] of coverageResponses) {
     const icon = getIcon(node);
     items.push(`${icon}${statusCode} response`);
   }
