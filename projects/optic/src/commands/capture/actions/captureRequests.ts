@@ -1,7 +1,7 @@
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import fetch from 'node-fetch';
 import Bottleneck from 'bottleneck';
-import exitHook from 'async-exit-hook';
+import exitHook from 'exit-hook';
 
 import ora from 'ora';
 import urljoin from 'url-join';
@@ -315,9 +315,8 @@ export async function captureRequestsFromProxy(
       process.kill(-app.pid);
     }
   }
-  exitHook((cb) => {
+  const unsubscribeHook = exitHook(() => {
     cleanup();
-    cb();
   });
   const spinner = getSpinner({
     text: 'Generating traffic to send to server',
@@ -394,6 +393,7 @@ export async function captureRequestsFromProxy(
     // The finally block will run before we return from the fn call
     return;
   } finally {
+    unsubscribeHook();
     cleanup();
 
     if (errors.length > 0) {
