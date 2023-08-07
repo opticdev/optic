@@ -3,9 +3,9 @@
 exports[`capture with inputs --har updating an OpenAPI spec 1`] = `
 "GET /books
   [32m✓ [39m200 response
-  [32m[200 response body] 'data' has been added[39m
-  [32m[200 response body] 'next' has been added[39m
-  [32m[200 response body] 'has_more_data' has been added[39m
+  [32m[200 response body] 'data' (/properties/data) has been added[39m
+  [32m[200 response body] 'next' (/properties/next) has been added[39m
+  [32m[200 response body] 'has_more_data' (/properties/has_more_data) has been added[39m
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
@@ -236,9 +236,9 @@ components:
 exports[`capture with inputs --har verifying OpenAPI spec 1`] = `
 "GET /books
   [31m× [39m200 response
-  [31m[200 response body] 'data' is not documented[39m
-  [31m[200 response body] 'next' is not documented[39m
-  [31m[200 response body] 'has_more_data' is not documented[39m
+  [31m[200 response body] 'data' (/properties/data) is not documented[39m
+  [31m[200 response body] 'next' (/properties/next) is not documented[39m
+  [31m[200 response body] 'has_more_data' (/properties/has_more_data) is not documented[39m
 
 100.0% coverage of your documented operations. 7 requests did not match a documented path (8 total requests).
 3 diffs detected in documented operations
@@ -1007,11 +1007,11 @@ exports[`capture with requests update behavior handles update in other file 1`] 
 "Generating traffic to send to server
 GET /books
   [32m✓ [39m200 response
-  [32m[200 response body] 'name' has been added[39m
-  [32m[200 response body] 'author_id' has been added[39m
-  [32m[200 response body] 'price' has been added[39m
-  [32m[200 response body] 'created_at' has been added[39m
-  [32m[200 response body] 'updated_at' has been added[39m
+  [32m[200 response body] 'name' (/properties/books/items/properties/name) has been added[39m
+  [32m[200 response body] 'author_id' (/properties/books/items/properties/author_id) has been added[39m
+  [32m[200 response body] 'price' (/properties/books/items/properties/price) has been added[39m
+  [32m[200 response body] 'created_at' (/properties/books/items/properties/created_at) has been added[39m
+  [32m[200 response body] 'updated_at' (/properties/books/items/properties/updated_at) has been added[39m
 "
 `;
 
@@ -1068,11 +1068,11 @@ exports[`capture with requests update behavior respects x-optic-path-ignore 1`] 
 "Generating traffic to send to server
 GET /books
   [32m✓ [39m200 response
-  [32m[200 response body] 'name' has been added[39m
-  [32m[200 response body] 'author_id' has been added[39m
-  [32m[200 response body] 'price' has been added[39m
-  [32m[200 response body] 'created_at' has been added[39m
-  [32m[200 response body] 'updated_at' has been added[39m
+  [32m[200 response body] 'name' (/properties/books/items/properties/name) has been added[39m
+  [32m[200 response body] 'author_id' (/properties/books/items/properties/author_id) has been added[39m
+  [32m[200 response body] 'price' (/properties/books/items/properties/price) has been added[39m
+  [32m[200 response body] 'created_at' (/properties/books/items/properties/created_at) has been added[39m
+  [32m[200 response body] 'updated_at' (/properties/books/items/properties/updated_at) has been added[39m
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
@@ -1190,11 +1190,11 @@ exports[`capture with requests update behavior updates all endpoints with --upda
 "Generating traffic to send to server
 GET /books
   [32m✓ [39m200 response
-  [32m[200 response body] 'name' has been added[39m
-  [32m[200 response body] 'author_id' has been added[39m
-  [32m[200 response body] 'price' has been added[39m
-  [32m[200 response body] 'created_at' has been added[39m
-  [32m[200 response body] 'updated_at' has been added[39m
+  [32m[200 response body] 'name' (/properties/books/items/properties/name) has been added[39m
+  [32m[200 response body] 'created_at' (/properties/books/items/properties/created_at) has been added[39m
+  [32m[200 response body] 'updated_at' (/properties/books/items/properties/updated_at) has been added[39m
+  [33m[200 response body] 'author_id' (/properties/books/items/properties/author_id) is now type number[39m
+  [33m[200 response body] 'price' (/properties/books/items/properties/price) is now type string[39m
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
@@ -1269,20 +1269,24 @@ components:
             properties:
               id:
                 type: string
+              author_id:
+                oneOf:
+                  - type: number
+                  - type: string
+              price:
+                oneOf:
+                  - type: string
+                  - type: number
               name:
                 type: string
-              author_id:
-                type: string
-              price:
-                type: number
               created_at:
                 type: string
               updated_at:
                 type: string
             required:
-              - name
+              - id
               - author_id
-              - price
+              - name
               - created_at
               - updated_at
     GetBooksBook200ResponseBody:
@@ -1350,11 +1354,11 @@ exports[`capture with requests update behavior updates only existing endpoints b
 "Generating traffic to send to server
 GET /books
   [32m✓ [39m200 response
-  [32m[200 response body] 'name' has been added[39m
-  [32m[200 response body] 'author_id' has been added[39m
-  [32m[200 response body] 'price' has been added[39m
-  [32m[200 response body] 'created_at' has been added[39m
-  [32m[200 response body] 'updated_at' has been added[39m
+  [32m[200 response body] 'name' (/properties/books/items/properties/name) has been added[39m
+  [32m[200 response body] 'created_at' (/properties/books/items/properties/created_at) has been added[39m
+  [32m[200 response body] 'updated_at' (/properties/books/items/properties/updated_at) has been added[39m
+  [33m[200 response body] 'author_id' (/properties/books/items/properties/author_id) is now type number[39m
+  [33m[200 response body] 'price' (/properties/books/items/properties/price) is now type string[39m
 
 4 unmatched requests
 [33mNew endpoints are only added in interactive mode.[39m
@@ -1391,20 +1395,24 @@ components:
             properties:
               id:
                 type: string
+              author_id:
+                oneOf:
+                  - type: number
+                  - type: string
+              price:
+                oneOf:
+                  - type: string
+                  - type: number
               name:
                 type: string
-              author_id:
-                type: string
-              price:
-                type: number
               created_at:
                 type: string
               updated_at:
                 type: string
             required:
-              - name
+              - id
               - author_id
-              - price
+              - name
               - created_at
               - updated_at
 "
@@ -1414,16 +1422,16 @@ exports[`capture with requests verify behavior verifies spec with endpoint speci
 "Generating traffic to send to server
 GET /books
   [31m× [39m200 response
-  [31m[200 response body] 'name' is not documented[39m
-  [31m[200 response body] 'author_id' is not documented[39m
-  [31m[200 response body] 'price' is not documented[39m
-  [31m[200 response body] 'created_at' is not documented[39m
-  [31m[200 response body] 'updated_at' is not documented[39m
+  [31m[200 response body] 'name' (/properties/books/items/properties/name) is not documented[39m
+  [31m[200 response body] 'author_id' (/properties/books/items/properties/author_id) is not documented[39m
+  [31m[200 response body] 'price' (/properties/books/items/properties/price) is not documented[39m
+  [31m[200 response body] 'created_at' (/properties/books/items/properties/created_at) is not documented[39m
+  [31m[200 response body] 'updated_at' (/properties/books/items/properties/updated_at) is not documented[39m
 GET /books/status
   [32m✓ [39m200 response
 GET /books/{bookId}
   [31m× [39m200 response
-  [31m[200 response body] 'price' is not documented[39m
+  [31m[200 response body] 'price' (/properties/price) is not documented[39m
 
 100.0% coverage of your documented operations. 2 requests did not match a documented path (6 total requests).
 6 diffs detected in documented operations
@@ -1434,15 +1442,56 @@ GET /books/{bookId}
 "
 `;
 
+exports[`capture with requests verify behavior verifies the specification in verbose mode 1`] = `
+"Generating traffic to send to server
+GET /books
+  [31m× [39m200 response
+  [31m[200 response body] 'name' (/properties/books/items/properties/name) is not documented[39m
+  [31m[200 response body] 'created_at' (/properties/books/items/properties/created_at) is not documented[39m
+  [31m[200 response body] 'updated_at' (/properties/books/items/properties/updated_at) is not documented[39m
+  [31m[200 response body] 'author_id' (/properties/books/items/properties/author_id) does not match type number. Received 6nTxAFM5ck4Hob77hGQoL[39m
+  [41m  Diff  [49m 'author_id' did not match schema
+operation: [1mget /books[22m  
+[90m25 |[39m properties:
+[90m26 |[39m   id:
+[90m27 |[39m     type: string
+[90m28 |[39m [1m[33m  author_id:  [41m[Actual] "6nTxAFM5ck4Hob77hGQoL"[49m[39m[22m
+[90m29 |[39m     type: number
+[90m30 |[39m   price:
+[90m31 |[39m     type: string
+[90m$workspace$/openapi.yml[39m
+
+  [31m[200 response body] 'price' (/properties/books/items/properties/price) does not match type string. Received 10[39m
+  [41m  Diff  [49m 'price' did not match schema
+operation: [1mget /books[22m  
+[90m27 |[39m     type: string
+[90m28 |[39m   author_id:
+[90m29 |[39m     type: number
+[90m30 |[39m [1m[33m  price:  [41m[Actual] 10[49m[39m[22m
+[90m31 |[39m     type: string
+[90m32 |[39m required:
+[90m33 |[39m   - id
+[90m$workspace$/openapi.yml[39m
+
+
+100.0% coverage of your documented operations. 4 requests did not match a documented path (5 total requests).
+7 diffs detected in documented operations
+
+[33mNew endpoints are only added in interactive mode.[39m
+[34mRun with \`--update interactive\` to add new endpoints[39m
+[33mHint: optic capture openapi.yml --update interactive[39m
+"
+`;
+
 exports[`capture with requests verify behavior verifies the specification with coverage 1`] = `
 "Generating traffic to send to server
 GET /books
   [31m× [39m200 response
-  [31m[200 response body] 'name' is not documented[39m
-  [31m[200 response body] 'author_id' is not documented[39m
-  [31m[200 response body] 'price' is not documented[39m
-  [31m[200 response body] 'created_at' is not documented[39m
-  [31m[200 response body] 'updated_at' is not documented[39m
+  [31m[200 response body] 'name' (/properties/books/items/properties/name) is not documented[39m
+  [31m[200 response body] 'created_at' (/properties/books/items/properties/created_at) is not documented[39m
+  [31m[200 response body] 'updated_at' (/properties/books/items/properties/updated_at) is not documented[39m
+  [31m[200 response body] 'author_id' (/properties/books/items/properties/author_id) does not match type number. Received 6nTxAFM5ck4Hob77hGQoL[39m
+  [31m[200 response body] 'price' (/properties/books/items/properties/price) does not match type string. Received 10[39m
 
 100.0% coverage of your documented operations. 4 requests did not match a documented path (5 total requests).
 5 diffs detected in documented operations
