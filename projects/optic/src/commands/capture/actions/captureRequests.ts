@@ -137,6 +137,9 @@ async function waitForServer(
 
   const serverReadyPromise = new Promise(async (resolve, reject) => {
     let done = false;
+    const timeoutMsg =
+      'The server timed out before a successful healthcheck. Verify the server URL in your optic.yml is correct and your server is reachable.';
+
     // We need to bail out if the server shut down, otherwise we never conclude this promise chain
     while (!done && !bailout.didBailout) {
       const isReady = await checkServer();
@@ -145,13 +148,13 @@ async function waitForServer(
         done = true;
       } else if (Date.now() > now + timeout) {
         didTimeout = true;
-        reject(new UserError({ message: 'Server check timed out.' }));
+        reject(new UserError({ message: timeoutMsg }));
       }
       await wait(readyInterval);
     }
     if (bailout.didBailout && !didTimeout)
       spinner?.fail('Server unexpectedly exited');
-    if (didTimeout) spinner?.fail('Server check timed out');
+    if (didTimeout) spinner?.fail(timeoutMsg);
     resolve(null);
   });
 
