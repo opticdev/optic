@@ -305,7 +305,7 @@ function makeAllRequests(
 export async function captureRequestsFromProxy(
   config: OpticCliConfig,
   captureConfig: CaptureConfigData,
-  options: { proxyPort?: string; serverOverride?: string }
+  options: { proxyPort?: string; serverOverride?: string; serverUrl: string }
 ) {
   let app: ChildProcessWithoutNullStreams | undefined = undefined;
   let proxy: ProxyInstance | undefined = undefined;
@@ -323,7 +323,7 @@ export async function captureRequestsFromProxy(
     color: 'blue',
   })?.start();
 
-  const serverUrl = options.serverOverride || captureConfig.server.url;
+  const serverUrl = options.serverUrl;
   const serverDir =
     captureConfig.server.dir === undefined
       ? config.root
