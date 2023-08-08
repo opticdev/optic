@@ -2,7 +2,7 @@ import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import fetch from 'node-fetch';
 import Bottleneck from 'bottleneck';
 import exitHook from 'exit-hook';
-
+import { exec } from 'child_process';
 import ora from 'ora';
 import urljoin from 'url-join';
 import { UserError } from '@useoptic/openapi-utilities';
@@ -312,7 +312,12 @@ export async function captureRequestsFromProxy(
   function cleanup() {
     proxy?.stop();
     if (app && app.pid && app.exitCode === null) {
-      process.kill(-app.pid);
+      if (process.platform === 'win32') {
+        // https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/taskkill
+        exec(`taskkill /pid ${app.pid} /t /f`);
+      } else {
+        process.kill(-app.pid);
+      }
     }
   }
   const unsubscribeHook = exitHook(() => {
