@@ -1,24 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`optic spec push can push a spec to a repo 1`] = `
-"Automatically adding the git sha 'git:COMMIT-HASH' and branch 'gitbranch:master' as tags
-
-Uploading spec for api at https://app.useoptic.com/organizations/org-id/apis/api-id with tags env:production, the-favorite-api, git:COMMIT-HASH, gitbranch:master
+"Uploading spec for api at http://localhost:3001/organizations/org-id/apis/api-id with tags env:production, the-favorite-api, git:COMMIT-HASH, gitbranch:master
 Succesfully uploaded spec to Optic. View the spec here http://localhost:3001/organizations/org-id/apis/api-id?specId=spec-id
-"
-`;
-
-exports[`optic spec push does not automatically add git tags when not clean state 1`] = `
-"Automatically adding the git sha 'git:COMMIT-HASH' and branch 'gitbranch:master' as tags
-
-Uploading spec for api at https://app.useoptic.com/organizations/org-id/apis/api-id with tags git:COMMIT-HASH, gitbranch:master
-Succesfully uploaded spec to Optic. View the spec here http://localhost:3001/organizations/org-id/apis/api-id?specId=spec-id
-"
-`;
-
-exports[`optic spec push requires x-optic-url 1`] = `
-"Automatically adding the git sha 'git:COMMIT-HASH' and branch 'gitbranch:master' as tags
-File ./spec.yml does not have an optic url. Files must be added to Optic and have an x-optic-url key before specs can be pushed up to Optic.
-[33mHint: [39m Run optic api add ./spec.yml
 "
 `;

@@ -247,3 +247,14 @@ export const guessRemoteOrigin = async (): Promise<{
 
   return null;
 };
+
+export const isTracked = async (filePath: string): Promise<boolean> =>
+  new Promise((resolve, reject) => {
+    const cb = (err: unknown, stdout: string, stderr: string) => {
+      if (err || stderr) reject(err || stderr);
+      resolve(!!stdout);
+    };
+
+    const command = `git ls-files ${filePath}`;
+    exec(command, cb);
+  });

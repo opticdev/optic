@@ -1,6 +1,7 @@
-import { url } from 'node:inspector';
 import { URL } from 'node:url';
 import urljoin from 'url-join';
+import { OpticCliConfig } from '../config';
+import { getDetailsForGeneration } from './generated';
 
 // expected format: app.useoptic.com/organizations/:orgId/apis/:apiId
 const PATH_NAME_REGEXP =
@@ -85,4 +86,34 @@ export function getCiSetupUrl(
   }
 
   return url.toString();
+}
+
+type OpticUrlDetails = {
+  orgId: string;
+  apiId: string;
+};
+
+export async function getOpticUrlDetails(
+  config: OpticCliConfig,
+  {
+    filePath,
+    opticUrl,
+  }: {
+    filePath?: string;
+    opticUrl?: string;
+  }
+): Promise<OpticUrlDetails | null> {
+  if (opticUrl) return getApiFromOpticUrl(opticUrl);
+  else if (filePath) {
+    const generatedDetails = await getDetailsForGeneration(config);
+    if (generatedDetails) {
+      const { web_url, organization_id } = generatedDetails;
+      const res = await config.client.getApis([filePath], web_url);
+      const api = res?.apis?.[0];
+      if (api) {
+        return { apiId: api.api_id, orgId: organization_id };
+      }
+    }
+  }
+  return null;
 }

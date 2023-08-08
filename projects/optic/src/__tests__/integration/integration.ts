@@ -125,11 +125,16 @@ async function getTsNodePath() {
 
 export async function runOptic(
   workspace: string,
-  cmd: string
+  cmd: string,
+  print?: boolean
 ): Promise<ProcessResult> {
   const src = path.join(root, 'src', 'index.ts');
   const tsNode = await getTsNodePath();
-  const result = await run(`${tsNode} ${src} ${cmd}`, false, workspace);
+  const result = await run(
+    `${tsNode} ${src} ${cmd}`,
+    print ?? false,
+    workspace
+  );
 
   return result;
 }
