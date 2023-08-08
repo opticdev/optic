@@ -79,7 +79,7 @@ function startApp(
   try {
     app = spawn(cmd.cmd, cmd.args, { detached: true, cwd: dir, shell: true });
   } catch (e) {
-    throw new UserError({ initialError: e as Error });
+    throw new UserError({ message: (e as Error).message });
   }
 
   app.stdout.on('data', (data) => {
