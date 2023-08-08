@@ -1,5 +1,364 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`generateEndpointSpecPatches OAS version 3.0.1 array with multiple items 1`] = `
+[
+  {
+    "description": "update response body: add property books",
+    "diff": {
+      "description": "'books' is not documented",
+      "example": [
+        {
+          "author_id": "6nTxAFM5ck4Hob77hGQoL",
+          "id": "WjE9O1d8ELCb8POiOw4pn",
+          "price": 10,
+        },
+        {
+          "id": "asdf",
+          "price": 1,
+        },
+        {
+          "author_id": "6nTxAFM5ck4Hob77hGQoL",
+          "id": "123",
+        },
+        null,
+      ],
+      "instancePath": "/books",
+      "key": "books",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/books",
+      "propertyPath": "/properties/books",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make books required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required",
+            "value": [
+              "books",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property books schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books",
+            "value": {
+              "items": {
+                "type": "object",
+              },
+              "type": "array",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property id",
+    "diff": {
+      "description": "'id' is not documented",
+      "example": "WjE9O1d8ELCb8POiOw4pn",
+      "instancePath": "/books/0/id",
+      "key": "id",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/books/items/properties",
+      "propertyExamplePath": "/books/0/id",
+      "propertyPath": "/properties/books/items/properties/id",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make id required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/required",
+            "value": [
+              "id",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property id schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/properties/id",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property author_id",
+    "diff": {
+      "description": "'author_id' is not documented",
+      "example": "6nTxAFM5ck4Hob77hGQoL",
+      "instancePath": "/books/0/author_id",
+      "key": "author_id",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/books/items/properties",
+      "propertyExamplePath": "/books/0/author_id",
+      "propertyPath": "/properties/books/items/properties/author_id",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property author_id required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/required/-",
+            "value": "author_id",
+          },
+        ],
+      },
+      {
+        "intent": "add property author_id schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/properties/author_id",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property price",
+    "diff": {
+      "description": "'price' is not documented",
+      "example": 10,
+      "instancePath": "/books/0/price",
+      "key": "price",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/books/items/properties",
+      "propertyExamplePath": "/books/0/price",
+      "propertyPath": "/properties/books/items/properties/price",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property price required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/required/-",
+            "value": "price",
+          },
+        ],
+      },
+      {
+        "intent": "add property price schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/properties/price",
+            "value": {
+              "type": "number",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make items null",
+    "diff": {
+      "description": "'items' did not match schema",
+      "example": null,
+      "expectedType": "object",
+      "instancePath": "/books/3",
+      "key": "items",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/books/items",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make items nullable",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/nullable",
+            "value": true,
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make property author_id optional",
+    "diff": {
+      "description": "required property 'author_id' was missing",
+      "example": undefined,
+      "instancePath": "/books/1/author_id",
+      "key": "author_id",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "/properties/books/items",
+      "propertyPath": "/properties/books/items/properties/author_id",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove author_id from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/required/1",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make property price optional",
+    "diff": {
+      "description": "required property 'price' was missing",
+      "example": undefined,
+      "instancePath": "/books/2/price",
+      "key": "price",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "/properties/books/items",
+      "propertyPath": "/properties/books/items/properties/price",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove price from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/required/1",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 array with multiple items 2`] = `
+{
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "books": {
+                      "items": {
+                        "nullable": true,
+                        "properties": {
+                          "author_id": {
+                            "type": "string",
+                          },
+                          "id": {
+                            "type": "string",
+                          },
+                          "price": {
+                            "type": "number",
+                          },
+                        },
+                        "required": [
+                          "id",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                  },
+                  "required": [
+                    "books",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
 exports[`generateEndpointSpecPatches OAS version 3.0.1 existing schema that does not match 1`] = `
 [
   {
@@ -2144,6 +2503,370 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
               },
             },
             "description": "200 response",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 array with multiple items 1`] = `
+[
+  {
+    "description": "update response body: add property books",
+    "diff": {
+      "description": "'books' is not documented",
+      "example": [
+        {
+          "author_id": "6nTxAFM5ck4Hob77hGQoL",
+          "id": "WjE9O1d8ELCb8POiOw4pn",
+          "price": 10,
+        },
+        {
+          "id": "asdf",
+          "price": 1,
+        },
+        {
+          "author_id": "6nTxAFM5ck4Hob77hGQoL",
+          "id": "123",
+        },
+        null,
+      ],
+      "instancePath": "/books",
+      "key": "books",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/books",
+      "propertyPath": "/properties/books",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make books required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required",
+            "value": [
+              "books",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property books schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books",
+            "value": {
+              "items": {
+                "type": "object",
+              },
+              "type": "array",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property id",
+    "diff": {
+      "description": "'id' is not documented",
+      "example": "WjE9O1d8ELCb8POiOw4pn",
+      "instancePath": "/books/0/id",
+      "key": "id",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/books/items/properties",
+      "propertyExamplePath": "/books/0/id",
+      "propertyPath": "/properties/books/items/properties/id",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make id required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/required",
+            "value": [
+              "id",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property id schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/properties/id",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property author_id",
+    "diff": {
+      "description": "'author_id' is not documented",
+      "example": "6nTxAFM5ck4Hob77hGQoL",
+      "instancePath": "/books/0/author_id",
+      "key": "author_id",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/books/items/properties",
+      "propertyExamplePath": "/books/0/author_id",
+      "propertyPath": "/properties/books/items/properties/author_id",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property author_id required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/required/-",
+            "value": "author_id",
+          },
+        ],
+      },
+      {
+        "intent": "add property author_id schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/properties/author_id",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property price",
+    "diff": {
+      "description": "'price' is not documented",
+      "example": 10,
+      "instancePath": "/books/0/price",
+      "key": "price",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/books/items/properties",
+      "propertyExamplePath": "/books/0/price",
+      "propertyPath": "/properties/books/items/properties/price",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property price required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/required/-",
+            "value": "price",
+          },
+        ],
+      },
+      {
+        "intent": "add property price schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/properties/price",
+            "value": {
+              "type": "number",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make items null",
+    "diff": {
+      "description": "'items' did not match schema",
+      "example": null,
+      "expectedType": "object",
+      "instancePath": "/books/3",
+      "key": "items",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/books/items",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make items null",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/type",
+            "value": [
+              "object",
+              "null",
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make property author_id optional",
+    "diff": {
+      "description": "required property 'author_id' was missing",
+      "example": undefined,
+      "instancePath": "/books/1/author_id",
+      "key": "author_id",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "/properties/books/items",
+      "propertyPath": "/properties/books/items/properties/author_id",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove author_id from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/required/1",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make property price optional",
+    "diff": {
+      "description": "required property 'price' was missing",
+      "example": undefined,
+      "instancePath": "/books/2/price",
+      "key": "price",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "/properties/books/items",
+      "propertyPath": "/properties/books/items/properties/price",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove price from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/required/1",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 array with multiple items 2`] = `
+{
+  "info": {},
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "books": {
+                      "items": {
+                        "properties": {
+                          "author_id": {
+                            "type": "string",
+                          },
+                          "id": {
+                            "type": "string",
+                          },
+                          "price": {
+                            "type": "number",
+                          },
+                        },
+                        "required": [
+                          "id",
+                        ],
+                        "type": [
+                          "object",
+                          "null",
+                        ],
+                      },
+                      "type": "array",
+                    },
+                  },
+                  "required": [
+                    "books",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
           },
         },
       },

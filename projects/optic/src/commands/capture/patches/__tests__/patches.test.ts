@@ -21,6 +21,33 @@ async function* GenerateInteractions(
   }
 }
 
+function makeInteraction(
+  endpoint: { method: OpenAPIV3.HttpMethods; path: string },
+  {
+    requestBody,
+    responseBody,
+  }: {
+    requestBody?: any;
+    responseBody?: any;
+  }
+): CapturedInteraction {
+  return {
+    request: {
+      host: 'localhost:3030',
+      method: endpoint.method,
+      path: endpoint.path,
+      body: requestBody ? CapturedBody.fromJSON(requestBody) : null,
+      headers: [],
+      query: [],
+    },
+    response: {
+      statusCode: '200',
+      body: CapturedBody.fromJSON(responseBody ?? {}),
+      headers: [],
+    },
+  };
+}
+
 describe('generatePathAndMethodSpecPatches', () => {
   const specHolder: any = {};
   beforeEach(() => {
@@ -80,12 +107,10 @@ describe('generateEndpointSpecPatches', () => {
     });
 
     test('undocumented request body', async () => {
-      const interaction: CapturedInteraction = {
-        request: {
-          host: 'localhost:3030',
-          method: OpenAPIV3.HttpMethods.POST,
-          path: '/api/animals',
-          body: CapturedBody.fromJSON({
+      const interaction = makeInteraction(
+        { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+        {
+          requestBody: {
             name: 'me',
             age: 100,
             created_at: '2023-07-20T14:39:22.184Z',
@@ -103,16 +128,9 @@ describe('generateEndpointSpecPatches', () => {
               },
             ],
             active: true,
-          }),
-          headers: [],
-          query: [],
-        },
-        response: {
-          statusCode: '200',
-          body: CapturedBody.fromJSON({}),
-          headers: [],
-        },
-      };
+          },
+        }
+      );
 
       const patches = await AT.collect(
         generateEndpointSpecPatches(
@@ -130,18 +148,10 @@ describe('generateEndpointSpecPatches', () => {
     });
 
     test('undocumented response body', async () => {
-      const interaction: CapturedInteraction = {
-        request: {
-          host: 'localhost:3030',
-          method: OpenAPIV3.HttpMethods.POST,
-          path: '/api/animals',
-          body: null,
-          headers: [],
-          query: [],
-        },
-        response: {
-          statusCode: '200',
-          body: CapturedBody.fromJSON({
+      const interaction = makeInteraction(
+        { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+        {
+          responseBody: {
             name: 'me',
             age: 100,
             created_at: '2023-07-20T14:39:22.184Z',
@@ -159,10 +169,9 @@ describe('generateEndpointSpecPatches', () => {
               },
             ],
             active: true,
-          }),
-          headers: [],
-        },
-      };
+          },
+        }
+      );
 
       const patches = await AT.collect(
         generateEndpointSpecPatches(
@@ -193,23 +202,14 @@ describe('generateEndpointSpecPatches', () => {
         },
       };
 
-      const interaction: CapturedInteraction = {
-        request: {
-          host: 'localhost:3030',
-          method: OpenAPIV3.HttpMethods.POST,
-          path: '/api/animals',
-          body: null,
-          headers: [],
-          query: [],
-        },
-        response: {
-          statusCode: '200',
-          body: CapturedBody.fromJSON({
+      const interaction = makeInteraction(
+        { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+        {
+          responseBody: {
             name: 'me',
-          }),
-          headers: [],
-        },
-      };
+          },
+        }
+      );
 
       const patches = await AT.collect(
         generateEndpointSpecPatches(
@@ -243,24 +243,14 @@ describe('generateEndpointSpecPatches', () => {
           },
         },
       };
-
-      const interaction: CapturedInteraction = {
-        request: {
-          host: 'localhost:3030',
-          method: OpenAPIV3.HttpMethods.POST,
-          path: '/api/animals',
-          body: null,
-          headers: [],
-          query: [],
-        },
-        response: {
-          statusCode: '200',
-          body: CapturedBody.fromJSON({
+      const interaction = makeInteraction(
+        { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+        {
+          responseBody: {
             name: 'me',
-          }),
-          headers: [],
-        },
-      };
+          },
+        }
+      );
 
       const patches = await AT.collect(
         generateEndpointSpecPatches(
@@ -295,23 +285,12 @@ describe('generateEndpointSpecPatches', () => {
           },
         },
       };
-
-      const interaction: CapturedInteraction = {
-        request: {
-          host: 'localhost:3030',
-          method: OpenAPIV3.HttpMethods.POST,
-          path: '/api/animals',
-          body: null,
-          headers: [],
-          query: [],
-        },
-        response: {
-          statusCode: '200',
-          body: CapturedBody.fromJSON({}),
-          headers: [],
-        },
-      };
-
+      const interaction = makeInteraction(
+        { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+        {
+          responseBody: {},
+        }
+      );
       const patches = await AT.collect(
         generateEndpointSpecPatches(
           GenerateInteractions([interaction]),
@@ -345,19 +324,10 @@ describe('generateEndpointSpecPatches', () => {
           },
         },
       };
-
-      const interaction: CapturedInteraction = {
-        request: {
-          host: 'localhost:3030',
-          method: OpenAPIV3.HttpMethods.POST,
-          path: '/api/animals',
-          body: null,
-          headers: [],
-          query: [],
-        },
-        response: {
-          statusCode: '200',
-          body: CapturedBody.fromJSON({
+      const interaction = makeInteraction(
+        { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+        {
+          responseBody: {
             books: [
               {
                 id: 'WjE9O1d8ELCb8POiOw4pn',
@@ -376,11 +346,60 @@ describe('generateEndpointSpecPatches', () => {
                 updated_at: '2022-10-22T10:11:51.421Z',
               },
             ],
-          }),
-          headers: [],
+          },
+        }
+      );
+
+      const patches = await AT.collect(
+        generateEndpointSpecPatches(
+          GenerateInteractions([interaction]),
+          specHolder,
+          {
+            method: 'post',
+            path: '/api/animals',
+          }
+        )
+      );
+
+      expect(patches).toMatchSnapshot();
+      expect(specHolder.spec).toMatchSnapshot();
+    });
+
+    test('array with multiple items', async () => {
+      specHolder.spec.paths['/api/animals'].post.responses = {
+        '200': {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+              },
+            },
+          },
         },
       };
-
+      const interaction = makeInteraction(
+        { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+        {
+          responseBody: {
+            books: [
+              {
+                id: 'WjE9O1d8ELCb8POiOw4pn',
+                author_id: '6nTxAFM5ck4Hob77hGQoL',
+                price: 10,
+              },
+              {
+                id: 'asdf',
+                price: 1,
+              },
+              {
+                id: '123',
+                author_id: '6nTxAFM5ck4Hob77hGQoL',
+              },
+              null,
+            ],
+          },
+        }
+      );
       const patches = await AT.collect(
         generateEndpointSpecPatches(
           GenerateInteractions([interaction]),
