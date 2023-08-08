@@ -167,11 +167,18 @@ export class DocumentedBodies {
           specJsonPath: bodySpecPath,
         };
       } // TODO: consider what to do when there's no content type (happens, as seen in the past)
+    } else if (interaction.request.body) {
+      logger.debug(
+        `skipping documenting request body for ${interaction.request.method} ${
+          interaction.request.path
+        } because response status code is ${
+          capturedStatusCode ? capturedStatusCode : 'null'
+        }`
+      );
     }
 
     if (
-      interaction.response &&
-      interaction.response.body &&
+      interaction.response?.body &&
       capturedStatusCode &&
       capturedStatusCode >= 200 &&
       capturedStatusCode < 500
@@ -239,7 +246,19 @@ export class DocumentedBodies {
           shapeLocation,
           specJsonPath: bodySpecPath,
         };
-      } // TODO: consider what to do when there's no content type (happens, as seen in the past)
+      } else {
+        logger.debug(
+          `skipping documenting response body for ${interaction.request.method} ${interaction.request.path} because there is no content type`
+        );
+      }
+    } else if (interaction.response?.body) {
+      logger.debug(
+        `skipping documenting response body for ${interaction.request.method} ${
+          interaction.request.path
+        } because response status code is ${
+          capturedStatusCode ? capturedStatusCode : 'null'
+        }`
+      );
     }
   }
 }
