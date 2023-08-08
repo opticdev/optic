@@ -1,7 +1,8 @@
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import fetch, { FetchError } from 'node-fetch';
 import Bottleneck from 'bottleneck';
-
+import exitHook from 'exit-hook';
+import { exec } from 'child_process';
 import ora from 'ora';
 import urljoin from 'url-join';
 import { UserError } from '@useoptic/openapi-utilities';
@@ -314,14 +315,30 @@ function makeAllRequests(
 export async function captureRequestsFromProxy(
   config: OpticCliConfig,
   captureConfig: CaptureConfigData,
-  options: { proxyPort?: string; serverOverride?: string }
+  options: { proxyPort?: string; serverOverride?: string; serverUrl: string }
 ) {
+  let app: ChildProcessWithoutNullStreams | undefined = undefined;
+  let proxy: ProxyInstance | undefined = undefined;
+  function cleanup() {
+    proxy?.stop();
+    if (app && app.pid && app.exitCode === null) {
+      if (process.platform === 'win32') {
+        // https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/taskkill
+        exec(`taskkill /pid ${app.pid} /t /f`);
+      } else {
+        process.kill(-app.pid);
+      }
+    }
+  }
+  const unsubscribeHook = exitHook(() => {
+    cleanup();
+  });
   const spinner = getSpinner({
     text: 'Generating traffic to send to server',
     color: 'blue',
   })?.start();
 
-  const serverUrl = options.serverOverride || captureConfig.server.url;
+  const serverUrl = options.serverUrl;
   const serverDir =
     captureConfig.server.dir === undefined
       ? config.root
@@ -330,8 +347,6 @@ export async function captureRequestsFromProxy(
     captureConfig.server.ready_timeout || defaultServerReadyTimeout;
   const readyInterval = captureConfig.server.ready_interval || 1000;
   // start app
-  let app: ChildProcessWithoutNullStreams | undefined;
-  let proxy: ProxyInstance | undefined = undefined;
 
   let errors: any[] = [];
   try {
@@ -401,10 +416,8 @@ export async function captureRequestsFromProxy(
     // The finally block will run before we return from the fn call
     return;
   } finally {
-    proxy?.stop();
-    if (app && app.pid && app.exitCode === null) {
-      process.kill(-app.pid);
-    }
+    unsubscribeHook();
+    cleanup();
 
     if (errors.length > 0) {
       logger.error('finished with errors:');

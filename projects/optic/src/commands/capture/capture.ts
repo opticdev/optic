@@ -16,7 +16,7 @@ import { initCommand } from './capture-init';
 import { captureV1 } from '../oas/capture';
 
 import { getCaptureStorage } from './storage';
-import { loadSpec, specHasUncommittedChanges } from '../../utils/spec-loaders';
+import { loadSpec } from '../../utils/spec-loaders';
 import { ApiCoverageCounter } from './coverage/api-coverage';
 import { HarEntries } from './sources/har';
 import {
@@ -31,11 +31,13 @@ import { CapturedInteractions } from './sources/captured-interactions';
 import * as AT from '../oas/lib/async-tools';
 import { GroupedCaptures } from './interactions/grouped-interactions';
 import { OPTIC_URL_KEY } from '../../constants';
-import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { uploadCoverage } from './actions/upload-coverage';
 import { resolveRelativePath } from '../../utils/capture';
 import { InferPathStructure } from './operations/infer-path-structure';
 import { getSpinner } from '../../utils/spinner';
+import { flushEvents, trackEvent } from '../../segment';
+import { getOpticUrlDetails } from '../../utils/cloud-urls';
+import sortBy from 'lodash.sortby';
 
 const indent = (n: number) => '  '.repeat(n);
 
@@ -150,6 +152,7 @@ const getCaptureAction =
     const captures = new GroupedCaptures(trafficDirectory, spec.jsonLike);
     const pathFromRoot = resolveRelativePath(config.root, filePath);
     const captureConfig = config.capture?.[pathFromRoot];
+    let serverUrl: string | null = null;
 
     if (options.har) {
       try {
@@ -193,7 +196,6 @@ const getCaptureAction =
           : logger.error(
               `Expected a capture config entry for ${pathFromRoot}. To add a capture config entry to your optic.yml, run ${initSuggestion}.`
             );
-        // TODO log error and run capture init or something - tbd what the first use is
         process.exitCode = 1;
         return;
       }
@@ -215,12 +217,11 @@ const getCaptureAction =
         process.exitCode = 1;
         return;
       }
-
-      const harEntries = await captureRequestsFromProxy(
-        config,
-        captureConfig,
-        options
-      );
+      serverUrl = options.serverOverride || captureConfig.server.url;
+      const harEntries = await captureRequestsFromProxy(config, captureConfig, {
+        ...options,
+        serverUrl,
+      });
       if (!harEntries) {
         // Error thrown where we don't have requests
         process.exitCode = 1;
@@ -261,11 +262,14 @@ const getCaptureAction =
     // update existing endpoints
     const coverage = new ApiCoverageCounter(spec.jsonLike);
     let diffCount = 0;
+    let endpointsAdded = 0;
     // Handle interactions for documented endpoints first
-    for (const {
-      interactions,
-      endpoint,
-    } of captures.getDocumentedEndpointInteractions()) {
+    const interactionsToLog = sortBy(
+      [...captures.getDocumentedEndpointInteractions()],
+      ({ endpoint }) => `${endpoint.path}${endpoint.method}`
+    );
+
+    for (const { interactions, endpoint } of interactionsToLog) {
       const { path, method } = endpoint;
       const endpointText = `${method.toUpperCase()} ${path}`;
       const spinner = getSpinner({
@@ -346,14 +350,16 @@ const getCaptureAction =
           endpointsToAdd,
         } = await promptUserForPathPattern(
           captures.getUndocumentedInteractions(),
-          spec.jsonLike,
           inferredPathStructure,
           { update: options.update }
         );
 
         logger.info(chalk.bold.gray('Documenting new operations:'));
 
-        for (const endpoint of endpointsToAdd) {
+        for (const endpoint of sortBy(
+          endpointsToAdd,
+          (e) => `${e.path}${e.method}`
+        )) {
           const { path, method } = endpoint;
           const endpointText = `${method.toUpperCase()} ${path}`;
           const spinner = getSpinner({
@@ -371,6 +377,7 @@ const getCaptureAction =
           spinner?.succeed();
         }
 
+        endpointsAdded = endpointsToAdd.length;
         if (newIgnorePaths.length) {
           await addIgnorePaths(spec, newIgnorePaths);
         }
@@ -394,6 +401,15 @@ const getCaptureAction =
       logger.info();
       logger.info(`${unmatchedInteractions} unmatched requests`);
     }
+    trackEvent('optic.capture.completed', {
+      input: options.har ? 'har' : options.postman ? 'postman' : 'capture',
+      serverUrl,
+      captureCmd: captureConfig?.requests.run?.command ?? null,
+      captureRequests: captureConfig?.requests.send?.length ?? 0,
+      interactionCount: totalInteractions,
+      endpointsAdded,
+      endpointsUpdated: options.update ? endpointCounts.total : 0,
+    });
 
     if (options.upload) {
       if (options.update) {
@@ -403,13 +419,15 @@ const getCaptureAction =
         process.exitCode = 1;
         return;
       }
-      const opticUrlDetails = getApiFromOpticUrl(spec.jsonLike[OPTIC_URL_KEY]);
-      if (
-        config.vcs?.type !== VCS.Git ||
-        specHasUncommittedChanges(spec.sourcemap, config.vcs.diffSet)
-      ) {
+
+      const opticUrlDetails = await getOpticUrlDetails(config, {
+        filePath: path.relative(config.root, path.resolve(filePath)),
+        opticUrl: spec.jsonLike[OPTIC_URL_KEY],
+      });
+
+      if (config.vcs?.type !== VCS.Git) {
         logger.error(
-          'optic capture --upload can only be run in a git repository without uncommitted changes. That ensures reports are properly tagged.'
+          'optic capture --upload can only be run in a git repository.'
         );
         process.exitCode = 1;
         return;
@@ -417,7 +435,7 @@ const getCaptureAction =
 
       if (!opticUrlDetails) {
         logger.error(
-          `File ${filePath} does not have an optic url. Files must be added to Optic and have an x-optic-url key before verification data can be uploaded.`
+          `File ${filePath} could not be associated with an Optic API. Files must be added to Optic before verification data can be uploaded.`
         );
         logger.error(`${chalk.yellow('Hint: ')} Run optic api add ${filePath}`);
         process.exitCode = 1;
@@ -452,6 +470,8 @@ const getCaptureAction =
       );
       process.exitCode = 1;
     }
+
+    await flushEvents();
   };
 
 async function createOpenAPIFile(filePath: string): Promise<boolean> {
@@ -479,7 +499,11 @@ function getSummaryText(endpointCoverage: OperationCoverage) {
     const icon = getIcon(endpointCoverage.requestBody);
     items.push(`${icon}Request Body`);
   }
-  for (const [statusCode, node] of Object.entries(endpointCoverage.responses)) {
+  const coverageResponses = sortBy(
+    Object.entries(endpointCoverage.responses),
+    ([statusCode]) => statusCode
+  );
+  for (const [statusCode, node] of coverageResponses) {
     const icon = getIcon(node);
     items.push(`${icon}${statusCode} response`);
   }

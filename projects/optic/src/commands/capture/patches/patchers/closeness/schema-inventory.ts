@@ -58,6 +58,7 @@ export class SchemaInventory {
   ): SpecPatches {
     if (addedPaths.size === 0) return [];
     const sorted = Array.from(addedPaths).sort();
+    let rootSchemasAdded = false;
 
     for await (let added of sorted) {
       const addedSchema = jsonPointerHelpers.get(spec, added);
@@ -171,6 +172,27 @@ export class SchemaInventory {
           counter++;
         }
 
+        const schemaOps: Operation[] = [];
+        if (!rootSchemasAdded) {
+          if (!spec.components) {
+            rootSchemasAdded = true;
+            schemaOps.push({
+              op: 'add',
+              path: jsonPointerHelpers.compile(['components']),
+              value: {
+                schemas: {},
+              },
+            });
+          } else if (!spec.components.schemas) {
+            rootSchemasAdded = true;
+            schemaOps.push({
+              op: 'add',
+              path: jsonPointerHelpers.compile(['components', 'schemas']),
+              value: {},
+            });
+          }
+        }
+
         const patch: SpecPatch = {
           description: `create and use $ref for body`,
           path: added,
@@ -179,25 +201,7 @@ export class SchemaInventory {
           groupedOperations: [
             {
               intent: 'add components.schemas if needed',
-              operations: (() => {
-                const ops: Operation[] = [];
-                if (!spec.components) {
-                  ops.push({
-                    op: 'add',
-                    path: jsonPointerHelpers.compile(['components']),
-                    value: {
-                      schemas: {},
-                    },
-                  });
-                } else if (!spec.components.schemas) {
-                  ops.push({
-                    op: 'add',
-                    path: jsonPointerHelpers.compile(['components', 'schemas']),
-                    value: {},
-                  });
-                }
-                return ops;
-              })(),
+              operations: schemaOps,
             },
             {
               intent: `create ref at ${refPath}`,

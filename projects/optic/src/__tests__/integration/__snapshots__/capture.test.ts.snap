@@ -9,11 +9,11 @@ exports[`capture with inputs --har updating an OpenAPI spec 1`] = `
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
-GET /books/{book}
 GET /authors/{author}
-GET /some/example
-POST /books
 POST /authors
+GET /books/{book}
+POST /books
+GET /some/example
 "
 `;
 
@@ -46,21 +46,6 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/PostBooksRequestBody"
-  "/books/{book}":
-    parameters:
-      - in: path
-        name: book
-        required: true
-        schema:
-          type: string
-    get:
-      responses:
-        "200":
-          description: 200 response
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: "#/components/schemas/GetBooksBook200ResponseBody"
   "/authors/{author}":
     parameters:
       - in: path
@@ -75,16 +60,7 @@ paths:
           content:
             application/json; charset=utf-8:
               schema:
-                $ref: "#/components/schemas/GetBooksBook200ResponseBody"
-  /some/example:
-    get:
-      responses:
-        "200":
-          description: 200 response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetSomeExample200ResponseBody"
+                $ref: "#/components/schemas/GetAuthorsAuthor200ResponseBody"
   /authors:
     post:
       responses:
@@ -99,6 +75,30 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/PostAuthorsRequestBody"
+  "/books/{book}":
+    parameters:
+      - in: path
+        name: book
+        required: true
+        schema:
+          type: string
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/GetAuthorsAuthor200ResponseBody"
+  /some/example:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetSomeExample200ResponseBody"
 components:
   schemas:
     GetBooks200ResponseBody:
@@ -140,14 +140,12 @@ components:
         - data
         - next
         - has_more_data
-    GetBooksBook200ResponseBody:
+    GetAuthorsAuthor200ResponseBody:
       type: object
       properties:
         id:
           type: string
         name:
-          type: string
-        author_id:
           type: string
         created_at:
           type: string
@@ -156,9 +154,48 @@ components:
       required:
         - id
         - name
-        - author_id
         - created_at
         - updated_at
+    PostAuthorsRequestBody:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+    PostAuthors201ResponseBody:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+    PostBooksRequestBody:
+      type: object
+      properties:
+        name:
+          type: string
+        author_id:
+          type: string
+      required:
+        - name
+        - author_id
+    PostBooks201ResponseBody:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        author_id:
+          type: string
+      required:
+        - id
+        - name
+        - author_id
     GetSomeExample200ResponseBody:
       type: object
       properties:
@@ -190,46 +227,6 @@ components:
               - another
       required:
         - something
-    PostBooksRequestBody:
-      type: object
-      properties:
-        name:
-          type: string
-        author_id:
-          type: string
-      required:
-        - name
-        - author_id
-    PostBooks201ResponseBody:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        author_id:
-          type: string
-      required:
-        - id
-        - name
-        - author_id
-    PostAuthorsRequestBody:
-      type: object
-      properties:
-        name:
-          type: string
-      required:
-        - name
-    PostAuthors201ResponseBody:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-      required:
-        - id
-        - name
 "
 `;
 
@@ -254,30 +251,30 @@ exports[`capture with inputs --postman updating an OpenAPI spec 1`] = `
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
-GET /get
-GET /headers
-GET /response-headers
-GET /basic-auth
-GET /
-GET /digest-auth
 GET /auth/hawk
-GET /oauth1
+GET /basic-auth
 GET /cookies/{cooky}
 GET /cookies
+GET /deflate
+GET /delay/{delay}
+DELETE /delete
+GET /digest-auth
+GET /encoding/utf8
+GET /
+GET /get/hello
+GET /get
+GET /gzip
+GET /headers
+GET /ip
+GET /oauth1
+PATCH /patch
+POST /post
+PUT /put
+GET /response-headers
 GET /status/{status}
 GET /stream/{stream}
-GET /delay/{delay}
-GET /encoding/utf8
-GET /gzip
-GET /deflate
-GET /ip
 GET /time/{time}
-GET /get/hello
-PUT /put
-POST /post
 POST /transform/collection
-DELETE /delete
-PATCH /patch
 "
 `;
 
@@ -297,7 +294,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetBooks200ResponseBody"
-  /get:
+  /auth/hawk:
     get:
       responses:
         "200":
@@ -305,24 +302,51 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GetGet200ResponseBody"
-  /headers:
-    get:
-      responses:
-        "200":
-          description: 200 response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetHeaders200ResponseBody"
-  /response-headers:
-    get:
-      responses:
-        "200":
-          description: 200 response
-          content:
-            text/html: {}
+                $ref: "#/components/schemas/GetAuthHawk200ResponseBody"
   /basic-auth:
+    get:
+      responses: {}
+  "/cookies/{cooky}":
+    parameters:
+      - in: path
+        name: cooky
+        required: true
+        schema:
+          type: string
+    get:
+      responses: {}
+  /cookies:
+    get:
+      responses: {}
+  /deflate:
+    get:
+      responses: {}
+  "/delay/{delay}":
+    parameters:
+      - in: path
+        name: delay
+        required: true
+        schema:
+          type: string
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetDelayDelay200ResponseBody"
+  /delete:
+    delete:
+      responses: {}
+      requestBody:
+        content:
+          text/plain:
+            schema: {}
+  /digest-auth:
+    get:
+      responses: {}
+  /encoding/utf8:
     get:
       responses: {}
   /:
@@ -334,10 +358,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Get200ResponseBody"
-  /digest-auth:
+  /get/hello:
     get:
       responses: {}
-  /auth/hawk:
+  /get:
     get:
       responses:
         "200":
@@ -345,7 +369,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GetAuthHawk200ResponseBody"
+                $ref: "#/components/schemas/GetGet200ResponseBody"
+  /gzip:
+    get:
+      responses: {}
+  /headers:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetHeaders200ResponseBody"
+  /ip:
+    get:
+      responses: {}
   /oauth1:
     get:
       responses:
@@ -361,18 +400,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetOauth1401ResponseBody"
-  "/cookies/{cooky}":
-    parameters:
-      - in: path
-        name: cooky
-        required: true
-        schema:
-          type: string
-    get:
+  /patch:
+    patch:
       responses: {}
-  /cookies:
-    get:
+      requestBody:
+        content:
+          text/plain:
+            schema: {}
+  /post:
+    post:
       responses: {}
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema: {}
+  /put:
+    put:
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PutPutRequestBody"
+  /response-headers:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            text/html: {}
   "/status/{status}":
     parameters:
       - in: path
@@ -397,33 +453,6 @@ paths:
           type: string
     get:
       responses: {}
-  "/delay/{delay}":
-    parameters:
-      - in: path
-        name: delay
-        required: true
-        schema:
-          type: string
-    get:
-      responses:
-        "200":
-          description: 200 response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetDelayDelay200ResponseBody"
-  /encoding/utf8:
-    get:
-      responses: {}
-  /gzip:
-    get:
-      responses: {}
-  /deflate:
-    get:
-      responses: {}
-  /ip:
-    get:
-      responses: {}
   "/time/{time}":
     parameters:
       - in: path
@@ -439,24 +468,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetTimeTime200ResponseBody"
-  /get/hello:
-    get:
-      responses: {}
-  /put:
-    put:
-      responses: {}
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/PutPutRequestBody"
-  /post:
-    post:
-      responses: {}
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema: {}
   /transform/collection:
     post:
       responses:
@@ -471,20 +482,6 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/PostTransformCollectionRequestBody"
-  /delete:
-    delete:
-      responses: {}
-      requestBody:
-        content:
-          text/plain:
-            schema: {}
-  /patch:
-    patch:
-      responses: {}
-      requestBody:
-        content:
-          text/plain:
-            schema: {}
 components:
   schemas:
     GetBooks200ResponseBody:
@@ -497,6 +494,35 @@ components:
             properties:
               id:
                 type: string
+    GetAuthHawk200ResponseBody:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+      required:
+        - status
+        - message
+    GetDelayDelay200ResponseBody:
+      type: object
+      properties:
+        delay:
+          type: string
+      required:
+        - delay
+    Get200ResponseBody:
+      type: object
+      properties:
+        cookies:
+          type: object
+          properties:
+            foo2:
+              type: string
+          required:
+            - foo2
+      required:
+        - cookies
     GetGet200ResponseBody:
       type: object
       properties:
@@ -583,28 +609,6 @@ components:
             - x-forwarded-proto
       required:
         - headers
-    Get200ResponseBody:
-      type: object
-      properties:
-        cookies:
-          type: object
-          properties:
-            foo2:
-              type: string
-          required:
-            - foo2
-      required:
-        - cookies
-    GetAuthHawk200ResponseBody:
-      type: object
-      properties:
-        status:
-          type: string
-        message:
-          type: string
-      required:
-        - status
-        - message
     GetOauth1401ResponseBody:
       type: object
       properties:
@@ -627,27 +631,6 @@ components:
         - normalized_param_string
         - base_string
         - signing_key
-    GetStatusStatus200ResponseBody:
-      type: object
-      properties:
-        status:
-          type: number
-      required:
-        - status
-    GetDelayDelay200ResponseBody:
-      type: object
-      properties:
-        delay:
-          type: string
-      required:
-        - delay
-    GetTimeTime200ResponseBody:
-      type: object
-      properties:
-        valid:
-          type: boolean
-      required:
-        - valid
     PutPutRequestBody:
       type: array
       items:
@@ -686,6 +669,20 @@ components:
           authenticated:
             type: boolean
         required: []
+    GetStatusStatus200ResponseBody:
+      type: object
+      properties:
+        status:
+          type: number
+      required:
+        - status
+    GetTimeTime200ResponseBody:
+      type: object
+      properties:
+        valid:
+          type: boolean
+      required:
+        - valid
     PostTransformCollectionRequestBody:
       type: object
       properties:
@@ -849,10 +846,10 @@ exports[`capture with requests update behavior handle server path prefixes in sp
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
-GET /books
-GET /books/{book}
 GET /authors
+GET /books/{book}
 POST /books/{book}
+GET /books
 "
 `;
 
@@ -875,6 +872,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetBooks200ResponseBody"
+  /authors:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAuthors200ResponseBody"
   "/books/{book}":
     parameters:
       - in: path
@@ -903,67 +909,15 @@ paths:
           application/json;charset=UTF-8:
             schema:
               $ref: "#/components/schemas/PostBooksBookRequestBody"
-  /authors:
-    get:
-      responses:
-        "200":
-          description: 200 response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetAuthors200ResponseBody"
 components:
   schemas:
     GetBooks200ResponseBody:
-      $ref: "#/components/schemas/GetBooks200ResponseBody_1"
-    GetBooks200ResponseBody_1:
       type: object
       properties:
         books:
           type: array
           items:
-            type: object
-            properties:
-              id:
-                type: string
-              name:
-                type: string
-              author_id:
-                type: string
-              price:
-                type: number
-              created_at:
-                type: string
-              updated_at:
-                type: string
-            required:
-              - name
-              - author_id
-              - price
-              - created_at
-              - updated_at
-    GetBooksBook200ResponseBody:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        author_id:
-          type: string
-        price:
-          type: number
-        created_at:
-          type: string
-        updated_at:
-          type: string
-      required:
-        - id
-        - name
-        - author_id
-        - price
-        - created_at
-        - updated_at
+            $ref: "#/components/schemas/GetBooksBook200ResponseBody"
     GetAuthors200ResponseBody:
       type: object
       properties:
@@ -987,6 +941,28 @@ components:
               - updated_at
       required:
         - authors
+    GetBooksBook200ResponseBody:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        author_id:
+          type: string
+        price:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+        - id
+        - name
+        - author_id
+        - price
+        - created_at
+        - updated_at
     PostBooksBookRequestBody:
       type: object
       properties:
@@ -1015,8 +991,8 @@ GET /books
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
-GET /books/{book}
 GET /authors
+GET /books/{book}
 POST /books/{book}
 "
 `;
@@ -1037,6 +1013,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetBooks200ResponseBody"
+  /authors:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAuthors200ResponseBody"
   "/books/{book}":
     parameters:
       - in: path
@@ -1065,15 +1050,6 @@ paths:
           application/json;charset=UTF-8:
             schema:
               $ref: "#/components/schemas/PostBooksBookRequestBody"
-  /authors:
-    get:
-      responses:
-        "200":
-          description: 200 response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetAuthors200ResponseBody"
 components:
   schemas:
     GetBooks200ResponseBody:
@@ -1102,28 +1078,6 @@ components:
               - price
               - created_at
               - updated_at
-    GetBooksBook200ResponseBody:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        author_id:
-          type: string
-        price:
-          type: number
-        created_at:
-          type: string
-        updated_at:
-          type: string
-      required:
-        - id
-        - name
-        - author_id
-        - price
-        - created_at
-        - updated_at
     GetAuthors200ResponseBody:
       type: object
       properties:
@@ -1147,6 +1101,28 @@ components:
               - updated_at
       required:
         - authors
+    GetBooksBook200ResponseBody:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        author_id:
+          type: string
+        price:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+        - id
+        - name
+        - author_id
+        - price
+        - created_at
+        - updated_at
     PostBooksBookRequestBody:
       type: object
       properties:
@@ -1226,6 +1202,8 @@ exports[`capture with requests update behavior handles update in other file 3`] 
 
 exports[`capture with requests update behavior respects x-optic-path-ignore 1`] = `
 "Generating traffic to send to server
+GET /authors
+  [32m✓ [39m200 response
 GET /books
   [32m✓ [39m200 response
   [32m[200 response body] 'name' (/properties/books/items/properties/name) has been added[39m
@@ -1260,6 +1238,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetBooks200ResponseBody"
+  /authors:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                type: object
   "/books/{book}":
     parameters:
       - in: path
@@ -1358,8 +1345,8 @@ GET /books
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
-GET /books/{book}
 GET /authors
+GET /books/{book}
 POST /books/{book}
 "
 `;
@@ -1380,6 +1367,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetBooks200ResponseBody"
+  /authors:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAuthors200ResponseBody"
   "/books/{book}":
     parameters:
       - in: path
@@ -1408,15 +1404,6 @@ paths:
           application/json;charset=UTF-8:
             schema:
               $ref: "#/components/schemas/PostBooksBookRequestBody"
-  /authors:
-    get:
-      responses:
-        "200":
-          description: 200 response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetAuthors200ResponseBody"
 components:
   schemas:
     GetBooks200ResponseBody:
@@ -1449,28 +1436,6 @@ components:
               - name
               - created_at
               - updated_at
-    GetBooksBook200ResponseBody:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        author_id:
-          type: string
-        price:
-          type: number
-        created_at:
-          type: string
-        updated_at:
-          type: string
-      required:
-        - id
-        - name
-        - author_id
-        - price
-        - created_at
-        - updated_at
     GetAuthors200ResponseBody:
       type: object
       properties:
@@ -1494,6 +1459,28 @@ components:
               - updated_at
       required:
         - authors
+    GetBooksBook200ResponseBody:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        author_id:
+          type: string
+        price:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+        - id
+        - name
+        - author_id
+        - price
+        - created_at
+        - updated_at
     PostBooksBookRequestBody:
       type: object
       properties:
@@ -1580,6 +1567,11 @@ components:
 
 exports[`capture with requests verify behavior verifies spec with endpoint specificity 1`] = `
 "Generating traffic to send to server
+GET /books/status
+  [32m✓ [39m200 response
+GET /books/{bookId}
+  [31m× [39m200 response
+  [31m[200 response body] 'price' (/properties/price) is not documented[39m
 GET /books
   [31m× [39m200 response
   [31m[200 response body] 'name' (/properties/books/items/properties/name) is not documented[39m
@@ -1587,11 +1579,6 @@ GET /books
   [31m[200 response body] 'price' (/properties/books/items/properties/price) is not documented[39m
   [31m[200 response body] 'created_at' (/properties/books/items/properties/created_at) is not documented[39m
   [31m[200 response body] 'updated_at' (/properties/books/items/properties/updated_at) is not documented[39m
-GET /books/status
-  [32m✓ [39m200 response
-GET /books/{bookId}
-  [31m× [39m200 response
-  [31m[200 response body] 'price' (/properties/price) is not documented[39m
 
 100.0% coverage of your documented operations. 2 requests did not match a documented path (6 total requests).
 6 diffs detected in documented operations

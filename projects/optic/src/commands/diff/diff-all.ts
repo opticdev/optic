@@ -100,10 +100,13 @@ comma separated values (e.g. "**/*.yml,**/*.json")'
     .option('--upload', 'upload specs', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
-    .option('--generated', 'use with --upload with a generated spec', false)
+    .option(
+      '--generated',
+      "[deprecated] Optic doesn't make a difference between generated and non generated specifications anymore"
+    )
     .option(
       '--fail-on-untracked-openapi',
-      'fail with exit code 1 if there are detected untracked apis',
+      '[deprecated] all matching APIs are now added by default',
       false
     )
     .action(errorHandler(getDiffAllAction(config), { command: 'diff-all' }));
@@ -117,13 +120,13 @@ type DiffAllActionOptions = {
   ignore?: string;
   headTag?: string;
   check: boolean;
-  generated: boolean;
   web: boolean;
   upload: boolean;
   json: boolean;
   validation: 'strict' | 'loose';
   failOnUntrackedOpenapi: boolean;
   severity: 'info' | 'warn' | 'error';
+  generated?: boolean;
 };
 
 type CandidateMap = Map<
@@ -272,49 +275,47 @@ async function computeAll(
     });
   }
 
-  if (options.generated) {
-    const generatedDetails = await getDetailsForGeneration(config);
-    if (generatedDetails) {
-      const { web_url, organization_id, default_branch, default_tag } =
-        generatedDetails;
+  const generatedDetails = await getDetailsForGeneration(config);
+  if (generatedDetails) {
+    const { web_url, organization_id, default_branch, default_tag } =
+      generatedDetails;
 
-      const pathToUrl: Record<string, string | null> = {};
-      for (const [p, comparison] of comparisons.entries()) {
-        if (!comparison.opticUrl) {
-          pathToUrl[p] = null;
-        }
+    const pathToUrl: Record<string, string | null> = {};
+    for (const [p, comparison] of comparisons.entries()) {
+      if (!comparison.opticUrl) {
+        pathToUrl[p] = null;
       }
-      let apis: (Types.Api | null)[] = [];
-      const chunks = chunk(Object.keys(pathToUrl), 20);
-      for (const chunk of chunks) {
-        const { apis: apiChunk } = await config.client.getApis(chunk, web_url);
-        apis.push(...apiChunk);
-      }
+    }
+    let apis: (Types.Api | null)[] = [];
+    const chunks = chunk(Object.keys(pathToUrl), 20);
+    for (const chunk of chunks) {
+      const { apis: apiChunk } = await config.client.getApis(chunk, web_url);
+      apis.push(...apiChunk);
+    }
 
-      for (const api of apis) {
-        if (api) {
-          pathToUrl[api.path] = getApiUrl(
-            config.client.getWebBase(),
-            api.organization_id,
-            api.api_id
-          );
-        }
+    for (const api of apis) {
+      if (api) {
+        pathToUrl[api.path] = getApiUrl(
+          config.client.getWebBase(),
+          api.organization_id,
+          api.api_id
+        );
       }
+    }
 
-      for (let [path, url] of Object.entries(pathToUrl)) {
-        if (!url) {
-          const api = await config.client.createApi(organization_id, {
-            name: path,
-            path,
-            web_url: web_url,
-            default_branch,
-            default_tag,
-          });
-          url = getApiUrl(config.client.getWebBase(), organization_id, api.id);
-        }
-        const comparison = comparisons.get(path);
-        if (comparison) comparison.opticUrl = url;
+    for (let [path, url] of Object.entries(pathToUrl)) {
+      if (!url) {
+        const api = await config.client.createApi(organization_id, {
+          name: path,
+          path,
+          web_url: web_url,
+          default_branch,
+          default_tag,
+        });
+        url = getApiUrl(config.client.getWebBase(), organization_id, api.id);
       }
+      const comparison = comparisons.get(path);
+      if (comparison) comparison.opticUrl = url;
     }
   }
 
@@ -323,10 +324,6 @@ async function computeAll(
       !!from && /^cloud:/.test(from) ? from.replace(/^cloud:/, '') : null;
 
     const specDetails = getApiFromOpticUrl(opticUrl);
-
-    if (!specDetails && options.failOnUntrackedOpenapi) {
-      process.exitCode = 1;
-    }
 
     if (!specDetails && (options.upload || cloudTag)) {
       logger.debug(
@@ -360,7 +357,6 @@ async function computeAll(
       toParseResults = await loadSpec(to, config, {
         strict: options.validation === 'strict',
         denormalize: true,
-        includeUncommittedChanges: options.generated,
       });
     } catch (e) {
       allWarnings.unparseableToSpec.push({
@@ -609,6 +605,20 @@ function applyGlobFilter(
 
 const getDiffAllAction =
   (config: OpticCliConfig) => async (options: DiffAllActionOptions) => {
+    if (options.generated) {
+      logger.warn(
+        chalk.yellow.bold(
+          `the --generated option is deprecated, diff-all works without the --generated option`
+        )
+      );
+    }
+    if (options.failOnUntrackedOpenapi) {
+      logger.warn(
+        chalk.yellow.bold(
+          `the --fail-on-untracked-openapi option is deprecated, all matching APIs are now tracked by default`
+        )
+      );
+    }
     if (config.vcs?.type !== VCS.Git) {
       logger.error(
         `Error: optic diff-all must be called from a git repository.`
