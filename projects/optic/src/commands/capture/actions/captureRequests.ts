@@ -115,10 +115,6 @@ async function waitForServer(
   targetUrl: string,
   spinner?: ora.Ora
 ) {
-  // since ready_endpoint is not required always wait one interval. without ready_endpoint,
-  // ready_interval must be at least the time it takes to start the server.
-  await wait(readyInterval);
-
   //
   // wait for the app to be ready
   //
@@ -354,7 +350,11 @@ export async function captureRequestsFromProxy(
         serverDir,
         spinner
       );
-      // If we don't bail out (i.e. the server is still running), we need the promise to be passed down to the next request
+
+      // since ready_endpoint is not required always wait one interval. without ready_endpoint,
+      // ready_interval must be at least the time it takes to start the server.
+      await wait(readyInterval);
+
       if (captureConfig.server.ready_endpoint) {
         if (spinner) spinner.text = 'Waiting for server to come online...';
         await waitForServer(
