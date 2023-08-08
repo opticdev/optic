@@ -77,7 +77,7 @@ function startApp(
   const cmd = commandSplitter(command);
   let app: ChildProcessWithoutNullStreams;
   try {
-    app = spawn(cmd.cmd, cmd.args, { detached: true, cwd: dir });
+    app = spawn(cmd.cmd, cmd.args, { detached: true, cwd: dir, shell: true });
   } catch (e) {
     throw new UserError({ initialError: e as Error });
   }
