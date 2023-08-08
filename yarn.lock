@@ -3717,6 +3717,7 @@ __metadata:
     commander: ^11.0.0
     conf: ^10.2.0
     dotenv: ^16.0.3
+    exit-hook: ^2.2.1
     fast-deep-equal: ^3.1.3
     fast-glob: ^3.2.12
     fs-extra: ^11.1.0
@@ -5908,6 +5909,13 @@ __metadata:
     signal-exit: ^3.0.7
     strip-final-newline: ^3.0.0
   checksum: 21fa46fc69314ace4068cf820142bdde5b643a5d89831c2c9349479c1555bff137a291b8e749e7efca36535e4e0a8c772c11008ca2e84d2cbd6ca141a3c8f937
+  languageName: node
+  linkType: hard
+
+"exit-hook@npm:^2.2.1":
+  version: 2.2.1
+  resolution: "exit-hook@npm:2.2.1"
+  checksum: 1aa8359b6c5590a012d6cadf9cd337d227291bfcaa8970dc585d73dffef0582af34ed8ac56f6164f8979979fb417cff1eb49f03cdfd782f9332a30c773f0ada0
   languageName: node
   linkType: hard
 
