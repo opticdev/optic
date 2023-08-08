@@ -610,7 +610,11 @@ function applyGlobFilter(
 const getDiffAllAction =
   (config: OpticCliConfig) => async (options: DiffAllActionOptions) => {
     if (options.generated) {
-      logger.warn(chalk.yellow.bold(`the --generated option is deprecated`));
+      logger.warn(
+        chalk.yellow.bold(
+          `the --generated option is deprecated, diff works without the --generated option`
+        )
+      );
     }
     if (config.vcs?.type !== VCS.Git) {
       logger.error(
