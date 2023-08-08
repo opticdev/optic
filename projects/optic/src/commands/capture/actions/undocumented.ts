@@ -4,14 +4,12 @@ import { matchPathPattern } from '../../../utils/pathPatterns';
 import { minimatch } from 'minimatch';
 import { logger } from '../../../logger';
 import { ParseResult } from '../../../utils/spec-loaders';
-import { getIgnorePaths } from '../../../utils/specs';
 
 import {
   CapturedInteraction,
   CapturedInteractions,
 } from '../sources/captured-interactions';
 import { InferPathStructure } from '../operations/infer-path-structure';
-import { specToPaths } from '../operations/queries';
 import {
   generateEndpointSpecPatches,
   generatePathAndMethodSpecPatches,
@@ -26,7 +24,6 @@ type MethodMap = Map<string, { add: Set<string>; ignore: Set<string> }>;
 
 export async function promptUserForPathPattern(
   interactions: CapturedInteractions,
-  spec: OpenAPIV3.Document,
   inferredPathStructure: InferPathStructure,
   options: { update: 'interactive' | 'automatic' }
 ) {
@@ -43,19 +40,7 @@ export async function promptUserForPathPattern(
       ])
   );
 
-  const ignorePaths = getIgnorePaths(spec);
   const newIgnorePaths: { method: string; path: string }[] = [];
-
-  for (const ignore of ignorePaths) {
-    if (!ignore.method) {
-      for (const [, methodNode] of methodMap) {
-        methodNode.ignore.add(ignore.path);
-      }
-    } else if (ignore.method) {
-      const maybeNode = methodMap.get(ignore.method);
-      maybeNode?.ignore.add(ignore.path);
-    }
-  }
 
   for await (const interaction of interactions) {
     const { path, method } = interaction.request;

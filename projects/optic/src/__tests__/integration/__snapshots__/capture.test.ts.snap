@@ -1202,6 +1202,8 @@ exports[`capture with requests update behavior handles update in other file 3`] 
 
 exports[`capture with requests update behavior respects x-optic-path-ignore 1`] = `
 "Generating traffic to send to server
+GET /authors
+  [32m✓ [39m200 response
 GET /books
   [32m✓ [39m200 response
   [32m[200 response body] 'name' (/properties/books/items/properties/name) has been added[39m
@@ -1236,6 +1238,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetBooks200ResponseBody"
+  /authors:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                type: object
   "/books/{book}":
     parameters:
       - in: path

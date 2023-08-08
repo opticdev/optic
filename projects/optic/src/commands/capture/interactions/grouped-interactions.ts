@@ -12,6 +12,8 @@ import { HttpArchive } from '../sources/har';
 import { OperationQueries, specToOperations } from '../operations/queries';
 import { getEndpointId } from '../../../utils/id';
 import { logger } from '../../../logger';
+import { getIgnorePaths } from '../../../utils/specs';
+import { minimatch } from 'minimatch';
 
 export async function* handleServerPathPrefix(
   interactions: CapturedInteractions,
@@ -52,8 +54,47 @@ export async function* handleServerPathPrefix(
         };
       } else {
         // Otherwise this is a request we should ignore since it doesn't match the base path for the hostBaseMap
+        logger.debug(
+          `Skipping interaction ${interaction.request.path} ${interaction.request.method} because path does not start with the hostname base: ${base}`
+        );
         continue;
       }
+    } else {
+      yield interaction;
+    }
+  }
+}
+
+export async function* filterIgnoredInteractions(
+  interactions: CapturedInteractions,
+  spec: OpenAPIV3.Document
+) {
+  const ignorePaths = getIgnorePaths(spec);
+  const methodMap: Map<string, Set<string>> = new Map(
+    Object.values(OpenAPIV3.HttpMethods)
+      .filter((method) => method !== 'options' && method !== 'head')
+      .map((method) => [method, new Set()])
+  );
+
+  for (const ignore of ignorePaths) {
+    if (ignore.method) {
+      methodMap.get(ignore.method)?.add(ignore.path);
+    } else {
+      for (const [, ignoreSet] of methodMap) {
+        ignoreSet.add(ignore.path);
+      }
+    }
+  }
+
+  for await (const interaction of interactions) {
+    const ignorePaths = methodMap.get(interaction.request.method) ?? new Set();
+    const ignoreMatch = [...ignorePaths.values()].find((p) =>
+      minimatch(interaction.request.path, p)
+    );
+    if (ignoreMatch) {
+      logger.debug(
+        `Skipping interaction ${interaction.request.path} ${interaction.request.method} because path matched the ignore pattern ${ignoreMatch}`
+      );
     } else {
       yield interaction;
     }
@@ -223,7 +264,10 @@ export class GroupedCaptures {
         yield {
           endpoint: node.endpoint,
           interactions: handleServerPathPrefix(
-            this.getInteractionsIterator(node),
+            filterIgnoredInteractions(
+              this.getInteractionsIterator(node),
+              this.spec
+            ),
             this.spec
           ),
         };
@@ -233,7 +277,10 @@ export class GroupedCaptures {
 
   getUndocumentedInteractions(): AsyncIterable<CapturedInteraction> {
     return handleServerPathPrefix(
-      this.getInteractionsIterator(this.unmatched),
+      filterIgnoredInteractions(
+        this.getInteractionsIterator(this.unmatched),
+        this.spec
+      ),
       this.spec
     );
   }
