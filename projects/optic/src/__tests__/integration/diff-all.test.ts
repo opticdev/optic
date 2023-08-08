@@ -231,28 +231,4 @@ describe('diff-all', () => {
       normalizeWorkspace(workspace, sanitizeOutput(combined))
     ).toMatchSnapshot();
   });
-
-  test('diff all in --generated', async () => {
-    const workspace = await setupWorkspace('diff-all/cloud-diff', {
-      repo: true,
-      commit: true,
-    });
-
-    await run(
-      `sed -i.bak 's/string/number/' spec-no-url.json spec-no-url.json`,
-      false,
-      workspace
-    );
-    process.env.OPTIC_TOKEN = '123';
-
-    const { combined, code } = await runOptic(
-      workspace,
-      'diff-all --compare-from cloud:main --check --upload --generated'
-    );
-
-    expect(code).toBe(1);
-    expect(
-      normalizeWorkspace(workspace, sanitizeOutput(combined))
-    ).toMatchSnapshot();
-  });
 });

@@ -1,9 +1,17 @@
 import prompts from 'prompts';
 import { OpticBackendClient } from '../client';
 
+function isInteractive() {
+  return (
+    process.stdout?.isTTY &&
+    process.env.TERM !== 'dumb' &&
+    !('CI' in process.env)
+  );
+}
+
 export async function getOrganizationFromToken(
   client: OpticBackendClient,
-  message: string | false
+  message: string
 ): Promise<
   | {
       ok: true;
@@ -18,7 +26,7 @@ export async function getOrganizationFromToken(
 
   const { organizations } = await client.getTokenOrgs();
   if (organizations.length > 1) {
-    if (message) {
+    if (isInteractive()) {
       const response = await prompts(
         {
           type: 'select',
@@ -33,7 +41,11 @@ export async function getOrganizationFromToken(
       );
       org = organizations.find((o) => o.id === response.orgId)!;
     } else {
-      org = organizations[0];
+      return {
+        ok: false,
+        error:
+          "Authenticated personal access token can access multiple organizations and Optic didn't know which one was the right one. Use an organization token to disambiguate in non TTY environments.",
+      };
     }
   } else if (organizations.length === 0) {
     process.exitCode = 1;

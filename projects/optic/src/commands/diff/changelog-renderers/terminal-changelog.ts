@@ -369,13 +369,6 @@ export function* terminalChangelog(
       sourcemapReaders,
       options
     );
-
-  const otherEndpoints = countUnusedEndpoints(specs.to.jsonLike, groupedDiffs);
-  if (otherEndpoints > 0 && Object.keys(groupedDiffs.endpoints).length > 0)
-    yield `...and ${otherEndpoints} other ${
-      otherEndpoints === 1 ? 'operation' : 'operations'
-    }`;
-  yield '';
 }
 
 function* getEndpointLogs(
@@ -455,7 +448,6 @@ function* getEndpointLogs(
       )
     );
   }
-  yield '';
 }
 
 function* getResponseChangeLogs(
@@ -472,7 +464,7 @@ function* getResponseChangeLogs(
 ) {
   const label = `- response ${chalk.bold(statusCode)}:`;
   const change = typeofV3Diffs(response.diffs);
-  const shouldRenderChildDiffs = !(change && change !== 'removed');
+  const shouldRenderChildDiffs = !change || change === 'changed';
 
   if (
     change ||

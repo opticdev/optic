@@ -174,10 +174,7 @@ export async function loadRaw(
 
 async function parseSpecAndDereference(
   filePathOrRef: string | undefined,
-  config: OpticCliConfig,
-  options: {
-    includeUncommittedChanges: boolean;
-  } = { includeUncommittedChanges: false }
+  config: OpticCliConfig
 ): Promise<ParseResult> {
   const workingDir = process.cwd();
   const input = parseOpticRef(filePathOrRef);
@@ -253,11 +250,7 @@ async function parseSpecAndDereference(
         path.resolve(workingDir, input.filePath)
       );
 
-      if (
-        config.vcs?.type === VCS.Git &&
-        (options.includeUncommittedChanges ||
-          !specHasUncommittedChanges(parseResult.sourcemap, config.vcs.diffSet))
-      ) {
+      if (config.vcs?.type === VCS.Git) {
         const commitMeta = await Git.commitMeta(config.vcs.sha);
 
         context = {
@@ -305,12 +298,9 @@ export const loadSpec = async (
   options: {
     strict: boolean;
     denormalize: boolean;
-    includeUncommittedChanges?: boolean;
   }
 ): Promise<ParseResult> => {
-  const file = await parseSpecAndDereference(opticRef, config, {
-    includeUncommittedChanges: options.includeUncommittedChanges ?? false,
-  });
+  const file = await parseSpecAndDereference(opticRef, config);
 
   return validateAndDenormalize(file, options);
 };
@@ -323,7 +313,6 @@ export const parseFilesFromRef = async (
   options: {
     denormalize: boolean;
     headStrict: boolean;
-    includeUncommittedChanges: boolean;
   }
 ): Promise<{
   baseFile: ParseResult;
@@ -358,10 +347,7 @@ export const parseFilesFromRef = async (
     }),
     headFile: await parseSpecAndDereference(
       existsOnHead ? absolutePath : undefined,
-      config,
-      {
-        includeUncommittedChanges: options.includeUncommittedChanges,
-      }
+      config
     ).then((file) => {
       return validateAndDenormalize(file, {
         denormalize: options.denormalize,
@@ -379,44 +365,40 @@ export const parseFilesFromCloud = async (
   options: {
     denormalize: boolean;
     headStrict: boolean;
-    generated: boolean;
   }
 ) => {
   const headFile = await loadSpec(filePath, config, {
     denormalize: options.denormalize,
     strict: options.headStrict,
-    includeUncommittedChanges: options.generated,
   });
 
   let specDetails = getApiFromOpticUrl(headFile.jsonLike[OPTIC_URL_KEY]);
 
-  if (options.generated) {
-    const relativePath = path.relative(config.root, path.resolve(filePath));
-    const generatedDetails = await getDetailsForGeneration(config);
-    if (generatedDetails) {
-      const { web_url, organization_id, default_branch, default_tag } =
-        generatedDetails;
+  const relativePath = path.relative(config.root, path.resolve(filePath));
+  const generatedDetails = await getDetailsForGeneration(config);
+  if (generatedDetails) {
+    const { web_url, organization_id, default_branch, default_tag } =
+      generatedDetails;
 
-      const { apis } = await config.client.getApis([relativePath], web_url);
-      let url: string;
-      if (!apis[0]) {
-        const api = await config.client.createApi(organization_id, {
-          name: relativePath,
-          path: relativePath,
-          web_url: web_url,
-          default_branch,
-          default_tag,
-        });
-        url = getApiUrl(config.client.getWebBase(), organization_id, api.id);
-      } else {
-        url = getApiUrl(
-          config.client.getWebBase(),
-          organization_id,
-          apis[0].api_id
-        );
-      }
-      specDetails = getApiFromOpticUrl(url);
+    const { apis } = await config.client.getApis([relativePath], web_url);
+    let url: string;
+    if (!apis[0]) {
+      const api = await config.client.createApi(organization_id, {
+        name: relativePath,
+        path: relativePath,
+        web_url: web_url,
+        default_branch,
+        default_tag,
+      });
+      url = getApiUrl(config.client.getWebBase(), organization_id, api.id);
+    } else {
+      url = getApiUrl(
+        config.client.getWebBase(),
+        organization_id,
+        apis[0].api_id
+      );
     }
+    specDetails = getApiFromOpticUrl(url);
   }
 
   if (!specDetails) {
@@ -437,14 +419,4 @@ ${chalk.gray(`Get started by running 'optic api add ${filePath}'`)}`
     headFile,
     specDetails,
   };
-};
-
-export const specHasUncommittedChanges = (
-  sourcemap: JsonSchemaSourcemap,
-  diffSet: Set<string>
-): boolean => {
-  // resolve absolute paths - in this case, if the path refers to a url or git ref, we don't care about it
-  // since its outside of the current working directory
-  const specFiles = sourcemap.files.map((f) => path.resolve(f.path));
-  return specFiles.some((f) => diffSet.has(f));
 };

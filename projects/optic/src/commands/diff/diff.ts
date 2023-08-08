@@ -23,7 +23,7 @@ import { logger } from '../../logger';
 import { errorHandler } from '../../error-handler';
 import path from 'path';
 import { OPTIC_URL_KEY } from '../../constants';
-import { getApiFromOpticUrl } from '../../utils/cloud-urls';
+import { getApiFromOpticUrl, getOpticUrlDetails } from '../../utils/cloud-urls';
 import * as Git from '../../utils/git-utils';
 import * as GitCandidates from '../api/git-get-file-candidates';
 import stableStringify from 'json-stable-stringify';
@@ -38,13 +38,13 @@ type DiffActionOptions = {
   web: boolean;
   upload: boolean;
   json: boolean;
-  generated: boolean;
   standard?: string;
   ruleset?: string;
   headTag?: string;
   validation: 'strict' | 'loose';
   severity: 'info' | 'warn' | 'error';
   lastChange: boolean;
+  generated?: boolean;
 };
 
 const description = `run a diff between two API specs`;
@@ -113,7 +113,10 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     .option('--upload', 'upload run to cloud', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
     .option('--json', 'output as json', false)
-    .option('--generated', 'use with --upload with a generated spec', false)
+    .option(
+      '--generated',
+      "[deprecated] Optic doesn't make a difference between generated and non generated specifications anymore"
+    )
     .option('--last-change', 'find the last change for this spec', false)
     .action(errorHandler(getDiffAction(config), { command: 'diff' }));
 };
@@ -135,12 +138,10 @@ const getHeadAndLastChanged = async (
     let baseFile = await loadSpec('null:', config, {
       strict: false,
       denormalize: true,
-      includeUncommittedChanges: options.generated,
     });
     const headFile = await loadSpec(file, config, {
       strict: options.validation === 'strict',
       denormalize: true,
-      includeUncommittedChanges: options.generated,
     });
     const stableSpecString = stableStringify(headFile.jsonLike);
     const headChecksum = computeChecksumForAws(stableSpecString);
@@ -153,7 +154,6 @@ const getHeadAndLastChanged = async (
         {
           strict: false,
           denormalize: true,
-          includeUncommittedChanges: options.generated,
         }
       );
       const stableSpecString = stableStringify(baseFileForSha.jsonLike);
@@ -165,11 +165,16 @@ const getHeadAndLastChanged = async (
       }
     }
 
-    const opticUrl: string | null =
+    const opticUrl =
       headFile.jsonLike[OPTIC_URL_KEY] ??
       baseFile.jsonLike[OPTIC_URL_KEY] ??
-      null;
-    const specDetails = opticUrl ? getApiFromOpticUrl(opticUrl) : null;
+      undefined;
+
+    const specDetails = await getOpticUrlDetails(config, {
+      filePath: path.relative(config.root, path.resolve(file)),
+      opticUrl,
+    });
+
     return {
       specs: [baseFile, headFile, specDetails],
       meta: { sha: shaWithChange },
@@ -192,12 +197,10 @@ const getBaseAndHeadFromFiles = async (
       loadSpec(file1, config, {
         strict: options.validation === 'strict',
         denormalize: true,
-        includeUncommittedChanges: options.generated,
       }),
       loadSpec(file2, config, {
         strict: options.validation === 'strict',
         denormalize: true,
-        includeUncommittedChanges: options.generated,
       }),
     ]);
     const opticUrl: string | null =
@@ -229,7 +232,6 @@ const getBaseAndHeadFromFileAndBase = async (
         {
           denormalize: true,
           headStrict: options.validation === 'strict',
-          generated: options.generated,
         }
       );
       return [baseFile, headFile, specDetails];
@@ -242,7 +244,6 @@ const getBaseAndHeadFromFileAndBase = async (
         {
           denormalize: true,
           headStrict: options.validation === 'strict',
-          includeUncommittedChanges: options.generated,
         }
       );
       const opticUrl: string | null =
@@ -290,6 +291,9 @@ const getDiffAction =
     file2: string | undefined,
     options: DiffActionOptions
   ) => {
+    if (options.generated) {
+      logger.warn(chalk.yellow.bold(`the --generated option is deprecated`));
+    }
     if (options.json) {
       // For json output we only want to render json
       logger.setLevel('silent');
@@ -301,16 +305,6 @@ const getDiffAction =
         )
       );
       return;
-    }
-
-    if (!options.web && !options.json && !config.isInCi) {
-      logger.info(
-        chalk.gray(
-          `Rerun this command with the ${chalk.whiteBright(
-            '--web'
-          )} flag to open a visual changelog your browser`
-        )
-      );
     }
 
     if (options.ruleset && !options.standard) {
@@ -396,8 +390,6 @@ const getDiffAction =
       specUrl = uploadResults?.headSpecUrl ?? null;
       maybeChangelogUrl = uploadResults?.changelogUrl ?? null;
     }
-    const hasOpticUrl = headParseResult.jsonLike['x-optic-url'];
-
     if (options.json) {
       console.log(
         JSON.stringify(
@@ -411,8 +403,6 @@ const getDiffAction =
       for (const warning of diffResult.warnings) {
         logger.warn(warning);
       }
-
-      logger.info('');
 
       let sourcemapOptions: SourcemapOptions = {
         ciProvider: undefined,
@@ -445,22 +435,6 @@ const getDiffAction =
       )) {
         logger.info(log);
       }
-    }
-
-    if (
-      !config.isInCi &&
-      ((!hasOpticUrl && headParseResult.from === 'file') ||
-        headParseResult.from === 'git')
-    ) {
-      const relativePath = path.relative(
-        process.cwd(),
-        headParseResult.sourcemap.rootFilePath
-      );
-      logger.info(
-        chalk.blue.bold(
-          `See the full history of this API by running "optic api add ${relativePath} --history-depth 0"`
-        )
-      );
     }
 
     if (config.isInCi && !options.upload) renderCloudSetup();
@@ -516,6 +490,12 @@ const getDiffAction =
         {
           severity: textToSev(options.severity),
         }
+      );
+    } else if (!options.web && !options.json) {
+      logger.info(
+        chalk.blue(
+          `Rerun this command with the --web flag to view the detailed changes in your browser`
+        )
       );
     }
 

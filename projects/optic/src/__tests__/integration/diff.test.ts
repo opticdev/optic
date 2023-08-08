@@ -133,7 +133,16 @@ describe('diff', () => {
 
   describe('with mock server', () => {
     setupTestServer(async ({ url, method }) => {
-      if (method === 'GET' && /\/api\/rulesets/.test(url)) {
+      if (method === 'GET' && /\/api\/token\/orgs/.test(url)) {
+        return JSON.stringify({
+          organizations: [
+            {
+              id: 'abc',
+              name: 'def',
+            },
+          ],
+        });
+      } else if (method === 'GET' && /\/api\/rulesets/.test(url)) {
         return JSON.stringify({
           rulesets: [
             {
@@ -189,6 +198,10 @@ paths: {}`;
           id: 'run-id',
           specUrl: `${process.env.BWTS_HOST_OVERRIDE}/spec`,
           sourcemapUrl: `${process.env.BWTS_HOST_OVERRIDE}/sourcemap`,
+        });
+      } else if (method === 'GET' && /\/api\/apis/.test(url)) {
+        return JSON.stringify({
+          apis: [],
         });
       }
       return JSON.stringify({});

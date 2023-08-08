@@ -1,19 +1,20 @@
 import { Command } from 'commander';
 import open from 'open';
 import { sanitizeGitTag } from '@useoptic/openapi-utilities';
+import path from 'path';
 
 import { OpticCliConfig, VCS } from '../../config';
-import {
-  loadSpec,
-  ParseResult,
-  specHasUncommittedChanges,
-} from '../../utils/spec-loaders';
+import { loadSpec, ParseResult } from '../../utils/spec-loaders';
 import { logger } from '../../logger';
 import { OPTIC_URL_KEY } from '../../constants';
 import * as Git from '../../utils/git-utils';
 import chalk from 'chalk';
 import { uploadSpec } from '../../utils/cloud-specs';
-import { getApiFromOpticUrl, getSpecUrl } from '../../utils/cloud-urls';
+import {
+  getApiUrl,
+  getOpticUrlDetails,
+  getSpecUrl,
+} from '../../utils/cloud-urls';
 import { errorHandler } from '../../error-handler';
 import { getTagsFromOptions, getUniqueTags } from '../../utils/tags';
 
@@ -88,51 +89,40 @@ const getSpecPushAction =
     let tagsToAdd: string[] = getTagsFromOptions(options.tag);
 
     if (config.vcs?.type === VCS.Git) {
-      if (
-        !specHasUncommittedChanges(parseResult.sourcemap, config.vcs.diffSet)
-      ) {
-        const sha = config.vcs.sha;
-        tagsToAdd.push(`git:${sha}`);
+      const sha = config.vcs.sha;
+      tagsToAdd.push(`git:${sha}`);
 
-        const branch = await Git.getCurrentBranchName();
+      const branch = await Git.getCurrentBranchName();
 
-        if (branch !== 'HEAD') {
-          tagsToAdd.push(sanitizeGitTag(`gitbranch:${branch}`));
-          logger.info(
-            `Automatically adding the git sha 'git:${sha}' and branch 'gitbranch:${branch}' as tags`
-          );
-        } else {
-          logger.info(`Automatically adding the git sha 'git:${sha}' as a tag`);
-        }
-      } else {
-        logger.info(
-          'Not automatically including any git tags because the current working directory has uncommited changes.'
-        );
+      if (branch !== 'HEAD') {
+        tagsToAdd.push(sanitizeGitTag(`gitbranch:${branch}`));
       }
     }
 
     tagsToAdd = getUniqueTags(tagsToAdd);
 
-    const opticUrl: string = parseResult.jsonLike[OPTIC_URL_KEY];
-    const specDetails = getApiFromOpticUrl(opticUrl);
+    const specDetails = await getOpticUrlDetails(config, {
+      filePath: spec_path
+        ? path.relative(config.root, path.resolve(spec_path))
+        : undefined,
+      opticUrl: parseResult.jsonLike[OPTIC_URL_KEY],
+    });
 
-    if (typeof opticUrl !== 'string') {
+    if (!specDetails) {
       logger.error(
-        `File ${spec_path} does not have an optic url. Files must be added to Optic and have an x-optic-url key before specs can be pushed up to Optic.`
-      );
-      logger.error(`${chalk.yellow('Hint: ')} Run optic api add ${spec_path}`);
-      process.exitCode = 1;
-      return;
-    } else if (!specDetails) {
-      logger.error(
-        `File ${spec_path} does not a valid. Files must be added to Optic and have an x-optic-url key that points to an uploaded spec before specs can be pushed up to Optic.`
+        `File ${spec_path} could not be associated to an Optic API. Files must be added to Optic before specs can be pushed up to Optic.`
       );
       logger.error(`${chalk.yellow('Hint: ')} Run optic api add ${spec_path}`);
       process.exitCode = 1;
       return;
     }
 
-    logger.info('');
+    const opticUrl = getApiUrl(
+      config.client.getWebBase(),
+      specDetails.orgId,
+      specDetails.apiId
+    );
+
     logger.info(
       `Uploading spec for api at ${opticUrl} ${
         tagsToAdd.length > 0 ? `with tags ${tagsToAdd.join(', ')}` : ''
