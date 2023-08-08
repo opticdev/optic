@@ -106,7 +106,7 @@ comma separated values (e.g. "**/*.yml,**/*.json")'
     )
     .option(
       '--fail-on-untracked-openapi',
-      'fail with exit code 1 if there are detected untracked apis',
+      '[deprecated] all matching APIs are now added by default',
       false
     )
     .action(errorHandler(getDiffAllAction(config), { command: 'diff-all' }));
@@ -324,10 +324,6 @@ async function computeAll(
       !!from && /^cloud:/.test(from) ? from.replace(/^cloud:/, '') : null;
 
     const specDetails = getApiFromOpticUrl(opticUrl);
-
-    if (!specDetails && options.failOnUntrackedOpenapi) {
-      process.exitCode = 1;
-    }
 
     if (!specDetails && (options.upload || cloudTag)) {
       logger.debug(
@@ -612,7 +608,14 @@ const getDiffAllAction =
     if (options.generated) {
       logger.warn(
         chalk.yellow.bold(
-          `the --generated option is deprecated, diff works without the --generated option`
+          `the --generated option is deprecated, diff-all works without the --generated option`
+        )
+      );
+    }
+    if (options.failOnUntrackedOpenapi) {
+      logger.warn(
+        chalk.yellow.bold(
+          `the --fail-on-untracked-openapi option is deprecated, all matching APIs are now tracked by default`
         )
       );
     }

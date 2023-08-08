@@ -292,7 +292,11 @@ const getDiffAction =
     options: DiffActionOptions
   ) => {
     if (options.generated) {
-      logger.warn(chalk.yellow.bold(`the --generated option is deprecated`));
+      logger.warn(
+        chalk.yellow.bold(
+          `the --generated option is deprecated, diff works without the --generated option`
+        )
+      );
     }
     if (options.json) {
       // For json output we only want to render json
