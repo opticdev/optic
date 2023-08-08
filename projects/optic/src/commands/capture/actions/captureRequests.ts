@@ -92,10 +92,11 @@ function startApp(
 
   const bailout: Bailout = {
     didBailout: false,
-    promise: new Promise((resolve, reject) => {
+    promise: new Promise((resolve) => {
       app!.on('exit', (code) => {
         bailout.didBailout = true;
-        reject(
+        // Resolve instead of reject since in cases where spawn cmd instantly fails we end up with an unhandled rejection
+        resolve(
           new UserError({
             message: `Server unexpectedly exited with error code ${code}`,
           })
@@ -154,18 +155,21 @@ async function waitForServer(
       }
       await wait(readyInterval);
     }
-    if (bailout.didBailout && !didTimeout)
-      spinner?.fail('Server unexpectedly exited');
 
     if (didTimeout)
       spinner?.fail(
         'Verify the server URL in your optic.yml is correct and your server is reachable.'
       );
 
-    resolve(null);
+    if (!bailout.didBailout) resolve(null);
   });
 
-  await Promise.race([serverReadyPromise, bailout.promise]);
+  await Promise.race([
+    serverReadyPromise,
+    bailout.promise.then((e) => {
+      throw e;
+    }),
+  ]);
 }
 
 function sendRequests(
@@ -381,7 +385,12 @@ export async function captureRequestsFromProxy(
       runRequestsPromise,
     ]);
     // Wait for either all the requests to complete (or reject), or for the app to shutdown prematurely
-    await Promise.race([bailout.promise, requestsPromises]);
+    await Promise.race([
+      bailout.promise.then((e) => {
+        throw e;
+      }),
+      requestsPromises,
+    ]);
     // catch the bailout promise rejection when we shutdown the app
     bailout.promise.catch((e) => {});
   } catch (e) {
