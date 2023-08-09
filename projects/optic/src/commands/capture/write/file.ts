@@ -45,6 +45,7 @@ export async function writePatchesToFiles(
         chalk.red.bold(`Error: Failed writing patches to ${filePath}`)
       );
       logger.debug({
+        location: 'patch files',
         error: e,
         operations: JSON.stringify(operations),
         parsed: JSON.stringify(parsed),
