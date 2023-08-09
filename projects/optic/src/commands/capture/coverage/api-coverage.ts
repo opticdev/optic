@@ -10,6 +10,7 @@ import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { computeEndpointChecksum } from '../../../utils/checksum';
 import { statusRangePattern } from '../../oas/operations';
 import { SpecPatch } from '../../oas/specs';
+import { denormalize } from '@useoptic/openapi-io';
 
 export class ApiCoverageCounter {
   coverage: ApiCoverage;
@@ -17,8 +18,11 @@ export class ApiCoverageCounter {
     this.coverage = {
       paths: {},
     };
+    const { jsonLike: denormalizedSpec } = denormalize({
+      jsonLike: JSON.parse(JSON.stringify(spec)),
+    });
 
-    Object.entries(spec.paths ?? {}).forEach(([path, methods]) => {
+    Object.entries(denormalizedSpec.paths ?? {}).forEach(([path, methods]) => {
       this.coverage.paths[path] = {};
       Object.entries(methods || {}).forEach((entry) => {
         const [method, operation] = entry as [
