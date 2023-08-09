@@ -410,10 +410,17 @@ export const parseFilesFromCloud = async (
 ${chalk.gray(`Get started by running 'optic api add ${filePath}'`)}`
     );
   }
-  const baseFile = await parseSpecAndDereference(
-    `cloud:${specDetails.apiId}@${cloudTag}`,
-    config
+  const baseFile = validateAndDenormalize(
+    await parseSpecAndDereference(
+      `cloud:${specDetails.apiId}@${cloudTag}`,
+      config
+    ),
+    {
+      denormalize: options.denormalize,
+      strict: false,
+    }
   );
+
   return {
     baseFile,
     headFile,
