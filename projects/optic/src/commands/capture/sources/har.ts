@@ -1,3 +1,6 @@
+import fsSync from 'fs';
+import path from 'path';
+import fs from 'node:fs/promises';
 import { Readable } from 'stream';
 import invariant from 'ts-invariant';
 import { withParser as pickWithParser } from 'stream-json/filters/Pick';
@@ -12,6 +15,26 @@ import { ProxyInteractions } from './proxy';
 import isUrl from 'is-url';
 import { Result, Ok, Err } from 'ts-results';
 import zlib from 'node:zlib';
+
+export async function* getHarEntriesFromFs(harPath: string) {
+  const isDir = fsSync.lstatSync(harPath).isDirectory();
+  const harPaths = isDir
+    ? await fs
+        .readdir(harPath)
+        .then((paths) =>
+          paths
+            .filter((p) => path.extname(p).toLowerCase() === '.har')
+            .map((p) => path.join(harPath, p))
+        )
+    : [harPath];
+
+  for (const harPath of harPaths) {
+    const harEntries = HarEntries.fromReadable(
+      fsSync.createReadStream(harPath)
+    );
+    yield* harEntries;
+  }
+}
 
 export interface HarEntries extends AsyncIterable<HttpArchive.Entry> {}
 export interface TryHarEntries

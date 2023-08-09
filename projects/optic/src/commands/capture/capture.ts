@@ -18,7 +18,7 @@ import { captureV1 } from '../oas/capture';
 import { getCaptureStorage } from './storage';
 import { loadSpec } from '../../utils/spec-loaders';
 import { ApiCoverageCounter } from './coverage/api-coverage';
-import { HarEntries } from './sources/har';
+import { getHarEntriesFromFs } from './sources/har';
 import {
   addIgnorePaths,
   documentNewEndpoint,
@@ -156,9 +156,7 @@ const getCaptureAction =
 
     if (options.har) {
       try {
-        const harEntries = HarEntries.fromReadable(
-          fsNonPromise.createReadStream(options.har)
-        );
+        const harEntries = getHarEntriesFromFs(options.har);
         for await (const harOrErr of harEntries) {
           if (harOrErr.ok) {
             captures.addHar(harOrErr.val);
