@@ -50,8 +50,7 @@ import {
 import { sourcemapReader } from './openapi3/implementations/openapi3/sourcemap-reader';
 
 export { defaultEmptySpec } from './openapi3/constants';
-export * from './ci-types';
-export { generateSpecResults } from './openapi3/implementations/openapi3/generate-spec-results';
+export * from './legacy-ci-types';
 export * from './openapi3/implementations/openapi3/types';
 
 export { SPEC_TAG_REGEXP, sanitizeGitTag } from './specs/tags';

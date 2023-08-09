@@ -8,7 +8,10 @@ import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { CapturedInteractions } from '../../capture/sources/captured-interactions';
 import { PostmanCollectionEntries } from '../../capture/sources/postman';
 import { HarEntries } from '../../capture/sources/har';
-import { handleServerPathPrefix } from '../../capture/interactions/grouped-interactions';
+import {
+  filterIgnoredInteractions,
+  handleServerPathPrefix,
+} from '../../capture/interactions/grouped-interactions';
 
 export async function getInteractions(
   options: { har?: string; postman?: string },
@@ -85,5 +88,8 @@ export async function getInteractions(
     );
   }
 
-  return handleServerPathPrefix(AT.merge(...sources), spec);
+  return handleServerPathPrefix(
+    filterIgnoredInteractions(AT.merge(...sources), spec),
+    spec
+  );
 }
