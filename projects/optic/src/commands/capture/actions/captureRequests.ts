@@ -1,8 +1,8 @@
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
-import fetch from 'node-fetch';
+import fetch, { FetchError } from 'node-fetch';
 import Bottleneck from 'bottleneck';
 import exitHook from 'exit-hook';
-
+import { exec } from 'child_process';
 import ora from 'ora';
 import urljoin from 'url-join';
 import { UserError } from '@useoptic/openapi-utilities';
@@ -78,9 +78,9 @@ function startApp(
   const cmd = commandSplitter(command);
   let app: ChildProcessWithoutNullStreams;
   try {
-    app = spawn(cmd.cmd, cmd.args, { detached: true, cwd: dir });
+    app = spawn(cmd.cmd, cmd.args, { detached: true, cwd: dir, shell: true });
   } catch (e) {
-    throw new UserError({ initialError: e as Error });
+    throw new UserError({ message: (e as Error).message });
   }
 
   app.stdout.on('data', (data) => {
@@ -93,10 +93,11 @@ function startApp(
 
   const bailout: Bailout = {
     didBailout: false,
-    promise: new Promise((resolve, reject) => {
+    promise: new Promise((resolve) => {
       app!.on('exit', (code) => {
         bailout.didBailout = true;
-        reject(
+        // Resolve instead of reject since in cases where spawn cmd instantly fails we end up with an unhandled rejection
+        resolve(
           new UserError({
             message: `Server unexpectedly exited with error code ${code}`,
           })
@@ -115,10 +116,6 @@ async function waitForServer(
   targetUrl: string,
   spinner?: ora.Ora
 ) {
-  // since ready_endpoint is not required always wait one interval. without ready_endpoint,
-  // ready_interval must be at least the time it takes to start the server.
-  await wait(readyInterval);
-
   //
   // wait for the app to be ready
   //
@@ -138,6 +135,7 @@ async function waitForServer(
 
   const serverReadyPromise = new Promise(async (resolve, reject) => {
     let done = false;
+
     // We need to bail out if the server shut down, otherwise we never conclude this promise chain
     while (!done && !bailout.didBailout) {
       const isReady = await checkServer();
@@ -146,17 +144,29 @@ async function waitForServer(
         done = true;
       } else if (Date.now() > now + timeout) {
         didTimeout = true;
-        reject(new UserError({ message: 'Server check timed out.' }));
+        reject(
+          new UserError({
+            message: 'The server timed out before a successful healthcheck.',
+          })
+        );
       }
       await wait(readyInterval);
     }
-    if (bailout.didBailout && !didTimeout)
-      spinner?.fail('Server unexpectedly exited');
-    if (didTimeout) spinner?.fail('Server check timed out');
-    resolve(null);
+
+    if (didTimeout)
+      spinner?.fail(
+        'Verify the server URL in your optic.yml is correct and your server is reachable.'
+      );
+
+    if (!bailout.didBailout) resolve(null);
   });
 
-  await Promise.race([serverReadyPromise, bailout.promise]);
+  await Promise.race([
+    serverReadyPromise,
+    bailout.promise.then((e) => {
+      throw e;
+    }),
+  ]);
 }
 
 function sendRequests(
@@ -199,8 +209,8 @@ function sendRequests(
     return limiter.schedule(() =>
       fetch(urljoin(proxyUrl, r.path), opts)
         .then((response) => response.json())
-        .catch((error) => {
-          loggerWhileSpinning.error(spinner, error);
+        .catch((error: FetchError) => {
+          loggerWhileSpinning.error(spinner, error.message);
         })
     );
   });
@@ -312,7 +322,12 @@ export async function captureRequestsFromProxy(
   function cleanup() {
     proxy?.stop();
     if (app && app.pid && app.exitCode === null) {
-      process.kill(-app.pid);
+      if (process.platform === 'win32') {
+        // https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/taskkill
+        exec(`taskkill /pid ${app.pid} /t /f`);
+      } else {
+        process.kill(-app.pid);
+      }
     }
   }
   const unsubscribeHook = exitHook(() => {
@@ -350,7 +365,11 @@ export async function captureRequestsFromProxy(
         serverDir,
         spinner
       );
-      // If we don't bail out (i.e. the server is still running), we need the promise to be passed down to the next request
+
+      // since ready_endpoint is not required always wait one interval. without ready_endpoint,
+      // ready_interval must be at least the time it takes to start the server.
+      await wait(readyInterval);
+
       if (captureConfig.server.ready_endpoint) {
         if (spinner) spinner.text = 'Waiting for server to come online...';
         await waitForServer(
@@ -381,12 +400,16 @@ export async function captureRequestsFromProxy(
       runRequestsPromise,
     ]);
     // Wait for either all the requests to complete (or reject), or for the app to shutdown prematurely
-    await Promise.race([bailout.promise, requestsPromises]);
+    await Promise.race([
+      bailout.promise.then((e) => {
+        throw e;
+      }),
+      requestsPromises,
+    ]);
     // catch the bailout promise rejection when we shutdown the app
     bailout.promise.catch((e) => {});
   } catch (e) {
-    spinner?.fail('Some requests failed to send');
-    logger.error(e);
+    spinner?.fail((e as Error).message);
 
     // Meaning either the requests threw an uncaught exception or the app server randomly quit
     process.exitCode = 1;

@@ -350,7 +350,6 @@ const getCaptureAction =
           endpointsToAdd,
         } = await promptUserForPathPattern(
           captures.getUndocumentedInteractions(),
-          spec.jsonLike,
           inferredPathStructure,
           { update: options.update }
         );

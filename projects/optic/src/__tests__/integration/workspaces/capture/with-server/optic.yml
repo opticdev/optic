@@ -111,6 +111,12 @@ capture:
           method: GET
         - path: /books/def
           method: GET
+        - path: /books/lqs
+          method: POST
+          data:
+            name: asd
+            price: 1
+            author_id: 6nTxAFM5ck4Hob77hGQoL
         - path: /books/asd
           method: POST
           data:
