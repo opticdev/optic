@@ -54,8 +54,8 @@ const getCiSetupAction =
                 name: 'provider',
                 message: 'What CI provider would you like to configure?',
                 choices: [
-                  { title: 'GitHub Actions', value: 'GitHub' },
-                  { title: 'GitLab CI/CD', value: 'GitLab' },
+                  { title: 'GitHub Actions', value: 'github' },
+                  { title: 'GitLab CI/CD', value: 'gitlab' },
                 ],
 
                 initial: maybeProvider?.provider === 'gitlab' ? 1 : undefined,
@@ -96,7 +96,7 @@ async function setupGitHub(config: OpticCliConfig, options: CISetupOptions) {
 
     console.log('');
     console.log('Next:');
-    console.log('- Edit and commit the generated CI file.');
+    console.log(`- Edit and commit ${target}`);
     console.log(
       '- Configure your standards and authorize Optic to comment on your PRs: https://useoptic.com/docs/setup-ci, then make a change to your OpenAPI files and submit a PR to see Optic in action!'
     );
@@ -146,7 +146,7 @@ async function setupGitLab(config: OpticCliConfig, options: CISetupOptions) {
 
     console.log('');
     console.log('Next:');
-    console.log('- Edit and commit the generated file.');
+    console.log(`- Edit and commit ${target}`);
     console.log(
       '- Configure your standards and authorize Optic to comment on your MRs: https://useoptic.com/docs/setup-ci, then make a change to your OpenAPI files and submit a MR to see Optic in action!'
     );
