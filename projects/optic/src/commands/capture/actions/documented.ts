@@ -84,13 +84,13 @@ function summarizePatch(
       const action =
         options.mode === 'update' ? 'has been added' : 'is not documented';
       const color = options.mode === 'update' ? chalk.green : chalk.red;
-      return [
-        color(
-          `${location} '${diff.key}' ${action} ${
-            diff.parentObjectPath ? `(${diff.parentObjectPath})` : ''
-          }`
-        ),
-      ];
+      const propertyLocation =
+        options.mode === 'update'
+          ? `(${diff.propertyPath})`
+          : diff.parentObjectPath
+          ? `(${diff.parentObjectPath})`
+          : '';
+      return [color(`${location} '${diff.key}' ${action} ${propertyLocation}`)];
     } else if (diff.kind === 'UnmatchedType') {
       // filter out dependent diffs
       if (
