@@ -122,6 +122,8 @@ async function initializeApi(
       ? path.relative(config.root, path.resolve(options.path_to_spec))
       : undefined,
     opticUrl: existingOpticUrl,
+    webUrl: options.web_url,
+    orgId,
   });
 
   let alreadyTracked = false;
