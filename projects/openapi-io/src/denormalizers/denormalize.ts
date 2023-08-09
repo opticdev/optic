@@ -6,8 +6,17 @@ import { denormalizeProperty } from './denormalizeProperty';
 import { JsonSchemaSourcemap } from '../parser/sourcemap';
 
 // Denormalizes a dereferenced openapi spec - mutates in place
-// For now, this function only denormalizes shared path parameters and flattens allOf
-export function denormalize<T extends ParseOpenAPIResult>(parse: T): T {
+// This function
+// - denormalizes shared path parameters
+// - flattens allOf
+// - adds response headers {} if not set
+// - adds parameters [] if not set
+export function denormalize<
+  T extends {
+    jsonLike: ParseOpenAPIResult['jsonLike'];
+    sourcemap?: ParseOpenAPIResult['sourcemap'];
+  },
+>(parse: T): T {
   for (const [pathKey, path] of Object.entries(parse.jsonLike.paths)) {
     if (path) {
       denormalizePaths(

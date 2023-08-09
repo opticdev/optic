@@ -1,6 +1,5 @@
 import { normalizeOpenApiPath } from '@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/openapi-traverser';
 import { createHash } from 'crypto';
-import { ParseResult } from './spec-loaders';
 import stableStringify from 'json-stable-stringify';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 
