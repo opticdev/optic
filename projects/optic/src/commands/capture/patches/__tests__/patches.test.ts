@@ -414,6 +414,54 @@ describe('generateEndpointSpecPatches', () => {
       expect(patches).toMatchSnapshot();
       expect(specHolder.spec).toMatchSnapshot();
     });
+
+    test('interactions with non-alphanumeric keys', async () => {
+      const interaction = makeInteraction(
+        { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+        {
+          responseBody: {
+            data: [
+              {
+                "tuple(('duration', 300))": [['duration', 300]],
+                'tpm()': 0.0,
+                'failure_rate()': 0,
+                'user_misery()': 0.0,
+                '😃things': ['duration', 300],
+              },
+            ],
+            meta: {
+              fields: {
+                "tuple(('duration', 300))": 'string',
+                'blah()': 'number',
+                project_threshold_config: 'string',
+              },
+              units: {
+                "tuple(('duration', 300))": null,
+                'blah()': null,
+                '😃things': null,
+              },
+              isMetricsData: false,
+              tips: { query: null, columns: null },
+              dataset: 'discover',
+            },
+          },
+        }
+      );
+
+      const patches = await AT.collect(
+        generateEndpointSpecPatches(
+          GenerateInteractions([interaction]),
+          specHolder,
+          {
+            method: 'post',
+            path: '/api/animals',
+          }
+        )
+      );
+
+      expect(patches).toMatchSnapshot();
+      expect(specHolder.spec).toMatchSnapshot();
+    });
   });
 });
 
