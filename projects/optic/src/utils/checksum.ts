@@ -1,8 +1,9 @@
 import { normalizeOpenApiPath } from '@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/openapi-traverser';
 import { createHash } from 'crypto';
-import { ParseResult } from './spec-loaders';
 import stableStringify from 'json-stable-stringify';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { denormalizeOperation } from '@useoptic/openapi-io';
+import { FlatOpenAPIV3 } from '@useoptic/openapi-utilities/build/flat-openapi-types';
 
 export function computeChecksumForAws(file: string): string {
   const hash = createHash('sha256');
@@ -17,6 +18,10 @@ export function computeEndpointChecksum(
   method: string,
   endpointContent: OpenAPIV3.OperationObject
 ): string {
+  denormalizeOperation(endpointContent as FlatOpenAPIV3.OperationObject, {
+    path,
+    method,
+  });
   const hash = createHash('sha256');
 
   const normalizedUrlPath = normalizeOpenApiPath(path);
