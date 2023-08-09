@@ -98,16 +98,25 @@ export async function getOpticUrlDetails(
   {
     filePath,
     opticUrl,
+    webUrl,
+    orgId,
   }: {
     filePath?: string;
     opticUrl?: string;
+    webUrl?: string;
+    orgId?: string;
   }
 ): Promise<OpticUrlDetails | null> {
   if (opticUrl) return getApiFromOpticUrl(opticUrl);
   else if (filePath) {
-    const generatedDetails = await getDetailsForGeneration(config);
-    if (generatedDetails) {
-      const { web_url, organization_id } = generatedDetails;
+    let organization_id = orgId;
+    let web_url = webUrl;
+    if (!organization_id || !webUrl) {
+      const generatedDetails = await getDetailsForGeneration(config);
+      web_url = generatedDetails?.web_url;
+      organization_id = generatedDetails?.organization_id;
+    }
+    if (web_url && organization_id) {
       const res = await config.client.getApis([filePath], web_url);
       const api = res?.apis?.[0];
       if (api) {
