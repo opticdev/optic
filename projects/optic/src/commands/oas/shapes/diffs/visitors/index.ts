@@ -5,6 +5,7 @@ import { additionalProperties } from './additionalProperties';
 import { oneOfKeyword } from './oneOf';
 import { requiredKeyword } from './required';
 import { typeKeyword } from './type';
+import { enumKeyword } from './enum';
 
 export interface ShapeDiffVisitor {
   (
@@ -18,6 +19,7 @@ const visitors: ShapeDiffVisitor[] = [
   oneOfKeyword,
   requiredKeyword,
   typeKeyword,
+  enumKeyword,
 ];
 
 export function* diffVisitors(

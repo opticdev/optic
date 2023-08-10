@@ -27,6 +27,11 @@ components:
                 type: string
               author_id:
                 type: number
+              status:
+                type: string
+                enum:
+                  - ready
+                  - not_ready
               price:
                 type: string
             required:

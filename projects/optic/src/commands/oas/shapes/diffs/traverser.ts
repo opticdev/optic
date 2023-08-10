@@ -121,6 +121,7 @@ export enum JsonSchemaKnownKeyword {
   additionalProperties = 'additionalProperties',
   type = 'type',
   oneOf = 'oneOf',
+  enum = 'enum',
 }
 
 export class SchemaCompilationError extends Error {

@@ -4,6 +4,7 @@ import { JsonSchemaKnownKeyword } from './traverser';
 export enum ShapeDiffResultKind {
   AdditionalProperty = 'AdditionalProperty',
   MissingRequiredProperty = 'MissingRequiredProperty',
+  MissingEnumValue = 'MissingEnumValue',
   UnmatchedType = 'UnmatchedType',
 }
 
@@ -35,6 +36,12 @@ export type ShapeDiffResult = {
       keyword: JsonSchemaKnownKeyword.type | JsonSchemaKnownKeyword.oneOf;
       expectedType: string;
 
+      propertyPath: JsonPath;
+    }
+  | {
+      kind: ShapeDiffResultKind.MissingEnumValue;
+      keyword: JsonSchemaKnownKeyword.enum;
+      value: string;
       propertyPath: JsonPath;
     }
 );

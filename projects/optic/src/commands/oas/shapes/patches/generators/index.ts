@@ -9,6 +9,7 @@ import { requiredPatches } from './required';
 import { typePatches } from './type';
 import { newSchemaPatch } from './newSchema';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
+import { enumPatches } from './enum';
 
 export interface DiffShapePatchGenerator {
   (
@@ -24,6 +25,7 @@ export const diffShapePatchGenerators: DiffShapePatchGenerator[] = [
   oneOfPatches,
   requiredPatches,
   typePatches,
+  enumPatches,
 ];
 
 export { newSchemaPatch };
