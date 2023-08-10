@@ -48,8 +48,11 @@ export class ShapeDiffTraverser {
 
   *results(): IterableIterator<ShapeDiffResult> {
     if (!this.validate || !this.validate.errors) return;
-    let validationErrors = this.validate.errors;
-
+    // Sometimes the schema path returned from AJV is encoded
+    let validationErrors = this.validate.errors.map((e) => ({
+      ...e,
+      schemaPath: decodeURIComponent(e.schemaPath),
+    }));
     let oneOfs: Map<string, ErrorObject> = new Map();
     let oneOfBranchType: [string, ErrorObject][] = [];
     let oneOfBranchOther: [string, ErrorObject][] = [];

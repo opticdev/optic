@@ -1,5 +1,364 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`generateEndpointSpecPatches OAS version 3.0.1 array with multiple items 1`] = `
+[
+  {
+    "description": "update response body: add property books",
+    "diff": {
+      "description": "'books' is not documented",
+      "example": [
+        {
+          "author_id": "6nTxAFM5ck4Hob77hGQoL",
+          "id": "WjE9O1d8ELCb8POiOw4pn",
+          "price": 10,
+        },
+        {
+          "id": "asdf",
+          "price": 1,
+        },
+        {
+          "author_id": "6nTxAFM5ck4Hob77hGQoL",
+          "id": "123",
+        },
+        null,
+      ],
+      "instancePath": "/books",
+      "key": "books",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/books",
+      "propertyPath": "/properties/books",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make books required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required",
+            "value": [
+              "books",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property books schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books",
+            "value": {
+              "items": {
+                "type": "object",
+              },
+              "type": "array",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property id",
+    "diff": {
+      "description": "'id' is not documented",
+      "example": "WjE9O1d8ELCb8POiOw4pn",
+      "instancePath": "/books/0/id",
+      "key": "id",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/books/items/properties",
+      "propertyExamplePath": "/books/0/id",
+      "propertyPath": "/properties/books/items/properties/id",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make id required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/required",
+            "value": [
+              "id",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property id schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/properties/id",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property author_id",
+    "diff": {
+      "description": "'author_id' is not documented",
+      "example": "6nTxAFM5ck4Hob77hGQoL",
+      "instancePath": "/books/0/author_id",
+      "key": "author_id",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/books/items/properties",
+      "propertyExamplePath": "/books/0/author_id",
+      "propertyPath": "/properties/books/items/properties/author_id",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property author_id required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/required/-",
+            "value": "author_id",
+          },
+        ],
+      },
+      {
+        "intent": "add property author_id schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/properties/author_id",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property price",
+    "diff": {
+      "description": "'price' is not documented",
+      "example": 10,
+      "instancePath": "/books/0/price",
+      "key": "price",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/books/items/properties",
+      "propertyExamplePath": "/books/0/price",
+      "propertyPath": "/properties/books/items/properties/price",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property price required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/required/-",
+            "value": "price",
+          },
+        ],
+      },
+      {
+        "intent": "add property price schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/properties/price",
+            "value": {
+              "type": "number",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make items null",
+    "diff": {
+      "description": "'items' did not match schema",
+      "example": null,
+      "expectedType": "object",
+      "instancePath": "/books/3",
+      "key": "items",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/books/items",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make items nullable",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/nullable",
+            "value": true,
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make property author_id optional",
+    "diff": {
+      "description": "required property 'author_id' was missing",
+      "example": undefined,
+      "instancePath": "/books/1/author_id",
+      "key": "author_id",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "/properties/books/items",
+      "propertyPath": "/properties/books/items/properties/author_id",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove author_id from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/required/1",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make property price optional",
+    "diff": {
+      "description": "required property 'price' was missing",
+      "example": undefined,
+      "instancePath": "/books/2/price",
+      "key": "price",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "/properties/books/items",
+      "propertyPath": "/properties/books/items/properties/price",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove price from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/required/1",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 array with multiple items 2`] = `
+{
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "books": {
+                      "items": {
+                        "nullable": true,
+                        "properties": {
+                          "author_id": {
+                            "type": "string",
+                          },
+                          "id": {
+                            "type": "string",
+                          },
+                          "price": {
+                            "type": "number",
+                          },
+                        },
+                        "required": [
+                          "id",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                  },
+                  "required": [
+                    "books",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
 exports[`generateEndpointSpecPatches OAS version 3.0.1 existing schema that does not match 1`] = `
 [
   {
@@ -493,6 +852,1315 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 existing schema that does
                 },
               },
             },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alphanumeric keys 1`] = `
+[
+  {
+    "description": "operation: add 200 response",
+    "diff": {
+      "contentType": "application/json",
+      "kind": "UnmatchedResponseStatusCode",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add response status code",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200",
+            "value": {
+              "description": "200 response",
+            },
+          },
+        ],
+      },
+      {
+        "intent": "add response body for content type 'application/json'",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content",
+            "value": {
+              "application/json": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "update response body: add schema object",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add schema object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+            "value": {},
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/type",
+            "value": "object",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property data",
+    "diff": {
+      "description": "'data' is not documented",
+      "example": [
+        {
+          "failure_rate()": 0,
+          "tpm()": 0,
+          "tuple(('duration', 300))": [
+            [
+              "duration",
+              300,
+            ],
+          ],
+          "user_misery()": 0,
+          "😃things": [
+            "duration",
+            300,
+          ],
+        },
+      ],
+      "instancePath": "/data",
+      "key": "data",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/data",
+      "propertyPath": "/properties/data",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make data required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required",
+            "value": [
+              "data",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property data schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data",
+            "value": {
+              "items": {
+                "type": "object",
+              },
+              "type": "array",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property meta",
+    "diff": {
+      "description": "'meta' is not documented",
+      "example": {
+        "dataset": "discover",
+        "fields": {
+          "blah()": "number",
+          "project_threshold_config": "string",
+          "tuple(('duration', 300))": "string",
+        },
+        "isMetricsData": false,
+        "tips": {
+          "columns": null,
+          "query": null,
+        },
+        "units": {
+          "blah()": null,
+          "tuple(('duration', 300))": null,
+          "😃things": null,
+        },
+      },
+      "instancePath": "/meta",
+      "key": "meta",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/meta",
+      "propertyPath": "/properties/meta",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property meta required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required/-",
+            "value": "meta",
+          },
+        ],
+      },
+      {
+        "intent": "add property meta schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta",
+            "value": {
+              "type": "object",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property tuple(('duration', 300))",
+    "diff": {
+      "description": "'tuple(('duration', 300))' is not documented",
+      "example": [
+        [
+          "duration",
+          300,
+        ],
+      ],
+      "instancePath": "/data/0/tuple(('duration', 300))",
+      "key": "tuple(('duration', 300))",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/data/items/properties",
+      "propertyExamplePath": "/data/0/tuple(('duration', 300))",
+      "propertyPath": "/properties/data/items/properties/tuple(('duration', 300))",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make tuple(('duration', 300)) required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/required",
+            "value": [
+              "tuple(('duration', 300))",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property tuple(('duration', 300)) schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/tuple(('duration', 300))",
+            "value": {
+              "items": {
+                "items": {
+                  "type": "string",
+                },
+                "type": "array",
+              },
+              "type": "array",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property tpm()",
+    "diff": {
+      "description": "'tpm()' is not documented",
+      "example": 0,
+      "instancePath": "/data/0/tpm()",
+      "key": "tpm()",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/data/items/properties",
+      "propertyExamplePath": "/data/0/tpm()",
+      "propertyPath": "/properties/data/items/properties/tpm()",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property tpm() required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/required/-",
+            "value": "tpm()",
+          },
+        ],
+      },
+      {
+        "intent": "add property tpm() schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/tpm()",
+            "value": {
+              "type": "number",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property failure_rate()",
+    "diff": {
+      "description": "'failure_rate()' is not documented",
+      "example": 0,
+      "instancePath": "/data/0/failure_rate()",
+      "key": "failure_rate()",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/data/items/properties",
+      "propertyExamplePath": "/data/0/failure_rate()",
+      "propertyPath": "/properties/data/items/properties/failure_rate()",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property failure_rate() required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/required/-",
+            "value": "failure_rate()",
+          },
+        ],
+      },
+      {
+        "intent": "add property failure_rate() schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/failure_rate()",
+            "value": {
+              "type": "number",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property user_misery()",
+    "diff": {
+      "description": "'user_misery()' is not documented",
+      "example": 0,
+      "instancePath": "/data/0/user_misery()",
+      "key": "user_misery()",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/data/items/properties",
+      "propertyExamplePath": "/data/0/user_misery()",
+      "propertyPath": "/properties/data/items/properties/user_misery()",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property user_misery() required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/required/-",
+            "value": "user_misery()",
+          },
+        ],
+      },
+      {
+        "intent": "add property user_misery() schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/user_misery()",
+            "value": {
+              "type": "number",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property 😃things",
+    "diff": {
+      "description": "'😃things' is not documented",
+      "example": [
+        "duration",
+        300,
+      ],
+      "instancePath": "/data/0/😃things",
+      "key": "😃things",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/data/items/properties",
+      "propertyExamplePath": "/data/0/😃things",
+      "propertyPath": "/properties/data/items/properties/😃things",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property 😃things required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/required/-",
+            "value": "😃things",
+          },
+        ],
+      },
+      {
+        "intent": "add property 😃things schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/😃things",
+            "value": {
+              "items": {
+                "type": "string",
+              },
+              "type": "array",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property fields",
+    "diff": {
+      "description": "'fields' is not documented",
+      "example": {
+        "blah()": "number",
+        "project_threshold_config": "string",
+        "tuple(('duration', 300))": "string",
+      },
+      "instancePath": "/meta/fields",
+      "key": "fields",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties",
+      "propertyExamplePath": "/meta/fields",
+      "propertyPath": "/properties/meta/properties/fields",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make fields required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/required",
+            "value": [
+              "fields",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property fields schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/fields",
+            "value": {
+              "type": "object",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property units",
+    "diff": {
+      "description": "'units' is not documented",
+      "example": {
+        "blah()": null,
+        "tuple(('duration', 300))": null,
+        "😃things": null,
+      },
+      "instancePath": "/meta/units",
+      "key": "units",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties",
+      "propertyExamplePath": "/meta/units",
+      "propertyPath": "/properties/meta/properties/units",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property units required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/required/-",
+            "value": "units",
+          },
+        ],
+      },
+      {
+        "intent": "add property units schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/units",
+            "value": {
+              "type": "object",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property isMetricsData",
+    "diff": {
+      "description": "'isMetricsData' is not documented",
+      "example": false,
+      "instancePath": "/meta/isMetricsData",
+      "key": "isMetricsData",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties",
+      "propertyExamplePath": "/meta/isMetricsData",
+      "propertyPath": "/properties/meta/properties/isMetricsData",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property isMetricsData required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/required/-",
+            "value": "isMetricsData",
+          },
+        ],
+      },
+      {
+        "intent": "add property isMetricsData schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/isMetricsData",
+            "value": {
+              "type": "boolean",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property tips",
+    "diff": {
+      "description": "'tips' is not documented",
+      "example": {
+        "columns": null,
+        "query": null,
+      },
+      "instancePath": "/meta/tips",
+      "key": "tips",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties",
+      "propertyExamplePath": "/meta/tips",
+      "propertyPath": "/properties/meta/properties/tips",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property tips required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/required/-",
+            "value": "tips",
+          },
+        ],
+      },
+      {
+        "intent": "add property tips schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/tips",
+            "value": {
+              "type": "object",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property dataset",
+    "diff": {
+      "description": "'dataset' is not documented",
+      "example": "discover",
+      "instancePath": "/meta/dataset",
+      "key": "dataset",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties",
+      "propertyExamplePath": "/meta/dataset",
+      "propertyPath": "/properties/meta/properties/dataset",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property dataset required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/required/-",
+            "value": "dataset",
+          },
+        ],
+      },
+      {
+        "intent": "add property dataset schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/dataset",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make items oneOf",
+    "diff": {
+      "description": "'items' did not match schema",
+      "example": 300,
+      "expectedType": "string",
+      "instancePath": "/data/0/tuple(('duration', 300))/0/1",
+      "key": "items",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/data/items/properties/tuple(('duration', 300))/items/items",
+    },
+    "groupedOperations": [
+      {
+        "intent": "replace items with a one of containing both types",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/tuple(('duration', 300))/items/items/type",
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/tuple(('duration', 300))/items/items/oneOf",
+            "value": [
+              {
+                "type": "string",
+              },
+              {
+                "type": "number",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make items oneOf",
+    "diff": {
+      "description": "'items' did not match schema",
+      "example": 300,
+      "expectedType": "string",
+      "instancePath": "/data/0/😃things/1",
+      "key": "items",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/data/items/properties/😃things/items",
+    },
+    "groupedOperations": [
+      {
+        "intent": "replace items with a one of containing both types",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/😃things/items/type",
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/😃things/items/oneOf",
+            "value": [
+              {
+                "type": "string",
+              },
+              {
+                "type": "number",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property tuple(('duration', 300))",
+    "diff": {
+      "description": "'tuple(('duration', 300))' is not documented",
+      "example": "string",
+      "instancePath": "/meta/fields/tuple(('duration', 300))",
+      "key": "tuple(('duration', 300))",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties/fields/properties",
+      "propertyExamplePath": "/meta/fields/tuple(('duration', 300))",
+      "propertyPath": "/properties/meta/properties/fields/properties/tuple(('duration', 300))",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/fields/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make tuple(('duration', 300)) required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/fields/required",
+            "value": [
+              "tuple(('duration', 300))",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property tuple(('duration', 300)) schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/fields/properties/tuple(('duration', 300))",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property blah()",
+    "diff": {
+      "description": "'blah()' is not documented",
+      "example": "number",
+      "instancePath": "/meta/fields/blah()",
+      "key": "blah()",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties/fields/properties",
+      "propertyExamplePath": "/meta/fields/blah()",
+      "propertyPath": "/properties/meta/properties/fields/properties/blah()",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property blah() required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/fields/required/-",
+            "value": "blah()",
+          },
+        ],
+      },
+      {
+        "intent": "add property blah() schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/fields/properties/blah()",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property project_threshold_config",
+    "diff": {
+      "description": "'project_threshold_config' is not documented",
+      "example": "string",
+      "instancePath": "/meta/fields/project_threshold_config",
+      "key": "project_threshold_config",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties/fields/properties",
+      "propertyExamplePath": "/meta/fields/project_threshold_config",
+      "propertyPath": "/properties/meta/properties/fields/properties/project_threshold_config",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property project_threshold_config required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/fields/required/-",
+            "value": "project_threshold_config",
+          },
+        ],
+      },
+      {
+        "intent": "add property project_threshold_config schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/fields/properties/project_threshold_config",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property tuple(('duration', 300))",
+    "diff": {
+      "description": "'tuple(('duration', 300))' is not documented",
+      "example": null,
+      "instancePath": "/meta/units/tuple(('duration', 300))",
+      "key": "tuple(('duration', 300))",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties/units/properties",
+      "propertyExamplePath": "/meta/units/tuple(('duration', 300))",
+      "propertyPath": "/properties/meta/properties/units/properties/tuple(('duration', 300))",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/units/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make tuple(('duration', 300)) required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/units/required",
+            "value": [
+              "tuple(('duration', 300))",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property tuple(('duration', 300)) schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/units/properties/tuple(('duration', 300))",
+            "value": {
+              "nullable": true,
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property blah()",
+    "diff": {
+      "description": "'blah()' is not documented",
+      "example": null,
+      "instancePath": "/meta/units/blah()",
+      "key": "blah()",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties/units/properties",
+      "propertyExamplePath": "/meta/units/blah()",
+      "propertyPath": "/properties/meta/properties/units/properties/blah()",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property blah() required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/units/required/-",
+            "value": "blah()",
+          },
+        ],
+      },
+      {
+        "intent": "add property blah() schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/units/properties/blah()",
+            "value": {
+              "nullable": true,
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property 😃things",
+    "diff": {
+      "description": "'😃things' is not documented",
+      "example": null,
+      "instancePath": "/meta/units/😃things",
+      "key": "😃things",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties/units/properties",
+      "propertyExamplePath": "/meta/units/😃things",
+      "propertyPath": "/properties/meta/properties/units/properties/😃things",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property 😃things required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/units/required/-",
+            "value": "😃things",
+          },
+        ],
+      },
+      {
+        "intent": "add property 😃things schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/units/properties/😃things",
+            "value": {
+              "nullable": true,
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property query",
+    "diff": {
+      "description": "'query' is not documented",
+      "example": null,
+      "instancePath": "/meta/tips/query",
+      "key": "query",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties/tips/properties",
+      "propertyExamplePath": "/meta/tips/query",
+      "propertyPath": "/properties/meta/properties/tips/properties/query",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/tips/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make query required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/tips/required",
+            "value": [
+              "query",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property query schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/tips/properties/query",
+            "value": {
+              "nullable": true,
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property columns",
+    "diff": {
+      "description": "'columns' is not documented",
+      "example": null,
+      "instancePath": "/meta/tips/columns",
+      "key": "columns",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties/tips/properties",
+      "propertyExamplePath": "/meta/tips/columns",
+      "propertyPath": "/properties/meta/properties/tips/properties/columns",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property columns required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/tips/required/-",
+            "value": "columns",
+          },
+        ],
+      },
+      {
+        "intent": "add property columns schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/tips/properties/columns",
+            "value": {
+              "nullable": true,
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alphanumeric keys 2`] = `
+{
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "properties": {
+                          "failure_rate()": {
+                            "type": "number",
+                          },
+                          "tpm()": {
+                            "type": "number",
+                          },
+                          "tuple(('duration', 300))": {
+                            "items": {
+                              "items": {
+                                "oneOf": [
+                                  {
+                                    "type": "string",
+                                  },
+                                  {
+                                    "type": "number",
+                                  },
+                                ],
+                              },
+                              "type": "array",
+                            },
+                            "type": "array",
+                          },
+                          "user_misery()": {
+                            "type": "number",
+                          },
+                          "😃things": {
+                            "items": {
+                              "oneOf": [
+                                {
+                                  "type": "string",
+                                },
+                                {
+                                  "type": "number",
+                                },
+                              ],
+                            },
+                            "type": "array",
+                          },
+                        },
+                        "required": [
+                          "tuple(('duration', 300))",
+                          "tpm()",
+                          "failure_rate()",
+                          "user_misery()",
+                          "😃things",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "meta": {
+                      "properties": {
+                        "dataset": {
+                          "type": "string",
+                        },
+                        "fields": {
+                          "properties": {
+                            "blah()": {
+                              "type": "string",
+                            },
+                            "project_threshold_config": {
+                              "type": "string",
+                            },
+                            "tuple(('duration', 300))": {
+                              "type": "string",
+                            },
+                          },
+                          "required": [
+                            "tuple(('duration', 300))",
+                            "blah()",
+                            "project_threshold_config",
+                          ],
+                          "type": "object",
+                        },
+                        "isMetricsData": {
+                          "type": "boolean",
+                        },
+                        "tips": {
+                          "properties": {
+                            "columns": {
+                              "nullable": true,
+                            },
+                            "query": {
+                              "nullable": true,
+                            },
+                          },
+                          "required": [
+                            "query",
+                            "columns",
+                          ],
+                          "type": "object",
+                        },
+                        "units": {
+                          "properties": {
+                            "blah()": {
+                              "nullable": true,
+                            },
+                            "tuple(('duration', 300))": {
+                              "nullable": true,
+                            },
+                            "😃things": {
+                              "nullable": true,
+                            },
+                          },
+                          "required": [
+                            "tuple(('duration', 300))",
+                            "blah()",
+                            "😃things",
+                          ],
+                          "type": "object",
+                        },
+                      },
+                      "required": [
+                        "fields",
+                        "units",
+                        "isMetricsData",
+                        "tips",
+                        "dataset",
+                      ],
+                      "type": "object",
+                    },
+                  },
+                  "required": [
+                    "data",
+                    "meta",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "200 response",
           },
         },
       },
@@ -2152,6 +3820,370 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
 }
 `;
 
+exports[`generateEndpointSpecPatches OAS version 3.1.0 array with multiple items 1`] = `
+[
+  {
+    "description": "update response body: add property books",
+    "diff": {
+      "description": "'books' is not documented",
+      "example": [
+        {
+          "author_id": "6nTxAFM5ck4Hob77hGQoL",
+          "id": "WjE9O1d8ELCb8POiOw4pn",
+          "price": 10,
+        },
+        {
+          "id": "asdf",
+          "price": 1,
+        },
+        {
+          "author_id": "6nTxAFM5ck4Hob77hGQoL",
+          "id": "123",
+        },
+        null,
+      ],
+      "instancePath": "/books",
+      "key": "books",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/books",
+      "propertyPath": "/properties/books",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make books required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required",
+            "value": [
+              "books",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property books schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books",
+            "value": {
+              "items": {
+                "type": "object",
+              },
+              "type": "array",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property id",
+    "diff": {
+      "description": "'id' is not documented",
+      "example": "WjE9O1d8ELCb8POiOw4pn",
+      "instancePath": "/books/0/id",
+      "key": "id",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/books/items/properties",
+      "propertyExamplePath": "/books/0/id",
+      "propertyPath": "/properties/books/items/properties/id",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make id required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/required",
+            "value": [
+              "id",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property id schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/properties/id",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property author_id",
+    "diff": {
+      "description": "'author_id' is not documented",
+      "example": "6nTxAFM5ck4Hob77hGQoL",
+      "instancePath": "/books/0/author_id",
+      "key": "author_id",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/books/items/properties",
+      "propertyExamplePath": "/books/0/author_id",
+      "propertyPath": "/properties/books/items/properties/author_id",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property author_id required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/required/-",
+            "value": "author_id",
+          },
+        ],
+      },
+      {
+        "intent": "add property author_id schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/properties/author_id",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property price",
+    "diff": {
+      "description": "'price' is not documented",
+      "example": 10,
+      "instancePath": "/books/0/price",
+      "key": "price",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/books/items/properties",
+      "propertyExamplePath": "/books/0/price",
+      "propertyPath": "/properties/books/items/properties/price",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property price required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/required/-",
+            "value": "price",
+          },
+        ],
+      },
+      {
+        "intent": "add property price schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/properties/price",
+            "value": {
+              "type": "number",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make items null",
+    "diff": {
+      "description": "'items' did not match schema",
+      "example": null,
+      "expectedType": "object",
+      "instancePath": "/books/3",
+      "key": "items",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/books/items",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make items null",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/type",
+            "value": [
+              "object",
+              "null",
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make property author_id optional",
+    "diff": {
+      "description": "required property 'author_id' was missing",
+      "example": undefined,
+      "instancePath": "/books/1/author_id",
+      "key": "author_id",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "/properties/books/items",
+      "propertyPath": "/properties/books/items/properties/author_id",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove author_id from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/required/1",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make property price optional",
+    "diff": {
+      "description": "required property 'price' was missing",
+      "example": undefined,
+      "instancePath": "/books/2/price",
+      "key": "price",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "/properties/books/items",
+      "propertyPath": "/properties/books/items/properties/price",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove price from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/books/items/required/1",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 array with multiple items 2`] = `
+{
+  "info": {},
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "books": {
+                      "items": {
+                        "properties": {
+                          "author_id": {
+                            "type": "string",
+                          },
+                          "id": {
+                            "type": "string",
+                          },
+                          "price": {
+                            "type": "number",
+                          },
+                        },
+                        "required": [
+                          "id",
+                        ],
+                        "type": [
+                          "object",
+                          "null",
+                        ],
+                      },
+                      "type": "array",
+                    },
+                  },
+                  "required": [
+                    "books",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
 exports[`generateEndpointSpecPatches OAS version 3.1.0 existing schema that does not match 1`] = `
 [
   {
@@ -2645,6 +4677,1315 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 existing schema that does
                 },
               },
             },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alphanumeric keys 1`] = `
+[
+  {
+    "description": "operation: add 200 response",
+    "diff": {
+      "contentType": "application/json",
+      "kind": "UnmatchedResponseStatusCode",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add response status code",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200",
+            "value": {
+              "description": "200 response",
+            },
+          },
+        ],
+      },
+      {
+        "intent": "add response body for content type 'application/json'",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content",
+            "value": {
+              "application/json": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "update response body: add schema object",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add schema object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+            "value": {},
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/type",
+            "value": "object",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property data",
+    "diff": {
+      "description": "'data' is not documented",
+      "example": [
+        {
+          "failure_rate()": 0,
+          "tpm()": 0,
+          "tuple(('duration', 300))": [
+            [
+              "duration",
+              300,
+            ],
+          ],
+          "user_misery()": 0,
+          "😃things": [
+            "duration",
+            300,
+          ],
+        },
+      ],
+      "instancePath": "/data",
+      "key": "data",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/data",
+      "propertyPath": "/properties/data",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make data required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required",
+            "value": [
+              "data",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property data schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data",
+            "value": {
+              "items": {
+                "type": "object",
+              },
+              "type": "array",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property meta",
+    "diff": {
+      "description": "'meta' is not documented",
+      "example": {
+        "dataset": "discover",
+        "fields": {
+          "blah()": "number",
+          "project_threshold_config": "string",
+          "tuple(('duration', 300))": "string",
+        },
+        "isMetricsData": false,
+        "tips": {
+          "columns": null,
+          "query": null,
+        },
+        "units": {
+          "blah()": null,
+          "tuple(('duration', 300))": null,
+          "😃things": null,
+        },
+      },
+      "instancePath": "/meta",
+      "key": "meta",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties",
+      "propertyExamplePath": "/meta",
+      "propertyPath": "/properties/meta",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property meta required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required/-",
+            "value": "meta",
+          },
+        ],
+      },
+      {
+        "intent": "add property meta schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta",
+            "value": {
+              "type": "object",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property tuple(('duration', 300))",
+    "diff": {
+      "description": "'tuple(('duration', 300))' is not documented",
+      "example": [
+        [
+          "duration",
+          300,
+        ],
+      ],
+      "instancePath": "/data/0/tuple(('duration', 300))",
+      "key": "tuple(('duration', 300))",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/data/items/properties",
+      "propertyExamplePath": "/data/0/tuple(('duration', 300))",
+      "propertyPath": "/properties/data/items/properties/tuple(('duration', 300))",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make tuple(('duration', 300)) required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/required",
+            "value": [
+              "tuple(('duration', 300))",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property tuple(('duration', 300)) schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/tuple(('duration', 300))",
+            "value": {
+              "items": {
+                "items": {
+                  "type": "string",
+                },
+                "type": "array",
+              },
+              "type": "array",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property tpm()",
+    "diff": {
+      "description": "'tpm()' is not documented",
+      "example": 0,
+      "instancePath": "/data/0/tpm()",
+      "key": "tpm()",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/data/items/properties",
+      "propertyExamplePath": "/data/0/tpm()",
+      "propertyPath": "/properties/data/items/properties/tpm()",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property tpm() required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/required/-",
+            "value": "tpm()",
+          },
+        ],
+      },
+      {
+        "intent": "add property tpm() schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/tpm()",
+            "value": {
+              "type": "number",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property failure_rate()",
+    "diff": {
+      "description": "'failure_rate()' is not documented",
+      "example": 0,
+      "instancePath": "/data/0/failure_rate()",
+      "key": "failure_rate()",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/data/items/properties",
+      "propertyExamplePath": "/data/0/failure_rate()",
+      "propertyPath": "/properties/data/items/properties/failure_rate()",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property failure_rate() required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/required/-",
+            "value": "failure_rate()",
+          },
+        ],
+      },
+      {
+        "intent": "add property failure_rate() schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/failure_rate()",
+            "value": {
+              "type": "number",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property user_misery()",
+    "diff": {
+      "description": "'user_misery()' is not documented",
+      "example": 0,
+      "instancePath": "/data/0/user_misery()",
+      "key": "user_misery()",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/data/items/properties",
+      "propertyExamplePath": "/data/0/user_misery()",
+      "propertyPath": "/properties/data/items/properties/user_misery()",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property user_misery() required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/required/-",
+            "value": "user_misery()",
+          },
+        ],
+      },
+      {
+        "intent": "add property user_misery() schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/user_misery()",
+            "value": {
+              "type": "number",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property 😃things",
+    "diff": {
+      "description": "'😃things' is not documented",
+      "example": [
+        "duration",
+        300,
+      ],
+      "instancePath": "/data/0/😃things",
+      "key": "😃things",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/data/items/properties",
+      "propertyExamplePath": "/data/0/😃things",
+      "propertyPath": "/properties/data/items/properties/😃things",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property 😃things required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/required/-",
+            "value": "😃things",
+          },
+        ],
+      },
+      {
+        "intent": "add property 😃things schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/😃things",
+            "value": {
+              "items": {
+                "type": "string",
+              },
+              "type": "array",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property fields",
+    "diff": {
+      "description": "'fields' is not documented",
+      "example": {
+        "blah()": "number",
+        "project_threshold_config": "string",
+        "tuple(('duration', 300))": "string",
+      },
+      "instancePath": "/meta/fields",
+      "key": "fields",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties",
+      "propertyExamplePath": "/meta/fields",
+      "propertyPath": "/properties/meta/properties/fields",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make fields required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/required",
+            "value": [
+              "fields",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property fields schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/fields",
+            "value": {
+              "type": "object",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property units",
+    "diff": {
+      "description": "'units' is not documented",
+      "example": {
+        "blah()": null,
+        "tuple(('duration', 300))": null,
+        "😃things": null,
+      },
+      "instancePath": "/meta/units",
+      "key": "units",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties",
+      "propertyExamplePath": "/meta/units",
+      "propertyPath": "/properties/meta/properties/units",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property units required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/required/-",
+            "value": "units",
+          },
+        ],
+      },
+      {
+        "intent": "add property units schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/units",
+            "value": {
+              "type": "object",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property isMetricsData",
+    "diff": {
+      "description": "'isMetricsData' is not documented",
+      "example": false,
+      "instancePath": "/meta/isMetricsData",
+      "key": "isMetricsData",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties",
+      "propertyExamplePath": "/meta/isMetricsData",
+      "propertyPath": "/properties/meta/properties/isMetricsData",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property isMetricsData required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/required/-",
+            "value": "isMetricsData",
+          },
+        ],
+      },
+      {
+        "intent": "add property isMetricsData schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/isMetricsData",
+            "value": {
+              "type": "boolean",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property tips",
+    "diff": {
+      "description": "'tips' is not documented",
+      "example": {
+        "columns": null,
+        "query": null,
+      },
+      "instancePath": "/meta/tips",
+      "key": "tips",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties",
+      "propertyExamplePath": "/meta/tips",
+      "propertyPath": "/properties/meta/properties/tips",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property tips required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/required/-",
+            "value": "tips",
+          },
+        ],
+      },
+      {
+        "intent": "add property tips schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/tips",
+            "value": {
+              "type": "object",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property dataset",
+    "diff": {
+      "description": "'dataset' is not documented",
+      "example": "discover",
+      "instancePath": "/meta/dataset",
+      "key": "dataset",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties",
+      "propertyExamplePath": "/meta/dataset",
+      "propertyPath": "/properties/meta/properties/dataset",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property dataset required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/required/-",
+            "value": "dataset",
+          },
+        ],
+      },
+      {
+        "intent": "add property dataset schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/dataset",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make items oneOf",
+    "diff": {
+      "description": "'items' did not match schema",
+      "example": 300,
+      "expectedType": "string",
+      "instancePath": "/data/0/tuple(('duration', 300))/0/1",
+      "key": "items",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/data/items/properties/tuple(('duration', 300))/items/items",
+    },
+    "groupedOperations": [
+      {
+        "intent": "replace items with a one of containing both types",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/tuple(('duration', 300))/items/items/type",
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/tuple(('duration', 300))/items/items/oneOf",
+            "value": [
+              {
+                "type": "string",
+              },
+              {
+                "type": "number",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make items oneOf",
+    "diff": {
+      "description": "'items' did not match schema",
+      "example": 300,
+      "expectedType": "string",
+      "instancePath": "/data/0/😃things/1",
+      "key": "items",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/data/items/properties/😃things/items",
+    },
+    "groupedOperations": [
+      {
+        "intent": "replace items with a one of containing both types",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/😃things/items/type",
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/😃things/items/oneOf",
+            "value": [
+              {
+                "type": "string",
+              },
+              {
+                "type": "number",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property tuple(('duration', 300))",
+    "diff": {
+      "description": "'tuple(('duration', 300))' is not documented",
+      "example": "string",
+      "instancePath": "/meta/fields/tuple(('duration', 300))",
+      "key": "tuple(('duration', 300))",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties/fields/properties",
+      "propertyExamplePath": "/meta/fields/tuple(('duration', 300))",
+      "propertyPath": "/properties/meta/properties/fields/properties/tuple(('duration', 300))",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/fields/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make tuple(('duration', 300)) required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/fields/required",
+            "value": [
+              "tuple(('duration', 300))",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property tuple(('duration', 300)) schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/fields/properties/tuple(('duration', 300))",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property blah()",
+    "diff": {
+      "description": "'blah()' is not documented",
+      "example": "number",
+      "instancePath": "/meta/fields/blah()",
+      "key": "blah()",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties/fields/properties",
+      "propertyExamplePath": "/meta/fields/blah()",
+      "propertyPath": "/properties/meta/properties/fields/properties/blah()",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property blah() required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/fields/required/-",
+            "value": "blah()",
+          },
+        ],
+      },
+      {
+        "intent": "add property blah() schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/fields/properties/blah()",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property project_threshold_config",
+    "diff": {
+      "description": "'project_threshold_config' is not documented",
+      "example": "string",
+      "instancePath": "/meta/fields/project_threshold_config",
+      "key": "project_threshold_config",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties/fields/properties",
+      "propertyExamplePath": "/meta/fields/project_threshold_config",
+      "propertyPath": "/properties/meta/properties/fields/properties/project_threshold_config",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property project_threshold_config required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/fields/required/-",
+            "value": "project_threshold_config",
+          },
+        ],
+      },
+      {
+        "intent": "add property project_threshold_config schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/fields/properties/project_threshold_config",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property tuple(('duration', 300))",
+    "diff": {
+      "description": "'tuple(('duration', 300))' is not documented",
+      "example": null,
+      "instancePath": "/meta/units/tuple(('duration', 300))",
+      "key": "tuple(('duration', 300))",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties/units/properties",
+      "propertyExamplePath": "/meta/units/tuple(('duration', 300))",
+      "propertyPath": "/properties/meta/properties/units/properties/tuple(('duration', 300))",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/units/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make tuple(('duration', 300)) required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/units/required",
+            "value": [
+              "tuple(('duration', 300))",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property tuple(('duration', 300)) schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/units/properties/tuple(('duration', 300))",
+            "value": {
+              "type": "null",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property blah()",
+    "diff": {
+      "description": "'blah()' is not documented",
+      "example": null,
+      "instancePath": "/meta/units/blah()",
+      "key": "blah()",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties/units/properties",
+      "propertyExamplePath": "/meta/units/blah()",
+      "propertyPath": "/properties/meta/properties/units/properties/blah()",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property blah() required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/units/required/-",
+            "value": "blah()",
+          },
+        ],
+      },
+      {
+        "intent": "add property blah() schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/units/properties/blah()",
+            "value": {
+              "type": "null",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property 😃things",
+    "diff": {
+      "description": "'😃things' is not documented",
+      "example": null,
+      "instancePath": "/meta/units/😃things",
+      "key": "😃things",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties/units/properties",
+      "propertyExamplePath": "/meta/units/😃things",
+      "propertyPath": "/properties/meta/properties/units/properties/😃things",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property 😃things required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/units/required/-",
+            "value": "😃things",
+          },
+        ],
+      },
+      {
+        "intent": "add property 😃things schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/units/properties/😃things",
+            "value": {
+              "type": "null",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property query",
+    "diff": {
+      "description": "'query' is not documented",
+      "example": null,
+      "instancePath": "/meta/tips/query",
+      "key": "query",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties/tips/properties",
+      "propertyExamplePath": "/meta/tips/query",
+      "propertyPath": "/properties/meta/properties/tips/properties/query",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add properties {} to parent object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/tips/properties",
+            "value": {},
+          },
+        ],
+      },
+      {
+        "intent": "add required [] to parent object and make query required",
+        "operations": [
+          {
+            "extra": "same",
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/tips/required",
+            "value": [
+              "query",
+            ],
+          },
+        ],
+      },
+      {
+        "intent": "add property query schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/tips/properties/query",
+            "value": {
+              "type": "null",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property columns",
+    "diff": {
+      "description": "'columns' is not documented",
+      "example": null,
+      "instancePath": "/meta/tips/columns",
+      "key": "columns",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/properties/meta/properties/tips/properties",
+      "propertyExamplePath": "/meta/tips/columns",
+      "propertyPath": "/properties/meta/properties/tips/properties/columns",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make new property columns required",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/tips/required/-",
+            "value": "columns",
+          },
+        ],
+      },
+      {
+        "intent": "add property columns schema to properties",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/meta/properties/tips/properties/columns",
+            "value": {
+              "type": "null",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alphanumeric keys 2`] = `
+{
+  "info": {},
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "properties": {
+                          "failure_rate()": {
+                            "type": "number",
+                          },
+                          "tpm()": {
+                            "type": "number",
+                          },
+                          "tuple(('duration', 300))": {
+                            "items": {
+                              "items": {
+                                "oneOf": [
+                                  {
+                                    "type": "string",
+                                  },
+                                  {
+                                    "type": "number",
+                                  },
+                                ],
+                              },
+                              "type": "array",
+                            },
+                            "type": "array",
+                          },
+                          "user_misery()": {
+                            "type": "number",
+                          },
+                          "😃things": {
+                            "items": {
+                              "oneOf": [
+                                {
+                                  "type": "string",
+                                },
+                                {
+                                  "type": "number",
+                                },
+                              ],
+                            },
+                            "type": "array",
+                          },
+                        },
+                        "required": [
+                          "tuple(('duration', 300))",
+                          "tpm()",
+                          "failure_rate()",
+                          "user_misery()",
+                          "😃things",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "meta": {
+                      "properties": {
+                        "dataset": {
+                          "type": "string",
+                        },
+                        "fields": {
+                          "properties": {
+                            "blah()": {
+                              "type": "string",
+                            },
+                            "project_threshold_config": {
+                              "type": "string",
+                            },
+                            "tuple(('duration', 300))": {
+                              "type": "string",
+                            },
+                          },
+                          "required": [
+                            "tuple(('duration', 300))",
+                            "blah()",
+                            "project_threshold_config",
+                          ],
+                          "type": "object",
+                        },
+                        "isMetricsData": {
+                          "type": "boolean",
+                        },
+                        "tips": {
+                          "properties": {
+                            "columns": {
+                              "type": "null",
+                            },
+                            "query": {
+                              "type": "null",
+                            },
+                          },
+                          "required": [
+                            "query",
+                            "columns",
+                          ],
+                          "type": "object",
+                        },
+                        "units": {
+                          "properties": {
+                            "blah()": {
+                              "type": "null",
+                            },
+                            "tuple(('duration', 300))": {
+                              "type": "null",
+                            },
+                            "😃things": {
+                              "type": "null",
+                            },
+                          },
+                          "required": [
+                            "tuple(('duration', 300))",
+                            "blah()",
+                            "😃things",
+                          ],
+                          "type": "object",
+                        },
+                      },
+                      "required": [
+                        "fields",
+                        "units",
+                        "isMetricsData",
+                        "tips",
+                        "dataset",
+                      ],
+                      "type": "object",
+                    },
+                  },
+                  "required": [
+                    "data",
+                    "meta",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "200 response",
           },
         },
       },
