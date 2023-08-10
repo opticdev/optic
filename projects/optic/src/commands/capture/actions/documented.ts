@@ -84,9 +84,13 @@ function summarizePatch(
       const action =
         options.mode === 'update' ? 'has been added' : 'is not documented';
       const color = options.mode === 'update' ? chalk.green : chalk.red;
-      return [
-        color(`${location} '${diff.key}' (${diff.propertyPath}) ${action}`),
-      ];
+      const propertyLocation =
+        options.mode === 'update'
+          ? `(${diff.propertyPath})`
+          : diff.parentObjectPath
+          ? `(${diff.parentObjectPath})`
+          : '';
+      return [color(`${location} '${diff.key}' ${action} ${propertyLocation}`)];
     } else if (diff.kind === 'UnmatchedType') {
       // filter out dependent diffs
       if (
@@ -111,7 +115,7 @@ function summarizePatch(
       const color = options.mode === 'update' ? chalk.yellow : chalk.red;
 
       const lines = [
-        color(`${location} '${diff.key}' (${diff.propertyPath}) ${action}`),
+        color(`${location} '${diff.key}' ${action} (${diff.propertyPath})`),
       ];
       if (verbose) {
         lines.push(
@@ -143,7 +147,7 @@ function summarizePatch(
       const color = options.mode === 'update' ? chalk.yellow : chalk.red;
 
       const lines = [
-        color(`${location} '${diff.key}' (${diff.propertyPath}) ${action}`),
+        color(`${location} '${diff.key}' ${action} (${diff.propertyPath})`),
       ];
       if (verbose) {
         lines.push(
