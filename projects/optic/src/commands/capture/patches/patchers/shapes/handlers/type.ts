@@ -1,9 +1,12 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import {
+  JsonSchemaKnownKeyword,
+  ErrorObject,
+  ShapeDiffResult,
+  ShapeDiffResultKind,
+} from '../diff';
 
-import { JsonSchemaKnownKeyword, ErrorObject } from '../traverser';
-import { ShapeDiffResult, ShapeDiffResultKind } from '../result';
-
-export function* typeKeyword(
+export function* diffTypeKeyword(
   validationError: ErrorObject,
   example: any
 ): IterableIterator<ShapeDiffResult> {

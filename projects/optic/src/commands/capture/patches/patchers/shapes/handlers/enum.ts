@@ -1,8 +1,12 @@
-import { JsonSchemaKnownKeyword, ErrorObject } from '../traverser';
-import { ShapeDiffResult, ShapeDiffResultKind } from '../result';
+import {
+  JsonSchemaKnownKeyword,
+  ErrorObject,
+  ShapeDiffResult,
+  ShapeDiffResultKind,
+} from '../diff';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
-export function* enumKeyword(
+export function* diffEnumKeyword(
   validationError: ErrorObject,
   example: any
 ): IterableIterator<ShapeDiffResult> {

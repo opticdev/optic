@@ -1,5 +1,5 @@
 import { ShapeDiffResult } from '../result';
-import { ErrorObject } from '../traverser';
+import { ErrorObject } from '../../../../capture/patches/patchers/shapes/diff';
 
 import { additionalProperties } from './additionalProperties';
 import { oneOfKeyword } from './oneOf';

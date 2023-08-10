@@ -1,6 +1,6 @@
 import { it, describe, expect } from '@jest/globals';
-import { diffBodyBySchema } from '..';
-import { SchemaObject } from '../../';
+import { diffBodyBySchema } from '../..';
+import { SchemaObject } from '../../../../../../oas/shapes';
 
 describe('enum json schema diff visitor', () => {
   const jsonSchema: SchemaObject = {

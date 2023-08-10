@@ -12,8 +12,9 @@ import * as AT from '../../oas/lib/async-tools';
 import { writePatchesToFiles } from '../write/file';
 import { logger } from '../../../logger';
 import { SpecPatch } from '../../oas/specs';
-import { ShapeDiffResult } from '../../oas/shapes/diffs';
+
 import { jsonPointerLogger } from '@useoptic/openapi-io';
+import { ShapeDiffResult } from '../patches/patchers/shapes/diff';
 
 function getShapeDiffDetails(
   diff: ShapeDiffResult,

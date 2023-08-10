@@ -1,16 +1,78 @@
 import jsonSchemaTraverse from 'json-schema-traverse';
-import { SchemaObject } from '..';
-import { ShapeDiffResult } from './result';
 import Ajv, { ErrorObject, ValidateFunction } from 'ajv';
-import { OpenAPIV3 } from '../../specs';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { Ono } from '@jsdevtools/ono';
 import { Result, Ok, Err } from 'ts-results';
+import { JsonPath } from '@useoptic/openapi-io';
+import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { SchemaObject } from '../../../../oas/shapes';
+import { diffAdditionalProperties } from './handlers/additionalProperties';
+import { diffOneOfKeyword } from './handlers/oneOf';
+import { diffRequiredKeyword } from './handlers/required';
+import { diffTypeKeyword } from './handlers/type';
+import { diffEnumKeyword } from './handlers/enum';
 
-import { diffVisitors } from './visitors';
+export function* diffVisitors(
+  validationError: ErrorObject,
+  example: any
+): IterableIterator<ShapeDiffResult> {
+  for (let visitor of [
+    diffAdditionalProperties,
+    diffOneOfKeyword,
+    diffRequiredKeyword,
+    diffTypeKeyword,
+    diffEnumKeyword,
+  ]) {
+    yield* visitor(validationError, example);
+  }
+}
+
+export enum ShapeDiffResultKind {
+  AdditionalProperty = 'AdditionalProperty',
+  MissingRequiredProperty = 'MissingRequiredProperty',
+  MissingEnumValue = 'MissingEnumValue',
+  UnmatchedType = 'UnmatchedType',
+}
+
+// The result of matching a body against it's (JSON) schema
+export type ShapeDiffResult = {
+  keyword: JsonSchemaKnownKeyword;
+  key: string;
+  example: any;
+  instancePath: JsonPath;
+  description: string;
+} & (
+  | {
+      kind: ShapeDiffResultKind.AdditionalProperty;
+      keyword: JsonSchemaKnownKeyword.additionalProperties;
+
+      propertyExamplePath: JsonPath;
+      parentObjectPath: JsonPath;
+      propertyPath: JsonPath;
+    }
+  | {
+      kind: ShapeDiffResultKind.MissingRequiredProperty;
+      keyword: JsonSchemaKnownKeyword.required;
+
+      parentObjectPath: JsonPath;
+      propertyPath: JsonPath;
+    }
+  | {
+      kind: ShapeDiffResultKind.UnmatchedType;
+      keyword: JsonSchemaKnownKeyword.type | JsonSchemaKnownKeyword.oneOf;
+      expectedType: string;
+
+      propertyPath: JsonPath;
+    }
+  | {
+      kind: ShapeDiffResultKind.MissingEnumValue;
+      keyword: JsonSchemaKnownKeyword.enum;
+      value: string;
+      propertyPath: JsonPath;
+    }
+);
 
 export type { ErrorObject };
-
 export class ShapeDiffTraverser {
   private validator: Ajv;
 
