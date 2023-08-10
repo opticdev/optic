@@ -16,12 +16,13 @@ optic-diff-push:
   rules:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
   script:
-    # Uncomment if you need to generate your spec before running Optic:
+    # 🔧 Uncomment if you need to generate your spec before running Optic:
     # - ./generate_spec.example.sh
     - npm install -g @useoptic/optic
 
-    # Update the "match" glob pattern to match your specs. Examples: "openapi.yml" or "openapi.yml,other.yml" or "*.openapi.yml"
-    # Add "--compare-from cloud:default" option to the command below if you generate your specs and don't track them in Git. Requires Optic cloud.
+    # 🔧 Update the "match" glob pattern to find OpenAPI specs in your repository.
+    # Examples: "openapi.yml" or "openapi.yml,other.yml" or "*.openapi.yml". Leave blank to mach all OpenAPI specs in repository.
+    # 🔧 Add "--compare-from cloud:default" option to the command below if you generate your specs and don't track them in Git. Requires Optic cloud.
     - optic diff-all --check --upload --head-tag "gitbranch:$CI_COMMIT_REF_NAME" --match ""
 
 # on merge request, diff with the base and post a comment
@@ -30,19 +31,20 @@ optic-diff-merge-request:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $OPTIC_TOKEN
   script:
-    # Uncomment if you need to generate your spec before running Optic:
+    # 🔧 Uncomment if you need to generate your spec before running Optic:
     # - ./generate_spec.example.sh
     - npm install -g @useoptic/optic
     - git fetch origin --depth=1 $CI_MERGE_REQUEST_DIFF_BASE_SHA
 
     # run optic diff and record the result, but don't fail if optic fails
-    # Update the "match" glob pattern to match your specs. Examples: "openapi.yml" or "openapi.yml,other.yml" or "*.openapi.yml"
-    # Add "--compare-from cloud:default" option to the command below if you generate your specs and don't track them in Git. Requires Optic cloud.
+    # 🔧 Update the "match" glob pattern to find OpenAPI specs in your repository.
+    # Examples: "openapi.yml" or "openapi.yml,other.yml" or "*.openapi.yml". Leave blank to mach all OpenAPI specs in repository.
+    # 🔧 Add "--compare-from cloud:default" option to the command below if you generate your specs and don't track them in Git. Requires Optic cloud.
     - export OPTIC_RESULT=0; optic diff-all --check --upload --head-tag "gitbranch:$CI_COMMIT_REF_NAME" --match "" || export OPTIC_RESULT=$?
 
     # add a comment on the merge request
     - if [ -n "${OPTIC_GITLAB_TOKEN}" ]; then GITLAB_TOKEN=$OPTIC_GITLAB_TOKEN optic ci comment --provider gitlab --project-id $CI_PROJECT_ID --merge-request-id $CI_MERGE_REQUEST_IID --sha $CI_COMMIT_SHA; fi;
 
-    # comment out the next line if you don't want to fail CI when checks fail
+    # 🔧 comment out the next line if you don't want to fail CI when checks fail
     - if [ $OPTIC_RESULT -ne 0 ]; then exit 1; fi;
 
