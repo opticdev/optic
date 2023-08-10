@@ -12,7 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # Uncomment to generate your specifications before running Optic:
+      # 🔧 Uncomment to generate your specifications before running Optic:
       # - name: Generate Spec
       #   run: ./generate_spec.example.sh
 
@@ -24,15 +24,15 @@ jobs:
           # A GitHub token with access to create comments on pull requests
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-          # If true, standard check failures will cause this action to fail.
-          # If false, standard check failures will show in PR comments and
-          # in Optic Cloud but will not cause the action to fail
+          # 🔧 If true, standard check failures will cause this action to fail.
+          # If false, standard check failures will show in PR comments and in Optic Cloud but will not cause the action to fail.
           standards_fail: true
 
-          # If you have more than one spec, separate matches with commas
+          # 🔧 A glob pattern to find OpenAPI files in your repository. Leave "" to match all OpenAPI specs in repository.
           # Examples of match: "openapi.yml" or "openapi.yml,other.yml" or "*.spec.yml"
           additional_args: --match ""
 
-          compare_from_pr: cloud:default
-          compare_from_push: cloud:default
+          # 🔧 Uncomment next two lines if you generate your specs and don't track them in Git. Requires Optic cloud.
+          # compare_from_pr: cloud:default
+          # compare_from_push: cloud:default
 
