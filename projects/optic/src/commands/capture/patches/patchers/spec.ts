@@ -7,7 +7,7 @@ import {
   PatchImpact,
   PatchOperation,
   PatchOperationGroup,
-} from '../../../oas/patches';
+} from '../patch-operations';
 import { SpecPatch } from '../../../oas/specs';
 import {
   UndocumentedOperation,

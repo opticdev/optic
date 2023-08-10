@@ -1,10 +1,6 @@
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
-import {
-  Schema,
-  SchemaObject,
-  ShapeLocation,
-  ShapePatch,
-} from '../../../../../oas/shapes';
+import { Schema, SchemaObject } from '../schema';
+import { ShapeLocation } from '../documented-bodies';
 import {
   JsonSchemaKnownKeyword,
   ErrorObject,
@@ -13,6 +9,7 @@ import {
 } from '../diff';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { OperationGroup, PatchImpact } from '../../../../../oas/specs/patches';
+import { ShapePatch } from '..';
 
 export function* oneOfKeywordDiffs(
   validationError: ErrorObject,

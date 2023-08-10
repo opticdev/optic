@@ -1,9 +1,3 @@
-import {
-  DocumentedBody,
-  Schema,
-  SchemaObject,
-  ShapeLocation,
-} from '../../../../oas/shapes';
 import { ShapeDiffResult, diffBodyBySchema } from './diff';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 import { oneOfPatches } from './handlers/oneOf';
@@ -13,13 +7,15 @@ import {
   PatchImpact,
   PatchOperation,
   PatchOperationGroup,
-} from '../../../../oas/patches';
+} from '../../patch-operations';
 import { logger } from '../../../../../logger';
 import { SentryClient } from '../../../../../sentry';
 import { newSchemaPatch } from './handlers/newSchema';
 import { enumPatches } from './handlers/enum';
 import { typePatches } from './handlers/type';
 import { additionalPropertiesPatches } from './handlers/additionalProperties';
+import { Schema, SchemaObject } from './schema';
+import { DocumentedBody, ShapeLocation } from './documented-bodies';
 
 export function* generateShapePatchesByDiff(
   diff: ShapeDiffResult,

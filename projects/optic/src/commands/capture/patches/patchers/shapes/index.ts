@@ -1,12 +1,5 @@
 import { Result } from 'ts-results';
 import {
-  Body,
-  DocumentedBody,
-  Schema,
-  SchemaObject,
-  ShapeLocation,
-} from '../../../../oas/shapes';
-import {
   ShapeDiffTraverser,
   SchemaCompilationError,
   ShapeDiffResult,
@@ -19,10 +12,12 @@ import {
   PatchImpact,
   PatchOperation,
   PatchOperationGroup,
-} from '../../../../oas/patches';
+} from '../../patch-operations';
 import { logger } from '../../../../../logger';
 import { SentryClient } from '../../../../../sentry';
 import { newSchemaPatch } from './handlers/newSchema';
+import { Schema, SchemaObject } from './schema';
+import { Body, DocumentedBody, ShapeLocation } from './documented-bodies';
 
 export function diffBodyBySchema(
   body: Body,

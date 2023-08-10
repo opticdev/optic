@@ -8,7 +8,7 @@ import { ApiCoverageCounter } from '../coverage/api-coverage';
 import { SpecPatch, SpecPatches } from '../../oas/specs';
 import { CapturedInteractions } from '../sources/captured-interactions';
 import { DocumentedInteraction, Operation } from '../../oas/operations';
-import { DocumentedBodies } from '../../oas/shapes';
+import { DocumentedBodies } from './patchers/shapes/documented-bodies';
 import { UndocumentedOperationType } from '../../oas/operations';
 import { SchemaInventory } from './patchers/closeness/schema-inventory';
 import {

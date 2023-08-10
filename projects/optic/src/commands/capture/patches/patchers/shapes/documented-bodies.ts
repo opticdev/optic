@@ -1,102 +1,56 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import {
-  BodyLocation,
-  BodyExampleLocation,
-  ComponentSchemaLocation,
-} from '@useoptic/openapi-utilities';
+import { BodyLocation } from '@useoptic/openapi-utilities';
 import { Result, Ok, Err, Option, Some, None } from 'ts-results';
 import MIMEType from 'whatwg-mimetype';
 
-import { BodyExampleFacts, ComponentSchemaExampleFacts } from '../../specs';
-import { OpenAPIV3 } from '../../specs';
-import { Body, DocumentedBody } from '../body';
 import {
   DocumentedInteraction,
   findResponse,
   findBody,
-} from '../../operations';
-import { CapturedBody } from '../../../capture/sources/body';
-import { logger } from '../../../../logger';
+} from '../../../../oas/operations';
+import { CapturedBody } from '../../../sources/body';
+import { logger } from '../../../../../logger';
+import { ShapePatch } from '.';
+import { Schema, SchemaObject } from './schema';
 
-export type { DocumentedBody };
+export interface Body {
+  contentType?: string;
+  value: any;
+}
+
+export type { BodyLocation };
+
+export type ShapeLocation =
+  | BodyLocation
+  | {
+      inComponentSchema: {
+        schemaName: string;
+      };
+    };
+
+export interface DocumentedBody {
+  body: Option<Body>;
+  bodySource?: CapturedBody;
+  schema: SchemaObject | null;
+  shapeLocation: ShapeLocation | null;
+  specJsonPath: string;
+}
+
+export class DocumentedBody {
+  static applyShapePatch(
+    body: DocumentedBody,
+    patch: ShapePatch
+  ): DocumentedBody {
+    return {
+      ...body,
+      schema: Schema.applyShapePatch(body.schema || {}, patch),
+    };
+  }
+}
 
 export interface DocumentedBodies extends AsyncIterable<DocumentedBody> {}
 
 export class DocumentedBodies {
-  static async *fromBodyExampleFacts(
-    exampleFacts: BodyExampleFacts,
-    spec: OpenAPIV3.Document
-  ): AsyncIterable<DocumentedBody> {
-    for await (let exampleFact of exampleFacts) {
-      let exampleBody = exampleFact.value;
-      if (!exampleBody || !exampleBody.value) continue; // TODO: add support for external values
-      let body = {
-        contentType: exampleBody.contentType,
-        value: exampleBody.value,
-      };
-
-      let conceptualLocation = exampleFact.location
-        .conceptualLocation as BodyExampleLocation;
-      let jsonPath = exampleFact.location.jsonPath;
-
-      let shapeLocation = conceptualLocation; // bit nasty, relying on BodyExampleLocation being a superset of BodyLocation
-
-      let bodyPath =
-        'singular' in conceptualLocation
-          ? jsonPointerHelpers.pop(jsonPath)
-          : jsonPointerHelpers.pop(jsonPointerHelpers.pop(jsonPath));
-      let expectedSchemaPath = jsonPointerHelpers.append(bodyPath, 'schema');
-
-      let resolvedSchema = jsonPointerHelpers.tryGet(spec, expectedSchemaPath);
-
-      if (resolvedSchema.match) {
-        let schema = resolvedSchema.value;
-        yield {
-          schema,
-          body: Some(body),
-          shapeLocation,
-          specJsonPath: bodyPath,
-        };
-      } else {
-        yield {
-          body: Some(body),
-          schema: null,
-          shapeLocation,
-          specJsonPath: bodyPath,
-        };
-      }
-    }
-  }
-
-  static async *fromComponentSchemaExampleFacts(
-    exampleFacts: ComponentSchemaExampleFacts,
-    spec: OpenAPIV3.Document
-  ): AsyncIterable<DocumentedBody> {
-    for await (let exampleFact of exampleFacts) {
-      let body = {
-        value: exampleFact.value,
-      };
-
-      let jsonPath = exampleFact.location.jsonPath;
-      let conceptualLocation = exampleFact.location
-        .conceptualLocation as ComponentSchemaLocation;
-
-      let expectedSchemaPath = jsonPointerHelpers.pop(jsonPath); // example lives nested in schema
-
-      let resolvedSchema = jsonPointerHelpers.tryGet(spec, expectedSchemaPath);
-
-      if (resolvedSchema.match) {
-        let schema = resolvedSchema.value;
-        yield {
-          schema,
-          body: Some(body),
-          shapeLocation: conceptualLocation,
-          specJsonPath: expectedSchemaPath,
-        };
-      }
-    }
-  }
-
   static async *fromDocumentedInteraction({
     interaction,
     specJsonPath,

@@ -15,11 +15,13 @@ import {
 } from '@useoptic/openapi-io';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import chalk from 'chalk';
-import { ShapeDiffResult } from '../shapes/diffs';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { Subject, tap } from '../lib/async-tools';
 import { DocumentedInteraction, DocumentedInteractions } from '../operations';
-import { DocumentedBodies, DocumentedBody } from '../shapes';
+import {
+  DocumentedBodies,
+  DocumentedBody,
+} from '../../capture/patches/patchers/shapes/documented-bodies';
 import { updateReporter } from '../reporters/update';
 import { ApiCoverageCounter } from '../../capture/coverage/api-coverage';
 import { ParsedOperation } from './document';
@@ -28,6 +30,7 @@ import {
   CapturedInteraction,
   CapturedInteractions,
 } from '../../capture/sources/captured-interactions';
+import { ShapeDiffResult } from '../../capture/patches/patchers/shapes/diff';
 
 export async function patchOperationsAsNeeded(
   patchInteractions: CapturedInteractions,

@@ -1,12 +1,12 @@
-import { OpenAPIV3 } from '../specs/index';
-import { ShapePatch } from './patches';
+import { OpenAPIV3 } from '../../../../oas/specs/index';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { PatchOperation } from '../patches';
+import { PatchOperation } from '../../patch-operations';
 import JsonPatch from 'fast-json-patch';
-import { OperationPatch } from '../operations';
+import { OperationPatch } from '../../../../oas/operations';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
-import { SentryClient } from '../../../sentry';
-import { logger } from '../../../logger';
+import { SentryClient } from '../../../../../sentry';
+import { logger } from '../../../../../logger';
+import { ShapePatch } from '.';
 
 export type SchemaObject = OpenAPIV3.SchemaObject;
 

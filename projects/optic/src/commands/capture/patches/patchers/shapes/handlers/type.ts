@@ -5,7 +5,8 @@ import {
   ShapeDiffResult,
   ShapeDiffResultKind,
 } from '../diff';
-import { Schema, SchemaObject, ShapeLocation } from '../../../../../oas/shapes';
+import { Schema, SchemaObject } from '../schema';
+import { ShapeLocation } from '../documented-bodies';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 import { ShapePatch } from '..';
 import { OperationGroup, PatchImpact } from '../../../../../oas/specs/patches';

@@ -1,5 +1,5 @@
-import { Schema, SchemaObject } from '../../../../../oas/shapes/schema';
-import { ShapeLocation } from '../../../../../oas/shapes';
+import { Schema, SchemaObject } from '../schema';
+import { ShapeLocation } from '../documented-bodies';
 import { OperationGroup, PatchImpact } from '../../../../../oas/specs/patches';
 import { ShapePatch } from '..';
 

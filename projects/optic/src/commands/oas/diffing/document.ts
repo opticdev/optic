@@ -21,7 +21,10 @@ import {
   SpecPatch,
   SpecPatches,
 } from '../specs';
-import { DocumentedBodies, DocumentedBody } from '../shapes';
+import {
+  DocumentedBodies,
+  DocumentedBody,
+} from '../../capture/patches/patchers/shapes/documented-bodies';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { ApiCoverageCounter } from '../../capture/coverage/api-coverage';
 import { SchemaInventory } from '../../capture/patches/patchers/closeness/schema-inventory';

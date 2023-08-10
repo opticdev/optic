@@ -1,5 +1,5 @@
 import { JsonSchemaSourcemap, isYaml } from '@useoptic/openapi-io';
-import { PatchOperation } from '../../patches';
+import { PatchOperation } from '../../../capture/patches/patch-operations';
 import { applyPatch } from './reconcilers';
 import { Readable, Writable } from 'stream';
 

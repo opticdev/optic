@@ -2,7 +2,7 @@ import { FlatOpenAPIV3, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { computeClosenessFromKeyValueTuples, walkSchema } from './closeness';
 import { SpecPatch, SpecPatches } from '../../../../oas/specs';
-import { PatchImpact } from '../../../../oas/patches';
+import { PatchImpact } from '../../patch-operations';
 import { PathComponents } from '../../../../oas/operations';
 import { Operation } from 'fast-json-patch';
 
