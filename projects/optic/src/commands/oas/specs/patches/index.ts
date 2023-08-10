@@ -11,7 +11,7 @@ import { OperationDiffResult } from '../../operations/diffs';
 import { SentryClient } from '../../../../sentry';
 import { logger } from '../../../../logger';
 import { ShapeDiffResult } from '../../../capture/patches/patchers/shapes/diff';
-import { ShapePatch } from '../../../capture/patches/patchers/shapes';
+import { ShapePatch } from '../../../capture/patches/patchers/shapes/patches';
 import { ShapeLocation } from '../../../capture/patches/patchers/shapes/documented-bodies';
 
 export { newSpecPatches } from './generators/new-spec';

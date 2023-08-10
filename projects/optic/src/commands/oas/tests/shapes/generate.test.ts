@@ -1,9 +1,13 @@
 import { it, describe, expect } from '@jest/globals';
-import { SchemaObject, ShapePatches, Schema } from '../../shapes';
-import { diffBodyBySchema, ShapeDiffResult } from '../../shapes/diffs';
 import * as DocumentedBodyFixtures from '../fixtures/documented-body';
 import { rootObjectOrArray } from '../fixtures/oneof-schemas';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
+import {
+  Schema,
+  SchemaObject,
+} from '../../../capture/patches/patchers/shapes/schema';
+import { ShapePatches } from '../../../capture/patches/patchers/shapes/patches';
+import { diffBodyBySchema } from '../../../capture/patches/patchers/shapes/diff';
 
 function generateSchema(
   openAPIVersion: SupportedOpenAPIVersions,

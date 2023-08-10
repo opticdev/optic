@@ -1,4 +1,4 @@
-import { ShapePatch } from '..';
+import { ShapePatch } from '../patches';
 import { OperationGroup, PatchImpact } from '../../../../../oas/specs/patches';
 import {
   JsonSchemaKnownKeyword,

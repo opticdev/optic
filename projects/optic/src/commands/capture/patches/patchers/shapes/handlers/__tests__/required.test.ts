@@ -1,6 +1,7 @@
 import { it, describe, expect } from '@jest/globals';
-import { diffBodyBySchema, generateShapePatchesByDiff } from '../..';
+import { generateShapePatchesByDiff } from '../../patches';
 import { SchemaObject } from '../../schema';
+import { diffBodyBySchema } from '../../diff';
 
 describe('required json schema diff visitor', () => {
   const jsonSchema: SchemaObject = {

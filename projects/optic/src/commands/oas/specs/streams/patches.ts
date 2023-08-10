@@ -21,7 +21,7 @@ import {
   DocumentedBodies,
   DocumentedBody,
 } from '../../../capture/patches/patchers/shapes/documented-bodies';
-import { ShapePatches } from '../../../capture/patches/patchers/shapes';
+import { ShapePatches } from '../../../capture/patches/patchers/shapes/patches';
 import { SchemaObject } from '../../../capture/patches/patchers/shapes/schema';
 
 export interface SpecPatches extends AsyncIterable<SpecPatch> {}

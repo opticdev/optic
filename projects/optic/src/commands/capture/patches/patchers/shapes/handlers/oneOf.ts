@@ -9,7 +9,7 @@ import {
 } from '../diff';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { OperationGroup, PatchImpact } from '../../../../../oas/specs/patches';
-import { ShapePatch } from '..';
+import { ShapePatch } from '../patches';
 
 export function* oneOfKeywordDiffs(
   validationError: ErrorObject,

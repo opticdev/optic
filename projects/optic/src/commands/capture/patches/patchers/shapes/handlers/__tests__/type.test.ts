@@ -1,7 +1,9 @@
 import { it, describe, expect } from '@jest/globals';
-import { diffBodyBySchema, generateShapePatchesByDiff } from '../..';
+
 import { SchemaObject } from '../../schema';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
+import { diffBodyBySchema } from '../../diff';
+import { generateShapePatchesByDiff } from '../../patches';
 
 describe('type json schema diff visitor', () => {
   const jsonSchema: SchemaObject = {

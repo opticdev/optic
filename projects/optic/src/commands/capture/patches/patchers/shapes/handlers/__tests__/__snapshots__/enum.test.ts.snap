@@ -16,3 +16,79 @@ exports[`enum json schema diff visitor when missing enum value 1`] = `
   },
 ]
 `;
+
+exports[`enum shape patch generator when enum is nested in array 1`] = `
+[
+  {
+    "description": "add enum new-field to status ",
+    "diff": {
+      "description": "'status' does not have enum value new-field",
+      "example": {
+        "other": [
+          {
+            "status": "new-field",
+          },
+        ],
+      },
+      "instancePath": "/other/0/status",
+      "key": "status",
+      "keyword": "enum",
+      "kind": "MissingEnumValue",
+      "propertyPath": "/properties/other/items/properties/status/enum",
+      "value": "new-field",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add new enum value to status",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/properties/other/items/properties/status/enum/-",
+            "value": "new-field",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+    ],
+    "shouldRegeneratePatches": false,
+  },
+]
+`;
+
+exports[`enum shape patch generator when missing an enum 1`] = `
+[
+  {
+    "description": "add enum new-field to status ",
+    "diff": {
+      "description": "'status' does not have enum value new-field",
+      "example": {
+        "status": "new-field",
+      },
+      "instancePath": "/status",
+      "key": "status",
+      "keyword": "enum",
+      "kind": "MissingEnumValue",
+      "propertyPath": "/properties/status/enum",
+      "value": "new-field",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add new enum value to status",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/properties/status/enum/-",
+            "value": "new-field",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+    ],
+    "shouldRegeneratePatches": false,
+  },
+]
+`;

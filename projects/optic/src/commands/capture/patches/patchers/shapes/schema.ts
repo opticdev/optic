@@ -6,7 +6,7 @@ import { OperationPatch } from '../../../../oas/operations';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 import { SentryClient } from '../../../../../sentry';
 import { logger } from '../../../../../logger';
-import { ShapePatch } from '.';
+import { ShapePatch } from './patches';
 
 export type SchemaObject = OpenAPIV3.SchemaObject;
 

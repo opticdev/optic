@@ -1,7 +1,7 @@
 import { Schema, SchemaObject } from '../schema';
 import { ShapeLocation } from '../documented-bodies';
 import { OperationGroup, PatchImpact } from '../../../../../oas/specs/patches';
-import { ShapePatch } from '..';
+import { ShapePatch } from '../patches';
 
 export function newSchemaPatch(
   schema: SchemaObject,

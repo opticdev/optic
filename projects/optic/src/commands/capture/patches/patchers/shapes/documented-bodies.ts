@@ -10,7 +10,7 @@ import {
 } from '../../../../oas/operations';
 import { CapturedBody } from '../../../sources/body';
 import { logger } from '../../../../../logger';
-import { ShapePatch } from '.';
+import { ShapePatch } from './patches';
 import { Schema, SchemaObject } from './schema';
 
 export interface Body {

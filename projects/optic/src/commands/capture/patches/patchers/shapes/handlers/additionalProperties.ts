@@ -8,7 +8,7 @@ import {
   ShapeDiffResultKind,
 } from '../diff';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { ShapePatch } from '..';
+import { ShapePatch } from '../patches';
 import { OperationGroup, PatchImpact } from '../../../../../oas/specs/patches';
 
 export function* additionalPropertiesDiffs(
