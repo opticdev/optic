@@ -8,10 +8,12 @@ import { OpenAPIV3, SpecPatch, SpecPatches } from '../../oas/specs';
 import { CapturedInteractions } from '../sources/captured-interactions';
 import { DocumentedInteraction, Operation } from '../../oas/operations';
 import { DocumentedBodies } from '../../oas/shapes';
-import { createMissingMethodPatch } from '../../oas/specs/patches/generators/missing-method';
-import { createMissingPathPatches } from '../../oas/specs/patches/generators/missing-path';
 import { UndocumentedOperationType } from '../../oas/operations';
 import { SchemaInventory } from './patchers/closeness/schema-inventory';
+import {
+  createMissingPathPatches,
+  createMissingMethodPatch,
+} from './patchers/spec';
 
 export async function* generatePathAndMethodSpecPatches(
   specHolder: {
