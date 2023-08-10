@@ -12,6 +12,7 @@ import JsonPatch from 'fast-json-patch';
 import { ShapeDiffResult } from '../../shapes/diffs';
 import { OperationDiffResult } from '../../operations/diffs';
 import { SentryClient } from '../../../../sentry';
+import { logger } from '../../../../logger';
 
 export { newSpecPatches } from './generators/new-spec';
 export { templatePatches } from './generators/template';
@@ -128,6 +129,12 @@ export class SpecPatch {
 
       return result.newDocument!;
     } catch (e) {
+      logger.debug({
+        location: 'schema',
+        error: e,
+        operations: JSON.stringify(operations),
+        parsed: JSON.stringify(spec),
+      });
       SentryClient.captureException(e, {
         extra: {
           operations,

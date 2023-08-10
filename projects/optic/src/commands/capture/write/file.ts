@@ -44,6 +44,12 @@ export async function writePatchesToFiles(
       logger.error(
         chalk.red.bold(`Error: Failed writing patches to ${filePath}`)
       );
+      logger.debug({
+        location: 'patch files',
+        error: e,
+        operations: JSON.stringify(operations),
+        parsed: JSON.stringify(parsed),
+      });
       Sentry.captureException(e, {
         extra: {
           operations,

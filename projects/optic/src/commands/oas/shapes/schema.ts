@@ -6,6 +6,7 @@ import JsonPatch from 'fast-json-patch';
 import { OperationPatch } from '../operations';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 import { SentryClient } from '../../../sentry';
+import { logger } from '../../../logger';
 
 export type SchemaObject = OpenAPIV3.SchemaObject;
 
@@ -117,6 +118,12 @@ export class Schema {
 
       return result.newDocument!;
     } catch (e) {
+      logger.debug({
+        location: 'schema',
+        error: e,
+        operations: JSON.stringify(operations),
+        parsed: JSON.stringify(schema),
+      });
       SentryClient.captureException(e, {
         extra: {
           operations,
