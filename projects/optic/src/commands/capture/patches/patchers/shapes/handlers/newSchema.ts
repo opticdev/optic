@@ -1,6 +1,7 @@
-import { Schema, SchemaObject } from '../../schema';
-import { ShapeLocation } from '../..';
-import { OperationGroup, PatchImpact, ShapePatch } from '..';
+import { Schema, SchemaObject } from '../../../../../oas/shapes/schema';
+import { ShapeLocation } from '../../../../../oas/shapes';
+import { OperationGroup, PatchImpact } from '../../../../../oas/specs/patches';
+import { ShapePatch } from '..';
 
 export function newSchemaPatch(
   schema: SchemaObject,

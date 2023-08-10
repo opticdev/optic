@@ -1,11 +1,62 @@
-import { PatchImpact, ShapePatch } from '../patches';
-import { Schema } from '../schema';
-import { diffBodyBySchema } from '../diffs';
-import { newSchemaPatch, generateShapePatchesByDiff } from '../patches';
-import { DocumentedBody } from '../body';
+import {
+  DocumentedBody,
+  Schema,
+  SchemaObject,
+  ShapeLocation,
+} from '../../../../oas/shapes';
+import { ShapeDiffResult, diffBodyBySchema } from './diff';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
-import { SentryClient } from '../../../../sentry';
-import { logger } from '../../../../logger';
+import { oneOfPatches } from './handlers/oneOf';
+import { requiredPatches } from './handlers/required';
+import { OperationDiffResult } from '../../../../oas/operations/diffs';
+import {
+  PatchImpact,
+  PatchOperation,
+  PatchOperationGroup,
+} from '../../../../oas/patches';
+import { logger } from '../../../../../logger';
+import { SentryClient } from '../../../../../sentry';
+import { newSchemaPatch } from './handlers/newSchema';
+import { enumPatches } from './handlers/enum';
+import { typePatches } from './handlers/type';
+import { additionalPropertiesPatches } from './handlers/additionalProperties';
+
+export function* generateShapePatchesByDiff(
+  diff: ShapeDiffResult,
+  schema: SchemaObject,
+  shapeContext: { location?: ShapeLocation },
+  openAPIVersion: SupportedOpenAPIVersions
+): IterableIterator<ShapePatch> {
+  for (let generator of [
+    oneOfPatches,
+    requiredPatches,
+    enumPatches,
+    typePatches,
+    additionalPropertiesPatches,
+  ]) {
+    yield* generator(diff, schema, shapeContext, openAPIVersion);
+  }
+}
+
+export interface ShapePatch {
+  description: string;
+  diff: ShapeDiffResult | OperationDiffResult | undefined;
+  impact: PatchImpact[];
+  groupedOperations: PatchOperationGroup[];
+  shouldRegeneratePatches?: boolean;
+}
+
+export class ShapePatch {
+  static *operations(patch: ShapePatch): IterableIterator<PatchOperation> {
+    for (let group of patch.groupedOperations) {
+      yield* PatchOperationGroup.operations(group);
+    }
+  }
+
+  static isAddition(patch: ShapePatch): boolean {
+    return patch.impact.includes(PatchImpact.Addition);
+  }
+}
 
 export interface ShapePatches extends Iterable<ShapePatch> {}
 

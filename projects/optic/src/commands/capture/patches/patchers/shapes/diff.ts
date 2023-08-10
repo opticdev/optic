@@ -5,23 +5,31 @@ import { Ono } from '@jsdevtools/ono';
 import { Result, Ok, Err } from 'ts-results';
 import { JsonPath } from '@useoptic/openapi-io';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
-import { SchemaObject } from '../../../../oas/shapes';
-import { diffAdditionalProperties } from './handlers/additionalProperties';
-import { diffOneOfKeyword } from './handlers/oneOf';
-import { diffRequiredKeyword } from './handlers/required';
-import { diffTypeKeyword } from './handlers/type';
-import { diffEnumKeyword } from './handlers/enum';
+import { Body, SchemaObject } from '../../../../oas/shapes';
+import { additionalPropertiesDiffs } from './handlers/additionalProperties';
+import { oneOfKeywordDiffs } from './handlers/oneOf';
+import { requiredKeywordDiffs } from './handlers/required';
+import { typeKeywordDiffs } from './handlers/type';
+import { enumKeywordDiffs } from './handlers/enum';
 
-export function* diffVisitors(
+export function diffBodyBySchema(
+  body: Body,
+  schema: SchemaObject
+): Result<IterableIterator<ShapeDiffResult>, SchemaCompilationError> {
+  let traverser = new ShapeDiffTraverser();
+  return traverser.traverse(body.value, schema).map(() => traverser.results());
+}
+
+function* diffVisitors(
   validationError: ErrorObject,
   example: any
 ): IterableIterator<ShapeDiffResult> {
   for (let visitor of [
-    diffAdditionalProperties,
-    diffOneOfKeyword,
-    diffRequiredKeyword,
-    diffTypeKeyword,
-    diffEnumKeyword,
+    additionalPropertiesDiffs,
+    oneOfKeywordDiffs,
+    requiredKeywordDiffs,
+    typeKeywordDiffs,
+    enumKeywordDiffs,
   ]) {
     yield* visitor(validationError, example);
   }
