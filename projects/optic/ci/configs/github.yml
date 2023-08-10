@@ -33,6 +33,7 @@ jobs:
           # Examples of match: "openapi.yml" or "openapi.yml,other.yml" or "*.spec.yml"
           additional_args: --match ""
 
-          compare_from_pr: cloud:default
-          compare_from_push: cloud:default
+          # Uncomment if you generate your specs and don't track them in Git. Requires Optic cloud.
+          # compare_from_pr: cloud:default
+          # compare_from_push: cloud:default
 
