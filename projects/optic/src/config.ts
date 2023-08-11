@@ -134,6 +134,7 @@ export type OpticCliConfig = Omit<ProjectYmlConfig, 'ruleset'> & {
 
   isAuthenticated: boolean;
   authenticationType?: 'user' | 'env';
+  userId?: string;
   client: OpticBackendClient;
 
   isInCi: boolean;
@@ -242,7 +243,7 @@ export const initializeRules = async (
   }
 };
 
-type UserConfig = {
+export type UserConfig = {
   token: string;
 };
 
@@ -299,6 +300,9 @@ export async function initializeConfig(): Promise<OpticCliConfig> {
       ? 'user'
       : undefined;
     cliConfig.isAuthenticated = true;
+    cliConfig.userId = token.startsWith('opat')
+      ? token.slice(4).split('.')[0]
+      : undefined;
     cliConfig.client = createOpticClient(token);
   }
 

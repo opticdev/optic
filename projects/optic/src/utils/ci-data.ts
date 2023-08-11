@@ -27,7 +27,7 @@ export type CiRunDetails = {
 
 const CI_DETAILS_FILE_PATH = path.join(process.cwd(), 'ci-run-details.json');
 
-export async function writeDataForCi(
+export async function getDataForCi(
   specs: (
     | {
         warnings: string[];
@@ -82,7 +82,29 @@ export async function writeDataForCi(
       }
     }
   }
+  return data;
+}
 
+export async function writeDataForCi(
+  specs: (
+    | {
+        warnings: string[];
+        results: RuleResult[];
+        groupedDiffs: ReturnType<typeof groupDiffsByEndpoint>;
+        changelogUrl?: string | null;
+        specUrl?: string | null;
+        name: string;
+      }
+    | {
+        name: string;
+        error: string;
+      }
+  )[],
+  options: {
+    severity: Severity;
+  }
+) {
+  const data = await getDataForCi(specs, options);
   await fs.writeFile(CI_DETAILS_FILE_PATH, JSON.stringify(data), 'utf-8');
 }
 
