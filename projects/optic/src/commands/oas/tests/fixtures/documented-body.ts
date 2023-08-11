@@ -1,8 +1,7 @@
-import { BodyLocation } from '../../shapes/body';
-import { DocumentedBody } from '../../shapes/body';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { Schema, SchemaObject } from '../../shapes';
 import { Some } from 'ts-results';
+import { SchemaObject } from '../../../capture/patches/patchers/shapes/schema';
+import { DocumentedBody } from '../../../capture/patches/patchers/shapes/documented-bodies';
 
 export function jsonBody(
   value: any,

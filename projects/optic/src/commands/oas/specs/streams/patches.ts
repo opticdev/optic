@@ -10,20 +10,19 @@ import {
   undocumentedOperationPatches,
 } from '../patches';
 import { SpecTemplate } from '../templates';
-import {
-  DocumentedBodies,
-  DocumentedBody,
-  SchemaObject,
-  ShapePatches,
-} from '../../shapes';
+
 import {
   DocumentedInteraction,
   OperationPatches,
   UndocumentedOperation,
 } from '../../operations';
-import { SchemaInventory } from '../../../capture/patches/patchers/closeness/schema-inventory';
-import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
+import {
+  DocumentedBodies,
+  DocumentedBody,
+} from '../../../capture/patches/patchers/shapes/documented-bodies';
+import { ShapePatches } from '../../../capture/patches/patchers/shapes/patches';
+import { SchemaObject } from '../../../capture/patches/patchers/shapes/schema';
 
 export interface SpecPatches extends AsyncIterable<SpecPatch> {}
 
@@ -64,12 +63,11 @@ export class SpecPatches {
     openAPIVersion: SupportedOpenAPIVersions
   ): SpecPatches {
     const updatedSchemasByPath: Map<string, SchemaObject> = new Map();
-
     for await (let documentedBody of documentedBodies) {
       let { specJsonPath, shapeLocation } = documentedBody;
 
       if (updatedSchemasByPath.has(specJsonPath)) {
-        documentedBody.schema = updatedSchemasByPath.get(specJsonPath)!;
+        documentedBody.schema = updatedSchemasByPath.get(specJsonPath) ?? null;
       }
 
       for (let patch of ShapePatches.generateBodyAdditions(

@@ -4,14 +4,14 @@ import {
   PatchImpact,
   PatchOperationGroup,
   PatchOperation,
-} from '../../patches';
+} from '../../../capture/patches/patch-operations';
 import JsonPatch, { JsonPatchError } from 'fast-json-patch';
 import { Result, Ok, Err } from 'ts-results';
 
 export type { PatchOperation };
 export { PatchOperationGroup, PatchImpact };
 import { diffOperationPatchGenerators } from './generators';
-import { ShapeDiffResult } from '../../shapes/diffs';
+import { ShapeDiffResult } from '../../../capture/patches/patchers/shapes/diff';
 
 export function* generateOperationPatchesByDiff(
   diff: OperationDiffResult,

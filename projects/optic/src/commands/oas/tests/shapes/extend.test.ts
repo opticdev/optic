@@ -1,8 +1,12 @@
 import { it, describe, expect } from '@jest/globals';
-import { SchemaObject, ShapePatches, Schema } from '../../shapes';
-import { diffBodyBySchema } from '../../shapes/diffs';
 
 import * as DocumentedBodyFixtures from '../fixtures/documented-body';
+import {
+  Schema,
+  SchemaObject,
+} from '../../../capture/patches/patchers/shapes/schema';
+import { ShapePatches } from '../../../capture/patches/patchers/shapes/patches';
+import { diffBodyBySchema } from '../../../capture/patches/patchers/shapes/diff';
 
 function patchSchema(
   schema: SchemaObject | null,

@@ -1,0 +1,643 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`type json schema diff visitor when provided with an array 1`] = `
+[
+  {
+    "description": "'stringField' did not match schema",
+    "example": [
+      "1",
+      "2",
+      "3",
+      true,
+    ],
+    "expectedType": "string",
+    "instancePath": "/stringField",
+    "key": "stringField",
+    "keyword": "type",
+    "kind": "UnmatchedType",
+    "propertyPath": "/properties/stringField",
+  },
+]
+`;
+
+exports[`type json schema diff visitor when provided with an object 1`] = `
+[
+  {
+    "description": "'stringField' did not match schema",
+    "example": {
+      "field": "string",
+    },
+    "expectedType": "string",
+    "instancePath": "/stringField",
+    "key": "stringField",
+    "keyword": "type",
+    "kind": "UnmatchedType",
+    "propertyPath": "/properties/stringField",
+  },
+]
+`;
+
+exports[`type json schema diff visitor when provided with another primitive 1`] = `
+[
+  {
+    "description": "'stringField' did not match schema",
+    "example": 123,
+    "expectedType": "string",
+    "instancePath": "/stringField",
+    "key": "stringField",
+    "keyword": "type",
+    "kind": "UnmatchedType",
+    "propertyPath": "/properties/stringField",
+  },
+]
+`;
+
+exports[`type json schema diff visitor when provided with null value 1`] = `
+[
+  {
+    "description": "'stringField' did not match schema",
+    "example": null,
+    "expectedType": "string",
+    "instancePath": "/stringField",
+    "key": "stringField",
+    "keyword": "type",
+    "kind": "UnmatchedType",
+    "propertyPath": "/properties/stringField",
+  },
+]
+`;
+
+exports[`type shape patch generator for 3.0.x when provided with an array, it can apply patches 1`] = `
+[
+  {
+    "description": "make stringField oneOf",
+    "diff": {
+      "description": "'stringField' did not match schema",
+      "example": [
+        "1",
+        "2",
+        "3",
+        true,
+      ],
+      "expectedType": "string",
+      "instancePath": "/stringField",
+      "key": "stringField",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/stringField",
+    },
+    "groupedOperations": [
+      {
+        "intent": "replace stringField with a one of containing both types",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/properties/stringField/type",
+          },
+          {
+            "op": "add",
+            "path": "/properties/stringField/oneOf",
+            "value": [
+              {
+                "type": "string",
+              },
+              {
+                "items": {
+                  "type": "string",
+                },
+                "type": "array",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+    "shouldRegeneratePatches": true,
+  },
+  {
+    "description": "change type of stringField",
+    "diff": {
+      "description": "'stringField' did not match schema",
+      "example": [
+        "1",
+        "2",
+        "3",
+        true,
+      ],
+      "expectedType": "string",
+      "instancePath": "/stringField",
+      "key": "stringField",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/stringField",
+    },
+    "groupedOperations": [
+      {
+        "intent": "change stringField type",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/properties/stringField",
+            "value": {
+              "items": {
+                "type": "string",
+              },
+              "type": "array",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "BackwardsIncompatible",
+    ],
+    "shouldRegeneratePatches": false,
+  },
+]
+`;
+
+exports[`type shape patch generator for 3.0.x when provided with an object, it can apply patches 1`] = `
+[
+  {
+    "description": "make stringField oneOf",
+    "diff": {
+      "description": "'stringField' did not match schema",
+      "example": {
+        "field": "string",
+      },
+      "expectedType": "string",
+      "instancePath": "/stringField",
+      "key": "stringField",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/stringField",
+    },
+    "groupedOperations": [
+      {
+        "intent": "replace stringField with a one of containing both types",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/properties/stringField/type",
+          },
+          {
+            "op": "add",
+            "path": "/properties/stringField/oneOf",
+            "value": [
+              {
+                "type": "string",
+              },
+              {
+                "type": "object",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+    "shouldRegeneratePatches": true,
+  },
+  {
+    "description": "change type of stringField",
+    "diff": {
+      "description": "'stringField' did not match schema",
+      "example": {
+        "field": "string",
+      },
+      "expectedType": "string",
+      "instancePath": "/stringField",
+      "key": "stringField",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/stringField",
+    },
+    "groupedOperations": [
+      {
+        "intent": "change stringField type",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/properties/stringField",
+            "value": {
+              "type": "object",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "BackwardsIncompatible",
+    ],
+    "shouldRegeneratePatches": false,
+  },
+]
+`;
+
+exports[`type shape patch generator for 3.0.x when provided with another primitive, it can apply patches 1`] = `
+[
+  {
+    "description": "make stringField oneOf",
+    "diff": {
+      "description": "'stringField' did not match schema",
+      "example": 123,
+      "expectedType": "string",
+      "instancePath": "/stringField",
+      "key": "stringField",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/stringField",
+    },
+    "groupedOperations": [
+      {
+        "intent": "replace stringField with a one of containing both types",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/properties/stringField/type",
+          },
+          {
+            "op": "add",
+            "path": "/properties/stringField/oneOf",
+            "value": [
+              {
+                "type": "string",
+              },
+              {
+                "type": "number",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+    "shouldRegeneratePatches": true,
+  },
+  {
+    "description": "change type of stringField",
+    "diff": {
+      "description": "'stringField' did not match schema",
+      "example": 123,
+      "expectedType": "string",
+      "instancePath": "/stringField",
+      "key": "stringField",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/stringField",
+    },
+    "groupedOperations": [
+      {
+        "intent": "change stringField type",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/properties/stringField",
+            "value": {
+              "type": "number",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "BackwardsIncompatible",
+    ],
+    "shouldRegeneratePatches": false,
+  },
+]
+`;
+
+exports[`type shape patch generator for 3.0.x when provided with null value, it can apply patches 1`] = `
+[
+  {
+    "description": "make stringField null",
+    "diff": {
+      "description": "'stringField' did not match schema",
+      "example": null,
+      "expectedType": "string",
+      "instancePath": "/stringField",
+      "key": "stringField",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/stringField",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make stringField nullable",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/properties/stringField/nullable",
+            "value": true,
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+    "shouldRegeneratePatches": false,
+  },
+]
+`;
+
+exports[`type shape patch generator for 3.1.x when provided with an array, it can apply patches 1`] = `
+[
+  {
+    "description": "make stringField oneOf",
+    "diff": {
+      "description": "'stringField' did not match schema",
+      "example": [
+        "1",
+        "2",
+        "3",
+        true,
+      ],
+      "expectedType": "string",
+      "instancePath": "/stringField",
+      "key": "stringField",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/stringField",
+    },
+    "groupedOperations": [
+      {
+        "intent": "replace stringField with a one of containing both types",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/properties/stringField/type",
+          },
+          {
+            "op": "add",
+            "path": "/properties/stringField/oneOf",
+            "value": [
+              {
+                "type": "string",
+              },
+              {
+                "items": {
+                  "type": "string",
+                },
+                "type": "array",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+    "shouldRegeneratePatches": true,
+  },
+  {
+    "description": "change type of stringField",
+    "diff": {
+      "description": "'stringField' did not match schema",
+      "example": [
+        "1",
+        "2",
+        "3",
+        true,
+      ],
+      "expectedType": "string",
+      "instancePath": "/stringField",
+      "key": "stringField",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/stringField",
+    },
+    "groupedOperations": [
+      {
+        "intent": "change stringField type",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/properties/stringField",
+            "value": {
+              "items": {
+                "type": "string",
+              },
+              "type": "array",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "BackwardsIncompatible",
+    ],
+    "shouldRegeneratePatches": false,
+  },
+]
+`;
+
+exports[`type shape patch generator for 3.1.x when provided with an object, it can apply patches 1`] = `
+[
+  {
+    "description": "make stringField oneOf",
+    "diff": {
+      "description": "'stringField' did not match schema",
+      "example": {
+        "field": "string",
+      },
+      "expectedType": "string",
+      "instancePath": "/stringField",
+      "key": "stringField",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/stringField",
+    },
+    "groupedOperations": [
+      {
+        "intent": "replace stringField with a one of containing both types",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/properties/stringField/type",
+          },
+          {
+            "op": "add",
+            "path": "/properties/stringField/oneOf",
+            "value": [
+              {
+                "type": "string",
+              },
+              {
+                "type": "object",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+    "shouldRegeneratePatches": true,
+  },
+  {
+    "description": "change type of stringField",
+    "diff": {
+      "description": "'stringField' did not match schema",
+      "example": {
+        "field": "string",
+      },
+      "expectedType": "string",
+      "instancePath": "/stringField",
+      "key": "stringField",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/stringField",
+    },
+    "groupedOperations": [
+      {
+        "intent": "change stringField type",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/properties/stringField",
+            "value": {
+              "type": "object",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "BackwardsIncompatible",
+    ],
+    "shouldRegeneratePatches": false,
+  },
+]
+`;
+
+exports[`type shape patch generator for 3.1.x when provided with another primitive, it can apply patches 1`] = `
+[
+  {
+    "description": "make stringField oneOf",
+    "diff": {
+      "description": "'stringField' did not match schema",
+      "example": 123,
+      "expectedType": "string",
+      "instancePath": "/stringField",
+      "key": "stringField",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/stringField",
+    },
+    "groupedOperations": [
+      {
+        "intent": "replace stringField with a one of containing both types",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/properties/stringField/type",
+          },
+          {
+            "op": "add",
+            "path": "/properties/stringField/oneOf",
+            "value": [
+              {
+                "type": "string",
+              },
+              {
+                "type": "number",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+    "shouldRegeneratePatches": true,
+  },
+  {
+    "description": "change type of stringField",
+    "diff": {
+      "description": "'stringField' did not match schema",
+      "example": 123,
+      "expectedType": "string",
+      "instancePath": "/stringField",
+      "key": "stringField",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/stringField",
+    },
+    "groupedOperations": [
+      {
+        "intent": "change stringField type",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/properties/stringField",
+            "value": {
+              "type": "number",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "BackwardsIncompatible",
+    ],
+    "shouldRegeneratePatches": false,
+  },
+]
+`;
+
+exports[`type shape patch generator for 3.1.x when provided with null value, it can apply patches 1`] = `
+[
+  {
+    "description": "make stringField null",
+    "diff": {
+      "description": "'stringField' did not match schema",
+      "example": null,
+      "expectedType": "string",
+      "instancePath": "/stringField",
+      "key": "stringField",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/stringField",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make stringField null",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/properties/stringField/type",
+            "value": [
+              "object",
+              "null",
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+    "shouldRegeneratePatches": false,
+  },
+]
+`;

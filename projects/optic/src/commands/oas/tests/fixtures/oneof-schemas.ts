@@ -1,4 +1,4 @@
-import { SchemaObject } from '../../shapes';
+import { SchemaObject } from '../../../capture/patches/patchers/shapes/schema';
 
 export const rootObjectOrArray = (): SchemaObject => ({
   oneOf: [

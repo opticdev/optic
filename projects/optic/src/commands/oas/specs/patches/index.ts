@@ -2,17 +2,17 @@ import {
   PatchImpact,
   PatchOperationGroup,
   PatchOperation,
-} from '../../patches';
-import { ShapePatch } from '../../shapes/patches';
-import { ShapeLocation } from '../../shapes';
+} from '../../../capture/patches/patch-operations';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { OperationPatch } from '../../operations';
 import { OpenAPIV3 } from '..';
 import JsonPatch from 'fast-json-patch';
-import { ShapeDiffResult } from '../../shapes/diffs';
 import { OperationDiffResult } from '../../operations/diffs';
 import { SentryClient } from '../../../../sentry';
 import { logger } from '../../../../logger';
+import { ShapeDiffResult } from '../../../capture/patches/patchers/shapes/diff';
+import { ShapePatch } from '../../../capture/patches/patchers/shapes/patches';
+import { ShapeLocation } from '../../../capture/patches/patchers/shapes/documented-bodies';
 
 export { newSpecPatches } from './generators/new-spec';
 export { templatePatches } from './generators/template';

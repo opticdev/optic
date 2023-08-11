@@ -1,7 +1,10 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { OperationPatch } from '..';
 import { Operation } from '../..';
-import { PatchOperationGroup, PatchImpact } from '../../../patches';
+import {
+  PatchOperationGroup,
+  PatchImpact,
+} from '../../../../capture/patches/patch-operations';
 import { OperationDiffResult, OperationDiffResultKind } from '../../diffs';
 import { OpenAPIV3 } from '../../../specs';
 
