@@ -29,6 +29,7 @@ import { registerBundle } from './commands/bundle/bundle';
 import { updateCommand } from './commands/oas/update';
 import { registerApiList } from './commands/api/list';
 import { registerHistory } from './commands/history';
+import { registerRunCommand } from './commands/run';
 import path from 'path';
 
 const packageJson = require('../package.json');
@@ -176,6 +177,7 @@ export const initCli = async (
   registerCiSetup(ciSubcommands, cliConfig);
 
   registerHistory(cli, cliConfig);
+  registerRunCommand(cli, cliConfig);
 
   return cli;
 };
