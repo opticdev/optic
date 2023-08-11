@@ -71,7 +71,10 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
       '--postman  <postman-collection-file>',
       'path to postman collection'
     )
-    .option('--har <har-file>', 'path to har file (v1.2, v1.3)')
+    .option(
+      '--har <har-file, directory>',
+      'path to har file (v1.2, v1.3), or directory containing har files'
+    )
     .option('--verbose', 'display verbose diff output', false)
 
     .addOption(
