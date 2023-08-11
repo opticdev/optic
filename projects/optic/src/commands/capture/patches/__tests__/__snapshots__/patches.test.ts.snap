@@ -2315,6 +2315,182 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 missing required property
 }
 `;
 
+exports[`generateEndpointSpecPatches OAS version 3.0.1 schema with enum 1`] = `
+[
+  {
+    "description": "update response body: add enum something-else to status ",
+    "diff": {
+      "description": "'status' does not have enum value something-else",
+      "example": {
+        "data": [
+          {
+            "status": "something-else",
+          },
+          {
+            "status": "another-thing",
+          },
+        ],
+        "status": "something-else",
+      },
+      "instancePath": "/status",
+      "key": "status",
+      "keyword": "enum",
+      "kind": "MissingEnumValue",
+      "propertyPath": "/properties/status/enum",
+      "value": "something-else",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add new enum value to status",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/status/enum/-",
+            "value": "something-else",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add enum something-else to status ",
+    "diff": {
+      "description": "'status' does not have enum value something-else",
+      "example": {
+        "data": [
+          {
+            "status": "something-else",
+          },
+          {
+            "status": "another-thing",
+          },
+        ],
+        "status": "something-else",
+      },
+      "instancePath": "/data/0/status",
+      "key": "status",
+      "keyword": "enum",
+      "kind": "MissingEnumValue",
+      "propertyPath": "/properties/data/items/properties/status/enum",
+      "value": "something-else",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add new enum value to status",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/status/enum/-",
+            "value": "something-else",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add enum another-thing to status ",
+    "diff": {
+      "description": "'status' does not have enum value another-thing",
+      "example": {
+        "data": [
+          {
+            "status": "something-else",
+          },
+          {
+            "status": "another-thing",
+          },
+        ],
+        "status": "something-else",
+      },
+      "instancePath": "/data/1/status",
+      "key": "status",
+      "keyword": "enum",
+      "kind": "MissingEnumValue",
+      "propertyPath": "/properties/data/items/properties/status/enum",
+      "value": "another-thing",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add new enum value to status",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/status/enum/-",
+            "value": "another-thing",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 schema with enum 2`] = `
+{
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "properties": {
+                          "status": {
+                            "enum": [
+                              "ready",
+                              "not_ready",
+                              "something-else",
+                              "another-thing",
+                            ],
+                            "type": "string",
+                          },
+                        },
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "enum": [
+                        "ready",
+                        "not_ready",
+                        "something-else",
+                      ],
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "status",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
 exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented property in schema 1`] = `
 [
   {
@@ -6128,6 +6304,182 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 missing required property
                     },
                   },
                   "required": [],
+                  "type": "object",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 schema with enum 1`] = `
+[
+  {
+    "description": "update response body: add enum something-else to status ",
+    "diff": {
+      "description": "'status' does not have enum value something-else",
+      "example": {
+        "data": [
+          {
+            "status": "something-else",
+          },
+          {
+            "status": "another-thing",
+          },
+        ],
+        "status": "something-else",
+      },
+      "instancePath": "/status",
+      "key": "status",
+      "keyword": "enum",
+      "kind": "MissingEnumValue",
+      "propertyPath": "/properties/status/enum",
+      "value": "something-else",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add new enum value to status",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/status/enum/-",
+            "value": "something-else",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add enum something-else to status ",
+    "diff": {
+      "description": "'status' does not have enum value something-else",
+      "example": {
+        "data": [
+          {
+            "status": "something-else",
+          },
+          {
+            "status": "another-thing",
+          },
+        ],
+        "status": "something-else",
+      },
+      "instancePath": "/data/0/status",
+      "key": "status",
+      "keyword": "enum",
+      "kind": "MissingEnumValue",
+      "propertyPath": "/properties/data/items/properties/status/enum",
+      "value": "something-else",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add new enum value to status",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/status/enum/-",
+            "value": "something-else",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add enum another-thing to status ",
+    "diff": {
+      "description": "'status' does not have enum value another-thing",
+      "example": {
+        "data": [
+          {
+            "status": "something-else",
+          },
+          {
+            "status": "another-thing",
+          },
+        ],
+        "status": "something-else",
+      },
+      "instancePath": "/data/1/status",
+      "key": "status",
+      "keyword": "enum",
+      "kind": "MissingEnumValue",
+      "propertyPath": "/properties/data/items/properties/status/enum",
+      "value": "another-thing",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add new enum value to status",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/status/enum/-",
+            "value": "another-thing",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+    ],
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 schema with enum 2`] = `
+{
+  "info": {},
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "properties": {
+                          "status": {
+                            "enum": [
+                              "ready",
+                              "not_ready",
+                              "something-else",
+                              "another-thing",
+                            ],
+                            "type": "string",
+                          },
+                        },
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "enum": [
+                        "ready",
+                        "not_ready",
+                        "something-else",
+                      ],
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "status",
+                  ],
                   "type": "object",
                 },
               },

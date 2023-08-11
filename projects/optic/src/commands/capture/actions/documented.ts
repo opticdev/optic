@@ -162,6 +162,37 @@ function summarizePatch(
         );
       }
       return lines;
+    } else if (diff.kind === 'MissingEnumValue') {
+      if (
+        !jsonPointerHelpers.tryGet(
+          spec,
+          jsonPointerHelpers.join(path, diff.propertyPath)
+        ).match
+      )
+        return [];
+
+      const action =
+        options.mode === 'update'
+          ? `now has enum value '${diff.value}'`
+          : `missing enum value '${diff.value}'`;
+      const color = options.mode === 'update' ? chalk.yellow : chalk.red;
+
+      const lines = [
+        color(`${location} '${diff.key}' ${action} (${diff.propertyPath})`),
+      ];
+      if (verbose) {
+        lines.push(
+          getShapeDiffDetails(
+            diff,
+            jsonPointerHelpers.join(path, diff.propertyPath),
+            `missing enum value '${diff.value}'`,
+            pointerLogger,
+            method,
+            pathPattern
+          )
+        );
+      }
+      return lines;
     }
   }
 

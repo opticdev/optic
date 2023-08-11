@@ -462,6 +462,60 @@ describe('generateEndpointSpecPatches', () => {
       expect(patches).toMatchSnapshot();
       expect(specHolder.spec).toMatchSnapshot();
     });
+
+    test('schema with enum', async () => {
+      specHolder.spec.paths['/api/animals'].post.responses = {
+        '200': {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  status: { type: 'string', enum: ['ready', 'not_ready'] },
+                  data: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        status: {
+                          type: 'string',
+                          enum: ['ready', 'not_ready'],
+                        },
+                      },
+                    },
+                  },
+                },
+                required: ['status'],
+              },
+            },
+          },
+        },
+      };
+
+      const interaction = makeInteraction(
+        { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+        {
+          responseBody: {
+            status: 'something-else',
+            data: [{ status: 'something-else' }, { status: 'another-thing' }],
+          },
+        }
+      );
+
+      const patches = await AT.collect(
+        generateEndpointSpecPatches(
+          GenerateInteractions([interaction]),
+          specHolder,
+          {
+            method: 'post',
+            path: '/api/animals',
+          }
+        )
+      );
+
+      expect(patches).toMatchSnapshot();
+      expect(specHolder.spec).toMatchSnapshot();
+    });
   });
 });
 

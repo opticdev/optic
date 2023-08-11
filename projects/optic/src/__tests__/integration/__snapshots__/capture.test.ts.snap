@@ -950,6 +950,8 @@ components:
           type: string
         author_id:
           type: string
+        status:
+          type: string
         price:
           type: number
         created_at:
@@ -960,6 +962,7 @@ components:
         - id
         - name
         - author_id
+        - status
         - price
         - created_at
         - updated_at
@@ -985,6 +988,7 @@ GET /books
   [32m✓ [39m200 response
   [32m[200 response body] 'name' has been added (/properties/books/items/properties/name)[39m
   [32m[200 response body] 'author_id' has been added (/properties/books/items/properties/author_id)[39m
+  [32m[200 response body] 'status' has been added (/properties/books/items/properties/status)[39m
   [32m[200 response body] 'price' has been added (/properties/books/items/properties/price)[39m
   [32m[200 response body] 'created_at' has been added (/properties/books/items/properties/created_at)[39m
   [32m[200 response body] 'updated_at' has been added (/properties/books/items/properties/updated_at)[39m
@@ -1066,6 +1070,8 @@ components:
                 type: string
               author_id:
                 type: string
+              status:
+                type: string
               price:
                 type: number
               created_at:
@@ -1075,6 +1081,7 @@ components:
             required:
               - name
               - author_id
+              - status
               - price
               - created_at
               - updated_at
@@ -1110,6 +1117,8 @@ components:
           type: string
         author_id:
           type: string
+        status:
+          type: string
         price:
           type: number
         created_at:
@@ -1120,6 +1129,7 @@ components:
         - id
         - name
         - author_id
+        - status
         - price
         - created_at
         - updated_at
@@ -1145,6 +1155,7 @@ GET /books
   [32m✓ [39m200 response
   [32m[200 response body] 'name' has been added (/properties/books/items/properties/name)[39m
   [32m[200 response body] 'author_id' has been added (/properties/books/items/properties/author_id)[39m
+  [32m[200 response body] 'status' has been added (/properties/books/items/properties/status)[39m
   [32m[200 response body] 'price' has been added (/properties/books/items/properties/price)[39m
   [32m[200 response body] 'created_at' has been added (/properties/books/items/properties/created_at)[39m
   [32m[200 response body] 'updated_at' has been added (/properties/books/items/properties/updated_at)[39m
@@ -1185,6 +1196,8 @@ exports[`capture with requests update behavior handles update in other file 3`] 
             type: string
           author_id:
             type: string
+          status:
+            type: string
           price:
             type: number
           created_at:
@@ -1194,6 +1207,7 @@ exports[`capture with requests update behavior handles update in other file 3`] 
         required:
           - name
           - author_id
+          - status
           - price
           - created_at
           - updated_at
@@ -1208,6 +1222,7 @@ GET /books
   [32m✓ [39m200 response
   [32m[200 response body] 'name' has been added (/properties/books/items/properties/name)[39m
   [32m[200 response body] 'author_id' has been added (/properties/books/items/properties/author_id)[39m
+  [32m[200 response body] 'status' has been added (/properties/books/items/properties/status)[39m
   [32m[200 response body] 'price' has been added (/properties/books/items/properties/price)[39m
   [32m[200 response body] 'created_at' has been added (/properties/books/items/properties/created_at)[39m
   [32m[200 response body] 'updated_at' has been added (/properties/books/items/properties/updated_at)[39m
@@ -1283,6 +1298,8 @@ components:
                 type: string
               author_id:
                 type: string
+              status:
+                type: string
               price:
                 type: number
               created_at:
@@ -1292,6 +1309,7 @@ components:
             required:
               - name
               - author_id
+              - status
               - price
               - created_at
               - updated_at
@@ -1317,6 +1335,8 @@ components:
           type: string
         author_id:
           type: string
+        status:
+          type: string
         price:
           type: number
         created_at:
@@ -1327,6 +1347,7 @@ components:
         - id
         - name
         - author_id
+        - status
         - price
         - created_at
         - updated_at
@@ -1342,6 +1363,7 @@ GET /books
   [32m[200 response body] 'updated_at' has been added (/properties/books/items/properties/updated_at)[39m
   [33m[200 response body] 'author_id' is now type number (/properties/books/items/properties/author_id)[39m
   [33m[200 response body] 'price' is now type string (/properties/books/items/properties/price)[39m
+  [33m[200 response body] 'status' now has enum value 'hold' (/properties/books/items/properties/status/enum)[39m
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
@@ -1420,6 +1442,12 @@ components:
                 oneOf:
                   - type: number
                   - type: string
+              status:
+                type: string
+                enum:
+                  - ready
+                  - not_ready
+                  - hold
               price:
                 oneOf:
                   - type: string
@@ -1468,6 +1496,8 @@ components:
           type: string
         author_id:
           type: string
+        status:
+          type: string
         price:
           type: number
         created_at:
@@ -1478,6 +1508,7 @@ components:
         - id
         - name
         - author_id
+        - status
         - price
         - created_at
         - updated_at
@@ -1506,6 +1537,7 @@ GET /books
   [32m[200 response body] 'updated_at' has been added (/properties/books/items/properties/updated_at)[39m
   [33m[200 response body] 'author_id' is now type number (/properties/books/items/properties/author_id)[39m
   [33m[200 response body] 'price' is now type string (/properties/books/items/properties/price)[39m
+  [33m[200 response body] 'status' now has enum value 'hold' (/properties/books/items/properties/status/enum)[39m
 
 4 unmatched requests
 [33mNew endpoints are only added in interactive mode.[39m
@@ -1546,6 +1578,12 @@ components:
                 oneOf:
                   - type: number
                   - type: string
+              status:
+                type: string
+                enum:
+                  - ready
+                  - not_ready
+                  - hold
               price:
                 oneOf:
                   - type: string
@@ -1571,17 +1609,19 @@ GET /books/status
   [32m✓ [39m200 response
 GET /books/{bookId}
   [31m× [39m200 response
+  [31m[200 response body] 'status' is not documented (/properties)[39m
   [31m[200 response body] 'price' is not documented (/properties)[39m
 GET /books
   [31m× [39m200 response
   [31m[200 response body] 'name' is not documented (/properties/books/items/properties)[39m
   [31m[200 response body] 'author_id' is not documented (/properties/books/items/properties)[39m
+  [31m[200 response body] 'status' is not documented (/properties/books/items/properties)[39m
   [31m[200 response body] 'price' is not documented (/properties/books/items/properties)[39m
   [31m[200 response body] 'created_at' is not documented (/properties/books/items/properties)[39m
   [31m[200 response body] 'updated_at' is not documented (/properties/books/items/properties)[39m
 
 100.0% coverage of your documented operations. 2 requests did not match a documented path (6 total requests).
-6 diffs detected in documented operations
+8 diffs detected in documented operations
 
 [33mNew endpoints are only added in interactive mode.[39m
 [34mRun with \`--update interactive\` to add new endpoints[39m
@@ -1604,25 +1644,37 @@ operation: [1mget /books[22m
 [90m27 |[39m     type: string
 [90m28 |[39m [1m[33m  author_id:  [41m[Actual] "6nTxAFM5ck4Hob77hGQoL"[49m[39m[22m
 [90m29 |[39m     type: number
-[90m30 |[39m   price:
+[90m30 |[39m   status:
 [90m31 |[39m     type: string
 [90m$workspace$/openapi.yml[39m
 
   [31m[200 response body] 'price' does not match type string. Received 10 (/properties/books/items/properties/price)[39m
   [41m  Diff  [49m 'price' did not match schema
 operation: [1mget /books[22m  
-[90m27 |[39m     type: string
-[90m28 |[39m   author_id:
-[90m29 |[39m     type: number
-[90m30 |[39m [1m[33m  price:  [41m[Actual] 10[49m[39m[22m
-[90m31 |[39m     type: string
-[90m32 |[39m required:
-[90m33 |[39m   - id
+[90m32 |[39m     enum:
+[90m33 |[39m       - ready
+[90m34 |[39m       - not_ready
+[90m35 |[39m [1m[33m  price:  [41m[Actual] 10[49m[39m[22m
+[90m36 |[39m     type: string
+[90m37 |[39m required:
+[90m38 |[39m   - id
+[90m$workspace$/openapi.yml[39m
+
+  [31m[200 response body] 'status' missing enum value 'hold' (/properties/books/items/properties/status/enum)[39m
+  [41m  Diff  [49m 'status' does not have enum value hold
+operation: [1mget /books[22m  
+[90m29 |[39m   type: number
+[90m30 |[39m status:
+[90m31 |[39m   type: string
+[90m32 |[39m [1m[33m  enum:  [41mmissing enum value 'hold'[49m[39m[22m
+[90m33 |[39m     - ready
+[90m34 |[39m     - not_ready
+[90m35 |[39m price:
 [90m$workspace$/openapi.yml[39m
 
 
 100.0% coverage of your documented operations. 4 requests did not match a documented path (5 total requests).
-7 diffs detected in documented operations
+9 diffs detected in documented operations
 
 [33mNew endpoints are only added in interactive mode.[39m
 [34mRun with \`--update interactive\` to add new endpoints[39m
@@ -1639,9 +1691,10 @@ GET /books
   [31m[200 response body] 'updated_at' is not documented (/properties/books/items/properties)[39m
   [31m[200 response body] 'author_id' does not match type number. Received 6nTxAFM5ck4Hob77hGQoL (/properties/books/items/properties/author_id)[39m
   [31m[200 response body] 'price' does not match type string. Received 10 (/properties/books/items/properties/price)[39m
+  [31m[200 response body] 'status' missing enum value 'hold' (/properties/books/items/properties/status/enum)[39m
 
 100.0% coverage of your documented operations. 4 requests did not match a documented path (5 total requests).
-5 diffs detected in documented operations
+6 diffs detected in documented operations
 
 [33mNew endpoints are only added in interactive mode.[39m
 [34mRun with \`--update interactive\` to add new endpoints[39m
