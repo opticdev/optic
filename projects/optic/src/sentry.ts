@@ -11,7 +11,13 @@ export const initSentry = (sentryUrl: string | undefined, version: string) => {
   if (sentryUrl && !isSentryDisabled) {
     Sentry.init({
       dsn: sentryUrl,
-      tracesSampleRate: 1.0,
+      integrations: (integrations) => {
+        // Disable the Sentry Http integration, we don't use traces across http bounds and this breaks certain cases with capture
+        // as it adds custom sentry http headers
+        return integrations.filter(
+          (integration) => integration.name !== 'Http'
+        );
+      },
       release: version,
     });
   }
