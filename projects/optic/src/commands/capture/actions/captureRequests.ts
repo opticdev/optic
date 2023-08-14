@@ -14,7 +14,7 @@ import {
   OpticCliConfig,
   RequestSend,
 } from '../../../config';
-import { ProxyInteractions } from '../sources/proxy';
+import { ProxyInteractions } from '../../oas/captures/proxy';
 import { HarEntries } from '../sources/har';
 import { getSpinner } from '../../../utils/spinner';
 

@@ -7,7 +7,7 @@ import {
   TimingEvents,
 } from 'mockttp';
 
-import { Subject } from '../../oas/lib/async-tools';
+import { Subject } from '../lib/async-tools';
 import { pki, md } from 'node-forge';
 import { randomBytes } from 'crypto';
 import { Readable } from 'stream';
@@ -118,6 +118,7 @@ export class ProxyInteractions {
 
     await capturingProxy.forUnmatchedRequest().thenPassThrough({
       beforeRequest(capturedRequest) {
+        console.log(capturedRequest.url);
         log.info('proxying request to ' + capturedRequest.url);
       },
     });
