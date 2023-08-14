@@ -64,6 +64,7 @@ export class ProxyServer {
     });
     const interactionSubject = new Subject<ProxySource.Interaction>();
     this.interactionSubject = interactionSubject;
+    this.capturingProxy = capturingProxy;
     const requestsById = new Map<string, ProxySource.Request>();
     if (!port) {
       port = await portfinder.getPortPromise({
