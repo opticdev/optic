@@ -11,7 +11,7 @@ import { chain } from 'stream-chain'; // replace with  stream.compose once it st
 import HarSchemas from 'har-schema';
 import Ajv, { SchemaObject, ErrorObject } from 'ajv';
 import ajvFormats from 'ajv-formats';
-import { ProxyInteractions } from './proxy';
+import { ProxyInteractions } from '../../oas/captures/proxy';
 import isUrl from 'is-url';
 import { Result, Ok, Err } from 'ts-results';
 import zlib from 'node:zlib';

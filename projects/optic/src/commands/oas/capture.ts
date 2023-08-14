@@ -23,10 +23,7 @@ import { clearCommand } from './capture-clear';
 import { createNewSpecFile } from '../../utils/specs';
 import { logger } from '../../logger';
 import { HarEntries, HttpArchive } from '../capture/sources/har';
-import {
-  ProxyCertAuthority,
-  ProxyInteractions,
-} from '../capture/sources/proxy';
+import { ProxyCertAuthority, ProxyInteractions } from './captures/proxy';
 import { CapturedInteraction } from '../capture/sources/captured-interactions';
 
 export async function captureV1(

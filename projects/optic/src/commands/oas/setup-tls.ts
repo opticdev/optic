@@ -9,7 +9,7 @@ import { Option, Some, None } from 'ts-results';
 import chalk from 'chalk';
 import path from 'path';
 import { exitIfNotElevated, platform, runCommand } from './lib/shell-utils';
-import { ProxyCertAuthority } from '../capture/sources/proxy';
+import { ProxyCertAuthority } from './captures/proxy';
 
 export async function setupTlsCommand(): Promise<Command> {
   const command = new Command('setup-tls');

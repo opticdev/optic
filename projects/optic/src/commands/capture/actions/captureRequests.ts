@@ -14,9 +14,9 @@ import {
   OpticCliConfig,
   RequestSend,
 } from '../../../config';
-import { ProxyInteractions } from '../sources/proxy';
 import { HarEntries } from '../sources/har';
 import { getSpinner } from '../../../utils/spinner';
+import { ProxyInteractions, ProxyServer } from '../sources/proxy';
 
 const defaultServerReadyTimeout = 10_000; // 10s
 
@@ -41,33 +41,6 @@ const loggerWhileSpinning = {
 
 const wait = (time: number) =>
   new Promise((r) => setTimeout(() => r(null), time));
-
-class ProxyInstance {
-  interactions!: ProxyInteractions;
-  url!: string;
-  targetUrl: string;
-  private abortController: AbortController;
-
-  constructor(target: string) {
-    this.abortController = new AbortController();
-    this.targetUrl = target;
-  }
-
-  public async start(port: number | undefined) {
-    [this.interactions, this.url] = await ProxyInteractions.create(
-      this.targetUrl,
-      this.abortController.signal,
-      {
-        mode: 'reverse-proxy',
-        proxyPort: port,
-      }
-    );
-  }
-
-  stop() {
-    this.abortController.abort();
-  }
-}
 
 type Bailout = { didBailout: boolean; promise: Promise<any> };
 function startApp(
@@ -266,7 +239,7 @@ async function runRequestsCommand(
 
 function makeAllRequests(
   captureConfig: CaptureConfigData,
-  proxy: ProxyInstance,
+  proxyUrl: string,
   spinner?: ora.Ora
 ) {
   // send requests
@@ -274,7 +247,7 @@ function makeAllRequests(
   if (captureConfig.requests && captureConfig.requests.send) {
     const requests = sendRequests(
       captureConfig.requests.send,
-      proxy.url,
+      proxyUrl,
       captureConfig.config?.request_concurrency || 5,
       spinner
     );
@@ -304,7 +277,7 @@ function makeAllRequests(
     runRequestsPromise = runRequestsCommand(
       captureConfig.requests.run.command,
       proxyVar,
-      proxy.url,
+      proxyUrl,
       spinner
     );
   }
@@ -318,7 +291,7 @@ export async function captureRequestsFromProxy(
   options: { proxyPort?: string; serverOverride?: string; serverUrl: string }
 ) {
   let app: ChildProcessWithoutNullStreams | undefined = undefined;
-  let proxy: ProxyInstance | undefined = undefined;
+  let proxy: ProxyServer | undefined = undefined;
   function cleanup() {
     proxy?.stop();
     if (app && app.pid && app.exitCode === null) {
@@ -337,6 +310,7 @@ export async function captureRequestsFromProxy(
     text: 'Generating traffic to send to server',
     color: 'blue',
   })?.start();
+  let interactions: ProxyInteractions | null = null;
 
   const serverUrl = options.serverUrl;
   const serverDir =
@@ -383,15 +357,16 @@ export async function captureRequestsFromProxy(
       }
     }
     // start proxy
-    proxy = new ProxyInstance(serverUrl);
-    await proxy.start(
+    proxy = new ProxyServer(serverUrl);
+    const [proxyInteractions, proxyUrl] = await proxy.start(
       options.proxyPort ? Number(options.proxyPort) : undefined
     );
+    interactions = proxyInteractions;
 
     if (spinner) spinner.text = 'Sending requests to server';
     let [sendRequestsPromise, runRequestsPromise] = makeAllRequests(
       captureConfig,
-      proxy,
+      proxyUrl,
       spinner
     );
     // Here we continue even if some of the requests failed - we log out the requests errors but use the rest to query
@@ -430,5 +405,5 @@ export async function captureRequestsFromProxy(
   spinner?.succeed('Finished running requests');
 
   // process proxy interactions into hars
-  return HarEntries.fromProxyInteractions(proxy.interactions);
+  return HarEntries.fromProxyInteractions(interactions);
 }
