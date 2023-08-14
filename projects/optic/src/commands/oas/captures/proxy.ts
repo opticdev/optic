@@ -25,6 +25,7 @@ import chalk from 'chalk';
 import { UserError } from '@useoptic/openapi-utilities';
 import { logger } from '../../../logger';
 import urljoin from 'url-join';
+import { ProxySource } from '../../capture/sources/proxy';
 
 type Logger = typeof globalLog;
 
@@ -269,28 +270,6 @@ export class ProxyInteractions {
 
     return [stream, transparentProxy.url!, capturingProxy.url];
   }
-}
-
-export declare namespace ProxySource {
-  interface Interaction {
-    request: Request;
-    response: Response;
-  }
-
-  interface Request
-    extends Omit<
-      CompletedRequest,
-      'matchedRuleId' | 'remoteIpAddress' | 'remotePort' | 'tags' | 'body'
-    > {
-    timingEvents: TimingEvents;
-    body: Body;
-  }
-  interface Response extends Omit<CompletedResponse, 'tags' | 'body'> {
-    timingEvents: TimingEvents;
-    body: Body;
-  }
-
-  type Body = Pick<CompletedBody, 'buffer'>;
 }
 
 export interface ProxyCertAuthority {
