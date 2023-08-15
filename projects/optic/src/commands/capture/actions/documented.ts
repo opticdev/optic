@@ -221,12 +221,12 @@ export async function diffExistingEndpoint(
       verbose: options.verbose,
     });
     if (summarized.length) {
-      patchSummaries.push(...summarized);
       if (logger.getLevel() <= 1 && patch.interaction) {
         patchSummaries.push(
           `Originating request: ${JSON.stringify(patch.interaction)}`
         );
       }
+      patchSummaries.push(...summarized);
     } else {
       logger.debug(`skipping patch:`);
       logger.debug(patch);
