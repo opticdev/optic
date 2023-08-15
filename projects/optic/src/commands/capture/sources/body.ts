@@ -1,5 +1,3 @@
-import { Readable } from 'stream';
-
 export interface CapturedBody {
   contentType: string | null;
   size: number; // size in bytes, defaults to -1
