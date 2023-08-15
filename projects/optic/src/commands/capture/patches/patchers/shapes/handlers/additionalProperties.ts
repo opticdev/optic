@@ -9,8 +9,8 @@ import {
 } from '../diff';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { ShapePatch } from '../patches';
-import { OperationGroup, PatchImpact } from '../../../../../oas/specs/patches';
 import { CapturedInteraction } from '../../../../sources/captured-interactions';
+import { OperationGroup, PatchImpact } from '../../spec/patches';
 
 export function* additionalPropertiesDiffs(
   validationError: ErrorObject,

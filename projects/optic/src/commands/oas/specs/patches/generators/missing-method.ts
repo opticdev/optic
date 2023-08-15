@@ -2,8 +2,8 @@ import {
   UndocumentedOperation,
   UndocumentedOperationType,
 } from '../../../operations';
-import { SpecPatch } from '../..';
-import { createMissingMethodPatch } from '../../../../capture/patches/patchers/spec';
+import { createMissingMethodPatch } from '../../../../capture/patches/patchers/spec/spec';
+import { SpecPatch } from '../../../../capture/patches/patchers/spec/patches';
 
 export function* missingMethodPatches(
   undocumentedOperation: UndocumentedOperation

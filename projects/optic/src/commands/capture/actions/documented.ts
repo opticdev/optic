@@ -11,10 +11,10 @@ import { ApiCoverageCounter } from '../coverage/api-coverage';
 import * as AT from '../../oas/lib/async-tools';
 import { writePatchesToFiles } from '../write/file';
 import { logger } from '../../../logger';
-import { SpecPatch } from '../../oas/specs';
 
 import { jsonPointerLogger } from '@useoptic/openapi-io';
 import { ShapeDiffResult } from '../patches/patchers/shapes/diff';
+import { SpecPatch } from '../patches/patchers/spec/patches';
 
 function getShapeDiffDetails(
   diff: ShapeDiffResult,

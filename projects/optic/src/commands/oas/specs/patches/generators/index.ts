@@ -1,4 +1,4 @@
-import { OpenAPIV3, SpecPatch } from '../..';
+import { SpecPatch } from '../../../../capture/patches/patchers/spec/patches';
 import { UndocumentedOperation } from '../../../operations';
 import { missingMethodPatches } from './missing-method';
 import { missingPathPatches } from './missing-path';

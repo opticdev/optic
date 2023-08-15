@@ -2,7 +2,6 @@ import { OpenAPIV3 } from '../../../../oas/specs/index';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { PatchOperation } from '../../patch-operations';
 import JsonPatch from 'fast-json-patch';
-import { OperationPatch } from '../../../../oas/operations';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 import { SentryClient } from '../../../../../sentry';
 import { logger } from '../../../../../logger';
@@ -105,13 +104,13 @@ export class Schema {
     schema: SchemaObject | null,
     patch: ShapePatch
   ): SchemaObject {
-    const operations = JsonPatch.deepClone([
-      ...OperationPatch.operations(patch),
-    ]);
+    const operations = JsonPatch.deepClone(
+      patch.groupedOperations.flatMap((operation) => operation.operations)
+    );
     try {
       const result = JsonPatch.applyPatch(
         schema,
-        JsonPatch.deepClone([...OperationPatch.operations(patch)]),
+        operations,
         undefined,
         false // don't mutate the original schema
       );

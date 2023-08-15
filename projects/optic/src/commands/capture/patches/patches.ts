@@ -5,7 +5,7 @@ import { checkOpenAPIVersion } from '@useoptic/openapi-io';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 
 import { ApiCoverageCounter } from '../coverage/api-coverage';
-import { SpecPatch, SpecPatches } from '../../oas/specs';
+import { SpecPatch, SpecPatches } from './patchers/spec/patches';
 import { CapturedInteractions } from '../sources/captured-interactions';
 import { DocumentedInteraction, Operation } from '../../oas/operations';
 import { DocumentedBodies } from './patchers/shapes/documented-bodies';
@@ -14,7 +14,7 @@ import { SchemaInventory } from './patchers/closeness/schema-inventory';
 import {
   createMissingPathPatches,
   createMissingMethodPatch,
-} from './patchers/spec';
+} from './patchers/spec/spec';
 
 export async function* generatePathAndMethodSpecPatches(
   specHolder: {

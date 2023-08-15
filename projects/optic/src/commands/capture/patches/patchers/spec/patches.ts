@@ -2,26 +2,26 @@ import {
   PatchImpact,
   PatchOperationGroup,
   PatchOperation,
-} from '../../../capture/patches/patch-operations';
+} from '../../patch-operations';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { OperationPatch } from '../../operations';
-import { OpenAPIV3 } from '..';
+import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import JsonPatch from 'fast-json-patch';
-import { OperationDiffResult } from '../../operations/diffs';
-import { SentryClient } from '../../../../sentry';
-import { logger } from '../../../../logger';
-import { ShapeDiffResult } from '../../../capture/patches/patchers/shapes/diff';
-import { ShapePatch } from '../../../capture/patches/patchers/shapes/patches';
-import { ShapeLocation } from '../../../capture/patches/patchers/shapes/documented-bodies';
-import { CapturedInteraction } from '../../../capture/sources/captured-interactions';
 
-export { newSpecPatches } from './generators/new-spec';
-export { templatePatches } from './generators/template';
-export { undocumentedOperationPatches } from './generators';
-export type {
-  ObservedSpecPatchGenerator,
-  ObservedSpecPatchGeneratorContext,
-} from './generators/template';
+import { ShapeDiffResult } from '../../patchers/shapes/diff';
+import { ShapePatch, ShapePatches } from '../../patchers/shapes/patches';
+import {
+  DocumentedBodies,
+  DocumentedBody,
+  ShapeLocation,
+} from '../../patchers/shapes/documented-bodies';
+import { CapturedInteraction } from '../../../sources/captured-interactions';
+import { SentryClient } from '../../../../../sentry';
+import { logger } from '../../../../../logger';
+import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
+import { SchemaObject } from '../shapes/schema';
+import { DocumentedInteraction } from '../../../../oas/operations';
+import { OperationPatch, generateOperationPatches } from './operations';
+import { OperationDiffResult } from '../../../../oas/operations/diffs';
 
 export interface SpecPatch {
   description: string;
@@ -129,6 +129,50 @@ export class SpecPatch {
       for (const op of group.operations) {
         yield op;
       }
+    }
+  }
+}
+
+export interface SpecPatches extends AsyncIterable<SpecPatch> {}
+
+export class SpecPatches {
+  static async *shapeAdditions(
+    documentedBodies: DocumentedBodies,
+    openAPIVersion: SupportedOpenAPIVersions
+  ): SpecPatches {
+    const updatedSchemasByPath: Map<string, SchemaObject> = new Map();
+    for await (let documentedBody of documentedBodies) {
+      let { specJsonPath, shapeLocation } = documentedBody;
+
+      if (updatedSchemasByPath.has(specJsonPath)) {
+        documentedBody.schema = updatedSchemasByPath.get(specJsonPath) ?? null;
+      }
+
+      for (let patch of ShapePatches.generateBodyAdditions(
+        documentedBody,
+        openAPIVersion
+      )) {
+        documentedBody = DocumentedBody.applyShapePatch(documentedBody, patch);
+        yield SpecPatch.fromShapePatch(patch, specJsonPath, shapeLocation!);
+      }
+
+      updatedSchemasByPath.set(specJsonPath, documentedBody.schema!);
+    }
+  }
+
+  static async *operationAdditions(
+    documentedInteraction: DocumentedInteraction
+  ) {
+    const operationPatches = generateOperationPatches(documentedInteraction);
+
+    for (let patch of operationPatches) {
+      const specPatch = SpecPatch.fromOperationPatch(
+        patch,
+        documentedInteraction.interaction,
+        documentedInteraction.specJsonPath
+      );
+
+      yield specPatch;
     }
   }
 }

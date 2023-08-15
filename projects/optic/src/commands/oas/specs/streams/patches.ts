@@ -1,32 +1,22 @@
 import { OpenAPIV3 } from '..';
 import { filter, flatMap } from '../../lib/async-tools';
-import {
-  SpecPatch,
-  PatchImpact,
-  Operation,
-  OperationGroup,
-  newSpecPatches,
-  templatePatches,
-  undocumentedOperationPatches,
-} from '../patches';
 import { SpecTemplate } from '../templates';
 
+import { UndocumentedOperation } from '../../operations';
 import {
-  DocumentedInteraction,
-  OperationPatches,
-  UndocumentedOperation,
-} from '../../operations';
-import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
+  Operation,
+  OperationGroup,
+  PatchImpact,
+  SpecPatch,
+  SpecPatches,
+} from '../../../capture/patches/patchers/spec/patches';
+import { templatePatches } from '../patches/generators/template';
 import {
-  DocumentedBodies,
-  DocumentedBody,
-} from '../../../capture/patches/patchers/shapes/documented-bodies';
-import { ShapePatches } from '../../../capture/patches/patchers/shapes/patches';
-import { SchemaObject } from '../../../capture/patches/patchers/shapes/schema';
+  newSpecPatches,
+  undocumentedOperationPatches,
+} from '../patches/generators';
 
-export interface SpecPatches extends AsyncIterable<SpecPatch> {}
-
-export class SpecPatches {
+export class LegacySpecPatches {
   static async *additions(patches: SpecPatches): SpecPatches {
     yield* filter<SpecPatch>(
       (patch) =>
@@ -56,48 +46,6 @@ export class SpecPatches {
     openAPIVersion: string = '3.0.3'
   ): SpecPatches {
     yield* newSpecPatches(info, openAPIVersion);
-  }
-
-  static async *shapeAdditions(
-    documentedBodies: DocumentedBodies,
-    openAPIVersion: SupportedOpenAPIVersions
-  ): SpecPatches {
-    const updatedSchemasByPath: Map<string, SchemaObject> = new Map();
-    for await (let documentedBody of documentedBodies) {
-      let { specJsonPath, shapeLocation } = documentedBody;
-
-      if (updatedSchemasByPath.has(specJsonPath)) {
-        documentedBody.schema = updatedSchemasByPath.get(specJsonPath) ?? null;
-      }
-
-      for (let patch of ShapePatches.generateBodyAdditions(
-        documentedBody,
-        openAPIVersion
-      )) {
-        documentedBody = DocumentedBody.applyShapePatch(documentedBody, patch);
-        yield SpecPatch.fromShapePatch(patch, specJsonPath, shapeLocation!);
-      }
-
-      updatedSchemasByPath.set(specJsonPath, documentedBody.schema!);
-    }
-  }
-
-  static async *operationAdditions(
-    documentedInteraction: DocumentedInteraction
-  ) {
-    const operationPatches = OperationPatches.generateRequestResponseAdditions(
-      documentedInteraction
-    );
-
-    for (let patch of operationPatches) {
-      const specPatch = SpecPatch.fromOperationPatch(
-        patch,
-        documentedInteraction.interaction,
-        documentedInteraction.specJsonPath
-      );
-
-      yield specPatch;
-    }
   }
 
   static *undocumentedOperation(undocumentedOperation: UndocumentedOperation) {

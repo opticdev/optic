@@ -1,19 +1,19 @@
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { OPTIC_PATH_IGNORE_KEY } from '../../../../constants';
+import { OPTIC_PATH_IGNORE_KEY } from '../../../../../constants';
 import { Operation } from 'fast-json-patch';
 
 import {
   PatchImpact,
   PatchOperation,
   PatchOperationGroup,
-} from '../patch-operations';
-import { SpecPatch } from '../../../oas/specs';
+} from '../../patch-operations';
+import { SpecPatch } from './patches';
 import {
   UndocumentedOperation,
   UndocumentedOperationType,
-} from '../../../oas/operations';
-import { OperationDiffResultKind } from '../../../oas/operations/diffs';
+} from '../../../../oas/operations';
+import { OperationDiffResultKind } from '../../../../oas/operations/diffs';
 
 export function getIgnorePathPatch(
   spec: OpenAPIV3.Document,
