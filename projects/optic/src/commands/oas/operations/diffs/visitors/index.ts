@@ -1,4 +1,4 @@
-import { OperationDiffResult } from '../result';
+import { OperationDiffResult } from '../../../../capture/patches/patchers/spec/types';
 
 export interface OperationDiffVisitor<I, T, C> {
   (interaction: I, spec: T, context?: C): IterableIterator<OperationDiffResult>;

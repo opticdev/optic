@@ -1,4 +1,4 @@
-import { OperationDiffResult } from './result';
+import { OperationDiffResult } from '../../../capture/patches/patchers/spec/types';
 import {
   OperationQueries,
   specToOperations,

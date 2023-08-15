@@ -1,4 +1,4 @@
-import { OpenAPIV3 } from '../../specs';
+import { OpenAPIV3 } from '../../../../oas/specs';
 
 export enum OperationDiffResultKind {
   // Operation
