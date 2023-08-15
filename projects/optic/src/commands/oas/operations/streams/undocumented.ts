@@ -6,7 +6,7 @@ import {
   PathComponent,
 } from '..';
 import { OpenAPIV3 } from '../../specs';
-import { diffOperationWithSpec, OperationDiffResultKind } from '../diffs';
+import { diffOperationWithSpec } from '../diffs';
 import * as AT from '../../lib/async-tools';
 import { minimatch } from 'minimatch';
 import { getIgnorePaths } from '../../../../utils/specs';
@@ -14,6 +14,7 @@ import {
   CapturedInteraction,
   CapturedInteractions,
 } from '../../../capture/sources/captured-interactions';
+import { OperationDiffResultKind } from '../../../capture/patches/patchers/spec/types';
 
 export interface UndocumentedOperations
   extends AsyncIterable<UndocumentedOperation> {}

@@ -9,8 +9,8 @@ import { Schema, SchemaObject } from '../schema';
 import { ShapeLocation } from '../documented-bodies';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 import { ShapePatch } from '../patches';
-import { OperationGroup, PatchImpact } from '../../../../../oas/specs/patches';
 import { CapturedInteraction } from '../../../../sources/captured-interactions';
+import { OperationGroup, PatchImpact } from '../../spec/patches';
 
 export function* typeKeywordDiffs(
   validationError: ErrorObject,

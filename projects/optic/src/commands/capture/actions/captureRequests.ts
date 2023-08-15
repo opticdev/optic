@@ -147,7 +147,7 @@ function sendRequests(
   proxyUrl: string,
   concurrency: number,
   spinner?: ora.Ora
-): Promise<void>[] {
+): Promise<any>[] {
   const limiter = new Bottleneck({
     maxConcurrent: concurrency,
     minTime: 0,
@@ -180,11 +180,9 @@ function sendRequests(
     }
 
     return limiter.schedule(() =>
-      fetch(urljoin(proxyUrl, r.path), opts)
-        .then((response) => response.json())
-        .catch((error: FetchError) => {
-          loggerWhileSpinning.error(spinner, error.message);
-        })
+      fetch(urljoin(proxyUrl, r.path), opts).catch((error: FetchError) => {
+        loggerWhileSpinning.error(spinner, error.message);
+      })
     );
   });
 }

@@ -1,4 +1,4 @@
-import { OpenAPIV3 } from '../../specs';
+import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 
 export enum OperationDiffResultKind {
   // Operation

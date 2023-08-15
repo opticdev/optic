@@ -342,7 +342,8 @@ paths:
       requestBody:
         content:
           text/plain:
-            schema: {}
+            schema:
+              $ref: "#/components/schemas/DeleteDeleteRequestBody"
   /digest-auth:
     get:
       responses: {}
@@ -406,19 +407,27 @@ paths:
       requestBody:
         content:
           text/plain:
-            schema: {}
+            schema:
+              $ref: "#/components/schemas/DeleteDeleteRequestBody"
   /post:
     post:
       responses: {}
       requestBody:
         content:
+          text/plain:
+            schema:
+              $ref: "#/components/schemas/DeleteDeleteRequestBody"
           application/x-www-form-urlencoded:
-            schema: {}
+            schema:
+              $ref: "#/components/schemas/DeleteDeleteRequestBody"
   /put:
     put:
       responses: {}
       requestBody:
         content:
+          text/plain:
+            schema:
+              $ref: "#/components/schemas/DeleteDeleteRequestBody"
           application/json:
             schema:
               $ref: "#/components/schemas/PutPutRequestBody"
@@ -428,7 +437,9 @@ paths:
         "200":
           description: 200 response
           content:
-            text/html: {}
+            text/html:
+              schema:
+                $ref: "#/components/schemas/DeleteDeleteRequestBody"
   "/status/{status}":
     parameters:
       - in: path
@@ -465,6 +476,9 @@ paths:
         "200":
           description: 200 response
           content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/DeleteDeleteRequestBody"
             application/json:
               schema:
                 $ref: "#/components/schemas/GetTimeTime200ResponseBody"
@@ -476,12 +490,281 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PostTransformCollection200ResponseBody"
+                type: object
+                properties:
+                  variables:
+                    type: array
+                    items: {}
+                  info:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      _postman_id:
+                        type: string
+                      description:
+                        type: string
+                      schema:
+                        type: string
+                    required:
+                      - name
+                      - _postman_id
+                      - description
+                      - schema
+                  item:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        event:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              listen:
+                                type: string
+                              script:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                  exec:
+                                    type: array
+                                    items:
+                                      type: string
+                                required:
+                                  - type
+                                  - exec
+                            required:
+                              - listen
+                              - script
+                        request:
+                          type: object
+                          properties:
+                            url:
+                              type: string
+                            method:
+                              type: string
+                            header:
+                              type: array
+                              items: {}
+                            body:
+                              type: object
+                              properties:
+                                mode:
+                                  type: string
+                                raw:
+                                  type: string
+                              required:
+                                - mode
+                                - raw
+                          required:
+                            - url
+                            - method
+                            - header
+                            - body
+                        response:
+                          type: array
+                          items: {}
+                      required:
+                        - name
+                        - request
+                        - response
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  order:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/DeleteDeleteRequestBody"
+                  folders:
+                    type: array
+                    items: {}
+                  requests:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        collectionId:
+                          type: string
+                        method:
+                          type: string
+                        headers:
+                          type: string
+                        data:
+                          type: array
+                          items: {}
+                        rawModeData:
+                          type: string
+                        tests:
+                          type: string
+                        preRequestScript:
+                          type: string
+                        url:
+                          type: string
+                        dataMode:
+                          type: string
+                      required:
+                        - id
+                        - name
+                        - collectionId
+                        - method
+                        - headers
+                        - data
+                        - rawModeData
+                        - url
+                required:
+                  - id
+                  - name
+                  - description
+                  - order
+                  - folders
+                  - requests
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PostTransformCollectionRequestBody"
+              type: object
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                description:
+                  type: string
+                order:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/DeleteDeleteRequestBody"
+                folders:
+                  type: array
+                  items: {}
+                requests:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                      collectionId:
+                        type: string
+                      method:
+                        type: string
+                      headers:
+                        type: string
+                      data:
+                        type: array
+                        items: {}
+                      rawModeData:
+                        type: string
+                      tests:
+                        type: string
+                      preRequestScript:
+                        type: string
+                      url:
+                        type: string
+                      dataMode:
+                        type: string
+                    required:
+                      - id
+                      - name
+                      - collectionId
+                      - method
+                      - headers
+                      - data
+                      - rawModeData
+                      - url
+                info:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    schema:
+                      type: string
+                    description:
+                      type: string
+                  required:
+                    - name
+                    - schema
+                    - description
+                item:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      request:
+                        type: object
+                        properties:
+                          url:
+                            type: string
+                          method:
+                            type: string
+                          header:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                key:
+                                  type: string
+                                value:
+                                  type: string
+                              required:
+                                - key
+                                - value
+                          body:
+                            type: object
+                            properties:
+                              mode:
+                                type: string
+                              raw:
+                                type: string
+                            required:
+                              - mode
+                              - raw
+                        required:
+                          - url
+                          - method
+                      event:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            listen:
+                              type: string
+                            script:
+                              type: object
+                              properties:
+                                type:
+                                  type: string
+                                exec:
+                                  type: array
+                                  items:
+                                    type: string
+                              required:
+                                - type
+                                - exec
+                          required:
+                            - listen
+                            - script
+                    required:
+                      - name
+                      - request
+              required:
+                - info
+                - item
 components:
   schemas:
     GetBooks200ResponseBody:
@@ -511,12 +794,18 @@ components:
           type: string
       required:
         - delay
+    DeleteDeleteRequestBody:
+      type: string
     Get200ResponseBody:
       type: object
       properties:
+        authenticated:
+          type: boolean
         cookies:
           type: object
           properties:
+            foo1:
+              type: string
             foo2:
               type: string
           required:
@@ -632,43 +921,101 @@ components:
         - base_string
         - signing_key
     PutPutRequestBody:
-      type: array
-      items:
-        type: object
-        properties:
-          hello:
-            type: string
-          my:
-            type: number
-          name:
-            type: boolean
-          is:
+      oneOf:
+        - type: object
+          properties:
+            hello:
+              type: string
+            my:
+              type: number
+            name:
+              type: boolean
+            is:
+              type: object
+              properties:
+                legally:
+                  type: string
+                num:
+                  type: number
+                mixed:
+                  type: array
+                  items:
+                    oneOf:
+                      - type: object
+                        properties:
+                          name:
+                            type: string
+                        required:
+                          - name
+                      - type: boolean
+                      - type: string
+                      - type: number
+              required:
+                - legally
+                - num
+                - mixed
+          required:
+            - hello
+            - my
+            - name
+            - is
+        - type: array
+          items:
             type: object
             properties:
-              legally:
+              hello:
                 type: string
-              num:
+              my:
                 type: number
-              mixed:
-                type: array
-                items:
-                  oneOf:
-                    - type: object
-                      properties:
-                        name:
-                          type: string
-                      required:
-                        - name
-                    - type: boolean
-                    - type: string
-                    - type: number
+              name:
+                type: boolean
+              is:
+                type: object
+                properties:
+                  legally:
+                    type: string
+                  num:
+                    type: number
+                  mixed:
+                    type: array
+                    items:
+                      oneOf:
+                        - type: object
+                          properties:
+                            name:
+                              type: string
+                          required:
+                            - name
+                        - type: boolean
+                        - type: string
+                        - type: number
+                required:
+                  - legally
+                  - num
+                  - mixed
+              authenticated:
+                type: boolean
+            required: []
+        - type: array
+          items:
+            type: object
+            properties:
+              hello:
+                type: string
+              my:
+                type: number
+              name:
+                type: boolean
+              is:
+                type: object
+              authenticated:
+                type: boolean
             required:
-              - legally
-              - num
-              - mixed
-          authenticated:
-            type: boolean
-        required: []
+              - hello
+              - my
+              - name
+              - is
+              - authenticated
     GetStatusStatus200ResponseBody:
       type: object
       properties:
@@ -683,149 +1030,6 @@ components:
           type: boolean
       required:
         - valid
-    PostTransformCollectionRequestBody:
-      type: object
-      properties:
-        info:
-          type: object
-          properties:
-            name:
-              type: string
-            schema:
-              type: string
-            description:
-              type: string
-          required:
-            - name
-            - schema
-            - description
-        item:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-              event:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    listen:
-                      type: string
-                    script:
-                      type: object
-                      properties:
-                        type:
-                          type: string
-                        exec:
-                          type: array
-                          items:
-                            type: string
-                      required:
-                        - type
-                        - exec
-                  required:
-                    - listen
-                    - script
-              request:
-                type: object
-                properties:
-                  url:
-                    type: string
-                  method:
-                    type: string
-                  header:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        key:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                        - key
-                        - value
-                  body:
-                    type: object
-                    properties:
-                      mode:
-                        type: string
-                      raw:
-                        type: string
-                    required:
-                      - mode
-                      - raw
-                required:
-                  - url
-                  - method
-            required:
-              - name
-              - request
-      required:
-        - info
-        - item
-    PostTransformCollection200ResponseBody:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        order:
-          type: array
-          items:
-            type: string
-        folders:
-          type: array
-          items: {}
-        requests:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-              name:
-                type: string
-              collectionId:
-                type: string
-              method:
-                type: string
-              headers:
-                type: string
-              data:
-                type: array
-                items: {}
-              rawModeData:
-                type: string
-              tests:
-                type: string
-              preRequestScript:
-                type: string
-              url:
-                type: string
-              dataMode:
-                type: string
-            required:
-              - id
-              - name
-              - collectionId
-              - method
-              - headers
-              - data
-              - rawModeData
-              - url
-      required:
-        - id
-        - name
-        - description
-        - order
-        - folders
-        - requests
 "
 `;
 
@@ -1370,6 +1574,7 @@ GET /books
 GET /authors
 GET /books/{book}
 POST /books/{book}
+GET /
 "
 `;
 
@@ -1426,6 +1631,15 @@ paths:
           application/json;charset=UTF-8:
             schema:
               $ref: "#/components/schemas/PostBooksBookRequestBody"
+  /:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/Get200ResponseBody"
 components:
   schemas:
     GetBooks200ResponseBody:
@@ -1525,6 +1739,8 @@ components:
         - name
         - price
         - author_id
+    Get200ResponseBody:
+      type: string
 "
 `;
 
@@ -1539,7 +1755,7 @@ GET /books
   [33m[200 response body] 'price' is now type string (/properties/books/items/properties/price)[39m
   [33m[200 response body] 'status' now has enum value 'hold' (/properties/books/items/properties/status/enum)[39m
 
-4 unmatched requests
+5 unmatched requests
 [33mNew endpoints are only added in interactive mode.[39m
 [34mRun with \`--update interactive\` to add new endpoints[39m
 [33mHint: optic capture openapi.yml --update interactive[39m
@@ -1670,7 +1886,7 @@ GET /books
 [90m$workspace$/openapi.yml[39m
 
 
-100.0% coverage of your documented operations. 4 requests did not match a documented path (5 total requests).
+100.0% coverage of your documented operations. 5 requests did not match a documented path (6 total requests).
 9 diffs detected in documented operations
 
 [33mNew endpoints are only added in interactive mode.[39m
@@ -1690,7 +1906,7 @@ GET /books
   [31m[200 response body] 'price' does not match type string. Received 10 (/properties/books/items/properties/price)[39m
   [31m[200 response body] 'status' missing enum value 'hold' (/properties/books/items/properties/status/enum)[39m
 
-100.0% coverage of your documented operations. 4 requests did not match a documented path (5 total requests).
+100.0% coverage of your documented operations. 5 requests did not match a documented path (6 total requests).
 6 diffs detected in documented operations
 
 [33mNew endpoints are only added in interactive mode.[39m

@@ -1,4 +1,5 @@
-import { Operation } from '../../patches';
+import { Operation } from '../../../../capture/patches/patchers/spec/patches';
+
 export { applyPatch } from './stringify';
 
 export interface SpecFileReconciler<Config> {

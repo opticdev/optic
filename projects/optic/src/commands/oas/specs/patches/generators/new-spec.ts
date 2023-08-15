@@ -1,5 +1,9 @@
-import { OperationGroup, PatchImpact, SpecPatch } from '..';
 import { OpenAPIV3 } from '../../';
+import {
+  OperationGroup,
+  PatchImpact,
+  SpecPatch,
+} from '../../../../capture/patches/patchers/spec/patches';
 
 export function* newSpecPatches<T>(
   info: OpenAPIV3.InfoObject,

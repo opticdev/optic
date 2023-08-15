@@ -9,8 +9,8 @@ import sortby from 'lodash.sortby';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { computeEndpointChecksum } from '../../../utils/checksum';
 import { statusRangePattern } from '../../oas/operations';
-import { SpecPatch } from '../../oas/specs';
 import { denormalize } from '@useoptic/openapi-io';
+import { SpecPatch } from '../patches/patchers/spec/patches';
 
 export class ApiCoverageCounter {
   coverage: ApiCoverage;

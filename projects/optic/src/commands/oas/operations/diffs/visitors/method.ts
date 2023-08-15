@@ -1,5 +1,8 @@
 import { OpenAPIV3 } from '../../../specs';
-import { OperationDiffResult, OperationDiffResultKind } from '../result';
+import {
+  OperationDiffResult,
+  OperationDiffResultKind,
+} from '../../../../capture/patches/patchers/spec/types';
 import { Option } from 'ts-results';
 
 export function* visitMethod(

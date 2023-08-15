@@ -1,6 +1,7 @@
 import { Schema, SchemaObject } from '../schema';
 import { ShapeLocation } from '../documented-bodies';
-import { OperationGroup, PatchImpact } from '../../../../../oas/specs/patches';
+import { PatchImpact } from '../../../patch-operations';
+import { OperationGroup } from '../../spec/patches';
 import { ShapePatch } from '../patches';
 import { CapturedInteraction } from '../../../../sources/captured-interactions';
 

@@ -1,13 +1,12 @@
-import {
-  SpecFile,
-  SpecPatches,
-  SpecFileOperation,
-  SpecFilesSourcemap,
-} from '..';
-import { Operation } from '../patches';
+import { SpecFile, SpecFileOperation, SpecFilesSourcemap } from '..';
 import { sourcemapReader } from '@useoptic/openapi-utilities';
 import invariant from 'ts-invariant';
 import fs from 'fs-extra';
+import { LegacySpecPatches } from './patches';
+import {
+  Operation,
+  SpecPatches,
+} from '../../../capture/patches/patchers/spec/patches';
 
 export interface SpecFileOperations extends AsyncIterable<SpecFileOperation> {}
 
@@ -18,7 +17,7 @@ export class SpecFileOperations {
   ): AsyncIterable<SpecFileOperation> {
     const sourcemapQueries = sourcemapReader(sourcemap);
 
-    let operations = SpecPatches.operations(specPatches);
+    let operations = LegacySpecPatches.operations(specPatches);
 
     for await (let operation of operations) {
       const result = sourcemapQueries.findFilePosition(operation.path);
@@ -41,7 +40,7 @@ export class SpecFileOperations {
     absoluteFilePath: string,
     specPatches: SpecPatches
   ): SpecFileOperations {
-    let operations = SpecPatches.operations(specPatches);
+    let operations = LegacySpecPatches.operations(specPatches);
 
     for await (let operation of operations) {
       yield { filePath: absoluteFilePath, operation };
