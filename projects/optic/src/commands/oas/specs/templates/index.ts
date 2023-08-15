@@ -1,4 +1,4 @@
-import { ObservedSpecPatchGenerator } from '../patches';
+import { ObservedSpecPatchGenerator } from '../patches/generators/template';
 
 export interface SpecTemplate<T> {
   name: string;

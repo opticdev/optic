@@ -1,7 +1,11 @@
-import { PatchImpact, SpecPatch, OperationGroup } from '..';
 import { OpenAPIV3 } from '../..';
 import JsonPatch from 'fast-json-patch';
 import { SpecTemplate } from '../..';
+import {
+  OperationGroup,
+  PatchImpact,
+  SpecPatch,
+} from '../../../../capture/patches/patchers/spec/patches';
 
 export interface ObservedSpecPatchGenerator<T> {
   (

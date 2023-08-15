@@ -5,8 +5,6 @@ import MIMEType from 'whatwg-mimetype';
 import { CapturedInteraction } from '../../capture/sources/captured-interactions';
 
 export { DocumentedInteractions } from './streams/documented-interactions';
-export { OperationPatches } from './streams/patches';
-export { OperationPatch } from './patches';
 export { UndocumentedOperations } from './streams/undocumented';
 
 export interface Operation extends OpenAPIV3.OperationObject {

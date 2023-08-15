@@ -5,8 +5,6 @@ import {
   SpecFiles,
   SpecFilesAsync,
   SpecFilesSourcemap,
-  SpecPatch,
-  SpecPatches,
 } from '../specs';
 import {
   checkOpenAPIVersion,
@@ -31,6 +29,11 @@ import {
   CapturedInteractions,
 } from '../../capture/sources/captured-interactions';
 import { ShapeDiffResult } from '../../capture/patches/patchers/shapes/diff';
+import {
+  SpecPatch,
+  SpecPatches,
+} from '../../capture/patches/patchers/spec/patches';
+import { LegacySpecPatches } from '../specs/streams/patches';
 
 export async function patchOperationsAsNeeded(
   patchInteractions: CapturedInteractions,
@@ -313,7 +316,7 @@ export function updateByInteractions(
   })();
 
   // additions only, so we only safely extend the spec
-  const specAdditions = SpecPatches.additions(specPatches);
+  const specAdditions = LegacySpecPatches.additions(specPatches);
 
   // making sure we end observations once we're done generating patches
   const observedResults = (async function* (): SpecPatches {

@@ -1,5 +1,4 @@
 import { ShapePatch } from '../patches';
-import { OperationGroup, PatchImpact } from '../../../../../oas/specs/patches';
 import {
   JsonSchemaKnownKeyword,
   ErrorObject,
@@ -9,6 +8,8 @@ import {
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { SchemaObject } from '../schema';
 import { CapturedInteraction } from '../../../../sources/captured-interactions';
+import { PatchImpact } from '../../../patch-operations';
+import { OperationGroup } from '../../spec/patches';
 
 export function* enumKeywordDiffs(
   validationError: ErrorObject,

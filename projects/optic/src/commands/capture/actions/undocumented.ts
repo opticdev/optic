@@ -16,9 +16,9 @@ import {
   generateRefRefactorPatches,
   jsonOpsFromSpecPatches,
 } from '../patches/patches';
-import { SpecPatches } from '../../oas/specs';
 import chalk from 'chalk';
 import { writePatchesToFiles } from '../write/file';
+import { SpecPatches } from '../patches/patchers/spec/patches';
 
 type MethodMap = Map<string, { add: Set<string>; ignore: Set<string> }>;
 
