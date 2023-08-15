@@ -52,6 +52,16 @@ exports[`enum shape patch generator when enum is nested in array 1`] = `
     "impact": [
       "Addition",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "",
+        "method": "get",
+        "path": "",
+        "query": [],
+      },
+    },
     "shouldRegeneratePatches": false,
   },
 ]
@@ -88,6 +98,16 @@ exports[`enum shape patch generator when missing an enum 1`] = `
     "impact": [
       "Addition",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "",
+        "method": "get",
+        "path": "",
+        "query": [],
+      },
+    },
     "shouldRegeneratePatches": false,
   },
 ]

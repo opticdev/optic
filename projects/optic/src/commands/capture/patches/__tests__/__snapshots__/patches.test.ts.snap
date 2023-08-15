@@ -74,6 +74,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 array with multiple items
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10},{"id":"asdf","price":1},{"id":"123","author_id":"6nTxAFM5ck4Hob77hGQoL"},null]}",
+          "contentType": "application/json",
+          "size": 167,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -130,6 +149,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 array with multiple items
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10},{"id":"asdf","price":1},{"id":"123","author_id":"6nTxAFM5ck4Hob77hGQoL"},null]}",
+          "contentType": "application/json",
+          "size": 167,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -173,6 +211,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 array with multiple items
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10},{"id":"asdf","price":1},{"id":"123","author_id":"6nTxAFM5ck4Hob77hGQoL"},null]}",
+          "contentType": "application/json",
+          "size": 167,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -216,6 +273,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 array with multiple items
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10},{"id":"asdf","price":1},{"id":"123","author_id":"6nTxAFM5ck4Hob77hGQoL"},null]}",
+          "contentType": "application/json",
+          "size": 167,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -246,6 +322,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 array with multiple items
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10},{"id":"asdf","price":1},{"id":"123","author_id":"6nTxAFM5ck4Hob77hGQoL"},null]}",
+          "contentType": "application/json",
+          "size": 167,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -275,6 +370,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 array with multiple items
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10},{"id":"asdf","price":1},{"id":"123","author_id":"6nTxAFM5ck4Hob77hGQoL"},null]}",
+          "contentType": "application/json",
+          "size": 167,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -304,6 +418,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 array with multiple items
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10},{"id":"asdf","price":1},{"id":"123","author_id":"6nTxAFM5ck4Hob77hGQoL"},null]}",
+          "contentType": "application/json",
+          "size": 167,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
 ]
@@ -388,6 +521,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 existing schema that does
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","name":"Pride and Prejudice","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10,"created_at":"2023-01-22T17:17:41.326Z","updated_at":"2023-01-22T17:17:41.326Z"},{"id":"vZsYVmzdxtihxQNqCs-3f","name":"The Great Gatsby","author_id":"NjpTwgmENj11rGdUgpCQ9","price":15,"created_at":"2022-10-22T10:11:51.421Z","updated_at":"2022-10-22T10:11:51.421Z"}]}",
+          "contentType": "application/json",
+          "size": 382,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -417,6 +569,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 existing schema that does
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","name":"Pride and Prejudice","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10,"created_at":"2023-01-22T17:17:41.326Z","updated_at":"2023-01-22T17:17:41.326Z"},{"id":"vZsYVmzdxtihxQNqCs-3f","name":"The Great Gatsby","author_id":"NjpTwgmENj11rGdUgpCQ9","price":15,"created_at":"2022-10-22T10:11:51.421Z","updated_at":"2022-10-22T10:11:51.421Z"}]}",
+          "contentType": "application/json",
+          "size": 382,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -446,6 +617,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 existing schema that does
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","name":"Pride and Prejudice","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10,"created_at":"2023-01-22T17:17:41.326Z","updated_at":"2023-01-22T17:17:41.326Z"},{"id":"vZsYVmzdxtihxQNqCs-3f","name":"The Great Gatsby","author_id":"NjpTwgmENj11rGdUgpCQ9","price":15,"created_at":"2022-10-22T10:11:51.421Z","updated_at":"2022-10-22T10:11:51.421Z"}]}",
+          "contentType": "application/json",
+          "size": 382,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -509,6 +699,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 existing schema that does
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","name":"Pride and Prejudice","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10,"created_at":"2023-01-22T17:17:41.326Z","updated_at":"2023-01-22T17:17:41.326Z"},{"id":"vZsYVmzdxtihxQNqCs-3f","name":"The Great Gatsby","author_id":"NjpTwgmENj11rGdUgpCQ9","price":15,"created_at":"2022-10-22T10:11:51.421Z","updated_at":"2022-10-22T10:11:51.421Z"}]}",
+          "contentType": "application/json",
+          "size": 382,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -565,6 +774,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 existing schema that does
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","name":"Pride and Prejudice","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10,"created_at":"2023-01-22T17:17:41.326Z","updated_at":"2023-01-22T17:17:41.326Z"},{"id":"vZsYVmzdxtihxQNqCs-3f","name":"The Great Gatsby","author_id":"NjpTwgmENj11rGdUgpCQ9","price":15,"created_at":"2022-10-22T10:11:51.421Z","updated_at":"2022-10-22T10:11:51.421Z"}]}",
+          "contentType": "application/json",
+          "size": 382,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -608,6 +836,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 existing schema that does
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","name":"Pride and Prejudice","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10,"created_at":"2023-01-22T17:17:41.326Z","updated_at":"2023-01-22T17:17:41.326Z"},{"id":"vZsYVmzdxtihxQNqCs-3f","name":"The Great Gatsby","author_id":"NjpTwgmENj11rGdUgpCQ9","price":15,"created_at":"2022-10-22T10:11:51.421Z","updated_at":"2022-10-22T10:11:51.421Z"}]}",
+          "contentType": "application/json",
+          "size": 382,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -651,6 +898,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 existing schema that does
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","name":"Pride and Prejudice","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10,"created_at":"2023-01-22T17:17:41.326Z","updated_at":"2023-01-22T17:17:41.326Z"},{"id":"vZsYVmzdxtihxQNqCs-3f","name":"The Great Gatsby","author_id":"NjpTwgmENj11rGdUgpCQ9","price":15,"created_at":"2022-10-22T10:11:51.421Z","updated_at":"2022-10-22T10:11:51.421Z"}]}",
+          "contentType": "application/json",
+          "size": 382,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -694,6 +960,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 existing schema that does
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","name":"Pride and Prejudice","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10,"created_at":"2023-01-22T17:17:41.326Z","updated_at":"2023-01-22T17:17:41.326Z"},{"id":"vZsYVmzdxtihxQNqCs-3f","name":"The Great Gatsby","author_id":"NjpTwgmENj11rGdUgpCQ9","price":15,"created_at":"2022-10-22T10:11:51.421Z","updated_at":"2022-10-22T10:11:51.421Z"}]}",
+          "contentType": "application/json",
+          "size": 382,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -737,6 +1022,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 existing schema that does
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","name":"Pride and Prejudice","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10,"created_at":"2023-01-22T17:17:41.326Z","updated_at":"2023-01-22T17:17:41.326Z"},{"id":"vZsYVmzdxtihxQNqCs-3f","name":"The Great Gatsby","author_id":"NjpTwgmENj11rGdUgpCQ9","price":15,"created_at":"2022-10-22T10:11:51.421Z","updated_at":"2022-10-22T10:11:51.421Z"}]}",
+          "contentType": "application/json",
+          "size": 382,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -780,6 +1084,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 existing schema that does
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","name":"Pride and Prejudice","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10,"created_at":"2023-01-22T17:17:41.326Z","updated_at":"2023-01-22T17:17:41.326Z"},{"id":"vZsYVmzdxtihxQNqCs-3f","name":"The Great Gatsby","author_id":"NjpTwgmENj11rGdUgpCQ9","price":15,"created_at":"2022-10-22T10:11:51.421Z","updated_at":"2022-10-22T10:11:51.421Z"}]}",
+          "contentType": "application/json",
+          "size": 382,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
 ]
@@ -899,6 +1222,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post",
   },
   {
@@ -925,6 +1267,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -1000,6 +1361,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -1060,6 +1440,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -1127,6 +1526,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -1170,6 +1588,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -1213,6 +1650,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -1256,6 +1712,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -1305,6 +1780,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -1365,6 +1859,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -1412,6 +1925,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -1455,6 +1987,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -1501,6 +2052,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -1544,6 +2114,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -1585,6 +2174,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -1626,6 +2234,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -1682,6 +2309,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -1725,6 +2371,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -1768,6 +2433,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -1824,6 +2508,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -1867,6 +2570,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -1910,6 +2632,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -1966,6 +2707,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -2009,6 +2769,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
 ]
@@ -2210,6 +2989,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 mismatched type in schema
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me"}",
+          "contentType": "application/json",
+          "size": 13,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
 ]
@@ -2280,6 +3078,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 missing required property
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
 ]
@@ -2354,6 +3171,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 schema with enum 1`] = `
     "impact": [
       "Addition",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"status":"something-else","data":[{"status":"something-else"},{"status":"another-thing"}]}",
+          "contentType": "application/json",
+          "size": 91,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -2393,6 +3229,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 schema with enum 1`] = `
     "impact": [
       "Addition",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"status":"something-else","data":[{"status":"something-else"},{"status":"another-thing"}]}",
+          "contentType": "application/json",
+          "size": 91,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -2432,6 +3287,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 schema with enum 1`] = `
     "impact": [
       "Addition",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"status":"something-else","data":[{"status":"something-else"},{"status":"another-thing"}]}",
+          "contentType": "application/json",
+          "size": 91,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
 ]
@@ -2537,6 +3411,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented property in 
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me"}",
+          "contentType": "application/json",
+          "size": 13,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
 ]
@@ -2612,6 +3505,29 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post",
   },
   {
@@ -2651,6 +3567,29 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post",
   },
   {
@@ -2672,6 +3611,29 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -2728,6 +3690,29 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -2771,6 +3756,29 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -2814,6 +3822,29 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -2872,6 +3903,29 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -2915,6 +3969,29 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -2959,6 +4036,29 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -3015,6 +4115,29 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -3058,6 +4181,29 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -3101,6 +4247,29 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -3144,6 +4313,29 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -3173,6 +4365,29 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -3202,6 +4417,29 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -3228,6 +4466,29 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented request body
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
 ]
@@ -3358,6 +4619,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post",
   },
   {
@@ -3384,6 +4664,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -3440,6 +4739,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -3483,6 +4801,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -3526,6 +4863,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -3584,6 +4940,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -3627,6 +5002,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -3671,6 +5065,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -3727,6 +5140,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -3770,6 +5202,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -3813,6 +5264,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -3856,6 +5326,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -3885,6 +5374,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -3914,6 +5422,25 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
 ]
@@ -4070,6 +5597,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 array with multiple items
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10},{"id":"asdf","price":1},{"id":"123","author_id":"6nTxAFM5ck4Hob77hGQoL"},null]}",
+          "contentType": "application/json",
+          "size": 167,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -4126,6 +5672,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 array with multiple items
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10},{"id":"asdf","price":1},{"id":"123","author_id":"6nTxAFM5ck4Hob77hGQoL"},null]}",
+          "contentType": "application/json",
+          "size": 167,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -4169,6 +5734,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 array with multiple items
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10},{"id":"asdf","price":1},{"id":"123","author_id":"6nTxAFM5ck4Hob77hGQoL"},null]}",
+          "contentType": "application/json",
+          "size": 167,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -4212,6 +5796,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 array with multiple items
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10},{"id":"asdf","price":1},{"id":"123","author_id":"6nTxAFM5ck4Hob77hGQoL"},null]}",
+          "contentType": "application/json",
+          "size": 167,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -4245,6 +5848,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 array with multiple items
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10},{"id":"asdf","price":1},{"id":"123","author_id":"6nTxAFM5ck4Hob77hGQoL"},null]}",
+          "contentType": "application/json",
+          "size": 167,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -4274,6 +5896,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 array with multiple items
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10},{"id":"asdf","price":1},{"id":"123","author_id":"6nTxAFM5ck4Hob77hGQoL"},null]}",
+          "contentType": "application/json",
+          "size": 167,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -4303,6 +5944,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 array with multiple items
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10},{"id":"asdf","price":1},{"id":"123","author_id":"6nTxAFM5ck4Hob77hGQoL"},null]}",
+          "contentType": "application/json",
+          "size": 167,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
 ]
@@ -4389,6 +6049,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 existing schema that does
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","name":"Pride and Prejudice","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10,"created_at":"2023-01-22T17:17:41.326Z","updated_at":"2023-01-22T17:17:41.326Z"},{"id":"vZsYVmzdxtihxQNqCs-3f","name":"The Great Gatsby","author_id":"NjpTwgmENj11rGdUgpCQ9","price":15,"created_at":"2022-10-22T10:11:51.421Z","updated_at":"2022-10-22T10:11:51.421Z"}]}",
+          "contentType": "application/json",
+          "size": 382,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -4418,6 +6097,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 existing schema that does
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","name":"Pride and Prejudice","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10,"created_at":"2023-01-22T17:17:41.326Z","updated_at":"2023-01-22T17:17:41.326Z"},{"id":"vZsYVmzdxtihxQNqCs-3f","name":"The Great Gatsby","author_id":"NjpTwgmENj11rGdUgpCQ9","price":15,"created_at":"2022-10-22T10:11:51.421Z","updated_at":"2022-10-22T10:11:51.421Z"}]}",
+          "contentType": "application/json",
+          "size": 382,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -4447,6 +6145,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 existing schema that does
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","name":"Pride and Prejudice","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10,"created_at":"2023-01-22T17:17:41.326Z","updated_at":"2023-01-22T17:17:41.326Z"},{"id":"vZsYVmzdxtihxQNqCs-3f","name":"The Great Gatsby","author_id":"NjpTwgmENj11rGdUgpCQ9","price":15,"created_at":"2022-10-22T10:11:51.421Z","updated_at":"2022-10-22T10:11:51.421Z"}]}",
+          "contentType": "application/json",
+          "size": 382,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -4510,6 +6227,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 existing schema that does
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","name":"Pride and Prejudice","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10,"created_at":"2023-01-22T17:17:41.326Z","updated_at":"2023-01-22T17:17:41.326Z"},{"id":"vZsYVmzdxtihxQNqCs-3f","name":"The Great Gatsby","author_id":"NjpTwgmENj11rGdUgpCQ9","price":15,"created_at":"2022-10-22T10:11:51.421Z","updated_at":"2022-10-22T10:11:51.421Z"}]}",
+          "contentType": "application/json",
+          "size": 382,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -4566,6 +6302,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 existing schema that does
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","name":"Pride and Prejudice","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10,"created_at":"2023-01-22T17:17:41.326Z","updated_at":"2023-01-22T17:17:41.326Z"},{"id":"vZsYVmzdxtihxQNqCs-3f","name":"The Great Gatsby","author_id":"NjpTwgmENj11rGdUgpCQ9","price":15,"created_at":"2022-10-22T10:11:51.421Z","updated_at":"2022-10-22T10:11:51.421Z"}]}",
+          "contentType": "application/json",
+          "size": 382,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -4609,6 +6364,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 existing schema that does
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","name":"Pride and Prejudice","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10,"created_at":"2023-01-22T17:17:41.326Z","updated_at":"2023-01-22T17:17:41.326Z"},{"id":"vZsYVmzdxtihxQNqCs-3f","name":"The Great Gatsby","author_id":"NjpTwgmENj11rGdUgpCQ9","price":15,"created_at":"2022-10-22T10:11:51.421Z","updated_at":"2022-10-22T10:11:51.421Z"}]}",
+          "contentType": "application/json",
+          "size": 382,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -4652,6 +6426,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 existing schema that does
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","name":"Pride and Prejudice","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10,"created_at":"2023-01-22T17:17:41.326Z","updated_at":"2023-01-22T17:17:41.326Z"},{"id":"vZsYVmzdxtihxQNqCs-3f","name":"The Great Gatsby","author_id":"NjpTwgmENj11rGdUgpCQ9","price":15,"created_at":"2022-10-22T10:11:51.421Z","updated_at":"2022-10-22T10:11:51.421Z"}]}",
+          "contentType": "application/json",
+          "size": 382,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -4695,6 +6488,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 existing schema that does
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","name":"Pride and Prejudice","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10,"created_at":"2023-01-22T17:17:41.326Z","updated_at":"2023-01-22T17:17:41.326Z"},{"id":"vZsYVmzdxtihxQNqCs-3f","name":"The Great Gatsby","author_id":"NjpTwgmENj11rGdUgpCQ9","price":15,"created_at":"2022-10-22T10:11:51.421Z","updated_at":"2022-10-22T10:11:51.421Z"}]}",
+          "contentType": "application/json",
+          "size": 382,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -4738,6 +6550,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 existing schema that does
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","name":"Pride and Prejudice","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10,"created_at":"2023-01-22T17:17:41.326Z","updated_at":"2023-01-22T17:17:41.326Z"},{"id":"vZsYVmzdxtihxQNqCs-3f","name":"The Great Gatsby","author_id":"NjpTwgmENj11rGdUgpCQ9","price":15,"created_at":"2022-10-22T10:11:51.421Z","updated_at":"2022-10-22T10:11:51.421Z"}]}",
+          "contentType": "application/json",
+          "size": 382,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -4781,6 +6612,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 existing schema that does
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"books":[{"id":"WjE9O1d8ELCb8POiOw4pn","name":"Pride and Prejudice","author_id":"6nTxAFM5ck4Hob77hGQoL","price":10,"created_at":"2023-01-22T17:17:41.326Z","updated_at":"2023-01-22T17:17:41.326Z"},{"id":"vZsYVmzdxtihxQNqCs-3f","name":"The Great Gatsby","author_id":"NjpTwgmENj11rGdUgpCQ9","price":15,"created_at":"2022-10-22T10:11:51.421Z","updated_at":"2022-10-22T10:11:51.421Z"}]}",
+          "contentType": "application/json",
+          "size": 382,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
 ]
@@ -4900,6 +6750,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post",
   },
   {
@@ -4926,6 +6795,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -5001,6 +6889,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -5061,6 +6968,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -5128,6 +7054,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -5171,6 +7116,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -5214,6 +7178,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -5257,6 +7240,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -5306,6 +7308,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -5366,6 +7387,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -5413,6 +7453,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -5456,6 +7515,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -5502,6 +7580,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -5545,6 +7642,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -5586,6 +7702,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -5627,6 +7762,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -5683,6 +7837,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -5726,6 +7899,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -5769,6 +7961,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -5825,6 +8036,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -5868,6 +8098,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -5911,6 +8160,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -5967,6 +8235,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -6010,6 +8297,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alp
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"tuple(('duration', 300))":[["duration",300]],"tpm()":0,"failure_rate()":0,"user_misery()":0,"😃things":["duration",300]}],"meta":{"fields":{"tuple(('duration', 300))":"string","blah()":"number","project_threshold_config":"string"},"units":{"tuple(('duration', 300))":null,"blah()":null,"😃things":null},"isMetricsData":false,"tips":{"query":null,"columns":null},"dataset":"discover"}}",
+          "contentType": "application/json",
+          "size": 395,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
 ]
@@ -6211,6 +8517,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 mismatched type in schema
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me"}",
+          "contentType": "application/json",
+          "size": 13,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
 ]
@@ -6281,6 +8606,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 missing required property
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
 ]
@@ -6355,6 +8699,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 schema with enum 1`] = `
     "impact": [
       "Addition",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"status":"something-else","data":[{"status":"something-else"},{"status":"another-thing"}]}",
+          "contentType": "application/json",
+          "size": 91,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -6394,6 +8757,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 schema with enum 1`] = `
     "impact": [
       "Addition",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"status":"something-else","data":[{"status":"something-else"},{"status":"another-thing"}]}",
+          "contentType": "application/json",
+          "size": 91,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -6433,6 +8815,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 schema with enum 1`] = `
     "impact": [
       "Addition",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"status":"something-else","data":[{"status":"something-else"},{"status":"another-thing"}]}",
+          "contentType": "application/json",
+          "size": 91,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
 ]
@@ -6538,6 +8939,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented property in 
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me"}",
+          "contentType": "application/json",
+          "size": 13,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
 ]
@@ -6613,6 +9033,29 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented request body
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post",
   },
   {
@@ -6652,6 +9095,29 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented request body
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post",
   },
   {
@@ -6673,6 +9139,29 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented request body
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -6729,6 +9218,29 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented request body
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -6772,6 +9284,29 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented request body
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -6815,6 +9350,29 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented request body
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -6873,6 +9431,29 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented request body
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -6916,6 +9497,29 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented request body
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -6960,6 +9564,29 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented request body
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -7016,6 +9643,29 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented request body
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -7059,6 +9709,29 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented request body
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -7102,6 +9775,29 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented request body
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -7145,6 +9841,29 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented request body
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -7174,6 +9893,29 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented request body
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -7203,6 +9945,29 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented request body
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/requestBody/content/application~1json/schema",
   },
   {
@@ -7229,6 +9994,29 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented request body
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
 ]
@@ -7359,6 +10147,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post",
   },
   {
@@ -7385,6 +10192,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -7441,6 +10267,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -7484,6 +10329,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -7527,6 +10391,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -7585,6 +10468,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -7628,6 +10530,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -7672,6 +10593,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented response bod
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -7728,6 +10668,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -7771,6 +10730,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -7814,6 +10792,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -7857,6 +10854,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented response bod
       "Addition",
       "BackwardsCompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -7886,6 +10902,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented response bod
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
@@ -7915,6 +10950,25 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 undocumented response bod
       "Addition",
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"name":"me","age":100,"created_at":"2023-07-20T14:39:22.184Z","hobbies":["running",{"type":"sport","name":"fishing"},{"type":"sport","name":"basketball","skill":100,"bad":null}],"active":true}",
+          "contentType": "application/json",
+          "size": 193,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
 ]

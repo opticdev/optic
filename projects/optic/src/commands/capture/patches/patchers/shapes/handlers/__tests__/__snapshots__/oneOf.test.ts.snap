@@ -123,6 +123,16 @@ exports[`one of shape patch generator can add an additional branch to a complex 
       "Addition",
       "BackwardsCompatibilityUnknown",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "",
+        "method": "get",
+        "path": "",
+        "query": [],
+      },
+    },
     "shouldRegeneratePatches": false,
   },
 ]
@@ -174,6 +184,16 @@ exports[`one of shape patch generator when new field in one of object variant of
       "Addition",
       "BackwardsCompatibilityUnknown",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "",
+        "method": "get",
+        "path": "",
+        "query": [],
+      },
+    },
     "shouldRegeneratePatches": false,
   },
 ]
@@ -211,6 +231,16 @@ exports[`one of shape patch generator when new primitive types provided to exist
       "Addition",
       "BackwardsCompatibilityUnknown",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "",
+        "method": "get",
+        "path": "",
+        "query": [],
+      },
+    },
     "shouldRegeneratePatches": false,
   },
 ]
@@ -267,6 +297,16 @@ exports[`one of shape patch generator when root schema is obejct and is shown an
       "Addition",
       "BackwardsCompatibilityUnknown",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "",
+        "method": "get",
+        "path": "",
+        "query": [],
+      },
+    },
     "shouldRegeneratePatches": true,
   },
   {
@@ -299,6 +339,16 @@ exports[`one of shape patch generator when root schema is obejct and is shown an
     "impact": [
       "BackwardsIncompatible",
     ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "",
+        "method": "get",
+        "path": "",
+        "query": [],
+      },
+    },
     "shouldRegeneratePatches": false,
   },
 ]
