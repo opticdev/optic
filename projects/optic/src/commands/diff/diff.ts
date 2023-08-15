@@ -360,7 +360,7 @@ const getDiffAction =
 
       try {
         await Git.assertRefExists(options.base);
-      } catch (e) {
+      } catch {
         logger.error(`Could not find base ref: ${options.base}`);
       }
 
