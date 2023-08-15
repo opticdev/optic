@@ -1,7 +1,8 @@
 import { it, describe, expect } from '@jest/globals';
-import { diffOperationWithSpec, OperationDiffResultKind } from '.';
+import { diffOperationWithSpec } from '.';
 import { HttpMethods } from '..';
 import { OpenAPIV3 } from '../../specs';
+import { OperationDiffResultKind } from '../../../capture/patches/patchers/spec/types';
 
 describe('diffOperationWithSpec', () => {
   it('yields diffs for unmatched paths', () => {

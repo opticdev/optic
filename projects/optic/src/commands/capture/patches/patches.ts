@@ -73,12 +73,12 @@ export async function* generateEndpointSpecPatches(
     endpoint.path,
     endpoint.method,
   ]);
-  const operation = Operation.fromOperationObject(
-    endpoint.path,
-    endpoint.method,
-    jsonPointerHelpers.get(specHolder.spec, jsonPath) as any
-  );
   for await (const interaction of interactions) {
+    const operation = Operation.fromOperationObject(
+      endpoint.path,
+      endpoint.method,
+      jsonPointerHelpers.get(specHolder.spec, jsonPath) as any
+    );
     let documentedInteraction: DocumentedInteraction = {
       interaction,
       operation,
