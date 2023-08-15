@@ -1,4 +1,4 @@
-import { OpenAPIV3 } from '../../../../oas/specs/index';
+import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { PatchOperation } from '../../patch-operations';
 import JsonPatch from 'fast-json-patch';

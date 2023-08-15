@@ -4,12 +4,9 @@ import {
   findBody,
   findResponse,
 } from '../../../../oas/operations';
-import {
-  OperationDiffResult,
-  OperationDiffResultKind,
-} from '../../../../oas/operations/diffs';
 import { PatchOperationGroup } from '../../patch-operations';
 import { PatchImpact } from './patches';
+import { OperationDiffResult, OperationDiffResultKind } from './types';
 
 export interface OperationPatch {
   description: string;

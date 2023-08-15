@@ -21,7 +21,7 @@ import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 import { SchemaObject } from '../shapes/schema';
 import { DocumentedInteraction } from '../../../../oas/operations';
 import { OperationPatch, generateOperationPatches } from './operations';
-import { OperationDiffResult } from '../../../../oas/operations/diffs';
+import { OperationDiffResult } from './types';
 
 export interface SpecPatch {
   description: string;

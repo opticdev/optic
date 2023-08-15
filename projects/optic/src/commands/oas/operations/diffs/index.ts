@@ -1,12 +1,6 @@
 import { OpenAPIV3 } from '../../specs';
-import {
-  OperationDiffResult,
-  OperationDiffResultKind,
-} from '../../../capture/patches/patchers/spec/types';
+import { OperationDiffResult } from '../../../capture/patches/patchers/spec/types';
 import { SpecOperationDiffTraverser } from './traversers';
-
-export type { OperationDiffResult };
-export { OperationDiffResultKind };
 
 export function* diffOperationWithSpec(
   operation: {

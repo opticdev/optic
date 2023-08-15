@@ -2,7 +2,6 @@ import { ShapeDiffResult, diffBodyBySchema } from './diff';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 import { oneOfPatches } from './handlers/oneOf';
 import { requiredPatches } from './handlers/required';
-import { OperationDiffResult } from '../../../../oas/operations/diffs';
 import {
   PatchImpact,
   PatchOperation,
@@ -17,6 +16,7 @@ import { additionalPropertiesPatches } from './handlers/additionalProperties';
 import { Schema, SchemaObject } from './schema';
 import { DocumentedBody, ShapeLocation } from './documented-bodies';
 import { CapturedInteraction } from '../../../sources/captured-interactions';
+import { OperationDiffResult } from '../spec/types';
 
 export function* generateShapePatchesByDiff(
   diff: ShapeDiffResult,

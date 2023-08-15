@@ -13,7 +13,7 @@ import {
   UndocumentedOperation,
   UndocumentedOperationType,
 } from '../../../../oas/operations';
-import { OperationDiffResultKind } from '../../../../oas/operations/diffs';
+import { OperationDiffResultKind } from './types';
 
 export function getIgnorePathPatch(
   spec: OpenAPIV3.Document,
