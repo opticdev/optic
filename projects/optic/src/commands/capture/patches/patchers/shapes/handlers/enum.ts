@@ -7,6 +7,8 @@ import {
   ShapeDiffResultKind,
 } from '../diff';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { SchemaObject } from '../schema';
+import { CapturedInteraction } from '../../../../sources/captured-interactions';
 
 export function* enumKeywordDiffs(
   validationError: ErrorObject,
@@ -33,7 +35,9 @@ export function* enumKeywordDiffs(
 }
 
 export function* enumPatches(
-  diff: ShapeDiffResult
+  diff: ShapeDiffResult,
+  schema: SchemaObject,
+  interaction: CapturedInteraction
 ): IterableIterator<ShapePatch> {
   if (
     diff.kind !== ShapeDiffResultKind.MissingEnumValue ||
@@ -56,5 +60,6 @@ export function* enumPatches(
     impact: [PatchImpact.Addition],
     groupedOperations,
     shouldRegeneratePatches: false,
+    interaction,
   };
 }

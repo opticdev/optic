@@ -10,6 +10,7 @@ import { ShapeLocation } from '../documented-bodies';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 import { ShapePatch } from '../patches';
 import { OperationGroup, PatchImpact } from '../../../../../oas/specs/patches';
+import { CapturedInteraction } from '../../../../sources/captured-interactions';
 
 export function* typeKeywordDiffs(
   validationError: ErrorObject,
@@ -45,6 +46,7 @@ export function* typeKeywordDiffs(
 export function* typePatches(
   diff: ShapeDiffResult,
   schema: SchemaObject,
+  interaction: CapturedInteraction,
   shapeContext: { location?: ShapeLocation },
   openAPIVersion: SupportedOpenAPIVersions
 ): IterableIterator<ShapePatch> {
@@ -138,6 +140,7 @@ export function* typePatches(
           }),
         ],
         shouldRegeneratePatches: false,
+        interaction,
       };
     } else {
       // option one: convert to a one-off
@@ -154,6 +157,7 @@ export function* typePatches(
         ],
         groupedOperations: makeOneOfOperations(),
         shouldRegeneratePatches: true,
+        interaction,
       };
 
       // option two: change the type
@@ -163,6 +167,7 @@ export function* typePatches(
         impact: [PatchImpact.BackwardsIncompatible],
         groupedOperations: changeTypeOperations(),
         shouldRegeneratePatches: false,
+        interaction,
       };
     }
   } else if (openAPIVersion === '3.1.x') {
@@ -193,6 +198,7 @@ export function* typePatches(
           }),
         ],
         shouldRegeneratePatches: false,
+        interaction,
       };
     } else {
       yield {
@@ -208,6 +214,7 @@ export function* typePatches(
         ],
         groupedOperations: makeOneOfOperations(),
         shouldRegeneratePatches: true,
+        interaction,
       };
 
       // option two: change the type
@@ -217,6 +224,7 @@ export function* typePatches(
         impact: [PatchImpact.BackwardsIncompatible],
         groupedOperations: changeTypeOperations(),
         shouldRegeneratePatches: false,
+        interaction,
       };
     }
   }

@@ -13,6 +13,7 @@ import { logger } from '../../../../logger';
 import { ShapeDiffResult } from '../../../capture/patches/patchers/shapes/diff';
 import { ShapePatch } from '../../../capture/patches/patchers/shapes/patches';
 import { ShapeLocation } from '../../../capture/patches/patchers/shapes/documented-bodies';
+import { CapturedInteraction } from '../../../capture/sources/captured-interactions';
 
 export { newSpecPatches } from './generators/new-spec';
 export { templatePatches } from './generators/template';
@@ -28,6 +29,7 @@ export interface SpecPatch {
   diff: ShapeDiffResult | OperationDiffResult | undefined;
   impact: PatchImpact[];
   groupedOperations: PatchOperationGroup[];
+  interaction?: CapturedInteraction;
 }
 
 export { PatchImpact, PatchOperationGroup as OperationGroup };
@@ -38,7 +40,7 @@ export class SpecPatch {
     shapePatch: ShapePatch,
     bodySpecPath: string,
     location: ShapeLocation
-  ) {
+  ): SpecPatch {
     const inResponse = 'inResponse' in location;
     const inComponentSchema = 'inComponentSchema' in location;
 
@@ -66,38 +68,13 @@ export class SpecPatch {
           })),
         };
       }),
-    };
-  }
-  static fromExistingRef(
-    shapePatch: ShapePatch,
-    bodySpecPath: string,
-    location: ShapeLocation
-  ) {
-    const inComponentSchema = 'inComponentSchema' in location;
-
-    const schemaPath = inComponentSchema
-      ? bodySpecPath
-      : jsonPointerHelpers.append(bodySpecPath, 'schema');
-
-    return {
-      description: shapePatch.description,
-      impact: shapePatch.impact,
-      diff: shapePatch.diff,
-      path: schemaPath,
-      groupedOperations: shapePatch.groupedOperations.map((group) => {
-        return {
-          ...group,
-          operations: group.operations.map((op) => ({
-            ...op,
-            path: jsonPointerHelpers.join(schemaPath, op.path),
-          })),
-        };
-      }),
+      interaction: shapePatch.interaction,
     };
   }
 
   static fromOperationPatch(
     operationPatch: OperationPatch,
+    interaction: CapturedInteraction,
     operationSpecPath: string
   ): SpecPatch {
     return {
@@ -114,6 +91,7 @@ export class SpecPatch {
           })),
         };
       }),
+      interaction,
     };
   }
 
@@ -144,7 +122,9 @@ export class SpecPatch {
     }
   }
 
-  static *operations(patch: ShapePatch): IterableIterator<PatchOperation> {
+  static *operations(
+    patch: Pick<ShapePatch, 'groupedOperations'>
+  ): IterableIterator<PatchOperation> {
     for (let group of patch.groupedOperations) {
       for (const op of group.operations) {
         yield op;

@@ -2,6 +2,7 @@ import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { Some } from 'ts-results';
 import { SchemaObject } from '../../../capture/patches/patchers/shapes/schema';
 import { DocumentedBody } from '../../../capture/patches/patchers/shapes/documented-bodies';
+import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 
 export function jsonBody(
   value: any,
@@ -15,6 +16,16 @@ export function jsonBody(
     shapeLocation: null,
     schema,
     specJsonPath: jsonPointerHelpers.compile(['/documented-body-fixture']),
+    interaction: {
+      request: {
+        host: '',
+        path: '',
+        method: OpenAPIV3.HttpMethods.GET,
+        body: null,
+        headers: [],
+        query: [],
+      },
+    },
   };
 }
 
@@ -45,6 +56,16 @@ export function jsonBodyInRequest(
       'content',
       'application/json',
     ]),
+    interaction: {
+      request: {
+        host: '',
+        path: '',
+        method: OpenAPIV3.HttpMethods.GET,
+        body: null,
+        headers: [],
+        query: [],
+      },
+    },
   };
 }
 

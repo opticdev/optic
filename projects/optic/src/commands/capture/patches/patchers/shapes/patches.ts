@@ -16,10 +16,12 @@ import { typePatches } from './handlers/type';
 import { additionalPropertiesPatches } from './handlers/additionalProperties';
 import { Schema, SchemaObject } from './schema';
 import { DocumentedBody, ShapeLocation } from './documented-bodies';
+import { CapturedInteraction } from '../../../sources/captured-interactions';
 
 export function* generateShapePatchesByDiff(
   diff: ShapeDiffResult,
   schema: SchemaObject,
+  interaction: CapturedInteraction,
   shapeContext: { location?: ShapeLocation },
   openAPIVersion: SupportedOpenAPIVersions
 ): IterableIterator<ShapePatch> {
@@ -30,12 +32,13 @@ export function* generateShapePatchesByDiff(
     typePatches,
     additionalPropertiesPatches,
   ]) {
-    yield* generator(diff, schema, shapeContext, openAPIVersion);
+    yield* generator(diff, schema, interaction, shapeContext, openAPIVersion);
   }
 }
 
 export interface ShapePatch {
   description: string;
+  interaction: CapturedInteraction;
   diff: ShapeDiffResult | OperationDiffResult | undefined;
   impact: PatchImpact[];
   groupedOperations: PatchOperationGroup[];
@@ -79,9 +82,14 @@ export class ShapePatches {
       i++;
       if (!schema || (!schema.type && !Schema.isPolymorphic(schema))) {
         let newSchema = Schema.baseFromValue(body.value, openAPIVersion);
-        let patch = newSchemaPatch(newSchema, schema || null, {
-          location: shapeLocation || undefined,
-        });
+        let patch = newSchemaPatch(
+          newSchema,
+          schema || null,
+          documentedBody.interaction,
+          {
+            location: shapeLocation || undefined,
+          }
+        );
 
         yield patch;
 
@@ -104,6 +112,7 @@ export class ShapePatches {
         let diffPatches = generateShapePatchesByDiff(
           shapeDiff,
           schema,
+          documentedBody.interaction,
           {
             location: shapeLocation || undefined,
           },

@@ -4,7 +4,18 @@ import { SchemaObject } from '../../schema';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 import { diffBodyBySchema } from '../../diff';
 import { generateShapePatchesByDiff } from '../../patches';
-
+import { CapturedInteraction } from '../../../../../sources/captured-interactions';
+import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+const mockInteraction: CapturedInteraction = {
+  request: {
+    host: '',
+    path: '',
+    method: OpenAPIV3.HttpMethods.GET,
+    body: null,
+    headers: [],
+    query: [],
+  },
+};
 describe('type json schema diff visitor', () => {
   const jsonSchema: SchemaObject = {
     type: 'object',
@@ -85,7 +96,13 @@ describe.each(['3.0.x', '3.1.x'])(
       const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
 
       const patches = diffs.flatMap((diff) => [
-        ...generateShapePatchesByDiff(diff, jsonSchema, {}, version),
+        ...generateShapePatchesByDiff(
+          diff,
+          jsonSchema,
+          mockInteraction,
+          {},
+          version
+        ),
       ]);
 
       expect(patches).toMatchSnapshot();
@@ -99,7 +116,13 @@ describe.each(['3.0.x', '3.1.x'])(
       const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
 
       const patches = diffs.flatMap((diff) => [
-        ...generateShapePatchesByDiff(diff, jsonSchema, {}, version),
+        ...generateShapePatchesByDiff(
+          diff,
+          jsonSchema,
+          mockInteraction,
+          {},
+          version
+        ),
       ]);
 
       expect(patches).toMatchSnapshot();
@@ -113,7 +136,13 @@ describe.each(['3.0.x', '3.1.x'])(
       const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
 
       const patches = diffs.flatMap((diff) => [
-        ...generateShapePatchesByDiff(diff, jsonSchema, {}, version),
+        ...generateShapePatchesByDiff(
+          diff,
+          jsonSchema,
+          mockInteraction,
+          {},
+          version
+        ),
       ]);
 
       expect(patches).toMatchSnapshot();
@@ -127,7 +156,13 @@ describe.each(['3.0.x', '3.1.x'])(
       const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
 
       const patches = diffs.flatMap((diff) => [
-        ...generateShapePatchesByDiff(diff, jsonSchema, {}, version),
+        ...generateShapePatchesByDiff(
+          diff,
+          jsonSchema,
+          mockInteraction,
+          {},
+          version
+        ),
       ]);
 
       expect(patches).toMatchSnapshot();
