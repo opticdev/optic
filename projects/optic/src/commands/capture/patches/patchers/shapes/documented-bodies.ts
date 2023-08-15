@@ -12,6 +12,7 @@ import { CapturedBody } from '../../../sources/body';
 import { logger } from '../../../../../logger';
 import { ShapePatch } from './patches';
 import { Schema, SchemaObject } from './schema';
+import { CapturedInteraction } from '../../../sources/captured-interactions';
 
 export interface Body {
   contentType?: string;
@@ -34,6 +35,7 @@ export interface DocumentedBody {
   schema: SchemaObject | null;
   shapeLocation: ShapeLocation | null;
   specJsonPath: string;
+  interaction: CapturedInteraction;
 }
 
 export class DocumentedBody {
@@ -119,6 +121,7 @@ export class DocumentedBodies {
           bodySource: capturedBody,
           shapeLocation,
           specJsonPath: bodySpecPath,
+          interaction,
         };
       } // TODO: consider what to do when there's no content type (happens, as seen in the past)
     } else if (interaction.request.body) {
@@ -199,6 +202,7 @@ export class DocumentedBodies {
           bodySource: capturedBody,
           shapeLocation,
           specJsonPath: bodySpecPath,
+          interaction,
         };
       } else {
         logger.debug(

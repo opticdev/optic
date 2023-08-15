@@ -10,6 +10,7 @@ import {
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { OperationGroup, PatchImpact } from '../../../../../oas/specs/patches';
 import { ShapePatch } from '../patches';
+import { CapturedInteraction } from '../../../../sources/captured-interactions';
 
 export function* oneOfKeywordDiffs(
   validationError: ErrorObject,
@@ -52,6 +53,7 @@ export function* oneOfKeywordDiffs(
 export function* oneOfPatches(
   diff: ShapeDiffResult,
   schema: SchemaObject,
+  interaction: CapturedInteraction,
   shapeContext: { location?: ShapeLocation },
   openAPIVersion: SupportedOpenAPIVersions
 ): IterableIterator<ShapePatch> {
@@ -88,5 +90,6 @@ export function* oneOfPatches(
     ],
     groupedOperations,
     shouldRegeneratePatches: false,
+    interaction,
   };
 }

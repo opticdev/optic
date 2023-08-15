@@ -10,6 +10,7 @@ import { OperationGroup, PatchImpact } from '../../../../../oas/specs/patches';
 import { SchemaObject } from 'ajv';
 import { ShapeLocation } from '../documented-bodies';
 import { ShapePatch } from '../patches';
+import { CapturedInteraction } from '../../../../sources/captured-interactions';
 
 export function* requiredKeywordDiffs(
   validationError: ErrorObject,
@@ -42,6 +43,7 @@ export function* requiredKeywordDiffs(
 export function* requiredPatches(
   diff: ShapeDiffResult,
   schema: SchemaObject,
+  interaction: CapturedInteraction,
   shapeContext: { location?: ShapeLocation },
   openAPIVersion: SupportedOpenAPIVersions
 ): IterableIterator<ShapePatch> {
@@ -101,6 +103,7 @@ export function* requiredPatches(
     groupedOperations: [
       ...makeOptionalOperations(requiredArray.indexOf(diff.key)),
     ],
+    interaction,
     shouldRegeneratePatches: false,
   };
   if (makeOptionalPatch.groupedOperations.length > 0) {
@@ -123,5 +126,6 @@ export function* requiredPatches(
       ...removePropertyOperations(diff.parentObjectPath, diff.key),
     ],
     shouldRegeneratePatches: false,
+    interaction,
   };
 }

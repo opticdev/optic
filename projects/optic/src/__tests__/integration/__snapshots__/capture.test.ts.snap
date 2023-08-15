@@ -1654,7 +1654,6 @@ GET /books
   [31m[200 response body] 'updated_at' is not documented (/properties/books/items/properties)[39m
   [31m[200 response body] 'author_id' does not match type number. Received 6nTxAFM5ck4Hob77hGQoL (/properties/books/items/properties/author_id)[39m
   [41m  Diff  [49m 'author_id' did not match schema
-operation: [1mget /books[22m  
 [90m25 |[39m properties:
 [90m26 |[39m   id:
 [90m27 |[39m     type: string
@@ -1666,7 +1665,6 @@ operation: [1mget /books[22m
 
   [31m[200 response body] 'price' does not match type string. Received 10 (/properties/books/items/properties/price)[39m
   [41m  Diff  [49m 'price' did not match schema
-operation: [1mget /books[22m  
 [90m32 |[39m     enum:
 [90m33 |[39m       - ready
 [90m34 |[39m       - not_ready
@@ -1678,7 +1676,6 @@ operation: [1mget /books[22m
 
   [31m[200 response body] 'status' missing enum value 'hold' (/properties/books/items/properties/status/enum)[39m
   [41m  Diff  [49m 'status' does not have enum value hold
-operation: [1mget /books[22m  
 [90m29 |[39m   type: number
 [90m30 |[39m status:
 [90m31 |[39m   type: string

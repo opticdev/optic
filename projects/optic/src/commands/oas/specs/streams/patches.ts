@@ -92,6 +92,7 @@ export class SpecPatches {
     for (let patch of operationPatches) {
       const specPatch = SpecPatch.fromOperationPatch(
         patch,
+        documentedInteraction.interaction,
         documentedInteraction.specJsonPath
       );
 

@@ -25,7 +25,6 @@ function getShapeDiffDetails(
   pathPattern: string
 ): string {
   const lines = `${chalk.bgRed('  Diff  ')} ${diff.description}
-operation: ${chalk.bold(`${method} ${pathPattern}`)}  
 ${pointerLogger.log(pathToHighlight, {
   highlightColor: 'yellow',
   observation: error,
@@ -222,6 +221,11 @@ export async function diffExistingEndpoint(
       verbose: options.verbose,
     });
     if (summarized.length) {
+      if (logger.getLevel() <= 1 && patch.interaction) {
+        patchSummaries.push(
+          `Originating request: ${JSON.stringify(patch.interaction)}`
+        );
+      }
       patchSummaries.push(...summarized);
     } else {
       logger.debug(`skipping patch:`);

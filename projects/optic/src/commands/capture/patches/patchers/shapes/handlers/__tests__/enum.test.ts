@@ -2,6 +2,19 @@ import { it, describe, expect } from '@jest/globals';
 import { diffBodyBySchema } from '../../diff';
 import { generateShapePatchesByDiff } from '../../patches';
 import { SchemaObject } from '../../schema';
+import { CapturedInteraction } from '../../../../../sources/captured-interactions';
+import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+
+const mockInteraction: CapturedInteraction = {
+  request: {
+    host: '',
+    path: '',
+    method: OpenAPIV3.HttpMethods.GET,
+    body: null,
+    headers: [],
+    query: [],
+  },
+};
 
 describe('enum json schema diff visitor', () => {
   const jsonSchema: SchemaObject = {
@@ -53,7 +66,13 @@ describe('enum shape patch generator', () => {
     const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
 
     const patches = diffs.flatMap((diff) => [
-      ...generateShapePatchesByDiff(diff, jsonSchema, {}, '3.1.x'),
+      ...generateShapePatchesByDiff(
+        diff,
+        jsonSchema,
+        mockInteraction,
+        {},
+        '3.1.x'
+      ),
     ]);
 
     expect(patches).toMatchSnapshot();
@@ -70,7 +89,13 @@ describe('enum shape patch generator', () => {
     const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
 
     const patches = diffs.flatMap((diff) => [
-      ...generateShapePatchesByDiff(diff, jsonSchema, {}, '3.1.x'),
+      ...generateShapePatchesByDiff(
+        diff,
+        jsonSchema,
+        mockInteraction,
+        {},
+        '3.1.x'
+      ),
     ]);
 
     expect(patches).toMatchSnapshot();

@@ -2,10 +2,12 @@ import { Schema, SchemaObject } from '../schema';
 import { ShapeLocation } from '../documented-bodies';
 import { OperationGroup, PatchImpact } from '../../../../../oas/specs/patches';
 import { ShapePatch } from '../patches';
+import { CapturedInteraction } from '../../../../sources/captured-interactions';
 
 export function newSchemaPatch(
   schema: SchemaObject,
   typelessSchema: SchemaObject | null,
+  interaction: CapturedInteraction,
   shapeContext: { location?: ShapeLocation }
 ): ShapePatch {
   let groupedOperations = [
@@ -28,5 +30,6 @@ export function newSchemaPatch(
     ],
     groupedOperations,
     shouldRegeneratePatches: false,
+    interaction,
   };
 }
