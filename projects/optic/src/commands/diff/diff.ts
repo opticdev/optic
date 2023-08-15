@@ -357,6 +357,13 @@ const getDiffAction =
         process.exitCode = 1;
         return;
       }
+
+      try {
+        await Git.assertRefExists(options.base);
+      } catch (e) {
+        logger.error(`Could not find base ref: ${options.base}`);
+      }
+
       parsedFiles = await getBaseAndHeadFromFileAndBase(
         file1,
         options.base,
