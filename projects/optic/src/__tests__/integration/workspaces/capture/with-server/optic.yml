@@ -29,6 +29,7 @@ capture:
       ready_endpoint: /healthcheck
     requests:
       send:
+        - path: /
         - path: /books
           method: GET
         - path: /books/asd

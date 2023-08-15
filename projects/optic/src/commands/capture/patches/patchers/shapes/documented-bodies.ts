@@ -248,7 +248,12 @@ async function decodeCapturedBody(
         value,
       })
     );
-  } // TODO: consider what to do when there's no content type (happens, as seen in the past)
-
-  return Ok(None); // no decoded body available
+  } else {
+    return Ok(
+      Some({
+        contentType,
+        value: capturedBody.body,
+      })
+    );
+  }
 }

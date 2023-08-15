@@ -269,12 +269,16 @@ GET /ip
 GET /oauth1
 PATCH /patch
 POST /post
-PUT /put
-GET /response-headers
-GET /status/{status}
-GET /stream/{stream}
-GET /time/{time}
-POST /transform/collection
+Error: Invalid reference token: text/plain
+    at Object.get ($root$/projects/json-pointer-helpers/src/json-pointers/json-pointer-helpers.ts:16:13)
+    at SchemaInventory.refsForAdditions ($root$/projects/optic/src/commands/capture/patches/patchers/closeness/schema-inventory.ts:64:46)
+    at async generateRefRefactorPatches ($root$/projects/optic/src/commands/capture/patches/patches.ts:146:18)
+    at async $root$/projects/optic/src/commands/capture/actions/undocumented.ts:181:5
+    at async jsonOpsFromSpecPatches ($root$/projects/optic/src/commands/capture/patches/patches.ts:154:20)
+    at async documentNewEndpoint ($root$/projects/optic/src/commands/capture/actions/undocumented.ts:194:22)
+    at async $root$/projects/optic/src/commands/capture/capture.ts:371:11
+    at async Command.<anonymous> ($root$/projects/optic/src/error-handler.ts:18:14)
+[31mInvalid reference token: text/plain[39m
 "
 `;
 
@@ -1370,6 +1374,7 @@ GET /books
 GET /authors
 GET /books/{book}
 POST /books/{book}
+GET /
 "
 `;
 
@@ -1426,6 +1431,15 @@ paths:
           application/json;charset=UTF-8:
             schema:
               $ref: "#/components/schemas/PostBooksBookRequestBody"
+  /:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/Get200ResponseBody"
 components:
   schemas:
     GetBooks200ResponseBody:
@@ -1525,6 +1539,8 @@ components:
         - name
         - price
         - author_id
+    Get200ResponseBody:
+      type: string
 "
 `;
 
@@ -1539,7 +1555,7 @@ GET /books
   [33m[200 response body] 'price' is now type string (/properties/books/items/properties/price)[39m
   [33m[200 response body] 'status' now has enum value 'hold' (/properties/books/items/properties/status/enum)[39m
 
-4 unmatched requests
+5 unmatched requests
 [33mNew endpoints are only added in interactive mode.[39m
 [34mRun with \`--update interactive\` to add new endpoints[39m
 [33mHint: optic capture openapi.yml --update interactive[39m
@@ -1673,7 +1689,7 @@ operation: [1mget /books[22m
 [90m$workspace$/openapi.yml[39m
 
 
-100.0% coverage of your documented operations. 4 requests did not match a documented path (5 total requests).
+100.0% coverage of your documented operations. 5 requests did not match a documented path (6 total requests).
 9 diffs detected in documented operations
 
 [33mNew endpoints are only added in interactive mode.[39m
@@ -1693,7 +1709,7 @@ GET /books
   [31m[200 response body] 'price' does not match type string. Received 10 (/properties/books/items/properties/price)[39m
   [31m[200 response body] 'status' missing enum value 'hold' (/properties/books/items/properties/status/enum)[39m
 
-100.0% coverage of your documented operations. 4 requests did not match a documented path (5 total requests).
+100.0% coverage of your documented operations. 5 requests did not match a documented path (6 total requests).
 6 diffs detected in documented operations
 
 [33mNew endpoints are only added in interactive mode.[39m
