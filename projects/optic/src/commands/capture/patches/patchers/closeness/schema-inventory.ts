@@ -63,6 +63,11 @@ export class SchemaInventory {
     for await (let added of sorted) {
       const addedSchema = jsonPointerHelpers.get(spec, added);
       const arrayItems = arrayItemPaths(addedSchema, added);
+      const isAPrimitiveSchema =
+        addedSchema.type === 'string' ||
+        addedSchema.type === 'boolean' ||
+        addedSchema.type === 'number' ||
+        addedSchema.type === 'integer';
 
       const isARootSchema =
         jsonPointerHelpers.matches(added, [
@@ -149,7 +154,7 @@ export class SchemaInventory {
         }
       }
       //create a root schema
-      if (!matchedSub && !matchedRoot && isARootSchema) {
+      if (!matchedSub && !matchedRoot && isARootSchema && !isAPrimitiveSchema) {
         const refName = refNameGenerator(added);
         matchedRoot = true;
         let refPath = jsonPointerHelpers.compile([
