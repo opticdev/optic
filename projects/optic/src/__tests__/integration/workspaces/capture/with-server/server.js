@@ -41,8 +41,15 @@ const books = [
 ];
 
 const requestListener = function (req, res) {
-  res.setHeader("Content-Type", "application/json");
   const normalizedUrl = serverPrefix ? req.url.replace(serverPrefix, '') : req.url
+  if (normalizedUrl === '/' && req.method === 'GET') {
+    res.setHeader("Content-Type", "text/html");
+    res.writeHead(200);
+    res.end('<html></html>');
+    return
+  }
+
+  res.setHeader("Content-Type", "application/json");
   if (normalizedUrl === '/books' && req.method === 'GET') {
     res.writeHead(200);
     res.end(JSON.stringify({books}));

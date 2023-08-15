@@ -18,8 +18,6 @@ import {
   SpecFiles,
   SpecFilesAsync,
   SpecFilesSourcemap,
-  SpecPatch,
-  SpecPatches,
 } from '../specs';
 import {
   DocumentedBodies,
@@ -34,6 +32,11 @@ import {
   CapturedInteraction,
   CapturedInteractions,
 } from '../../capture/sources/captured-interactions';
+import {
+  SpecPatch,
+  SpecPatches,
+} from '../../capture/patches/patchers/spec/patches';
+import { LegacySpecPatches } from '../specs/streams/patches';
 
 export interface ParsedOperation {
   methods: HttpMethod[];
@@ -371,7 +374,9 @@ export function addOperations(
     for await (let undocumentedOperation of undocumentedOperations) {
       observers.undocumentedOperation(undocumentedOperation);
 
-      let patches = SpecPatches.undocumentedOperation(undocumentedOperation);
+      let patches = LegacySpecPatches.undocumentedOperation(
+        undocumentedOperation
+      );
 
       for (let patch of patches) {
         patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
@@ -488,7 +493,7 @@ export function addOperations(
   })();
 
   // additions only, so we only safely extend the spec
-  const specAdditions = SpecPatches.additions(specPatches);
+  const specAdditions = LegacySpecPatches.additions(specPatches);
 
   // making sure we end observations once we're done generating patches
   const observedResults = (async function* (): SpecPatches {

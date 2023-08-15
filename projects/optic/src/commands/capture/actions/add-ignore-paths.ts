@@ -1,6 +1,6 @@
 import { ParseResult } from '../../../utils/spec-loaders';
-import { SpecPatches } from '../../oas/specs';
-import { getIgnorePathPatch } from '../patches/patchers/spec';
+import { SpecPatches } from '../patches/patchers/spec/patches';
+import { getIgnorePathPatch } from '../patches/patchers/spec/spec';
 import { jsonOpsFromSpecPatches } from '../patches/patches';
 import { writePatchesToFiles } from '../write/file';
 
