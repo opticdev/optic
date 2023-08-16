@@ -240,9 +240,7 @@ exports[`capture with inputs --har verifying OpenAPI spec 1`] = `
 100.0% coverage of your documented operations. 7 requests did not match a documented path (8 total requests).
 3 diffs detected in documented operations
 
-[33mNew endpoints are only added in interactive mode.[39m
-[34mRun with \`--update interactive\` to add new endpoints[39m
-[33mHint: optic capture openapi.yml --update interactive[39m
+[33mNew endpoints are only added in interactive mode. Run 'optic capture openapi.yml --update interactive' to add new endpoints[39m
 "
 `;
 
@@ -1040,9 +1038,7 @@ exports[`capture with inputs --postman verifying OpenAPI spec 1`] = `
 
 0.0% coverage of your documented operations. 58 requests did not match a documented path (58 total requests).
 
-[33mNew endpoints are only added in interactive mode.[39m
-[34mRun with \`--update interactive\` to add new endpoints[39m
-[33mHint: optic capture openapi.yml --update interactive[39m
+[33mNew endpoints are only added in interactive mode. Run 'optic capture openapi.yml --update interactive' to add new endpoints[39m
 "
 `;
 
@@ -1756,9 +1752,7 @@ GET /books
   [33m[200 response body] 'status' now has enum value 'hold' (/properties/books/items/properties/status/enum)[39m
 
 5 unmatched requests
-[33mNew endpoints are only added in interactive mode.[39m
-[34mRun with \`--update interactive\` to add new endpoints[39m
-[33mHint: optic capture openapi.yml --update interactive[39m
+[33mNew endpoints are only added in interactive mode. Run 'optic capture openapi.yml --update interactive' to add new endpoints[39m
 "
 `;
 
@@ -1839,9 +1833,7 @@ GET /books
 100.0% coverage of your documented operations. 2 requests did not match a documented path (6 total requests).
 8 diffs detected in documented operations
 
-[33mNew endpoints are only added in interactive mode.[39m
-[34mRun with \`--update interactive\` to add new endpoints[39m
-[33mHint: optic capture openapi-with-overlapping-paths.yml --update interactive[39m
+[33mNew endpoints are only added in interactive mode. Run 'optic capture openapi-with-overlapping-paths.yml --update interactive' to add new endpoints[39m
 "
 `;
 
@@ -1889,9 +1881,7 @@ GET /books
 100.0% coverage of your documented operations. 5 requests did not match a documented path (6 total requests).
 9 diffs detected in documented operations
 
-[33mNew endpoints are only added in interactive mode.[39m
-[34mRun with \`--update interactive\` to add new endpoints[39m
-[33mHint: optic capture openapi.yml --update interactive[39m
+[33mNew endpoints are only added in interactive mode. Run 'optic capture openapi.yml --update interactive' to add new endpoints[39m
 "
 `;
 
@@ -1909,8 +1899,6 @@ GET /books
 100.0% coverage of your documented operations. 5 requests did not match a documented path (6 total requests).
 6 diffs detected in documented operations
 
-[33mNew endpoints are only added in interactive mode.[39m
-[34mRun with \`--update interactive\` to add new endpoints[39m
-[33mHint: optic capture openapi.yml --update interactive[39m
+[33mNew endpoints are only added in interactive mode. Run 'optic capture openapi.yml --update interactive' to add new endpoints[39m
 "
 `;
