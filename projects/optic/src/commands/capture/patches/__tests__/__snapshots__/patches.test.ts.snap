@@ -3301,6 +3301,10 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 schema with arrays with p
             "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/status/type",
           },
           {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/status/nullable",
+          },
+          {
             "op": "add",
             "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/status/oneOf",
             "value": [
@@ -3361,7 +3365,6 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 schema with arrays with p
                       "items": {
                         "properties": {
                           "status": {
-                            "nullable": true,
                             "oneOf": [
                               {
                                 "nullable": true,
