@@ -1,5 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`diff file doesn't exist 1`] = `
+"[31mError opening file "$workspace$/doesnt-exist.json" [39m
+[31mENOENT: no such file or directory, open '$workspace$/doesnt-exist.json'[39m
+"
+`;
+
 exports[`diff petstore diff 1`] = `
 "[31mx [39m[1mSwagger Petstore Updated[22m [90mpetstore-base.json[39m
 [1mOperations: [22m5 operations added, 16 changed, 1 removed
