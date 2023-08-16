@@ -54,7 +54,8 @@ describe('diff', () => {
 
   test("file doesn't exist", async () => {
     const workspace = await setupWorkspace('diff/files-no-repo', {
-      repo: false,
+      repo: true,
+      commit: true,
     });
 
     await run(
