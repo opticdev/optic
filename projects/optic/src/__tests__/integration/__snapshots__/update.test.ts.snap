@@ -53,54 +53,28 @@ exports[`update update an existing spec with prefixed server 2`] = `
             "items": {
               "properties": {
                 "another": {
-                  "oneOf": [
-                    {
-                      "items": {
-                        "properties": {
-                          "max": {
-                            "type": "number",
-                          },
-                          "min": {
-                            "type": "number",
-                          },
-                          "path": {
-                            "type": "string",
-                          },
-                        },
-                        "required": [
-                          "path",
-                          "max",
-                          "min",
-                        ],
-                        "type": "object",
+                  "items": {
+                    "properties": {
+                      "max": {
+                        "type": "number",
                       },
-                      "type": [
-                        "object",
-                        "null",
-                      ],
-                    },
-                    {
-                      "items": {
-                        "properties": {
-                          "max": {
-                            "type": "number",
-                          },
-                          "min": {
-                            "type": "number",
-                          },
-                          "path": {
-                            "type": "string",
-                          },
-                        },
-                        "required": [
-                          "path",
-                          "max",
-                          "min",
-                        ],
-                        "type": "object",
+                      "min": {
+                        "type": "number",
                       },
-                      "type": "array",
+                      "path": {
+                        "type": "string",
+                      },
                     },
+                    "required": [
+                      "path",
+                      "max",
+                      "min",
+                    ],
+                    "type": "object",
+                  },
+                  "type": [
+                    "array",
+                    "null",
                   ],
                 },
                 "name": {
@@ -404,54 +378,28 @@ exports[`update updates an empty spec 2`] = `
             "items": {
               "properties": {
                 "another": {
-                  "oneOf": [
-                    {
-                      "items": {
-                        "properties": {
-                          "max": {
-                            "type": "number",
-                          },
-                          "min": {
-                            "type": "number",
-                          },
-                          "path": {
-                            "type": "string",
-                          },
-                        },
-                        "required": [
-                          "path",
-                          "max",
-                          "min",
-                        ],
-                        "type": "object",
+                  "items": {
+                    "properties": {
+                      "max": {
+                        "type": "number",
                       },
-                      "type": [
-                        "object",
-                        "null",
-                      ],
-                    },
-                    {
-                      "items": {
-                        "properties": {
-                          "max": {
-                            "type": "number",
-                          },
-                          "min": {
-                            "type": "number",
-                          },
-                          "path": {
-                            "type": "string",
-                          },
-                        },
-                        "required": [
-                          "path",
-                          "max",
-                          "min",
-                        ],
-                        "type": "object",
+                      "min": {
+                        "type": "number",
                       },
-                      "type": "array",
+                      "path": {
+                        "type": "string",
+                      },
                     },
+                    "required": [
+                      "path",
+                      "max",
+                      "min",
+                    ],
+                    "type": "object",
+                  },
+                  "type": [
+                    "array",
+                    "null",
                   ],
                 },
                 "name": {
@@ -749,54 +697,28 @@ exports[`update updates an existing spec 2`] = `
             "items": {
               "properties": {
                 "another": {
-                  "oneOf": [
-                    {
-                      "items": {
-                        "properties": {
-                          "max": {
-                            "type": "number",
-                          },
-                          "min": {
-                            "type": "number",
-                          },
-                          "path": {
-                            "type": "string",
-                          },
-                        },
-                        "required": [
-                          "path",
-                          "max",
-                          "min",
-                        ],
-                        "type": "object",
+                  "items": {
+                    "properties": {
+                      "max": {
+                        "type": "number",
                       },
-                      "type": [
-                        "object",
-                        "null",
-                      ],
-                    },
-                    {
-                      "items": {
-                        "properties": {
-                          "max": {
-                            "type": "number",
-                          },
-                          "min": {
-                            "type": "number",
-                          },
-                          "path": {
-                            "type": "string",
-                          },
-                        },
-                        "required": [
-                          "path",
-                          "max",
-                          "min",
-                        ],
-                        "type": "object",
+                      "min": {
+                        "type": "number",
                       },
-                      "type": "array",
+                      "path": {
+                        "type": "string",
+                      },
                     },
+                    "required": [
+                      "path",
+                      "max",
+                      "min",
+                    ],
+                    "type": "object",
+                  },
+                  "type": [
+                    "array",
+                    "null",
                   ],
                 },
                 "name": {
