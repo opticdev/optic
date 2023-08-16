@@ -78,7 +78,7 @@ export class ShapePatches {
 
     let patchesExhausted = false;
     let i = 0;
-    while (!patchesExhausted && i < MAX_ITERATIONS) {
+    while (!patchesExhausted) {
       i++;
       if (!schema || (!schema.type && !Schema.isPolymorphic(schema))) {
         let newSchema = Schema.baseFromValue(body.value, openAPIVersion);
@@ -132,6 +132,18 @@ export class ShapePatches {
         if (shouldRegenerate) break;
       }
       patchesExhausted = patchCount === 0;
+      if (i === MAX_ITERATIONS) {
+        SentryClient.captureException(
+          new Error('max iterations in shape patches hit'),
+          {
+            extra: {
+              body,
+              schema,
+            },
+          }
+        );
+        break;
+      }
     }
   }
 }

@@ -3132,6 +3132,265 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 missing required property
 }
 `;
 
+exports[`generateEndpointSpecPatches OAS version 3.0.1 schema with arrays with polymorphic items 1`] = `
+[
+  {
+    "description": "update response body: make property status optional",
+    "diff": {
+      "description": "required property 'status' was missing",
+      "example": undefined,
+      "instancePath": "/status",
+      "key": "status",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "",
+      "propertyPath": "/properties/status",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove status from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required/0",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"status":null},{"status":"something-else"},{"status":"another-thing"},{"status":null},{"status":123}]}",
+          "contentType": "application/json",
+          "size": 112,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make status null",
+    "diff": {
+      "description": "'status' did not match schema",
+      "example": null,
+      "expectedType": "string",
+      "instancePath": "/data/0/status",
+      "key": "status",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/data/items/properties/status",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make status nullable",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/status/nullable",
+            "value": true,
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"status":null},{"status":"something-else"},{"status":"another-thing"},{"status":null},{"status":123}]}",
+          "contentType": "application/json",
+          "size": 112,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make status null",
+    "diff": {
+      "description": "'status' did not match schema",
+      "example": null,
+      "expectedType": "string",
+      "instancePath": "/data/3/status",
+      "key": "status",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/data/items/properties/status",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make status nullable",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/status/nullable",
+            "value": true,
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"status":null},{"status":"something-else"},{"status":"another-thing"},{"status":null},{"status":123}]}",
+          "contentType": "application/json",
+          "size": 112,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make status oneOf",
+    "diff": {
+      "description": "'status' did not match schema",
+      "example": 123,
+      "expectedType": "string",
+      "instancePath": "/data/4/status",
+      "key": "status",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/data/items/properties/status",
+    },
+    "groupedOperations": [
+      {
+        "intent": "replace status with a one of containing both types",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/status/type",
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/status/oneOf",
+            "value": [
+              {
+                "nullable": true,
+                "type": "string",
+              },
+              {
+                "type": "number",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"status":null},{"status":"something-else"},{"status":"another-thing"},{"status":null},{"status":123}]}",
+          "contentType": "application/json",
+          "size": 112,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 schema with arrays with polymorphic items 2`] = `
+{
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "properties": {
+                          "status": {
+                            "nullable": true,
+                            "oneOf": [
+                              {
+                                "nullable": true,
+                                "type": "string",
+                              },
+                              {
+                                "type": "number",
+                              },
+                            ],
+                          },
+                        },
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                  },
+                  "required": [],
+                  "type": "object",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
 exports[`generateEndpointSpecPatches OAS version 3.0.1 schema with enum 1`] = `
 [
   {
@@ -8645,6 +8904,328 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 missing required property
                   "properties": {
                     "name": {
                       "type": "string",
+                    },
+                  },
+                  "required": [],
+                  "type": "object",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 schema with arrays with polymorphic items 1`] = `
+[
+  {
+    "description": "update response body: make property status optional",
+    "diff": {
+      "description": "required property 'status' was missing",
+      "example": undefined,
+      "instancePath": "/status",
+      "key": "status",
+      "keyword": "required",
+      "kind": "MissingRequiredProperty",
+      "parentObjectPath": "",
+      "propertyPath": "/properties/status",
+    },
+    "groupedOperations": [
+      {
+        "intent": "remove status from parent's required array",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/required/0",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"status":null},{"status":"something-else"},{"status":"another-thing"},{"status":null},{"status":123}]}",
+          "contentType": "application/json",
+          "size": 112,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make status null",
+    "diff": {
+      "description": "'status' did not match schema",
+      "example": null,
+      "expectedType": "string",
+      "instancePath": "/data/0/status",
+      "key": "status",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/data/items/properties/status",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make status null",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/status/type",
+            "value": [
+              "object",
+              "null",
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"status":null},{"status":"something-else"},{"status":"another-thing"},{"status":null},{"status":123}]}",
+          "contentType": "application/json",
+          "size": 112,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make status null",
+    "diff": {
+      "description": "'status' did not match schema",
+      "example": null,
+      "expectedType": "string",
+      "instancePath": "/data/3/status",
+      "key": "status",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/data/items/properties/status",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make status null",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/status/type",
+            "value": [
+              "object",
+              "null",
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"status":null},{"status":"something-else"},{"status":"another-thing"},{"status":null},{"status":123}]}",
+          "contentType": "application/json",
+          "size": 112,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: make status oneOf",
+    "diff": {
+      "description": "'status' did not match schema",
+      "example": 123,
+      "expectedType": "string",
+      "instancePath": "/data/4/status",
+      "key": "status",
+      "keyword": "type",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/data/items/properties/status",
+    },
+    "groupedOperations": [
+      {
+        "intent": "replace status with a one of containing both types",
+        "operations": [
+          {
+            "op": "remove",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/status/type",
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/status/oneOf",
+            "value": [
+              {
+                "type": [
+                  "object",
+                  "null",
+                ],
+              },
+              {
+                "type": "number",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"status":null},{"status":"something-else"},{"status":"another-thing"},{"status":null},{"status":123}]}",
+          "contentType": "application/json",
+          "size": 112,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: expand one of for oneOf",
+    "diff": {
+      "description": "'oneOf' did not match schema",
+      "example": "another-thing",
+      "expectedType": "oneOf schema",
+      "instancePath": "/data/2/status",
+      "key": "oneOf",
+      "keyword": "oneOf",
+      "kind": "UnmatchedType",
+      "propertyPath": "/properties/data/items/properties/status/oneOf",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add new oneOf branch to oneOf",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/status/oneOf/-",
+            "value": {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsIncompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"data":[{"status":null},{"status":"something-else"},{"status":"another-thing"},{"status":null},{"status":123}]}",
+          "contentType": "application/json",
+          "size": 112,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 schema with arrays with polymorphic items 2`] = `
+{
+  "info": {},
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "properties": {
+                          "status": {
+                            "oneOf": [
+                              {
+                                "type": [
+                                  "object",
+                                  "null",
+                                ],
+                              },
+                              {
+                                "type": "number",
+                              },
+                              {
+                                "type": "string",
+                              },
+                            ],
+                          },
+                        },
+                        "type": "object",
+                      },
+                      "type": "array",
                     },
                   },
                   "required": [],
