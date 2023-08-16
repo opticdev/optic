@@ -505,11 +505,7 @@ exports[`generate shapes from bodies primitives can build JSON from a boolean 1`
 }
 `;
 
-exports[`generate shapes from bodies primitives can build JSON from a null 1`] = `
-{
-  "nullable": true,
-}
-`;
+exports[`generate shapes from bodies primitives can build JSON from a null 1`] = `{}`;
 
 exports[`generate shapes from bodies primitives can build JSON from a number 1`] = `
 {
