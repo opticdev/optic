@@ -320,20 +320,10 @@ export const parseFilesFromRef = async (
   pathFromGitRoot: string;
 }> => {
   await Git.assertRefExists(base);
-  const absolutePath = path.resolve(filePath);
   const gitFileName = filePathToGitPath(rootGitPath, filePath);
-  const fileExistsOnBasePromise = exec(`git show ${base}:${gitFileName}`)
+  const existsOnBase = await exec(`git show ${base}:${gitFileName}`)
     .then(() => true)
     .catch(() => false);
-  const fileExistsOnHeadPromise = fs
-    .access(absolutePath)
-    .then(() => true)
-    .catch(() => false);
-
-  const [existsOnBase, existsOnHead] = await Promise.all([
-    fileExistsOnBasePromise,
-    fileExistsOnHeadPromise,
-  ]);
 
   return {
     baseFile: await parseSpecAndDereference(
@@ -345,10 +335,7 @@ export const parseFilesFromRef = async (
         strict: false,
       });
     }),
-    headFile: await parseSpecAndDereference(
-      existsOnHead ? absolutePath : undefined,
-      config
-    ).then((file) => {
+    headFile: await parseSpecAndDereference(filePath, config).then((file) => {
       return validateAndDenormalize(file, {
         denormalize: options.denormalize,
         strict: options.headStrict,

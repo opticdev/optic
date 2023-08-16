@@ -52,6 +52,26 @@ describe('diff', () => {
     expect(code).toBe(0);
   });
 
+  test("file doesn't exist", async () => {
+    const workspace = await setupWorkspace('diff/files-no-repo', {
+      repo: true,
+      commit: true,
+    });
+
+    await run(
+      `touch abc.txt && git add . && git commit -m 'add abc.txt'`,
+      false,
+      workspace
+    );
+
+    const { combined, code } = await runOptic(
+      workspace,
+      'diff doesnt-exist.json --base HEAD~1'
+    );
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(code).toBe(1);
+  });
+
   test('reads optic.dev.yml for rulesets', async () => {
     const workspace = await setupWorkspace('diff/basic-rules-dev-yml', {
       repo: true,
