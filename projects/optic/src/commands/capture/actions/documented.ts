@@ -20,9 +20,7 @@ function getShapeDiffDetails(
   diff: ShapeDiffResult,
   pathToHighlight: string,
   error: string,
-  pointerLogger: ReturnType<typeof jsonPointerLogger>,
-  method: string,
-  pathPattern: string
+  pointerLogger: ReturnType<typeof jsonPointerLogger>
 ): string {
   const lines = `${chalk.bgRed('  Diff  ')} ${diff.description}
 ${pointerLogger.log(pathToHighlight, {
@@ -45,7 +43,6 @@ function summarizePatch(
   const pointerLogger = jsonPointerLogger(sourcemap);
   const { diff, path, groupedOperations } = patch;
   const parts = jsonPointerHelpers.decode(path);
-  const [_, pathPattern, method] = parts;
   if (!diff || groupedOperations.length === 0) return [];
   if (
     diff.kind === 'UnmatchdResponseBody' ||
@@ -123,9 +120,7 @@ function summarizePatch(
             diff,
             jsonPointerHelpers.join(path, diff.propertyPath),
             `[Actual] ${JSON.stringify(diff.example)}`,
-            pointerLogger,
-            method,
-            pathPattern
+            pointerLogger
           )
         );
       }
@@ -155,9 +150,7 @@ function summarizePatch(
             diff,
             jsonPointerHelpers.join(path, diff.propertyPath),
             `missing`,
-            pointerLogger,
-            method,
-            pathPattern
+            pointerLogger
           )
         );
       }
@@ -186,9 +179,7 @@ function summarizePatch(
             diff,
             jsonPointerHelpers.join(path, diff.propertyPath),
             `missing enum value '${diff.value}'`,
-            pointerLogger,
-            method,
-            pathPattern
+            pointerLogger
           )
         );
       }
@@ -227,9 +218,6 @@ export async function diffExistingEndpoint(
         );
       }
       patchSummaries.push(...summarized);
-    } else {
-      logger.debug(`skipping patch:`);
-      logger.debug(patch);
     }
   })(
     generateEndpointSpecPatches(
