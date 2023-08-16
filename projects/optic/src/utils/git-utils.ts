@@ -64,7 +64,7 @@ export const gitShow = async (ref: string, path: string): Promise<string> =>
 export const getCurrentBranchName = async (): Promise<string> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
-      if (err || stderr || !stdout) reject();
+      if (err || stderr || !stdout) reject(err || new Error(stderr));
       resolve(stdout.trim());
     };
 
@@ -78,7 +78,7 @@ export const getMergeBase = async (
 ): Promise<string> => {
   return new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
-      if (err || stderr || !stdout) reject();
+      if (err || stderr || !stdout) reject(err || new Error(stderr));
       resolve(stdout.trim());
     };
 
@@ -90,7 +90,7 @@ export const getMergeBase = async (
 export const getRootPath = async (): Promise<string> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
-      if (err || stderr || !stdout) reject();
+      if (err || stderr || !stdout) reject(err || new Error(stderr));
       resolve(stdout.trim());
     };
     const command = `git rev-parse --show-toplevel`;
@@ -101,7 +101,9 @@ export const assertRefExists = async (ref: string): Promise<void> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
       if (err || stderr)
-        reject(`ref ${ref} does not exist in current git repository`);
+        reject(
+          new Error(`ref ${ref} does not exist in current git repository`)
+        );
       resolve();
     };
     const command = `git cat-file -t ${ref}`;
@@ -111,7 +113,7 @@ export const assertRefExists = async (ref: string): Promise<void> =>
 export const gitStatus = async (): Promise<string> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
-      if (err || stderr) reject(err || stderr);
+      if (err || stderr) reject(err || new Error(stderr));
       resolve(stdout.trim());
     };
     const command = `git status --porcelain`;
@@ -121,7 +123,7 @@ export const gitStatus = async (): Promise<string> =>
 export const resolveGitRef = async (ref: string): Promise<string> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
-      if (err || stderr || !stdout) reject(err || stderr);
+      if (err || stderr || !stdout) reject(err || new Error(stderr));
       resolve(stdout.trim());
     };
     const command = `git rev-parse ${ref}`;
@@ -139,7 +141,7 @@ export const commitMeta = async (ref: string): Promise<CommitMeta> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
       if (err || stderr || !stdout) {
-        reject(err || stderr);
+        reject(err || new Error(stderr));
       }
 
       stdout = stdout.trim();
@@ -164,7 +166,7 @@ export const findOpenApiSpecsCandidates = async (
 ): Promise<string[]> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
-      if (err || stderr) reject(err || stderr);
+      if (err || stderr) reject(err || new Error(stderr));
       resolve(
         stdout
           .trim()
@@ -187,7 +189,7 @@ export const findOpenApiSpecsCandidates = async (
 export const remotes = async (): Promise<string[]> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
-      if (err || stderr || !stdout) reject(err || stderr);
+      if (err || stderr || !stdout) reject(err || new Error(stderr));
       resolve(
         stdout
           .trim()
@@ -202,7 +204,7 @@ export const remotes = async (): Promise<string[]> =>
 export const getRemoteUrl = async (remote: string): Promise<string> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
-      if (err || stderr || !stdout) reject(err || stderr);
+      if (err || stderr || !stdout) reject(err || new Error(stderr));
       resolve(stdout.trim());
     };
 
@@ -251,7 +253,7 @@ export const guessRemoteOrigin = async (): Promise<{
 export const isTracked = async (filePath: string): Promise<boolean> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
-      if (err || stderr) reject(err || stderr);
+      if (err || stderr) reject(err || new Error(stderr));
       resolve(!!stdout);
     };
 
