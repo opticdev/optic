@@ -461,13 +461,9 @@ const getCaptureAction =
       (options.update === 'documented' || !options.update)
     ) {
       logger.info(
-        chalk.yellow('New endpoints are only added in interactive mode.')
-      );
-      logger.info(
-        chalk.blue('Run with `--update interactive` to add new endpoints')
-      );
-      logger.info(
-        chalk.yellow(`Hint: optic capture ${filePath} --update interactive`)
+        chalk.yellow(
+          `New endpoints are only added in interactive mode. Run 'optic capture ${filePath} --update interactive' to add new endpoints`
+        )
       );
       process.exitCode = 1;
     }
