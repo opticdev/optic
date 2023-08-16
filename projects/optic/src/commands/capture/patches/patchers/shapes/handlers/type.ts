@@ -172,10 +172,11 @@ export function* typePatches(
     }
   } else if (openAPIVersion === '3.1.x') {
     if (diff.example === null) {
-      const schemaType = Array.isArray(schema.type)
-        ? [...schema.type, 'null']
-        : schema.type
-        ? [schema.type, 'null']
+      const subschema = jsonPointerHelpers.get(schema, diff.propertyPath);
+      const schemaType = Array.isArray(subschema.type)
+        ? [...subschema.type, 'null']
+        : subschema.type
+        ? [subschema.type, 'null']
         : ['null'];
 
       yield {

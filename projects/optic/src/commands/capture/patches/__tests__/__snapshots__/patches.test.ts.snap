@@ -8992,7 +8992,7 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 schema with arrays with p
             "op": "replace",
             "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/status/type",
             "value": [
-              "object",
+              "string",
               "null",
             ],
           },
@@ -9044,7 +9044,8 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 schema with arrays with p
             "op": "replace",
             "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/status/type",
             "value": [
-              "object",
+              "string",
+              "null",
               "null",
             ],
           },
@@ -9102,7 +9103,8 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 schema with arrays with p
             "value": [
               {
                 "type": [
-                  "object",
+                  "string",
+                  "null",
                   "null",
                 ],
               },
@@ -9110,57 +9112,6 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 schema with arrays with p
                 "type": "number",
               },
             ],
-          },
-        ],
-      },
-    ],
-    "impact": [
-      "Addition",
-      "BackwardsIncompatible",
-    ],
-    "interaction": {
-      "request": {
-        "body": null,
-        "headers": [],
-        "host": "localhost:3030",
-        "method": "post",
-        "path": "/api/animals",
-        "query": [],
-      },
-      "response": {
-        "body": {
-          "body": "{"data":[{"status":null},{"status":"something-else"},{"status":"another-thing"},{"status":null},{"status":123}]}",
-          "contentType": "application/json",
-          "size": 112,
-        },
-        "headers": [],
-        "statusCode": "200",
-      },
-    },
-    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
-  },
-  {
-    "description": "update response body: expand one of for oneOf",
-    "diff": {
-      "description": "'oneOf' did not match schema",
-      "example": "another-thing",
-      "expectedType": "oneOf schema",
-      "instancePath": "/data/2/status",
-      "key": "oneOf",
-      "keyword": "oneOf",
-      "kind": "UnmatchedType",
-      "propertyPath": "/properties/data/items/properties/status/oneOf",
-    },
-    "groupedOperations": [
-      {
-        "intent": "add new oneOf branch to oneOf",
-        "operations": [
-          {
-            "op": "add",
-            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/status/oneOf/-",
-            "value": {
-              "type": "string",
-            },
           },
         ],
       },
@@ -9213,15 +9164,13 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 schema with arrays with p
                             "oneOf": [
                               {
                                 "type": [
-                                  "object",
+                                  "string",
+                                  "null",
                                   "null",
                                 ],
                               },
                               {
                                 "type": "number",
-                              },
-                              {
-                                "type": "string",
                               },
                             ],
                           },
