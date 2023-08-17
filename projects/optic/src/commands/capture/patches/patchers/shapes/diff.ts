@@ -6,27 +6,45 @@ import { Result, Ok, Err } from 'ts-results';
 import { JsonPath } from '@useoptic/openapi-io';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { SchemaObject } from './schema';
-import { Body } from './documented-bodies';
+import { Body, ShapeLocation } from './documented-bodies';
 import { additionalPropertiesDiffs } from './handlers/additionalProperties';
 import { oneOfKeywordDiffs } from './handlers/oneOf';
 import { requiredKeywordDiffs } from './handlers/required';
 import { typeKeywordDiffs } from './handlers/type';
 import { enumKeywordDiffs } from './handlers/enum';
+import { CapturedInteraction } from '../../../sources/captured-interactions';
 
 export function diffBodyBySchema(
   body: Body,
-  schema: SchemaObject
+  schema: SchemaObject,
+  {
+    specJsonPath,
+    interaction,
+  }: {
+    specJsonPath: string;
+    interaction: CapturedInteraction;
+  }
 ): Result<
   IterableIterator<ShapeDiffResult | UnpatchableDiff>,
   SchemaCompilationError
 > {
-  let traverser = new ShapeDiffTraverser();
+  let traverser = new ShapeDiffTraverser({
+    specJsonPath,
+    interaction,
+  });
   return traverser.traverse(body.value, schema).map(() => traverser.results());
 }
 
 function* diffVisitors(
   validationError: ErrorObject,
-  example: any
+  example: any,
+  {
+    specJsonPath,
+    interaction,
+  }: {
+    specJsonPath: string;
+    interaction: CapturedInteraction;
+  }
 ): IterableIterator<ShapeDiffResult | UnpatchableDiff> {
   switch (validationError.keyword) {
     case JsonSchemaKnownKeyword.additionalProperties:
@@ -49,7 +67,17 @@ function* diffVisitors(
       yield* enumKeywordDiffs(validationError, example);
       break;
     default:
-      yield { validationError, example, unpatchable: true };
+      yield {
+        validationError,
+        example,
+        unpatchable: true,
+        interaction,
+        bodyPath: specJsonPath,
+        path: jsonPointerHelpers.append(
+          specJsonPath,
+          validationError.schemaPath.substring(1)
+        ),
+      };
   }
 }
 
@@ -100,8 +128,11 @@ export type ShapeDiffResult = {
 
 export type UnpatchableDiff = {
   validationError: ErrorObject;
+  path: string;
+  bodyPath: string;
   example: any;
   unpatchable: true;
+  interaction: CapturedInteraction;
 };
 
 export type { ErrorObject };
@@ -110,8 +141,16 @@ export class ShapeDiffTraverser {
 
   private validate?: ValidateFunction;
   private bodyValue?: any;
+  private specJsonPath: string;
+  private interaction: CapturedInteraction;
 
-  constructor() {
+  constructor({
+    specJsonPath,
+    interaction,
+  }: {
+    specJsonPath: string;
+    interaction: CapturedInteraction;
+  }) {
     this.validator = new Ajv({
       allErrors: true,
       validateFormats: false,
@@ -119,6 +158,8 @@ export class ShapeDiffTraverser {
       strictTypes: false,
       useDefaults: true,
     });
+    this.specJsonPath = specJsonPath;
+    this.interaction = interaction;
   }
 
   traverse(
@@ -188,13 +229,19 @@ export class ShapeDiffTraverser {
         }
       } else {
         // not related to one-of? visit right away
-        yield* diffVisitors(validationError, this.bodyValue);
+        yield* diffVisitors(validationError, this.bodyValue, {
+          specJsonPath: this.specJsonPath,
+          interaction: this.interaction,
+        });
       }
     }
 
     for (let [oneOfPath, otherBranchError] of oneOfBranchOther) {
       // any nested errors are all safe to visit
-      yield* diffVisitors(otherBranchError, this.bodyValue);
+      yield* diffVisitors(otherBranchError, this.bodyValue, {
+        specJsonPath: this.specJsonPath,
+        interaction: this.interaction,
+      });
 
       // once a nested error has been visited, we consider this a branch type match
       oneOfs.delete(oneOfPath);
@@ -205,7 +252,10 @@ export class ShapeDiffTraverser {
 
     // visit any left over one ofs
     for (let oneOfError of oneOfs.values()) {
-      yield* diffVisitors(oneOfError, this.bodyValue);
+      yield* diffVisitors(oneOfError, this.bodyValue, {
+        specJsonPath: this.specJsonPath,
+        interaction: this.interaction,
+      });
     }
   }
 }

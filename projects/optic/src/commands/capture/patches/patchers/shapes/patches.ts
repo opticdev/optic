@@ -96,7 +96,10 @@ export class ShapePatches {
         schema = Schema.applyShapePatch(schema, patch);
       }
 
-      let shapeDiffsOpt = diffBodyBySchema(body, schema);
+      let shapeDiffsOpt = diffBodyBySchema(body, schema, {
+        specJsonPath,
+        interaction: documentedBody.interaction,
+      });
       if (shapeDiffsOpt.err) {
         logger.error(`Could not update body at ${specJsonPath}`);
         logger.error(shapeDiffsOpt.val);
@@ -135,7 +138,10 @@ export class ShapePatches {
       patchesExhausted = patchCount === 0;
       if (patchesExhausted || i === MAX_ITERATIONS) {
         // diff the final schema + emit the results
-        let shapeDiffsOpt = diffBodyBySchema(body, schema);
+        let shapeDiffsOpt = diffBodyBySchema(body, schema, {
+          specJsonPath,
+          interaction: documentedBody.interaction,
+        });
         if (!shapeDiffsOpt.err) {
           for (const diff of shapeDiffsOpt.val) {
             if ('unpatchable' in diff) {

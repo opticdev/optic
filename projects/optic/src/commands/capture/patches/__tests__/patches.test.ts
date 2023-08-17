@@ -573,6 +573,10 @@ describe('generateEndpointSpecPatches', () => {
       expect(patches).toMatchSnapshot();
       expect(specHolder.spec).toMatchSnapshot();
     });
+
+    test('collects unpatchable diffs', async () => {
+      throw new Error('todo');
+    });
   });
 });
 

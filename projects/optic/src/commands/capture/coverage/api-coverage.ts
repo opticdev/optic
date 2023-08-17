@@ -11,6 +11,7 @@ import { computeEndpointChecksum } from '../../../utils/checksum';
 import { statusRangePattern } from '../../oas/operations';
 import { denormalize } from '@useoptic/openapi-io';
 import { SpecPatch } from '../patches/patchers/spec/patches';
+import { UnpatchableDiff } from '../patches/patchers/shapes/diff';
 
 export class ApiCoverageCounter {
   coverage: ApiCoverage;
@@ -98,12 +99,13 @@ export class ApiCoverageCounter {
     }
   };
 
-  shapeDiff = (patch: SpecPatch) => {
+  shapeDiff = (patch: SpecPatch | UnpatchableDiff) => {
     const parts = jsonPointerHelpers.decode(patch.path);
     const [_, pathPattern, method] = parts;
     const operation = this.coverage.paths[pathPattern]?.[method];
     if (operation) {
       if (
+        'unpatchable' in patch ||
         patch.diff?.kind === 'UnmatchedType' ||
         patch.diff?.kind === 'AdditionalProperty' ||
         patch.diff?.kind === 'MissingRequiredProperty'

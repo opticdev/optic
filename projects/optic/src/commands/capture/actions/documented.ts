@@ -20,17 +20,32 @@ import {
 import { SpecPatch } from '../patches/patchers/spec/patches';
 
 function getShapeDiffDetails(
-  diff: ShapeDiffResult,
+  description: string,
   pathToHighlight: string,
   error: string,
   pointerLogger: ReturnType<typeof jsonPointerLogger>
 ): string {
-  const lines = `${chalk.bgRed('  Diff  ')} ${diff.description}
+  const lines = `${chalk.bgRed('  Diff  ')} ${description}
 ${pointerLogger.log(pathToHighlight, {
   highlightColor: 'yellow',
   observation: error,
 })}\n`;
   return lines;
+}
+
+function locationFromPath(path: string) {
+  // expected patterns:
+  // /paths/:path/:method/requestBody
+  // /paths/:path/:method/responses/:statusCode
+  const parts = jsonPointerHelpers.decode(path);
+
+  const location =
+    parts[3] === 'requestBody'
+      ? '[request body]'
+      : parts[3] === 'responses' && parts[4]
+      ? `[${parts[4]} response body]`
+      : '';
+  return location;
 }
 
 function summarizePatch(
@@ -45,7 +60,6 @@ function summarizePatch(
   const { jsonLike: spec, sourcemap } = parseResult;
   const pointerLogger = jsonPointerLogger(sourcemap);
   const { diff, path, groupedOperations } = patch;
-  const parts = jsonPointerHelpers.decode(path);
   if (!diff || groupedOperations.length === 0) return [];
   if (
     diff.kind === 'UnmatchdResponseBody' ||
@@ -61,15 +75,7 @@ function summarizePatch(
     const color = options.mode === 'update' ? chalk.green : chalk.red;
     return [color(`${location} body ${action}`)];
   } else {
-    // expected patterns:
-    // /paths/:path/:method/requestBody
-    // /paths/:path/:method/responses/:statusCode
-    const location =
-      parts[3] === 'requestBody'
-        ? '[request body]'
-        : parts[3] === 'responses' && parts[4]
-        ? `[${parts[4]} response body]`
-        : '';
+    const location = locationFromPath(path);
 
     if (diff.kind === 'AdditionalProperty') {
       // filter out dependent diffs
@@ -120,7 +126,7 @@ function summarizePatch(
       if (verbose) {
         lines.push(
           getShapeDiffDetails(
-            diff,
+            diff.description,
             jsonPointerHelpers.join(path, diff.propertyPath),
             `[Actual] ${JSON.stringify(diff.example)}`,
             pointerLogger
@@ -150,7 +156,7 @@ function summarizePatch(
       if (verbose) {
         lines.push(
           getShapeDiffDetails(
-            diff,
+            diff.description,
             jsonPointerHelpers.join(path, diff.propertyPath),
             `missing`,
             pointerLogger
@@ -179,7 +185,7 @@ function summarizePatch(
       if (verbose) {
         lines.push(
           getShapeDiffDetails(
-            diff,
+            diff.description,
             jsonPointerHelpers.join(path, diff.propertyPath),
             `missing enum value '${diff.value}'`,
             pointerLogger
@@ -190,6 +196,41 @@ function summarizePatch(
     }
   }
 
+  return [];
+}
+
+function summarizeUnpatchableDiff(
+  diff: UnpatchableDiff,
+  parseResult: ParseResult,
+  options: {
+    mode: 'update' | 'verify';
+    verbose: boolean;
+  }
+): string[] {
+  const pointerLogger = jsonPointerLogger(parseResult.sourcemap);
+
+  const { path, validationError } = diff;
+  const location = locationFromPath(path);
+  const action =
+    options.mode === 'update'
+      ? `could not be automatically updated`
+      : `did not match schema`;
+
+  // TODO make this better
+  const lines = [chalk.red(`${location} diff '${diff.bodyPath}' ${action}`)];
+  if (options.verbose) {
+    lines.push(
+      `Failed validation with error: ${JSON.stringify(validationError)}`
+    );
+    lines.push(
+      getShapeDiffDetails(
+        'interaction did not match schema',
+        path,
+        ``,
+        pointerLogger
+      )
+    );
+  }
   return [];
 }
 
@@ -207,30 +248,43 @@ export async function diffExistingEndpoint(
   }
 ) {
   const patchSummaries: string[] = [];
-  const unpatchableDiffs: UnpatchableDiff[] = [];
+  function addPatchSummary(patchOrDiff: SpecPatch | UnpatchableDiff) {
+    coverage.shapeDiff(patchOrDiff);
+    const summarized =
+      'unpatchable' in patchOrDiff
+        ? summarizeUnpatchableDiff(patchOrDiff, parseResult, {
+            mode: options.update ? 'update' : 'verify',
+            verbose: options.verbose,
+          })
+        : summarizePatch(patchOrDiff, parseResult, {
+            mode: options.update ? 'update' : 'verify',
+            verbose: options.verbose,
+          });
 
-  const specPatches = AT.tap((patch: SpecPatch) => {
-    coverage.shapeDiff(patch);
-    const summarized = summarizePatch(patch, parseResult, {
-      mode: options.update ? 'update' : 'verify',
-      verbose: options.verbose,
-    });
     if (summarized.length) {
-      if (logger.getLevel() <= 1 && patch.interaction) {
+      if (logger.getLevel() <= 1 && patchOrDiff.interaction) {
         patchSummaries.push(
-          `Originating request: ${JSON.stringify(patch.interaction)}`
+          `Originating request: ${JSON.stringify(patchOrDiff.interaction)}`
         );
       }
       patchSummaries.push(...summarized);
     }
-  })(
-    generateEndpointSpecPatches(
-      interactions,
-      { spec: parseResult.jsonLike },
-      endpoint,
-      { coverage, unpatchableDiffs }
+  }
+
+  const specPatches: AsyncIterable<SpecPatch> = AT.filter(
+    (patchOrDiff: SpecPatch | UnpatchableDiff) => {
+      return !('unpatchable' in patchOrDiff);
+    }
+  )(
+    AT.tap(addPatchSummary)(
+      generateEndpointSpecPatches(
+        interactions,
+        { spec: parseResult.jsonLike },
+        endpoint,
+        { coverage }
+      )
     )
-  );
+  ) as AsyncIterable<SpecPatch>;
 
   if (options.update) {
     const operations = await jsonOpsFromSpecPatches(specPatches);
@@ -239,8 +293,6 @@ export async function diffExistingEndpoint(
     for await (const _ of specPatches) {
     }
   }
-
-  // TODO do something with unpatchable diffs
 
   return { patchSummaries, hasDiffs: patchSummaries.length > 0 };
 }

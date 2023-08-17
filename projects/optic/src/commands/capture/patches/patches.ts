@@ -65,9 +65,8 @@ export async function* generateEndpointSpecPatches(
   opts: {
     coverage?: ApiCoverageCounter;
     schemaAdditionsSet?: Set<string>;
-    unpatchableDiffs?: UnpatchableDiff[];
   } = {}
-) {
+): AsyncIterable<SpecPatch | UnpatchableDiff> {
   // TODO move this to the top level
   const openAPIVersion = checkOpenAPIVersion(specHolder.spec);
   const jsonPath = jsonPointerHelpers.compile([
@@ -116,9 +115,7 @@ export async function* generateEndpointSpecPatches(
     );
 
     for await (let patch of shapePatches) {
-      if ('unpatchable' in patch) {
-        opts.unpatchableDiffs?.push(patch);
-      } else {
+      if (!('unpatchable' in patch)) {
         opts.schemaAdditionsSet?.add(patch.path);
         specHolder.spec = SpecPatch.applyPatch(patch, specHolder.spec);
         yield patch;
