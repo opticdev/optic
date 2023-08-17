@@ -1,5 +1,5 @@
 import jsonSchemaTraverse from 'json-schema-traverse';
-import Ajv, { ErrorObject, ValidateFunction } from 'ajv';
+import Ajv, { ErrorObject, ValidateFunction, ValidationError } from 'ajv';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { Ono } from '@jsdevtools/ono';
 import { Result, Ok, Err } from 'ts-results';
@@ -16,7 +16,10 @@ import { enumKeywordDiffs } from './handlers/enum';
 export function diffBodyBySchema(
   body: Body,
   schema: SchemaObject
-): Result<IterableIterator<ShapeDiffResult>, SchemaCompilationError> {
+): Result<
+  IterableIterator<ShapeDiffResult | UnpatchableDiff>,
+  SchemaCompilationError
+> {
   let traverser = new ShapeDiffTraverser();
   return traverser.traverse(body.value, schema).map(() => traverser.results());
 }
@@ -24,15 +27,29 @@ export function diffBodyBySchema(
 function* diffVisitors(
   validationError: ErrorObject,
   example: any
-): IterableIterator<ShapeDiffResult> {
-  for (let visitor of [
-    additionalPropertiesDiffs,
-    oneOfKeywordDiffs,
-    requiredKeywordDiffs,
-    typeKeywordDiffs,
-    enumKeywordDiffs,
-  ]) {
-    yield* visitor(validationError, example);
+): IterableIterator<ShapeDiffResult | UnpatchableDiff> {
+  switch (validationError.keyword) {
+    case JsonSchemaKnownKeyword.additionalProperties:
+      yield* additionalPropertiesDiffs(validationError, example);
+      break;
+
+    case JsonSchemaKnownKeyword.oneOf:
+      yield* oneOfKeywordDiffs(validationError, example);
+      break;
+
+    case JsonSchemaKnownKeyword.required:
+      yield* requiredKeywordDiffs(validationError, example);
+      break;
+
+    case JsonSchemaKnownKeyword.type:
+      yield* typeKeywordDiffs(validationError, example);
+      break;
+
+    case JsonSchemaKnownKeyword.enum:
+      yield* enumKeywordDiffs(validationError, example);
+      break;
+    default:
+      yield { validationError, example, unpatchable: true };
   }
 }
 
@@ -81,6 +98,12 @@ export type ShapeDiffResult = {
     }
 );
 
+export type UnpatchableDiff = {
+  validationError: ErrorObject;
+  example: any;
+  unpatchable: true;
+};
+
 export type { ErrorObject };
 export class ShapeDiffTraverser {
   private validator: Ajv;
@@ -117,7 +140,7 @@ export class ShapeDiffTraverser {
     return Ok.EMPTY;
   }
 
-  *results(): IterableIterator<ShapeDiffResult> {
+  *results(): IterableIterator<ShapeDiffResult | UnpatchableDiff> {
     if (!this.validate || !this.validate.errors) return;
     // Sometimes the schema path returned from AJV is encoded
     let validationErrors = this.validate.errors.map((e) => ({

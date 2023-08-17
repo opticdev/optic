@@ -15,6 +15,7 @@ import {
   createMissingPathPatches,
   createMissingMethodPatch,
 } from './patchers/spec/spec';
+import { UnpatchableDiff } from './patchers/shapes/diff';
 
 export async function* generatePathAndMethodSpecPatches(
   specHolder: {
@@ -64,6 +65,7 @@ export async function* generateEndpointSpecPatches(
   opts: {
     coverage?: ApiCoverageCounter;
     schemaAdditionsSet?: Set<string>;
+    unpatchableDiffs?: UnpatchableDiff[];
   } = {}
 ) {
   // TODO move this to the top level
@@ -114,9 +116,13 @@ export async function* generateEndpointSpecPatches(
     );
 
     for await (let patch of shapePatches) {
-      opts.schemaAdditionsSet?.add(patch.path);
-      specHolder.spec = SpecPatch.applyPatch(patch, specHolder.spec);
-      yield patch;
+      if ('unpatchable' in patch) {
+        opts.unpatchableDiffs?.push(patch);
+      } else {
+        opts.schemaAdditionsSet?.add(patch.path);
+        specHolder.spec = SpecPatch.applyPatch(patch, specHolder.spec);
+        yield patch;
+      }
     }
   }
 }

@@ -19,6 +19,7 @@ import {
 import chalk from 'chalk';
 import { writePatchesToFiles } from '../write/file';
 import { SpecPatches } from '../patches/patchers/spec/patches';
+import { UnpatchableDiff } from '../patches/patchers/shapes/diff';
 
 type MethodMap = Map<string, { add: Set<string>; ignore: Set<string> }>;
 
@@ -156,6 +157,15 @@ export async function documentNewEndpoint(
       }
     }
   })();
+  const meta: {
+    schemaAdditionsSet: Set<string>;
+    usedExistingRef: boolean;
+    unpatchableDiffs: UnpatchableDiff[];
+  } = {
+    schemaAdditionsSet: new Set<string>(),
+    usedExistingRef: false,
+    unpatchableDiffs: [],
+  };
 
   // generate patches to add the endpoint if doesn't exist
   const specPatches = (async function* (): SpecPatches {
@@ -165,11 +175,6 @@ export async function documentNewEndpoint(
     };
 
     yield* generatePathAndMethodSpecPatches(specHolder, endpoint);
-
-    const meta = {
-      schemaAdditionsSet: new Set<string>(),
-      usedExistingRef: false,
-    };
 
     yield* generateEndpointSpecPatches(
       interactionsAsAsyncIterator,
@@ -182,6 +187,7 @@ export async function documentNewEndpoint(
 
     // If we use an existing ref, we need to rerun traffic
     if (meta.usedExistingRef) {
+      meta.unpatchableDiffs = [];
       yield* generateEndpointSpecPatches(
         interactionsAsAsyncIterator,
         specHolder,
@@ -190,6 +196,8 @@ export async function documentNewEndpoint(
       );
     }
   })();
+
+  // TODO do something with unpatchable diffs
 
   const operations = await jsonOpsFromSpecPatches(specPatches);
   await writePatchesToFiles(operations, parseResult.sourcemap);

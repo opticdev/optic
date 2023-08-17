@@ -13,7 +13,10 @@ import { writePatchesToFiles } from '../write/file';
 import { logger } from '../../../logger';
 
 import { jsonPointerLogger } from '@useoptic/openapi-io';
-import { ShapeDiffResult } from '../patches/patchers/shapes/diff';
+import {
+  ShapeDiffResult,
+  UnpatchableDiff,
+} from '../patches/patchers/shapes/diff';
 import { SpecPatch } from '../patches/patchers/spec/patches';
 
 function getShapeDiffDetails(
@@ -204,6 +207,7 @@ export async function diffExistingEndpoint(
   }
 ) {
   const patchSummaries: string[] = [];
+  const unpatchableDiffs: UnpatchableDiff[] = [];
 
   const specPatches = AT.tap((patch: SpecPatch) => {
     coverage.shapeDiff(patch);
@@ -224,7 +228,7 @@ export async function diffExistingEndpoint(
       interactions,
       { spec: parseResult.jsonLike },
       endpoint,
-      { coverage }
+      { coverage, unpatchableDiffs }
     )
   );
 
@@ -235,6 +239,8 @@ export async function diffExistingEndpoint(
     for await (const _ of specPatches) {
     }
   }
+
+  // TODO do something with unpatchable diffs
 
   return { patchSummaries, hasDiffs: patchSummaries.length > 0 };
 }

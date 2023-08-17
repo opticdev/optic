@@ -304,6 +304,9 @@ export function updateByInteractions(
       );
 
       for await (let patch of shapePatches) {
+        // For capture v1, we skip unpatchable diffs
+        if ('unpatchable' in patch) continue;
+
         patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
         yield patch;
         observers.interactionPatch(documentedInteraction, patch);

@@ -463,6 +463,9 @@ export function addOperations(
       const addedPaths = new Set<string>();
 
       for await (let patch of shapePatches) {
+        // For capture v1, we skip unpatchable diffs
+        if ('unpatchable' in patch) continue;
+
         // register additions
         addedPaths.add(patch.path);
         patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);

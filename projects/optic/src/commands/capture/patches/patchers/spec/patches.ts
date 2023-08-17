@@ -7,7 +7,7 @@ import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import JsonPatch from 'fast-json-patch';
 
-import { ShapeDiffResult } from '../../patchers/shapes/diff';
+import { ShapeDiffResult, UnpatchableDiff } from '../../patchers/shapes/diff';
 import { ShapePatch, ShapePatches } from '../../patchers/shapes/patches';
 import {
   DocumentedBodies,
@@ -139,7 +139,7 @@ export class SpecPatches {
   static async *shapeAdditions(
     documentedBodies: DocumentedBodies,
     openAPIVersion: SupportedOpenAPIVersions
-  ): SpecPatches {
+  ): AsyncIterable<SpecPatch | UnpatchableDiff> {
     const updatedSchemasByPath: Map<string, SchemaObject> = new Map();
     for await (let documentedBody of documentedBodies) {
       let { specJsonPath, shapeLocation } = documentedBody;
@@ -148,12 +148,23 @@ export class SpecPatches {
         documentedBody.schema = updatedSchemasByPath.get(specJsonPath) ?? null;
       }
 
-      for (let patch of ShapePatches.generateBodyAdditions(
+      for (let patchOrDiff of ShapePatches.generateBodyAdditions(
         documentedBody,
         openAPIVersion
       )) {
-        documentedBody = DocumentedBody.applyShapePatch(documentedBody, patch);
-        yield SpecPatch.fromShapePatch(patch, specJsonPath, shapeLocation!);
+        if ('unpatchable' in patchOrDiff) {
+          yield patchOrDiff;
+        } else {
+          documentedBody = DocumentedBody.applyShapePatch(
+            documentedBody,
+            patchOrDiff
+          );
+          yield SpecPatch.fromShapePatch(
+            patchOrDiff,
+            specJsonPath,
+            shapeLocation!
+          );
+        }
       }
 
       updatedSchemasByPath.set(specJsonPath, documentedBody.schema!);
