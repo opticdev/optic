@@ -118,8 +118,8 @@ export async function* generateEndpointSpecPatches(
       if (!('unpatchable' in patch)) {
         opts.schemaAdditionsSet?.add(patch.path);
         specHolder.spec = SpecPatch.applyPatch(patch, specHolder.spec);
-        yield patch;
       }
+      yield patch;
     }
   }
 }

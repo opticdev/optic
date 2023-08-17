@@ -1,12 +1,12 @@
 import jsonSchemaTraverse from 'json-schema-traverse';
-import Ajv, { ErrorObject, ValidateFunction, ValidationError } from 'ajv';
+import Ajv, { ErrorObject, ValidateFunction } from 'ajv';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { Ono } from '@jsdevtools/ono';
 import { Result, Ok, Err } from 'ts-results';
 import { JsonPath } from '@useoptic/openapi-io';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { SchemaObject } from './schema';
-import { Body, ShapeLocation } from './documented-bodies';
+import { Body } from './documented-bodies';
 import { additionalPropertiesDiffs } from './handlers/additionalProperties';
 import { oneOfKeywordDiffs } from './handlers/oneOf';
 import { requiredKeywordDiffs } from './handlers/required';

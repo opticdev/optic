@@ -143,6 +143,7 @@ export class ShapePatches {
           interaction: documentedBody.interaction,
         });
         if (!shapeDiffsOpt.err) {
+          // TODO collect and dedupe by keyword + schema path
           for (const diff of shapeDiffsOpt.val) {
             if ('unpatchable' in diff) {
               yield diff;

@@ -13,10 +13,7 @@ import { writePatchesToFiles } from '../write/file';
 import { logger } from '../../../logger';
 
 import { jsonPointerLogger } from '@useoptic/openapi-io';
-import {
-  ShapeDiffResult,
-  UnpatchableDiff,
-} from '../patches/patchers/shapes/diff';
+import { UnpatchableDiff } from '../patches/patchers/shapes/diff';
 import { SpecPatch } from '../patches/patchers/spec/patches';
 
 function getShapeDiffDetails(
@@ -216,7 +213,7 @@ function summarizeUnpatchableDiff(
       ? `could not be automatically updated`
       : `did not match schema`;
 
-  // TODO make this better
+  // TODO use AJV errors or something here
   const lines = [chalk.red(`${location} diff '${diff.bodyPath}' ${action}`)];
   if (options.verbose) {
     lines.push(
@@ -231,7 +228,7 @@ function summarizeUnpatchableDiff(
       )
     );
   }
-  return [];
+  return lines;
 }
 
 export async function diffExistingEndpoint(
