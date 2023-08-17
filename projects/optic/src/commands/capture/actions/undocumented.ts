@@ -4,7 +4,7 @@ import { matchPathPattern } from '../../../utils/pathPatterns';
 import { minimatch } from 'minimatch';
 import { logger } from '../../../logger';
 import { ParseResult } from '../../../utils/spec-loaders';
-
+import * as AT from '../../oas/lib/async-tools';
 import {
   CapturedInteraction,
   CapturedInteractions,
@@ -18,7 +18,7 @@ import {
 } from '../patches/patches';
 import chalk from 'chalk';
 import { writePatchesToFiles } from '../write/file';
-import { SpecPatches } from '../patches/patchers/spec/patches';
+import { SpecPatch, SpecPatches } from '../patches/patchers/spec/patches';
 import { UnpatchableDiff } from '../patches/patchers/shapes/diff';
 
 type MethodMap = Map<string, { add: Set<string>; ignore: Set<string> }>;
@@ -157,15 +157,6 @@ export async function documentNewEndpoint(
       }
     }
   })();
-  const meta: {
-    schemaAdditionsSet: Set<string>;
-    usedExistingRef: boolean;
-    unpatchableDiffs: UnpatchableDiff[];
-  } = {
-    schemaAdditionsSet: new Set<string>(),
-    usedExistingRef: false,
-    unpatchableDiffs: [],
-  };
 
   // generate patches to add the endpoint if doesn't exist
   const specPatches = (async function* (): SpecPatches {
@@ -173,31 +164,42 @@ export async function documentNewEndpoint(
     const specHolder = {
       spec: parseResult.jsonLike,
     };
-
+    const meta = {
+      schemaAdditionsSet: new Set<string>(),
+      usedExistingRef: false,
+    };
     yield* generatePathAndMethodSpecPatches(specHolder, endpoint);
 
-    yield* generateEndpointSpecPatches(
-      interactionsAsAsyncIterator,
-      specHolder,
-      endpoint,
-      meta
-    );
+    // We don't need to collect unpatchable diffs here, since optic is generating a spec from no schema, we'll always know how to handle schemas we create
+    yield* AT.filter(
+      (diffOrPatch: SpecPatch | UnpatchableDiff) =>
+        !('unpatchable' in diffOrPatch)
+    )(
+      generateEndpointSpecPatches(
+        interactionsAsAsyncIterator,
+        specHolder,
+        endpoint,
+        meta
+      )
+    ) as SpecPatches;
 
     yield* generateRefRefactorPatches(specHolder, meta);
 
     // If we use an existing ref, we need to rerun traffic
     if (meta.usedExistingRef) {
-      meta.unpatchableDiffs = [];
-      yield* generateEndpointSpecPatches(
-        interactionsAsAsyncIterator,
-        specHolder,
-        endpoint,
-        meta
-      );
+      yield* AT.filter(
+        (diffOrPatch: SpecPatch | UnpatchableDiff) =>
+          !('unpatchable' in diffOrPatch)
+      )(
+        generateEndpointSpecPatches(
+          interactionsAsAsyncIterator,
+          specHolder,
+          endpoint,
+          meta
+        )
+      ) as SpecPatches;
     }
   })();
-
-  // TODO do something with unpatchable diffs
 
   const operations = await jsonOpsFromSpecPatches(specPatches);
   await writePatchesToFiles(operations, parseResult.sourcemap);
