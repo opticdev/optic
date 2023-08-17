@@ -168,7 +168,6 @@ function initialSchema(
 
 export const allowedMetaDataForAll: string[] = [
   'title',
-  'nullable',
   'description',
   'example',
   'examples',
@@ -187,6 +186,7 @@ export const allowedKeysForOneOf: string[] = [
 
 export const allowedKeysForObject: string[] = [
   ...allowedMetaDataForAll,
+  'nullable',
   'additionalProperties',
   'type',
   'maxProperties',
@@ -196,6 +196,7 @@ export const allowedKeysForObject: string[] = [
 ];
 export const allowedKeysForArray: string[] = [
   ...allowedMetaDataForAll,
+  'nullable',
   'type',
   'items',
   'maxItems',
@@ -205,6 +206,7 @@ export const allowedKeysForArray: string[] = [
 
 export const allowedKeysForString: string[] = [
   ...allowedMetaDataForAll,
+  'nullable',
   'type',
   'format',
   'pattern',
@@ -214,6 +216,7 @@ export const allowedKeysForString: string[] = [
 
 export const allowedKeysForInteger: string[] = [
   ...allowedMetaDataForAll,
+  'nullable',
   'type',
   'minimum',
   'maximum',

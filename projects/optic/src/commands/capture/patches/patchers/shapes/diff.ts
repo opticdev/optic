@@ -222,8 +222,13 @@ function prepareSchemaForDiff(input: SchemaObject): SchemaObject {
 
       // Fix case where nullable is set and there is no type key
       if (!schema.type && schema.nullable) {
-        // We set this to string since we're not sure what the actual type is; this should be fine for us since we'll use this schema for diffing purposes and update
-        schema.type = 'string';
+        if (schema.oneOf || schema.anyOf || schema.allOf) {
+          // in the polymorphic case we have to remove nullable, since type will override and you cannot use
+          delete schema.nullable;
+        } else {
+          // We set this to string since we're not sure what the actual type is; this should be fine for us since we'll use this schema for diffing purposes and update
+          schema.type = 'string';
+        }
       }
     },
   });

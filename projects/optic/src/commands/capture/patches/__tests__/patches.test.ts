@@ -516,6 +516,63 @@ describe('generateEndpointSpecPatches', () => {
       expect(patches).toMatchSnapshot();
       expect(specHolder.spec).toMatchSnapshot();
     });
+
+    test('schema with arrays with polymorphic items', async () => {
+      specHolder.spec.paths['/api/animals'].post.responses = {
+        '200': {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  data: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        status: {
+                          type: 'string',
+                        },
+                      },
+                    },
+                  },
+                },
+                required: ['status'],
+              },
+            },
+          },
+        },
+      };
+
+      const interaction = makeInteraction(
+        { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+        {
+          responseBody: {
+            data: [
+              { status: null },
+              { status: 'something-else' },
+              { status: 'another-thing' },
+              { status: null },
+              { status: 123 },
+            ],
+          },
+        }
+      );
+
+      const patches = await AT.collect(
+        generateEndpointSpecPatches(
+          GenerateInteractions([interaction]),
+          specHolder,
+          {
+            method: 'post',
+            path: '/api/animals',
+          }
+        )
+      );
+
+      expect(patches).toMatchSnapshot();
+      expect(specHolder.spec).toMatchSnapshot();
+    });
   });
 });
 
