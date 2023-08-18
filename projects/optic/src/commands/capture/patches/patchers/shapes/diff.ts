@@ -70,7 +70,7 @@ function* diffVisitors(
       const schemaPath = validationError.schemaPath.substring(1);
       yield {
         validationError,
-        example,
+        example: jsonPointerHelpers.get(example, validationError.instancePath),
         unpatchable: true,
         interaction,
         bodyPath: specJsonPath,

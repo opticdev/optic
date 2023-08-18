@@ -33,7 +33,9 @@ components:
                   - ready
                   - not_ready
               price:
-                type: string
+                type: number
+                maximum: 6
+                minimum: 2
             required:
               - id
               - author_id

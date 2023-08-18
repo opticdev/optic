@@ -16,6 +16,10 @@ import { jsonPointerLogger } from '@useoptic/openapi-io';
 import { UnpatchableDiff } from '../patches/patchers/shapes/diff';
 import { SpecPatch } from '../patches/patchers/spec/patches';
 
+type GroupedUnpatchableDiff = Omit<UnpatchableDiff, 'example'> & {
+  examples: any[];
+};
+
 function getShapeDiffDetails(
   description: string,
   pathToHighlight: string,
@@ -197,7 +201,7 @@ function summarizePatch(
 }
 
 function summarizeUnpatchableDiff(
-  diff: UnpatchableDiff,
+  diff: GroupedUnpatchableDiff,
   parseResult: ParseResult,
   options: {
     mode: 'update' | 'verify';
@@ -205,19 +209,23 @@ function summarizeUnpatchableDiff(
   }
 ): string[] {
   const verbose = options.verbose && options.mode === 'verify';
-
   const pointerLogger = jsonPointerLogger(parseResult.sourcemap);
-  const { path, validationError, example } = diff;
+  const { path, validationError, examples } = diff;
   const location = locationFromPath(path);
+  const summarizedExamples =
+    examples
+      .slice(0, 3)
+      .map((e) => JSON.stringify(e))
+      .join(', ') +
+    (examples.length > 3 ? ` and ${examples.length - 3} other values` : '');
 
-  const value = jsonPointerHelpers.get(example, validationError.instancePath);
   const lines = [
     chalk.red(
       `${location} schema (${diff.schemaPath}) with keyword '${
         validationError.keyword
       }' and parameters ${JSON.stringify(
         validationError.params
-      )} received invalid value ${JSON.stringify(value)}`
+      )} received invalid values ${summarizedExamples}`
     ),
   ];
   if (options.mode === 'update') {
@@ -228,12 +236,53 @@ function summarizeUnpatchableDiff(
       getShapeDiffDetails(
         'interaction did not match schema',
         path,
-        `[Actual] ${value}`,
+        `[Actual] ${summarizedExamples}`,
         pointerLogger
       )
     );
   }
   return lines;
+}
+
+// Groups together diffs that are triggered from the same schema instance (we could have multiple interactions or array items that trigger a custom schema error)
+// The reason we need to group these diffs and not the patches, is because once a patchable diff is hit the in-memory spec used to continue diffing never generates the second diff.
+// In the case of unpatchable diffs, we get all interactions that would have caused this issue
+async function groupUnpatchableDiffs(
+  collectedPatches: (SpecPatch | UnpatchableDiff)[]
+): Promise<AsyncIterable<SpecPatch | GroupedUnpatchableDiff>> {
+  const patchesOrGroupedDiffs: (SpecPatch | GroupedUnpatchableDiff)[] = [];
+  const relatedErrorToIdx = new Map<string, number>();
+
+  for (let i = 0; i < collectedPatches.length; i++) {
+    const patchOrDiff = collectedPatches[i];
+    if ('unpatchable' in patchOrDiff) {
+      const errorId = `${patchOrDiff.validationError.schemaPath}${patchOrDiff.validationError.keyword}`;
+      const relatedIdx = relatedErrorToIdx.get(errorId);
+      if (typeof relatedIdx === 'number') {
+        const relatedDiff = patchesOrGroupedDiffs[relatedIdx];
+        if ('unpatchable' in relatedDiff) {
+          relatedDiff.examples.push(patchOrDiff.example);
+        } else {
+          throw new Error('Invalid index for patchesOrGroupedDiffs');
+        }
+      } else {
+        relatedErrorToIdx.set(errorId, patchesOrGroupedDiffs.length);
+        const { example, ...withoutExample } = patchOrDiff;
+        patchesOrGroupedDiffs.push({
+          ...withoutExample,
+          examples: [example],
+        });
+      }
+    } else {
+      patchesOrGroupedDiffs.push(patchOrDiff);
+    }
+  }
+
+  return (async function* () {
+    for (const patchOrDiff of patchesOrGroupedDiffs) {
+      yield patchOrDiff;
+    }
+  })();
 }
 
 export async function diffExistingEndpoint(
@@ -250,7 +299,7 @@ export async function diffExistingEndpoint(
   }
 ) {
   const patchSummaries: string[] = [];
-  function addPatchSummary(patchOrDiff: SpecPatch | UnpatchableDiff) {
+  function addPatchSummary(patchOrDiff: SpecPatch | GroupedUnpatchableDiff) {
     coverage.shapeDiff(patchOrDiff);
     const summarized =
       'unpatchable' in patchOrDiff
@@ -272,13 +321,8 @@ export async function diffExistingEndpoint(
       patchSummaries.push(...summarized);
     }
   }
-
-  const specPatches: AsyncIterable<SpecPatch> = AT.filter(
-    (patchOrDiff: SpecPatch | UnpatchableDiff) => {
-      return !('unpatchable' in patchOrDiff);
-    }
-  )(
-    AT.tap(addPatchSummary)(
+  const groupedDiffs = await groupUnpatchableDiffs(
+    await AT.collect(
       generateEndpointSpecPatches(
         interactions,
         { spec: parseResult.jsonLike },
@@ -286,7 +330,13 @@ export async function diffExistingEndpoint(
         { coverage }
       )
     )
-  ) as AsyncIterable<SpecPatch>;
+  );
+
+  const specPatches: AsyncIterable<SpecPatch> = AT.filter(
+    (patchOrDiff: SpecPatch | GroupedUnpatchableDiff) => {
+      return !('unpatchable' in patchOrDiff);
+    }
+  )(AT.tap(addPatchSummary)(groupedDiffs)) as AsyncIterable<SpecPatch>;
 
   if (options.update) {
     const operations = await jsonOpsFromSpecPatches(specPatches);
