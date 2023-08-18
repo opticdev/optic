@@ -12,27 +12,75 @@ import { oneOfKeywordDiffs } from './handlers/oneOf';
 import { requiredKeywordDiffs } from './handlers/required';
 import { typeKeywordDiffs } from './handlers/type';
 import { enumKeywordDiffs } from './handlers/enum';
+import { CapturedInteraction } from '../../../sources/captured-interactions';
 
 export function diffBodyBySchema(
   body: Body,
-  schema: SchemaObject
-): Result<IterableIterator<ShapeDiffResult>, SchemaCompilationError> {
-  let traverser = new ShapeDiffTraverser();
+  schema: SchemaObject,
+  {
+    specJsonPath,
+    interaction,
+  }: {
+    specJsonPath: string;
+    interaction: CapturedInteraction;
+  }
+): Result<
+  IterableIterator<ShapeDiffResult | UnpatchableDiff>,
+  SchemaCompilationError
+> {
+  let traverser = new ShapeDiffTraverser({
+    specJsonPath,
+    interaction,
+  });
   return traverser.traverse(body.value, schema).map(() => traverser.results());
 }
 
 function* diffVisitors(
   validationError: ErrorObject,
-  example: any
-): IterableIterator<ShapeDiffResult> {
-  for (let visitor of [
-    additionalPropertiesDiffs,
-    oneOfKeywordDiffs,
-    requiredKeywordDiffs,
-    typeKeywordDiffs,
-    enumKeywordDiffs,
-  ]) {
-    yield* visitor(validationError, example);
+  example: any,
+  {
+    specJsonPath,
+    interaction,
+  }: {
+    specJsonPath: string;
+    interaction: CapturedInteraction;
+  }
+): IterableIterator<ShapeDiffResult | UnpatchableDiff> {
+  switch (validationError.keyword) {
+    case JsonSchemaKnownKeyword.additionalProperties:
+      yield* additionalPropertiesDiffs(validationError, example);
+      break;
+
+    case JsonSchemaKnownKeyword.oneOf:
+      yield* oneOfKeywordDiffs(validationError, example);
+      break;
+
+    case JsonSchemaKnownKeyword.required:
+      yield* requiredKeywordDiffs(validationError, example);
+      break;
+
+    case JsonSchemaKnownKeyword.type:
+      yield* typeKeywordDiffs(validationError, example);
+      break;
+
+    case JsonSchemaKnownKeyword.enum:
+      yield* enumKeywordDiffs(validationError, example);
+      break;
+    default:
+      const schemaPath = validationError.schemaPath.substring(1);
+      yield {
+        validationError,
+        example: jsonPointerHelpers.get(example, validationError.instancePath),
+        unpatchable: true,
+        interaction,
+        bodyPath: specJsonPath,
+        schemaPath,
+        path: jsonPointerHelpers.append(
+          specJsonPath,
+          'schema',
+          ...jsonPointerHelpers.decode(schemaPath)
+        ),
+      };
   }
 }
 
@@ -81,14 +129,32 @@ export type ShapeDiffResult = {
     }
 );
 
+export type UnpatchableDiff = {
+  validationError: ErrorObject;
+  path: string;
+  bodyPath: string;
+  schemaPath: string;
+  example: any;
+  unpatchable: true;
+  interaction: CapturedInteraction;
+};
+
 export type { ErrorObject };
 export class ShapeDiffTraverser {
   private validator: Ajv;
 
   private validate?: ValidateFunction;
   private bodyValue?: any;
+  private specJsonPath: string;
+  private interaction: CapturedInteraction;
 
-  constructor() {
+  constructor({
+    specJsonPath,
+    interaction,
+  }: {
+    specJsonPath: string;
+    interaction: CapturedInteraction;
+  }) {
     this.validator = new Ajv({
       allErrors: true,
       validateFormats: false,
@@ -96,6 +162,8 @@ export class ShapeDiffTraverser {
       strictTypes: false,
       useDefaults: true,
     });
+    this.specJsonPath = specJsonPath;
+    this.interaction = interaction;
   }
 
   traverse(
@@ -117,7 +185,7 @@ export class ShapeDiffTraverser {
     return Ok.EMPTY;
   }
 
-  *results(): IterableIterator<ShapeDiffResult> {
+  *results(): IterableIterator<ShapeDiffResult | UnpatchableDiff> {
     if (!this.validate || !this.validate.errors) return;
     // Sometimes the schema path returned from AJV is encoded
     let validationErrors = this.validate.errors.map((e) => ({
@@ -165,13 +233,19 @@ export class ShapeDiffTraverser {
         }
       } else {
         // not related to one-of? visit right away
-        yield* diffVisitors(validationError, this.bodyValue);
+        yield* diffVisitors(validationError, this.bodyValue, {
+          specJsonPath: this.specJsonPath,
+          interaction: this.interaction,
+        });
       }
     }
 
     for (let [oneOfPath, otherBranchError] of oneOfBranchOther) {
       // any nested errors are all safe to visit
-      yield* diffVisitors(otherBranchError, this.bodyValue);
+      yield* diffVisitors(otherBranchError, this.bodyValue, {
+        specJsonPath: this.specJsonPath,
+        interaction: this.interaction,
+      });
 
       // once a nested error has been visited, we consider this a branch type match
       oneOfs.delete(oneOfPath);
@@ -182,7 +256,10 @@ export class ShapeDiffTraverser {
 
     // visit any left over one ofs
     for (let oneOfError of oneOfs.values()) {
-      yield* diffVisitors(oneOfError, this.bodyValue);
+      yield* diffVisitors(oneOfError, this.bodyValue, {
+        specJsonPath: this.specJsonPath,
+        interaction: this.interaction,
+      });
     }
   }
 }

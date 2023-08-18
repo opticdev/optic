@@ -55,3 +55,11 @@ export type FileWithSerializedSourcemap = {
   jsonLike: OpenAPIV3.Document;
   sourcemap: SerializedSourcemap;
 };
+
+export type SourcemapLine = {
+  filePath: string;
+  startLine: number;
+  endLine: number;
+  startPosition: number;
+  endPosition: number;
+};

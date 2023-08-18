@@ -1,5 +1,5 @@
 import { it, describe, expect } from '@jest/globals';
-import { diffBodyBySchema } from '../../diff';
+import { ShapeDiffResult, diffBodyBySchema } from '../../diff';
 import { generateShapePatchesByDiff } from '../../patches';
 import { SchemaObject } from '../../schema';
 import { CapturedInteraction } from '../../../../../sources/captured-interactions';
@@ -28,7 +28,10 @@ describe('enum json schema diff visitor', () => {
     const input = {
       status: 'ready',
     };
-    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema, {
+      specJsonPath: '',
+      interaction: mockInteraction,
+    });
     expect([...diffs]).toHaveLength(0);
   });
 
@@ -36,7 +39,12 @@ describe('enum json schema diff visitor', () => {
     const input = {
       status: 'new-field',
     };
-    const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
+    const diffs = [
+      ...diffBodyBySchema({ value: input }, jsonSchema, {
+        specJsonPath: '',
+        interaction: mockInteraction,
+      }),
+    ];
     expect(diffs).toHaveLength(1);
     expect(diffs).toMatchSnapshot();
   });
@@ -63,11 +71,16 @@ describe('enum shape patch generator', () => {
     const input = {
       status: 'new-field',
     };
-    const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
+    const diffs = [
+      ...diffBodyBySchema({ value: input }, jsonSchema, {
+        specJsonPath: '',
+        interaction: mockInteraction,
+      }),
+    ];
 
     const patches = diffs.flatMap((diff) => [
       ...generateShapePatchesByDiff(
-        diff,
+        diff as ShapeDiffResult,
         jsonSchema,
         mockInteraction,
         {},
@@ -86,11 +99,16 @@ describe('enum shape patch generator', () => {
         },
       ],
     };
-    const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
+    const diffs = [
+      ...diffBodyBySchema({ value: input }, jsonSchema, {
+        specJsonPath: '',
+        interaction: mockInteraction,
+      }),
+    ];
 
     const patches = diffs.flatMap((diff) => [
       ...generateShapePatchesByDiff(
-        diff,
+        diff as ShapeDiffResult,
         jsonSchema,
         mockInteraction,
         {},

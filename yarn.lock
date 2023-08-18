@@ -3657,6 +3657,7 @@ __metadata:
     ts-jest: ^29.0.3
     ts-node: ^10.9.1
     typescript: ^5.0.0
+    url-join: ^4.0.1
     yaml-ast-parser: ^0.0.43
   languageName: unknown
   linkType: soft

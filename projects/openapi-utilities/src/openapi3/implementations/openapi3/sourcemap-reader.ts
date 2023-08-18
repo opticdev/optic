@@ -12,8 +12,13 @@ import {
   ILookupPathResult,
   JsonPath,
   SerializedSourcemap,
+  SourcemapLine,
   ToSource,
 } from './types';
+import isUrl from 'is-url';
+import urljoin from 'url-join';
+import chalk from 'chalk';
+import path from 'path';
 
 export function resolveJsonPointerInYamlAst(
   node: YAMLNode, // root ast
@@ -128,7 +133,9 @@ export function sourcemapReader(sourcemap: SerializedSourcemap) {
     };
   };
 
-  const findFileAndLines = (jsonPathFromRoot: JsonPath) => {
+  const findFileAndLines = (
+    jsonPathFromRoot: JsonPath
+  ): SourcemapLine | undefined => {
     const lookupResult = findFile(jsonPathFromRoot);
     if (lookupResult) {
       const astNode = lookupResult.astNode;
@@ -221,5 +228,45 @@ function astNodesToStartEndPosition(astNode: YAMLNode): [number, number] {
     }
   } catch {
     return [astNode.startPosition, astNode.endPosition];
+  }
+}
+
+export type GetSourcemapOptions =
+  | {
+      ciProvider: 'github' | 'gitlab';
+      remote: string;
+      sha: string;
+      root: string;
+    }
+  | {
+      ciProvider?: undefined;
+    };
+
+export function getSourcemapLink(
+  sourcemap: SourcemapLine,
+  options: GetSourcemapOptions = {}
+): string {
+  if (isUrl(sourcemap.filePath)) {
+    return `${chalk.underline(sourcemap.filePath)} line ${sourcemap.startLine}`;
+  } else if (options.ciProvider) {
+    const pathFromRoot = path.relative(options.root, sourcemap.filePath);
+    return options.ciProvider === 'github'
+      ? urljoin(
+          options.remote,
+          'tree',
+          options.sha,
+          `${pathFromRoot}#L${sourcemap.startLine}`
+        )
+      : urljoin(
+          options.remote,
+          '-/blob',
+          options.sha,
+          `${pathFromRoot}#L${sourcemap.startLine}`
+        );
+  } else {
+    const relativePath = path.relative(process.cwd(), sourcemap.filePath);
+    return chalk.underline(
+      `${relativePath}:${sourcemap.startLine}:${sourcemap.startPosition}`
+    );
   }
 }

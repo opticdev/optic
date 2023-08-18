@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import path from 'path';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { ParseResult } from '../../../utils/spec-loaders';
 import {
@@ -13,21 +14,41 @@ import { writePatchesToFiles } from '../write/file';
 import { logger } from '../../../logger';
 
 import { jsonPointerLogger } from '@useoptic/openapi-io';
-import { ShapeDiffResult } from '../patches/patchers/shapes/diff';
+import { UnpatchableDiff } from '../patches/patchers/shapes/diff';
 import { SpecPatch } from '../patches/patchers/spec/patches';
+import { getSourcemapLink, sourcemapReader } from '@useoptic/openapi-utilities';
+
+type GroupedUnpatchableDiff = Omit<UnpatchableDiff, 'example'> & {
+  examples: any[];
+};
 
 function getShapeDiffDetails(
-  diff: ShapeDiffResult,
+  description: string,
   pathToHighlight: string,
   error: string,
   pointerLogger: ReturnType<typeof jsonPointerLogger>
 ): string {
-  const lines = `${chalk.bgRed('  Diff  ')} ${diff.description}
+  const lines = `${chalk.bgRed('  Diff  ')} ${description}
 ${pointerLogger.log(pathToHighlight, {
   highlightColor: 'yellow',
   observation: error,
 })}\n`;
   return lines;
+}
+
+function locationFromPath(path: string) {
+  // expected patterns:
+  // /paths/:path/:method/requestBody
+  // /paths/:path/:method/responses/:statusCode
+  const parts = jsonPointerHelpers.decode(path);
+
+  const location =
+    parts[3] === 'requestBody'
+      ? '[request body]'
+      : parts[3] === 'responses' && parts[4]
+      ? `[${parts[4]} response body]`
+      : '';
+  return location;
 }
 
 function summarizePatch(
@@ -42,7 +63,6 @@ function summarizePatch(
   const { jsonLike: spec, sourcemap } = parseResult;
   const pointerLogger = jsonPointerLogger(sourcemap);
   const { diff, path, groupedOperations } = patch;
-  const parts = jsonPointerHelpers.decode(path);
   if (!diff || groupedOperations.length === 0) return [];
   if (
     diff.kind === 'UnmatchdResponseBody' ||
@@ -58,15 +78,7 @@ function summarizePatch(
     const color = options.mode === 'update' ? chalk.green : chalk.red;
     return [color(`${location} body ${action}`)];
   } else {
-    // expected patterns:
-    // /paths/:path/:method/requestBody
-    // /paths/:path/:method/responses/:statusCode
-    const location =
-      parts[3] === 'requestBody'
-        ? '[request body]'
-        : parts[3] === 'responses' && parts[4]
-        ? `[${parts[4]} response body]`
-        : '';
+    const location = locationFromPath(path);
 
     if (diff.kind === 'AdditionalProperty') {
       // filter out dependent diffs
@@ -117,7 +129,7 @@ function summarizePatch(
       if (verbose) {
         lines.push(
           getShapeDiffDetails(
-            diff,
+            diff.description,
             jsonPointerHelpers.join(path, diff.propertyPath),
             `[Actual] ${JSON.stringify(diff.example)}`,
             pointerLogger
@@ -147,7 +159,7 @@ function summarizePatch(
       if (verbose) {
         lines.push(
           getShapeDiffDetails(
-            diff,
+            diff.description,
             jsonPointerHelpers.join(path, diff.propertyPath),
             `missing`,
             pointerLogger
@@ -176,7 +188,7 @@ function summarizePatch(
       if (verbose) {
         lines.push(
           getShapeDiffDetails(
-            diff,
+            diff.description,
             jsonPointerHelpers.join(path, diff.propertyPath),
             `missing enum value '${diff.value}'`,
             pointerLogger
@@ -188,6 +200,98 @@ function summarizePatch(
   }
 
   return [];
+}
+
+function summarizeUnpatchableDiff(
+  diff: GroupedUnpatchableDiff,
+  parseResult: ParseResult,
+  options: {
+    mode: 'update' | 'verify';
+    verbose: boolean;
+  }
+): string[] {
+  const verbose = options.verbose && options.mode === 'verify';
+  const pointerLogger = jsonPointerLogger(parseResult.sourcemap);
+  const reader = sourcemapReader(parseResult.sourcemap);
+  const { path: jsonPath, validationError, examples } = diff;
+  const location = locationFromPath(jsonPath);
+  const summarizedExamples =
+    examples
+      .slice(0, 3)
+      .map((e) => JSON.stringify(e))
+      .join(', ') +
+    (examples.length > 3 ? ` and ${examples.length - 3} other values` : '');
+
+  const lines = [
+    chalk.red(
+      `${location} schema (${diff.schemaPath}) with keyword '${
+        validationError.keyword
+      }' and parameters ${JSON.stringify(
+        validationError.params
+      )} received invalid values ${summarizedExamples}`
+    ),
+  ];
+  if (options.mode === 'update') {
+    const sourcemap = reader.findFileAndLines(jsonPath);
+    lines.push(
+      chalk.red(
+        ` ⛔️ schema could not be automatically updated. Update the schema manually` +
+          (sourcemap ? ` at ${getSourcemapLink(sourcemap)}` : '')
+      )
+    );
+  }
+  if (verbose) {
+    lines.push(
+      getShapeDiffDetails(
+        'interaction did not match schema',
+        jsonPath,
+        `[Actual] ${summarizedExamples}`,
+        pointerLogger
+      )
+    );
+  }
+  return lines;
+}
+
+// Groups together diffs that are triggered from the same schema instance (we could have multiple interactions or array items that trigger a custom schema error)
+// The reason we need to group these diffs and not the patches, is because once a patchable diff is hit the in-memory spec used to continue diffing never generates the second diff.
+// In the case of unpatchable diffs, we get all interactions that would have caused this issue
+async function groupUnpatchableDiffs(
+  collectedPatches: (SpecPatch | UnpatchableDiff)[]
+): Promise<AsyncIterable<SpecPatch | GroupedUnpatchableDiff>> {
+  const patchesOrGroupedDiffs: (SpecPatch | GroupedUnpatchableDiff)[] = [];
+  const relatedErrorToIdx = new Map<string, number>();
+
+  for (let i = 0; i < collectedPatches.length; i++) {
+    const patchOrDiff = collectedPatches[i];
+    if ('unpatchable' in patchOrDiff) {
+      const errorId = `${patchOrDiff.validationError.schemaPath}${patchOrDiff.validationError.keyword}`;
+      const relatedIdx = relatedErrorToIdx.get(errorId);
+      if (typeof relatedIdx === 'number') {
+        const relatedDiff = patchesOrGroupedDiffs[relatedIdx];
+        if ('unpatchable' in relatedDiff) {
+          relatedDiff.examples.push(patchOrDiff.example);
+        } else {
+          throw new Error('Invalid index for patchesOrGroupedDiffs');
+        }
+      } else {
+        relatedErrorToIdx.set(errorId, patchesOrGroupedDiffs.length);
+        const { example, ...withoutExample } = patchOrDiff;
+        patchesOrGroupedDiffs.push({
+          ...withoutExample,
+          examples: [example],
+        });
+      }
+    } else {
+      patchesOrGroupedDiffs.push(patchOrDiff);
+    }
+  }
+
+  return (async function* () {
+    for (const patchOrDiff of patchesOrGroupedDiffs) {
+      yield patchOrDiff;
+    }
+  })();
 }
 
 export async function diffExistingEndpoint(
@@ -204,29 +308,44 @@ export async function diffExistingEndpoint(
   }
 ) {
   const patchSummaries: string[] = [];
+  function addPatchSummary(patchOrDiff: SpecPatch | GroupedUnpatchableDiff) {
+    coverage.shapeDiff(patchOrDiff);
+    const summarized =
+      'unpatchable' in patchOrDiff
+        ? summarizeUnpatchableDiff(patchOrDiff, parseResult, {
+            mode: options.update ? 'update' : 'verify',
+            verbose: options.verbose,
+          })
+        : summarizePatch(patchOrDiff, parseResult, {
+            mode: options.update ? 'update' : 'verify',
+            verbose: options.verbose,
+          });
 
-  const specPatches = AT.tap((patch: SpecPatch) => {
-    coverage.shapeDiff(patch);
-    const summarized = summarizePatch(patch, parseResult, {
-      mode: options.update ? 'update' : 'verify',
-      verbose: options.verbose,
-    });
     if (summarized.length) {
-      if (logger.getLevel() <= 1 && patch.interaction) {
+      if (logger.getLevel() <= 1 && patchOrDiff.interaction) {
         patchSummaries.push(
-          `Originating request: ${JSON.stringify(patch.interaction)}`
+          `Originating request: ${JSON.stringify(patchOrDiff.interaction)}`
         );
       }
       patchSummaries.push(...summarized);
     }
-  })(
-    generateEndpointSpecPatches(
-      interactions,
-      { spec: parseResult.jsonLike },
-      endpoint,
-      { coverage }
+  }
+  const groupedDiffs = await groupUnpatchableDiffs(
+    await AT.collect(
+      generateEndpointSpecPatches(
+        interactions,
+        { spec: parseResult.jsonLike },
+        endpoint,
+        { coverage }
+      )
     )
   );
+
+  const specPatches: AsyncIterable<SpecPatch> = AT.filter(
+    (patchOrDiff: SpecPatch | GroupedUnpatchableDiff) => {
+      return !('unpatchable' in patchOrDiff);
+    }
+  )(AT.tap(addPatchSummary)(groupedDiffs)) as AsyncIterable<SpecPatch>;
 
   if (options.update) {
     const operations = await jsonOpsFromSpecPatches(specPatches);

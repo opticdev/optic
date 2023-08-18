@@ -1564,8 +1564,9 @@ GET /books
   [32m[200 response body] 'created_at' has been added (/properties/books/items/properties/created_at)[39m
   [32m[200 response body] 'updated_at' has been added (/properties/books/items/properties/updated_at)[39m
   [33m[200 response body] 'author_id' is now type number (/properties/books/items/properties/author_id)[39m
-  [33m[200 response body] 'price' is now type string (/properties/books/items/properties/price)[39m
   [33m[200 response body] 'status' now has enum value 'hold' (/properties/books/items/properties/status/enum)[39m
+  [31m[200 response body] schema (/properties/books/items/properties/price/maximum) with keyword 'maximum' and parameters {"comparison":"<=","limit":6} received invalid values 10, 15[39m
+  [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:37:799[24m[39m
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
@@ -1661,9 +1662,9 @@ components:
                   - not_ready
                   - hold
               price:
-                oneOf:
-                  - type: string
-                  - type: number
+                type: number
+                maximum: 6
+                minimum: 2
               name:
                 type: string
               created_at:
@@ -1748,8 +1749,9 @@ GET /books
   [32m[200 response body] 'created_at' has been added (/properties/books/items/properties/created_at)[39m
   [32m[200 response body] 'updated_at' has been added (/properties/books/items/properties/updated_at)[39m
   [33m[200 response body] 'author_id' is now type number (/properties/books/items/properties/author_id)[39m
-  [33m[200 response body] 'price' is now type string (/properties/books/items/properties/price)[39m
   [33m[200 response body] 'status' now has enum value 'hold' (/properties/books/items/properties/status/enum)[39m
+  [31m[200 response body] schema (/properties/books/items/properties/price/maximum) with keyword 'maximum' and parameters {"comparison":"<=","limit":6} received invalid values 10, 15[39m
+  [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:37:799[24m[39m
 
 5 unmatched requests
 [33mNew endpoints are only added in interactive mode. Run 'optic capture openapi.yml --update interactive' to add new endpoints[39m
@@ -1795,9 +1797,9 @@ components:
                   - not_ready
                   - hold
               price:
-                oneOf:
-                  - type: string
-                  - type: number
+                type: number
+                maximum: 6
+                minimum: 2
               name:
                 type: string
               created_at:
@@ -1855,17 +1857,6 @@ GET /books
 [90m31 |[39m     type: string
 [90m$workspace$/openapi.yml[39m
 
-  [31m[200 response body] 'price' does not match type string. Received 10 (/properties/books/items/properties/price)[39m
-  [41m  Diff  [49m 'price' did not match schema
-[90m32 |[39m     enum:
-[90m33 |[39m       - ready
-[90m34 |[39m       - not_ready
-[90m35 |[39m [1m[33m  price:  [41m[Actual] 10[49m[39m[22m
-[90m36 |[39m     type: string
-[90m37 |[39m required:
-[90m38 |[39m   - id
-[90m$workspace$/openapi.yml[39m
-
   [31m[200 response body] 'status' missing enum value 'hold' (/properties/books/items/properties/status/enum)[39m
   [41m  Diff  [49m 'status' does not have enum value hold
 [90m29 |[39m   type: number
@@ -1875,6 +1866,17 @@ GET /books
 [90m33 |[39m     - ready
 [90m34 |[39m     - not_ready
 [90m35 |[39m price:
+[90m$workspace$/openapi.yml[39m
+
+  [31m[200 response body] schema (/properties/books/items/properties/price/maximum) with keyword 'maximum' and parameters {"comparison":"<=","limit":6} received invalid values 10, 15[39m
+  [41m  Diff  [49m interaction did not match schema
+[90m34 |[39m       - not_ready
+[90m35 |[39m   price:
+[90m36 |[39m     type: number
+[90m37 |[39m [1m[33m    maximum: 6  [41m[Actual] 10, 15[49m[39m[22m
+[90m38 |[39m     minimum: 2
+[90m39 |[39m required:
+[90m40 |[39m   - id
 [90m$workspace$/openapi.yml[39m
 
 
@@ -1893,8 +1895,8 @@ GET /books
   [31m[200 response body] 'created_at' is not documented (/properties/books/items/properties)[39m
   [31m[200 response body] 'updated_at' is not documented (/properties/books/items/properties)[39m
   [31m[200 response body] 'author_id' does not match type number. Received 6nTxAFM5ck4Hob77hGQoL (/properties/books/items/properties/author_id)[39m
-  [31m[200 response body] 'price' does not match type string. Received 10 (/properties/books/items/properties/price)[39m
   [31m[200 response body] 'status' missing enum value 'hold' (/properties/books/items/properties/status/enum)[39m
+  [31m[200 response body] schema (/properties/books/items/properties/price/maximum) with keyword 'maximum' and parameters {"comparison":"<=","limit":6} received invalid values 10, 15[39m
 
 100.0% coverage of your documented operations. 5 requests did not match a documented path (6 total requests).
 6 diffs detected in documented operations

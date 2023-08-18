@@ -15,6 +15,7 @@ import {
   createMissingPathPatches,
   createMissingMethodPatch,
 } from './patchers/spec/spec';
+import { UnpatchableDiff } from './patchers/shapes/diff';
 
 export async function* generatePathAndMethodSpecPatches(
   specHolder: {
@@ -65,7 +66,7 @@ export async function* generateEndpointSpecPatches(
     coverage?: ApiCoverageCounter;
     schemaAdditionsSet?: Set<string>;
   } = {}
-) {
+): AsyncIterable<SpecPatch | UnpatchableDiff> {
   // TODO move this to the top level
   const openAPIVersion = checkOpenAPIVersion(specHolder.spec);
   const jsonPath = jsonPointerHelpers.compile([
@@ -114,8 +115,10 @@ export async function* generateEndpointSpecPatches(
     );
 
     for await (let patch of shapePatches) {
-      opts.schemaAdditionsSet?.add(patch.path);
-      specHolder.spec = SpecPatch.applyPatch(patch, specHolder.spec);
+      if (!('unpatchable' in patch)) {
+        opts.schemaAdditionsSet?.add(patch.path);
+        specHolder.spec = SpecPatch.applyPatch(patch, specHolder.spec);
+      }
       yield patch;
     }
   }

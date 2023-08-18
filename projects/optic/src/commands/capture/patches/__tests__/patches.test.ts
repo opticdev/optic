@@ -534,10 +534,10 @@ describe('generateEndpointSpecPatches', () => {
                           type: 'string',
                         },
                       },
+                      required: ['status'],
                     },
                   },
                 },
-                required: ['status'],
               },
             },
           },
@@ -555,6 +555,58 @@ describe('generateEndpointSpecPatches', () => {
               { status: null },
               { status: 123 },
             ],
+          },
+        }
+      );
+
+      const patches = await AT.collect(
+        generateEndpointSpecPatches(
+          GenerateInteractions([interaction]),
+          specHolder,
+          {
+            method: 'post',
+            path: '/api/animals',
+          }
+        )
+      );
+
+      expect(patches).toMatchSnapshot();
+      expect(specHolder.spec).toMatchSnapshot();
+    });
+
+    test('collects unpatchable diffs', async () => {
+      specHolder.spec.paths['/api/animals'].post.responses = {
+        '200': {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  data: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        status: {
+                          type: 'string',
+                          const: 'ok',
+                        },
+                      },
+                      required: ['status'],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      const interaction = makeInteraction(
+        { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+        {
+          responseBody: {
+            data: [{ status: 'ok' }, { status: 'not-ok' }],
           },
         }
       );
