@@ -27,6 +27,8 @@ function patchSchema(
     let patches = ShapePatches.generateBodyAdditions(body, openAPIVersion);
 
     for (let patch of patches) {
+      if ('unpatchable' in patch) continue;
+
       schema = Schema.applyShapePatch(schema, patch);
     }
   }
@@ -37,7 +39,10 @@ function patchSchema(
 function* diffs(schema: SchemaObject | null, ...inputs: any[]) {
   if (!schema) return;
   for (let input of inputs) {
-    yield* diffBodyBySchema({ value: input }, schema);
+    yield* diffBodyBySchema({ value: input }, schema, {
+      specJsonPath: '',
+      interaction: {} as any,
+    });
   }
 }
 

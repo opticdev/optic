@@ -2,7 +2,7 @@ import { it, describe, expect } from '@jest/globals';
 
 import { SchemaObject } from '../../schema';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
-import { diffBodyBySchema } from '../../diff';
+import { ShapeDiffResult, diffBodyBySchema } from '../../diff';
 import { generateShapePatchesByDiff } from '../../patches';
 import { CapturedInteraction } from '../../../../../sources/captured-interactions';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
@@ -28,7 +28,10 @@ describe('type json schema diff visitor', () => {
     const input = {
       stringField: 'hello-string',
     };
-    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema, {
+      specJsonPath: '',
+      interaction: mockInteraction,
+    });
     expect([...diffs]).toHaveLength(0);
   });
 
@@ -36,7 +39,10 @@ describe('type json schema diff visitor', () => {
     const input = {
       // stringField: "hello-string", // commented to show ommitted
     };
-    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema, {
+      specJsonPath: '',
+      interaction: mockInteraction,
+    });
     expect([...diffs]).toHaveLength(0);
   });
 
@@ -45,7 +51,10 @@ describe('type json schema diff visitor', () => {
       stringField: 123,
     };
 
-    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema, {
+      specJsonPath: '',
+      interaction: mockInteraction,
+    });
     expect([...diffs]).toMatchSnapshot();
   });
 
@@ -54,7 +63,10 @@ describe('type json schema diff visitor', () => {
       stringField: ['1', '2', '3', true],
     };
 
-    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema, {
+      specJsonPath: '',
+      interaction: mockInteraction,
+    });
     expect([...diffs]).toMatchSnapshot();
   });
 
@@ -63,7 +75,10 @@ describe('type json schema diff visitor', () => {
       stringField: { field: 'string' },
     };
 
-    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema, {
+      specJsonPath: '',
+      interaction: mockInteraction,
+    });
     expect([...diffs]).toMatchSnapshot();
   });
 
@@ -72,7 +87,10 @@ describe('type json schema diff visitor', () => {
       stringField: null,
     };
 
-    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema, {
+      specJsonPath: '',
+      interaction: mockInteraction,
+    });
     expect([...diffs]).toMatchSnapshot();
   });
 });
@@ -93,11 +111,16 @@ describe.each(['3.0.x', '3.1.x'])(
         stringField: 123,
       };
 
-      const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
+      const diffs = [
+        ...diffBodyBySchema({ value: input }, jsonSchema, {
+          specJsonPath: '',
+          interaction: mockInteraction,
+        }),
+      ];
 
       const patches = diffs.flatMap((diff) => [
         ...generateShapePatchesByDiff(
-          diff,
+          diff as ShapeDiffResult,
           jsonSchema,
           mockInteraction,
           {},
@@ -113,11 +136,16 @@ describe.each(['3.0.x', '3.1.x'])(
         stringField: ['1', '2', '3', true],
       };
 
-      const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
+      const diffs = [
+        ...diffBodyBySchema({ value: input }, jsonSchema, {
+          specJsonPath: '',
+          interaction: mockInteraction,
+        }),
+      ];
 
       const patches = diffs.flatMap((diff) => [
         ...generateShapePatchesByDiff(
-          diff,
+          diff as ShapeDiffResult,
           jsonSchema,
           mockInteraction,
           {},
@@ -133,11 +161,16 @@ describe.each(['3.0.x', '3.1.x'])(
         stringField: { field: 'string' },
       };
 
-      const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
+      const diffs = [
+        ...diffBodyBySchema({ value: input }, jsonSchema, {
+          specJsonPath: '',
+          interaction: mockInteraction,
+        }),
+      ];
 
       const patches = diffs.flatMap((diff) => [
         ...generateShapePatchesByDiff(
-          diff,
+          diff as ShapeDiffResult,
           jsonSchema,
           mockInteraction,
           {},
@@ -153,11 +186,16 @@ describe.each(['3.0.x', '3.1.x'])(
         stringField: null,
       };
 
-      const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
+      const diffs = [
+        ...diffBodyBySchema({ value: input }, jsonSchema, {
+          specJsonPath: '',
+          interaction: mockInteraction,
+        }),
+      ];
 
       const patches = diffs.flatMap((diff) => [
         ...generateShapePatchesByDiff(
-          diff,
+          diff as ShapeDiffResult,
           jsonSchema,
           mockInteraction,
           {},

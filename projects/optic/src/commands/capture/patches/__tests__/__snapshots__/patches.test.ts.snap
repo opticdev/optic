@@ -496,16 +496,7 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 collects unpatchable diff
 [
   {
     "bodyPath": "/paths/~1api~1animals/post/responses/200/content/application~1json",
-    "example": {
-      "data": [
-        {
-          "status": "ok",
-        },
-        {
-          "status": "not-ok",
-        },
-      ],
-    },
+    "example": "not-ok",
     "interaction": {
       "request": {
         "body": null,
@@ -6330,16 +6321,7 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 collects unpatchable diff
 [
   {
     "bodyPath": "/paths/~1api~1animals/post/responses/200/content/application~1json",
-    "example": {
-      "data": [
-        {
-          "status": "ok",
-        },
-        {
-          "status": "not-ok",
-        },
-      ],
-    },
+    "example": "not-ok",
     "interaction": {
       "request": {
         "body": null,

@@ -1,7 +1,7 @@
 import { it, describe, expect } from '@jest/globals';
 import { SchemaObject } from '../../schema';
 import { objectOrStringOneOf } from '../../../../../../oas/tests/fixtures/oneof-schemas';
-import { diffBodyBySchema } from '../../diff';
+import { ShapeDiffResult, diffBodyBySchema } from '../../diff';
 import { generateShapePatchesByDiff } from '../../patches';
 import { CapturedInteraction } from '../../../../../sources/captured-interactions';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
@@ -29,14 +29,20 @@ describe('one of json schema diff visitor', () => {
     const input = {
       polyProp: 'hello-string',
     };
-    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema, {
+      specJsonPath: '',
+      interaction: mockInteraction,
+    });
     expect([...diffs]).toHaveLength(0);
   });
   it('when valid case 2, no diff', () => {
     const input = {
       polyProp: 123,
     };
-    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema, {
+      specJsonPath: '',
+      interaction: mockInteraction,
+    });
     expect([...diffs]).toHaveLength(0);
   });
 
@@ -55,7 +61,10 @@ describe('one of json schema diff visitor', () => {
     };
     const input = { id: 'an-identifier' };
 
-    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema, {
+      specJsonPath: '',
+      interaction: mockInteraction,
+    });
     expect([...diffs]).toHaveLength(0);
   });
 
@@ -64,7 +73,10 @@ describe('one of json schema diff visitor', () => {
       polyProp: true,
     };
 
-    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema, {
+      specJsonPath: '',
+      interaction: mockInteraction,
+    });
 
     // expect(result.totalDiffsAfterPatches).toBe(0);
     expect([...diffs]).toMatchSnapshot();
@@ -84,7 +96,10 @@ describe('one of json schema diff visitor', () => {
       polyProp: { hello: 'world' },
     };
 
-    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema, {
+      specJsonPath: '',
+      interaction: mockInteraction,
+    });
     expect([...diffs]).toMatchSnapshot();
   });
 
@@ -107,7 +122,12 @@ describe('one of json schema diff visitor', () => {
 
     const input = ['user1', 'user2', 'user3'];
 
-    const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
+    const diffs = [
+      ...diffBodyBySchema({ value: input }, jsonSchema, {
+        specJsonPath: '',
+        interaction: mockInteraction,
+      }),
+    ];
     expect(diffs).toHaveLength(1);
     expect(diffs).toMatchSnapshot();
   });
@@ -122,7 +142,10 @@ describe('one of json schema diff visitor', () => {
 
     const input: any = [];
 
-    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema, {
+      specJsonPath: '',
+      interaction: mockInteraction,
+    });
     expect([...diffs]).toMatchSnapshot();
   });
 
@@ -139,7 +162,10 @@ describe('one of json schema diff visitor', () => {
       },
     };
 
-    const diffs = diffBodyBySchema({ value: input }, jsonSchema);
+    const diffs = diffBodyBySchema({ value: input }, jsonSchema, {
+      specJsonPath: '',
+      interaction: mockInteraction,
+    });
     expect([...diffs]).toMatchSnapshot();
   });
 });
@@ -159,11 +185,16 @@ describe('one of shape patch generator', () => {
       polyProp: true,
     };
 
-    const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
+    const diffs = [
+      ...diffBodyBySchema({ value: input }, jsonSchema, {
+        specJsonPath: '',
+        interaction: mockInteraction,
+      }),
+    ];
 
     const patches = diffs.flatMap((diff) => [
       ...generateShapePatchesByDiff(
-        diff,
+        diff as ShapeDiffResult,
         jsonSchema,
         mockInteraction,
         {},
@@ -188,11 +219,16 @@ describe('one of shape patch generator', () => {
       polyProp: { hello: 'world' },
     };
 
-    const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
+    const diffs = [
+      ...diffBodyBySchema({ value: input }, jsonSchema, {
+        specJsonPath: '',
+        interaction: mockInteraction,
+      }),
+    ];
 
     const patches = diffs.flatMap((diff) => [
       ...generateShapePatchesByDiff(
-        diff,
+        diff as ShapeDiffResult,
         jsonSchema,
         mockInteraction,
         {},
@@ -213,11 +249,16 @@ describe('one of shape patch generator', () => {
 
     const input: any = [];
 
-    const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
+    const diffs = [
+      ...diffBodyBySchema({ value: input }, jsonSchema, {
+        specJsonPath: '',
+        interaction: mockInteraction,
+      }),
+    ];
 
     const patches = diffs.flatMap((diff) => [
       ...generateShapePatchesByDiff(
-        diff,
+        diff as ShapeDiffResult,
         jsonSchema,
         mockInteraction,
         {},
@@ -241,11 +282,16 @@ describe('one of shape patch generator', () => {
       },
     };
 
-    const diffs = [...diffBodyBySchema({ value: input }, jsonSchema)];
+    const diffs = [
+      ...diffBodyBySchema({ value: input }, jsonSchema, {
+        specJsonPath: '',
+        interaction: mockInteraction,
+      }),
+    ];
 
     const patches = diffs.flatMap((diff) => [
       ...generateShapePatchesByDiff(
-        diff,
+        diff as ShapeDiffResult,
         jsonSchema,
         mockInteraction,
         {},
