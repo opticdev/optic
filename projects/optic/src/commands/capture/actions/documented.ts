@@ -204,26 +204,31 @@ function summarizeUnpatchableDiff(
     verbose: boolean;
   }
 ): string[] {
+  const verbose = options.verbose && options.mode === 'verify';
+
   const pointerLogger = jsonPointerLogger(parseResult.sourcemap);
-
-  const { path, validationError } = diff;
+  const { path, validationError, example } = diff;
   const location = locationFromPath(path);
-  const action =
-    options.mode === 'update'
-      ? `could not be automatically updated`
-      : `did not match schema`;
 
-  // TODO use AJV errors or something here
-  const lines = [chalk.red(`${location} diff '${diff.bodyPath}' ${action}`)];
-  if (options.verbose) {
-    lines.push(
-      `Failed validation with error: ${JSON.stringify(validationError)}`
-    );
+  const value = jsonPointerHelpers.get(example, validationError.instancePath);
+  const lines = [
+    chalk.red(
+      `${location} schema (${diff.schemaPath}) with keyword '${
+        validationError.keyword
+      }' and parameters ${JSON.stringify(
+        validationError.params
+      )} received invalid value ${JSON.stringify(value)}`
+    ),
+  ];
+  if (options.mode === 'update') {
+    lines.push(chalk.red(` ⛔️ schema could not be automatically updated`));
+  }
+  if (verbose) {
     lines.push(
       getShapeDiffDetails(
         'interaction did not match schema',
         path,
-        ``,
+        `[Actual] ${value}`,
         pointerLogger
       )
     );

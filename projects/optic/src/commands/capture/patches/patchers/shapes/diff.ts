@@ -67,15 +67,18 @@ function* diffVisitors(
       yield* enumKeywordDiffs(validationError, example);
       break;
     default:
+      const schemaPath = validationError.schemaPath.substring(1);
       yield {
         validationError,
         example,
         unpatchable: true,
         interaction,
         bodyPath: specJsonPath,
+        schemaPath,
         path: jsonPointerHelpers.append(
           specJsonPath,
-          validationError.schemaPath.substring(1)
+          'schema',
+          ...jsonPointerHelpers.decode(schemaPath)
         ),
       };
   }
@@ -130,6 +133,7 @@ export type UnpatchableDiff = {
   validationError: ErrorObject;
   path: string;
   bodyPath: string;
+  schemaPath: string;
   example: any;
   unpatchable: true;
   interaction: CapturedInteraction;
