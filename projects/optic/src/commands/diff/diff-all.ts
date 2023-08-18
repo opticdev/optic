@@ -11,7 +11,7 @@ import { compute } from './compute';
 import chalk from 'chalk';
 import { flushEvents, trackEvent } from '../../segment';
 import { compressDataV2 } from './compressResults';
-import { textToSev } from '@useoptic/openapi-utilities';
+import { GetSourcemapOptions, textToSev } from '@useoptic/openapi-utilities';
 import { uploadDiff } from './upload-diff';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { writeDataForCi } from '../../utils/ci-data';
@@ -20,10 +20,7 @@ import { checkOpenAPIVersion } from '@useoptic/openapi-io';
 import path from 'path';
 import { getApiUrl } from '../../utils/cloud-urls';
 import { getDetailsForGeneration } from '../../utils/generated';
-import {
-  SourcemapOptions,
-  terminalChangelog,
-} from './changelog-renderers/terminal-changelog';
+import { terminalChangelog } from './changelog-renderers/terminal-changelog';
 import { jsonChangelog } from './changelog-renderers/json-changelog';
 import * as Types from '../../client/optic-backend-types';
 import { openUrl } from '../../utils/open-url';
@@ -401,7 +398,7 @@ async function computeAll(
       changelogUrl = uploadResults?.changelogUrl ?? null;
     }
 
-    let sourcemapOptions: SourcemapOptions = {
+    let sourcemapOptions: GetSourcemapOptions = {
       ciProvider: undefined,
     };
     if (config.isInCi && config.vcs?.type === VCS.Git) {

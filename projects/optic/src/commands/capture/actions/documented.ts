@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import path from 'path';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { ParseResult } from '../../../utils/spec-loaders';
 import {
@@ -15,6 +16,7 @@ import { logger } from '../../../logger';
 import { jsonPointerLogger } from '@useoptic/openapi-io';
 import { UnpatchableDiff } from '../patches/patchers/shapes/diff';
 import { SpecPatch } from '../patches/patchers/spec/patches';
+import { getSourcemapLink, sourcemapReader } from '@useoptic/openapi-utilities';
 
 type GroupedUnpatchableDiff = Omit<UnpatchableDiff, 'example'> & {
   examples: any[];
@@ -210,8 +212,9 @@ function summarizeUnpatchableDiff(
 ): string[] {
   const verbose = options.verbose && options.mode === 'verify';
   const pointerLogger = jsonPointerLogger(parseResult.sourcemap);
-  const { path, validationError, examples } = diff;
-  const location = locationFromPath(path);
+  const reader = sourcemapReader(parseResult.sourcemap);
+  const { path: jsonPath, validationError, examples } = diff;
+  const location = locationFromPath(jsonPath);
   const summarizedExamples =
     examples
       .slice(0, 3)
@@ -229,13 +232,19 @@ function summarizeUnpatchableDiff(
     ),
   ];
   if (options.mode === 'update') {
-    lines.push(chalk.red(` ⛔️ schema could not be automatically updated`));
+    const sourcemap = reader.findFileAndLines(jsonPath);
+    lines.push(
+      chalk.red(
+        ` ⛔️ schema could not be automatically updated. Update the schema manually` +
+          (sourcemap ? ` at ${getSourcemapLink(sourcemap)}` : '')
+      )
+    );
   }
   if (verbose) {
     lines.push(
       getShapeDiffDetails(
         'interaction did not match schema',
-        path,
+        jsonPath,
         `[Actual] ${summarizedExamples}`,
         pointerLogger
       )

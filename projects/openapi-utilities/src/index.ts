@@ -47,7 +47,11 @@ import {
   isChangeVariant,
   isFactOrChangeVariant,
 } from './openapi3/sdk/isType';
-import { sourcemapReader } from './openapi3/implementations/openapi3/sourcemap-reader';
+import {
+  sourcemapReader,
+  getSourcemapLink,
+  GetSourcemapOptions,
+} from './openapi3/implementations/openapi3/sourcemap-reader';
 
 export { defaultEmptySpec } from './openapi3/constants';
 export * from './legacy-ci-types';
@@ -99,6 +103,8 @@ export { OpenApiV3Traverser } from './openapi3/traverser';
 
 export {
   sourcemapReader,
+  GetSourcemapOptions,
+  getSourcemapLink,
   OpenApiFact,
   OpenAPITraverser,
   factsToChangelog,

@@ -1566,7 +1566,7 @@ GET /books
   [33m[200 response body] 'author_id' is now type number (/properties/books/items/properties/author_id)[39m
   [33m[200 response body] 'status' now has enum value 'hold' (/properties/books/items/properties/status/enum)[39m
   [31m[200 response body] schema (/properties/books/items/properties/price/maximum) with keyword 'maximum' and parameters {"comparison":"<=","limit":6} received invalid values 10, 15[39m
-  [31m ⛔️ schema could not be automatically updated[39m
+  [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:37:799[24m[39m
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
@@ -1751,7 +1751,7 @@ GET /books
   [33m[200 response body] 'author_id' is now type number (/properties/books/items/properties/author_id)[39m
   [33m[200 response body] 'status' now has enum value 'hold' (/properties/books/items/properties/status/enum)[39m
   [31m[200 response body] schema (/properties/books/items/properties/price/maximum) with keyword 'maximum' and parameters {"comparison":"<=","limit":6} received invalid values 10, 15[39m
-  [31m ⛔️ schema could not be automatically updated[39m
+  [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:37:799[24m[39m
 
 5 unmatched requests
 [33mNew endpoints are only added in interactive mode. Run 'optic capture openapi.yml --update interactive' to add new endpoints[39m

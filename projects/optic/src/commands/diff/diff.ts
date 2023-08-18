@@ -1,5 +1,9 @@
 import { Command, Option } from 'commander';
-import { UserError, textToSev } from '@useoptic/openapi-utilities';
+import {
+  GetSourcemapOptions,
+  UserError,
+  textToSev,
+} from '@useoptic/openapi-utilities';
 
 import {
   parseFilesFromRef,
@@ -10,10 +14,7 @@ import {
 import { ConfigRuleset, OpticCliConfig, VCS } from '../../config';
 import chalk from 'chalk';
 import { flushEvents, trackEvent } from '../../segment';
-import {
-  SourcemapOptions,
-  terminalChangelog,
-} from './changelog-renderers/terminal-changelog';
+import { terminalChangelog } from './changelog-renderers/terminal-changelog';
 import { jsonChangelog } from './changelog-renderers/json-changelog';
 import { compute } from './compute';
 import { compressDataV2 } from './compressResults';
@@ -408,7 +409,7 @@ const getDiffAction =
         logger.warn(warning);
       }
 
-      let sourcemapOptions: SourcemapOptions = {
+      let sourcemapOptions: GetSourcemapOptions = {
         ciProvider: undefined,
       };
       if (config.isInCi && config.vcs?.type === VCS.Git) {

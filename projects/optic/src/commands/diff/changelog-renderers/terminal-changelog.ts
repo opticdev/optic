@@ -1,5 +1,4 @@
 import { OpenAPIV3 } from 'openapi-types';
-import path from 'path';
 import {
   ObjectDiff,
   RuleResult,
@@ -8,6 +7,9 @@ import {
   getOperationsChangedLabel,
   sevToText,
   sourcemapReader,
+  getSourcemapLink,
+  SourcemapLine,
+  GetSourcemapOptions,
   typeofDiff,
 } from '@useoptic/openapi-utilities';
 import type {
@@ -25,59 +27,14 @@ import { Instance as Chalk } from 'chalk';
 import { getLocation } from '@useoptic/openapi-utilities/build/openapi3/traverser';
 import { interpretFieldLevelDiffs } from './common';
 import { ParseResult } from '../../../utils/spec-loaders';
-import isUrl from 'is-url';
-import urljoin from 'url-join';
 
 const chalk = new Chalk();
 
 const added = chalk.green('added');
 const removed = chalk.red('removed');
 const changed = chalk.yellow('changed');
-type SourcemapReaderFindLine = ReturnType<
-  typeof sourcemapReader
->['findFileAndLines'];
 
-type SourcemapLine = NonNullable<ReturnType<SourcemapReaderFindLine>>;
-
-export type SourcemapOptions =
-  | {
-      ciProvider: 'github' | 'gitlab';
-      remote: string;
-      sha: string;
-      root: string;
-    }
-  | {
-      ciProvider: undefined;
-    };
-
-function getSourcemapLink(
-  sourcemap: SourcemapLine,
-  options: SourcemapOptions
-): string {
-  if (isUrl(sourcemap.filePath)) {
-    return `${chalk.underline(sourcemap.filePath)} line ${sourcemap.startLine}`;
-  } else if (options.ciProvider) {
-    const pathFromRoot = path.relative(options.root, sourcemap.filePath);
-    return options.ciProvider === 'github'
-      ? urljoin(
-          options.remote,
-          'tree',
-          options.sha,
-          `${pathFromRoot}#L${sourcemap.startLine}`
-        )
-      : urljoin(
-          options.remote,
-          '-/blob',
-          options.sha,
-          `${pathFromRoot}#L${sourcemap.startLine}`
-        );
-  } else {
-    const relativePath = path.relative(process.cwd(), sourcemap.filePath);
-    return chalk.underline(
-      `${relativePath}:${sourcemap.startLine}:${sourcemap.startPosition}`
-    );
-  }
-}
+type SourcemapReaderLine = (path: string) => SourcemapLine | undefined;
 
 const INDENTATION = '  ';
 const formatRawValue = (value: string, indent: string): string => {
@@ -192,10 +149,10 @@ function isRuleVisible(
 function* getRuleLogs(
   rules: RuleResult[],
   sourcemapReaders: {
-    before: SourcemapReaderFindLine;
-    after: SourcemapReaderFindLine;
+    before: SourcemapReaderLine;
+    after: SourcemapReaderLine;
   },
-  options: SourcemapOptions & {
+  options: GetSourcemapOptions & {
     verbose: boolean;
   }
 ) {
@@ -273,7 +230,7 @@ export function* terminalChangelog(
     results: RuleResult[];
     diffs: ObjectDiff[];
   },
-  options: SourcemapOptions & {
+  options: GetSourcemapOptions & {
     path: string;
     check: boolean;
     inCi: boolean;
@@ -375,10 +332,10 @@ function* getEndpointLogs(
   specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
   endpointChange: Endpoint,
   sourcemapReaders: {
-    before: SourcemapReaderFindLine;
-    after: SourcemapReaderFindLine;
+    before: SourcemapReaderLine;
+    after: SourcemapReaderLine;
   },
-  options: SourcemapOptions & {
+  options: GetSourcemapOptions & {
     verbose: boolean;
     check: boolean;
     severity: Severity;
@@ -455,10 +412,10 @@ function* getResponseChangeLogs(
   response: Response,
   statusCode: string,
   sourcemapReaders: {
-    before: SourcemapReaderFindLine;
-    after: SourcemapReaderFindLine;
+    before: SourcemapReaderLine;
+    after: SourcemapReaderLine;
   },
-  options: SourcemapOptions & {
+  options: GetSourcemapOptions & {
     verbose: boolean;
   }
 ) {
@@ -502,10 +459,10 @@ function* getRequestChangeLogs(
   specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
   request: Endpoint['request'],
   sourcemapReaders: {
-    before: SourcemapReaderFindLine;
-    after: SourcemapReaderFindLine;
+    before: SourcemapReaderLine;
+    after: SourcemapReaderLine;
   },
-  options: SourcemapOptions & {
+  options: GetSourcemapOptions & {
     verbose: boolean;
   }
 ) {
@@ -537,10 +494,10 @@ function* getBodyChangeLogs(
   body: Body,
   key: string,
   sourcemapReaders: {
-    before: SourcemapReaderFindLine;
-    after: SourcemapReaderFindLine;
+    before: SourcemapReaderLine;
+    after: SourcemapReaderLine;
   },
-  options: SourcemapOptions & {
+  options: GetSourcemapOptions & {
     verbose: boolean;
     shouldRenderChildDiffs?: boolean;
   }
@@ -565,10 +522,10 @@ function* getBodyChangeLogs(
 function* getBodyDetailLogs(
   body: Body,
   sourcemapReaders: {
-    before: SourcemapReaderFindLine;
-    after: SourcemapReaderFindLine;
+    before: SourcemapReaderLine;
+    after: SourcemapReaderLine;
   },
-  options: SourcemapOptions & {
+  options: GetSourcemapOptions & {
     verbose: boolean;
     shouldRenderChildDiffs?: boolean;
   }
@@ -621,10 +578,10 @@ function* getParameterLogs(
   parameterType: 'query' | 'cookie' | 'path' | 'header',
   diffByName: Record<string, { diffs: Diff[]; rules: RuleResult[] }>,
   sourcemapReaders: {
-    before: SourcemapReaderFindLine;
-    after: SourcemapReaderFindLine;
+    before: SourcemapReaderLine;
+    after: SourcemapReaderLine;
   },
-  options: SourcemapOptions & {
+  options: GetSourcemapOptions & {
     verbose: boolean;
   }
 ) {
