@@ -32,7 +32,11 @@ const DefaultOpticCliConfig: OpticCliConfig = {
   ruleset: undefined,
   isAuthenticated: false,
   client: createOpticClient('no_token'),
-  isInCi: process.env.CI === 'true',
+  isInCi:
+    process.env.CI === 'true' ||
+    process.env.CI === '1' ||
+    process.env.CI === 'yes' ||
+    process.env.CI === 'y',
 };
 
 const RequestSend = Type.Object({
