@@ -1,8 +1,5 @@
 import yaml from 'yaml';
-import {
-  createOpticConfig,
-  updateOpticConfig,
-} from '../../utils/write-optic-config';
+import { updateOpticConfig } from '../../utils/write-optic-config';
 import { OpticCliConfig } from '../../config';
 
 export async function initCaptureConfig(
@@ -19,16 +16,8 @@ export async function initCaptureConfig(
     console.log('');
     return;
   }
-  const configPath = config.configPath
-    ? config.configPath
-    : await createOpticConfig(config.root, 'capture', {});
 
-  try {
-    await updateOpticConfig(parsedExample, oasFile, configPath);
-    return configPath;
-  } catch (err) {
-    throw err;
-  }
+  return updateOpticConfig(parsedExample, oasFile, config);
 }
 
 // returns a complete Capture block example
