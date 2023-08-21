@@ -55,7 +55,7 @@ ${skipConfigUpdate ? `${oasFile}:` : ''}
     run:
       # 🔧 Specify a command that will generate traffic
       command: your-test-command
-      # 🔧 Ensure your command uses the OPTIC_PROXY environment variable. This ensures test traffic is hit
+      # 🔧 OPTIC_PROXY is added to your command's env and contains the URL of an Optic's local reverse proxy. Your command should send its requests to this URL.
       proxy_variable: OPTIC_PROXY
     # 🔧 Or instead, craft requests for Optic send to your server
     send:
