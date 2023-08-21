@@ -146,7 +146,11 @@ const getCaptureAction =
       return;
     }
 
-    trackEvent('optic.capture.start');
+    trackEvent('optic.capture.start', {
+      input: options.har ? 'har' : options.postman ? 'postman' : 'capture',
+      mode: options.update ?? 'verify',
+      isInCi: config.isInCi,
+    });
 
     const trafficDirectory = await setup(filePath);
     logger.debug(`Writing captured traffic to ${trafficDirectory}`);
@@ -413,6 +417,7 @@ const getCaptureAction =
       interactionCount: totalInteractions,
       endpointsAdded,
       endpointsUpdated: options.update ? endpointCounts.total : 0,
+      isInCi: config.isInCi,
     });
 
     if (options.upload) {
