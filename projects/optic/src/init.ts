@@ -171,9 +171,7 @@ export const initCli = async (
   registerSpecPush(specSubcommands, cliConfig);
   registerSpecAddApiUrl(specSubcommands, cliConfig);
 
-  const ciSubcommands = cli
-    .command('ci', { hidden: true })
-    .addHelpCommand(false);
+  const ciSubcommands = cli.command('ci').addHelpCommand(false);
   registerCiComment(ciSubcommands, cliConfig);
   registerCiSetup(ciSubcommands, cliConfig);
 
