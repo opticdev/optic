@@ -404,6 +404,7 @@ const getCaptureAction =
     }
     trackEvent('optic.capture.completed', {
       input: options.har ? 'har' : options.postman ? 'postman' : 'capture',
+      mode: options.update ?? 'verify',
       serverUrl,
       captureCmd: captureConfig?.requests.run?.command ?? null,
       captureRequests: captureConfig?.requests.send?.length ?? 0,
