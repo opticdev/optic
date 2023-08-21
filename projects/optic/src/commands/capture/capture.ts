@@ -146,6 +146,8 @@ const getCaptureAction =
       return;
     }
 
+    trackEvent('optic.capture.start');
+
     const trafficDirectory = await setup(filePath);
     logger.debug(`Writing captured traffic to ${trafficDirectory}`);
     let spec = await loadSpec(filePath, config, {
