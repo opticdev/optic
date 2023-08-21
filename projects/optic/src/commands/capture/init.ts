@@ -17,64 +17,63 @@ export async function initCaptureConfig(
   }
   logger.info(`Writing capture config to ${opticConfigPath}`);
   try {
-    await updateOpticConfig(parsedExample, opticConfigPath);
+    await updateOpticConfig(parsedExample, oasFile, opticConfigPath);
   } catch (err) {
     throw err;
   }
 }
+// # Configures the 'optic capture' flow. View the documentation for details about how capture works: https://www.useoptic.com/docs/capturing-traffic
 
 // returns a complete Capture block example
 export function captureConfigExample(oasFile: string) {
   return `
-    # Configures the 'optic capture' flow. View the documentation for details about how capture works: https://www.useoptic.com/docs/capturing-traffic
-    capture:
-      ${oasFile}:
-        server:
-          # The command to run your server.
-          # Optional: If omitted, Optic assumes the server is running or started elsewhere.
-          command: your-server-command
-          # The url where your server can be reached once running.
-          # Required: Can be overridden with '--server-override'.
-          url: http://localhost:8080
-          # A readiness endpoint for Optic to validate before sending requests.
-          # Optional: If omitted, perform no readiness checking.
+    ${oasFile}:
+      server:
+        # The command to run your server.
+        # Optional: If omitted, Optic assumes the server is running or started elsewhere.
+        command: your-server-command
+        # The url where your server can be reached once running.
+        # Required: Can be overridden with '--server-override'.
+        url: http://localhost:8080
+        # A readiness endpoint for Optic to validate before sending requests.
+        # Optional: If omitted, perform no readiness checking.
 
-          ready_endpoint: /
-          # The interval to check 'ready_endpoint', in ms.
-          # Optional: default: 1000
-          ready_interval: 1000
-          # The length of time in ms to wait for a successful ready check to occur.
-          # Optional: default: 10_000, 10 seconds
-          ready_timeout: 10_000
-        # At least one of 'requests.run' or 'requests.send' is required below.
-        requests:
-          # Run a command to generate traffic. Requests should be sent to the Optic proxy, the address of which is injected
-          # into 'run.command's env as OPTIC_PROXY or the value of 'run.proxy_variable', if set.
-          run:
-            # The command that will generate traffic to the Optic proxy. Globbing with '*' is supported.
-            # Required if specifying 'requests.run'.
-            command: your-test-command
-            # The name of the environment variable injected into the env of the command that contains the address of the Optic proxy.
-            # Optional: default: OPTIC_PROXY
-            proxy_variable: OPTIC_PROXY
-          # Have Optic generate traffic to the proxy itself by specifying endpoint details. A request's 'data' attribute
-          # is converted to JSON and sent along with the request.
-          send:
-            # path: Required
-            # method: Optional: default: GET
-            # data: Optional: If omitted on a POST request, default: {}
-            # headers: Optional: If 'content-type' is omitted, it is set to 'application/json;charset=UTF-8'.
-            - path: /
-              method: GET
-            - path: /users/create
-              method: POST
-              headers:
-                content-type: application/json;charset=UTF-8
-              data:
-                name: Hank
-        config:
-          # The number of parallel requests to make when using 'requests.send'.
-          # Optional: default: 4
-          request_concurrency: 4
+        ready_endpoint: /
+        # The interval to check 'ready_endpoint', in ms.
+        # Optional: default: 1000
+        ready_interval: 1000
+        # The length of time in ms to wait for a successful ready check to occur.
+        # Optional: default: 10_000, 10 seconds
+        ready_timeout: 10_000
+      # At least one of 'requests.run' or 'requests.send' is required below.
+      requests:
+        # Run a command to generate traffic. Requests should be sent to the Optic proxy, the address of which is injected
+        # into 'run.command's env as OPTIC_PROXY or the value of 'run.proxy_variable', if set.
+        run:
+          # The command that will generate traffic to the Optic proxy. Globbing with '*' is supported.
+          # Required if specifying 'requests.run'.
+          command: your-test-command
+          # The name of the environment variable injected into the env of the command that contains the address of the Optic proxy.
+          # Optional: default: OPTIC_PROXY
+          proxy_variable: OPTIC_PROXY
+        # Have Optic generate traffic to the proxy itself by specifying endpoint details. A request's 'data' attribute
+        # is converted to JSON and sent along with the request.
+        send:
+          # path: Required
+          # method: Optional: default: GET
+          # data: Optional: If omitted on a POST request, default: {}
+          # headers: Optional: If 'content-type' is omitted, it is set to 'application/json;charset=UTF-8'.
+          - path: /
+            method: GET
+          - path: /users/create
+            method: POST
+            headers:
+              content-type: application/json;charset=UTF-8
+            data:
+              name: Hank
+      config:
+        # The number of parallel requests to make when using 'requests.send'.
+        # Optional: default: 4
+        request_concurrency: 4
   `;
 }

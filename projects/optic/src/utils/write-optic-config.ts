@@ -10,9 +10,7 @@ export async function createOpticConfig(
   const opticYmlPath = path.join(filePath, 'optic.yml');
   const opticYml = new yaml.Document();
   opticYml.set(key, value);
-  await fs.writeFile(opticYmlPath, opticYml.toString()).catch((err) => {
-    throw err;
-  });
+  await fs.writeFile(opticYmlPath, opticYml.toString());
   return opticYmlPath;
 }
 
@@ -20,6 +18,7 @@ export async function createOpticConfig(
 // key already exists in the Optic config, it is overwritten.
 export async function updateOpticConfig(
   newDocument: yaml.Document.Parsed,
+  filePath: string,
   opticConfigPath: string
 ) {
   try {
@@ -27,10 +26,14 @@ export async function updateOpticConfig(
       await fs.readFile(opticConfigPath, 'utf8')
     );
 
-    // the assumption is that the document being merged only has a single top-level key
-    // so we take the first index
-    const topLevelKey = Object.keys(newDocument.toJSON())[0];
-    opticYml.set(topLevelKey, newDocument.get(topLevelKey));
+    if (!opticYml.has('capture')) {
+      opticYml.set('capture', {});
+    }
+
+    (opticYml.get('capture') as yaml.Document.Parsed).set(
+      filePath,
+      newDocument.get(filePath)
+    );
 
     await fs.writeFile(opticConfigPath, opticYml.toString());
   } catch (err) {

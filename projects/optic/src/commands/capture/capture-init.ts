@@ -38,19 +38,6 @@ export function initCommand(config: OpticCliConfig): Command {
 
       const relativeOasFile = resolveRelativePath(config.root, specPath);
 
-      // if there is already a specific capture config for the oas file specified call that out and do nothing
-      if (
-        config.capture &&
-        config.capture?.[relativeOasFile] &&
-        !options.stdout
-      ) {
-        logger.warn(
-          `optic.yml already contains a capture config for the file ${relativeOasFile}. This command would overwrite the existing configuration. Make changes manually, or view a sample capture configuration with: \`optic capture init optic.yml --stdout\``
-        );
-        process.exitCode = 1;
-        return;
-      }
-
       try {
         await initCaptureConfig(
           relativeOasFile,
