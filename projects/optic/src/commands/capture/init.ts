@@ -48,15 +48,13 @@ export function captureConfigExample(oasFile: string) {
 
       # 🔧 Specify either 'requests.run' or 'requests.send' to generate requests to hit your server
       requests:
-        # Run a command to generate traffic. 
         # ℹ️ Requests should be sent to the Optic proxy, the address of which is injected into 'run.command's env as OPTIC_PROXY (or the value of 'run.proxy_variable').
         run:
+          # 🔧 Specify a command that will generate traffic
           command: your-test-command
-          # The name of the environment variable injected into the env of the command that contains the address of the Optic proxy.
-          # Optional: default: OPTIC_PROXY
+          # 🔧 Ensure your command uses the OPTIC_PROXY environment variable. This ensures test traffic is hit
           proxy_variable: OPTIC_PROXY
-        # Have Optic generate traffic to the proxy itself by specifying endpoint details. A request's 'data' attribute
-        # is converted to JSON and sent along with the request.
+        # 🔧 Or instead, craft requests for Optic send to your server
         send:
           - path: /
             method: GET
