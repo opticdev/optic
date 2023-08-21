@@ -32,7 +32,8 @@ const checkIsInCi = (): boolean => {
     lowerCase === 'true' ||
     lowerCase === '1' ||
     lowerCase === 'yes' ||
-    lowerCase === 'y'
+    lowerCase === 'y' ||
+    lowerCase === 'on'
   );
 };
 
