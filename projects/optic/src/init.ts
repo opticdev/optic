@@ -158,16 +158,22 @@ export const initCli = async (
   registerRulesetUpload(rulesetSubcommands, cliConfig);
   registerRulesetInit(rulesetSubcommands, cliConfig);
 
-  const apiSubcommands = cli.command('api', { hidden: true }).addHelpCommand(false);
+  const apiSubcommands = cli
+    .command('api', { hidden: true })
+    .addHelpCommand(false);
   registerApiAdd(apiSubcommands, cliConfig);
   registerApiCreate(apiSubcommands, cliConfig);
   registerApiList(apiSubcommands, cliConfig);
 
-  const specSubcommands = cli.command('spec', { hidden: true }).addHelpCommand(false);
+  const specSubcommands = cli
+    .command('spec', { hidden: true })
+    .addHelpCommand(false);
   registerSpecPush(specSubcommands, cliConfig);
   registerSpecAddApiUrl(specSubcommands, cliConfig);
 
-  const ciSubcommands = cli.command('ci', { hidden: true }).addHelpCommand(false);
+  const ciSubcommands = cli
+    .command('ci', { hidden: true })
+    .addHelpCommand(false);
   registerCiComment(ciSubcommands, cliConfig);
   registerCiSetup(ciSubcommands, cliConfig);
 
