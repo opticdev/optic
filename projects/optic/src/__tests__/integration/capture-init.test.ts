@@ -54,4 +54,16 @@ describe('capture init', () => {
       await fs.readFile(path.join(workspace, 'optic.yml'), 'utf-8')
     ).toMatchSnapshot();
   });
+
+  test('init with --stdout', async () => {
+    const workspace = await setupWorkspace('capture-init/no-yml', {
+      repo: true,
+    });
+    const { combined, code } = await runOptic(
+      workspace,
+      'capture init abc.yml --stdout'
+    );
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(code).toBe(0);
+  });
 });
