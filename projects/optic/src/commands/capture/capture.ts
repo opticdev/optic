@@ -38,6 +38,7 @@ import { getSpinner } from '../../utils/spinner';
 import { flushEvents, trackEvent } from '../../segment';
 import { getOpticUrlDetails } from '../../utils/cloud-urls';
 import sortBy from 'lodash.sortby';
+import * as Git from '../../utils/git-utils';
 
 const indent = (n: number) => '  '.repeat(n);
 
@@ -145,6 +146,12 @@ const getCaptureAction =
       await captureV1(filePath, targetUrl, config, command);
       return;
     }
+
+    trackEvent('optic.capture.start', {
+      input: options.har ? 'har' : options.postman ? 'postman' : 'capture',
+      mode: options.update ?? 'verify',
+      isInCi: config.isInCi,
+    });
 
     const trafficDirectory = await setup(filePath);
     logger.debug(`Writing captured traffic to ${trafficDirectory}`);
@@ -402,14 +409,27 @@ const getCaptureAction =
       logger.info();
       logger.info(`${unmatchedInteractions} unmatched requests`);
     }
+    const maybeOrigin =
+      config.vcs?.type === VCS.Git ? await Git.guessRemoteOrigin() : null;
+    const relativePath = path.relative(config.root, path.resolve(filePath));
+
     trackEvent('optic.capture.completed', {
       input: options.har ? 'har' : options.postman ? 'postman' : 'capture',
+      mode: options.update ?? 'verify',
       serverUrl,
       captureCmd: captureConfig?.requests.run?.command ?? null,
       captureRequests: captureConfig?.requests.send?.length ?? 0,
       interactionCount: totalInteractions,
       endpointsAdded,
       endpointsUpdated: options.update ? endpointCounts.total : 0,
+      isInCi: config.isInCi,
+      upload: options.upload,
+      ...(maybeOrigin?.web_url
+        ? {
+            webUrlAndPath: `${maybeOrigin.web_url}.${relativePath}`,
+            webUrl: maybeOrigin.web_url,
+          }
+        : {}),
     });
 
     if (options.upload) {
