@@ -1,10 +1,11 @@
 import { Command } from 'commander';
 
-import { createOpticConfig } from '../../utils/write-optic-config';
 import { initCaptureConfig } from './init';
 import { logger } from '../../logger';
 import { OpticCliConfig } from '../../config';
 import { resolveRelativePath } from '../../utils/capture';
+import path from 'path';
+import chalk from 'chalk';
 
 type CaptureInitActionOptions = {
   stdout: boolean;
@@ -26,35 +27,36 @@ export function initCommand(config: OpticCliConfig): Command {
     )
     .action(async (specPath) => {
       const options: CaptureInitActionOptions = command.opts();
-      if (!config.configPath && !options.stdout) {
-        try {
-          config.configPath = await createOpticConfig(
-            config.root,
-            'capture',
-            {}
-          );
-        } catch (err) {
-          logger.error(err);
-          process.exitCode = 1;
-          return;
-        }
-      }
 
       const relativeOasFile = resolveRelativePath(config.root, specPath);
+      let configPath: string | undefined = undefined;
+      if (config.capture?.[relativeOasFile] && !options.stdout) {
+        logger.error(
+          `optic.yml already contains a capture config for the file ${relativeOasFile}. This command would overwrite the existing configuration. Make changes manually, or view a sample capture configuration with: \`optic capture init optic.yml --stdout\``
+        );
+        process.exitCode = 1;
+        return;
+      }
 
       try {
-        await initCaptureConfig(
+        configPath = await initCaptureConfig(
           relativeOasFile,
           options.stdout,
-          config.configPath!
+          config
         );
       } catch (err) {
         logger.error(err);
         process.exitCode = 1;
+        return;
       }
-      if (!options.stdout) {
-        // TODO set relative path here
-        logger.info(`Wrote capture config to ${config.configPath}`);
+
+      if (configPath) {
+        logger.info(
+          `${chalk.green('✔')} Wrote capture config to ${path.relative(
+            process.cwd(),
+            configPath
+          )}`
+        );
         logger.info('');
         logger.info(`Next:`);
         logger.info(`- Edit the configuration to match your setup (🔧)`);
@@ -62,7 +64,7 @@ export function initCommand(config: OpticCliConfig): Command {
           `    A full reference for the configuration can be found at https://www.useoptic.com/docs/capturing-traffic#configuration-reference`
         );
         logger.info(
-          `- Then run: optic capture ${relativeOasFile} --update interaction`
+          `- Then run: optic capture ${relativeOasFile} --update interaction `
         );
       }
     });

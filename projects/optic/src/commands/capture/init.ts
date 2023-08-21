@@ -1,11 +1,15 @@
 import yaml from 'yaml';
-import { updateOpticConfig } from '../../utils/write-optic-config';
+import {
+  createOpticConfig,
+  updateOpticConfig,
+} from '../../utils/write-optic-config';
+import { OpticCliConfig } from '../../config';
 
 export async function initCaptureConfig(
   oasFile: string,
   skipConfigUpdate: boolean,
-  opticConfigPath: string
-) {
+  config: OpticCliConfig
+): Promise<string | undefined> {
   const captureExample = captureConfigExample(oasFile);
   const parsedExample = yaml.parseDocument(captureExample);
 
@@ -15,8 +19,13 @@ export async function initCaptureConfig(
     console.log('');
     return;
   }
+  const configPath = config.configPath
+    ? config.configPath
+    : await createOpticConfig(config.root, 'capture', {});
+
   try {
-    await updateOpticConfig(parsedExample, oasFile, opticConfigPath);
+    await updateOpticConfig(parsedExample, oasFile, configPath);
+    return configPath;
   } catch (err) {
     throw err;
   }
