@@ -25,16 +25,10 @@ export async function updateOpticConfig(
     let opticYml = yaml.parseDocument(
       await fs.readFile(opticConfigPath, 'utf8')
     );
-
     if (!opticYml.has('capture')) {
       opticYml.set('capture', {});
     }
-
-    (opticYml.get('capture') as yaml.Document.Parsed).set(
-      filePath,
-      newDocument.get(filePath)
-    );
-
+    opticYml.setIn(['capture', filePath], newDocument);
     await fs.writeFile(opticConfigPath, opticYml.toString());
   } catch (err) {
     throw err;
