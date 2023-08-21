@@ -1,0 +1,156 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`capture init init with --stdout 1`] = `
+"capture:
+  abc.yml:
+    server:
+      # 🔧 Update this to the command to run your server.
+      # Optional: If omitted, Optic assumes the server is running or started elsewhere.
+      command: your-server-command
+      # 🔧 Update this url to where your server can be reached.
+      # Required: Can be overridden with '--server-override'.
+      url: http://localhost:8080
+      # 🔧 Update the readiness endpoint for Optic to validate before sending requests.
+      # Optional: If omitted, perform no readiness checking.
+      ready_endpoint: /
+
+    # 🔧 Specify either 'requests.run' or 'requests.send' to generate requests to hit your server
+    requests:
+      # ℹ️ Requests should be sent to the Optic proxy, the address of which is injected into 'run.command's env as OPTIC_PROXY (or the value of 'run.proxy_variable').
+      run:
+        # 🔧 Specify a command that will generate traffic
+        command: your-test-command
+        # 🔧 OPTIC_PROXY is added to your command's env and contains the URL of an Optic's local reverse proxy. Your command should send its requests to this URL.
+        proxy_variable: OPTIC_PROXY
+      # 🔧 Or instead, craft requests for Optic send to your server
+      send:
+        - path: /
+          method: GET
+        - path: /users/create
+          method: POST
+          headers:
+            content-type: application/json;charset=UTF-8
+          data:
+            name: Hank
+
+
+"
+`;
+
+exports[`capture init init with existing optic.yml 1`] = `
+"[32m✔[39m Wrote capture config to optic.yml
+
+Next:
+- Edit the configuration to match your setup (🔧)
+    A full reference for the configuration can be found at https://www.useoptic.com/docs/capturing-traffic#configuration-reference
+- Then run: optic capture abc.yml --update interaction 
+"
+`;
+
+exports[`capture init init with existing optic.yml 2`] = `
+"ruleset:
+  - breaking-changes
+  - naming:
+      pathComponents: camelCase
+  - '@org/custom-ruleset'
+  - ./rules/local.js
+capture:
+  openapi.yml:
+    server:
+      command: node server.js
+      url: http://localhost:3000
+      ready_endpoint: /healthcheck
+    requests:
+      send:
+        - path: /
+        - path: /books
+          method: GET
+        - path: /books/asd
+          method: GET
+        - path: /books/def
+          method: GET
+        - path: /books/asd
+          method: POST
+          data:
+            name: asd
+            price: 1
+            author_id: 6nTxAFM5ck4Hob77hGQoL
+        - path: /authors
+          method: GET
+  abc.yml:
+    server:
+      # 🔧 Update this to the command to run your server.
+      # Optional: If omitted, Optic assumes the server is running or started elsewhere.
+      command: your-server-command
+      # 🔧 Update this url to where your server can be reached.
+      # Required: Can be overridden with '--server-override'.
+      url: http://localhost:8080
+      # 🔧 Update the readiness endpoint for Optic to validate before sending requests.
+      # Optional: If omitted, perform no readiness checking.
+      ready_endpoint: /
+
+    # 🔧 Specify either 'requests.run' or 'requests.send' to generate requests to hit your server
+    requests:
+      # ℹ️ Requests should be sent to the Optic proxy, the address of which is injected into 'run.command's env as OPTIC_PROXY (or the value of 'run.proxy_variable').
+      run:
+        # 🔧 Specify a command that will generate traffic
+        command: your-test-command
+        # 🔧 OPTIC_PROXY is added to your command's env and contains the URL of an Optic's local reverse proxy. Your command should send its requests to this URL.
+        proxy_variable: OPTIC_PROXY
+      # 🔧 Or instead, craft requests for Optic send to your server
+      send:
+        - path: /
+          method: GET
+        - path: /users/create
+          method: POST
+          headers:
+            content-type: application/json;charset=UTF-8
+          data:
+            name: Hank
+"
+`;
+
+exports[`capture init init with no optic.yml 1`] = `
+"[32m✔[39m Wrote capture config to optic.yml
+
+Next:
+- Edit the configuration to match your setup (🔧)
+    A full reference for the configuration can be found at https://www.useoptic.com/docs/capturing-traffic#configuration-reference
+- Then run: optic capture abc.yml --update interaction 
+"
+`;
+
+exports[`capture init init with no optic.yml 2`] = `
+"capture:
+  abc.yml:
+    server:
+      # 🔧 Update this to the command to run your server.
+      # Optional: If omitted, Optic assumes the server is running or started elsewhere.
+      command: your-server-command
+      # 🔧 Update this url to where your server can be reached.
+      # Required: Can be overridden with '--server-override'.
+      url: http://localhost:8080
+      # 🔧 Update the readiness endpoint for Optic to validate before sending requests.
+      # Optional: If omitted, perform no readiness checking.
+      ready_endpoint: /
+
+    # 🔧 Specify either 'requests.run' or 'requests.send' to generate requests to hit your server
+    requests:
+      # ℹ️ Requests should be sent to the Optic proxy, the address of which is injected into 'run.command's env as OPTIC_PROXY (or the value of 'run.proxy_variable').
+      run:
+        # 🔧 Specify a command that will generate traffic
+        command: your-test-command
+        # 🔧 OPTIC_PROXY is added to your command's env and contains the URL of an Optic's local reverse proxy. Your command should send its requests to this URL.
+        proxy_variable: OPTIC_PROXY
+      # 🔧 Or instead, craft requests for Optic send to your server
+      send:
+        - path: /
+          method: GET
+        - path: /users/create
+          method: POST
+          headers:
+            content-type: application/json;charset=UTF-8
+          data:
+            name: Hank
+"
+`;

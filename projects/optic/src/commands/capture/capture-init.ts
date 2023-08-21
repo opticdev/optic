@@ -1,10 +1,15 @@
 import { Command } from 'commander';
 
-import { createOpticConfig } from '../../utils/write-optic-config';
 import { initCaptureConfig } from './init';
 import { logger } from '../../logger';
 import { OpticCliConfig } from '../../config';
 import { resolveRelativePath } from '../../utils/capture';
+import path from 'path';
+import chalk from 'chalk';
+
+type CaptureInitActionOptions = {
+  stdout: boolean;
+};
 
 export function initCommand(config: OpticCliConfig): Command {
   const command = new Command('init');
@@ -21,30 +26,12 @@ export function initCommand(config: OpticCliConfig): Command {
       false
     )
     .action(async (specPath) => {
-      const options = command.opts();
-      if (!config.configPath && !options.stdout) {
-        try {
-          config.configPath = await createOpticConfig(
-            config.root,
-            'capture',
-            {}
-          );
-        } catch (err) {
-          logger.error(err);
-          process.exitCode = 1;
-          return;
-        }
-      }
+      const options: CaptureInitActionOptions = command.opts();
 
       const relativeOasFile = resolveRelativePath(config.root, specPath);
-
-      // if there is already a specific capture config for the oas file specified call that out and do nothing
-      if (
-        config.capture &&
-        config.capture?.[relativeOasFile] &&
-        !options.stdout
-      ) {
-        logger.warn(
+      let configPath: string | undefined = undefined;
+      if (config.capture?.[relativeOasFile] && !options.stdout) {
+        logger.error(
           `optic.yml already contains a capture config for the file ${relativeOasFile}. This command would overwrite the existing configuration. Make changes manually, or view a sample capture configuration with: \`optic capture init optic.yml --stdout\``
         );
         process.exitCode = 1;
@@ -52,16 +39,34 @@ export function initCommand(config: OpticCliConfig): Command {
       }
 
       try {
-        await initCaptureConfig(
+        configPath = await initCaptureConfig(
           relativeOasFile,
-          options.stdout!,
-          config.configPath!
+          options.stdout,
+          config
         );
       } catch (err) {
         logger.error(err);
         process.exitCode = 1;
+        return;
       }
-      return;
+
+      if (configPath) {
+        logger.info(
+          `${chalk.green('✔')} Wrote capture config to ${path.relative(
+            process.cwd(),
+            configPath
+          )}`
+        );
+        logger.info('');
+        logger.info(`Next:`);
+        logger.info(`- Edit the configuration to match your setup (🔧)`);
+        logger.info(
+          `    A full reference for the configuration can be found at https://www.useoptic.com/docs/capturing-traffic#configuration-reference`
+        );
+        logger.info(
+          `- Then run: optic capture ${relativeOasFile} --update interaction `
+        );
+      }
     });
 
   return command;
