@@ -418,6 +418,7 @@ const getCaptureAction =
       endpointsAdded,
       endpointsUpdated: options.update ? endpointCounts.total : 0,
       isInCi: config.isInCi,
+      upload: options.upload,
     });
 
     if (options.upload) {
