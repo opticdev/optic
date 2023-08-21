@@ -25,6 +25,18 @@ export const USER_CONFIG_PATH =
     ? path.join(USER_CONFIG_DIR, 'config.local.json')
     : path.join(USER_CONFIG_DIR, 'config.json');
 
+const checkIsInCi = (): boolean => {
+  const lowerCase = process.env.CI?.toLowerCase();
+
+  return (
+    lowerCase === 'true' ||
+    lowerCase === '1' ||
+    lowerCase === 'yes' ||
+    lowerCase === 'y' ||
+    lowerCase === 'on'
+  );
+};
+
 const DefaultOpticCliConfig: OpticCliConfig = {
   isDefaultConfig: true,
   root: process.cwd(),
@@ -32,7 +44,7 @@ const DefaultOpticCliConfig: OpticCliConfig = {
   ruleset: undefined,
   isAuthenticated: false,
   client: createOpticClient('no_token'),
-  isInCi: process.env.CI === 'true',
+  isInCi: checkIsInCi(),
 };
 
 const RequestSend = Type.Object({
