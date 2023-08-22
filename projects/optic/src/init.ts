@@ -135,13 +135,13 @@ export const initCli = async (
   oas.addCommand(verifyCommand(cliConfig));
   oas.addCommand(updateCommand());
 
-  cli.addCommand(oas);
+  cli.addCommand(oas, { hidden: true });
 
   // commands for tracking changes with openapi
   cli.addCommand(await newCommand());
-  cli.addCommand(await setupTlsCommand());
-  cli.addCommand(verifyCommand(cliConfig));
-  cli.addCommand(updateCommand());
+  cli.addCommand(await setupTlsCommand(), { hidden: true });
+  cli.addCommand(verifyCommand(cliConfig), { hidden: true });
+  cli.addCommand(updateCommand(), { hidden: true });
 
   registerLint(cli, cliConfig);
   registerDiffAll(cli, cliConfig);
@@ -158,12 +158,16 @@ export const initCli = async (
   registerRulesetUpload(rulesetSubcommands, cliConfig);
   registerRulesetInit(rulesetSubcommands, cliConfig);
 
-  const apiSubcommands = cli.command('api').addHelpCommand(false);
+  const apiSubcommands = cli
+    .command('api', { hidden: true })
+    .addHelpCommand(false);
   registerApiAdd(apiSubcommands, cliConfig);
   registerApiCreate(apiSubcommands, cliConfig);
   registerApiList(apiSubcommands, cliConfig);
 
-  const specSubcommands = cli.command('spec').addHelpCommand(false);
+  const specSubcommands = cli
+    .command('spec', { hidden: true })
+    .addHelpCommand(false);
   registerSpecPush(specSubcommands, cliConfig);
   registerSpecAddApiUrl(specSubcommands, cliConfig);
 
