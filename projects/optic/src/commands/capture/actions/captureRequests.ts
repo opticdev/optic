@@ -51,7 +51,12 @@ function startApp(
   const cmd = commandSplitter(command);
   let app: ChildProcessWithoutNullStreams;
   try {
-    app = spawn(cmd.cmd, cmd.args, { detached: true, cwd: dir, shell: true });
+    app = spawn(cmd.cmd, cmd.args, {
+      detached: true,
+      cwd: dir,
+      shell: true,
+      windowsHide: true,
+    });
   } catch (e) {
     throw new UserError({ message: (e as Error).message });
   }
@@ -204,6 +209,7 @@ async function runRequestsCommand(
       },
       detached: true,
       shell: true,
+      windowsHide: true,
     });
   } catch (e) {
     throw new UserError({ initialError: e as Error });
