@@ -9093,64 +9093,11 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 schema with arrays with p
     "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
   },
   {
-    "description": "update response body: make status null",
-    "diff": {
-      "description": "'status' did not match schema",
-      "example": null,
-      "expectedType": "string",
-      "instancePath": "/data/3/status",
-      "key": "status",
-      "keyword": "type",
-      "kind": "UnmatchedType",
-      "propertyPath": "/properties/data/items/properties/status",
-    },
-    "groupedOperations": [
-      {
-        "intent": "make status null",
-        "operations": [
-          {
-            "op": "replace",
-            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/properties/data/items/properties/status/type",
-            "value": [
-              "string",
-              "null",
-              "null",
-            ],
-          },
-        ],
-      },
-    ],
-    "impact": [
-      "Addition",
-      "BackwardsIncompatible",
-    ],
-    "interaction": {
-      "request": {
-        "body": null,
-        "headers": [],
-        "host": "localhost:3030",
-        "method": "post",
-        "path": "/api/animals",
-        "query": [],
-      },
-      "response": {
-        "body": {
-          "body": "{"data":[{"status":null},{"status":"something-else"},{"status":"another-thing"},{"status":null},{"status":123}]}",
-          "contentType": "application/json",
-          "size": 112,
-        },
-        "headers": [],
-        "statusCode": "200",
-      },
-    },
-    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
-  },
-  {
     "description": "update response body: make status oneOf",
     "diff": {
       "description": "'status' did not match schema",
       "example": 123,
-      "expectedType": "string",
+      "expectedType": "string,null",
       "instancePath": "/data/4/status",
       "key": "status",
       "keyword": "type",
@@ -9172,7 +9119,6 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 schema with arrays with p
               {
                 "type": [
                   "string",
-                  "null",
                   "null",
                 ],
               },
@@ -9233,7 +9179,6 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 schema with arrays with p
                               {
                                 "type": [
                                   "string",
-                                  "null",
                                   "null",
                                 ],
                               },
