@@ -52,7 +52,7 @@ function startApp(
   let app: ChildProcessWithoutNullStreams;
   try {
     app = spawn(cmd.cmd, cmd.args, {
-      detached: true,
+      detached: false,
       cwd: dir,
       shell: true,
       windowsHide: true,
@@ -207,7 +207,7 @@ async function runRequestsCommand(
         ...process.env,
         [proxyVar]: proxyUrl,
       },
-      detached: true,
+      detached: false,
       shell: true,
       windowsHide: true,
     });
