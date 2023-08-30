@@ -50,7 +50,7 @@ exports[`capture init init with --stdout 1`] = `
 
 exports[`capture init init with existing optic.yml 1`] = `
 "[32m✔[39m Wrote capture config to optic.yml
-Run [1moptic capture \${relativeOasFile} --update interactive[22m
+Run [1moptic capture abc.yml --update interactive[22m
 "
 `;
 
@@ -130,7 +130,7 @@ capture:
 
 exports[`capture init init with no optic.yml 1`] = `
 "[32m✔[39m Wrote capture config to optic.yml
-Run [1moptic capture \${relativeOasFile} --update interactive[22m
+Run [1moptic capture abc.yml --update interactive[22m
 "
 `;
 
