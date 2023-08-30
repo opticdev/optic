@@ -18,6 +18,45 @@ export const registerLogin = (cli: Command, config: OpticCliConfig) => {
     .action(errorHandler(getLoginAction(config), { command: 'login' }));
 };
 
+export const handleTokenInput = async (token: string) => {
+  const userConfig = await readUserConfig();
+  const newClient = createOpticClient(token);
+  try {
+    const result = await newClient.verifyToken();
+
+    if (result.user) {
+      alias(result.user.userId);
+      identify(result.user.email);
+      trackEvent('cli.login');
+      await flushEvents();
+    }
+  } catch (e) {
+    console.log(e);
+    logger.error(chalk.red(`An error occurred while verifying your token.`));
+    process.exitCode = 1;
+    return;
+  }
+
+  const base64Token = Buffer.from(token).toString('base64');
+
+  const newConfig = userConfig
+    ? {
+        ...userConfig,
+        token: base64Token,
+      }
+    : {
+        token: base64Token,
+      };
+  await fs.mkdir(path.dirname(USER_CONFIG_PATH), { recursive: true });
+  await fs.writeFile(USER_CONFIG_PATH, JSON.stringify(newConfig), 'utf-8');
+
+  logger.info(
+    chalk.green(
+      `Successfully saved your personal access token to ${USER_CONFIG_PATH}`
+    )
+  );
+};
+
 const getLoginAction = (config: OpticCliConfig) => async () => {
   const userConfig = await readUserConfig();
   if (userConfig?.token) {
@@ -62,39 +101,5 @@ Create an account and generate a personal access token at ${chalk.underline.blue
   }
 
   logger.info(chalk.green(`\nVerifying your token`));
-  const newClient = createOpticClient(response.token);
-  try {
-    const result = await newClient.verifyToken();
-
-    if (result.user) {
-      alias(result.user.userId);
-      identify(result.user.email);
-      trackEvent('cli.login');
-      await flushEvents();
-    }
-  } catch (e) {
-    console.log(e);
-    logger.error(chalk.red(`An error occurred while verifying your token.`));
-    process.exitCode = 1;
-    return;
-  }
-
-  const base64Token = Buffer.from(response.token).toString('base64');
-
-  const newConfig = userConfig
-    ? {
-        ...userConfig,
-        token: base64Token,
-      }
-    : {
-        token: base64Token,
-      };
-  await fs.mkdir(path.dirname(USER_CONFIG_PATH), { recursive: true });
-  await fs.writeFile(USER_CONFIG_PATH, JSON.stringify(newConfig), 'utf-8');
-
-  logger.info(
-    chalk.green(
-      `Successfully saved your personal access token to ${USER_CONFIG_PATH}`
-    )
-  );
+  await handleTokenInput(response.token);
 };
