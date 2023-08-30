@@ -39,11 +39,7 @@ exports[`capture init init with --stdout 1`] = `
 
 exports[`capture init init with existing optic.yml 1`] = `
 "[32m✔[39m Wrote capture config to optic.yml
-
-Next:
-- Edit the configuration to match your setup (🔧)
-    A full reference for the configuration can be found at https://www.useoptic.com/docs/capturing-traffic#configuration-reference
-- Then run: optic capture abc.yml --update interaction 
+Run [1moptic capture \${relativeOasFile} --update interactive[22m
 "
 `;
 
@@ -112,11 +108,7 @@ capture:
 
 exports[`capture init init with no optic.yml 1`] = `
 "[32m✔[39m Wrote capture config to optic.yml
-
-Next:
-- Edit the configuration to match your setup (🔧)
-    A full reference for the configuration can be found at https://www.useoptic.com/docs/capturing-traffic#configuration-reference
-- Then run: optic capture abc.yml --update interaction 
+Run [1moptic capture \${relativeOasFile} --update interactive[22m
 "
 `;
 
