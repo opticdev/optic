@@ -59,7 +59,7 @@ export function initCommand(config: OpticCliConfig): Command {
         );
         logger.info(
           `Run ${chalk.bold(
-            'optic capture ${relativeOasFile} --update interactive'
+            `optic capture ${relativeOasFile} --update interactive`
           )}`
         );
       }
