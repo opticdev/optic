@@ -57,14 +57,10 @@ export function initCommand(config: OpticCliConfig): Command {
             configPath
           )}`
         );
-        logger.info('');
-        logger.info(`Next:`);
-        logger.info(`- Edit the configuration to match your setup (🔧)`);
         logger.info(
-          `    A full reference for the configuration can be found at https://www.useoptic.com/docs/capturing-traffic#configuration-reference`
-        );
-        logger.info(
-          `- Then run: optic capture ${relativeOasFile} --update interaction `
+          `Run ${chalk.bold(
+            'optic capture ${relativeOasFile} --update interactive'
+          )}`
         );
       }
     });
