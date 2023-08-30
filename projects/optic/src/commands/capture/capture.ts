@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { Command, Option } from 'commander';
 import path from 'path';
+import { normalize } from 'crosspath';
 import fs from 'node:fs/promises';
 import fsNonPromise from 'node:fs';
 
@@ -160,7 +161,7 @@ const getCaptureAction =
       denormalize: false,
     });
     const captures = new GroupedCaptures(trafficDirectory, spec.jsonLike);
-    const pathFromRoot = resolveRelativePath(config.root, filePath);
+    const pathFromRoot = normalize(resolveRelativePath(config.root, filePath));
     const captureConfig = config.capture?.[pathFromRoot];
     let serverUrl: string | null = null;
 
