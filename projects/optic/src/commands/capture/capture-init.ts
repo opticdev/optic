@@ -5,6 +5,7 @@ import { logger } from '../../logger';
 import { OpticCliConfig } from '../../config';
 import { resolveRelativePath } from '../../utils/capture';
 import path from 'path';
+import { normalize } from 'crosspath';
 import chalk from 'chalk';
 
 type CaptureInitActionOptions = {
@@ -40,7 +41,7 @@ export function initCommand(config: OpticCliConfig): Command {
 
       try {
         configPath = await initCaptureConfig(
-          relativeOasFile,
+          normalize(relativeOasFile),
           options.stdout,
           config
         );
