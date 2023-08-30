@@ -22,6 +22,12 @@ exports[`capture init init with --stdout 1`] = `
           method: GET
         - path: /orgs/facebook/repos
           method: GET
+        - path: /orgs/opticdev/repos
+          method: GET
+        - path: /orgs/facebook/repos
+          method: GET
+        - path: /orgs/github/repos
+          method: GET
     # When you are ready, set up an actual integration that run your test suite
     # Read reference docs here: https://www.useoptic.com/docs/capturing-traffic#configuration-reference
     # server:
@@ -102,6 +108,12 @@ capture:
           method: GET
         - path: /orgs/facebook/repos
           method: GET
+        - path: /orgs/opticdev/repos
+          method: GET
+        - path: /orgs/facebook/repos
+          method: GET
+        - path: /orgs/github/repos
+          method: GET
     # When you are ready, set up an actual integration that run your test suite
     # Read reference docs here: https://www.useoptic.com/docs/capturing-traffic#configuration-reference
     # server:
@@ -151,6 +163,12 @@ exports[`capture init init with no optic.yml 2`] = `
         - path: /orgs/opticdev/repos
           method: GET
         - path: /orgs/facebook/repos
+          method: GET
+        - path: /orgs/opticdev/repos
+          method: GET
+        - path: /orgs/facebook/repos
+          method: GET
+        - path: /orgs/github/repos
           method: GET
     # When you are ready, set up an actual integration that run your test suite
     # Read reference docs here: https://www.useoptic.com/docs/capturing-traffic#configuration-reference
