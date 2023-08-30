@@ -46,7 +46,7 @@ describe('capture init', () => {
     });
     const { combined, code } = await runOptic(
       workspace,
-      'capture init test\\abc.yml'
+      String.raw`capture init test\\abc.yml`
     );
     expect(
       await fs.readFile(path.join(workspace, 'optic.yml'), 'utf-8')
