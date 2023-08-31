@@ -398,6 +398,7 @@ async function runSpectral(
         '--format=json',
         `--ruleset="${spectralRuleset}"`,
         `--o="${resultsOutput}"`,
+        `--quiet`,
       ],
       { shell: false, cwd: process.cwd(), env: process.env }
     );

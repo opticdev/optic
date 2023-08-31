@@ -3,16 +3,33 @@ import prompts from 'prompts';
 import { OpticCliConfig, readUserConfig, VCS } from '../config';
 import { errorHandler } from '../error-handler';
 import { logger } from '../logger';
-import { getNewTokenUrl } from '../utils/cloud-urls';
+import { getApiFromOpticUrl, getNewTokenUrl } from '../utils/cloud-urls';
 import open from 'open';
-import { createOpticClient } from '../client/optic-backend';
 import { handleTokenInput } from './login/login';
+import { matchSpecCandidates } from './diff/diff-all';
+import { getCurrentBranchName } from '../utils/git-utils';
+import { loadSpec, loadRaw } from '../utils/spec-loaders';
+import type { ParseResult } from '../utils/spec-loaders';
+import { OPTIC_URL_KEY } from '../constants';
+import { checkOpenAPIVersion } from '@useoptic/openapi-io';
+import { getDetailsForGeneration } from '../utils/generated';
+import path from 'path';
+import { OpenAPIV3, sanitizeGitTag } from '@useoptic/openapi-utilities';
+import * as Types from '../client/optic-backend-types';
+import chunk from 'lodash.chunk';
+import { getApiUrl } from '../utils/cloud-urls';
+import { compute } from './diff/compute';
+import { uploadDiff } from './diff/upload-diff';
+import { uploadSpec } from '../utils/cloud-specs';
+import chalk from 'chalk';
 
 const usage = () => `
   optic run
 `;
 
 const helpText = `
+
+
 Example usage:
   Run:
   $ optic run
@@ -25,34 +42,23 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
     .addHelpText('after', helpText)
     .option(
       '--match <match-glob>',
-      'Filter OpenAPI specifications files with this glob pattern.'
+      'Filter local OpenAPI specifications files with this glob pattern.'
     )
     .option(
       '--ignore <ignore-glob>',
-      'Ignore OpenAPI specifications files with this glob pattern.'
+      'Ignore local OpenAPI specifications files with this glob pattern.'
+    )
+    .option(
+      '--base <base-comparison-tag>',
+      'Specify a cloud tag to compare local versions of your OpenAPI specs against. E.g. "gitbranch:main". If unspecified, Optic compare your specs against the latest cloud version if finds tagged with `girbranch:<current-branch>`.'
     )
     .action(errorHandler(getRunAction(config), { command: 'run' }));
 }
 
-// to = current files
-// from = cloud:<x>
-
-/*
- * Check authentication:
- * - CI: valid token or exit 1
- * - interactive mode: logged in or trigger login flow (prompt for token, suggest opening web page to get one)
- * Find all spec files in repository directory (using --match and --ignore). If no spec is found, print links to guides and stop there.
- * Find latest cloud:<git-branch> version for each spec. Default to cloud:default if no spec was found for branch tag (notify user about this somehow). Default to empty spec if not found.
- * Diff + check all specs against cloud version. Use standards if configured.
- * Test specs for which capture is configured.
- * Upload spec versions and cloud run.
- * Report summary for each API: breaking changes, standards, capture tests.
- * Comment on PR if --comment is set
- */
-
 type RunActionOptions = {
   match?: string;
   ignore?: string;
+  base?: string;
 };
 
 async function authenticateIT(config: OpticCliConfig) {
@@ -99,17 +105,248 @@ async function authenticateIT(config: OpticCliConfig) {
 }
 
 async function authenticateCI() {
-  throw new Error('not implemented'); // TODO
+  throw new Error('not implemented'); // TODO CI auth
+}
+
+async function identifyOrCreateApis(
+  config: OpticCliConfig,
+  localSpecPaths: string[]
+) {
+  // TODO: improve logging in getDetailsForGeneration
+  const generatedDetails = await getDetailsForGeneration(config);
+  if (!generatedDetails) throw new Error('Could not determine remote branch'); // TODO: report
+
+  const { web_url, organization_id, default_branch, default_tag } =
+    generatedDetails;
+
+  const pathUrls = new Map<string, string>();
+
+  for await (const specPath of localSpecPaths) {
+    let rawSpec: OpenAPIV3.Document<{}>;
+
+    try {
+      rawSpec = await loadRaw(specPath, config);
+    } catch (e) {
+      console.log('error loading raw', e);
+      continue; // TODO: handle failures
+    }
+
+    try {
+      checkOpenAPIVersion(rawSpec);
+    } catch (e) {
+      console.log('error api version', e);
+      continue; // TODO: handle failures
+    }
+
+    const opticUrl = rawSpec[OPTIC_URL_KEY];
+    const relativePath = path.relative(config.root, path.resolve(specPath));
+    pathUrls.set(relativePath, opticUrl);
+  }
+
+  let apis: (Types.Api | null)[] = [];
+  const chunks = chunk([...pathUrls.keys()], 20);
+  for (const chunk of chunks) {
+    const { apis: apiChunk } = await config.client.getApis(chunk, web_url);
+    apis.push(...apiChunk);
+  }
+
+  for (const api of apis) {
+    if (api) {
+      pathUrls.set(
+        api.path,
+        getApiUrl(config.client.getWebBase(), api.organization_id, api.api_id)
+      );
+    }
+  }
+
+  for (let [path, url] of pathUrls.entries()) {
+    if (!url) {
+      const api = await config.client.createApi(organization_id, {
+        name: path,
+        path,
+        web_url: web_url,
+        default_branch,
+        default_tag,
+      });
+      const url = getApiUrl(
+        config.client.getWebBase(),
+        organization_id,
+        api.id
+      );
+      pathUrls.set(path, url);
+    }
+  }
+
+  return pathUrls;
+}
+
+type SpecReport = {
+  issues?: number;
+  noRemoteSpec?: boolean;
+  path: string;
+  title?: string;
+  error?: string;
+  changelogLink?: string;
+};
+
+// TODO: run lint even the first time a spec is pushed
+function report(
+  options: RunActionOptions,
+  specReports: SpecReport[],
+  branchTag: string
+) {
+  for (const report of specReports) {
+    logger.info(`| ${chalk.bold(report.title)} (${report.path})`);
+    if (report.error) {
+      logger.warn(
+        `| Optic encountered an error handling this specification: ${report.error}`
+      );
+    } else if (report.noRemoteSpec) {
+      if (options.base) {
+        logger.warn(
+          '| No cloud spec with specified base tag was found to compare local spec against.'
+        );
+      } else {
+        logger.info(
+          `| First version pushed to \`${branchTag}\` tag on Optic cloud. Make changes to your spec and run Optic again to see Optic diff your local spec with this latest cloud version.`
+        );
+      }
+    } else {
+      logger.info(
+        (report.issues ?? 0) > 0
+          ? `| ❌ ${report.issues} issue${report.issues! > 1 ? 's' : ''} ${
+              report.issues! > 1 ? 'were' : 'was'
+            } found.`
+          : `| ✅ all checks passed.`
+      );
+      logger.info(`| View report: ${chalk.blue(report.changelogLink)}.`);
+    }
+    logger.info('');
+  }
 }
 
 export const getRunAction =
   (config: OpticCliConfig) => async (options: RunActionOptions) => {
+    // TODO: track using config.userId
     if (config.vcs?.type !== VCS.Git) {
       logger.error(`Error: optic must be called from a git repository.`);
       process.exitCode = 1;
       return;
     }
 
-    // TODO: handle unauthenticated
     config.isInCi ? await authenticateCI() : await authenticateIT(config);
+
+    const match = options.match ?? '**/*.(json|yml|yaml)';
+    const localSpecPaths = await matchSpecCandidates(match, options.ignore);
+    if (!localSpecPaths.length) {
+      logger.info(
+        `Optic couldn't find any OpenAPI specification in your repository${
+          options.match || options.ignore ? ` that matches your criteria` : ''
+        }.`
+      );
+      logger.info('');
+      // TODO: "generate from code" splash page
+      logger.info(`ℹ️  Don't have an OpenAPI file yet? Check our guides on how to generate one:
+- generate from test HTTP traffic: https://www.useoptic.com/docs/capturing-traffic
+- generate from your code: https://www.useoptic.com/docs/generating-openapi/express
+`);
+      return;
+    }
+
+    // TODO: check what happens if we don't have a branch
+    const branch = await getCurrentBranchName();
+    const branchTag = `gitbranch:${branch}`;
+    const baseTag = options.base ?? branchTag;
+
+    const specReports: SpecReport[] = [];
+    const pathUrls = await identifyOrCreateApis(config, localSpecPaths);
+
+    for (const [path, opticUrl] of pathUrls.entries()) {
+      const specReport: SpecReport = { path };
+      specReports.push(specReport);
+
+      let headSpec: ParseResult;
+      try {
+        headSpec = await loadSpec(path, config, {
+          strict: false, // TODO
+          denormalize: true,
+        });
+      } catch (e) {
+        specReport.error = `Invalid specification: ${e}`;
+        continue;
+      }
+
+      specReport.title = headSpec.jsonLike.info.title;
+
+      let baseSpec: ParseResult | undefined = undefined;
+      let specDetails: ReturnType<typeof getApiFromOpticUrl>;
+      try {
+        specDetails = getApiFromOpticUrl(opticUrl);
+      } catch (e) {
+        specReport.error = `Failed to load API from Optic: ${e}`;
+        continue;
+      }
+      if (!specDetails) {
+        specReport.error = `Could not load API form Optic ${opticUrl}`;
+        continue;
+      }
+      try {
+        baseSpec = await loadSpec(
+          `cloud:${specDetails.apiId}@${baseTag}`,
+          config,
+          {
+            strict: false, // TODO
+            denormalize: true,
+          }
+        );
+      } catch (_e) {}
+
+      if (baseSpec && baseSpec.jsonLike['x-optic-ci-empty-spec'] !== true) {
+        const { specResults, /* checks, changelogData, warnings, */ standard } =
+          await compute([baseSpec, headSpec], config, {
+            standard: undefined, // TODO
+            check: true,
+            path,
+          });
+
+        let upload: Awaited<ReturnType<typeof uploadDiff>>;
+        try {
+          upload = await uploadDiff(
+            {
+              from: baseSpec,
+              to: headSpec,
+            },
+            specResults,
+            config,
+            specDetails,
+            {
+              //headTag: options.headTag, TODO
+              standard,
+              silent: true,
+            }
+          );
+        } catch (e) {
+          specReport.error = `Failed to upload run to Optic: ${e}`;
+          continue;
+        }
+        specReport.changelogLink = upload?.changelogUrl;
+        specReport.issues = specResults.results.length;
+      } else {
+        specReport.noRemoteSpec = true;
+
+        try {
+          await uploadSpec(specDetails.apiId, {
+            spec: headSpec,
+            client: config.client,
+            tags: [sanitizeGitTag(branchTag)],
+            orgId: specDetails.orgId,
+          });
+        } catch (e) {
+          specReport.error = `Failed to upload run to Optic: ${e}`;
+          continue;
+        }
+      }
+    }
+
+    report(options, specReports, branchTag);
   };
