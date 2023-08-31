@@ -14,7 +14,7 @@ export async function getDetailsForGeneration(config: OpticCliConfig): Promise<{
   let default_tag: string = 'gitbranch:main';
   const maybeOrigin = await Git.guessRemoteOrigin();
 
-  const message = `Select the organization that your APIs are attached to. In a non interactive environment, use an organization token.`;
+  const message = `Select the organization that your APIs are attached to. Use an organization token to disambiguate in non interactive environments.`;
   const orgRes = await getOrganizationFromToken(config.client, message);
 
   const maybeDefaultBranch = await Git.getDefaultBranchName();
@@ -33,7 +33,7 @@ export async function getDetailsForGeneration(config: OpticCliConfig): Promise<{
   } else if (!maybeOrigin) {
     logger.warn(
       chalk.yellow(
-        'Could not guess the git remote origin - cannot automatically connect untracked apis with optic cloud'
+        'Could not guess the git remote origin - cannot automatically connect apis with optic cloud'
       )
     );
     logger.warn(
@@ -42,9 +42,7 @@ export async function getDetailsForGeneration(config: OpticCliConfig): Promise<{
     return null;
   } else if (!orgRes.ok) {
     logger.error(orgRes.error);
-    logger.error(
-      'skipping automatically connect untracked apis with optic cloud'
-    );
+    logger.error('skipping automatically connect apis with optic cloud');
     return null;
   }
   return null;

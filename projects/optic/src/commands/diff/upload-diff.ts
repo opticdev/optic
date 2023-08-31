@@ -20,6 +20,7 @@ export async function uploadDiff(
   options: {
     headTag?: string;
     standard: ConfigRuleset[];
+    silent?: boolean;
   }
 ): Promise<{
   baseSpecUrl: string | null;
@@ -99,7 +100,8 @@ export async function uploadDiff(
       specDetails.apiId,
       run.id
     );
-    spinner?.succeed(`Uploaded results of diff to ${changelogUrl}`);
+    if (!options.silent)
+      spinner?.succeed(`Uploaded results of diff to ${changelogUrl}`);
 
     return {
       changelogUrl,
@@ -122,7 +124,7 @@ export async function uploadDiff(
               baseSpecId
             ),
     };
-  } else {
+  } else if (!options.silent) {
     const reason = !specDetails
       ? 'no x-optic-url was set on the spec file'
       : config.vcs?.type === VCS.Git
