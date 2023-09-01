@@ -18,7 +18,7 @@ export const registerLogin = (cli: Command, config: OpticCliConfig) => {
     .action(errorHandler(getLoginAction(config), { command: 'login' }));
 };
 
-export const handleTokenInput = async (token: string) => {
+export const handleTokenInput = async (token: string, silent?: boolean) => {
   const userConfig = await readUserConfig();
   const newClient = createOpticClient(token);
   try {
@@ -31,10 +31,12 @@ export const handleTokenInput = async (token: string) => {
       await flushEvents();
     }
   } catch (e) {
-    console.log(e);
-    logger.error(chalk.red(`An error occurred while verifying your token.`));
+    if (!silent) {
+      console.log(e);
+      logger.error(chalk.red(`An error occurred while verifying your token.`));
+    }
     process.exitCode = 1;
-    return;
+    return false;
   }
 
   const base64Token = Buffer.from(token).toString('base64');
@@ -55,6 +57,7 @@ export const handleTokenInput = async (token: string) => {
       `Successfully saved your personal access token to ${USER_CONFIG_PATH}`
     )
   );
+  return true;
 };
 
 const getLoginAction = (config: OpticCliConfig) => async () => {
