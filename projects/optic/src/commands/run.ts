@@ -22,6 +22,7 @@ import { compute } from './diff/compute';
 import { uploadDiff } from './diff/upload-diff';
 import { uploadSpec } from '../utils/cloud-specs';
 import chalk from 'chalk';
+import { trackEvent } from '../segment';
 
 const usage = () => `
   optic run
@@ -97,15 +98,23 @@ async function authenticateIT(config: OpticCliConfig) {
   );
 
   if (!token) {
-    throw new Error('Expected token');
+    return false;
   }
+
+  trackEvent(
+    'optic.run.token_pasted',
+    {
+      isInCi: config.isInCi,
+    },
+    config.userId
+  );
 
   await handleTokenInput(token);
   return true;
 }
 
-async function authenticateCI() {
-  throw new Error('not implemented'); // TODO CI auth
+async function authenticateCI(config: OpticCliConfig) {
+  return config.isAuthenticated;
 }
 
 async function identifyOrCreateApis(
@@ -187,6 +196,11 @@ type SpecReport = {
   title?: string;
   error?: string;
   changelogLink?: string;
+  endpoints?: {
+    added: number;
+    removed: number;
+    changed: number;
+  };
 };
 
 // TODO: run lint even the first time a spec is pushed
@@ -198,9 +212,7 @@ function report(
   for (const report of specReports) {
     logger.info(`| ${chalk.bold(report.title)} (${report.path})`);
     if (report.error) {
-      logger.warn(
-        `| Optic encountered an error handling this specification: ${report.error}`
-      );
+      logger.warn(`| Optic encountered an error: ${report.error}`);
     } else if (report.noRemoteSpec) {
       if (options.base) {
         logger.warn(
@@ -208,7 +220,7 @@ function report(
         );
       } else {
         logger.info(
-          `| First version pushed to \`${branchTag}\` tag on Optic cloud. Make changes to your spec and run Optic again to see Optic diff your local spec with this latest cloud version.`
+          `| First version pushed on Optic cloud with \`${branchTag}\` tag. Make changes to your spec and run again to see Optic diff your spec with this latest uploaded version.`
         );
       }
     } else {
@@ -227,14 +239,32 @@ function report(
 
 export const getRunAction =
   (config: OpticCliConfig) => async (options: RunActionOptions) => {
-    // TODO: track using config.userId
+    trackEvent(
+      'optic.run',
+      {
+        isInCi: config.isInCi,
+      },
+      config.userId
+    );
+
     if (config.vcs?.type !== VCS.Git) {
-      logger.error(`Error: optic must be called from a git repository.`);
+      const error = `Error: optic must be called from a git repository.`;
+      logger.error(error);
+      trackEvent(
+        'optic.run.error',
+        {
+          isInCi: config.isInCi,
+          error,
+        },
+        config.userId
+      );
       process.exitCode = 1;
       return;
     }
 
-    config.isInCi ? await authenticateCI() : await authenticateIT(config);
+    const authentified = config.isInCi
+      ? await authenticateCI(config)
+      : await authenticateIT(config);
 
     const match = options.match ?? '**/*.(json|yml|yaml)';
     const localSpecPaths = await matchSpecCandidates(match, options.ignore);
@@ -246,9 +276,9 @@ export const getRunAction =
       );
       logger.info('');
       // TODO: "generate from code" splash page
-      logger.info(`ℹ️  Don't have an OpenAPI file yet? Check our guides on how to generate one:
-- generate from test HTTP traffic: https://www.useoptic.com/docs/capturing-traffic
-- generate from your code: https://www.useoptic.com/docs/generating-openapi/express
+      logger.info(`ℹ️  Don't have an OpenAPI file yet? Check our guides on how to get one:
+- from your test HTTP traffic: https://www.useoptic.com/docs/capturing-traffic
+- from your code: https://www.useoptic.com/docs/generating-openapi/express
 `);
       return;
     }
@@ -349,4 +379,18 @@ export const getRunAction =
     }
 
     report(options, specReports, branchTag);
+
+    trackEvent(
+      'optic.run.complete',
+      {
+        isInCi: config.isInCi,
+        specs: localSpecPaths.length,
+        failed_specs: specReports.filter((s) => s.error).length,
+        spec_with_design_issues: specReports.filter((s) => s.issues).length,
+        specs_without_remote_on_specified_base: options.base
+          ? specReports.filter((s) => s.noRemoteSpec).length
+          : undefined,
+      },
+      config.userId
+    );
   };
