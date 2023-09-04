@@ -1,8 +1,8 @@
 {
   "name": "@useoptic/rulesets-base",
   "license": "MIT",
-  "packageManager": "yarn@3.6.3",
-  "version": "0.49.9",
+  "packageManager": "yarn@3.6.2",
+  "version": "0.49.7-0",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -20,7 +20,6 @@
     "@stoplight/spectral-rulesets": "^1.14.1",
     "@useoptic/json-pointer-helpers": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
-    "ajv": "^8.6.0",
     "lodash.pick": "^4.4.0",
     "node-fetch": "^2.6.7",
     "semver": "^7.5.4"
@@ -40,5 +39,6 @@
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.0"
-  }
+  },
+  "stableVersion": "0.49.6"
 }

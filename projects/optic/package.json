@@ -1,8 +1,8 @@
 {
   "name": "@useoptic/optic",
   "license": "MIT",
-  "packageManager": "yarn@3.6.3",
-  "version": "0.49.9",
+  "packageManager": "yarn@3.6.2",
+  "version": "0.49.7-0",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -139,5 +139,6 @@
       "node18-win-x64"
     ],
     "outputPath": "../../dist"
-  }
+  },
+  "stableVersion": "0.49.6"
 }
