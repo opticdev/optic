@@ -193,7 +193,7 @@ function matchCandidates(
   return results;
 }
 
-export async function computeAll(
+async function computeAll(
   candidateMap: CandidateMap,
   config: OpticCliConfig,
   options: DiffAllActionOptions
@@ -451,7 +451,7 @@ export async function computeAll(
   };
 }
 
-export type Result = Awaited<ReturnType<typeof compute>> & {
+type Result = Awaited<ReturnType<typeof compute>> & {
   fromParseResults: ParseResult;
   toParseResults: ParseResult;
   from?: string;
@@ -460,7 +460,7 @@ export type Result = Awaited<ReturnType<typeof compute>> & {
   changelogUrl: string | null;
 };
 
-export type Warnings = {
+type Warnings = {
   missingOpticUrl: {
     path: string;
   }[];
