@@ -451,7 +451,7 @@ export async function computeAll(
   };
 }
 
-type Result = Awaited<ReturnType<typeof compute>> & {
+export type Result = Awaited<ReturnType<typeof compute>> & {
   fromParseResults: ParseResult;
   toParseResults: ParseResult;
   from?: string;
@@ -460,7 +460,7 @@ type Result = Awaited<ReturnType<typeof compute>> & {
   changelogUrl: string | null;
 };
 
-type Warnings = {
+export type Warnings = {
   missingOpticUrl: {
     path: string;
   }[];

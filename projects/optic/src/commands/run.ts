@@ -1,6 +1,6 @@
 import { Command, Option } from 'commander';
 import prompts from 'prompts';
-import { OpticCliConfig, readUserConfig, VCS } from '../config';
+import { ConfigRuleset, OpticCliConfig, readUserConfig, VCS } from '../config';
 import { errorHandler } from '../error-handler';
 import { logger } from '../logger';
 import { getApiFromOpticUrl, getNewTokenUrl } from '../utils/cloud-urls';
@@ -15,9 +15,11 @@ import { checkOpenAPIVersion } from '@useoptic/openapi-io';
 import { getDetailsForGeneration } from '../utils/generated';
 import path from 'path';
 import {
+  CompareSpecResults,
   OpenAPIV3,
   RuleResult,
   sanitizeGitTag,
+  Severity,
 } from '@useoptic/openapi-utilities';
 import * as Types from '../client/optic-backend-types';
 import chunk from 'lodash.chunk';
@@ -29,6 +31,14 @@ import chalk from 'chalk';
 import { flushEvents, trackEvent } from '../segment';
 import { BreakingChangesRuleset } from '@useoptic/standard-rulesets';
 import { createOpticClient } from '../client/optic-backend';
+import fs from 'fs';
+import { CommentApi, GithubCommenter } from './ci/comment/comment-api';
+import { CiRunDetails, getDataForCi } from '../utils/ci-data';
+import {
+  COMPARE_SUMMARY_IDENTIFIER,
+  generateCompareSummaryMarkdown,
+} from './ci/comment/common';
+import { GroupedDiffs } from '@useoptic/openapi-utilities/build/openapi3/group-diff';
 
 const usage = () => `
   optic run
@@ -53,15 +63,61 @@ How \`optic run\` works internally:
 - the \`run\` command first identifies OpenAPI specification files in your repository using --match and --ignore.
 - it then searches for the latest cloud uploaded version of each specification to compare it against: tagged with the specified --base tag, or with \`gitbranch:<current-branch>\` if no --base tag is specified.
 - next Optic checks for breaking changes, design issues and implementation mismatches and reports in the console. By default Optic will exit 1 to fail your CI in case issues are detected.
-- next the command uploads the latest local specification versions and run reports to your Optic cloud account with the tag \`gitbranch:<current-branch>\`.`;
+- next the command uploads the latest local specification versions and run reports to your Optic cloud account with the tag \`gitbranch:<current-branch>\`.
+- finally Optic will report in the console, and post a comment to your pull request if the --comment option was used.
+`;
 
 const severities = ['none', 'error'] as const;
 
+function getProvider() {
+  const githubToken = process.env.GITHUB_TOKEN;
+  if (githubToken) return 'github';
+  else return null;
+}
+
+// TODO: support enterprise base url
+async function getGitHubCommenter() {
+  const eventFile = fs.readFileSync(process.env.GITHUB_EVENT_PATH!, 'utf8');
+  const event = JSON.parse(eventFile);
+  const pullRequest = event.pull_request.number;
+  const [owner, repo] = process.env.GITHUB_REPOSITORY!.split('/');
+  const sha = process.env.GITHUB_SHA!;
+  const token = process.env.GITHUB_TOKEN!;
+  const commenter = new GithubCommenter({
+    owner,
+    repo,
+    pullRequest,
+    sha,
+    token,
+  });
+  return commenter;
+}
+
+async function comment(data: CiRunDetails, commenter: CommentApi, sha: string) {
+  const maybeComment: { id: string; body: string } | null =
+    await commenter.getComment(COMPARE_SUMMARY_IDENTIFIER);
+
+  const body = generateCompareSummaryMarkdown({ sha }, data, {
+    verbose: false, // TODO
+  });
+
+  if (maybeComment) {
+    // If there's a comment already, we need to check whether this session newer than the posted comment
+    await commenter.updateComment(maybeComment.id, body);
+  } else {
+    // if does not have comment, we should only comment when there is a completed or failed session
+    if (data.completed.length > 0 || data.failed.length > 0) {
+      await commenter.createComment(body);
+    }
+  }
+}
+
 // TODO:
-// - add comment
-// - add capture
-// - fix broken redirection create account -> new token
+// - support comment for Gitlab
+// - support capture
+// - fix redirection from create account to new token
 // - check userId analytics
+// - support tags option
 export function registerRunCommand(cli: Command, config: OpticCliConfig) {
   cli
     .command('run')
@@ -82,6 +138,10 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
       '--base <base-comparison-tag>',
       'Specify a cloud tag to compare local versions of your OpenAPI specs against. E.g. "gitbranch:main". If unspecified, Optic compare your specs against the latest cloud version if finds tagged with `gitbranch:<currently-checked-out-branch>`.'
     )
+    .option(
+      '--comment',
+      '(GitHub only) Post a comment on your pull merge request with relevant Optic information when your OpenAPI specifications change. Optic will post a single comment and update it when the specs change again.'
+    )
     .addOption(
       new Option(
         '--severity <severity>',
@@ -98,9 +158,10 @@ type RunActionOptions = {
   ignore?: string;
   base?: string;
   severity: (typeof severities)[number];
+  comment?: boolean;
 };
 
-async function authenticateIT(config: OpticCliConfig) {
+async function authenticateInteractive(config: OpticCliConfig) {
   const userConfig = await readUserConfig();
   if (userConfig?.token) return true;
 
@@ -337,7 +398,7 @@ export const getRunAction =
 
     if (config.vcs?.type !== VCS.Git) {
       const error = `Error: optic must be called from a git repository.`;
-      logger.error(error);
+      logger.error(chalk.red(error));
       trackEvent(
         'optic.run.error',
         {
@@ -352,10 +413,12 @@ export const getRunAction =
 
     const authentified = config.isInCi
       ? await authenticateCI(config)
-      : await authenticateIT(config);
+      : await authenticateInteractive(config);
 
     if (!authentified) {
-      logger.error('A valid Optic token is required to run this command.');
+      logger.error(
+        chalk.red('A valid Optic token is required to run this command.')
+      );
       process.exitCode = 1;
       return;
     }
@@ -393,7 +456,24 @@ export const getRunAction =
     const pathUrls = await identifyOrCreateApis(config, localSpecPaths);
     const allChecks: Awaited<ReturnType<typeof compute>>['checks'][] = [];
 
+    let results: {
+      warnings: string[];
+      groupedDiffs: GroupedDiffs;
+      results: RuleResult[];
+      name: string;
+      specUrl: string;
+      changelogUrl: string;
+    }[] = [];
+
     for (const [path, opticUrl] of pathUrls.entries()) {
+      let specResults: CompareSpecResults,
+        warnings: string[],
+        checks: any,
+        standard: ConfigRuleset[],
+        changelogData: GroupedDiffs,
+        changelogUrl: string | undefined,
+        specUrl: string | undefined;
+
       const specReport: SpecReport = { path };
       specReports.push(specReport);
 
@@ -434,14 +514,11 @@ export const getRunAction =
       } catch (_e) {}
 
       if (baseSpec && baseSpec.jsonLike['x-optic-ci-empty-spec'] !== true) {
-        const { specResults, standard, checks } = await compute(
-          [baseSpec, headSpec],
-          config,
-          {
+        ({ specResults, standard, checks, changelogData, warnings } =
+          await compute([baseSpec, headSpec], config, {
             check: true,
             path,
-          }
-        );
+          }));
 
         let upload: Awaited<ReturnType<typeof uploadDiff>>;
         try {
@@ -459,6 +536,8 @@ export const getRunAction =
               silent: true,
             }
           );
+          specUrl = upload?.headSpecUrl ?? undefined;
+          changelogUrl = upload?.changelogUrl ?? undefined;
         } catch (e) {
           specReport.error = `Failed to upload run to Optic: ${e}`;
           continue;
@@ -475,7 +554,8 @@ export const getRunAction =
         specReport.noRemoteSpec = true;
 
         try {
-          await uploadSpec(specDetails.apiId, {
+          // TODO: specUrl in this case
+          const upload = await uploadSpec(specDetails.apiId, {
             spec: headSpec,
             client: config.client,
             tags: [sanitizeGitTag(branchTag)],
@@ -486,14 +566,11 @@ export const getRunAction =
           continue;
         }
 
-        const { specResults, checks } = await compute(
-          [headSpec, headSpec],
-          config,
-          {
+        ({ specResults, checks, standard, warnings, changelogData } =
+          await compute([headSpec, headSpec], config, {
             check: true,
             path,
-          }
-        );
+          }));
 
         allChecks.push(checks);
 
@@ -502,9 +579,50 @@ export const getRunAction =
         );
         specReport.designIssues = designIssues;
       }
+
+      results.push({
+        groupedDiffs: changelogData,
+        warnings,
+        name: path,
+        specUrl: specUrl ?? '',
+        changelogUrl: changelogUrl ?? '',
+        results: specResults.results,
+      });
     }
 
     report(options, specReports, branchTag);
+
+    const provider = getProvider();
+    switch (options.comment && provider) {
+      case 'github': {
+        const commenter = await getGitHubCommenter();
+        const sha = process.env.GITHUB_SHA!;
+
+        const data = results.map((result) => ({
+          warnings: result.warnings,
+          groupedDiffs: result.groupedDiffs,
+          results: result.results,
+          name: result.name ?? 'Unknown comparison',
+          specUrl: result.specUrl,
+          changelogUrl: result.changelogUrl,
+        }));
+        await comment(
+          await getDataForCi(data, { severity: Severity.Error }),
+          commenter,
+          sha
+        );
+        break;
+      }
+      default: {
+        logger.error(
+          chalk.red(
+            'Optic Could not identify your Git provider. Use the `--comment` option from either Github or Gitlab CI environments.'
+          )
+        );
+        process.exitCode = 1;
+        return;
+      }
+    }
 
     const hasFailures = allChecks.some((checks) => checks.failed.error > 0);
     const exit1 = options.severity === 'error' && hasFailures;
