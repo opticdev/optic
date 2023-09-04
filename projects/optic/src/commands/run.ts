@@ -41,31 +41,26 @@ import {
 import { GroupedDiffs } from '@useoptic/openapi-utilities/build/openapi3/group-diff';
 
 const usage = () => `
-  optic run
-  optic run --match *.spec.yml --ignore irrelevant.spec.yml --base gitbranch:main`;
 
-const helpText = `
-Run this \`optic run\` locally and in your CI and start shipping better APIs:
-- prevent shipping unintentional breaking changes
-- enforce API design, including Spectral rules and forwards-only governance
-- ensure that your API specifications and implementations match
-- get automated cloud reports: stats, API changelogs, documentation time travel and more
+  Run Optic locally
+  ------------------------
+  Run \`optic run\` to discover OpenAPI files in your repositorty and start tracking their versions in a dedicated Optic cloud account.
+  Make some changes to the specifications and run the same command again to see how Optic handles changes to your specs:
 
-Typical CI setup:
-- run: \`optic run --base gitbranch:<target-branch>\` when pushing to a PR branch to compare the branch versions with the target branch ones.
-- run \`optic run\` when merging on main to upload the newest \`gitbranch:main\` cloud version.
+  > optic run [--match ./specs/*.openapi.yml [--ignore ./specs/ignore.openapi.yml]]
 
-Authentication:
-- Use a personal access token for local runs. Optic will give you a link to grab one on app.useoptic.com and ask you to paste it.
-- In CI, prefer an organization token: \`OPTIC_TOKEN=<org-token> optic run\`. Get one from the "tokens" tab in app.useoptic.com.
+  CI setup: Github Action
+  ------------------------
+  On pull request event: compare current branch specs with base branch ones and post a summary to the PR:
 
-How \`optic run\` works internally:
-- the \`run\` command first identifies OpenAPI specification files in your repository using --match and --ignore.
-- it then searches for the latest cloud uploaded version of each specification to compare it against: tagged with the specified --base tag, or with \`gitbranch:<current-branch>\` if no --base tag is specified.
-- next Optic checks for breaking changes, design issues and implementation mismatches and reports in the console. By default Optic will exit 1 to fail your CI in case issues are detected.
-- next the command uploads the latest local specification versions and run reports to your Optic cloud account with the tag \`gitbranch:<current-branch>\`.
-- finally Optic will report in the console, and post a comment to your pull request if the --comment option was used.
+  > OPTIC_TOKEN=\${{ secrets.OPTIC_TOKEN }} GITHUB_TOKEN=\${{ secrets.GITHUB_TOKEN }} optic run --base "gitbranch:$GITHUB_BASE_REF" --comment
+
+  On push event: push the latest specifications versions to Optic cloud:
+
+  > OPTIC_TOKEN=\${{ secrets.OPTIC_TOKEN }} optic run
 `;
+
+const helpText = ``;
 
 const severities = ['none', 'error'] as const;
 
@@ -115,37 +110,39 @@ async function comment(data: CiRunDetails, commenter: CommentApi, sha: string) {
 // TODO:
 // - support comment for Gitlab
 // - support capture
-// - fix redirection from create account to new token
 // - check userId analytics
-// - support tags option
+// - support tags option?
 export function registerRunCommand(cli: Command, config: OpticCliConfig) {
   cli
     .command('run')
     .addHelpText('after', helpText)
-    .configureHelp({ commandUsage: usage })
     .description(
-      'Run the Optic suite on your OpenAPI specification files and start shipping better APIs.'
+      `Integrate Optic to your CI flow and immediately start shipping better APIs:
+- prevent shipping unintentional breaking changes
+- enforce API design, including Spectral rules and forwards-only governance
+- get cloud benefits: stats, shareable changelogs, documentation hubs with time travel and more`
     )
+    .configureHelp({ commandUsage: usage })
     .option(
       '--match <match-glob>',
-      'Select local OpenAPI specifications files to handle with this comma separated glob patterns list.'
+      'Select local OpenAPI specifications files to handle. Comma separated glob patterns list.'
     )
     .option(
       '--ignore <ignore-glob>',
-      'Select local OpenAPI specifications files to ignore with this comma separated glob patterns list.'
+      'Select local OpenAPI specifications files to ignore. Comma separated glob patterns list.'
     )
     .option(
       '--base <base-comparison-tag>',
-      'Specify a cloud tag to compare local versions of your OpenAPI specs against. E.g. "gitbranch:main". If unspecified, Optic compare your specs against the latest cloud version if finds tagged with `gitbranch:<currently-checked-out-branch>`.'
+      'Specify a cloud tag to compare local versions of your OpenAPI specs against, e.g. "gitbranch:main". Defaults to `gitbranch:<current-branch>`.'
     )
     .option(
       '--comment',
-      '(GitHub only) Post a comment on your pull merge request with relevant Optic information when your OpenAPI specifications change. Optic will post a single comment and update it when the specs change again.'
+      '(GitHub only) Post a summary as pull request comment when your OpenAPI specifications changed. Optic will post a single comment and update it when the specs change again. GITHUB_TOKEN must be passed in the environment.'
     )
     .addOption(
       new Option(
         '--severity <severity>',
-        'Specify the severity level to exit with exit code when issues are found. `--severity none` will prevent Optic from exiting 1 when issues are encountered in your specification files.'
+        'Specify the severity level to exit with exit code upon issues. Use `none` to disable exit 1 upon error.'
       )
         .choices(severities)
         .default('error')
@@ -386,12 +383,20 @@ const partitionFailedResults = (results: RuleResult[]) => {
   );
 };
 
+const optionsForAnalytics = (options: RunActionOptions) => ({
+  comment: options.comment,
+  match: !!options.match,
+  ignore: !!options.ignore,
+  severity: !!options.severity,
+});
+
 export const getRunAction =
   (config: OpticCliConfig) => async (options: RunActionOptions) => {
     trackEvent(
       'optic.run.init',
       {
         isInCi: config.isInCi,
+        ...optionsForAnalytics(options),
       },
       config.userId
     );
@@ -555,7 +560,7 @@ export const getRunAction =
 
         try {
           // TODO: specUrl in this case
-          const upload = await uploadSpec(specDetails.apiId, {
+          await uploadSpec(specDetails.apiId, {
             spec: headSpec,
             client: config.client,
             tags: [sanitizeGitTag(branchTag)],
@@ -592,35 +597,43 @@ export const getRunAction =
 
     report(options, specReports, branchTag);
 
-    const provider = getProvider();
-    switch (options.comment && provider) {
-      case 'github': {
-        const commenter = await getGitHubCommenter();
-        const sha = process.env.GITHUB_SHA!;
+    if (options.comment) {
+      switch (getProvider()) {
+        case 'github': {
+          const commenter = await getGitHubCommenter();
+          const sha = process.env.GITHUB_SHA!;
 
-        const data = results.map((result) => ({
-          warnings: result.warnings,
-          groupedDiffs: result.groupedDiffs,
-          results: result.results,
-          name: result.name ?? 'Unknown comparison',
-          specUrl: result.specUrl,
-          changelogUrl: result.changelogUrl,
-        }));
-        await comment(
-          await getDataForCi(data, { severity: Severity.Error }),
-          commenter,
-          sha
-        );
-        break;
-      }
-      default: {
-        logger.error(
-          chalk.red(
-            'Optic Could not identify your Git provider. Use the `--comment` option from either Github or Gitlab CI environments.'
-          )
-        );
-        process.exitCode = 1;
-        return;
+          const data = results.map((result) => ({
+            warnings: result.warnings,
+            groupedDiffs: result.groupedDiffs,
+            results: result.results,
+            name: result.name ?? 'Unknown comparison',
+            specUrl: result.specUrl,
+            changelogUrl: result.changelogUrl,
+          }));
+
+          await comment(
+            await getDataForCi(data, { severity: Severity.Error }),
+            commenter,
+            sha
+          );
+
+          break;
+        }
+        default: {
+          logger.error(
+            chalk.red(
+              'Optic needs a GITHUB_TOKEN to have permission to post a comment when --comment is set.'
+            )
+          );
+          logger.info(
+            chalk.red(
+              'The `--comment` option is only available as part of a GitHub action for now. Email us at contact@useoptic.com to request another provider.'
+            )
+          );
+          process.exitCode = 1;
+          return;
+        }
       }
     }
 
@@ -648,6 +661,7 @@ export const getRunAction =
           : specReports.filter((s) => s.noRemoteSpec).length,
         exit1,
         webUrl: maybeOrigin?.web_url,
+        ...optionsForAnalytics(options),
       },
       config.userId
     );
