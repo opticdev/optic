@@ -37,7 +37,7 @@ const usage = () => `
 
   Run Optic locally
   ------------------------
-  Run \`optic run\` to discover OpenAPI files in your repositorty and start tracking them in your dedicated Optic cloud account.
+  Run \`optic run\` to discover OpenAPI files in your repository and start tracking them in your dedicated Optic cloud account.
   Make some changes to the specifications and run the same command again to see how Optic handles changes to your specs:
 
   > optic run [--match ./specs/*.openapi.yml [--ignore ./specs/ignore.openapi.yml]]
@@ -45,17 +45,16 @@ const usage = () => `
   CI setup: Github Action
   ------------------------
   On pull request and push events, check changes to your specifications, upload latest versions to Optic cloud and post a change summary to the PR.
-  Get an organization OPTIC_TOKEN from app.useoptic.com.
-  GITHUB_TOKEN with write permission is required to post a comment with a changes summary on your pull requests: https://www.useoptic.com/docs/setup-ci#configure-commenting-on-pull-requests
+  Optic figures out current branch and PR target branch from the environment.
+  Get your organization OPTIC_TOKEN from app.useoptic.com. Pass a GITHUB_TOKEN with write permission to let Optic post comments with change summaries on your pull requests:
+  https://www.useoptic.com/docs/setup-ci#configure-commenting-on-pull-requests
 
   > OPTIC_TOKEN=\${{ secrets.OPTIC_TOKEN }} GITHUB_TOKEN=\${{ secrets.GITHUB_TOKEN }} optic run
 
   CI setup: Gitlab
   ------------------------
-  Work in progress. Email us at contact@useoptic.com.
+  Work in progress: request Gitlab support on https://github.com/opticdev/optic/issues
 `;
-
-const helpText = ``;
 
 const severities = ['none', 'error'] as const;
 
@@ -109,7 +108,6 @@ async function comment(data: CiRunDetails, commenter: CommentApi, sha: string) {
 export function registerRunCommand(cli: Command, config: OpticCliConfig) {
   cli
     .command('run')
-    .addHelpText('after', helpText)
     .description(
       `Integrate Optic to your CI flow and immediately start shipping better APIs:
 - prevent shipping unintentional breaking changes
@@ -234,10 +232,12 @@ function report(
   specReports: SpecReport[],
   {
     headTag,
-    baseBranch,
+    isPR,
+    baseTag,
   }: {
     headTag: string;
-    baseBranch: string | undefined;
+    baseTag: string | undefined;
+    isPR: boolean;
   }
 ) {
   for (const report of specReports) {
@@ -247,16 +247,13 @@ function report(
       return;
     }
     if (report.noRemoteSpec) {
-      if (baseBranch) {
+      if (isPR) {
         logger.warn(
-          `| ⚠️  Optic is trying to compare your spec with its latest uploaded cloud version for tag \`gitbranch:${baseBranch}\` but none was found: make sure to run \`optic run\` at least once from target branch.`
-        );
-        logger.warn(
-          `| To compare specs to a "gitbranch:<branch>" base, make sure \`optic run\` was called from the target base branch.`
+          `| ⚠️  No spec version was found on cloud tag \`${baseTag}\`: run \`optic run\` from the target branch to push a reference version to Optic cloud.`
         );
       } else {
         logger.info(
-          `| First version pushed on Optic cloud with tag \`${headTag}\`. Make changes to your local spec and run again to see how Optic compares the two versions.`
+          `| First version of your specification was pushed to Optic cloud on \`${headTag}\` tag. Make changes to your spec and run again to see how Optic compares the two versions.`
         );
       }
     }
@@ -317,15 +314,24 @@ const getGithubBranchName = () => {
 export const getRunAction =
   (config: OpticCliConfig) => async (options: RunActionOptions) => {
     const commentToken = process.env.GITHUB_TOKEN;
-    const headBranch = getGithubBranchName() ?? (await getCurrentBranchName());
+
+    const currentBranch =
+      getGithubBranchName() ?? (await getCurrentBranchName());
+    const currentBranchCloudTag = `gitbranch:${currentBranch}`;
+
     const baseBranch = process.env.GITHUB_BASE_REF;
+    const baseBranchCloudTag = baseBranch
+      ? `gitbranch:${baseBranch}`
+      : currentBranchCloudTag;
+
+    const isPR = !!baseBranch;
 
     trackEvent(
       'optic.run.init',
       {
         isInCi: config.isInCi,
         commentToken: !!commentToken,
-        baseBranch: !!baseBranch,
+        isPR,
         ...optionsForAnalytics(options),
       },
       config.userId
@@ -375,24 +381,20 @@ export const getRunAction =
       return;
     }
 
-    const headTag = `gitbranch:${headBranch}`;
-    const baseTag = baseBranch ? `gitbranch:${baseBranch}` : headTag;
-
     logger.info(
       `Optic matched ${localSpecPaths.length} OpenAPI specification file${
         localSpecPaths.length > 1 ? 's' : ''
       }.`
     );
     logger.info(
-      baseBranch
-        ? `Checking and comparing your specifications against tag \`${baseTag}\` on Optic cloud, then updating tag: \`${headTag}\` with local version.\n`
-        : `Checking and updating your specifications to tag \`${headTag}\` on Optic cloud.\n`
+      `Checking your specifications, comparing them against \`${baseBranchCloudTag}\` on Optic cloud, then pushing them to \`${currentBranchCloudTag}\`.`
     );
-    if (!commentToken && baseBranch) {
+    if (!commentToken && isPR) {
       logger.info(
-        `Pass a GITHUB_TOKEN with write permission in env to let Optic post summaries on your pull requests.`
+        `Pass a GITHUB_TOKEN environment variable with write permission to let Optic post comment with API change summaries to your pull requests.`
       );
     }
+    logger.info('');
 
     const specReports: SpecReport[] = [];
     const pathUrls = await identifyOrCreateApis(config, localSpecPaths);
@@ -419,9 +421,9 @@ export const getRunAction =
       const specReport: SpecReport = { path };
       specReports.push(specReport);
 
-      let headSpec: ParseResult;
+      let localSpec: ParseResult;
       try {
-        headSpec = await loadSpec(path, config, {
+        localSpec = await loadSpec(path, config, {
           strict: false, // TODO
           denormalize: true,
         });
@@ -430,9 +432,9 @@ export const getRunAction =
         continue;
       }
 
-      specReport.title = headSpec.jsonLike.info.title;
+      specReport.title = localSpec.jsonLike.info.title;
 
-      let baseSpec: ParseResult | undefined = undefined;
+      let cloudSpec: ParseResult | undefined = undefined;
       let specDetails: ReturnType<typeof getApiFromOpticUrl>;
       try {
         specDetails = getApiFromOpticUrl(opticUrl);
@@ -445,8 +447,8 @@ export const getRunAction =
         continue;
       }
       try {
-        baseSpec = await loadSpec(
-          `cloud:${specDetails.apiId}@${baseTag}`,
+        cloudSpec = await loadSpec(
+          `cloud:${specDetails.apiId}@${baseBranchCloudTag}`,
           config,
           {
             strict: false, // TODO
@@ -455,9 +457,9 @@ export const getRunAction =
         );
       } catch (_e) {}
 
-      if (baseSpec && baseSpec.jsonLike['x-optic-ci-empty-spec'] !== true) {
+      if (cloudSpec && cloudSpec.jsonLike['x-optic-ci-empty-spec'] !== true) {
         ({ specResults, standard, checks, changelogData, warnings } =
-          await compute([baseSpec, headSpec], config, {
+          await compute([cloudSpec, localSpec], config, {
             check: true,
             path,
           }));
@@ -466,8 +468,8 @@ export const getRunAction =
         try {
           upload = await uploadDiff(
             {
-              from: baseSpec,
-              to: headSpec,
+              from: cloudSpec,
+              to: localSpec,
             },
             specResults,
             config,
@@ -475,7 +477,7 @@ export const getRunAction =
             {
               standard,
               silent: true,
-              currentBranch: headBranch,
+              currentBranch: currentBranch,
             }
           );
           specUrl = upload?.headSpecUrl ?? undefined;
@@ -498,9 +500,9 @@ export const getRunAction =
         try {
           // TODO: specUrl in this case
           await uploadSpec(specDetails.apiId, {
-            spec: headSpec,
+            spec: localSpec,
             client: config.client,
-            tags: [sanitizeGitTag(headTag)],
+            tags: [sanitizeGitTag(currentBranchCloudTag)],
             orgId: specDetails.orgId,
           });
         } catch (e) {
@@ -509,7 +511,7 @@ export const getRunAction =
         }
 
         ({ specResults, checks, standard, warnings, changelogData } =
-          await compute([headSpec, headSpec], config, {
+          await compute([localSpec, localSpec], config, {
             check: true,
             path,
           }));
@@ -532,7 +534,11 @@ export const getRunAction =
       });
     }
 
-    report(specReports, { headTag, baseBranch });
+    report(specReports, {
+      headTag: currentBranchCloudTag,
+      baseTag: baseBranchCloudTag,
+      isPR,
+    });
 
     if (commentToken) {
       switch (getProvider()) {
@@ -556,20 +562,6 @@ export const getRunAction =
           );
 
           break;
-        }
-        default: {
-          logger.error(
-            chalk.red(
-              'Optic needs a GITHUB_TOKEN to have permission to post a comment when --comment is set.'
-            )
-          );
-          logger.info(
-            chalk.red(
-              'The `--comment` option is only available as part of a GitHub action for now. Email us at contact@useoptic.com to request another provider.'
-            )
-          );
-          process.exitCode = 1;
-          return;
         }
       }
     }
