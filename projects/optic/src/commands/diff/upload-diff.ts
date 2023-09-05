@@ -1,4 +1,3 @@
-import ora from 'ora';
 import { getRunUrl, getSpecUrl } from '../../utils/cloud-urls';
 import { ConfigRuleset, OpticCliConfig, VCS } from '../../config';
 import { ParseResult } from '../../utils/spec-loaders';
