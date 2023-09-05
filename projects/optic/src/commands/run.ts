@@ -299,7 +299,7 @@ export const getRunAction =
       ? `gitbranch:${baseBranch}`
       : currentBranchCloudTag;
 
-    const isPR = !!baseBranch;
+    const isPR = config.isInCi && !!baseBranch;
 
     trackEvent(
       'optic.run.init',
@@ -435,7 +435,12 @@ export const getRunAction =
         continue;
       }
 
-      // TODO: fix empty spec diff
+      if (cloudSpec.jsonLike['x-optic-ci-empty-spec']) {
+        cloudSpec.jsonLike.info.title = localSpec.jsonLike.info.title;
+        cloudSpec.jsonLike.info.version = localSpec.jsonLike.info.version;
+        cloudSpec.jsonLike.openapi = localSpec.jsonLike.openapi;
+      }
+
       ({ specResults, standard, checks, changelogData, warnings } =
         await compute([cloudSpec, localSpec], config, {
           check: true,
@@ -485,7 +490,7 @@ export const getRunAction =
 
     report(specReports);
 
-    if (commentToken) {
+    if (commentToken && isPR) {
       switch (getProvider()) {
         case 'github': {
           const commenter = await getGitHubCommenter();
