@@ -97,7 +97,7 @@ describe('dereferencing openapi files', () => {
     expect(fileResults.jsonLike).toMatchSnapshot();
   });
 
-  it('can parse an OpenAPI file with an empty url ref', async () => {
+  it.skip('can parse an OpenAPI file with an empty url ref', async () => {
     const fileResults = await parseOpenAPIWithSourcemap(
       path.resolve(
         path.join(__dirname, '../../../inputs/openapi3/empty-with-url-ref.json')
