@@ -21,6 +21,7 @@ export async function uploadDiff(
     headTag?: string;
     standard: ConfigRuleset[];
     silent?: boolean;
+    currentBranch?: string;
   }
 ): Promise<{
   baseSpecUrl: string | null;
@@ -56,7 +57,8 @@ export async function uploadDiff(
       tags.push(`git:${specs.to.context.sha}`);
       // If no gitbranch is set, try to add own git branch
       if (!tagsFromOptions.some((tag) => /^gitbranch\:/.test(tag))) {
-        const currentBranch = await Git.getCurrentBranchName();
+        const currentBranch =
+          options.currentBranch ?? (await Git.getCurrentBranchName());
         if (currentBranch !== 'HEAD') {
           tags.push(sanitizeGitTag(`gitbranch:${currentBranch}`));
         } else {

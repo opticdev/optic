@@ -44,18 +44,18 @@ const usage = () => `
 
   Run Optic locally
   ------------------------
-  Run \`optic run\` to discover OpenAPI files in your repositorty and start tracking their versions in a dedicated Optic cloud account.
+  Run \`optic run\` to discover OpenAPI files in your repositorty and start tracking them in your dedicated Optic cloud account.
   Make some changes to the specifications and run the same command again to see how Optic handles changes to your specs:
 
   > optic run [--match ./specs/*.openapi.yml [--ignore ./specs/ignore.openapi.yml]]
 
   CI setup: Github Action
   ------------------------
-  On pull request event: compare current branch specs with base branch ones and post a summary to the PR:
+  On pull request, check changes to your specifications and post a summary to the PR:
 
   > OPTIC_TOKEN=\${{ secrets.OPTIC_TOKEN }} GITHUB_TOKEN=\${{ secrets.GITHUB_TOKEN }} optic run --base "gitbranch:$GITHUB_BASE_REF" --comment
 
-  On push event: push the latest specifications versions to Optic cloud:
+  On push, push the latest specifications versions to Optic cloud:
 
   > OPTIC_TOKEN=\${{ secrets.OPTIC_TOKEN }} optic run
 `;
@@ -446,15 +446,19 @@ export const getRunAction =
     }
 
     // TODO: check what happens if we don't have a branch
-    const branch = await getCurrentBranchName();
+    const branch =
+      process.env.GITHUB_HEAD_REF ?? (await getCurrentBranchName());
     const branchTag = `gitbranch:${branch}`;
+
     const baseTag = options.base ?? branchTag;
 
     logger.info(
       `Optic found ${localSpecPaths.length} OpenAPI specification files to handle.`
     );
     logger.info(
-      `Your local specifications will be compared to their latest uploaded versions on tag \`${baseTag}\`, then uploaded with the current branch tag: \`${branchTag}\`.\n`
+      branchTag === baseTag
+        ? `Your specifications will be pushed to tag \`${branchTag}\` on Optic cloud.\n`
+        : `Your specifications will be compared against their latest Optic cloud versions on tag \`${baseTag}\`, then pushed to tag: \`${branchTag}\`.\n`
     );
 
     const specReports: SpecReport[] = [];
