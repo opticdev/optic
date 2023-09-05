@@ -13,12 +13,10 @@ import type { ParseResult } from '../utils/spec-loaders';
 import {
   CompareSpecResults,
   RuleResult,
-  sanitizeGitTag,
   Severity,
 } from '@useoptic/openapi-utilities';
 import { compute } from './diff/compute';
 import { uploadDiff } from './diff/upload-diff';
-import { uploadSpec } from '../utils/cloud-specs';
 import chalk from 'chalk';
 import { flushEvents, trackEvent } from '../segment';
 import { BreakingChangesRuleset } from '@useoptic/standard-rulesets';
@@ -45,7 +43,7 @@ const usage = () => `
   CI setup: Github Action
   ------------------------
   On pull request and push events, check changes to your specifications, upload latest versions to Optic cloud and post a change summary to the PR.
-  Optic figures out current branch and PR target branch from the environment.
+  Optic figures out the current branch and the PR target branch from the environment.
   Get your organization OPTIC_TOKEN from app.useoptic.com. Pass a GITHUB_TOKEN with write permission to let Optic post comments with change summaries on your pull requests:
   https://www.useoptic.com/docs/setup-ci#configure-commenting-on-pull-requests
 
@@ -216,7 +214,6 @@ async function authenticateCI(config: OpticCliConfig) {
 type SpecReport = {
   breakingChanges?: number;
   designIssues?: number;
-  noRemoteSpec?: boolean;
   path: string;
   title?: string;
   error?: string;
@@ -228,38 +225,14 @@ type SpecReport = {
   };
 };
 
-function report(
-  specReports: SpecReport[],
-  {
-    headTag,
-    isPR,
-    baseTag,
-  }: {
-    headTag: string;
-    baseTag: string | undefined;
-    isPR: boolean;
-  }
-) {
+function report(specReports: SpecReport[]) {
   for (const report of specReports) {
     logger.info(`| ${chalk.bold(report.title)} (${report.path})`);
     if (report.error) {
       logger.warn(`| Optic encountered an error: ${report.error}`);
       return;
     }
-    if (report.noRemoteSpec) {
-      if (isPR) {
-        logger.warn(
-          `| ⚠️  No spec version was found on cloud tag \`${baseTag}\`: run \`optic run\` from the target branch to push a reference version to Optic cloud.`
-        );
-      } else {
-        logger.info(
-          `| First version of your specification was pushed to Optic cloud on \`${headTag}\` tag. Make changes to your spec and run again to see how Optic compares the two versions.`
-        );
-      }
-    }
-    const breakingChangesReport = report.noRemoteSpec
-      ? ''
-      : report.breakingChanges
+    const breakingChangesReport = report.breakingChanges
       ? `❌ ${report.breakingChanges} breaking change${
           report.breakingChanges > 1 ? 's' : ''
         } `
@@ -317,10 +290,12 @@ export const getRunAction =
 
     const currentBranch =
       getGithubBranchName() ?? (await getCurrentBranchName());
+
     const currentBranchCloudTag = `gitbranch:${currentBranch}`;
 
     const baseBranch = process.env.GITHUB_BASE_REF;
-    const baseBranchCloudTag = baseBranch
+
+    const cloudTag = baseBranch
       ? `gitbranch:${baseBranch}`
       : currentBranchCloudTag;
 
@@ -387,7 +362,7 @@ export const getRunAction =
       }.`
     );
     logger.info(
-      `Checking your specifications, comparing them against \`${baseBranchCloudTag}\` on Optic cloud, then pushing them to \`${currentBranchCloudTag}\`.`
+      `Checking your specifications, comparing them against \`${cloudTag}\` tag, then pushing them to \`${currentBranchCloudTag}\` tag on Optic cloud.`
     );
     if (!commentToken && isPR) {
       logger.info(
@@ -448,81 +423,55 @@ export const getRunAction =
       }
       try {
         cloudSpec = await loadSpec(
-          `cloud:${specDetails.apiId}@${baseBranchCloudTag}`,
+          `cloud:${specDetails.apiId}@${cloudTag}`,
           config,
           {
             strict: false, // TODO
             denormalize: true,
           }
         );
-      } catch (_e) {}
-
-      if (cloudSpec && cloudSpec.jsonLike['x-optic-ci-empty-spec'] !== true) {
-        ({ specResults, standard, checks, changelogData, warnings } =
-          await compute([cloudSpec, localSpec], config, {
-            check: true,
-            path,
-          }));
-
-        let upload: Awaited<ReturnType<typeof uploadDiff>>;
-        try {
-          upload = await uploadDiff(
-            {
-              from: cloudSpec,
-              to: localSpec,
-            },
-            specResults,
-            config,
-            specDetails,
-            {
-              standard,
-              silent: true,
-              currentBranch: currentBranch,
-            }
-          );
-          specUrl = upload?.headSpecUrl ?? undefined;
-          changelogUrl = upload?.changelogUrl ?? undefined;
-        } catch (e) {
-          specReport.error = `Failed to upload run to Optic: ${e}`;
-          continue;
-        }
-        specReport.changelogLink = upload?.changelogUrl;
-        const [breakingChanges, designIssues] = partitionFailedResults(
-          specResults.results
-        );
-
-        specReport.designIssues = designIssues;
-        specReport.breakingChanges = breakingChanges;
-        allChecks.push(checks);
-      } else {
-        specReport.noRemoteSpec = true;
-
-        try {
-          // TODO: specUrl in this case
-          await uploadSpec(specDetails.apiId, {
-            spec: localSpec,
-            client: config.client,
-            tags: [sanitizeGitTag(currentBranchCloudTag)],
-            orgId: specDetails.orgId,
-          });
-        } catch (e) {
-          specReport.error = `Failed to upload run to Optic: ${e}`;
-          continue;
-        }
-
-        ({ specResults, checks, standard, warnings, changelogData } =
-          await compute([localSpec, localSpec], config, {
-            check: true,
-            path,
-          }));
-
-        allChecks.push(checks);
-
-        const [_breakingChanges, designIssues] = partitionFailedResults(
-          specResults.results
-        );
-        specReport.designIssues = designIssues;
+      } catch (e) {
+        specReport.error = `Failed to load cloud specification: ${e}`;
+        continue;
       }
+
+      // TODO: fix empty spec diff
+      ({ specResults, standard, checks, changelogData, warnings } =
+        await compute([cloudSpec, localSpec], config, {
+          check: true,
+          path,
+        }));
+
+      let upload: Awaited<ReturnType<typeof uploadDiff>>;
+      try {
+        upload = await uploadDiff(
+          {
+            from: cloudSpec,
+            to: localSpec,
+          },
+          specResults,
+          config,
+          specDetails,
+          {
+            standard,
+            silent: true,
+            currentBranch: currentBranch,
+          }
+        );
+        specUrl = upload?.headSpecUrl ?? undefined;
+        changelogUrl = upload?.changelogUrl ?? undefined;
+      } catch (e) {
+        specReport.error = `Failed to upload run to Optic: ${e}`;
+        continue;
+      }
+      specReport.changelogLink = upload?.changelogUrl;
+      const [breakingChanges, designIssues] = partitionFailedResults(
+        specResults.results
+      );
+
+      specReport.designIssues = designIssues;
+      specReport.breakingChanges = breakingChanges;
+      allChecks.push(checks);
 
       results.push({
         groupedDiffs: changelogData,
@@ -534,11 +483,7 @@ export const getRunAction =
       });
     }
 
-    report(specReports, {
-      headTag: currentBranchCloudTag,
-      baseTag: baseBranchCloudTag,
-      isPR,
-    });
+    report(specReports);
 
     if (commentToken) {
       switch (getProvider()) {
