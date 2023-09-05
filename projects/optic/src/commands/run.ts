@@ -8,22 +8,14 @@ import open from 'open';
 import { handleTokenInput } from './login/login';
 import { matchSpecCandidates } from './diff/diff-all';
 import { getCurrentBranchName, guessRemoteOrigin } from '../utils/git-utils';
-import { loadSpec, loadRaw } from '../utils/spec-loaders';
+import { loadSpec } from '../utils/spec-loaders';
 import type { ParseResult } from '../utils/spec-loaders';
-import { OPTIC_URL_KEY } from '../constants';
-import { checkOpenAPIVersion } from '@useoptic/openapi-io';
-import { getDetailsForGeneration } from '../utils/generated';
-import path from 'path';
 import {
   CompareSpecResults,
-  OpenAPIV3,
   RuleResult,
   sanitizeGitTag,
   Severity,
 } from '@useoptic/openapi-utilities';
-import * as Types from '../client/optic-backend-types';
-import chunk from 'lodash.chunk';
-import { getApiUrl } from '../utils/cloud-urls';
 import { compute } from './diff/compute';
 import { uploadDiff } from './diff/upload-diff';
 import { uploadSpec } from '../utils/cloud-specs';
@@ -39,6 +31,7 @@ import {
   generateCompareSummaryMarkdown,
 } from './ci/comment/common';
 import { GroupedDiffs } from '@useoptic/openapi-utilities/build/openapi3/group-diff';
+import { identifyOrCreateApis } from './identify-apis';
 
 const usage = () => `
 
@@ -56,6 +49,10 @@ const usage = () => `
   GITHUB_TOKEN with write permission is required to post a comment with a changes summary on your pull requests: https://www.useoptic.com/docs/setup-ci#configure-commenting-on-pull-requests
 
   > OPTIC_TOKEN=\${{ secrets.OPTIC_TOKEN }} GITHUB_TOKEN=\${{ secrets.GITHUB_TOKEN }} optic run
+
+  CI setup: Gitlab
+  ------------------------
+  Work in progress. Email us at contact@useoptic.com.
 `;
 
 const helpText = ``;
@@ -218,78 +215,6 @@ async function authenticateCI(config: OpticCliConfig) {
   return config.isAuthenticated;
 }
 
-async function identifyOrCreateApis(
-  config: OpticCliConfig,
-  localSpecPaths: string[]
-) {
-  // TODO: improve logging in getDetailsForGeneration
-  const generatedDetails = await getDetailsForGeneration(config);
-  if (!generatedDetails) throw new Error('Could not determine remote branch'); // TODO: report
-
-  const { web_url, organization_id, default_branch, default_tag } =
-    generatedDetails;
-
-  const pathUrls = new Map<string, string>();
-
-  for await (const specPath of localSpecPaths) {
-    let rawSpec: OpenAPIV3.Document<{}>;
-
-    try {
-      rawSpec = await loadRaw(specPath, config);
-    } catch (e) {
-      logger.error('Error loading raw spec', e);
-      continue; // TODO: handle failures
-    }
-
-    try {
-      checkOpenAPIVersion(rawSpec);
-    } catch (e) {
-      logger.error('Error checking OpenAPI version', e);
-      continue; // TODO: handle failures
-    }
-
-    const opticUrl = rawSpec[OPTIC_URL_KEY];
-    const relativePath = path.relative(config.root, path.resolve(specPath));
-    pathUrls.set(relativePath, opticUrl);
-  }
-
-  let apis: (Types.Api | null)[] = [];
-  const chunks = chunk([...pathUrls.keys()], 20);
-  for (const chunk of chunks) {
-    const { apis: apiChunk } = await config.client.getApis(chunk, web_url);
-    apis.push(...apiChunk);
-  }
-
-  for (const api of apis) {
-    if (api) {
-      pathUrls.set(
-        api.path,
-        getApiUrl(config.client.getWebBase(), api.organization_id, api.api_id)
-      );
-    }
-  }
-
-  for (let [path, url] of pathUrls.entries()) {
-    if (!url) {
-      const api = await config.client.createApi(organization_id, {
-        name: path,
-        path,
-        web_url: web_url,
-        default_branch,
-        default_tag,
-      });
-      const url = getApiUrl(
-        config.client.getWebBase(),
-        organization_id,
-        api.id
-      );
-      pathUrls.set(path, url);
-    }
-  }
-
-  return pathUrls;
-}
-
 type SpecReport = {
   breakingChanges?: number;
   designIssues?: number;
@@ -352,7 +277,7 @@ function report(
     logger.info(`| ${breakingChangesReport}${designReport}`);
 
     if (report.changelogLink) {
-      logger.info(`| View report: ${chalk.blue(report.changelogLink)}.`);
+      logger.info(`| View report: ${chalk.blue(report.changelogLink)}`);
     }
     logger.info('');
   }
@@ -381,11 +306,18 @@ const optionsForAnalytics = (options: RunActionOptions) => ({
   severity: !!options.severity,
 });
 
+const getGithubBranchName = () => {
+  const headRef = process.env.GITHUB_HEAD_REF;
+  if (headRef) return headRef;
+  const ref = process.env.GITHUB_REF;
+  if (!ref || ref.indexOf('/heads/') < 0) return undefined;
+  return ref.split('/heads/')[1];
+};
+
 export const getRunAction =
   (config: OpticCliConfig) => async (options: RunActionOptions) => {
     const commentToken = process.env.GITHUB_TOKEN;
-    const headBranch =
-      process.env.GITHUB_HEAD_REF ?? (await getCurrentBranchName());
+    const headBranch = getGithubBranchName() ?? (await getCurrentBranchName());
     const baseBranch = process.env.GITHUB_BASE_REF;
 
     trackEvent(
@@ -447,13 +379,20 @@ export const getRunAction =
     const baseTag = baseBranch ? `gitbranch:${baseBranch}` : headTag;
 
     logger.info(
-      `Optic matched ${localSpecPaths.length} OpenAPI specification files.`
+      `Optic matched ${localSpecPaths.length} OpenAPI specification file${
+        localSpecPaths.length > 1 ? 's' : ''
+      }.`
     );
     logger.info(
-      headTag === baseTag
-        ? `Checking and updating your specifications to tag \`${headTag}\` on Optic cloud.\n`
-        : `Checking and comparing your specifications against tag \`${baseTag}\` on Optic cloud, then pushing them on tag: \`${headTag}\`.\n`
+      baseBranch
+        ? `Checking and comparing your specifications against tag \`${baseTag}\` on Optic cloud, then updating tag: \`${headTag}\` with local version.\n`
+        : `Checking and updating your specifications to tag \`${headTag}\` on Optic cloud.\n`
     );
+    if (!commentToken && baseBranch) {
+      logger.info(
+        `Pass a GITHUB_TOKEN with write permission in env to let Optic post summaries on your pull requests.`
+      );
+    }
 
     const specReports: SpecReport[] = [];
     const pathUrls = await identifyOrCreateApis(config, localSpecPaths);
