@@ -40,6 +40,7 @@ export async function getOrganizationFromToken(
         { onCancel: () => process.exit(1) }
       );
       org = organizations.find((o) => o.id === response.orgId)!;
+      console.log('');
     } else {
       return {
         ok: false,
