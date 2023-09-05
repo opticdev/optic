@@ -51,13 +51,11 @@ const usage = () => `
 
   CI setup: Github Action
   ------------------------
-  On pull request, check changes to your specifications and post a summary to the PR:
+  On pull request and push events, check changes to your specifications, upload latest versions to Optic cloud and post a change summary to the PR.
+  Get an organization OPTIC_TOKEN from app.useoptic.com.
+  GITHUB_TOKEN with write permission is required to post a comment with a changes summary on your pull requests: https://www.useoptic.com/docs/setup-ci#configure-commenting-on-pull-requests
 
-  > OPTIC_TOKEN=\${{ secrets.OPTIC_TOKEN }} GITHUB_TOKEN=\${{ secrets.GITHUB_TOKEN }} optic run --base "gitbranch:$GITHUB_BASE_REF" --comment
-
-  On push, push the latest specifications versions to Optic cloud:
-
-  > OPTIC_TOKEN=\${{ secrets.OPTIC_TOKEN }} optic run
+  > OPTIC_TOKEN=\${{ secrets.OPTIC_TOKEN }} GITHUB_TOKEN=\${{ secrets.GITHUB_TOKEN }} optic run
 `;
 
 const helpText = ``;
@@ -111,7 +109,6 @@ async function comment(data: CiRunDetails, commenter: CommentApi, sha: string) {
 // - support comment for Gitlab
 // - support capture
 // - check userId analytics
-// - support tags option?
 export function registerRunCommand(cli: Command, config: OpticCliConfig) {
   cli
     .command('run')
@@ -131,18 +128,10 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
       '--ignore <ignore-glob>',
       'Select local OpenAPI specifications files to ignore. Comma separated glob patterns list.'
     )
-    .option(
-      '--base <base-comparison-tag>',
-      'Specify a cloud tag to compare local versions of your OpenAPI specs against, e.g. "gitbranch:main". Defaults to `gitbranch:<current-branch>`.'
-    )
-    .option(
-      '--comment',
-      '(GitHub only) Post a summary as pull request comment when your OpenAPI specifications changed. Optic will post a single comment and update it when the specs change again. GITHUB_TOKEN must be passed in the environment.'
-    )
     .addOption(
       new Option(
         '--severity <severity>',
-        'Specify the severity level to exit with exit code upon issues. Use `none` to disable exit 1 upon error.'
+        'Use `none` to prevent Optic from  exiting 1 when issues are found.'
       )
         .choices(severities)
         .default('error')
@@ -153,9 +142,7 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
 type RunActionOptions = {
   match?: string;
   ignore?: string;
-  base?: string;
   severity: (typeof severities)[number];
-  comment?: boolean;
 };
 
 async function authenticateInteractive(config: OpticCliConfig) {
@@ -319,9 +306,14 @@ type SpecReport = {
 };
 
 function report(
-  options: RunActionOptions,
   specReports: SpecReport[],
-  branchTag: string
+  {
+    headTag,
+    baseBranch,
+  }: {
+    headTag: string;
+    baseBranch: string | undefined;
+  }
 ) {
   for (const report of specReports) {
     logger.info(`| ${chalk.bold(report.title)} (${report.path})`);
@@ -330,16 +322,16 @@ function report(
       return;
     }
     if (report.noRemoteSpec) {
-      if (options.base) {
+      if (baseBranch) {
         logger.warn(
-          `| ⚠️  Optic is trying to compare your spec with its latest uploaded version on tag \`${options.base}\`, but none was found.`
+          `| ⚠️  Optic is trying to compare your spec with its latest uploaded cloud version for tag \`gitbranch:${baseBranch}\` but none was found: make sure to run \`optic run\` at least once from target branch.`
         );
         logger.warn(
           `| To compare specs to a "gitbranch:<branch>" base, make sure \`optic run\` was called from the target base branch.`
         );
       } else {
         logger.info(
-          `| First version pushed on Optic cloud with tag \`${branchTag}\`. Make changes to your local spec and run again to see how Optic compares the two versions.`
+          `| First version pushed on Optic cloud with tag \`${headTag}\`. Make changes to your local spec and run again to see how Optic compares the two versions.`
         );
       }
     }
@@ -384,7 +376,6 @@ const partitionFailedResults = (results: RuleResult[]) => {
 };
 
 const optionsForAnalytics = (options: RunActionOptions) => ({
-  comment: options.comment,
   match: !!options.match,
   ignore: !!options.ignore,
   severity: !!options.severity,
@@ -392,10 +383,17 @@ const optionsForAnalytics = (options: RunActionOptions) => ({
 
 export const getRunAction =
   (config: OpticCliConfig) => async (options: RunActionOptions) => {
+    const commentToken = process.env.GITHUB_TOKEN;
+    const headBranch =
+      process.env.GITHUB_HEAD_REF ?? (await getCurrentBranchName());
+    const baseBranch = process.env.GITHUB_BASE_REF;
+
     trackEvent(
       'optic.run.init',
       {
         isInCi: config.isInCi,
+        commentToken: !!commentToken,
+        baseBranch: !!baseBranch,
         ...optionsForAnalytics(options),
       },
       config.userId
@@ -428,12 +426,12 @@ export const getRunAction =
       return;
     }
 
-    const match = options.match ?? '**/*.(json|yml|yaml)';
+    const match = options.match ?? `**/*.(json|yml|yaml)`;
     const localSpecPaths = await matchSpecCandidates(match, options.ignore);
     if (!localSpecPaths.length) {
       logger.info(
         `Optic couldn't find any OpenAPI specification in your repository${
-          options.match || options.ignore ? ` that matches your criteria` : ''
+          options.match || options.ignore ? ` that matches your filters` : ''
         }.`
       );
       logger.info('');
@@ -445,20 +443,16 @@ export const getRunAction =
       return;
     }
 
-    // TODO: check what happens if we don't have a branch
-    const branch =
-      process.env.GITHUB_HEAD_REF ?? (await getCurrentBranchName());
-    const branchTag = `gitbranch:${branch}`;
-
-    const baseTag = options.base ?? branchTag;
+    const headTag = `gitbranch:${headBranch}`;
+    const baseTag = baseBranch ? `gitbranch:${baseBranch}` : headTag;
 
     logger.info(
-      `Optic found ${localSpecPaths.length} OpenAPI specification files to handle.`
+      `Optic matched ${localSpecPaths.length} OpenAPI specification files.`
     );
     logger.info(
-      branchTag === baseTag
-        ? `Your specifications will be pushed to tag \`${branchTag}\` on Optic cloud.\n`
-        : `Your specifications will be compared against their latest Optic cloud versions on tag \`${baseTag}\`, then pushed to tag: \`${branchTag}\`.\n`
+      headTag === baseTag
+        ? `Checking and updating your specifications to tag \`${headTag}\` on Optic cloud.\n`
+        : `Checking and comparing your specifications against tag \`${baseTag}\` on Optic cloud, then pushing them on tag: \`${headTag}\`.\n`
     );
 
     const specReports: SpecReport[] = [];
@@ -540,9 +534,9 @@ export const getRunAction =
             config,
             specDetails,
             {
-              //headTag: options.headTag, TODO
               standard,
               silent: true,
+              currentBranch: headBranch,
             }
           );
           specUrl = upload?.headSpecUrl ?? undefined;
@@ -567,7 +561,7 @@ export const getRunAction =
           await uploadSpec(specDetails.apiId, {
             spec: headSpec,
             client: config.client,
-            tags: [sanitizeGitTag(branchTag)],
+            tags: [sanitizeGitTag(headTag)],
             orgId: specDetails.orgId,
           });
         } catch (e) {
@@ -599,9 +593,9 @@ export const getRunAction =
       });
     }
 
-    report(options, specReports, branchTag);
+    report(specReports, { headTag, baseBranch });
 
-    if (options.comment) {
+    if (commentToken) {
       switch (getProvider()) {
         case 'github': {
           const commenter = await getGitHubCommenter();
@@ -657,12 +651,6 @@ export const getRunAction =
           .length,
         spec_with_breaking_changes: specReports.filter((s) => s.breakingChanges)
           .length,
-        specs_without_remote_on_specified_base: options.base
-          ? specReports.filter((s) => s.noRemoteSpec).length
-          : undefined,
-        specs_without_remote_on_default_base: options.base
-          ? undefined
-          : specReports.filter((s) => s.noRemoteSpec).length,
         exit1,
         webUrl: maybeOrigin?.web_url,
         ...optionsForAnalytics(options),
