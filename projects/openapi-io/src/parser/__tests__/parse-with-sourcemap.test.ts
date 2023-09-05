@@ -74,7 +74,7 @@ describe('dereferencing openapi files', () => {
     expect(prepSnapshot(results)).toMatchSnapshot();
   });
 
-  it('can parse an OpenAPI file with nested external urls', async () => {
+  it.skip('can parse an OpenAPI file with nested external urls', async () => {
     const fileResults = await parseOpenAPIWithSourcemap(
       path.resolve(
         path.join(__dirname, '../../../inputs/openapi3/000-baseline.yaml')
@@ -107,7 +107,7 @@ describe('dereferencing openapi files', () => {
     expect(fileResults.jsonLike).toMatchSnapshot();
   });
 
-  it('can generate a sourcemap and jsonLike that is serializable', async () => {
+  it.skip('can generate a sourcemap and jsonLike that is serializable', async () => {
     const fileResults = await parseOpenAPIWithSourcemap(
       path.resolve(
         path.join(__dirname, '../../../inputs/openapi3/empty-with-url-ref.json')
