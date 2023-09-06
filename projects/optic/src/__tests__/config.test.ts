@@ -1,4 +1,5 @@
 import { test, expect, describe, beforeEach, jest } from '@jest/globals';
+import path from 'path';
 import { UserError } from '@useoptic/openapi-utilities';
 import { createOpticClient } from '../client';
 import {
@@ -9,6 +10,7 @@ import {
 } from '../config';
 
 jest.mock('../client');
+jest.mock('process');
 
 describe('detectConfig', () => {
   beforeEach(() => {
@@ -16,13 +18,21 @@ describe('detectConfig', () => {
   });
 
   test('finds config', async () => {
-    const path = await detectCliConfig('src/__tests__/');
-    expect(path).toBe('src/__tests__/optic.yml');
+    process.cwd = () => path.resolve('src/__tests__');
+    const configPath = await detectCliConfig('src/__tests__');
+    expect(configPath).toBe(path.resolve('src/__tests__/optic.yml'));
+  });
+
+  test('finds config in a parent before the top level git root', async () => {
+    process.cwd = () => path.resolve('src/__tests__/integration');
+    const configPath = await detectCliConfig('src/__tests__');
+    expect(configPath).toBe(path.resolve('src/__tests__/optic.yml'));
   });
 
   test("doesn't find config", async () => {
-    const path = await detectCliConfig('src');
-    expect(path).toBeUndefined();
+    process.cwd = () => path.resolve('src');
+    const configPath = await detectCliConfig('src');
+    expect(configPath).toBeUndefined();
   });
 });
 
