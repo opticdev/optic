@@ -24,9 +24,8 @@ export function clearCommand(): Command {
       }
       if (specPath) {
         const absoluteSpecPath = Path.resolve(specPath);
-        const { trafficDirectory, openApiExists } = await captureStorage(
-          specPath
-        );
+        const { trafficDirectory, openApiExists } =
+          await captureStorage(specPath);
         if (!openApiExists) {
           return await feedback.inputError(
             'OpenAPI specification file could not be found',
