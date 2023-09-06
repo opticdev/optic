@@ -46,7 +46,7 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/PostBooksRequestBody"
-  "/authors/{author}":
+  /authors/{author}:
     parameters:
       - in: path
         name: author
@@ -75,7 +75,7 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/PostAuthorsRequestBody"
-  "/books/{book}":
+  /books/{book}:
     parameters:
       - in: path
         name: book
@@ -304,7 +304,7 @@ paths:
   /basic-auth:
     get:
       responses: {}
-  "/cookies/{cooky}":
+  /cookies/{cooky}:
     parameters:
       - in: path
         name: cooky
@@ -319,7 +319,7 @@ paths:
   /deflate:
     get:
       responses: {}
-  "/delay/{delay}":
+  /delay/{delay}:
     parameters:
       - in: path
         name: delay
@@ -438,7 +438,7 @@ paths:
             text/html:
               schema:
                 type: string
-  "/status/{status}":
+  /status/{status}:
     parameters:
       - in: path
         name: status
@@ -453,7 +453,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetStatusStatus200ResponseBody"
-  "/stream/{stream}":
+  /stream/{stream}:
     parameters:
       - in: path
         name: stream
@@ -462,7 +462,7 @@ paths:
           type: string
     get:
       responses: {}
-  "/time/{time}":
+  /time/{time}:
     parameters:
       - in: path
         name: time
@@ -1083,7 +1083,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetAuthors200ResponseBody"
-  "/books/{book}":
+  /books/{book}:
     parameters:
       - in: path
         name: book
@@ -1228,7 +1228,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetAuthors200ResponseBody"
-  "/books/{book}":
+  /books/{book}:
     parameters:
       - in: path
         name: book
@@ -1464,7 +1464,7 @@ paths:
             application/json:
               schema:
                 type: object
-  "/books/{book}":
+  /books/{book}:
     parameters:
       - in: path
         name: book
@@ -1602,7 +1602,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetAuthors200ResponseBody"
-  "/books/{book}":
+  /books/{book}:
     parameters:
       - in: path
         name: book
