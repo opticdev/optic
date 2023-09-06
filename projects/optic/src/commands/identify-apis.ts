@@ -12,12 +12,12 @@ import { getApiUrl } from '../utils/cloud-urls';
 
 export async function identifyOrCreateApis(
   config: OpticCliConfig,
-  localSpecPaths: string[]
+  localSpecPaths: string[],
+  generatedDetails: Exclude<
+    Awaited<ReturnType<typeof getDetailsForGeneration>>,
+    null
+  >
 ) {
-  // TODO: improve logging in getDetailsForGeneration
-  const generatedDetails = await getDetailsForGeneration(config);
-  if (!generatedDetails) throw new Error('Could not determine remote branch'); // TODO: report
-
   const { web_url, organization_id, default_branch, default_tag } =
     generatedDetails;
 
