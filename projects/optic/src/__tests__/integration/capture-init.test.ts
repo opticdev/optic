@@ -40,6 +40,16 @@ describe('capture init', () => {
     ).toMatchSnapshot();
   });
 
+  test('init with windows path is normalized', async () => {
+    const workspace = await setupWorkspace('capture-init/no-yml', {
+      repo: true,
+    });
+    await runOptic(workspace, String.raw`capture init test\\abc.yml`);
+    expect(
+      await fs.readFile(path.join(workspace, 'optic.yml'), 'utf-8')
+    ).toMatch(/test\/abc\.yml/);
+  });
+
   test('init with existing optic.yml', async () => {
     const workspace = await setupWorkspace('capture-init/yml', {
       repo: true,

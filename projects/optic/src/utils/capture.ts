@@ -1,4 +1,5 @@
 import path from 'path';
+import { normalize } from 'crosspath';
 
 export type SpawnCommand = {
   cmd: string;
@@ -14,5 +15,5 @@ export function commandSplitter(command: string): SpawnCommand {
 
 // returns the relative path between file and rootPath
 export function resolveRelativePath(rootPath: string, file: string): string {
-  return path.relative(rootPath, path.resolve(file));
+  return normalize(path.relative(rootPath, path.resolve(file)));
 }

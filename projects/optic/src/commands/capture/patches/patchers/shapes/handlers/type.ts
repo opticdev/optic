@@ -198,7 +198,7 @@ export function* typePatches(
             value: schemaType,
           }),
         ],
-        shouldRegeneratePatches: false,
+        shouldRegeneratePatches: true,
         interaction,
       };
     } else {

@@ -777,7 +777,7 @@ exports[`type shape patch generator for 3.1.x when provided with null value, it 
         "query": [],
       },
     },
-    "shouldRegeneratePatches": false,
+    "shouldRegeneratePatches": true,
   },
 ]
 `;

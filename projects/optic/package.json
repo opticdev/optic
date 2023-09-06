@@ -2,7 +2,7 @@
   "name": "@useoptic/optic",
   "license": "MIT",
   "packageManager": "yarn@3.6.2",
-  "version": "0.49.3",
+  "version": "0.49.7",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -76,6 +76,7 @@
     "chalk": "^4.1.2",
     "commander": "^11.0.0",
     "conf": "^10.2.0",
+    "crosspath": "^2.0.0",
     "dotenv": "^16.0.3",
     "exit-hook": "^2.2.1",
     "fast-deep-equal": "^3.1.3",
