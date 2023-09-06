@@ -6,6 +6,7 @@ import {
   Result,
   RuleResult,
 } from '@useoptic/openapi-utilities';
+import { OpenAPIFactNodes } from '../rule-runner/rule-runner-types';
 
 class NotImplementedError extends Error {}
 
@@ -26,6 +27,7 @@ export class ExternalRuleBase {
     changelog: IChange[];
     nextJsonLike: OpenAPIV3.Document;
     currentJsonLike: OpenAPIV3.Document;
+    groupedFacts: OpenAPIFactNodes;
   }): Promise<Result[]> {
     throw new NotImplementedError();
   }
@@ -35,6 +37,7 @@ export class ExternalRuleBase {
     diffs: ObjectDiff[];
     fromSpec: OpenAPIV3.Document;
     toSpec: OpenAPIV3.Document;
+    groupedFacts: OpenAPIFactNodes;
   }): Promise<RuleResult[]> {
     throw new NotImplementedError();
   }

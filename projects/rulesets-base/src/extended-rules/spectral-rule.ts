@@ -1,10 +1,12 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import {
   constructFactTree,
+  FactVariant,
   getFactForJsonPath,
   IChange,
   IFact,
   ObjectDiff,
+  OpenApiKind,
   OpenAPIV3,
   OpenApiV3Traverser,
   Result,
@@ -14,11 +16,22 @@ import {
   UserError,
 } from '@useoptic/openapi-utilities';
 import { ExternalRuleBase } from '../rules/external-rule-base';
-import { isExempted } from '../rule-runner/utils';
+import {
+  createRuleContextWithOperation,
+  createRuleContextWithoutOperation,
+  isExempted,
+} from '../rule-runner/utils';
 import { spawn } from 'child_process';
 import path from 'node:path';
 import os from 'node:os';
 import fs from 'node:fs/promises';
+import { RuleContext } from '..';
+import { NodeDetail, OpenAPIFactNodes } from '../rule-runner/rule-runner-types';
+import {
+  createOperation,
+  createSpecification,
+} from '../rule-runner/data-constructors';
+import { getEndpointKey } from '../rule-runner/group-facts';
 
 type Lifecycle = 'added' | 'addedOrChanged' | 'changed' | 'always';
 
@@ -100,6 +113,48 @@ function toOpticRuleResult(
   };
 }
 
+function createSpecNode(
+  spec: OpenAPIV3.Document
+): Parameters<typeof createRuleContextWithoutOperation>['0'] {
+  const { paths, components, ...specificationFact } = spec;
+
+  const fact: FactVariant<OpenApiKind.Specification> = {
+    location: {
+      jsonPath: '',
+      conceptualPath: [],
+      conceptualLocation: {},
+      kind: OpenApiKind.Specification,
+    },
+    value: specificationFact,
+  };
+  const node: NodeDetail<OpenApiKind.Specification> = {
+    before: fact,
+    after: fact,
+    change: null,
+  };
+  return {
+    before: createSpecification(node, 'before', spec)!,
+    after: createSpecification(node, 'after', spec)!,
+    node,
+  };
+}
+
+function createOperationNode(
+  facts: OpenAPIFactNodes,
+  jsonPath: string,
+  before: OpenAPIV3.Document,
+  after: OpenAPIV3.Document
+): Parameters<typeof createRuleContextWithOperation>['1'] {
+  const [, path, method] = jsonPointerHelpers.decode(jsonPath);
+
+  const endpointNode = facts.endpoints.get(getEndpointKey({ path, method }))!;
+  return {
+    before: createOperation(endpointNode, 'before', before)!,
+    after: createOperation(endpointNode, 'after', after)!,
+    node: endpointNode,
+  };
+}
+
 export class SpectralRule extends ExternalRuleBase {
   private lifecycle: Lifecycle;
   public name: string;
@@ -109,12 +164,14 @@ export class SpectralRule extends ExternalRuleBase {
   private spectral?: {
     run: (json: any) => Promise<SpectralResult[]>;
   };
+  private matches?: (context: RuleContext) => boolean;
   constructor(options: {
     name: string;
     applies?: Lifecycle;
     rulesetPointer?: string;
     flatSpecFile?: string;
     docsLink?: string;
+    matches?: (context: RuleContext) => boolean;
     spectral?: {
       run: (json: any) => Promise<SpectralResult[]>;
     };
@@ -126,6 +183,7 @@ export class SpectralRule extends ExternalRuleBase {
     this.lifecycle = options.applies ?? 'always';
     this.docsLink = options.docsLink;
     this.spectral = options.spectral;
+    this.matches = options.matches;
   }
 
   async runRulesV2(inputs: {
@@ -133,6 +191,7 @@ export class SpectralRule extends ExternalRuleBase {
     diffs: ObjectDiff[];
     fromSpec: OpenAPIV3.Document;
     toSpec: OpenAPIV3.Document;
+    groupedFacts: OpenAPIFactNodes;
   }): Promise<RuleResult[]> {
     if ((inputs.toSpec as any)['x-optic-ci-empty-spec'] === true) {
       return [];
@@ -186,6 +245,42 @@ export class SpectralRule extends ExternalRuleBase {
       const fact = getFactForJsonPath(path, factTree);
       if (!fact) {
         continue;
+      }
+
+      if (this.matches) {
+        const spec = {
+          before: createSpecification(
+            inputs.groupedFacts.specification,
+            'before',
+            inputs.fromSpec
+          )!,
+          after: createSpecification(
+            inputs.groupedFacts.specification,
+            'after',
+            inputs.toSpec
+          )!,
+          node: inputs.groupedFacts.specification,
+        };
+
+        const ruleContext = jsonPointerHelpers.startsWith(path, [
+          'paths',
+          '**',
+          '**',
+        ])
+          ? createRuleContextWithOperation(
+              spec,
+              createOperationNode(
+                inputs.groupedFacts,
+                path,
+                inputs.fromSpec,
+                inputs.toSpec
+              ),
+              inputs.context
+            )
+          : createRuleContextWithoutOperation(spec, inputs.context);
+        if (!this.matches(ruleContext)) {
+          continue;
+        }
       }
 
       // This exemption is actually on the Fact level, rather than the spectral path
@@ -276,6 +371,7 @@ export class SpectralRule extends ExternalRuleBase {
     changelog: IChange[];
     nextJsonLike: OpenAPIV3.Document<{}>;
     currentJsonLike: OpenAPIV3.Document<{}>;
+    groupedFacts: OpenAPIFactNodes;
   }): Promise<Result[]> {
     if ((inputs.nextJsonLike as any)['x-optic-ci-empty-spec'] === true) {
       return [];
@@ -325,6 +421,29 @@ export class SpectralRule extends ExternalRuleBase {
       const fact = getFactForJsonPath(path, factTree);
       if (!fact) {
         continue;
+      }
+
+      if (this.matches) {
+        const spec = createSpecNode(inputs.nextJsonLike);
+        const ruleContext = jsonPointerHelpers.startsWith(path, [
+          'paths',
+          '**',
+          '**',
+        ])
+          ? createRuleContextWithOperation(
+              spec,
+              createOperationNode(
+                inputs.groupedFacts,
+                path,
+                inputs.currentJsonLike,
+                inputs.nextJsonLike
+              ),
+              inputs.context
+            )
+          : createRuleContextWithoutOperation(spec, inputs.context);
+        if (!this.matches(ruleContext)) {
+          continue;
+        }
       }
 
       // This exemption is actually on the Fact level, rather than the spectral path

@@ -143,12 +143,6 @@ export class RuleRunner {
       (rule) => !ExternalRuleBase.isInstance(rule)
     ) as (Ruleset | Rule)[];
 
-    const externalResults: Result[] = [];
-    for (const externalRule of externalRules) {
-      const results = await externalRule.runRules(inputs);
-      externalResults.push(...results);
-    }
-
     // Groups the flat list of beforefacts, afterfacts and changes by location (e.g. operation, query parameter, response, response property, etc).
     // A node can contain a before fact, after fact and or change.
     const openApiFactNodes = groupFacts({
@@ -156,6 +150,15 @@ export class RuleRunner {
       afterFacts: nextFacts,
       changes: changelog,
     });
+
+    const externalResults: Result[] = [];
+    for (const externalRule of externalRules) {
+      const results = await externalRule.runRules({
+        ...inputs,
+        groupedFacts: openApiFactNodes,
+      });
+      externalResults.push(...results);
+    }
 
     // Run rules on specifications and collect the results
     const specificationResults = runSpecificationRules({
@@ -232,12 +235,6 @@ export class RuleRunner {
       (rule) => !ExternalRuleBase.isInstance(rule)
     ) as (Ruleset | Rule)[];
 
-    const externalResults: RuleResult[] = [];
-    for (const externalRule of externalRules) {
-      const results = await externalRule.runRulesV2(inputs);
-      externalResults.push(...results);
-    }
-
     // TODO reimplement the rule runner so we don't need to generate legacy fact types here
     const beforeFacts =
       inputs.fromSpec['x-optic-ci-empty-spec'] === true
@@ -254,6 +251,15 @@ export class RuleRunner {
       afterFacts,
       changes: changelog,
     });
+
+    const externalResults: RuleResult[] = [];
+    for (const externalRule of externalRules) {
+      const results = await externalRule.runRulesV2({
+        ...inputs,
+        groupedFacts: openApiFactNodes,
+      });
+      externalResults.push(...results);
+    }
 
     // Run rules on specifications and collect the results
     const specificationResults: RuleResult[] = runSpecificationRules({
