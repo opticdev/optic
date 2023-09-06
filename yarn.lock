@@ -3167,9 +3167,9 @@ __metadata:
   linkType: hard
 
 "@types/cookie@npm:^0":
-  version: 0.5.1
-  resolution: "@types/cookie@npm:0.5.1"
-  checksum: 9a8d60fc84797122bc399d6bd330fe5780dc7aab032321de705049ea925339f74658bfa418de483a625d51858770efef58df633ff2e20f1bdf7fbd74a52847e2
+  version: 0.5.2
+  resolution: "@types/cookie@npm:0.5.2"
+  checksum: 4a1e46379d877f5a3cc687a9799dd72e5f7e68c4764d45cb469789dec92b4b4a7a5bb8b10a08c90be15939fa7b9b402f87ed339dfac0cabf43699c5189880e88
   languageName: node
   linkType: hard
 
@@ -3380,9 +3380,9 @@ __metadata:
   linkType: hard
 
 "@types/log@npm:^6.3.0":
-  version: 6.3.0
-  resolution: "@types/log@npm:6.3.0"
-  checksum: 558a25d8efbec4a084054dd72b2bbe3ea455d78202a3de9edeea7cbe43f670667cb6a58736dc084d4227995e4fe507a3456cfe42cd1eea8dc56f7382a18abaf2
+  version: 6.3.1
+  resolution: "@types/log@npm:6.3.1"
+  checksum: 412d0e13f0082e976c617b1ee8def7d84c975ac081ad798cd0c8560fa1429f147943fa3c12572d15e04750229dc0aea007edde764cbea3d42924f6fbf6dfcda6
   languageName: node
   linkType: hard
 
@@ -3462,9 +3462,9 @@ __metadata:
   linkType: hard
 
 "@types/semver@npm:^7.3.10":
-  version: 7.5.0
-  resolution: "@types/semver@npm:7.5.0"
-  checksum: 0a64b9b9c7424d9a467658b18dd70d1d781c2d6f033096a6e05762d20ebbad23c1b69b0083b0484722aabf35640b78ccc3de26368bcae1129c87e9df028a22e2
+  version: 7.5.1
+  resolution: "@types/semver@npm:7.5.1"
+  checksum: 2fffe938c7ac168711f245a16e1856a3578d77161ca17e29a05c3e02c7be3e9c5beefa29a3350f6c1bd982fb70aa28cc52e4845eb7d36246bcdc0377170d584d
   languageName: node
   linkType: hard
 
@@ -6163,8 +6163,8 @@ __metadata:
   linkType: hard
 
 "fastify@npm:^4.17.0":
-  version: 4.20.0
-  resolution: "fastify@npm:4.20.0"
+  version: 4.22.2
+  resolution: "fastify@npm:4.22.2"
   dependencies:
     "@fastify/ajv-compiler": ^3.5.0
     "@fastify/error": ^3.2.0
@@ -6182,7 +6182,7 @@ __metadata:
     secure-json-parse: ^2.5.0
     semver: ^7.5.0
     tiny-lru: ^11.0.1
-  checksum: e3342f4744088f57c673bfa2f43fc429b3ba6b50c250d5a361a7bd2af5fd3bd5b681e602b49228a9f9011706142bcb7c94f37533e96878e49bc5b0a40080535e
+  checksum: 495c816a106548d0cf18fb379c5b06de7eecfb79a373d490e341c9f12297e378b3005ef4a36f0cbaccdf8ca818c6ff91832f4ade17726e68d43a0c6e7bc49810
   languageName: node
   linkType: hard
 
@@ -8863,8 +8863,8 @@ __metadata:
   linkType: hard
 
 "mockttp@npm:^3.9.1":
-  version: 3.9.1
-  resolution: "mockttp@npm:3.9.1"
+  version: 3.9.2
+  resolution: "mockttp@npm:3.9.2"
   dependencies:
     "@graphql-tools/schema": ^8.5.0
     "@graphql-tools/utils": ^8.8.0
@@ -8907,7 +8907,7 @@ __metadata:
     ws: ^8.8.0
   bin:
     mockttp: dist/admin/admin-bin.js
-  checksum: 1d162c2009c04823da08c7e9a1773bb04aa29b1577af6c0d2a50f900f4993a66a856fe9b7149f55d5bd9473de8c74279cd2994f69033b2339d960836b1eb6d7a
+  checksum: aa11f01ef7765b96a8ad135f97eddd72e548e626bab4c9fcef7bf52633b1f49e5e4cd2f763356d4ae1ea8bb7f5f4d52110681e46913fc5800b0713a99c273316
   languageName: node
   linkType: hard
 
@@ -11169,22 +11169,22 @@ __metadata:
   linkType: hard
 
 "typescript@npm:^5.0.0, typescript@npm:^5.0.4":
-  version: 5.1.6
-  resolution: "typescript@npm:5.1.6"
+  version: 5.2.2
+  resolution: "typescript@npm:5.2.2"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: b2f2c35096035fe1f5facd1e38922ccb8558996331405eb00a5111cc948b2e733163cc22fab5db46992aba7dd520fff637f2c1df4996ff0e134e77d3249a7350
+  checksum: 7912821dac4d962d315c36800fe387cdc0a6298dba7ec171b350b4a6e988b51d7b8f051317786db1094bd7431d526b648aba7da8236607febb26cf5b871d2d3c
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@^5.0.0#~builtin<compat/typescript>, typescript@patch:typescript@^5.0.4#~builtin<compat/typescript>":
-  version: 5.1.6
-  resolution: "typescript@patch:typescript@npm%3A5.1.6#~builtin<compat/typescript>::version=5.1.6&hash=5da071"
+  version: 5.2.2
+  resolution: "typescript@patch:typescript@npm%3A5.2.2#~builtin<compat/typescript>::version=5.2.2&hash=f3b441"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: f53bfe97f7c8b2b6d23cf572750d4e7d1e0c5fff1c36d859d0ec84556a827b8785077bc27676bf7e71fae538e517c3ecc0f37e7f593be913d884805d931bc8be
+  checksum: 0f4da2f15e6f1245e49db15801dbee52f2bbfb267e1c39225afdab5afee1a72839cd86000e65ee9d7e4dfaff12239d28beaf5ee431357fcced15fb08583d72ca
   languageName: node
   linkType: hard
 
