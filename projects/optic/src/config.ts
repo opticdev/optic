@@ -143,24 +143,29 @@ const ajv = new Ajv();
 const validateConfigSchema = ajv.compile(ProjectYmlConfig);
 
 // attempt to find an optic.yml file, or return undefined if none can be found
+// Starts from cwd, and looks up until the top level dir (usually the git root or cwd)
 export async function detectCliConfig(
-  dir: string
+  topLevelDir: string
 ): Promise<string | undefined> {
-  const expectedDevYmlPath = path.join(dir, OPTIC_DEV_YML_NAME);
-  const expectedYmlPath = path.join(dir, OPTIC_YML_NAME);
-  // test out the dev path first
-  try {
-    await fs.access(expectedDevYmlPath);
-    return expectedDevYmlPath;
-  } catch (e) {}
+  let currentDir = process.cwd();
+  // search up from pwd to specified dir
+  while (topLevelDir.length <= currentDir.length) {
+    const expectedDevYmlPath = path.join(currentDir, OPTIC_DEV_YML_NAME);
+    const expectedYmlPath = path.join(currentDir, OPTIC_YML_NAME);
+    try {
+      await fs.access(expectedYmlPath);
+      return expectedYmlPath;
+    } catch (e) {}
 
-  try {
-    await fs.access(expectedYmlPath);
-  } catch (e) {
-    return undefined;
+    try {
+      await fs.access(expectedDevYmlPath);
+      return expectedDevYmlPath;
+    } catch (e) {}
+
+    currentDir = path.dirname(currentDir);
   }
 
-  return expectedYmlPath;
+  return undefined;
 }
 
 export async function loadCliConfig(
