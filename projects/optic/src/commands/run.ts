@@ -8,7 +8,7 @@ import open from 'open';
 import { handleTokenInput } from './login/login';
 import { matchSpecCandidates } from './diff/diff-all';
 import { getCurrentBranchName, guessRemoteOrigin } from '../utils/git-utils';
-import { loadSpec } from '../utils/spec-loaders';
+import { loadSpec, loadRaw } from '../utils/spec-loaders';
 import type { ParseResult } from '../utils/spec-loaders';
 import {
   CompareSpecResults,
@@ -30,26 +30,27 @@ import {
 } from './ci/comment/common';
 import { GroupedDiffs } from '@useoptic/openapi-utilities/build/openapi3/group-diff';
 import { identifyOrCreateApis } from './identify-apis';
+import { getDetailsForGeneration } from '../utils/generated';
+import { checkOpenAPIVersion } from '@useoptic/openapi-io';
 
 const usage = () => `
 
-  Run Optic locally
+  Local usage
   ------------------------
   Run \`optic run\` to discover OpenAPI files in your repository and start tracking them in your dedicated Optic cloud account.
   Make some changes to the specifications and run the same command again to see how Optic handles changes to your specs:
 
   > optic run [--match ./specs/*.openapi.yml [--ignore ./specs/ignore.openapi.yml]]
 
-  CI setup: Github Action
+  CI: Github Action
   ------------------------
-  On pull request and push events, check changes to your specifications, upload latest versions to Optic cloud and post a change summary to the PR.
-  Optic figures out the current branch and the PR target branch from the environment.
-  Get your organization OPTIC_TOKEN from app.useoptic.com. Pass a GITHUB_TOKEN with write permission to let Optic post comments with change summaries on your pull requests:
-  https://www.useoptic.com/docs/setup-ci#configure-commenting-on-pull-requests
+  On pull request and push events, lint and check changes to your specifications, upload latest versions to Optic cloud and post a summary to the PR.
+  Optic figures out the current branch and the PR target branch from the CI environment.
+  Get your organization OPTIC_TOKEN from app.useoptic.com. Pass a GITHUB_TOKEN with write permission to let Optic post summaries to your pull requests:
 
   > OPTIC_TOKEN=\${{ secrets.OPTIC_TOKEN }} GITHUB_TOKEN=\${{ secrets.GITHUB_TOKEN }} optic run
 
-  CI setup: Gitlab
+  CI: Gitlab
   ------------------------
   Work in progress: request Gitlab support on https://github.com/opticdev/optic/issues
 `;
@@ -62,7 +63,6 @@ function getProvider() {
   else return null;
 }
 
-// TODO: support enterprise base url
 async function getGitHubCommenter() {
   const eventFile = fs.readFileSync(process.env.GITHUB_EVENT_PATH!, 'utf8');
   const event = JSON.parse(eventFile);
@@ -76,6 +76,7 @@ async function getGitHubCommenter() {
     pullRequest,
     sha,
     token,
+    enterpriseBaseUrl: process.env.GITHUB_API_URL,
   });
   return commenter;
 }
@@ -85,14 +86,12 @@ async function comment(data: CiRunDetails, commenter: CommentApi, sha: string) {
     await commenter.getComment(COMPARE_SUMMARY_IDENTIFIER);
 
   const body = generateCompareSummaryMarkdown({ sha }, data, {
-    verbose: false, // TODO
+    verbose: false,
   });
 
   if (maybeComment) {
-    // If there's a comment already, we need to check whether this session newer than the posted comment
     await commenter.updateComment(maybeComment.id, body);
   } else {
-    // if does not have comment, we should only comment when there is a completed or failed session
     if (data.completed.length > 0 || data.failed.length > 0) {
       await commenter.createComment(body);
     }
@@ -103,14 +102,12 @@ async function comment(data: CiRunDetails, commenter: CommentApi, sha: string) {
 // - support comment for Gitlab
 // - support capture
 // - check userId analytics
+// - update main --help to mention `optic run`
 export function registerRunCommand(cli: Command, config: OpticCliConfig) {
   cli
     .command('run')
     .description(
-      `Integrate Optic to your CI flow and immediately start shipping better APIs:
-- prevent shipping unintentional breaking changes
-- enforce API design, including Spectral rules and forwards-only governance
-- get cloud benefits: stats, shareable changelogs, documentation hubs with time travel and more`
+      `A workflow command that wraps up multiple utilities in a single one: it discovers OpenAPI specifications in your repository, lints them, searches for potentially harmful breaking changes, pushes latest versions to your Optic cloud account and post a summary of the changes to your pull rqeuests when a GITHUB_TOKEN with write permission is set as environment variable.`
     )
     .configureHelp({ commandUsage: usage })
     .option(
@@ -340,7 +337,21 @@ export const getRunAction =
     }
 
     const match = options.match ?? `**/*.(json|yml|yaml)`;
-    const localSpecPaths = await matchSpecCandidates(match, options.ignore);
+    const localSpecPathsUnchecked = await matchSpecCandidates(
+      match,
+      options.ignore
+    );
+
+    const localSpecPaths: string[] = [];
+    for (const path of localSpecPathsUnchecked) {
+      try {
+        const spec = await loadRaw(path, config);
+        if (checkOpenAPIVersion(spec)) localSpecPaths.push(path);
+      } catch (e) {
+        continue;
+      }
+    }
+
     if (!localSpecPaths.length) {
       logger.info(
         `Optic couldn't find any OpenAPI specification in your repository${
@@ -371,8 +382,21 @@ export const getRunAction =
     }
     logger.info('');
 
+    const generatedDetails = await getDetailsForGeneration(config);
+    if (!generatedDetails) return;
+
     const specReports: SpecReport[] = [];
-    const pathUrls = await identifyOrCreateApis(config, localSpecPaths);
+    let pathUrls: Map<string, string>;
+    try {
+      pathUrls = await identifyOrCreateApis(
+        config,
+        localSpecPaths,
+        generatedDetails
+      );
+    } catch (e) {
+      logger.error(`${e}`);
+      return;
+    }
     const allChecks: Awaited<ReturnType<typeof compute>>['checks'][] = [];
 
     let results: {
@@ -399,7 +423,7 @@ export const getRunAction =
       let localSpec: ParseResult;
       try {
         localSpec = await loadSpec(path, config, {
-          strict: false, // TODO
+          strict: true,
           denormalize: true,
         });
       } catch (e) {
@@ -426,7 +450,7 @@ export const getRunAction =
           `cloud:${specDetails.apiId}@${cloudTag}`,
           config,
           {
-            strict: false, // TODO
+            strict: false,
             denormalize: true,
           }
         );

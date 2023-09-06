@@ -31,18 +31,18 @@ export async function getDetailsForGeneration(config: OpticCliConfig): Promise<{
       organization_id: orgRes.org.id,
     };
   } else if (!maybeOrigin) {
+    logger.warn(chalk.red('Could not identify your APIs with Optic cloud'));
     logger.warn(
-      chalk.yellow(
-        'Could not guess the git remote origin - cannot automatically connect apis with optic cloud'
-      )
+      "Optic identifies your APIs by their path in the repository and the repository's Git remote origin, but the later could not be determined."
     );
     logger.warn(
-      `To fix this, ensure that the git remote is set, or manually add x-optic-url to the specs you want to track.`
+      "Either set your repository's Git remote and run the command again, or add an identifier to your specification: run `optic api new <name>` and follow the instructions.\n"
     );
     return null;
   } else if (!orgRes.ok) {
-    logger.error(orgRes.error);
-    logger.error('skipping automatically connect apis with optic cloud');
+    logger.error(
+      `Optic encountered an error trying to connect APIs to Optic cloud: ${orgRes.error}`
+    );
     return null;
   }
   return null;
