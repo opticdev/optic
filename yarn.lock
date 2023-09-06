@@ -3833,6 +3833,7 @@ __metadata:
     "@types/node": ^18.0.0
     "@useoptic/json-pointer-helpers": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"
+    ajv: ^8.6.0
     babel-jest: ^29.3.1
     jest: ^29.3.1
     lodash.pick: ^4.4.0

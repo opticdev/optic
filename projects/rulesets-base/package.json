@@ -20,6 +20,7 @@
     "@stoplight/spectral-rulesets": "^1.14.1",
     "@useoptic/json-pointer-helpers": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
+    "ajv": "^8.6.0",
     "lodash.pick": "^4.4.0",
     "node-fetch": "^2.6.7",
     "semver": "^7.5.4"
