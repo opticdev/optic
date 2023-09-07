@@ -1,4 +1,4 @@
-import { SpectralRule } from '@useoptic/rulesets-base';
+import { RuleContext, SpectralRule } from '@useoptic/rulesets-base';
 import Ajv from 'ajv';
 import {
   IChange,
@@ -41,6 +41,7 @@ export class SpectralRulesets extends ExternalRuleBase {
     private options: {
       always: string[];
       added: string[];
+      matches?: (context: RuleContext) => boolean;
     }
   ) {
     super();
@@ -74,6 +75,7 @@ export class SpectralRulesets extends ExternalRuleBase {
         flatSpecFile: absolutePathTmpSpec,
         applies: 'added',
         rulesetPointer: ruleInput,
+        matches: this.options.matches,
       });
     });
     const always = this.options.always.map((ruleInput) => {
@@ -82,6 +84,7 @@ export class SpectralRulesets extends ExternalRuleBase {
         flatSpecFile: absolutePathTmpSpec,
         applies: 'always',
         rulesetPointer: ruleInput,
+        matches: this.options.matches,
       });
     });
 
@@ -120,6 +123,7 @@ export class SpectralRulesets extends ExternalRuleBase {
         flatSpecFile: absolutePathTmpSpec,
         applies: 'added',
         rulesetPointer: ruleInput,
+        matches: this.options.matches,
       });
     });
     const always = this.options.always.map((ruleInput) => {
@@ -128,6 +132,7 @@ export class SpectralRulesets extends ExternalRuleBase {
         flatSpecFile: absolutePathTmpSpec,
         applies: 'always',
         rulesetPointer: ruleInput,
+        matches: this.options.matches,
       });
     });
 
