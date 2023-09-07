@@ -14,7 +14,7 @@ jobs:
   verify-prerelease-tag:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Verify prerelease has a prerelease tag
         if: github.event.release.prerelease
         run: |
@@ -27,7 +27,7 @@ jobs:
   verify-versions-agree:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Confirm GH release and package.json agree on version
         if: github.event_name == 'release'
         run: |
@@ -45,7 +45,7 @@ jobs:
   verify-version-unpublished:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Confirm release version is unpublished
         run: |
           package_version=$(jq -r '.version' < package.json)
@@ -71,7 +71,7 @@ jobs:
     outputs:
       optic_version: ${{ steps.version.outputs.optic_version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v3
         with:
