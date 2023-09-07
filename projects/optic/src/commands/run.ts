@@ -299,23 +299,16 @@ const getGithubBranchName = () => {
   return ref.split('/heads/')[1];
 };
 
+// TODO: exit 1 when optic encounters an error?
 export const getRunAction =
   (config: OpticCliConfig) => async (options: RunActionOptions) => {
-    const commentToken = process.env.GITHUB_TOKEN;
+    const commentToken =
+      process.env.GITHUB_TOKEN ?? process.env.OPTIC_GITLAB_TOKEN;
 
     const currentBranch =
       getGithubBranchName() ??
       process.env.CI_COMMIT_REF_NAME ??
       (await getCurrentBranchName());
-
-    logger.info(
-      'currentBranch',
-      currentBranch,
-      'CI_COMMIT_REF_NAME',
-      process.env.CI_COMMIT_REF_NAME,
-      'GH branchname',
-      getGithubBranchName()
-    );
 
     const currentBranchCloudTag = `gitbranch:${currentBranch}`;
 
@@ -402,11 +395,11 @@ export const getRunAction =
       }.`
     );
     logger.info(
-      `Checking your specifications, comparing them against \`${cloudTag}\` tag, then pushing them to \`${currentBranchCloudTag}\` tag on Optic cloud.`
+      `Checking your specifications, comparing them against \`${cloudTag}\` tag, then pushing them to \`${currentBranchCloudTag}\` tag on Optic cloud.\n`
     );
     if (!commentToken && isPR) {
       logger.info(
-        `Pass a GITHUB_TOKEN environment variable with write permission to let Optic post comment with API change summaries to your pull requests.`
+        `Pass a GITHUB_TOKEN or OPTIC_GITLAB_TOKEN environment variable with write permission to let Optic post comment with API change summaries to your pull requests.\n`
       );
     }
     logger.info('');
