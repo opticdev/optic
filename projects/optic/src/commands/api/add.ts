@@ -60,6 +60,10 @@ export const registerApiAdd = (cli: Command, config: OpticCliConfig) => {
       'Sets the depth of how far to crawl through to add historic API data. Set history-depth=0 if you want to crawl the entire history',
       '1'
     )
+    .option(
+      '--start-commit <start-commit>',
+      'Start backfilling at a certain commit. Should be used with history-depth'
+    )
     .option('--all', 'add all', false)
     .option('--web', 'open to the added API in Optic Cloud', false)
     .action(errorHandler(getApiAddAction(config), { command: 'api-add' }));
@@ -69,6 +73,7 @@ type ApiAddActionOptions = {
   historyDepth: string;
   web: boolean;
   all: boolean;
+  startCommit?: string;
 };
 
 async function initializeApi(
@@ -219,6 +224,7 @@ async function backfillHistory(
     default_branch: string;
     default_tag?: string | undefined;
     web_url?: string;
+    startCommit?: string;
   }
 ) {
   const specsStatus = new Map<
@@ -235,6 +241,7 @@ async function backfillHistory(
     const currentBranch = await Git.getCurrentBranchName();
     let mergeBaseSha: string | null = null;
     let shouldTag = true;
+    let shouldStart = options.startCommit === undefined;
     let branchToUseForTag = currentBranch;
 
     if (options.default_branch !== '') {
@@ -249,6 +256,17 @@ async function backfillHistory(
     for await (const sha of shas) {
       if (mergeBaseSha === sha) {
         shouldTag = true;
+      }
+      if (options.startCommit && !shouldStart) {
+        const adjustedSha = sha.slice(0, options.startCommit.length);
+        if (adjustedSha === options.startCommit) {
+          shouldStart = true;
+        } else {
+          logger.debug(
+            `Skipping ${adjustedSha}, waiting for ${options.startCommit}`
+          );
+          continue;
+        }
       }
       const baseText = `${chalk.bold.blue(
         'Backfilling'
@@ -511,6 +529,7 @@ export const getApiAddAction =
         default_branch,
         default_tag,
         web_url,
+        startCommit: options.startCommit,
       });
     }
 
