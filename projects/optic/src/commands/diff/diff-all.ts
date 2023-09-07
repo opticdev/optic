@@ -217,7 +217,7 @@ async function computeAll(
     }
   > = new Map();
 
-  for await (const [_, candidate] of candidateMap) {
+  for await (const [candidatePath, candidate] of candidateMap) {
     // We load the raw spec and discard the comparison if there is no optic url or is in an invalid version
     // Cases we run the comparison:
     // - if to spec has x-optic-url
@@ -260,12 +260,7 @@ async function computeAll(
       continue;
     }
 
-    const p = candidate.to ?? candidate.from;
-    // should never happen
-    if (!p) continue;
-    const relativePath = path.relative(config.root, path.resolve(p));
-
-    comparisons.set(relativePath, {
+    comparisons.set(candidatePath, {
       from: candidate.from,
       to: candidate.to,
       opticUrl,
