@@ -43,16 +43,42 @@ It can be difficult to keep an OpenAPI in-sync with your implementation. Optic t
 Think of it like Snapshot testing, but for your API's behavior, with OpenAPI as the snapshot. 
 
 ```
-optic capture openapi.yml https://localhost:8080 --command "npm test"
-optic verify openapi.yml
+optic capture init openapi.yml
 ```
 
-<img src="https://github.com/opticdev/optic/assets/5900338/a9b36ff3-6f24-42b3-8d0d-16d678852761" width="500" />
+Configuration will be generated for you in the `optic.yml` file
+
+```yml
+capture:
+  openapi.yml:
+    server:
+      command: npm start # your server start command
+      url: http://localhost:8080 # where your server starts
+    requests:
+      send:
+        - path: /
+          method: GET
+        - path: /users/create
+          method: POST
+          headers:
+            content-type: application/json;charset=UTF-8
+          data:
+            name: Hank
+```
+
+Then you can run:
+
+```
+optic capture openapi.yml
+```
+
+When Optic detects a diff, you can correct it manually, or run `optic capture --update=interactive` to have Optic figures out exactly which lines of OpenAPI need to be updated and make the changes for you.
+
+```
+optic capture openapi.yml --update=interactive
+```
 
 
-When Optic detects a diff, you can correct it manually, or run `optic update` to have Optic figures out exactly which lines of OpenAPI need to be updated and make the changes for you.
-
-<img src="https://github.com/opticdev/optic/assets/5900338/5b1c2275-e98c-4832-b284-5fe29894b925" width="500" />
 
 [Read Documentation](https://www.useoptic.com/docs/verify-openapi)
 
