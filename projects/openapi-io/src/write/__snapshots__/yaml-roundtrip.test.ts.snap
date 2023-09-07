@@ -204,7 +204,7 @@ paths:
           content:
             application/json; charset=utf-8:
               {}
-  "/users/{user}/followers":
+  /users/{user}/followers:
     parameters:
       - in: path
         name: user
@@ -216,7 +216,7 @@ paths:
           content:
             application/json; charset=utf-8:
               {}
-  "/users/{user}/orgs":
+  /users/{user}/orgs:
     parameters:
       - in: path
         name: user
