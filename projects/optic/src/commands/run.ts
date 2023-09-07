@@ -49,7 +49,7 @@ const usage = () => `
   CI usage
   ------------------------
   On pull / merge request and push events, lint and check changes to your specifications, upload latest versions to Optic cloud and post a summary to the PR / MR.
-  Optic figures out the current branch and target branch from the CI environment. Get your organization OPTIC_TOKEN from app.useoptic.com.
+  Optic figures out current and target branches from the CI environment. Get your organization OPTIC_TOKEN from app.useoptic.com.
   Check the documentation to setup commenting on your pull / merge requests: https://www.useoptic.com/docs/setup-ci#configure-commenting-on-pull-requests
 
   Github Actions:
@@ -68,7 +68,7 @@ function getProvider() {
   if (githubToken) return 'github';
 
   const gitlabToken = process.env.OPTIC_GITLAB_TOKEN;
-  if (githubToken) return 'gitlab';
+  if (gitlabToken) return 'gitlab';
   else return null;
 }
 
@@ -127,7 +127,7 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
   cli
     .command('run')
     .description(
-      `A workflow command that wraps up multiple utilities in a single one: discover OpenAPI specifications in your repository, lint them, search for potentially harmful breaking changes, push latest versions to your Optic cloud account and post a human-readable summary of the changes to your pull requests.`
+      `Optic's complete workflow command: find OpenAPI specifications in your repository, lint them, search for breaking changes, push their latest versions to your Optic cloud account, log results and post a human-readable summary of the changes to your pull request.`
     )
     .configureHelp({ commandUsage: usage })
     .option(
@@ -233,6 +233,7 @@ type SpecReport = {
   title?: string;
   error?: string;
   changelogLink?: string;
+  diffs?: number;
   endpoints?: {
     added: number;
     removed: number;
@@ -247,7 +248,9 @@ function report(specReports: SpecReport[]) {
       logger.warn(`| Optic encountered an error: ${report.error}`);
       return;
     }
-    const breakingChangesReport = report.breakingChanges
+    const breakingChangesReport = !report.diffs
+      ? '☑️  No changes '
+      : report.breakingChanges
       ? `❌ ${report.breakingChanges} breaking change${
           report.breakingChanges > 1 ? 's' : ''
         } `
@@ -261,8 +264,8 @@ function report(specReports: SpecReport[]) {
 
     logger.info(`| ${breakingChangesReport}${designReport}`);
 
-    if (report.changelogLink) {
-      logger.info(`| View report: ${chalk.blue(report.changelogLink)}`);
+    if (report.diffs && report.changelogLink) {
+      logger.info(`| View report: ${report.changelogLink}`);
     }
     logger.info('');
   }
@@ -392,20 +395,37 @@ export const getRunAction =
     logger.info(
       `Optic matched ${localSpecPaths.length} OpenAPI specification file${
         localSpecPaths.length > 1 ? 's' : ''
-      }.`
+      }: ${localSpecPaths.join(', ')}.\n`
     );
-    logger.info(
-      `Checking your specifications, comparing them against \`${cloudTag}\` tag, then pushing them to \`${currentBranchCloudTag}\` tag on Optic cloud.\n`
-    );
+
+    const generatedDetails = await getDetailsForGeneration(config);
+    if (!generatedDetails) return;
+
+    logger.info(`-------------------------------------
+
+ Comparing your local specifications to their latest \`${cloudTag}\` version on Optic cloud, then pushing them ${
+   cloudTag === currentBranchCloudTag ? 'back ' : ''
+ }to \`${currentBranchCloudTag}\`.
+
+            Optic Cloud
+ ┌───────────────┐ ┌───────────────┐
+ │      [1]      │ │      [2]      │
+ └───┬───────────┘ └───────────▲───┘
+     │Compare            Update│
+ ┌───▼─────────────────────────┴───┐
+ │           Local specs           │
+ └─────────────────────────────────┘
+
+ [1]: ${cloudTag} (Target branch Optic cloud tag for a PR / MR, current branch tag otherwise)
+ [2]: ${currentBranchCloudTag} (Current branch Optic cloud tag)
+
+-------------------------------------`);
     if (!commentToken && isPR) {
       logger.info(
         `Pass a GITHUB_TOKEN or OPTIC_GITLAB_TOKEN environment variable with write permission to let Optic post comment with API change summaries to your pull requests.\n`
       );
     }
     logger.info('');
-
-    const generatedDetails = await getDetailsForGeneration(config);
-    if (!generatedDetails) return;
 
     const specReports: SpecReport[] = [];
     let pathUrls: Map<string, string>;
@@ -492,6 +512,8 @@ export const getRunAction =
           check: true,
           path,
         }));
+
+      specReport.diffs = specResults.diffs.length;
 
       let upload: Awaited<ReturnType<typeof uploadDiff>>;
       try {
@@ -611,5 +633,10 @@ export const getRunAction =
 
     await flushEvents();
 
-    if (exit1) process.exitCode = 1;
+    if (exit1) {
+      logger.info(
+        'Exiting with code 1 as errors were found. Disable this behaviour with the `--severity none` option.'
+      );
+      process.exitCode = 1;
+    }
   };
