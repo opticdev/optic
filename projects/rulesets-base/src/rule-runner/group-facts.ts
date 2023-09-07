@@ -12,8 +12,13 @@ import {
   ResponseNode,
 } from './rule-runner-types';
 
-const getEndpointKey = ({ path, method }: { path: string; method: string }) =>
-  `${method} ${path}`;
+export const getEndpointKey = ({
+  path,
+  method,
+}: {
+  path: string;
+  method: string;
+}) => `${method} ${path}`;
 
 const createEmptyNodeDetail = () => ({
   before: null,

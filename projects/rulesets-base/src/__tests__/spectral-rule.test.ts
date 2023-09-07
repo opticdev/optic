@@ -17,15 +17,14 @@ spectral.setRuleset({
 });
 
 describe('spectral rule test', () => {
-  const ruleRunner = new RuleRunner([
-    new SpectralRule({
-      name: 'spectral-rules',
-      spectral,
-      applies: 'added',
-    }),
-  ]);
-
   test('runs spectral rules on added', async () => {
+    const ruleRunner = new RuleRunner([
+      new SpectralRule({
+        name: 'spectral-rules',
+        spectral,
+        applies: 'added',
+      }),
+    ]);
     const before: OpenAPIV3.Document = { ...defaultEmptySpec };
     const after: OpenAPIV3.Document = {
       ...defaultEmptySpec,
@@ -56,5 +55,43 @@ describe('spectral rule test', () => {
       context: {},
     });
     expect(resultsAgainstSelf.length === 0).toBe(true);
+  });
+
+  test('can use matches', async () => {
+    const ruleRunner = new RuleRunner([
+      new SpectralRule({
+        name: 'spectral-rules',
+        spectral,
+        applies: 'always',
+        matches: (context) => context.operation.method === 'get',
+      }),
+    ]);
+
+    const spec: OpenAPIV3.Document = {
+      ...defaultEmptySpec,
+      paths: {
+        '/api': {
+          get: {
+            responses: {},
+          },
+          post: {
+            responses: {},
+          },
+        },
+      },
+    };
+
+    const results = await ruleRunner.runRules({
+      diffs: [],
+      fromSpec: spec,
+      toSpec: spec,
+      context: {},
+    });
+    expect(results.length > 0).toBe(true);
+    expect(
+      results.filter((r) => /post/i.test(r.location.jsonPath)).length
+    ).toBe(0);
+    expect(results.every((r) => r.passed)).toBe(false);
+    expect(results).toMatchSnapshot();
   });
 });

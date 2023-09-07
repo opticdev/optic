@@ -12,6 +12,7 @@ import { ExternalRuleBase } from '@useoptic/rulesets-base/build/rules/external-r
 import path from 'path';
 import os from 'os';
 import fs from 'node:fs/promises';
+import { OpenAPIFactNodes } from '@useoptic/rulesets-base/build/rule-runner/rule-runner-types';
 
 const ajv = new Ajv();
 const configSchema = {
@@ -52,6 +53,7 @@ export class SpectralRulesets extends ExternalRuleBase {
     changelog: IChange[];
     nextJsonLike: OpenAPIV3.Document<{}>;
     currentJsonLike: OpenAPIV3.Document<{}>;
+    groupedFacts: OpenAPIFactNodes;
   }): Promise<Result[]> {
     const absolutePathTmpSpec = path.join(
       os.tmpdir(),
@@ -100,6 +102,7 @@ export class SpectralRulesets extends ExternalRuleBase {
     diffs: ObjectDiff[];
     fromSpec: OpenAPIV3.Document;
     toSpec: OpenAPIV3.Document;
+    groupedFacts: OpenAPIFactNodes;
   }): Promise<RuleResult[]> {
     const absolutePathTmpSpec = path.join(
       os.tmpdir(),
