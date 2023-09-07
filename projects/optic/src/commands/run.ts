@@ -583,7 +583,10 @@ export const getRunAction =
       }
     }
 
-    const hasFailures = allChecks.some((checks) => checks.failed.error > 0);
+    const hasFailures =
+      allChecks.some((checks) => checks.failed.error > 0) ||
+      specReports.some((r) => r.error);
+
     const exit1 = options.severity === 'error' && hasFailures;
 
     const maybeOrigin =
