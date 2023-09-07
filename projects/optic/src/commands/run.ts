@@ -18,11 +18,15 @@ import {
 import { compute } from './diff/compute';
 import { uploadDiff } from './diff/upload-diff';
 import chalk from 'chalk';
-import { flushEvents, trackEvent } from '../segment';
+import { alias, flushEvents, trackEvent } from '../segment';
 import { BreakingChangesRuleset } from '@useoptic/standard-rulesets';
 import { createOpticClient } from '../client/optic-backend';
 import fs from 'fs';
-import { CommentApi, GithubCommenter } from './ci/comment/comment-api';
+import {
+  CommentApi,
+  GithubCommenter,
+  GitlabCommenter,
+} from './ci/comment/comment-api';
 import { CiRunDetails, getDataForCi } from '../utils/ci-data';
 import {
   COMPARE_SUMMARY_IDENTIFIER,
@@ -42,17 +46,19 @@ const usage = () => `
 
   > optic run [--match ./specs/*.openapi.yml [--ignore ./specs/ignore.openapi.yml]]
 
-  CI: Github Action
+  CI usage
   ------------------------
-  On pull request and push events, lint and check changes to your specifications, upload latest versions to Optic cloud and post a summary to the PR.
-  Optic figures out the current branch and the PR target branch from the CI environment.
-  Get your organization OPTIC_TOKEN from app.useoptic.com. Pass a GITHUB_TOKEN with write permission to let Optic post summaries to your pull requests:
+  On pull / merge request and push events, lint and check changes to your specifications, upload latest versions to Optic cloud and post a summary to the PR / MR.
+  Optic figures out the current branch and target branch from the CI environment. Get your organization OPTIC_TOKEN from app.useoptic.com.
+  Check the documentation to setup commenting on your pull / merge requests: https://www.useoptic.com/docs/setup-ci#configure-commenting-on-pull-requests
+
+  Github Actions:
 
   > OPTIC_TOKEN=\${{ secrets.OPTIC_TOKEN }} GITHUB_TOKEN=\${{ secrets.GITHUB_TOKEN }} optic run
 
-  CI: Gitlab
-  ------------------------
-  Work in progress: request Gitlab support on https://github.com/opticdev/optic/issues
+  Gitlab CI:
+
+  > OPTIC_TOKEN=\${{ secrets.OPTIC_TOKEN }} OPTIC_GITLAB_TOKEN=\${{ secrets.GITHUB_TOKEN }} optic run
 `;
 
 const severities = ['none', 'error'] as const;
@@ -60,10 +66,13 @@ const severities = ['none', 'error'] as const;
 function getProvider() {
   const githubToken = process.env.GITHUB_TOKEN;
   if (githubToken) return 'github';
+
+  const gitlabToken = process.env.OPTIC_GITLAB_TOKEN;
+  if (githubToken) return 'gitlab';
   else return null;
 }
 
-async function getGitHubCommenter() {
+async function getGithubCommenter() {
   const eventFile = fs.readFileSync(process.env.GITHUB_EVENT_PATH!, 'utf8');
   const event = JSON.parse(eventFile);
   const pullRequest = event.pull_request.number;
@@ -77,6 +86,17 @@ async function getGitHubCommenter() {
     sha,
     token,
     enterpriseBaseUrl: process.env.GITHUB_API_URL,
+  });
+  return commenter;
+}
+
+async function getGitlabCommenter() {
+  const commenter = new GitlabCommenter({
+    token: process.env.OPTIC_GITLAB_TOKEN!,
+    enterpriseBaseUrl: process.env.CI_SERVER_URL,
+    projectId: process.env.CI_PROJECT_ID!,
+    sha: process.env.CI_COMMIT_SHA!,
+    mergeRequestId: process.env.CI_MERGE_REQUEST_ID!,
   });
   return commenter;
 }
@@ -107,7 +127,7 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
   cli
     .command('run')
     .description(
-      `A workflow command that wraps up multiple utilities in a single one: it discovers OpenAPI specifications in your repository, lints them, searches for potentially harmful breaking changes, pushes latest versions to your Optic cloud account and post a summary of the changes to your pull rqeuests when a GITHUB_TOKEN with write permission is set as environment variable.`
+      `A workflow command that wraps up multiple utilities in a single one: discover OpenAPI specifications in your repository, lint them, search for potentially harmful breaking changes, push latest versions to your Optic cloud account and post a human-readable summary of the changes to your pull requests.`
     )
     .configureHelp({ commandUsage: usage })
     .option(
@@ -184,6 +204,7 @@ async function authenticateInteractive(config: OpticCliConfig) {
   }
 
   if (!validToken) return false;
+  // TODO: associate org token to user
 
   config.client = createOpticClient(token);
   config.authenticationType = 'user';
@@ -192,14 +213,11 @@ async function authenticateInteractive(config: OpticCliConfig) {
     ? token.slice(4).split('.')[0]
     : undefined;
 
-  trackEvent(
-    'optic.run.token.valid',
-    {
-      isInCi: config.isInCi,
-      tokenType: token.startsWith('opat') ? 'pat' : 'org',
-    },
-    config.userId
-  );
+  if (config.userId) {
+    alias(config.userId);
+    trackEvent('cli.login');
+    await flushEvents();
+  }
 
   return true;
 }
@@ -286,11 +304,24 @@ export const getRunAction =
     const commentToken = process.env.GITHUB_TOKEN;
 
     const currentBranch =
-      getGithubBranchName() ?? (await getCurrentBranchName());
+      getGithubBranchName() ??
+      process.env.CI_COMMIT_REF_NAME ??
+      (await getCurrentBranchName());
+
+    logger.info(
+      'currentBranch',
+      currentBranch,
+      'CI_COMMIT_REF_NAME',
+      process.env.CI_COMMIT_REF_NAME,
+      'GH branchname',
+      getGithubBranchName()
+    );
 
     const currentBranchCloudTag = `gitbranch:${currentBranch}`;
 
-    const baseBranch = process.env.GITHUB_BASE_REF;
+    const baseBranch =
+      process.env.GITHUB_BASE_REF ??
+      process.env.CI_MERGE_REQUEST_TARGET_BRANCH_NAME;
 
     const cloudTag = baseBranch
       ? `gitbranch:${baseBranch}`
@@ -359,11 +390,9 @@ export const getRunAction =
         }.`
       );
       logger.info('');
-      // TODO: "generate from code" splash page
-      logger.info(`ℹ️  Don't have an OpenAPI file yet? Check our guides on how to get one:
-- from your test HTTP traffic: https://www.useoptic.com/docs/capturing-traffic
-- from your code: https://www.useoptic.com/docs/generating-openapi/express
-`);
+      logger.info(
+        `ℹ️  No OpenAPI file yet? Get one: https://www.useoptic.com/docs/how-to-generate-openapi`
+      );
       return;
     }
 
@@ -484,7 +513,7 @@ export const getRunAction =
           {
             standard,
             silent: true,
-            currentBranch: currentBranch,
+            currentBranch,
           }
         );
         specUrl = upload?.headSpecUrl ?? undefined;
@@ -517,8 +546,29 @@ export const getRunAction =
     if (commentToken && isPR) {
       switch (getProvider()) {
         case 'github': {
-          const commenter = await getGitHubCommenter();
+          const commenter = await getGithubCommenter();
           const sha = process.env.GITHUB_SHA!;
+
+          const data = results.map((result) => ({
+            warnings: result.warnings,
+            groupedDiffs: result.groupedDiffs,
+            results: result.results,
+            name: result.name ?? 'Unknown comparison',
+            specUrl: result.specUrl,
+            changelogUrl: result.changelogUrl,
+          }));
+
+          await comment(
+            await getDataForCi(data, { severity: Severity.Error }),
+            commenter,
+            sha
+          );
+
+          break;
+        }
+        case 'gitlab': {
+          const commenter = await getGitlabCommenter();
+          const sha = process.env.CI_COMMIT_SHA!;
 
           const data = results.map((result) => ({
             warnings: result.warnings,

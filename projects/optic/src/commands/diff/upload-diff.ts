@@ -64,9 +64,6 @@ export async function uploadDiff(
           logger.warn(
             `Warning: current branch was detected as 'HEAD'. This usually means the git is running against a detached HEAD and Optic will not be able to add gitbranch tags.`
           );
-          logger.warn(
-            'You can fix this by manually adding the `gitbranch:` by adding `--head-tag gitbranch:current-branch`'
-          );
         }
       }
 
