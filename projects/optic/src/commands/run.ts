@@ -119,10 +119,7 @@ async function comment(data: CiRunDetails, commenter: CommentApi, sha: string) {
 }
 
 // TODO:
-// - support comment for Gitlab
 // - support capture
-// - check userId analytics
-// - update main --help to mention `optic run`
 export function registerRunCommand(cli: Command, config: OpticCliConfig) {
   cli
     .command('run')
@@ -302,7 +299,6 @@ const getGithubBranchName = () => {
   return ref.split('/heads/')[1];
 };
 
-// TODO: exit 1 when optic encounters an error?
 export const getRunAction =
   (config: OpticCliConfig) => async (options: RunActionOptions) => {
     const commentToken =
@@ -416,8 +412,8 @@ export const getRunAction =
  │           Local specs           │
  └─────────────────────────────────┘
 
- [1]: ${cloudTag} (Target branch Optic cloud tag for a PR / MR, current branch tag otherwise)
- [2]: ${currentBranchCloudTag} (Current branch Optic cloud tag)
+ [1]: ${cloudTag} (Target branch tag for a PR / MR, current branch tag otherwise)
+ [2]: ${currentBranchCloudTag} (Current branch tag)
 
 -------------------------------------`);
     if (!commentToken && isPR) {
