@@ -46,10 +46,6 @@ ${skipConfigUpdate ? `capture:\n  ${oasFile}:` : ''}
         method: GET   
       - path: /orgs/facebook/repos
         method: GET   
-      - path: /orgs/opticdev/repos
-        method: GET
-      - path: /orgs/facebook/repos
-        method: GET
       - path: /orgs/github/repos
         method: GET   
     # When you are ready, set up an actual integration that run your test suite
