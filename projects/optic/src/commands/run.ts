@@ -129,7 +129,7 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
     .addOption(
       new Option(
         '--severity <severity>',
-        'Use `none` to prevent Optic from  exiting 1 when issues are found.'
+        'Use `none` to prevent Optic from exiting 1 when issues are found.'
       )
         .choices(severities)
         .default('error')
