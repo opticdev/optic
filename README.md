@@ -72,12 +72,16 @@ Then you can run:
 optic capture openapi.yml
 ```
 
+<img width="602" alt="Screenshot 2023-09-08 at 2 11 00 PM" src="https://github.com/opticdev/optic/assets/18374483/a4daba2a-3be1-446d-9747-28a1cdce3926">
+
+
 When Optic detects a diff, you can correct it manually, or run `optic capture --update=interactive` to have Optic figures out exactly which lines of OpenAPI need to be updated and make the changes for you.
 
 ```
 optic capture openapi.yml --update=interactive
 ```
 
+<img width="604" alt="Screenshot 2023-09-08 at 2 12 15 PM" src="https://github.com/opticdev/optic/assets/18374483/c7c540c8-2501-4824-aac6-049587e29c0a">
 
 
 [Read Documentation](https://www.useoptic.com/docs/verify-openapi)
