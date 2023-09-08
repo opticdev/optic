@@ -1,4 +1,3 @@
-import ora from 'ora';
 import { getRunUrl, getSpecUrl } from '../../utils/cloud-urls';
 import { ConfigRuleset, OpticCliConfig, VCS } from '../../config';
 import { ParseResult } from '../../utils/spec-loaders';
@@ -20,6 +19,8 @@ export async function uploadDiff(
   options: {
     headTag?: string;
     standard: ConfigRuleset[];
+    silent?: boolean;
+    currentBranch?: string;
   }
 ): Promise<{
   baseSpecUrl: string | null;
@@ -55,15 +56,13 @@ export async function uploadDiff(
       tags.push(`git:${specs.to.context.sha}`);
       // If no gitbranch is set, try to add own git branch
       if (!tagsFromOptions.some((tag) => /^gitbranch\:/.test(tag))) {
-        const currentBranch = await Git.getCurrentBranchName();
+        const currentBranch =
+          options.currentBranch ?? (await Git.getCurrentBranchName());
         if (currentBranch !== 'HEAD') {
           tags.push(sanitizeGitTag(`gitbranch:${currentBranch}`));
         } else {
           logger.warn(
             `Warning: current branch was detected as 'HEAD'. This usually means the git is running against a detached HEAD and Optic will not be able to add gitbranch tags.`
-          );
-          logger.warn(
-            'You can fix this by manually adding the `gitbranch:` by adding `--head-tag gitbranch:current-branch`'
           );
         }
       }
@@ -99,7 +98,8 @@ export async function uploadDiff(
       specDetails.apiId,
       run.id
     );
-    spinner?.succeed(`Uploaded results of diff to ${changelogUrl}`);
+    if (!options.silent)
+      spinner?.succeed(`Uploaded results of diff to ${changelogUrl}`);
 
     return {
       changelogUrl,
@@ -122,7 +122,7 @@ export async function uploadDiff(
               baseSpecId
             ),
     };
-  } else {
+  } else if (!options.silent) {
     const reason = !specDetails
       ? 'no x-optic-url was set on the spec file'
       : config.vcs?.type === VCS.Git

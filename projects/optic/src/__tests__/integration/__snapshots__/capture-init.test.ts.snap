@@ -22,10 +22,6 @@ exports[`capture init init with --stdout 1`] = `
           method: GET
         - path: /orgs/facebook/repos
           method: GET
-        - path: /orgs/opticdev/repos
-          method: GET
-        - path: /orgs/facebook/repos
-          method: GET
         - path: /orgs/github/repos
           method: GET
     # When you are ready, set up an actual integration that run your test suite
@@ -104,10 +100,6 @@ capture:
           method: GET
         - path: /orgs/facebook/repos
           method: GET
-        - path: /orgs/opticdev/repos
-          method: GET
-        - path: /orgs/facebook/repos
-          method: GET
         - path: /orgs/github/repos
           method: GET
     # When you are ready, set up an actual integration that run your test suite
@@ -151,10 +143,6 @@ exports[`capture init init with no optic.yml 2`] = `
         - path: /users/pjhyett/repos
           method: GET
         - path: /users/pjhyett/followers
-          method: GET
-        - path: /orgs/opticdev/repos
-          method: GET
-        - path: /orgs/facebook/repos
           method: GET
         - path: /orgs/opticdev/repos
           method: GET
