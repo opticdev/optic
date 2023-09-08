@@ -557,7 +557,7 @@ function sanitizeRef(maybeGitRef: string): string {
   return maybeGitRef.includes(':') ? maybeGitRef.split(':')[1] : maybeGitRef;
 }
 
-async function matchSpecCandidates(
+export async function matchSpecCandidates(
   matchesOption?: string,
   ignoresOption?: string
 ): Promise<string[]> {
