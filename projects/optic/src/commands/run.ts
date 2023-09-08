@@ -96,7 +96,7 @@ async function getGitlabCommenter() {
     enterpriseBaseUrl: process.env.CI_SERVER_URL,
     projectId: process.env.CI_PROJECT_ID!,
     sha: process.env.CI_COMMIT_SHA!,
-    mergeRequestId: process.env.CI_MERGE_REQUEST_ID!,
+    mergeRequestId: process.env.CI_MERGE_REQUEST_IID!,
   });
   return commenter;
 }
