@@ -33,7 +33,7 @@ export async function getDetailsForGeneration(config: OpticCliConfig): Promise<{
   } else if (!maybeOrigin) {
     logger.warn(chalk.red('Could not identify your APIs with Optic cloud'));
     logger.warn(
-      "Optic identifies your APIs by their path in the repository and the repository's Git remote origin, but the later could not be determined."
+      "Optic identifies your APIs by their path in the repository and the repository's Git remote origin, but the latter could not be determined."
     );
     logger.warn(
       "Either set your repository's Git remote and run the command again, or add an identifier to your specification: run `optic api new <name>` and follow the instructions.\n"
