@@ -202,8 +202,11 @@ async function runRequestsCommand(
         ...process.env,
         [proxyVar]: proxyUrl,
       },
-      detached: true,
+      detached: false,
       shell: true,
+      // hide child process powershell windows on Windows systems. this only works with "detached: false".
+      // https://nodejs.org/api/child_process.html#child_processexeccommand-options-callback
+      windowsHide: true,
     });
   } catch (e) {
     throw new UserError({ initialError: e as Error });
