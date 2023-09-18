@@ -9694,8 +9694,8 @@ __metadata:
   linkType: hard
 
 "postman-collection@npm:^4.1.7":
-  version: 4.2.0
-  resolution: "postman-collection@npm:4.2.0"
+  version: 4.2.1
+  resolution: "postman-collection@npm:4.2.1"
   dependencies:
     "@faker-js/faker": 5.5.3
     file-type: 3.9.0
@@ -9708,7 +9708,7 @@ __metadata:
     postman-url-encoder: 3.0.5
     semver: 7.5.4
     uuid: 8.3.2
-  checksum: a9fa8b8d7dcc6b28bae87ee3a0438f9abffa575246b7d3785d8227847b247dbc94b9a16216e20808f8d02232d72955395617c21ddbc9264073dce86f8f34cf30
+  checksum: b027a084d35ac29244e5a47b533178ff7fe6437924320d17b5dd275461689be32030e5b22469da3f72b113353269b37be09b4353db532672975f830772dd70e0
   languageName: node
   linkType: hard
 
