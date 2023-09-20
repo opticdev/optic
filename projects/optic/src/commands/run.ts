@@ -609,6 +609,13 @@ export const getRunAction =
 
     await flushEvents();
 
+    if (!config.isInCi) {
+      logger.info('');
+      logger.info(
+        `🤖 Don't forget to add Optic to your CI flow: https://www.useoptic.com/docs/setup-ci`
+      );
+    }
+
     if (exit1) {
       logger.info(
         'Exiting with code 1 as errors were found. Disable this behaviour with the `--severity none` option.'
