@@ -198,13 +198,10 @@ async function authenticateInteractive(config: OpticCliConfig) {
   config.isAuthenticated = true;
   config.userId = token.startsWith('opat')
     ? token.slice(4).split('.')[0]
-    : undefined;
+    : token;
 
-  if (config.userId) {
-    alias(config.userId);
-    trackEvent('cli.login');
-    await flushEvents();
-  }
+  trackEvent('cli.login');
+  await flushEvents();
 
   return true;
 }
