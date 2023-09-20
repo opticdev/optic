@@ -72,7 +72,7 @@ Example usage:
 
 export const registerDiff = (cli: Command, config: OpticCliConfig) => {
   cli
-    .command('diff')
+    .command('diff', { hidden: true })
     .configureHelp({
       commandUsage: usage,
     })
