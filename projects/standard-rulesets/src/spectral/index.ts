@@ -51,16 +51,28 @@ const configSchema = {
 const validateConfigSchema = ajv.compile(configSchema);
 
 export class SpectralRulesets extends ExternalRuleBase {
-  constructor(
-    private options: {
-      always: string[];
-      added: string[];
-      changed: string[];
-      addedOrChanged: string[];
-      matches?: (context: RuleContext) => boolean;
-    }
-  ) {
+  private options: {
+    always: string[];
+    added: string[];
+    changed: string[];
+    addedOrChanged: string[];
+    matches?: (context: RuleContext) => boolean;
+  };
+  constructor(options: {
+    always?: string[];
+    added?: string[];
+    changed?: string[];
+    addedOrChanged?: string[];
+    matches?: (context: RuleContext) => boolean;
+  }) {
     super();
+    this.options = {
+      always: options.always ?? [],
+      added: options.added ?? [],
+      changed: options.changed ?? [],
+      addedOrChanged: options.addedOrChanged ?? [],
+      matches: options.matches,
+    };
   }
 
   async runRules(inputs: {
