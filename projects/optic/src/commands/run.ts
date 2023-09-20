@@ -398,11 +398,10 @@ export const getRunAction =
  │           Local specs           │
  └─────────────────────────────────┘
 
- [1]: Comparing your local specifications to their latest \`${cloudTag}\` version in Optic cloud.
-      (Optic compares against the target branch tag upon a PR/MR event, and the current branch tag otherwise)
+ [1]: Comparing your local specifications to their last uploaded Optic cloud version for tag \`${cloudTag}\`.
+      Optic compares local specs against the target branch upon PR/MR events, and the current branch upon push events or local runs.
 
- [2]: Pushing local specs as latest versions for \`${currentBranchCloudTag}\` in Optic cloud.
-      (Updating the current branch tag)
+ [2]: Pushing local specs as latest versions in Optic cloud for tag \`${currentBranchCloudTag}\`, the current branch tag.
 
 --------------------------------------------------------------------------------------------------`);
     if (!commentToken && isPR) {
