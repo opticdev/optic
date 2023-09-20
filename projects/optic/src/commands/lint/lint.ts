@@ -20,7 +20,7 @@ const usage = () => `
 
 export const registerLint = (cli: Command, config: OpticCliConfig) => {
   cli
-    .command('lint')
+    .command('lint', { hidden: true })
     .configureHelp({
       commandUsage: usage,
     })

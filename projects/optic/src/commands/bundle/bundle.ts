@@ -43,7 +43,7 @@ export const registerBundle = (cli: Command, config: OpticCliConfig) => {
   ).hideHelp(true);
 
   cli
-    .command('bundle')
+    .command('bundle', { hidden: true })
     .configureHelp({
       commandUsage: usage,
     })
