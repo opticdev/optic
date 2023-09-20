@@ -44,7 +44,7 @@ Example usage:
 
 export const registerDiffAll = (cli: Command, config: OpticCliConfig) => {
   cli
-    .command('diff-all')
+    .command('diff-all', { hidden: true })
     .configureHelp({
       commandUsage: usage,
     })

@@ -24,7 +24,7 @@ const choices: Provider[] = ['github', 'gitlab'];
 
 export const registerCiSetup = (cli: Command, config: OpticCliConfig) => {
   cli
-    .command('setup')
+    .command('setup', { hidden: true })
     .configureHelp({
       commandUsage: usage,
     })

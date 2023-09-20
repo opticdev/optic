@@ -30,7 +30,7 @@ export const registerDereference = (cli: Command, config: OpticCliConfig) => {
   ).hideHelp(true);
 
   cli
-    .command('dereference')
+    .command('dereference', { hidden: true })
     .configureHelp({
       commandUsage: usage,
     })

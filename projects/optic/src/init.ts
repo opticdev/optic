@@ -121,6 +121,7 @@ export const initCli = async (
   cli.version(packageJson.version);
   cli.addHelpCommand(false);
 
+  registerRunCommand(cli, cliConfig);
   registerDiff(cli, cliConfig);
 
   const betaSubcommands = cli.command('beta', { hidden: true });
@@ -139,7 +140,7 @@ export const initCli = async (
   cli.addCommand(oas, { hidden: true });
 
   // commands for tracking changes with openapi
-  cli.addCommand(await newCommand());
+  cli.addCommand(await newCommand(), { hidden: true });
   cli.addCommand(await setupTlsCommand(), { hidden: true });
   cli.addCommand(verifyCommand(cliConfig), { hidden: true });
   cli.addCommand(updateCommand(), { hidden: true });
@@ -172,12 +173,13 @@ export const initCli = async (
   registerSpecPush(specSubcommands, cliConfig);
   registerSpecAddApiUrl(specSubcommands, cliConfig);
 
-  const ciSubcommands = cli.command('ci').addHelpCommand(false);
+  const ciSubcommands = cli
+    .command('ci', { hidden: true })
+    .addHelpCommand(false);
   registerCiComment(ciSubcommands, cliConfig);
   registerCiSetup(ciSubcommands, cliConfig);
 
   registerHistory(cli, cliConfig);
-  registerRunCommand(cli, cliConfig);
 
   return cli;
 };
