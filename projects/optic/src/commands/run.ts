@@ -48,7 +48,6 @@ const usage = () => `
 
   CI usage
   ------------------------
-  Lint and check changes to your specifications, update cloud spec repository and post a friendly summary to the PR/MR.
   Visit https://www.useoptic.com/docs/setup-ci for detailed CI setup instructions.
 `;
 
@@ -115,7 +114,7 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
   cli
     .command('run')
     .description(
-      `Optic's complete workflow command: find OpenAPI specifications in your repository, lint them, search for breaking changes, update your Optic cloud specs repository, log results and post a human-readable summary of the changes to your pull request.`
+      `Optic's workflow command: validate your OpenAPI specification files, check API governance policies, search for breaking changes and post a human-readable summary of the changes to your pull request.`
     )
     .configureHelp({ commandUsage: usage })
     .option(
@@ -252,7 +251,7 @@ function report(specReports: SpecReport[]) {
 
     logger.info(`| ${breakingChangesReport}${designReport}`);
 
-    if (report.diffs && report.changelogLink) {
+    if (report.changelogLink) {
       logger.info(`| View report: ${report.changelogLink}`);
     }
     logger.info('');
@@ -382,31 +381,30 @@ export const getRunAction =
     logger.info(
       `Optic matched ${localSpecPaths.length} OpenAPI specification file${
         localSpecPaths.length > 1 ? 's' : ''
-      }: ${localSpecPaths.join(', ')}.\n`
+      }:`
     );
+    logger.info(`${localSpecPaths.join(', ')}.\n`);
 
     const generatedDetails = await getDetailsForGeneration(config);
     if (!generatedDetails) return;
 
-    logger.info(`-------------------------------------
+    logger.info(`--------------------------------------------------------------------------------------------------
 
- Comparing your local specifications to their latest \`${cloudTag}\` version on Optic cloud, then pushing them ${
-   cloudTag === currentBranchCloudTag ? 'back ' : ''
- }to \`${currentBranchCloudTag}\`.
-
-            Optic Cloud
- ┌───────────────┐ ┌───────────────┐
- │      [1]      │ │      [2]      │
- └───┬───────────┘ └───────────▲───┘
+ ┌─────────────────────────────────┐
+ │  [1]      Optic Cloud      [2]  │
+ └───┬─────────────────────────▲───┘
      │Compare            Update│
  ┌───▼─────────────────────────┴───┐
  │           Local specs           │
  └─────────────────────────────────┘
 
- [1]: ${cloudTag} (Optic tag for target branch in a PR/MR situation, current branch otherwise)
- [2]: ${currentBranchCloudTag} (Optic tag for current branch)
+ [1]: Comparing your local specifications to their latest \`${cloudTag}\` version in Optic cloud.
+      (Optic compares against the target branch tag upon a PR/MR event, and the current branch tag otherwise)
 
--------------------------------------`);
+ [2]: Pushing local specs as latest versions for \`${currentBranchCloudTag}\` in Optic cloud.
+      (Updating the current branch tag)
+
+--------------------------------------------------------------------------------------------------`);
     if (!commentToken && isPR) {
       logger.info(
         `Pass a GITHUB_TOKEN or OPTIC_GITLAB_TOKEN environment variable with write permission to let Optic post comment with API change summaries to your pull requests.\n`
