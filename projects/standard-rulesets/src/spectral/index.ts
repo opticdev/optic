@@ -32,6 +32,20 @@ const configSchema = {
         description: 'URI of spectral ruleset file (file or URL)',
       },
     },
+    changed: {
+      type: 'array',
+      items: {
+        type: 'string',
+        description: 'URI of spectral ruleset file (file or URL)',
+      },
+    },
+    addedOrChanged: {
+      type: 'array',
+      items: {
+        type: 'string',
+        description: 'URI of spectral ruleset file (file or URL)',
+      },
+    },
   },
 };
 const validateConfigSchema = ajv.compile(configSchema);
@@ -41,6 +55,8 @@ export class SpectralRulesets extends ExternalRuleBase {
     private options: {
       always: string[];
       added: string[];
+      changed: string[];
+      addedOrChanged: string[];
       matches?: (context: RuleContext) => boolean;
     }
   ) {
@@ -78,6 +94,39 @@ export class SpectralRulesets extends ExternalRuleBase {
         matches: this.options.matches,
       });
     });
+    const changed = this.options.changed.map((ruleInput) => {
+      return new SpectralRule({
+        name:
+          'Spectral Rules applied to changes to the specification: ' +
+          ruleInput,
+        flatSpecFile: absolutePathTmpSpec,
+        applies: 'changed',
+        rulesetPointer: ruleInput,
+        matches: this.options.matches,
+      });
+    });
+    const addedOrChanged = this.options.addedOrChanged.flatMap((ruleInput) => {
+      return [
+        new SpectralRule({
+          name:
+            'Spectral Rules applied to additions to the specification: ' +
+            ruleInput,
+          flatSpecFile: absolutePathTmpSpec,
+          applies: 'added',
+          rulesetPointer: ruleInput,
+          matches: this.options.matches,
+        }),
+        new SpectralRule({
+          name:
+            'Spectral Rules applied to changes to the specification: ' +
+            ruleInput,
+          flatSpecFile: absolutePathTmpSpec,
+          applies: 'changed',
+          rulesetPointer: ruleInput,
+          matches: this.options.matches,
+        }),
+      ];
+    });
     const always = this.options.always.map((ruleInput) => {
       return new SpectralRule({
         name: 'Spectral Rules applied to entire specification: ' + ruleInput,
@@ -88,7 +137,7 @@ export class SpectralRulesets extends ExternalRuleBase {
       });
     });
 
-    const allRulesets = [...always, ...added];
+    const allRulesets = [...always, ...added, ...changed, ...addedOrChanged];
 
     const allResults = await Promise.all(
       allRulesets.map((ruleset) => ruleset.runRules(inputs))
@@ -160,11 +209,18 @@ export class SpectralRulesets extends ExternalRuleBase {
         })
         .join('\n- ');
     }
-    const configValidated = config as { added?: string[]; always?: string[] };
+    const configValidated = config as {
+      added?: string[];
+      always?: string[];
+      changed?: string[];
+      addedOrChanged?: string[];
+    };
 
     return new SpectralRulesets({
       added: configValidated.added ?? [],
       always: configValidated.always ?? [],
+      changed: configValidated.changed ?? [],
+      addedOrChanged: configValidated.addedOrChanged ?? [],
     });
   }
 }
