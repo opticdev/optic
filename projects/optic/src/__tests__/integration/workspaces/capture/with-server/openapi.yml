@@ -5,16 +5,21 @@ info:
   version: 0.1.0
 paths:
   /books:
+    post:
+      "responses": {}
     get:
+      # a comment about something
       responses:
         "200":
           description: 200 response
           content:
             application/json:
               schema:
+                # use the refs here
                 $ref: "#/components/schemas/GetBooks200ResponseBody"
 components:
   schemas:
+    # this is a schema
     GetBooks200ResponseBody:
       type: object
       properties:

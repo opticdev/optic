@@ -5,7 +5,7 @@ import {
   UserError,
   sourcemapReader,
 } from '@useoptic/openapi-utilities';
-import { isYaml, loadYaml, writeYaml } from '@useoptic/openapi-io';
+import { applyOperationsToYamlString, isYaml } from '@useoptic/openapi-io';
 import jsonpatch, { Operation } from 'fast-json-patch';
 import { logger } from '../../../logger';
 import chalk from 'chalk';
@@ -31,14 +31,19 @@ export async function writePatchesToFiles(
   for (let [filePath, operations] of Object.entries(operationsByFile)) {
     const file = sourcemap.files.find(({ path }) => path === filePath)!;
 
-    const parsed = parse(filePath, file.contents);
     let stringified: string;
     try {
-      const patchedContents = jsonpatch.applyPatch(
-        parsed || {},
-        operations
-      ).newDocument;
-      stringified = stringify(filePath, patchedContents);
+      if (isYaml(filePath)) {
+        stringified = applyOperationsToYamlString(file.contents, operations);
+      } else {
+        const parsed = file.contents ? JSON.parse(file.contents) : {};
+        const patchedContents = jsonpatch.applyPatch(
+          parsed || {},
+          operations
+        ).newDocument;
+
+        stringified = JSON.stringify(patchedContents, null, 2);
+      }
     } catch (e) {
       logger.error('');
       logger.error(
@@ -48,33 +53,17 @@ export async function writePatchesToFiles(
         location: 'patch files',
         error: e,
         operations: JSON.stringify(operations),
-        parsed: JSON.stringify(parsed),
+        parsed: file.contents,
       });
       Sentry.captureException(e, {
         extra: {
           operations,
-          parsed,
+          parsed: file.contents,
         },
       });
       throw new UserError();
     }
 
     await fs.writeFile(filePath, stringified);
-  }
-}
-
-function parse(filePath: string, fileContents: string) {
-  if (isYaml(filePath)) {
-    return loadYaml(fileContents);
-  } else {
-    return fileContents ? JSON.parse(fileContents) : {};
-  }
-}
-
-function stringify(filePath: string, document: any) {
-  if (isYaml(filePath)) {
-    return writeYaml(document);
-  } else {
-    return JSON.stringify(document, null, 2);
   }
 }
