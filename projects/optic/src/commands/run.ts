@@ -114,7 +114,7 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
   cli
     .command('run')
     .description(
-      `Optic's workflow command: lint OpenAPI specifications, search for breaking changes, enforce custom API governance rules, and optionally check that your specs match your test traffic and post a friendly summary to the PR/MR.`
+      `Optic's workflow command: run lint rules, breaking change checks, and spec validation. Posts the results to PR/MRs when run in CI.`
     )
     .configureHelp({ commandUsage: usage })
     .option(
