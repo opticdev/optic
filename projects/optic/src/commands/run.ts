@@ -18,7 +18,7 @@ import {
 import { compute } from './diff/compute';
 import { uploadDiff } from './diff/upload-diff';
 import chalk from 'chalk';
-import { alias, flushEvents, trackEvent } from '../segment';
+import { flushEvents, trackEvent } from '../segment';
 import { BreakingChangesRuleset } from '@useoptic/standard-rulesets';
 import { createOpticClient } from '../client/optic-backend';
 import fs from 'fs';
@@ -114,7 +114,7 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
   cli
     .command('run')
     .description(
-      `Optic's workflow command: lint OpenAPI specifications, search for breaking changes, enforce custom API governance rules, automatically update your specs to match your tests traffic and post a friendly summary to the PR/MR and .`
+      `Optic's workflow command: lint OpenAPI specifications, search for breaking changes, enforce custom API governance rules, and optionally check that your specs match your test traffic and post a friendly summary to the PR/MR.`
     )
     .configureHelp({ commandUsage: usage })
     .option(
@@ -291,20 +291,9 @@ export const getRunAction =
     const commentToken =
       process.env.GITHUB_TOKEN ?? process.env.OPTIC_GITLAB_TOKEN;
 
-    const currentBranch =
-      getGithubBranchName() ??
-      process.env.CI_COMMIT_REF_NAME ??
-      (await getCurrentBranchName());
-
-    const currentBranchCloudTag = `gitbranch:${currentBranch}`;
-
     const baseBranch =
       process.env.GITHUB_BASE_REF ??
       process.env.CI_MERGE_REQUEST_TARGET_BRANCH_NAME;
-
-    const cloudTag = baseBranch
-      ? `gitbranch:${baseBranch}`
-      : currentBranchCloudTag;
 
     const isPR = config.isInCi && !!baseBranch;
 
@@ -333,6 +322,17 @@ export const getRunAction =
       process.exitCode = 1;
       return;
     }
+
+    const currentBranch =
+      getGithubBranchName() ??
+      process.env.CI_COMMIT_REF_NAME ??
+      (await getCurrentBranchName());
+
+    const currentBranchCloudTag = `gitbranch:${currentBranch}`;
+
+    const cloudTag = baseBranch
+      ? `gitbranch:${baseBranch}`
+      : currentBranchCloudTag;
 
     const authentified = config.isInCi
       ? await authenticateCI(config)
