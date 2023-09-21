@@ -36,7 +36,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@apidevtools/json-schema-ref-parser": "9.0.9",
+    "@apidevtools/json-schema-ref-parser": "11.1.0",
     "@jsdevtools/ono": "^7.1.3",
     "@useoptic/json-pointer-helpers": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",

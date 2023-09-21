@@ -15,15 +15,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apidevtools/json-schema-ref-parser@npm:9.0.9":
-  version: 9.0.9
-  resolution: "@apidevtools/json-schema-ref-parser@npm:9.0.9"
+"@apidevtools/json-schema-ref-parser@npm:11.1.0":
+  version: 11.1.0
+  resolution: "@apidevtools/json-schema-ref-parser@npm:11.1.0"
   dependencies:
     "@jsdevtools/ono": ^7.1.3
-    "@types/json-schema": ^7.0.6
-    call-me-maybe: ^1.0.1
+    "@types/json-schema": ^7.0.13
+    "@types/lodash.clonedeep": ^4.5.7
     js-yaml: ^4.1.0
-  checksum: b21f6bdd37d2942c3967ee77569bc74fadd1b922f688daf5ef85057789a2c3a7f4afc473aa2f3a93ec950dabb6ef365f8bd9cf51e4e062a1ee1e59b989f8f9b4
+    lodash.clonedeep: ^4.5.0
+  checksum: b2a9c0749e9c190cbbb24fbcec069203cc317a30a32ad731f1b99cf48aa279fa956fe6951e3adc964989e983e7ea4d24313aa806430a53c81ded855fc94e5170
   languageName: node
   linkType: hard
 
@@ -3351,7 +3352,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/json-schema@npm:^7.0.4, @types/json-schema@npm:^7.0.6, @types/json-schema@npm:^7.0.7":
+"@types/json-schema@npm:^7.0.13":
+  version: 7.0.13
+  resolution: "@types/json-schema@npm:7.0.13"
+  checksum: 345df21a678fa72fb389f35f33de77833d09d4a142bb2bcb27c18690efa4cf70fc2876e43843cefb3fbdb9fcb12cd3e970a90936df30f53bbee899865ff605ab
+  languageName: node
+  linkType: hard
+
+"@types/json-schema@npm:^7.0.4, @types/json-schema@npm:^7.0.7":
   version: 7.0.9
   resolution: "@types/json-schema@npm:7.0.9"
   checksum: 259d0e25f11a21ba5c708f7ea47196bd396e379fddb79c76f9f4f62c945879dc21657904914313ec2754e443c5018ea8372362f323f30e0792897fdb2098a705
@@ -3392,7 +3400,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.clonedeep@npm:^4":
+"@types/lodash.clonedeep@npm:^4, @types/lodash.clonedeep@npm:^4.5.7":
   version: 4.5.7
   resolution: "@types/lodash.clonedeep@npm:4.5.7"
   dependencies:
@@ -3695,7 +3703,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@useoptic/openapi-io@workspace:projects/openapi-io"
   dependencies:
-    "@apidevtools/json-schema-ref-parser": 9.0.9
+    "@apidevtools/json-schema-ref-parser": 11.1.0
     "@babel/core": ^7.17.0
     "@babel/plugin-transform-runtime": ^7.17.0
     "@babel/preset-env": ^7.17.0
@@ -4806,13 +4814,6 @@ __metadata:
     function-bind: ^1.1.1
     get-intrinsic: ^1.0.2
   checksum: f8e31de9d19988a4b80f3e704788c4a2d6b6f3d17cfec4f57dc29ced450c53a49270dc66bf0fbd693329ee948dd33e6c90a329519aef17474a4d961e8d6426b0
-  languageName: node
-  linkType: hard
-
-"call-me-maybe@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "call-me-maybe@npm:1.0.1"
-  checksum: d19e9d6ac2c6a83fb1215718b64c5e233f688ebebb603bdfe4af59cde952df1f2b648530fab555bf290ea910d69d7d9665ebc916e871e0e194f47c2e48e4886b
   languageName: node
   linkType: hard
 
