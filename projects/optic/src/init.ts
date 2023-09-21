@@ -109,8 +109,14 @@ export const initCli = async (
 
   let cliConfig: OpticCliConfig;
 
+  cli.option('-f , --file <path>', 'The path to the desired optic.yml file');
+  cli.parse();
+  console.log(`NATE: --file=${cli.opts().file}`);
+
   try {
-    cliConfig = await initializeConfig();
+    cliConfig = cli.opts().file
+      ? await initializeConfig(cli.opts().file)
+      : await initializeConfig(undefined);
   } catch (e) {
     logger.error(chalk.red('Error initializing the cli config'));
     logger.error((e as Error).message);

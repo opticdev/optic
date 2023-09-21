@@ -285,7 +285,9 @@ async function getYmlOrJsonChanges(gitRoot: string): Promise<Set<string>> {
   return new Set(ymlOrJsonWithChanges);
 }
 
-export async function initializeConfig(): Promise<OpticCliConfig> {
+export async function initializeConfig(
+  opticYml: string | undefined
+): Promise<OpticCliConfig> {
   let cliConfig: OpticCliConfig = DefaultOpticCliConfig;
   const userConfig = await readUserConfig();
   const maybeEnvToken = process.env.OPTIC_TOKEN;
@@ -306,7 +308,14 @@ export async function initializeConfig(): Promise<OpticCliConfig> {
     cliConfig.client = createOpticClient(token);
   }
 
-  if ((await Git.hasGit()) && (await Git.isInGitRepo())) {
+  if (opticYml) {
+    logger.debug(`Using config manually specified at ${opticYml}`);
+    cliConfig = {
+      ...cliConfig,
+      ...(await loadCliConfig(opticYml, cliConfig.client)),
+      isDefaultConfig: false,
+    };
+  } else if ((await Git.hasGit()) && (await Git.isInGitRepo())) {
     const gitRoot = await Git.getRootPath();
     const opticYmlPath = await detectCliConfig(gitRoot);
 
