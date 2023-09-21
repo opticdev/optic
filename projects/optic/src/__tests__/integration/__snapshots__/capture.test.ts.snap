@@ -303,7 +303,8 @@ paths:
                 $ref: "#/components/schemas/GetAuthHawk200ResponseBody"
   /basic-auth:
     get:
-      responses: {}
+      responses:
+        {}
   /cookies/{cooky}:
     parameters:
       - in: path
@@ -312,13 +313,16 @@ paths:
         schema:
           type: string
     get:
-      responses: {}
+      responses:
+        {}
   /cookies:
     get:
-      responses: {}
+      responses:
+        {}
   /deflate:
     get:
-      responses: {}
+      responses:
+        {}
   /delay/{delay}:
     parameters:
       - in: path
@@ -336,7 +340,8 @@ paths:
                 $ref: "#/components/schemas/GetDelayDelay200ResponseBody"
   /delete:
     delete:
-      responses: {}
+      responses:
+        {}
       requestBody:
         content:
           text/plain:
@@ -344,10 +349,12 @@ paths:
               type: string
   /digest-auth:
     get:
-      responses: {}
+      responses:
+        {}
   /encoding/utf8:
     get:
-      responses: {}
+      responses:
+        {}
   /:
     get:
       responses:
@@ -359,7 +366,8 @@ paths:
                 $ref: "#/components/schemas/Get200ResponseBody"
   /get/hello:
     get:
-      responses: {}
+      responses:
+        {}
   /get:
     get:
       responses:
@@ -371,7 +379,8 @@ paths:
                 $ref: "#/components/schemas/GetGet200ResponseBody"
   /gzip:
     get:
-      responses: {}
+      responses:
+        {}
   /headers:
     get:
       responses:
@@ -383,25 +392,27 @@ paths:
                 $ref: "#/components/schemas/GetHeaders200ResponseBody"
   /ip:
     get:
-      responses: {}
+      responses:
+        {}
   /oauth1:
     get:
       responses:
-        "200":
-          description: 200 response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetAuthHawk200ResponseBody"
         "401":
           description: 401 response
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetOauth1401ResponseBody"
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAuthHawk200ResponseBody"
   /patch:
     patch:
-      responses: {}
+      responses:
+        {}
       requestBody:
         content:
           text/plain:
@@ -409,7 +420,8 @@ paths:
               type: string
   /post:
     post:
-      responses: {}
+      responses:
+        {}
       requestBody:
         content:
           text/plain:
@@ -420,7 +432,8 @@ paths:
               type: string
   /put:
     put:
-      responses: {}
+      responses:
+        {}
       requestBody:
         content:
           text/plain:
@@ -461,7 +474,8 @@ paths:
         schema:
           type: string
     get:
-      responses: {}
+      responses:
+        {}
   /time/{time}:
     parameters:
       - in: path
@@ -722,7 +736,8 @@ components:
                   - mixed
               authenticated:
                 type: boolean
-            required: []
+            required:
+              []
         - type: array
           items:
             type: object
@@ -772,7 +787,8 @@ components:
             type: string
         folders:
           type: array
-          items: {}
+          items:
+            {}
         requests:
           type: array
           items:
@@ -790,7 +806,8 @@ components:
                 type: string
               data:
                 type: array
-                items: {}
+                items:
+                  {}
               rawModeData:
                 type: string
               tests:
@@ -895,7 +912,8 @@ components:
       properties:
         variables:
           type: array
-          items: {}
+          items:
+            {}
         info:
           type: object
           properties:
@@ -950,7 +968,8 @@ components:
                     type: string
                   header:
                     type: array
-                    items: {}
+                    items:
+                      {}
                   body:
                     type: object
                     properties:
@@ -968,7 +987,8 @@ components:
                   - body
               response:
                 type: array
-                items: {}
+                items:
+                  {}
             required:
               - name
               - request
@@ -985,7 +1005,8 @@ components:
             type: string
         folders:
           type: array
-          items: {}
+          items:
+            {}
         requests:
           type: array
           items:
@@ -1003,7 +1024,8 @@ components:
                 type: string
               data:
                 type: array
-                items: {}
+                items:
+                  {}
               rawModeData:
                 type: string
               tests:
@@ -1566,7 +1588,8 @@ GET /books
   [33m[200 response body] 'author_id' is now type number (/properties/books/items/properties/author_id)[39m
   [33m[200 response body] 'status' now has enum value 'hold' (/properties/books/items/properties/status/enum)[39m
   [31m[200 response body] schema (/properties/books/items/properties/price/maximum) with keyword 'maximum' and parameters {"comparison":"<=","limit":6} received invalid values 10, 15[39m
-  [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:37:799[24m[39m
+  [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:42:924[24m[39m
+[90m...and 1 endpoint that did not receive traffic[39m
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
@@ -1585,13 +1608,18 @@ info:
   version: 0.1.0
 paths:
   /books:
+    post:
+      "responses":
+        {}
     get:
+      # a comment about something
       responses:
         "200":
           description: 200 response
           content:
             application/json:
               schema:
+                # use the refs here
                 $ref: "#/components/schemas/GetBooks200ResponseBody"
   /authors:
     get:
@@ -1641,6 +1669,7 @@ paths:
                 type: string
 components:
   schemas:
+    # this is a schema
     GetBooks200ResponseBody:
       type: object
       properties:
@@ -1751,7 +1780,8 @@ GET /books
   [33m[200 response body] 'author_id' is now type number (/properties/books/items/properties/author_id)[39m
   [33m[200 response body] 'status' now has enum value 'hold' (/properties/books/items/properties/status/enum)[39m
   [31m[200 response body] schema (/properties/books/items/properties/price/maximum) with keyword 'maximum' and parameters {"comparison":"<=","limit":6} received invalid values 10, 15[39m
-  [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:37:799[24m[39m
+  [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:42:924[24m[39m
+[90m...and 1 endpoint that did not receive traffic[39m
 
 5 unmatched requests
 [33mNew endpoints are only added in interactive mode. Run 'optic capture openapi.yml --update interactive' to add new endpoints[39m
@@ -1766,16 +1796,22 @@ info:
   version: 0.1.0
 paths:
   /books:
+    post:
+      "responses":
+        {}
     get:
+      # a comment about something
       responses:
         "200":
           description: 200 response
           content:
             application/json:
               schema:
+                # use the refs here
                 $ref: "#/components/schemas/GetBooks200ResponseBody"
 components:
   schemas:
+    # this is a schema
     GetBooks200ResponseBody:
       type: object
       properties:
@@ -1848,39 +1884,40 @@ GET /books
   [31m[200 response body] 'updated_at' is not documented (/properties/books/items/properties)[39m
   [31m[200 response body] 'author_id' does not match type number. Received 6nTxAFM5ck4Hob77hGQoL (/properties/books/items/properties/author_id)[39m
   [41m  Diff  [49m 'author_id' did not match schema
-[90m25 |[39m properties:
-[90m26 |[39m   id:
-[90m27 |[39m     type: string
-[90m28 |[39m [1m[33m  author_id:  [41m[Actual] "6nTxAFM5ck4Hob77hGQoL"[49m[39m[22m
-[90m29 |[39m     type: number
-[90m30 |[39m   status:
-[90m31 |[39m     type: string
+[90m30 |[39m properties:
+[90m31 |[39m   id:
+[90m32 |[39m     type: string
+[90m33 |[39m [1m[33m  author_id:  [41m[Actual] "6nTxAFM5ck4Hob77hGQoL"[49m[39m[22m
+[90m34 |[39m     type: number
+[90m35 |[39m   status:
+[90m36 |[39m     type: string
 [90m$workspace$/openapi.yml[39m
 
   [31m[200 response body] 'status' missing enum value 'hold' (/properties/books/items/properties/status/enum)[39m
   [41m  Diff  [49m 'status' does not have enum value hold
-[90m29 |[39m   type: number
-[90m30 |[39m status:
-[90m31 |[39m   type: string
-[90m32 |[39m [1m[33m  enum:  [41mmissing enum value 'hold'[49m[39m[22m
-[90m33 |[39m     - ready
-[90m34 |[39m     - not_ready
-[90m35 |[39m price:
+[90m34 |[39m   type: number
+[90m35 |[39m status:
+[90m36 |[39m   type: string
+[90m37 |[39m [1m[33m  enum:  [41mmissing enum value 'hold'[49m[39m[22m
+[90m38 |[39m     - ready
+[90m39 |[39m     - not_ready
+[90m40 |[39m price:
 [90m$workspace$/openapi.yml[39m
 
   [31m[200 response body] schema (/properties/books/items/properties/price/maximum) with keyword 'maximum' and parameters {"comparison":"<=","limit":6} received invalid values 10, 15[39m
   [41m  Diff  [49m interaction did not match schema
-[90m34 |[39m       - not_ready
-[90m35 |[39m   price:
-[90m36 |[39m     type: number
-[90m37 |[39m [1m[33m    maximum: 6  [41m[Actual] 10, 15[49m[39m[22m
-[90m38 |[39m     minimum: 2
-[90m39 |[39m required:
-[90m40 |[39m   - id
+[90m39 |[39m       - not_ready
+[90m40 |[39m   price:
+[90m41 |[39m     type: number
+[90m42 |[39m [1m[33m    maximum: 6  [41m[Actual] 10, 15[49m[39m[22m
+[90m43 |[39m     minimum: 2
+[90m44 |[39m required:
+[90m45 |[39m   - id
 [90m$workspace$/openapi.yml[39m
 
+[90m...and 1 endpoint that did not receive traffic[39m
 
-100.0% coverage of your documented operations. 5 requests did not match a documented path (6 total requests).
+66.7% coverage of your documented operations. 5 requests did not match a documented path (6 total requests).
 9 diffs detected in documented operations
 
 [33mNew endpoints are only added in interactive mode. Run 'optic capture openapi.yml --update interactive' to add new endpoints[39m
@@ -1897,8 +1934,9 @@ GET /books
   [31m[200 response body] 'author_id' does not match type number. Received 6nTxAFM5ck4Hob77hGQoL (/properties/books/items/properties/author_id)[39m
   [31m[200 response body] 'status' missing enum value 'hold' (/properties/books/items/properties/status/enum)[39m
   [31m[200 response body] schema (/properties/books/items/properties/price/maximum) with keyword 'maximum' and parameters {"comparison":"<=","limit":6} received invalid values 10, 15[39m
+[90m...and 1 endpoint that did not receive traffic[39m
 
-100.0% coverage of your documented operations. 5 requests did not match a documented path (6 total requests).
+66.7% coverage of your documented operations. 5 requests did not match a documented path (6 total requests).
 6 diffs detected in documented operations
 
 [33mNew endpoints are only added in interactive mode. Run 'optic capture openapi.yml --update interactive' to add new endpoints[39m

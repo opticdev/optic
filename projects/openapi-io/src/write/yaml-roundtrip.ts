@@ -67,9 +67,3 @@ function insert<T>(arr: T[], index: number, item: any) {
   copy.splice(index, 0, item);
   return copy;
 }
-
-function remove<T>(arr: T[], index: number) {
-  const copy = [...arr];
-  copy.splice(index, 1);
-  return copy;
-}
