@@ -301,6 +301,7 @@ export const getRunAction =
       'optic.run.init',
       {
         isInCi: config.isInCi,
+        isAuthenticated: config.isAuthenticated,
         commentToken: !!commentToken,
         isPR,
         ...optionsForAnalytics(options),
@@ -605,14 +606,28 @@ export const getRunAction =
 
     await flushEvents();
 
+    logger.info('');
+
     if (!config.isInCi) {
-      logger.info('');
       logger.info(
-        `🤖 Don't forget to add Optic to your CI flow: https://www.useoptic.com/docs/setup-ci`
+        `🤖 Add Optic to your CI flow: https://www.useoptic.com/docs/setup-ci`
+      );
+    }
+
+    if (config.isInCi && !commentToken) {
+      logger.info(
+        `💬 Configure commenting on PR/MR: https://www.useoptic.com/docs/setup-ci#configure-commenting-on-pull-requests-optional`
+      );
+    }
+
+    if (config.isDefaultConfig) {
+      logger.info(
+        `🔧 Customize your governance rules: https://www.useoptic.com/docs/lint-openapi`
       );
     }
 
     if (exit1) {
+      logger.info('');
       logger.info(
         'Exiting with code 1 as errors were found. Disable this behaviour with the `--severity none` option.'
       );
