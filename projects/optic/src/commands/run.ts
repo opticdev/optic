@@ -225,34 +225,32 @@ type SpecReport = {
   };
 };
 
-function report(specReports: SpecReport[]) {
-  for (const report of specReports) {
-    logger.info(`| ${chalk.bold(report.title)} (${report.path})`);
-    if (report.error) {
-      logger.warn(`| Optic encountered an error: ${report.error}`);
-      return;
-    }
-    const breakingChangesReport = !report.diffs
-      ? '☑️  No changes '
-      : report.breakingChanges
-      ? `❌ ${report.breakingChanges} breaking change${
-          report.breakingChanges > 1 ? 's' : ''
-        } `
-      : '✅ No breaking changes ';
-
-    const designReport = report.designIssues
-      ? `❌ ${report.designIssues} design issue${
-          report.designIssues > 1 ? 's' : ''
-        } `
-      : '✅ Design ';
-
-    logger.info(`| ${breakingChangesReport}${designReport}`);
-
-    if (report.changelogLink) {
-      logger.info(`| View report: ${report.changelogLink}`);
-    }
-    logger.info('');
+function report(report: SpecReport) {
+  logger.info(`| ${chalk.bold(report.title)} (${report.path})`);
+  if (report.error) {
+    logger.warn(`| Optic encountered an error: ${report.error}`);
+    return;
   }
+  const breakingChangesReport = !report.diffs
+    ? '☑️  No changes '
+    : report.breakingChanges
+    ? `❌ ${report.breakingChanges} breaking change${
+        report.breakingChanges > 1 ? 's' : ''
+      } `
+    : '✅ No breaking changes ';
+
+  const designReport = report.designIssues
+    ? `❌ ${report.designIssues} design issue${
+        report.designIssues > 1 ? 's' : ''
+      } `
+    : '✅ Design ';
+
+  logger.info(`| ${breakingChangesReport}${designReport}`);
+
+  if (report.changelogLink) {
+    logger.info(`| View report: ${report.changelogLink}`);
+  }
+  logger.info('');
 }
 
 // Dirty dirty, lemon squeezy
@@ -536,9 +534,9 @@ export const getRunAction =
         changelogUrl: changelogUrl ?? '',
         results: specResults.results,
       });
-    }
 
-    report(specReports);
+      report(specReport);
+    }
 
     if (commentToken && isPR) {
       const data = results.map((result) => ({
