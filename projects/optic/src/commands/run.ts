@@ -1,5 +1,6 @@
 import { Command, Option } from 'commander';
 import prompts from 'prompts';
+import path from 'path';
 import { ConfigRuleset, OpticCliConfig, readUserConfig, VCS } from '../config';
 import { errorHandler } from '../error-handler';
 import { logger } from '../logger';
@@ -36,6 +37,11 @@ import { GroupedDiffs } from '@useoptic/openapi-utilities/build/openapi3/group-d
 import { identifyOrCreateApis } from './identify-apis';
 import { getDetailsForGeneration } from '../utils/generated';
 import { checkOpenAPIVersion } from '@useoptic/openapi-io';
+import { resolveRelativePath } from '../utils/capture';
+import { GroupedCaptures } from './capture/interactions/grouped-interactions';
+import { getCaptureStorage } from './capture/storage';
+import { captureRequestsFromProxy } from './capture/actions/captureRequests';
+import { processCaptures } from './capture/capture';
 
 const usage = () => `
 
@@ -108,8 +114,6 @@ async function comment(data: CiRunDetails, commenter: CommentApi, sha: string) {
   }
 }
 
-// TODO:
-// - support capture
 export function registerRunCommand(cli: Command, config: OpticCliConfig) {
   cli
     .command('run')
@@ -191,7 +195,6 @@ async function authenticateInteractive(config: OpticCliConfig) {
   }
 
   if (!validToken) return false;
-  // TODO: associate org token to user
 
   config.client = createOpticClient(token);
   config.authenticationType = 'user';
@@ -217,6 +220,7 @@ type SpecReport = {
   title?: string;
   error?: string;
   changelogLink?: string;
+  capture?: {};
   diffs?: number;
   endpoints?: {
     added: number;
@@ -430,7 +434,7 @@ export const getRunAction =
       changelogUrl: string;
     }[] = [];
 
-    for (const [path, opticUrl] of pathUrls.entries()) {
+    for (const [specPath, opticUrl] of pathUrls.entries()) {
       let specResults: CompareSpecResults,
         warnings: string[],
         checks: any,
@@ -439,12 +443,12 @@ export const getRunAction =
         changelogUrl: string | undefined,
         specUrl: string | undefined;
 
-      const specReport: SpecReport = { path };
+      const specReport: SpecReport = { path: specPath };
       specReports.push(specReport);
 
       let localSpec: ParseResult;
       try {
-        localSpec = await loadSpec(path, config, {
+        localSpec = await loadSpec(specPath, config, {
           strict: true,
           denormalize: true,
         });
@@ -490,10 +494,67 @@ export const getRunAction =
       ({ specResults, standard, checks, changelogData, warnings } =
         await compute([cloudSpec, localSpec], config, {
           check: true,
-          path,
+          path: specPath,
         }));
 
       specReport.diffs = specResults.diffs.length;
+
+      // Capture block
+      const pathFromRoot = resolveRelativePath(config.root, specPath);
+      const captureConfig = config.capture?.[pathFromRoot];
+
+      if (captureConfig) {
+        const trafficDirectory = await getCaptureStorage(
+          path.resolve(specPath)
+        );
+        const captures = new GroupedCaptures(
+          trafficDirectory,
+          localSpec.jsonLike
+        );
+        const harEntries = await captureRequestsFromProxy(
+          config,
+          captureConfig,
+          {
+            serverUrl: captureConfig.server.url,
+          }
+        );
+        if (!harEntries) {
+          continue;
+        }
+
+        for await (const har of harEntries) {
+          captures.addHar(har);
+          logger.debug(
+            `Captured ${har.request.method.toUpperCase()} ${har.request.url}`
+          );
+        }
+        const captureResults = await processCaptures(
+          {
+            captureConfig,
+            cliConfig: config,
+            captures,
+            spec: localSpec,
+            filePath: specPath,
+          },
+          {
+            bufferLogs: true,
+            verbose: false,
+          }
+        );
+        if (!captureResults) continue;
+        const {
+          unmatchedInteractions,
+          totalInteractions,
+          coverage,
+          endpointsAdded,
+          endpointCounts,
+          bufferedOutput,
+        } = captureResults;
+
+        // TODO add this to spec report somehow
+
+        // TODO add upload here
+      }
 
       let upload: Awaited<ReturnType<typeof uploadDiff>>;
       try {
@@ -529,7 +590,7 @@ export const getRunAction =
       results.push({
         groupedDiffs: changelogData,
         warnings,
-        name: path,
+        name: specPath,
         specUrl: specUrl ?? '',
         changelogUrl: changelogUrl ?? '',
         results: specResults.results,
