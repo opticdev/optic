@@ -3543,11 +3543,11 @@ __metadata:
   linkType: hard
 
 "@types/set-cookie-parser@npm:^2":
-  version: 2.4.3
-  resolution: "@types/set-cookie-parser@npm:2.4.3"
+  version: 2.4.4
+  resolution: "@types/set-cookie-parser@npm:2.4.4"
   dependencies:
     "@types/node": "*"
-  checksum: 8c0ded364c5a53598dc58f6c668d6fdbefa3bb78fcb1181202b92f4d8495ca33b4317f54ac0fe42824278e789d730ee5cbd2f7f864466e708589ff4eab2bf457
+  checksum: db6f16639fba5645332d7e1c9c2c35b9466be55622c3e1a376e1dc0d5253c970aa2e67e868788e5c0d3483d7c8b6ab500eca25713717fb674285346959dc5bfd
   languageName: node
   linkType: hard
 
