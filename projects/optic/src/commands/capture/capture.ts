@@ -256,6 +256,7 @@ const getCaptureAction =
     );
 
     if (!captureOutput) {
+      process.exitCode = 1;
       return;
     }
     const {
@@ -263,6 +264,7 @@ const getCaptureAction =
       totalInteractions,
       coverage,
       endpointsAdded,
+      hasAnyDiffs,
       endpointCounts,
     } = captureOutput;
 
@@ -331,6 +333,9 @@ const getCaptureAction =
           branchTag ? `for tag '${branchTag}'` : ''
         }. View your spec at ${specUrl}`
       );
+    }
+    if (hasAnyDiffs) {
+      process.exitCode = 1;
     }
 
     if (
@@ -442,12 +447,12 @@ export async function processCaptures(
         ? bufferedOutput.push(JSON.stringify(captureConfig?.requests?.send))
         : logger.error(captureConfig?.requests?.send);
     }
-    process.exitCode = 1;
     return;
   }
 
   // update existing endpoints
   const coverage = new ApiCoverageCounter(spec.jsonLike);
+  let hasAnyDiffs = false;
   let diffCount = 0;
   let endpointsAdded = 0;
   // Handle interactions for documented endpoints first
@@ -492,7 +497,7 @@ export async function processCaptures(
       if (!hasDiffs) {
         spinner?.succeed(endpointText);
       } else {
-        process.exitCode = 1;
+        hasAnyDiffs = true;
         spinner?.fail(endpointText);
       }
     }
@@ -609,5 +614,6 @@ export async function processCaptures(
     endpointsAdded,
     endpointCounts,
     bufferedOutput,
+    hasAnyDiffs,
   };
 }

@@ -42,6 +42,7 @@ import { GroupedCaptures } from './capture/interactions/grouped-interactions';
 import { getCaptureStorage } from './capture/storage';
 import { captureRequestsFromProxy } from './capture/actions/captureRequests';
 import { processCaptures } from './capture/capture';
+import { uploadCoverage } from './capture/actions/upload-coverage';
 
 const usage = () => `
 
@@ -220,7 +221,12 @@ type SpecReport = {
   title?: string;
   error?: string;
   changelogLink?: string;
-  capture?: {};
+  capture?: {
+    bufferedOutput: string[];
+    unmatchedInteractions: number;
+    hasAnyDiffs: boolean;
+    coverage: string;
+  };
   diffs?: number;
   endpoints?: {
     added: number;
@@ -253,6 +259,19 @@ function report(report: SpecReport) {
 
   if (report.changelogLink) {
     logger.info(`| View report: ${report.changelogLink}`);
+  }
+  if (report.capture) {
+    const { bufferedOutput, coverage, unmatchedInteractions } = report.capture;
+    logger.info(
+      `| ${coverage}% API test coverage ${
+        unmatchedInteractions
+          ? `(${unmatchedInteractions} unmatched interactions)`
+          : ''
+      }`
+    );
+    bufferedOutput.forEach((output) => {
+      logger.info(`| ` + output);
+    });
   }
   logger.info('');
 }
@@ -541,19 +560,21 @@ export const getRunAction =
             verbose: false,
           }
         );
-        if (!captureResults) continue;
-        const {
-          unmatchedInteractions,
-          totalInteractions,
-          coverage,
-          endpointsAdded,
-          endpointCounts,
+        if (!captureResults) {
+          process.exitCode = 1;
+          continue;
+        }
+        const { unmatchedInteractions, hasAnyDiffs, coverage, bufferedOutput } =
+          captureResults;
+
+        specReport.capture = {
           bufferedOutput,
-        } = captureResults;
+          coverage: String(coverage.calculateCoverage().percent),
+          unmatchedInteractions,
+          hasAnyDiffs,
+        };
 
-        // TODO add this to spec report somehow
-
-        // TODO add upload here
+        await uploadCoverage(localSpec, coverage, specDetails, config);
       }
 
       let upload: Awaited<ReturnType<typeof uploadDiff>>;
@@ -639,7 +660,12 @@ export const getRunAction =
 
     const hasFailures =
       allChecks.some((checks) => checks.failed.error > 0) ||
-      specReports.some((r) => r.error);
+      specReports.some((r) => r.error) ||
+      specReports.some(
+        (r) =>
+          r.capture &&
+          (r.capture.unmatchedInteractions > 0 || r.capture.hasAnyDiffs)
+      );
 
     const exit1 = options.severity === 'error' && hasFailures;
 
