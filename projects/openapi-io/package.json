@@ -26,7 +26,7 @@
     "@types/lodash.clonedeep": "^4",
     "@types/lodash.sortby": "^4.7.7",
     "@types/node": "^18.0.0",
-    "@types/node-fetch": "2.6.5",
+    "@types/node-fetch": "2.6.6",
     "@types/semver": "^7.3.10",
     "babel-jest": "^29.3.1",
     "jest": "^29.3.1",
