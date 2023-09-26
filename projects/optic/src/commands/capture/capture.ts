@@ -342,6 +342,7 @@ const getCaptureAction =
       unmatchedInteractions &&
       (options.update === 'documented' || !options.update)
     ) {
+      logger.info('');
       logger.info(
         chalk.yellow(
           `New endpoints are only added in interactive mode. Run 'optic capture ${filePath} --update interactive' to add new endpoints`
@@ -612,9 +613,10 @@ export async function processCaptures(
     options.bufferLogs
       ? bufferedOutput.push(`${coverageText} ${requestsText}`)
       : logger.info(`${coverageText} ${requestsText}`);
-    diffCount !== 0 && options.bufferLogs
-      ? bufferedOutput.push(diffText)
-      : logger.info(diffText);
+    diffCount !== 0 &&
+      (options.bufferLogs
+        ? bufferedOutput.push(diffText)
+        : logger.info(diffText));
   } else if (options.update === 'documented' && unmatchedInteractions > 0) {
     const unmatchedText = `${unmatchedInteractions} unmatched requests`;
     options.bufferLogs ? bufferedOutput.push('') : logger.info();

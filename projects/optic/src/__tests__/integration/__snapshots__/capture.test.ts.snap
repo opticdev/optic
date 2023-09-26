@@ -1784,6 +1784,7 @@ GET /books
 [90m...and 1 endpoint that did not receive traffic[39m
 
 5 unmatched requests
+
 [33mNew endpoints are only added in interactive mode. Run 'optic capture openapi.yml --update interactive' to add new endpoints[39m
 "
 `;
