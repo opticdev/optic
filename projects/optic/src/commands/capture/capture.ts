@@ -10,13 +10,13 @@ import { errorHandler } from '../../error-handler';
 
 import { createNewSpecFile } from '../../utils/specs';
 import { logger } from '../../logger';
-import { OpticCliConfig, VCS } from '../../config';
+import { CaptureConfigData, OpticCliConfig, VCS } from '../../config';
 import { clearCommand } from '../oas/capture-clear';
 import { initCommand } from './capture-init';
 import { captureV1 } from '../oas/capture';
 
 import { getCaptureStorage } from './storage';
-import { loadSpec } from '../../utils/spec-loaders';
+import { ParseResult, loadSpec } from '../../utils/spec-loaders';
 import { ApiCoverageCounter } from './coverage/api-coverage';
 import { getHarEntriesFromFs } from './sources/har';
 import {
@@ -244,171 +244,30 @@ const getCaptureAction =
       await captures.writeHarFiles();
     }
 
-    const { unmatched: unmatchedInteractions, total: totalInteractions } =
-      captures.interactionCount();
+    const captureOutput = await processCaptures(
+      {
+        cliConfig: config,
+        captureConfig: captureConfig,
+        spec,
+        filePath,
+        captures,
+      },
+      { ...options, bufferLogs: false }
+    );
 
-    if (totalInteractions === 0) {
-      logger.error(
-        chalk.red('Error: No requests were captured by the Optic proxy')
-      );
-      if (captureConfig?.requests?.run) {
-        logger.error(
-          `Check that you are sending requests to the Optic proxy. You can see where the Optic proxy is running by using the ${
-            captureConfig?.requests?.run.proxy_variable ?? 'OPTIC_PROXY'
-          } environment variable`
-        );
-      } else if (captureConfig?.requests?.send) {
-        logger.error(
-          `Check that you are sending at least one request in your send configuration. Using config`
-        );
-        logger.error(captureConfig?.requests?.send);
-      }
+    if (!captureOutput.success) {
       process.exitCode = 1;
       return;
     }
+    const {
+      unmatchedInteractions,
+      totalInteractions,
+      coverage,
+      endpointsAdded,
+      hasAnyDiffs,
+      endpointCounts,
+    } = captureOutput;
 
-    // update existing endpoints
-    const coverage = new ApiCoverageCounter(spec.jsonLike);
-    let diffCount = 0;
-    let endpointsAdded = 0;
-    // Handle interactions for documented endpoints first
-    const interactionsToLog = sortBy(
-      [...captures.getDocumentedEndpointInteractions()],
-      ({ endpoint }) => `${endpoint.path}${endpoint.method}`
-    );
-
-    for (const { interactions, endpoint } of interactionsToLog) {
-      const { path, method } = endpoint;
-      const endpointText = `${method.toUpperCase()} ${path}`;
-      const spinner = getSpinner({
-        text: endpointText,
-        color: 'blue',
-      })?.start();
-      const { patchSummaries, hasDiffs } = await diffExistingEndpoint(
-        interactions,
-        spec,
-        coverage,
-        endpoint,
-        options
-      );
-
-      let endpointCoverage = coverage.coverage.paths[path][method];
-      if (options.update) {
-        // Since we flush each endpoint updates to disk, we should reload the spec to get the latest spec and sourcemap which we both use to generate the next set of patches
-        spec = await loadSpec(filePath, config, {
-          strict: false,
-          denormalize: false,
-        });
-        const operation = spec.jsonLike.paths[path]?.[method];
-        if (operation) {
-          coverage.addEndpoint(operation, path, method, {
-            newlyDocumented: true,
-          });
-          endpointCoverage = coverage.coverage.paths[path][method];
-        }
-        spinner?.succeed(endpointText);
-      } else {
-        if (!hasDiffs) {
-          spinner?.succeed(endpointText);
-        } else {
-          process.exitCode = 1;
-          spinner?.fail(endpointText);
-        }
-      }
-      const summaryText = getSummaryText(endpointCoverage);
-      summaryText && logger.info(indent(1) + summaryText);
-      for (const patchSummary of patchSummaries) {
-        logger.info(indent(1) + patchSummary);
-      }
-      diffCount += patchSummaries.length;
-    }
-    const endpointCounts = captures.counts();
-    if (endpointCounts.total > 0 && endpointCounts.unmatched > 0) {
-      const unmatchedEndpointsText = `${endpointCounts.unmatched} endpoint${
-        endpointCounts.unmatched === 1 ? '' : 's'
-      }`;
-      if (endpointCounts.matched > 0) {
-        logger.info(
-          chalk.gray(
-            `...and ${unmatchedEndpointsText} that did not receive traffic`
-          )
-        );
-      } else {
-        logger.info(
-          chalk.gray(`${unmatchedEndpointsText} did not receive traffic`)
-        );
-      }
-    }
-
-    // document new endpoints
-    if (unmatchedInteractions) {
-      if (options.update === 'interactive' || options.update === 'automatic') {
-        logger.info('');
-        logger.info(
-          chalk.bold.gray('Learning path patterns for unmatched requests...')
-        );
-        const inferredPathStructure =
-          await InferPathStructure.fromSpecAndInteractions(
-            spec.jsonLike,
-            captures.getUndocumentedInteractions()
-          );
-        const {
-          interactions: filteredInteractions,
-          ignorePaths: newIgnorePaths,
-          endpointsToAdd,
-        } = await promptUserForPathPattern(
-          captures.getUndocumentedInteractions(),
-          inferredPathStructure,
-          { update: options.update }
-        );
-
-        logger.info(chalk.bold.gray('Documenting new operations:'));
-
-        for (const endpoint of sortBy(
-          endpointsToAdd,
-          (e) => `${e.path}${e.method}`
-        )) {
-          const { path, method } = endpoint;
-          const endpointText = `${method.toUpperCase()} ${path}`;
-          const spinner = getSpinner({
-            text: endpointText,
-            color: 'blue',
-          })?.start();
-
-          await documentNewEndpoint(filteredInteractions, spec, endpoint);
-
-          // Since we flush each endpoint updates to disk, we should reload the spec to get the latest spec and sourcemap which we both use to generate the next set of patches
-          spec = await loadSpec(filePath, config, {
-            strict: false,
-            denormalize: false,
-          });
-          spinner?.succeed();
-        }
-
-        endpointsAdded = endpointsToAdd.length;
-        if (newIgnorePaths.length) {
-          await addIgnorePaths(spec, newIgnorePaths);
-        }
-      }
-    }
-
-    if (!options.update) {
-      const coverageStats = coverage.calculateCoverage();
-      const coverageText = `${coverageStats.percent}% coverage of your documented operations.`;
-      const requestsText =
-        unmatchedInteractions === 0
-          ? `All requests matched a documented path (${totalInteractions} total requests)`
-          : `${unmatchedInteractions} requests did not match a documented path (${totalInteractions} total requests).`;
-
-      logger.info();
-      logger.info(`${coverageText} ${requestsText}`);
-      diffCount !== 0 &&
-        logger.info(`${diffCount} diffs detected in documented operations`);
-      logger.info();
-    } else if (options.update === 'documented' && unmatchedInteractions > 0) {
-      logger.info();
-      logger.info(`${unmatchedInteractions} unmatched requests`);
-    }
     const maybeOrigin =
       config.vcs?.type === VCS.Git ? await Git.guessRemoteOrigin() : null;
     const relativePath = path.relative(config.root, path.resolve(filePath));
@@ -475,11 +334,15 @@ const getCaptureAction =
         }. View your spec at ${specUrl}`
       );
     }
+    if (hasAnyDiffs) {
+      process.exitCode = 1;
+    }
 
     if (
       unmatchedInteractions &&
       (options.update === 'documented' || !options.update)
     ) {
+      logger.info('');
       logger.info(
         chalk.yellow(
           `New endpoints are only added in interactive mode. Run 'optic capture ${filePath} --update interactive' to add new endpoints`
@@ -544,4 +407,232 @@ async function setup(filePath: string): Promise<string> {
     }
   }
   return await getCaptureStorage(resolvedPath);
+}
+
+export async function processCaptures(
+  {
+    captureConfig,
+    cliConfig,
+    captures,
+    spec,
+    filePath,
+  }: {
+    filePath: string;
+    spec: ParseResult;
+    captures: GroupedCaptures;
+    captureConfig?: CaptureConfigData;
+    cliConfig: OpticCliConfig;
+  },
+  options: Pick<CaptureActionOptions, 'update' | 'verbose'> & {
+    bufferLogs: boolean;
+  }
+): Promise<
+  | {
+      unmatchedInteractions: number;
+      totalInteractions: number;
+      coverage: ApiCoverageCounter;
+      endpointsAdded: number;
+      endpointCounts: {
+        total: number;
+        unmatched: number;
+        matched: number;
+      };
+      bufferedOutput: string[];
+      hasAnyDiffs: boolean;
+      success: true;
+    }
+  | { success: false; bufferedOutput: string[] }
+> {
+  const bufferedOutput: string[] = [];
+  const { unmatched: unmatchedInteractions, total: totalInteractions } =
+    captures.interactionCount();
+
+  if (totalInteractions === 0) {
+    const errorMsg = chalk.red(
+      'Error: No requests were captured by the Optic proxy'
+    );
+    options.bufferLogs ? bufferedOutput.push(errorMsg) : logger.error(errorMsg);
+    if (captureConfig?.requests?.run) {
+      const helpMsg = `Check that you are sending requests to the Optic proxy. You can see where the Optic proxy is running by using the ${
+        captureConfig?.requests?.run.proxy_variable ?? 'OPTIC_PROXY'
+      } environment variable`;
+      options.bufferLogs ? bufferedOutput.push(helpMsg) : logger.error(helpMsg);
+    } else if (captureConfig?.requests?.send) {
+      const helpMsg = `Check that you are sending at least one request in your send configuration. Using config`;
+      options.bufferLogs ? bufferedOutput.push(helpMsg) : logger.error(helpMsg);
+      options.bufferLogs
+        ? bufferedOutput.push(JSON.stringify(captureConfig?.requests?.send))
+        : logger.error(captureConfig?.requests?.send);
+    }
+    return { bufferedOutput, success: false };
+  }
+
+  // update existing endpoints
+  const coverage = new ApiCoverageCounter(spec.jsonLike);
+  let hasAnyDiffs = false;
+  let diffCount = 0;
+  let endpointsAdded = 0;
+  // Handle interactions for documented endpoints first
+  const interactionsToLog = sortBy(
+    [...captures.getDocumentedEndpointInteractions()],
+    ({ endpoint }) => `${endpoint.path}${endpoint.method}`
+  );
+
+  for (const { interactions, endpoint } of interactionsToLog) {
+    const { path, method } = endpoint;
+    const endpointText = `${method.toUpperCase()} ${path}`;
+    const spinner = !options.bufferLogs
+      ? getSpinner({
+          text: endpointText,
+          color: 'blue',
+        })?.start()
+      : (bufferedOutput.push(endpointText), undefined);
+    const { patchSummaries, hasDiffs } = await diffExistingEndpoint(
+      interactions,
+      spec,
+      coverage,
+      endpoint,
+      options
+    );
+
+    let endpointCoverage = coverage.coverage.paths[path][method];
+    if (options.update) {
+      // Since we flush each endpoint updates to disk, we should reload the spec to get the latest spec and sourcemap which we both use to generate the next set of patches
+      spec = await loadSpec(filePath, cliConfig, {
+        strict: false,
+        denormalize: false,
+      });
+      const operation = spec.jsonLike.paths[path]?.[method];
+      if (operation) {
+        coverage.addEndpoint(operation, path, method, {
+          newlyDocumented: true,
+        });
+        endpointCoverage = coverage.coverage.paths[path][method];
+      }
+      spinner?.succeed(endpointText);
+    } else {
+      if (!hasDiffs) {
+        spinner?.succeed(endpointText);
+      } else {
+        hasAnyDiffs = true;
+        spinner?.fail(endpointText);
+      }
+    }
+    const summaryText = getSummaryText(endpointCoverage);
+    summaryText && options.bufferLogs
+      ? bufferedOutput.push(indent(1) + summaryText)
+      : logger.info(indent(1) + summaryText);
+    for (const patchSummary of patchSummaries) {
+      options.bufferLogs
+        ? bufferedOutput.push(indent(1) + patchSummary)
+        : logger.info(indent(1) + patchSummary);
+    }
+    diffCount += patchSummaries.length;
+  }
+  const endpointCounts = captures.counts();
+  if (endpointCounts.total > 0 && endpointCounts.unmatched > 0) {
+    const unmatchedEndpointsText = `${endpointCounts.unmatched} endpoint${
+      endpointCounts.unmatched === 1 ? '' : 's'
+    }`;
+    if (endpointCounts.matched > 0) {
+      const txt = chalk.gray(
+        `...and ${unmatchedEndpointsText} that did not receive traffic`
+      );
+      options.bufferLogs ? bufferedOutput.push(txt) : logger.info(txt);
+    } else {
+      const txt = chalk.gray(
+        `${unmatchedEndpointsText} did not receive traffic`
+      );
+      options.bufferLogs ? bufferedOutput.push(txt) : logger.info(txt);
+    }
+  }
+
+  // document new endpoints
+  if (unmatchedInteractions) {
+    if (options.update === 'interactive' || options.update === 'automatic') {
+      options.bufferLogs ? bufferedOutput.push('') : logger.info('');
+      const summary = chalk.bold.gray(
+        'Learning path patterns for unmatched requests...'
+      );
+      options.bufferLogs ? bufferedOutput.push(summary) : logger.info(summary);
+      const inferredPathStructure =
+        await InferPathStructure.fromSpecAndInteractions(
+          spec.jsonLike,
+          captures.getUndocumentedInteractions()
+        );
+      const {
+        interactions: filteredInteractions,
+        ignorePaths: newIgnorePaths,
+        endpointsToAdd,
+      } = await promptUserForPathPattern(
+        captures.getUndocumentedInteractions(),
+        inferredPathStructure,
+        { update: options.update }
+      );
+      const header = chalk.bold.gray('Documenting new operations:');
+      options.bufferLogs ? bufferedOutput.push(header) : logger.info(header);
+
+      for (const endpoint of sortBy(
+        endpointsToAdd,
+        (e) => `${e.path}${e.method}`
+      )) {
+        const { path, method } = endpoint;
+        const endpointText = `${method.toUpperCase()} ${path}`;
+        const spinner = getSpinner({
+          text: endpointText,
+          color: 'blue',
+        })?.start();
+
+        await documentNewEndpoint(filteredInteractions, spec, endpoint);
+
+        // Since we flush each endpoint updates to disk, we should reload the spec to get the latest spec and sourcemap which we both use to generate the next set of patches
+        spec = await loadSpec(filePath, cliConfig, {
+          strict: false,
+          denormalize: false,
+        });
+        spinner?.succeed();
+      }
+
+      endpointsAdded = endpointsToAdd.length;
+      if (newIgnorePaths.length) {
+        await addIgnorePaths(spec, newIgnorePaths);
+      }
+    }
+  }
+
+  if (!options.update) {
+    const coverageStats = coverage.calculateCoverage();
+    const coverageText = `${coverageStats.percent}% coverage of your documented operations.`;
+    const requestsText =
+      unmatchedInteractions === 0
+        ? `All requests matched a documented path (${totalInteractions} total requests)`
+        : `${unmatchedInteractions} requests did not match a documented path (${totalInteractions} total requests).`;
+
+    const diffText = `${diffCount} diffs detected in documented operations`;
+    options.bufferLogs ? bufferedOutput.push('') : logger.info();
+    options.bufferLogs
+      ? bufferedOutput.push(`${coverageText} ${requestsText}`)
+      : logger.info(`${coverageText} ${requestsText}`);
+    diffCount !== 0 &&
+      (options.bufferLogs
+        ? bufferedOutput.push(diffText)
+        : logger.info(diffText));
+  } else if (options.update === 'documented' && unmatchedInteractions > 0) {
+    const unmatchedText = `${unmatchedInteractions} unmatched requests`;
+    options.bufferLogs ? bufferedOutput.push('') : logger.info();
+    options.bufferLogs
+      ? bufferedOutput.push(unmatchedText)
+      : logger.info(unmatchedText);
+  }
+
+  return {
+    unmatchedInteractions,
+    totalInteractions,
+    coverage,
+    endpointsAdded,
+    endpointCounts,
+    bufferedOutput,
+    hasAnyDiffs,
+    success: true,
+  };
 }

@@ -1,5 +1,6 @@
 import { Command, Option } from 'commander';
 import prompts from 'prompts';
+import path from 'path';
 import { ConfigRuleset, OpticCliConfig, readUserConfig, VCS } from '../config';
 import { errorHandler } from '../error-handler';
 import { logger } from '../logger';
@@ -36,6 +37,12 @@ import { GroupedDiffs } from '@useoptic/openapi-utilities/build/openapi3/group-d
 import { identifyOrCreateApis } from './identify-apis';
 import { getDetailsForGeneration } from '../utils/generated';
 import { checkOpenAPIVersion } from '@useoptic/openapi-io';
+import { resolveRelativePath } from '../utils/capture';
+import { GroupedCaptures } from './capture/interactions/grouped-interactions';
+import { getCaptureStorage } from './capture/storage';
+import { captureRequestsFromProxy } from './capture/actions/captureRequests';
+import { processCaptures } from './capture/capture';
+import { uploadCoverage } from './capture/actions/upload-coverage';
 
 const usage = () => `
 
@@ -108,8 +115,6 @@ async function comment(data: CiRunDetails, commenter: CommentApi, sha: string) {
   }
 }
 
-// TODO:
-// - support capture
 export function registerRunCommand(cli: Command, config: OpticCliConfig) {
   cli
     .command('run')
@@ -191,7 +196,6 @@ async function authenticateInteractive(config: OpticCliConfig) {
   }
 
   if (!validToken) return false;
-  // TODO: associate org token to user
 
   config.client = createOpticClient(token);
   config.authenticationType = 'user';
@@ -217,6 +221,18 @@ type SpecReport = {
   title?: string;
   error?: string;
   changelogLink?: string;
+  capture?:
+    | {
+        bufferedOutput: string[];
+        unmatchedInteractions: number;
+        hasAnyDiffs: boolean;
+        coverage: string;
+        success: true;
+      }
+    | {
+        success: false;
+        error: string;
+      };
   diffs?: number;
   endpoints?: {
     added: number;
@@ -249,6 +265,23 @@ function report(report: SpecReport) {
 
   if (report.changelogLink) {
     logger.info(`| View report: ${report.changelogLink}`);
+  }
+  logger.info('|');
+  if (report.capture && report.capture.success) {
+    const { bufferedOutput, coverage } = report.capture;
+    logger.info(`| API Test Coverage Report (${coverage}% coverage)`);
+    bufferedOutput.forEach((output) => {
+      logger.info(`| ` + output);
+    });
+  } else {
+    if (report.capture) {
+      logger.info(`| API test verification failed to run`);
+      logger.info(`| ${report.capture.error}`);
+    } else {
+      logger.info(
+        `| Skipping API test verification (set up by running optic capture init ${report.path})`
+      );
+    }
   }
   logger.info('');
 }
@@ -430,7 +463,7 @@ export const getRunAction =
       changelogUrl: string;
     }[] = [];
 
-    for (const [path, opticUrl] of pathUrls.entries()) {
+    for (const [specPath, opticUrl] of pathUrls.entries()) {
       let specResults: CompareSpecResults,
         warnings: string[],
         checks: any,
@@ -439,12 +472,12 @@ export const getRunAction =
         changelogUrl: string | undefined,
         specUrl: string | undefined;
 
-      const specReport: SpecReport = { path };
+      const specReport: SpecReport = { path: specPath };
       specReports.push(specReport);
 
       let localSpec: ParseResult;
       try {
-        localSpec = await loadSpec(path, config, {
+        localSpec = await loadSpec(specPath, config, {
           strict: true,
           denormalize: true,
         });
@@ -490,10 +523,75 @@ export const getRunAction =
       ({ specResults, standard, checks, changelogData, warnings } =
         await compute([cloudSpec, localSpec], config, {
           check: true,
-          path,
+          path: specPath,
         }));
 
       specReport.diffs = specResults.diffs.length;
+
+      // Capture block
+      const pathFromRoot = resolveRelativePath(config.root, specPath);
+      const captureConfig = config.capture?.[pathFromRoot];
+
+      if (captureConfig) {
+        const trafficDirectory = await getCaptureStorage(
+          path.resolve(specPath)
+        );
+        const captures = new GroupedCaptures(
+          trafficDirectory,
+          localSpec.jsonLike
+        );
+        const harEntries = await captureRequestsFromProxy(
+          config,
+          captureConfig,
+          {
+            serverUrl: captureConfig.server.url,
+            disableSpinner: true,
+          }
+        );
+        if (!harEntries) {
+          continue;
+        }
+
+        for await (const har of harEntries) {
+          captures.addHar(har);
+          logger.debug(
+            `Captured ${har.request.method.toUpperCase()} ${har.request.url}`
+          );
+        }
+        const captureResults = await processCaptures(
+          {
+            captureConfig,
+            cliConfig: config,
+            captures,
+            spec: localSpec,
+            filePath: specPath,
+          },
+          {
+            bufferLogs: true,
+            verbose: false,
+          }
+        );
+        if (!captureResults.success) {
+          process.exitCode = 1;
+          specReport.capture = {
+            success: false,
+            error: captureResults.bufferedOutput.join('\n| '),
+          };
+          continue;
+        }
+        const { unmatchedInteractions, hasAnyDiffs, coverage, bufferedOutput } =
+          captureResults;
+
+        specReport.capture = {
+          bufferedOutput,
+          coverage: String(coverage.calculateCoverage().percent),
+          unmatchedInteractions,
+          hasAnyDiffs,
+          success: true,
+        };
+
+        await uploadCoverage(localSpec, coverage, specDetails, config);
+      }
 
       let upload: Awaited<ReturnType<typeof uploadDiff>>;
       try {
@@ -529,7 +627,7 @@ export const getRunAction =
       results.push({
         groupedDiffs: changelogData,
         warnings,
-        name: path,
+        name: specPath,
         specUrl: specUrl ?? '',
         changelogUrl: changelogUrl ?? '',
         results: specResults.results,
@@ -578,7 +676,15 @@ export const getRunAction =
 
     const hasFailures =
       allChecks.some((checks) => checks.failed.error > 0) ||
-      specReports.some((r) => r.error);
+      specReports.some((r) => r.error) ||
+      specReports.some((r) => {
+        if (!r.capture) return false;
+        const captureFailedToRun = !r.capture.success;
+        const captureHasMismatch =
+          r.capture.success &&
+          (r.capture.unmatchedInteractions > 0 || r.capture.hasAnyDiffs);
+        return captureFailedToRun || captureHasMismatch;
+      });
 
     const exit1 = options.severity === 'error' && hasFailures;
 
