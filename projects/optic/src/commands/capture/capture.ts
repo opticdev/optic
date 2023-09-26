@@ -255,7 +255,7 @@ const getCaptureAction =
       { ...options, bufferLogs: false }
     );
 
-    if (!captureOutput) {
+    if (!captureOutput.success) {
       process.exitCode = 1;
       return;
     }
@@ -425,7 +425,23 @@ export async function processCaptures(
   options: Pick<CaptureActionOptions, 'update' | 'verbose'> & {
     bufferLogs: boolean;
   }
-) {
+): Promise<
+  | {
+      unmatchedInteractions: number;
+      totalInteractions: number;
+      coverage: ApiCoverageCounter;
+      endpointsAdded: number;
+      endpointCounts: {
+        total: number;
+        unmatched: number;
+        matched: number;
+      };
+      bufferedOutput: string[];
+      hasAnyDiffs: boolean;
+      success: true;
+    }
+  | { success: false; bufferedOutput: string[] }
+> {
   const bufferedOutput: string[] = [];
   const { unmatched: unmatchedInteractions, total: totalInteractions } =
     captures.interactionCount();
@@ -447,7 +463,7 @@ export async function processCaptures(
         ? bufferedOutput.push(JSON.stringify(captureConfig?.requests?.send))
         : logger.error(captureConfig?.requests?.send);
     }
-    return;
+    return { bufferedOutput, success: false };
   }
 
   // update existing endpoints
@@ -615,5 +631,6 @@ export async function processCaptures(
     endpointCounts,
     bufferedOutput,
     hasAnyDiffs,
+    success: true,
   };
 }

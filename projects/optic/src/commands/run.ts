@@ -221,12 +221,18 @@ type SpecReport = {
   title?: string;
   error?: string;
   changelogLink?: string;
-  capture?: {
-    bufferedOutput: string[];
-    unmatchedInteractions: number;
-    hasAnyDiffs: boolean;
-    coverage: string;
-  };
+  capture?:
+    | {
+        bufferedOutput: string[];
+        unmatchedInteractions: number;
+        hasAnyDiffs: boolean;
+        coverage: string;
+        success: true;
+      }
+    | {
+        success: false;
+        error: string;
+      };
   diffs?: number;
   endpoints?: {
     added: number;
@@ -261,16 +267,21 @@ function report(report: SpecReport) {
     logger.info(`| View report: ${report.changelogLink}`);
   }
   logger.info('|');
-  if (report.capture) {
+  if (report.capture && report.capture.success) {
     const { bufferedOutput, coverage } = report.capture;
     logger.info(`| API Test Coverage Report (${coverage}% coverage)`);
     bufferedOutput.forEach((output) => {
       logger.info(`| ` + output);
     });
   } else {
-    logger.info(
-      `| Skipping API test verification (set up by running optic capture init ${report.path})`
-    );
+    if (report.capture) {
+      logger.info(`| API test verification failed to run`);
+      logger.info(`| ${report.capture.error}`);
+    } else {
+      logger.info(
+        `| Skipping API test verification (set up by running optic capture init ${report.path})`
+      );
+    }
   }
   logger.info('');
 }
@@ -560,8 +571,12 @@ export const getRunAction =
             verbose: false,
           }
         );
-        if (!captureResults) {
+        if (!captureResults.success) {
           process.exitCode = 1;
+          specReport.capture = {
+            success: false,
+            error: captureResults.bufferedOutput.join('\n| '),
+          };
           continue;
         }
         const { unmatchedInteractions, hasAnyDiffs, coverage, bufferedOutput } =
@@ -572,6 +587,7 @@ export const getRunAction =
           coverage: String(coverage.calculateCoverage().percent),
           unmatchedInteractions,
           hasAnyDiffs,
+          success: true,
         };
 
         await uploadCoverage(localSpec, coverage, specDetails, config);
@@ -661,11 +677,14 @@ export const getRunAction =
     const hasFailures =
       allChecks.some((checks) => checks.failed.error > 0) ||
       specReports.some((r) => r.error) ||
-      specReports.some(
-        (r) =>
-          r.capture &&
-          (r.capture.unmatchedInteractions > 0 || r.capture.hasAnyDiffs)
-      );
+      specReports.some((r) => {
+        if (!r.capture) return false;
+        const captureFailedToRun = !r.capture.success;
+        const captureHasMismatch =
+          r.capture.success &&
+          (r.capture.unmatchedInteractions > 0 || r.capture.hasAnyDiffs);
+        return captureFailedToRun || captureHasMismatch;
+      });
 
     const exit1 = options.severity === 'error' && hasFailures;
 
