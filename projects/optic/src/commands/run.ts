@@ -260,18 +260,17 @@ function report(report: SpecReport) {
   if (report.changelogLink) {
     logger.info(`| View report: ${report.changelogLink}`);
   }
+  logger.info('|');
   if (report.capture) {
-    const { bufferedOutput, coverage, unmatchedInteractions } = report.capture;
-    logger.info(
-      `| ${coverage}% API test coverage ${
-        unmatchedInteractions
-          ? `(${unmatchedInteractions} unmatched interactions)`
-          : ''
-      }`
-    );
+    const { bufferedOutput, coverage } = report.capture;
+    logger.info(`| API Test Coverage Report (${coverage}% coverage)`);
     bufferedOutput.forEach((output) => {
       logger.info(`| ` + output);
     });
+  } else {
+    logger.info(
+      `| Skipping API test verification (set up by running optic capture init ${report.path})`
+    );
   }
   logger.info('');
 }
@@ -535,6 +534,7 @@ export const getRunAction =
           captureConfig,
           {
             serverUrl: captureConfig.server.url,
+            disableSpinner: true,
           }
         );
         if (!harEntries) {

@@ -289,7 +289,12 @@ function makeAllRequests(
 export async function captureRequestsFromProxy(
   config: OpticCliConfig,
   captureConfig: CaptureConfigData,
-  options: { proxyPort?: string; serverOverride?: string; serverUrl: string }
+  options: {
+    proxyPort?: string;
+    serverOverride?: string;
+    serverUrl: string;
+    disableSpinner?: boolean;
+  }
 ) {
   let app: ChildProcessWithoutNullStreams | undefined = undefined;
   let proxy: ProxyServer | undefined = undefined;
@@ -307,10 +312,12 @@ export async function captureRequestsFromProxy(
   const unsubscribeHook = exitHook(() => {
     cleanup();
   });
-  const spinner = getSpinner({
-    text: 'Generating traffic to send to server',
-    color: 'blue',
-  })?.start();
+  const spinner = options.disableSpinner
+    ? undefined
+    : getSpinner({
+        text: 'Generating traffic to send to server',
+        color: 'blue',
+      })?.start();
   let interactions: ProxyInteractions | null = null;
 
   const serverUrl = options.serverUrl;
