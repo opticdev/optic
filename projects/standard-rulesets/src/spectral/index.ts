@@ -196,8 +196,41 @@ export class SpectralRulesets extends ExternalRuleBase {
         matches: this.options.matches,
       });
     });
+    const changed = this.options.changed.map((ruleInput) => {
+      return new SpectralRule({
+        name:
+          'Spectral Rules applied to changes to the specification: ' +
+          ruleInput,
+        flatSpecFile: absolutePathTmpSpec,
+        applies: 'changed',
+        rulesetPointer: ruleInput,
+        matches: this.options.matches,
+      });
+    });
+    const addedOrChanged = this.options.addedOrChanged.flatMap((ruleInput) => {
+      return [
+        new SpectralRule({
+          name:
+            'Spectral Rules applied to additions to the specification: ' +
+            ruleInput,
+          flatSpecFile: absolutePathTmpSpec,
+          applies: 'added',
+          rulesetPointer: ruleInput,
+          matches: this.options.matches,
+        }),
+        new SpectralRule({
+          name:
+            'Spectral Rules applied to changes to the specification: ' +
+            ruleInput,
+          flatSpecFile: absolutePathTmpSpec,
+          applies: 'changed',
+          rulesetPointer: ruleInput,
+          matches: this.options.matches,
+        }),
+      ];
+    });
 
-    const allRulesets = [...always, ...added];
+    const allRulesets = [...always, ...added, ...changed, ...addedOrChanged];
 
     const allResults = await Promise.all(
       allRulesets.map((ruleset) => ruleset.runRulesV2(inputs))
