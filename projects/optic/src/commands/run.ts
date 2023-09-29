@@ -279,7 +279,7 @@ function report(report: SpecReport) {
       logger.info(`| ${report.capture.error}`);
     } else {
       logger.info(
-        `| Skipping API test verification (set up by running optic capture init ${report.path})`
+        `| Skipping API test verification (set up by running \`optic capture init ${report.path}\`)`
       );
     }
   }
@@ -412,7 +412,7 @@ export const getRunAction =
         localSpecPaths.length > 1 ? 's' : ''
       }:`
     );
-    logger.info(`${localSpecPaths.join(', ')}.\n`);
+    logger.info(`${localSpecPaths.join(', ')}\n`);
 
     const generatedDetails = await getDetailsForGeneration(config);
     if (!generatedDetails) return;
@@ -427,10 +427,8 @@ export const getRunAction =
  │           Local specs           │
  └─────────────────────────────────┘
 
- [1]: Comparing your local specifications to their last uploaded Optic cloud version for tag \`${cloudTag}\`.
-      Optic compares local specs against the target branch upon PR/MR events, and the current branch upon push events or local runs.
-
- [2]: Pushing local specs as latest versions in Optic cloud for tag \`${currentBranchCloudTag}\`, the current branch tag.
+ [1]: \`${cloudTag}\`
+ [2]: \`${currentBranchCloudTag}\`
 
 --------------------------------------------------------------------------------------------------`);
     if (!commentToken && isPR) {
