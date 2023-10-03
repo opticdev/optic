@@ -401,6 +401,9 @@ const createOpenAPIValidationSchema = (schema: any, version: '3.0' | '3.1') => {
             name: {
               type: 'string',
             },
+            identifier: {
+              type: 'string',
+            },
             url: {
               type: 'string',
             },
