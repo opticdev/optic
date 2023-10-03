@@ -365,39 +365,313 @@ const openapi3_1_schema_object = {
   },
 };
 
-const createOpenAPIValidationSchema = (schema: any) => ({
-  $id: 'http://openapis.org/v3/schema.json#',
-  $schema: 'http://json-schema.org/draft-07/schema#',
-  type: 'object',
-  description: 'This is the root document object of the OpenAPI document.',
-  required: ['openapi', 'info', 'paths'],
-  additionalProperties: false,
-  patternProperties: {
-    '^x-': {
-      $ref: '#/definitions/specificationExtension',
-    },
-  },
-  properties: {
-    openapi: {
-      type: 'string',
-    },
-    info: {
-      $ref: '#/definitions/info',
-    },
-    servers: {
-      type: 'array',
-      items: {
-        $ref: '#/definitions/server',
+const createOpenAPIValidationSchema = (schema: any, version: '3.0' | '3.1') => {
+  const license =
+    version === '3.0'
+      ? {
+          type: 'object',
+          description: 'License information for the exposed API.',
+          required: ['name'],
+          additionalProperties: false,
+          patternProperties: {
+            '^x-': {
+              $ref: '#/definitions/specificationExtension',
+            },
+          },
+          properties: {
+            name: {
+              type: 'string',
+            },
+            url: {
+              type: 'string',
+            },
+          },
+        }
+      : {
+          type: 'object',
+          description: 'License information for the exposed API.',
+          required: ['name'],
+          additionalProperties: false,
+          patternProperties: {
+            '^x-': {
+              $ref: '#/definitions/specificationExtension',
+            },
+          },
+          properties: {
+            name: {
+              type: 'string',
+            },
+            identifier: {
+              type: 'string',
+            },
+            url: {
+              type: 'string',
+            },
+          },
+        };
+
+  return {
+    $id: 'http://openapis.org/v3/schema.json#',
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    type: 'object',
+    description: 'This is the root document object of the OpenAPI document.',
+    required: ['openapi', 'info', 'paths'],
+    additionalProperties: false,
+    patternProperties: {
+      '^x-': {
+        $ref: '#/definitions/specificationExtension',
       },
-      uniqueItems: true,
     },
-    paths: {
-      $ref: '#/definitions/paths',
+    properties: {
+      openapi: {
+        type: 'string',
+      },
+      info: {
+        $ref: '#/definitions/info',
+      },
+      servers: {
+        type: 'array',
+        items: {
+          $ref: '#/definitions/server',
+        },
+        uniqueItems: true,
+      },
+      paths: {
+        $ref: '#/definitions/paths',
+      },
+      webhooks: {
+        additionalProperties: {
+          type: 'object',
+          properties: {
+            get: {
+              $ref: '#/definitions/operation',
+            },
+            put: {
+              $ref: '#/definitions/operation',
+            },
+            post: {
+              $ref: '#/definitions/operation',
+            },
+            delete: {
+              $ref: '#/definitions/operation',
+            },
+            options: {
+              $ref: '#/definitions/operation',
+            },
+            head: {
+              $ref: '#/definitions/operation',
+            },
+            patch: {
+              $ref: '#/definitions/operation',
+            },
+            trace: {
+              $ref: '#/definitions/operation',
+            },
+          },
+        },
+      },
+      components: {
+        $ref: '#/definitions/components',
+      },
+      security: {
+        type: 'array',
+        items: {
+          $ref: '#/definitions/securityRequirement',
+        },
+        uniqueItems: true,
+      },
+      tags: {
+        type: 'array',
+        items: {
+          $ref: '#/definitions/tag',
+        },
+        uniqueItems: true,
+      },
+      externalDocs: {
+        $ref: '#/definitions/externalDocs',
+      },
     },
-    webhooks: {
-      additionalProperties: {
+    definitions: {
+      info: {
         type: 'object',
+        description:
+          'The object provides metadata about the API. The metadata MAY be used by the clients if needed, and MAY be presented in editing or documentation generation tools for convenience.',
+        required: ['title', 'version'],
+        additionalProperties: false,
+        patternProperties: {
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
+        },
         properties: {
+          title: {
+            type: 'string',
+          },
+          description: {
+            type: 'string',
+          },
+          termsOfService: {
+            type: 'string',
+          },
+          contact: {
+            $ref: '#/definitions/contact',
+          },
+          license: {
+            $ref: '#/definitions/license',
+          },
+          version: {
+            type: 'string',
+          },
+          summary: {
+            type: 'string',
+          },
+        },
+      },
+      contact: {
+        type: 'object',
+        description: 'Contact information for the exposed API.',
+        additionalProperties: false,
+        patternProperties: {
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
+        },
+        properties: {
+          name: {
+            type: 'string',
+          },
+          url: {
+            type: 'string',
+          },
+          email: {
+            type: 'string',
+          },
+        },
+      },
+      license,
+      server: {
+        type: 'object',
+        description: 'An object representing a Server.',
+        required: ['url'],
+        additionalProperties: false,
+        patternProperties: {
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
+        },
+        properties: {
+          url: {
+            type: 'string',
+          },
+          description: {
+            type: 'string',
+          },
+          variables: {
+            $ref: '#/definitions/serverVariables',
+          },
+        },
+      },
+      serverVariable: {
+        type: 'object',
+        description:
+          'An object representing a Server Variable for server URL template substitution.',
+        required: ['default'],
+        additionalProperties: false,
+        patternProperties: {
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
+        },
+        properties: {
+          enum: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+            uniqueItems: true,
+          },
+          default: {
+            type: 'string',
+          },
+          description: {
+            type: 'string',
+          },
+        },
+      },
+      components: {
+        type: 'object',
+        description:
+          'Holds a set of reusable objects for different aspects of the OAS. All objects defined within the components object will have no effect on the API unless they are explicitly referenced from properties outside the components object.',
+        additionalProperties: false,
+        patternProperties: {
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
+        },
+        properties: {
+          schemas: {
+            $ref: '#/definitions/schemasOrReferences',
+          },
+          responses: {
+            $ref: '#/definitions/responsesOrReferences',
+          },
+          parameters: {
+            $ref: '#/definitions/parametersOrReferences',
+          },
+          examples: {
+            $ref: '#/definitions/examplesOrReferences',
+          },
+          requestBodies: {
+            $ref: '#/definitions/requestBodiesOrReferences',
+          },
+          headers: {
+            $ref: '#/definitions/headersOrReferences',
+          },
+          securitySchemes: {
+            $ref: '#/definitions/securitySchemesOrReferences',
+          },
+          links: {
+            $ref: '#/definitions/linksOrReferences',
+          },
+          callbacks: {
+            $ref: '#/definitions/callbacksOrReferences',
+          },
+        },
+      },
+      paths: {
+        type: 'object',
+        description:
+          'Holds the relative paths to the individual endpoints and their operations. The path is appended to the URL from the `Server Object` in order to construct the full URL.  The Paths MAY be empty, due to ACL constraints.',
+        additionalProperties: false,
+        patternProperties: {
+          '^/': {
+            $ref: '#/definitions/pathItem',
+          },
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
+        },
+      },
+      pathItem: {
+        type: 'object',
+        description:
+          'Describes the operations available on a single path. A Path Item MAY be empty, due to ACL constraints. The path itself is still exposed to the documentation viewer but they will not know which operations and parameters are available.',
+        additionalProperties: false,
+        patternProperties: {
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
+        },
+        properties: {
+          $ref: {
+            type: 'string',
+          },
+          summary: {
+            type: 'string',
+          },
+          description: {
+            type: 'string',
+          },
           get: {
             $ref: '#/definitions/operation',
           },
@@ -422,1069 +696,823 @@ const createOpenAPIValidationSchema = (schema: any) => ({
           trace: {
             $ref: '#/definitions/operation',
           },
+          servers: {
+            type: 'array',
+            items: {
+              $ref: '#/definitions/server',
+            },
+            uniqueItems: true,
+          },
+          parameters: {
+            type: 'array',
+            items: {
+              $ref: '#/definitions/parameterOrReference',
+            },
+            uniqueItems: true,
+          },
         },
       },
-    },
-    components: {
-      $ref: '#/definitions/components',
-    },
-    security: {
-      type: 'array',
-      items: {
-        $ref: '#/definitions/securityRequirement',
-      },
-      uniqueItems: true,
-    },
-    tags: {
-      type: 'array',
-      items: {
-        $ref: '#/definitions/tag',
-      },
-      uniqueItems: true,
-    },
-    externalDocs: {
-      $ref: '#/definitions/externalDocs',
-    },
-  },
-  definitions: {
-    info: {
-      type: 'object',
-      description:
-        'The object provides metadata about the API. The metadata MAY be used by the clients if needed, and MAY be presented in editing or documentation generation tools for convenience.',
-      required: ['title', 'version'],
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
+      operation: {
+        type: 'object',
+        description: 'Describes a single API operation on a path.',
+        required: ['responses'],
+        additionalProperties: false,
+        patternProperties: {
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
         },
-      },
-      properties: {
-        title: {
-          type: 'string',
-        },
-        description: {
-          type: 'string',
-        },
-        termsOfService: {
-          type: 'string',
-        },
-        contact: {
-          $ref: '#/definitions/contact',
-        },
-        license: {
-          $ref: '#/definitions/license',
-        },
-        version: {
-          type: 'string',
-        },
-        summary: {
-          type: 'string',
-        },
-      },
-    },
-    contact: {
-      type: 'object',
-      description: 'Contact information for the exposed API.',
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
-        },
-      },
-      properties: {
-        name: {
-          type: 'string',
-        },
-        url: {
-          type: 'string',
-        },
-        email: {
-          type: 'string',
-        },
-      },
-    },
-    license: {
-      type: 'object',
-      description: 'License information for the exposed API.',
-      required: ['name'],
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
-        },
-      },
-      properties: {
-        name: {
-          type: 'string',
-        },
-        url: {
-          type: 'string',
-        },
-      },
-    },
-    server: {
-      type: 'object',
-      description: 'An object representing a Server.',
-      required: ['url'],
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
-        },
-      },
-      properties: {
-        url: {
-          type: 'string',
-        },
-        description: {
-          type: 'string',
-        },
-        variables: {
-          $ref: '#/definitions/serverVariables',
-        },
-      },
-    },
-    serverVariable: {
-      type: 'object',
-      description:
-        'An object representing a Server Variable for server URL template substitution.',
-      required: ['default'],
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
-        },
-      },
-      properties: {
-        enum: {
-          type: 'array',
-          items: {
+        properties: {
+          tags: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+            uniqueItems: true,
+          },
+          summary: {
             type: 'string',
           },
-          uniqueItems: true,
-        },
-        default: {
-          type: 'string',
-        },
-        description: {
-          type: 'string',
-        },
-      },
-    },
-    components: {
-      type: 'object',
-      description:
-        'Holds a set of reusable objects for different aspects of the OAS. All objects defined within the components object will have no effect on the API unless they are explicitly referenced from properties outside the components object.',
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
-        },
-      },
-      properties: {
-        schemas: {
-          $ref: '#/definitions/schemasOrReferences',
-        },
-        responses: {
-          $ref: '#/definitions/responsesOrReferences',
-        },
-        parameters: {
-          $ref: '#/definitions/parametersOrReferences',
-        },
-        examples: {
-          $ref: '#/definitions/examplesOrReferences',
-        },
-        requestBodies: {
-          $ref: '#/definitions/requestBodiesOrReferences',
-        },
-        headers: {
-          $ref: '#/definitions/headersOrReferences',
-        },
-        securitySchemes: {
-          $ref: '#/definitions/securitySchemesOrReferences',
-        },
-        links: {
-          $ref: '#/definitions/linksOrReferences',
-        },
-        callbacks: {
-          $ref: '#/definitions/callbacksOrReferences',
-        },
-      },
-    },
-    paths: {
-      type: 'object',
-      description:
-        'Holds the relative paths to the individual endpoints and their operations. The path is appended to the URL from the `Server Object` in order to construct the full URL.  The Paths MAY be empty, due to ACL constraints.',
-      additionalProperties: false,
-      patternProperties: {
-        '^/': {
-          $ref: '#/definitions/pathItem',
-        },
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
-        },
-      },
-    },
-    pathItem: {
-      type: 'object',
-      description:
-        'Describes the operations available on a single path. A Path Item MAY be empty, due to ACL constraints. The path itself is still exposed to the documentation viewer but they will not know which operations and parameters are available.',
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
-        },
-      },
-      properties: {
-        $ref: {
-          type: 'string',
-        },
-        summary: {
-          type: 'string',
-        },
-        description: {
-          type: 'string',
-        },
-        get: {
-          $ref: '#/definitions/operation',
-        },
-        put: {
-          $ref: '#/definitions/operation',
-        },
-        post: {
-          $ref: '#/definitions/operation',
-        },
-        delete: {
-          $ref: '#/definitions/operation',
-        },
-        options: {
-          $ref: '#/definitions/operation',
-        },
-        head: {
-          $ref: '#/definitions/operation',
-        },
-        patch: {
-          $ref: '#/definitions/operation',
-        },
-        trace: {
-          $ref: '#/definitions/operation',
-        },
-        servers: {
-          type: 'array',
-          items: {
-            $ref: '#/definitions/server',
-          },
-          uniqueItems: true,
-        },
-        parameters: {
-          type: 'array',
-          items: {
-            $ref: '#/definitions/parameterOrReference',
-          },
-          uniqueItems: true,
-        },
-      },
-    },
-    operation: {
-      type: 'object',
-      description: 'Describes a single API operation on a path.',
-      required: ['responses'],
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
-        },
-      },
-      properties: {
-        tags: {
-          type: 'array',
-          items: {
+          description: {
             type: 'string',
           },
-          uniqueItems: true,
-        },
-        summary: {
-          type: 'string',
-        },
-        description: {
-          type: 'string',
-        },
-        externalDocs: {
-          $ref: '#/definitions/externalDocs',
-        },
-        operationId: {
-          type: 'string',
-        },
-        parameters: {
-          type: 'array',
-          items: {
-            $ref: '#/definitions/parameterOrReference',
+          externalDocs: {
+            $ref: '#/definitions/externalDocs',
           },
-          uniqueItems: true,
-        },
-        requestBody: {
-          $ref: '#/definitions/requestBodyOrReference',
-        },
-        responses: {
-          $ref: '#/definitions/responses',
-        },
-        callbacks: {
-          $ref: '#/definitions/callbacksOrReferences',
-        },
-        deprecated: {
-          type: 'boolean',
-        },
-        security: {
-          type: 'array',
-          items: {
-            $ref: '#/definitions/securityRequirement',
+          operationId: {
+            type: 'string',
           },
-          uniqueItems: true,
+          parameters: {
+            type: 'array',
+            items: {
+              $ref: '#/definitions/parameterOrReference',
+            },
+            uniqueItems: true,
+          },
+          requestBody: {
+            $ref: '#/definitions/requestBodyOrReference',
+          },
+          responses: {
+            $ref: '#/definitions/responses',
+          },
+          callbacks: {
+            $ref: '#/definitions/callbacksOrReferences',
+          },
+          deprecated: {
+            type: 'boolean',
+          },
+          security: {
+            type: 'array',
+            items: {
+              $ref: '#/definitions/securityRequirement',
+            },
+            uniqueItems: true,
+          },
+          servers: {
+            type: 'array',
+            items: {
+              $ref: '#/definitions/server',
+            },
+            uniqueItems: true,
+          },
         },
-        servers: {
-          type: 'array',
-          items: {
+      },
+      externalDocs: {
+        type: 'object',
+        description:
+          'Allows referencing an external resource for extended documentation.',
+        required: ['url'],
+        additionalProperties: false,
+        patternProperties: {
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
+        },
+        properties: {
+          description: {
+            type: 'string',
+          },
+          url: {
+            type: 'string',
+          },
+        },
+      },
+      parameter: {
+        type: 'object',
+        description:
+          'Describes a single operation parameter.  A unique parameter is defined by a combination of a name and location.',
+        required: ['name', 'in'],
+        additionalProperties: false,
+        patternProperties: {
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
+        },
+        properties: {
+          name: {
+            type: 'string',
+          },
+          in: {
+            type: 'string',
+          },
+          description: {
+            type: 'string',
+          },
+          required: {
+            type: 'boolean',
+          },
+          deprecated: {
+            type: 'boolean',
+          },
+          allowEmptyValue: {
+            type: 'boolean',
+          },
+          style: {
+            type: 'string',
+          },
+          explode: {
+            type: 'boolean',
+          },
+          allowReserved: {
+            type: 'boolean',
+          },
+          schema: {
+            $ref: '#/definitions/schemaOrReference',
+          },
+          example: {
+            $ref: '#/definitions/any',
+          },
+          examples: {
+            $ref: '#/definitions/examplesOrReferences',
+          },
+          content: {
+            $ref: '#/definitions/mediaTypes',
+          },
+        },
+      },
+      requestBody: {
+        type: 'object',
+        description: 'Describes a single request body.',
+        required: ['content'],
+        additionalProperties: false,
+        patternProperties: {
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
+        },
+        properties: {
+          description: {
+            type: 'string',
+          },
+          content: {
+            $ref: '#/definitions/mediaTypes',
+          },
+          required: {
+            type: 'boolean',
+          },
+        },
+      },
+      mediaType: {
+        type: 'object',
+        description:
+          'Each Media Type Object provides schema and examples for the media type identified by its key.',
+        additionalProperties: false,
+        patternProperties: {
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
+        },
+        properties: {
+          schema: {
+            $ref: '#/definitions/schemaOrReference',
+          },
+          example: {
+            $ref: '#/definitions/any',
+          },
+          examples: {
+            $ref: '#/definitions/examplesOrReferences',
+          },
+          encoding: {
+            $ref: '#/definitions/encodings',
+          },
+        },
+      },
+      encoding: {
+        type: 'object',
+        description:
+          'A single encoding definition applied to a single schema property.',
+        additionalProperties: false,
+        patternProperties: {
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
+        },
+        properties: {
+          contentType: {
+            type: 'string',
+          },
+          headers: {
+            $ref: '#/definitions/headersOrReferences',
+          },
+          style: {
+            type: 'string',
+          },
+          explode: {
+            type: 'boolean',
+          },
+          allowReserved: {
+            type: 'boolean',
+          },
+        },
+      },
+      responses: {
+        type: 'object',
+        description:
+          'A container for the expected responses of an operation. The container maps a HTTP response code to the expected response.  The documentation is not necessarily expected to cover all possible HTTP response codes because they may not be known in advance. However, documentation is expected to cover a successful operation response and any known errors.  The `default` MAY be used as a default response object for all HTTP codes  that are not covered individually by the specification.  The `Responses Object` MUST contain at least one response code, and it  SHOULD be the response for a successful operation call.',
+        additionalProperties: false,
+        patternProperties: {
+          '^([0-9X]{3})$': {
+            $ref: '#/definitions/responseOrReference',
+          },
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
+        },
+        properties: {
+          default: {
+            $ref: '#/definitions/responseOrReference',
+          },
+        },
+      },
+      response: {
+        type: 'object',
+        description:
+          'Describes a single response from an API Operation, including design-time, static  `links` to operations based on the response.',
+        required: ['description'],
+        additionalProperties: false,
+        patternProperties: {
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
+        },
+        properties: {
+          description: {
+            type: 'string',
+          },
+          headers: {
+            $ref: '#/definitions/headersOrReferences',
+          },
+          content: {
+            $ref: '#/definitions/mediaTypes',
+          },
+          links: {
+            $ref: '#/definitions/linksOrReferences',
+          },
+        },
+      },
+      callback: {
+        type: 'object',
+        description:
+          'A map of possible out-of band callbacks related to the parent operation. Each value in the map is a Path Item Object that describes a set of requests that may be initiated by the API provider and the expected responses. The key value used to identify the callback object is an expression, evaluated at runtime, that identifies a URL to use for the callback operation.',
+        additionalProperties: false,
+        patternProperties: {
+          '^': {
+            $ref: '#/definitions/pathItem',
+          },
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
+        },
+      },
+      example: {
+        type: 'object',
+        description: '',
+        additionalProperties: false,
+        patternProperties: {
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
+        },
+        properties: {
+          summary: {
+            type: 'string',
+          },
+          description: {
+            type: 'string',
+          },
+          value: {
+            $ref: '#/definitions/any',
+          },
+          externalValue: {
+            type: 'string',
+          },
+        },
+      },
+      link: {
+        type: 'object',
+        description:
+          "The `Link object` represents a possible design-time link for a response. The presence of a link does not guarantee the caller's ability to successfully invoke it, rather it provides a known relationship and traversal mechanism between responses and other operations.  Unlike _dynamic_ links (i.e. links provided **in** the response payload), the OAS linking mechanism does not require link information in the runtime response.  For computing links, and providing instructions to execute them, a runtime expression is used for accessing values in an operation and using them as parameters while invoking the linked operation.",
+        additionalProperties: false,
+        patternProperties: {
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
+        },
+        properties: {
+          operationRef: {
+            type: 'string',
+          },
+          operationId: {
+            type: 'string',
+          },
+          parameters: {
+            $ref: '#/definitions/anysOrExpressions',
+          },
+          requestBody: {
+            $ref: '#/definitions/anyOrExpression',
+          },
+          description: {
+            type: 'string',
+          },
+          server: {
             $ref: '#/definitions/server',
           },
-          uniqueItems: true,
         },
       },
-    },
-    externalDocs: {
-      type: 'object',
-      description:
-        'Allows referencing an external resource for extended documentation.',
-      required: ['url'],
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
+      header: {
+        type: 'object',
+        description:
+          'The Header Object follows the structure of the Parameter Object with the following changes:  1. `name` MUST NOT be specified, it is given in the corresponding `headers` map. 1. `in` MUST NOT be specified, it is implicitly in `header`. 1. All traits that are affected by the location MUST be applicable to a location of `header` (for example, `style`).',
+        additionalProperties: false,
+        patternProperties: {
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
+        },
+        properties: {
+          description: {
+            type: 'string',
+          },
+          required: {
+            type: 'boolean',
+          },
+          deprecated: {
+            type: 'boolean',
+          },
+          allowEmptyValue: {
+            type: 'boolean',
+          },
+          style: {
+            type: 'string',
+          },
+          explode: {
+            type: 'boolean',
+          },
+          allowReserved: {
+            type: 'boolean',
+          },
+          schema: {
+            $ref: '#/definitions/schemaOrReference',
+          },
+          example: {
+            $ref: '#/definitions/any',
+          },
+          examples: {
+            $ref: '#/definitions/examplesOrReferences',
+          },
+          content: {
+            $ref: '#/definitions/mediaTypes',
+          },
         },
       },
-      properties: {
-        description: {
-          type: 'string',
+      tag: {
+        type: 'object',
+        description:
+          'Adds metadata to a single tag that is used by the Operation Object. It is not mandatory to have a Tag Object per tag defined in the Operation Object instances.',
+        required: ['name'],
+        additionalProperties: false,
+        patternProperties: {
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
         },
-        url: {
-          type: 'string',
-        },
-      },
-    },
-    parameter: {
-      type: 'object',
-      description:
-        'Describes a single operation parameter.  A unique parameter is defined by a combination of a name and location.',
-      required: ['name', 'in'],
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
-        },
-      },
-      properties: {
-        name: {
-          type: 'string',
-        },
-        in: {
-          type: 'string',
-        },
-        description: {
-          type: 'string',
-        },
-        required: {
-          type: 'boolean',
-        },
-        deprecated: {
-          type: 'boolean',
-        },
-        allowEmptyValue: {
-          type: 'boolean',
-        },
-        style: {
-          type: 'string',
-        },
-        explode: {
-          type: 'boolean',
-        },
-        allowReserved: {
-          type: 'boolean',
-        },
-        schema: {
-          $ref: '#/definitions/schemaOrReference',
-        },
-        example: {
-          $ref: '#/definitions/any',
-        },
-        examples: {
-          $ref: '#/definitions/examplesOrReferences',
-        },
-        content: {
-          $ref: '#/definitions/mediaTypes',
+        properties: {
+          name: {
+            type: 'string',
+          },
+          description: {
+            type: 'string',
+          },
+          externalDocs: {
+            $ref: '#/definitions/externalDocs',
+          },
         },
       },
-    },
-    requestBody: {
-      type: 'object',
-      description: 'Describes a single request body.',
-      required: ['content'],
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
+      examples: {
+        type: 'object',
+        description: '',
+        additionalProperties: false,
+      },
+      reference: {
+        type: 'object',
+        description:
+          'A simple object to allow referencing other components in the specification, internally and externally.  The Reference Object is defined by JSON Reference and follows the same structure, behavior and rules.   For this specification, reference resolution is accomplished as defined by the JSON Reference specification and not by the JSON Schema specification.',
+        required: ['$ref'],
+        additionalProperties: false,
+        properties: {
+          $ref: {
+            type: 'string',
+          },
         },
       },
-      properties: {
-        description: {
-          type: 'string',
-        },
-        content: {
-          $ref: '#/definitions/mediaTypes',
-        },
-        required: {
-          type: 'boolean',
-        },
-      },
-    },
-    mediaType: {
-      type: 'object',
-      description:
-        'Each Media Type Object provides schema and examples for the media type identified by its key.',
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
+      schema,
+      discriminator: {
+        type: 'object',
+        description:
+          'When request bodies or response payloads may be one of a number of different schemas, a `discriminator` object can be used to aid in serialization, deserialization, and validation.  The discriminator is a specific object in a schema which is used to inform the consumer of the specification of an alternative schema based on the value associated with it.  When using the discriminator, _inline_ schemas will not be considered.',
+        required: ['propertyName'],
+        additionalProperties: false,
+        properties: {
+          propertyName: {
+            type: 'string',
+          },
+          mapping: {
+            $ref: '#/definitions/strings',
+          },
         },
       },
-      properties: {
-        schema: {
-          $ref: '#/definitions/schemaOrReference',
+      xml: {
+        type: 'object',
+        description:
+          'A metadata object that allows for more fine-tuned XML model definitions.  When using arrays, XML element names are *not* inferred (for singular/plural forms) and the `name` property SHOULD be used to add that information. See examples for expected behavior.',
+        additionalProperties: false,
+        patternProperties: {
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
         },
-        example: {
-          $ref: '#/definitions/any',
-        },
-        examples: {
-          $ref: '#/definitions/examplesOrReferences',
-        },
-        encoding: {
-          $ref: '#/definitions/encodings',
-        },
-      },
-    },
-    encoding: {
-      type: 'object',
-      description:
-        'A single encoding definition applied to a single schema property.',
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
-        },
-      },
-      properties: {
-        contentType: {
-          type: 'string',
-        },
-        headers: {
-          $ref: '#/definitions/headersOrReferences',
-        },
-        style: {
-          type: 'string',
-        },
-        explode: {
-          type: 'boolean',
-        },
-        allowReserved: {
-          type: 'boolean',
+        properties: {
+          name: {
+            type: 'string',
+          },
+          namespace: {
+            type: 'string',
+          },
+          prefix: {
+            type: 'string',
+          },
+          attribute: {
+            type: 'boolean',
+          },
+          wrapped: {
+            type: 'boolean',
+          },
         },
       },
-    },
-    responses: {
-      type: 'object',
-      description:
-        'A container for the expected responses of an operation. The container maps a HTTP response code to the expected response.  The documentation is not necessarily expected to cover all possible HTTP response codes because they may not be known in advance. However, documentation is expected to cover a successful operation response and any known errors.  The `default` MAY be used as a default response object for all HTTP codes  that are not covered individually by the specification.  The `Responses Object` MUST contain at least one response code, and it  SHOULD be the response for a successful operation call.',
-      additionalProperties: false,
-      patternProperties: {
-        '^([0-9X]{3})$': {
-          $ref: '#/definitions/responseOrReference',
+      securityScheme: {
+        type: 'object',
+        description:
+          "Defines a security scheme that can be used by the operations. Supported schemes are HTTP authentication, an API key (either as a header or as a query parameter), OAuth2's common flows (implicit, password, application and access code) as defined in RFC6749, and OpenID Connect Discovery.",
+        required: ['type'],
+        additionalProperties: false,
+        patternProperties: {
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
         },
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
-        },
-      },
-      properties: {
-        default: {
-          $ref: '#/definitions/responseOrReference',
-        },
-      },
-    },
-    response: {
-      type: 'object',
-      description:
-        'Describes a single response from an API Operation, including design-time, static  `links` to operations based on the response.',
-      required: ['description'],
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
-        },
-      },
-      properties: {
-        description: {
-          type: 'string',
-        },
-        headers: {
-          $ref: '#/definitions/headersOrReferences',
-        },
-        content: {
-          $ref: '#/definitions/mediaTypes',
-        },
-        links: {
-          $ref: '#/definitions/linksOrReferences',
+        properties: {
+          type: {
+            type: 'string',
+          },
+          description: {
+            type: 'string',
+          },
+          name: {
+            type: 'string',
+          },
+          in: {
+            type: 'string',
+          },
+          scheme: {
+            type: 'string',
+          },
+          bearerFormat: {
+            type: 'string',
+          },
+          flows: {
+            $ref: '#/definitions/oauthFlows',
+          },
+          openIdConnectUrl: {
+            type: 'string',
+          },
         },
       },
-    },
-    callback: {
-      type: 'object',
-      description:
-        'A map of possible out-of band callbacks related to the parent operation. Each value in the map is a Path Item Object that describes a set of requests that may be initiated by the API provider and the expected responses. The key value used to identify the callback object is an expression, evaluated at runtime, that identifies a URL to use for the callback operation.',
-      additionalProperties: false,
-      patternProperties: {
-        '^': {
-          $ref: '#/definitions/pathItem',
+      oauthFlows: {
+        type: 'object',
+        description: 'Allows configuration of the supported OAuth Flows.',
+        additionalProperties: false,
+        patternProperties: {
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
         },
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
-        },
-      },
-    },
-    example: {
-      type: 'object',
-      description: '',
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
-        },
-      },
-      properties: {
-        summary: {
-          type: 'string',
-        },
-        description: {
-          type: 'string',
-        },
-        value: {
-          $ref: '#/definitions/any',
-        },
-        externalValue: {
-          type: 'string',
+        properties: {
+          implicit: {
+            $ref: '#/definitions/oauthFlow',
+          },
+          password: {
+            $ref: '#/definitions/oauthFlow',
+          },
+          clientCredentials: {
+            $ref: '#/definitions/oauthFlow',
+          },
+          authorizationCode: {
+            $ref: '#/definitions/oauthFlow',
+          },
         },
       },
-    },
-    link: {
-      type: 'object',
-      description:
-        "The `Link object` represents a possible design-time link for a response. The presence of a link does not guarantee the caller's ability to successfully invoke it, rather it provides a known relationship and traversal mechanism between responses and other operations.  Unlike _dynamic_ links (i.e. links provided **in** the response payload), the OAS linking mechanism does not require link information in the runtime response.  For computing links, and providing instructions to execute them, a runtime expression is used for accessing values in an operation and using them as parameters while invoking the linked operation.",
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
+      oauthFlow: {
+        type: 'object',
+        description: 'Configuration details for a supported OAuth Flow',
+        additionalProperties: false,
+        patternProperties: {
+          '^x-': {
+            $ref: '#/definitions/specificationExtension',
+          },
+        },
+        properties: {
+          authorizationUrl: {
+            type: 'string',
+          },
+          tokenUrl: {
+            type: 'string',
+          },
+          refreshUrl: {
+            type: 'string',
+          },
+          scopes: {
+            $ref: '#/definitions/strings',
+          },
         },
       },
-      properties: {
-        operationRef: {
-          type: 'string',
+      securityRequirement: {
+        type: 'object',
+        description:
+          'Lists the required security schemes to execute this operation. The name used for each property MUST correspond to a security scheme declared in the Security Schemes under the Components Object.  Security Requirement Objects that contain multiple schemes require that all schemes MUST be satisfied for a request to be authorized. This enables support for scenarios where multiple query parameters or HTTP headers are required to convey security information.  When a list of Security Requirement Objects is defined on the Open API object or Operation Object, only one of Security Requirement Objects in the list needs to be satisfied to authorize the request.',
+        additionalProperties: false,
+        patternProperties: {
+          '^[a-zA-Z0-9\\.\\-_]+$': {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+            uniqueItems: true,
+          },
         },
-        operationId: {
-          type: 'string',
-        },
-        parameters: {
-          $ref: '#/definitions/anysOrExpressions',
-        },
-        requestBody: {
+      },
+      anyOrExpression: {
+        oneOf: [
+          {
+            $ref: '#/definitions/any',
+          },
+          {
+            $ref: '#/definitions/expression',
+          },
+        ],
+      },
+      callbackOrReference: {
+        oneOf: [
+          {
+            $ref: '#/definitions/callback',
+          },
+          {
+            $ref: '#/definitions/reference',
+          },
+        ],
+      },
+      exampleOrReference: {
+        oneOf: [
+          {
+            $ref: '#/definitions/example',
+          },
+          {
+            $ref: '#/definitions/reference',
+          },
+        ],
+      },
+      headerOrReference: {
+        oneOf: [
+          {
+            $ref: '#/definitions/header',
+          },
+          {
+            $ref: '#/definitions/reference',
+          },
+        ],
+      },
+      linkOrReference: {
+        oneOf: [
+          {
+            $ref: '#/definitions/link',
+          },
+          {
+            $ref: '#/definitions/reference',
+          },
+        ],
+      },
+      parameterOrReference: {
+        oneOf: [
+          {
+            $ref: '#/definitions/parameter',
+          },
+          {
+            $ref: '#/definitions/reference',
+          },
+        ],
+      },
+      requestBodyOrReference: {
+        oneOf: [
+          {
+            $ref: '#/definitions/requestBody',
+          },
+          {
+            $ref: '#/definitions/reference',
+          },
+        ],
+      },
+      responseOrReference: {
+        oneOf: [
+          {
+            $ref: '#/definitions/response',
+          },
+          {
+            $ref: '#/definitions/reference',
+          },
+        ],
+      },
+      schemaOrReference: {
+        anyOf: [
+          {
+            $ref: '#/definitions/schema',
+          },
+          {
+            $ref: '#/definitions/reference',
+          },
+        ],
+      },
+      securitySchemeOrReference: {
+        anyOf: [
+          {
+            $ref: '#/definitions/securityScheme',
+          },
+          {
+            $ref: '#/definitions/reference',
+          },
+        ],
+      },
+      anysOrExpressions: {
+        type: 'object',
+        additionalProperties: {
           $ref: '#/definitions/anyOrExpression',
         },
-        description: {
-          type: 'string',
-        },
-        server: {
-          $ref: '#/definitions/server',
+      },
+      callbacksOrReferences: {
+        type: 'object',
+        additionalProperties: {
+          $ref: '#/definitions/callbackOrReference',
         },
       },
-    },
-    header: {
-      type: 'object',
-      description:
-        'The Header Object follows the structure of the Parameter Object with the following changes:  1. `name` MUST NOT be specified, it is given in the corresponding `headers` map. 1. `in` MUST NOT be specified, it is implicitly in `header`. 1. All traits that are affected by the location MUST be applicable to a location of `header` (for example, `style`).',
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
+      encodings: {
+        type: 'object',
+        additionalProperties: {
+          $ref: '#/definitions/encoding',
         },
       },
-      properties: {
-        description: {
-          type: 'string',
+      examplesOrReferences: {
+        type: 'object',
+        additionalProperties: {
+          $ref: '#/definitions/exampleOrReference',
         },
-        required: {
-          type: 'boolean',
+      },
+      headersOrReferences: {
+        type: 'object',
+        additionalProperties: {
+          $ref: '#/definitions/headerOrReference',
         },
-        deprecated: {
-          type: 'boolean',
+      },
+      linksOrReferences: {
+        type: 'object',
+        additionalProperties: {
+          $ref: '#/definitions/linkOrReference',
         },
-        allowEmptyValue: {
-          type: 'boolean',
+      },
+      mediaTypes: {
+        type: 'object',
+        additionalProperties: {
+          $ref: '#/definitions/mediaType',
         },
-        style: {
-          type: 'string',
+      },
+      parametersOrReferences: {
+        type: 'object',
+        additionalProperties: {
+          $ref: '#/definitions/parameterOrReference',
         },
-        explode: {
-          type: 'boolean',
+      },
+      requestBodiesOrReferences: {
+        type: 'object',
+        additionalProperties: {
+          $ref: '#/definitions/requestBodyOrReference',
         },
-        allowReserved: {
-          type: 'boolean',
+      },
+      responsesOrReferences: {
+        type: 'object',
+        additionalProperties: {
+          $ref: '#/definitions/responseOrReference',
         },
-        schema: {
+      },
+      schemasOrReferences: {
+        type: 'object',
+        additionalProperties: {
           $ref: '#/definitions/schemaOrReference',
         },
-        example: {
-          $ref: '#/definitions/any',
-        },
-        examples: {
-          $ref: '#/definitions/examplesOrReferences',
-        },
-        content: {
-          $ref: '#/definitions/mediaTypes',
+      },
+      securitySchemesOrReferences: {
+        type: 'object',
+        additionalProperties: {
+          $ref: '#/definitions/securitySchemeOrReference',
         },
       },
-    },
-    tag: {
-      type: 'object',
-      description:
-        'Adds metadata to a single tag that is used by the Operation Object. It is not mandatory to have a Tag Object per tag defined in the Operation Object instances.',
-      required: ['name'],
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
+      serverVariables: {
+        type: 'object',
+        additionalProperties: {
+          $ref: '#/definitions/serverVariable',
         },
       },
-      properties: {
-        name: {
-          type: 'string',
-        },
-        description: {
-          type: 'string',
-        },
-        externalDocs: {
-          $ref: '#/definitions/externalDocs',
-        },
-      },
-    },
-    examples: {
-      type: 'object',
-      description: '',
-      additionalProperties: false,
-    },
-    reference: {
-      type: 'object',
-      description:
-        'A simple object to allow referencing other components in the specification, internally and externally.  The Reference Object is defined by JSON Reference and follows the same structure, behavior and rules.   For this specification, reference resolution is accomplished as defined by the JSON Reference specification and not by the JSON Schema specification.',
-      required: ['$ref'],
-      additionalProperties: false,
-      properties: {
-        $ref: {
+      strings: {
+        type: 'object',
+        additionalProperties: {
           type: 'string',
         },
       },
-    },
-    schema,
-    discriminator: {
-      type: 'object',
-      description:
-        'When request bodies or response payloads may be one of a number of different schemas, a `discriminator` object can be used to aid in serialization, deserialization, and validation.  The discriminator is a specific object in a schema which is used to inform the consumer of the specification of an alternative schema based on the value associated with it.  When using the discriminator, _inline_ schemas will not be considered.',
-      required: ['propertyName'],
-      additionalProperties: false,
-      properties: {
-        propertyName: {
-          type: 'string',
-        },
-        mapping: {
-          $ref: '#/definitions/strings',
-        },
+      object: {
+        type: 'object',
+        additionalProperties: true,
       },
-    },
-    xml: {
-      type: 'object',
-      description:
-        'A metadata object that allows for more fine-tuned XML model definitions.  When using arrays, XML element names are *not* inferred (for singular/plural forms) and the `name` property SHOULD be used to add that information. See examples for expected behavior.',
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
-        },
+      any: {
+        additionalProperties: true,
       },
-      properties: {
-        name: {
-          type: 'string',
-        },
-        namespace: {
-          type: 'string',
-        },
-        prefix: {
-          type: 'string',
-        },
-        attribute: {
-          type: 'boolean',
-        },
-        wrapped: {
-          type: 'boolean',
-        },
+      expression: {
+        type: 'object',
+        additionalProperties: true,
       },
-    },
-    securityScheme: {
-      type: 'object',
-      description:
-        "Defines a security scheme that can be used by the operations. Supported schemes are HTTP authentication, an API key (either as a header or as a query parameter), OAuth2's common flows (implicit, password, application and access code) as defined in RFC6749, and OpenID Connect Discovery.",
-      required: ['type'],
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
-        },
-      },
-      properties: {
-        type: {
-          type: 'string',
-        },
-        description: {
-          type: 'string',
-        },
-        name: {
-          type: 'string',
-        },
-        in: {
-          type: 'string',
-        },
-        scheme: {
-          type: 'string',
-        },
-        bearerFormat: {
-          type: 'string',
-        },
-        flows: {
-          $ref: '#/definitions/oauthFlows',
-        },
-        openIdConnectUrl: {
-          type: 'string',
-        },
-      },
-    },
-    oauthFlows: {
-      type: 'object',
-      description: 'Allows configuration of the supported OAuth Flows.',
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
-        },
-      },
-      properties: {
-        implicit: {
-          $ref: '#/definitions/oauthFlow',
-        },
-        password: {
-          $ref: '#/definitions/oauthFlow',
-        },
-        clientCredentials: {
-          $ref: '#/definitions/oauthFlow',
-        },
-        authorizationCode: {
-          $ref: '#/definitions/oauthFlow',
-        },
-      },
-    },
-    oauthFlow: {
-      type: 'object',
-      description: 'Configuration details for a supported OAuth Flow',
-      additionalProperties: false,
-      patternProperties: {
-        '^x-': {
-          $ref: '#/definitions/specificationExtension',
-        },
-      },
-      properties: {
-        authorizationUrl: {
-          type: 'string',
-        },
-        tokenUrl: {
-          type: 'string',
-        },
-        refreshUrl: {
-          type: 'string',
-        },
-        scopes: {
-          $ref: '#/definitions/strings',
-        },
-      },
-    },
-    securityRequirement: {
-      type: 'object',
-      description:
-        'Lists the required security schemes to execute this operation. The name used for each property MUST correspond to a security scheme declared in the Security Schemes under the Components Object.  Security Requirement Objects that contain multiple schemes require that all schemes MUST be satisfied for a request to be authorized. This enables support for scenarios where multiple query parameters or HTTP headers are required to convey security information.  When a list of Security Requirement Objects is defined on the Open API object or Operation Object, only one of Security Requirement Objects in the list needs to be satisfied to authorize the request.',
-      additionalProperties: false,
-      patternProperties: {
-        '^[a-zA-Z0-9\\.\\-_]+$': {
-          type: 'array',
-          items: {
+      specificationExtension: {
+        description: 'Any property starting with x- is valid.',
+        oneOf: [
+          {
+            type: 'null',
+          },
+          {
+            type: 'number',
+          },
+          {
+            type: 'boolean',
+          },
+          {
             type: 'string',
           },
-          uniqueItems: true,
-        },
+          {
+            type: 'object',
+          },
+          {
+            type: 'array',
+          },
+        ],
+      },
+      defaultType: {
+        oneOf: [
+          {
+            type: 'null',
+          },
+          {
+            type: 'array',
+          },
+          {
+            type: 'object',
+          },
+          {
+            type: 'number',
+          },
+          {
+            type: 'boolean',
+          },
+          {
+            type: 'string',
+          },
+        ],
       },
     },
-    anyOrExpression: {
-      oneOf: [
-        {
-          $ref: '#/definitions/any',
-        },
-        {
-          $ref: '#/definitions/expression',
-        },
-      ],
-    },
-    callbackOrReference: {
-      oneOf: [
-        {
-          $ref: '#/definitions/callback',
-        },
-        {
-          $ref: '#/definitions/reference',
-        },
-      ],
-    },
-    exampleOrReference: {
-      oneOf: [
-        {
-          $ref: '#/definitions/example',
-        },
-        {
-          $ref: '#/definitions/reference',
-        },
-      ],
-    },
-    headerOrReference: {
-      oneOf: [
-        {
-          $ref: '#/definitions/header',
-        },
-        {
-          $ref: '#/definitions/reference',
-        },
-      ],
-    },
-    linkOrReference: {
-      oneOf: [
-        {
-          $ref: '#/definitions/link',
-        },
-        {
-          $ref: '#/definitions/reference',
-        },
-      ],
-    },
-    parameterOrReference: {
-      oneOf: [
-        {
-          $ref: '#/definitions/parameter',
-        },
-        {
-          $ref: '#/definitions/reference',
-        },
-      ],
-    },
-    requestBodyOrReference: {
-      oneOf: [
-        {
-          $ref: '#/definitions/requestBody',
-        },
-        {
-          $ref: '#/definitions/reference',
-        },
-      ],
-    },
-    responseOrReference: {
-      oneOf: [
-        {
-          $ref: '#/definitions/response',
-        },
-        {
-          $ref: '#/definitions/reference',
-        },
-      ],
-    },
-    schemaOrReference: {
-      anyOf: [
-        {
-          $ref: '#/definitions/schema',
-        },
-        {
-          $ref: '#/definitions/reference',
-        },
-      ],
-    },
-    securitySchemeOrReference: {
-      anyOf: [
-        {
-          $ref: '#/definitions/securityScheme',
-        },
-        {
-          $ref: '#/definitions/reference',
-        },
-      ],
-    },
-    anysOrExpressions: {
-      type: 'object',
-      additionalProperties: {
-        $ref: '#/definitions/anyOrExpression',
-      },
-    },
-    callbacksOrReferences: {
-      type: 'object',
-      additionalProperties: {
-        $ref: '#/definitions/callbackOrReference',
-      },
-    },
-    encodings: {
-      type: 'object',
-      additionalProperties: {
-        $ref: '#/definitions/encoding',
-      },
-    },
-    examplesOrReferences: {
-      type: 'object',
-      additionalProperties: {
-        $ref: '#/definitions/exampleOrReference',
-      },
-    },
-    headersOrReferences: {
-      type: 'object',
-      additionalProperties: {
-        $ref: '#/definitions/headerOrReference',
-      },
-    },
-    linksOrReferences: {
-      type: 'object',
-      additionalProperties: {
-        $ref: '#/definitions/linkOrReference',
-      },
-    },
-    mediaTypes: {
-      type: 'object',
-      additionalProperties: {
-        $ref: '#/definitions/mediaType',
-      },
-    },
-    parametersOrReferences: {
-      type: 'object',
-      additionalProperties: {
-        $ref: '#/definitions/parameterOrReference',
-      },
-    },
-    requestBodiesOrReferences: {
-      type: 'object',
-      additionalProperties: {
-        $ref: '#/definitions/requestBodyOrReference',
-      },
-    },
-    responsesOrReferences: {
-      type: 'object',
-      additionalProperties: {
-        $ref: '#/definitions/responseOrReference',
-      },
-    },
-    schemasOrReferences: {
-      type: 'object',
-      additionalProperties: {
-        $ref: '#/definitions/schemaOrReference',
-      },
-    },
-    securitySchemesOrReferences: {
-      type: 'object',
-      additionalProperties: {
-        $ref: '#/definitions/securitySchemeOrReference',
-      },
-    },
-    serverVariables: {
-      type: 'object',
-      additionalProperties: {
-        $ref: '#/definitions/serverVariable',
-      },
-    },
-    strings: {
-      type: 'object',
-      additionalProperties: {
-        type: 'string',
-      },
-    },
-    object: {
-      type: 'object',
-      additionalProperties: true,
-    },
-    any: {
-      additionalProperties: true,
-    },
-    expression: {
-      type: 'object',
-      additionalProperties: true,
-    },
-    specificationExtension: {
-      description: 'Any property starting with x- is valid.',
-      oneOf: [
-        {
-          type: 'null',
-        },
-        {
-          type: 'number',
-        },
-        {
-          type: 'boolean',
-        },
-        {
-          type: 'string',
-        },
-        {
-          type: 'object',
-        },
-        {
-          type: 'array',
-        },
-      ],
-    },
-    defaultType: {
-      oneOf: [
-        {
-          type: 'null',
-        },
-        {
-          type: 'array',
-        },
-        {
-          type: 'object',
-        },
-        {
-          type: 'number',
-        },
-        {
-          type: 'boolean',
-        },
-        {
-          type: 'string',
-        },
-      ],
-    },
-  },
-});
+  };
+};
 
 export const basic3openapi_schema = {
   $id: 'http://openapis.org/v3/schema.json#',
@@ -1550,8 +1578,10 @@ export const basic3openapi_schema = {
 };
 
 export const openapi3_0_json_schema = createOpenAPIValidationSchema(
-  openapi3_0_schema_object
+  openapi3_0_schema_object,
+  '3.0'
 );
 export const openapi3_1_json_schema = createOpenAPIValidationSchema(
-  openapi3_1_schema_object
+  openapi3_1_schema_object,
+  '3.1'
 );
