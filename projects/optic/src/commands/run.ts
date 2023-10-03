@@ -328,13 +328,17 @@ export const getRunAction =
 
     const isPR = config.isInCi && !!baseBranch;
 
+    const maybeOrigin =
+      config.vcs?.type === VCS.Git ? await guessRemoteOrigin() : null;
+
     trackEvent(
       'optic.run.init',
       {
         isInCi: config.isInCi,
-        isAuthenticated: config.isAuthenticated,
+        isAuthenticated: !!config.isAuthenticated,
         commentToken: !!commentToken,
         isPR,
+        webUrl: maybeOrigin?.web_url,
         ...optionsForAnalytics(options),
       },
       config.userId
@@ -685,9 +689,6 @@ export const getRunAction =
       });
 
     const exit1 = options.severity === 'error' && hasFailures;
-
-    const maybeOrigin =
-      config.vcs?.type === VCS.Git ? await guessRemoteOrigin() : null;
 
     trackEvent(
       'optic.run.complete',
