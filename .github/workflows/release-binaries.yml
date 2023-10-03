@@ -38,5 +38,5 @@ jobs:
         run: |
           set -a
           source projects/optic/.env.production
-          task pkg:build -- --no-bytecode --public --public-packages "*"
+          task pkg:build -- --no-bytecode --public --public-packages "*" --compress gzip
           task pkg:archive pkg:upload
