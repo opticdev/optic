@@ -517,6 +517,9 @@ const createOpenAPIValidationSchema = (schema: any) => ({
         name: {
           type: 'string',
         },
+        identifier: {
+          type: 'string',
+        },
         url: {
           type: 'string',
         },
