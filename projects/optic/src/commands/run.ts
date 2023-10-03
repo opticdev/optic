@@ -51,7 +51,7 @@ const usage = () => `
   Find OpenAPI files in your repository, lint them and start tracking them in your dedicated Optic cloud account.
   Make some changes to the specifications and run the command again to see how Optic checks your changes:
 
-  > optic run [--match ./specs/*.openapi.yml [--ignore ./specs/ignore.openapi.yml]]
+  > optic run [./specs/*.openapi.yml [--ignore ./specs/ignore.openapi.yml]]
 
   CI usage
   ------------------------
@@ -123,12 +123,8 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
     )
     .configureHelp({ commandUsage: usage })
     .option(
-      '--match <match-glob>',
-      'Select local OpenAPI specifications files to handle. Comma separated glob patterns list.'
-    )
-    .option(
       '--ignore <ignore-glob>',
-      'Select local OpenAPI specifications files to ignore. Comma separated glob patterns list.'
+      'OpenAPI specification files to ignore, comma separated globs.'
     )
     .addOption(
       new Option(
@@ -138,11 +134,14 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
         .choices(severities)
         .default('error')
     )
+    .argument(
+      '[files]',
+      'OpenAPI specification files to handle, comma separated globs. Leave empty to let Optic detect files.'
+    )
     .action(errorHandler(getRunAction(config), { command: 'run' }));
 }
 
 type RunActionOptions = {
-  match?: string;
   ignore?: string;
   severity: (typeof severities)[number];
 };
@@ -304,7 +303,6 @@ const partitionFailedResults = (results: RuleResult[]) => {
 };
 
 const optionsForAnalytics = (options: RunActionOptions) => ({
-  match: !!options.match,
   ignore: !!options.ignore,
   severity: !!options.severity,
 });
@@ -318,7 +316,8 @@ const getGithubBranchName = () => {
 };
 
 export const getRunAction =
-  (config: OpticCliConfig) => async (options: RunActionOptions) => {
+  (config: OpticCliConfig) =>
+  async (matchArg: string | undefined, options: RunActionOptions) => {
     const commentToken =
       process.env.GITHUB_TOKEN ?? process.env.OPTIC_GITLAB_TOKEN;
 
@@ -382,7 +381,7 @@ export const getRunAction =
       return;
     }
 
-    const match = options.match ?? `**/*.(json|yml|yaml)`;
+    const match = matchArg ?? `**/*.(json|yml|yaml)`;
     const localSpecPathsUnchecked = await matchSpecCandidates(
       match,
       options.ignore
@@ -401,7 +400,7 @@ export const getRunAction =
     if (!localSpecPaths.length) {
       logger.info(
         `Optic couldn't find any OpenAPI specification in your repository${
-          options.match || options.ignore ? ` that matches your filters` : ''
+          matchArg || options.ignore ? ` that matches your filters` : ''
         }.`
       );
       logger.info('');
