@@ -119,7 +119,7 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
   cli
     .command('run')
     .description(
-      `Optic's workflow command: run lint rules, breaking change checks, and spec validation. Posts the results to PR/MRs when run in CI.`
+      `Optic's CI workflow command: run lint rules, breaking change checks, and spec validation. Posts the results to PR/MRs.`
     )
     .configureHelp({ commandUsage: usage })
     .option(
@@ -135,7 +135,7 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
         .default('error')
     )
     .argument(
-      '[files]',
+      '[file_paths]',
       'OpenAPI specification files to handle, comma separated globs. Leave empty to let Optic detect files.'
     )
     .action(errorHandler(getRunAction(config), { command: 'run' }));
