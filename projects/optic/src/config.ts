@@ -302,7 +302,7 @@ export async function initializeConfig(): Promise<OpticCliConfig> {
     cliConfig.isAuthenticated = true;
     cliConfig.userId = token.startsWith('opat')
       ? token.slice(4).split('.')[0]
-      : undefined;
+      : token;
     cliConfig.client = createOpticClient(token);
   }
 

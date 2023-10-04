@@ -6,7 +6,7 @@ import { errorHandler } from '../error-handler';
 import { logger } from '../logger';
 import { getApiFromOpticUrl, getNewTokenUrl } from '../utils/cloud-urls';
 import open from 'open';
-import { handleTokenInput } from './login/login';
+import { handleTokenInput, identifyLoginFromToken } from './login/login';
 import { matchSpecCandidates } from './diff/diff-all';
 import { getCurrentBranchName, guessRemoteOrigin } from '../utils/git-utils';
 import { loadSpec, loadRaw } from '../utils/spec-loaders';
@@ -19,7 +19,7 @@ import {
 import { compute } from './diff/compute';
 import { uploadDiff } from './diff/upload-diff';
 import chalk from 'chalk';
-import { flushEvents, trackEvent } from '../segment';
+import { flushEvents, trackEvent, identify } from '../segment';
 import { BreakingChangesRuleset } from '@useoptic/standard-rulesets';
 import { createOpticClient } from '../client/optic-backend';
 import fs from 'fs';
@@ -148,7 +148,12 @@ type RunActionOptions = {
 
 async function authenticateInteractive(config: OpticCliConfig) {
   const userConfig = await readUserConfig();
-  if (userConfig?.token) return true;
+  if (userConfig?.token) {
+    try {
+      await identifyLoginFromToken(userConfig.token);
+    } catch (e) {}
+    return true;
+  }
 
   const { token } = await prompts(
     [
@@ -210,6 +215,7 @@ async function authenticateInteractive(config: OpticCliConfig) {
 }
 
 async function authenticateCI(config: OpticCliConfig) {
+  if (config.userId) identify(config.userId);
   return config.isAuthenticated;
 }
 
