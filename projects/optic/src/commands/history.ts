@@ -29,7 +29,7 @@ function short(sha: string) {
 
 export const registerHistory = (cli: Command, config: OpticCliConfig) => {
   cli
-    .command('history', { hidden: true })
+    .command('history')
     .configureHelp({ commandUsage: usage })
     .addHelpText('after', helpText)
     .description('Browse spec history and create a text changelog')
