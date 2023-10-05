@@ -213,78 +213,6 @@ async function authenticateCI(config: OpticCliConfig) {
   return config.isAuthenticated;
 }
 
-type SpecReport = {
-  breakingChanges?: number;
-  designIssues?: number;
-  path: string;
-  title?: string;
-  error?: string;
-  changelogLink?: string;
-  capture?:
-    | {
-        bufferedOutput: string[];
-        unmatchedInteractions: number;
-        hasAnyDiffs: boolean;
-        coverage: string;
-        success: true;
-      }
-    | {
-        success: false;
-        error: string;
-      };
-  diffs?: number;
-  endpoints?: {
-    added: number;
-    removed: number;
-    changed: number;
-  };
-};
-
-function report(report: SpecReport) {
-  logger.info(`| ${chalk.bold(report.title)} (${report.path})`);
-  if (report.error) {
-    logger.warn(`| Optic encountered an error: ${report.error}`);
-    return;
-  }
-  const breakingChangesReport = !report.diffs
-    ? '☑️  No changes '
-    : report.breakingChanges
-    ? `❌ ${report.breakingChanges} breaking change${
-        report.breakingChanges > 1 ? 's' : ''
-      } `
-    : '✅ No breaking changes ';
-
-  const designReport = report.designIssues
-    ? `❌ ${report.designIssues} design issue${
-        report.designIssues > 1 ? 's' : ''
-      } `
-    : '✅ Design ';
-
-  logger.info(`| ${breakingChangesReport}${designReport}`);
-
-  if (report.changelogLink) {
-    logger.info(`| View report: ${report.changelogLink}`);
-  }
-  logger.info('|');
-  if (report.capture && report.capture.success) {
-    const { bufferedOutput, coverage } = report.capture;
-    logger.info(`| API Test Coverage Report (${coverage}% coverage)`);
-    bufferedOutput.forEach((output) => {
-      logger.info(`| ` + output);
-    });
-  } else {
-    if (report.capture) {
-      logger.info(`| API test verification failed to run`);
-      logger.info(`| ${report.capture.error}`);
-    } else {
-      logger.info(
-        `| Skipping API test verification (set up by running \`optic capture init ${report.path}\`)`
-      );
-    }
-  }
-  logger.info('');
-}
-
 // Dirty dirty, lemon squeezy
 const breakingChangesRules = new BreakingChangesRuleset();
 const breakingChangesRuleNames = breakingChangesRules.rules.map((r) => r.name);
@@ -302,6 +230,115 @@ const partitionFailedResults = (results: RuleResult[]) => {
   );
 };
 
+type DiffResult = {
+  warnings: string[];
+  groupedDiffs: GroupedDiffs;
+  results: RuleResult[];
+  name: string;
+  specUrl: string;
+  changelogUrl: string;
+};
+
+type SpecReport = {
+  path: string;
+  title?: string;
+  error?: string;
+  diff?:
+    | { success: false; error: string }
+    | {
+        diffResult?: DiffResult;
+        checks?: Awaited<ReturnType<typeof compute>>['checks'];
+        success: true;
+        breakingChanges?: number;
+        designIssues?: number;
+        changelogLink?: string;
+        diffs?: number;
+        endpoints?: {
+          added: number;
+          removed: number;
+          changed: number;
+        };
+      };
+  capture?:
+    | {
+        bufferedOutput: string[];
+        unmatchedInteractions: number;
+        hasAnyDiffs: boolean;
+        coverage: string;
+        success: true;
+      }
+    | {
+        success: false;
+        error: string;
+      };
+};
+
+function reportDiff(report: SpecReport) {
+  const diffReport = report.diff;
+  if (!diffReport) return;
+  if (!diffReport.success) {
+    logger.info(`| Optic run failed to diff:`);
+    logger.info(`| ${diffReport.error}`);
+    logger.info('|');
+    return;
+  }
+  const breakingChangesReport = !diffReport.diffs
+    ? '☑️  No changes '
+    : diffReport.breakingChanges
+    ? `❌ ${diffReport.breakingChanges} breaking change${
+        diffReport.breakingChanges > 1 ? 's' : ''
+      } `
+    : '✅ No breaking changes ';
+
+  const designReport = diffReport.designIssues
+    ? `❌ ${diffReport.designIssues} design issue${
+        diffReport.designIssues > 1 ? 's' : ''
+      } `
+    : '✅ Design ';
+
+  logger.info(`| ${breakingChangesReport}${designReport}`);
+
+  if (diffReport.changelogLink) {
+    logger.info(`| View report: ${diffReport.changelogLink}`);
+  }
+  logger.info('|');
+}
+
+function reportCapture(report: SpecReport) {
+  const captureReport = report.capture;
+  if (!captureReport) {
+    logger.info(
+      `| Skipping API test verification (set up by running \`optic capture init ${report.path}\`)`
+    );
+    return;
+  } else if (captureReport.success) {
+    const { bufferedOutput, coverage } = captureReport;
+    logger.info(`| API Test Coverage Report (${coverage}% coverage)`);
+    bufferedOutput.forEach((output) => {
+      logger.info(`| ` + output);
+    });
+  } else {
+    if (captureReport) {
+      logger.info(`| API test verification failed to run`);
+      logger.info(`| ${captureReport.error}`);
+    } else {
+    }
+  }
+}
+
+function reportSpec(report: SpecReport) {
+  logger.info(`| ${chalk.bold(report.title)} (${report.path})`);
+
+  if (report.error) {
+    logger.info(`| Diff failed:`);
+    logger.info(`| ${report.error}`);
+    return;
+  }
+  reportDiff(report);
+  reportCapture(report);
+  logger.info('');
+}
+
 const optionsForAnalytics = (options: RunActionOptions) => ({
   ignore: !!options.ignore,
   severity: !!options.severity,
@@ -313,6 +350,200 @@ const getGithubBranchName = () => {
   const ref = process.env.GITHUB_REF;
   if (!ref || ref.indexOf('/heads/') < 0) return undefined;
   return ref.split('/heads/')[1];
+};
+
+const runDiffs = async ({
+  specPath,
+  cloudTag,
+  config,
+  localSpec,
+  currentBranch,
+  specDetails,
+}: {
+  specPath: string;
+  cloudTag: string;
+  config: OpticCliConfig;
+  localSpec: ParseResult;
+  currentBranch: string;
+  specDetails: Exclude<ReturnType<typeof getApiFromOpticUrl>, null>;
+}) => {
+  let specResults: CompareSpecResults,
+    warnings: string[],
+    checks: any,
+    standard: ConfigRuleset[],
+    changelogData: GroupedDiffs,
+    changelogUrl: string | undefined,
+    specUrl: string | undefined;
+
+  let cloudSpec: ParseResult | undefined = undefined;
+  try {
+    cloudSpec = await loadSpec(
+      `cloud:${specDetails.apiId}@${cloudTag}`,
+      config,
+      {
+        strict: false,
+        denormalize: true,
+      }
+    );
+  } catch (e) {
+    return {
+      success: false,
+      error: `Failed to load cloud specification: ${e}`,
+    };
+  }
+
+  if (cloudSpec.jsonLike['x-optic-ci-empty-spec']) {
+    cloudSpec.jsonLike.info.title = localSpec.jsonLike.info.title;
+    cloudSpec.jsonLike.info.version = localSpec.jsonLike.info.version;
+    cloudSpec.jsonLike.openapi = localSpec.jsonLike.openapi;
+  }
+
+  let computeResults: Awaited<ReturnType<typeof compute>>;
+
+  try {
+    computeResults = await compute([cloudSpec, localSpec], config, {
+      check: true,
+      path: specPath,
+    });
+  } catch (e) {
+    return {
+      success: false,
+      error: `Run failed to compute diffs: ${e}`,
+    };
+  }
+
+  ({ specResults, standard, checks, changelogData, warnings } = computeResults);
+
+  let upload: Awaited<ReturnType<typeof uploadDiff>>;
+  try {
+    upload = await uploadDiff(
+      {
+        from: cloudSpec,
+        to: localSpec,
+      },
+      specResults,
+      config,
+      specDetails,
+      {
+        standard,
+        silent: true,
+        currentBranch,
+      }
+    );
+    specUrl = upload?.headSpecUrl ?? undefined;
+    changelogUrl = upload?.changelogUrl ?? undefined;
+  } catch (e) {
+    return {
+      success: false,
+      error: `Failed to upload run to Optic: ${e}`,
+    };
+  }
+  const diffReport: SpecReport['diff'] = { success: true };
+  diffReport.diffs = specResults.diffs.length;
+  diffReport.changelogLink = upload?.changelogUrl;
+
+  const [breakingChanges, designIssues] = partitionFailedResults(
+    specResults.results
+  );
+
+  diffReport.designIssues = designIssues;
+  diffReport.breakingChanges = breakingChanges;
+  diffReport.checks = checks;
+  diffReport.diffResult = {
+    groupedDiffs: changelogData,
+    warnings,
+    name: specPath,
+    specUrl: specUrl ?? '',
+    changelogUrl: changelogUrl ?? '',
+    results: specResults.results,
+  };
+
+  return diffReport;
+};
+
+const runCapture = async ({
+  specPath,
+  config,
+  localSpec,
+  specDetails,
+}: {
+  specPath: string;
+  config: OpticCliConfig;
+  localSpec: ParseResult;
+  specDetails: Exclude<ReturnType<typeof getApiFromOpticUrl>, null>;
+}): Promise<SpecReport['capture']> => {
+  const pathFromRoot = resolveRelativePath(config.root, specPath);
+  const captureConfig = config.capture?.[pathFromRoot];
+
+  if (captureConfig) {
+    const trafficDirectory = await getCaptureStorage(path.resolve(specPath));
+    const captures = new GroupedCaptures(trafficDirectory, localSpec.jsonLike);
+
+    let harEntries: any;
+    try {
+      harEntries = await captureRequestsFromProxy(config, captureConfig, {
+        serverUrl: captureConfig.server.url,
+        disableSpinner: true,
+      });
+    } catch (e) {
+      return {
+        success: false,
+        error: `Run failed to capture: ${e}`,
+      };
+    }
+
+    if (!harEntries) {
+      return {
+        success: false,
+        error: `Run failed: no har entries were captured`,
+      };
+    }
+
+    for await (const har of harEntries) {
+      captures.addHar(har);
+      logger.debug(
+        `Captured ${har.request.method.toUpperCase()} ${har.request.url}`
+      );
+    }
+    const captureResults = await processCaptures(
+      {
+        captureConfig,
+        cliConfig: config,
+        captures,
+        spec: localSpec,
+        filePath: specPath,
+      },
+      {
+        bufferLogs: true,
+        verbose: false,
+      }
+    );
+    if (!captureResults.success) {
+      return {
+        success: false,
+        error: captureResults.bufferedOutput.join('\n| '),
+      };
+    }
+    const { unmatchedInteractions, hasAnyDiffs, coverage, bufferedOutput } =
+      captureResults;
+
+    try {
+      await uploadCoverage(localSpec, coverage, specDetails, config);
+    } catch (e) {
+      return {
+        success: false,
+        error: `Run failed to upload coverage: ${e}`,
+      };
+    }
+
+    return {
+      bufferedOutput,
+      coverage: String(coverage.calculateCoverage().percent),
+      unmatchedInteractions,
+      hasAnyDiffs,
+      success: true,
+    };
+  }
 };
 
 export const getRunAction =
@@ -453,29 +684,8 @@ export const getRunAction =
       logger.error(`${e}`);
       return;
     }
-    const allChecks: Awaited<ReturnType<typeof compute>>['checks'][] = [];
-
-    let results: {
-      warnings: string[];
-      groupedDiffs: GroupedDiffs;
-      results: RuleResult[];
-      name: string;
-      specUrl: string;
-      changelogUrl: string;
-    }[] = [];
 
     for (const [specPath, opticUrl] of pathUrls.entries()) {
-      let specResults: CompareSpecResults,
-        warnings: string[],
-        checks: any,
-        standard: ConfigRuleset[],
-        changelogData: GroupedDiffs,
-        changelogUrl: string | undefined,
-        specUrl: string | undefined;
-
-      const specReport: SpecReport = { path: specPath };
-      specReports.push(specReport);
-
       let localSpec: ParseResult;
       try {
         localSpec = await loadSpec(specPath, config, {
@@ -483,169 +693,78 @@ export const getRunAction =
           denormalize: true,
         });
       } catch (e) {
-        specReport.error = `Invalid specification: ${e}`;
+        const specReport = {
+          error: `Invalid specification: ${e}`,
+          path: specPath,
+        };
+        reportSpec(specReport);
         continue;
       }
 
-      specReport.title = localSpec.jsonLike.info.title;
-
-      let cloudSpec: ParseResult | undefined = undefined;
       let specDetails: ReturnType<typeof getApiFromOpticUrl>;
       try {
         specDetails = getApiFromOpticUrl(opticUrl);
       } catch (e) {
-        specReport.error = `Failed to load API from Optic: ${e}`;
+        const specReport = {
+          error: `Failed to load specification from Optic: ${e}`,
+          path: specPath,
+        };
+        reportSpec(specReport);
         continue;
       }
       if (!specDetails) {
-        specReport.error = `Could not load API form Optic ${opticUrl}`;
-        continue;
-      }
-      try {
-        cloudSpec = await loadSpec(
-          `cloud:${specDetails.apiId}@${cloudTag}`,
-          config,
-          {
-            strict: false,
-            denormalize: true,
-          }
-        );
-      } catch (e) {
-        specReport.error = `Failed to load cloud specification: ${e}`;
-        continue;
-      }
-
-      if (cloudSpec.jsonLike['x-optic-ci-empty-spec']) {
-        cloudSpec.jsonLike.info.title = localSpec.jsonLike.info.title;
-        cloudSpec.jsonLike.info.version = localSpec.jsonLike.info.version;
-        cloudSpec.jsonLike.openapi = localSpec.jsonLike.openapi;
-      }
-
-      ({ specResults, standard, checks, changelogData, warnings } =
-        await compute([cloudSpec, localSpec], config, {
-          check: true,
+        const specReport = {
+          error: `Could not load specification form Optic ${opticUrl}`,
           path: specPath,
-        }));
-
-      specReport.diffs = specResults.diffs.length;
-
-      // Capture block
-      const pathFromRoot = resolveRelativePath(config.root, specPath);
-      const captureConfig = config.capture?.[pathFromRoot];
-
-      if (captureConfig) {
-        const trafficDirectory = await getCaptureStorage(
-          path.resolve(specPath)
-        );
-        const captures = new GroupedCaptures(
-          trafficDirectory,
-          localSpec.jsonLike
-        );
-        const harEntries = await captureRequestsFromProxy(
-          config,
-          captureConfig,
-          {
-            serverUrl: captureConfig.server.url,
-            disableSpinner: true,
-          }
-        );
-        if (!harEntries) {
-          continue;
-        }
-
-        for await (const har of harEntries) {
-          captures.addHar(har);
-          logger.debug(
-            `Captured ${har.request.method.toUpperCase()} ${har.request.url}`
-          );
-        }
-        const captureResults = await processCaptures(
-          {
-            captureConfig,
-            cliConfig: config,
-            captures,
-            spec: localSpec,
-            filePath: specPath,
-          },
-          {
-            bufferLogs: true,
-            verbose: false,
-          }
-        );
-        if (!captureResults.success) {
-          process.exitCode = 1;
-          specReport.capture = {
-            success: false,
-            error: captureResults.bufferedOutput.join('\n| '),
-          };
-          continue;
-        }
-        const { unmatchedInteractions, hasAnyDiffs, coverage, bufferedOutput } =
-          captureResults;
-
-        specReport.capture = {
-          bufferedOutput,
-          coverage: String(coverage.calculateCoverage().percent),
-          unmatchedInteractions,
-          hasAnyDiffs,
-          success: true,
         };
-
-        await uploadCoverage(localSpec, coverage, specDetails, config);
-      }
-
-      let upload: Awaited<ReturnType<typeof uploadDiff>>;
-      try {
-        upload = await uploadDiff(
-          {
-            from: cloudSpec,
-            to: localSpec,
-          },
-          specResults,
-          config,
-          specDetails,
-          {
-            standard,
-            silent: true,
-            currentBranch,
-          }
-        );
-        specUrl = upload?.headSpecUrl ?? undefined;
-        changelogUrl = upload?.changelogUrl ?? undefined;
-      } catch (e) {
-        specReport.error = `Failed to upload run to Optic: ${e}`;
+        reportSpec(specReport);
         continue;
       }
-      specReport.changelogLink = upload?.changelogUrl;
-      const [breakingChanges, designIssues] = partitionFailedResults(
-        specResults.results
-      );
 
-      specReport.designIssues = designIssues;
-      specReport.breakingChanges = breakingChanges;
-      allChecks.push(checks);
-
-      results.push({
-        groupedDiffs: changelogData,
-        warnings,
-        name: specPath,
-        specUrl: specUrl ?? '',
-        changelogUrl: changelogUrl ?? '',
-        results: specResults.results,
+      const diffsReport = await runDiffs({
+        cloudTag,
+        config,
+        currentBranch,
+        localSpec,
+        specDetails,
+        specPath,
       });
 
-      report(specReport);
+      const captureReport = await runCapture({
+        config,
+        localSpec,
+        specDetails,
+        specPath,
+      });
+
+      const specReport = {
+        path: specPath,
+        title: localSpec.jsonLike.info.title,
+        diff: diffsReport,
+        capture: captureReport,
+      };
+
+      specReports.push(specReport);
+      reportSpec(specReport);
     }
 
     if (commentToken && isPR) {
-      const data = results.map((result) => ({
-        warnings: result.warnings,
-        groupedDiffs: result.groupedDiffs,
-        results: result.results,
-        name: result.name ?? 'Unknown comparison',
-        specUrl: result.specUrl,
-        changelogUrl: result.changelogUrl,
-      }));
+      const data = specReports
+        .map((report) => {
+          const result = report?.diff?.success
+            ? report.diff.diffResult
+            : undefined;
+          if (!result) return null;
+          return {
+            warnings: result.warnings,
+            groupedDiffs: result.groupedDiffs,
+            results: result.results,
+            name: result.name ?? 'Unknown comparison',
+            specUrl: result.specUrl,
+            changelogUrl: result.changelogUrl,
+          };
+        })
+        .filter((r: DiffResult | null): r is DiffResult => !!r);
 
       switch (getProvider()) {
         case 'github': {
@@ -676,8 +795,9 @@ export const getRunAction =
     }
 
     const hasFailures =
-      allChecks.some((checks) => checks.failed.error > 0) ||
-      specReports.some((r) => r.error) ||
+      specReports.some(
+        (r) => !r.diff?.success || (r.diff.checks?.failed.error ?? 0) > 0
+      ) ||
       specReports.some((r) => {
         if (!r.capture) return false;
         const captureFailedToRun = !r.capture.success;
@@ -689,24 +809,13 @@ export const getRunAction =
 
     const exit1 = options.severity === 'error' && hasFailures;
 
-    trackEvent(
-      'optic.run.complete',
-      {
-        isInCi: config.isInCi,
-        specs: localSpecPaths.length,
-        failed_specs: specReports.filter((s) => s.error).length,
-        spec_with_design_issues: specReports.filter((s) => s.designIssues)
-          .length,
-        spec_with_breaking_changes: specReports.filter((s) => s.breakingChanges)
-          .length,
-        exit1,
-        webUrl: maybeOrigin?.web_url,
-        ...optionsForAnalytics(options),
-      },
-      config.userId
-    );
-
-    await flushEvents();
+    if (exit1) {
+      logger.info('');
+      logger.info(
+        'Errors were found: exiting with code 1. Disable this behaviour with the `--severity none` option.'
+      );
+      process.exitCode = 1;
+    }
 
     logger.info('');
 
@@ -728,11 +837,24 @@ export const getRunAction =
       );
     }
 
-    if (exit1) {
-      logger.info('');
-      logger.info(
-        'Exiting with code 1 as errors were found. Disable this behaviour with the `--severity none` option.'
-      );
-      process.exitCode = 1;
-    }
+    trackEvent(
+      'optic.run.complete',
+      {
+        isInCi: config.isInCi,
+        specs: localSpecPaths.length,
+        failed_specs: specReports.filter((s) => !s.diff?.success).length,
+        spec_with_design_issues: specReports.filter(
+          (s) => s.diff?.success && s.diff?.designIssues
+        ).length,
+        spec_with_breaking_changes: specReports.filter(
+          (s) => s.diff?.success && s.diff.breakingChanges
+        ).length,
+        exit1,
+        webUrl: maybeOrigin?.web_url,
+        ...optionsForAnalytics(options),
+      },
+      config.userId
+    );
+
+    await flushEvents();
   };
