@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`cache saves rule preparation 1`] = `
+"{"rules":{"9ea5192cb734baa5749da7483e08707e8f3c2dc2853dedc00f71315899d19d53":{"rule":"All operations must have an operationId","changed":false,"severity":"ERROR","entity":"OPERATION"}},"evaluations":{}}
+"
+`;
+
+exports[`can classify rules by openapi entity kind: All operations must have an operationId 1`] = `
+{
+  "changed": false,
+  "entity": "OPERATION",
+  "rule": "All operations must have an operationId",
+  "severity": "ERROR",
+}
+`;
+
+exports[`can classify rules by openapi entity kind: All query parameters should be optional 1`] = `
+{
+  "changed": false,
+  "entity": "QUERY_PARAMETER",
+  "rule": "All query parameters should be optional",
+  "severity": "WARNING",
+}
+`;
+
+exports[`can classify rules by openapi entity kind: All responses that return an array must use pagination 1`] = `
+{
+  "changed": false,
+  "entity": "RESPONSE",
+  "rule": "All responses that return an array must use pagination",
+  "severity": "ERROR",
+}
+`;
+
+exports[`can classify rules by openapi entity kind: No response returns an array. If it returns array data it is wrapped in an object ie. {"users": []} 1`] = `
+{
+  "changed": false,
+  "entity": "RESPONSE",
+  "rule": "No response returns an array. If it returns array data it is wrapped in an object ie. {"users", []}",
+  "severity": "ERROR",
+}
+`;
+
+exports[`can classify rules by openapi entity kind: operationId should never change 1`] = `
+{
+  "changed": true,
+  "entity": "OPERATION",
+  "rule": "operationId should never change",
+  "severity": "ERROR",
+}
+`;

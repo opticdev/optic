@@ -7,6 +7,7 @@ import {
 } from '@useoptic/openapi-utilities';
 import { RuleRunner } from './rule-runner';
 import { Rule, Ruleset } from './rules';
+import { ExternalRuleBase } from './rules/external-rule-base';
 
 export const createRuleInputs = (
   beforeJson: OpenAPIV3.Document,
@@ -37,6 +38,15 @@ export const runRulesWithInputs = (
   afterJson: OpenAPIV3.Document
 ): Promise<Result[]> => {
   const ruleRunner = new RuleRunner(rules);
+  return ruleRunner.runRulesWithFacts(createRuleInputs(beforeJson, afterJson));
+};
+
+export const externalRulesWithInputs = (
+  rules: ExternalRuleBase,
+  beforeJson: OpenAPIV3.Document,
+  afterJson: OpenAPIV3.Document
+): Promise<Result[]> => {
+  const ruleRunner = new RuleRunner([rules]);
   return ruleRunner.runRulesWithFacts(createRuleInputs(beforeJson, afterJson));
 };
 
