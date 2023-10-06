@@ -1,11 +1,8 @@
 import {
-  OperationRule,
-  PropertyRule,
-  RuleError,
-} from '@useoptic/rulesets-base';
-import {
+  ChangeType,
   IChange,
   IFact,
+  ObjectDiff,
   OpenApiKind,
   OperationLocation,
   Result,
@@ -89,24 +86,10 @@ export class LintGpt extends ExternalRuleBase {
           ) {
             addedRules.push({
               ...result,
-              severity: config.severity
-                ? config.severity
-                  ? 'error'
-                    ? 'ERROR'
-                    : 'WARNING'
-                  : result.severity
-                : 'WARNING',
             });
           } else {
             requirementRules.push({
               ...result,
-              severity: config.severity
-                ? config.severity
-                  ? 'error'
-                    ? 'ERROR'
-                    : 'WARNING'
-                  : result.severity
-                : 'WARNING',
             });
           }
         }
@@ -127,115 +110,209 @@ export class LintGpt extends ExternalRuleBase {
     this.evaluation = new NaiveLocalCache();
   }
 
-  async runRules(inputs: {
+  async runRulesV2(inputs: {
     context: any;
-    nextFacts: IFact[];
-    currentFacts: IFact[];
-    changelog: IChange[];
-    nextJsonLike: OpenAPIV3.Document;
-    currentJsonLike: OpenAPIV3.Document;
+    diffs: ObjectDiff[];
+    fromSpec: OpenAPIV3.Document;
+    toSpec: OpenAPIV3.Document;
     groupedFacts: OpenAPIFactNodes;
-  }): Promise<Result[]> {
-    await this.evaluation.loadCache();
+  }): Promise<RuleResult[]> {
+    const operationsToRun: AIRuleRunInputs[] = [];
+    const responsesToRun: AIRuleRunInputs[] = [];
+    const propertiesToRun: AIRuleRunInputs[] = [];
+    await await this.evaluation.loadCache();
 
-    const results: Result[] = [];
-    for await (const rule of this.requirementRules) {
-      results.push(...(await this.runRule(rule, inputs, false)));
-    }
+    inputs.groupedFacts.endpoints.forEach((endpoint) => {
+      const { path, method } = endpoint;
 
-    await this.evaluation.flushCache();
-    return results;
-  }
+      const location = `${method} ${path}`;
+      const didChange = endpoint.change?.changeType === ChangeType.Changed;
+      const jsonPath = (endpoint.after?.location.jsonPath ||
+        endpoint.before?.location.jsonPath)!;
 
-  async runRule(
-    preparedRule: PreparedRule,
-    inputs: {
-      context: any;
-      nextFacts: IFact[];
-      currentFacts: IFact[];
-      changelog: IChange[];
-      nextJsonLike: OpenAPIV3.Document;
-      currentJsonLike: OpenAPIV3.Document;
-      groupedFacts: OpenAPIFactNodes;
-    },
-    addedOnly: boolean
-  ): Promise<Result[]> {
-    const examples: {
-      location: string;
-      jsonLocation: RuleResult['location'];
-      value: any;
-      before?: any;
-    }[] = [];
+      const inAfterSpec = endpoint.after !== null;
+      if (inAfterSpec) {
+        operationsToRun.push({
+          locationContext: location,
+          jsonPath,
+          value: jsonPointerHelpers.get(inputs.toSpec, jsonPath),
+          before: didChange
+            ? jsonPointerHelpers.get(
+                inputs.fromSpec,
+                endpoint.before?.location.jsonPath!
+              )
+            : undefined,
+        });
+      }
 
-    switch (preparedRule.entity) {
-      case 'OPERATION':
-        const operations = inputs.nextFacts.filter(
-          (i) => i.location.kind === OpenApiKind.Operation
-        );
-        operations.forEach((operation) => {
-          const location = operation.location
-            .conceptualLocation as OperationLocation;
-          examples.push({
-            location: `${location.method} ${location.path}`,
-            jsonLocation: {
-              spec: 'after',
-              jsonPath: operation.location.jsonPath,
-            },
-            value: jsonPointerHelpers.get(
-              inputs.nextJsonLike,
-              operation.location.jsonPath
-            ),
-            before: preparedRule.changed
-              ? jsonPointerHelpers.get(
-                  inputs.currentJsonLike,
-                  operation.location.jsonPath
-                )
-              : undefined,
+      endpoint.responses.forEach((responses) => {
+        const location = `${method} ${path} ${responses.statusCode} response`;
+        const didChange = responses.change?.changeType === ChangeType.Changed;
+
+        responses.bodies.forEach((body) => {
+          body.fields.forEach((property) => {
+            if (property.after) {
+              const propertyLocation = `${method} ${path} ${responses.statusCode} response property. Name: \`${property.after.value.key}\`. Required? \`${property.after.value.required}\``;
+              const didChange =
+                property.change?.changeType === ChangeType.Changed;
+
+              propertiesToRun.push({
+                locationContext: propertyLocation,
+                jsonPath: property.after.location.jsonPath,
+                value: jsonPointerHelpers.get(
+                  inputs.toSpec,
+                  property.after.location.jsonPath
+                ),
+                before: didChange
+                  ? jsonPointerHelpers.get(
+                      inputs.fromSpec,
+                      property.before!.location.jsonPath
+                    )
+                  : undefined,
+              });
+            }
           });
         });
-        break;
-    }
 
-    const ruleResults = Promise.all(
-      examples.map(async (entity) => {
-        try {
-          const result = await this.evaluation.getOrEvaluateRule(
-            preparedRule,
-            entity.location,
-            entity,
-            entity.before
-          );
-          if ('skipped' in result && result.skipped) {
-            return null;
-          }
-          if ('passed' in result) {
-            const severity =
-              preparedRule.severity === 'ERROR'
-                ? Severity.Error
-                : Severity.Warn;
-            const opticResult: Result = {
-              passed: result.passed,
-              where: entity.location,
-              name: preparedRule.rule,
-              error: 'error' in result ? result.error : undefined,
-              severity,
-              isMust: severity === Severity.Error,
-              // @ts-ignore
-              change: null,
-              isShould: severity === Severity.Warn,
-              // location: entity.jsonLocation,
-            };
-            return opticResult;
-          }
-        } catch (e) {
-          console.error('Lintgpt error ' + e);
-          return null;
-        }
-      })
+        responsesToRun.push({
+          locationContext: location,
+          jsonPath,
+          value: jsonPointerHelpers.get(inputs.toSpec, jsonPath),
+          before: didChange
+            ? jsonPointerHelpers.get(
+                inputs.fromSpec,
+                responses.before?.location.jsonPath!
+              )
+            : undefined,
+        });
+      });
+    });
+
+    ///// run the rules
+
+    const operationsRules = this.requirementRules.filter(
+      (i) => i.entity === 'OPERATION'
     );
-    const resultsResolved = (await ruleResults).filter((i) =>
-      Boolean(i)
-    ) as Result[];
-    return resultsResolved;
+
+    const responsesRules = this.requirementRules.filter(
+      (i) => i.entity === 'RESPONSE'
+    );
+
+    const propertyRules = this.requirementRules.filter(
+      (i) => i.entity === 'PROPERTY'
+    );
+
+    const operationRuleResults = Promise.all(
+      operationsRules.map(async (rule) => {
+        return Promise.all(
+          operationsToRun.map(async (operation) => {
+            const result = await this.evaluation.getOrEvaluateRule(
+              rule,
+              operation.locationContext,
+              operation.value,
+              operation.before
+            );
+
+            if ('skipped' in result) {
+              return null;
+            } else if ('passed' in result) {
+              const opticResult: RuleResult = {
+                passed: result.passed,
+                where: operation.locationContext,
+                name: rule.rule,
+                severity:
+                  rule.severity === 'ERROR' ? Severity.Error : Severity.Warn,
+                location: {
+                  jsonPath: operation.jsonPath,
+                  spec: 'after',
+                },
+                error: 'error' in result ? result.error : undefined,
+              };
+              return opticResult;
+            }
+          })
+        );
+      })
+    ).then((i) => i.flat(2).filter((i) => Boolean(i)) as RuleResult[]);
+
+    const responsesRuleResults = Promise.all(
+      responsesRules.map(async (rule) => {
+        return Promise.all(
+          operationsToRun.map(async (response) => {
+            const result = await this.evaluation.getOrEvaluateRule(
+              rule,
+              response.locationContext,
+              response.value,
+              response.before
+            );
+
+            if ('skipped' in result) {
+              return null;
+            } else if ('passed' in result) {
+              const opticResult: RuleResult = {
+                passed: result.passed,
+                where: response.locationContext,
+                name: rule.rule,
+                severity:
+                  rule.severity === 'ERROR' ? Severity.Error : Severity.Warn,
+                location: {
+                  jsonPath: response.jsonPath,
+                  spec: 'after',
+                },
+                error: 'error' in result ? result.error : undefined,
+              };
+              return opticResult;
+            }
+          })
+        );
+      })
+    ).then((i) => i.flat(2).filter((i) => Boolean(i)) as RuleResult[]);
+
+    const propertyRuleResults = Promise.all(
+      propertyRules.map(async (rule) => {
+        return Promise.all(
+          propertiesToRun.map(async (property) => {
+            const result = await this.evaluation.getOrEvaluateRule(
+              rule,
+              property.locationContext,
+              property.value,
+              property.before
+            );
+
+            if ('skipped' in result) {
+              return null;
+            } else if ('passed' in result) {
+              const opticResult: RuleResult = {
+                passed: result.passed,
+                where: property.locationContext,
+                name: rule.rule,
+                severity:
+                  rule.severity === 'ERROR' ? Severity.Error : Severity.Warn,
+                location: {
+                  jsonPath: property.jsonPath,
+                  spec: 'after',
+                },
+                error: 'error' in result ? result.error : undefined,
+              };
+              return opticResult;
+            }
+          })
+        );
+      })
+    ).then((i) => i.flat(2).filter((i) => Boolean(i)) as RuleResult[]);
+
+    await this.evaluation.flushCache();
+    return [
+      ...(await operationRuleResults),
+      ...(await responsesRuleResults),
+      ...(await propertyRuleResults),
+    ];
   }
 }
+
+type AIRuleRunInputs = {
+  locationContext: string;
+  value: any;
+  before?: any;
+  jsonPath: string;
+};

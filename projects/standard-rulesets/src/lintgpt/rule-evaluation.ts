@@ -64,7 +64,7 @@ If the example is not relevant to the rule ie rule cares about object properties
             error: {
               type: 'string',
               description:
-                'When passed is false, give the user an error explaining why the rule was failed',
+                'When passed is false, give the user an error explaining why the rule was failed.',
             },
             skipped: {
               type: 'boolean',
