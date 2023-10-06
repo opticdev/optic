@@ -848,7 +848,9 @@ export const getRunAction =
       {
         isInCi: config.isInCi,
         specs: localSpecPaths.length,
-        failed_specs: specReports.filter((s) => !s.diff?.success).length,
+        failed_specs: specReports.filter(
+          (s) => !s.diff?.success || s.capture?.success === false
+        ).length,
         spec_with_design_issues: specReports.filter(
           (s) => s.diff?.success && s.diff?.designIssues
         ).length,
