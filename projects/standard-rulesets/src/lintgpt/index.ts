@@ -207,6 +207,9 @@ export class LintGpt extends ExternalRuleBase {
         operationsRules.map(async (rule) => {
           return Promise.all(
             operationsToRun.map(async (operation) => {
+              if (rule.changed && !operation.before) {
+                return null;
+              }
               const result = await this.evaluation.getOrEvaluateRule(
                 rule,
                 operation.locationContext,
@@ -244,6 +247,9 @@ export class LintGpt extends ExternalRuleBase {
         responsesRules.map(async (rule) => {
           return Promise.all(
             responsesToRun.map(async (response) => {
+              if (rule.changed && !response.before) {
+                return null;
+              }
               const result = await this.evaluation.getOrEvaluateRule(
                 rule,
                 response.locationContext,
@@ -281,6 +287,9 @@ export class LintGpt extends ExternalRuleBase {
         propertyRules.map(async (rule) => {
           return Promise.all(
             propertiesToRun.map(async (property) => {
+              if (rule.changed && !property.before) {
+                return null;
+              }
               const result = await this.evaluation.getOrEvaluateRule(
                 rule,
                 property.locationContext,
