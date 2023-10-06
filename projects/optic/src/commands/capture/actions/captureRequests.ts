@@ -202,8 +202,11 @@ async function runRequestsCommand(
         ...process.env,
         [proxyVar]: proxyUrl,
       },
-      detached: true,
+      detached: false,
       shell: true,
+      // hide child process powershell windows on Windows systems. this only works with "detached: false".
+      // https://nodejs.org/api/child_process.html#child_processexeccommand-options-callback
+      windowsHide: true,
     });
   } catch (e) {
     throw new UserError({ initialError: e as Error });
@@ -286,7 +289,12 @@ function makeAllRequests(
 export async function captureRequestsFromProxy(
   config: OpticCliConfig,
   captureConfig: CaptureConfigData,
-  options: { proxyPort?: string; serverOverride?: string; serverUrl: string }
+  options: {
+    proxyPort?: string;
+    serverOverride?: string;
+    serverUrl: string;
+    disableSpinner?: boolean;
+  }
 ) {
   let app: ChildProcessWithoutNullStreams | undefined = undefined;
   let proxy: ProxyServer | undefined = undefined;
@@ -304,10 +312,12 @@ export async function captureRequestsFromProxy(
   const unsubscribeHook = exitHook(() => {
     cleanup();
   });
-  const spinner = getSpinner({
-    text: 'Generating traffic to send to server',
-    color: 'blue',
-  })?.start();
+  const spinner = options.disableSpinner
+    ? undefined
+    : getSpinner({
+        text: 'Generating traffic to send to server',
+        color: 'blue',
+      })?.start();
   let interactions: ProxyInteractions | null = null;
 
   const serverUrl = options.serverUrl;

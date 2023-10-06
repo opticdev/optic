@@ -1,8 +1,8 @@
 {
   "name": "@useoptic/fastify-capture",
   "license": "MIT",
-  "packageManager": "yarn@3.6.3",
-  "version": "0.50.0",
+  "packageManager": "yarn@3.6.4",
+  "version": "0.50.7",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [

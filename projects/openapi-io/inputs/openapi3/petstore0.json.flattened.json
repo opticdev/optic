@@ -51,9 +51,7 @@
     "paths": {
       "/pet/{petId}/uploadImage": {
         "post": {
-          "tags": [
-            "pet"
-          ],
+          "tags": ["pet"],
           "summary": "uploads an image",
           "operationId": "uploadFile",
           "parameters": [
@@ -113,19 +111,14 @@
           },
           "security": [
             {
-              "petstore_auth": [
-                "write:pets",
-                "read:pets"
-              ]
+              "petstore_auth": ["write:pets", "read:pets"]
             }
           ]
         }
       },
       "/store/inventory": {
         "get": {
-          "tags": [
-            "store"
-          ],
+          "tags": ["store"],
           "summary": "Returns pet inventories by status",
           "description": "Returns a map of status codes to quantities",
           "operationId": "getInventory",
@@ -154,9 +147,7 @@
       },
       "/store/order": {
         "post": {
-          "tags": [
-            "store"
-          ],
+          "tags": ["store"],
           "summary": "Place an order for a pet",
           "operationId": "placeOrder",
           "requestBody": {
@@ -185,11 +176,7 @@
                     "status": {
                       "type": "string",
                       "description": "Order Status",
-                      "enum": [
-                        "placed",
-                        "approved",
-                        "delivered"
-                      ]
+                      "enum": ["placed", "approved", "delivered"]
                     },
                     "complete": {
                       "type": "boolean",
@@ -231,11 +218,7 @@
                       "status": {
                         "type": "string",
                         "description": "Order Status",
-                        "enum": [
-                          "placed",
-                          "approved",
-                          "delivered"
-                        ]
+                        "enum": ["placed", "approved", "delivered"]
                       },
                       "complete": {
                         "type": "boolean",
@@ -270,11 +253,7 @@
                       "status": {
                         "type": "string",
                         "description": "Order Status",
-                        "enum": [
-                          "placed",
-                          "approved",
-                          "delivered"
-                        ]
+                        "enum": ["placed", "approved", "delivered"]
                       },
                       "complete": {
                         "type": "boolean",
@@ -298,9 +277,7 @@
       },
       "/store/order/{orderId}": {
         "get": {
-          "tags": [
-            "store"
-          ],
+          "tags": ["store"],
           "summary": "Find purchase order by ID",
           "description": "For valid response try integer IDs with value >= 1 and <= 10.         Other values will generated exceptions",
           "operationId": "getOrderById",
@@ -345,11 +322,7 @@
                       "status": {
                         "type": "string",
                         "description": "Order Status",
-                        "enum": [
-                          "placed",
-                          "approved",
-                          "delivered"
-                        ]
+                        "enum": ["placed", "approved", "delivered"]
                       },
                       "complete": {
                         "type": "boolean",
@@ -384,11 +357,7 @@
                       "status": {
                         "type": "string",
                         "description": "Order Status",
-                        "enum": [
-                          "placed",
-                          "approved",
-                          "delivered"
-                        ]
+                        "enum": ["placed", "approved", "delivered"]
                       },
                       "complete": {
                         "type": "boolean",
@@ -413,9 +382,7 @@
           }
         },
         "delete": {
-          "tags": [
-            "store"
-          ],
+          "tags": ["store"],
           "summary": "Delete purchase order by ID",
           "description": "For valid response try integer IDs with positive integer value.         Negative or non-integer values will generate API errors",
           "operationId": "deleteOrder",
@@ -446,9 +413,7 @@
       },
       "/user": {
         "post": {
-          "tags": [
-            "user"
-          ],
+          "tags": ["user"],
           "summary": "Create user",
           "description": "This can only be done by the logged in user.",
           "operationId": "createUser",
@@ -506,9 +471,7 @@
       },
       "/user/createWithArray": {
         "post": {
-          "tags": [
-            "user"
-          ],
+          "tags": ["user"],
           "summary": "Creates list of users with given input array",
           "operationId": "createUsersWithArrayInput",
           "requestBody": {
@@ -568,9 +531,7 @@
       },
       "/user/createWithList": {
         "post": {
-          "tags": [
-            "user"
-          ],
+          "tags": ["user"],
           "summary": "Creates list of users with given input array",
           "operationId": "createUsersWithListInput",
           "requestBody": {
@@ -630,9 +591,7 @@
       },
       "/user/login": {
         "get": {
-          "tags": [
-            "user"
-          ],
+          "tags": ["user"],
           "summary": "Logs user into the system",
           "operationId": "loginUser",
           "parameters": [
@@ -696,9 +655,7 @@
       },
       "/user/logout": {
         "get": {
-          "tags": [
-            "user"
-          ],
+          "tags": ["user"],
           "summary": "Logs out current logged in user session",
           "operationId": "logoutUser",
           "responses": {
@@ -711,9 +668,7 @@
       },
       "/user/{username}": {
         "get": {
-          "tags": [
-            "user"
-          ],
+          "tags": ["user"],
           "summary": "Get user by user name",
           "operationId": "getUserByName",
           "parameters": [
@@ -818,9 +773,7 @@
           }
         },
         "put": {
-          "tags": [
-            "user"
-          ],
+          "tags": ["user"],
           "summary": "Updated user",
           "description": "This can only be done by the logged in user.",
           "operationId": "updateUser",
@@ -891,9 +844,7 @@
           "x-codegen-request-body-name": "body"
         },
         "delete": {
-          "tags": [
-            "user"
-          ],
+          "tags": ["user"],
           "summary": "Delete user",
           "description": "This can only be done by the logged in user.",
           "operationId": "deleteUser",
@@ -945,11 +896,7 @@
             "status": {
               "type": "string",
               "description": "Order Status",
-              "enum": [
-                "placed",
-                "approved",
-                "delivered"
-              ]
+              "enum": ["placed", "approved", "delivered"]
             },
             "complete": {
               "type": "boolean",
@@ -1026,10 +973,7 @@
           }
         },
         "Pet": {
-          "required": [
-            "name",
-            "photoUrls"
-          ],
+          "required": ["name", "photoUrls"],
           "type": "object",
           "properties": {
             "id": {
@@ -1090,11 +1034,7 @@
             "status": {
               "type": "string",
               "description": "pet status in the store",
-              "enum": [
-                "available",
-                "pending",
-                "sold"
-              ]
+              "enum": ["available", "pending", "sold"]
             }
           },
           "xml": {
@@ -1149,5532 +1089,2814 @@
       [
         "#",
         {
-          "node": [
-            0,
-            18581
-          ],
+          "node": [0, 18581],
           "file": 0
         }
       ],
       [
         "#/openapi",
         {
-          "key": [
-            4,
-            13
-          ],
-          "value": [
-            15,
-            22
-          ],
-          "node": [
-            4,
-            22
-          ],
+          "key": [4, 13],
+          "value": [15, 22],
+          "node": [4, 22],
           "file": 0
         }
       ],
       [
         "#/info",
         {
-          "key": [
-            26,
-            32
-          ],
-          "value": [
-            34,
-            625
-          ],
-          "node": [
-            26,
-            625
-          ],
+          "key": [26, 32],
+          "value": [34, 625],
+          "node": [26, 625],
           "file": 0
         }
       ],
       [
         "#/info/title",
         {
-          "key": [
-            40,
-            47
-          ],
-          "value": [
-            49,
-            67
-          ],
-          "node": [
-            40,
-            67
-          ],
+          "key": [40, 47],
+          "value": [49, 67],
+          "node": [40, 67],
           "file": 0
         }
       ],
       [
         "#/info/description",
         {
-          "key": [
-            73,
-            86
-          ],
-          "value": [
-            88,
-            372
-          ],
-          "node": [
-            73,
-            372
-          ],
+          "key": [73, 86],
+          "value": [88, 372],
+          "node": [73, 372],
           "file": 0
         }
       ],
       [
         "#/info/termsOfService",
         {
-          "key": [
-            378,
-            394
-          ],
-          "value": [
-            396,
-            422
-          ],
-          "node": [
-            378,
-            422
-          ],
+          "key": [378, 394],
+          "value": [396, 422],
+          "node": [378, 422],
           "file": 0
         }
       ],
       [
         "#/info/contact",
         {
-          "key": [
-            428,
-            437
-          ],
-          "value": [
-            439,
-            482
-          ],
-          "node": [
-            428,
-            482
-          ],
+          "key": [428, 437],
+          "value": [439, 482],
+          "node": [428, 482],
           "file": 0
         }
       ],
       [
         "#/info/contact/email",
         {
-          "key": [
-            447,
-            454
-          ],
-          "value": [
-            456,
-            476
-          ],
-          "node": [
-            447,
-            476
-          ],
+          "key": [447, 454],
+          "value": [456, 476],
+          "node": [447, 476],
           "file": 0
         }
       ],
       [
         "#/info/license",
         {
-          "key": [
-            488,
-            497
-          ],
-          "value": [
-            499,
-            597
-          ],
-          "node": [
-            488,
-            597
-          ],
+          "key": [488, 497],
+          "value": [499, 597],
+          "node": [488, 597],
           "file": 0
         }
       ],
       [
         "#/info/license/name",
         {
-          "key": [
-            507,
-            513
-          ],
-          "value": [
-            515,
-            527
-          ],
-          "node": [
-            507,
-            527
-          ],
+          "key": [507, 513],
+          "value": [515, 527],
+          "node": [507, 527],
           "file": 0
         }
       ],
       [
         "#/info/license/url",
         {
-          "key": [
-            535,
-            540
-          ],
-          "value": [
-            542,
-            591
-          ],
-          "node": [
-            535,
-            591
-          ],
+          "key": [535, 540],
+          "value": [542, 591],
+          "node": [535, 591],
           "file": 0
         }
       ],
       [
         "#/info/version",
         {
-          "key": [
-            603,
-            612
-          ],
-          "value": [
-            614,
-            621
-          ],
-          "node": [
-            603,
-            621
-          ],
+          "key": [603, 612],
+          "value": [614, 621],
+          "node": [603, 621],
           "file": 0
         }
       ],
       [
         "#/externalDocs",
         {
-          "key": [
-            629,
-            643
-          ],
-          "value": [
-            645,
-            731
-          ],
-          "node": [
-            629,
-            731
-          ],
+          "key": [629, 643],
+          "value": [645, 731],
+          "node": [629, 731],
           "file": 0
         }
       ],
       [
         "#/externalDocs/description",
         {
-          "key": [
-            651,
-            664
-          ],
-          "value": [
-            666,
-            695
-          ],
-          "node": [
-            651,
-            695
-          ],
+          "key": [651, 664],
+          "value": [666, 695],
+          "node": [651, 695],
           "file": 0
         }
       ],
       [
         "#/externalDocs/url",
         {
-          "key": [
-            701,
-            706
-          ],
-          "value": [
-            708,
-            727
-          ],
-          "node": [
-            701,
-            727
-          ],
+          "key": [701, 706],
+          "value": [708, 727],
+          "node": [701, 727],
           "file": 0
         }
       ],
       [
         "#/servers",
         {
-          "key": [
-            735,
-            744
-          ],
-          "value": [
-            746,
-            867
-          ],
-          "node": [
-            735,
-            867
-          ],
+          "key": [735, 744],
+          "value": [746, 867],
+          "node": [735, 867],
           "file": 0
         }
       ],
       [
         "#/servers/0",
         {
-          "node": [
-            752,
-            805
-          ],
+          "node": [752, 805],
           "file": 0
         }
       ],
       [
         "#/servers/0/url",
         {
-          "key": [
-            760,
-            765
-          ],
-          "value": [
-            767,
-            799
-          ],
-          "node": [
-            760,
-            799
-          ],
+          "key": [760, 765],
+          "value": [767, 799],
+          "node": [760, 799],
           "file": 0
         }
       ],
       [
         "#/servers/1",
         {
-          "node": [
-            811,
-            863
-          ],
+          "node": [811, 863],
           "file": 0
         }
       ],
       [
         "#/servers/1/url",
         {
-          "key": [
-            819,
-            824
-          ],
-          "value": [
-            826,
-            857
-          ],
-          "node": [
-            819,
-            857
-          ],
+          "key": [819, 824],
+          "value": [826, 857],
+          "node": [819, 857],
           "file": 0
         }
       ],
       [
         "#/tags",
         {
-          "key": [
-            871,
-            877
-          ],
-          "value": [
-            879,
-            1364
-          ],
-          "node": [
-            871,
-            1364
-          ],
+          "key": [871, 877],
+          "value": [879, 1364],
+          "node": [871, 1364],
           "file": 0
         }
       ],
       [
         "#/tags/0",
         {
-          "node": [
-            885,
-            1071
-          ],
+          "node": [885, 1071],
           "file": 0
         }
       ],
       [
         "#/tags/0/name",
         {
-          "key": [
-            893,
-            899
-          ],
-          "value": [
-            901,
-            906
-          ],
-          "node": [
-            893,
-            906
-          ],
+          "key": [893, 899],
+          "value": [901, 906],
+          "node": [893, 906],
           "file": 0
         }
       ],
       [
         "#/tags/0/description",
         {
-          "key": [
-            914,
-            927
-          ],
-          "value": [
-            929,
-            957
-          ],
-          "node": [
-            914,
-            957
-          ],
+          "key": [914, 927],
+          "value": [929, 957],
+          "node": [914, 957],
           "file": 0
         }
       ],
       [
         "#/tags/0/externalDocs",
         {
-          "key": [
-            965,
-            979
-          ],
-          "value": [
-            981,
-            1065
-          ],
-          "node": [
-            965,
-            1065
-          ],
+          "key": [965, 979],
+          "value": [981, 1065],
+          "node": [965, 1065],
           "file": 0
         }
       ],
       [
         "#/tags/0/externalDocs/description",
         {
-          "key": [
-            991,
-            1004
-          ],
-          "value": [
-            1006,
-            1021
-          ],
-          "node": [
-            991,
-            1021
-          ],
+          "key": [991, 1004],
+          "value": [1006, 1021],
+          "node": [991, 1021],
           "file": 0
         }
       ],
       [
         "#/tags/0/externalDocs/url",
         {
-          "key": [
-            1031,
-            1036
-          ],
-          "value": [
-            1038,
-            1057
-          ],
-          "node": [
-            1031,
-            1057
-          ],
+          "key": [1031, 1036],
+          "value": [1038, 1057],
+          "node": [1031, 1057],
           "file": 0
         }
       ],
       [
         "#/tags/1",
         {
-          "node": [
-            1077,
-            1156
-          ],
+          "node": [1077, 1156],
           "file": 0
         }
       ],
       [
         "#/tags/1/name",
         {
-          "key": [
-            1085,
-            1091
-          ],
-          "value": [
-            1093,
-            1100
-          ],
-          "node": [
-            1085,
-            1100
-          ],
+          "key": [1085, 1091],
+          "value": [1093, 1100],
+          "node": [1085, 1100],
           "file": 0
         }
       ],
       [
         "#/tags/1/description",
         {
-          "key": [
-            1108,
-            1121
-          ],
-          "value": [
-            1123,
-            1150
-          ],
-          "node": [
-            1108,
-            1150
-          ],
+          "key": [1108, 1121],
+          "value": [1123, 1150],
+          "node": [1108, 1150],
           "file": 0
         }
       ],
       [
         "#/tags/2",
         {
-          "node": [
-            1162,
-            1360
-          ],
+          "node": [1162, 1360],
           "file": 0
         }
       ],
       [
         "#/tags/2/name",
         {
-          "key": [
-            1170,
-            1176
-          ],
-          "value": [
-            1178,
-            1184
-          ],
-          "node": [
-            1170,
-            1184
-          ],
+          "key": [1170, 1176],
+          "value": [1178, 1184],
+          "node": [1170, 1184],
           "file": 0
         }
       ],
       [
         "#/tags/2/description",
         {
-          "key": [
-            1192,
-            1205
-          ],
-          "value": [
-            1207,
-            1230
-          ],
-          "node": [
-            1192,
-            1230
-          ],
+          "key": [1192, 1205],
+          "value": [1207, 1230],
+          "node": [1192, 1230],
           "file": 0
         }
       ],
       [
         "#/tags/2/externalDocs",
         {
-          "key": [
-            1238,
-            1252
-          ],
-          "value": [
-            1254,
-            1354
-          ],
-          "node": [
-            1238,
-            1354
-          ],
+          "key": [1238, 1252],
+          "value": [1254, 1354],
+          "node": [1238, 1354],
           "file": 0
         }
       ],
       [
         "#/tags/2/externalDocs/description",
         {
-          "key": [
-            1264,
-            1277
-          ],
-          "value": [
-            1279,
-            1310
-          ],
-          "node": [
-            1264,
-            1310
-          ],
+          "key": [1264, 1277],
+          "value": [1279, 1310],
+          "node": [1264, 1310],
           "file": 0
         }
       ],
       [
         "#/tags/2/externalDocs/url",
         {
-          "key": [
-            1320,
-            1325
-          ],
-          "value": [
-            1327,
-            1346
-          ],
-          "node": [
-            1320,
-            1346
-          ],
+          "key": [1320, 1325],
+          "value": [1327, 1346],
+          "node": [1320, 1346],
           "file": 0
         }
       ],
       [
         "#/paths",
         {
-          "key": [
-            1368,
-            1375
-          ],
-          "value": [
-            1377,
-            14363
-          ],
-          "node": [
-            1368,
-            14363
-          ],
+          "key": [1368, 1375],
+          "value": [1377, 14363],
+          "node": [1368, 14363],
           "file": 0
         }
       ],
       [
         "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema",
         {
-          "key": [
-            17788,
-            17801
-          ],
-          "value": [
-            17803,
-            18092
-          ],
-          "node": [
-            17788,
-            18092
-          ],
+          "key": [17788, 17801],
+          "value": [17803, 18092],
+          "node": [17788, 18092],
           "file": 0
         }
       ],
       [
         "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/type",
         {
-          "key": [
-            17813,
-            17819
-          ],
-          "value": [
-            17821,
-            17829
-          ],
-          "node": [
-            17813,
-            17829
-          ],
+          "key": [17813, 17819],
+          "value": [17821, 17829],
+          "node": [17813, 17829],
           "file": 0
         }
       ],
       [
         "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties",
         {
-          "key": [
-            17839,
-            17851
-          ],
-          "value": [
-            17853,
-            18084
-          ],
-          "node": [
-            17839,
-            18084
-          ],
+          "key": [17839, 17851],
+          "value": [17853, 18084],
+          "node": [17839, 18084],
           "file": 0
         }
       ],
       [
         "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties/code",
         {
-          "key": [
-            17865,
-            17871
-          ],
-          "value": [
-            17873,
-            17947
-          ],
-          "node": [
-            17865,
-            17947
-          ],
+          "key": [17865, 17871],
+          "value": [17873, 17947],
+          "node": [17865, 17947],
           "file": 0
         }
       ],
       [
         "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties/code/type",
         {
-          "key": [
-            17887,
-            17893
-          ],
-          "value": [
-            17895,
-            17904
-          ],
-          "node": [
-            17887,
-            17904
-          ],
+          "key": [17887, 17893],
+          "value": [17895, 17904],
+          "node": [17887, 17904],
           "file": 0
         }
       ],
       [
         "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties/code/format",
         {
-          "key": [
-            17918,
-            17926
-          ],
-          "value": [
-            17928,
-            17935
-          ],
-          "node": [
-            17918,
-            17935
-          ],
+          "key": [17918, 17926],
+          "value": [17928, 17935],
+          "node": [17918, 17935],
           "file": 0
         }
       ],
       [
         "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties/type",
         {
-          "key": [
-            17959,
-            17965
-          ],
-          "value": [
-            17967,
-            18009
-          ],
-          "node": [
-            17959,
-            18009
-          ],
+          "key": [17959, 17965],
+          "value": [17967, 18009],
+          "node": [17959, 18009],
           "file": 0
         }
       ],
       [
         "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties/type/type",
         {
-          "key": [
-            17981,
-            17987
-          ],
-          "value": [
-            17989,
-            17997
-          ],
-          "node": [
-            17981,
-            17997
-          ],
+          "key": [17981, 17987],
+          "value": [17989, 17997],
+          "node": [17981, 17997],
           "file": 0
         }
       ],
       [
         "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties/message",
         {
-          "key": [
-            18021,
-            18030
-          ],
-          "value": [
-            18032,
-            18074
-          ],
-          "node": [
-            18021,
-            18074
-          ],
+          "key": [18021, 18030],
+          "value": [18032, 18074],
+          "node": [18021, 18074],
           "file": 0
         }
       ],
       [
         "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties/message/type",
         {
-          "key": [
-            18046,
-            18052
-          ],
-          "value": [
-            18054,
-            18062
-          ],
-          "node": [
-            18046,
-            18062
-          ],
+          "key": [18046, 18052],
+          "value": [18054, 18062],
+          "node": [18046, 18062],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1inventory",
         {
-          "key": [
-            2899,
-            2917
-          ],
-          "value": [
-            2919,
-            3673
-          ],
-          "node": [
-            2899,
-            3673
-          ],
+          "key": [2899, 2917],
+          "value": [2919, 3673],
+          "node": [2899, 3673],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1inventory/get",
         {
-          "key": [
-            2927,
-            2932
-          ],
-          "value": [
-            2934,
-            3667
-          ],
-          "node": [
-            2927,
-            3667
-          ],
+          "key": [2927, 2932],
+          "value": [2934, 3667],
+          "node": [2927, 3667],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1inventory/get/tags",
         {
-          "key": [
-            2944,
-            2950
-          ],
-          "value": [
-            2952,
-            2981
-          ],
-          "node": [
-            2944,
-            2981
-          ],
+          "key": [2944, 2950],
+          "value": [2952, 2981],
+          "node": [2944, 2981],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1inventory/get/tags/0",
         {
-          "node": [
-            2964,
-            2971
-          ],
+          "node": [2964, 2971],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1inventory/get/summary",
         {
-          "key": [
-            2991,
-            3000
-          ],
-          "value": [
-            3002,
-            3037
-          ],
-          "node": [
-            2991,
-            3037
-          ],
+          "key": [2991, 3000],
+          "value": [3002, 3037],
+          "node": [2991, 3037],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1inventory/get/description",
         {
-          "key": [
-            3047,
-            3060
-          ],
-          "value": [
-            3062,
-            3107
-          ],
-          "node": [
-            3047,
-            3107
-          ],
+          "key": [3047, 3060],
+          "value": [3062, 3107],
+          "node": [3047, 3107],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1inventory/get/operationId",
         {
-          "key": [
-            3117,
-            3130
-          ],
-          "value": [
-            3132,
-            3146
-          ],
-          "node": [
-            3117,
-            3146
-          ],
+          "key": [3117, 3130],
+          "value": [3132, 3146],
+          "node": [3117, 3146],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1inventory/get/responses",
         {
-          "key": [
-            3156,
-            3167
-          ],
-          "value": [
-            3169,
-            3576
-          ],
-          "node": [
-            3156,
-            3576
-          ],
+          "key": [3156, 3167],
+          "value": [3169, 3576],
+          "node": [3156, 3576],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1inventory/get/responses/200",
         {
-          "key": [
-            3181,
-            3186
-          ],
-          "value": [
-            3188,
-            3566
-          ],
-          "node": [
-            3181,
-            3566
-          ],
+          "key": [3181, 3186],
+          "value": [3188, 3566],
+          "node": [3181, 3566],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1inventory/get/responses/200/description",
         {
-          "key": [
-            3202,
-            3215
-          ],
-          "value": [
-            3217,
-            3239
-          ],
-          "node": [
-            3202,
-            3239
-          ],
+          "key": [3202, 3215],
+          "value": [3217, 3239],
+          "node": [3202, 3239],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1inventory/get/responses/200/content",
         {
-          "key": [
-            3253,
-            3262
-          ],
-          "value": [
-            3264,
-            3554
-          ],
-          "node": [
-            3253,
-            3554
-          ],
+          "key": [3253, 3262],
+          "value": [3264, 3554],
+          "node": [3253, 3554],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1inventory/get/responses/200/content/application~1json",
         {
-          "key": [
-            3280,
-            3298
-          ],
-          "value": [
-            3300,
-            3540
-          ],
-          "node": [
-            3280,
-            3540
-          ],
+          "key": [3280, 3298],
+          "value": [3300, 3540],
+          "node": [3280, 3540],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1inventory/get/responses/200/content/application~1json/schema",
         {
-          "key": [
-            3318,
-            3326
-          ],
-          "value": [
-            3328,
-            3524
-          ],
-          "node": [
-            3318,
-            3524
-          ],
+          "key": [3318, 3326],
+          "value": [3328, 3524],
+          "node": [3318, 3524],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1inventory/get/responses/200/content/application~1json/schema/type",
         {
-          "key": [
-            3348,
-            3354
-          ],
-          "value": [
-            3356,
-            3364
-          ],
-          "node": [
-            3348,
-            3364
-          ],
+          "key": [3348, 3354],
+          "value": [3356, 3364],
+          "node": [3348, 3364],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1inventory/get/responses/200/content/application~1json/schema/additionalProperties",
         {
-          "key": [
-            3384,
-            3406
-          ],
-          "value": [
-            3408,
-            3506
-          ],
-          "node": [
-            3384,
-            3506
-          ],
+          "key": [3384, 3406],
+          "value": [3408, 3506],
+          "node": [3384, 3506],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1inventory/get/responses/200/content/application~1json/schema/additionalProperties/type",
         {
-          "key": [
-            3430,
-            3436
-          ],
-          "value": [
-            3438,
-            3447
-          ],
-          "node": [
-            3430,
-            3447
-          ],
+          "key": [3430, 3436],
+          "value": [3438, 3447],
+          "node": [3430, 3447],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1inventory/get/responses/200/content/application~1json/schema/additionalProperties/format",
         {
-          "key": [
-            3469,
-            3477
-          ],
-          "value": [
-            3479,
-            3486
-          ],
-          "node": [
-            3469,
-            3486
-          ],
+          "key": [3469, 3477],
+          "value": [3479, 3486],
+          "node": [3469, 3486],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1inventory/get/security",
         {
-          "key": [
-            3586,
-            3596
-          ],
-          "value": [
-            3598,
-            3659
-          ],
-          "node": [
-            3586,
-            3659
-          ],
+          "key": [3586, 3596],
+          "value": [3598, 3659],
+          "node": [3586, 3659],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1inventory/get/security/0",
         {
-          "node": [
-            3610,
-            3649
-          ],
+          "node": [3610, 3649],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1inventory/get/security/0/api_key",
         {
-          "key": [
-            3624,
-            3633
-          ],
-          "value": [
-            3635,
-            3637
-          ],
-          "node": [
-            3624,
-            3637
-          ],
+          "key": [3624, 3633],
+          "value": [3635, 3637],
+          "node": [3624, 3637],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order",
         {
-          "key": [
-            3679,
-            3693
-          ],
-          "value": [
-            3695,
-            4759
-          ],
-          "node": [
-            3679,
-            4759
-          ],
+          "key": [3679, 3693],
+          "value": [3695, 4759],
+          "node": [3679, 4759],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post",
         {
-          "key": [
-            3703,
-            3709
-          ],
-          "value": [
-            3711,
-            4753
-          ],
-          "node": [
-            3703,
-            4753
-          ],
+          "key": [3703, 3709],
+          "value": [3711, 4753],
+          "node": [3703, 4753],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/tags",
         {
-          "key": [
-            3721,
-            3727
-          ],
-          "value": [
-            3729,
-            3758
-          ],
-          "node": [
-            3721,
-            3758
-          ],
+          "key": [3721, 3727],
+          "value": [3729, 3758],
+          "node": [3721, 3758],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/tags/0",
         {
-          "node": [
-            3741,
-            3748
-          ],
+          "node": [3741, 3748],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/summary",
         {
-          "key": [
-            3768,
-            3777
-          ],
-          "value": [
-            3779,
-            3805
-          ],
-          "node": [
-            3768,
-            3805
-          ],
+          "key": [3768, 3777],
+          "value": [3779, 3805],
+          "node": [3768, 3805],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/operationId",
         {
-          "key": [
-            3815,
-            3828
-          ],
-          "value": [
-            3830,
-            3842
-          ],
-          "node": [
-            3815,
-            3842
-          ],
+          "key": [3815, 3828],
+          "value": [3830, 3842],
+          "node": [3815, 3842],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody",
         {
-          "key": [
-            3852,
-            3865
-          ],
-          "value": [
-            3867,
-            4135
-          ],
-          "node": [
-            3852,
-            4135
-          ],
+          "key": [3852, 3865],
+          "value": [3867, 4135],
+          "node": [3852, 4135],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/description",
         {
-          "key": [
-            3879,
-            3892
-          ],
-          "value": [
-            3894,
-            3931
-          ],
-          "node": [
-            3879,
-            3931
-          ],
+          "key": [3879, 3892],
+          "value": [3894, 3931],
+          "node": [3879, 3931],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content",
         {
-          "key": [
-            3943,
-            3952
-          ],
-          "value": [
-            3954,
-            4097
-          ],
-          "node": [
-            3943,
-            4097
-          ],
+          "key": [3943, 3952],
+          "value": [3954, 4097],
+          "node": [3943, 4097],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*",
         {
-          "key": [
-            3968,
-            3973
-          ],
-          "value": [
-            3975,
-            4085
-          ],
-          "node": [
-            3968,
-            4085
-          ],
+          "key": [3968, 3973],
+          "value": [3975, 4085],
+          "node": [3968, 4085],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema",
         {
-          "key": [
-            14406,
-            14413
-          ],
-          "value": [
-            14415,
-            15240
-          ],
-          "node": [
-            14406,
-            15240
-          ],
+          "key": [14406, 14413],
+          "value": [14415, 15240],
+          "node": [14406, 15240],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/type",
         {
-          "key": [
-            14425,
-            14431
-          ],
-          "value": [
-            14433,
-            14441
-          ],
-          "node": [
-            14425,
-            14441
-          ],
+          "key": [14425, 14431],
+          "value": [14433, 14441],
+          "node": [14425, 14441],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties",
         {
-          "key": [
-            14451,
-            14463
-          ],
-          "value": [
-            14465,
-            15178
-          ],
-          "node": [
-            14451,
-            15178
-          ],
+          "key": [14451, 14463],
+          "value": [14465, 15178],
+          "node": [14451, 15178],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/id",
         {
-          "key": [
-            14477,
-            14481
-          ],
-          "value": [
-            14483,
-            14557
-          ],
-          "node": [
-            14477,
-            14557
-          ],
+          "key": [14477, 14481],
+          "value": [14483, 14557],
+          "node": [14477, 14557],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/id/type",
         {
-          "key": [
-            14497,
-            14503
-          ],
-          "value": [
-            14505,
-            14514
-          ],
-          "node": [
-            14497,
-            14514
-          ],
+          "key": [14497, 14503],
+          "value": [14505, 14514],
+          "node": [14497, 14514],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/id/format",
         {
-          "key": [
-            14528,
-            14536
-          ],
-          "value": [
-            14538,
-            14545
-          ],
-          "node": [
-            14528,
-            14545
-          ],
+          "key": [14528, 14536],
+          "value": [14538, 14545],
+          "node": [14528, 14545],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/petId",
         {
-          "key": [
-            14569,
-            14576
-          ],
-          "value": [
-            14578,
-            14652
-          ],
-          "node": [
-            14569,
-            14652
-          ],
+          "key": [14569, 14576],
+          "value": [14578, 14652],
+          "node": [14569, 14652],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/petId/type",
         {
-          "key": [
-            14592,
-            14598
-          ],
-          "value": [
-            14600,
-            14609
-          ],
-          "node": [
-            14592,
-            14609
-          ],
+          "key": [14592, 14598],
+          "value": [14600, 14609],
+          "node": [14592, 14609],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/petId/format",
         {
-          "key": [
-            14623,
-            14631
-          ],
-          "value": [
-            14633,
-            14640
-          ],
-          "node": [
-            14623,
-            14640
-          ],
+          "key": [14623, 14631],
+          "value": [14633, 14640],
+          "node": [14623, 14640],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/quantity",
         {
-          "key": [
-            14664,
-            14674
-          ],
-          "value": [
-            14676,
-            14750
-          ],
-          "node": [
-            14664,
-            14750
-          ],
+          "key": [14664, 14674],
+          "value": [14676, 14750],
+          "node": [14664, 14750],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/quantity/type",
         {
-          "key": [
-            14690,
-            14696
-          ],
-          "value": [
-            14698,
-            14707
-          ],
-          "node": [
-            14690,
-            14707
-          ],
+          "key": [14690, 14696],
+          "value": [14698, 14707],
+          "node": [14690, 14707],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/quantity/format",
         {
-          "key": [
-            14721,
-            14729
-          ],
-          "value": [
-            14731,
-            14738
-          ],
-          "node": [
-            14721,
-            14738
-          ],
+          "key": [14721, 14729],
+          "value": [14731, 14738],
+          "node": [14721, 14738],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/shipDate",
         {
-          "key": [
-            14762,
-            14772
-          ],
-          "value": [
-            14774,
-            14851
-          ],
-          "node": [
-            14762,
-            14851
-          ],
+          "key": [14762, 14772],
+          "value": [14774, 14851],
+          "node": [14762, 14851],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/shipDate/type",
         {
-          "key": [
-            14788,
-            14794
-          ],
-          "value": [
-            14796,
-            14804
-          ],
-          "node": [
-            14788,
-            14804
-          ],
+          "key": [14788, 14794],
+          "value": [14796, 14804],
+          "node": [14788, 14804],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/shipDate/format",
         {
-          "key": [
-            14818,
-            14826
-          ],
-          "value": [
-            14828,
-            14839
-          ],
-          "node": [
-            14818,
-            14839
-          ],
+          "key": [14818, 14826],
+          "value": [14828, 14839],
+          "node": [14818, 14839],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status",
         {
-          "key": [
-            14863,
-            14871
-          ],
-          "value": [
-            14873,
-            15071
-          ],
-          "node": [
-            14863,
-            15071
-          ],
+          "key": [14863, 14871],
+          "value": [14873, 15071],
+          "node": [14863, 15071],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status/type",
         {
-          "key": [
-            14887,
-            14893
-          ],
-          "value": [
-            14895,
-            14903
-          ],
-          "node": [
-            14887,
-            14903
-          ],
+          "key": [14887, 14893],
+          "value": [14895, 14903],
+          "node": [14887, 14903],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status/description",
         {
-          "key": [
-            14917,
-            14930
-          ],
-          "value": [
-            14932,
-            14946
-          ],
-          "node": [
-            14917,
-            14946
-          ],
+          "key": [14917, 14930],
+          "value": [14932, 14946],
+          "node": [14917, 14946],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status/enum",
         {
-          "key": [
-            14960,
-            14966
-          ],
-          "value": [
-            14968,
-            15059
-          ],
-          "node": [
-            14960,
-            15059
-          ],
+          "key": [14960, 14966],
+          "value": [14968, 15059],
+          "node": [14960, 15059],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status/enum/0",
         {
-          "node": [
-            14984,
-            14992
-          ],
+          "node": [14984, 14992],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status/enum/1",
         {
-          "node": [
-            15008,
-            15018
-          ],
+          "node": [15008, 15018],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status/enum/2",
         {
-          "node": [
-            15034,
-            15045
-          ],
+          "node": [15034, 15045],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/complete",
         {
-          "key": [
-            15083,
-            15093
-          ],
-          "value": [
-            15095,
-            15168
-          ],
-          "node": [
-            15083,
-            15168
-          ],
+          "key": [15083, 15093],
+          "value": [15095, 15168],
+          "node": [15083, 15168],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/complete/type",
         {
-          "key": [
-            15109,
-            15115
-          ],
-          "value": [
-            15117,
-            15126
-          ],
-          "node": [
-            15109,
-            15126
-          ],
+          "key": [15109, 15115],
+          "value": [15117, 15126],
+          "node": [15109, 15126],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/complete/default",
         {
-          "key": [
-            15140,
-            15149
-          ],
-          "value": [
-            15151,
-            15156
-          ],
-          "node": [
-            15140,
-            15156
-          ],
+          "key": [15140, 15149],
+          "value": [15151, 15156],
+          "node": [15140, 15156],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/xml",
         {
-          "key": [
-            15188,
-            15193
-          ],
-          "value": [
-            15195,
-            15232
-          ],
-          "node": [
-            15188,
-            15232
-          ],
+          "key": [15188, 15193],
+          "value": [15195, 15232],
+          "node": [15188, 15232],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/xml/name",
         {
-          "key": [
-            15207,
-            15213
-          ],
-          "value": [
-            15215,
-            15222
-          ],
-          "node": [
-            15207,
-            15222
-          ],
+          "key": [15207, 15213],
+          "value": [15215, 15222],
+          "node": [15207, 15222],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/requestBody/required",
         {
-          "key": [
-            4109,
-            4119
-          ],
-          "value": [
-            4121,
-            4125
-          ],
-          "node": [
-            4109,
-            4125
-          ],
+          "key": [4109, 4119],
+          "value": [4121, 4125],
+          "node": [4109, 4125],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/responses",
         {
-          "key": [
-            4145,
-            4156
-          ],
-          "value": [
-            4158,
-            4698
-          ],
-          "node": [
-            4145,
-            4698
-          ],
+          "key": [4145, 4156],
+          "value": [4158, 4698],
+          "node": [4145, 4698],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/responses/200",
         {
-          "key": [
-            4170,
-            4175
-          ],
-          "value": [
-            4177,
-            4586
-          ],
-          "node": [
-            4170,
-            4586
-          ],
+          "key": [4170, 4175],
+          "value": [4177, 4586],
+          "node": [4170, 4586],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/responses/200/description",
         {
-          "key": [
-            4191,
-            4204
-          ],
-          "value": [
-            4206,
-            4228
-          ],
-          "node": [
-            4191,
-            4228
-          ],
+          "key": [4191, 4204],
+          "value": [4206, 4228],
+          "node": [4191, 4228],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/responses/200/content",
         {
-          "key": [
-            4242,
-            4251
-          ],
-          "value": [
-            4253,
-            4574
-          ],
-          "node": [
-            4242,
-            4574
-          ],
+          "key": [4242, 4251],
+          "value": [4253, 4574],
+          "node": [4242, 4574],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/responses/200/content/application~1xml",
         {
-          "key": [
-            4269,
-            4286
-          ],
-          "value": [
-            4288,
-            4406
-          ],
-          "node": [
-            4269,
-            4406
-          ],
+          "key": [4269, 4286],
+          "value": [4288, 4406],
+          "node": [4269, 4406],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/responses/200/content/application~1json",
         {
-          "key": [
-            4422,
-            4440
-          ],
-          "value": [
-            4442,
-            4560
-          ],
-          "node": [
-            4422,
-            4560
-          ],
+          "key": [4422, 4440],
+          "value": [4442, 4560],
+          "node": [4422, 4560],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/responses/400",
         {
-          "key": [
-            4598,
-            4603
-          ],
-          "value": [
-            4605,
-            4688
-          ],
-          "node": [
-            4598,
-            4688
-          ],
+          "key": [4598, 4603],
+          "value": [4605, 4688],
+          "node": [4598, 4688],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/responses/400/description",
         {
-          "key": [
-            4619,
-            4632
-          ],
-          "value": [
-            4634,
-            4649
-          ],
-          "node": [
-            4619,
-            4649
-          ],
+          "key": [4619, 4632],
+          "value": [4634, 4649],
+          "node": [4619, 4649],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/responses/400/content",
         {
-          "key": [
-            4663,
-            4672
-          ],
-          "value": [
-            4674,
-            4676
-          ],
-          "node": [
-            4663,
-            4676
-          ],
+          "key": [4663, 4672],
+          "value": [4674, 4676],
+          "node": [4663, 4676],
           "file": 0
         }
       ],
       [
         "#/paths/~1store~1order/post/x-codegen-request-body-name",
         {
-          "key": [
-            4708,
-            4737
-          ],
-          "value": [
-            4739,
-            4745
-          ],
-          "node": [
-            4708,
-            4745
-          ],
+          "key": [4708, 4737],
+          "value": [4739, 4745],
+          "node": [4708, 4745],
           "file": 0
         }
       ],
       [
         "#/paths/~1user",
         {
-          "key": [
-            7047,
-            7054
-          ],
-          "value": [
-            7056,
-            7743
-          ],
-          "node": [
-            7047,
-            7743
-          ],
+          "key": [7047, 7054],
+          "value": [7056, 7743],
+          "node": [7047, 7743],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post",
         {
-          "key": [
-            7064,
-            7070
-          ],
-          "value": [
-            7072,
-            7737
-          ],
-          "node": [
-            7064,
-            7737
-          ],
+          "key": [7064, 7070],
+          "value": [7072, 7737],
+          "node": [7064, 7737],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/tags",
         {
-          "key": [
-            7082,
-            7088
-          ],
-          "value": [
-            7090,
-            7118
-          ],
-          "node": [
-            7082,
-            7118
-          ],
+          "key": [7082, 7088],
+          "value": [7090, 7118],
+          "node": [7082, 7118],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/tags/0",
         {
-          "node": [
-            7102,
-            7108
-          ],
+          "node": [7102, 7108],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/summary",
         {
-          "key": [
-            7128,
-            7137
-          ],
-          "value": [
-            7139,
-            7152
-          ],
-          "node": [
-            7128,
-            7152
-          ],
+          "key": [7128, 7137],
+          "value": [7139, 7152],
+          "node": [7128, 7152],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/description",
         {
-          "key": [
-            7162,
-            7175
-          ],
-          "value": [
-            7177,
-            7223
-          ],
-          "node": [
-            7162,
-            7223
-          ],
+          "key": [7162, 7175],
+          "value": [7177, 7223],
+          "node": [7162, 7223],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/operationId",
         {
-          "key": [
-            7233,
-            7246
-          ],
-          "value": [
-            7248,
-            7260
-          ],
-          "node": [
-            7233,
-            7260
-          ],
+          "key": [7233, 7246],
+          "value": [7248, 7260],
+          "node": [7233, 7260],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody",
         {
-          "key": [
-            7270,
-            7283
-          ],
-          "value": [
-            7285,
-            7536
-          ],
-          "node": [
-            7270,
-            7536
-          ],
+          "key": [7270, 7283],
+          "value": [7285, 7536],
+          "node": [7270, 7536],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/description",
         {
-          "key": [
-            7297,
-            7310
-          ],
-          "value": [
-            7312,
-            7333
-          ],
-          "node": [
-            7297,
-            7333
-          ],
+          "key": [7297, 7310],
+          "value": [7312, 7333],
+          "node": [7297, 7333],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content",
         {
-          "key": [
-            7345,
-            7354
-          ],
-          "value": [
-            7356,
-            7498
-          ],
-          "node": [
-            7345,
-            7498
-          ],
+          "key": [7345, 7354],
+          "value": [7356, 7498],
+          "node": [7345, 7498],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*",
         {
-          "key": [
-            7370,
-            7375
-          ],
-          "value": [
-            7377,
-            7486
-          ],
-          "node": [
-            7370,
-            7486
-          ],
+          "key": [7370, 7375],
+          "value": [7377, 7486],
+          "node": [7370, 7486],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema",
         {
-          "key": [
-            15547,
-            15553
-          ],
-          "value": [
-            15555,
-            16301
-          ],
-          "node": [
-            15547,
-            16301
-          ],
+          "key": [15547, 15553],
+          "value": [15555, 16301],
+          "node": [15547, 16301],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/type",
         {
-          "key": [
-            15565,
-            15571
-          ],
-          "value": [
-            15573,
-            15581
-          ],
-          "node": [
-            15565,
-            15581
-          ],
+          "key": [15565, 15571],
+          "value": [15573, 15581],
+          "node": [15565, 15581],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/properties",
         {
-          "key": [
-            15591,
-            15603
-          ],
-          "value": [
-            15605,
-            16240
-          ],
-          "node": [
-            15591,
-            16240
-          ],
+          "key": [15591, 15603],
+          "value": [15605, 16240],
+          "node": [15591, 16240],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/id",
         {
-          "key": [
-            15617,
-            15621
-          ],
-          "value": [
-            15623,
-            15697
-          ],
-          "node": [
-            15617,
-            15697
-          ],
+          "key": [15617, 15621],
+          "value": [15623, 15697],
+          "node": [15617, 15697],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/id/type",
         {
-          "key": [
-            15637,
-            15643
-          ],
-          "value": [
-            15645,
-            15654
-          ],
-          "node": [
-            15637,
-            15654
-          ],
+          "key": [15637, 15643],
+          "value": [15645, 15654],
+          "node": [15637, 15654],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/id/format",
         {
-          "key": [
-            15668,
-            15676
-          ],
-          "value": [
-            15678,
-            15685
-          ],
-          "node": [
-            15668,
-            15685
-          ],
+          "key": [15668, 15676],
+          "value": [15678, 15685],
+          "node": [15668, 15685],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/username",
         {
-          "key": [
-            15709,
-            15719
-          ],
-          "value": [
-            15721,
-            15763
-          ],
-          "node": [
-            15709,
-            15763
-          ],
+          "key": [15709, 15719],
+          "value": [15721, 15763],
+          "node": [15709, 15763],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/username/type",
         {
-          "key": [
-            15735,
-            15741
-          ],
-          "value": [
-            15743,
-            15751
-          ],
-          "node": [
-            15735,
-            15751
-          ],
+          "key": [15735, 15741],
+          "value": [15743, 15751],
+          "node": [15735, 15751],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/firstName",
         {
-          "key": [
-            15775,
-            15786
-          ],
-          "value": [
-            15788,
-            15830
-          ],
-          "node": [
-            15775,
-            15830
-          ],
+          "key": [15775, 15786],
+          "value": [15788, 15830],
+          "node": [15775, 15830],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/firstName/type",
         {
-          "key": [
-            15802,
-            15808
-          ],
-          "value": [
-            15810,
-            15818
-          ],
-          "node": [
-            15802,
-            15818
-          ],
+          "key": [15802, 15808],
+          "value": [15810, 15818],
+          "node": [15802, 15818],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/lastName",
         {
-          "key": [
-            15842,
-            15852
-          ],
-          "value": [
-            15854,
-            15896
-          ],
-          "node": [
-            15842,
-            15896
-          ],
+          "key": [15842, 15852],
+          "value": [15854, 15896],
+          "node": [15842, 15896],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/lastName/type",
         {
-          "key": [
-            15868,
-            15874
-          ],
-          "value": [
-            15876,
-            15884
-          ],
-          "node": [
-            15868,
-            15884
-          ],
+          "key": [15868, 15874],
+          "value": [15876, 15884],
+          "node": [15868, 15884],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/email",
         {
-          "key": [
-            15908,
-            15915
-          ],
-          "value": [
-            15917,
-            15959
-          ],
-          "node": [
-            15908,
-            15959
-          ],
+          "key": [15908, 15915],
+          "value": [15917, 15959],
+          "node": [15908, 15959],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/email/type",
         {
-          "key": [
-            15931,
-            15937
-          ],
-          "value": [
-            15939,
-            15947
-          ],
-          "node": [
-            15931,
-            15947
-          ],
+          "key": [15931, 15937],
+          "value": [15939, 15947],
+          "node": [15931, 15947],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/password",
         {
-          "key": [
-            15971,
-            15981
-          ],
-          "value": [
-            15983,
-            16025
-          ],
-          "node": [
-            15971,
-            16025
-          ],
+          "key": [15971, 15981],
+          "value": [15983, 16025],
+          "node": [15971, 16025],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/password/type",
         {
-          "key": [
-            15997,
-            16003
-          ],
-          "value": [
-            16005,
-            16013
-          ],
-          "node": [
-            15997,
-            16013
-          ],
+          "key": [15997, 16003],
+          "value": [16005, 16013],
+          "node": [15997, 16013],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/phone",
         {
-          "key": [
-            16037,
-            16044
-          ],
-          "value": [
-            16046,
-            16088
-          ],
-          "node": [
-            16037,
-            16088
-          ],
+          "key": [16037, 16044],
+          "value": [16046, 16088],
+          "node": [16037, 16088],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/phone/type",
         {
-          "key": [
-            16060,
-            16066
-          ],
-          "value": [
-            16068,
-            16076
-          ],
-          "node": [
-            16060,
-            16076
-          ],
+          "key": [16060, 16066],
+          "value": [16068, 16076],
+          "node": [16060, 16076],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/userStatus",
         {
-          "key": [
-            16100,
-            16112
-          ],
-          "value": [
-            16114,
-            16230
-          ],
-          "node": [
-            16100,
-            16230
-          ],
+          "key": [16100, 16112],
+          "value": [16114, 16230],
+          "node": [16100, 16230],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/userStatus/type",
         {
-          "key": [
-            16128,
-            16134
-          ],
-          "value": [
-            16136,
-            16145
-          ],
-          "node": [
-            16128,
-            16145
-          ],
+          "key": [16128, 16134],
+          "value": [16136, 16145],
+          "node": [16128, 16145],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/userStatus/description",
         {
-          "key": [
-            16159,
-            16172
-          ],
-          "value": [
-            16174,
-            16187
-          ],
-          "node": [
-            16159,
-            16187
-          ],
+          "key": [16159, 16172],
+          "value": [16174, 16187],
+          "node": [16159, 16187],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/userStatus/format",
         {
-          "key": [
-            16201,
-            16209
-          ],
-          "value": [
-            16211,
-            16218
-          ],
-          "node": [
-            16201,
-            16218
-          ],
+          "key": [16201, 16209],
+          "value": [16211, 16218],
+          "node": [16201, 16218],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/xml",
         {
-          "key": [
-            16250,
-            16255
-          ],
-          "value": [
-            16257,
-            16293
-          ],
-          "node": [
-            16250,
-            16293
-          ],
+          "key": [16250, 16255],
+          "value": [16257, 16293],
+          "node": [16250, 16293],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/content/*~1*/schema/xml/name",
         {
-          "key": [
-            16269,
-            16275
-          ],
-          "value": [
-            16277,
-            16283
-          ],
-          "node": [
-            16269,
-            16283
-          ],
+          "key": [16269, 16275],
+          "value": [16277, 16283],
+          "node": [16269, 16283],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/requestBody/required",
         {
-          "key": [
-            7510,
-            7520
-          ],
-          "value": [
-            7522,
-            7526
-          ],
-          "node": [
-            7510,
-            7526
-          ],
+          "key": [7510, 7520],
+          "value": [7522, 7526],
+          "node": [7510, 7526],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/responses",
         {
-          "key": [
-            7546,
-            7557
-          ],
-          "value": [
-            7559,
-            7682
-          ],
-          "node": [
-            7546,
-            7682
-          ],
+          "key": [7546, 7557],
+          "value": [7559, 7682],
+          "node": [7546, 7682],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/responses/default",
         {
-          "key": [
-            7571,
-            7580
-          ],
-          "value": [
-            7582,
-            7672
-          ],
-          "node": [
-            7571,
-            7672
-          ],
+          "key": [7571, 7580],
+          "value": [7582, 7672],
+          "node": [7571, 7672],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/responses/default/description",
         {
-          "key": [
-            7596,
-            7609
-          ],
-          "value": [
-            7611,
-            7633
-          ],
-          "node": [
-            7596,
-            7633
-          ],
+          "key": [7596, 7609],
+          "value": [7611, 7633],
+          "node": [7596, 7633],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/responses/default/content",
         {
-          "key": [
-            7647,
-            7656
-          ],
-          "value": [
-            7658,
-            7660
-          ],
-          "node": [
-            7647,
-            7660
-          ],
+          "key": [7647, 7656],
+          "value": [7658, 7660],
+          "node": [7647, 7660],
           "file": 0
         }
       ],
       [
         "#/paths/~1user/post/x-codegen-request-body-name",
         {
-          "key": [
-            7692,
-            7721
-          ],
-          "value": [
-            7723,
-            7729
-          ],
-          "node": [
-            7692,
-            7729
-          ],
+          "key": [7692, 7721],
+          "value": [7723, 7729],
+          "node": [7692, 7729],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithArray",
         {
-          "key": [
-            7749,
-            7772
-          ],
-          "value": [
-            7774,
-            8518
-          ],
-          "node": [
-            7749,
-            8518
-          ],
+          "key": [7749, 7772],
+          "value": [7774, 8518],
+          "node": [7749, 8518],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithArray/post",
         {
-          "key": [
-            7782,
-            7788
-          ],
-          "value": [
-            7790,
-            8512
-          ],
-          "node": [
-            7782,
-            8512
-          ],
+          "key": [7782, 7788],
+          "value": [7790, 8512],
+          "node": [7782, 8512],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithArray/post/tags",
         {
-          "key": [
-            7800,
-            7806
-          ],
-          "value": [
-            7808,
-            7836
-          ],
-          "node": [
-            7800,
-            7836
-          ],
+          "key": [7800, 7806],
+          "value": [7808, 7836],
+          "node": [7800, 7836],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithArray/post/tags/0",
         {
-          "node": [
-            7820,
-            7826
-          ],
+          "node": [7820, 7826],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithArray/post/summary",
         {
-          "key": [
-            7846,
-            7855
-          ],
-          "value": [
-            7857,
-            7903
-          ],
-          "node": [
-            7846,
-            7903
-          ],
+          "key": [7846, 7855],
+          "value": [7857, 7903],
+          "node": [7846, 7903],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithArray/post/operationId",
         {
-          "key": [
-            7913,
-            7926
-          ],
-          "value": [
-            7928,
-            7955
-          ],
-          "node": [
-            7913,
-            7955
-          ],
+          "key": [7913, 7926],
+          "value": [7928, 7955],
+          "node": [7913, 7955],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithArray/post/requestBody",
         {
-          "key": [
-            7965,
-            7978
-          ],
-          "value": [
-            7980,
-            8311
-          ],
-          "node": [
-            7965,
-            8311
-          ],
+          "key": [7965, 7978],
+          "value": [7980, 8311],
+          "node": [7965, 8311],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithArray/post/requestBody/description",
         {
-          "key": [
-            7992,
-            8005
-          ],
-          "value": [
-            8007,
-            8028
-          ],
-          "node": [
-            7992,
-            8028
-          ],
+          "key": [7992, 8005],
+          "value": [8007, 8028],
+          "node": [7992, 8028],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithArray/post/requestBody/content",
         {
-          "key": [
-            8040,
-            8049
-          ],
-          "value": [
-            8051,
-            8273
-          ],
-          "node": [
-            8040,
-            8273
-          ],
+          "key": [8040, 8049],
+          "value": [8051, 8273],
+          "node": [8040, 8273],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithArray/post/requestBody/content/*~1*",
         {
-          "key": [
-            8065,
-            8070
-          ],
-          "value": [
-            8072,
-            8261
-          ],
-          "node": [
-            8065,
-            8261
-          ],
+          "key": [8065, 8070],
+          "value": [8072, 8261],
+          "node": [8065, 8261],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema",
         {
-          "key": [
-            8088,
-            8096
-          ],
-          "value": [
-            8098,
-            8247
-          ],
-          "node": [
-            8088,
-            8247
-          ],
+          "key": [8088, 8096],
+          "value": [8098, 8247],
+          "node": [8088, 8247],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/type",
         {
-          "key": [
-            8116,
-            8122
-          ],
-          "value": [
-            8124,
-            8131
-          ],
-          "node": [
-            8116,
-            8131
-          ],
+          "key": [8116, 8122],
+          "value": [8124, 8131],
+          "node": [8116, 8131],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithArray/post/requestBody/required",
         {
-          "key": [
-            8285,
-            8295
-          ],
-          "value": [
-            8297,
-            8301
-          ],
-          "node": [
-            8285,
-            8301
-          ],
+          "key": [8285, 8295],
+          "value": [8297, 8301],
+          "node": [8285, 8301],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithArray/post/responses",
         {
-          "key": [
-            8321,
-            8332
-          ],
-          "value": [
-            8334,
-            8457
-          ],
-          "node": [
-            8321,
-            8457
-          ],
+          "key": [8321, 8332],
+          "value": [8334, 8457],
+          "node": [8321, 8457],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithArray/post/responses/default",
         {
-          "key": [
-            8346,
-            8355
-          ],
-          "value": [
-            8357,
-            8447
-          ],
-          "node": [
-            8346,
-            8447
-          ],
+          "key": [8346, 8355],
+          "value": [8357, 8447],
+          "node": [8346, 8447],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithArray/post/responses/default/description",
         {
-          "key": [
-            8371,
-            8384
-          ],
-          "value": [
-            8386,
-            8408
-          ],
-          "node": [
-            8371,
-            8408
-          ],
+          "key": [8371, 8384],
+          "value": [8386, 8408],
+          "node": [8371, 8408],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithArray/post/responses/default/content",
         {
-          "key": [
-            8422,
-            8431
-          ],
-          "value": [
-            8433,
-            8435
-          ],
-          "node": [
-            8422,
-            8435
-          ],
+          "key": [8422, 8431],
+          "value": [8433, 8435],
+          "node": [8422, 8435],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithArray/post/x-codegen-request-body-name",
         {
-          "key": [
-            8467,
-            8496
-          ],
-          "value": [
-            8498,
-            8504
-          ],
-          "node": [
-            8467,
-            8504
-          ],
+          "key": [8467, 8496],
+          "value": [8498, 8504],
+          "node": [8467, 8504],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithList",
         {
-          "key": [
-            8524,
-            8546
-          ],
-          "value": [
-            8548,
-            9291
-          ],
-          "node": [
-            8524,
-            9291
-          ],
+          "key": [8524, 8546],
+          "value": [8548, 9291],
+          "node": [8524, 9291],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithList/post",
         {
-          "key": [
-            8556,
-            8562
-          ],
-          "value": [
-            8564,
-            9285
-          ],
-          "node": [
-            8556,
-            9285
-          ],
+          "key": [8556, 8562],
+          "value": [8564, 9285],
+          "node": [8556, 9285],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithList/post/tags",
         {
-          "key": [
-            8574,
-            8580
-          ],
-          "value": [
-            8582,
-            8610
-          ],
-          "node": [
-            8574,
-            8610
-          ],
+          "key": [8574, 8580],
+          "value": [8582, 8610],
+          "node": [8574, 8610],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithList/post/tags/0",
         {
-          "node": [
-            8594,
-            8600
-          ],
+          "node": [8594, 8600],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithList/post/summary",
         {
-          "key": [
-            8620,
-            8629
-          ],
-          "value": [
-            8631,
-            8677
-          ],
-          "node": [
-            8620,
-            8677
-          ],
+          "key": [8620, 8629],
+          "value": [8631, 8677],
+          "node": [8620, 8677],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithList/post/operationId",
         {
-          "key": [
-            8687,
-            8700
-          ],
-          "value": [
-            8702,
-            8728
-          ],
-          "node": [
-            8687,
-            8728
-          ],
+          "key": [8687, 8700],
+          "value": [8702, 8728],
+          "node": [8687, 8728],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithList/post/requestBody",
         {
-          "key": [
-            8738,
-            8751
-          ],
-          "value": [
-            8753,
-            9084
-          ],
-          "node": [
-            8738,
-            9084
-          ],
+          "key": [8738, 8751],
+          "value": [8753, 9084],
+          "node": [8738, 9084],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithList/post/requestBody/description",
         {
-          "key": [
-            8765,
-            8778
-          ],
-          "value": [
-            8780,
-            8801
-          ],
-          "node": [
-            8765,
-            8801
-          ],
+          "key": [8765, 8778],
+          "value": [8780, 8801],
+          "node": [8765, 8801],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithList/post/requestBody/content",
         {
-          "key": [
-            8813,
-            8822
-          ],
-          "value": [
-            8824,
-            9046
-          ],
-          "node": [
-            8813,
-            9046
-          ],
+          "key": [8813, 8822],
+          "value": [8824, 9046],
+          "node": [8813, 9046],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithList/post/requestBody/content/*~1*",
         {
-          "key": [
-            8838,
-            8843
-          ],
-          "value": [
-            8845,
-            9034
-          ],
-          "node": [
-            8838,
-            9034
-          ],
+          "key": [8838, 8843],
+          "value": [8845, 9034],
+          "node": [8838, 9034],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema",
         {
-          "key": [
-            8861,
-            8869
-          ],
-          "value": [
-            8871,
-            9020
-          ],
-          "node": [
-            8861,
-            9020
-          ],
+          "key": [8861, 8869],
+          "value": [8871, 9020],
+          "node": [8861, 9020],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/type",
         {
-          "key": [
-            8889,
-            8895
-          ],
-          "value": [
-            8897,
-            8904
-          ],
-          "node": [
-            8889,
-            8904
-          ],
+          "key": [8889, 8895],
+          "value": [8897, 8904],
+          "node": [8889, 8904],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithList/post/requestBody/required",
         {
-          "key": [
-            9058,
-            9068
-          ],
-          "value": [
-            9070,
-            9074
-          ],
-          "node": [
-            9058,
-            9074
-          ],
+          "key": [9058, 9068],
+          "value": [9070, 9074],
+          "node": [9058, 9074],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithList/post/responses",
         {
-          "key": [
-            9094,
-            9105
-          ],
-          "value": [
-            9107,
-            9230
-          ],
-          "node": [
-            9094,
-            9230
-          ],
+          "key": [9094, 9105],
+          "value": [9107, 9230],
+          "node": [9094, 9230],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithList/post/responses/default",
         {
-          "key": [
-            9119,
-            9128
-          ],
-          "value": [
-            9130,
-            9220
-          ],
-          "node": [
-            9119,
-            9220
-          ],
+          "key": [9119, 9128],
+          "value": [9130, 9220],
+          "node": [9119, 9220],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithList/post/responses/default/description",
         {
-          "key": [
-            9144,
-            9157
-          ],
-          "value": [
-            9159,
-            9181
-          ],
-          "node": [
-            9144,
-            9181
-          ],
+          "key": [9144, 9157],
+          "value": [9159, 9181],
+          "node": [9144, 9181],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithList/post/responses/default/content",
         {
-          "key": [
-            9195,
-            9204
-          ],
-          "value": [
-            9206,
-            9208
-          ],
-          "node": [
-            9195,
-            9208
-          ],
+          "key": [9195, 9204],
+          "value": [9206, 9208],
+          "node": [9195, 9208],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1createWithList/post/x-codegen-request-body-name",
         {
-          "key": [
-            9240,
-            9269
-          ],
-          "value": [
-            9271,
-            9277
-          ],
-          "node": [
-            9240,
-            9277
-          ],
+          "key": [9240, 9269],
+          "value": [9271, 9277],
+          "node": [9240, 9277],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login",
         {
-          "key": [
-            9297,
-            9310
-          ],
-          "value": [
-            9312,
-            11051
-          ],
-          "node": [
-            9297,
-            11051
-          ],
+          "key": [9297, 9310],
+          "value": [9312, 11051],
+          "node": [9297, 11051],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get",
         {
-          "key": [
-            9320,
-            9325
-          ],
-          "value": [
-            9327,
-            11045
-          ],
-          "node": [
-            9320,
-            11045
-          ],
+          "key": [9320, 9325],
+          "value": [9327, 11045],
+          "node": [9320, 11045],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/tags",
         {
-          "key": [
-            9337,
-            9343
-          ],
-          "value": [
-            9345,
-            9373
-          ],
-          "node": [
-            9337,
-            9373
-          ],
+          "key": [9337, 9343],
+          "value": [9345, 9373],
+          "node": [9337, 9373],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/tags/0",
         {
-          "node": [
-            9357,
-            9363
-          ],
+          "node": [9357, 9363],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/summary",
         {
-          "key": [
-            9383,
-            9392
-          ],
-          "value": [
-            9394,
-            9421
-          ],
-          "node": [
-            9383,
-            9421
-          ],
+          "key": [9383, 9392],
+          "value": [9394, 9421],
+          "node": [9383, 9421],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/operationId",
         {
-          "key": [
-            9431,
-            9444
-          ],
-          "value": [
-            9446,
-            9457
-          ],
-          "node": [
-            9431,
-            9457
-          ],
+          "key": [9431, 9444],
+          "value": [9446, 9457],
+          "node": [9431, 9457],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/parameters",
         {
-          "key": [
-            9467,
-            9479
-          ],
-          "value": [
-            9481,
-            9978
-          ],
-          "node": [
-            9467,
-            9978
-          ],
+          "key": [9467, 9479],
+          "value": [9481, 9978],
+          "node": [9467, 9978],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/parameters/0",
         {
-          "node": [
-            9493,
-            9718
-          ],
+          "node": [9493, 9718],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/parameters/0/name",
         {
-          "key": [
-            9507,
-            9513
-          ],
-          "value": [
-            9515,
-            9525
-          ],
-          "node": [
-            9507,
-            9525
-          ],
+          "key": [9507, 9513],
+          "value": [9515, 9525],
+          "node": [9507, 9525],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/parameters/0/in",
         {
-          "key": [
-            9539,
-            9543
-          ],
-          "value": [
-            9545,
-            9552
-          ],
-          "node": [
-            9539,
-            9552
-          ],
+          "key": [9539, 9543],
+          "value": [9545, 9552],
+          "node": [9539, 9552],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/parameters/0/description",
         {
-          "key": [
-            9566,
-            9579
-          ],
-          "value": [
-            9581,
-            9606
-          ],
-          "node": [
-            9566,
-            9606
-          ],
+          "key": [9566, 9579],
+          "value": [9581, 9606],
+          "node": [9566, 9606],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/parameters/0/required",
         {
-          "key": [
-            9620,
-            9630
-          ],
-          "value": [
-            9632,
-            9636
-          ],
-          "node": [
-            9620,
-            9636
-          ],
+          "key": [9620, 9630],
+          "value": [9632, 9636],
+          "node": [9620, 9636],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/parameters/0/schema",
         {
-          "key": [
-            9650,
-            9658
-          ],
-          "value": [
-            9660,
-            9706
-          ],
-          "node": [
-            9650,
-            9706
-          ],
+          "key": [9650, 9658],
+          "value": [9660, 9706],
+          "node": [9650, 9706],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/parameters/0/schema/type",
         {
-          "key": [
-            9676,
-            9682
-          ],
-          "value": [
-            9684,
-            9692
-          ],
-          "node": [
-            9676,
-            9692
-          ],
+          "key": [9676, 9682],
+          "value": [9684, 9692],
+          "node": [9676, 9692],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/parameters/1",
         {
-          "node": [
-            9730,
-            9968
-          ],
+          "node": [9730, 9968],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/parameters/1/name",
         {
-          "key": [
-            9744,
-            9750
-          ],
-          "value": [
-            9752,
-            9762
-          ],
-          "node": [
-            9744,
-            9762
-          ],
+          "key": [9744, 9750],
+          "value": [9752, 9762],
+          "node": [9744, 9762],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/parameters/1/in",
         {
-          "key": [
-            9776,
-            9780
-          ],
-          "value": [
-            9782,
-            9789
-          ],
-          "node": [
-            9776,
-            9789
-          ],
+          "key": [9776, 9780],
+          "value": [9782, 9789],
+          "node": [9776, 9789],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/parameters/1/description",
         {
-          "key": [
-            9803,
-            9816
-          ],
-          "value": [
-            9818,
-            9856
-          ],
-          "node": [
-            9803,
-            9856
-          ],
+          "key": [9803, 9816],
+          "value": [9818, 9856],
+          "node": [9803, 9856],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/parameters/1/required",
         {
-          "key": [
-            9870,
-            9880
-          ],
-          "value": [
-            9882,
-            9886
-          ],
-          "node": [
-            9870,
-            9886
-          ],
+          "key": [9870, 9880],
+          "value": [9882, 9886],
+          "node": [9870, 9886],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/parameters/1/schema",
         {
-          "key": [
-            9900,
-            9908
-          ],
-          "value": [
-            9910,
-            9956
-          ],
-          "node": [
-            9900,
-            9956
-          ],
+          "key": [9900, 9908],
+          "value": [9910, 9956],
+          "node": [9900, 9956],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/parameters/1/schema/type",
         {
-          "key": [
-            9926,
-            9932
-          ],
-          "value": [
-            9934,
-            9942
-          ],
-          "node": [
-            9926,
-            9942
-          ],
+          "key": [9926, 9932],
+          "value": [9934, 9942],
+          "node": [9926, 9942],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses",
         {
-          "key": [
-            9988,
-            9999
-          ],
-          "value": [
-            10001,
-            11037
-          ],
-          "node": [
-            9988,
-            11037
-          ],
+          "key": [9988, 9999],
+          "value": [10001, 11037],
+          "node": [9988, 11037],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/200",
         {
-          "key": [
-            10013,
-            10018
-          ],
-          "value": [
-            10020,
-            10904
-          ],
-          "node": [
-            10013,
-            10904
-          ],
+          "key": [10013, 10018],
+          "value": [10020, 10904],
+          "node": [10013, 10904],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/200/description",
         {
-          "key": [
-            10034,
-            10047
-          ],
-          "value": [
-            10049,
-            10071
-          ],
-          "node": [
-            10034,
-            10071
-          ],
+          "key": [10034, 10047],
+          "value": [10049, 10071],
+          "node": [10034, 10071],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/200/headers",
         {
-          "key": [
-            10085,
-            10094
-          ],
-          "value": [
-            10096,
-            10586
-          ],
-          "node": [
-            10085,
-            10586
-          ],
+          "key": [10085, 10094],
+          "value": [10096, 10586],
+          "node": [10085, 10586],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit",
         {
-          "key": [
-            10112,
-            10126
-          ],
-          "value": [
-            10128,
-            10333
-          ],
-          "node": [
-            10112,
-            10333
-          ],
+          "key": [10112, 10126],
+          "value": [10128, 10333],
+          "node": [10112, 10333],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit/description",
         {
-          "key": [
-            10146,
-            10159
-          ],
-          "value": [
-            10161,
-            10197
-          ],
-          "node": [
-            10146,
-            10197
-          ],
+          "key": [10146, 10159],
+          "value": [10161, 10197],
+          "node": [10146, 10197],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit/schema",
         {
-          "key": [
-            10215,
-            10223
-          ],
-          "value": [
-            10225,
-            10317
-          ],
-          "node": [
-            10215,
-            10317
-          ],
+          "key": [10215, 10223],
+          "value": [10225, 10317],
+          "node": [10215, 10317],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit/schema/type",
         {
-          "key": [
-            10245,
-            10251
-          ],
-          "value": [
-            10253,
-            10262
-          ],
-          "node": [
-            10245,
-            10262
-          ],
+          "key": [10245, 10251],
+          "value": [10253, 10262],
+          "node": [10245, 10262],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit/schema/format",
         {
-          "key": [
-            10282,
-            10290
-          ],
-          "value": [
-            10292,
-            10299
-          ],
-          "node": [
-            10282,
-            10299
-          ],
+          "key": [10282, 10290],
+          "value": [10292, 10299],
+          "node": [10282, 10299],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/200/headers/X-Expires-After",
         {
-          "key": [
-            10349,
-            10366
-          ],
-          "value": [
-            10368,
-            10572
-          ],
-          "node": [
-            10349,
-            10572
-          ],
+          "key": [10349, 10366],
+          "value": [10368, 10572],
+          "node": [10349, 10572],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/200/headers/X-Expires-After/description",
         {
-          "key": [
-            10386,
-            10399
-          ],
-          "value": [
-            10401,
-            10433
-          ],
-          "node": [
-            10386,
-            10433
-          ],
+          "key": [10386, 10399],
+          "value": [10401, 10433],
+          "node": [10386, 10433],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/200/headers/X-Expires-After/schema",
         {
-          "key": [
-            10451,
-            10459
-          ],
-          "value": [
-            10461,
-            10556
-          ],
-          "node": [
-            10451,
-            10556
-          ],
+          "key": [10451, 10459],
+          "value": [10461, 10556],
+          "node": [10451, 10556],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/200/headers/X-Expires-After/schema/type",
         {
-          "key": [
-            10481,
-            10487
-          ],
-          "value": [
-            10489,
-            10497
-          ],
-          "node": [
-            10481,
-            10497
-          ],
+          "key": [10481, 10487],
+          "value": [10489, 10497],
+          "node": [10481, 10497],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/200/headers/X-Expires-After/schema/format",
         {
-          "key": [
-            10517,
-            10525
-          ],
-          "value": [
-            10527,
-            10538
-          ],
-          "node": [
-            10517,
-            10538
-          ],
+          "key": [10517, 10525],
+          "value": [10527, 10538],
+          "node": [10517, 10538],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/200/content",
         {
-          "key": [
-            10600,
-            10609
-          ],
-          "value": [
-            10611,
-            10892
-          ],
-          "node": [
-            10600,
-            10892
-          ],
+          "key": [10600, 10609],
+          "value": [10611, 10892],
+          "node": [10600, 10892],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/200/content/application~1xml",
         {
-          "key": [
-            10627,
-            10644
-          ],
-          "value": [
-            10646,
-            10744
-          ],
-          "node": [
-            10627,
-            10744
-          ],
+          "key": [10627, 10644],
+          "value": [10646, 10744],
+          "node": [10627, 10744],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/200/content/application~1xml/schema",
         {
-          "key": [
-            10664,
-            10672
-          ],
-          "value": [
-            10674,
-            10728
-          ],
-          "node": [
-            10664,
-            10728
-          ],
+          "key": [10664, 10672],
+          "value": [10674, 10728],
+          "node": [10664, 10728],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/200/content/application~1xml/schema/type",
         {
-          "key": [
-            10694,
-            10700
-          ],
-          "value": [
-            10702,
-            10710
-          ],
-          "node": [
-            10694,
-            10710
-          ],
+          "key": [10694, 10700],
+          "value": [10702, 10710],
+          "node": [10694, 10710],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/200/content/application~1json",
         {
-          "key": [
-            10760,
-            10778
-          ],
-          "value": [
-            10780,
-            10878
-          ],
-          "node": [
-            10760,
-            10878
-          ],
+          "key": [10760, 10778],
+          "value": [10780, 10878],
+          "node": [10760, 10878],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/200/content/application~1json/schema",
         {
-          "key": [
-            10798,
-            10806
-          ],
-          "value": [
-            10808,
-            10862
-          ],
-          "node": [
-            10798,
-            10862
-          ],
+          "key": [10798, 10806],
+          "value": [10808, 10862],
+          "node": [10798, 10862],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/200/content/application~1json/schema/type",
         {
-          "key": [
-            10828,
-            10834
-          ],
-          "value": [
-            10836,
-            10844
-          ],
-          "node": [
-            10828,
-            10844
-          ],
+          "key": [10828, 10834],
+          "value": [10836, 10844],
+          "node": [10828, 10844],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/400",
         {
-          "key": [
-            10916,
-            10921
-          ],
-          "value": [
-            10923,
-            11027
-          ],
-          "node": [
-            10916,
-            11027
-          ],
+          "key": [10916, 10921],
+          "value": [10923, 11027],
+          "node": [10916, 11027],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/400/description",
         {
-          "key": [
-            10937,
-            10950
-          ],
-          "value": [
-            10952,
-            10988
-          ],
-          "node": [
-            10937,
-            10988
-          ],
+          "key": [10937, 10950],
+          "value": [10952, 10988],
+          "node": [10937, 10988],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1login/get/responses/400/content",
         {
-          "key": [
-            11002,
-            11011
-          ],
-          "value": [
-            11013,
-            11015
-          ],
-          "node": [
-            11002,
-            11015
-          ],
+          "key": [11002, 11011],
+          "value": [11013, 11015],
+          "node": [11002, 11015],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1logout",
         {
-          "key": [
-            11057,
-            11071
-          ],
-          "value": [
-            11073,
-            11393
-          ],
-          "node": [
-            11057,
-            11393
-          ],
+          "key": [11057, 11071],
+          "value": [11073, 11393],
+          "node": [11057, 11393],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1logout/get",
         {
-          "key": [
-            11081,
-            11086
-          ],
-          "value": [
-            11088,
-            11387
-          ],
-          "node": [
-            11081,
-            11387
-          ],
+          "key": [11081, 11086],
+          "value": [11088, 11387],
+          "node": [11081, 11387],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1logout/get/tags",
         {
-          "key": [
-            11098,
-            11104
-          ],
-          "value": [
-            11106,
-            11134
-          ],
-          "node": [
-            11098,
-            11134
-          ],
+          "key": [11098, 11104],
+          "value": [11106, 11134],
+          "node": [11098, 11134],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1logout/get/tags/0",
         {
-          "node": [
-            11118,
-            11124
-          ],
+          "node": [11118, 11124],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1logout/get/summary",
         {
-          "key": [
-            11144,
-            11153
-          ],
-          "value": [
-            11155,
-            11196
-          ],
-          "node": [
-            11144,
-            11196
-          ],
+          "key": [11144, 11153],
+          "value": [11155, 11196],
+          "node": [11144, 11196],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1logout/get/operationId",
         {
-          "key": [
-            11206,
-            11219
-          ],
-          "value": [
-            11221,
-            11233
-          ],
-          "node": [
-            11206,
-            11233
-          ],
+          "key": [11206, 11219],
+          "value": [11221, 11233],
+          "node": [11206, 11233],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1logout/get/responses",
         {
-          "key": [
-            11243,
-            11254
-          ],
-          "value": [
-            11256,
-            11379
-          ],
-          "node": [
-            11243,
-            11379
-          ],
+          "key": [11243, 11254],
+          "value": [11256, 11379],
+          "node": [11243, 11379],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1logout/get/responses/default",
         {
-          "key": [
-            11268,
-            11277
-          ],
-          "value": [
-            11279,
-            11369
-          ],
-          "node": [
-            11268,
-            11369
-          ],
+          "key": [11268, 11277],
+          "value": [11279, 11369],
+          "node": [11268, 11369],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1logout/get/responses/default/description",
         {
-          "key": [
-            11293,
-            11306
-          ],
-          "value": [
-            11308,
-            11330
-          ],
-          "node": [
-            11293,
-            11330
-          ],
+          "key": [11293, 11306],
+          "value": [11308, 11330],
+          "node": [11293, 11330],
           "file": 0
         }
       ],
       [
         "#/paths/~1user~1logout/get/responses/default/content",
         {
-          "key": [
-            11344,
-            11353
-          ],
-          "value": [
-            11355,
-            11357
-          ],
-          "node": [
-            11344,
-            11357
-          ],
+          "key": [11344, 11353],
+          "value": [11355, 11357],
+          "node": [11344, 11357],
           "file": 0
         }
       ],
       [
         "#/components",
         {
-          "key": [
-            14367,
-            14379
-          ],
-          "value": [
-            14381,
-            18578
-          ],
-          "node": [
-            14367,
-            18578
-          ],
+          "key": [14367, 14379],
+          "value": [14381, 18578],
+          "node": [14367, 18578],
           "file": 0
         }
       ],
       [
         "#/components/schemas",
         {
-          "key": [
-            14387,
-            14396
-          ],
-          "value": [
-            14398,
-            18098
-          ],
-          "node": [
-            14387,
-            18098
-          ],
+          "key": [14387, 14396],
+          "value": [14398, 18098],
+          "node": [14387, 18098],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Order",
         {
-          "key": [
-            14406,
-            14413
-          ],
-          "value": [
-            14415,
-            15240
-          ],
-          "node": [
-            14406,
-            15240
-          ],
+          "key": [14406, 14413],
+          "value": [14415, 15240],
+          "node": [14406, 15240],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Category",
         {
-          "key": [
-            15248,
-            15258
-          ],
-          "value": [
-            15260,
-            15539
-          ],
-          "node": [
-            15248,
-            15539
-          ],
+          "key": [15248, 15258],
+          "value": [15260, 15539],
+          "node": [15248, 15539],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Category/type",
         {
-          "key": [
-            15270,
-            15276
-          ],
-          "value": [
-            15278,
-            15286
-          ],
-          "node": [
-            15270,
-            15286
-          ],
+          "key": [15270, 15276],
+          "value": [15278, 15286],
+          "node": [15270, 15286],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Category/properties",
         {
-          "key": [
-            15296,
-            15308
-          ],
-          "value": [
-            15310,
-            15474
-          ],
-          "node": [
-            15296,
-            15474
-          ],
+          "key": [15296, 15308],
+          "value": [15310, 15474],
+          "node": [15296, 15474],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Category/properties/id",
         {
-          "key": [
-            15322,
-            15326
-          ],
-          "value": [
-            15328,
-            15402
-          ],
-          "node": [
-            15322,
-            15402
-          ],
+          "key": [15322, 15326],
+          "value": [15328, 15402],
+          "node": [15322, 15402],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Category/properties/id/type",
         {
-          "key": [
-            15342,
-            15348
-          ],
-          "value": [
-            15350,
-            15359
-          ],
-          "node": [
-            15342,
-            15359
-          ],
+          "key": [15342, 15348],
+          "value": [15350, 15359],
+          "node": [15342, 15359],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Category/properties/id/format",
         {
-          "key": [
-            15373,
-            15381
-          ],
-          "value": [
-            15383,
-            15390
-          ],
-          "node": [
-            15373,
-            15390
-          ],
+          "key": [15373, 15381],
+          "value": [15383, 15390],
+          "node": [15373, 15390],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Category/properties/name",
         {
-          "key": [
-            15414,
-            15420
-          ],
-          "value": [
-            15422,
-            15464
-          ],
-          "node": [
-            15414,
-            15464
-          ],
+          "key": [15414, 15420],
+          "value": [15422, 15464],
+          "node": [15414, 15464],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Category/properties/name/type",
         {
-          "key": [
-            15436,
-            15442
-          ],
-          "value": [
-            15444,
-            15452
-          ],
-          "node": [
-            15436,
-            15452
-          ],
+          "key": [15436, 15442],
+          "value": [15444, 15452],
+          "node": [15436, 15452],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Category/xml",
         {
-          "key": [
-            15484,
-            15489
-          ],
-          "value": [
-            15491,
-            15531
-          ],
-          "node": [
-            15484,
-            15531
-          ],
+          "key": [15484, 15489],
+          "value": [15491, 15531],
+          "node": [15484, 15531],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Category/xml/name",
         {
-          "key": [
-            15503,
-            15509
-          ],
-          "value": [
-            15511,
-            15521
-          ],
-          "node": [
-            15503,
-            15521
-          ],
+          "key": [15503, 15509],
+          "value": [15511, 15521],
+          "node": [15503, 15521],
           "file": 0
         }
       ],
       [
         "#/components/schemas/User",
         {
-          "key": [
-            15547,
-            15553
-          ],
-          "value": [
-            15555,
-            16301
-          ],
-          "node": [
-            15547,
-            16301
-          ],
+          "key": [15547, 15553],
+          "value": [15555, 16301],
+          "node": [15547, 16301],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Tag",
         {
-          "key": [
-            16309,
-            16314
-          ],
-          "value": [
-            16316,
-            16590
-          ],
-          "node": [
-            16309,
-            16590
-          ],
+          "key": [16309, 16314],
+          "value": [16316, 16590],
+          "node": [16309, 16590],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Tag/type",
         {
-          "key": [
-            16326,
-            16332
-          ],
-          "value": [
-            16334,
-            16342
-          ],
-          "node": [
-            16326,
-            16342
-          ],
+          "key": [16326, 16332],
+          "value": [16334, 16342],
+          "node": [16326, 16342],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Tag/properties",
         {
-          "key": [
-            16352,
-            16364
-          ],
-          "value": [
-            16366,
-            16530
-          ],
-          "node": [
-            16352,
-            16530
-          ],
+          "key": [16352, 16364],
+          "value": [16366, 16530],
+          "node": [16352, 16530],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Tag/properties/id",
         {
-          "key": [
-            16378,
-            16382
-          ],
-          "value": [
-            16384,
-            16458
-          ],
-          "node": [
-            16378,
-            16458
-          ],
+          "key": [16378, 16382],
+          "value": [16384, 16458],
+          "node": [16378, 16458],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Tag/properties/id/type",
         {
-          "key": [
-            16398,
-            16404
-          ],
-          "value": [
-            16406,
-            16415
-          ],
-          "node": [
-            16398,
-            16415
-          ],
+          "key": [16398, 16404],
+          "value": [16406, 16415],
+          "node": [16398, 16415],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Tag/properties/id/format",
         {
-          "key": [
-            16429,
-            16437
-          ],
-          "value": [
-            16439,
-            16446
-          ],
-          "node": [
-            16429,
-            16446
-          ],
+          "key": [16429, 16437],
+          "value": [16439, 16446],
+          "node": [16429, 16446],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Tag/properties/name",
         {
-          "key": [
-            16470,
-            16476
-          ],
-          "value": [
-            16478,
-            16520
-          ],
-          "node": [
-            16470,
-            16520
-          ],
+          "key": [16470, 16476],
+          "value": [16478, 16520],
+          "node": [16470, 16520],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Tag/properties/name/type",
         {
-          "key": [
-            16492,
-            16498
-          ],
-          "value": [
-            16500,
-            16508
-          ],
-          "node": [
-            16492,
-            16508
-          ],
+          "key": [16492, 16498],
+          "value": [16500, 16508],
+          "node": [16492, 16508],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Tag/xml",
         {
-          "key": [
-            16540,
-            16545
-          ],
-          "value": [
-            16547,
-            16582
-          ],
-          "node": [
-            16540,
-            16582
-          ],
+          "key": [16540, 16545],
+          "value": [16547, 16582],
+          "node": [16540, 16582],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Tag/xml/name",
         {
-          "key": [
-            16559,
-            16565
-          ],
-          "value": [
-            16567,
-            16572
-          ],
-          "node": [
-            16559,
-            16572
-          ],
+          "key": [16559, 16565],
+          "value": [16567, 16572],
+          "node": [16559, 16572],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet",
         {
-          "key": [
-            16598,
-            16603
-          ],
-          "value": [
-            16605,
-            17780
-          ],
-          "node": [
-            16598,
-            17780
-          ],
+          "key": [16598, 16603],
+          "value": [16605, 17780],
+          "node": [16598, 17780],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/required",
         {
-          "key": [
-            16615,
-            16625
-          ],
-          "value": [
-            16627,
-            16678
-          ],
-          "node": [
-            16615,
-            16678
-          ],
+          "key": [16615, 16625],
+          "value": [16627, 16678],
+          "node": [16615, 16678],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/required/0",
         {
-          "node": [
-            16639,
-            16645
-          ],
+          "node": [16639, 16645],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/required/1",
         {
-          "node": [
-            16657,
-            16668
-          ],
+          "node": [16657, 16668],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/type",
         {
-          "key": [
-            16688,
-            16694
-          ],
-          "value": [
-            16696,
-            16704
-          ],
-          "node": [
-            16688,
-            16704
-          ],
+          "key": [16688, 16694],
+          "value": [16696, 16704],
+          "node": [16688, 16704],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties",
         {
-          "key": [
-            16714,
-            16726
-          ],
-          "value": [
-            16728,
-            17720
-          ],
-          "node": [
-            16714,
-            17720
-          ],
+          "key": [16714, 16726],
+          "value": [16728, 17720],
+          "node": [16714, 17720],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/id",
         {
-          "key": [
-            16740,
-            16744
-          ],
-          "value": [
-            16746,
-            16820
-          ],
-          "node": [
-            16740,
-            16820
-          ],
+          "key": [16740, 16744],
+          "value": [16746, 16820],
+          "node": [16740, 16820],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/id/type",
         {
-          "key": [
-            16760,
-            16766
-          ],
-          "value": [
-            16768,
-            16777
-          ],
-          "node": [
-            16760,
-            16777
-          ],
+          "key": [16760, 16766],
+          "value": [16768, 16777],
+          "node": [16760, 16777],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/id/format",
         {
-          "key": [
-            16791,
-            16799
-          ],
-          "value": [
-            16801,
-            16808
-          ],
-          "node": [
-            16791,
-            16808
-          ],
+          "key": [16791, 16799],
+          "value": [16801, 16808],
+          "node": [16791, 16808],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/category",
         {
-          "key": [
-            15248,
-            15258
-          ],
-          "value": [
-            15260,
-            15539
-          ],
-          "node": [
-            15248,
-            15539
-          ],
+          "key": [15248, 15258],
+          "value": [15260, 15539],
+          "node": [15248, 15539],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/name",
         {
-          "key": [
-            16921,
-            16927
-          ],
-          "value": [
-            16929,
-            17004
-          ],
-          "node": [
-            16921,
-            17004
-          ],
+          "key": [16921, 16927],
+          "value": [16929, 17004],
+          "node": [16921, 17004],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/name/type",
         {
-          "key": [
-            16943,
-            16949
-          ],
-          "value": [
-            16951,
-            16959
-          ],
-          "node": [
-            16943,
-            16959
-          ],
+          "key": [16943, 16949],
+          "value": [16951, 16959],
+          "node": [16943, 16959],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/name/example",
         {
-          "key": [
-            16973,
-            16982
-          ],
-          "value": [
-            16984,
-            16992
-          ],
-          "node": [
-            16973,
-            16992
-          ],
+          "key": [16973, 16982],
+          "value": [16984, 16992],
+          "node": [16973, 16992],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/photoUrls",
         {
-          "key": [
-            17016,
-            17027
-          ],
-          "value": [
-            17029,
-            17239
-          ],
-          "node": [
-            17016,
-            17239
-          ],
+          "key": [17016, 17027],
+          "value": [17029, 17239],
+          "node": [17016, 17239],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/photoUrls/type",
         {
-          "key": [
-            17043,
-            17049
-          ],
-          "value": [
-            17051,
-            17058
-          ],
-          "node": [
-            17043,
-            17058
-          ],
+          "key": [17043, 17049],
+          "value": [17051, 17058],
+          "node": [17043, 17058],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/photoUrls/xml",
         {
-          "key": [
-            17072,
-            17077
-          ],
-          "value": [
-            17079,
-            17158
-          ],
-          "node": [
-            17072,
-            17158
-          ],
+          "key": [17072, 17077],
+          "value": [17079, 17158],
+          "node": [17072, 17158],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/photoUrls/xml/name",
         {
-          "key": [
-            17095,
-            17101
-          ],
-          "value": [
-            17103,
-            17113
-          ],
-          "node": [
-            17095,
-            17113
-          ],
+          "key": [17095, 17101],
+          "value": [17103, 17113],
+          "node": [17095, 17113],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/photoUrls/xml/wrapped",
         {
-          "key": [
-            17129,
-            17138
-          ],
-          "value": [
-            17140,
-            17144
-          ],
-          "node": [
-            17129,
-            17144
-          ],
+          "key": [17129, 17138],
+          "value": [17140, 17144],
+          "node": [17129, 17144],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/photoUrls/items",
         {
-          "key": [
-            17172,
-            17179
-          ],
-          "value": [
-            17181,
-            17227
-          ],
-          "node": [
-            17172,
-            17227
-          ],
+          "key": [17172, 17179],
+          "value": [17181, 17227],
+          "node": [17172, 17227],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/photoUrls/items/type",
         {
-          "key": [
-            17197,
-            17203
-          ],
-          "value": [
-            17205,
-            17213
-          ],
-          "node": [
-            17197,
-            17213
-          ],
+          "key": [17197, 17203],
+          "value": [17205, 17213],
+          "node": [17197, 17213],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/tags",
         {
-          "key": [
-            17251,
-            17257
-          ],
-          "value": [
-            17259,
-            17482
-          ],
-          "node": [
-            17251,
-            17482
-          ],
+          "key": [17251, 17257],
+          "value": [17259, 17482],
+          "node": [17251, 17482],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/tags/type",
         {
-          "key": [
-            17273,
-            17279
-          ],
-          "value": [
-            17281,
-            17288
-          ],
-          "node": [
-            17273,
-            17288
-          ],
+          "key": [17273, 17279],
+          "value": [17281, 17288],
+          "node": [17273, 17288],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/tags/xml",
         {
-          "key": [
-            17302,
-            17307
-          ],
-          "value": [
-            17309,
-            17383
-          ],
-          "node": [
-            17302,
-            17383
-          ],
+          "key": [17302, 17307],
+          "value": [17309, 17383],
+          "node": [17302, 17383],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/tags/xml/name",
         {
-          "key": [
-            17325,
-            17331
-          ],
-          "value": [
-            17333,
-            17338
-          ],
-          "node": [
-            17325,
-            17338
-          ],
+          "key": [17325, 17331],
+          "value": [17333, 17338],
+          "node": [17325, 17338],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/tags/xml/wrapped",
         {
-          "key": [
-            17354,
-            17363
-          ],
-          "value": [
-            17365,
-            17369
-          ],
-          "node": [
-            17354,
-            17369
-          ],
+          "key": [17354, 17363],
+          "value": [17365, 17369],
+          "node": [17354, 17369],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/tags/items",
         {
-          "key": [
-            16309,
-            16314
-          ],
-          "value": [
-            16316,
-            16590
-          ],
-          "node": [
-            16309,
-            16590
-          ],
+          "key": [16309, 16314],
+          "value": [16316, 16590],
+          "node": [16309, 16590],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/status",
         {
-          "key": [
-            17494,
-            17502
-          ],
-          "value": [
-            17504,
-            17710
-          ],
-          "node": [
-            17494,
-            17710
-          ],
+          "key": [17494, 17502],
+          "value": [17504, 17710],
+          "node": [17494, 17710],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/status/type",
         {
-          "key": [
-            17518,
-            17524
-          ],
-          "value": [
-            17526,
-            17534
-          ],
-          "node": [
-            17518,
-            17534
-          ],
+          "key": [17518, 17524],
+          "value": [17526, 17534],
+          "node": [17518, 17534],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/status/description",
         {
-          "key": [
-            17548,
-            17561
-          ],
-          "value": [
-            17563,
-            17588
-          ],
-          "node": [
-            17548,
-            17588
-          ],
+          "key": [17548, 17561],
+          "value": [17563, 17588],
+          "node": [17548, 17588],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/status/enum",
         {
-          "key": [
-            17602,
-            17608
-          ],
-          "value": [
-            17610,
-            17698
-          ],
-          "node": [
-            17602,
-            17698
-          ],
+          "key": [17602, 17608],
+          "value": [17610, 17698],
+          "node": [17602, 17698],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/status/enum/0",
         {
-          "node": [
-            17626,
-            17637
-          ],
+          "node": [17626, 17637],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/status/enum/1",
         {
-          "node": [
-            17653,
-            17662
-          ],
+          "node": [17653, 17662],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/properties/status/enum/2",
         {
-          "node": [
-            17678,
-            17684
-          ],
+          "node": [17678, 17684],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/xml",
         {
-          "key": [
-            17730,
-            17735
-          ],
-          "value": [
-            17737,
-            17772
-          ],
-          "node": [
-            17730,
-            17772
-          ],
+          "key": [17730, 17735],
+          "value": [17737, 17772],
+          "node": [17730, 17772],
           "file": 0
         }
       ],
       [
         "#/components/schemas/Pet/xml/name",
         {
-          "key": [
-            17749,
-            17755
-          ],
-          "value": [
-            17757,
-            17762
-          ],
-          "node": [
-            17749,
-            17762
-          ],
+          "key": [17749, 17755],
+          "value": [17757, 17762],
+          "node": [17749, 17762],
           "file": 0
         }
       ],
       [
         "#/components/schemas/ApiResponse",
         {
-          "key": [
-            17788,
-            17801
-          ],
-          "value": [
-            17803,
-            18092
-          ],
-          "node": [
-            17788,
-            18092
-          ],
+          "key": [17788, 17801],
+          "value": [17803, 18092],
+          "node": [17788, 18092],
           "file": 0
         }
       ],
       [
         "#/components/securitySchemes",
         {
-          "key": [
-            18104,
-            18121
-          ],
-          "value": [
-            18123,
-            18574
-          ],
-          "node": [
-            18104,
-            18574
-          ],
+          "key": [18104, 18121],
+          "value": [18123, 18574],
+          "node": [18104, 18574],
           "file": 0
         }
       ],
       [
         "#/components/securitySchemes/petstore_auth",
         {
-          "key": [
-            18131,
-            18146
-          ],
-          "value": [
-            18148,
-            18464
-          ],
-          "node": [
-            18131,
-            18464
-          ],
+          "key": [18131, 18146],
+          "value": [18148, 18464],
+          "node": [18131, 18464],
           "file": 0
         }
       ],
       [
         "#/components/securitySchemes/petstore_auth/type",
         {
-          "key": [
-            18158,
-            18164
-          ],
-          "value": [
-            18166,
-            18174
-          ],
-          "node": [
-            18158,
-            18174
-          ],
+          "key": [18158, 18164],
+          "value": [18166, 18174],
+          "node": [18158, 18174],
           "file": 0
         }
       ],
       [
         "#/components/securitySchemes/petstore_auth/flows",
         {
-          "key": [
-            18184,
-            18191
-          ],
-          "value": [
-            18193,
-            18456
-          ],
-          "node": [
-            18184,
-            18456
-          ],
+          "key": [18184, 18191],
+          "value": [18193, 18456],
+          "node": [18184, 18456],
           "file": 0
         }
       ],
       [
         "#/components/securitySchemes/petstore_auth/flows/implicit",
         {
-          "key": [
-            18205,
-            18215
-          ],
-          "value": [
-            18217,
-            18446
-          ],
-          "node": [
-            18205,
-            18446
-          ],
+          "key": [18205, 18215],
+          "value": [18217, 18446],
+          "node": [18205, 18446],
           "file": 0
         }
       ],
       [
         "#/components/securitySchemes/petstore_auth/flows/implicit/authorizationUrl",
         {
-          "key": [
-            18231,
-            18249
-          ],
-          "value": [
-            18251,
-            18292
-          ],
-          "node": [
-            18231,
-            18292
-          ],
+          "key": [18231, 18249],
+          "value": [18251, 18292],
+          "node": [18231, 18292],
           "file": 0
         }
       ],
       [
         "#/components/securitySchemes/petstore_auth/flows/implicit/scopes",
         {
-          "key": [
-            18306,
-            18314
-          ],
-          "value": [
-            18316,
-            18434
-          ],
-          "node": [
-            18306,
-            18434
-          ],
+          "key": [18306, 18314],
+          "value": [18316, 18434],
+          "node": [18306, 18434],
           "file": 0
         }
       ],
       [
         "#/components/securitySchemes/api_key",
         {
-          "key": [
-            18472,
-            18481
-          ],
-          "value": [
-            18483,
-            18568
-          ],
-          "node": [
-            18472,
-            18568
-          ],
+          "key": [18472, 18481],
+          "value": [18483, 18568],
+          "node": [18472, 18568],
           "file": 0
         }
       ],
       [
         "#/components/securitySchemes/api_key/type",
         {
-          "key": [
-            18493,
-            18499
-          ],
-          "value": [
-            18501,
-            18509
-          ],
-          "node": [
-            18493,
-            18509
-          ],
+          "key": [18493, 18499],
+          "value": [18501, 18509],
+          "node": [18493, 18509],
           "file": 0
         }
       ],
       [
         "#/components/securitySchemes/api_key/name",
         {
-          "key": [
-            18519,
-            18525
-          ],
-          "value": [
-            18527,
-            18536
-          ],
-          "node": [
-            18519,
-            18536
-          ],
+          "key": [18519, 18525],
+          "value": [18527, 18536],
+          "node": [18519, 18536],
           "file": 0
         }
       ],
       [
         "#/components/securitySchemes/api_key/in",
         {
-          "key": [
-            18546,
-            18550
-          ],
-          "value": [
-            18552,
-            18560
-          ],
-          "node": [
-            18546,
-            18560
-          ],
+          "key": [18546, 18550],
+          "value": [18552, 18560],
+          "node": [18546, 18560],
           "file": 0
         }
       ]

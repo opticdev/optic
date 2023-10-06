@@ -54,7 +54,6 @@ import {
 } from './openapi3/implementations/openapi3/sourcemap-reader';
 
 export { defaultEmptySpec } from './openapi3/constants';
-export * from './legacy-ci-types';
 export * from './openapi3/implementations/openapi3/types';
 
 export { SPEC_TAG_REGEXP, sanitizeGitTag } from './specs/tags';
@@ -75,11 +74,8 @@ export {
   groupChangesAndRules,
 } from './utilities/group-changes';
 export { traverseSpec } from './utilities/traverse-spec';
-export { generateChangelogData } from './utilities/generate-changelog-data';
 export { compareChangesByPath } from './utilities/compare-changes-by-path';
 export {
-  getOperationsModifsLabel,
-  countOperationsModifications,
   getLabel,
   getOperationsChanged,
   getOperationsChangedLabel,

@@ -18,18 +18,24 @@ export const registerLogin = (cli: Command, config: OpticCliConfig) => {
     .action(errorHandler(getLoginAction(config), { command: 'login' }));
 };
 
+export async function identifyLoginFromToken(token: string) {
+  const newClient = createOpticClient(token);
+  const result = await newClient.verifyToken();
+
+  if (result.user) {
+    alias(result.user.userId);
+    identify(result.user.email);
+    trackEvent('cli.login');
+    await flushEvents();
+  } else {
+    alias(token);
+  }
+}
+
 export const handleTokenInput = async (token: string, silent?: boolean) => {
   const userConfig = await readUserConfig();
-  const newClient = createOpticClient(token);
   try {
-    const result = await newClient.verifyToken();
-
-    if (result.user) {
-      alias(result.user.userId);
-      identify(result.user.email);
-      trackEvent('cli.login');
-      await flushEvents();
-    }
+    await identifyLoginFromToken(token);
   } catch (e) {
     if (!silent) {
       console.log(e);
