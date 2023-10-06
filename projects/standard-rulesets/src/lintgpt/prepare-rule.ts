@@ -16,16 +16,11 @@ export type PreparedRule = {
   rule: string;
   changed: boolean;
   severity: 'ERROR' | 'WARNING';
+  slug: string;
 };
-export async function prepareRule(rule: string): Promise<
-  | {
-      entity: OpenAPIRuleType;
-      rule: string;
-      changed: boolean;
-      severity: 'ERROR' | 'WARNING';
-    }
-  | undefined
-> {
+export async function prepareRule(
+  rule: string
+): Promise<PreparedRule | undefined> {
   const completion = await openai.chat.completions.create({
     messages: [
       {
@@ -54,7 +49,7 @@ export async function prepareRule(rule: string): Promise<
         name: 'attachRule',
         parameters: {
           type: 'object',
-          required: ['openapiEntity', 'changed', 'severity'],
+          required: ['openapiEntity', 'changed', 'severity', 'slug'],
           properties: {
             changed: {
               description:
@@ -65,6 +60,12 @@ export async function prepareRule(rule: string): Promise<
               description: 'Is this an error or a warning?',
               type: 'string',
               enum: ['ERROR', 'WARNING'],
+            },
+            slug: {
+              description:
+                'create a short slug that describes this rule in kebab-case',
+              type: 'string',
+              example: 'all-operations-have-ids',
             },
             openapiEntity: {
               type: 'string',
@@ -95,6 +96,7 @@ export async function prepareRule(rule: string): Promise<
       changed: parsed.changed,
       severity: parsed.severity,
       entity: parsed.openapiEntity,
+      slug: parsed.slug,
     };
   } else {
     return undefined;
