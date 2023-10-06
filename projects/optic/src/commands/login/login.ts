@@ -28,7 +28,7 @@ export async function identifyLoginFromToken(token: string) {
     trackEvent('cli.login');
     await flushEvents();
   } else {
-    identify(token);
+    alias(token);
   }
 }
 
