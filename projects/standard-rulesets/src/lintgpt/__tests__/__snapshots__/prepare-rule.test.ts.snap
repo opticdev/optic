@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`cache saves rule preparation 1`] = `
-"{"rules":{"9ea5192cb734baa5749da7483e08707e8f3c2dc2853dedc00f71315899d19d53":{"rule":"All operations must have an operationId","changed":false,"severity":"ERROR","entity":"OPERATION"}},"evaluations":{}}
+"{"rules":{"9ea5192cb734baa5749da7483e08707e8f3c2dc2853dedc00f71315899d19d53":{"rule":"All operations must have an operationId","changed":false,"severity":"ERROR","entity":"OPERATION","slug":"operationid-required"}},"evaluations":{}}
 "
 `;
 
@@ -11,6 +11,7 @@ exports[`can classify rules by openapi entity kind: All operations must have an 
   "entity": "OPERATION",
   "rule": "All operations must have an operationId",
   "severity": "ERROR",
+  "slug": "operationid-required",
 }
 `;
 
@@ -20,6 +21,7 @@ exports[`can classify rules by openapi entity kind: All query parameters should 
   "entity": "QUERY_PARAMETER",
   "rule": "All query parameters should be optional",
   "severity": "WARNING",
+  "slug": "query-parameters-should-be-optional",
 }
 `;
 
@@ -29,6 +31,7 @@ exports[`can classify rules by openapi entity kind: All responses that return an
   "entity": "RESPONSE",
   "rule": "All responses that return an array must use pagination",
   "severity": "ERROR",
+  "slug": "array-response-pagination",
 }
 `;
 
@@ -38,6 +41,7 @@ exports[`can classify rules by openapi entity kind: No response returns an array
   "entity": "RESPONSE",
   "rule": "No response returns an array. If it returns array data it is wrapped in an object ie. {"users", []}",
   "severity": "ERROR",
+  "slug": "no-array-response",
 }
 `;
 
@@ -47,5 +51,6 @@ exports[`can classify rules by openapi entity kind: operationId should never cha
   "entity": "OPERATION",
   "rule": "operationId should never change",
   "severity": "ERROR",
+  "slug": "operationid-should-never-change",
 }
 `;
