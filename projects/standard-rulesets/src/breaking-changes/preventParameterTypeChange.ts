@@ -1,7 +1,7 @@
 import { OperationRule, RuleError } from '@useoptic/rulesets-base';
 import { getOperationAssertionsParameter } from './helpers/getOperationAssertionsParameter';
 import { ParameterIn } from './helpers/types';
-import { didTypeChange } from './helpers/type-change';
+import { computeEffectiveTypeChange } from './helpers/type-change';
 
 const getName = <P extends ParameterIn>(parameterIn: P) =>
   `prevent ${parameterIn} parameters type changes` as const;
@@ -25,10 +25,13 @@ const getPreventParameterTypeChange = (parameterIn: ParameterIn) =>
           'type' in before.value.schema &&
           after.value.schema &&
           'type' in after.value.schema &&
-          didTypeChange(before.value.schema.type, after.value.schema.type)
+          computeEffectiveTypeChange(
+            before.value.schema.type,
+            after.value.schema.type
+          ).narrowed
         ) {
           throw new RuleError({
-            message: `expected ${parameterIn} parameter '${after.value.name}' to not change type. This is a breaking change.`,
+            message: `expected ${parameterIn} parameter '${after.value.name}' not be narrowed. This is a breaking change.`,
           });
         }
       });
