@@ -1,5 +1,9 @@
 import { OpenAI } from 'openai';
 
-export const openai = new OpenAI({
-  apiKey: process.env.OPENAI_TOKEN,
-});
+export const openai: OpenAI = (() => {
+  if (process.env.OPENAI_TOKEN) {
+    return new OpenAI({
+      apiKey: process.env.OPENAI_TOKEN,
+    });
+  }
+})() as OpenAI;
