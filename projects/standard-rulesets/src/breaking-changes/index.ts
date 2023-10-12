@@ -1,9 +1,4 @@
-import {
-  Rule,
-  RuleContext,
-  Ruleset,
-  RulesetConfig,
-} from '@useoptic/rulesets-base';
+import { Rule, RuleContext, Ruleset } from '@useoptic/rulesets-base';
 import { preventOperationRemoval } from './preventOperationRemoval';
 import { preventRequestPropertyRequired } from './preventRequestPropertyRequired';
 import { preventRequestPropertyTypeChange } from './preventRequestPropertyTypeChange';
