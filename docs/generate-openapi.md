@@ -1,8 +1,8 @@
 # Generate OpenAPI from tests
 ![GitHub Repo stars](https://img.shields.io/github/stars/opticdev/optic?style=social) ![GitHub contributors](https://img.shields.io/github/contributors-anon/opticdev/optic?style=social) ![npm](https://img.shields.io/npm/dm/@useoptic/openapi-io?style=social) ![license](https://img.shields.io/github/license/opticdev/optic?style=social)
 
-Run API tests through a local proxy that generates accurate OpenAPI documentation. When new endpoints are added or existing API behavior changes, the proxy updates the OpenAPI for you so it is always up-to-date. 
 
+Your API tests create a lot of useful data about how your API behaves. We created a proxy that looks at the traffic from your API tests and uses it to generate accurate OpenAPI documentation. When new endpoints are added or existing API behavior changes, the proxy updates the OpenAPI for you so it always stays up-to-date. Connect your tests, get accurate docs.  
 
 https://github.com/opticdev/optic/assets/5900338/e3497023-d303-4265-9c28-ce124ca746e3
 
