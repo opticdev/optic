@@ -61,6 +61,8 @@ Think of it like Snapshot testing, but for your API's behavior, with OpenAPI as 
   Once you've set up the repo, you can run `optic capture openapi.yml` to verify traffic against your OpenAPI spec, and `optic capture openapi.yml --update=interactive` to update any diffs.
 </details>
 
+To start capturing your test traffic, run:
+
 ```
 optic capture init openapi.yml
 ```
