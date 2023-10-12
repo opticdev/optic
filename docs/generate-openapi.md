@@ -3,6 +3,9 @@
 
 Run API tests through a local proxy that generates accurate OpenAPI documentation. When new endpoints are added or existing API behavior changes, the proxy updates the OpenAPI for you so it is always up-to-date. 
 
+
+https://github.com/opticdev/optic/assets/5900338/e3497023-d303-4265-9c28-ce124ca746e3
+
 # Install
 ```bash
 npm install -g @useoptic/optic
