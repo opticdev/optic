@@ -1,9 +1,8 @@
 # Generate OpenAPI from tests
 ![GitHub Repo stars](https://img.shields.io/github/stars/opticdev/optic?style=social) ![GitHub contributors](https://img.shields.io/github/contributors-anon/opticdev/optic?style=social) ![npm](https://img.shields.io/npm/dm/@useoptic/openapi-io?style=social) ![license](https://img.shields.io/github/license/opticdev/optic?style=social)
 
-Run your API tests through a local proxy to generate accurate OpenAPI documentations. When new endpoints are added or existing API behavior changes, the proxy updates the docs for you. 
+Run API tests through a local proxy that generates accurate OpenAPI documentation. When new endpoints are added or existing API behavior changes, the proxy updates the OpenAPI for you so it is always up-to-date. 
 
----
 # Install
 ```bash
 npm install -g @useoptic/optic
@@ -12,8 +11,8 @@ or
 ```bash
 sh -c "$(curl -Ls https://install.useoptic.com/install.sh)"
 ```
----
 
+# Setup
 
 **1. Point Optic at an OpenAPI spec**. If none exists, an empty one will be created:
 
@@ -39,8 +38,9 @@ Update your test runner to send traffic through the local proxy. When Optic runs
 
 ```
 const baseUrl = process.env.OPTIC_PROXY || process.env.API_BASE_URL || 'http://localhost:8080'
-
 ```
+
+[Full documentation for configuring captures can be found here](https://www.useoptic.com/docs/capturing-traffic)
 
 **3. Run your tests with Optic:**
 ```
