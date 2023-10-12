@@ -114,7 +114,7 @@ optic capture openapi.yml --update
 ## Advanced
 
 ### Preserve manual changes 
-Most OpenAPI generators overwrite manual changes. Optic will always preserve your schema changes, and the `description`, `summary`, and other metadata fields you write
+Most OpenAPI generators overwrite manual changes. Optic will always preserve your schema changes, and the `description`, `summary`, and other metadata fields you write.
 
 If Optic detects the type of `avatar_url` is changed to `string | null`, it will patch the value of `type` without touching the `description`: 
 ```yaml
@@ -168,6 +168,8 @@ type: array
 items: 
   $ref: "./components/schemas/Todo#ReadTodoModel"
 ```
+
+Optic will keep generating and patching your OpenAPI specification in the correct places. 
 
 ### Bring your existing OpenAPI specification 
 Optic should work with a valid OpenAPI 3.0 and 3.1 specifications you already have. Teams that write their OpenAPI specifications by hand and work "design-first", use Optic to verify that new API endpoints are build to spec and existing ones don't change.
