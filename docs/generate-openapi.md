@@ -79,7 +79,8 @@ As you answer the prompts, OpenAPI operations will begin to appear in your OpenA
 
 ![alt](https://i.imgur.com/PK702Zp.jpg)
 
->  - Generates OpenAPI 3.0 or 3.1 (depending on the version your set).
+> **About the generator:** 
+> - Generates OpenAPI 3.0 or 3.1 (depending on the version your set).
 >  - Generates new `schema.components` when documenting new endpoints. 
 >  - Re-uses existing `schema.components`
 
