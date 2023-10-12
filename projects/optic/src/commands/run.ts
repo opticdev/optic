@@ -8,7 +8,11 @@ import { getApiFromOpticUrl, getNewTokenUrl } from '../utils/cloud-urls';
 import open from 'open';
 import { handleTokenInput, identifyLoginFromToken } from './login/login';
 import { matchSpecCandidates } from './diff/diff-all';
-import { getCurrentBranchName, guessRemoteOrigin } from '../utils/git-utils';
+import {
+  checkIgnore,
+  getCurrentBranchName,
+  guessRemoteOrigin,
+} from '../utils/git-utils';
 import { loadSpec, loadRaw } from '../utils/spec-loaders';
 import type { ParseResult } from '../utils/spec-loaders';
 import {
@@ -45,17 +49,12 @@ import { processCaptures } from './capture/capture';
 import { uploadCoverage } from './capture/actions/upload-coverage';
 
 const usage = () => `
+  To see how Optic handles changes, run Optic in your repository a first time; then make
+  changes to one or more of your OpenAPI files and run again:
 
-  Local usage
-  ------------------------
-  Find OpenAPI files in your repository, lint them and start tracking them in your dedicated Optic cloud account.
-  Make some changes to the specifications and run the command again to see how Optic checks your changes:
+  $ optic run
 
-  > optic run [./specs/*.openapi.yml [--ignore ./specs/ignore.openapi.yml]]
-
-  CI usage
-  ------------------------
-  Visit https://www.useoptic.com/docs/setup-ci for detailed CI setup instructions.
+  Visit https://www.useoptic.com/docs/setup-ci for CI setup instructions.
 `;
 
 const severities = ['none', 'error'] as const;
@@ -119,24 +118,31 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
   cli
     .command('run')
     .description(
-      `Optic's CI workflow command: run lint rules, breaking change checks, and spec validation. Posts the results to PR/MRs.`
+      `Optic's CI workflow command.
+Tests that every OpenAPI specification in your repo is accurate, has no breaking changes and follows the standards you defined in the optic.yml file;
+then posts a comment with a report to your PR/MR and exits with code 1 when issues are found.`
     )
     .configureHelp({ commandUsage: usage })
     .option(
       '--ignore <ignore-glob>',
       'OpenAPI specification files to ignore, comma separated globs.'
     )
+    .option(
+      '--include-git-ignored',
+      'Set to true to also match Git ignored files.',
+      false
+    )
     .addOption(
       new Option(
         '--severity <severity>',
-        'Use `none` to prevent Optic from exiting 1 when issues are found.'
+        'Set to "none" to prevent Optic from exiting 1 when issues are found.'
       )
         .choices(severities)
         .default('error')
     )
     .argument(
       '[file_paths]',
-      'OpenAPI specification files to handle, comma separated globs. Leave empty to let Optic detect files.'
+      'OpenAPI specification files to handle, comma separated globs. Leave empty to match all non-ignored OpenAPI files in your repository.'
     )
     .action(errorHandler(getRunAction(config), { command: 'run' }));
 }
@@ -144,6 +150,7 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
 type RunActionOptions = {
   ignore?: string;
   severity: (typeof severities)[number];
+  includeGitIgnored: boolean;
 };
 
 async function authenticateInteractive(config: OpticCliConfig) {
@@ -619,10 +626,15 @@ export const getRunAction =
     }
 
     const match = matchArg ?? `**/*.(json|yml|yaml)`;
-    const localSpecPathsUnchecked = await matchSpecCandidates(
+    let localSpecPathsUnchecked = await matchSpecCandidates(
       match,
       options.ignore
     );
+
+    if (!options.includeGitIgnored)
+      localSpecPathsUnchecked = await excludeGitIgnored(
+        localSpecPathsUnchecked
+      );
 
     const localSpecPaths: string[] = [];
     for (const path of localSpecPathsUnchecked) {
@@ -866,3 +878,8 @@ export const getRunAction =
 
     await flushEvents();
   };
+
+async function excludeGitIgnored(filepaths: string[]): Promise<string[]> {
+  const ignored = new Set(await checkIgnore(filepaths));
+  return filepaths.filter((p) => !ignored.has(p));
+}

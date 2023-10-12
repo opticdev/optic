@@ -137,6 +137,16 @@ export type CommitMeta = {
   message: string;
 };
 
+export const checkIgnore = async (pathnames: string[]): Promise<string[]> =>
+  new Promise((resolve, reject) => {
+    const cb = (err: unknown, stdout: string, stderr: string) => {
+      if (err || stderr || !stdout) reject(err || new Error(stderr));
+      resolve(stdout.trim().split('\n'));
+    };
+    const command = `git check-ignore ${pathnames.join(' ')}`;
+    exec(command, cb);
+  });
+
 export const commitMeta = async (ref: string): Promise<CommitMeta> =>
   new Promise((resolve, reject) => {
     const cb = (err: unknown, stdout: string, stderr: string) => {
