@@ -3,6 +3,12 @@
 
 Run your API tests through a local proxy to generate accurate OpenAPI documentations. When new endpoints are added or existing API behavior changes, the proxy updates the docs for you. 
 
+
+
+https://github.com/opticdev/optic/assets/5900338/e3497023-d303-4265-9c28-ce124ca746e3
+
+
+
 ---
 # Install
 ```bash
