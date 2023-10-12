@@ -37,7 +37,7 @@ capture:
       command: go test
 ```
 
-Update your test runner to send traffic through the local proxy. When Optic runs your test command, it will add `$OPTIC_PROXY` (a fully qualified hostname) to the environment: 
+Update your test runner to send traffic through the local proxy. When Optic is running your test command, `$OPTIC_PROXY` (a fully qualified hostname) will be in the environment: 
 
 ```
 // in your test fixture
