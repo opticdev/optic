@@ -20,7 +20,7 @@ sh -c "$(curl -Ls https://install.useoptic.com/install.sh)"
 **1. Point Optic at an OpenAPI spec**. If none exists, an empty one will be created:
 
 ```
-optic capture init service.openapi.yml
+optic capture init openapi.yml
 ```
 
 **2. Connect your tests.** Tell Optic how to run your tests in the `optic.yml` config file: 
@@ -28,7 +28,7 @@ optic capture init service.openapi.yml
 `optic.yaml`
 ```yaml
 capture:
-  service.openapi.yml:
+  openapi.yml:
     server:
       # hostname of your test server
       url: http://localhost:8080
@@ -52,9 +52,9 @@ fetch(`${baseUrl}/...`)
 
 **3. Run your tests with Optic:**
 ```
-optic capture service.openapi.yml
+optic capture openapi.yml
 ```
-If `service.openapi.yml` is an empty OpenAPI file, Optic will help us document the endpoints: 
+If `openapi.yml` is an empty OpenAPI file, Optic will help us document the endpoints: 
 
 ```
 Running tests 'go test'...22 requests captured
