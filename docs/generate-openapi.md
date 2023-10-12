@@ -40,7 +40,12 @@ capture:
 Update your test runner to send traffic through the local proxy. When Optic runs your test command, it will add `$OPTIC_PROXY` (a fully qualified hostname) to the environment: 
 
 ```
+// in your test fixture
 const baseUrl = process.env.OPTIC_PROXY || process.env.API_BASE_URL || 'http://localhost:8080'
+...
+
+// send test traffic through the local proxy when it is running
+fetch(`${baseUrl}/...`)
 ```
 
 [Full documentation for configuring captures can be found here](https://www.useoptic.com/docs/capturing-traffic)
