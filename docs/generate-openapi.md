@@ -81,8 +81,10 @@ As you answer the prompts, OpenAPI operations will begin to appear in your OpenA
 
 > **About the generator:** 
 > - Generates OpenAPI 3.0 or 3.1 (depending on the version your set).
->  - Generates new `schema.components` when documenting new endpoints. 
->  - Re-uses existing `schema.components`
+>
+> - Generates new `schema.components` when documenting new endpoints.
+> 
+> - Re-uses existing `schema.components`
 
 **5. Update the documentation**
 
@@ -101,6 +103,8 @@ optic capture openapi.yml --update
 
 ![alt](https://i.imgur.com/UeaKSW7.jpg)
 
+> **About the updater:**
+> 
 > Optic updates your OpenAPI in the correct spot. It works with shared components, and even specs broken into multiple files
 
 ---
