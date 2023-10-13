@@ -1,5 +1,5 @@
 import { RequestRule, RuleError } from '@useoptic/rulesets-base';
-import { isInUnionProperty } from './helpers/inUnionType';
+import { isInUnionProperty } from './helpers/unions';
 
 export const preventRequestPropertyRequired = () =>
   new RequestRule({

@@ -1,5 +1,5 @@
 import { ResponseBodyRule, RuleError } from '@useoptic/rulesets-base';
-import { isInUnionProperty } from './helpers/inUnionType';
+import { isInUnionProperty } from './helpers/unions';
 
 export const preventResponsePropertyRemoval = () =>
   new ResponseBodyRule({

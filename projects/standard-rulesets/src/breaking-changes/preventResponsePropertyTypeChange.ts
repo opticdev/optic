@@ -1,6 +1,6 @@
 import { ResponseBodyRule, RuleError } from '@useoptic/rulesets-base';
 import { computeEffectiveTypeChange } from './helpers/type-change';
-import { isInUnionProperty } from './helpers/inUnionType';
+import { isInUnionProperty } from './helpers/unions';
 
 export const preventResponsePropertyTypeChange = () =>
   new ResponseBodyRule({
