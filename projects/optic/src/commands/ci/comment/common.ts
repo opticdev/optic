@@ -22,14 +22,12 @@ const getChecksLabel = (
   }
 
   const exemptedChunk =
-    exemptedFailingChecks > 0
-      ? ` ${exemptedFailingChecks} were exempted from failing`
-      : '';
+    exemptedFailingChecks > 0 ? `, ${exemptedFailingChecks} exempted` : '';
 
   return failingChecks > 0
     ? `⚠️ **${failingChecks}** / **${totalChecks}** failed${exemptedChunk}`
     : totalChecks > 0
-    ? `✅ all passed (**${totalChecks}**)${exemptedChunk}`
+    ? `✅ **${totalChecks}** passed${exemptedChunk}`
     : `ℹ️ No automated checks have run`;
 };
 
@@ -48,11 +46,7 @@ function getOperationsText(
         ...[...ops.removed].map((o) => `\`${o}\` (removed)`),
       ].join('\n')
     : '';
-  return `${getOperationsChangedLabel(groupedDiffs)} ${
-    options.webUrl
-      ? `([view changelog](${options.webUrl}))`
-      : '([setup changelog](https://useoptic.com/docs/cloud-get-started))'
-  }
+  return `${getOperationsChangedLabel(groupedDiffs)}
 
   ${operationsText}
 `;
@@ -80,9 +74,10 @@ ${
 <thead>
 <tr>
 <th>API</th>
-<th>Operation Changes</th>
-<th>Checks</th>
+<th>Changes</th>
+<th>Rules</th>
 ${anyCompletedHasWarning ? '<th>Warnings</th>' : ''}
+<th></th>
 </tr>
 </thead>
 <tbody>
@@ -92,11 +87,7 @@ ${results.completed
       `<tr>
 <td>
 
-${s.apiName} ${
-        s.specUrl
-          ? `([preview](${s.specUrl}))`
-          : '([setup preview](https://useoptic.com/docs/cloud-get-started))'
-      }
+${s.apiName}
 
 </td>
 <td>
@@ -113,6 +104,7 @@ ${getChecksLabel(s.comparison.results, results.severity)}
 
 </td>
 ${anyCompletedHasWarning ? `<td>${s.warnings.join('\n')}</td>` : ''}
+<td>${s.opticWebUrl ? `[View report](${s.opticWebUrl})` : ''}</td>
 </tr>`
   )
   .join('\n')}
