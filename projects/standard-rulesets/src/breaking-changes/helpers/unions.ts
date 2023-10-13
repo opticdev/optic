@@ -18,9 +18,7 @@ type KeyMap = Map<string, KeyNode | KeyMap[]>;
 
 // Return an array of Maps that have different keys that they require; if there is a oneOf or anyOf
 // create a key with multiple sets
-export function createKeyMapFromSchema(
-  schema: FlatOpenAPIV3_1.SchemaObject
-): KeyMap {
+function createKeyMapFromSchema(schema: FlatOpenAPIV3_1.SchemaObject): KeyMap {
   const keyMap: KeyMap = new Map();
 
   function traverseSchema(schema: FlatOpenAPIV3_1.SchemaObject, path: string) {
@@ -98,6 +96,22 @@ export function computeUnionTransition(
     expanded: false,
     narrowed: false,
   };
+
+  const b = before as FlatOpenAPIV3_1.SchemaObject;
+  const a = after as FlatOpenAPIV3_1.SchemaObject;
+
+  const beforeMaps = b.oneOf
+    ? b.oneOf.map((s) => createKeyMapFromSchema(s))
+    : b.anyOf
+    ? b.anyOf.map((s) => createKeyMapFromSchema(s))
+    : createKeyMapFromSchema(b);
+  const afterMaps = a.oneOf
+    ? a.oneOf.map((s) => createKeyMapFromSchema(s))
+    : a.anyOf
+    ? a.anyOf.map((s) => createKeyMapFromSchema(s))
+    : createKeyMapFromSchema(a);
+
+  // TODO compute diff here
 
   // For each schema:
   // - compute the keymap from schema which summarizes the data from the schema
