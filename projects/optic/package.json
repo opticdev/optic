@@ -60,7 +60,7 @@
     "@httptoolkit/httpolyglot": "^2.0.1",
     "@jsdevtools/ono": "^7.1.3",
     "@octokit/rest": "^19.0.0",
-    "@sentry/node": "7.70.0",
+    "@sentry/node": "^7.74.0",
     "@sinclair/typebox": "^0.31.0",
     "@stoplight/spectral-core": "^1.8.1",
     "@useoptic/openapi-io": "workspace:*",
