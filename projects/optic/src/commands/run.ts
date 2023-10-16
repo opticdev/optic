@@ -632,9 +632,11 @@ export const getRunAction =
     );
 
     if (!options.includeGitIgnored)
-      localSpecPathsUnchecked = await excludeGitIgnored(
-        localSpecPathsUnchecked
-      );
+      try {
+        localSpecPathsUnchecked = await excludeGitIgnored(
+          localSpecPathsUnchecked
+        );
+      } catch (e) {}
 
     const localSpecPaths: string[] = [];
     for (const path of localSpecPathsUnchecked) {

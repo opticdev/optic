@@ -1,4 +1,4 @@
-import { exec } from 'child_process';
+import { exec, ExecException } from 'child_process';
 import giturlparse from 'git-url-parse';
 import urljoin from 'url-join';
 
@@ -139,7 +139,8 @@ export type CommitMeta = {
 
 export const checkIgnore = async (pathnames: string[]): Promise<string[]> =>
   new Promise((resolve, reject) => {
-    const cb = (err: unknown, stdout: string, stderr: string) => {
+    const cb = (err: ExecException | null, stdout: string, stderr: string) => {
+      if (err && err.code === 1) return resolve([]); // check-ignore exits 1 when no file is ignored
       if (err || stderr || !stdout) reject(err || new Error(stderr));
       resolve(stdout.trim().split('\n'));
     };
