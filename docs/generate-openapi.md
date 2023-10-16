@@ -2,7 +2,9 @@
 ![GitHub Repo stars](https://img.shields.io/github/stars/opticdev/optic?style=social) ![GitHub contributors](https://img.shields.io/github/contributors-anon/opticdev/optic?style=social) ![npm](https://img.shields.io/npm/dm/@useoptic/openapi-io?style=social) ![license](https://img.shields.io/github/license/opticdev/optic?style=social)
 
 
-API tests create a lot of unused data about how your API behaves. This project uses a proxy to captures test traffic and generate/patch OpenAPI documentation. When new endpoints are added or existing API behavior changes, the proxy updates the OpenAPI for you so it always stays up-to-date. Connect your tests, get accurate docs.  
+API tests create a lot of unused data about how your API behaves. This project uses a proxy to captures test traffic and keep your OpenAPI accurate. When new endpoints are added or existing API behavior changes, the proxy updates the OpenAPI to match the current API behavior. 
+
+Connect your tests, get accurate docs.  
 
 https://github.com/opticdev/optic/assets/5900338/e3497023-d303-4265-9c28-ce124ca746e3
 
@@ -13,7 +15,7 @@ npm install -g @useoptic/optic
 
 # Setup
 
-**1. Point Optic at an OpenAPI spec**. If none exists, an empty one will be created:
+**1. Point Optic at an OpenAPI spec**. If none exists, an empty spec will be created:
 
 ```
 optic capture init openapi.yml
@@ -35,7 +37,7 @@ capture:
 
 Update your test runner to send traffic through the local proxy. When Optic is running your test command, `$OPTIC_PROXY` (a fully qualified hostname) will be in the environment: 
 
-```
+```typescript
 // in your test fixture
 const baseUrl = process.env.OPTIC_PROXY || process.env.API_BASE_URL || 'http://localhost:8080'
 ...
@@ -50,8 +52,6 @@ fetch(`${baseUrl}/...`)
 ```
 optic capture openapi.yml
 ```
-If `openapi.yml` is an empty OpenAPI file, Optic will help us document the endpoints: 
-
 ```
 Running tests 'go test'...22 requests captured
 
@@ -60,14 +60,15 @@ Running tests 'go test'...22 requests captured
 Run 'optic capture openapi.yml --update interactive' to add new endpoints
 ```
 
+Optic detected 5 undocumented endpoints in the traffic. Let's document them next by passing the `--update` flag. 
 
 **4. Document API endpoints**
-
-Optic infers the paths in your API based on the traffic. It is pretty good at it, but if you need to override its inference you can. Once a path is added to your specification, it will not ask you about it again: 
 
 ```
 optic capture openapi.yml --update interactive
 ```
+
+Optic infers the paths in your API based on the traffic. It is pretty good at it, but if you need to override its inference you can. Once a path is added to your specification, it will not ask you about it again: 
 
 ![alt](https://i.imgur.com/KKNMxsD.jpg)
 
