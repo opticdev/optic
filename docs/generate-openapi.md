@@ -112,10 +112,10 @@ optic capture openapi.yml --update automatic
 ---
 
 ## Use Cases
-1. Quickly document an existing internal API
-2. Catch unplanned/accidental API changes in CI to prevent them from shipping
-3. Fix the inaccuracies in an existing OpenAPI document. 
-4. Start using OpenAPI
+1. Quickly document an existing internal API.
+1. Catch unplanned/accidental API changes in CI and prevent them from shipping.
+1. Fix inaccuracies in an existing OpenAPI document.
+1. Adopt OpenAPI.
 
 ## Advanced
 
