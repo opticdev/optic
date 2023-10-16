@@ -22,7 +22,9 @@ cd bookstore-example
 optic capture openapi.yml
 ```
 
-https://github.com/opticdev/optic/assets/5900338/e3497023-d303-4265-9c28-ce124ca746e3
+
+https://github.com/opticdev/optic/assets/5900338/d4e740b8-7ee2-4451-aee5-3ec062d5162b
+
 
 
 # Setup
