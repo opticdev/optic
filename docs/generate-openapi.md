@@ -116,7 +116,7 @@ optic capture openapi.yml --update automatic
 1. Fix inaccuracies in an existing OpenAPI document.
 1. Adopt OpenAPI.
 
-## Advanced
+## Advanced Usage
 
 ### Preserve manual changes 
 Most OpenAPI generators overwrite manual changes. Optic preserves manual schema changes, including changes to the description, summary, or other metadata fields.
