@@ -177,7 +177,7 @@ items:
 Optic will keep generating and patching your OpenAPI specification in the correct places. 
 
 ### Bring your existing OpenAPI specification 
-Optic works the valid OpenAPI specification 3.0 and 3.1 files you already have. Teams that write their OpenAPI specifications by hand and work "design-first" use Optic to verify that new API endpoints are built to spec and existing ones aren't changed.
+Optic works with your valid, existing OpenAPI specification 3.0 and 3.1 files. Teams that write their OpenAPI specifications by hand and work "design-first" use Optic to verify that new API endpoints are built to spec and existing ones aren't changed.
 
 ---
 
