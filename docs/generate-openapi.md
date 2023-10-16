@@ -2,7 +2,7 @@
 ![GitHub Repo stars](https://img.shields.io/github/stars/opticdev/optic?style=social) ![GitHub contributors](https://img.shields.io/github/contributors-anon/opticdev/optic?style=social) ![npm](https://img.shields.io/npm/dm/@useoptic/openapi-io?style=social) ![license](https://img.shields.io/github/license/opticdev/optic?style=social)
 
 
-Your API tests create a lot of useful data about how your API behaves. This is a proxy that captures your test traffic and uses it to generate accurate OpenAPI documentation. When new endpoints are added or existing API behavior changes, the proxy updates the OpenAPI for you so it always stays up-to-date. Connect your tests, get accurate docs.  
+API tests create a lot of unused data about how your API behaves. This project uses a proxy to captures test traffic and generate/patch OpenAPI documentation. When new endpoints are added or existing API behavior changes, the proxy updates the OpenAPI for you so it always stays up-to-date. Connect your tests, get accurate docs.  
 
 https://github.com/opticdev/optic/assets/5900338/e3497023-d303-4265-9c28-ce124ca746e3
 
