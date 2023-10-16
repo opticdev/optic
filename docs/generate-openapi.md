@@ -26,7 +26,7 @@ optic capture openapi.yml
 
 ## Integrating Optic with your project
 
-**1. Connect your tests.** Tell Optic how to run your tests in the `optic.yml` config file: 
+**1. Connect your tests.** Tell Optic how to run your tests in the `optic.yml` config file.
 
 ```yaml
 # optic.yml
@@ -42,7 +42,7 @@ capture:
         command: yarn run test
 ```
 
-**2. Configure your tests to send traffic to the Optic CLI**:
+**2. Configure your tests to send traffic to the Optic CLI.**
 
 Update your test runner to send traffic through Optic's proxy. Optic injects an environment variable, `OPTIC_PROXY`, into the env of `requests.run.command` that contains the URL where the proxy is listening.
 
@@ -57,7 +57,7 @@ fetch(`${baseUrl}/...`)
 
 [Full documentation for configuring captures can be found here](https://www.useoptic.com/docs/capturing-traffic)
 
-**3. Run your tests with Optic**:
+**3. Run your tests with Optic.**
 ```
 > optic capture openapi.yml
 
@@ -70,7 +70,7 @@ Run 'optic capture openapi.yml --update interactive' to add new endpoints
 
 Optic detected 5 undocumented endpoints in the traffic. Let's document them next by passing the `--update` flag. 
 
-**4. Document API endpoints**
+**4. Document your API endpoints.**
 
 ```
 optic capture openapi.yml --update interactive
@@ -89,7 +89,7 @@ As you answer the prompts, OpenAPI operations will begin to appear in your OpenA
 > - New `schema.components` when documenting new endpoints.
 > - Reuses existing `schema.components`.
 
-**5. Update the documentation**
+**5. Update your documentation.**
 
 APIs change and Optic helps you keep up with those changes. Unlike most OpenAPI generators, you can run Optic as many times as you want. It will verify that your API keeps working as documented, preserve manual changes, and patch the specification when it is out-of-date.
 
