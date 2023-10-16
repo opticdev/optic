@@ -85,7 +85,7 @@ As you answer the prompts, OpenAPI operations will begin to appear in your OpenA
 ![alt](https://i.imgur.com/PK702Zp.jpg)
 
 > **Optic generates:** 
-> - OpenAPI 3.0 or 3.1 (depending on the version your set).
+> - OpenAPI 3.0 or 3.1 (depending on the version you set).
 > - New `schema.components` when documenting new endpoints.
 > - Reuses existing `schema.components`.
 
