@@ -17,6 +17,7 @@ import { loadSpec, loadRaw } from '../utils/spec-loaders';
 import type { ParseResult } from '../utils/spec-loaders';
 import {
   CompareSpecResults,
+  getOperationsChangedLabel,
   RuleResult,
   Severity,
 } from '@useoptic/openapi-utilities';
@@ -45,7 +46,7 @@ import { GroupedCaptures } from './capture/interactions/grouped-interactions';
 import { getCaptureStorage } from './capture/storage';
 import { captureRequestsFromProxy } from './capture/actions/captureRequests';
 import { processCaptures } from './capture/capture';
-//import { uploadCoverage } from './capture/actions/upload-coverage';
+import { uploadCoverage } from './capture/actions/upload-coverage';
 
 const usage = () => `
   To see how Optic handles changes, run Optic in your repository a first time; then make
@@ -241,6 +242,7 @@ type SpecReport = {
   diff?:
     | { success: false; error: string }
     | {
+        runId?: string;
         diffResult?: DiffResult;
         checks?: Awaited<ReturnType<typeof compute>>['checks'];
         success: true;
@@ -269,6 +271,15 @@ function reportDiff(report: SpecReport) {
   const results = diffReport.diffResult?.results ?? [];
   const failingResults = results.filter((r) => !r.passed && !r.exempted);
 
+  if (diffReport.diffResult?.groupedDiffs) {
+    logger.info(
+      `| Changes: ${
+        getOperationsChangedLabel(diffReport.diffResult?.groupedDiffs) ||
+        'No operation changed'
+      }`
+    );
+  }
+
   const rulesReport = failingResults.length
     ? `⚠️  ${failingResults.length}/${results?.length} failed`
     : `✅ ${results.length}/${results.length} passed`;
@@ -296,7 +307,9 @@ function reportCapture(report: SpecReport) {
 
   if (passed) {
     logger.info(
-      `| Tests:   ✅ ${coverage.calculateCoverage().percent}% coverage`
+      `| Tests:   ✅ ${Math.round(
+        Number(coverage.calculateCoverage().percent)
+      )}% coverage`
     );
   } else {
     const { unmatchedInteractions, mismatchedEndpoints } = capture;
@@ -389,7 +402,7 @@ const runDiffs = async ({
     return {
       success: false,
       error: `Failed to load cloud specification: ${e}`,
-    };
+    } as const;
   }
 
   if (cloudSpec.jsonLike['x-optic-ci-empty-spec']) {
@@ -409,12 +422,11 @@ const runDiffs = async ({
     return {
       success: false,
       error: `Run failed to compute diffs: ${e}`,
-    };
+    } as const;
   }
 
   ({ specResults, standard, checks, changelogData, warnings } = computeResults);
 
-  // TODO: extract
   let upload: Awaited<ReturnType<typeof uploadDiff>>;
   try {
     upload = await uploadDiff(
@@ -437,13 +449,16 @@ const runDiffs = async ({
     return {
       success: false,
       error: `Failed to upload run to Optic: ${e}`,
-    };
+    } as const;
   }
-  const diffReport: SpecReport['diff'] = { success: true };
-  diffReport.diffs = specResults.diffs.length;
-  diffReport.changelogLink = upload?.changelogUrl;
+  const diffReport: SpecReport['diff'] = {
+    success: true,
+    diffs: specResults.diffs.length,
+    changelogLink: upload?.changelogUrl,
+    runId: upload?.runId,
+    checks,
+  };
 
-  diffReport.checks = checks;
   diffReport.diffResult = {
     groupedDiffs: changelogData,
     warnings,
@@ -460,10 +475,16 @@ const runCapture = async ({
   specPath,
   config,
   localSpec,
+  specDetails,
+  runId,
+  organizationId,
 }: {
   specPath: string;
   config: OpticCliConfig;
   localSpec: ParseResult;
+  specDetails: Exclude<ReturnType<typeof getApiFromOpticUrl>, null>;
+  runId?: string;
+  organizationId?: string;
 }) => {
   const pathFromRoot = resolveRelativePath(config.root, specPath);
   const captureConfig = config.capture?.[pathFromRoot];
@@ -513,15 +534,47 @@ const runCapture = async ({
       }
     );
 
-    // TODO: extract
-    //try {
-    //await uploadCoverage(localSpec, coverage, specDetails, config);
-    //} catch (e) {
-    //return {
-    //success: false,
-    //error: `Run failed to upload coverage: ${e}`,
-    //};
-    //}
+    if (runId && organizationId) {
+      try {
+        const captureData = captureResults.success
+          ? ({
+              run_id: runId,
+              organization_id: organizationId,
+              unmatched_interactions: captureResults.unmatchedInteractions,
+              total_interactions: captureResults.totalInteractions,
+              percent_covered: Math.round(
+                Number(captureResults.coverage.calculateCoverage().percent)
+              ),
+              endpoints_added: captureResults.endpointsAdded,
+              endpoints_matched: captureResults.endpointCounts.matched,
+              endpoints_unmatched: captureResults.endpointCounts.unmatched,
+              endpoints_total: captureResults.endpointCounts.total,
+              has_any_diffs: captureResults.hasAnyDiffs,
+              mismatched_endpoints: captureResults.mismatchedEndpoints,
+              success: true,
+            } as const)
+          : ({ success: false } as const);
+        await config.client.createCapture(captureData);
+      } catch (e) {
+        logger.info('oups', e);
+      }
+    }
+
+    if (captureResults.success) {
+      try {
+        await uploadCoverage(
+          localSpec,
+          captureResults.coverage,
+          specDetails,
+          config
+        );
+      } catch (e) {
+        return {
+          success: false,
+          bufferedOutput: [`Run failed to upload coverage: ${e}`],
+        } as const;
+      }
+    }
 
     return captureResults;
   }
@@ -723,6 +776,9 @@ export const getRunAction =
         config,
         localSpec,
         specPath,
+        specDetails,
+        runId: diffsReport.success ? diffsReport.runId : undefined,
+        organizationId: generatedDetails.organization_id,
       });
 
       const specReport = {
