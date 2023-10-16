@@ -6,12 +6,24 @@ API tests create a lot of unused data about how your API behaves. This project u
 
 Connect your tests, get accurate docs.  
 
-https://github.com/opticdev/optic/assets/5900338/e3497023-d303-4265-9c28-ce124ca746e3
-
 # Install
 ```bash
 npm install -g @useoptic/optic
 ```
+
+#### Quick Demo
+```bash
+git clone https://github.com/opticdev/bookstore-example.git
+```
+```
+cd bookstore-example
+```
+```
+optic capture openapi.yml
+```
+
+https://github.com/opticdev/optic/assets/5900338/e3497023-d303-4265-9c28-ce124ca746e3
+
 
 # Setup
 
@@ -173,11 +185,9 @@ Optic should work with a valid OpenAPI 3.0 and 3.1 specifications you already ha
 
 ---
 
+### Resources
 
-DEMO!
+- [Read our full documentation here](https://www.useoptic.com/docs)
+- [Join us on Discord](https://discord.com/invite/t9hADkuYjP)
 
-NExt steps!
-
-Help!
-
-
+License MIT
