@@ -59,9 +59,8 @@ fetch(`${baseUrl}/...`)
 
 **3. Run your tests with Optic**:
 ```
-optic capture openapi.yml
-```
-```
+> optic capture openapi.yml
+
 Running tests 'yarn run test'...22 requests captured
 
 5 requests did not match a documented path (5 total requests).
