@@ -62,7 +62,7 @@ fetch(`${baseUrl}/...`)
 optic capture openapi.yml
 ```
 ```
-Running tests 'go test'...22 requests captured
+Running tests 'yarn run test'...22 requests captured
 
 5 requests did not match a documented path (5 total requests).
 
