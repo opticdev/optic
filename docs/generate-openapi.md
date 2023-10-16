@@ -10,10 +10,6 @@ https://github.com/opticdev/optic/assets/5900338/e3497023-d303-4265-9c28-ce124ca
 ```bash
 npm install -g @useoptic/optic
 ```
-or
-```bash
-sh -c "$(curl -Ls https://install.useoptic.com/install.sh)"
-```
 
 # Setup
 
