@@ -44,7 +44,7 @@ capture:
 
 **2. Configure your tests to send traffic to the Optic CLI**:
 
-Update your test runner to send traffic through Optic's proxy. Optic injects an environment variable, `OPTIC_PROXY`, into the env of `requests.run.command`.
+Update your test runner to send traffic through Optic's proxy. Optic injects an environment variable, `OPTIC_PROXY`, into the env of `requests.run.command` that contains the URL where the proxy is listening.
 
 ```typescript
 // in your test fixture
