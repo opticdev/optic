@@ -92,22 +92,22 @@ As you answer the prompts, OpenAPI operations will begin to appear in your OpenA
 
 **5. Update the documentation**
 
-APIs change. Optic helps you keep up with those changes. Unlike most OpenAPI generators, you can run Optic as many times as you want. It will verify that your API keeps working as-documented, preserve any manual changes you make, and help patch the specification when it is out-of-date.  
+APIs change and Optic helps you keep up with those changes. Unlike most OpenAPI generators, you can run Optic as many times as you want. It will verify that your API keeps working as documented, preserve manual changes, and patch the specification when it is out-of-date.
 
 ```
 optic capture openapi.yml
 ```
 ![alt](https://i.imgur.com/kDYij8e.jpg)
 
-Cool! Optic exited `1` because it detected an undocumented response property called `location`. You could manually update the schema to get this passing again. Or run `--update` to save time: 
+Cool! When an undocumented response property is detected, Optic will exit 1 and bring it to your attention. In this case, a property called `location` has been added. To resolve it, you could manually update the schema, or run `--update` to save time:
 
 ```
-optic capture openapi.yml --update
+optic capture openapi.yml --update automatic
 ```
 
 ![alt](https://i.imgur.com/UeaKSW7.jpg)
 
-> Optic updates your OpenAPI in the correct spot. It works with shared components, and even specs broken into multiple files
+> Optic updates your OpenAPI in the correct spot. It works with shared components and even specs broken into multiple files.
 
 ---
 
