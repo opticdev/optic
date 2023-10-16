@@ -120,16 +120,16 @@ optic capture openapi.yml --update automatic
 ## Advanced
 
 ### Preserve manual changes 
-Most OpenAPI generators overwrite manual changes. Optic will always preserve your schema changes, and the `description`, `summary`, and other metadata fields you write.
+Most OpenAPI generators overwrite manual changes. Optic preserves manual schema changes, including changes to the description, summary, or other metadata fields.
 
-If Optic detects the type of `avatar_url` is changed to `string | null`, it will patch the value of `type` without touching the `description`: 
+For example, If Optic detects the type of `avatar_url` is changed to `string | null`, it will patch the value of `type` without touching the `description`:
 ```yaml
 avatar_url:
   description: the URL of our user's avatar.
   type: string
 ```
 
-```yaml
+```diff
 avatar_url:
   description: the URL of our user's avatar.
 -  type: string 
@@ -139,17 +139,17 @@ avatar_url:
 ```
 
 ### Ignore certain paths
-Some HTTP requests will not be part of your API ie. images, css, js. This is often the case for SPAs so Optic supports filtering certain kinds of traffic. We use [minimatch](https://github.com/isaacs/minimatch) to support these glob patterns:  
+Some requests will not be part of your API, e.g., static assets like images, CSS, or Javascript files. This is often the case for single-page applications, so Optic offers first-class support for ignoring paths. Under the hood, we use [minimatch](https://github.com/isaacs/minimatch) to support glob expressions.
 
 ```yaml
 openapi: 3.1.0
 x-optic-path-ignore:
   - "**/*.+(ico|png|jpeg|jpg|gif)"
-  - "/health-check"
+  - "/healthcheck"
 ```
 
 ### Set a base path
-If your API operations share a common base path ie `/api` or `/api/v1` you should put that path into `.servers`. This will ignore all other traffic, and generate new paths relative to the base path ie `/users` instead of `/api/users`:
+If your API operations share a common base path (e.g., `/api/v1`) you can include that path into the `.servers` section of your OpenAPI specification. This will cause Optic to ignore any traffic not matching the base path, and generate paths relative to the base path (i.e., `/users` rather than `/api/users`).
 ```yaml
 openapi: 3.1.0
 servers:
@@ -178,7 +178,7 @@ items:
 Optic will keep generating and patching your OpenAPI specification in the correct places. 
 
 ### Bring your existing OpenAPI specification 
-Optic should work with a valid OpenAPI 3.0 and 3.1 specifications you already have. Teams that write their OpenAPI specifications by hand and work "design-first", use Optic to verify that new API endpoints are build to spec and existing ones don't change.
+Optic works the valid OpenAPI specification 3.0 and 3.1 files you already have. Teams that write their OpenAPI specifications by hand and work "design-first" use Optic to verify that new API endpoints are built to spec and existing ones aren't changed.
 
 ---
 
