@@ -98,7 +98,7 @@ optic capture openapi.yml
 ```
 ![alt](https://i.imgur.com/kDYij8e.jpg)
 
-Cool! When an undocumented response property is detected, Optic will exit 1 and bring it to your attention. In this case, a property called `location` has been added. To resolve it, you could manually update the schema, or run `--update` to save time:
+Cool! When an undocumented change is detected, Optic will bring it to your attention (and exit 1). In this case, a response property called `location` has been added. To resolve it, you could manually update the schema, or run `--update` to save time:
 
 ```
 optic capture openapi.yml --update automatic
