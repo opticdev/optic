@@ -19,6 +19,7 @@ export type CiRunDetails = {
     opticWebUrl?: string | null;
     comparison: Comparison;
     specUrl?: string | null;
+    capture?: CaptureForCI;
   }[];
   failed: { apiName: string; error: string }[];
   noop: { apiName: string }[];
@@ -26,6 +27,24 @@ export type CiRunDetails = {
 };
 
 const CI_DETAILS_FILE_PATH = path.join(process.cwd(), 'ci-run-details.json');
+
+type CaptureForCI =
+  | {
+      success: false;
+    }
+  | {
+      unmatchedInteractions: number;
+      totalInteractions: number;
+      percentCovered: number;
+      endpointsAdded: number;
+      endpointCounts: {
+        total: number;
+        unmatched: number;
+        matched: number;
+      };
+      hasAnyDiffs: boolean;
+      success: true;
+    };
 
 export async function getDataForCi(
   specs: (
@@ -36,6 +55,7 @@ export async function getDataForCi(
         changelogUrl?: string | null;
         specUrl?: string | null;
         name: string;
+        capture?: CaptureForCI;
       }
     | {
         name: string;
@@ -63,7 +83,8 @@ export async function getDataForCi(
       if (
         Object.keys(spec.groupedDiffs.endpoints).length === 0 &&
         spec.groupedDiffs.specification.diffs.length === 0 &&
-        spec.results.length === 0
+        spec.results.length === 0 &&
+        !spec.capture
       ) {
         data.noop.push({
           apiName: spec.name,
@@ -78,6 +99,7 @@ export async function getDataForCi(
             groupedDiffs: spec.groupedDiffs,
             results: spec.results,
           },
+          capture: spec.capture,
         });
       }
     }
@@ -94,6 +116,7 @@ export async function writeDataForCi(
         changelogUrl?: string | null;
         specUrl?: string | null;
         name: string;
+        capture?: CaptureForCI;
       }
     | {
         name: string;
