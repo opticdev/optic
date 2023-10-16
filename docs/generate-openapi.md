@@ -2,52 +2,49 @@
 ![GitHub Repo stars](https://img.shields.io/github/stars/opticdev/optic?style=social) ![GitHub contributors](https://img.shields.io/github/contributors-anon/opticdev/optic?style=social) ![npm](https://img.shields.io/npm/dm/@useoptic/openapi-io?style=social) ![license](https://img.shields.io/github/license/opticdev/optic?style=social)
 
 
-API tests create a lot of unused data about how your API behaves. This project uses a proxy to captures test traffic and keep your OpenAPI accurate. When new endpoints are added or existing API behavior changes, the proxy updates the OpenAPI to match the current API behavior. 
+API tests create a lot of unused data about how your API behaves. Optic Capture runs a proxy that you can send traffic to from your existing tests or other tools. That traffic is observed and used to keep your OpenAPI specification accurate. When new endpoints are added or existing API behavior changes, Optic updates the OpenAPI spec to match the current API behavior. 
 
-Connect your tests, get accurate docs.  
+**Connect your tests, get accurate docs!**
 
 https://github.com/opticdev/optic/assets/5900338/d4e740b8-7ee2-4451-aee5-3ec062d5162b
 
 
-# Install
+## Install
 ```bash
 npm install -g @useoptic/optic
 ```
 
-#### Quick Demo
+## Quick Start
+
+You can quickly kick the tires with our example API. 
+
 ```bash
 git clone https://github.com/opticdev/bookstore-example.git
-```
-```
 cd bookstore-example
-```
-```
 optic capture openapi.yml
 ```
 
-# Setup
+## Integrating Optic with your project
 
-**1. Point Optic at an OpenAPI spec**. If none exists, an empty spec will be created:
+**1. Connect your tests.** Tell Optic how to run your tests in the `optic.yml` config file: 
 
-```
-optic capture init openapi.yml
-```
-
-**2. Connect your tests.** Tell Optic how to run your tests in the `optic.yml` config file: 
-
-`optic.yaml`
 ```yaml
+# optic.yml
 capture:
   openapi.yml:
     server:
-      # hostname of your test server
+      # the URL where you app will be listening. this is where Optic's
+      # proxy will forward requests.
       url: http://localhost:8080
     requests:
-      # the command that runs your test
-      command: go test
+      run:
+        # the command that runs your tests
+        command: yarn run test
 ```
 
-Update your test runner to send traffic through the local proxy. When Optic is running your test command, `$OPTIC_PROXY` (a fully qualified hostname) will be in the environment: 
+**2. Configure your tests to send traffic to the Optic's proxy**:
+
+Update your test runner to send traffic through Optic's proxy. Optic injects an environment variable, `OPTIC_PROXY`, into the env of `requests.run.command`.
 
 ```typescript
 // in your test fixture
@@ -60,7 +57,7 @@ fetch(`${baseUrl}/...`)
 
 [Full documentation for configuring captures can be found here](https://www.useoptic.com/docs/capturing-traffic)
 
-**3. Run your tests with Optic:**
+**3. Run your tests with Optic**:
 ```
 optic capture openapi.yml
 ```
