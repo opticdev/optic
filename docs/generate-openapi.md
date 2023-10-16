@@ -91,7 +91,7 @@ As you answer the prompts, OpenAPI operations will begin to appear in your OpenA
 
 **5. Update your documentation.**
 
-APIs change and Optic helps you keep up with those changes. Unlike most OpenAPI generators, you can run Optic as many times as you want. It will verify that your API keeps working as documented, preserve manual changes, and patch the specification when it is out-of-date.
+APIs change and Optic helps you keep up with those changes. Unlike most OpenAPI generators, you can run Optic as many times as you want. It will verify that your API keeps working as documented, while preserving manual changes and patching the specification when it is out-of-date.
 
 ```
 optic capture openapi.yml
