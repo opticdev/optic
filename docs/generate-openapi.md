@@ -6,6 +6,9 @@ API tests create a lot of unused data about how your API behaves. This project u
 
 Connect your tests, get accurate docs.  
 
+https://github.com/opticdev/optic/assets/5900338/d4e740b8-7ee2-4451-aee5-3ec062d5162b
+
+
 # Install
 ```bash
 npm install -g @useoptic/optic
@@ -21,11 +24,6 @@ cd bookstore-example
 ```
 optic capture openapi.yml
 ```
-
-
-https://github.com/opticdev/optic/assets/5900338/d4e740b8-7ee2-4451-aee5-3ec062d5162b
-
-
 
 # Setup
 
