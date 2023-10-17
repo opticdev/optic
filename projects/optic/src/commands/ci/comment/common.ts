@@ -52,6 +52,31 @@ function getOperationsText(
 `;
 }
 
+const getCaptureIssuesLabel = ({
+  unmatchedInteractions,
+  mismatchedEndpoints,
+}: {
+  unmatchedInteractions: number;
+  mismatchedEndpoints: number;
+}) => {
+  return [
+    ...(unmatchedInteractions
+      ? [
+          `🆕 ${unmatchedInteractions} undocumented path${
+            unmatchedInteractions ? 's' : ''
+          }`,
+        ]
+      : []),
+    ...(mismatchedEndpoints
+      ? [
+          `⚠️  ${mismatchedEndpoints} mismatch${
+            unmatchedInteractions ? 'es' : ''
+          }`,
+        ]
+      : []),
+  ].join('\n');
+};
+
 export const generateCompareSummaryMarkdown = (
   commit: { sha: string },
   results: CiRunDetails,
@@ -77,6 +102,7 @@ ${
 <th>Changes</th>
 <th>Rules</th>
 ${anyCompletedHasWarning ? '<th>Warnings</th>' : ''}
+<th>Tests</th>
 <th></th>
 </tr>
 </thead>
@@ -98,12 +124,28 @@ ${getOperationsText(s.comparison.groupedDiffs, {
 })}
 
 </td>
+${
+  s.capture
+    ? s.capture.success
+      ? s.capture.mismatchedEndpoints || s.capture.unmatchedInteractions
+        ? getCaptureIssuesLabel({
+            unmatchedInteractions: s.capture.unmatchedInteractions,
+            mismatchedEndpoints: s.capture.mismatchedEndpoints,
+          })
+        : `✅ ${s.capture.percentCovered}% coverage`
+      : '❌ Failed to run'
+    : ''
+}
 <td>
 
 ${getChecksLabel(s.comparison.results, results.severity)}
 
 </td>
 ${anyCompletedHasWarning ? `<td>${s.warnings.join('\n')}</td>` : ''}
+
+<td>
+</td>
+
 <td>${s.opticWebUrl ? `[View report](${s.opticWebUrl})` : ''}</td>
 </tr>`
   )
