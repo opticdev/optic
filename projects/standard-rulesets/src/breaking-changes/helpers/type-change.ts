@@ -1,8 +1,6 @@
-import { OpenApi3SchemaFact } from '@useoptic/openapi-utilities';
-
 export function computeEffectiveTypeChange(
-  beforeType: OpenApi3SchemaFact['type'],
-  afterType: OpenApi3SchemaFact['type']
+  beforeType: string | string[],
+  afterType: string | string[]
 ): {
   expanded: boolean;
   narrowed: boolean;
@@ -34,7 +32,7 @@ export function computeEffectiveTypeChange(
   return results;
 }
 
-function typeToSet(type: OpenApi3SchemaFact['type']): Set<string> {
+function typeToSet(type: string | string[]): Set<string> {
   if (Array.isArray(type)) {
     return new Set(type);
   } else if (typeof type === 'string') {
