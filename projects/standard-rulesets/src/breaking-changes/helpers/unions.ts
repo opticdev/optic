@@ -1,6 +1,5 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { FlatOpenAPIV3_1, OpenAPIV3 } from '@useoptic/openapi-utilities';
-import { computeEffectiveTypeChange } from './type-change';
 
 export function isInUnionProperty(jsonPath: string): boolean {
   const parts = jsonPointerHelpers.decode(jsonPath);
@@ -14,15 +13,39 @@ export function schemaIsUnionProperty(schema: OpenAPIV3.SchemaObject): boolean {
 type KeyNode =
   | {
       required: boolean;
-      type: string[];
+      type: string;
       keyword: 'type';
     }
   | {
       required: boolean;
       type: KeyMap[];
-      keyword: 'oneOf' | 'anyOf';
+      keyword: 'oneOf' | 'anyOf' | 'typeArray';
     };
 type KeyMap = Map<string, KeyNode>;
+
+function traverseTypeArraySchemas(
+  schema: FlatOpenAPIV3_1.SchemaObject
+): KeyMap[] {
+  return Array.isArray(schema.type)
+    ? schema.type.map((type) => {
+        if (type === 'object') {
+          const { items, ...newSchema } = { ...schema } as any;
+          newSchema.type = 'object';
+          return createKeyMapFromSchema(newSchema);
+        } else if (type === 'array') {
+          const { properties, ...newSchema } = { ...schema } as any;
+          newSchema.type = 'array';
+
+          return createKeyMapFromSchema(newSchema);
+        } else {
+          const { items, properties, ...newSchema } = { ...schema } as any;
+          newSchema.type = type;
+
+          return createKeyMapFromSchema(newSchema);
+        }
+      })
+    : [];
+}
 
 // Return an array of Maps that have different keys that they require; if there is a oneOf or anyOf
 // create a key with multiple sets
@@ -51,11 +74,20 @@ function createKeyMapFromSchema(schema: FlatOpenAPIV3_1.SchemaObject): KeyMap {
                 keyword: 'anyOf',
               });
           } else {
-            const node: KeyNode = {
-              required: schema.required ? schema.required.includes(key) : false,
-              type: Array.isArray(value.type) ? value.type : [value.type],
-              keyword: 'type',
-            };
+            const required = schema.required
+              ? schema.required.includes(key)
+              : false;
+            const node: KeyNode = Array.isArray(value.type)
+              ? {
+                  required,
+                  type: traverseTypeArraySchemas(value),
+                  keyword: 'typeArray',
+                }
+              : {
+                  required,
+                  type: value.type,
+                  keyword: 'type',
+                };
 
             keyMap.set(fullKey, node);
 
@@ -81,13 +113,17 @@ function createKeyMapFromSchema(schema: FlatOpenAPIV3_1.SchemaObject): KeyMap {
               keyword: 'anyOf',
             });
         } else {
-          const node: KeyNode = {
-            required: false,
-            type: Array.isArray(schema.items.type)
-              ? schema.items.type
-              : [schema.items.type],
-            keyword: 'type',
-          };
+          const node: KeyNode = Array.isArray(schema.items.type)
+            ? {
+                required: false,
+                type: traverseTypeArraySchemas(schema.items),
+                keyword: 'typeArray',
+              }
+            : {
+                required: false,
+                type: schema.items.type,
+                keyword: 'type',
+              };
 
           keyMap.set(fullKey, node);
 
@@ -97,18 +133,24 @@ function createKeyMapFromSchema(schema: FlatOpenAPIV3_1.SchemaObject): KeyMap {
       }
     }
   }
-  if (schema.type !== 'array' && schema.type !== 'object') {
-    const node: KeyNode = {
-      required: false,
-      type: Array.isArray(schema.type)
-        ? schema.type
-        : ([schema.type] as string[]),
-      keyword: 'type',
-    };
+
+  if (schema.type) {
+    const node: KeyNode = Array.isArray(schema.type)
+      ? {
+          required: false,
+          type: traverseTypeArraySchemas(schema),
+          keyword: 'typeArray',
+        }
+      : {
+          required: false,
+          type: schema.type,
+          keyword: 'type',
+        };
 
     keyMap.set('', node);
+
+    traverseSchema(schema, '');
   }
-  traverseSchema(schema, '');
   return keyMap;
 }
 
@@ -122,12 +164,17 @@ function diffKeyMaps(aMap: KeyMap, bMap: KeyMap) {
     if (bValue) {
       // if both typestrings, just check types
       if (aValue.keyword === 'type' && bValue.keyword === 'type') {
-        const typeChange = computeEffectiveTypeChange(aValue.type, bValue.type);
-        if (typeChange.expanded) results.expanded = true;
-        if (typeChange.narrowed) results.narrowed = true;
+        if (aValue.type !== bValue.type) {
+          results.expanded = true;
+          results.narrowed = true;
+        }
         // TODO do other breaking change checks like format / pattern / min/max
       } else if (aValue.keyword === 'type' || bValue.keyword === 'type') {
-        // TODO do transitions from oneOF to typestrings
+        if (aValue.keyword === 'type' && bValue.keyword !== 'type') {
+          results.expanded = true;
+        } else {
+          results.narrowed = true;
+        }
       } else {
         // A type is considered narrowed if any before item does not overlap with every item in the after set
         const isNarrowed = aValue.type.some((aKeyMap) =>
