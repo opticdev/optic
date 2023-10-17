@@ -2,7 +2,7 @@
 ![GitHub Repo stars](https://img.shields.io/github/stars/opticdev/optic?style=social) ![GitHub contributors](https://img.shields.io/github/contributors-anon/opticdev/optic?style=social) ![npm](https://img.shields.io/npm/dm/@useoptic/openapi-io?style=social) ![license](https://img.shields.io/github/license/opticdev/optic?style=social)
 
 
-API tests contain a lot of undocumented information about how your API behaves. Optic leverages your existing tests to capture and persist that information to an OpenAPI specification. Optic's capture feature works by observing traffic that passes through a locally-running proxy and uses it to keep your OpenAPI specification accurate. When new endpoints are added or existing API behavior changes, Optic updates the OpenAPI spec to match the current API behavior.
+API tests contain a lot of unused information about how your API behaves. Optic runs your existing tests through a locally-running proxy and uses that traffic to write/update OpenAPI specification for you. When new endpoints are added, Optic generated accurate OpenAPI. When existing API behavior changes, Optic updates the schemas to match the current API behavior.
 
 **Connect your tests, get accurate docs!**
 
@@ -76,7 +76,7 @@ Optic detected 5 undocumented endpoints in the traffic. Let's document them next
 optic capture openapi.yml --update interactive
 ```
 
-Optic infers the paths in your API based on the traffic. It is pretty good at it, but if you need to override its inference you can. Once a path is added to your specification, it will not ask you about it again: 
+Optic infers the paths in your API based on the traffic. It is pretty good at it, but if you need to override its inference you can. Once a path is added to your specification, its path pattern is remembered.  
 
 ![alt](https://i.imgur.com/KKNMxsD.jpg)
 
@@ -91,17 +91,17 @@ As you answer the prompts, OpenAPI operations will begin to appear in your OpenA
 
 **5. Update your documentation.**
 
-APIs change and Optic helps you keep up with those changes. Unlike most OpenAPI generators, you can run Optic as many times as you want. It will verify that your API keeps working as documented, while preserving manual changes and patching the specification when it is out-of-date.
+APIs change and Optic helps you keep up with those changes. Unlike most OpenAPI generators, you can run Optic as many times as you want. It will verify that your API keeps working as documented and patch the specification when it is out-of-date. It does that without overriding manual changes you made. 
 
 ```
 optic capture openapi.yml
 ```
 ![alt](https://i.imgur.com/kDYij8e.jpg)
 
-Cool! When an undocumented change is detected, Optic will bring it to your attention (and exit 1). In this case, a response property called `location` has been added. To resolve it, you could manually update the schema, or run `--update` to save time:
+Cool! When an undocumented change is detected, Optic will bring it to your attention (and exit 1). In this case, a response property called `location` has been added. To resolve it, you could manually update the schema, or run `--update` to have Optic do it for you:
 
 ```
-optic capture openapi.yml --update automatic
+optic capture openapi.yml --update
 ```
 
 ![alt](https://i.imgur.com/UeaKSW7.jpg)
@@ -114,7 +114,6 @@ optic capture openapi.yml --update automatic
 1. Quickly document an existing internal API.
 1. Catch unplanned/accidental API changes in CI and prevent them from shipping.
 1. Fix inaccuracies in an existing OpenAPI document.
-1. Adopt OpenAPI.
 
 ## Advanced Usage
 
