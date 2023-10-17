@@ -32,7 +32,7 @@ import {
   GithubCommenter,
   GitlabCommenter,
 } from './ci/comment/comment-api';
-import { CiRunDetails, getDataForCi } from '../utils/ci-data';
+import { CaptureForCI, CiRunDetails, getDataForCi } from '../utils/ci-data';
 import {
   COMPARE_SUMMARY_IDENTIFIER,
   generateCompareSummaryMarkdown,
@@ -555,9 +555,7 @@ const runCapture = async ({
             } as const)
           : ({ success: false } as const);
         await config.client.createCapture(captureData);
-      } catch (e) {
-        logger.info('oups', e);
-      }
+      } catch (e) {}
     }
 
     if (captureResults.success) {
@@ -799,6 +797,20 @@ export const getRunAction =
             ? report.diff.diffResult
             : undefined;
           if (!result) return null;
+
+          const captureData: CaptureForCI | undefined = report.capture
+            ? report.capture?.success
+              ? {
+                  success: true,
+                  unmatchedInteractions: report.capture.unmatchedInteractions,
+                  percentCovered: Math.round(
+                    Number(report.capture.coverage.calculateCoverage().percent)
+                  ),
+                  mismatchedEndpoints: report.capture.mismatchedEndpoints,
+                }
+              : { success: false }
+            : undefined;
+
           return {
             warnings: result.warnings,
             groupedDiffs: result.groupedDiffs,
@@ -806,9 +818,14 @@ export const getRunAction =
             name: result.name ?? 'Unknown comparison',
             specUrl: result.specUrl,
             changelogUrl: result.changelogUrl,
+            capture: captureData,
           };
         })
-        .filter((r: DiffResult | null): r is DiffResult => !!r);
+        .filter(
+          (
+            r: DiffResult | null
+          ): r is DiffResult & { capture: CaptureForCI | undefined } => !!r
+        );
 
       switch (getProvider()) {
         case 'github': {

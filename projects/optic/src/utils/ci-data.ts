@@ -28,21 +28,14 @@ export type CiRunDetails = {
 
 const CI_DETAILS_FILE_PATH = path.join(process.cwd(), 'ci-run-details.json');
 
-type CaptureForCI =
+export type CaptureForCI =
   | {
       success: false;
     }
   | {
       unmatchedInteractions: number;
-      totalInteractions: number;
+      mismatchedEndpoints: number;
       percentCovered: number;
-      endpointsAdded: number;
-      endpointCounts: {
-        total: number;
-        unmatched: number;
-        matched: number;
-      };
-      hasAnyDiffs: boolean;
       success: true;
     };
 
