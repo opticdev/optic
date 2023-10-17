@@ -124,6 +124,15 @@ ${getOperationsText(s.comparison.groupedDiffs, {
 })}
 
 </td>
+<td>
+
+${getChecksLabel(s.comparison.results, results.severity)}
+
+</td>
+
+${anyCompletedHasWarning ? `<td>${s.warnings.join('\n')}</td>` : ''}
+
+<td>
 ${
   s.capture
     ? s.capture.success
@@ -136,14 +145,6 @@ ${
       : '❌ Failed to run'
     : ''
 }
-<td>
-
-${getChecksLabel(s.comparison.results, results.severity)}
-
-</td>
-${anyCompletedHasWarning ? `<td>${s.warnings.join('\n')}</td>` : ''}
-
-<td>
 </td>
 
 <td>${s.opticWebUrl ? `[View report](${s.opticWebUrl})` : ''}</td>
