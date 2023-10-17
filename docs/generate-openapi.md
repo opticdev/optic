@@ -2,7 +2,7 @@
 ![GitHub Repo stars](https://img.shields.io/github/stars/opticdev/optic?style=social) ![GitHub contributors](https://img.shields.io/github/contributors-anon/opticdev/optic?style=social) ![npm](https://img.shields.io/npm/dm/@useoptic/openapi-io?style=social) ![license](https://img.shields.io/github/license/opticdev/optic?style=social)
 
 
-API tests contain a lot of unused information about how your API behaves. Optic leverages that existing test traffic to keep an OpenAPI specification accurate. The `capture` command starts a local proxy and runs your API tests through it. When new endpoints are observed, Optic generates a new OpenAPI operations and adds it to your spec. When existing API behavior changes, Optic updates the spec to match the current API behavior.
+API tests contain a lot of unused information about how your API behaves. Optic leverages that existing test traffic to keep an OpenAPI specification accurate. The `capture` command starts a local proxy and runs your API tests through it. When new endpoints are observed, Optic generates a new OpenAPI operation and adds it to your spec. When existing API behavior changes, Optic updates the spec to match the current API behavior.
 
 **Connect your tests, get accurate docs!**
 
