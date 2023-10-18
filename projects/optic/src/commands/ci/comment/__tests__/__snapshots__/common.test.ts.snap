@@ -16,7 +16,7 @@ commit_sha: 123
 <th>Changes</th>
 <th>Rules</th>
 
-<th>Tests</th>
+
 <th></th>
 </tr>
 </thead>
@@ -43,11 +43,7 @@ completed
 
 
 
-<td>
 
-
-
-</td>
 
 <td>
 
@@ -103,7 +99,7 @@ commit_sha: 123
 <th>Changes</th>
 <th>Rules</th>
 
-<th>Tests</th>
+
 <th></th>
 </tr>
 </thead>
@@ -131,11 +127,7 @@ completed
 
 
 
-<td>
 
-
-
-</td>
 
 <td>
 
@@ -243,7 +235,7 @@ commit_sha: 123
 <th>Changes</th>
 <th>Rules</th>
 
-<th>Tests</th>
+
 <th></th>
 </tr>
 </thead>
@@ -270,11 +262,7 @@ completed
 
 
 
-<td>
 
-
-
-</td>
 
 <td>
 
@@ -308,7 +296,7 @@ commit_sha: 123
 <th>Changes</th>
 <th>Rules</th>
 
-<th>Tests</th>
+
 <th></th>
 </tr>
 </thead>
@@ -335,11 +323,7 @@ no-optic-cloud
 
 
 
-<td>
 
-
-
-</td>
 
 <td>
 

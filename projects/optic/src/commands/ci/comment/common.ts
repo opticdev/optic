@@ -87,6 +87,7 @@ export const generateCompareSummaryMarkdown = (
   const anyCompletedHasWarning = results.completed.some(
     (s) => s.warnings.length > 0
   );
+  const anyCompletedHasCapture = results.completed.some((s) => s.capture);
   return `
 <!--
 DO NOT MODIFY
@@ -104,7 +105,7 @@ ${
 <th>Changes</th>
 <th>Rules</th>
 ${anyCompletedHasWarning ? '<th>Warnings</th>' : ''}
-<th>Tests</th>
+${anyCompletedHasCapture ? '<th>Tests</th>' : ''}
 <th></th>
 </tr>
 </thead>
@@ -135,6 +136,10 @@ ${getChecksLabel(s.comparison.results, results.severity)}
 
 ${anyCompletedHasWarning ? `<td>${s.warnings.join('\n')}</td>` : ''}
 
+${
+  anyCompletedHasCapture
+    ? `
+
 <td>
 
 ${
@@ -151,6 +156,10 @@ ${
 }
 
 </td>
+
+`
+    : ''
+}
 
 <td>
 
