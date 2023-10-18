@@ -3151,9 +3151,9 @@ __metadata:
   linkType: hard
 
 "@types/analytics-node@npm:^3.1.10":
-  version: 3.1.12
-  resolution: "@types/analytics-node@npm:3.1.12"
-  checksum: c6f59b8845697c650c15de7910da1b74b4cf363eb92278ad43282773bdaf4bc757b8fb6af6633a7aaf9d729d03d943bbbdad7c8bea5bbeea486ec51317ea6478
+  version: 3.1.13
+  resolution: "@types/analytics-node@npm:3.1.13"
+  checksum: c8c4fbfd8389dbe5c72a95fbf873d67a56818656f22a2179152f24f59e57a015bc2f1d3e932e23c8875620844ccb6b8efbc8cc6f6ae575a9e5709a535f67020d
   languageName: node
   linkType: hard
 
