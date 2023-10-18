@@ -1,5 +1,9 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { FlatOpenAPIV3_1, OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  FlatOpenAPIV3_1,
+  OpenAPIV3,
+  OpenAPIV3_1,
+} from '@useoptic/openapi-utilities';
 
 export function isInUnionProperty(jsonPath: string): boolean {
   const parts = jsonPointerHelpers.decode(jsonPath);
@@ -164,9 +168,14 @@ function diffKeyMaps(aMap: KeyMap, bMap: KeyMap) {
     if (bValue) {
       // if both typestrings, just check types
       if (aValue.keyword === 'type' && bValue.keyword === 'type') {
+        // This is where we do our traditional breaking changes checks
         if (aValue.type !== bValue.type) {
           results.expanded = true;
           results.narrowed = true;
+        } else if (aValue.required && !bValue.required) {
+          results.narrowed = true;
+        } else if (!aValue.required && bValue.required) {
+          results.expanded = true;
         }
         // TODO do other breaking change checks like format / pattern / min/max
       } else if (aValue.keyword === 'type' || bValue.keyword === 'type') {
@@ -177,12 +186,12 @@ function diffKeyMaps(aMap: KeyMap, bMap: KeyMap) {
         }
       } else {
         // A type is considered narrowed if any before item does not overlap with every item in the after set
-        const isNarrowed = aValue.type.some((aKeyMap) =>
-          bValue.type.every((bKeyMap) => diffKeyMaps(aKeyMap, bKeyMap).narrowed)
+        const isNarrowed = !aValue.type.every((aKeyMap) =>
+          bValue.type.some((bKeyMap) => !diffKeyMaps(aKeyMap, bKeyMap).narrowed)
         );
         // A type is considered expanded if any after item does not overlap with every item in the before set
-        const isExpanded = bValue.type.some((bKeyMap) =>
-          aValue.type.every((aKeyMap) => diffKeyMaps(aKeyMap, bKeyMap).expanded)
+        const isExpanded = !bValue.type.every((bKeyMap) =>
+          aValue.type.some((aKeyMap) => !diffKeyMaps(aKeyMap, bKeyMap).expanded)
         );
 
         if (isNarrowed) results.narrowed = true;
@@ -203,8 +212,8 @@ function diffKeyMaps(aMap: KeyMap, bMap: KeyMap) {
 }
 
 export function computeUnionTransition(
-  before: OpenAPIV3.SchemaObject,
-  after: OpenAPIV3.SchemaObject
+  before: OpenAPIV3.SchemaObject | OpenAPIV3_1.SchemaObject,
+  after: OpenAPIV3.SchemaObject | OpenAPIV3_1.SchemaObject
 ): {
   expanded: boolean;
   narrowed: boolean;
@@ -222,17 +231,16 @@ export function computeUnionTransition(
     : a.anyOf
     ? a.anyOf.map((s) => createKeyMapFromSchema(s))
     : [createKeyMapFromSchema(a)];
-
   // A type is considered narrowed if any before item does not overlap with every item in the after set
-  const isNarrowed = beforeMaps.some((beforeKeyMap) =>
-    afterMaps.every(
-      (afterKeyMap) => diffKeyMaps(beforeKeyMap, afterKeyMap).narrowed
+  const isNarrowed = !beforeMaps.every((beforeKeyMap) =>
+    afterMaps.some(
+      (afterKeyMap) => !diffKeyMaps(beforeKeyMap, afterKeyMap).narrowed
     )
   );
   // A type is considered expanded if any after item does not overlap with every item in the before set
-  const isExpanded = afterMaps.some((afterKeyMap) =>
-    beforeMaps.every(
-      (beforeKeyMap) => diffKeyMaps(beforeKeyMap, afterKeyMap).expanded
+  const isExpanded = !afterMaps.every((afterKeyMap) =>
+    beforeMaps.some(
+      (beforeKeyMap) => !diffKeyMaps(beforeKeyMap, afterKeyMap).expanded
     )
   );
 
