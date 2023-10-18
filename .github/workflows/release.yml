@@ -129,26 +129,28 @@ jobs:
           fi
 
       - name: Announce success
-        uses: Ilshidur/action-slack@689ad44a9c9092315abd286d0e3a9a74d31ab78a # v2.1.0
+        uses: slackapi/slack-github-action@v1.24.0
         if: >
           success()
           && env.SKIP_ANNOUNCE == 'false'
           && env.SKIP_PUBLISH == 'false'
         env:
-          SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
+          SLACK_WEBHOOK_URL: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
         with:
-          args: '{{ GITHUB_ACTOR }}: ✅ optic v{{ VERSION }} packages published to channel `{{ RELEASE_CHANNEL }}`!'
+          slack-message: '{{ GITHUB_ACTOR }}: ✅ optic v{{ VERSION }} packages published to channel `{{ RELEASE_CHANNEL }}`!'
 
       - name: Announce failure
-        uses: Ilshidur/action-slack@689ad44a9c9092315abd286d0e3a9a74d31ab78a # v2.1.0
+        uses: slackapi/slack-github-action@v1.24.0
         if: >
           failure()
           && env.SKIP_ANNOUNCE == 'false'
           && env.SKIP_PUBLISH == 'false'
         env:
-          SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
+          SLACK_WEBHOOK_URL: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
         with:
-          args: '{{ GITHUB_ACTOR }}: 🚫 optic v{{ VERSION }} failed to publish.'
+          slack-message: '{{ GITHUB_ACTOR }}: 🚫 optic v{{ VERSION }} failed to publish.'
 
   publish-binaries:
     needs: release
