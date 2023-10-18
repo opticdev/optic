@@ -39,6 +39,29 @@ export class OpticBackendClient extends JsonHttpClient {
     return this.getJson(`/api/token/orgs`);
   }
 
+  public async createCapture(
+    data:
+      | {
+          run_id: string;
+          organization_id: string;
+          success: true;
+          unmatched_interactions: number;
+          total_interactions: number;
+          percent_covered: number;
+          endpoints_added: number;
+          endpoints_matched: number;
+          endpoints_unmatched: number;
+          endpoints_total: number;
+          has_any_diffs: boolean;
+          mismatched_endpoints: number;
+        }
+      | {
+          success: false;
+        }
+  ): Promise<{}> {
+    return this.postJson(`/api/captures`, data);
+  }
+
   public async createRuleset(
     organizationId: string,
     name: string,

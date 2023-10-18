@@ -432,6 +432,7 @@ export async function processCaptures(
       totalInteractions: number;
       coverage: ApiCoverageCounter;
       endpointsAdded: number;
+      mismatchedEndpoints: number;
       endpointCounts: {
         total: number;
         unmatched: number;
@@ -472,6 +473,8 @@ export async function processCaptures(
   let hasAnyDiffs = false;
   let diffCount = 0;
   let endpointsAdded = 0;
+  let mismatchedEndpoints = new Set<string>();
+
   // Handle interactions for documented endpoints first
   const interactionsToLog = sortBy(
     [...captures.getDocumentedEndpointInteractions()],
@@ -514,6 +517,7 @@ export async function processCaptures(
       if (!hasDiffs) {
         spinner?.succeed(endpointText);
       } else {
+        mismatchedEndpoints.add(`${method}-${path}`);
         hasAnyDiffs = true;
         spinner?.fail(endpointText);
       }
@@ -630,6 +634,7 @@ export async function processCaptures(
     totalInteractions,
     coverage,
     endpointsAdded,
+    mismatchedEndpoints: mismatchedEndpoints.size,
     endpointCounts,
     bufferedOutput,
     hasAnyDiffs,

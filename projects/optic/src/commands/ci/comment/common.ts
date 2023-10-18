@@ -22,14 +22,12 @@ const getChecksLabel = (
   }
 
   const exemptedChunk =
-    exemptedFailingChecks > 0
-      ? ` ${exemptedFailingChecks} were exempted from failing`
-      : '';
+    exemptedFailingChecks > 0 ? `, ${exemptedFailingChecks} exempted` : '';
 
   return failingChecks > 0
-    ? `⚠️ **${failingChecks}** / **${totalChecks}** failed${exemptedChunk}`
+    ? `⚠️ **${failingChecks}**/**${totalChecks}** failed${exemptedChunk}`
     : totalChecks > 0
-    ? `✅ all passed (**${totalChecks}**)${exemptedChunk}`
+    ? `✅ **${totalChecks}** passed${exemptedChunk}`
     : `ℹ️ No automated checks have run`;
 };
 
@@ -37,7 +35,7 @@ export const COMPARE_SUMMARY_IDENTIFIER = `optic-comment-3UsoJCz_Z0SpGLo5Vjw6o`;
 
 function getOperationsText(
   groupedDiffs: GroupedDiffs,
-  options: { webUrl?: string | null; verbose: boolean }
+  options: { webUrl?: string | null; verbose: boolean; labelJoiner?: string }
 ) {
   const ops = getOperationsChanged(groupedDiffs);
 
@@ -48,15 +46,38 @@ function getOperationsText(
         ...[...ops.removed].map((o) => `\`${o}\` (removed)`),
       ].join('\n')
     : '';
-  return `${getOperationsChangedLabel(groupedDiffs)} ${
-    options.webUrl
-      ? `([view changelog](${options.webUrl}))`
-      : '([setup changelog](https://useoptic.com/docs/cloud-get-started))'
-  }
+  return `${getOperationsChangedLabel(groupedDiffs, {
+    joiner: options.labelJoiner,
+  })}
 
   ${operationsText}
 `;
 }
+
+const getCaptureIssuesLabel = ({
+  unmatchedInteractions,
+  mismatchedEndpoints,
+}: {
+  unmatchedInteractions: number;
+  mismatchedEndpoints: number;
+}) => {
+  return [
+    ...(unmatchedInteractions
+      ? [
+          `🆕 ${unmatchedInteractions} undocumented path${
+            unmatchedInteractions > 1 ? 's' : ''
+          }`,
+        ]
+      : []),
+    ...(mismatchedEndpoints
+      ? [
+          `⚠️  ${mismatchedEndpoints} mismatch${
+            mismatchedEndpoints > 1 ? 'es' : ''
+          }`,
+        ]
+      : []),
+  ].join('\n');
+};
 
 export const generateCompareSummaryMarkdown = (
   commit: { sha: string },
@@ -66,6 +87,7 @@ export const generateCompareSummaryMarkdown = (
   const anyCompletedHasWarning = results.completed.some(
     (s) => s.warnings.length > 0
   );
+  const anyCompletedHasCapture = results.completed.some((s) => s.capture);
   return `
 <!--
 DO NOT MODIFY
@@ -80,9 +102,11 @@ ${
 <thead>
 <tr>
 <th>API</th>
-<th>Operation Changes</th>
-<th>Checks</th>
+<th>Changes</th>
+<th>Rules</th>
 ${anyCompletedHasWarning ? '<th>Warnings</th>' : ''}
+${anyCompletedHasCapture ? '<th>Tests</th>' : ''}
+<th></th>
 </tr>
 </thead>
 <tbody>
@@ -92,11 +116,7 @@ ${results.completed
       `<tr>
 <td>
 
-${s.apiName} ${
-        s.specUrl
-          ? `([preview](${s.specUrl}))`
-          : '([setup preview](https://useoptic.com/docs/cloud-get-started))'
-      }
+${s.apiName}
 
 </td>
 <td>
@@ -104,6 +124,7 @@ ${s.apiName} ${
 ${getOperationsText(s.comparison.groupedDiffs, {
   webUrl: s.opticWebUrl,
   verbose: options.verbose,
+  labelJoiner: ',\n',
 })}
 
 </td>
@@ -112,7 +133,39 @@ ${getOperationsText(s.comparison.groupedDiffs, {
 ${getChecksLabel(s.comparison.results, results.severity)}
 
 </td>
+
 ${anyCompletedHasWarning ? `<td>${s.warnings.join('\n')}</td>` : ''}
+
+${
+  anyCompletedHasCapture
+    ? `
+
+<td>
+
+${
+  s.capture
+    ? s.capture.success
+      ? s.capture.mismatchedEndpoints || s.capture.unmatchedInteractions
+        ? getCaptureIssuesLabel({
+            unmatchedInteractions: s.capture.unmatchedInteractions,
+            mismatchedEndpoints: s.capture.mismatchedEndpoints,
+          })
+        : `✅ ${s.capture.percentCovered}% coverage`
+      : '❌ Failed to run'
+    : ''
+}
+
+</td>
+
+`
+    : ''
+}
+
+<td>
+
+${s.opticWebUrl ? `[View report](${s.opticWebUrl})` : ''}
+
+</td>
 </tr>`
   )
   .join('\n')}
