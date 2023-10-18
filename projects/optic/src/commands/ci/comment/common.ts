@@ -25,7 +25,7 @@ const getChecksLabel = (
     exemptedFailingChecks > 0 ? `, ${exemptedFailingChecks} exempted` : '';
 
   return failingChecks > 0
-    ? `⚠️ **${failingChecks}** / **${totalChecks}** failed${exemptedChunk}`
+    ? `⚠️ **${failingChecks}**/**${totalChecks}** failed${exemptedChunk}`
     : totalChecks > 0
     ? `✅ **${totalChecks}** passed${exemptedChunk}`
     : `ℹ️ No automated checks have run`;
@@ -35,7 +35,7 @@ export const COMPARE_SUMMARY_IDENTIFIER = `optic-comment-3UsoJCz_Z0SpGLo5Vjw6o`;
 
 function getOperationsText(
   groupedDiffs: GroupedDiffs,
-  options: { webUrl?: string | null; verbose: boolean }
+  options: { webUrl?: string | null; verbose: boolean; labelJoiner?: string }
 ) {
   const ops = getOperationsChanged(groupedDiffs);
 
@@ -46,7 +46,9 @@ function getOperationsText(
         ...[...ops.removed].map((o) => `\`${o}\` (removed)`),
       ].join('\n')
     : '';
-  return `${getOperationsChangedLabel(groupedDiffs)}
+  return `${getOperationsChangedLabel(groupedDiffs, {
+    joiner: options.labelJoiner,
+  })}
 
   ${operationsText}
 `;
@@ -63,14 +65,14 @@ const getCaptureIssuesLabel = ({
     ...(unmatchedInteractions
       ? [
           `🆕 ${unmatchedInteractions} undocumented path${
-            unmatchedInteractions ? 's' : ''
+            unmatchedInteractions > 1 ? 's' : ''
           }`,
         ]
       : []),
     ...(mismatchedEndpoints
       ? [
           `⚠️  ${mismatchedEndpoints} mismatch${
-            unmatchedInteractions ? 'es' : ''
+            mismatchedEndpoints > 1 ? 'es' : ''
           }`,
         ]
       : []),
@@ -121,6 +123,7 @@ ${s.apiName}
 ${getOperationsText(s.comparison.groupedDiffs, {
   webUrl: s.opticWebUrl,
   verbose: options.verbose,
+  labelJoiner: ',\n',
 })}
 
 </td>
@@ -133,6 +136,7 @@ ${getChecksLabel(s.comparison.results, results.severity)}
 ${anyCompletedHasWarning ? `<td>${s.warnings.join('\n')}</td>` : ''}
 
 <td>
+
 ${
   s.capture
     ? s.capture.success
@@ -145,9 +149,14 @@ ${
       : '❌ Failed to run'
     : ''
 }
+
 </td>
 
-<td>${s.opticWebUrl ? `[View report](${s.opticWebUrl})` : ''}</td>
+<td>
+
+${s.opticWebUrl ? `[View report](${s.opticWebUrl})` : ''}
+
+</td>
 </tr>`
   )
   .join('\n')}
