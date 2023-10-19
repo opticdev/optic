@@ -740,8 +740,50 @@ describe('computeUnionTransition', () => {
       });
     });
 
-    test('oneOf to type array at root schema', () => {});
+    test('oneOf to type array at root schema', () => {
+      const narrowed = (schemas.oneOf.nested.narrowed as any).properties.nested;
+      const expanded = (schemas.typeArrays.nested.expandedObject as any)
+        .properties.nested;
+      if (type === 'narrowing') {
+        expect(computeUnionTransition(expanded, narrowed)).toEqual({
+          expanded: false,
+          narrowed: true,
+        });
+      } else {
+        expect(computeUnionTransition(narrowed, expanded)).toEqual({
+          expanded: true,
+          narrowed: false,
+        });
+      }
+    });
 
-    test('nested oneOf and type arrays', () => {});
+    test('nested oneOf and type arrays', () => {
+      const narrowed: OpenAPIV3_1.SchemaObject = {
+        oneOf: [
+          {
+            type: 'object',
+            properties: { nested: schemas.oneOf.nested.narrowed },
+          },
+          { type: 'string' },
+        ],
+      };
+      const expanded: OpenAPIV3_1.SchemaObject = {
+        type: ['object', 'string'],
+        properties: {
+          nested: schemas.typeArrays.nested.expandedObject,
+        },
+      };
+      if (type === 'narrowing') {
+        expect(computeUnionTransition(expanded, narrowed)).toEqual({
+          expanded: false,
+          narrowed: true,
+        });
+      } else {
+        expect(computeUnionTransition(narrowed, expanded)).toEqual({
+          expanded: true,
+          narrowed: false,
+        });
+      }
+    });
   });
 });

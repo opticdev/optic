@@ -186,11 +186,11 @@ function diffKeyMaps(aMap: KeyMap, bMap: KeyMap) {
           results.narrowed = true;
         }
       } else {
-        // A type is considered narrowed if any before item does not overlap with every item in the after set
+        // A type is considered narrowed if any before item does not have an equivalent set with any item in the after set
         const isNarrowed = !aValue.type.every((aKeyMap) =>
           bValue.type.some((bKeyMap) => !diffKeyMaps(aKeyMap, bKeyMap).narrowed)
         );
-        // A type is considered expanded if any after item does not overlap with every item in the before set
+        // A type is considered expanded if any after item does not have an equivalent set with any item in the before set
         const isExpanded = !bValue.type.every((bKeyMap) =>
           aValue.type.some((aKeyMap) => !diffKeyMaps(aKeyMap, bKeyMap).expanded)
         );
@@ -226,19 +226,24 @@ export function computeUnionTransition(
     ? b.oneOf.map((s) => createKeyMapFromSchema(s))
     : b.anyOf
     ? b.anyOf.map((s) => createKeyMapFromSchema(s))
+    : Array.isArray(b.type)
+    ? traverseTypeArraySchemas(b)
     : [createKeyMapFromSchema(b)];
   const afterMaps = a.oneOf
     ? a.oneOf.map((s) => createKeyMapFromSchema(s))
     : a.anyOf
     ? a.anyOf.map((s) => createKeyMapFromSchema(s))
+    : Array.isArray(a.type)
+    ? traverseTypeArraySchemas(a)
     : [createKeyMapFromSchema(a)];
-  // A type is considered narrowed if any before item does not overlap with every item in the after set
+
+  // A type is considered narrowed if any before item does not have an equivalent set with any item in the after set
   const isNarrowed = !beforeMaps.every((beforeKeyMap) =>
     afterMaps.some(
       (afterKeyMap) => !diffKeyMaps(beforeKeyMap, afterKeyMap).narrowed
     )
   );
-  // A type is considered expanded if any after item does not overlap with every item in the before set
+  // A type is considered expanded if any after item does not have an equivalent set with any item in the before set
   const isExpanded = !afterMaps.every((afterKeyMap) =>
     beforeMaps.some(
       (beforeKeyMap) => !diffKeyMaps(beforeKeyMap, afterKeyMap).expanded
