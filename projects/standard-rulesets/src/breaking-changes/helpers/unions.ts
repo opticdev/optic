@@ -4,6 +4,7 @@ import {
   OpenAPIV3,
   OpenAPIV3_1,
 } from '@useoptic/openapi-utilities';
+import { computeTypeTransition } from './type-change';
 
 export function isInUnionProperty(jsonPath: string): boolean {
   const parts = jsonPointerHelpers.decode(jsonPath);
@@ -17,7 +18,7 @@ export function schemaIsUnionProperty(schema: OpenAPIV3.SchemaObject): boolean {
 type KeyNode =
   | {
       required: boolean;
-      type: string;
+      schema: OpenAPIV3.SchemaObject | OpenAPIV3_1.SchemaObject;
       keyword: 'type';
     }
   | {
@@ -89,7 +90,7 @@ function createKeyMapFromSchema(schema: FlatOpenAPIV3_1.SchemaObject): KeyMap {
                 }
               : {
                   required,
-                  type: value.type,
+                  schema: value,
                   keyword: 'type',
                 };
 
@@ -125,7 +126,7 @@ function createKeyMapFromSchema(schema: FlatOpenAPIV3_1.SchemaObject): KeyMap {
               }
             : {
                 required: false,
-                type: schema.items.type,
+                schema: schema.items,
                 keyword: 'type',
               };
 
@@ -147,7 +148,7 @@ function createKeyMapFromSchema(schema: FlatOpenAPIV3_1.SchemaObject): KeyMap {
         }
       : {
           required: false,
-          type: schema.type,
+          schema,
           keyword: 'type',
         };
 
@@ -166,19 +167,23 @@ function diffKeyMaps(aMap: KeyMap, bMap: KeyMap) {
   for (const [key, aValue] of aMap) {
     const bValue = bMap.get(key);
     if (bValue) {
-      // if both typestrings, just check types
       if (aValue.keyword === 'type' && bValue.keyword === 'type') {
-        // This is where we do our traditional breaking changes checks
-        if (aValue.type !== bValue.type) {
-          results.expanded = true;
-          results.narrowed = true;
-        } else if (aValue.required && !bValue.required) {
-          results.narrowed = true;
-        } else if (!aValue.required && bValue.required) {
+        const typeTransition = computeTypeTransition(aValue, bValue);
+        // TODO add in reasons why something failed
+        if (
+          typeTransition.expanded.enum ||
+          typeTransition.expanded.requiredChange ||
+          typeTransition.expanded.typeChange
+        ) {
           results.expanded = true;
         }
-        // TODO check enums
-        // TODO do other breaking change checks like format / pattern / min/max
+        if (
+          typeTransition.narrowed.enum ||
+          typeTransition.narrowed.requiredChange ||
+          typeTransition.narrowed.typeChange
+        ) {
+          results.narrowed = true;
+        }
       } else if (aValue.keyword === 'type' || bValue.keyword === 'type') {
         if (aValue.keyword === 'type' && bValue.keyword !== 'type') {
           results.expanded = true;

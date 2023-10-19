@@ -387,6 +387,48 @@ describe('computeUnionTransition', () => {
             });
           }
         });
+
+        test('enums', () => {
+          const narrowed: OpenAPIV3_1.SchemaObject = {
+            type: 'object',
+            properties: {
+              user: {
+                type: 'object',
+                properties: {
+                  status: {
+                    type: 'string',
+                    enum: ['online'],
+                  },
+                },
+              },
+            },
+          };
+          const expanded: OpenAPIV3_1.SchemaObject = {
+            type: 'object',
+            properties: {
+              user: {
+                type: 'object',
+                properties: {
+                  status: {
+                    type: 'string',
+                    enum: ['online', 'offline'],
+                  },
+                },
+              },
+            },
+          };
+          if (type === 'narrowing') {
+            expect(computeUnionTransition(expanded, narrowed)).toEqual({
+              expanded: false,
+              narrowed: true,
+            });
+          } else {
+            expect(computeUnionTransition(narrowed, expanded)).toEqual({
+              expanded: true,
+              narrowed: false,
+            });
+          }
+        });
       });
 
       describe('type array to type array', () => {
