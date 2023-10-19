@@ -804,7 +804,7 @@ describe('breaking changes ruleset', () => {
                 content: {
                   'application/json': {
                     schema: {
-                      type: ['number', 'object'],
+                      type: 'object',
                       properties: {
                         id: { type: 'string' },
                       },
