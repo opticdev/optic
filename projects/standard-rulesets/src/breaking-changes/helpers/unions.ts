@@ -11,8 +11,10 @@ export function isInUnionProperty(jsonPath: string): boolean {
   return parts.some((p) => p === 'oneOf' || p === 'anyOf');
 }
 
-export function schemaIsUnionProperty(schema: OpenAPIV3.SchemaObject): boolean {
-  return !!(schema.oneOf || schema.anyOf);
+export function schemaIsUnion(
+  schema?: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject
+): schema is OpenAPIV3.SchemaObject {
+  return !!(schema && !('$ref' in schema) && (schema.oneOf || schema.anyOf));
 }
 
 type KeyNode =
@@ -218,8 +220,14 @@ function diffKeyMaps(aMap: KeyMap, bMap: KeyMap) {
 }
 
 export function computeUnionTransition(
-  before: OpenAPIV3.SchemaObject | OpenAPIV3_1.SchemaObject,
-  after: OpenAPIV3.SchemaObject | OpenAPIV3_1.SchemaObject
+  before:
+    | OpenAPIV3.SchemaObject
+    | OpenAPIV3_1.SchemaObject
+    | OpenAPIV3.ReferenceObject,
+  after:
+    | OpenAPIV3.SchemaObject
+    | OpenAPIV3_1.SchemaObject
+    | OpenAPIV3.ReferenceObject
 ): {
   expanded: boolean;
   narrowed: boolean;

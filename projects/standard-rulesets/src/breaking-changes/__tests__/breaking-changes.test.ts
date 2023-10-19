@@ -1,5 +1,5 @@
 import { test, expect, describe } from '@jest/globals';
-import { OpenAPIV3, Severity } from '@useoptic/openapi-utilities';
+import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { TestHelpers } from '@useoptic/rulesets-base';
 import { BreakingChangesRuleset } from '../index';
 
@@ -772,6 +772,141 @@ describe('breaking changes ruleset', () => {
                   'application/json': {
                     schema: {
                       type: 'string',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+    const results = await TestHelpers.runRulesWithInputs(
+      [new BreakingChangesRuleset()],
+      beforeJson,
+      afterJson
+    );
+    expect(results.length > 0).toBe(true);
+
+    expect(results).toMatchSnapshot();
+    expect(results.some((result) => !result.passed)).toBe(true);
+  });
+
+  test('valid union type transition', async () => {
+    const beforeJson: any = {
+      ...TestHelpers.createEmptySpec(),
+      paths: {
+        '/api/users': {
+          get: {
+            responses: {
+              '200': {
+                description: 'response',
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: ['number', 'object'],
+                      properties: {
+                        id: { type: 'string' },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+    const afterJson: OpenAPIV3.Document = {
+      ...TestHelpers.createEmptySpec(),
+      paths: {
+        '/api/users': {
+          get: {
+            responses: {
+              '200': {
+                description: 'response',
+                content: {
+                  'application/json': {
+                    schema: {
+                      oneOf: [
+                        { type: 'number' },
+                        {
+                          type: 'object',
+                          properties: {
+                            id: { type: 'string' },
+                            name: { type: 'string' },
+                          },
+                          required: ['id', 'name'],
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+    const results = await TestHelpers.runRulesWithInputs(
+      [new BreakingChangesRuleset()],
+      beforeJson,
+      afterJson
+    );
+    expect(results.length > 0).toBe(true);
+
+    expect(results).toMatchSnapshot();
+    expect(results.every((result) => result.passed)).toBe(true);
+  });
+
+  test('invalid union type transition', async () => {
+    const beforeJson: any = {
+      ...TestHelpers.createEmptySpec(),
+      paths: {
+        '/api/users': {
+          get: {
+            responses: {
+              '200': {
+                description: 'response',
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: ['number', 'object'],
+                      properties: {
+                        id: { type: 'string' },
+                        name: { type: 'string' },
+                      },
+                      required: ['id', 'name'],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+    const afterJson: OpenAPIV3.Document = {
+      ...TestHelpers.createEmptySpec(),
+      paths: {
+        '/api/users': {
+          get: {
+            responses: {
+              '200': {
+                description: 'response',
+                content: {
+                  'application/json': {
+                    schema: {
+                      oneOf: [
+                        { type: 'number' },
+                        {
+                          type: 'object',
+                          properties: {
+                            id: { type: 'string' },
+                            name: { type: 'string' },
+                          },
+                        },
+                      ],
                     },
                   },
                 },

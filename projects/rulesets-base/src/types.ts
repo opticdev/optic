@@ -50,7 +50,7 @@ export type CookieParameter = FactVariant<OpenApiKind.CookieParameter> & {
 };
 
 export type RequestBody = FactVariant<OpenApiKind.Body> & {
-  raw: OpenAPIV3.SchemaObject;
+  raw: OpenAPIV3.MediaTypeObject;
   contentType: string;
   properties: Map<string, Property>;
 };

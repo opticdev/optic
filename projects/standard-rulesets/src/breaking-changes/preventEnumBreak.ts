@@ -6,6 +6,7 @@ import {
 import { getOperationAssertionsParameter } from './helpers/getOperationAssertionsParameter';
 import { ParameterIn } from './helpers/types';
 import { OpenAPIV3 } from 'openapi-types';
+import { isInUnionProperty } from './helpers/unions';
 
 const enumWasNarrowed = (before: any[], after: any[]): string[] | false => {
   let beforeSet = new Set(before);
@@ -103,6 +104,13 @@ export const preventPropertyEnumBreak = () => {
     matches: (property, context) => isSchemaWithEnum(property.raw),
     rule: (property, context) => {
       property.changed((before, after) => {
+        if (
+          isInUnionProperty(before.location.jsonPath) ||
+          isInUnionProperty(after.location.jsonPath)
+        ) {
+          return;
+        }
+
         const enumNarrowed =
           isSchemaWithEnum(before.raw) &&
           isSchemaWithEnum(after.raw) &&

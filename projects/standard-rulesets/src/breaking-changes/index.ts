@@ -31,6 +31,8 @@ import {
 } from './preventParameterTypeChange';
 import Ajv from 'ajv';
 import { SeverityTextOptions, SeverityText } from '@useoptic/openapi-utilities';
+import { preventRequestExpandingInUnionTypes } from './preventRequestExpandingWithUnionTypes';
+import { preventResponseNarrowingInUnionTypes } from './preventResponseNarrowingWithUnionType';
 
 type YamlConfig = {
   exclude_operations_with_extension?: string;
@@ -143,6 +145,8 @@ export class BreakingChangesRuleset extends Ruleset<Rule[]> {
       preventResponsePropertyRemoval(),
       preventResponsePropertyTypeChange(),
       preventResponseStatusCodeRemoval(),
+      preventRequestExpandingInUnionTypes(),
+      preventResponseNarrowingInUnionTypes(),
     ];
     super({
       ...config,
