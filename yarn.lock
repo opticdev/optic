@@ -3187,9 +3187,9 @@ __metadata:
   linkType: hard
 
 "@types/babel__preset-env@npm:^7":
-  version: 7.9.3
-  resolution: "@types/babel__preset-env@npm:7.9.3"
-  checksum: 7e89a37c4a7ebe841e0bc610e19497fe0642d741e8651c52ea4727782e46ea47d2aaf2656927a684c6618d8981b0febc1fc8c82c4a1d84b4ec5793a283e1ef7f
+  version: 7.9.4
+  resolution: "@types/babel__preset-env@npm:7.9.4"
+  checksum: a4580b541d4fe7bdf9ecb9695cb90827f96c75e5c807e6fcf6cbca3beeb9106019dc322b2d08de03025d57c6f3f1431d80eb3ea6d9416e90bc8ee15460efa27d
   languageName: node
   linkType: hard
 
