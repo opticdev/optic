@@ -177,6 +177,7 @@ function diffKeyMaps(aMap: KeyMap, bMap: KeyMap) {
         } else if (!aValue.required && bValue.required) {
           results.expanded = true;
         }
+        // TODO check enums
         // TODO do other breaking change checks like format / pattern / min/max
       } else if (aValue.keyword === 'type' || bValue.keyword === 'type') {
         if (aValue.keyword === 'type' && bValue.keyword !== 'type') {
