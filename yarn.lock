@@ -513,7 +513,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helper-validator-identifier@npm:^7.22.19, @babel/helper-validator-identifier@npm:^7.22.20":
+"@babel/helper-validator-identifier@npm:^7.22.20":
   version: 7.22.20
   resolution: "@babel/helper-validator-identifier@npm:7.22.20"
   checksum: df882d2675101df2d507b95b195ca2f86a3ef28cb711c84f37e79ca23178e13b9f0d8b522774211f51e40168bf5142be4c1c9776a150cddb61a0d5bf3e95750b
@@ -1804,14 +1804,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/types@npm:^7.22.19":
-  version: 7.22.19
-  resolution: "@babel/types@npm:7.22.19"
+"@babel/types@npm:^7.22.19, @babel/types@npm:^7.23.0":
+  version: 7.23.0
+  resolution: "@babel/types@npm:7.23.0"
   dependencies:
     "@babel/helper-string-parser": "npm:^7.22.5"
-    "@babel/helper-validator-identifier": "npm:^7.22.19"
+    "@babel/helper-validator-identifier": "npm:^7.22.20"
     to-fast-properties: "npm:^2.0.0"
-  checksum: 46062a21c10b9441fd7066943c105e1f3a427bf8646e00af40825733d5c131b8e7eadd783d8e7b528a73636f2989c35dd3cd81a937e0578bee2112e45ec0e1db
+  checksum: ca5b896a26c91c5672254725c4c892a35567d2122afc47bd5331d1611a7f9230c19fc9ef591a5a6f80bf0d80737e104a9ac205c96447c74bee01d4319db58001
   languageName: node
   linkType: hard
 
@@ -1823,17 +1823,6 @@ __metadata:
     "@babel/helper-validator-identifier": "npm:^7.22.5"
     to-fast-properties: "npm:^2.0.0"
   checksum: 7f7edffe7e13dbd26a182677575ca7451bc234ce43b93dc49d27325306748628019e7753e6b5619ae462ea0d7e5ce2c0cc24092d53b592642ea89542037748b5
-  languageName: node
-  linkType: hard
-
-"@babel/types@npm:^7.23.0":
-  version: 7.23.0
-  resolution: "@babel/types@npm:7.23.0"
-  dependencies:
-    "@babel/helper-string-parser": "npm:^7.22.5"
-    "@babel/helper-validator-identifier": "npm:^7.22.20"
-    to-fast-properties: "npm:^2.0.0"
-  checksum: ca5b896a26c91c5672254725c4c892a35567d2122afc47bd5331d1611a7f9230c19fc9ef591a5a6f80bf0d80737e104a9ac205c96447c74bee01d4319db58001
   languageName: node
   linkType: hard
 
@@ -3423,11 +3412,9 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:^18.0.0":
-  version: 18.18.9
-  resolution: "@types/node@npm:18.18.9"
-  dependencies:
-    undici-types: "npm:~5.26.4"
-  checksum: ebd98b117c868edc597807cd0dab214b6110b9cd5ee406632641d0cf5b8bd7cb199caaac657a046d9203c441dbcfb3c71154ffa2d615ec89f80e6972143e6ec8
+  version: 18.18.6
+  resolution: "@types/node@npm:18.18.6"
+  checksum: ba8b71c724c4c9b1908faf09be1aa062790ef4194f956f6c7ae9791f8d2c1d123635695e41c3c8326223d2262bae2b3b5c8774c7a6c5885a98437b6fb04a2f0c
   languageName: node
   linkType: hard
 
