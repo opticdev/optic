@@ -35,7 +35,7 @@ ${skipConfigUpdate ? `capture:\n  ${oasFile}:` : ''}
       url: https://echo.o3c.org
     requests:
       send: 
-        - path: /users/aidan
+        - path: /users/
           headers:
             - x-response-json: '{"id":0, "name":"aidan"}'
         - path: /users/create
