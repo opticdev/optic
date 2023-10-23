@@ -23,6 +23,7 @@ export async function uploadDiff(
     currentBranch?: string;
   }
 ): Promise<{
+  runId: string;
   baseSpecUrl: string | null;
   headSpecUrl: string | null;
   changelogUrl: string;
@@ -102,6 +103,7 @@ export async function uploadDiff(
       spinner?.succeed(`Uploaded results of diff to ${changelogUrl}`);
 
     return {
+      runId: run.id,
       changelogUrl,
       headSpecUrl:
         headSpecId === EMPTY_SPEC_ID

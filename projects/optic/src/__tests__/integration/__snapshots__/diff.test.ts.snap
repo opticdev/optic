@@ -9,7 +9,7 @@ exports[`diff file doesn't exist 1`] = `
 exports[`diff petstore diff 1`] = `
 "[31mx [39m[1mSwagger Petstore Updated[22m [90mpetstore-base.json[39m
 [1mOperations: [22m5 operations added, 16 changed, 1 removed
-[31mx [39m [1mChecks:[22m 160/211 passed 
+[31mx [39m [1mChecks:[22m 192/243 passed 
 
 specification details:
 - /servers/2 [32madded[39m
@@ -378,10 +378,9 @@ specification details:
         at [4mpetstore-updated.json:83:2701[24m
         
       - property [1m/schema/properties/stringOrNumberOrObject[22m: [33mchanged[39m
-      - property [1m/schema/properties/stringOrNumberOrObject/oneOf/2/properties/orderId[22m: 
       
-        [31m[1mx [prevent removing response property][22m cannot remove response property 'orderId'. This is a breaking change.[39m
-        at [4mpetstore-base.json:81:2600[24m
+        [31m[1mx [prevent narrowing in response union types][22m cannot narrow a response body[39m
+        at [4mpetstore-updated.json:76:2389[24m
         
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
@@ -580,7 +579,7 @@ exports[`diff with mock server uploads specs if authenticated and --upload 1`] =
 [31mx [39m[1mEmpty[22m [90mspec.json[39m
 [1mPreview docs: [22m http://localhost:3001/organizations/org-id/apis/api-id?specId=already-uploaded
 [1mOperations: [22m1 operation changed
-[31mx [39m [1mChecks:[22m 0/1 passed 
+[31mx [39m [1mChecks:[22m 1/2 passed 
 
 [31mx [1mPATCH[22m /example[39m: 
   - response [1m200[22m: 

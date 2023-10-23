@@ -2,11 +2,14 @@ import { getEndpointDiffs, typeofV3Diffs } from '../openapi3/group-diff';
 import { ChangeType } from '../openapi3/sdk/types';
 import { GroupedDiffs } from '../openapi3/group-diff';
 
-export const getLabel = (operationsModifsCount: {
-  [ChangeType.Added]: number;
-  [ChangeType.Changed]: number;
-  [ChangeType.Removed]: number;
-}) =>
+export const getLabel = (
+  operationsModifsCount: {
+    [ChangeType.Added]: number;
+    [ChangeType.Changed]: number;
+    [ChangeType.Removed]: number;
+  },
+  opts?: { joiner?: string }
+) =>
   Object.keys(operationsModifsCount)
     .filter((k) => (operationsModifsCount as any)[k])
     .map(
@@ -19,7 +22,7 @@ export const getLabel = (operationsModifsCount: {
             : ''
         }${key}`
     )
-    .join(', ');
+    .join(opts?.joiner ?? ', ');
 
 export const getOperationsChanged = (
   groupedDiffs: GroupedDiffs
@@ -52,13 +55,17 @@ export const getOperationsChanged = (
 };
 
 export const getOperationsChangedLabel = (
-  groupedDiffs: GroupedDiffs
+  groupedDiffs: GroupedDiffs,
+  opts?: { joiner?: string }
 ): string => {
   const { added, changed, removed } = getOperationsChanged(groupedDiffs);
 
-  return getLabel({
-    added: added.size,
-    changed: changed.size,
-    removed: removed.size,
-  });
+  return getLabel(
+    {
+      added: added.size,
+      changed: changed.size,
+      removed: removed.size,
+    },
+    opts
+  );
 };

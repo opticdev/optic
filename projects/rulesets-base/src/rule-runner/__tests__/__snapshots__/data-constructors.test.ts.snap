@@ -66,6 +66,10 @@ exports[`createOperation with after key 1`] = `
       },
     },
   },
+  "polymorphicSchemas": {
+    "after": Set {},
+    "before": Set {},
+  },
   "queryParameters": Map {},
   "raw": {
     "description": "For valid response try integer IDs with value >= 1 and <= 10.         Other values will generated exceptions",
@@ -1412,6 +1416,10 @@ exports[`createOperation with before key 1`] = `
         },
       },
     },
+  },
+  "polymorphicSchemas": {
+    "after": Set {},
+    "before": Set {},
   },
   "queryParameters": Map {},
   "raw": {

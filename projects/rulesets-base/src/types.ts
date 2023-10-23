@@ -23,6 +23,7 @@ export type Specification = FactVariant<OpenApiKind.Specification> & {
 export type Operation = FactVariant<OpenApiKind.Operation> & {
   raw: OpenAPIV3.OperationObject;
   security: OpenAPIV3.OperationObject['security'] | null;
+  polymorphicSchemas: { before: Set<string>; after: Set<string> };
   path: string;
   method: string;
   queryParameters: Map<string, QueryParameter>;
@@ -50,7 +51,7 @@ export type CookieParameter = FactVariant<OpenApiKind.CookieParameter> & {
 };
 
 export type RequestBody = FactVariant<OpenApiKind.Body> & {
-  raw: OpenAPIV3.RequestBodyObject;
+  raw: OpenAPIV3.MediaTypeObject;
   contentType: string;
   properties: Map<string, Property>;
 };

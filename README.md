@@ -32,6 +32,12 @@ optic diff openapi.yml --base main --check
 ```
 optic diff feature/example:openapi.yml develop:main --check
 ```
+**Compare files in against a remote URL**
+```
+optic diff --check \
+https://raw.githubusercontent.com/opticdev/bookstore-example/89c9a67935c850c1051059f4c719ef433dea8cc0/openapi.yml \
+https://raw.githubusercontent.com/opticdev/bookstore-example/ac5f3c55a6f7f27c482a557563686d0328dafb55/openapi.yml
+```
 
 <img src="https://github.com/opticdev/optic/assets/5900338/fd6cdd7f-c147-467b-9517-84232baa898f" width="500" />
 
@@ -40,7 +46,22 @@ optic diff feature/example:openapi.yml develop:main --check
 ## Test the accuracy of your documentation using `optic capture`
 It can be difficult to keep an OpenAPI in-sync with your implementation. Optic tests if your OpenAPI is accurate by capturing traffic from your tests and comparing it to the spec.
 
-Think of it like Snapshot testing, but for your API's behavior, with OpenAPI as the snapshot. 
+Think of it like Snapshot testing, but for your API's behavior, with OpenAPI as the snapshot.
+
+<details>
+  <summary>Try it out with our example repo</summary>
+  You can clone our example repo to try out `optic capture` against a repo that is already set up.
+
+  ```bash
+  git clone git@github.com:opticdev/examples.git
+  cd ./examples/apps/bookstore-api
+  npm install
+  ```
+
+  Once you've set up the repo, you can run `optic capture openapi.yml` to verify traffic against your OpenAPI spec, and `optic capture openapi.yml --update=interactive` to update any diffs.
+</details>
+
+To start capturing your test traffic, run:
 
 ```
 optic capture init openapi.yml

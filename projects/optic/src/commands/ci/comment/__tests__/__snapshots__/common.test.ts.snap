@@ -13,21 +13,23 @@ commit_sha: 123
 <thead>
 <tr>
 <th>API</th>
-<th>Operation Changes</th>
-<th>Checks</th>
+<th>Changes</th>
+<th>Rules</th>
 
+
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>
 
-completed ([preview](https://app.useoptic.com/docs))
+completed
 
 </td>
 <td>
 
-2 operations added ([view changelog](https://app.useoptic.com/changelog))
+2 operations added
 
   
 
@@ -39,6 +41,15 @@ completed ([preview](https://app.useoptic.com/docs))
 
 </td>
 
+
+
+
+
+<td>
+
+[View report](https://app.useoptic.com/changelog)
+
+</td>
 </tr>
 </tbody>
 </table>
@@ -85,21 +96,23 @@ commit_sha: 123
 <thead>
 <tr>
 <th>API</th>
-<th>Operation Changes</th>
-<th>Checks</th>
+<th>Changes</th>
+<th>Rules</th>
 
+
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>
 
-completed ([preview](https://app.useoptic.com/docs))
+completed
 
 </td>
 <td>
 
-2 operations added ([view changelog](https://app.useoptic.com/changelog))
+2 operations added
 
   \`GET /api\` (added)
 \`POST /api\` (added)
@@ -112,6 +125,15 @@ completed ([preview](https://app.useoptic.com/docs))
 
 </td>
 
+
+
+
+
+<td>
+
+[View report](https://app.useoptic.com/changelog)
+
+</td>
 </tr>
 </tbody>
 </table>
@@ -210,21 +232,23 @@ commit_sha: 123
 <thead>
 <tr>
 <th>API</th>
-<th>Operation Changes</th>
-<th>Checks</th>
+<th>Changes</th>
+<th>Rules</th>
 
+
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>
 
-completed ([preview](https://app.useoptic.com/docs))
+completed
 
 </td>
 <td>
 
-2 operations added ([view changelog](https://app.useoptic.com/changelog))
+2 operations added
 
   
 
@@ -236,6 +260,15 @@ completed ([preview](https://app.useoptic.com/docs))
 
 </td>
 
+
+
+
+
+<td>
+
+[View report](https://app.useoptic.com/changelog)
+
+</td>
 </tr>
 </tbody>
 </table>
@@ -260,21 +293,23 @@ commit_sha: 123
 <thead>
 <tr>
 <th>API</th>
-<th>Operation Changes</th>
-<th>Checks</th>
+<th>Changes</th>
+<th>Rules</th>
 
+
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>
 
-no-optic-cloud ([setup preview](https://useoptic.com/docs/cloud-get-started))
+no-optic-cloud
 
 </td>
 <td>
 
-2 operations added ([setup changelog](https://useoptic.com/docs/cloud-get-started))
+2 operations added
 
   
 
@@ -286,6 +321,15 @@ no-optic-cloud ([setup preview](https://useoptic.com/docs/cloud-get-started))
 
 </td>
 
+
+
+
+
+<td>
+
+
+
+</td>
 </tr>
 </tbody>
 </table>
