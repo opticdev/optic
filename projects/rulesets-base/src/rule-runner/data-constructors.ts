@@ -183,6 +183,7 @@ export const createOperation = (
 
   return {
     ...operationFact,
+    polymorphicSchemas: endpoint.polymorphicSchemas,
     raw: jsonPointerHelpers.get(openApiSpec, operationFact.location.jsonPath),
     path: endpoint.path,
     method: endpoint.method,

@@ -50,6 +50,15 @@ exports[`groupFacts for petstore example 1`] = `
       "method": "get",
       "path": "/example",
       "pathParameters": Map {},
+      "polymorphicSchemas": {
+        "after": Set {
+          "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject",
+        },
+        "before": Set {
+          "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject",
+          "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject",
+        },
+      },
       "queryParameters": Map {},
       "request": {
         "after": null,
@@ -1296,6 +1305,10 @@ exports[`groupFacts for petstore example 1`] = `
       "method": "get",
       "path": "/pet",
       "pathParameters": Map {},
+      "polymorphicSchemas": {
+        "after": Set {},
+        "before": Set {},
+      },
       "queryParameters": Map {},
       "request": {
         "after": null,
@@ -1546,6 +1559,10 @@ exports[`groupFacts for petstore example 1`] = `
       "method": "post",
       "path": "/pet",
       "pathParameters": Map {},
+      "polymorphicSchemas": {
+        "after": Set {},
+        "before": Set {},
+      },
       "queryParameters": Map {},
       "request": {
         "after": {
@@ -3298,6 +3315,10 @@ exports[`groupFacts for petstore example 1`] = `
       "method": "put",
       "path": "/pet",
       "pathParameters": Map {},
+      "polymorphicSchemas": {
+        "after": Set {},
+        "before": Set {},
+      },
       "queryParameters": Map {},
       "request": {
         "after": {
@@ -5357,6 +5378,10 @@ exports[`groupFacts for petstore example 1`] = `
           "change": null,
         },
       },
+      "polymorphicSchemas": {
+        "after": Set {},
+        "before": Set {},
+      },
       "queryParameters": Map {},
       "request": {
         "after": {
@@ -6956,6 +6981,10 @@ exports[`groupFacts for petstore example 1`] = `
       "method": "get",
       "path": "/store/inventory",
       "pathParameters": Map {},
+      "polymorphicSchemas": {
+        "after": Set {},
+        "before": Set {},
+      },
       "queryParameters": Map {},
       "request": {
         "after": null,
@@ -7150,6 +7179,10 @@ exports[`groupFacts for petstore example 1`] = `
       "method": "post",
       "path": "/store/order",
       "pathParameters": Map {},
+      "polymorphicSchemas": {
+        "after": Set {},
+        "before": Set {},
+      },
       "queryParameters": Map {},
       "request": {
         "after": {
@@ -9375,6 +9408,10 @@ exports[`groupFacts for petstore example 1`] = `
           "change": null,
         },
       },
+      "polymorphicSchemas": {
+        "after": Set {},
+        "before": Set {},
+      },
       "queryParameters": Map {},
       "request": {
         "after": null,
@@ -11336,6 +11373,10 @@ exports[`groupFacts for petstore example 1`] = `
           "change": null,
         },
       },
+      "polymorphicSchemas": {
+        "after": Set {},
+        "before": Set {},
+      },
       "queryParameters": Map {},
       "request": {
         "after": null,
@@ -11804,6 +11845,10 @@ exports[`groupFacts for petstore example 1`] = `
       "method": "post",
       "path": "/user",
       "pathParameters": Map {},
+      "polymorphicSchemas": {
+        "after": Set {},
+        "before": Set {},
+      },
       "queryParameters": Map {},
       "request": {
         "after": {
@@ -12779,6 +12824,10 @@ exports[`groupFacts for petstore example 1`] = `
       "method": "post",
       "path": "/user/createWithArray",
       "pathParameters": Map {},
+      "polymorphicSchemas": {
+        "after": Set {},
+        "before": Set {},
+      },
       "queryParameters": Map {},
       "request": {
         "after": {
@@ -13790,6 +13839,10 @@ exports[`groupFacts for petstore example 1`] = `
       "method": "post",
       "path": "/user/createWithList",
       "pathParameters": Map {},
+      "polymorphicSchemas": {
+        "after": Set {},
+        "before": Set {},
+      },
       "queryParameters": Map {},
       "request": {
         "after": {
@@ -14799,6 +14852,10 @@ exports[`groupFacts for petstore example 1`] = `
       "method": "get",
       "path": "/user/login",
       "pathParameters": Map {},
+      "polymorphicSchemas": {
+        "after": Set {},
+        "before": Set {},
+      },
       "queryParameters": Map {
         "username" => {
           "after": {
@@ -15465,6 +15522,10 @@ exports[`groupFacts for petstore example 1`] = `
       "method": "get",
       "path": "/user/logout",
       "pathParameters": Map {},
+      "polymorphicSchemas": {
+        "after": Set {},
+        "before": Set {},
+      },
       "queryParameters": Map {},
       "request": {
         "after": null,
@@ -15647,6 +15708,10 @@ exports[`groupFacts for petstore example 1`] = `
           },
           "change": null,
         },
+      },
+      "polymorphicSchemas": {
+        "after": Set {},
+        "before": Set {},
       },
       "queryParameters": Map {},
       "request": {
@@ -17999,6 +18064,10 @@ exports[`groupFacts for petstore example 1`] = `
           "change": null,
         },
       },
+      "polymorphicSchemas": {
+        "after": Set {},
+        "before": Set {},
+      },
       "queryParameters": Map {},
       "request": {
         "after": {
@@ -19092,6 +19161,10 @@ exports[`groupFacts for petstore example 1`] = `
           "change": null,
         },
       },
+      "polymorphicSchemas": {
+        "after": Set {},
+        "before": Set {},
+      },
       "queryParameters": Map {},
       "request": {
         "after": null,
@@ -19284,6 +19357,10 @@ exports[`groupFacts for petstore example 1`] = `
       "method": "get",
       "path": "/pet/findByStatus",
       "pathParameters": Map {},
+      "polymorphicSchemas": {
+        "after": Set {},
+        "before": Set {},
+      },
       "queryParameters": Map {
         "status" => {
           "after": {
@@ -21392,6 +21469,10 @@ exports[`groupFacts for petstore example 1`] = `
       "method": "get",
       "path": "/pet/findByTags",
       "pathParameters": Map {},
+      "polymorphicSchemas": {
+        "after": Set {},
+        "before": Set {},
+      },
       "queryParameters": Map {
         "tags" => {
           "after": {
@@ -23547,6 +23628,10 @@ exports[`groupFacts for petstore example 1`] = `
           },
         },
       },
+      "polymorphicSchemas": {
+        "after": Set {},
+        "before": Set {},
+      },
       "queryParameters": Map {},
       "request": {
         "after": null,
@@ -25618,6 +25703,10 @@ exports[`groupFacts for petstore example 1`] = `
           },
         },
       },
+      "polymorphicSchemas": {
+        "after": Set {},
+        "before": Set {},
+      },
       "queryParameters": Map {},
       "request": {
         "after": {
@@ -25973,6 +26062,10 @@ exports[`groupFacts for petstore example 1`] = `
             },
           },
         },
+      },
+      "polymorphicSchemas": {
+        "after": Set {},
+        "before": Set {},
       },
       "queryParameters": Map {},
       "request": {

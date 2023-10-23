@@ -49,6 +49,7 @@ export const createRuleContextWithoutOperation = (
         conceptualPath: [],
         kind: OpenApiKind.Operation,
       },
+      polymorphicSchemas: { before: new Set(), after: new Set() },
       value: { pathPattern: '', method: '' },
       path: '',
       method: '',

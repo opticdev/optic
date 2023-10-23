@@ -308,6 +308,10 @@ exports[`SpecificationRule rulesContext after 1`] = `
     "method": "",
     "path": "",
     "pathParameters": Map {},
+    "polymorphicSchemas": {
+      "after": Set {},
+      "before": Set {},
+    },
     "queryParameters": Map {},
     "raw": {
       "responses": {},
@@ -384,6 +388,10 @@ exports[`SpecificationRule rulesContext after is empty spec 1`] = `
     "method": "",
     "path": "",
     "pathParameters": Map {},
+    "polymorphicSchemas": {
+      "after": Set {},
+      "before": Set {},
+    },
     "queryParameters": Map {},
     "raw": {
       "responses": {},
@@ -460,6 +468,10 @@ exports[`SpecificationRule rulesContext before 1`] = `
     "method": "",
     "path": "",
     "pathParameters": Map {},
+    "polymorphicSchemas": {
+      "after": Set {},
+      "before": Set {},
+    },
     "queryParameters": Map {},
     "raw": {
       "responses": {},
@@ -536,6 +548,10 @@ exports[`SpecificationRule rulesContext before is empty spec 1`] = `
     "method": "",
     "path": "",
     "pathParameters": Map {},
+    "polymorphicSchemas": {
+      "after": Set {},
+      "before": Set {},
+    },
     "queryParameters": Map {},
     "raw": {
       "responses": {},

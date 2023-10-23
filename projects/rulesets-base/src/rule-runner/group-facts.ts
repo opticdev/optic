@@ -11,6 +11,7 @@ import {
   OpenAPIFactNodes,
   ResponseNode,
 } from './rule-runner-types';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 export const getEndpointKey = ({
   path,
@@ -50,6 +51,7 @@ const createEndpoint = ({
   method: string;
 }): EndpointNode => ({
   ...createEmptyNodeDetail(),
+  polymorphicSchemas: { before: new Set(), after: new Set() },
   headerParameters: new Map(),
   pathParameters: new Map(),
   queryParameters: new Map(),
@@ -174,6 +176,15 @@ const useFactToUpdate = (
       responseBody.fields.set(jsonPath, field);
       responseChange.bodies.set(contentType, responseBody);
       endpoint.responses.set(statusCode, responseChange);
+      const parts = jsonPointerHelpers.decode(jsonPath);
+      const polymorphicIndex = parts.findIndex(
+        (p) => p === 'oneOf' || p === 'anyOf'
+      );
+      if (polymorphicIndex !== -1) {
+        endpoint.polymorphicSchemas[key].add(
+          jsonPointerHelpers.compile(parts.slice(0, polymorphicIndex))
+        );
+      }
     } else {
       const {
         body: { contentType },
@@ -187,6 +198,15 @@ const useFactToUpdate = (
       requestBody.fields.set(jsonPath, field);
 
       endpoint.request.bodies.set(contentType, requestBody);
+      const parts = jsonPointerHelpers.decode(jsonPath);
+      const polymorphicIndex = parts.findIndex(
+        (p) => p === 'oneOf' || p === 'anyOf'
+      );
+      if (polymorphicIndex !== -1) {
+        endpoint.polymorphicSchemas[key].add(
+          jsonPointerHelpers.compile(parts.slice(0, polymorphicIndex))
+        );
+      }
     }
   } else if (isFactVariant(fact, OpenApiKind.Request)) {
     endpoint.request[key] = fact;
