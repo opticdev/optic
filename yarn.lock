@@ -3440,9 +3440,9 @@ __metadata:
   linkType: hard
 
 "@types/log@npm:^6.3.0":
-  version: 6.3.1
-  resolution: "@types/log@npm:6.3.1"
-  checksum: 412d0e13f0082e976c617b1ee8def7d84c975ac081ad798cd0c8560fa1429f147943fa3c12572d15e04750229dc0aea007edde764cbea3d42924f6fbf6dfcda6
+  version: 6.3.2
+  resolution: "@types/log@npm:6.3.2"
+  checksum: 147775ee4d56429c6a0e543045ca3f8a0d610f5ab2d1a3ac8262900aa6a2bdef98789a7529ec3b97a148cfaba9ddab5c8dbe8018f8487f89f5e725b3cf39f857
   languageName: node
   linkType: hard
 
