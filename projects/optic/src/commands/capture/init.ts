@@ -37,7 +37,7 @@ ${skipConfigUpdate ? `capture:\n  ${oasFile}:` : ''}
       send: 
         - path: /users/
           headers:
-            - x-response-json: '[{"id":0, "name":"aidan"}]'
+            x-response-json: '[{"id":0, "name":"aidan"}]'
         - path: /users/create
           method: POST
           data:
