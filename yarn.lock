@@ -3370,11 +3370,11 @@ __metadata:
   linkType: hard
 
 "@types/lodash.chunk@npm:^4":
-  version: 4.2.7
-  resolution: "@types/lodash.chunk@npm:4.2.7"
+  version: 4.2.8
+  resolution: "@types/lodash.chunk@npm:4.2.8"
   dependencies:
     "@types/lodash": "*"
-  checksum: 09df5ca00d8866776038bf94658d30b4ea84bffe5f81c14c01568bcb6be692bf59f6ea093de2bb0afbb3f8e54ae96ebd97595f2838ab59b77865427ca77d391e
+  checksum: a9d3bce2656ce6782dc1c1ee4072014183d42aabb056b4cacffb94077b10c2c32468545301526055fbd7e0da266143cff742714dbf6476ad13bd7f2840bb9d00
   languageName: node
   linkType: hard
 
