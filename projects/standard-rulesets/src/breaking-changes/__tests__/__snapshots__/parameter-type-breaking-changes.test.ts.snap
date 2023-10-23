@@ -96,59 +96,6 @@ exports[`breaking changes ruleset - parameter type change "cookie" parameter typ
     },
     "condition": undefined,
     "docsLink": undefined,
-    "error": undefined,
-    "exempted": false,
-    "expected": undefined,
-    "isMust": true,
-    "isShould": false,
-    "name": "prevent cookie parameters enum breaking changes",
-    "passed": true,
-    "received": undefined,
-    "severity": 2,
-    "type": "changed",
-    "where": "GET /api/users cookie parameter: version",
-  },
-  {
-    "change": {
-      "changeType": "changed",
-      "changed": {
-        "after": {
-          "in": "cookie",
-          "name": "version",
-          "schema": {
-            "type": "number",
-          },
-        },
-        "before": {
-          "in": "cookie",
-          "name": "version",
-          "schema": {
-            "type": "string",
-          },
-        },
-      },
-      "location": {
-        "conceptualLocation": {
-          "inRequest": {
-            "cookie": "version",
-          },
-          "method": "get",
-          "path": "/api/users",
-        },
-        "conceptualPath": [
-          "operations",
-          "/api/users",
-          "get",
-          "parameters",
-          "cookie",
-          "version",
-        ],
-        "jsonPath": "/paths/~1api~1users/get/parameters/0",
-        "kind": "cookie-parameter",
-      },
-    },
-    "condition": undefined,
-    "docsLink": undefined,
     "error": "expected cookie parameter 'version' not be narrowed. This is a breaking change.",
     "exempted": false,
     "expected": undefined,
@@ -219,59 +166,6 @@ exports[`breaking changes ruleset - parameter type change "cookie" parameter typ
 
 exports[`breaking changes ruleset - parameter type change "header" parameter type change 1`] = `
 [
-  {
-    "change": {
-      "changeType": "changed",
-      "changed": {
-        "after": {
-          "in": "header",
-          "name": "version",
-          "schema": {
-            "type": "number",
-          },
-        },
-        "before": {
-          "in": "header",
-          "name": "version",
-          "schema": {
-            "type": "string",
-          },
-        },
-      },
-      "location": {
-        "conceptualLocation": {
-          "inRequest": {
-            "header": "version",
-          },
-          "method": "get",
-          "path": "/api/users",
-        },
-        "conceptualPath": [
-          "operations",
-          "/api/users",
-          "get",
-          "parameters",
-          "header",
-          "version",
-        ],
-        "jsonPath": "/paths/~1api~1users/get/parameters/0",
-        "kind": "header-parameter",
-      },
-    },
-    "condition": undefined,
-    "docsLink": undefined,
-    "error": undefined,
-    "exempted": false,
-    "expected": undefined,
-    "isMust": true,
-    "isShould": false,
-    "name": "prevent header parameters enum breaking changes",
-    "passed": true,
-    "received": undefined,
-    "severity": 2,
-    "type": "changed",
-    "where": "GET /api/users header parameter: version",
-  },
   {
     "change": {
       "changeType": "changed",
@@ -530,59 +424,6 @@ exports[`breaking changes ruleset - parameter type change "path" parameter type 
     },
     "condition": undefined,
     "docsLink": undefined,
-    "error": undefined,
-    "exempted": false,
-    "expected": undefined,
-    "isMust": true,
-    "isShould": false,
-    "name": "prevent path parameters enum breaking changes",
-    "passed": true,
-    "received": undefined,
-    "severity": 2,
-    "type": "changed",
-    "where": "GET /api/users path parameter: version",
-  },
-  {
-    "change": {
-      "changeType": "changed",
-      "changed": {
-        "after": {
-          "in": "path",
-          "name": "version",
-          "schema": {
-            "type": "number",
-          },
-        },
-        "before": {
-          "in": "path",
-          "name": "version",
-          "schema": {
-            "type": "string",
-          },
-        },
-      },
-      "location": {
-        "conceptualLocation": {
-          "inRequest": {
-            "path": "version",
-          },
-          "method": "get",
-          "path": "/api/users",
-        },
-        "conceptualPath": [
-          "operations",
-          "/api/users",
-          "get",
-          "parameters",
-          "path",
-          "version",
-        ],
-        "jsonPath": "/paths/~1api~1users/get/parameters/0",
-        "kind": "path-parameter",
-      },
-    },
-    "condition": undefined,
-    "docsLink": undefined,
     "error": "expected path parameter 'version' not be narrowed. This is a breaking change.",
     "exempted": false,
     "expected": undefined,
@@ -600,59 +441,6 @@ exports[`breaking changes ruleset - parameter type change "path" parameter type 
 
 exports[`breaking changes ruleset - parameter type change "query" parameter type change 1`] = `
 [
-  {
-    "change": {
-      "changeType": "changed",
-      "changed": {
-        "after": {
-          "in": "query",
-          "name": "version",
-          "schema": {
-            "type": "number",
-          },
-        },
-        "before": {
-          "in": "query",
-          "name": "version",
-          "schema": {
-            "type": "string",
-          },
-        },
-      },
-      "location": {
-        "conceptualLocation": {
-          "inRequest": {
-            "query": "version",
-          },
-          "method": "get",
-          "path": "/api/users",
-        },
-        "conceptualPath": [
-          "operations",
-          "/api/users",
-          "get",
-          "parameters",
-          "query",
-          "version",
-        ],
-        "jsonPath": "/paths/~1api~1users/get/parameters/0",
-        "kind": "query-parameter",
-      },
-    },
-    "condition": undefined,
-    "docsLink": undefined,
-    "error": undefined,
-    "exempted": false,
-    "expected": undefined,
-    "isMust": true,
-    "isShould": false,
-    "name": "prevent query parameters enum breaking changes",
-    "passed": true,
-    "received": undefined,
-    "severity": 2,
-    "type": "changed",
-    "where": "GET /api/users query parameter: version",
-  },
   {
     "change": {
       "changeType": "changed",

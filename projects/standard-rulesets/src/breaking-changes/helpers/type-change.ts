@@ -62,8 +62,8 @@ export function computeTypeTransition(
     : null;
   if (beforeEnum && afterEnum) {
     const enumResults = diffSets(new Set(beforeEnum), new Set(afterEnum));
-    if (enumResults.expanded) results.expanded.enum = true;
-    if (enumResults.narrowed) results.narrowed.enum = true;
+    if (enumResults.expanded.length) results.expanded.enum = true;
+    if (enumResults.narrowed.length) results.narrowed.enum = true;
   } else if (beforeEnum && !afterEnum) {
     results.expanded.enum = true;
   } else if (!beforeEnum && afterEnum) {
@@ -82,31 +82,24 @@ export function computeEffectiveTypeChange(
 } {
   const before = typeToSet(beforeType);
   const after = typeToSet(afterType);
-
-  return diffSets(before, after);
+  const diff = diffSets(before, after);
+  return {
+    narrowed: diff.narrowed.length > 0,
+    expanded: diff.expanded.length > 0,
+  };
 }
 
-function diffSets(
+export function diffSets(
   beforeSet: Set<string>,
   afterSet: Set<string>
-): { expanded: boolean; narrowed: boolean } {
-  const results = {
-    expanded: false,
-    narrowed: false,
+): { expanded: string[]; narrowed: string[] } {
+  const narrowedSet = new Set([...beforeSet].filter((x) => !afterSet.has(x)));
+  const expandedSet = new Set([...afterSet].filter((x) => !beforeSet.has(x)));
+
+  return {
+    expanded: [...expandedSet],
+    narrowed: [...narrowedSet],
   };
-
-  for (const a of beforeSet) {
-    if (!afterSet.has(a)) {
-      results.narrowed = true;
-    }
-  }
-  for (const a of afterSet) {
-    if (!beforeSet.has(a)) {
-      results.expanded = true;
-    }
-  }
-
-  return results;
 }
 
 function typeToSet(type?: string | string[]): Set<string> {
