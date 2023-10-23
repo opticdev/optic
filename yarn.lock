@@ -3415,11 +3415,11 @@ __metadata:
   linkType: hard
 
 "@types/lodash.pick@npm:^4":
-  version: 4.4.7
-  resolution: "@types/lodash.pick@npm:4.4.7"
+  version: 4.4.8
+  resolution: "@types/lodash.pick@npm:4.4.8"
   dependencies:
     "@types/lodash": "*"
-  checksum: 78428a83b5d85e75bd13fb632030f9adb08dfc5bde3a9b6a302434fe7ac98e62919f87a7337e0ba674017d63bc57a8855ef863f5fcecd25e63b1d39eba2e4697
+  checksum: e433e4cb31e7e45d8b08d8cf1354956196671bfde496faeaaf56cfd2261133540dd116a05f42f6a315edf2da35eba9f9ea9c69ec37c81f37c7fc78d8fc345834
   languageName: node
   linkType: hard
 
