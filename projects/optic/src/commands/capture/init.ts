@@ -41,9 +41,9 @@ ${skipConfigUpdate ? `capture:\n  ${oasFile}:` : ''}
         - path: /users/create
           method: POST
           data:
-            - name: nic
+            name: nic
           headers:
-            - x-response-json: '{"id":1, "name":"nic"}'
-            - x-response-code: "201"
+            x-response-json: '{"id":1, "name":"nic"}'
+            x-response-code: "201"
   `;
 }
