@@ -3292,9 +3292,9 @@ __metadata:
   linkType: hard
 
 "@types/is-url@npm:^1.2.30":
-  version: 1.2.30
-  resolution: "@types/is-url@npm:1.2.30"
-  checksum: 81f337a7442f56d160ec0f63b2847cff368c5701f46a32c3c4fff5a1424b6afb4ad3eb7206febd26760a869680d61b7626e41f0ad652003f5783bcfda5b41d9e
+  version: 1.2.31
+  resolution: "@types/is-url@npm:1.2.31"
+  checksum: 95caf8c7ea1b1eb8db5651701c65d29ceca645afc82cfba55fd813ee712791f53001ea44e8de2d4337b101da5d9f0c69f736c0f9eb9dfa59ceb2b346457753e9
   languageName: node
   linkType: hard
 
