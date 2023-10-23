@@ -3379,11 +3379,11 @@ __metadata:
   linkType: hard
 
 "@types/lodash.clonedeep@npm:^4":
-  version: 4.5.7
-  resolution: "@types/lodash.clonedeep@npm:4.5.7"
+  version: 4.5.8
+  resolution: "@types/lodash.clonedeep@npm:4.5.8"
   dependencies:
     "@types/lodash": "*"
-  checksum: 20d6a20970b3b54b3c10cf17ace1cea49c4905d7f7cae2575a98108466e8d4c9bea3b3449d11ccaac4da1fc9bab225f477f4c2dbea8ba877cc47f629455efb69
+  checksum: 7779674a1a4458c14b4c4a90424c94e48f433d4e506a254854899df3099f9b6c33ba5c63324016f077372682c5add9c8729796519c95e4dd210f7205f8108b27
   languageName: node
   linkType: hard
 
