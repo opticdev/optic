@@ -6,13 +6,11 @@ describe('computeEffectiveTypeChange', () => {
     expect(computeEffectiveTypeChange('boolean', ['boolean'])).toEqual({
       expanded: false,
       narrowed: false,
-      identical: true,
     });
 
     expect(computeEffectiveTypeChange('string', 'string')).toEqual({
       expanded: false,
       narrowed: false,
-      identical: true,
     });
 
     expect(
@@ -20,7 +18,6 @@ describe('computeEffectiveTypeChange', () => {
     ).toEqual({
       expanded: false,
       narrowed: false,
-      identical: true,
     });
   });
 
@@ -28,13 +25,11 @@ describe('computeEffectiveTypeChange', () => {
     expect(computeEffectiveTypeChange('boolean', ['string'])).toEqual({
       expanded: true,
       narrowed: true,
-      identical: false,
     });
 
     expect(computeEffectiveTypeChange('string', 'number')).toEqual({
       expanded: true,
       narrowed: true,
-      identical: false,
     });
 
     expect(
@@ -42,7 +37,6 @@ describe('computeEffectiveTypeChange', () => {
     ).toEqual({
       expanded: true,
       narrowed: false,
-      identical: false,
     });
 
     expect(
@@ -50,7 +44,6 @@ describe('computeEffectiveTypeChange', () => {
     ).toEqual({
       expanded: false,
       narrowed: true,
-      identical: false,
     });
 
     expect(
@@ -58,7 +51,6 @@ describe('computeEffectiveTypeChange', () => {
     ).toEqual({
       expanded: true,
       narrowed: true,
-      identical: false,
     });
   });
 });

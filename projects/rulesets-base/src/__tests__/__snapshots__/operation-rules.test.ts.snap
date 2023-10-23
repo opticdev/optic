@@ -3172,6 +3172,10 @@ exports[`OperationRule rulesContext after 1`] = `
     "method": "get",
     "path": "/api/users",
     "pathParameters": Map {},
+    "polymorphicSchemas": {
+      "after": Set {},
+      "before": Set {},
+    },
     "queryParameters": Map {},
     "raw": {
       "description": "hello",
@@ -3254,6 +3258,10 @@ exports[`OperationRule rulesContext before 1`] = `
     "method": "get",
     "path": "/api/users",
     "pathParameters": Map {},
+    "polymorphicSchemas": {
+      "after": Set {},
+      "before": Set {},
+    },
     "queryParameters": Map {},
     "raw": {
       "description": "hello",

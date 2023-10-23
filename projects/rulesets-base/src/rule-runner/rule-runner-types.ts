@@ -35,6 +35,7 @@ export type BodyNode = NodeDetail<OpenApiKind.Body> & {
 export type EndpointNode = NodeDetail<OpenApiKind.Operation> & {
   method: string;
   path: string;
+  polymorphicSchemas: { before: Set<string>; after: Set<string> };
 
   headerParameters: Map<string, HeaderParameterNode>;
   pathParameters: Map<string, PathParameterNode>;
