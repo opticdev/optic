@@ -6,9 +6,18 @@ export const preventRequestPropertyRequired = () =>
     name: 'prevent changing request property to required',
     rule: (requestAssertions, ruleContext) => {
       requestAssertions.property.added((property) => {
+        const beforePolymorphicSchemas = [
+          ...ruleContext.operation.polymorphicSchemas.before.values(),
+        ];
+
         if (ruleContext.operation.change === 'added') return; // rule doesn't apply for new operations
         // Children of union properties / transitions are handled in a separate rule
-        if (isInUnionProperty(property.location.jsonPath)) {
+        if (
+          isInUnionProperty(property.location.jsonPath) ||
+          beforePolymorphicSchemas.some((schemaPath) =>
+            property.location.jsonPath.startsWith(schemaPath)
+          )
+        ) {
           return;
         }
         if (property.value.required) {

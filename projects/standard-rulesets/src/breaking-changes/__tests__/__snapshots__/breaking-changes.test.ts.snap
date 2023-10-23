@@ -2329,6 +2329,388 @@ exports[`breaking changes ruleset valid changes 1`] = `
 ]
 `;
 
+exports[`breaking changes ruleset valid request union type transition 1`] = `
+[
+  {
+    "change": {
+      "added": {
+        "flatSchema": {
+          "type": "string",
+        },
+        "key": "id",
+        "required": true,
+      },
+      "changeType": "added",
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [
+            "id",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+          "id",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/id",
+        "kind": "field",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent changing request property to required",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "added",
+    "where": "GET /api/users request body: application/json property: id",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "type": "object",
+          },
+        },
+        "before": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "oneOf": [
+              {
+                "properties": {
+                  "id": {
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "id",
+                ],
+                "type": "object",
+              },
+            ],
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent request property type changes",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "changed",
+    "where": "GET /api/users request body: application/json",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "type": "object",
+          },
+        },
+        "before": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "oneOf": [
+              {
+                "properties": {
+                  "id": {
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "id",
+                ],
+                "type": "object",
+              },
+            ],
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent expanded in request union types",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "changed",
+    "where": "GET /api/users request body: application/json",
+  },
+]
+`;
+
+exports[`breaking changes ruleset valid response union type transition 1`] = `
+[
+  {
+    "change": {
+      "changeType": "removed",
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": [
+            "id",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "id",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/id",
+        "kind": "field",
+      },
+      "removed": {
+        "before": {
+          "flatSchema": {
+            "type": "string",
+          },
+          "key": "id",
+          "required": false,
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent removing response property",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "removed",
+    "where": "GET /api/users response 200 response body: application/json property id",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "oneOf": [
+              {
+                "type": "number",
+              },
+              {
+                "properties": {
+                  "id": {
+                    "type": "string",
+                  },
+                  "name": {
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "id",
+                  "name",
+                ],
+                "type": "object",
+              },
+            ],
+          },
+        },
+        "before": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "type": "object",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent response property type changes",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "changed",
+    "where": "GET /api/users response 200 response body: application/json",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "oneOf": [
+              {
+                "type": "number",
+              },
+              {
+                "properties": {
+                  "id": {
+                    "type": "string",
+                  },
+                  "name": {
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "id",
+                  "name",
+                ],
+                "type": "object",
+              },
+            ],
+          },
+        },
+        "before": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "type": "object",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent narrowing in response union types",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "changed",
+    "where": "GET /api/users response 200 response body: application/json",
+  },
+]
+`;
+
 exports[`breaking changes ruleset valid union type refactor 1`] = `
 [
   {
@@ -2607,210 +2989,6 @@ exports[`breaking changes ruleset valid union type refactor 1`] = `
                 "type": "object",
               },
             ],
-          },
-        },
-      },
-      "location": {
-        "conceptualLocation": {
-          "inResponse": {
-            "body": {
-              "contentType": "application/json",
-            },
-            "statusCode": "200",
-          },
-          "method": "get",
-          "path": "/api/users",
-        },
-        "conceptualPath": [
-          "operations",
-          "/api/users",
-          "get",
-          "responses",
-          "200",
-          "application/json",
-        ],
-        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
-        "kind": "body",
-      },
-    },
-    "condition": undefined,
-    "docsLink": undefined,
-    "error": undefined,
-    "exempted": false,
-    "expected": undefined,
-    "isMust": true,
-    "isShould": false,
-    "name": "prevent narrowing in response union types",
-    "passed": true,
-    "received": undefined,
-    "severity": 2,
-    "type": "changed",
-    "where": "GET /api/users response 200 response body: application/json",
-  },
-]
-`;
-
-exports[`breaking changes ruleset valid union type transition 1`] = `
-[
-  {
-    "change": {
-      "changeType": "removed",
-      "location": {
-        "conceptualLocation": {
-          "inResponse": {
-            "body": {
-              "contentType": "application/json",
-            },
-            "statusCode": "200",
-          },
-          "jsonSchemaTrail": [
-            "id",
-          ],
-          "method": "get",
-          "path": "/api/users",
-        },
-        "conceptualPath": [
-          "operations",
-          "/api/users",
-          "get",
-          "responses",
-          "200",
-          "application/json",
-          "id",
-        ],
-        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/id",
-        "kind": "field",
-      },
-      "removed": {
-        "before": {
-          "flatSchema": {
-            "type": "string",
-          },
-          "key": "id",
-          "required": false,
-        },
-      },
-    },
-    "condition": undefined,
-    "docsLink": undefined,
-    "error": "cannot remove response property 'id'. This is a breaking change.",
-    "exempted": false,
-    "expected": undefined,
-    "isMust": true,
-    "isShould": false,
-    "name": "prevent removing response property",
-    "passed": false,
-    "received": undefined,
-    "severity": 2,
-    "type": "removed",
-    "where": "GET /api/users response 200 response body: application/json property id",
-  },
-  {
-    "change": {
-      "changeType": "changed",
-      "changed": {
-        "after": {
-          "contentType": "application/json",
-          "flatSchema": {
-            "oneOf": [
-              {
-                "type": "number",
-              },
-              {
-                "properties": {
-                  "id": {
-                    "type": "string",
-                  },
-                  "name": {
-                    "type": "string",
-                  },
-                },
-                "required": [
-                  "id",
-                  "name",
-                ],
-                "type": "object",
-              },
-            ],
-          },
-        },
-        "before": {
-          "contentType": "application/json",
-          "flatSchema": {
-            "type": "object",
-          },
-        },
-      },
-      "location": {
-        "conceptualLocation": {
-          "inResponse": {
-            "body": {
-              "contentType": "application/json",
-            },
-            "statusCode": "200",
-          },
-          "method": "get",
-          "path": "/api/users",
-        },
-        "conceptualPath": [
-          "operations",
-          "/api/users",
-          "get",
-          "responses",
-          "200",
-          "application/json",
-        ],
-        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
-        "kind": "body",
-      },
-    },
-    "condition": undefined,
-    "docsLink": undefined,
-    "error": undefined,
-    "exempted": false,
-    "expected": undefined,
-    "isMust": true,
-    "isShould": false,
-    "name": "prevent response property type changes",
-    "passed": true,
-    "received": undefined,
-    "severity": 2,
-    "type": "changed",
-    "where": "GET /api/users response 200 response body: application/json",
-  },
-  {
-    "change": {
-      "changeType": "changed",
-      "changed": {
-        "after": {
-          "contentType": "application/json",
-          "flatSchema": {
-            "oneOf": [
-              {
-                "type": "number",
-              },
-              {
-                "properties": {
-                  "id": {
-                    "type": "string",
-                  },
-                  "name": {
-                    "type": "string",
-                  },
-                },
-                "required": [
-                  "id",
-                  "name",
-                ],
-                "type": "object",
-              },
-            ],
-          },
-        },
-        "before": {
-          "contentType": "application/json",
-          "flatSchema": {
-            "type": "object",
           },
         },
       },
