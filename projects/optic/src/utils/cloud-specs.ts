@@ -213,6 +213,7 @@ export async function uploadSpecVerification(
     client: OpticBackendClient;
     verificationData: ApiCoverage;
     message?: string;
+    runId?: string;
   }
 ) {
   const stableResultsString = stableStringify(opts.verificationData);
@@ -231,6 +232,7 @@ export async function uploadSpecVerification(
     spec_id: specId,
     upload_id,
     message: opts.message,
+    run_id: opts.runId,
   });
 
   return id;

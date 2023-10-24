@@ -1356,68 +1356,6 @@ exports[`breaking changes ruleset valid changes 1`] = `
     "expected": undefined,
     "isMust": true,
     "isShould": false,
-    "name": "prevent cookie parameters enum breaking changes",
-    "passed": true,
-    "received": undefined,
-    "severity": 2,
-    "type": "changed",
-    "where": "GET /api/users cookie parameter: enum-widening",
-  },
-  {
-    "change": {
-      "changeType": "changed",
-      "changed": {
-        "after": {
-          "in": "cookie",
-          "name": "enum-widening",
-          "schema": {
-            "enum": [
-              1,
-              2,
-              3,
-            ],
-            "type": "number",
-          },
-        },
-        "before": {
-          "in": "cookie",
-          "name": "enum-widening",
-          "schema": {
-            "enum": [
-              1,
-              2,
-            ],
-            "type": "number",
-          },
-        },
-      },
-      "location": {
-        "conceptualLocation": {
-          "inRequest": {
-            "cookie": "enum-widening",
-          },
-          "method": "get",
-          "path": "/api/users",
-        },
-        "conceptualPath": [
-          "operations",
-          "/api/users",
-          "get",
-          "parameters",
-          "cookie",
-          "enum-widening",
-        ],
-        "jsonPath": "/paths/~1api~1users/get/parameters/3",
-        "kind": "cookie-parameter",
-      },
-    },
-    "condition": undefined,
-    "docsLink": undefined,
-    "error": undefined,
-    "exempted": false,
-    "expected": undefined,
-    "isMust": true,
-    "isShould": false,
     "name": "prevent cookie parameters type changes",
     "passed": true,
     "received": undefined,
@@ -1532,123 +1470,12 @@ exports[`breaking changes ruleset valid changes 1`] = `
     "expected": undefined,
     "isMust": true,
     "isShould": false,
-    "name": "prevent header parameters enum breaking changes",
-    "passed": true,
-    "received": undefined,
-    "severity": 2,
-    "type": "changed",
-    "where": "GET /api/users header parameter: enum-removal",
-  },
-  {
-    "change": {
-      "changeType": "changed",
-      "changed": {
-        "after": {
-          "in": "header",
-          "name": "enum-removal",
-          "schema": {
-            "type": "number",
-          },
-        },
-        "before": {
-          "in": "header",
-          "name": "enum-removal",
-          "schema": {
-            "enum": [
-              1,
-              2,
-            ],
-            "type": "number",
-          },
-        },
-      },
-      "location": {
-        "conceptualLocation": {
-          "inRequest": {
-            "header": "enum-removal",
-          },
-          "method": "get",
-          "path": "/api/users",
-        },
-        "conceptualPath": [
-          "operations",
-          "/api/users",
-          "get",
-          "parameters",
-          "header",
-          "enum-removal",
-        ],
-        "jsonPath": "/paths/~1api~1users/get/parameters/4",
-        "kind": "header-parameter",
-      },
-    },
-    "condition": undefined,
-    "docsLink": undefined,
-    "error": undefined,
-    "exempted": false,
-    "expected": undefined,
-    "isMust": true,
-    "isShould": false,
     "name": "prevent header parameters type changes",
     "passed": true,
     "received": undefined,
     "severity": 2,
     "type": "changed",
     "where": "GET /api/users header parameter: enum-removal",
-  },
-  {
-    "change": {
-      "changeType": "changed",
-      "changed": {
-        "after": {
-          "in": "query",
-          "name": "required",
-          "schema": {
-            "type": "string",
-          },
-        },
-        "before": {
-          "in": "query",
-          "name": "required",
-          "required": true,
-          "schema": {
-            "type": "string",
-          },
-        },
-      },
-      "location": {
-        "conceptualLocation": {
-          "inRequest": {
-            "query": "required",
-          },
-          "method": "get",
-          "path": "/api/users",
-        },
-        "conceptualPath": [
-          "operations",
-          "/api/users",
-          "get",
-          "parameters",
-          "query",
-          "required",
-        ],
-        "jsonPath": "/paths/~1api~1users/get/parameters/0",
-        "kind": "query-parameter",
-      },
-    },
-    "condition": undefined,
-    "docsLink": undefined,
-    "error": undefined,
-    "exempted": false,
-    "expected": undefined,
-    "isMust": true,
-    "isShould": false,
-    "name": "prevent query parameters enum breaking changes",
-    "passed": true,
-    "received": undefined,
-    "severity": 2,
-    "type": "changed",
-    "where": "GET /api/users query parameter: required",
   },
   {
     "change": {

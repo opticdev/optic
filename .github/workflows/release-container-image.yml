@@ -69,7 +69,7 @@ jobs:
       - name: Announce failure
         uses: slackapi/slack-github-action@v1.24.0
         if: failure()
-        payload:
+        env:
           SLACK_WEBHOOK_URL: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
         with:
