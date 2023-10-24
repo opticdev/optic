@@ -138,7 +138,10 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
         with:
-          slack-message: '{{ GITHUB_ACTOR }}: ✅ optic v{{ VERSION }} packages published to channel `{{ RELEASE_CHANNEL }}`!'
+          payload: |
+            {
+              "text": "${{github.actor}}: ✅ optic v${{env.VERSION}} packages published to channel `${{env.RELEASE_CHANNEL}}`!"
+            }
 
       - name: Announce failure
         uses: slackapi/slack-github-action@v1.24.0
@@ -150,7 +153,10 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
         with:
-          slack-message: '{{ GITHUB_ACTOR }}: 🚫 optic v{{ VERSION }} failed to publish.'
+          payload: |
+            {
+              "text": "${{github.actor}}: 🚫 optic v${{env.VERSION}} failed to publish."
+            }
 
   publish-binaries:
     needs: release
