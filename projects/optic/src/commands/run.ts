@@ -564,7 +564,8 @@ const runCapture = async ({
           localSpec,
           captureResults.coverage,
           specDetails,
-          config
+          config,
+          { runId }
         );
       } catch (e) {
         return {

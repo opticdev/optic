@@ -10,7 +10,8 @@ export async function uploadCoverage(
   spec: ParseResult,
   coverage: ApiCoverageCounter,
   { orgId, apiId }: { orgId: string; apiId: string },
-  config: OpticCliConfig
+  config: OpticCliConfig,
+  opts?: { runId?: string }
 ) {
   const tags: string[] = [];
   let branchTag: string | undefined = undefined;
@@ -30,6 +31,7 @@ export async function uploadCoverage(
   await uploadSpecVerification(specId, {
     client: config.client,
     verificationData: coverage.coverage,
+    runId: opts?.runId,
   });
 
   const specUrl = getSpecUrl(config.client.getWebBase(), orgId, apiId, specId);
