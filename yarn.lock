@@ -3600,9 +3600,9 @@ __metadata:
   linkType: hard
 
 "@types/url-join@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "@types/url-join@npm:4.0.1"
-  checksum: 29444b90e165b3970c8ad3fcef1e2de092e72b67e1f3aaff3016eea1697f98a01a28fb4f71f8044e3338a95bd2262327e9299be416efe5297018658760a331b4
+  version: 4.0.2
+  resolution: "@types/url-join@npm:4.0.2"
+  checksum: 0ee32c987fef3fedfc50d0ed41725f8322ccecf4ef5f495e016762b9489cee2331dd989765181dce050607f847994e909139d86847fc7e2b552dead3884ae6fd
   languageName: node
   linkType: hard
 
