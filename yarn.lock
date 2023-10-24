@@ -3554,11 +3554,11 @@ __metadata:
   linkType: hard
 
 "@types/stream-chain@npm:*, @types/stream-chain@npm:^2":
-  version: 2.0.2
-  resolution: "@types/stream-chain@npm:2.0.2"
+  version: 2.0.3
+  resolution: "@types/stream-chain@npm:2.0.3"
   dependencies:
     "@types/node": "*"
-  checksum: b6d3e19f10a4575043fb9473dc34ae273409cf8293d2f3f724ccc75f1dbeffd4d368bff056ed1f02f16d05955e354f6cbdda76ada3139ccfb9ee527b11362d82
+  checksum: eacae24b07d802da64df58b0a14917f9a4b7c5d6f2e525388ed2fe10e621354399da89874a44d4ef8022f5879c55d4cdf2c25ab5e5ffa45a3d4140b4637a2a6b
   languageName: node
   linkType: hard
 
