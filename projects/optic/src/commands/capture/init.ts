@@ -30,7 +30,7 @@ ${skipConfigUpdate ? `capture:\n  ${oasFile}:` : ''}
     # Complete reference documentation for this configuration file is available:
     #   https://www.useoptic.com/docs/capturing-traffic#configuration-reference
 
-    # Run with "optic capture ${oasFile} --update interactive" 
+    # Run with "optic capture ${oasFile} --update interactive"
     server:
       url: https://echo.o3c.org
     requests:
