@@ -64,8 +64,10 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
         with:
-          slack-message: '{{ GITHUB_ACTOR }}: ✅ container images `docker.io/useoptic/optic:${{ inputs.optic_version }}`, `public.ecr.aws/optic/optic:${{ inputs.optic_version }}` published!'
-
+          payload: |
+            {
+              "text": "${{github.actor}}: ✅ container images `docker.io/useoptic/optic:${{inputs.optic_version}}`, `public.ecr.aws/optic/optic:${{inputs.optic_version}}` published!"
+            }
       - name: Announce failure
         uses: slackapi/slack-github-action@v1.24.0
         if: failure()
@@ -73,4 +75,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL_RELEASES }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
         with:
-          slack-message: '{{ GITHUB_ACTOR }}: 🚫 container images failed to publish.'
+          payload: |
+            {
+              "text": "${{github.actor}}: 🚫 container images failed to publish."
+            }
