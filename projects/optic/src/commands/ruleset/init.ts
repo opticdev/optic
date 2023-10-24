@@ -5,7 +5,6 @@ import { OpticCliConfig } from '../../config';
 import tar from 'tar';
 import path from 'path';
 import chalk from 'chalk';
-import latestVersion from 'latest-version';
 import { errorHandler } from '../../error-handler';
 
 const DEFAULT_INIT_FOLDER = 'optic-ruleset';
@@ -71,6 +70,7 @@ const getInitAction = () => async (name?: string) => {
     '@useoptic/rulesets-base',
     '@useoptic/openapi-utilities',
   ];
+  const latestVersion = (await import('latest-version')).default;
   const version = await latestVersion(dependencies[0]);
 
   await fs
