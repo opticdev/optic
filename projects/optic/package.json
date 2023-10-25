@@ -75,7 +75,7 @@
     "bottleneck": "^2.19.5",
     "chalk": "^4.1.2",
     "commander": "^11.0.0",
-    "conf": "^10.2.0",
+    "conf": "^12.0.0",
     "crosspath": "^2.0.0",
     "dotenv": "^16.0.3",
     "exit-hook": "^2.2.1",
