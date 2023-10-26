@@ -44,7 +44,7 @@
     "@types/stream-chain": "^2",
     "@types/stream-json": "^1",
     "@types/tar": "^6",
-    "@types/update-notifier": "^5",
+    "@types/update-notifier": "^6.0.6",
     "@types/url-join": "^4.0.1",
     "babel-jest": "^29.3.1",
     "babel-plugin-transform-inline-environment-variables": "^0.4.3",
@@ -117,7 +117,7 @@
     "ts-invariant": "^0.9.4",
     "ts-results": "^3.3.0",
     "tunnel": "^0.0.6",
-    "update-notifier": "^5.1.0",
+    "update-notifier": "^6.0.2",
     "url-join": "^4.0.1",
     "whatwg-mimetype": "^3.0.0"
   },
