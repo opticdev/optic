@@ -2791,9 +2791,9 @@ __metadata:
   linkType: hard
 
 "@sinclair/typebox@npm:^0.31.0":
-  version: 0.31.18
-  resolution: "@sinclair/typebox@npm:0.31.18"
-  checksum: 06bc64232394cc11a00ec8214696fcecab4e8af0c04da81fb21c69ccd69b398be55d42dedb5f007b8f49abdb6eb6045520785e362975a9af82563ce11032a91b
+  version: 0.31.20
+  resolution: "@sinclair/typebox@npm:0.31.20"
+  checksum: 001b78c746a49ecf4c358ac88185336a1a38701fe52e7f47e9b77141d1db5d4917a9de4a013f9578ebf118b567a282b282ca51c580e1442bf3ad355fb452529e
   languageName: node
   linkType: hard
 
