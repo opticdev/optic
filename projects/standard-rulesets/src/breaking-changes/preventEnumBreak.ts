@@ -7,37 +7,27 @@ import { getOperationAssertionsParameter } from './helpers/getOperationAssertion
 import { ParameterIn } from './helpers/types';
 import { OpenAPIV3 } from 'openapi-types';
 import { isInUnionProperty } from './helpers/unions';
+import { diffSets } from './helpers/type-change';
 
-const enumWasNarrowed = (before: any[], after: any[]): string[] | false => {
-  let beforeSet = new Set(before);
-  let afterSet = new Set(after);
-  const setDiff = new Set([...beforeSet].filter((x) => !afterSet.has(x)));
-
-  if (setDiff.size) {
-    return [...setDiff];
-  } else {
-    return false;
-  }
-};
-
-type SchemaWithEnum = OpenAPIV3.SchemaObject &
-  ({ enum: any[] } | { const: any });
+const InfiniteSet = Symbol('infinite enum set');
 
 const isSchemaWithEnum = (
   obj: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject | undefined
-): obj is SchemaWithEnum => {
+): boolean => {
   if (!obj) return false;
   return ('enum' in obj && Array.isArray(obj.enum)) || 'const' in obj;
 };
 
-const getEnumFromSchema = (schemaWithEnum: SchemaWithEnum): any[] => {
+const getEnumFromSchema = (
+  schemaWithEnum: OpenAPIV3.SchemaObject
+): any[] | typeof InfiniteSet => {
   if ('enum' in schemaWithEnum && Array.isArray(schemaWithEnum.enum)) {
     return schemaWithEnum.enum;
   }
   if ('const' in schemaWithEnum) {
     return [schemaWithEnum.const];
   }
-  return [];
+  return InfiniteSet;
 };
 
 const getRuleName = <P extends ParameterIn>(parameterIn: P) =>
@@ -53,33 +43,44 @@ const getPreventParameterEnumBreak = <P extends ParameterIn>(parameterIn: P) =>
       );
 
       parameter.changed((before, after) => {
-        const enumNarrowed =
-          isSchemaWithEnum(before.value?.schema) &&
-          isSchemaWithEnum(after.value?.schema) &&
-          enumWasNarrowed(
-            getEnumFromSchema(before.value.schema),
-            getEnumFromSchema(after.value.schema)
-          );
+        if (
+          !(
+            isSchemaWithEnum(before.value?.schema) ||
+            isSchemaWithEnum(after.value?.schema)
+          )
+        ) {
+          return;
+        }
 
-        if (enumNarrowed) {
+        const beforeEnum = getEnumFromSchema(
+          before.value?.schema as OpenAPIV3.SchemaObject
+        );
+        const afterEnum = getEnumFromSchema(
+          after.value?.schema as OpenAPIV3.SchemaObject
+        );
+        if (beforeEnum === InfiniteSet || afterEnum === InfiniteSet) {
+          if (beforeEnum === InfiniteSet && afterEnum !== InfiniteSet) {
+            throw new RuleError({
+              message: `cannot add an enum to restrict possible values for ${parameterIn} parameter ${after.value.name}. This is a breaking change.`,
+            });
+          } else {
+            return;
+          }
+        }
+        const enumDiff =
+          (isSchemaWithEnum(before.value?.schema) ||
+            isSchemaWithEnum(after.value?.schema)) &&
+          diffSets(new Set(beforeEnum), new Set(afterEnum));
+
+        if (enumDiff && enumDiff.narrowed.length) {
           throw new RuleError({
             message: `cannot remove enum option${
-              enumNarrowed.length > 1 ? 's' : ''
-            } '${enumNarrowed.join(', ')}' from ${parameterIn} parameter '${
+              enumDiff.narrowed.length > 1 ? 's' : ''
+            } '${enumDiff.narrowed.join(
+              ', '
+            )}' from ${parameterIn} parameter '${
               after.value.name
             }'. This is a breaking change.`,
-          });
-        }
-      });
-
-      parameter.changed((before, after) => {
-        const enumNewlyAdded =
-          !isSchemaWithEnum(before.value?.schema) &&
-          isSchemaWithEnum(after.value?.schema);
-
-        if (enumNewlyAdded) {
-          throw new RuleError({
-            message: `cannot add an enum to restrict possible values for ${parameterIn} parameter '${after.value.name}'. This is a breaking change.`,
           });
         }
       });
@@ -111,19 +112,49 @@ export const preventPropertyEnumBreak = () => {
           return;
         }
 
-        const enumNarrowed =
-          isSchemaWithEnum(before.raw) &&
-          isSchemaWithEnum(after.raw) &&
-          enumWasNarrowed(
-            getEnumFromSchema(before.raw),
-            getEnumFromSchema(after.raw)
-          );
+        if (!(isSchemaWithEnum(before.raw) || isSchemaWithEnum(after.raw))) {
+          return;
+        }
+        const inRequest = 'inRequest' in after.location.conceptualLocation;
+        const beforeEnum = getEnumFromSchema(before.raw);
+        const afterEnum = getEnumFromSchema(after.raw);
+        if (beforeEnum === InfiniteSet || afterEnum === InfiniteSet) {
+          if (
+            inRequest &&
+            beforeEnum === InfiniteSet &&
+            afterEnum !== InfiniteSet
+          ) {
+            throw new RuleError({
+              message: `cannot add enum or const to request property ${after.value.key}. This is a breaking change.`,
+            });
+          } else if (
+            !inRequest &&
+            beforeEnum !== InfiniteSet &&
+            afterEnum === InfiniteSet
+          ) {
+            throw new RuleError({
+              message: `cannot remove enum or const from response property ${after.value.key}. This is a breaking change.`,
+            });
+          }
+          return;
+        }
 
-        if (enumNarrowed) {
+        let beforeSet = new Set(beforeEnum);
+        let afterSet = new Set(afterEnum);
+        const results = diffSets(beforeSet, afterSet);
+        if (inRequest && results.narrowed.length) {
           throw new RuleError({
             message: `cannot remove enum option${
-              enumNarrowed.length > 1 ? 's' : ''
-            } '${enumNarrowed.join(', ')}' from '${
+              results.narrowed.length > 1 ? 's' : ''
+            } '${results.narrowed.join(', ')}' from '${
+              after.value.key
+            }' property. This is a breaking change.`,
+          });
+        } else if (!inRequest && results.expanded.length) {
+          throw new RuleError({
+            message: `cannot add enum option${
+              results.expanded.length > 1 ? 's' : ''
+            } '${results.expanded.join(', ')}' from '${
               after.value.key
             }' property. This is a breaking change.`,
           });

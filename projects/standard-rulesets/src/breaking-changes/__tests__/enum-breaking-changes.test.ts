@@ -223,7 +223,77 @@ describe('breaking changes ruleset - parameter enum change', () => {
       expect(results.some((result) => !result.passed)).toBe(true);
     }
   );
-  test('enums in bodies', async () => {
+
+  test('enums in request bodies', async () => {
+    const beforeJson: OpenAPIV3.Document = {
+      ...TestHelpers.createEmptySpec(),
+      paths: {
+        '/api/users': {
+          get: {
+            requestBody: {
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      enum: {
+                        type: 'string',
+                        enum: ['A', 'B'],
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            responses: {
+              '200': {
+                description: '',
+              },
+            },
+          },
+        },
+      },
+    };
+    const afterJson: OpenAPIV3.Document = {
+      ...TestHelpers.createEmptySpec(),
+      paths: {
+        '/api/users': {
+          get: {
+            requestBody: {
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      enum: {
+                        type: 'string',
+                        enum: ['A'],
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            responses: {
+              '200': {
+                description: '',
+              },
+            },
+          },
+        },
+      },
+    };
+    const results = await TestHelpers.runRulesWithInputs(
+      [new BreakingChangesRuleset()],
+      beforeJson,
+      afterJson
+    );
+    expect(results.length > 0).toBe(true);
+
+    expect(results).toMatchSnapshot();
+    expect(results.some((result) => !result.passed)).toBe(true);
+  });
+  test('enums in response bodies', async () => {
     const beforeJson: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -239,7 +309,7 @@ describe('breaking changes ruleset - parameter enum change', () => {
                       properties: {
                         enum: {
                           type: 'string',
-                          enum: ['A', 'B', 'C'],
+                          enum: ['A', 'B'],
                         },
                       },
                     },
@@ -266,7 +336,7 @@ describe('breaking changes ruleset - parameter enum change', () => {
                       properties: {
                         enum: {
                           type: 'string',
-                          enum: ['A', 'B'],
+                          enum: ['A', 'B', 'C'],
                         },
                       },
                     },
