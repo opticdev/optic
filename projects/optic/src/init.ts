@@ -2,6 +2,7 @@ import { Command, program as cliInstance } from 'commander';
 import { initSentry } from './sentry';
 import { flushEvents, initSegment, trackEvent } from './segment';
 
+import updateNotifier from 'update-notifier';
 import { registerDiff } from './commands/diff/diff';
 import { registerRulesetUpload } from './commands/ruleset/upload';
 
@@ -81,7 +82,6 @@ export const initCli = async (
   });
 
   if (options.hideNotifier !== true) {
-    const updateNotifier = (await import('update-notifier')).default;
     const notifier = updateNotifier({
       pkg: {
         name: packageJson.name,
