@@ -4,7 +4,6 @@ import fs from 'fs-extra';
 import objectHash from 'object-hash';
 import path from 'path';
 import { AIRuleEvaluationResult, evaluateRule } from './rule-evaluation';
-import { writeJson } from '@useoptic/optic/build/utils/write-to-file';
 type RuleCache = {
   getOrPrepareRule: (rule: string) => Promise<PreparedRule | undefined>;
 };
