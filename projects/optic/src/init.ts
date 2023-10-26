@@ -1,5 +1,4 @@
 import { Command, program as cliInstance } from 'commander';
-import updateNotifier from 'update-notifier';
 import { initSentry } from './sentry';
 import { flushEvents, initSegment, trackEvent } from './segment';
 
@@ -82,6 +81,7 @@ export const initCli = async (
   });
 
   if (options.hideNotifier !== true) {
+    const updateNotifier = (await import('update-notifier')).default;
     const notifier = updateNotifier({
       pkg: {
         name: packageJson.name,
