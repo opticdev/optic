@@ -1,6 +1,6 @@
 import { ResponseBodyRule, RuleError } from '@useoptic/rulesets-base';
 import { computeEffectiveTypeChange } from './helpers/type-change';
-import { isInUnionProperty } from './helpers/unions';
+import { isInUnionProperty, schemaIsUnion } from './helpers/unions';
 
 export const preventResponsePropertyTypeChange = () =>
   new ResponseBodyRule({
@@ -9,8 +9,8 @@ export const preventResponsePropertyTypeChange = () =>
       responseAssertions.body.changed((before, after) => {
         // Children of union properties / transitions are handled in a separate rule
         if (
-          isInUnionProperty(before.location.jsonPath) ||
-          isInUnionProperty(after.location.jsonPath)
+          schemaIsUnion(before.value.flatSchema) ||
+          schemaIsUnion(after.value.flatSchema)
         ) {
           return;
         }

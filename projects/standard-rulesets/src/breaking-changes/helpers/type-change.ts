@@ -70,11 +70,13 @@ export function computeTypeTransition(
     : null;
   if (beforeEnum && afterEnum) {
     const enumResults = diffSets(new Set(beforeEnum), new Set(afterEnum));
-    if (enumResults.afterSetDiff.length)
+    // A little counterintuitively, beforeSetDiff means the enum set goes from [a,b] to [a]
+    // TODO: rename this to better name `requestBreak` and `responseBreak`
+    if (enumResults.beforeSetDiff.length)
       results.expanded.enum = `enums ${enumResults.afterSetDiff.join(
         ','
       )} were added`;
-    if (enumResults.beforeSetDiff.length)
+    if (enumResults.afterSetDiff.length)
       results.narrowed.enum = `enums ${enumResults.beforeSetDiff.join(
         ','
       )} were removed`;
@@ -100,8 +102,8 @@ export function computeEffectiveTypeChange(
   const after = typeToSet(afterType);
   const diff = diffSets(before, after);
   return {
-    narrowed: diff.afterSetDiff.length > 0,
-    expanded: diff.beforeSetDiff.length > 0,
+    narrowed: diff.beforeSetDiff.length > 0,
+    expanded: diff.afterSetDiff.length > 0,
   };
 }
 

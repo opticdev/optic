@@ -3,6 +3,7 @@ import {
   FlatOpenAPIV3_1,
   OpenAPIV3,
   OpenAPIV3_1,
+  OpenApi3SchemaFact,
 } from '@useoptic/openapi-utilities';
 import { computeTypeTransition } from './type-change';
 
@@ -12,7 +13,10 @@ export function isInUnionProperty(jsonPath: string): boolean {
 }
 
 export function schemaIsUnion(
-  schema?: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject
+  schema?:
+    | OpenAPIV3.SchemaObject
+    | OpenAPIV3.ReferenceObject
+    | OpenApi3SchemaFact
 ): schema is OpenAPIV3.SchemaObject {
   return !!(schema && !('$ref' in schema) && (schema.oneOf || schema.anyOf));
 }
@@ -59,6 +63,64 @@ function traverseTypeArraySchemas(
         }
       })
     : [];
+}
+
+function areKeymapsNarrowed(
+  aKeymaps: KeyMap[],
+  bKeymaps: KeyMap[],
+  keyName: string | null
+) {
+  const narrowedResults = aKeymaps
+    .map((aKeymap) => {
+      const diffResults = bKeymaps.map((bKeymap) =>
+        diffKeyMaps(aKeymap, bKeymap, keyName)
+      );
+      const hasAnyValidTransition = diffResults.some((d) => !d.narrowed);
+      // There could be multiple reasons a type does not overlap - we select the one with the least divergence
+      return hasAnyValidTransition
+        ? null
+        : // TODO choose a better heuristic for error version
+          diffResults.sort(
+            (a, b) => a.narrowedReasons.length - b.narrowedReasons.length
+          )[0];
+    })
+    .filter((r) => r !== null) as UnionDiffResult[];
+  const isNarrowed = narrowedResults.length !== 0;
+  return {
+    isNarrowed,
+    reasons: isNarrowed
+      ? narrowedResults.map((r) => r.narrowedReasons).flat()
+      : [],
+  };
+}
+
+function areKeymapsExpanded(
+  aKeymaps: KeyMap[],
+  bKeymaps: KeyMap[],
+  keyName: string | null
+) {
+  const expandedResults = bKeymaps
+    .map((bKeymap) => {
+      const diffResults = aKeymaps.map((aKeymap) =>
+        diffKeyMaps(aKeymap, bKeymap, keyName)
+      );
+      const hasAnyValidTransition = diffResults.some((d) => !d.expanded);
+
+      // There could be multiple reasons a type does not overlap - we select the one with the least divergence
+      return hasAnyValidTransition
+        ? null
+        : diffResults.sort(
+            (a, b) => a.expandedReasons.length - b.expandedReasons.length
+          )[0];
+    })
+    .filter((r) => r !== null) as UnionDiffResult[];
+  const isExpanded = expandedResults.length !== 0;
+  return {
+    isExpanded,
+    reasons: isExpanded
+      ? expandedResults.map((r) => r.expandedReasons).flat()
+      : [],
+  };
 }
 
 // Return an array of Maps that have different keys that they require; if there is a oneOf or anyOf
@@ -168,7 +230,11 @@ function createKeyMapFromSchema(schema: FlatOpenAPIV3_1.SchemaObject): KeyMap {
   return keyMap;
 }
 
-function diffKeyMaps(aMap: KeyMap, bMap: KeyMap): UnionDiffResult {
+function diffKeyMaps(
+  aMap: KeyMap,
+  bMap: KeyMap,
+  parentKey: string | null
+): UnionDiffResult {
   const results: UnionDiffResult = {
     expanded: false,
     expandedReasons: [],
@@ -177,49 +243,105 @@ function diffKeyMaps(aMap: KeyMap, bMap: KeyMap): UnionDiffResult {
   };
   for (const [key, aValue] of aMap) {
     const bValue = bMap.get(key);
+    const keyName = parentKey ? `${parentKey}.${key}` : key;
     if (bValue) {
       if (aValue.keyword === 'type' && bValue.keyword === 'type') {
         const typeTransition = computeTypeTransition(aValue, bValue);
-        if (
-          typeTransition.expanded.enum ||
-          typeTransition.expanded.requiredChange ||
-          typeTransition.expanded.typeChange
-        ) {
+        if (typeTransition.expanded.enum) {
           results.expanded = true;
+          results.expandedReasons.push(
+            `key ${keyName}: ${typeTransition.expanded.enum}`
+          );
         }
-        if (
-          typeTransition.narrowed.enum ||
-          typeTransition.narrowed.requiredChange ||
-          typeTransition.narrowed.typeChange
-        ) {
-          results.narrowed = true;
-        }
-      } else if (aValue.keyword === 'type' || bValue.keyword === 'type') {
-        if (aValue.keyword === 'type' && bValue.keyword !== 'type') {
+        if (typeTransition.expanded.requiredChange) {
           results.expanded = true;
-        } else {
+          results.expandedReasons.push(
+            `key ${keyName}: ${typeTransition.expanded.requiredChange}`
+          );
+        }
+        if (typeTransition.expanded.typeChange) {
+          results.expanded = true;
+          results.expandedReasons.push(
+            `key ${keyName}: ${typeTransition.expanded.typeChange}`
+          );
+        }
+
+        if (typeTransition.narrowed.enum) {
           results.narrowed = true;
+          results.narrowedReasons.push(
+            `key ${keyName}: ${typeTransition.narrowed.enum}`
+          );
+        }
+        if (typeTransition.narrowed.requiredChange) {
+          results.narrowed = true;
+          results.narrowedReasons.push(
+            `key ${keyName}: ${typeTransition.narrowed.requiredChange}`
+          );
+        }
+        if (typeTransition.narrowed.typeChange) {
+          results.narrowed = true;
+          results.narrowedReasons.push(
+            `key ${keyName}: ${typeTransition.narrowed.typeChange}`
+          );
         }
       } else {
-        // A type is considered narrowed if any before item does not have an equivalent set with any item in the after set
-        const isNarrowed = !aValue.type.every((aKeyMap) =>
-          bValue.type.some((bKeyMap) => !diffKeyMaps(aKeyMap, bKeyMap).narrowed)
+        const aKeymaps =
+          aValue.keyword === 'type'
+            ? [
+                createKeyMapFromSchema(
+                  aValue.schema as FlatOpenAPIV3_1.SchemaObject
+                ),
+              ]
+            : aValue.type;
+        const bKeymaps =
+          bValue.keyword === 'type'
+            ? [
+                createKeyMapFromSchema(
+                  bValue.schema as FlatOpenAPIV3_1.SchemaObject
+                ),
+              ]
+            : bValue.type;
+        const { isNarrowed, reasons: narrowedReasons } = areKeymapsNarrowed(
+          aKeymaps,
+          bKeymaps,
+          keyName
         );
-        // A type is considered expanded if any after item does not have an equivalent set with any item in the before set
-        const isExpanded = !bValue.type.every((bKeyMap) =>
-          aValue.type.some((aKeyMap) => !diffKeyMaps(aKeyMap, bKeyMap).expanded)
+        if (isNarrowed) {
+          results.narrowed = true;
+          results.narrowedReasons.push(
+            `key ${keyName}: ${
+              aValue.keyword
+            } was narrowed: ${narrowedReasons.join(', ')}`
+          );
+        }
+        const { isExpanded, reasons: expandedReasons } = areKeymapsExpanded(
+          aKeymaps,
+          bKeymaps,
+          keyName
         );
-
-        if (isNarrowed) results.narrowed = true;
-        if (isExpanded) results.expanded = true;
+        if (isExpanded) {
+          results.expanded = true;
+          results.expandedReasons.push(
+            `key ${keyName}: ${
+              aValue.keyword
+            } was expanded: ${expandedReasons.join(', ')}`
+          );
+        }
       }
     } else if (aValue.required) {
       results.narrowed = true;
+      results.narrowedReasons.push(
+        `key ${keyName}: required property was removed`
+      );
     }
   }
 
   for (const [key, bValue] of bMap) {
+    const keyName = parentKey ? `${parentKey}.${key}` : key;
     if (!aMap.has(key) && bValue.required) {
+      results.expandedReasons.push(
+        `key ${keyName}: required property was added`
+      );
       results.expanded = true;
     }
   }
@@ -237,6 +359,12 @@ export function computeUnionTransition(
     | OpenAPIV3_1.SchemaObject
     | OpenAPIV3.ReferenceObject
 ): UnionDiffResult {
+  const results: UnionDiffResult = {
+    narrowed: false,
+    narrowedReasons: [],
+    expanded: false,
+    expandedReasons: [],
+  };
   const b = before as FlatOpenAPIV3_1.SchemaObject;
   const a = after as FlatOpenAPIV3_1.SchemaObject;
 
@@ -255,21 +383,28 @@ export function computeUnionTransition(
     ? traverseTypeArraySchemas(a)
     : [createKeyMapFromSchema(a)];
 
-  // A type is considered narrowed if any before item does not have an equivalent set with any item in the after set
-  const isNarrowed = !beforeMaps.every((beforeKeyMap) =>
-    afterMaps.some(
-      (afterKeyMap) => !diffKeyMaps(beforeKeyMap, afterKeyMap).narrowed
-    )
+  const { isNarrowed, reasons: narrowedReasons } = areKeymapsNarrowed(
+    beforeMaps,
+    afterMaps,
+    null
   );
-  // A type is considered expanded if any after item does not have an equivalent set with any item in the before set
-  const isExpanded = !afterMaps.every((afterKeyMap) =>
-    beforeMaps.some(
-      (beforeKeyMap) => !diffKeyMaps(beforeKeyMap, afterKeyMap).expanded
-    )
+  if (isNarrowed) {
+    results.narrowed = true;
+    results.narrowedReasons.push(
+      `schema was narrowed: ${narrowedReasons.join(', ')}`
+    );
+  }
+  const { isExpanded, reasons: expandedReasons } = areKeymapsExpanded(
+    beforeMaps,
+    afterMaps,
+    null
   );
+  if (isExpanded) {
+    results.expanded = true;
+    results.expandedReasons.push(
+      `schema was expanded: ${expandedReasons.join(', ')}`
+    );
+  }
 
-  return {
-    narrowed: isNarrowed,
-    expanded: isExpanded,
-  };
+  return results;
 }

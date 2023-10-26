@@ -284,11 +284,15 @@ describe('computeUnionTransition', () => {
             expect(computeUnionTransition(expanded, narrowed)).toEqual({
               expanded: true,
               narrowed: true,
+              narrowedReasons: expect.any(Array),
+              expandedReasons: expect.any(Array),
             });
           } else {
             expect(computeUnionTransition(narrowed, expanded)).toEqual({
               expanded: true,
               narrowed: true,
+              narrowedReasons: expect.any(Array),
+              expandedReasons: expect.any(Array),
             });
           }
         });
@@ -325,11 +329,15 @@ describe('computeUnionTransition', () => {
             expect(computeUnionTransition(expanded, narrowed)).toEqual({
               expanded: false,
               narrowed: true,
+              expandedReasons: [],
+              narrowedReasons: expect.any(Array),
             });
           } else {
             expect(computeUnionTransition(narrowed, expanded)).toEqual({
               expanded: true,
               narrowed: false,
+              expandedReasons: expect.any(Array),
+              narrowedReasons: [],
             });
           }
         });
@@ -352,11 +360,15 @@ describe('computeUnionTransition', () => {
             expect(computeUnionTransition(expanded, narrowed)).toEqual({
               expanded: false,
               narrowed: true,
+              expandedReasons: [],
+              narrowedReasons: expect.any(Array),
             });
           } else {
             expect(computeUnionTransition(narrowed, expanded)).toEqual({
               expanded: true,
               narrowed: false,
+              expandedReasons: expect.any(Array),
+              narrowedReasons: [],
             });
           }
         });
@@ -379,31 +391,21 @@ describe('computeUnionTransition', () => {
             expect(computeUnionTransition(expanded, narrowed)).toEqual({
               expanded: false,
               narrowed: false,
+              expandedReasons: [],
+              narrowedReasons: [],
             });
           } else {
             expect(computeUnionTransition(narrowed, expanded)).toEqual({
               expanded: false,
               narrowed: false,
+              expandedReasons: [],
+              narrowedReasons: [],
             });
           }
         });
 
         test('enums', () => {
-          const narrowed: OpenAPIV3_1.SchemaObject = {
-            type: 'object',
-            properties: {
-              user: {
-                type: 'object',
-                properties: {
-                  status: {
-                    type: 'string',
-                    enum: ['online'],
-                  },
-                },
-              },
-            },
-          };
-          const expanded: OpenAPIV3_1.SchemaObject = {
+          const moreEnums: OpenAPIV3_1.SchemaObject = {
             type: 'object',
             properties: {
               user: {
@@ -417,15 +419,33 @@ describe('computeUnionTransition', () => {
               },
             },
           };
+          const lessEnums: OpenAPIV3_1.SchemaObject = {
+            type: 'object',
+            properties: {
+              user: {
+                type: 'object',
+                properties: {
+                  status: {
+                    type: 'string',
+                    enum: ['online'],
+                  },
+                },
+              },
+            },
+          };
           if (type === 'narrowing') {
-            expect(computeUnionTransition(expanded, narrowed)).toEqual({
+            expect(computeUnionTransition(lessEnums, moreEnums)).toEqual({
               expanded: false,
               narrowed: true,
+              expandedReasons: [],
+              narrowedReasons: expect.any(Array),
             });
           } else {
-            expect(computeUnionTransition(narrowed, expanded)).toEqual({
+            expect(computeUnionTransition(moreEnums, lessEnums)).toEqual({
               expanded: true,
               narrowed: false,
+              expandedReasons: expect.any(Array),
+              narrowedReasons: [],
             });
           }
         });
@@ -442,6 +462,8 @@ describe('computeUnionTransition', () => {
             ).toEqual({
               expanded: false,
               narrowed: true,
+              narrowedReasons: expect.any(Array),
+              expandedReasons: [],
             });
           } else {
             expect(
@@ -452,6 +474,8 @@ describe('computeUnionTransition', () => {
             ).toEqual({
               expanded: true,
               narrowed: false,
+              narrowedReasons: [],
+              expandedReasons: expect.any(Array),
             });
           }
 
@@ -463,6 +487,8 @@ describe('computeUnionTransition', () => {
           ).toEqual({
             expanded: false,
             narrowed: false,
+            narrowedReasons: [],
+            expandedReasons: [],
           });
         });
 
@@ -475,6 +501,8 @@ describe('computeUnionTransition', () => {
           ).toEqual({
             narrowed: false,
             expanded: false,
+            narrowedReasons: [],
+            expandedReasons: [],
           });
         });
 
@@ -488,6 +516,9 @@ describe('computeUnionTransition', () => {
             ).toEqual({
               expanded: false,
               narrowed: true,
+
+              expandedReasons: [],
+              narrowedReasons: expect.any(Array),
             });
             expect(
               computeUnionTransition(
@@ -497,6 +528,8 @@ describe('computeUnionTransition', () => {
             ).toEqual({
               expanded: false,
               narrowed: true,
+              expandedReasons: [],
+              narrowedReasons: expect.any(Array),
             });
           } else {
             expect(
@@ -507,6 +540,8 @@ describe('computeUnionTransition', () => {
             ).toEqual({
               expanded: true,
               narrowed: false,
+              expandedReasons: expect.any(Array),
+              narrowedReasons: [],
             });
             expect(
               computeUnionTransition(
@@ -516,6 +551,8 @@ describe('computeUnionTransition', () => {
             ).toEqual({
               expanded: true,
               narrowed: false,
+              expandedReasons: expect.any(Array),
+              narrowedReasons: [],
             });
           }
         });
@@ -532,6 +569,8 @@ describe('computeUnionTransition', () => {
             ).toEqual({
               expanded: false,
               narrowed: true,
+              expandedReasons: [],
+              narrowedReasons: expect.any(Array),
             });
           } else {
             expect(
@@ -542,6 +581,8 @@ describe('computeUnionTransition', () => {
             ).toEqual({
               expanded: true,
               narrowed: false,
+              expandedReasons: expect.any(Array),
+              narrowedReasons: [],
             });
           }
 
@@ -553,6 +594,8 @@ describe('computeUnionTransition', () => {
           ).toEqual({
             expanded: false,
             narrowed: false,
+            expandedReasons: [],
+            narrowedReasons: [],
           });
         });
 
@@ -565,6 +608,8 @@ describe('computeUnionTransition', () => {
           ).toEqual({
             narrowed: false,
             expanded: false,
+            expandedReasons: [],
+            narrowedReasons: [],
           });
         });
 
@@ -578,6 +623,8 @@ describe('computeUnionTransition', () => {
             ).toEqual({
               expanded: false,
               narrowed: true,
+              expandedReasons: [],
+              narrowedReasons: expect.any(Array),
             });
             expect(
               computeUnionTransition(
@@ -587,6 +634,8 @@ describe('computeUnionTransition', () => {
             ).toEqual({
               expanded: false,
               narrowed: true,
+              expandedReasons: [],
+              narrowedReasons: expect.any(Array),
             });
           } else {
             expect(
@@ -597,6 +646,8 @@ describe('computeUnionTransition', () => {
             ).toEqual({
               expanded: true,
               narrowed: false,
+              expandedReasons: expect.any(Array),
+              narrowedReasons: [],
             });
             expect(
               computeUnionTransition(
@@ -606,6 +657,8 @@ describe('computeUnionTransition', () => {
             ).toEqual({
               expanded: true,
               narrowed: false,
+              expandedReasons: expect.any(Array),
+              narrowedReasons: [],
             });
           }
         });
@@ -622,6 +675,8 @@ describe('computeUnionTransition', () => {
             ).toEqual({
               expanded: false,
               narrowed: true,
+              expandedReasons: [],
+              narrowedReasons: expect.any(Array),
             });
           } else {
             expect(
@@ -632,6 +687,8 @@ describe('computeUnionTransition', () => {
             ).toEqual({
               expanded: true,
               narrowed: false,
+              expandedReasons: expect.any(Array),
+              narrowedReasons: [],
             });
           }
 
@@ -643,6 +700,8 @@ describe('computeUnionTransition', () => {
           ).toEqual({
             expanded: false,
             narrowed: false,
+            expandedReasons: [],
+            narrowedReasons: [],
           });
         });
 
@@ -655,6 +714,8 @@ describe('computeUnionTransition', () => {
           ).toEqual({
             narrowed: false,
             expanded: false,
+            expandedReasons: [],
+            narrowedReasons: [],
           });
         });
 
@@ -668,6 +729,8 @@ describe('computeUnionTransition', () => {
             ).toEqual({
               expanded: false,
               narrowed: true,
+              expandedReasons: [],
+              narrowedReasons: expect.any(Array),
             });
             expect(
               computeUnionTransition(
@@ -677,6 +740,8 @@ describe('computeUnionTransition', () => {
             ).toEqual({
               expanded: false,
               narrowed: true,
+              expandedReasons: [],
+              narrowedReasons: expect.any(Array),
             });
           } else {
             expect(
@@ -687,6 +752,8 @@ describe('computeUnionTransition', () => {
             ).toEqual({
               expanded: true,
               narrowed: false,
+              expandedReasons: expect.any(Array),
+              narrowedReasons: [],
             });
             expect(
               computeUnionTransition(
@@ -696,6 +763,8 @@ describe('computeUnionTransition', () => {
             ).toEqual({
               expanded: true,
               narrowed: false,
+              expandedReasons: expect.any(Array),
+              narrowedReasons: [],
             });
           }
         });
@@ -732,11 +801,15 @@ describe('computeUnionTransition', () => {
           expect(computeUnionTransition(expanded, narrowed)).toEqual({
             expanded: false,
             narrowed: true,
+            expandedReasons: [],
+            narrowedReasons: expect.any(Array),
           });
         } else {
           expect(computeUnionTransition(narrowed, expanded)).toEqual({
             expanded: true,
             narrowed: false,
+            expandedReasons: expect.any(Array),
+            narrowedReasons: [],
           });
         }
       });
@@ -772,11 +845,15 @@ describe('computeUnionTransition', () => {
           expect(computeUnionTransition(expanded, narrowed)).toEqual({
             expanded: false,
             narrowed: true,
+            expandedReasons: [],
+            narrowedReasons: expect.any(Array),
           });
         } else {
           expect(computeUnionTransition(narrowed, expanded)).toEqual({
             expanded: true,
             narrowed: false,
+            expandedReasons: expect.any(Array),
+            narrowedReasons: [],
           });
         }
       });
@@ -790,11 +867,15 @@ describe('computeUnionTransition', () => {
         expect(computeUnionTransition(expanded, narrowed)).toEqual({
           expanded: false,
           narrowed: true,
+          expandedReasons: [],
+          narrowedReasons: expect.any(Array),
         });
       } else {
         expect(computeUnionTransition(narrowed, expanded)).toEqual({
           expanded: true,
           narrowed: false,
+          expandedReasons: expect.any(Array),
+          narrowedReasons: [],
         });
       }
     });
@@ -819,11 +900,15 @@ describe('computeUnionTransition', () => {
         expect(computeUnionTransition(expanded, narrowed)).toEqual({
           expanded: false,
           narrowed: true,
+          expandedReasons: [],
+          narrowedReasons: expect.any(Array),
         });
       } else {
         expect(computeUnionTransition(narrowed, expanded)).toEqual({
           expanded: true,
           narrowed: false,
+          expandedReasons: expect.any(Array),
+          narrowedReasons: [],
         });
       }
     });

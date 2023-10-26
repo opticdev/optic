@@ -72,11 +72,11 @@ const getPreventParameterEnumBreak = <P extends ParameterIn>(parameterIn: P) =>
             isSchemaWithEnum(after.value?.schema)) &&
           diffSets(new Set(beforeEnum), new Set(afterEnum));
 
-        if (enumDiff && enumDiff.narrowed.length) {
+        if (enumDiff && enumDiff.beforeSetDiff.length) {
           throw new RuleError({
             message: `cannot remove enum option${
-              enumDiff.narrowed.length > 1 ? 's' : ''
-            } '${enumDiff.narrowed.join(
+              enumDiff.beforeSetDiff.length > 1 ? 's' : ''
+            } '${enumDiff.beforeSetDiff.join(
               ', '
             )}' from ${parameterIn} parameter '${
               after.value.name
@@ -142,19 +142,19 @@ export const preventPropertyEnumBreak = () => {
         let beforeSet = new Set(beforeEnum);
         let afterSet = new Set(afterEnum);
         const results = diffSets(beforeSet, afterSet);
-        if (inRequest && results.narrowed.length) {
+        if (inRequest && results.beforeSetDiff.length) {
           throw new RuleError({
             message: `cannot remove enum option${
-              results.narrowed.length > 1 ? 's' : ''
-            } '${results.narrowed.join(', ')}' from '${
+              results.beforeSetDiff.length > 1 ? 's' : ''
+            } '${results.beforeSetDiff.join(', ')}' from '${
               after.value.key
             }' property. This is a breaking change.`,
           });
-        } else if (!inRequest && results.expanded.length) {
+        } else if (!inRequest && results.afterSetDiff.length) {
           throw new RuleError({
             message: `cannot add enum option${
-              results.expanded.length > 1 ? 's' : ''
-            } '${results.expanded.join(', ')}' from '${
+              results.afterSetDiff.length > 1 ? 's' : ''
+            } '${results.afterSetDiff.join(', ')}' from '${
               after.value.key
             }' property. This is a breaking change.`,
           });
