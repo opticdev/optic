@@ -30,6 +30,13 @@ type KeyNode =
     };
 type KeyMap = Map<string, KeyNode>;
 
+type UnionDiffResult = {
+  expanded: boolean;
+  expandedReasons: string[];
+  narrowed: boolean;
+  narrowedReasons: string[];
+};
+
 function traverseTypeArraySchemas(
   schema: FlatOpenAPIV3_1.SchemaObject
 ): KeyMap[] {
@@ -161,17 +168,18 @@ function createKeyMapFromSchema(schema: FlatOpenAPIV3_1.SchemaObject): KeyMap {
   return keyMap;
 }
 
-function diffKeyMaps(aMap: KeyMap, bMap: KeyMap) {
-  const results = {
+function diffKeyMaps(aMap: KeyMap, bMap: KeyMap): UnionDiffResult {
+  const results: UnionDiffResult = {
     expanded: false,
+    expandedReasons: [],
     narrowed: false,
+    narrowedReasons: [],
   };
   for (const [key, aValue] of aMap) {
     const bValue = bMap.get(key);
     if (bValue) {
       if (aValue.keyword === 'type' && bValue.keyword === 'type') {
         const typeTransition = computeTypeTransition(aValue, bValue);
-        // TODO add in reasons why something failed
         if (
           typeTransition.expanded.enum ||
           typeTransition.expanded.requiredChange ||
@@ -228,10 +236,7 @@ export function computeUnionTransition(
     | OpenAPIV3.SchemaObject
     | OpenAPIV3_1.SchemaObject
     | OpenAPIV3.ReferenceObject
-): {
-  expanded: boolean;
-  narrowed: boolean;
-} {
+): UnionDiffResult {
   const b = before as FlatOpenAPIV3_1.SchemaObject;
   const a = after as FlatOpenAPIV3_1.SchemaObject;
 

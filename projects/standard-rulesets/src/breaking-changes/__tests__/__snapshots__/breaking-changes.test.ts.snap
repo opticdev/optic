@@ -1,5 +1,162 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`breaking changes ruleset invalid union type enum transition 1`] = `
+[
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "oneOf": [
+              {
+                "type": "number",
+              },
+              {
+                "properties": {
+                  "id": {
+                    "type": "string",
+                  },
+                  "status": {
+                    "enum": [
+                      "online",
+                      "offline",
+                    ],
+                    "type": "string",
+                  },
+                },
+                "type": "object",
+              },
+            ],
+          },
+        },
+        "before": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "type": [
+              "number",
+              "object",
+            ],
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent response property type changes",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "changed",
+    "where": "GET /api/users response 200 response body: application/json",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "oneOf": [
+              {
+                "type": "number",
+              },
+              {
+                "properties": {
+                  "id": {
+                    "type": "string",
+                  },
+                  "status": {
+                    "enum": [
+                      "online",
+                      "offline",
+                    ],
+                    "type": "string",
+                  },
+                },
+                "type": "object",
+              },
+            ],
+          },
+        },
+        "before": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "type": [
+              "number",
+              "object",
+            ],
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent narrowing in response union types",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "changed",
+    "where": "GET /api/users response 200 response body: application/json",
+  },
+]
+`;
+
 exports[`breaking changes ruleset invalid union type transition 1`] = `
 [
   {

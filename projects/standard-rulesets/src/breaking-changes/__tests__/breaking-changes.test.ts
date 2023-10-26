@@ -1087,6 +1087,76 @@ describe('breaking changes ruleset', () => {
     expect(results).toMatchSnapshot();
     expect(results.some((result) => !result.passed)).toBe(true);
   });
+
+  test('invalid union type enum transition', async () => {
+    const beforeJson: any = {
+      ...TestHelpers.createEmptySpec(),
+      paths: {
+        '/api/users': {
+          get: {
+            responses: {
+              '200': {
+                description: 'response',
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: ['number', 'object'],
+                      properties: {
+                        id: { type: 'string' },
+                        status: { type: 'string', enum: ['online'] },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+    const afterJson: OpenAPIV3.Document = {
+      ...TestHelpers.createEmptySpec(),
+      paths: {
+        '/api/users': {
+          get: {
+            responses: {
+              '200': {
+                description: 'response',
+                content: {
+                  'application/json': {
+                    schema: {
+                      oneOf: [
+                        { type: 'number' },
+                        {
+                          type: 'object',
+                          properties: {
+                            id: { type: 'string' },
+                            status: {
+                              type: 'string',
+                              enum: ['online', 'offline'],
+                            },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+    const results = await TestHelpers.runRulesWithInputs(
+      [new BreakingChangesRuleset()],
+      beforeJson,
+      afterJson
+    );
+    expect(results.length > 0).toBe(true);
+
+    expect(results).toMatchSnapshot();
+    expect(results.some((result) => !result.passed)).toBe(true);
+  });
 });
 
 describe('breaking change ruleset configuration', () => {
