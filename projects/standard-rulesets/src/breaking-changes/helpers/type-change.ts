@@ -15,19 +15,19 @@ export function computeTypeTransition(
   before: PropertyType,
   after: PropertyType
 ): {
-  expanded: BreakingChangeResult;
-  narrowed: BreakingChangeResult;
+  request: BreakingChangeResult;
+  response: BreakingChangeResult;
 } {
   const results: {
-    expanded: BreakingChangeResult;
-    narrowed: BreakingChangeResult;
+    request: BreakingChangeResult;
+    response: BreakingChangeResult;
   } = {
-    expanded: {
+    request: {
       enum: false,
       typeChange: false,
       requiredChange: false,
     },
-    narrowed: {
+    response: {
       enum: false,
       typeChange: false,
       requiredChange: false,
@@ -46,15 +46,15 @@ export function computeTypeTransition(
     ? `[${after.schema.type.join(',')}]`
     : after.schema.type;
   if (typeChange.expanded)
-    results.expanded.typeChange = `${beforeType} was changed to ${afterType}`;
+    results.request.typeChange = `type ${beforeType} was changed to ${afterType}`;
   if (typeChange.narrowed)
-    results.narrowed.typeChange = `${beforeType} was changed to ${afterType}`;
+    results.response.typeChange = `type ${beforeType} was changed to ${afterType}`;
 
   // Check required changes
   if (before.required && !after.required) {
-    results.narrowed.requiredChange = `was made optional`;
+    results.response.requiredChange = `was made optional`;
   } else if (!before.required && after.required) {
-    results.expanded.requiredChange = `was made required`;
+    results.request.requiredChange = `was made required`;
   }
 
   // Check enum change
@@ -70,22 +70,20 @@ export function computeTypeTransition(
     : null;
   if (beforeEnum && afterEnum) {
     const enumResults = diffSets(new Set(beforeEnum), new Set(afterEnum));
-    // A little counterintuitively, beforeSetDiff means the enum set goes from [a,b] to [a]
-    // TODO: rename this to better name `requestBreak` and `responseBreak`
     if (enumResults.beforeSetDiff.length)
-      results.expanded.enum = `enums ${enumResults.afterSetDiff.join(
+      results.request.enum = `enums ${enumResults.afterSetDiff.join(
         ','
       )} were added`;
     if (enumResults.afterSetDiff.length)
-      results.narrowed.enum = `enums ${enumResults.beforeSetDiff.join(
+      results.response.enum = `enums ${enumResults.beforeSetDiff.join(
         ','
       )} were removed`;
   } else if (beforeEnum && !afterEnum) {
     const keyword = 'const' in before.schema ? 'const' : 'enum';
-    results.expanded.enum = `${keyword} keyword was removed`;
+    results.request.enum = `${keyword} keyword was removed`;
   } else if (!beforeEnum && afterEnum) {
     const keyword = 'const' in after.schema ? 'const' : 'enum';
-    results.narrowed.enum = `${keyword} keyword added`;
+    results.response.enum = `${keyword} keyword added`;
   }
 
   return results;

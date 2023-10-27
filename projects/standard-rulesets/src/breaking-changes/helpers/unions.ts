@@ -35,10 +35,10 @@ type KeyNode =
 type KeyMap = Map<string, KeyNode>;
 
 type UnionDiffResult = {
-  expanded: boolean;
-  expandedReasons: string[];
-  narrowed: boolean;
-  narrowedReasons: string[];
+  request: boolean;
+  requestReasons: string[];
+  response: boolean;
+  responseReasons: string[];
 };
 
 function traverseTypeArraySchemas(
@@ -65,60 +65,60 @@ function traverseTypeArraySchemas(
     : [];
 }
 
-function areKeymapsNarrowed(
+function areKeymapsResponseBreaking(
   aKeymaps: KeyMap[],
   bKeymaps: KeyMap[],
   keyName: string | null
 ) {
-  const narrowedResults = aKeymaps
+  const responseResults = aKeymaps
     .map((aKeymap) => {
       const diffResults = bKeymaps.map((bKeymap) =>
         diffKeyMaps(aKeymap, bKeymap, keyName)
       );
-      const hasAnyValidTransition = diffResults.some((d) => !d.narrowed);
+      const hasAnyValidTransition = diffResults.some((d) => !d.response);
       // There could be multiple reasons a type does not overlap - we select the one with the least divergence
       return hasAnyValidTransition
         ? null
         : // TODO choose a better heuristic for error version
           diffResults.sort(
-            (a, b) => a.narrowedReasons.length - b.narrowedReasons.length
+            (a, b) => a.responseReasons.length - b.responseReasons.length
           )[0];
     })
     .filter((r) => r !== null) as UnionDiffResult[];
-  const isNarrowed = narrowedResults.length !== 0;
+  const isResponse = responseResults.length !== 0;
   return {
-    isNarrowed,
-    reasons: isNarrowed
-      ? narrowedResults.map((r) => r.narrowedReasons).flat()
+    isResponse,
+    reasons: isResponse
+      ? responseResults.map((r) => r.responseReasons).flat()
       : [],
   };
 }
 
-function areKeymapsExpanded(
+function areKeymapsRequestBreaking(
   aKeymaps: KeyMap[],
   bKeymaps: KeyMap[],
   keyName: string | null
 ) {
-  const expandedResults = bKeymaps
+  const requestResults = bKeymaps
     .map((bKeymap) => {
       const diffResults = aKeymaps.map((aKeymap) =>
         diffKeyMaps(aKeymap, bKeymap, keyName)
       );
-      const hasAnyValidTransition = diffResults.some((d) => !d.expanded);
+      const hasAnyValidTransition = diffResults.some((d) => !d.request);
 
       // There could be multiple reasons a type does not overlap - we select the one with the least divergence
       return hasAnyValidTransition
         ? null
         : diffResults.sort(
-            (a, b) => a.expandedReasons.length - b.expandedReasons.length
+            (a, b) => a.requestReasons.length - b.requestReasons.length
           )[0];
     })
     .filter((r) => r !== null) as UnionDiffResult[];
-  const isExpanded = expandedResults.length !== 0;
+  const isRequestBreaking = requestResults.length !== 0;
   return {
-    isExpanded,
-    reasons: isExpanded
-      ? expandedResults.map((r) => r.expandedReasons).flat()
+    isRequestBreaking,
+    reasons: isRequestBreaking
+      ? requestResults.map((r) => r.requestReasons).flat()
       : [],
   };
 }
@@ -132,7 +132,7 @@ function createKeyMapFromSchema(schema: FlatOpenAPIV3_1.SchemaObject): KeyMap {
     if (schema.type === 'object') {
       if (schema.properties) {
         for (const [key, value] of Object.entries(schema.properties)) {
-          const fullKey = `${path}.${key}`;
+          const fullKey = path ? `${path}.${key}` : key;
           const required = schema.required
             ? schema.required.includes(key)
             : false;
@@ -236,52 +236,53 @@ function diffKeyMaps(
   parentKey: string | null
 ): UnionDiffResult {
   const results: UnionDiffResult = {
-    expanded: false,
-    expandedReasons: [],
-    narrowed: false,
-    narrowedReasons: [],
+    request: false,
+    requestReasons: [],
+    response: false,
+    responseReasons: [],
   };
   for (const [key, aValue] of aMap) {
     const bValue = bMap.get(key);
     const keyName = parentKey ? `${parentKey}.${key}` : key;
+    const prefix = keyName ? `key ${keyName}: ` : '';
     if (bValue) {
       if (aValue.keyword === 'type' && bValue.keyword === 'type') {
         const typeTransition = computeTypeTransition(aValue, bValue);
-        if (typeTransition.expanded.enum) {
-          results.expanded = true;
-          results.expandedReasons.push(
-            `key ${keyName}: ${typeTransition.expanded.enum}`
+        if (typeTransition.request.enum) {
+          results.request = true;
+          results.requestReasons.push(
+            `${prefix}${typeTransition.request.enum}`
           );
         }
-        if (typeTransition.expanded.requiredChange) {
-          results.expanded = true;
-          results.expandedReasons.push(
-            `key ${keyName}: ${typeTransition.expanded.requiredChange}`
+        if (typeTransition.request.requiredChange) {
+          results.request = true;
+          results.requestReasons.push(
+            `${prefix}${typeTransition.request.requiredChange}`
           );
         }
-        if (typeTransition.expanded.typeChange) {
-          results.expanded = true;
-          results.expandedReasons.push(
-            `key ${keyName}: ${typeTransition.expanded.typeChange}`
+        if (typeTransition.request.typeChange) {
+          results.request = true;
+          results.requestReasons.push(
+            `${prefix}${typeTransition.request.typeChange}`
           );
         }
 
-        if (typeTransition.narrowed.enum) {
-          results.narrowed = true;
-          results.narrowedReasons.push(
-            `key ${keyName}: ${typeTransition.narrowed.enum}`
+        if (typeTransition.response.enum) {
+          results.response = true;
+          results.responseReasons.push(
+            `${prefix}${typeTransition.response.enum}`
           );
         }
-        if (typeTransition.narrowed.requiredChange) {
-          results.narrowed = true;
-          results.narrowedReasons.push(
-            `key ${keyName}: ${typeTransition.narrowed.requiredChange}`
+        if (typeTransition.response.requiredChange) {
+          results.response = true;
+          results.responseReasons.push(
+            `${prefix}${typeTransition.response.requiredChange}`
           );
         }
-        if (typeTransition.narrowed.typeChange) {
-          results.narrowed = true;
-          results.narrowedReasons.push(
-            `key ${keyName}: ${typeTransition.narrowed.typeChange}`
+        if (typeTransition.response.typeChange) {
+          results.response = true;
+          results.responseReasons.push(
+            `${prefix}${typeTransition.response.typeChange}`
           );
         }
       } else {
@@ -301,48 +302,35 @@ function diffKeyMaps(
                 ),
               ]
             : bValue.type;
-        const { isNarrowed, reasons: narrowedReasons } = areKeymapsNarrowed(
-          aKeymaps,
-          bKeymaps,
-          keyName
-        );
-        if (isNarrowed) {
-          results.narrowed = true;
-          results.narrowedReasons.push(
-            `key ${keyName}: ${
-              aValue.keyword
-            } was narrowed: ${narrowedReasons.join(', ')}`
+        const { isResponse, reasons: responseReasons } =
+          areKeymapsResponseBreaking(aKeymaps, bKeymaps, keyName);
+        if (isResponse) {
+          results.response = true;
+          results.responseReasons.push(
+            `${prefix}${aValue.keyword}: ${responseReasons.join(', ')}`
           );
         }
-        const { isExpanded, reasons: expandedReasons } = areKeymapsExpanded(
-          aKeymaps,
-          bKeymaps,
-          keyName
-        );
-        if (isExpanded) {
-          results.expanded = true;
-          results.expandedReasons.push(
-            `key ${keyName}: ${
-              aValue.keyword
-            } was expanded: ${expandedReasons.join(', ')}`
+        const { isRequestBreaking, reasons: requestReasons } =
+          areKeymapsRequestBreaking(aKeymaps, bKeymaps, keyName);
+        if (isRequestBreaking) {
+          results.request = true;
+          results.requestReasons.push(
+            `${prefix}${aValue.keyword}: ${requestReasons.join(', ')}`
           );
         }
       }
     } else if (aValue.required) {
-      results.narrowed = true;
-      results.narrowedReasons.push(
-        `key ${keyName}: required property was removed`
-      );
+      results.response = true;
+      results.responseReasons.push(`${prefix}required property was removed`);
     }
   }
 
   for (const [key, bValue] of bMap) {
     const keyName = parentKey ? `${parentKey}.${key}` : key;
+    const prefix = keyName ? `key ${keyName}: ` : '';
     if (!aMap.has(key) && bValue.required) {
-      results.expandedReasons.push(
-        `key ${keyName}: required property was added`
-      );
-      results.expanded = true;
+      results.requestReasons.push(`${prefix}required property was added`);
+      results.request = true;
     }
   }
 
@@ -360,10 +348,10 @@ export function computeUnionTransition(
     | OpenAPIV3.ReferenceObject
 ): UnionDiffResult {
   const results: UnionDiffResult = {
-    narrowed: false,
-    narrowedReasons: [],
-    expanded: false,
-    expandedReasons: [],
+    response: false,
+    responseReasons: [],
+    request: false,
+    requestReasons: [],
   };
   const b = before as FlatOpenAPIV3_1.SchemaObject;
   const a = after as FlatOpenAPIV3_1.SchemaObject;
@@ -383,27 +371,20 @@ export function computeUnionTransition(
     ? traverseTypeArraySchemas(a)
     : [createKeyMapFromSchema(a)];
 
-  const { isNarrowed, reasons: narrowedReasons } = areKeymapsNarrowed(
+  const { isResponse, reasons: responseReasons } = areKeymapsResponseBreaking(
     beforeMaps,
     afterMaps,
     null
   );
-  if (isNarrowed) {
-    results.narrowed = true;
-    results.narrowedReasons.push(
-      `schema was narrowed: ${narrowedReasons.join(', ')}`
-    );
+  if (isResponse) {
+    results.response = true;
+    results.responseReasons.push(`${responseReasons.join(', ')}`);
   }
-  const { isExpanded, reasons: expandedReasons } = areKeymapsExpanded(
-    beforeMaps,
-    afterMaps,
-    null
-  );
-  if (isExpanded) {
-    results.expanded = true;
-    results.expandedReasons.push(
-      `schema was expanded: ${expandedReasons.join(', ')}`
-    );
+  const { isRequestBreaking, reasons: expandedReasons } =
+    areKeymapsRequestBreaking(beforeMaps, afterMaps, null);
+  if (isRequestBreaking) {
+    results.request = true;
+    results.requestReasons.push(`${expandedReasons.join(', ')}`);
   }
 
   return results;

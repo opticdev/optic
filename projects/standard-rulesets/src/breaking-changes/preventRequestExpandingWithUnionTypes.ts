@@ -11,7 +11,7 @@ export const preventRequestExpandingInUnionTypes = () =>
         if (!beforeSchema || !afterSchema) return;
         if (schemaIsUnion(beforeSchema) || schemaIsUnion(afterSchema)) {
           const results = computeUnionTransition(beforeSchema, afterSchema);
-          if (results.expanded) {
+          if (results.request) {
             const keyword =
               'oneOf' in beforeSchema || 'oneOf' in afterSchema
                 ? 'oneOf'
@@ -23,7 +23,7 @@ export const preventRequestExpandingInUnionTypes = () =>
                 ? `request body changed to ${keyword}`
                 : `request body changed from ${keyword}`;
             throw new RuleError({
-              message: `${prefix} did not overlap with the previous schema: ${results.expandedReasons.join(
+              message: `${prefix} did not overlap with the previous schema. ${results.requestReasons.join(
                 ', '
               )}`,
             });
@@ -37,7 +37,7 @@ export const preventRequestExpandingInUnionTypes = () =>
         if (!beforeSchema || !afterSchema) return;
         if (schemaIsUnion(beforeSchema) || schemaIsUnion(afterSchema)) {
           const results = computeUnionTransition(beforeSchema, afterSchema);
-          if (results.expanded) {
+          if (results.request) {
             const keyword =
               'oneOf' in beforeSchema || 'oneOf' in afterSchema
                 ? 'oneOf'
@@ -50,7 +50,7 @@ export const preventRequestExpandingInUnionTypes = () =>
                 : `request property changed from ${keyword}`;
 
             throw new RuleError({
-              message: `${prefix} did not overlap with the previous schema: ${results.narrowedReasons.join(
+              message: `${prefix} did not overlap with the previous schema. ${results.requestReasons.join(
                 ', '
               )}`,
             });
