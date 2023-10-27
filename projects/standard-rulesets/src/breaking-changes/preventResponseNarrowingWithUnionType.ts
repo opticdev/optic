@@ -23,9 +23,9 @@ export const preventResponseNarrowingInUnionTypes = () =>
                 ? `response body changed to ${keyword}`
                 : `response body changed from ${keyword}`;
             throw new RuleError({
-              message: `${prefix} did not overlap with the previous schema. ${results.responseReasons.join(
-                ', '
-              )}`,
+              message: `${prefix} did not overlap with the previous schema. ${results.responseReasons
+                .map((r) => r.reason)
+                .join(', ')}`,
             });
           }
         }
@@ -50,9 +50,9 @@ export const preventResponseNarrowingInUnionTypes = () =>
                 : `response property changed from ${keyword}`;
 
             throw new RuleError({
-              message: `${prefix} did not overlap with the previous schema. ${results.responseReasons.join(
-                ', '
-              )}`,
+              message: `${prefix} did not overlap with the previous schema. ${results.responseReasons
+                .map((r) => r.reason)
+                .join(', ')}`,
             });
           }
         }

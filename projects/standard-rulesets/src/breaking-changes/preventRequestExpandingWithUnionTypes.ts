@@ -23,9 +23,9 @@ export const preventRequestExpandingInUnionTypes = () =>
                 ? `request body changed to ${keyword}`
                 : `request body changed from ${keyword}`;
             throw new RuleError({
-              message: `${prefix} did not overlap with the previous schema. ${results.requestReasons.join(
-                ', '
-              )}`,
+              message: `${prefix} did not overlap with the previous schema. ${results.requestReasons
+                .map((r) => r.reason)
+                .join(', ')}`,
             });
           }
         }
@@ -50,9 +50,9 @@ export const preventRequestExpandingInUnionTypes = () =>
                 : `request property changed from ${keyword}`;
 
             throw new RuleError({
-              message: `${prefix} did not overlap with the previous schema. ${results.requestReasons.join(
-                ', '
-              )}`,
+              message: `${prefix} did not overlap with the previous schema. ${results.requestReasons
+                .map((r) => r.reason)
+                .join(', ')}`,
             });
           }
         }

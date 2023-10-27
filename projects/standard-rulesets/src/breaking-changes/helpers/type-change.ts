@@ -71,11 +71,11 @@ export function computeTypeTransition(
   if (beforeEnum && afterEnum) {
     const enumResults = diffSets(new Set(beforeEnum), new Set(afterEnum));
     if (enumResults.beforeSetDiff.length)
-      results.request.enum = `enums ${enumResults.afterSetDiff.join(
+      results.request.enum = `enums ${enumResults.beforeSetDiff.join(
         ','
       )} were added`;
     if (enumResults.afterSetDiff.length)
-      results.response.enum = `enums ${enumResults.beforeSetDiff.join(
+      results.response.enum = `enums ${enumResults.afterSetDiff.join(
         ','
       )} were removed`;
   } else if (beforeEnum && !afterEnum) {

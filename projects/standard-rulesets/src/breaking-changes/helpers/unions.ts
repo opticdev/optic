@@ -7,6 +7,8 @@ import {
 } from '@useoptic/openapi-utilities';
 import { computeTypeTransition } from './type-change';
 
+const SEPARATOR = '.';
+
 export function isInUnionProperty(jsonPath: string): boolean {
   const parts = jsonPointerHelpers.decode(jsonPath);
   return parts.some((p) => p === 'oneOf' || p === 'anyOf');
@@ -36,10 +38,33 @@ type KeyMap = Map<string, KeyNode>;
 
 type UnionDiffResult = {
   request: boolean;
-  requestReasons: string[];
+  requestReasons: { key: string; reason: string }[];
   response: boolean;
-  responseReasons: string[];
+  responseReasons: { key: string; reason: string }[];
 };
+
+function getDeepestDiffLevel(reasons: { key: string }[]): number {
+  let max = 0;
+  for (const { key } of reasons) {
+    const keyLength = key === '' ? 0 : key.split(SEPARATOR).length;
+    max = Math.max(max, keyLength);
+  }
+
+  return max;
+}
+
+function compareReasons(
+  a: { key: string; reason: string }[],
+  b: { key: string; reason: string }[]
+): number {
+  const aDiffLevel = getDeepestDiffLevel(a);
+  const bDiffLevel = getDeepestDiffLevel(b);
+  if (aDiffLevel === bDiffLevel) {
+    return a.length - b.length;
+  } else {
+    return bDiffLevel - aDiffLevel;
+  }
+}
 
 function traverseTypeArraySchemas(
   schema: FlatOpenAPIV3_1.SchemaObject
@@ -76,12 +101,12 @@ function areKeymapsResponseBreaking(
         diffKeyMaps(aKeymap, bKeymap, keyName)
       );
       const hasAnyValidTransition = diffResults.some((d) => !d.response);
-      // There could be multiple reasons a type does not overlap - we select the one with the least divergence
+      // There could be multiple reasons a type does not overlap - we select the one that we think is the most relevant,
+      // in this case, this is a diff at the deepest level
       return hasAnyValidTransition
         ? null
-        : // TODO choose a better heuristic for error version
-          diffResults.sort(
-            (a, b) => a.responseReasons.length - b.responseReasons.length
+        : diffResults.sort((a, b) =>
+            compareReasons(a.responseReasons, b.responseReasons)
           )[0];
     })
     .filter((r) => r !== null) as UnionDiffResult[];
@@ -89,7 +114,9 @@ function areKeymapsResponseBreaking(
   return {
     isResponse,
     reasons: isResponse
-      ? responseResults.map((r) => r.responseReasons).flat()
+      ? responseResults.sort((a, b) =>
+          compareReasons(a.responseReasons, b.responseReasons)
+        )[0].responseReasons
       : [],
   };
 }
@@ -106,11 +133,12 @@ function areKeymapsRequestBreaking(
       );
       const hasAnyValidTransition = diffResults.some((d) => !d.request);
 
-      // There could be multiple reasons a type does not overlap - we select the one with the least divergence
+      // There could be multiple reasons a type does not overlap - we select the one that we think is the most relevant,
+      // in this case, this is a diff at the deepest level
       return hasAnyValidTransition
         ? null
-        : diffResults.sort(
-            (a, b) => a.requestReasons.length - b.requestReasons.length
+        : diffResults.sort((a, b) =>
+            compareReasons(a.requestReasons, b.requestReasons)
           )[0];
     })
     .filter((r) => r !== null) as UnionDiffResult[];
@@ -118,7 +146,9 @@ function areKeymapsRequestBreaking(
   return {
     isRequestBreaking,
     reasons: isRequestBreaking
-      ? requestResults.map((r) => r.requestReasons).flat()
+      ? requestResults.sort((a, b) =>
+          compareReasons(a.requestReasons, b.requestReasons)
+        )[0].requestReasons
       : [],
   };
 }
@@ -132,7 +162,7 @@ function createKeyMapFromSchema(schema: FlatOpenAPIV3_1.SchemaObject): KeyMap {
     if (schema.type === 'object') {
       if (schema.properties) {
         for (const [key, value] of Object.entries(schema.properties)) {
-          const fullKey = path ? `${path}.${key}` : key;
+          const fullKey = path ? `${path}${SEPARATOR}${key}` : key;
           const required = schema.required
             ? schema.required.includes(key)
             : false;
@@ -243,47 +273,53 @@ function diffKeyMaps(
   };
   for (const [key, aValue] of aMap) {
     const bValue = bMap.get(key);
-    const keyName = parentKey ? `${parentKey}.${key}` : key;
+    const keyName = parentKey ? `${parentKey}${SEPARATOR}${key}` : key;
     const prefix = keyName ? `key ${keyName}: ` : '';
     if (bValue) {
       if (aValue.keyword === 'type' && bValue.keyword === 'type') {
         const typeTransition = computeTypeTransition(aValue, bValue);
         if (typeTransition.request.enum) {
           results.request = true;
-          results.requestReasons.push(
-            `${prefix}${typeTransition.request.enum}`
-          );
+          results.requestReasons.push({
+            key: keyName,
+            reason: `${prefix}${typeTransition.request.enum}`,
+          });
         }
         if (typeTransition.request.requiredChange) {
           results.request = true;
-          results.requestReasons.push(
-            `${prefix}${typeTransition.request.requiredChange}`
-          );
+          results.requestReasons.push({
+            key: keyName,
+            reason: `${prefix}${typeTransition.request.requiredChange}`,
+          });
         }
         if (typeTransition.request.typeChange) {
           results.request = true;
-          results.requestReasons.push(
-            `${prefix}${typeTransition.request.typeChange}`
-          );
+          results.requestReasons.push({
+            key: keyName,
+            reason: `${prefix}${typeTransition.request.typeChange}`,
+          });
         }
 
         if (typeTransition.response.enum) {
           results.response = true;
-          results.responseReasons.push(
-            `${prefix}${typeTransition.response.enum}`
-          );
+          results.responseReasons.push({
+            key: keyName,
+            reason: `${prefix}${typeTransition.response.enum}`,
+          });
         }
         if (typeTransition.response.requiredChange) {
           results.response = true;
-          results.responseReasons.push(
-            `${prefix}${typeTransition.response.requiredChange}`
-          );
+          results.responseReasons.push({
+            key: keyName,
+            reason: `${prefix}${typeTransition.response.requiredChange}`,
+          });
         }
         if (typeTransition.response.typeChange) {
           results.response = true;
-          results.responseReasons.push(
-            `${prefix}${typeTransition.response.typeChange}`
-          );
+          results.responseReasons.push({
+            key: keyName,
+            reason: `${prefix}${typeTransition.response.typeChange}`,
+          });
         }
       } else {
         const aKeymaps =
@@ -306,22 +342,31 @@ function diffKeyMaps(
           areKeymapsResponseBreaking(aKeymaps, bKeymaps, keyName);
         if (isResponse) {
           results.response = true;
-          results.responseReasons.push(
-            `${prefix}${aValue.keyword}: ${responseReasons.join(', ')}`
-          );
+          results.responseReasons.push({
+            key: keyName,
+            reason: `${prefix}${aValue.keyword}: ${responseReasons
+              .map((r) => r.reason)
+              .join(', ')}`,
+          });
         }
         const { isRequestBreaking, reasons: requestReasons } =
           areKeymapsRequestBreaking(aKeymaps, bKeymaps, keyName);
         if (isRequestBreaking) {
           results.request = true;
-          results.requestReasons.push(
-            `${prefix}${aValue.keyword}: ${requestReasons.join(', ')}`
-          );
+          results.requestReasons.push({
+            key: keyName,
+            reason: `${prefix}${aValue.keyword}: ${requestReasons
+              .map((r) => r.reason)
+              .join(', ')}`,
+          });
         }
       }
     } else if (aValue.required) {
       results.response = true;
-      results.responseReasons.push(`${prefix}required property was removed`);
+      results.responseReasons.push({
+        key: keyName,
+        reason: `${prefix}required property was removed`,
+      });
     }
   }
 
@@ -329,7 +374,10 @@ function diffKeyMaps(
     const keyName = parentKey ? `${parentKey}.${key}` : key;
     const prefix = keyName ? `key ${keyName}: ` : '';
     if (!aMap.has(key) && bValue.required) {
-      results.requestReasons.push(`${prefix}required property was added`);
+      results.requestReasons.push({
+        key: keyName,
+        reason: `${prefix}required property was added`,
+      });
       results.request = true;
     }
   }
@@ -378,13 +426,19 @@ export function computeUnionTransition(
   );
   if (isResponse) {
     results.response = true;
-    results.responseReasons.push(`${responseReasons.join(', ')}`);
+    results.responseReasons.push({
+      key: 'root',
+      reason: `${responseReasons.map((r) => r.reason).join(', ')}`,
+    });
   }
   const { isRequestBreaking, reasons: expandedReasons } =
     areKeymapsRequestBreaking(beforeMaps, afterMaps, null);
   if (isRequestBreaking) {
     results.request = true;
-    results.requestReasons.push(`${expandedReasons.join(', ')}`);
+    results.requestReasons.push({
+      key: 'root',
+      reason: `${expandedReasons.map((r) => r.reason).join(', ')}`,
+    });
   }
 
   return results;
