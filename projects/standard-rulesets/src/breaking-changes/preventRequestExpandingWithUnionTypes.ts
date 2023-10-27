@@ -12,8 +12,21 @@ export const preventRequestExpandingInUnionTypes = () =>
         if (schemaIsUnion(beforeSchema) || schemaIsUnion(afterSchema)) {
           const results = computeUnionTransition(beforeSchema, afterSchema);
           if (results.expanded) {
-            // TODO add in the reason of where something was expanded
-            throw new RuleError({ message: 'cannot expand a request body' });
+            const keyword =
+              'oneOf' in beforeSchema || 'oneOf' in afterSchema
+                ? 'oneOf'
+                : 'anyOf';
+            const prefix =
+              schemaIsUnion(beforeSchema) && schemaIsUnion(afterSchema)
+                ? `request body ${keyword} schema`
+                : schemaIsUnion(afterSchema)
+                ? `request body changed to ${keyword}`
+                : `request body changed from ${keyword}`;
+            throw new RuleError({
+              message: `${prefix} did not overlap with the previous schema: ${results.expandedReasons.join(
+                ', '
+              )}`,
+            });
           }
         }
       });
@@ -25,8 +38,22 @@ export const preventRequestExpandingInUnionTypes = () =>
         if (schemaIsUnion(beforeSchema) || schemaIsUnion(afterSchema)) {
           const results = computeUnionTransition(beforeSchema, afterSchema);
           if (results.expanded) {
-            // TODO add in the reason of where something was expanded
-            throw new RuleError({ message: 'cannot expand a request body' });
+            const keyword =
+              'oneOf' in beforeSchema || 'oneOf' in afterSchema
+                ? 'oneOf'
+                : 'anyOf';
+            const prefix =
+              schemaIsUnion(beforeSchema) && schemaIsUnion(afterSchema)
+                ? `request property ${keyword} schema`
+                : schemaIsUnion(afterSchema)
+                ? `request property changed to ${keyword}`
+                : `request property changed from ${keyword}`;
+
+            throw new RuleError({
+              message: `${prefix} did not overlap with the previous schema: ${results.narrowedReasons.join(
+                ', '
+              )}`,
+            });
           }
         }
       });
