@@ -291,7 +291,7 @@ function diffKeyMaps(
         : parentKey === '/'
         ? `${parentKey}${key}`
         : `${parentKey}${SEPARATOR}${key}`;
-    const prefix = keyName ? `key ${keyName}: ` : '';
+    const prefix = keyName ? `${keyName}: ` : '';
     if (bValue) {
       if (aValue.keyword === 'type' && bValue.keyword === 'type') {
         const typeTransition = computeTypeTransition(aValue, bValue);
@@ -412,7 +412,7 @@ function diffKeyMaps(
         : parentKey === '/'
         ? `${parentKey}${key}`
         : `${parentKey}${SEPARATOR}${key}`;
-    const prefix = keyName ? `key ${keyName}: ` : '';
+    const prefix = keyName ? `${keyName}: ` : '';
     if (!aMap.has(key) && bValue.required) {
       results.requestReasons.push({
         key: keyName,

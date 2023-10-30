@@ -391,12 +391,12 @@ specification details:
         
       - property [1m/schema/properties/stringOrNumberOrObject[22m: [33mchanged[39m
       
-        [31m[1mx [prevent narrowing in response union types][22m response property oneOf schema did not overlap with the previous schema. key oneOf/2: type object was changed to string[39m
+        [31m[1mx [prevent narrowing in response union types][22m response property oneOf schema did not overlap with the previous schema. oneOf/2: type object was changed to string[39m
         at [4mpetstore-updated.json:80:2583[24m
         
       - property [1m/schema/properties/oneOfToObject[22m: [33mchanged[39m
       
-        [31m[1mx [prevent narrowing in response union types][22m response property changed from oneOf did not overlap with the previous schema. key oneOf/0/id: was made optional[39m
+        [31m[1mx [prevent narrowing in response union types][22m response property changed from oneOf did not overlap with the previous schema. oneOf/0/id: was made optional[39m
         at [4mpetstore-updated.json:76:2389[24m
         
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
