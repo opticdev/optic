@@ -108,6 +108,15 @@ export class HarEntries {
 
       let requestBodyBuffer = interaction.request.body.buffer;
       let requestContentType = interaction.request.headers['content-type'];
+      let queryString: HttpArchive.Request['queryString'] = [];
+      try {
+        const url = new URL(interaction.request.url);
+        for (const [name, value] of url.searchParams) {
+          queryString.push({ name, value });
+        }
+      } catch (e) {
+        continue;
+      }
 
       const requestBodyEncoded =
         requestContentType &&
@@ -127,7 +136,7 @@ export class HarEntries {
         headersSize: -1, // hard to calculate
         bodySize: interaction.request.body.buffer.length,
         cookies: [], // not available from proxy, but could parse from header
-        queryString: [], // not available from proxy, but could parse from url
+        queryString,
         postData:
           requestContentType && requestBodyEncoded
             ? {
