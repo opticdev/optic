@@ -7,7 +7,7 @@ import {
 } from '@useoptic/openapi-utilities';
 import { computeTypeTransition } from './type-change';
 
-const SEPARATOR = '.';
+const SEPARATOR = '/';
 
 export function isInUnionProperty(jsonPath: string): boolean {
   const parts = jsonPointerHelpers.decode(jsonPath);
@@ -46,7 +46,7 @@ type UnionDiffResult = {
 function getDeepestDiffLevel(reasons: { key: string }[]): number {
   let max = 0;
   for (const { key } of reasons) {
-    const keyLength = key === '' ? 0 : key.split(SEPARATOR).length;
+    const keyLength = key === SEPARATOR ? 0 : key.split(SEPARATOR).length;
     max = Math.max(max, keyLength);
   }
 
@@ -93,12 +93,18 @@ function traverseTypeArraySchemas(
 function areKeymapsResponseBreaking(
   aKeymaps: KeyMap[],
   bKeymaps: KeyMap[],
-  keyName: string | null
+  keyName: string,
+  keyword: string | null
 ) {
   const responseResults = aKeymaps
-    .map((aKeymap) => {
+    .map((aKeymap, i) => {
+      const key = keyword
+        ? keyName === '/'
+          ? `${keyword}/${i}`
+          : `${keyword}/${keyName}/${i}`
+        : keyName;
       const diffResults = bKeymaps.map((bKeymap) =>
-        diffKeyMaps(aKeymap, bKeymap, keyName)
+        diffKeyMaps(aKeymap, bKeymap, key)
       );
       const hasAnyValidTransition = diffResults.some((d) => !d.response);
       // There could be multiple reasons a type does not overlap - we select the one that we think is the most relevant,
@@ -124,12 +130,18 @@ function areKeymapsResponseBreaking(
 function areKeymapsRequestBreaking(
   aKeymaps: KeyMap[],
   bKeymaps: KeyMap[],
-  keyName: string | null
+  keyName: string,
+  keyword: string | null
 ) {
   const requestResults = bKeymaps
-    .map((bKeymap) => {
+    .map((bKeymap, i) => {
+      const key = keyword
+        ? keyName === '/'
+          ? `${keyword}/${i}`
+          : `${keyword}/${keyName}/${i}`
+        : keyName;
       const diffResults = aKeymaps.map((aKeymap) =>
-        diffKeyMaps(aKeymap, bKeymap, keyName)
+        diffKeyMaps(aKeymap, bKeymap, key)
       );
       const hasAnyValidTransition = diffResults.some((d) => !d.request);
 
@@ -263,7 +275,7 @@ function createKeyMapFromSchema(schema: FlatOpenAPIV3_1.SchemaObject): KeyMap {
 function diffKeyMaps(
   aMap: KeyMap,
   bMap: KeyMap,
-  parentKey: string | null
+  parentKey: string
 ): UnionDiffResult {
   const results: UnionDiffResult = {
     request: false,
@@ -273,7 +285,12 @@ function diffKeyMaps(
   };
   for (const [key, aValue] of aMap) {
     const bValue = bMap.get(key);
-    const keyName = parentKey ? `${parentKey}${SEPARATOR}${key}` : key;
+    const keyName =
+      key === ''
+        ? parentKey
+        : parentKey === '/'
+        ? `${parentKey}${key}`
+        : `${parentKey}${SEPARATOR}${key}`;
     const prefix = keyName ? `key ${keyName}: ` : '';
     if (bValue) {
       if (aValue.keyword === 'type' && bValue.keyword === 'type') {
@@ -338,8 +355,17 @@ function diffKeyMaps(
                 ),
               ]
             : bValue.type;
+        const responseKeyword =
+          aValue.keyword === 'anyOf' || aValue.keyword === 'oneOf'
+            ? aValue.keyword
+            : null;
         const { isResponse, reasons: responseReasons } =
-          areKeymapsResponseBreaking(aKeymaps, bKeymaps, keyName);
+          areKeymapsResponseBreaking(
+            aKeymaps,
+            bKeymaps,
+            keyName,
+            responseKeyword
+          );
         if (isResponse) {
           results.response = true;
           results.responseReasons.push({
@@ -349,8 +375,17 @@ function diffKeyMaps(
               .join(', ')}`,
           });
         }
+        const requestKeyword =
+          bValue.keyword === 'anyOf' || bValue.keyword === 'oneOf'
+            ? bValue.keyword
+            : null;
         const { isRequestBreaking, reasons: requestReasons } =
-          areKeymapsRequestBreaking(aKeymaps, bKeymaps, keyName);
+          areKeymapsRequestBreaking(
+            aKeymaps,
+            bKeymaps,
+            keyName,
+            requestKeyword
+          );
         if (isRequestBreaking) {
           results.request = true;
           results.requestReasons.push({
@@ -371,7 +406,12 @@ function diffKeyMaps(
   }
 
   for (const [key, bValue] of bMap) {
-    const keyName = parentKey ? `${parentKey}.${key}` : key;
+    const keyName =
+      key === ''
+        ? parentKey
+        : parentKey === '/'
+        ? `${parentKey}${key}`
+        : `${parentKey}${SEPARATOR}${key}`;
     const prefix = keyName ? `key ${keyName}: ` : '';
     if (!aMap.has(key) && bValue.required) {
       results.requestReasons.push({
@@ -411,6 +451,7 @@ export function computeUnionTransition(
     : Array.isArray(b.type)
     ? traverseTypeArraySchemas(b)
     : [createKeyMapFromSchema(b)];
+  const beforeKeyword = b.oneOf ? 'oneOf' : b.anyOf ? 'anyOf' : null;
   const afterMaps = a.oneOf
     ? a.oneOf.map((s) => createKeyMapFromSchema(s))
     : a.anyOf
@@ -418,11 +459,13 @@ export function computeUnionTransition(
     : Array.isArray(a.type)
     ? traverseTypeArraySchemas(a)
     : [createKeyMapFromSchema(a)];
+  const afterKeyword = a.oneOf ? 'oneOf' : a.anyOf ? 'anyOf' : null;
 
   const { isResponse, reasons: responseReasons } = areKeymapsResponseBreaking(
     beforeMaps,
     afterMaps,
-    null
+    '/',
+    beforeKeyword
   );
   if (isResponse) {
     results.response = true;
@@ -432,7 +475,7 @@ export function computeUnionTransition(
     });
   }
   const { isRequestBreaking, reasons: expandedReasons } =
-    areKeymapsRequestBreaking(beforeMaps, afterMaps, null);
+    areKeymapsRequestBreaking(beforeMaps, afterMaps, '/', afterKeyword);
   if (isRequestBreaking) {
     results.request = true;
     results.requestReasons.push({
