@@ -6,7 +6,7 @@ import {
 import { getOperationAssertionsParameter } from './helpers/getOperationAssertionsParameter';
 import { ParameterIn } from './helpers/types';
 import { OpenAPIV3 } from 'openapi-types';
-import { isInUnionProperty } from './helpers/unions';
+import { isInUnionProperty, schemaIsUnion } from './helpers/unions';
 import { diffSets } from './helpers/type-change';
 
 const InfiniteSet = Symbol('infinite enum set');
@@ -107,7 +107,9 @@ export const preventPropertyEnumBreak = () => {
       property.changed((before, after) => {
         if (
           isInUnionProperty(before.location.jsonPath) ||
-          isInUnionProperty(after.location.jsonPath)
+          schemaIsUnion(before.value.flatSchema) ||
+          isInUnionProperty(after.location.jsonPath) ||
+          schemaIsUnion(after.value.flatSchema)
         ) {
           return;
         }

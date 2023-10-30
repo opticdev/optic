@@ -30,7 +30,9 @@ export const preventRequestPropertyTypeChange = () =>
       requestAssertions.property.changed((before, after) => {
         // Children of union properties / transitions are handled in a separate rule
         if (
+          schemaIsUnion(before.value.flatSchema) ||
           isInUnionProperty(before.location.jsonPath) ||
+          schemaIsUnion(after.value.flatSchema) ||
           isInUnionProperty(after.location.jsonPath)
         ) {
           return;
