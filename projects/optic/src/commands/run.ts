@@ -124,25 +124,28 @@ then posts a comment with a report to your PR/MR and exits with code 1 when issu
     )
     .configureHelp({ commandUsage: usage })
     .option(
-      '--ignore <ignore-glob>',
-      'OpenAPI specification files to ignore, comma separated globs.'
-    )
-    .option(
-      '--include-git-ignored',
-      'Set to true to also match Git ignored files.',
-      false
+      '-i, --ignore <glob_pattern,...>',
+      'Glob patterns matching OpenAPI specifications to ignore'
     )
     .addOption(
       new Option(
-        '--severity <severity>',
-        'Set to "none" to prevent Optic from exiting 1 when issues are found.'
+        '-I, --include-git-ignored <bool>',
+        'Include specifications matched in .gitignore'
+      )
+        .choices(['true', 'false'])
+        .default('false')
+    )
+    .addOption(
+      new Option(
+        '-s, --severity <severity>',
+        'Control the exit code when there are issues: error=1, none=0'
       )
         .choices(severities)
         .default('error')
     )
     .argument(
       '[file_paths]',
-      'OpenAPI specification files to handle, comma separated globs. Leave empty to match all non-ignored OpenAPI files in your repository.'
+      'OpenAPI specifications to process, comma separated globs. Leave empty to match all non-ignored OpenAPI files in your repository'
     )
     .action(errorHandler(getRunAction(config), { command: 'run' }));
 }
