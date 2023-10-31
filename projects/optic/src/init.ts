@@ -54,6 +54,7 @@ export const initCli = async (
   } = {}
 ): Promise<Command> => {
   cli.name('optic');
+  cli.helpOption('-h, --help', 'Display help for the command');
   logger.debug(
     `Using Optic version ${packageJson.version} - ${getInstallMethod()}`
   );
