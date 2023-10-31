@@ -114,8 +114,8 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     .option('-c, --check', 'Enable checks', false)
     .option('-u, --upload', 'Upload run to cloud', false)
     .option('-w, --web', 'View the diff in the optic changelog web view', false)
-    .option('-j, --json', 'Output as json', false)
-    .option('-l, --last-change', 'Find the last change for this spec', false)
+    .option('--json', 'Output as json', false)
+    .option('--last-change', 'Find the last change for this spec', false)
     .option(
       '--generated',
       '[deprecated] Optic no longer differentiates generated and non-generated specifications'
