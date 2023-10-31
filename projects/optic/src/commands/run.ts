@@ -118,7 +118,7 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
   cli
     .command('run')
     .description(
-      'CI workflow command that tests each OpenAPI specification in your repo and summarizes the results as a pull (or merge) request comment.'
+      'CI workflow command that tests each OpenAPI specification in your repo and summarizes the results as a pull (or merge) request comment'
     )
     .configureHelp({ commandUsage: usage })
     .option(
