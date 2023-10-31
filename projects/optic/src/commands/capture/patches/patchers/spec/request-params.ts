@@ -12,13 +12,12 @@ export async function* generateRequestParameterPatches(
   const hasAnyQueryOrHeader =
     interaction.request.query.length > 0 ||
     interaction.request.headers.length > 0;
+  const specPath = jsonPointerHelpers.compile([
+    'paths',
+    operation.pathPattern,
+    operation.method,
+  ]);
   if (hasAnyQueryOrHeader) {
-    const specPath = jsonPointerHelpers.compile([
-      'paths',
-      operation.pathPattern,
-      operation.method,
-    ]);
-
     if (!operation.parameters) {
       yield {
         description: 'add parameters array to operation',
@@ -57,9 +56,9 @@ export async function* generateRequestParameterPatches(
             in: location as 'query' | 'header',
             name,
           },
-          path: specPath,
+          path: jsonPointerHelpers.append(specPath, 'parameters'),
           groupedOperations: [
-            PatchOperationGroup.create('add parameters array', {
+            PatchOperationGroup.create(`add ${name} ${location} parameter`, {
               op: 'add',
               path: jsonPointerHelpers.append(specPath, 'parameters', '/-'),
               value: {
@@ -77,5 +76,44 @@ export async function* generateRequestParameterPatches(
     }
   }
 
-  // TODO look at required params and error if not found
+  const operationParams = operation.parameters ?? [];
+  for (let i = 0; i < operationParams.length; i++) {
+    const param = operationParams[i];
+    if ('$ref' in param) continue;
+    if (!(param.in === 'query' || param.in === 'header')) continue;
+    if (!param.required) continue;
+
+    const paramsToLookIn =
+      param.in === 'query'
+        ? interaction.request.query
+        : interaction.request.headers;
+    if (!paramsToLookIn.find((p) => p.name !== param.name)) {
+      const paramPath = jsonPointerHelpers.append(
+        specPath,
+        'parameters',
+        String(i)
+      );
+      yield {
+        description: `make ${param.name} ${location} parameter optional`,
+        impact: [PatchImpact.BackwardsCompatible],
+        diff: {
+          kind: OperationDiffResultKind.MissingRequiredRequiredParameter,
+          in: param.in,
+          name: param.name,
+        },
+        path: paramPath,
+        groupedOperations: [
+          PatchOperationGroup.create(
+            `make ${param.name} ${location} parameter optional`,
+            {
+              op: 'replace',
+              path: jsonPointerHelpers.append(paramPath, 'required'),
+              value: false,
+            }
+          ),
+        ],
+        interaction,
+      };
+    }
+  }
 }

@@ -101,9 +101,33 @@ export async function* generateEndpointSpecPatches(
       yield patch;
     }
 
-    // TODO add query, header, response header diffs
+    // phase two: request params and response headers
+    let requestPatches = SpecPatches.requestAdditions(
+      interaction,
+      Operation.fromOperationObject(
+        endpoint.path,
+        endpoint.method,
+        jsonPointerHelpers.get(specHolder.spec, jsonPath) as any
+      )
+    );
+    for await (let patch of requestPatches) {
+      specHolder.spec = SpecPatch.applyPatch(patch, specHolder.spec);
+      yield patch;
+    }
+    let responseAdditions = SpecPatches.responseAdditions(
+      interaction,
+      Operation.fromOperationObject(
+        endpoint.path,
+        endpoint.method,
+        jsonPointerHelpers.get(specHolder.spec, jsonPath) as any
+      )
+    );
+    for await (let patch of responseAdditions) {
+      specHolder.spec = SpecPatch.applyPatch(patch, specHolder.spec);
+      yield patch;
+    }
 
-    // phase two: shape patches, describing request / response bodies in detail
+    // phase three: shape patches, describing request / response bodies in detail
     documentedInteraction = DocumentedInteraction.updateOperation(
       documentedInteraction,
       specHolder.spec
