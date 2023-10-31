@@ -118,31 +118,32 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
   cli
     .command('run')
     .description(
-      `Optic's CI workflow command.
-Tests that every OpenAPI specification in your repo is accurate, has no breaking changes and follows the standards you defined in the optic.yml file;
-then posts a comment with a report to your PR/MR and exits with code 1 when issues are found.`
+      'CI workflow command that tests each OpenAPI specification in your repo and summarizes the results as a pull (or merge) request comment'
     )
     .configureHelp({ commandUsage: usage })
     .option(
-      '--ignore <ignore-glob>',
-      'OpenAPI specification files to ignore, comma separated globs.'
-    )
-    .option(
-      '--include-git-ignored',
-      'Set to true to also match Git ignored files.',
-      false
+      '-i, --ignore <glob_pattern,...>',
+      'Glob patterns matching specifications to ignore'
     )
     .addOption(
       new Option(
-        '--severity <severity>',
-        'Set to "none" to prevent Optic from exiting 1 when issues are found.'
+        '-I, --include-git-ignored <bool>',
+        'Include specifications matched in .gitignore'
+      )
+        .choices(['true', 'false'])
+        .default('false')
+    )
+    .addOption(
+      new Option(
+        '-s, --severity <severity>',
+        'Control the exit code when there are issues: error=1, none=0'
       )
         .choices(severities)
         .default('error')
     )
     .argument(
-      '[file_paths]',
-      'OpenAPI specification files to handle, comma separated globs. Leave empty to match all non-ignored OpenAPI files in your repository.'
+      'file_paths',
+      'Comma-seperated glob patterns matching specifications to process. When omitted, matches all non-ignored specifications.'
     )
     .action(errorHandler(getRunAction(config), { command: 'run' }));
 }
