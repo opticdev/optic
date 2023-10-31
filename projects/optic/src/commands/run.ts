@@ -144,8 +144,8 @@ then posts a comment with a report to your PR/MR and exits with code 1 when issu
         .default('error')
     )
     .argument(
-      '[glob_pattern,...]',
-      'Glob patterns matching specifications to process. Leave empty to match all non-ignored specifications in your repository.'
+      'file_paths',
+      'Comma-seperated glob patterns matching specifications to process. When omitted, matches all non-ignored specifications.'
     )
     .action(errorHandler(getRunAction(config), { command: 'run' }));
 }
