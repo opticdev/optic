@@ -125,7 +125,7 @@ then posts a comment with a report to your PR/MR and exits with code 1 when issu
     .configureHelp({ commandUsage: usage })
     .option(
       '-i, --ignore <glob_pattern,...>',
-      'Glob patterns matching OpenAPI specifications to ignore'
+      'Glob patterns matching specifications to ignore'
     )
     .addOption(
       new Option(
@@ -145,7 +145,7 @@ then posts a comment with a report to your PR/MR and exits with code 1 when issu
     )
     .argument(
       '[file_paths]',
-      'OpenAPI specifications to process, comma separated globs. Leave empty to match all non-ignored OpenAPI files in your repository'
+      'Specifications to process, comma separated globs. Leave empty to match all non-ignored specifications in your repository'
     )
     .action(errorHandler(getRunAction(config), { command: 'run' }));
 }
