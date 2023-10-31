@@ -72,6 +72,13 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "oneOfToObject": {
+                      "oneOf": [
+                        { "type": "object", "properties": { "id": {"type":"string"}}, "required": ["id"]},
+                        { "type": "object", "properties": { "name": {"type":"string"}}, "required": ["name"]}
+                      
+                      ]
+                    },
                     "stringOrNumberOrObject": {
                       "oneOf": [
                         { "type": "string" },

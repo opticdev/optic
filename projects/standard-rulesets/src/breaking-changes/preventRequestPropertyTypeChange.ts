@@ -1,6 +1,6 @@
 import { RequestRule, RuleError } from '@useoptic/rulesets-base';
 import { computeEffectiveTypeChange } from './helpers/type-change';
-import { isInUnionProperty } from './helpers/unions';
+import { isInUnionProperty, schemaIsUnion } from './helpers/unions';
 
 export const preventRequestPropertyTypeChange = () =>
   new RequestRule({
@@ -9,8 +9,8 @@ export const preventRequestPropertyTypeChange = () =>
       requestAssertions.body.changed((before, after) => {
         // Children of union properties / transitions are handled in a separate rule
         if (
-          isInUnionProperty(before.location.jsonPath) ||
-          isInUnionProperty(after.location.jsonPath)
+          schemaIsUnion(before.value.flatSchema) ||
+          schemaIsUnion(after.value.flatSchema)
         ) {
           return;
         }
@@ -30,7 +30,9 @@ export const preventRequestPropertyTypeChange = () =>
       requestAssertions.property.changed((before, after) => {
         // Children of union properties / transitions are handled in a separate rule
         if (
+          schemaIsUnion(before.value.flatSchema) ||
           isInUnionProperty(before.location.jsonPath) ||
+          schemaIsUnion(after.value.flatSchema) ||
           isInUnionProperty(after.location.jsonPath)
         ) {
           return;

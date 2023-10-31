@@ -1,5 +1,5 @@
 import { ResponseBodyRule, RuleError } from '@useoptic/rulesets-base';
-import { isInUnionProperty } from './helpers/unions';
+import { isInUnionProperty, schemaIsUnion } from './helpers/unions';
 
 export const preventResponsePropertyRemoval = () =>
   new ResponseBodyRule({
@@ -12,6 +12,7 @@ export const preventResponsePropertyRemoval = () =>
         // Children of union properties / transitions are handled in a separate rule
         if (
           isInUnionProperty(property.location.jsonPath) ||
+          schemaIsUnion(property.value.flatSchema) ||
           afterPolymorphicSchemas.some((schemaPath) =>
             property.location.jsonPath.startsWith(schemaPath)
           )

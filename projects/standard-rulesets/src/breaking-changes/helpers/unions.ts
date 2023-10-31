@@ -3,8 +3,11 @@ import {
   FlatOpenAPIV3_1,
   OpenAPIV3,
   OpenAPIV3_1,
+  OpenApi3SchemaFact,
 } from '@useoptic/openapi-utilities';
 import { computeTypeTransition } from './type-change';
+
+const SEPARATOR = '/';
 
 export function isInUnionProperty(jsonPath: string): boolean {
   const parts = jsonPointerHelpers.decode(jsonPath);
@@ -12,7 +15,10 @@ export function isInUnionProperty(jsonPath: string): boolean {
 }
 
 export function schemaIsUnion(
-  schema?: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject
+  schema?:
+    | OpenAPIV3.SchemaObject
+    | OpenAPIV3.ReferenceObject
+    | OpenApi3SchemaFact
 ): schema is OpenAPIV3.SchemaObject {
   return !!(schema && !('$ref' in schema) && (schema.oneOf || schema.anyOf));
 }
@@ -29,6 +35,36 @@ type KeyNode =
       keyword: 'oneOf' | 'anyOf' | 'typeArray';
     };
 type KeyMap = Map<string, KeyNode>;
+
+type UnionDiffResult = {
+  request: boolean;
+  requestReasons: { key: string; reason: string }[];
+  response: boolean;
+  responseReasons: { key: string; reason: string }[];
+};
+
+function getDeepestDiffLevel(reasons: { key: string }[]): number {
+  let max = 0;
+  for (const { key } of reasons) {
+    const keyLength = key === SEPARATOR ? 0 : key.split(SEPARATOR).length;
+    max = Math.max(max, keyLength);
+  }
+
+  return max;
+}
+
+function compareReasons(
+  a: { key: string; reason: string }[],
+  b: { key: string; reason: string }[]
+): number {
+  const aDiffLevel = getDeepestDiffLevel(a);
+  const bDiffLevel = getDeepestDiffLevel(b);
+  if (aDiffLevel === bDiffLevel) {
+    return a.length - b.length;
+  } else {
+    return bDiffLevel - aDiffLevel;
+  }
+}
 
 function traverseTypeArraySchemas(
   schema: FlatOpenAPIV3_1.SchemaObject
@@ -54,6 +90,81 @@ function traverseTypeArraySchemas(
     : [];
 }
 
+function areKeymapsResponseBreaking(
+  aKeymaps: KeyMap[],
+  bKeymaps: KeyMap[],
+  keyName: string,
+  keyword: string | null
+) {
+  const responseResults = aKeymaps
+    .map((aKeymap, i) => {
+      const key = keyword
+        ? keyName === '/'
+          ? `${keyword}/${i}`
+          : `${keyword}/${keyName}/${i}`
+        : keyName;
+      const diffResults = bKeymaps.map((bKeymap) =>
+        diffKeyMaps(aKeymap, bKeymap, key)
+      );
+      const hasAnyValidTransition = diffResults.some((d) => !d.response);
+      // There could be multiple reasons a type does not overlap - we select the one that we think is the most relevant,
+      // in this case, this is a diff at the deepest level
+      return hasAnyValidTransition
+        ? null
+        : diffResults.sort((a, b) =>
+            compareReasons(a.responseReasons, b.responseReasons)
+          )[0];
+    })
+    .filter((r) => r !== null) as UnionDiffResult[];
+  const isResponse = responseResults.length !== 0;
+  return {
+    isResponse,
+    reasons: isResponse
+      ? responseResults.sort((a, b) =>
+          compareReasons(a.responseReasons, b.responseReasons)
+        )[0].responseReasons
+      : [],
+  };
+}
+
+function areKeymapsRequestBreaking(
+  aKeymaps: KeyMap[],
+  bKeymaps: KeyMap[],
+  keyName: string,
+  keyword: string | null
+) {
+  const requestResults = bKeymaps
+    .map((bKeymap, i) => {
+      const key = keyword
+        ? keyName === '/'
+          ? `${keyword}/${i}`
+          : `${keyword}/${keyName}/${i}`
+        : keyName;
+      const diffResults = aKeymaps.map((aKeymap) =>
+        diffKeyMaps(aKeymap, bKeymap, key)
+      );
+      const hasAnyValidTransition = diffResults.some((d) => !d.request);
+
+      // There could be multiple reasons a type does not overlap - we select the one that we think is the most relevant,
+      // in this case, this is a diff at the deepest level
+      return hasAnyValidTransition
+        ? null
+        : diffResults.sort((a, b) =>
+            compareReasons(a.requestReasons, b.requestReasons)
+          )[0];
+    })
+    .filter((r) => r !== null) as UnionDiffResult[];
+  const isRequestBreaking = requestResults.length !== 0;
+  return {
+    isRequestBreaking,
+    reasons: isRequestBreaking
+      ? requestResults.sort((a, b) =>
+          compareReasons(a.requestReasons, b.requestReasons)
+        )[0].requestReasons
+      : [],
+  };
+}
+
 // Return an array of Maps that have different keys that they require; if there is a oneOf or anyOf
 // create a key with multiple sets
 function createKeyMapFromSchema(schema: FlatOpenAPIV3_1.SchemaObject): KeyMap {
@@ -63,7 +174,7 @@ function createKeyMapFromSchema(schema: FlatOpenAPIV3_1.SchemaObject): KeyMap {
     if (schema.type === 'object') {
       if (schema.properties) {
         for (const [key, value] of Object.entries(schema.properties)) {
-          const fullKey = `${path}.${key}`;
+          const fullKey = path ? `${path}${SEPARATOR}${key}` : key;
           const required = schema.required
             ? schema.required.includes(key)
             : false;
@@ -161,58 +272,153 @@ function createKeyMapFromSchema(schema: FlatOpenAPIV3_1.SchemaObject): KeyMap {
   return keyMap;
 }
 
-function diffKeyMaps(aMap: KeyMap, bMap: KeyMap) {
-  const results = {
-    expanded: false,
-    narrowed: false,
+function diffKeyMaps(
+  aMap: KeyMap,
+  bMap: KeyMap,
+  parentKey: string
+): UnionDiffResult {
+  const results: UnionDiffResult = {
+    request: false,
+    requestReasons: [],
+    response: false,
+    responseReasons: [],
   };
   for (const [key, aValue] of aMap) {
     const bValue = bMap.get(key);
+    const keyName =
+      key === ''
+        ? parentKey
+        : parentKey === '/'
+        ? `${parentKey}${key}`
+        : `${parentKey}${SEPARATOR}${key}`;
+    const prefix = keyName ? `${keyName}: ` : '';
     if (bValue) {
       if (aValue.keyword === 'type' && bValue.keyword === 'type') {
         const typeTransition = computeTypeTransition(aValue, bValue);
-        // TODO add in reasons why something failed
-        if (
-          typeTransition.expanded.enum ||
-          typeTransition.expanded.requiredChange ||
-          typeTransition.expanded.typeChange
-        ) {
-          results.expanded = true;
+        if (typeTransition.request.enum) {
+          results.request = true;
+          results.requestReasons.push({
+            key: keyName,
+            reason: `${prefix}${typeTransition.request.enum}`,
+          });
         }
-        if (
-          typeTransition.narrowed.enum ||
-          typeTransition.narrowed.requiredChange ||
-          typeTransition.narrowed.typeChange
-        ) {
-          results.narrowed = true;
+        if (typeTransition.request.requiredChange) {
+          results.request = true;
+          results.requestReasons.push({
+            key: keyName,
+            reason: `${prefix}${typeTransition.request.requiredChange}`,
+          });
         }
-      } else if (aValue.keyword === 'type' || bValue.keyword === 'type') {
-        if (aValue.keyword === 'type' && bValue.keyword !== 'type') {
-          results.expanded = true;
-        } else {
-          results.narrowed = true;
+        if (typeTransition.request.typeChange) {
+          results.request = true;
+          results.requestReasons.push({
+            key: keyName,
+            reason: `${prefix}${typeTransition.request.typeChange}`,
+          });
+        }
+
+        if (typeTransition.response.enum) {
+          results.response = true;
+          results.responseReasons.push({
+            key: keyName,
+            reason: `${prefix}${typeTransition.response.enum}`,
+          });
+        }
+        if (typeTransition.response.requiredChange) {
+          results.response = true;
+          results.responseReasons.push({
+            key: keyName,
+            reason: `${prefix}${typeTransition.response.requiredChange}`,
+          });
+        }
+        if (typeTransition.response.typeChange) {
+          results.response = true;
+          results.responseReasons.push({
+            key: keyName,
+            reason: `${prefix}${typeTransition.response.typeChange}`,
+          });
         }
       } else {
-        // A type is considered narrowed if any before item does not have an equivalent set with any item in the after set
-        const isNarrowed = !aValue.type.every((aKeyMap) =>
-          bValue.type.some((bKeyMap) => !diffKeyMaps(aKeyMap, bKeyMap).narrowed)
-        );
-        // A type is considered expanded if any after item does not have an equivalent set with any item in the before set
-        const isExpanded = !bValue.type.every((bKeyMap) =>
-          aValue.type.some((aKeyMap) => !diffKeyMaps(aKeyMap, bKeyMap).expanded)
-        );
-
-        if (isNarrowed) results.narrowed = true;
-        if (isExpanded) results.expanded = true;
+        const aKeymaps =
+          aValue.keyword === 'type'
+            ? [
+                createKeyMapFromSchema(
+                  aValue.schema as FlatOpenAPIV3_1.SchemaObject
+                ),
+              ]
+            : aValue.type;
+        const bKeymaps =
+          bValue.keyword === 'type'
+            ? [
+                createKeyMapFromSchema(
+                  bValue.schema as FlatOpenAPIV3_1.SchemaObject
+                ),
+              ]
+            : bValue.type;
+        const responseKeyword =
+          aValue.keyword === 'anyOf' || aValue.keyword === 'oneOf'
+            ? aValue.keyword
+            : null;
+        const { isResponse, reasons: responseReasons } =
+          areKeymapsResponseBreaking(
+            aKeymaps,
+            bKeymaps,
+            keyName,
+            responseKeyword
+          );
+        if (isResponse) {
+          results.response = true;
+          results.responseReasons.push({
+            key: keyName,
+            reason: `${prefix}${aValue.keyword}: ${responseReasons
+              .map((r) => r.reason)
+              .join(', ')}`,
+          });
+        }
+        const requestKeyword =
+          bValue.keyword === 'anyOf' || bValue.keyword === 'oneOf'
+            ? bValue.keyword
+            : null;
+        const { isRequestBreaking, reasons: requestReasons } =
+          areKeymapsRequestBreaking(
+            aKeymaps,
+            bKeymaps,
+            keyName,
+            requestKeyword
+          );
+        if (isRequestBreaking) {
+          results.request = true;
+          results.requestReasons.push({
+            key: keyName,
+            reason: `${prefix}${aValue.keyword}: ${requestReasons
+              .map((r) => r.reason)
+              .join(', ')}`,
+          });
+        }
       }
     } else if (aValue.required) {
-      results.narrowed = true;
+      results.response = true;
+      results.responseReasons.push({
+        key: keyName,
+        reason: `${prefix}required property was removed`,
+      });
     }
   }
 
   for (const [key, bValue] of bMap) {
+    const keyName =
+      key === ''
+        ? parentKey
+        : parentKey === '/'
+        ? `${parentKey}${key}`
+        : `${parentKey}${SEPARATOR}${key}`;
+    const prefix = keyName ? `${keyName}: ` : '';
     if (!aMap.has(key) && bValue.required) {
-      results.expanded = true;
+      results.requestReasons.push({
+        key: keyName,
+        reason: `${prefix}required property was added`,
+      });
+      results.request = true;
     }
   }
 
@@ -228,10 +434,13 @@ export function computeUnionTransition(
     | OpenAPIV3.SchemaObject
     | OpenAPIV3_1.SchemaObject
     | OpenAPIV3.ReferenceObject
-): {
-  expanded: boolean;
-  narrowed: boolean;
-} {
+): UnionDiffResult {
+  const results: UnionDiffResult = {
+    response: false,
+    responseReasons: [],
+    request: false,
+    requestReasons: [],
+  };
   const b = before as FlatOpenAPIV3_1.SchemaObject;
   const a = after as FlatOpenAPIV3_1.SchemaObject;
 
@@ -242,6 +451,7 @@ export function computeUnionTransition(
     : Array.isArray(b.type)
     ? traverseTypeArraySchemas(b)
     : [createKeyMapFromSchema(b)];
+  const beforeKeyword = b.oneOf ? 'oneOf' : b.anyOf ? 'anyOf' : null;
   const afterMaps = a.oneOf
     ? a.oneOf.map((s) => createKeyMapFromSchema(s))
     : a.anyOf
@@ -249,22 +459,30 @@ export function computeUnionTransition(
     : Array.isArray(a.type)
     ? traverseTypeArraySchemas(a)
     : [createKeyMapFromSchema(a)];
+  const afterKeyword = a.oneOf ? 'oneOf' : a.anyOf ? 'anyOf' : null;
 
-  // A type is considered narrowed if any before item does not have an equivalent set with any item in the after set
-  const isNarrowed = !beforeMaps.every((beforeKeyMap) =>
-    afterMaps.some(
-      (afterKeyMap) => !diffKeyMaps(beforeKeyMap, afterKeyMap).narrowed
-    )
+  const { isResponse, reasons: responseReasons } = areKeymapsResponseBreaking(
+    beforeMaps,
+    afterMaps,
+    '/',
+    beforeKeyword
   );
-  // A type is considered expanded if any after item does not have an equivalent set with any item in the before set
-  const isExpanded = !afterMaps.every((afterKeyMap) =>
-    beforeMaps.some(
-      (beforeKeyMap) => !diffKeyMaps(beforeKeyMap, afterKeyMap).expanded
-    )
-  );
+  if (isResponse) {
+    results.response = true;
+    results.responseReasons.push({
+      key: 'root',
+      reason: `${responseReasons.map((r) => r.reason).join(', ')}`,
+    });
+  }
+  const { isRequestBreaking, reasons: expandedReasons } =
+    areKeymapsRequestBreaking(beforeMaps, afterMaps, '/', afterKeyword);
+  if (isRequestBreaking) {
+    results.request = true;
+    results.requestReasons.push({
+      key: 'root',
+      reason: `${expandedReasons.map((r) => r.reason).join(', ')}`,
+    });
+  }
 
-  return {
-    narrowed: isNarrowed,
-    expanded: isExpanded,
-  };
+  return results;
 }

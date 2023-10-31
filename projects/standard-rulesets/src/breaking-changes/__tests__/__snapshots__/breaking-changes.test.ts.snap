@@ -1,5 +1,412 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`breaking changes ruleset invalid union type enum transition in request 1`] = `
+[
+  {
+    "change": {
+      "added": {
+        "flatSchema": {
+          "type": "string",
+        },
+        "key": "id",
+        "required": false,
+      },
+      "changeType": "added",
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [
+            "id",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+          "oneOf",
+          "1",
+          "id",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/oneOf/1/properties/id",
+        "kind": "field",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent changing request property to required",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "added",
+    "where": "GET /api/users request body: application/json property: id",
+  },
+  {
+    "change": {
+      "added": {
+        "flatSchema": {
+          "enum": [
+            "online",
+          ],
+          "type": "string",
+        },
+        "key": "status",
+        "required": false,
+      },
+      "changeType": "added",
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [
+            "status",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+          "oneOf",
+          "1",
+          "status",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/oneOf/1/properties/status",
+        "kind": "field",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent changing request property to required",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "added",
+    "where": "GET /api/users request body: application/json property: status",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "oneOf": [
+              {
+                "type": "number",
+              },
+              {
+                "properties": {
+                  "id": {
+                    "type": "string",
+                  },
+                  "status": {
+                    "enum": [
+                      "online",
+                    ],
+                    "type": "string",
+                  },
+                },
+                "type": "object",
+              },
+            ],
+          },
+        },
+        "before": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "type": [
+              "number",
+              "object",
+            ],
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent request property type changes",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "changed",
+    "where": "GET /api/users request body: application/json",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "oneOf": [
+              {
+                "type": "number",
+              },
+              {
+                "properties": {
+                  "id": {
+                    "type": "string",
+                  },
+                  "status": {
+                    "enum": [
+                      "online",
+                    ],
+                    "type": "string",
+                  },
+                },
+                "type": "object",
+              },
+            ],
+          },
+        },
+        "before": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "type": [
+              "number",
+              "object",
+            ],
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "request body changed to oneOf did not overlap with the previous schema. oneOf/1/status: enums offline were added",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent expanded in request union types",
+    "passed": false,
+    "received": undefined,
+    "severity": 2,
+    "type": "changed",
+    "where": "GET /api/users request body: application/json",
+  },
+]
+`;
+
+exports[`breaking changes ruleset invalid union type enum transition in response 1`] = `
+[
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "oneOf": [
+              {
+                "type": "number",
+              },
+              {
+                "properties": {
+                  "id": {
+                    "type": "string",
+                  },
+                  "status": {
+                    "enum": [
+                      "online",
+                      "offline",
+                    ],
+                    "type": "string",
+                  },
+                },
+                "type": "object",
+              },
+            ],
+          },
+        },
+        "before": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "type": [
+              "number",
+              "object",
+            ],
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent response property type changes",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "changed",
+    "where": "GET /api/users response 200 response body: application/json",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "oneOf": [
+              {
+                "type": "number",
+              },
+              {
+                "properties": {
+                  "id": {
+                    "type": "string",
+                  },
+                  "status": {
+                    "enum": [
+                      "online",
+                      "offline",
+                    ],
+                    "type": "string",
+                  },
+                },
+                "type": "object",
+              },
+            ],
+          },
+        },
+        "before": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "type": [
+              "number",
+              "object",
+            ],
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "response body changed to oneOf did not overlap with the previous schema. /status: enums offline were removed",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent narrowing in response union types",
+    "passed": false,
+    "received": undefined,
+    "severity": 2,
+    "type": "changed",
+    "where": "GET /api/users response 200 response body: application/json",
+  },
+]
+`;
+
 exports[`breaking changes ruleset invalid union type transition 1`] = `
 [
   {
@@ -134,7 +541,7 @@ exports[`breaking changes ruleset invalid union type transition 1`] = `
     },
     "condition": undefined,
     "docsLink": undefined,
-    "error": "cannot narrow a response body",
+    "error": "response body changed to oneOf did not overlap with the previous schema. /id: was made optional, /name: was made optional",
     "exempted": false,
     "expected": undefined,
     "isMust": true,
