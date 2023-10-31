@@ -101,6 +101,8 @@ export async function* generateEndpointSpecPatches(
       yield patch;
     }
 
+    // TODO add query, header, response header diffs
+
     // phase two: shape patches, describing request / response bodies in detail
     documentedInteraction = DocumentedInteraction.updateOperation(
       documentedInteraction,

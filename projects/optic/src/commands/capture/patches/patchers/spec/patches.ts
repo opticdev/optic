@@ -19,9 +19,10 @@ import { SentryClient } from '../../../../../sentry';
 import { logger } from '../../../../../logger';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 import { SchemaObject } from '../shapes/schema';
-import { DocumentedInteraction } from '../../../../oas/operations';
+import { DocumentedInteraction, Operation } from '../../../../oas/operations';
 import { OperationPatch, generateOperationPatches } from './operations';
 import { OperationDiffResult } from './types';
+import { generateRequestParameterPatches } from './request-params';
 
 export interface SpecPatch {
   description: string;
@@ -186,4 +187,16 @@ export class SpecPatches {
       yield specPatch;
     }
   }
+
+  static async *requestAdditions(
+    interaction: CapturedInteraction,
+    operation: Operation
+  ): SpecPatches {
+    yield* generateRequestParameterPatches(interaction, operation);
+  }
+
+  static async *responseAdditions(
+    interaction: CapturedInteraction,
+    operation: Operation
+  ): SpecPatches {}
 }
