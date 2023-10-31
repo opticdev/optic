@@ -11,9 +11,22 @@ export const preventResponseNarrowingInUnionTypes = () =>
         if (!beforeSchema || !afterSchema) return;
         if (schemaIsUnion(beforeSchema) || schemaIsUnion(afterSchema)) {
           const results = computeUnionTransition(beforeSchema, afterSchema);
-          if (results.narrowed) {
-            // TODO add in the reason of where something was narrowed
-            throw new RuleError({ message: 'cannot narrow a response body' });
+          if (results.response) {
+            const keyword =
+              'oneOf' in beforeSchema || 'oneOf' in afterSchema
+                ? 'oneOf'
+                : 'anyOf';
+            const prefix =
+              schemaIsUnion(beforeSchema) && schemaIsUnion(afterSchema)
+                ? `response body ${keyword} schema`
+                : schemaIsUnion(afterSchema)
+                ? `response body changed to ${keyword}`
+                : `response body changed from ${keyword}`;
+            throw new RuleError({
+              message: `${prefix} did not overlap with the previous schema. ${results.responseReasons
+                .map((r) => r.reason)
+                .join(', ')}`,
+            });
           }
         }
       });
@@ -24,9 +37,23 @@ export const preventResponseNarrowingInUnionTypes = () =>
         if (!beforeSchema || !afterSchema) return;
         if (schemaIsUnion(beforeSchema) || schemaIsUnion(afterSchema)) {
           const results = computeUnionTransition(beforeSchema, afterSchema);
-          if (results.narrowed) {
-            // TODO add in the reason of where something was narrowed
-            throw new RuleError({ message: 'cannot narrow a response body' });
+          if (results.response) {
+            const keyword =
+              'oneOf' in beforeSchema || 'oneOf' in afterSchema
+                ? 'oneOf'
+                : 'anyOf';
+            const prefix =
+              schemaIsUnion(beforeSchema) && schemaIsUnion(afterSchema)
+                ? `response property ${keyword} schema`
+                : schemaIsUnion(afterSchema)
+                ? `response property changed to ${keyword}`
+                : `response property changed from ${keyword}`;
+
+            throw new RuleError({
+              message: `${prefix} did not overlap with the previous schema. ${results.responseReasons
+                .map((r) => r.reason)
+                .join(', ')}`,
+            });
           }
         }
       });
