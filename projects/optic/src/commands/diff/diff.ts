@@ -82,22 +82,22 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     .argument('[file_path]', 'Path to file to compare')
     .addOption(
       new Option(
-        '--base <base>',
+        '-b, --base <base>',
         'The base ref to compare against, also supports optic cloud tags (cloud:tag_name)'
       ).default('HEAD')
     )
     .option(
-      '--standard <standard>',
+      '-S, --standard <standard>',
       'Run comparison with a locally defined standard, if not set, looks for the standard on the [x-optic-standard] key in the spec and then the optic.dev.yml file'
     )
     .option(
-      '--head-tag <head-tag>',
+      '-H, --head-tag <head-tag>',
       'Adds additional tags to the HEAD spec, used in conjunction with `--upload`'
     )
     .addOption(new Option('--ruleset <ruleset>', '').hideHelp())
     .addOption(
       new Option(
-        '--severity <severity>',
+        '-s, --severity <severity>',
         'Specify the severity level to exit with exit code: info=0, warn=1, error=2'
       )
         .choices(['info', 'warn', 'error'])
@@ -105,21 +105,21 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     )
     .addOption(
       new Option(
-        '--validation <validation>',
+        '-v, --validation <validation>',
         'Specify the level of validation to run'
       )
         .choices(['strict', 'loose'])
         .default('strict')
     )
-    .option('--check', 'Enable checks', false)
-    .option('--upload', 'Upload run to cloud', false)
-    .option('--web', 'View the diff in the optic changelog web view', false)
-    .option('--json', 'Output as json', false)
+    .option('-c, --check', 'Enable checks', false)
+    .option('-u, --upload', 'Upload run to cloud', false)
+    .option('-w, --web', 'View the diff in the optic changelog web view', false)
+    .option('-j, --json', 'Output as json', false)
+    .option('-l, --last-change', 'Find the last change for this spec', false)
     .option(
       '--generated',
       '[deprecated] Optic no longer differentiates generated and non-generated specifications'
     )
-    .option('--last-change', 'Find the last change for this spec', false)
     .action(errorHandler(getDiffAction(config), { command: 'diff' }));
 };
 
