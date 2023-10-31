@@ -118,9 +118,7 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
   cli
     .command('run')
     .description(
-      `Optic's CI workflow command.
-Tests that every OpenAPI specification in your repo is accurate, has no breaking changes and follows the standards you defined in the optic.yml file;
-then posts a comment with a report to your PR/MR and exits with code 1 when issues are found.`
+      'CI workflow command that tests each OpenAPI specification in your repo and summarizes the results as a pull (or merge) request comment.'
     )
     .configureHelp({ commandUsage: usage })
     .option(
