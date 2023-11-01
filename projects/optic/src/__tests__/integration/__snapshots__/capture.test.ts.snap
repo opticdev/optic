@@ -3,12 +3,6 @@
 exports[`capture with inputs --har updating an OpenAPI spec 1`] = `
 "GET /books
   [32m✓ [39m200 response
-  [32m[header parameter] Host has been added[39m
-  [32m[header parameter] User-Agent has been added[39m
-  [32m[header parameter] Accept has been added[39m
-  [32m[200 response header] Host has been added[39m
-  [32m[200 response header] User-Agent has been added[39m
-  [32m[200 response header] Accept has been added[39m
   [32m[200 response body] 'data' has been added (/properties/data)[39m
   [32m[200 response body] 'next' has been added (/properties/next)[39m
   [32m[200 response body] 'has_more_data' has been added (/properties/has_more_data)[39m
@@ -39,38 +33,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetBooks200ResponseBody"
-          headers:
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
     post:
       responses:
         "201":
@@ -79,63 +41,11 @@ paths:
             application/json; charset=utf-8:
               schema:
                 $ref: "#/components/schemas/PostBooks201ResponseBody"
-          headers:
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-            Content-Type:
-              schema:
-                type: string
-              name: Content-Type
-              required: true
-            Content-Length:
-              schema:
-                type: string
-              name: Content-Length
-              required: true
       requestBody:
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/PostBooksRequestBody"
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Content-Type
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Content-Length
-          required: true
   /authors/{author}:
     parameters:
       - in: path
@@ -151,38 +61,6 @@ paths:
             application/json; charset=utf-8:
               schema:
                 $ref: "#/components/schemas/GetAuthorsAuthor200ResponseBody"
-          headers:
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
   /authors:
     post:
       responses:
@@ -192,63 +70,11 @@ paths:
             application/json; charset=utf-8:
               schema:
                 $ref: "#/components/schemas/PostAuthors201ResponseBody"
-          headers:
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-            Content-Type:
-              schema:
-                type: string
-              name: Content-Type
-              required: true
-            Content-Length:
-              schema:
-                type: string
-              name: Content-Length
-              required: true
       requestBody:
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/PostAuthorsRequestBody"
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Content-Type
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Content-Length
-          required: true
   /books/{book}:
     parameters:
       - in: path
@@ -264,38 +90,6 @@ paths:
             application/json; charset=utf-8:
               schema:
                 $ref: "#/components/schemas/GetAuthorsAuthor200ResponseBody"
-          headers:
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
   /some/example:
     get:
       responses:
@@ -305,38 +99,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetSomeExample200ResponseBody"
-          headers:
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
 components:
   schemas:
     GetBooks200ResponseBody:
@@ -471,18 +233,12 @@ components:
 exports[`capture with inputs --har verifying OpenAPI spec 1`] = `
 "GET /books
   [31m× [39m200 response
-  [31m[header parameter] Host is not documented[39m
-  [31m[header parameter] User-Agent is not documented[39m
-  [31m[header parameter] Accept is not documented[39m
-  [31m[200 response header] Host is not documented[39m
-  [31m[200 response header] User-Agent is not documented[39m
-  [31m[200 response header] Accept is not documented[39m
   [31m[200 response body] 'data' is not documented (/properties)[39m
   [31m[200 response body] 'next' is not documented (/properties)[39m
   [31m[200 response body] 'has_more_data' is not documented (/properties)[39m
 
 100.0% coverage of your documented operations. 7 requests did not match a documented path (8 total requests).
-9 diffs detected in documented operations
+3 diffs detected in documented operations
 
 [33mNew endpoints are only added in interactive mode. Run 'optic capture openapi.yml --update interactive' to add new endpoints[39m
 "
@@ -545,78 +301,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetAuthHawk200ResponseBody"
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-              name: Access-Control-Allow-Credentials
-              required: true
-            Access-Control-Allow-Headers:
-              schema:
-                type: string
-              name: Access-Control-Allow-Headers
-              required: true
-            Access-Control-Allow-Methods:
-              schema:
-                type: string
-              name: Access-Control-Allow-Methods
-              required: true
-            Access-Control-Allow-Origin:
-              schema:
-                type: string
-              name: Access-Control-Allow-Origin
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-            Content-Encoding:
-              schema:
-                type: string
-              name: Content-Encoding
-              required: true
-            Content-Type:
-              schema:
-                type: string
-              name: Content-Type
-              required: true
-            Date:
-              schema:
-                type: string
-              name: Date
-              required: true
-            Server:
-              schema:
-                type: string
-              name: Server
-              required: true
-            Server-Authorization:
-              schema:
-                type: string
-              name: Server-Authorization
-              required: true
-            Vary:
-              schema:
-                type: string
-              name: Vary
-              required: true
-            X-Powered-By:
-              schema:
-                type: string
-              name: X-Powered-By
-              required: true
-            transfer-encoding:
-              schema:
-                type: string
-              name: transfer-encoding
-              required: true
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: Authorization
-          required: true
   /basic-auth:
     get:
       responses:
@@ -665,67 +349,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetDelayDelay200ResponseBody"
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-              name: Access-Control-Allow-Credentials
-              required: true
-            Access-Control-Allow-Headers:
-              schema:
-                type: string
-              name: Access-Control-Allow-Headers
-              required: true
-            Access-Control-Allow-Methods:
-              schema:
-                type: string
-              name: Access-Control-Allow-Methods
-              required: true
-            Access-Control-Allow-Origin:
-              schema:
-                type: string
-              name: Access-Control-Allow-Origin
-              required: true
-            Access-Control-Expose-Headers:
-              schema:
-                type: string
-              name: Access-Control-Expose-Headers
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-            Content-Length:
-              schema:
-                type: string
-              name: Content-Length
-              required: true
-            Content-Type:
-              schema:
-                type: string
-              name: Content-Type
-              required: true
-            Date:
-              schema:
-                type: string
-              name: Date
-              required: true
-            ETag:
-              schema:
-                type: string
-              name: ETag
-              required: true
-            Server:
-              schema:
-                type: string
-              name: Server
-              required: true
-            Vary:
-              schema:
-                type: string
-              name: Vary
-              required: true
   /delete:
     delete:
       responses:
@@ -739,12 +362,6 @@ paths:
     get:
       responses:
         {}
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: Authorization
-          required: false
   /encoding/utf8:
     get:
       responses:
@@ -758,67 +375,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Get200ResponseBody"
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-              name: Access-Control-Allow-Credentials
-              required: true
-            Access-Control-Allow-Headers:
-              schema:
-                type: string
-              name: Access-Control-Allow-Headers
-              required: true
-            Access-Control-Allow-Methods:
-              schema:
-                type: string
-              name: Access-Control-Allow-Methods
-              required: true
-            Access-Control-Allow-Origin:
-              schema:
-                type: string
-              name: Access-Control-Allow-Origin
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-            Content-Encoding:
-              schema:
-                type: string
-              name: Content-Encoding
-              required: true
-            Content-Length:
-              schema:
-                type: string
-              name: Content-Length
-              required: true
-            Content-Type:
-              schema:
-                type: string
-              name: Content-Type
-              required: true
-            Date:
-              schema:
-                type: string
-              name: Date
-              required: true
-            Server:
-              schema:
-                type: string
-              name: Server
-              required: true
-            Vary:
-              schema:
-                type: string
-              name: Vary
-              required: true
-            X-Powered-By:
-              schema:
-                type: string
-              name: X-Powered-By
-              required: true
   /get/hello:
     get:
       responses:
@@ -832,52 +388,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetGet200ResponseBody"
-          headers:
-            Content-Encoding:
-              schema:
-                type: string
-              name: Content-Encoding
-              required: true
-            Content-Type:
-              schema:
-                type: string
-              name: Content-Type
-              required: true
-            Date:
-              schema:
-                type: string
-              name: Date
-              required: true
-            ETag:
-              schema:
-                type: string
-              name: ETag
-              required: true
-            Server:
-              schema:
-                type: string
-              name: Server
-              required: true
-            set-cookie:
-              schema:
-                type: string
-              name: set-cookie
-              required: true
-            Vary:
-              schema:
-                type: string
-              name: Vary
-              required: true
-            Content-Length:
-              schema:
-                type: string
-              name: Content-Length
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
       parameters:
         - schema:
             type: string
@@ -902,73 +412,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetHeaders200ResponseBody"
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-              name: Access-Control-Allow-Credentials
-              required: true
-            Access-Control-Allow-Headers:
-              schema:
-                type: string
-              name: Access-Control-Allow-Headers
-              required: true
-            Access-Control-Allow-Methods:
-              schema:
-                type: string
-              name: Access-Control-Allow-Methods
-              required: true
-            Access-Control-Allow-Origin:
-              schema:
-                type: string
-              name: Access-Control-Allow-Origin
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-            Content-Encoding:
-              schema:
-                type: string
-              name: Content-Encoding
-              required: true
-            Content-Length:
-              schema:
-                type: string
-              name: Content-Length
-              required: true
-            Content-Type:
-              schema:
-                type: string
-              name: Content-Type
-              required: true
-            Date:
-              schema:
-                type: string
-              name: Date
-              required: true
-            Server:
-              schema:
-                type: string
-              name: Server
-              required: true
-            Vary:
-              schema:
-                type: string
-              name: Vary
-              required: true
-            X-Powered-By:
-              schema:
-                type: string
-              name: X-Powered-By
-              required: true
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: my-sample-header
-          required: false
   /ip:
     get:
       responses:
@@ -982,145 +425,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetOauth1401ResponseBody"
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-              name: Access-Control-Allow-Credentials
-              required: true
-            Access-Control-Allow-Headers:
-              schema:
-                type: string
-              name: Access-Control-Allow-Headers
-              required: true
-            Access-Control-Allow-Methods:
-              schema:
-                type: string
-              name: Access-Control-Allow-Methods
-              required: true
-            Access-Control-Allow-Origin:
-              schema:
-                type: string
-              name: Access-Control-Allow-Origin
-              required: true
-            Access-Control-Expose-Headers:
-              schema:
-                type: string
-              name: Access-Control-Expose-Headers
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-            Content-Length:
-              schema:
-                type: string
-              name: Content-Length
-              required: true
-            Content-Type:
-              schema:
-                type: string
-              name: Content-Type
-              required: true
-            Date:
-              schema:
-                type: string
-              name: Date
-              required: true
-            ETag:
-              schema:
-                type: string
-              name: ETag
-              required: true
-            Server:
-              schema:
-                type: string
-              name: Server
-              required: true
-            Vary:
-              schema:
-                type: string
-              name: Vary
-              required: true
         "200":
           description: 200 response
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetAuthHawk200ResponseBody"
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-              name: Access-Control-Allow-Credentials
-              required: true
-            Access-Control-Allow-Headers:
-              schema:
-                type: string
-              name: Access-Control-Allow-Headers
-              required: true
-            Access-Control-Allow-Methods:
-              schema:
-                type: string
-              name: Access-Control-Allow-Methods
-              required: true
-            Access-Control-Allow-Origin:
-              schema:
-                type: string
-              name: Access-Control-Allow-Origin
-              required: true
-            Access-Control-Expose-Headers:
-              schema:
-                type: string
-              name: Access-Control-Expose-Headers
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-            Content-Encoding:
-              schema:
-                type: string
-              name: Content-Encoding
-              required: true
-            Content-Length:
-              schema:
-                type: string
-              name: Content-Length
-              required: true
-            Content-Type:
-              schema:
-                type: string
-              name: Content-Type
-              required: true
-            Date:
-              schema:
-                type: string
-              name: Date
-              required: true
-            ETag:
-              schema:
-                type: string
-              name: ETag
-              required: true
-            Server:
-              schema:
-                type: string
-              name: Server
-              required: true
-            Vary:
-              schema:
-                type: string
-              name: Vary
-              required: true
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: Authorization
-          required: false
   /patch:
     patch:
       responses:
@@ -1163,72 +473,6 @@ paths:
             text/html:
               schema:
                 type: string
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-              name: Access-Control-Allow-Credentials
-              required: true
-            Access-Control-Allow-Headers:
-              schema:
-                type: string
-              name: Access-Control-Allow-Headers
-              required: true
-            Access-Control-Allow-Methods:
-              schema:
-                type: string
-              name: Access-Control-Allow-Methods
-              required: true
-            Access-Control-Allow-Origin:
-              schema:
-                type: string
-              name: Access-Control-Allow-Origin
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-            Content-Encoding:
-              schema:
-                type: string
-              name: Content-Encoding
-              required: true
-            Content-Length:
-              schema:
-                type: string
-              name: Content-Length
-              required: true
-            Content-Type:
-              schema:
-                type: string
-              name: Content-Type
-              required: true
-            Date:
-              schema:
-                type: string
-              name: Date
-              required: true
-            Server:
-              schema:
-                type: string
-              name: Server
-              required: true
-            Vary:
-              schema:
-                type: string
-              name: Vary
-              required: true
-            X-Powered-By:
-              schema:
-                type: string
-              name: X-Powered-By
-              required: true
-            test:
-              schema:
-                type: string
-              name: test
-              required: true
       parameters:
         - schema:
             type: string
@@ -1265,67 +509,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetStatusStatus200ResponseBody"
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-              name: Access-Control-Allow-Credentials
-              required: true
-            Access-Control-Allow-Headers:
-              schema:
-                type: string
-              name: Access-Control-Allow-Headers
-              required: true
-            Access-Control-Allow-Methods:
-              schema:
-                type: string
-              name: Access-Control-Allow-Methods
-              required: true
-            Access-Control-Allow-Origin:
-              schema:
-                type: string
-              name: Access-Control-Allow-Origin
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-            Content-Length:
-              schema:
-                type: string
-              name: Content-Length
-              required: true
-            Content-Type:
-              schema:
-                type: string
-              name: Content-Type
-              required: true
-            Date:
-              schema:
-                type: string
-              name: Date
-              required: true
-            ETag:
-              schema:
-                type: string
-              name: ETag
-              required: true
-            Server:
-              schema:
-                type: string
-              name: Server
-              required: true
-            Vary:
-              schema:
-                type: string
-              name: Vary
-              required: true
-            X-Powered-By:
-              schema:
-                type: string
-              name: X-Powered-By
-              required: true
   /stream/{stream}:
     parameters:
       - in: path
@@ -1354,77 +537,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetTimeTime200ResponseBody"
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-              name: Access-Control-Allow-Credentials
-              required: true
-            Access-Control-Allow-Headers:
-              schema:
-                type: string
-              name: Access-Control-Allow-Headers
-              required: true
-            Access-Control-Allow-Methods:
-              schema:
-                type: string
-              name: Access-Control-Allow-Methods
-              required: true
-            Access-Control-Allow-Origin:
-              schema:
-                type: string
-              name: Access-Control-Allow-Origin
-              required: true
-            Access-Control-Expose-Headers:
-              schema:
-                type: string
-              name: Access-Control-Expose-Headers
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-            Content-Encoding:
-              schema:
-                type: string
-              name: Content-Encoding
-              required: false
-            Content-Length:
-              schema:
-                type: string
-              name: Content-Length
-              required: true
-            Content-Type:
-              schema:
-                type: string
-              name: Content-Type
-              required: true
-            Date:
-              schema:
-                type: string
-              name: Date
-              required: true
-            ETag:
-              schema:
-                type: string
-              name: ETag
-              required: true
-            Server:
-              schema:
-                type: string
-              name: Server
-              required: true
-            Vary:
-              schema:
-                type: string
-              name: Vary
-              required: true
-            set-cookie:
-              schema:
-                type: string
-              name: set-cookie
-              required: true
       parameters:
         - schema:
             type: string
@@ -1470,77 +582,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PostTransformCollection200ResponseBody"
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-              name: Access-Control-Allow-Credentials
-              required: true
-            Access-Control-Allow-Headers:
-              schema:
-                type: string
-              name: Access-Control-Allow-Headers
-              required: true
-            Access-Control-Allow-Methods:
-              schema:
-                type: string
-              name: Access-Control-Allow-Methods
-              required: true
-            Access-Control-Allow-Origin:
-              schema:
-                type: string
-              name: Access-Control-Allow-Origin
-              required: true
-            Access-Control-Expose-Headers:
-              schema:
-                type: string
-              name: Access-Control-Expose-Headers
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-            Content-Encoding:
-              schema:
-                type: string
-              name: Content-Encoding
-              required: true
-            Content-Type:
-              schema:
-                type: string
-              name: Content-Type
-              required: true
-            Date:
-              schema:
-                type: string
-              name: Date
-              required: true
-            ETag:
-              schema:
-                type: string
-              name: ETag
-              required: true
-            Server:
-              schema:
-                type: string
-              name: Server
-              required: true
-            Vary:
-              schema:
-                type: string
-              name: Vary
-              required: true
-            set-cookie:
-              schema:
-                type: string
-              name: set-cookie
-              required: true
-            transfer-encoding:
-              schema:
-                type: string
-              name: transfer-encoding
-              required: true
       requestBody:
         content:
           application/json:
@@ -1557,11 +598,6 @@ paths:
           in: query
           name: to
           required: true
-        - schema:
-            type: string
-          in: header
-          name: Content-Type
-          required: false
 components:
   schemas:
     GetBooks200ResponseBody:
@@ -2150,68 +1186,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetBooks200ResponseBody"
-          headers:
-            content-type:
-              schema:
-                type: string
-              name: content-type
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept-Encoding:
-              schema:
-                type: string
-              name: Accept-Encoding
-              required: true
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: content-type
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept-Encoding
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Connection
-          required: true
   /authors:
     get:
       responses:
@@ -2221,68 +1195,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetAuthors200ResponseBody"
-          headers:
-            content-type:
-              schema:
-                type: string
-              name: content-type
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept-Encoding:
-              schema:
-                type: string
-              name: Accept-Encoding
-              required: true
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: content-type
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept-Encoding
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Connection
-          required: true
   /books/{book}:
     parameters:
       - in: path
@@ -2298,68 +1210,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetBooksBook200ResponseBody"
-          headers:
-            content-type:
-              schema:
-                type: string
-              name: content-type
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept-Encoding:
-              schema:
-                type: string
-              name: Accept-Encoding
-              required: true
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: content-type
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept-Encoding
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Connection
-          required: true
     post:
       responses:
         "200":
@@ -2368,83 +1218,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetBooksBook200ResponseBody"
-          headers:
-            content-type:
-              schema:
-                type: string
-              name: content-type
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-            Content-Length:
-              schema:
-                type: string
-              name: Content-Length
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept-Encoding:
-              schema:
-                type: string
-              name: Accept-Encoding
-              required: true
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
       requestBody:
         content:
           application/json;charset=UTF-8:
             schema:
               $ref: "#/components/schemas/PostBooksBookRequestBody"
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: content-type
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Content-Length
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept-Encoding
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Connection
-          required: true
 components:
   schemas:
     GetBooks200ResponseBody:
@@ -2522,18 +1300,6 @@ exports[`capture with requests update behavior handle servers not at root of hos
 "Generating traffic to send to server
 GET /books
   [32m✓ [39m200 response
-  [32m[header parameter] content-type has been added[39m
-  [32m[header parameter] Accept has been added[39m
-  [32m[header parameter] User-Agent has been added[39m
-  [32m[header parameter] Accept-Encoding has been added[39m
-  [32m[header parameter] Host has been added[39m
-  [32m[header parameter] Connection has been added[39m
-  [32m[200 response header] content-type has been added[39m
-  [32m[200 response header] Accept has been added[39m
-  [32m[200 response header] User-Agent has been added[39m
-  [32m[200 response header] Accept-Encoding has been added[39m
-  [32m[200 response header] Host has been added[39m
-  [32m[200 response header] Connection has been added[39m
   [32m[200 response body] 'name' has been added (/properties/books/items/properties/name)[39m
   [32m[200 response body] 'author_id' has been added (/properties/books/items/properties/author_id)[39m
   [32m[200 response body] 'status' has been added (/properties/books/items/properties/status)[39m
@@ -2565,68 +1331,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetBooks200ResponseBody"
-          headers:
-            content-type:
-              schema:
-                type: string
-              name: content-type
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept-Encoding:
-              schema:
-                type: string
-              name: Accept-Encoding
-              required: true
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: content-type
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept-Encoding
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Connection
-          required: true
   /authors:
     get:
       responses:
@@ -2636,68 +1340,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetAuthors200ResponseBody"
-          headers:
-            content-type:
-              schema:
-                type: string
-              name: content-type
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept-Encoding:
-              schema:
-                type: string
-              name: Accept-Encoding
-              required: true
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: content-type
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept-Encoding
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Connection
-          required: true
   /books/{book}:
     parameters:
       - in: path
@@ -2713,68 +1355,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetBooksBook200ResponseBody"
-          headers:
-            content-type:
-              schema:
-                type: string
-              name: content-type
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept-Encoding:
-              schema:
-                type: string
-              name: Accept-Encoding
-              required: true
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: content-type
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept-Encoding
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Connection
-          required: true
     post:
       responses:
         "200":
@@ -2783,83 +1363,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetBooksBook200ResponseBody"
-          headers:
-            content-type:
-              schema:
-                type: string
-              name: content-type
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-            Content-Length:
-              schema:
-                type: string
-              name: Content-Length
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept-Encoding:
-              schema:
-                type: string
-              name: Accept-Encoding
-              required: true
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
       requestBody:
         content:
           application/json;charset=UTF-8:
             schema:
               $ref: "#/components/schemas/PostBooksBookRequestBody"
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: content-type
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Content-Length
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept-Encoding
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Connection
-          required: true
 components:
   schemas:
     GetBooks200ResponseBody:
@@ -2959,18 +1467,6 @@ exports[`capture with requests update behavior handles update in other file 1`] 
 "Generating traffic to send to server
 GET /books
   [32m✓ [39m200 response
-  [32m[header parameter] content-type has been added[39m
-  [32m[header parameter] Accept has been added[39m
-  [32m[header parameter] User-Agent has been added[39m
-  [32m[header parameter] Accept-Encoding has been added[39m
-  [32m[header parameter] Host has been added[39m
-  [32m[header parameter] Connection has been added[39m
-  [32m[200 response header] content-type has been added[39m
-  [32m[200 response header] Accept has been added[39m
-  [32m[200 response header] User-Agent has been added[39m
-  [32m[200 response header] Accept-Encoding has been added[39m
-  [32m[200 response header] Host has been added[39m
-  [32m[200 response header] Connection has been added[39m
   [32m[200 response body] 'name' has been added (/properties/books/items/properties/name)[39m
   [32m[200 response body] 'author_id' has been added (/properties/books/items/properties/author_id)[39m
   [32m[200 response body] 'status' has been added (/properties/books/items/properties/status)[39m
@@ -2996,68 +1492,6 @@ paths:
             application/json:
               schema:
                 $ref: ./components/books.yml#/GetBooks200ResponseBody
-          headers:
-            content-type:
-              schema:
-                type: string
-              name: content-type
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept-Encoding:
-              schema:
-                type: string
-              name: Accept-Encoding
-              required: true
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: content-type
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept-Encoding
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Connection
-          required: true
 "
 `;
 
@@ -3100,18 +1534,6 @@ GET /authors
   [32m✓ [39m200 response
 GET /books
   [32m✓ [39m200 response
-  [32m[header parameter] content-type has been added[39m
-  [32m[header parameter] Accept has been added[39m
-  [32m[header parameter] User-Agent has been added[39m
-  [32m[header parameter] Accept-Encoding has been added[39m
-  [32m[header parameter] Host has been added[39m
-  [32m[header parameter] Connection has been added[39m
-  [32m[200 response header] content-type has been added[39m
-  [32m[200 response header] Accept has been added[39m
-  [32m[200 response header] User-Agent has been added[39m
-  [32m[200 response header] Accept-Encoding has been added[39m
-  [32m[200 response header] Host has been added[39m
-  [32m[200 response header] Connection has been added[39m
   [32m[200 response body] 'name' has been added (/properties/books/items/properties/name)[39m
   [32m[200 response body] 'author_id' has been added (/properties/books/items/properties/author_id)[39m
   [32m[200 response body] 'status' has been added (/properties/books/items/properties/status)[39m
@@ -3145,68 +1567,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetBooks200ResponseBody"
-          headers:
-            content-type:
-              schema:
-                type: string
-              name: content-type
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept-Encoding:
-              schema:
-                type: string
-              name: Accept-Encoding
-              required: true
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: content-type
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept-Encoding
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Connection
-          required: true
   /authors:
     get:
       responses:
@@ -3231,83 +1591,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PostBooksBook200ResponseBody"
-          headers:
-            content-type:
-              schema:
-                type: string
-              name: content-type
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-            Content-Length:
-              schema:
-                type: string
-              name: Content-Length
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept-Encoding:
-              schema:
-                type: string
-              name: Accept-Encoding
-              required: true
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
       requestBody:
         content:
           application/json;charset=UTF-8:
             schema:
               $ref: "#/components/schemas/PostBooksBookRequestBody"
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: content-type
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Content-Length
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept-Encoding
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Connection
-          required: true
 components:
   schemas:
     GetBooks200ResponseBody:
@@ -3384,18 +1672,6 @@ exports[`capture with requests update behavior updates all endpoints with --upda
 "Generating traffic to send to server
 GET /books
   [32m✓ [39m200 response
-  [32m[header parameter] content-type has been added[39m
-  [32m[header parameter] Accept has been added[39m
-  [32m[header parameter] User-Agent has been added[39m
-  [32m[header parameter] Accept-Encoding has been added[39m
-  [32m[header parameter] Host has been added[39m
-  [32m[header parameter] Connection has been added[39m
-  [32m[200 response header] content-type has been added[39m
-  [32m[200 response header] Accept has been added[39m
-  [32m[200 response header] User-Agent has been added[39m
-  [32m[200 response header] Accept-Encoding has been added[39m
-  [32m[200 response header] Host has been added[39m
-  [32m[200 response header] Connection has been added[39m
   [32m[200 response body] 'name' has been added (/properties/books/items/properties/name)[39m
   [32m[200 response body] 'created_at' has been added (/properties/books/items/properties/created_at)[39m
   [32m[200 response body] 'updated_at' has been added (/properties/books/items/properties/updated_at)[39m
@@ -3435,68 +1711,6 @@ paths:
               schema:
                 # use the refs here
                 $ref: "#/components/schemas/GetBooks200ResponseBody"
-          headers:
-            content-type:
-              schema:
-                type: string
-              name: content-type
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept-Encoding:
-              schema:
-                type: string
-              name: Accept-Encoding
-              required: true
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: content-type
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept-Encoding
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Connection
-          required: true
   /authors:
     get:
       responses:
@@ -3506,68 +1720,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetAuthors200ResponseBody"
-          headers:
-            content-type:
-              schema:
-                type: string
-              name: content-type
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept-Encoding:
-              schema:
-                type: string
-              name: Accept-Encoding
-              required: true
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: content-type
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept-Encoding
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Connection
-          required: true
   /books/{book}:
     parameters:
       - in: path
@@ -3583,68 +1735,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetBooksBook200ResponseBody"
-          headers:
-            content-type:
-              schema:
-                type: string
-              name: content-type
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept-Encoding:
-              schema:
-                type: string
-              name: Accept-Encoding
-              required: true
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: content-type
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept-Encoding
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Connection
-          required: true
     post:
       responses:
         "200":
@@ -3653,83 +1743,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetBooksBook200ResponseBody"
-          headers:
-            content-type:
-              schema:
-                type: string
-              name: content-type
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-            Content-Length:
-              schema:
-                type: string
-              name: Content-Length
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept-Encoding:
-              schema:
-                type: string
-              name: Accept-Encoding
-              required: true
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
       requestBody:
         content:
           application/json;charset=UTF-8:
             schema:
               $ref: "#/components/schemas/PostBooksBookRequestBody"
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: content-type
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Content-Length
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept-Encoding
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Connection
-          required: true
   /:
     get:
       responses:
@@ -3739,68 +1757,6 @@ paths:
             text/html:
               schema:
                 type: string
-          headers:
-            content-type:
-              schema:
-                type: string
-              name: content-type
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept-Encoding:
-              schema:
-                type: string
-              name: Accept-Encoding
-              required: true
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: content-type
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept-Encoding
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Connection
-          required: true
 components:
   schemas:
     # this is a schema
@@ -3908,18 +1864,6 @@ exports[`capture with requests update behavior updates only existing endpoints b
 "Generating traffic to send to server
 GET /books
   [32m✓ [39m200 response
-  [32m[header parameter] content-type has been added[39m
-  [32m[header parameter] Accept has been added[39m
-  [32m[header parameter] User-Agent has been added[39m
-  [32m[header parameter] Accept-Encoding has been added[39m
-  [32m[header parameter] Host has been added[39m
-  [32m[header parameter] Connection has been added[39m
-  [32m[200 response header] content-type has been added[39m
-  [32m[200 response header] Accept has been added[39m
-  [32m[200 response header] User-Agent has been added[39m
-  [32m[200 response header] Accept-Encoding has been added[39m
-  [32m[200 response header] Host has been added[39m
-  [32m[200 response header] Connection has been added[39m
   [32m[200 response body] 'name' has been added (/properties/books/items/properties/name)[39m
   [32m[200 response body] 'created_at' has been added (/properties/books/items/properties/created_at)[39m
   [32m[200 response body] 'updated_at' has been added (/properties/books/items/properties/updated_at)[39m
@@ -3956,68 +1900,6 @@ paths:
               schema:
                 # use the refs here
                 $ref: "#/components/schemas/GetBooks200ResponseBody"
-          headers:
-            content-type:
-              schema:
-                type: string
-              name: content-type
-              required: true
-            Accept:
-              schema:
-                type: string
-              name: Accept
-              required: true
-            User-Agent:
-              schema:
-                type: string
-              name: User-Agent
-              required: true
-            Accept-Encoding:
-              schema:
-                type: string
-              name: Accept-Encoding
-              required: true
-            Host:
-              schema:
-                type: string
-              name: Host
-              required: true
-            Connection:
-              schema:
-                type: string
-              name: Connection
-              required: true
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: content-type
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: User-Agent
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept-Encoding
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Host
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Connection
-          required: true
 components:
   schemas:
     # this is a schema
@@ -4064,53 +1946,17 @@ exports[`capture with requests verify behavior verifies spec with endpoint speci
 "Generating traffic to send to server
 GET /books/status
   [32m✓ [39m200 response
-  [31m[header parameter] content-type is not documented[39m
-  [31m[header parameter] Accept is not documented[39m
-  [31m[header parameter] User-Agent is not documented[39m
-  [31m[header parameter] Accept-Encoding is not documented[39m
-  [31m[header parameter] Host is not documented[39m
-  [31m[header parameter] Connection is not documented[39m
-  [31m[200 response header] content-type is not documented[39m
-  [31m[200 response header] Accept is not documented[39m
-  [31m[200 response header] User-Agent is not documented[39m
-  [31m[200 response header] Accept-Encoding is not documented[39m
-  [31m[200 response header] Host is not documented[39m
-  [31m[200 response header] Connection is not documented[39m
 GET /books/{bookId}
   [31m× [39m200 response
-  [31m[header parameter] content-type is not documented[39m
-  [31m[header parameter] Accept is not documented[39m
-  [31m[header parameter] User-Agent is not documented[39m
-  [31m[header parameter] Accept-Encoding is not documented[39m
-  [31m[header parameter] Host is not documented[39m
-  [31m[header parameter] Connection is not documented[39m
-  [31m[200 response header] content-type is not documented[39m
-  [31m[200 response header] Accept is not documented[39m
-  [31m[200 response header] User-Agent is not documented[39m
-  [31m[200 response header] Accept-Encoding is not documented[39m
-  [31m[200 response header] Host is not documented[39m
-  [31m[200 response header] Connection is not documented[39m
   [31m[200 response body] 'status' is not documented (/properties)[39m
   [31m[200 response body] 'price' is not documented (/properties)[39m
 GET /books
   200 response
   [31m[404 response body] body is not documented[39m
   [31m[query parameter] list is not documented[39m
-  [31m[header parameter] content-type is not documented[39m
-  [31m[header parameter] Accept is not documented[39m
-  [31m[header parameter] User-Agent is not documented[39m
-  [31m[header parameter] Accept-Encoding is not documented[39m
-  [31m[header parameter] Host is not documented[39m
-  [31m[header parameter] Connection is not documented[39m
-  [31m[404 response header] content-type is not documented[39m
-  [31m[404 response header] Accept is not documented[39m
-  [31m[404 response header] User-Agent is not documented[39m
-  [31m[404 response header] Accept-Encoding is not documented[39m
-  [31m[404 response header] Host is not documented[39m
-  [31m[404 response header] Connection is not documented[39m
 
 83.3% coverage of your documented operations. 2 requests did not match a documented path (6 total requests).
-40 diffs detected in documented operations
+4 diffs detected in documented operations
 
 [33mNew endpoints are only added in interactive mode. Run 'optic capture openapi-with-overlapping-paths.yml --update interactive' to add new endpoints[39m
 "
@@ -4120,18 +1966,6 @@ exports[`capture with requests verify behavior verifies the specification in ver
 "Generating traffic to send to server
 GET /books
   [31m× [39m200 response
-  [31m[header parameter] content-type is not documented[39m
-  [31m[header parameter] Accept is not documented[39m
-  [31m[header parameter] User-Agent is not documented[39m
-  [31m[header parameter] Accept-Encoding is not documented[39m
-  [31m[header parameter] Host is not documented[39m
-  [31m[header parameter] Connection is not documented[39m
-  [31m[200 response header] content-type is not documented[39m
-  [31m[200 response header] Accept is not documented[39m
-  [31m[200 response header] User-Agent is not documented[39m
-  [31m[200 response header] Accept-Encoding is not documented[39m
-  [31m[200 response header] Host is not documented[39m
-  [31m[200 response header] Connection is not documented[39m
   [31m[200 response body] 'name' is not documented (/properties/books/items/properties)[39m
   [31m[200 response body] 'created_at' is not documented (/properties/books/items/properties)[39m
   [31m[200 response body] 'updated_at' is not documented (/properties/books/items/properties)[39m
@@ -4171,7 +2005,7 @@ GET /books
 [90m...and 1 endpoint that did not receive traffic[39m
 
 66.7% coverage of your documented operations. 5 requests did not match a documented path (6 total requests).
-21 diffs detected in documented operations
+9 diffs detected in documented operations
 
 [33mNew endpoints are only added in interactive mode. Run 'optic capture openapi.yml --update interactive' to add new endpoints[39m
 "
@@ -4181,18 +2015,6 @@ exports[`capture with requests verify behavior verifies the specification with c
 "Generating traffic to send to server
 GET /books
   [31m× [39m200 response
-  [31m[header parameter] content-type is not documented[39m
-  [31m[header parameter] Accept is not documented[39m
-  [31m[header parameter] User-Agent is not documented[39m
-  [31m[header parameter] Accept-Encoding is not documented[39m
-  [31m[header parameter] Host is not documented[39m
-  [31m[header parameter] Connection is not documented[39m
-  [31m[200 response header] content-type is not documented[39m
-  [31m[200 response header] Accept is not documented[39m
-  [31m[200 response header] User-Agent is not documented[39m
-  [31m[200 response header] Accept-Encoding is not documented[39m
-  [31m[200 response header] Host is not documented[39m
-  [31m[200 response header] Connection is not documented[39m
   [31m[200 response body] 'name' is not documented (/properties/books/items/properties)[39m
   [31m[200 response body] 'created_at' is not documented (/properties/books/items/properties)[39m
   [31m[200 response body] 'updated_at' is not documented (/properties/books/items/properties)[39m
@@ -4202,7 +2024,7 @@ GET /books
 [90m...and 1 endpoint that did not receive traffic[39m
 
 66.7% coverage of your documented operations. 5 requests did not match a documented path (6 total requests).
-18 diffs detected in documented operations
+6 diffs detected in documented operations
 
 [33mNew endpoints are only added in interactive mode. Run 'optic capture openapi.yml --update interactive' to add new endpoints[39m
 "

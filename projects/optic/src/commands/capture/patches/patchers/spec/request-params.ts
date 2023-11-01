@@ -8,15 +8,19 @@ export async function* generateRequestParameterPatches(
   interaction: CapturedInteraction,
   operation: Operation
 ): SpecPatches {
-  const hasAnyQueryOrHeader =
-    interaction.request.query.length > 0 ||
-    interaction.request.headers.length > 0;
+  const interactionParams = [
+    ...interaction.request.query.map((q) => ({ location: 'query', ...q })),
+    // To learn about new headers, uncomment the line below. The reason we don't learn headers is because there are lots of headers that would be noisy / external to the API
+    // We likely would want to specify an allowlist here that lets a user specify headers that they care about that we would look out for and filter for
+    // ...interaction.request.headers.map((h) => ({ location: 'header', ...h })), // Turned off
+  ];
+  const hasAnyParam = interactionParams.length > 0;
   const specPath = jsonPointerHelpers.compile([
     'paths',
     operation.pathPattern,
     operation.method,
   ]);
-  if (hasAnyQueryOrHeader) {
+  if (hasAnyParam) {
     if (!operation.parameters) {
       yield {
         description: 'add parameters array to operation',
@@ -36,12 +40,7 @@ export async function* generateRequestParameterPatches(
       };
     }
 
-    const params = [
-      ...interaction.request.query.map((q) => ({ location: 'query', ...q })),
-      ...interaction.request.headers.map((h) => ({ location: 'header', ...h })),
-    ];
-
-    for (const { location, name } of params) {
+    for (const { location, name } of interactionParams) {
       const existingParam = operation.parameters?.find(
         (p) => !('$ref' in p) && p.in === location && p.name === name
       );

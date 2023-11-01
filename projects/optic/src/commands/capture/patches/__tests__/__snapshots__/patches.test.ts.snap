@@ -1165,99 +1165,6 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 header parameter not docu
     "path": "/paths/~1api~1animals/post",
   },
   {
-    "description": "add parameters array to operation",
-    "diff": {
-      "kind": "MissingRequestParametersArray",
-    },
-    "groupedOperations": [
-      {
-        "op": "add",
-        "path": "/paths/~1api~1animals/post/parameters",
-        "value": [],
-      },
-    ],
-    "impact": [
-      "Addition",
-      "BackwardsCompatible",
-    ],
-    "interaction": {
-      "request": {
-        "body": null,
-        "headers": [
-          {
-            "name": "undocumented",
-            "value": "abc",
-          },
-        ],
-        "host": "localhost:3030",
-        "method": "post",
-        "path": "/api/animals",
-        "query": [],
-      },
-      "response": {
-        "body": {
-          "body": "{}",
-          "contentType": "application/json",
-          "size": 2,
-        },
-        "headers": [],
-        "statusCode": "200",
-      },
-    },
-    "path": "/paths/~1api~1animals/post",
-  },
-  {
-    "description": "add undocumented header parameter",
-    "diff": {
-      "in": "header",
-      "kind": "UnmatchedRequestParameter",
-      "name": "undocumented",
-    },
-    "groupedOperations": [
-      {
-        "op": "add",
-        "path": "/paths/~1api~1animals/post/parameters/-",
-        "value": {
-          "in": "header",
-          "name": "undocumented",
-          "required": true,
-          "schema": {
-            "type": "string",
-          },
-        },
-      },
-    ],
-    "impact": [
-      "Addition",
-      "BackwardsCompatible",
-    ],
-    "interaction": {
-      "request": {
-        "body": null,
-        "headers": [
-          {
-            "name": "undocumented",
-            "value": "abc",
-          },
-        ],
-        "host": "localhost:3030",
-        "method": "post",
-        "path": "/api/animals",
-        "query": [],
-      },
-      "response": {
-        "body": {
-          "body": "{}",
-          "contentType": "application/json",
-          "size": 2,
-        },
-        "headers": [],
-        "statusCode": "200",
-      },
-    },
-    "path": "/paths/~1api~1animals/post/parameters",
-  },
-  {
     "description": "update response body: add schema object",
     "diff": undefined,
     "groupedOperations": [
@@ -1312,16 +1219,6 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 header parameter not docu
   "paths": {
     "/api/animals": {
       "post": {
-        "parameters": [
-          {
-            "in": "header",
-            "name": "undocumented",
-            "required": true,
-            "schema": {
-              "type": "string",
-            },
-          },
-        ],
         "responses": {
           "200": {
             "content": {
@@ -3643,99 +3540,6 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 response headers not docu
     "path": "/paths/~1api~1animals/post",
   },
   {
-    "description": "add response headers object to operation",
-    "diff": {
-      "kind": "MissingResponseHeadersObject",
-      "statusCode": "200",
-    },
-    "groupedOperations": [
-      {
-        "op": "add",
-        "path": "/paths/~1api~1animals/post/responses/200/headers",
-        "value": {},
-      },
-    ],
-    "impact": [
-      "Addition",
-      "BackwardsCompatible",
-    ],
-    "interaction": {
-      "request": {
-        "body": null,
-        "headers": [],
-        "host": "localhost:3030",
-        "method": "post",
-        "path": "/api/animals",
-        "query": [],
-      },
-      "response": {
-        "body": {
-          "body": "{}",
-          "contentType": "application/json",
-          "size": 2,
-        },
-        "headers": [
-          {
-            "name": "undocumented",
-            "value": "abc",
-          },
-        ],
-        "statusCode": "200",
-      },
-    },
-    "path": "/paths/~1api~1animals/post/responses/200",
-  },
-  {
-    "description": "add undocumented response header to 200 response",
-    "diff": {
-      "kind": "UnmatchedResponseHeader",
-      "name": "undocumented",
-      "statusCode": "200",
-    },
-    "groupedOperations": [
-      {
-        "op": "add",
-        "path": "/paths/~1api~1animals/post/responses/200/headers/undocumented",
-        "value": {
-          "name": "undocumented",
-          "required": true,
-          "schema": {
-            "type": "string",
-          },
-        },
-      },
-    ],
-    "impact": [
-      "Addition",
-      "BackwardsCompatible",
-    ],
-    "interaction": {
-      "request": {
-        "body": null,
-        "headers": [],
-        "host": "localhost:3030",
-        "method": "post",
-        "path": "/api/animals",
-        "query": [],
-      },
-      "response": {
-        "body": {
-          "body": "{}",
-          "contentType": "application/json",
-          "size": 2,
-        },
-        "headers": [
-          {
-            "name": "undocumented",
-            "value": "abc",
-          },
-        ],
-        "statusCode": "200",
-      },
-    },
-    "path": "/paths/~1api~1animals/post/responses/200/headers/undocumented",
-  },
-  {
     "description": "update response body: add schema object",
     "diff": undefined,
     "groupedOperations": [
@@ -3800,15 +3604,6 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 response headers not docu
               },
             },
             "description": "200 response",
-            "headers": {
-              "undocumented": {
-                "name": "undocumented",
-                "required": true,
-                "schema": {
-                  "type": "string",
-                },
-              },
-            },
           },
         },
       },
@@ -7372,99 +7167,6 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 header parameter not docu
     "path": "/paths/~1api~1animals/post",
   },
   {
-    "description": "add parameters array to operation",
-    "diff": {
-      "kind": "MissingRequestParametersArray",
-    },
-    "groupedOperations": [
-      {
-        "op": "add",
-        "path": "/paths/~1api~1animals/post/parameters",
-        "value": [],
-      },
-    ],
-    "impact": [
-      "Addition",
-      "BackwardsCompatible",
-    ],
-    "interaction": {
-      "request": {
-        "body": null,
-        "headers": [
-          {
-            "name": "undocumented",
-            "value": "abc",
-          },
-        ],
-        "host": "localhost:3030",
-        "method": "post",
-        "path": "/api/animals",
-        "query": [],
-      },
-      "response": {
-        "body": {
-          "body": "{}",
-          "contentType": "application/json",
-          "size": 2,
-        },
-        "headers": [],
-        "statusCode": "200",
-      },
-    },
-    "path": "/paths/~1api~1animals/post",
-  },
-  {
-    "description": "add undocumented header parameter",
-    "diff": {
-      "in": "header",
-      "kind": "UnmatchedRequestParameter",
-      "name": "undocumented",
-    },
-    "groupedOperations": [
-      {
-        "op": "add",
-        "path": "/paths/~1api~1animals/post/parameters/-",
-        "value": {
-          "in": "header",
-          "name": "undocumented",
-          "required": true,
-          "schema": {
-            "type": "string",
-          },
-        },
-      },
-    ],
-    "impact": [
-      "Addition",
-      "BackwardsCompatible",
-    ],
-    "interaction": {
-      "request": {
-        "body": null,
-        "headers": [
-          {
-            "name": "undocumented",
-            "value": "abc",
-          },
-        ],
-        "host": "localhost:3030",
-        "method": "post",
-        "path": "/api/animals",
-        "query": [],
-      },
-      "response": {
-        "body": {
-          "body": "{}",
-          "contentType": "application/json",
-          "size": 2,
-        },
-        "headers": [],
-        "statusCode": "200",
-      },
-    },
-    "path": "/paths/~1api~1animals/post/parameters",
-  },
-  {
     "description": "update response body: add schema object",
     "diff": undefined,
     "groupedOperations": [
@@ -7519,16 +7221,6 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 header parameter not docu
   "paths": {
     "/api/animals": {
       "post": {
-        "parameters": [
-          {
-            "in": "header",
-            "name": "undocumented",
-            "required": true,
-            "schema": {
-              "type": "string",
-            },
-          },
-        ],
         "responses": {
           "200": {
             "content": {
@@ -9850,99 +9542,6 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 response headers not docu
     "path": "/paths/~1api~1animals/post",
   },
   {
-    "description": "add response headers object to operation",
-    "diff": {
-      "kind": "MissingResponseHeadersObject",
-      "statusCode": "200",
-    },
-    "groupedOperations": [
-      {
-        "op": "add",
-        "path": "/paths/~1api~1animals/post/responses/200/headers",
-        "value": {},
-      },
-    ],
-    "impact": [
-      "Addition",
-      "BackwardsCompatible",
-    ],
-    "interaction": {
-      "request": {
-        "body": null,
-        "headers": [],
-        "host": "localhost:3030",
-        "method": "post",
-        "path": "/api/animals",
-        "query": [],
-      },
-      "response": {
-        "body": {
-          "body": "{}",
-          "contentType": "application/json",
-          "size": 2,
-        },
-        "headers": [
-          {
-            "name": "undocumented",
-            "value": "abc",
-          },
-        ],
-        "statusCode": "200",
-      },
-    },
-    "path": "/paths/~1api~1animals/post/responses/200",
-  },
-  {
-    "description": "add undocumented response header to 200 response",
-    "diff": {
-      "kind": "UnmatchedResponseHeader",
-      "name": "undocumented",
-      "statusCode": "200",
-    },
-    "groupedOperations": [
-      {
-        "op": "add",
-        "path": "/paths/~1api~1animals/post/responses/200/headers/undocumented",
-        "value": {
-          "name": "undocumented",
-          "required": true,
-          "schema": {
-            "type": "string",
-          },
-        },
-      },
-    ],
-    "impact": [
-      "Addition",
-      "BackwardsCompatible",
-    ],
-    "interaction": {
-      "request": {
-        "body": null,
-        "headers": [],
-        "host": "localhost:3030",
-        "method": "post",
-        "path": "/api/animals",
-        "query": [],
-      },
-      "response": {
-        "body": {
-          "body": "{}",
-          "contentType": "application/json",
-          "size": 2,
-        },
-        "headers": [
-          {
-            "name": "undocumented",
-            "value": "abc",
-          },
-        ],
-        "statusCode": "200",
-      },
-    },
-    "path": "/paths/~1api~1animals/post/responses/200/headers/undocumented",
-  },
-  {
     "description": "update response body: add schema object",
     "diff": undefined,
     "groupedOperations": [
@@ -10007,15 +9606,6 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 response headers not docu
               },
             },
             "description": "200 response",
-            "headers": {
-              "undocumented": {
-                "name": "undocumented",
-                "required": true,
-                "schema": {
-                  "type": "string",
-                },
-              },
-            },
           },
         },
       },
