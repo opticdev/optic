@@ -87,7 +87,7 @@ function summarizePatch(
 
     const action =
       options.mode === 'update' ? 'has been added' : 'is not documented';
-    return [color(`${location} body ${action}`)];
+    return [color(`${location} ${diff.name} ${action}`)];
   } else if (
     diff.kind === 'MissingRequiredRequiredParameter' ||
     diff.kind === 'MissingRequiredResponseHeader'
@@ -98,7 +98,7 @@ function summarizePatch(
         : `[${diff.statusCode} response header]`;
     const action =
       options.mode === 'update' ? 'is now optional' : 'is required and missing';
-    return [color(`${location} body ${action}`)];
+    return [color(`${location} ${diff.name} ${action}`)];
   } else {
     const location = locationFromPath(path);
 
