@@ -23,6 +23,7 @@ import { DocumentedInteraction, Operation } from '../../../../oas/operations';
 import { OperationPatch, generateOperationPatches } from './operations';
 import { OperationDiffResult } from './types';
 import { generateRequestParameterPatches } from './request-params';
+import { generateResponseHeaderPatches } from './response-headers';
 
 export interface SpecPatch {
   description: string;
@@ -198,5 +199,7 @@ export class SpecPatches {
   static async *responseAdditions(
     interaction: CapturedInteraction,
     operation: Operation
-  ): SpecPatches {}
+  ): SpecPatches {
+    yield* generateResponseHeaderPatches(interaction, operation);
+  }
 }
