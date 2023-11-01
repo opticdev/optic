@@ -48,15 +48,15 @@ type DiffActionOptions = {
   generated?: boolean;
 };
 
-const description = `run a diff between two API specs`;
+const description = 'Run a diff between two API specs';
 
 const usage = () => `
-  optic diff <file_path> --base <base>
-  optic diff <file_to_compare_against> <file_path>
-  optic diff <file_to_compare_against> <file_path> --check`;
+  optic diff [file] --base <base>
+  optic diff [file1] [file2]
+  optic diff [file1] [file2] --check`;
 
 const helpText = `
-Example usage:
+Examples:
   Diff \`specs/openapi-spec.yml\` against master
   $ optic diff openapi-spec.yml --base master
 
@@ -78,47 +78,48 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     })
     .addHelpText('after', helpText)
     .description(description)
-    .argument('[file_to_compare_against]', 'path to file to compare with')
-    .argument('[file_path]', 'path to file to compare')
-    .option(
-      '--base <base>',
-      'the base ref to compare against. Defaults to HEAD. Also supports optic cloud tags (cloud:tag_name)',
-      'HEAD'
+    .argument('[file1]', 'Path to file to compare with')
+    .argument('[file2]', 'Path to file to compare')
+    .addOption(
+      new Option(
+        '-b, --base <base>',
+        'The base ref to compare against, also supports optic cloud tags (cloud:tag_name)'
+      ).default('HEAD')
     )
     .option(
-      '--standard <standard>',
-      'run comparison with a locally defined standard, if not set, looks for the standard on the [x-optic-standard] key on the spec, and then the optic.dev.yml file.'
+      '-S, --standard <standard>',
+      'Run comparison with a locally defined standard, if not set, looks for the standard on the [x-optic-standard] key in the spec and then the optic.dev.yml file'
     )
     .option(
-      '--head-tag <head-tag>',
-      'Adds additional tags to the HEAD spec. Should be used in conjunction with `--upload`'
+      '-H, --head-tag <head-tag>',
+      'Adds additional tags to the HEAD spec, used in conjunction with `--upload`'
     )
     .addOption(new Option('--ruleset <ruleset>', '').hideHelp())
     .addOption(
       new Option(
-        '--severity <severity>',
-        'specify the severity level to exit with exit code, options are error, warn and info'
+        '-s, --severity <severity>',
+        'Specify the severity level to exit with exit code: info=0, warn=1, error=2'
       )
-        .choices(['error', 'warn', 'info'])
+        .choices(['info', 'warn', 'error'])
         .default('error')
     )
     .addOption(
       new Option(
-        '--validation <validation>',
-        'specify the level of validation to run'
+        '-v, --validation <validation>',
+        'Specify the level of validation to run'
       )
         .choices(['strict', 'loose'])
         .default('strict')
     )
-    .option('--check', 'enable checks', false)
-    .option('--upload', 'upload run to cloud', false)
-    .option('--web', 'view the diff in the optic changelog web view', false)
-    .option('--json', 'output as json', false)
+    .option('-c, --check', 'Enable checks', false)
+    .option('-u, --upload', 'Upload run to cloud', false)
+    .option('-w, --web', 'View the diff in the Optic changelog web view', false)
+    .option('--json', 'Output as json', false)
+    .option('--last-change', 'Find the last change for this spec', false)
     .option(
       '--generated',
-      "[deprecated] Optic doesn't make a difference between generated and non generated specifications anymore"
+      '[deprecated] Optic no longer differentiates generated and non-generated specifications'
     )
-    .option('--last-change', 'find the last change for this spec', false)
     .action(errorHandler(getDiffAction(config), { command: 'diff' }));
 };
 
