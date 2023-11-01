@@ -12,10 +12,10 @@ export function clearCommand(): Command {
   const feedback = createCommandFeedback(command);
 
   command
-    .description('clear captures for the OpenAPI file')
-    .helpOption('-h, --help', 'Display help for the command');
-    .argument('[openapi-file]', 'an OpenAPI spec file to add an operation to')
-    .option('--all', 'clear all captured traffic')
+    .description('Clear captures for an OpenAPI spec')
+    .helpOption('-h, --help', 'Display help for the command')
+    .argument('[openapi-file]', 'The OpenAPI spec to clear')
+    .option('--all', 'Clear all captured traffic')
     .action(async (specPath) => {
       const options = command.opts();
       if (options.all) {
