@@ -52,8 +52,8 @@ const description = 'Run a diff between two API specs';
 
 const usage = () => `
   optic diff <file_path> --base <base>
-  optic diff <file_to_compare_against> <file_path>
-  optic diff <file_to_compare_against> <file_path> --check`;
+  optic diff [file_to_compare_against] <file_path>
+  optic diff [file_to_compare_against] <file_path> --check`;
 
 const helpText = `
 Example usage:
