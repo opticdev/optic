@@ -39,7 +39,6 @@ import { flushEvents, trackEvent } from '../../segment';
 import { getOpticUrlDetails } from '../../utils/cloud-urls';
 import sortBy from 'lodash.sortby';
 import * as Git from '../../utils/git-utils';
-import { getEndpointDiffs } from '@useoptic/openapi-utilities/build/openapi3/group-diff';
 
 const indent = (n: number) => '  '.repeat(n);
 
