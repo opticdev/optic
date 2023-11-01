@@ -39,79 +39,80 @@ import { flushEvents, trackEvent } from '../../segment';
 import { getOpticUrlDetails } from '../../utils/cloud-urls';
 import sortBy from 'lodash.sortby';
 import * as Git from '../../utils/git-utils';
+import { getEndpointDiffs } from '@useoptic/openapi-utilities/build/openapi3/group-diff';
 
 const indent = (n: number) => '  '.repeat(n);
 
 export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
   const command = new Command('capture');
+  // not super sure why we have to override the help here
+  command.helpOption('-h, --help', 'Display help for the command');
 
   command.addCommand(clearCommand());
   command.addCommand(initCommand(config));
 
   command
-    .argument('<openapi-file>', 'an OpenAPI spec file to add an operation to')
+    .argument('<openapi-file>', 'An OpenAPI spec file to add an operation to')
     .argument(
       '[target-url]',
-      'the url to capture (deprecated, use optic.yml configuration instead)'
+      'The url to capture (deprecated, use optic.yml configuration instead)'
     )
-    .description('capture traffic using the configuration in optic.yml')
-    .option(
-      '--proxy-port <proxy-port>',
-      'specify the port the proxy should be running on'
+    .description('Capture traffic using the configuration in optic.yml')
+    .addOption(
+      new Option(
+        '-p, --proxy-port <proxy-port>',
+        'Specify the port the proxy should be running on'
+      ).default(8000)
     )
     .addOption(
       new Option(
         '-u, --update [mode]',
-        'update the OpenAPI spec to match the traffic. specify the mode to change the update behavior on how to handle undocumented endpoints (endpoints not in your spec). \
- documented will only update documented endpoints. interactive will prompt you for new endpoint paths. automatic will guess the correct path'
+        `Update the OpenAPI spec based on the traffic. Mode selects the update behavior:
+- documented: Update previously documented endpoints
+- interactive: Prompt for new endpoints
+- automatic: Automatically document new endpoints`
       )
         .preset('documented')
         .choices(['interactive', 'automatic', 'documented'])
     )
+    .option('--postman <postman-collection-file>', 'Path to Postman collection')
     .option(
-      '--postman  <postman-collection-file>',
-      'path to postman collection'
+      '--har <har-file or directory>',
+      'Path to har file (v1.2, v1.3), or directory containing har files'
     )
+    .option('--verbose', 'Display verbose diff output', false)
     .option(
-      '--har <har-file, directory>',
-      'path to har file (v1.2, v1.3), or directory containing har files'
+      '-s, --server-override <url>',
+      'Skip executing `capture[].server.command` and forward proxy traffic to this URL instead'
     )
-    .option('--verbose', 'display verbose diff output', false)
-
-    .addOption(
-      new Option(
-        '-s, --server-override <url>',
-        'Skip executing `capture[].server.command` and forward proxy traffic to this URL instead'
-      )
-    )
-    .option('--upload', 'upload coverage results to Optic Cloud', false)
+    .option('--upload', 'Upload coverage results to Optic Cloud', false)
     // TODO deprecate hidden options below
     .addOption(
       new Option(
         '--no-tls',
-        'disable TLS support for --proxy and prevent generation of new CA certificates'
+        'Disable TLS support for --proxy and prevent generation of new CA certificates'
       ).hideHelp()
     )
     .addOption(
       new Option(
         '-r, --reverse-proxy',
-        'run optic capture in reverse proxy mode - send traffic to a port that gets forwarded to your server'
+        'Run optic capture in reverse proxy mode'
       ).hideHelp()
     )
     .addOption(
       new Option(
         '--command <command>',
-        'command to run with the http_proxy and http_proxy configured'
+        'Command to run with the http_proxy and http_proxy configured'
       ).hideHelp()
     )
     .addOption(
       new Option(
         '-d, --debug',
-        `output debug information (on stderr). Use LOG_LEVEL env with 'debug', 'info' to increase verbosity`
+        `Output debug information (on stderr). Use LOG_LEVEL env with 'debug', 'info' to increase verbosity.`
       ).hideHelp()
     )
     .addOption(
-      new Option('-o, --output <output>', 'file name for output').hideHelp()
+      new Option('-o, --output <output>', 'File name for output').hideHelp()
     )
     .action(
       errorHandler(getCaptureAction(config, command), { command: 'capture' })
