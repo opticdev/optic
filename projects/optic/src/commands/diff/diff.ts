@@ -51,9 +51,9 @@ type DiffActionOptions = {
 const description = 'Run a diff between two API specs';
 
 const usage = () => `
-  optic diff [file_path] --base <base>
-  optic diff [file_to_compare_against] [file_path]
-  optic diff [file_to_compare_against] [file_path] --check`;
+  optic diff [file] --base <base>
+  optic diff [file1] [file2]
+  optic diff [file1] [file2] --check`;
 
 const helpText = `
 Examples:
