@@ -56,7 +56,7 @@ const usage = () => `
   optic diff [file_to_compare_against] <file_path> --check`;
 
 const helpText = `
-Example usage:
+Examples:
   Diff \`specs/openapi-spec.yml\` against master
   $ optic diff openapi-spec.yml --base master
 
