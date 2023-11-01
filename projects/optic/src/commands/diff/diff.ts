@@ -78,8 +78,8 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     })
     .addHelpText('after', helpText)
     .description(description)
-    .argument('[file_to_compare_against]', 'Path to file to compare with')
-    .argument('[file_path]', 'Path to file to compare')
+    .argument('[file1]', 'Path to file to compare with')
+    .argument('[file2]', 'Path to file to compare')
     .addOption(
       new Option(
         '-b, --base <base>',
