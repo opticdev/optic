@@ -13,7 +13,6 @@ type CaptureInitActionOptions = {
 
 export function initCommand(config: OpticCliConfig): Command {
   const command = new Command('init');
-  // not super sure why we have to override the help here
   command.helpOption('-h, --help', 'Display help for the command');
   command
     .description('Add a `capture` block to your Optic.yml')

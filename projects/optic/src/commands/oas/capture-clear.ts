@@ -13,6 +13,7 @@ export function clearCommand(): Command {
 
   command
     .description('clear captures for the OpenAPI file')
+    .helpOption('-h, --help', 'Display help for the command');
     .argument('[openapi-file]', 'an OpenAPI spec file to add an operation to')
     .option('--all', 'clear all captured traffic')
     .action(async (specPath) => {

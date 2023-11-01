@@ -44,14 +44,11 @@ import { getEndpointDiffs } from '@useoptic/openapi-utilities/build/openapi3/gro
 const indent = (n: number) => '  '.repeat(n);
 
 export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
-  const command = new Command('capture');
-  // not super sure why we have to override the help here
-  command.helpOption('-h, --help', 'Display help for the command');
-
-  command.addCommand(clearCommand());
-  command.addCommand(initCommand(config));
+  const command = cli.command('capture');
 
   command
+    .addCommand(clearCommand())
+    .addCommand(initCommand(config))
     .argument('<openapi-file>', 'An OpenAPI spec file to add an operation to')
     .argument(
       '[target-url]',
@@ -115,10 +112,10 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
       new Option('-o, --output <output>', 'File name for output').hideHelp()
     )
     .action(
-      errorHandler(getCaptureAction(config, command), { command: 'capture' })
+      errorHandler(getCaptureAction(config, command), {
+        command: 'capture',
+      })
     );
-
-  cli.addCommand(command);
 }
 type CaptureActionOptions = {
   proxyPort?: string;
