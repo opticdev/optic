@@ -47,8 +47,6 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
   const command = cli.command('capture');
 
   command
-    .addCommand(clearCommand())
-    .addCommand(initCommand(config))
     .argument('<openapi-file>', 'An OpenAPI spec file to add an operation to')
     .argument(
       '[target-url]',
@@ -116,6 +114,9 @@ export function registerCaptureCommand(cli: Command, config: OpticCliConfig) {
         command: 'capture',
       })
     );
+
+  // subcommands
+  command.addCommand(clearCommand()).addCommand(initCommand(config));
 }
 type CaptureActionOptions = {
   proxyPort?: string;
