@@ -60,7 +60,7 @@ export async function* generateRequestParameterPatches(
           groupedOperations: [
             PatchOperationGroup.create(`add ${name} ${location} parameter`, {
               op: 'add',
-              path: jsonPointerHelpers.append(specPath, 'parameters', '/-'),
+              path: jsonPointerHelpers.append(specPath, 'parameters', '-'),
               value: {
                 schema: { type: 'string' }, // we assume everything is a string
                 in: location,
@@ -94,7 +94,7 @@ export async function* generateRequestParameterPatches(
         String(i)
       );
       yield {
-        description: `make ${param.name} ${location} parameter optional`,
+        description: `make ${param.name} ${param.in} parameter optional`,
         impact: [PatchImpact.BackwardsCompatible],
         diff: {
           kind: OperationDiffResultKind.MissingRequiredRequiredParameter,
@@ -104,7 +104,7 @@ export async function* generateRequestParameterPatches(
         path: paramPath,
         groupedOperations: [
           PatchOperationGroup.create(
-            `make ${param.name} ${location} parameter optional`,
+            `make ${param.name} ${param.in} parameter optional`,
             {
               op: 'replace',
               path: jsonPointerHelpers.append(paramPath, 'required'),

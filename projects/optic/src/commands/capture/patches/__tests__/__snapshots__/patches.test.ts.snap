@@ -1264,6 +1264,448 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 existing schema that does
 }
 `;
 
+exports[`generateEndpointSpecPatches OAS version 3.0.1 header parameter not documented 1`] = `
+[
+  {
+    "description": "operation: add 200 response",
+    "diff": {
+      "contentType": "application/json",
+      "kind": "UnmatchedResponseStatusCode",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add response status code",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200",
+            "value": {
+              "description": "200 response",
+            },
+          },
+        ],
+      },
+      {
+        "intent": "add response body for content type 'application/json'",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content",
+            "value": {
+              "application/json": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "add parameters array to operation",
+    "diff": {
+      "kind": "MissingRequestParametersArray",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add parameters array",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/parameters",
+            "value": [],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "add undocumented header parameter",
+    "diff": {
+      "in": "header",
+      "kind": "UnmatchedRequestParameter",
+      "name": "undocumented",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add undocumented header parameter",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/parameters/-",
+            "value": {
+              "in": "header",
+              "name": "undocumented",
+              "required": true,
+              "schema": {
+                "type": "string",
+              },
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/parameters",
+  },
+  {
+    "description": "update response body: add schema object",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add schema object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+            "value": {},
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/type",
+            "value": "object",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 header parameter not documented 2`] = `
+{
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "parameters": [
+          {
+            "in": "header",
+            "name": "undocumented",
+            "required": true,
+            "schema": {
+              "type": "string",
+            },
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                },
+              },
+            },
+            "description": "200 response",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 header parameter required but not seen 1`] = `
+[
+  {
+    "description": "operation: add 200 response",
+    "diff": {
+      "contentType": "application/json",
+      "kind": "UnmatchedResponseStatusCode",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add response status code",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200",
+            "value": {
+              "description": "200 response",
+            },
+          },
+        ],
+      },
+      {
+        "intent": "add response body for content type 'application/json'",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content",
+            "value": {
+              "application/json": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "make required header parameter optional",
+    "diff": {
+      "in": "header",
+      "kind": "MissingRequiredRequiredParameter",
+      "name": "required",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make required header parameter optional",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/paths/~1api~1animals/post/parameters/0/required",
+            "value": false,
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/parameters/0",
+  },
+  {
+    "description": "update response body: add schema object",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add schema object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+            "value": {},
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/type",
+            "value": "object",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 header parameter required but not seen 2`] = `
+{
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "parameters": [
+          {
+            "in": "header",
+            "name": "required",
+            "required": false,
+            "schema": {
+              "type": "string",
+            },
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                },
+              },
+            },
+            "description": "200 response",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
 exports[`generateEndpointSpecPatches OAS version 3.0.1 interactions with non-alphanumeric keys 1`] = `
 [
   {
@@ -3202,6 +3644,801 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 missing required property
                   },
                   "required": [],
                   "type": "object",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 query parameter not documented 1`] = `
+[
+  {
+    "description": "operation: add 200 response",
+    "diff": {
+      "contentType": "application/json",
+      "kind": "UnmatchedResponseStatusCode",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add response status code",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200",
+            "value": {
+              "description": "200 response",
+            },
+          },
+        ],
+      },
+      {
+        "intent": "add response body for content type 'application/json'",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content",
+            "value": {
+              "application/json": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "add parameters array to operation",
+    "diff": {
+      "kind": "MissingRequestParametersArray",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add parameters array",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/parameters",
+            "value": [],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "add undocumented query parameter",
+    "diff": {
+      "in": "query",
+      "kind": "UnmatchedRequestParameter",
+      "name": "undocumented",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add undocumented query parameter",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/parameters/-",
+            "value": {
+              "in": "query",
+              "name": "undocumented",
+              "required": true,
+              "schema": {
+                "type": "string",
+              },
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/parameters",
+  },
+  {
+    "description": "update response body: add schema object",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add schema object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+            "value": {},
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/type",
+            "value": "object",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 query parameter not documented 2`] = `
+{
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "undocumented",
+            "required": true,
+            "schema": {
+              "type": "string",
+            },
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                },
+              },
+            },
+            "description": "200 response",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 query parameter required but not seen 1`] = `
+[
+  {
+    "description": "operation: add 200 response",
+    "diff": {
+      "contentType": "application/json",
+      "kind": "UnmatchedResponseStatusCode",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add response status code",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200",
+            "value": {
+              "description": "200 response",
+            },
+          },
+        ],
+      },
+      {
+        "intent": "add response body for content type 'application/json'",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content",
+            "value": {
+              "application/json": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "make required query parameter optional",
+    "diff": {
+      "in": "query",
+      "kind": "MissingRequiredRequiredParameter",
+      "name": "required",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make required query parameter optional",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/paths/~1api~1animals/post/parameters/0/required",
+            "value": false,
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/parameters/0",
+  },
+  {
+    "description": "update response body: add schema object",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add schema object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+            "value": {},
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/type",
+            "value": "object",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 query parameter required but not seen 2`] = `
+{
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "required",
+            "required": false,
+            "schema": {
+              "type": "string",
+            },
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                },
+              },
+            },
+            "description": "200 response",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 response headers not documented 1`] = `
+[
+  {
+    "description": "operation: add 200 response",
+    "diff": {
+      "contentType": "application/json",
+      "kind": "UnmatchedResponseStatusCode",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add response status code",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200",
+            "value": {
+              "description": "200 response",
+            },
+          },
+        ],
+      },
+      {
+        "intent": "add response body for content type 'application/json'",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content",
+            "value": {
+              "application/json": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "add response headers object to operation",
+    "diff": {
+      "kind": "MissingResponseHeadersObject",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add parameters array",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/headers",
+            "value": {},
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200",
+  },
+  {
+    "description": "add undocumented response header to 200 response",
+    "diff": {
+      "kind": "UnmatchedResponseHeader",
+      "name": "undocumented",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add undocumented response header to 200 response",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/headers/undocumented",
+            "value": {
+              "name": "undocumented",
+              "required": true,
+              "schema": {
+                "type": "string",
+              },
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/headers/undocumented",
+  },
+  {
+    "description": "update response body: add schema object",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add schema object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+            "value": {},
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/type",
+            "value": "object",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 response headers not documented 2`] = `
+{
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                },
+              },
+            },
+            "description": "200 response",
+            "headers": {
+              "undocumented": {
+                "name": "undocumented",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 response headers required but not seen 1`] = `
+[
+  {
+    "description": "make required response header in 200 response optional",
+    "diff": {
+      "kind": "MissingRequiredResponseHeader",
+      "name": "required",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make required response header in 200 response optional",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/paths/~1api~1animals/post/responses/200/headers/required/required",
+            "value": false,
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/headers/required",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 response headers required but not seen 2`] = `
+{
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "properties": {
+                          "status": {
+                            "const": "ok",
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "status",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                  },
+                  "type": "object",
+                },
+              },
+            },
+            "headers": {
+              "required": {
+                "name": "required",
+                "required": false,
+                "schema": {
+                  "type": "string",
                 },
               },
             },
@@ -7089,6 +8326,448 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 existing schema that does
 }
 `;
 
+exports[`generateEndpointSpecPatches OAS version 3.1.0 header parameter not documented 1`] = `
+[
+  {
+    "description": "operation: add 200 response",
+    "diff": {
+      "contentType": "application/json",
+      "kind": "UnmatchedResponseStatusCode",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add response status code",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200",
+            "value": {
+              "description": "200 response",
+            },
+          },
+        ],
+      },
+      {
+        "intent": "add response body for content type 'application/json'",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content",
+            "value": {
+              "application/json": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "add parameters array to operation",
+    "diff": {
+      "kind": "MissingRequestParametersArray",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add parameters array",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/parameters",
+            "value": [],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "add undocumented header parameter",
+    "diff": {
+      "in": "header",
+      "kind": "UnmatchedRequestParameter",
+      "name": "undocumented",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add undocumented header parameter",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/parameters/-",
+            "value": {
+              "in": "header",
+              "name": "undocumented",
+              "required": true,
+              "schema": {
+                "type": "string",
+              },
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/parameters",
+  },
+  {
+    "description": "update response body: add schema object",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add schema object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+            "value": {},
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/type",
+            "value": "object",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 header parameter not documented 2`] = `
+{
+  "info": {},
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "parameters": [
+          {
+            "in": "header",
+            "name": "undocumented",
+            "required": true,
+            "schema": {
+              "type": "string",
+            },
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                },
+              },
+            },
+            "description": "200 response",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 header parameter required but not seen 1`] = `
+[
+  {
+    "description": "operation: add 200 response",
+    "diff": {
+      "contentType": "application/json",
+      "kind": "UnmatchedResponseStatusCode",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add response status code",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200",
+            "value": {
+              "description": "200 response",
+            },
+          },
+        ],
+      },
+      {
+        "intent": "add response body for content type 'application/json'",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content",
+            "value": {
+              "application/json": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "make required header parameter optional",
+    "diff": {
+      "in": "header",
+      "kind": "MissingRequiredRequiredParameter",
+      "name": "required",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make required header parameter optional",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/paths/~1api~1animals/post/parameters/0/required",
+            "value": false,
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/parameters/0",
+  },
+  {
+    "description": "update response body: add schema object",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add schema object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+            "value": {},
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/type",
+            "value": "object",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 header parameter required but not seen 2`] = `
+{
+  "info": {},
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "parameters": [
+          {
+            "in": "header",
+            "name": "required",
+            "required": false,
+            "schema": {
+              "type": "string",
+            },
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                },
+              },
+            },
+            "description": "200 response",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
 exports[`generateEndpointSpecPatches OAS version 3.1.0 interactions with non-alphanumeric keys 1`] = `
 [
   {
@@ -9027,6 +10706,801 @@ exports[`generateEndpointSpecPatches OAS version 3.1.0 missing required property
                   },
                   "required": [],
                   "type": "object",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 query parameter not documented 1`] = `
+[
+  {
+    "description": "operation: add 200 response",
+    "diff": {
+      "contentType": "application/json",
+      "kind": "UnmatchedResponseStatusCode",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add response status code",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200",
+            "value": {
+              "description": "200 response",
+            },
+          },
+        ],
+      },
+      {
+        "intent": "add response body for content type 'application/json'",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content",
+            "value": {
+              "application/json": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "add parameters array to operation",
+    "diff": {
+      "kind": "MissingRequestParametersArray",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add parameters array",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/parameters",
+            "value": [],
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "add undocumented query parameter",
+    "diff": {
+      "in": "query",
+      "kind": "UnmatchedRequestParameter",
+      "name": "undocumented",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add undocumented query parameter",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/parameters/-",
+            "value": {
+              "in": "query",
+              "name": "undocumented",
+              "required": true,
+              "schema": {
+                "type": "string",
+              },
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/parameters",
+  },
+  {
+    "description": "update response body: add schema object",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add schema object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+            "value": {},
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/type",
+            "value": "object",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 query parameter not documented 2`] = `
+{
+  "info": {},
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "undocumented",
+            "required": true,
+            "schema": {
+              "type": "string",
+            },
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                },
+              },
+            },
+            "description": "200 response",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 query parameter required but not seen 1`] = `
+[
+  {
+    "description": "operation: add 200 response",
+    "diff": {
+      "contentType": "application/json",
+      "kind": "UnmatchedResponseStatusCode",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add response status code",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200",
+            "value": {
+              "description": "200 response",
+            },
+          },
+        ],
+      },
+      {
+        "intent": "add response body for content type 'application/json'",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content",
+            "value": {
+              "application/json": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "make required query parameter optional",
+    "diff": {
+      "in": "query",
+      "kind": "MissingRequiredRequiredParameter",
+      "name": "required",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make required query parameter optional",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/paths/~1api~1animals/post/parameters/0/required",
+            "value": false,
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/parameters/0",
+  },
+  {
+    "description": "update response body: add schema object",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add schema object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+            "value": {},
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/type",
+            "value": "object",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 query parameter required but not seen 2`] = `
+{
+  "info": {},
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "required",
+            "required": false,
+            "schema": {
+              "type": "string",
+            },
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                },
+              },
+            },
+            "description": "200 response",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 response headers not documented 1`] = `
+[
+  {
+    "description": "operation: add 200 response",
+    "diff": {
+      "contentType": "application/json",
+      "kind": "UnmatchedResponseStatusCode",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add response status code",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200",
+            "value": {
+              "description": "200 response",
+            },
+          },
+        ],
+      },
+      {
+        "intent": "add response body for content type 'application/json'",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content",
+            "value": {
+              "application/json": {},
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post",
+  },
+  {
+    "description": "add response headers object to operation",
+    "diff": {
+      "kind": "MissingResponseHeadersObject",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add parameters array",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/headers",
+            "value": {},
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200",
+  },
+  {
+    "description": "add undocumented response header to 200 response",
+    "diff": {
+      "kind": "UnmatchedResponseHeader",
+      "name": "undocumented",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "add undocumented response header to 200 response",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/headers/undocumented",
+            "value": {
+              "name": "undocumented",
+              "required": true,
+              "schema": {
+                "type": "string",
+              },
+            },
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/headers/undocumented",
+  },
+  {
+    "description": "update response body: add schema object",
+    "diff": undefined,
+    "groupedOperations": [
+      {
+        "intent": "add schema object",
+        "operations": [
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+            "value": {},
+          },
+          {
+            "op": "add",
+            "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/type",
+            "value": "object",
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [
+          {
+            "name": "undocumented",
+            "value": "abc",
+          },
+        ],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 response headers not documented 2`] = `
+{
+  "info": {},
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                },
+              },
+            },
+            "description": "200 response",
+            "headers": {
+              "undocumented": {
+                "name": "undocumented",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 response headers required but not seen 1`] = `
+[
+  {
+    "description": "make required response header in 200 response optional",
+    "diff": {
+      "kind": "MissingRequiredResponseHeader",
+      "name": "required",
+      "statusCode": "200",
+    },
+    "groupedOperations": [
+      {
+        "intent": "make required response header in 200 response optional",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/paths/~1api~1animals/post/responses/200/headers/required/required",
+            "value": false,
+          },
+        ],
+      },
+    ],
+    "impact": [
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{}",
+          "contentType": "application/json",
+          "size": 2,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/headers/required",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 response headers required but not seen 2`] = `
+{
+  "info": {},
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "properties": {
+                          "status": {
+                            "const": "ok",
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "status",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                  },
+                  "type": "object",
+                },
+              },
+            },
+            "headers": {
+              "required": {
+                "name": "required",
+                "required": false,
+                "schema": {
+                  "type": "string",
                 },
               },
             },

@@ -15,7 +15,11 @@ import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import chalk from 'chalk';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { Subject, tap } from '../lib/async-tools';
-import { DocumentedInteraction, DocumentedInteractions } from '../operations';
+import {
+  DocumentedInteraction,
+  DocumentedInteractions,
+  Operation,
+} from '../operations';
 import {
   DocumentedBodies,
   DocumentedBody,
@@ -288,10 +292,15 @@ export function updateByInteractions(
       }
 
       // phase two: shape patches, describing request / response bodies in detail
-      documentedInteraction = DocumentedInteraction.updateOperation(
-        documentedInteraction,
-        patchedSpec
+      documentedInteraction.operation = Operation.fromOperationObject(
+        documentedInteraction.operation.pathPattern,
+        documentedInteraction.operation.method,
+        jsonPointerHelpers.get(
+          patchedSpec,
+          documentedInteraction.specJsonPath
+        ) as any
       );
+
       let documentedBodies = DocumentedBodies.fromDocumentedInteraction(
         documentedInteraction
       );

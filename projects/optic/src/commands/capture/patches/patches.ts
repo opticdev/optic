@@ -7,7 +7,7 @@ import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { ApiCoverageCounter } from '../coverage/api-coverage';
 import { SpecPatch, SpecPatches } from './patchers/spec/patches';
 import { CapturedInteractions } from '../sources/captured-interactions';
-import { DocumentedInteraction, Operation } from '../../oas/operations';
+import { Operation } from '../../oas/operations';
 import { DocumentedBodies } from './patchers/shapes/documented-bodies';
 import { UndocumentedOperationType } from '../../oas/operations';
 import { SchemaInventory } from './patchers/closeness/schema-inventory';
@@ -80,7 +80,7 @@ export async function* generateEndpointSpecPatches(
       endpoint.method,
       jsonPointerHelpers.get(specHolder.spec, jsonPath) as any
     );
-    let documentedInteraction: DocumentedInteraction = {
+    let documentedInteraction = {
       interaction,
       operation,
       specJsonPath: jsonPath,
@@ -128,9 +128,10 @@ export async function* generateEndpointSpecPatches(
     }
 
     // phase three: shape patches, describing request / response bodies in detail
-    documentedInteraction = DocumentedInteraction.updateOperation(
-      documentedInteraction,
-      specHolder.spec
+    documentedInteraction.operation = Operation.fromOperationObject(
+      endpoint.path,
+      endpoint.method,
+      jsonPointerHelpers.get(specHolder.spec, jsonPath) as any
     );
     let documentedBodies = DocumentedBodies.fromDocumentedInteraction(
       documentedInteraction

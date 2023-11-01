@@ -1,5 +1,4 @@
 import chalk from 'chalk';
-import path from 'path';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { ParseResult } from '../../../utils/spec-loaders';
 import {
