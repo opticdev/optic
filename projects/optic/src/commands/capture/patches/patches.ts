@@ -182,8 +182,8 @@ export async function* generateRefRefactorPatches(
 export async function jsonOpsFromSpecPatches(specPatches: SpecPatches) {
   const ops: JsonOps[] = [];
   for await (const patch of specPatches) {
-    for (const { operations } of patch.groupedOperations) {
-      ops.push(...operations);
+    for (const operation of patch.groupedOperations) {
+      ops.push(operation);
     }
   }
 

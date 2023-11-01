@@ -2,7 +2,6 @@ import { CapturedInteraction } from '../../../sources/captured-interactions';
 import { PatchImpact, SpecPatches } from './patches';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { Operation } from '../../../../oas/operations';
-import { PatchOperationGroup } from '../../patch-operations';
 import { OperationDiffResultKind } from './types';
 
 export async function* generateRequestParameterPatches(
@@ -27,11 +26,11 @@ export async function* generateRequestParameterPatches(
         },
         path: specPath,
         groupedOperations: [
-          PatchOperationGroup.create('add parameters array', {
+          {
             op: 'add',
             path: jsonPointerHelpers.append(specPath, 'parameters'),
             value: [],
-          }),
+          },
         ],
         interaction,
       };
@@ -58,7 +57,7 @@ export async function* generateRequestParameterPatches(
           },
           path: jsonPointerHelpers.append(specPath, 'parameters'),
           groupedOperations: [
-            PatchOperationGroup.create(`add ${name} ${location} parameter`, {
+            {
               op: 'add',
               path: jsonPointerHelpers.append(specPath, 'parameters', '-'),
               value: {
@@ -67,7 +66,7 @@ export async function* generateRequestParameterPatches(
                 name,
                 required: true, // we assume everything is required until we see something is not required
               },
-            }),
+            },
           ],
           interaction,
         };
@@ -103,14 +102,11 @@ export async function* generateRequestParameterPatches(
         },
         path: paramPath,
         groupedOperations: [
-          PatchOperationGroup.create(
-            `make ${param.name} ${param.in} parameter optional`,
-            {
-              op: 'replace',
-              path: jsonPointerHelpers.append(paramPath, 'required'),
-              value: false,
-            }
-          ),
+          {
+            op: 'replace',
+            path: jsonPointerHelpers.append(paramPath, 'required'),
+            value: false,
+          },
         ],
         interaction,
       };

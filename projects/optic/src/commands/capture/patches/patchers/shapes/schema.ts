@@ -105,7 +105,7 @@ export class Schema {
     patch: ShapePatch
   ): SchemaObject {
     const operations = JsonPatch.deepClone(
-      patch.groupedOperations.flatMap((operation) => operation.operations)
+      patch.groupedOperations.flatMap((operation) => operation)
     );
     try {
       const result = JsonPatch.applyPatch(

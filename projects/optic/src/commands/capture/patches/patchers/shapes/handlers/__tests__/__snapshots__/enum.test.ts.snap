@@ -39,14 +39,9 @@ exports[`enum shape patch generator when enum is nested in array 1`] = `
     },
     "groupedOperations": [
       {
-        "intent": "add new enum value to status",
-        "operations": [
-          {
-            "op": "add",
-            "path": "/properties/other/items/properties/status/enum/-",
-            "value": "new-field",
-          },
-        ],
+        "op": "add",
+        "path": "/properties/other/items/properties/status/enum/-",
+        "value": "new-field",
       },
     ],
     "impact": [
@@ -85,14 +80,9 @@ exports[`enum shape patch generator when missing an enum 1`] = `
     },
     "groupedOperations": [
       {
-        "intent": "add new enum value to status",
-        "operations": [
-          {
-            "op": "add",
-            "path": "/properties/status/enum/-",
-            "value": "new-field",
-          },
-        ],
+        "op": "add",
+        "path": "/properties/status/enum/-",
+        "value": "new-field",
       },
     ],
     "impact": [

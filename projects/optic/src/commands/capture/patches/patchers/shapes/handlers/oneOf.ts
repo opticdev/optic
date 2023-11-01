@@ -8,8 +8,7 @@ import {
   ShapeDiffResultKind,
 } from '../diff';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { PatchImpact } from '../../../patch-operations';
-import { OperationGroup } from '../../spec/patches';
+import { PatchImpact, PatchOperation } from '../../../patch-operations';
 import { ShapePatch } from '../patches';
 import { CapturedInteraction } from '../../../../sources/captured-interactions';
 
@@ -66,15 +65,13 @@ export function* oneOfPatches(
   )
     return;
 
-  let groupedOperations: OperationGroup[] = [];
+  let groupedOperations: PatchOperation[] = [];
 
-  groupedOperations.push(
-    OperationGroup.create(`add new oneOf branch to ${diff.key}`, {
-      op: 'add',
-      path: jsonPointerHelpers.append(diff.propertyPath, '-'), // "-" indicates append to array
-      value: Schema.baseFromValue(diff.example, openAPIVersion),
-    })
-  );
+  groupedOperations.push({
+    op: 'add',
+    path: jsonPointerHelpers.append(diff.propertyPath, '-'), // "-" indicates append to array
+    value: Schema.baseFromValue(diff.example, openAPIVersion),
+  });
 
   // TODO: possibly clean up the newly generated schema, or perhaps try to not make that necessary
 

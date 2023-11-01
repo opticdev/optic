@@ -4,15 +4,15 @@ import {
   findBody,
   findResponse,
 } from '../../../../oas/operations';
-import { PatchOperationGroup } from '../../patch-operations';
 import { PatchImpact } from './patches';
 import { OperationDiffResult, OperationDiffResultKind } from './types';
+import { PatchOperation } from '../../patch-operations';
 
 export interface OperationPatch {
   description: string;
   impact: PatchImpact[];
   diff: OperationDiffResult | undefined;
-  groupedOperations: PatchOperationGroup[];
+  groupedOperations: PatchOperation[];
 }
 export interface OperationPatches extends Iterable<OperationPatch> {}
 
@@ -37,11 +37,11 @@ function* generateRequestPatches(
         kind: OperationDiffResultKind.MissingRequestBody,
       },
       groupedOperations: [
-        PatchOperationGroup.create('make request body optional', {
+        {
           op: 'replace',
           path: jsonPointerHelpers.compile(['requestBody', 'required']),
           value: false,
-        }),
+        },
       ],
     };
   } else if (
@@ -59,14 +59,14 @@ function* generateRequestPatches(
         contentType: contentType,
       },
       groupedOperations: [
-        PatchOperationGroup.create(`add request body to operation`, {
+        {
           op: 'add',
           path: jsonPointerHelpers.compile(['requestBody']),
           value: {
             content: {},
           },
-        }),
-        PatchOperationGroup.create(`add ${contentType} as content type`, {
+        },
+        {
           op: 'add',
           path: jsonPointerHelpers.compile([
             'requestBody',
@@ -76,7 +76,7 @@ function* generateRequestPatches(
           value: {
             schema: {},
           },
-        }),
+        },
       ],
     };
   } else if (
@@ -91,29 +91,25 @@ function* generateRequestPatches(
 
     if (!matchedRequestBody) {
       const contentType = interaction.request.body.contentType;
-      let groupedOperations: PatchOperationGroup[] = [];
+      let groupedOperations: PatchOperation[] = [];
       if (!operation.requestBody.content) {
-        groupedOperations.push(
-          PatchOperationGroup.create(`add content to operation`, {
-            op: 'add',
-            path: jsonPointerHelpers.compile(['requestBody', 'content']),
-            value: {},
-          })
-        );
-      }
-      groupedOperations.push(
-        PatchOperationGroup.create(`add ${contentType} as content type`, {
+        groupedOperations.push({
           op: 'add',
-          path: jsonPointerHelpers.compile([
-            'requestBody',
-            'content',
-            contentType,
-          ]),
-          value: {
-            schema: {},
-          },
-        })
-      );
+          path: jsonPointerHelpers.compile(['requestBody', 'content']),
+          value: {},
+        });
+      }
+      groupedOperations.push({
+        op: 'add',
+        path: jsonPointerHelpers.compile([
+          'requestBody',
+          'content',
+          contentType,
+        ]),
+        value: {
+          schema: {},
+        },
+      });
 
       yield {
         description: `add '${contentType}' body as a valid request body type`,
@@ -148,32 +144,23 @@ function* generateResponsePatches(
     ) {
       return; // only document 2xx and 4xx
     }
-    const groupedOperations: PatchOperationGroup[] = [
-      PatchOperationGroup.create('add response status code', {
+    const groupedOperations: PatchOperation[] = [
+      {
         op: 'add',
         path: jsonPointerHelpers.compile(['responses', statusCode]),
         value: {
           description: `${statusCode} response`,
         },
-      }),
+      },
     ];
     if (contentType) {
-      groupedOperations.push(
-        PatchOperationGroup.create(
-          `add response body for content type '${contentType}'`,
-          {
-            op: 'add',
-            path: jsonPointerHelpers.compile([
-              'responses',
-              statusCode,
-              'content',
-            ]),
-            value: {
-              [contentType]: {},
-            },
-          }
-        )
-      );
+      groupedOperations.push({
+        op: 'add',
+        path: jsonPointerHelpers.compile(['responses', statusCode, 'content']),
+        value: {
+          [contentType]: {},
+        },
+      });
     }
 
     yield {
@@ -197,39 +184,25 @@ function* generateResponsePatches(
   );
 
   if (!matchedBody && interaction.response.body && contentType) {
-    const groupedOperations: PatchOperationGroup[] = [];
+    const groupedOperations: PatchOperation[] = [];
 
     if (!response.content) {
-      groupedOperations.push(
-        PatchOperationGroup.create(
-          `add content object for ${statusCode} response`,
-          {
-            op: 'add',
-            path: jsonPointerHelpers.compile([
-              'responses',
-              statusCode,
-              'content',
-            ]),
-            value: {},
-          }
-        )
-      );
+      groupedOperations.push({
+        op: 'add',
+        path: jsonPointerHelpers.compile(['responses', statusCode, 'content']),
+        value: {},
+      });
     }
-    groupedOperations.push(
-      PatchOperationGroup.create(
-        `add response body for content type '${contentType}'`,
-        {
-          op: 'add',
-          path: jsonPointerHelpers.compile([
-            'responses',
-            statusCode,
-            'content',
-            contentType,
-          ]),
-          value: {},
-        }
-      )
-    );
+    groupedOperations.push({
+      op: 'add',
+      path: jsonPointerHelpers.compile([
+        'responses',
+        statusCode,
+        'content',
+        contentType,
+      ]),
+      value: {},
+    });
 
     yield {
       description: `add ${contentType} response for ${statusCode}`,
@@ -256,19 +229,14 @@ function* generateResponsePatches(
         statusCode: statusCode,
       },
       groupedOperations: [
-        PatchOperationGroup.create(
-          `remove response content (${
-            contentSize > 0 ? `${contentSize} bodies` : 'empty'
-          })`,
-          {
-            op: 'remove',
-            path: jsonPointerHelpers.compile([
-              'responses',
-              statusCode,
-              'content',
-            ]),
-          }
-        ),
+        {
+          op: 'remove',
+          path: jsonPointerHelpers.compile([
+            'responses',
+            statusCode,
+            'content',
+          ]),
+        },
       ],
     };
   }

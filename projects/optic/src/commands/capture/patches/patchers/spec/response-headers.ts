@@ -2,7 +2,7 @@ import { CapturedInteraction } from '../../../sources/captured-interactions';
 import { PatchImpact, SpecPatches } from './patches';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { Operation } from '../../../../oas/operations';
-import { PatchOperationGroup } from '../../patch-operations';
+
 import { OperationDiffResultKind } from './types';
 
 export async function* generateResponseHeaderPatches(
@@ -31,11 +31,11 @@ export async function* generateResponseHeaderPatches(
         },
         path: responsePath,
         groupedOperations: [
-          PatchOperationGroup.create('add parameters array', {
+          {
             op: 'add',
             path: jsonPointerHelpers.append(responsePath, 'headers'),
             value: {},
-          }),
+          },
         ],
         interaction,
       };
@@ -59,18 +59,15 @@ export async function* generateResponseHeaderPatches(
           },
           path: headerPath,
           groupedOperations: [
-            PatchOperationGroup.create(
-              `add ${name} response header to ${interaction.response.statusCode} response`,
-              {
-                op: 'add',
-                path: headerPath,
-                value: {
-                  schema: { type: 'string' }, // we assume everything is a string
-                  name,
-                  required: true, // we assume everything is required until we see something is not required
-                },
-              }
-            ),
+            {
+              op: 'add',
+              path: headerPath,
+              value: {
+                schema: { type: 'string' }, // we assume everything is a string
+                name,
+                required: true, // we assume everything is required until we see something is not required
+              },
+            },
           ],
           interaction,
         };
@@ -99,14 +96,11 @@ export async function* generateResponseHeaderPatches(
         },
         path: headerPath,
         groupedOperations: [
-          PatchOperationGroup.create(
-            `make ${key} response header in ${interaction.response.statusCode} response optional`,
-            {
-              op: 'replace',
-              path: jsonPointerHelpers.append(headerPath, 'required'),
-              value: false,
-            }
-          ),
+          {
+            op: 'replace',
+            path: jsonPointerHelpers.append(headerPath, 'required'),
+            value: false,
+          },
         ],
         interaction,
       };

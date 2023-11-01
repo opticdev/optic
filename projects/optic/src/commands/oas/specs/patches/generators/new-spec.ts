@@ -1,6 +1,5 @@
 import { OpenAPIV3 } from '../../';
 import {
-  OperationGroup,
   PatchImpact,
   SpecPatch,
 } from '../../../../capture/patches/patchers/spec/patches';
@@ -23,11 +22,11 @@ export function* newSpecPatches<T>(
     path: '/',
     diff: undefined,
     groupedOperations: [
-      OperationGroup.create(`setup minimal viable OpenAPI spec file`, {
+      {
         op: 'add',
         path: '',
         value: newSpec,
-      }),
+      },
     ],
   };
 }
