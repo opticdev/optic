@@ -16,7 +16,7 @@ import { exec } from 'child_process';
 import { getEndpointsChanges } from '@useoptic/openapi-utilities';
 
 const usage = () => `
-  optic history <path_to_spec.yml>`;
+  optic history [path_to_spec]`;
 
 const helpText = `
 Example usage:
@@ -33,7 +33,7 @@ export const registerHistory = (cli: Command, config: OpticCliConfig) => {
     .configureHelp({ commandUsage: usage })
     .addHelpText('after', helpText)
     .description('Browse spec history and create a text changelog')
-    .argument('[path_to_spec]', 'path to OpenAPI file')
+    .argument('[path_to_spec]', 'Path to OpenAPI file')
     .option(
       '-D, --history-depth <history-depth>',
       'Sets the depth of how far to crawl through to historic API data. history-depth=0 will crawl the entire history',
