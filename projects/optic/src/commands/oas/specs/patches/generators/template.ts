@@ -2,7 +2,6 @@ import { OpenAPIV3 } from '../..';
 import JsonPatch from 'fast-json-patch';
 import { SpecTemplate } from '../..';
 import {
-  OperationGroup,
   PatchImpact,
   SpecPatch,
 } from '../../../../capture/patches/patchers/spec/patches';
@@ -33,11 +32,6 @@ export function* templatePatches<T>(
     diff: undefined,
     path: '/',
     description: `changes made through applying '${template.name}' template`, // TODO: allow template control more specifically
-    groupedOperations: [
-      OperationGroup.create(
-        `match changes made through applying '${template.name}' template`, // TODO: identify intent of changes
-        ...operations
-      ),
-    ],
+    groupedOperations: [...operations],
   };
 }

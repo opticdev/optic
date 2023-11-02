@@ -5,7 +5,6 @@ import { SpecTemplate } from '../templates';
 import { UndocumentedOperation } from '../../operations';
 import {
   Operation,
-  OperationGroup,
   PatchImpact,
   SpecPatch,
   SpecPatches,
@@ -27,8 +26,8 @@ export class LegacySpecPatches {
 
   static async *operations(patches: SpecPatches): AsyncIterable<Operation> {
     yield* flatMap<SpecPatch, Operation>(async function* (patch) {
-      for (let group of patch.groupedOperations) {
-        yield* OperationGroup.operations(group);
+      for (let op of patch.groupedOperations) {
+        yield op;
       }
     })(patches);
   }

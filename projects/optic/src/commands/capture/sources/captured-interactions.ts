@@ -2,7 +2,6 @@ import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 
 import { HttpArchive, HarEntries } from './har';
 import { PostmanEntry, PostmanCollectionEntries } from './postman';
-import { ProxySource, ProxyInteractions } from '../sources/proxy';
 
 import { URL } from 'url';
 import { Buffer } from 'buffer';
@@ -16,7 +15,7 @@ type Header = {
 
 type Query = {
   name: string;
-  value: string | string[];
+  value: string;
 };
 
 export interface CapturedInteraction {
@@ -25,17 +24,16 @@ export interface CapturedInteraction {
     method: OpenAPIV3.HttpMethods;
     path: string;
     body: CapturedBody | null;
-    // TODO implement support for headers / queries
     headers: Header[];
     query: Query[];
   };
   response?: {
     statusCode: string;
     body: CapturedBody | null;
-    // TODO implement support for response headers
     headers: Header[];
   };
 }
+
 export class CapturedInteraction {
   static fromHarEntry(entry: HttpArchive.Entry): CapturedInteraction | null {
     const url = new URL(entry.request.url);
@@ -79,71 +77,30 @@ export class CapturedInteraction {
       responseBody = CapturedBody.from(asText, responseContent.mimeType);
     }
 
+    const headers = entry.request.headers
+      .filter((h) => h.name && h.value)
+      .map((h) => ({ name: h.name, value: h.value }));
+    const query = entry.request.queryString
+      .filter((q) => q.name && q.value)
+      .map((q) => ({ name: q.name, value: q.value }));
+
+    const responseHeaders = entry.response.headers
+      .filter((h) => h.name && h.value)
+      .map((h) => ({ name: h.name, value: h.value }));
+
     return {
       request: {
         host: url.host,
         method,
         path: url.pathname,
         body: requestBody,
-        headers: [],
-        query: [],
+        headers,
+        query,
       },
       response: {
         statusCode: '' + entry.response.status,
         body: responseBody,
-        headers: [],
-      },
-    };
-  }
-
-  static fromProxyInteraction(
-    proxyInteraction: ProxySource.Interaction
-  ): CapturedInteraction | null {
-    const url = new URL(proxyInteraction.request.url);
-
-    const method = OpenAPIV3.HttpMethods[proxyInteraction.request.method];
-    if (!method) {
-      return null;
-    }
-
-    let requestBody: CapturedBody | null = null;
-    let responseBody: CapturedBody | null = null;
-
-    const requestBodyBuffer = proxyInteraction.request.body.buffer;
-    if (requestBodyBuffer.length > 0) {
-      let contentType = proxyInteraction.request.headers['content-type'];
-      let contentLength = proxyInteraction.request.headers['content-length'];
-
-      requestBody = CapturedBody.from(
-        new TextDecoder().decode(requestBodyBuffer),
-        contentType || null
-      );
-    }
-
-    const responseBodyBuffer = proxyInteraction.response.body.buffer;
-    if (responseBodyBuffer.length > 0) {
-      let contentType = proxyInteraction.response.headers['content-type'];
-      let contentLength = proxyInteraction.response.headers['content-length'];
-
-      responseBody = CapturedBody.from(
-        new TextDecoder().decode(responseBodyBuffer),
-        contentType || null
-      );
-    }
-
-    return {
-      request: {
-        host: url.hostname,
-        method,
-        path: url.pathname,
-        body: requestBody,
-        headers: [],
-        query: [],
-      },
-      response: {
-        statusCode: '' + proxyInteraction.response.statusCode,
-        body: responseBody,
-        headers: [],
+        headers: responseHeaders,
       },
     };
   }
@@ -245,20 +202,6 @@ export class CapturedInteractions {
         yield capturedInteraction;
       } else {
         logger.debug(`skipping entry ${JSON.stringify(entry)}`);
-      }
-    }
-  }
-
-  static async *fromProxyInteractions(
-    interactions: ProxyInteractions
-  ): CapturedInteractions {
-    for await (let interaction of interactions) {
-      const capturedInteraction =
-        CapturedInteraction.fromProxyInteraction(interaction);
-      if (capturedInteraction) {
-        yield capturedInteraction;
-      } else {
-        logger.debug(`skipping entry ${JSON.stringify(interaction)}`);
       }
     }
   }

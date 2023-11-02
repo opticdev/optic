@@ -104,19 +104,14 @@ exports[`one of shape patch generator can add an additional branch to a complex 
     },
     "groupedOperations": [
       {
-        "intent": "add new oneOf branch to oneOf",
-        "operations": [
-          {
-            "op": "add",
-            "path": "/properties/location/properties/principality/properties/coordinates/oneOf/-",
-            "value": {
-              "items": {
-                "type": "number",
-              },
-              "type": "array",
-            },
+        "op": "add",
+        "path": "/properties/location/properties/principality/properties/coordinates/oneOf/-",
+        "value": {
+          "items": {
+            "type": "number",
           },
-        ],
+          "type": "array",
+        },
       },
     ],
     "impact": [
@@ -155,29 +150,19 @@ exports[`one of shape patch generator when new field in one of object variant of
     },
     "groupedOperations": [
       {
-        "intent": "add required [] to parent object and make hello required",
-        "operations": [
-          {
-            "extra": "same",
-            "op": "add",
-            "path": "/properties/polyProp/oneOf/0/required",
-            "value": [
-              "hello",
-            ],
-          },
+        "extra": "same",
+        "op": "add",
+        "path": "/properties/polyProp/oneOf/0/required",
+        "value": [
+          "hello",
         ],
       },
       {
-        "intent": "add property hello schema to properties",
-        "operations": [
-          {
-            "op": "add",
-            "path": "/properties/polyProp/oneOf/0/properties/hello",
-            "value": {
-              "type": "string",
-            },
-          },
-        ],
+        "op": "add",
+        "path": "/properties/polyProp/oneOf/0/properties/hello",
+        "value": {
+          "type": "string",
+        },
       },
     ],
     "impact": [
@@ -215,16 +200,11 @@ exports[`one of shape patch generator when new primitive types provided to exist
     },
     "groupedOperations": [
       {
-        "intent": "add new oneOf branch to oneOf",
-        "operations": [
-          {
-            "op": "add",
-            "path": "/properties/polyProp/oneOf/-",
-            "value": {
-              "type": "boolean",
-            },
-          },
-        ],
+        "op": "add",
+        "path": "/properties/polyProp/oneOf/-",
+        "value": {
+          "type": "boolean",
+        },
       },
     ],
     "impact": [
@@ -262,33 +242,28 @@ exports[`one of shape patch generator when root schema is obejct and is shown an
     },
     "groupedOperations": [
       {
-        "intent": "replace  with a one of containing both types",
-        "operations": [
+        "op": "remove",
+        "path": "/type",
+      },
+      {
+        "op": "remove",
+        "path": "/properties",
+      },
+      {
+        "op": "add",
+        "path": "/oneOf",
+        "value": [
           {
-            "op": "remove",
-            "path": "/type",
+            "properties": {
+              "sup": {
+                "type": "string",
+              },
+            },
+            "type": "object",
           },
           {
-            "op": "remove",
-            "path": "/properties",
-          },
-          {
-            "op": "add",
-            "path": "/oneOf",
-            "value": [
-              {
-                "properties": {
-                  "sup": {
-                    "type": "string",
-                  },
-                },
-                "type": "object",
-              },
-              {
-                "items": {},
-                "type": "array",
-              },
-            ],
+            "items": {},
+            "type": "array",
           },
         ],
       },
@@ -323,17 +298,12 @@ exports[`one of shape patch generator when root schema is obejct and is shown an
     },
     "groupedOperations": [
       {
-        "intent": "change  type",
-        "operations": [
-          {
-            "op": "replace",
-            "path": "",
-            "value": {
-              "items": {},
-              "type": "array",
-            },
-          },
-        ],
+        "op": "replace",
+        "path": "",
+        "value": {
+          "items": {},
+          "type": "array",
+        },
       },
     ],
     "impact": [

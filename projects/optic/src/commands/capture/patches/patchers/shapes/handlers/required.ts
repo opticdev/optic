@@ -6,8 +6,7 @@ import {
   ShapeDiffResultKind,
 } from '../diff';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { PatchImpact } from '../../../patch-operations';
-import { OperationGroup } from '../../spec/patches';
+import { PatchImpact, PatchOperation } from '../../../patch-operations';
 import { SchemaObject } from 'ajv';
 import { ShapeLocation } from '../documented-bodies';
 import { ShapePatch } from '../patches';
@@ -60,34 +59,31 @@ export function* requiredPatches(
     requiredPath
   ) as string[];
 
-  function* makeOptionalOperations(indexOfRequired) {
+  function* makeOptionalOperations(indexOfRequired): Generator<PatchOperation> {
     if (indexOfRequired > -1)
-      yield OperationGroup.create(
-        `remove ${diff.key} from parent's required array`,
-        {
-          op: 'remove',
-          path: jsonPointerHelpers.append(
-            requiredPath,
-            indexOfRequired.toString()
-          ),
-        }
-      );
+      yield {
+        op: 'remove',
+        path: jsonPointerHelpers.append(
+          requiredPath,
+          indexOfRequired.toString()
+        ),
+      };
   }
 
-  function* removePropertyOperations(parentObjectPath: string, key: string) {
+  function* removePropertyOperations(
+    parentObjectPath: string,
+    key: string
+  ): Generator<PatchOperation> {
     const propertyPath = jsonPointerHelpers.append(
       parentObjectPath,
       'properties',
       key
     );
 
-    yield OperationGroup.create(
-      `remove ${key} from parent's properties object`,
-      {
-        op: 'remove',
-        path: propertyPath,
-      }
-    );
+    yield {
+      op: 'remove',
+      path: propertyPath,
+    };
   }
   // patch one: make required field optional
   let makeOptionalPatch = {

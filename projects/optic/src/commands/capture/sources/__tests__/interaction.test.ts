@@ -114,50 +114,6 @@ describe('CapturedIntearction.fromHarEntry', () => {
   });
 });
 
-describe('CapturedInteraction.fromProxyInteraction', () => {
-  it('can create a CaturedInteraction from a ProxySource.Interaction', () => {
-    let testInteraction = {
-      request: proxySourceRequest(),
-      response: proxySourceResponse(),
-    };
-    let interaction = CapturedInteraction.fromProxyInteraction(testInteraction);
-
-    expect(interaction).toMatchSnapshot();
-  });
-
-  it('includes request bodies', () => {
-    let testInteraction = {
-      request: proxySourceRequest(Buffer.from('some-body'), 'text/plain'),
-      response: proxySourceResponse(),
-    };
-
-    let interaction = CapturedInteraction.fromProxyInteraction(testInteraction);
-    expect(interaction).toMatchSnapshot({
-      request: { body: matchBody() },
-    });
-
-    let parsingBody = CapturedBody.text(interaction!.request.body!);
-    expect(parsingBody).resolves.toBe('some-body');
-  });
-
-  it('includes response bodies', () => {
-    let testBody = { a: 1, b: true, c: { d: 'ok' } };
-    let testInteraction = {
-      request: proxySourceRequest(),
-      response: proxySourceResponse(200, Buffer.from(JSON.stringify(testBody))),
-    };
-
-    let interaction = CapturedInteraction.fromProxyInteraction(testInteraction);
-
-    expect(interaction).toMatchSnapshot({
-      response: { body: matchBody() },
-    });
-
-    let parsingBody = CapturedBody.json(interaction!.response?.body);
-    expect(parsingBody).resolves.toMatchObject(testBody);
-  });
-});
-
 describe('CapturedInteraction.fromPostmanEntry', () => {
   let testEntries: PostmanEntry[];
 

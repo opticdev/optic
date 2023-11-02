@@ -8,8 +8,7 @@ import {
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { SchemaObject } from '../schema';
 import { CapturedInteraction } from '../../../../sources/captured-interactions';
-import { PatchImpact } from '../../../patch-operations';
-import { OperationGroup } from '../../spec/patches';
+import { PatchImpact, PatchOperation } from '../../../patch-operations';
 
 export function* enumKeywordDiffs(
   validationError: ErrorObject,
@@ -46,15 +45,13 @@ export function* enumPatches(
   )
     return;
 
-  let groupedOperations: OperationGroup[] = [];
+  let groupedOperations: PatchOperation[] = [];
 
-  groupedOperations.push(
-    OperationGroup.create(`add new enum value to ${diff.key}`, {
-      op: 'add',
-      path: jsonPointerHelpers.append(diff.propertyPath, '-'), // "-" indicates append to array
-      value: diff.value,
-    })
-  );
+  groupedOperations.push({
+    op: 'add',
+    path: jsonPointerHelpers.append(diff.propertyPath, '-'), // "-" indicates append to array
+    value: diff.value,
+  });
   yield {
     description: `add enum ${diff.value} to ${diff.key} `,
     diff,

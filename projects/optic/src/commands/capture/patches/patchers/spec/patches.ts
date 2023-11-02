@@ -1,8 +1,4 @@
-import {
-  PatchImpact,
-  PatchOperationGroup,
-  PatchOperation,
-} from '../../patch-operations';
+import { PatchImpact, PatchOperation } from '../../patch-operations';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import JsonPatch from 'fast-json-patch';
@@ -19,20 +15,22 @@ import { SentryClient } from '../../../../../sentry';
 import { logger } from '../../../../../logger';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 import { SchemaObject } from '../shapes/schema';
-import { DocumentedInteraction } from '../../../../oas/operations';
+import { DocumentedInteraction, Operation } from '../../../../oas/operations';
 import { OperationPatch, generateOperationPatches } from './operations';
 import { OperationDiffResult } from './types';
+import { generateRequestParameterPatches } from './request-params';
+import { generateResponseHeaderPatches } from './response-headers';
 
 export interface SpecPatch {
   description: string;
   path: string;
   diff: ShapeDiffResult | OperationDiffResult | undefined;
   impact: PatchImpact[];
-  groupedOperations: PatchOperationGroup[];
+  groupedOperations: PatchOperation[];
   interaction?: CapturedInteraction;
 }
 
-export { PatchImpact, PatchOperationGroup as OperationGroup };
+export { PatchImpact };
 export type { PatchOperation as Operation };
 
 export class SpecPatch {
@@ -59,15 +57,10 @@ export class SpecPatch {
       impact: shapePatch.impact,
       diff: shapePatch.diff,
       path: schemaPath,
-      groupedOperations: shapePatch.groupedOperations.map((group) => {
-        return {
-          ...group,
-          operations: group.operations.map((op) => ({
-            ...op,
-            path: jsonPointerHelpers.join(schemaPath, op.path),
-          })),
-        };
-      }),
+      groupedOperations: shapePatch.groupedOperations.map((op) => ({
+        ...op,
+        path: jsonPointerHelpers.join(schemaPath, op.path),
+      })),
       interaction: shapePatch.interaction,
     };
   }
@@ -82,15 +75,10 @@ export class SpecPatch {
       impact: operationPatch.impact,
       diff: operationPatch.diff,
       path: operationSpecPath,
-      groupedOperations: operationPatch.groupedOperations.map((group) => {
-        return {
-          ...group,
-          operations: group.operations.map((op) => ({
-            ...op,
-            path: jsonPointerHelpers.join(operationSpecPath, op.path),
-          })),
-        };
-      }),
+      groupedOperations: operationPatch.groupedOperations.map((op) => ({
+        ...op,
+        path: jsonPointerHelpers.join(operationSpecPath, op.path),
+      })),
       interaction,
     };
   }
@@ -125,10 +113,8 @@ export class SpecPatch {
   static *operations(
     patch: Pick<ShapePatch, 'groupedOperations'>
   ): IterableIterator<PatchOperation> {
-    for (let group of patch.groupedOperations) {
-      for (const op of group.operations) {
-        yield op;
-      }
+    for (let op of patch.groupedOperations) {
+      yield op;
     }
   }
 }
@@ -185,5 +171,19 @@ export class SpecPatches {
 
       yield specPatch;
     }
+  }
+
+  static async *requestAdditions(
+    interaction: CapturedInteraction,
+    operation: Operation
+  ): SpecPatches {
+    yield* generateRequestParameterPatches(interaction, operation);
+  }
+
+  static async *responseAdditions(
+    interaction: CapturedInteraction,
+    operation: Operation
+  ): SpecPatches {
+    yield* generateResponseHeaderPatches(interaction, operation);
   }
 }

@@ -31,13 +31,8 @@ exports[`required shape patch generator missing required fields will patch as 'm
     },
     "groupedOperations": [
       {
-        "intent": "remove f3 from parent's required array",
-        "operations": [
-          {
-            "op": "remove",
-            "path": "/properties/hello/required/2",
-          },
-        ],
+        "op": "remove",
+        "path": "/properties/hello/required/2",
       },
     ],
     "impact": [
@@ -70,22 +65,12 @@ exports[`required shape patch generator missing required fields will patch as 'm
     },
     "groupedOperations": [
       {
-        "intent": "remove f3 from parent's required array",
-        "operations": [
-          {
-            "op": "remove",
-            "path": "/properties/hello/required/2",
-          },
-        ],
+        "op": "remove",
+        "path": "/properties/hello/required/2",
       },
       {
-        "intent": "remove f3 from parent's properties object",
-        "operations": [
-          {
-            "op": "remove",
-            "path": "/properties/hello/properties/f3",
-          },
-        ],
+        "op": "remove",
+        "path": "/properties/hello/properties/f3",
       },
     ],
     "impact": [
