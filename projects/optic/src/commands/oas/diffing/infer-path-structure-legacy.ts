@@ -20,7 +20,7 @@ type PathComponentCandidate = {
   examplePath?: string;
 };
 
-export class InferPathStructure {
+export class InferPathStructureLegacy {
   private paths: PathComponentCandidate[];
   constructor(
     private knownOperations: { pathPattern: string; methods: string[] }[] = []
@@ -76,8 +76,10 @@ export class InferPathStructure {
   static async fromSpecAndInteractions(
     spec: OpenAPIV3.Document,
     interactions: CapturedInteractions
-  ): Promise<InferPathStructure> {
-    const inferredPathStructure = new InferPathStructure(specToPaths(spec));
+  ): Promise<InferPathStructureLegacy> {
+    const inferredPathStructure = new InferPathStructureLegacy(
+      specToPaths(spec)
+    );
     for await (const interaction of interactions) {
       inferredPathStructure.includeObservedUrlPath(
         interaction.request.method,

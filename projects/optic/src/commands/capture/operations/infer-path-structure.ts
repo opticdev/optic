@@ -23,6 +23,21 @@ export class PathInference {
     this.observedUrls = new Set();
   }
 
+  static async fromSpecAndInteractions(
+    spec: OpenAPIV3.Document,
+    interactions: CapturedInteractions
+  ): Promise<PathInference> {
+    const pathInference = new PathInference();
+    for (const { pathPattern } of specToPaths(spec)) {
+      pathInference.addKnownPath(pathPattern);
+    }
+    for await (const interaction of interactions) {
+      pathInference.addObservedUrl(interaction.request.path);
+    }
+
+    return pathInference;
+  }
+
   addKnownPath(path: string) {
     let currentNode = this.root;
     for (const part of fragmentize(path)) {
@@ -92,7 +107,8 @@ export class PathInference {
         ...this.observedUrls.values(),
       ].filter((url) => {
         const urlFragments = fragmentize(url);
-        if (urlFragments.length < builtUrl.length) return false;
+        // url must greater than the current built url - we dont want identical urls to count here
+        if (urlFragments.length <= builtUrl.length) return false;
         for (let i = 0; i < builtUrl.length; i++) {
           if (!isTemplated(builtUrl[i]) && builtUrl[i] !== urlFragments[i])
             return false;

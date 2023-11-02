@@ -33,7 +33,7 @@ import { GroupedCaptures } from './interactions/grouped-interactions';
 import { OPTIC_URL_KEY } from '../../constants';
 import { uploadCoverage } from './actions/upload-coverage';
 import { resolveRelativePath } from '../../utils/capture';
-import { InferPathStructure } from './operations/infer-path-structure';
+import { PathInference } from './operations/infer-path-structure';
 import { getSpinner } from '../../utils/spinner';
 import { flushEvents, trackEvent } from '../../segment';
 import { getOpticUrlDetails } from '../../utils/cloud-urls';
@@ -559,11 +559,10 @@ export async function processCaptures(
         'Learning path patterns for unmatched requests...'
       );
       options.bufferLogs ? bufferedOutput.push(summary) : logger.info(summary);
-      const inferredPathStructure =
-        await InferPathStructure.fromSpecAndInteractions(
-          spec.jsonLike,
-          captures.getUndocumentedInteractions()
-        );
+      const inferredPathStructure = await PathInference.fromSpecAndInteractions(
+        spec.jsonLike,
+        captures.getUndocumentedInteractions()
+      );
       const {
         interactions: filteredInteractions,
         ignorePaths: newIgnorePaths,
