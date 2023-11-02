@@ -44,7 +44,7 @@
     "@types/stream-chain": "^2",
     "@types/stream-json": "^1",
     "@types/tar": "^6",
-    "@types/update-notifier": "^5",
+    "@types/update-notifier": "^6.0.0",
     "@types/url-join": "^4.0.1",
     "babel-jest": "^29.3.1",
     "babel-plugin-transform-inline-environment-variables": "^0.4.3",
