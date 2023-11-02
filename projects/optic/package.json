@@ -117,7 +117,7 @@
     "ts-invariant": "^0.9.4",
     "ts-results": "^3.3.0",
     "tunnel": "^0.0.6",
-    "update-notifier": "^5",
+    "update-notifier": "^7.0.0",
     "url-join": "^4.0.1",
     "whatwg-mimetype": "^3.0.0"
   },
