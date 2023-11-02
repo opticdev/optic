@@ -8,7 +8,7 @@ import {
   UndocumentedOperations,
   UndocumentedOperationType,
 } from '../operations';
-import { InferPathStructure } from '../../capture/operations/infer-path-structure';
+import { InferPathStructure } from './infer-path-structure-legacy';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import * as AT from '../lib/async-tools';
 import {
