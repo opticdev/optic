@@ -7,7 +7,7 @@ import {
   isTemplated,
   looksLikeAVariable,
   reservedPatterns,
-} from '../../capture/operations/infer-path-structure';
+} from '../../capture/operations/path-inference';
 
 const COLLAPSE_CONSTANTS_N = 2;
 

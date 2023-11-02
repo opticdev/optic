@@ -9,7 +9,7 @@ import {
   CapturedInteraction,
   CapturedInteractions,
 } from '../sources/captured-interactions';
-import { PathInference } from '../operations/infer-path-structure';
+import { PathInference } from '../operations/path-inference';
 import {
   generateEndpointSpecPatches,
   generatePathAndMethodSpecPatches,

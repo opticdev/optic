@@ -1,5 +1,5 @@
 import { beforeEach, describe, test, expect } from '@jest/globals';
-import { PathInference } from '../infer-path-structure';
+import { PathInference } from '../path-inference';
 
 describe('from a fresh spec without known paths', () => {
   test('it will return the url if no inferences can be made', () => {

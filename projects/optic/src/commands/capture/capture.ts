@@ -33,7 +33,7 @@ import { GroupedCaptures } from './interactions/grouped-interactions';
 import { OPTIC_URL_KEY } from '../../constants';
 import { uploadCoverage } from './actions/upload-coverage';
 import { resolveRelativePath } from '../../utils/capture';
-import { PathInference } from './operations/infer-path-structure';
+import { PathInference } from './operations/path-inference';
 import { getSpinner } from '../../utils/spinner';
 import { flushEvents, trackEvent } from '../../segment';
 import { getOpticUrlDetails } from '../../utils/cloud-urls';
