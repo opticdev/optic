@@ -1,13 +1,18 @@
 import pluralize from 'pluralize';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
-import { CapturedInteractions } from '../sources/captured-interactions';
-import { specToPaths } from './queries';
+import { CapturedInteractions } from '../../capture/sources/captured-interactions';
+import { specToPaths } from '../../capture/operations/queries';
+import {
+  fragmentize,
+  isTemplated,
+  looksLikeAVariable,
+  reservedPatterns,
+} from '../../capture/operations/path-inference';
 
 const COLLAPSE_CONSTANTS_N = 2;
 
 type PathComponentCandidate = {
   name: string;
-  count: number;
   httpMethods: Set<string>;
   inferred: 'constant' | 'variable';
   parent: PathComponentCandidate | null;
@@ -15,7 +20,7 @@ type PathComponentCandidate = {
   examplePath?: string;
 };
 
-export class InferPathStructure {
+export class InferPathStructureLegacy {
   private paths: PathComponentCandidate[];
   constructor(
     private knownOperations: { pathPattern: string; methods: string[] }[] = []
@@ -53,7 +58,6 @@ export class InferPathStructure {
           parent = match;
         } else if (!match) {
           const insert: PathComponentCandidate = {
-            count: 0,
             httpMethods: isLast ? new Set(operation.methods) : new Set(),
             parent: parent,
             name: name,
@@ -72,8 +76,10 @@ export class InferPathStructure {
   static async fromSpecAndInteractions(
     spec: OpenAPIV3.Document,
     interactions: CapturedInteractions
-  ): Promise<InferPathStructure> {
-    const inferredPathStructure = new InferPathStructure(specToPaths(spec));
+  ): Promise<InferPathStructureLegacy> {
+    const inferredPathStructure = new InferPathStructureLegacy(
+      specToPaths(spec)
+    );
     for await (const interaction of interactions) {
       inferredPathStructure.includeObservedUrlPath(
         interaction.request.method,
@@ -105,8 +111,8 @@ export class InferPathStructure {
           (inferred === 'constant' ? i.name === name : true) // if it is constant name matches
       );
     };
-
     const fragments = fragmentize(urlPath);
+
     let last: PathComponentCandidate | null = null;
     let parent: PathComponentCandidate | null = null;
     fragments.forEach((fragment, index) => {
@@ -133,7 +139,6 @@ export class InferPathStructure {
           : fragment;
 
         const insert: PathComponentCandidate = {
-          count: 0,
           httpMethods: isLast ? new Set([method]) : new Set(),
           parent: parent,
           name: name,
@@ -196,7 +201,6 @@ export class InferPathStructure {
                 parent: children[0].parent,
                 inferred: 'variable',
                 httpMethods,
-                count: toCollapse.length,
                 verified: false,
                 examplePath: toCollapse[0]?.examplePath,
               };
@@ -254,7 +258,6 @@ export class InferPathStructure {
           parent: reduce!.insertVariable,
           name: constant,
           verified: false,
-          count: 22,
           inferred: 'constant',
           httpMethods: combinedHttpMethods,
           examplePath: examplePath,
@@ -284,7 +287,6 @@ export class InferPathStructure {
           parent: reduce!.insertVariable,
           name: variable,
           verified: false,
-          count: 0,
           inferred: 'variable',
           httpMethods: combinedHttpMethods,
           examplePath,
@@ -345,23 +347,9 @@ function reducePathPattern(component: PathComponentCandidate): string {
   return '/' + pathPatternComponents.reverse().join('/');
 }
 
-function fragmentize(path: string): string[] {
-  if (!path.startsWith('/')) {
-    path = `/${path}`;
-  }
-  return path.split('/').slice(1).map(decodePathFragment);
-}
-
-function isTemplated(pathFragment: string) {
-  return /^{.+}$/.test(pathFragment);
-}
-
-function decodePathFragment(pathFragment: string) {
-  try {
-    return pathFragment && decodeURIComponent(pathFragment);
-  } catch (_) {
-    return pathFragment;
-  }
+function pathToSegments(path: string, n: number) {
+  const withoutLeading = path.split('/').filter((i) => Boolean(i));
+  return '/' + withoutLeading.slice(0, n).join('/');
 }
 
 function stripParamBrackets(input: string): string {
@@ -370,41 +358,6 @@ function stripParamBrackets(input: string): string {
   return input.substring(1, input.length - 1);
 }
 
-const reservedPatterns = [
-  /api/,
-  /v[0-9]+/,
-  /v[0-9]+/,
-  /[0-9]+\.[0-9]+/,
-  /20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]/,
-];
-
 function parentIsNeverResource(parent: string): boolean {
   return reservedPatterns.some((pattern) => pattern.test(parent));
-}
-
-function looksLikeAVariable(stringValue: string): boolean {
-  if (reservedPatterns.some((pattern) => pattern.test(stringValue)))
-    return false;
-
-  if (stringValue)
-    if (!isNaN(Number(stringValue)))
-      // any number is a variable
-      return true;
-  // any uuid is a variable
-  if (
-    /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i.test(
-      stringValue
-    ) ||
-    /^[0-9A-F]{8}-[0-9A-F]{4}-[5][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i.test(
-      stringValue
-    )
-  )
-    return true;
-
-  return false;
-}
-
-function pathToSegments(path: string, n: number) {
-  const withoutLeading = path.split('/').filter((i) => Boolean(i));
-  return '/' + withoutLeading.slice(0, n).join('/');
 }

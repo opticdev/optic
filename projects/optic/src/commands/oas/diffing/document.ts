@@ -9,7 +9,7 @@ import {
   UndocumentedOperations,
   UndocumentedOperationType,
 } from '../operations';
-import { InferPathStructure } from '../../capture/operations/infer-path-structure';
+import { InferPathStructureLegacy } from './infer-path-structure-legacy';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import * as AT from '../lib/async-tools';
 import {
@@ -138,7 +138,7 @@ export async function observationToUndocumented(
     }
   }
 
-  const inferredPathStructure = new InferPathStructure(operations);
+  const inferredPathStructure = new InferPathStructureLegacy(operations);
   [...pathDiffs.unmatchedPaths.values()].forEach((observed) =>
     inferredPathStructure.includeObservedUrlPath(observed.method, observed.path)
   );

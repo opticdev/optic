@@ -9,7 +9,7 @@ import {
   CapturedInteraction,
   CapturedInteractions,
 } from '../sources/captured-interactions';
-import { InferPathStructure } from '../operations/infer-path-structure';
+import { PathInference } from '../operations/path-inference';
 import {
   generateEndpointSpecPatches,
   generatePathAndMethodSpecPatches,
@@ -25,7 +25,7 @@ type MethodMap = Map<string, { add: Set<string>; ignore: Set<string> }>;
 
 export async function promptUserForPathPattern(
   interactions: CapturedInteractions,
-  inferredPathStructure: InferPathStructure,
+  pathInference: PathInference,
   options: { update: 'interactive' | 'automatic' }
 ) {
   const filteredInteractions: CapturedInteraction[] = [];
@@ -59,8 +59,7 @@ export async function promptUserForPathPattern(
     const pathInIgnore = [...ignore.values()].some((ignore) =>
       minimatch(path, ignore)
     );
-    const guessedPattern =
-      inferredPathStructure.includeObservedUrlPath(method, path) ?? path;
+    const guessedPattern = pathInference.getInferedPattern(path);
 
     if (pathInAdd) {
       filteredInteractions.push(interaction);
@@ -69,6 +68,7 @@ export async function promptUserForPathPattern(
       continue;
     } else if (options.update === 'automatic') {
       add.add(guessedPattern);
+      pathInference.addKnownPath(guessedPattern);
       filteredInteractions.push(interaction);
     } else {
       logger.info(`> ` + chalk.bold.blue(guessedPattern));
@@ -116,9 +116,11 @@ export async function promptUserForPathPattern(
 
       if (results.action === 'yes') {
         add.add(guessedPattern);
+        pathInference.addKnownPath(guessedPattern);
         filteredInteractions.push(interaction);
       } else if (results.action === 'no') {
         add.add(results.newPath);
+        pathInference.addKnownPath(results.newPath);
         filteredInteractions.push(interaction);
       } else if (results.action === 'skip') {
         continue;
