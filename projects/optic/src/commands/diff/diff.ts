@@ -469,7 +469,8 @@ const getDiffAction =
             baseParseResult,
             headParseResult,
             diffResult.specResults,
-            meta
+            meta,
+            diffResult.changelogData
           );
           analyticsData.compressedDataLength = compressedData.length;
           logger.info('Opening up diff in web view');
