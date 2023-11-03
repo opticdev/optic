@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "release": "gh release create --target=$(git branch --show-current) v$(node -e \"process.stdout.write(require('./package.json').version)\")",
-    "version": "yarn workspaces foreach -v version",
+    "version": "yarn workspaces foreach -Av version",
     "prepare": "husky install",
     "lint": "prettier --check 'projects/*/src/**/*.(js|jsx|ts|tsx|json|css)'"
   },
