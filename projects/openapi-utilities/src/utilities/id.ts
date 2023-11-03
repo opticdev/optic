@@ -13,5 +13,7 @@ export const getEndpointId = (endpoint: {
   method: string;
   path: string;
 }): string => {
-  return `${endpoint.method.toUpperCase()}${ENDPOINT_ID_SEPARATOR}${endpoint.path.toLowerCase()}`;
+  return `${endpoint.method.toUpperCase()}${ENDPOINT_ID_SEPARATOR}${
+    endpoint.path
+  }`;
 };
