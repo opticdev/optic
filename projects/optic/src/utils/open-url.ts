@@ -21,6 +21,8 @@ export const openUrl = async (url: string) => {
       );
 
       await open(tmpHtmlPath);
+    } else {
+      throw e;
     }
   }
 };
