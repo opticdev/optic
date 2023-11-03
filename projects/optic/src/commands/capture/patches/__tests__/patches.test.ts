@@ -24,9 +24,15 @@ async function* GenerateInteractions(
 function makeInteraction(
   endpoint: { method: OpenAPIV3.HttpMethods; path: string },
   {
+    parameters,
     requestBody,
     responseBody,
   }: {
+    parameters?: {
+      header?: { name: string; value: string }[];
+      query?: { name: string; value: string }[];
+      responseHeaders?: { name: string; value: string }[];
+    };
     requestBody?: any;
     responseBody?: any;
   }
@@ -37,13 +43,13 @@ function makeInteraction(
       method: endpoint.method,
       path: endpoint.path,
       body: requestBody ? CapturedBody.fromJSON(requestBody) : null,
-      headers: [],
-      query: [],
+      headers: parameters?.header ?? [],
+      query: parameters?.query ?? [],
     },
     response: {
       statusCode: '200',
       body: CapturedBody.fromJSON(responseBody ?? {}),
-      headers: [],
+      headers: parameters?.responseHeaders ?? [],
     },
   };
 }
@@ -611,6 +617,141 @@ describe('generateEndpointSpecPatches', () => {
         }
       );
 
+      const patches = await AT.collect(
+        generateEndpointSpecPatches(
+          GenerateInteractions([interaction]),
+          specHolder,
+          {
+            method: 'post',
+            path: '/api/animals',
+          }
+        )
+      );
+
+      expect(patches).toMatchSnapshot();
+      expect(specHolder.spec).toMatchSnapshot();
+    });
+
+    describe.each([['query'], ['header']])('%s parameter', (location) => {
+      test('not documented', async () => {
+        const interaction = makeInteraction(
+          { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+          {
+            parameters: {
+              [location]: [{ name: 'undocumented', value: 'abc' }],
+            },
+          }
+        );
+        const patches = await AT.collect(
+          generateEndpointSpecPatches(
+            GenerateInteractions([interaction]),
+            specHolder,
+            {
+              method: 'post',
+              path: '/api/animals',
+            }
+          )
+        );
+
+        expect(patches).toMatchSnapshot();
+        expect(specHolder.spec).toMatchSnapshot();
+      });
+
+      test('required but not seen', async () => {
+        specHolder.spec.paths['/api/animals'].post.parameters = [
+          {
+            in: location,
+            name: 'required',
+            required: true,
+            schema: {
+              type: 'string',
+            },
+          },
+        ];
+        const interaction = makeInteraction(
+          { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+          {}
+        );
+        const patches = await AT.collect(
+          generateEndpointSpecPatches(
+            GenerateInteractions([interaction]),
+            specHolder,
+            {
+              method: 'post',
+              path: '/api/animals',
+            }
+          )
+        );
+
+        expect(patches).toMatchSnapshot();
+        expect(specHolder.spec).toMatchSnapshot();
+      });
+    });
+
+    test('response headers not documented', async () => {
+      const interaction = makeInteraction(
+        { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+        {
+          parameters: {
+            responseHeaders: [{ name: 'undocumented', value: 'abc' }],
+          },
+        }
+      );
+      const patches = await AT.collect(
+        generateEndpointSpecPatches(
+          GenerateInteractions([interaction]),
+          specHolder,
+          {
+            method: 'post',
+            path: '/api/animals',
+          }
+        )
+      );
+
+      expect(patches).toMatchSnapshot();
+      expect(specHolder.spec).toMatchSnapshot();
+    });
+
+    test('response headers required but not seen', async () => {
+      specHolder.spec.paths['/api/animals'].post.responses = {
+        '200': {
+          headers: {
+            required: {
+              name: 'required',
+              required: true,
+              schema: {
+                type: 'string',
+              },
+            },
+          },
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  data: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        status: {
+                          type: 'string',
+                          const: 'ok',
+                        },
+                      },
+                      required: ['status'],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+      const interaction = makeInteraction(
+        { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+        {}
+      );
       const patches = await AT.collect(
         generateEndpointSpecPatches(
           GenerateInteractions([interaction]),

@@ -13,12 +13,12 @@ type CaptureInitActionOptions = {
 
 export function initCommand(config: OpticCliConfig): Command {
   const command = new Command('init');
-
+  command.helpOption('-h, --help', 'Display help for the command');
   command
     .description('Add a `capture` block to your Optic.yml')
     .argument(
       'openapi-file',
-      'the OpenAPI specification to write the `capture` block for'
+      'The OpenAPI specification to write the `capture` block for'
     )
     .option(
       '--stdout',

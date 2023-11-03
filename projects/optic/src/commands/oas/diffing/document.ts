@@ -4,6 +4,7 @@ import {
   DocumentedInteractions,
   HttpMethod,
   HttpMethods,
+  Operation,
   UndocumentedOperation,
   UndocumentedOperations,
   UndocumentedOperationType,
@@ -446,9 +447,13 @@ export function addOperations(
       }
 
       // phase two: shape patches, describing request / response bodies in detail
-      documentedInteraction = DocumentedInteraction.updateOperation(
-        documentedInteraction,
-        patchedSpec
+      documentedInteraction.operation = Operation.fromOperationObject(
+        documentedInteraction.operation.pathPattern,
+        documentedInteraction.operation.method,
+        jsonPointerHelpers.get(
+          patchedSpec,
+          documentedInteraction.specJsonPath
+        ) as any
       );
       let documentedBodies = DocumentedBodies.fromDocumentedInteraction(
         documentedInteraction

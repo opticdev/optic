@@ -6,7 +6,7 @@ capture:
       ready_endpoint: /healthcheck
     requests:
       send:
-        - path: /books
+        - path: /books?list=all
           method: GET
         - path: /books/asd
           method: GET

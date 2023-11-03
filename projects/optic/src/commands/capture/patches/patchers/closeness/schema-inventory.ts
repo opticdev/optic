@@ -106,16 +106,11 @@ export class SchemaInventory {
             diff: undefined,
             groupedOperations: [
               {
-                intent: `use ref at ${added}`,
-                operations: [
-                  {
-                    op: 'replace',
-                    path: added,
-                    value: {
-                      $ref: `#${match.ref}`,
-                    },
-                  },
-                ],
+                op: 'replace',
+                path: added,
+                value: {
+                  $ref: `#${match.ref}`,
+                },
               },
             ],
           };
@@ -136,16 +131,11 @@ export class SchemaInventory {
               diff: undefined,
               groupedOperations: [
                 {
-                  intent: `use ref at ${items}`,
-                  operations: [
-                    {
-                      op: 'replace',
-                      path: items,
-                      value: {
-                        $ref: `#${match.ref}`,
-                      },
-                    },
-                  ],
+                  op: 'replace',
+                  path: items,
+                  value: {
+                    $ref: `#${match.ref}`,
+                  },
                 },
               ],
             };
@@ -204,31 +194,18 @@ export class SchemaInventory {
           impact: [PatchImpact.Refactor],
           diff: undefined,
           groupedOperations: [
+            ...schemaOps,
             {
-              intent: 'add components.schemas if needed',
-              operations: schemaOps,
+              op: 'add',
+              path: refPath,
+              value: addedSchema,
             },
             {
-              intent: `create ref at ${refPath}`,
-              operations: [
-                {
-                  op: 'add',
-                  path: refPath,
-                  value: addedSchema,
-                },
-              ],
-            },
-            {
-              intent: 'use new $ref',
-              operations: [
-                {
-                  op: 'replace',
-                  path: added,
-                  value: {
-                    $ref: `#${refPath}`,
-                  },
-                },
-              ],
+              op: 'replace',
+              path: added,
+              value: {
+                $ref: `#${refPath}`,
+              },
             },
           ],
         };

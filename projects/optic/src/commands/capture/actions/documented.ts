@@ -1,5 +1,4 @@
 import chalk from 'chalk';
-import path from 'path';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { ParseResult } from '../../../utils/spec-loaders';
 import {
@@ -63,6 +62,7 @@ function summarizePatch(
   const { jsonLike: spec, sourcemap } = parseResult;
   const pointerLogger = jsonPointerLogger(sourcemap);
   const { diff, path, groupedOperations } = patch;
+  const color = options.mode === 'update' ? chalk.green : chalk.red;
   if (!diff || groupedOperations.length === 0) return [];
   if (
     diff.kind === 'UnmatchdResponseBody' ||
@@ -75,8 +75,30 @@ function summarizePatch(
         : `[${diff.statusCode} response body]`;
     const action =
       options.mode === 'update' ? 'has been added' : 'is not documented';
-    const color = options.mode === 'update' ? chalk.green : chalk.red;
     return [color(`${location} body ${action}`)];
+  } else if (
+    diff.kind === 'UnmatchedRequestParameter' ||
+    diff.kind === 'UnmatchedResponseHeader'
+  ) {
+    const location =
+      diff.kind === 'UnmatchedRequestParameter'
+        ? `[${diff.in} parameter]`
+        : `[${diff.statusCode} response header]`;
+
+    const action =
+      options.mode === 'update' ? 'has been added' : 'is not documented';
+    return [color(`${location} ${diff.name} ${action}`)];
+  } else if (
+    diff.kind === 'MissingRequiredRequiredParameter' ||
+    diff.kind === 'MissingRequiredResponseHeader'
+  ) {
+    const location =
+      diff.kind === 'MissingRequiredRequiredParameter'
+        ? `[${diff.in} parameter]`
+        : `[${diff.statusCode} response header]`;
+    const action =
+      options.mode === 'update' ? 'is now optional' : 'is required and missing';
+    return [color(`${location} ${diff.name} ${action}`)];
   } else {
     const location = locationFromPath(path);
 
@@ -92,7 +114,6 @@ function summarizePatch(
 
       const action =
         options.mode === 'update' ? 'has been added' : 'is not documented';
-      const color = options.mode === 'update' ? chalk.green : chalk.red;
       const propertyLocation =
         options.mode === 'update'
           ? `(${diff.propertyPath})`

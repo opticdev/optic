@@ -10,7 +10,8 @@ import {
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { ShapePatch } from '../patches';
 import { CapturedInteraction } from '../../../../sources/captured-interactions';
-import { OperationGroup, PatchImpact } from '../../spec/patches';
+import { PatchImpact } from '../../spec/patches';
+import { PatchOperation } from '../../../patch-operations';
 
 export function* additionalPropertiesDiffs(
   validationError: ErrorObject,
@@ -85,53 +86,38 @@ export function* additionalPropertiesPatches(
   );
 
   // if properties is not set, create one with empty {}
-  let groupedOperations: OperationGroup[] = [];
+  let groupedOperations: PatchOperation[] = [];
   if (!parent.properties) {
-    groupedOperations.push(
-      OperationGroup.create(`add properties {} to parent object`, {
-        op: 'add',
-        path: propertiesPath,
-        value: {},
-      })
-    );
+    groupedOperations.push({
+      op: 'add',
+      path: propertiesPath,
+      value: {},
+    });
   }
   // if required is not set, create one with property in it
   if (!parent.required) {
-    groupedOperations.push(
-      OperationGroup.create(
-        `add required [] to parent object and make ${diff.key} required`,
-        {
-          op: 'add',
-          path: requiredPath,
-          value: [diff.key],
-          // @ts-ignore
-          extra: 'same',
-        }
-      )
-    );
+    groupedOperations.push({
+      op: 'add',
+      path: requiredPath,
+      value: [diff.key],
+      // @ts-ignore
+      extra: 'same',
+    });
   } else if (!parent.required.includes(diff.key)) {
-    groupedOperations.push(
-      OperationGroup.create(`make new property ${diff.key} required`, {
-        op: 'add',
-        path: requiredPath + '/-', // append
-        value: diff.key,
-      })
-    );
+    groupedOperations.push({
+      op: 'add',
+      path: requiredPath + '/-', // append
+      value: diff.key,
+    });
   }
 
   // ok now we're ready for the property
   if (!(parent.properties || {}).hasOwnProperty(diff.key)) {
-    groupedOperations.push(
-      OperationGroup.create(
-        `add property ${diff.key} schema to properties`,
-
-        {
-          op: 'add',
-          path: newPropertyPath,
-          value: Schema.baseFromValue(diff.example, openAPIVersion),
-        }
-      )
-    );
+    groupedOperations.push({
+      op: 'add',
+      path: newPropertyPath,
+      value: Schema.baseFromValue(diff.example, openAPIVersion),
+    });
   }
 
   if (groupedOperations.length < 1) return;

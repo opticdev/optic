@@ -1,7 +1,6 @@
 import { Schema, SchemaObject } from '../schema';
 import { ShapeLocation } from '../documented-bodies';
 import { PatchImpact } from '../../../patch-operations';
-import { OperationGroup } from '../../spec/patches';
 import { ShapePatch } from '../patches';
 import { CapturedInteraction } from '../../../../sources/captured-interactions';
 
@@ -11,12 +10,7 @@ export function newSchemaPatch(
   interaction: CapturedInteraction,
   shapeContext: { location?: ShapeLocation }
 ): ShapePatch {
-  let groupedOperations = [
-    OperationGroup.create(
-      'add schema object',
-      ...Schema.mergeOperations(typelessSchema, schema)
-    ),
-  ];
+  let groupedOperations = [...Schema.mergeOperations(typelessSchema, schema)];
 
   return {
     description: 'add schema object',

@@ -3,11 +3,7 @@ import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { OPTIC_PATH_IGNORE_KEY } from '../../../../../constants';
 import { Operation } from 'fast-json-patch';
 
-import {
-  PatchImpact,
-  PatchOperation,
-  PatchOperationGroup,
-} from '../../patch-operations';
+import { PatchImpact, PatchOperation } from '../../patch-operations';
 import { SpecPatch } from './patches';
 import {
   UndocumentedOperation,
@@ -43,12 +39,7 @@ export function getIgnorePathPatch(
     description: 'add x-optic-path-ignore values',
     diff: undefined,
     impact: [PatchImpact.Addition],
-    groupedOperations: [
-      {
-        intent: 'add ignore paths to optic',
-        operations,
-      },
-    ],
+    groupedOperations: operations,
     path: basePath,
   };
 }
@@ -62,35 +53,29 @@ export function createMissingPathPatches(
   const { specPath, methods, pathPattern, pathParameters } =
     undocumentedOperation;
 
-  let groupedOperations: PatchOperationGroup[] = [];
+  let groupedOperations: PatchOperation[] = [];
 
-  groupedOperations.push(
-    PatchOperationGroup.create(`add path with parameters`, {
-      op: 'add',
-      path: specPath,
-      value: {},
-    })
-  );
+  groupedOperations.push({
+    op: 'add',
+    path: specPath,
+    value: {},
+  });
 
   if (pathParameters.length > 0) {
-    groupedOperations.push(
-      PatchOperationGroup.create(`add path parameters`, {
-        op: 'add',
-        path: jsonPointerHelpers.append(specPath, 'parameters'),
-        value: pathParameters.map(
-          (parameterName): OpenAPIV3.ParameterObject => {
-            return {
-              in: 'path',
-              name: parameterName,
-              required: true,
-              schema: {
-                type: 'string',
-              },
-            };
-          }
-        ),
-      })
-    );
+    groupedOperations.push({
+      op: 'add',
+      path: jsonPointerHelpers.append(specPath, 'parameters'),
+      value: pathParameters.map((parameterName): OpenAPIV3.ParameterObject => {
+        return {
+          in: 'path',
+          name: parameterName,
+          required: true,
+          schema: {
+            type: 'string',
+          },
+        };
+      }),
+    });
   }
 
   let methodOperations: PatchOperation[] = methods.map((method) => ({
@@ -101,9 +86,7 @@ export function createMissingPathPatches(
     },
   }));
 
-  groupedOperations.push(
-    PatchOperationGroup.create('add methods', ...methodOperations)
-  );
+  groupedOperations.push(...methodOperations);
 
   return {
     diff: {
@@ -127,17 +110,15 @@ export function createMissingMethodPatch(
 ): SpecPatch {
   const { specPath, method, pathPattern } = undocumentedOperation;
 
-  let groupedOperations: PatchOperationGroup[] = [];
+  let groupedOperations: PatchOperation[] = [];
 
-  groupedOperations.push(
-    PatchOperationGroup.create(`add method`, {
-      op: 'add',
-      path: specPath,
-      value: {
-        responses: {},
-      },
-    })
-  );
+  groupedOperations.push({
+    op: 'add',
+    path: specPath,
+    value: {
+      responses: {},
+    },
+  });
 
   return {
     diff: {

@@ -4,7 +4,76 @@ exports[`CapturedIntearction.fromHarEntry can create a CapturedInteraction from 
 {
   "request": {
     "body": null,
-    "headers": [],
+    "headers": [
+      {
+        "name": ":authority",
+        "value": "petstore.swagger.io",
+      },
+      {
+        "name": ":method",
+        "value": "GET",
+      },
+      {
+        "name": ":path",
+        "value": "/v2/store/inventory",
+      },
+      {
+        "name": ":scheme",
+        "value": "https",
+      },
+      {
+        "name": "accept",
+        "value": "application/json",
+      },
+      {
+        "name": "accept-encoding",
+        "value": "gzip, deflate, br",
+      },
+      {
+        "name": "accept-language",
+        "value": "en-GB,en;q=0.9,nl-NL;q=0.8,nl;q=0.7,en-US;q=0.6",
+      },
+      {
+        "name": "cache-control",
+        "value": "no-cache",
+      },
+      {
+        "name": "pragma",
+        "value": "no-cache",
+      },
+      {
+        "name": "referer",
+        "value": "https://petstore.swagger.io/",
+      },
+      {
+        "name": "sec-ch-ua",
+        "value": "" Not A;Brand";v="99", "Chromium";v="101", "Google Chrome";v="101"",
+      },
+      {
+        "name": "sec-ch-ua-mobile",
+        "value": "?0",
+      },
+      {
+        "name": "sec-ch-ua-platform",
+        "value": ""macOS"",
+      },
+      {
+        "name": "sec-fetch-dest",
+        "value": "empty",
+      },
+      {
+        "name": "sec-fetch-mode",
+        "value": "cors",
+      },
+      {
+        "name": "sec-fetch-site",
+        "value": "same-origin",
+      },
+      {
+        "name": "user-agent",
+        "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36",
+      },
+    ],
     "host": "petstore.swagger.io",
     "method": "get",
     "path": "/v2/store/inventory",
@@ -16,7 +85,32 @@ exports[`CapturedIntearction.fromHarEntry can create a CapturedInteraction from 
       "contentType": "application/json",
       "size": 133,
     },
-    "headers": [],
+    "headers": [
+      {
+        "name": "access-control-allow-headers",
+        "value": "Content-Type, api_key, Authorization",
+      },
+      {
+        "name": "access-control-allow-methods",
+        "value": "GET, POST, DELETE, PUT",
+      },
+      {
+        "name": "access-control-allow-origin",
+        "value": "*",
+      },
+      {
+        "name": "content-type",
+        "value": "application/json",
+      },
+      {
+        "name": "date",
+        "value": "Wed, 11 May 2022 11:47:04 GMT",
+      },
+      {
+        "name": "server",
+        "value": "Jetty(9.2.9.v20150224)",
+      },
+    ],
     "statusCode": "200",
   },
 }
@@ -30,7 +124,88 @@ exports[`CapturedIntearction.fromHarEntry includes request bodies 1`] = `
       "contentType": "application/json",
       "size": 128,
     },
-    "headers": [],
+    "headers": [
+      {
+        "name": ":authority",
+        "value": "petstore.swagger.io",
+      },
+      {
+        "name": ":method",
+        "value": "POST",
+      },
+      {
+        "name": ":path",
+        "value": "/v2/store/order",
+      },
+      {
+        "name": ":scheme",
+        "value": "https",
+      },
+      {
+        "name": "accept",
+        "value": "application/json",
+      },
+      {
+        "name": "accept-encoding",
+        "value": "gzip, deflate, br",
+      },
+      {
+        "name": "accept-language",
+        "value": "en-GB,en;q=0.9,nl-NL;q=0.8,nl;q=0.7,en-US;q=0.6",
+      },
+      {
+        "name": "cache-control",
+        "value": "no-cache",
+      },
+      {
+        "name": "content-length",
+        "value": "128",
+      },
+      {
+        "name": "content-type",
+        "value": "application/json",
+      },
+      {
+        "name": "origin",
+        "value": "https://petstore.swagger.io",
+      },
+      {
+        "name": "pragma",
+        "value": "no-cache",
+      },
+      {
+        "name": "referer",
+        "value": "https://petstore.swagger.io/",
+      },
+      {
+        "name": "sec-ch-ua",
+        "value": "" Not A;Brand";v="99", "Chromium";v="101", "Google Chrome";v="101"",
+      },
+      {
+        "name": "sec-ch-ua-mobile",
+        "value": "?0",
+      },
+      {
+        "name": "sec-ch-ua-platform",
+        "value": ""macOS"",
+      },
+      {
+        "name": "sec-fetch-dest",
+        "value": "empty",
+      },
+      {
+        "name": "sec-fetch-mode",
+        "value": "cors",
+      },
+      {
+        "name": "sec-fetch-site",
+        "value": "same-origin",
+      },
+      {
+        "name": "user-agent",
+        "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36",
+      },
+    ],
     "host": "petstore.swagger.io",
     "method": "post",
     "path": "/v2/store/order",
@@ -42,7 +217,32 @@ exports[`CapturedIntearction.fromHarEntry includes request bodies 1`] = `
       "contentType": "application/json",
       "size": 119,
     },
-    "headers": [],
+    "headers": [
+      {
+        "name": "access-control-allow-headers",
+        "value": "Content-Type, api_key, Authorization",
+      },
+      {
+        "name": "access-control-allow-methods",
+        "value": "GET, POST, DELETE, PUT",
+      },
+      {
+        "name": "access-control-allow-origin",
+        "value": "*",
+      },
+      {
+        "name": "content-type",
+        "value": "application/json",
+      },
+      {
+        "name": "date",
+        "value": "Wed, 11 May 2022 11:48:47 GMT",
+      },
+      {
+        "name": "server",
+        "value": "Jetty(9.2.9.v20150224)",
+      },
+    ],
     "statusCode": "200",
   },
 }
@@ -52,7 +252,76 @@ exports[`CapturedIntearction.fromHarEntry includes response bodies 1`] = `
 {
   "request": {
     "body": null,
-    "headers": [],
+    "headers": [
+      {
+        "name": ":authority",
+        "value": "petstore.swagger.io",
+      },
+      {
+        "name": ":method",
+        "value": "GET",
+      },
+      {
+        "name": ":path",
+        "value": "/v2/store/inventory",
+      },
+      {
+        "name": ":scheme",
+        "value": "https",
+      },
+      {
+        "name": "accept",
+        "value": "application/json",
+      },
+      {
+        "name": "accept-encoding",
+        "value": "gzip, deflate, br",
+      },
+      {
+        "name": "accept-language",
+        "value": "en-GB,en;q=0.9,nl-NL;q=0.8,nl;q=0.7,en-US;q=0.6",
+      },
+      {
+        "name": "cache-control",
+        "value": "no-cache",
+      },
+      {
+        "name": "pragma",
+        "value": "no-cache",
+      },
+      {
+        "name": "referer",
+        "value": "https://petstore.swagger.io/",
+      },
+      {
+        "name": "sec-ch-ua",
+        "value": "" Not A;Brand";v="99", "Chromium";v="101", "Google Chrome";v="101"",
+      },
+      {
+        "name": "sec-ch-ua-mobile",
+        "value": "?0",
+      },
+      {
+        "name": "sec-ch-ua-platform",
+        "value": ""macOS"",
+      },
+      {
+        "name": "sec-fetch-dest",
+        "value": "empty",
+      },
+      {
+        "name": "sec-fetch-mode",
+        "value": "cors",
+      },
+      {
+        "name": "sec-fetch-site",
+        "value": "same-origin",
+      },
+      {
+        "name": "user-agent",
+        "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36",
+      },
+    ],
     "host": "petstore.swagger.io",
     "method": "get",
     "path": "/v2/store/inventory",
@@ -64,7 +333,32 @@ exports[`CapturedIntearction.fromHarEntry includes response bodies 1`] = `
       "contentType": "application/json",
       "size": 133,
     },
-    "headers": [],
+    "headers": [
+      {
+        "name": "access-control-allow-headers",
+        "value": "Content-Type, api_key, Authorization",
+      },
+      {
+        "name": "access-control-allow-methods",
+        "value": "GET, POST, DELETE, PUT",
+      },
+      {
+        "name": "access-control-allow-origin",
+        "value": "*",
+      },
+      {
+        "name": "content-type",
+        "value": "application/json",
+      },
+      {
+        "name": "date",
+        "value": "Wed, 11 May 2022 11:47:04 GMT",
+      },
+      {
+        "name": "server",
+        "value": "Jetty(9.2.9.v20150224)",
+      },
+    ],
     "statusCode": "200",
   },
 }
@@ -78,7 +372,88 @@ exports[`CapturedIntearction.fromHarEntry supports request body encoding for sup
       "contentType": "application/json",
       "size": 128,
     },
-    "headers": [],
+    "headers": [
+      {
+        "name": ":authority",
+        "value": "petstore.swagger.io",
+      },
+      {
+        "name": ":method",
+        "value": "POST",
+      },
+      {
+        "name": ":path",
+        "value": "/v2/store/order",
+      },
+      {
+        "name": ":scheme",
+        "value": "https",
+      },
+      {
+        "name": "accept",
+        "value": "application/json",
+      },
+      {
+        "name": "accept-encoding",
+        "value": "gzip, deflate, br",
+      },
+      {
+        "name": "accept-language",
+        "value": "en-GB,en;q=0.9,nl-NL;q=0.8,nl;q=0.7,en-US;q=0.6",
+      },
+      {
+        "name": "cache-control",
+        "value": "no-cache",
+      },
+      {
+        "name": "content-length",
+        "value": "128",
+      },
+      {
+        "name": "content-type",
+        "value": "application/json",
+      },
+      {
+        "name": "origin",
+        "value": "https://petstore.swagger.io",
+      },
+      {
+        "name": "pragma",
+        "value": "no-cache",
+      },
+      {
+        "name": "referer",
+        "value": "https://petstore.swagger.io/",
+      },
+      {
+        "name": "sec-ch-ua",
+        "value": "" Not A;Brand";v="99", "Chromium";v="101", "Google Chrome";v="101"",
+      },
+      {
+        "name": "sec-ch-ua-mobile",
+        "value": "?0",
+      },
+      {
+        "name": "sec-ch-ua-platform",
+        "value": ""macOS"",
+      },
+      {
+        "name": "sec-fetch-dest",
+        "value": "empty",
+      },
+      {
+        "name": "sec-fetch-mode",
+        "value": "cors",
+      },
+      {
+        "name": "sec-fetch-site",
+        "value": "same-origin",
+      },
+      {
+        "name": "user-agent",
+        "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36",
+      },
+    ],
     "host": "petstore.swagger.io",
     "method": "post",
     "path": "/v2/store/order",
@@ -90,7 +465,32 @@ exports[`CapturedIntearction.fromHarEntry supports request body encoding for sup
       "contentType": "application/json",
       "size": 119,
     },
-    "headers": [],
+    "headers": [
+      {
+        "name": "access-control-allow-headers",
+        "value": "Content-Type, api_key, Authorization",
+      },
+      {
+        "name": "access-control-allow-methods",
+        "value": "GET, POST, DELETE, PUT",
+      },
+      {
+        "name": "access-control-allow-origin",
+        "value": "*",
+      },
+      {
+        "name": "content-type",
+        "value": "application/json",
+      },
+      {
+        "name": "date",
+        "value": "Wed, 11 May 2022 11:48:47 GMT",
+      },
+      {
+        "name": "server",
+        "value": "Jetty(9.2.9.v20150224)",
+      },
+    ],
     "statusCode": "200",
   },
 }
@@ -100,7 +500,76 @@ exports[`CapturedIntearction.fromHarEntry supports response body encoding for su
 {
   "request": {
     "body": null,
-    "headers": [],
+    "headers": [
+      {
+        "name": ":authority",
+        "value": "petstore.swagger.io",
+      },
+      {
+        "name": ":method",
+        "value": "GET",
+      },
+      {
+        "name": ":path",
+        "value": "/v2/store/inventory",
+      },
+      {
+        "name": ":scheme",
+        "value": "https",
+      },
+      {
+        "name": "accept",
+        "value": "application/json",
+      },
+      {
+        "name": "accept-encoding",
+        "value": "gzip, deflate, br",
+      },
+      {
+        "name": "accept-language",
+        "value": "en-GB,en;q=0.9,nl-NL;q=0.8,nl;q=0.7,en-US;q=0.6",
+      },
+      {
+        "name": "cache-control",
+        "value": "no-cache",
+      },
+      {
+        "name": "pragma",
+        "value": "no-cache",
+      },
+      {
+        "name": "referer",
+        "value": "https://petstore.swagger.io/",
+      },
+      {
+        "name": "sec-ch-ua",
+        "value": "" Not A;Brand";v="99", "Chromium";v="101", "Google Chrome";v="101"",
+      },
+      {
+        "name": "sec-ch-ua-mobile",
+        "value": "?0",
+      },
+      {
+        "name": "sec-ch-ua-platform",
+        "value": ""macOS"",
+      },
+      {
+        "name": "sec-fetch-dest",
+        "value": "empty",
+      },
+      {
+        "name": "sec-fetch-mode",
+        "value": "cors",
+      },
+      {
+        "name": "sec-fetch-site",
+        "value": "same-origin",
+      },
+      {
+        "name": "user-agent",
+        "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36",
+      },
+    ],
     "host": "petstore.swagger.io",
     "method": "get",
     "path": "/v2/store/inventory",
@@ -112,7 +581,32 @@ exports[`CapturedIntearction.fromHarEntry supports response body encoding for su
       "contentType": "application/json",
       "size": 133,
     },
-    "headers": [],
+    "headers": [
+      {
+        "name": "access-control-allow-headers",
+        "value": "Content-Type, api_key, Authorization",
+      },
+      {
+        "name": "access-control-allow-methods",
+        "value": "GET, POST, DELETE, PUT",
+      },
+      {
+        "name": "access-control-allow-origin",
+        "value": "*",
+      },
+      {
+        "name": "content-type",
+        "value": "application/json",
+      },
+      {
+        "name": "date",
+        "value": "Wed, 11 May 2022 11:47:04 GMT",
+      },
+      {
+        "name": "server",
+        "value": "Jetty(9.2.9.v20150224)",
+      },
+    ],
     "statusCode": "200",
   },
 }
@@ -317,68 +811,6 @@ exports[`CapturedInteraction.fromPostmanEntry includes response bodies 1`] = `
         "value": "keep-alive",
       },
     ],
-    "statusCode": "200",
-  },
-}
-`;
-
-exports[`CapturedInteraction.fromProxyInteraction can create a CaturedInteraction from a ProxySource.Interaction 1`] = `
-{
-  "request": {
-    "body": null,
-    "headers": [],
-    "host": "localhost",
-    "method": "get",
-    "path": "/test-path",
-    "query": [],
-  },
-  "response": {
-    "body": null,
-    "headers": [],
-    "statusCode": "200",
-  },
-}
-`;
-
-exports[`CapturedInteraction.fromProxyInteraction includes request bodies 1`] = `
-{
-  "request": {
-    "body": {
-      "body": Anything,
-      "contentType": "text/plain",
-      "size": 9,
-    },
-    "headers": [],
-    "host": "localhost",
-    "method": "get",
-    "path": "/test-path",
-    "query": [],
-  },
-  "response": {
-    "body": null,
-    "headers": [],
-    "statusCode": "200",
-  },
-}
-`;
-
-exports[`CapturedInteraction.fromProxyInteraction includes response bodies 1`] = `
-{
-  "request": {
-    "body": null,
-    "headers": [],
-    "host": "localhost",
-    "method": "get",
-    "path": "/test-path",
-    "query": [],
-  },
-  "response": {
-    "body": {
-      "body": Anything,
-      "contentType": null,
-      "size": 31,
-    },
-    "headers": [],
     "statusCode": "200",
   },
 }

@@ -2,11 +2,7 @@ import { ShapeDiffResult, UnpatchableDiff, diffBodyBySchema } from './diff';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 import { oneOfPatches } from './handlers/oneOf';
 import { requiredPatches } from './handlers/required';
-import {
-  PatchImpact,
-  PatchOperation,
-  PatchOperationGroup,
-} from '../../patch-operations';
+import { PatchImpact, PatchOperation } from '../../patch-operations';
 import { logger } from '../../../../../logger';
 import { SentryClient } from '../../../../../sentry';
 import { newSchemaPatch } from './handlers/newSchema';
@@ -41,14 +37,14 @@ export interface ShapePatch {
   interaction: CapturedInteraction;
   diff: ShapeDiffResult | OperationDiffResult | undefined;
   impact: PatchImpact[];
-  groupedOperations: PatchOperationGroup[];
+  groupedOperations: PatchOperation[];
   shouldRegeneratePatches?: boolean;
 }
 
 export class ShapePatch {
   static *operations(patch: ShapePatch): IterableIterator<PatchOperation> {
-    for (let group of patch.groupedOperations) {
-      yield* PatchOperationGroup.operations(group);
+    for (let op of patch.groupedOperations) {
+      yield op;
     }
   }
 

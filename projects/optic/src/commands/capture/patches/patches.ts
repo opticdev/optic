@@ -7,7 +7,7 @@ import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { ApiCoverageCounter } from '../coverage/api-coverage';
 import { SpecPatch, SpecPatches } from './patchers/spec/patches';
 import { CapturedInteractions } from '../sources/captured-interactions';
-import { DocumentedInteraction, Operation } from '../../oas/operations';
+import { Operation } from '../../oas/operations';
 import { DocumentedBodies } from './patchers/shapes/documented-bodies';
 import { UndocumentedOperationType } from '../../oas/operations';
 import { SchemaInventory } from './patchers/closeness/schema-inventory';
@@ -80,7 +80,7 @@ export async function* generateEndpointSpecPatches(
       endpoint.method,
       jsonPointerHelpers.get(specHolder.spec, jsonPath) as any
     );
-    let documentedInteraction: DocumentedInteraction = {
+    let documentedInteraction = {
       interaction,
       operation,
       specJsonPath: jsonPath,
@@ -101,10 +101,37 @@ export async function* generateEndpointSpecPatches(
       yield patch;
     }
 
-    // phase two: shape patches, describing request / response bodies in detail
-    documentedInteraction = DocumentedInteraction.updateOperation(
-      documentedInteraction,
-      specHolder.spec
+    // phase two: request params and response headers
+    let requestPatches = SpecPatches.requestAdditions(
+      interaction,
+      Operation.fromOperationObject(
+        endpoint.path,
+        endpoint.method,
+        jsonPointerHelpers.get(specHolder.spec, jsonPath) as any
+      )
+    );
+    for await (let patch of requestPatches) {
+      specHolder.spec = SpecPatch.applyPatch(patch, specHolder.spec);
+      yield patch;
+    }
+    let responseAdditions = SpecPatches.responseAdditions(
+      interaction,
+      Operation.fromOperationObject(
+        endpoint.path,
+        endpoint.method,
+        jsonPointerHelpers.get(specHolder.spec, jsonPath) as any
+      )
+    );
+    for await (let patch of responseAdditions) {
+      specHolder.spec = SpecPatch.applyPatch(patch, specHolder.spec);
+      yield patch;
+    }
+
+    // phase three: shape patches, describing request / response bodies in detail
+    documentedInteraction.operation = Operation.fromOperationObject(
+      endpoint.path,
+      endpoint.method,
+      jsonPointerHelpers.get(specHolder.spec, jsonPath) as any
     );
     let documentedBodies = DocumentedBodies.fromDocumentedInteraction(
       documentedInteraction
@@ -155,8 +182,8 @@ export async function* generateRefRefactorPatches(
 export async function jsonOpsFromSpecPatches(specPatches: SpecPatches) {
   const ops: JsonOps[] = [];
   for await (const patch of specPatches) {
-    for (const { operations } of patch.groupedOperations) {
-      ops.push(...operations);
+    for (const operation of patch.groupedOperations) {
+      ops.push(operation);
     }
   }
 

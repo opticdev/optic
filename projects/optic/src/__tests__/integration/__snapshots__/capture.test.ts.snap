@@ -315,6 +315,17 @@ paths:
     get:
       responses:
         {}
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: foo1
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: foo2
+          required: true
   /cookies:
     get:
       responses:
@@ -377,6 +388,17 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetGet200ResponseBody"
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: foo1
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: foo2
+          required: true
   /gzip:
     get:
       responses:
@@ -451,6 +473,27 @@ paths:
             text/html:
               schema:
                 type: string
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: foo1
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: foo2
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: Content-Type
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: test
+          required: true
   /status/{status}:
     parameters:
       - in: path
@@ -494,6 +537,42 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetTimeTime200ResponseBody"
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: timestamp
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: format
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: unit
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: years
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: target
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: start
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: end
+          required: true
   /transform/collection:
     post:
       responses:
@@ -508,6 +587,17 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/PostTransformCollectionRequestBody"
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: from
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: to
+          required: true
 components:
   schemas:
     GetBooks200ResponseBody:
@@ -1861,16 +1951,12 @@ GET /books/{bookId}
   [31m[200 response body] 'status' is not documented (/properties)[39m
   [31m[200 response body] 'price' is not documented (/properties)[39m
 GET /books
-  [31m× [39m200 response
-  [31m[200 response body] 'name' is not documented (/properties/books/items/properties)[39m
-  [31m[200 response body] 'author_id' is not documented (/properties/books/items/properties)[39m
-  [31m[200 response body] 'status' is not documented (/properties/books/items/properties)[39m
-  [31m[200 response body] 'price' is not documented (/properties/books/items/properties)[39m
-  [31m[200 response body] 'created_at' is not documented (/properties/books/items/properties)[39m
-  [31m[200 response body] 'updated_at' is not documented (/properties/books/items/properties)[39m
+  200 response
+  [31m[404 response body] body is not documented[39m
+  [31m[query parameter] list is not documented[39m
 
-100.0% coverage of your documented operations. 2 requests did not match a documented path (6 total requests).
-8 diffs detected in documented operations
+83.3% coverage of your documented operations. 2 requests did not match a documented path (6 total requests).
+4 diffs detected in documented operations
 
 [33mNew endpoints are only added in interactive mode. Run 'optic capture openapi-with-overlapping-paths.yml --update interactive' to add new endpoints[39m
 "

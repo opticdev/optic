@@ -119,7 +119,7 @@ export const initCli = async (
     return cli;
   }
 
-  cli.version(packageJson.version);
+  cli.version(packageJson.version, '-V, --version', 'Display version');
   cli.addHelpCommand(false);
 
   registerRunCommand(cli, cliConfig);

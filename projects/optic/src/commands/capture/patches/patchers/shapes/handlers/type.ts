@@ -10,7 +10,8 @@ import { ShapeLocation } from '../documented-bodies';
 import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 import { ShapePatch } from '../patches';
 import { CapturedInteraction } from '../../../../sources/captured-interactions';
-import { OperationGroup, PatchImpact } from '../../spec/patches';
+import { PatchImpact } from '../../spec/patches';
+import { PatchOperation } from '../../../patch-operations';
 
 export function* typeKeywordDiffs(
   validationError: ErrorObject,
@@ -63,7 +64,7 @@ export function* typePatches(
   const alreadyOneOf = Array.isArray(currentPropertySchema.oneOf);
 
   function makeOneOfOperations() {
-    const groupedOperations: OperationGroup[] = [];
+    const groupedOperations: PatchOperation[] = [];
     if (alreadyOneOf) {
       let baseSchema = Schema.baseFromValue(diff.example, openAPIVersion);
 
@@ -72,13 +73,11 @@ export function* typePatches(
           Schema.equals(baseSchema, branchSchema)
         )
       ) {
-        groupedOperations.push(
-          OperationGroup.create(`add new oneOf type to ${diff.key}`, {
-            op: 'add',
-            path: jsonPointerHelpers.append(diff.propertyPath, 'oneOf', '-'), // "-" indicates append to array
-            value: baseSchema,
-          })
-        );
+        groupedOperations.push({
+          op: 'add',
+          path: jsonPointerHelpers.append(diff.propertyPath, 'oneOf', '-'), // "-" indicates append to array
+          value: baseSchema,
+        });
       }
     } else {
       let mergeOperations = [
@@ -91,22 +90,19 @@ export function* typePatches(
       ];
 
       groupedOperations.push(
-        OperationGroup.create(
-          `replace ${diff.key} with a one of containing both types`,
-          ...mergeOperations.map((op) => ({
-            ...op,
-            path: jsonPointerHelpers.join(diff.propertyPath, op.path),
-          }))
-        )
+        ...mergeOperations.map((op) => ({
+          ...op,
+          path: jsonPointerHelpers.join(diff.propertyPath, op.path),
+        }))
       );
     }
 
     return groupedOperations;
   }
 
-  function changeTypeOperations() {
+  function changeTypeOperations(): PatchOperation[] {
     return [
-      OperationGroup.create(`change ${diff.key} type`, {
+      {
         op: 'replace',
         path: jsonPointerHelpers.append(diff.propertyPath),
         // handles removal of keys that are no longer allowed
@@ -114,7 +110,7 @@ export function* typePatches(
           currentPropertySchema,
           Schema.baseFromValue(diff.example, openAPIVersion)
         ),
-      }),
+      },
     ];
   }
 
@@ -132,12 +128,12 @@ export function* typePatches(
             : PatchImpact.BackwardsIncompatible,
         ],
         groupedOperations: [
-          OperationGroup.create(`make ${diff.key} nullable`, {
+          {
             op: 'replace',
             path: jsonPointerHelpers.append(diff.propertyPath, 'nullable'),
             // handles removal of keys that are no longer allowed
             value: true,
-          }),
+          },
         ],
         shouldRegeneratePatches: false,
         interaction,
@@ -191,12 +187,12 @@ export function* typePatches(
             : PatchImpact.BackwardsIncompatible,
         ],
         groupedOperations: [
-          OperationGroup.create(`make ${diff.key} null`, {
+          {
             op: 'replace',
             path: jsonPointerHelpers.append(diff.propertyPath, 'type'),
             // handles removal of keys that are no longer allowed
             value: schemaType,
-          }),
+          },
         ],
         shouldRegeneratePatches: true,
         interaction,

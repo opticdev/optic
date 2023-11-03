@@ -22,12 +22,12 @@ tasks:
   build:
     desc: Build
     cmds:
-      - yarn workspaces foreach -pv --topological-dev --no-private run build
+      - yarn workspaces foreach -Apv --topological-dev --no-private run build
 
   clean:
     desc: Clean
     cmds:
-      - yarn workspaces foreach -pv --no-private run clean
+      - yarn workspaces foreach -Apv --no-private run clean
 
   lint:
     desc: Lint
@@ -37,17 +37,17 @@ tasks:
   test:
     desc: Test
     cmds:
-      - yarn workspaces foreach -v --no-private run test {{.CLI_ARGS}}
+      - yarn workspaces foreach -Av --no-private run test {{.CLI_ARGS}}
 
   update-snapshots:
     desc: Update snapshots
     cmds:
-      - yarn workspaces foreach -v --no-private run test -u
+      - yarn workspaces foreach -Av --no-private run test -u
 
   publish:
     desc: "Publish built artifacts. Passes CLI_ARGS to 'npm publish'"
     cmds:
-      - yarn workspaces foreach -v --no-private npm publish --access public {{.CLI_ARGS}}
+      - yarn workspaces foreach -Av --no-private npm publish --access public {{.CLI_ARGS}}
 
   #
   # container image build tasks
