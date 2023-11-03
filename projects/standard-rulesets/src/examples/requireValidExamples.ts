@@ -8,6 +8,7 @@ import {
 import { OpenAPIV3 } from 'openapi-types';
 import Ajv from 'ajv/dist/2019';
 import addFormats from 'ajv-formats';
+import { OAS3 } from '@useoptic/openapi-utilities';
 
 type SchemaObject = OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject;
 
@@ -95,7 +96,7 @@ function prepareSchemaForValidation(
   }
 
   if (!inAllOf) {
-    if (schema.type === 'object' && !schema.additionalProperties) {
+    if (OAS3.isObjectType(schema.type) && !schema.additionalProperties) {
       schema.additionalProperties = false;
     }
     if (schema.allOf && !(schema as any).unevaluatedProperties) {

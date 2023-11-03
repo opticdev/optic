@@ -4,7 +4,7 @@ import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { Ono } from '@jsdevtools/ono';
 import { Result, Ok, Err } from 'ts-results';
 import { JsonPath } from '@useoptic/openapi-io';
-import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { OAS3, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { SchemaObject } from './schema';
 import { Body } from './documented-bodies';
 import { additionalPropertiesDiffs } from './handlers/additionalProperties';
@@ -291,7 +291,7 @@ function prepareSchemaForDiff(input: SchemaObject): SchemaObject {
         which are easy to override by writing your schemas properly
        */
       if (
-        schema.type === 'object' &&
+        OAS3.isObjectType(schema.type) &&
         !schema.hasOwnProperty('additionalProperties')
       ) {
         schema['additionalProperties'] = false;

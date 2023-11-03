@@ -1,4 +1,8 @@
-import { FlatOpenAPIV3, FlatOpenAPIV3_1 } from '@useoptic/openapi-utilities';
+import {
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
+  OAS3,
+} from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 export function walkSchema(
@@ -62,7 +66,7 @@ export function walkSchema(
     });
   }
 
-  if (schema.type === 'object') {
+  if (OAS3.isObjectType(schema.type)) {
     const objectProperties = Object.keys(properties || {}) || [];
     objectProperties.forEach((property) => {
       tuples.push([

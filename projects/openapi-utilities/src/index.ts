@@ -95,7 +95,7 @@ export {
   SeverityTextOptions,
   SeverityText,
 } from './results';
-export { OpenApiV3Traverser } from './openapi3/traverser';
+export { OpenApiV3Traverser, OAS3 } from './openapi3/traverser';
 
 export {
   sourcemapReader,

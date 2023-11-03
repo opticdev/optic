@@ -1,4 +1,4 @@
-import { FlatOpenAPIV3, OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { FlatOpenAPIV3, OAS3, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { computeClosenessFromKeyValueTuples, walkSchema } from './closeness';
 import { PatchImpact } from '../../patch-operations';
@@ -223,11 +223,11 @@ function arrayItemPaths(
 
   function walk(schema: FlatOpenAPIV3.SchemaObject, path: string, n: number) {
     if (n > 2) return;
-    if (schema.type === 'array' && schema.items) {
+    if (OAS3.isArrayType(schema.type) && (schema as any).items) {
       const itemsPath = jsonPointerHelpers.append(path, 'items');
       results.push(itemsPath);
-      walk(schema.items, itemsPath, n + 1);
-    } else if (schema.type === 'object' && schema.properties) {
+      walk((schema as any).items, itemsPath, n + 1);
+    } else if (OAS3.isObjectType(schema.type) && schema.properties) {
       Object.entries(schema.properties).forEach(([prop, propSchema]) => {
         walk(
           propSchema,

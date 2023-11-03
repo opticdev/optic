@@ -1,5 +1,6 @@
 import { OpenAPIV3, OpenAPIV3_1 } from 'openapi-types';
 import Ajv from 'ajv';
+import { OAS3 } from '@useoptic/openapi-utilities';
 
 type SchemaUnion = OpenAPIV3.SchemaObject | OpenAPIV3_1.SchemaObject;
 
@@ -31,13 +32,13 @@ export function attachAdvancedValidators(ajv: Ajv) {
 }
 
 export function validateSchema(schema: SchemaUnion) {
-  if (schema.type === 'object') {
+  if (OAS3.isObjectType(schema.type)) {
     checkForDisallowedKeywords(
       'schema with type "object" cannot also include keywords: ',
       ['items'],
       schema
     );
-  } else if (schema.type === 'array') {
+  } else if (OAS3.isArrayType(schema.type)) {
     checkForDisallowedKeywords(
       'schema with type "array" cannot also include keywords: ',
       ['properties', 'required'],
