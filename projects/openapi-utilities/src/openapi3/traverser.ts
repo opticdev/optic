@@ -568,7 +568,8 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
           );
         }
       }
-    } else if (OAS3.isArrayType(schema.type)) {
+    }
+    if (OAS3.isArrayType(schema.type)) {
       const arrayItems = (schema as OpenAPIV3.ArraySchemaObject).items;
       const nextJsonPath = jsonPointer.append(jsonPath, 'items');
       if (!isObject(arrayItems)) {

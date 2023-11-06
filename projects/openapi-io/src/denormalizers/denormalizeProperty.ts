@@ -112,18 +112,21 @@ export function denormalizeProperty(
         });
       }
     }
-  } else if (OAS3.isArrayType(schema.type) && (schema as any).items) {
-    denormalizeProperty((schema as any).items, sourcemap, {
-      old: jsonPointerHelpers.append(pointers.old, 'items'),
-      new: jsonPointerHelpers.append(pointers.new, 'items'),
-    });
-  } else if (OAS3.isObjectType(schema.type)) {
-    const properties = schema.properties ?? {};
-    for (const [key, property] of Object.entries(properties)) {
-      denormalizeProperty(property, sourcemap, {
-        old: jsonPointerHelpers.append(pointers.old, 'properties', key),
-        new: jsonPointerHelpers.append(pointers.new, 'properties', key),
+  } else {
+    if (OAS3.isArrayType(schema.type) && (schema as any).items) {
+      denormalizeProperty((schema as any).items, sourcemap, {
+        old: jsonPointerHelpers.append(pointers.old, 'items'),
+        new: jsonPointerHelpers.append(pointers.new, 'items'),
       });
+    }
+    if (OAS3.isObjectType(schema.type)) {
+      const properties = schema.properties ?? {};
+      for (const [key, property] of Object.entries(properties)) {
+        denormalizeProperty(property, sourcemap, {
+          old: jsonPointerHelpers.append(pointers.old, 'properties', key),
+          new: jsonPointerHelpers.append(pointers.new, 'properties', key),
+        });
+      }
     }
   }
   // else we stop here

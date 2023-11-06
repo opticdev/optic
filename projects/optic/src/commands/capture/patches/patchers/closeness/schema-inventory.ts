@@ -227,7 +227,8 @@ function arrayItemPaths(
       const itemsPath = jsonPointerHelpers.append(path, 'items');
       results.push(itemsPath);
       walk((schema as any).items, itemsPath, n + 1);
-    } else if (OAS3.isObjectType(schema.type) && schema.properties) {
+    }
+    if (OAS3.isObjectType(schema.type) && schema.properties) {
       Object.entries(schema.properties).forEach(([prop, propSchema]) => {
         walk(
           propSchema,

@@ -215,7 +215,8 @@ function createKeyMapFromSchema(schema: FlatOpenAPIV3_1.SchemaObject): KeyMap {
           }
         }
       }
-    } else if (OAS3.isArrayType(schema.type)) {
+    }
+    if (OAS3.isArrayType(schema.type)) {
       schema = schema as FlatOpenAPIV3_1.ArraySchemaObject;
       if (schema.items) {
         const fullKey = `${path}.items`;
