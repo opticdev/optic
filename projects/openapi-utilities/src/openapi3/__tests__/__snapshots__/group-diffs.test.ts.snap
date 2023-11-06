@@ -3,7 +3,163 @@
 exports[`groupDiffsByEndpoint can group diffs by endpoint for small-pet-store  1`] = `
 GroupedDiffs {
   "endpoints": {
-    "/user-~_~-POST": {
+    "DELETE-~_~-/user/{username}": {
+      "cookieParameters": {},
+      "diffs": [
+        {
+          "after": "/paths/~1user~1{username}/delete",
+          "change": "added",
+          "trail": "",
+        },
+      ],
+      "headerParameters": {},
+      "method": "DELETE",
+      "path": "/user/{username}",
+      "pathParameters": {},
+      "queryParameters": {},
+      "request": {
+        "contents": {},
+        "diffs": [],
+        "rules": [],
+      },
+      "responses": {},
+      "rules": [],
+    },
+    "GET-~_~-/user/login": {
+      "cookieParameters": {},
+      "diffs": [],
+      "headerParameters": {},
+      "method": "GET",
+      "path": "/user/login",
+      "pathParameters": {},
+      "queryParameters": {},
+      "request": {
+        "contents": {},
+        "diffs": [],
+        "rules": [],
+      },
+      "responses": {
+        "200": {
+          "contents": {
+            "application/xml": {
+              "examples": {
+                "diffs": [],
+                "rules": [],
+              },
+              "fields": {
+                "/schema/properties/id": {
+                  "diffs": [
+                    {
+                      "before": "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/required/0",
+                      "change": "removed",
+                      "pathReconciliation": [],
+                      "trail": "/schema/required/0",
+                    },
+                  ],
+                  "rules": [],
+                },
+                "/schema/properties/name": {
+                  "diffs": [
+                    {
+                      "after": "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/required/0",
+                      "change": "added",
+                      "trail": "/schema/required/0",
+                    },
+                    {
+                      "after": "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/properties/name",
+                      "change": "added",
+                      "trail": "",
+                    },
+                  ],
+                  "rules": [],
+                },
+                "/schema/properties/status/properties/lastLogin": {
+                  "diffs": [
+                    {
+                      "after": "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/properties/status/required",
+                      "change": "added",
+                      "trail": "/required",
+                    },
+                  ],
+                  "rules": [],
+                },
+              },
+            },
+          },
+          "diffs": [],
+          "headers": {},
+          "rules": [],
+        },
+      },
+      "rules": [],
+    },
+    "GET-~_~-/user/logout": {
+      "cookieParameters": {},
+      "diffs": [
+        {
+          "after": "/paths/~1user~1logout/get",
+          "change": "added",
+          "trail": "",
+        },
+      ],
+      "headerParameters": {},
+      "method": "GET",
+      "path": "/user/logout",
+      "pathParameters": {},
+      "queryParameters": {},
+      "request": {
+        "contents": {},
+        "diffs": [],
+        "rules": [],
+      },
+      "responses": {},
+      "rules": [],
+    },
+    "GET-~_~-/user/{username}": {
+      "cookieParameters": {},
+      "diffs": [
+        {
+          "after": "/paths/~1user~1{username}/get",
+          "change": "added",
+          "trail": "",
+        },
+      ],
+      "headerParameters": {},
+      "method": "GET",
+      "path": "/user/{username}",
+      "pathParameters": {},
+      "queryParameters": {},
+      "request": {
+        "contents": {},
+        "diffs": [],
+        "rules": [],
+      },
+      "responses": {},
+      "rules": [],
+    },
+    "PATCH-~_~-/user/{username}": {
+      "cookieParameters": {},
+      "diffs": [
+        {
+          "after": "/paths/~1user~1{username}/patch",
+          "change": "added",
+          "trail": "",
+        },
+      ],
+      "headerParameters": {},
+      "method": "PATCH",
+      "path": "/user/{username}",
+      "pathParameters": {},
+      "queryParameters": {},
+      "request": {
+        "contents": {},
+        "diffs": [],
+        "rules": [],
+      },
+      "responses": {},
+      "rules": [],
+    },
+    "POST-~_~-/user": {
       "cookieParameters": {},
       "diffs": [],
       "headerParameters": {},
@@ -156,162 +312,6 @@ GroupedDiffs {
           "where": "blah",
         },
       ],
-    },
-    "/user/login-~_~-GET": {
-      "cookieParameters": {},
-      "diffs": [],
-      "headerParameters": {},
-      "method": "GET",
-      "path": "/user/login",
-      "pathParameters": {},
-      "queryParameters": {},
-      "request": {
-        "contents": {},
-        "diffs": [],
-        "rules": [],
-      },
-      "responses": {
-        "200": {
-          "contents": {
-            "application/xml": {
-              "examples": {
-                "diffs": [],
-                "rules": [],
-              },
-              "fields": {
-                "/schema/properties/id": {
-                  "diffs": [
-                    {
-                      "before": "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/required/0",
-                      "change": "removed",
-                      "pathReconciliation": [],
-                      "trail": "/schema/required/0",
-                    },
-                  ],
-                  "rules": [],
-                },
-                "/schema/properties/name": {
-                  "diffs": [
-                    {
-                      "after": "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/required/0",
-                      "change": "added",
-                      "trail": "/schema/required/0",
-                    },
-                    {
-                      "after": "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/properties/name",
-                      "change": "added",
-                      "trail": "",
-                    },
-                  ],
-                  "rules": [],
-                },
-                "/schema/properties/status/properties/lastLogin": {
-                  "diffs": [
-                    {
-                      "after": "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/properties/status/required",
-                      "change": "added",
-                      "trail": "/required",
-                    },
-                  ],
-                  "rules": [],
-                },
-              },
-            },
-          },
-          "diffs": [],
-          "headers": {},
-          "rules": [],
-        },
-      },
-      "rules": [],
-    },
-    "/user/logout-~_~-GET": {
-      "cookieParameters": {},
-      "diffs": [
-        {
-          "after": "/paths/~1user~1logout/get",
-          "change": "added",
-          "trail": "",
-        },
-      ],
-      "headerParameters": {},
-      "method": "GET",
-      "path": "/user/logout",
-      "pathParameters": {},
-      "queryParameters": {},
-      "request": {
-        "contents": {},
-        "diffs": [],
-        "rules": [],
-      },
-      "responses": {},
-      "rules": [],
-    },
-    "/user/{username}-~_~-DELETE": {
-      "cookieParameters": {},
-      "diffs": [
-        {
-          "after": "/paths/~1user~1{username}/delete",
-          "change": "added",
-          "trail": "",
-        },
-      ],
-      "headerParameters": {},
-      "method": "DELETE",
-      "path": "/user/{username}",
-      "pathParameters": {},
-      "queryParameters": {},
-      "request": {
-        "contents": {},
-        "diffs": [],
-        "rules": [],
-      },
-      "responses": {},
-      "rules": [],
-    },
-    "/user/{username}-~_~-GET": {
-      "cookieParameters": {},
-      "diffs": [
-        {
-          "after": "/paths/~1user~1{username}/get",
-          "change": "added",
-          "trail": "",
-        },
-      ],
-      "headerParameters": {},
-      "method": "GET",
-      "path": "/user/{username}",
-      "pathParameters": {},
-      "queryParameters": {},
-      "request": {
-        "contents": {},
-        "diffs": [],
-        "rules": [],
-      },
-      "responses": {},
-      "rules": [],
-    },
-    "/user/{username}-~_~-PATCH": {
-      "cookieParameters": {},
-      "diffs": [
-        {
-          "after": "/paths/~1user~1{username}/patch",
-          "change": "added",
-          "trail": "",
-        },
-      ],
-      "headerParameters": {},
-      "method": "PATCH",
-      "path": "/user/{username}",
-      "pathParameters": {},
-      "queryParameters": {},
-      "request": {
-        "contents": {},
-        "diffs": [],
-        "rules": [],
-      },
-      "responses": {},
-      "rules": [],
     },
   },
   "specification": {

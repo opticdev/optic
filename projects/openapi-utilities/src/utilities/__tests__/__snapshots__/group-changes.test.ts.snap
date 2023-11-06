@@ -3,7 +3,7 @@
 exports[`groupChangesAndRules diffs and groups changes between two open api files: pet store grouped changes 1`] = `
 {
   "changesByEndpoint": Map {
-    "/example.GET" => {
+    "GET-~_~-/example" => {
       "change": {
         "changeType": "changed",
         "changed": {
@@ -544,7 +544,7 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
         },
       },
     },
-    "/pet.GET" => {
+    "GET-~_~-/pet" => {
       "change": {
         "changeType": "removed",
         "location": {
@@ -666,7 +666,7 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
         },
       },
     },
-    "/pet.POST" => {
+    "POST-~_~-/pet" => {
       "change": {
         "changeType": "changed",
         "changed": {
@@ -809,7 +809,7 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
       },
       "responses": Map {},
     },
-    "/pet.PUT" => {
+    "PUT-~_~-/pet" => {
       "change": null,
       "cookieParameters": {
         "changes": Map {},
@@ -1444,7 +1444,7 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
         },
       },
     },
-    "/pet/findByStatus.GET" => {
+    "GET-~_~-/pet/findByStatus" => {
       "change": {
         "added": {
           "description": "Multiple status values can be provided with comma separated strings",
@@ -2598,7 +2598,7 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
         },
       },
     },
-    "/pet/findByTags.GET" => {
+    "GET-~_~-/pet/findByTags" => {
       "change": {
         "added": {
           "deprecated": true,
@@ -3711,7 +3711,7 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
         },
       },
     },
-    "/pet/{petId}.DELETE" => {
+    "DELETE-~_~-/pet/{petId}" => {
       "change": {
         "added": {
           "method": "delete",
@@ -3903,7 +3903,7 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
         },
       },
     },
-    "/pet/{petId}.GET" => {
+    "GET-~_~-/pet/{petId}" => {
       "change": {
         "added": {
           "description": "Returns a single pet",
@@ -5008,7 +5008,7 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
         },
       },
     },
-    "/pet/{petId}.POST" => {
+    "POST-~_~-/pet/{petId}" => {
       "change": {
         "added": {
           "method": "post",
@@ -5266,7 +5266,7 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
         },
       },
     },
-    "/pet/{petId}/uploadImage.POST" => {
+    "POST-~_~-/pet/{petId}/uploadImage" => {
       "change": null,
       "cookieParameters": {
         "changes": Map {
@@ -6046,7 +6046,7 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
         },
       },
     },
-    "/store/order.POST" => {
+    "POST-~_~-/store/order" => {
       "change": null,
       "cookieParameters": {
         "changes": Map {},
@@ -6488,7 +6488,7 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
         },
       },
     },
-    "/store/order/{orderId}.DELETE" => {
+    "DELETE-~_~-/store/order/{orderId}" => {
       "change": null,
       "cookieParameters": {
         "changes": Map {},
@@ -6696,7 +6696,7 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
         },
       },
     },
-    "/store/order/{orderId}.GET" => {
+    "GET-~_~-/store/order/{orderId}" => {
       "change": null,
       "cookieParameters": {
         "changes": Map {},
@@ -7208,7 +7208,7 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
         },
       },
     },
-    "/user.POST" => {
+    "POST-~_~-/user" => {
       "change": null,
       "cookieParameters": {
         "changes": Map {},
@@ -7465,7 +7465,7 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
       },
       "responses": Map {},
     },
-    "/user/createWithArray.POST" => {
+    "POST-~_~-/user/createWithArray" => {
       "change": null,
       "cookieParameters": {
         "changes": Map {},
@@ -7732,7 +7732,7 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
       },
       "responses": Map {},
     },
-    "/user/createWithList.POST" => {
+    "POST-~_~-/user/createWithList" => {
       "change": null,
       "cookieParameters": {
         "changes": Map {},
@@ -7999,7 +7999,7 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
       },
       "responses": Map {},
     },
-    "/user/login.GET" => {
+    "GET-~_~-/user/login" => {
       "change": null,
       "cookieParameters": {
         "changes": Map {},
@@ -8145,7 +8145,7 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
         },
       },
     },
-    "/user/{username}.GET" => {
+    "GET-~_~-/user/{username}" => {
       "change": null,
       "cookieParameters": {
         "changes": Map {},
@@ -8953,7 +8953,7 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
         },
       },
     },
-    "/user/{username}.PUT" => {
+    "PUT-~_~-/user/{username}" => {
       "change": null,
       "cookieParameters": {
         "changes": Map {},
