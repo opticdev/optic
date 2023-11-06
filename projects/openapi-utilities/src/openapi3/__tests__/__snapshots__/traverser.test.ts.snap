@@ -835,6 +835,24 @@ exports[`traversing a spec can traverse a spec (./inputs/openapi3/polymorphic-sc
   },
   {
     "location": {
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/typearray",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/typearray/properties/id",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/typearray/items/properties/id",
+    },
+    "type": "field",
+  },
+  {
+    "location": {
       "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject",
     },
     "type": "field",
