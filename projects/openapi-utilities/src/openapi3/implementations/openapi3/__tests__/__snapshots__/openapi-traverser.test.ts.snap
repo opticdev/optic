@@ -6030,6 +6030,128 @@ exports[`will work with 3.1 schemas 1`] = `
           "statusCode": "200",
         },
         "jsonSchemaTrail": [
+          "typearray",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "typearray",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/typearray",
+      "kind": "field",
+    },
+    "value": {
+      "flatSchema": {
+        "items": {
+          "properties": {
+            "id": {
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+        "type": [
+          "object",
+          "array",
+        ],
+      },
+      "key": "typearray",
+      "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "typearray",
+          "id",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "typearray",
+        "id",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/typearray/properties/id",
+      "kind": "field",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+      "key": "id",
+      "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "typearray",
+          "items",
+          "id",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "typearray",
+        "items",
+        "id",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/typearray/items/properties/id",
+      "kind": "field",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+      "key": "id",
+      "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
           "stringOrNumberOrObject",
         ],
         "method": "get",

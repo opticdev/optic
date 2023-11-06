@@ -7,6 +7,21 @@ import {
   V3FactType,
 } from './types';
 
+export const OAS3 = {
+  isObjectType(
+    type: OpenAPIV3.SchemaObject['type'] | OpenAPIV3_1.SchemaObject['type']
+  ): boolean {
+    return (
+      type === 'object' || (Array.isArray(type) && type.includes('object'))
+    );
+  },
+  isArrayType(
+    type: OpenAPIV3.SchemaObject['type'] | OpenAPIV3_1.SchemaObject['type']
+  ): boolean {
+    return type === 'array' || (Array.isArray(type) && type.includes('array'));
+  },
+};
+
 // This is the V2 traverser version which is intended to be used for more efficient storage + better compatibility between OpenAPI versions
 type Traverse<DocSchema> = {
   format: string;
@@ -534,40 +549,17 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
       }
     }
 
-    switch (schema.type) {
-      case 'object':
-        for (let [key, fieldSchema] of Object.entries(
-          schema.properties || {}
-        )) {
-          const nextJsonPath = jsonPointer.append(jsonPath, 'properties', key);
-          if (!isObject(fieldSchema)) {
-            this.warnings.push(
-              `Expected an object at: ${getReadableLocation(
-                jsonPath
-              )}, nextJsonPath ${fieldSchema}`
-            );
-          } else if (isNotReferenceObject(fieldSchema)) {
-            yield* this.traverseField(fieldSchema, nextJsonPath);
-          } else {
-            this.warnings.push(
-              `Expected a flattened spec, found a reference at: ${getReadableLocation(
-                nextJsonPath
-              )}`
-            );
-          }
-        }
-        break;
-      case 'array':
-        const arrayItems = schema.items;
-        const nextJsonPath = jsonPointer.append(jsonPath, 'items');
-        if (!isObject(arrayItems)) {
+    if (OAS3.isObjectType(schema.type)) {
+      for (let [key, fieldSchema] of Object.entries(schema.properties || {})) {
+        const nextJsonPath = jsonPointer.append(jsonPath, 'properties', key);
+        if (!isObject(fieldSchema)) {
           this.warnings.push(
             `Expected an object at: ${getReadableLocation(
-              nextJsonPath
-            )}, found ${arrayItems}`
+              jsonPath
+            )}, nextJsonPath ${fieldSchema}`
           );
-        } else if (isNotReferenceObject(arrayItems)) {
-          yield* this.traverseSchema(arrayItems, nextJsonPath);
+        } else if (isNotReferenceObject(fieldSchema)) {
+          yield* this.traverseField(fieldSchema, nextJsonPath);
         } else {
           this.warnings.push(
             `Expected a flattened spec, found a reference at: ${getReadableLocation(
@@ -575,11 +567,26 @@ export class OpenApiV3Traverser implements Traverse<OpenAPIV3.Document> {
             )}`
           );
         }
-        break;
-      case 'string':
-      case 'number':
-      case 'integer':
-        break;
+      }
+    }
+    if (OAS3.isArrayType(schema.type)) {
+      const arrayItems = (schema as OpenAPIV3.ArraySchemaObject).items;
+      const nextJsonPath = jsonPointer.append(jsonPath, 'items');
+      if (!isObject(arrayItems)) {
+        this.warnings.push(
+          `Expected an object at: ${getReadableLocation(
+            nextJsonPath
+          )}, found ${arrayItems}`
+        );
+      } else if (isNotReferenceObject(arrayItems)) {
+        yield* this.traverseSchema(arrayItems, nextJsonPath);
+      } else {
+        this.warnings.push(
+          `Expected a flattened spec, found a reference at: ${getReadableLocation(
+            nextJsonPath
+          )}`
+        );
+      }
     }
   }
 

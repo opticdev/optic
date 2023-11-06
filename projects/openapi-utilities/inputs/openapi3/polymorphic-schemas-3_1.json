@@ -22,6 +22,16 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "typearray": {
+                      "type": ["object", "array"],
+                      "properties": {
+                        "id": { "type": "string" }
+                      },
+                      "items": {
+                        "type": "object",
+                        "properties": { "id": { "type": "string" } }
+                      }
+                    },
                     "stringOrNumberOrObject": {
                       "oneOf": [
                         { "type": "string" },

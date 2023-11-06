@@ -1,5 +1,5 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { FlatOpenAPIV3 } from '@useoptic/openapi-utilities';
+import { FlatOpenAPIV3, OAS3 } from '@useoptic/openapi-utilities';
 import { JsonSchemaSourcemap } from '../parser/sourcemap';
 import { logPointer } from './pointer';
 
@@ -89,7 +89,7 @@ export function denormalizeProperty(
   if (polymorphicKey && polymorphicValue) {
     if (
       polymorphicKey === 'allOf' &&
-      polymorphicValue.every((schema) => schema.type === 'object')
+      polymorphicValue.every((schema) => OAS3.isObjectType(schema.type))
     ) {
       const effectiveObject = mergeAllOf(polymorphicValue, sourcemap, pointers);
       schema.type = effectiveObject.type;
@@ -112,18 +112,21 @@ export function denormalizeProperty(
         });
       }
     }
-  } else if (schema.type === 'array' && schema.items) {
-    denormalizeProperty(schema.items, sourcemap, {
-      old: jsonPointerHelpers.append(pointers.old, 'items'),
-      new: jsonPointerHelpers.append(pointers.new, 'items'),
-    });
-  } else if (schema.type === 'object') {
-    const properties = schema.properties ?? {};
-    for (const [key, property] of Object.entries(properties)) {
-      denormalizeProperty(property, sourcemap, {
-        old: jsonPointerHelpers.append(pointers.old, 'properties', key),
-        new: jsonPointerHelpers.append(pointers.new, 'properties', key),
+  } else {
+    if (OAS3.isArrayType(schema.type) && (schema as any).items) {
+      denormalizeProperty((schema as any).items, sourcemap, {
+        old: jsonPointerHelpers.append(pointers.old, 'items'),
+        new: jsonPointerHelpers.append(pointers.new, 'items'),
       });
+    }
+    if (OAS3.isObjectType(schema.type)) {
+      const properties = schema.properties ?? {};
+      for (const [key, property] of Object.entries(properties)) {
+        denormalizeProperty(property, sourcemap, {
+          old: jsonPointerHelpers.append(pointers.old, 'properties', key),
+          new: jsonPointerHelpers.append(pointers.new, 'properties', key),
+        });
+      }
     }
   }
   // else we stop here

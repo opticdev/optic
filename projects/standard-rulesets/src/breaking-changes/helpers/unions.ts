@@ -1,6 +1,7 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import {
   FlatOpenAPIV3_1,
+  OAS3,
   OpenAPIV3,
   OpenAPIV3_1,
   OpenApi3SchemaFact,
@@ -171,7 +172,7 @@ function createKeyMapFromSchema(schema: FlatOpenAPIV3_1.SchemaObject): KeyMap {
   const keyMap: KeyMap = new Map();
 
   function traverseSchema(schema: FlatOpenAPIV3_1.SchemaObject, path: string) {
-    if (schema.type === 'object') {
+    if (OAS3.isObjectType(schema.type)) {
       if (schema.properties) {
         for (const [key, value] of Object.entries(schema.properties)) {
           const fullKey = path ? `${path}${SEPARATOR}${key}` : key;
@@ -214,7 +215,9 @@ function createKeyMapFromSchema(schema: FlatOpenAPIV3_1.SchemaObject): KeyMap {
           }
         }
       }
-    } else if (schema.type === 'array') {
+    }
+    if (OAS3.isArrayType(schema.type)) {
+      schema = schema as FlatOpenAPIV3_1.ArraySchemaObject;
       if (schema.items) {
         const fullKey = `${path}.items`;
         if (!schema.items.type) {
