@@ -376,7 +376,7 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
       "comparison": {
         "groupedDiffs": {
           "endpoints": {
-            "/api/filler-route-~_~-POST": {
+            "POST-~_~-/api/filler-route": {
               "cookieParameters": {},
               "diffs": [],
               "headerParameters": {},
@@ -407,7 +407,7 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
                 },
               ],
             },
-            "/filler_route-~_~-POST": {
+            "POST-~_~-/filler_route": {
               "cookieParameters": {},
               "diffs": [],
               "headerParameters": {},
@@ -486,7 +486,7 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
       "comparison": {
         "groupedDiffs": {
           "endpoints": {
-            "/api/filler-route-~_~-POST": {
+            "POST-~_~-/api/filler-route": {
               "cookieParameters": {},
               "diffs": [
                 {
@@ -573,7 +573,7 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
                 },
               ],
             },
-            "/filler_route-~_~-POST": {
+            "POST-~_~-/filler_route": {
               "cookieParameters": {},
               "diffs": [
                 {
@@ -779,7 +779,7 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
       "comparison": {
         "groupedDiffs": {
           "endpoints": {
-            "/example-~_~-GET": {
+            "GET-~_~-/example": {
               "cookieParameters": {},
               "diffs": [],
               "headerParameters": {},
@@ -809,7 +809,7 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
                 },
               ],
             },
-            "/example-~_~-PATCH": {
+            "PATCH-~_~-/example": {
               "cookieParameters": {},
               "diffs": [],
               "headerParameters": {},
@@ -839,7 +839,7 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
                 },
               ],
             },
-            "/example-~_~-POST": {
+            "POST-~_~-/example": {
               "cookieParameters": {},
               "diffs": [],
               "headerParameters": {},
@@ -869,7 +869,7 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
                 },
               ],
             },
-            "/example-~_~-PUT": {
+            "PUT-~_~-/example": {
               "cookieParameters": {},
               "diffs": [],
               "headerParameters": {},
@@ -969,7 +969,7 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
       "comparison": {
         "groupedDiffs": {
           "endpoints": {
-            "/filler_route-~_~-POST": {
+            "POST-~_~-/filler_route": {
               "cookieParameters": {},
               "diffs": [],
               "headerParameters": {},
@@ -1035,7 +1035,7 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
       "comparison": {
         "groupedDiffs": {
           "endpoints": {
-            "/example-~_~-GET": {
+            "GET-~_~-/example": {
               "cookieParameters": {},
               "diffs": [],
               "headerParameters": {},
@@ -1065,7 +1065,7 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
                 },
               ],
             },
-            "/example-~_~-PATCH": {
+            "PATCH-~_~-/example": {
               "cookieParameters": {},
               "diffs": [],
               "headerParameters": {},
@@ -1095,7 +1095,7 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
                 },
               ],
             },
-            "/example-~_~-POST": {
+            "POST-~_~-/example": {
               "cookieParameters": {},
               "diffs": [],
               "headerParameters": {},
@@ -1125,7 +1125,7 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
                 },
               ],
             },
-            "/example-~_~-PUT": {
+            "PUT-~_~-/example": {
               "cookieParameters": {},
               "diffs": [],
               "headerParameters": {},
@@ -1225,7 +1225,7 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
       "comparison": {
         "groupedDiffs": {
           "endpoints": {
-            "/filler_route-~_~-POST": {
+            "POST-~_~-/filler_route": {
               "cookieParameters": {},
               "diffs": [],
               "headerParameters": {},
@@ -1291,7 +1291,7 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
       "comparison": {
         "groupedDiffs": {
           "endpoints": {
-            "/api/filler-route-~_~-POST": {
+            "POST-~_~-/api/filler-route": {
               "cookieParameters": {},
               "diffs": [
                 {
@@ -1328,7 +1328,7 @@ exports[`diff-all diffs all files in a workspace with x-optic-url keys with --up
                 },
               ],
             },
-            "/filler_route-~_~-POST": {
+            "POST-~_~-/filler_route": {
               "cookieParameters": {},
               "diffs": [
                 {
