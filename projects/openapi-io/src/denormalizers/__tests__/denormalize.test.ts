@@ -48,6 +48,10 @@ describe('denormalize', () => {
         'merges nested allOf',
         'src/denormalizers/__tests__/specs/allOf/nested.yaml',
       ],
+      [
+        'merges allOfs in type array object / items',
+        'src/denormalizers/__tests__/specs/allOf/in-type-array.yaml',
+      ],
     ])('%s', async (_, openapiFilePath) => {
       const spec = await parseOpenAPIWithSourcemap(
         path.resolve(openapiFilePath)
