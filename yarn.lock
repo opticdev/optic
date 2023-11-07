@@ -3418,11 +3418,11 @@ __metadata:
   linkType: hard
 
 "@types/lodash.sortby@npm:^4.7.7":
-  version: 4.7.8
-  resolution: "@types/lodash.sortby@npm:4.7.8"
+  version: 4.7.9
+  resolution: "@types/lodash.sortby@npm:4.7.9"
   dependencies:
     "@types/lodash": "npm:*"
-  checksum: 534f5a5257f3fca3a18a28e0674d70c5d52d90ad3440d7183598a84d55e3754a7a9dc0fe4a9816f794d17eb25abaa6069f59e42f4601e41a06072536738a67af
+  checksum: 682547c7bb210db87ebc172a95c71c3d35d89e87f4eb959c28772b8d80c767bd8cb95ac48390302ac649b3e6450e26c1512818d2d0f0749393c49b5dcbf437c3
   languageName: node
   linkType: hard
 
