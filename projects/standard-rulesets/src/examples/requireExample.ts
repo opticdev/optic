@@ -33,6 +33,15 @@ export const requireResponseExamples = (
           }
         });
       }
+      if (applies === 'added') {
+        responseBodyAssertions.body.added((body) => {
+          if (responseToNumberOfExamples(body) < 1) {
+            throw new RuleError({
+              message: `a valid example is required for added response bodies`,
+            });
+          }
+        });
+      }
       if (applies === 'addedOrChanged' || applies === 'added') {
         responseBodyAssertions.body.addedOrChanged((body) => {
           if (responseToNumberOfExamples(body) < 1) {
