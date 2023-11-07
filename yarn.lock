@@ -3174,9 +3174,9 @@ __metadata:
   linkType: hard
 
 "@types/babel__plugin-transform-runtime@npm:^7":
-  version: 7.9.4
-  resolution: "@types/babel__plugin-transform-runtime@npm:7.9.4"
-  checksum: efbcbae29f5401733ef1ac70dd5c7c3347cf4ce8d6b886ff57cfef331d29754b5436654ab7a360b1576d9672614b624f4b4081c92222559f6d3b461d3efd7f7c
+  version: 7.9.5
+  resolution: "@types/babel__plugin-transform-runtime@npm:7.9.5"
+  checksum: 119d8f88188c63eb21bf150d294991d3470e6aa90dc8ec9f634197760af8acc981564e29af9087bfa8ad713b5b5419cae03047cd225fccb9977bb97adf25a871
   languageName: node
   linkType: hard
 
