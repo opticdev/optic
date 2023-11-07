@@ -111,7 +111,13 @@ const getLintAction =
           file1: path,
         };
 
-        const compressedData = compressDataV2(file, file, specResults, meta);
+        const compressedData = compressDataV2(
+          file,
+          file,
+          specResults,
+          meta,
+          changelogData
+        );
         analyticsData.compressedDataLength = compressedData.length;
         logger.info('Opening up lint results in web view');
 

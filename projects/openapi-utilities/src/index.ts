@@ -55,6 +55,7 @@ import {
 
 export { defaultEmptySpec } from './openapi3/constants';
 export * from './openapi3/implementations/openapi3/types';
+export * from './utilities/id';
 
 export { SPEC_TAG_REGEXP, sanitizeGitTag } from './specs/tags';
 

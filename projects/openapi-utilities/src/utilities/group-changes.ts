@@ -13,11 +13,7 @@ import {
 } from '../openapi3/sdk/isType';
 import { compareChangesByPath } from './compare-changes-by-path';
 import { ResultWithSourcemap } from '../types';
-
-function getEndpointId(endpoint: { pathId: string; method: string }) {
-  const { pathId, method } = endpoint;
-  return `${pathId}.${method.toUpperCase()}`;
-}
+import { getEndpointId } from './id';
 
 export type ContentType = string;
 export type StatusCode = string;
@@ -198,7 +194,7 @@ export const groupChangesAndRules = ({
       change.location.conceptualLocation as any
     ).method;
     if (!path || !method) continue;
-    const endpointId = getEndpointId({ pathId: path, method });
+    const endpointId = getEndpointId({ path, method });
     const maybeEndpointChange = groupedChanges.get(endpointId);
     const endpointChange =
       maybeEndpointChange || createEmptyOpenApiChange({ path, method });
@@ -354,7 +350,7 @@ export const groupChangesAndRules = ({
       rule.change.location.conceptualLocation as any
     ).method;
     if (!path || !method) continue;
-    const endpointId = getEndpointId({ pathId: path, method });
+    const endpointId = getEndpointId({ path, method });
     const maybeEndpoint = groupedChanges.get(endpointId);
     const endpoint =
       maybeEndpoint || createEmptyOpenApiChange({ path, method });

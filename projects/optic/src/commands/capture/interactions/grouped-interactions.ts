@@ -1,5 +1,5 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { OpenAPIV3, getEndpointId } from '@useoptic/openapi-utilities';
 import crypto from 'crypto';
 import fs from 'node:fs/promises';
 import path from 'path';
@@ -10,7 +10,6 @@ import {
 } from '../sources/captured-interactions';
 import { HttpArchive } from '../sources/har';
 import { OperationQueries, specToOperations } from '../operations/queries';
-import { getEndpointId } from '../../../utils/id';
 import { logger } from '../../../logger';
 import { getIgnorePaths } from '../../../utils/specs';
 import { minimatch } from 'minimatch';

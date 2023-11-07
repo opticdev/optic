@@ -1,6 +1,11 @@
 import zlib from 'node:zlib';
-import { OpenAPIV3, compareSpecs } from '@useoptic/openapi-utilities';
+import {
+  OpenAPIV3,
+  compareSpecs,
+  getEndpointId,
+} from '@useoptic/openapi-utilities';
 import { ParseResult } from '../../utils/spec-loaders';
+import { compute } from './compute';
 
 type SpecResultsV2 = Awaited<ReturnType<typeof compareSpecs>>;
 
@@ -13,16 +18,50 @@ const removeComponentsFromSpec = (
   return componentlessSpec;
 };
 
+const removeUnusedEndpoints = (
+  spec: OpenAPIV3.Document,
+  changelogData: Awaited<ReturnType<typeof compute>>['changelogData']
+): OpenAPIV3.Document => {
+  const { paths, ...specWithoutPaths } = spec;
+  const newPaths = {};
+  for (const [pathPattern, methodObj] of Object.entries(paths)) {
+    newPaths[pathPattern] = {};
+    for (const method of Object.values(OpenAPIV3.HttpMethods)) {
+      const operation = methodObj?.[method];
+      const hasChangelogDataForEndpoint =
+        getEndpointId({ method, path: pathPattern }) in changelogData.endpoints;
+      if (operation && hasChangelogDataForEndpoint) {
+        newPaths[pathPattern][method] = operation;
+      }
+    }
+  }
+
+  return {
+    ...specWithoutPaths,
+    paths: newPaths,
+  };
+};
+
 export const compressDataV2 = (
   baseFile: ParseResult,
   headFile: ParseResult,
   specResults: SpecResultsV2,
-  meta: Record<string, unknown>
+  meta: Record<string, unknown>,
+  changelogData: Awaited<ReturnType<typeof compute>>['changelogData']
 ): string => {
   const dataToCompress = {
-    base: removeComponentsFromSpec(baseFile.jsonLike),
-    head: removeComponentsFromSpec(headFile.jsonLike),
-    results: specResults,
+    base: removeUnusedEndpoints(
+      removeComponentsFromSpec(baseFile.jsonLike),
+      changelogData
+    ),
+    head: removeUnusedEndpoints(
+      removeComponentsFromSpec(headFile.jsonLike),
+      changelogData
+    ),
+    results: {
+      ...specResults,
+      results: specResults.results.filter((r) => !r.passed),
+    },
     meta,
     version: '2',
   };

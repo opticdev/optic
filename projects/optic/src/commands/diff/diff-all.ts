@@ -527,7 +527,7 @@ function handleWarnings(
 
 async function openWebpage(
   url: string | null,
-  { fromParseResults, toParseResults, specResults }: Result,
+  { fromParseResults, toParseResults, specResults, changelogData }: Result,
   config: OpticCliConfig
 ) {
   const analyticsData: Record<string, any> = {
@@ -543,7 +543,8 @@ async function openWebpage(
       fromParseResults,
       toParseResults,
       specResults,
-      meta
+      meta,
+      changelogData
     );
     analyticsData.compressedDataLength = compressedData.length;
     url = `${config.client.getWebBase()}/cli/diff#${compressedData}`;
