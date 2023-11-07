@@ -3400,11 +3400,11 @@ __metadata:
   linkType: hard
 
 "@types/lodash.omit@npm:^4.5.7":
-  version: 4.5.8
-  resolution: "@types/lodash.omit@npm:4.5.8"
+  version: 4.5.9
+  resolution: "@types/lodash.omit@npm:4.5.9"
   dependencies:
     "@types/lodash": "npm:*"
-  checksum: 601fa4a79ddb64e2630d1d98e1042c249c8eeed2a0fd70dafcfad7e04182d95ad3932074b3612df8190e38495fa21cb1ae04ebabe8f32ab8bfadd8c23a0e3b93
+  checksum: 3b60c8ee8e9a691392d9a3ceabb32c85f888784bd3307eac3de01aeb7ff37383dc8899f027fe852641f5e0f56158fb19785cc3d20a4922e85b5810f14cba23f6
   languageName: node
   linkType: hard
 
