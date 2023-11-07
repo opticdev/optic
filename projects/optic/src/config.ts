@@ -173,12 +173,10 @@ export async function detectCliConfig(
 
 export async function renderTemplate(configPath: string): Promise<unknown> {
   dotenv.config({ path: '.optic.env' });
-
   const template = Handlebars.compile(await fs.readFile(configPath, 'utf-8'));
   // TODO: handle unset values
-  const resultYaml = template(process.env);
-  const config = yaml.load(resultYaml);
-  return config;
+  const result = template(process.env);
+  return yaml.load(result);
 }
 
 export async function loadCliConfig(
