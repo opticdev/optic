@@ -3286,9 +3286,9 @@ __metadata:
   linkType: hard
 
 "@types/is-url@npm:^1.2.30":
-  version: 1.2.31
-  resolution: "@types/is-url@npm:1.2.31"
-  checksum: c191ed50018e33f657a82d24cb414a4830caa24acd14429aae26bbc1802a2ff739ffed4f08d3fb2f321522f8754f3e31a5708312da3fb1888898c3a37ad8ebb1
+  version: 1.2.32
+  resolution: "@types/is-url@npm:1.2.32"
+  checksum: 735e7c8d45c2e7f3ab41d86b9e7c33913eb184533fdc5415a1496155c1d0e076bb9ec712273403daaa37f2a92f5e0bb459135d6d6c835a6a60c694efc16c679b
   languageName: node
   linkType: hard
 
