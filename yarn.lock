@@ -3339,9 +3339,9 @@ __metadata:
   linkType: hard
 
 "@types/json-stable-stringify@npm:^1.0.33":
-  version: 1.0.35
-  resolution: "@types/json-stable-stringify@npm:1.0.35"
-  checksum: 67b50a86478f932c932ba21515b80700a8844d55e0656b3abe2c32c41c1c405c70fcd10b30ff8f38d1869871af2deae63ffdea54ce72cc2ee92e94a9d1cf2b6f
+  version: 1.0.36
+  resolution: "@types/json-stable-stringify@npm:1.0.36"
+  checksum: c2f0d0075bd04681d664a7ac4ef5078289b2f790f9737cd3457b5cc199d39df2efe132e04574ad5f89c9ae50096d44c9ca5ec4aebcd6005b969009f725dbcb79
   languageName: node
   linkType: hard
 
