@@ -221,7 +221,10 @@ async function parseSpecAndDereference(
         ...(await parseOpenAPIFromRepoWithSourcemap(
           input.name,
           config.root,
-          input.branch
+          input.branch,
+          {
+            externalHeadersMap: new Map(), // TODO replace this with ref resolution headers
+          }
         )),
         from: 'git',
         isEmptySpec: false,
@@ -236,7 +239,9 @@ async function parseSpecAndDereference(
       };
     }
     case 'url': {
-      const parseResult = await parseOpenAPIWithSourcemap(input.url);
+      const parseResult = await parseOpenAPIWithSourcemap(input.url, {
+        externalHeadersMap: new Map(), // TODO replace this with ref resolution headers
+      });
       return {
         ...parseResult,
         from: 'url',
@@ -247,7 +252,10 @@ async function parseSpecAndDereference(
     case 'file':
       let context: ParseResultContext = null;
       const parseResult = await parseOpenAPIWithSourcemap(
-        path.resolve(workingDir, input.filePath)
+        path.resolve(workingDir, input.filePath),
+        {
+          externalHeadersMap: new Map(), // TODO replace this with ref resolution headers
+        }
       );
 
       if (config.vcs?.type === VCS.Git) {
