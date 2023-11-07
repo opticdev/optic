@@ -1,0 +1,350 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`documentation ruleset failing require operation description 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "value": {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "an operation description must be included",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require operation description",
+    "passed": false,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users",
+  },
+]
+`;
+
+exports[`documentation ruleset failing require operation id 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "value": {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "an operation id must be included",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require operation id",
+    "passed": false,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users",
+  },
+]
+`;
+
+exports[`documentation ruleset failing require operation summary 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "value": {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "an operation summary must be included",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require operation summary",
+    "passed": false,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users",
+  },
+]
+`;
+
+exports[`documentation ruleset failing require property description 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": [
+            "id",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "id",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/id",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "description": undefined,
+          "type": "string",
+        },
+        "key": "id",
+        "required": false,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "an property description must be included",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property description",
+    "passed": false,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users response 200 response body: application/json property id",
+  },
+]
+`;
+
+exports[`documentation ruleset passing require operation description 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "value": {
+        "description": "this is a description",
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require operation description",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users",
+  },
+]
+`;
+
+exports[`documentation ruleset passing require operation id 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "value": {
+        "method": "get",
+        "operationId": "operationid",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require operation id",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users",
+  },
+]
+`;
+
+exports[`documentation ruleset passing require operation summary 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "value": {
+        "method": "get",
+        "pathPattern": "/api/users",
+        "summary": "this is a summary",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require operation summary",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users",
+  },
+]
+`;
+
+exports[`documentation ruleset passing require property description 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": [
+            "id",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "id",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/id",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "description": "description",
+          "type": "string",
+        },
+        "key": "id",
+        "required": false,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property description",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users response 200 response body: application/json property id",
+  },
+]
+`;
