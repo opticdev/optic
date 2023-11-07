@@ -41,7 +41,7 @@ https://raw.githubusercontent.com/opticdev/bookstore-example/ac5f3c55a6f7f27c482
 
 <img src="https://github.com/opticdev/optic/assets/5900338/fd6cdd7f-c147-467b-9517-84232baa898f" width="500" />
 
-[Read Documentation](https://www.useoptic.com/docs/compare-openapi)
+[Read Documentation](https://www.useoptic.com/docs/diff-openapi)
 
 ## Test the accuracy of your documentation using `optic capture`
 It can be difficult to keep an OpenAPI in-sync with your implementation. Optic tests if your OpenAPI is accurate by capturing traffic from your tests and comparing it to the spec.
@@ -151,16 +151,29 @@ ruleset:
       queryParameters: snake_case
   # Require your OpenAPI has examples, and that those examples match the schema
   - examples:
+      # This will apply the rule to only new names (existing ones will be exempted)
+      # Change to always if you want to fail on legacy names
+      # Change to addedOrChanged if you want it to run on added or changed parts of the spec
+      required_on: added
       # Turn on/off the parts of the spec that need examples
       require_request_examples: true
       require_response_examples: true
       require_parameter_examples: true
       # (optional) allow certain operations do not need examples
       exclude_operations_with_extension: x-legacy-api
-
+  # Require documentation in your OpenAPI spec
+  - documentation:
+      # This will apply the rule to only new names (existing ones will be exempted)
+      # Change to always if you want to fail on legacy names
+      # Change to addedOrChanged if you want it to run on added or changed parts of the spec
+      required_on: added
+      require_property_descriptions: true
+      require_operation_summary: true
+      require_operation_description: true
+      require_operation_id: true
 ```
 
-[Read documentation](https://www.useoptic.com/docs/add-to-project)
+[Read documentation](https://www.useoptic.com/docs/style-guides)
 
 
 ## Start running in CI
