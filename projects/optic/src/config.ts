@@ -176,7 +176,7 @@ export async function renderTemplate(configPath: string): Promise<unknown> {
 
   const template = Handlebars.compile(await fs.readFile(configPath, 'utf-8'));
   // TODO: handle unset values
-  const resultYaml = template({ GITHUB_TOKEN: process.env.GITHUB_TOKEN });
+  const resultYaml = template(process.env);
   const config = yaml.load(resultYaml);
   return config;
 }
