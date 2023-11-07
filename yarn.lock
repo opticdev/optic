@@ -3382,11 +3382,11 @@ __metadata:
   linkType: hard
 
 "@types/lodash.groupby@npm:^4.6.6":
-  version: 4.6.8
-  resolution: "@types/lodash.groupby@npm:4.6.8"
+  version: 4.6.9
+  resolution: "@types/lodash.groupby@npm:4.6.9"
   dependencies:
     "@types/lodash": "npm:*"
-  checksum: c79396ebf8b8212a3a6b383d0d5b8d6a4708c818136bf0d9414f8cd3332a9dcb647812d5c7cbabc8465b4dc9ea7e05f84ede9f72ca265f9e17ecb1790833a477
+  checksum: 1302531f76da99cc8f1bbd486a8c7048a833352b12c39eb5b2ded01173dd5fff76f2c7ace04f08b51c55840271170f1cfbffe4e454dde8597c3ee996e70d4e11
   languageName: node
   linkType: hard
 
