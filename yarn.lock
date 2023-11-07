@@ -3263,9 +3263,9 @@ __metadata:
   linkType: hard
 
 "@types/git-url-parse@npm:^9.0.1":
-  version: 9.0.2
-  resolution: "@types/git-url-parse@npm:9.0.2"
-  checksum: 0ec86f675e87168ad2a23a4d21286bbde2fac8fbcd314fb55d0f82eccd1ef26af931869a2d675f82fb49cb8b6ac13545bbc8144a4fb6ce78af695396421aa666
+  version: 9.0.3
+  resolution: "@types/git-url-parse@npm:9.0.3"
+  checksum: 7335a185ed33921c025428fba62d86208573001f3ec686519bda272a9dfefbf32aba2dbc5c782ca705282f3338e04a45df6548863d26b9616531d45078160b93
   languageName: node
   linkType: hard
 
