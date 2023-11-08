@@ -157,7 +157,11 @@ export function normalizeWorkspace(workspace: string, text: string): string {
 
 let server: http.Server;
 
-type MockHttpHandler = (req: { url: string; method: string }) => any;
+type MockHttpHandler = (req: {
+  url: string;
+  method: string;
+  headers: http.IncomingHttpHeaders;
+}) => any;
 
 export let reqs: http.IncomingMessage[] = [];
 const createListener = (handler?: MockHttpHandler) => {
@@ -170,7 +174,11 @@ const createListener = (handler?: MockHttpHandler) => {
     resp.writeHead(200);
     const body =
       req.url && req.method && handler
-        ? await handler({ url: req.url, method: req.method })
+        ? await handler({
+            url: req.url,
+            method: req.method,
+            headers: req.headers,
+          })
         : undefined;
     resp.end(body);
   };

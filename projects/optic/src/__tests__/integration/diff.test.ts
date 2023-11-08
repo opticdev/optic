@@ -152,7 +152,7 @@ describe('diff', () => {
   });
 
   describe('with mock server', () => {
-    setupTestServer(async ({ url, method }) => {
+    setupTestServer(async ({ url, method, headers }) => {
       if (method === 'GET' && /\/api\/token\/orgs/.test(url)) {
         return JSON.stringify({
           organizations: [
@@ -202,13 +202,33 @@ describe('diff', () => {
         return JSON.stringify({
           id: 'run-id',
         });
-      } else if (method === 'GET' && /my-spec\.yml$/.test(url)) {
+      } else if (
+        method === 'GET' &&
+        /my-spec\.yml$/.test(url) &&
+        headers.custom_header === 'hello'
+      ) {
         return `openapi: 3.0.3
 info:
   title: a spec
   description: The API
   version: 0.1.0
-paths: {}`;
+paths:
+  /api/users:
+    get:
+      responses:
+        '200':
+          description: hello
+          content:
+            application/json:
+              schema:
+                $ref: ${process.env.BWTS_HOST_OVERRIDE}/shared-schema.yml
+`;
+      } else if (
+        method === 'GET' &&
+        /shared-schema\.yml$/.test(url) &&
+        headers.custom_header === 'hello'
+      ) {
+        return `type: string`;
       } else if (method === 'GET' && /spec$/.test(url)) {
         return `{"openapi":"3.1.0","paths":{ "/api/users": { "get": { "responses":{} }}},"info":{"version":"0.0.0","title":"Empty"}}`;
       } else if (method === 'GET' && /sourcemap$/.test(url)) {
@@ -295,8 +315,8 @@ paths: {}`;
       expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     });
 
-    test('with web url', async () => {
-      const workspace = await setupWorkspace('diff/files-no-repo', {
+    test('with web url and header', async () => {
+      const workspace = await setupWorkspace('diff/ref-resolve-headers', {
         repo: false,
       });
       const { combined, code } = await runOptic(
