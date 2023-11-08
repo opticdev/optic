@@ -109,6 +109,18 @@ export const ProjectYmlConfig = Type.Object({
     )
   ),
   capture: Type.Optional(Type.Record(Type.String(), CaptureConfigData)),
+  external_refs: Type.Optional(
+    Type.Object({
+      resolve_headers: Type.Optional(
+        Type.Array(
+          Type.Object({
+            headers: Type.Record(Type.String(), Type.String()),
+            url_prefix: Type.Optional(Type.String()),
+          })
+        )
+      ),
+    })
+  ),
 });
 export type ProjectYmlConfig = Static<typeof ProjectYmlConfig>;
 export type ConfigRuleset = { name: string; config: unknown };

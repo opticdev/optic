@@ -7,7 +7,6 @@ import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import {
   validateOpenApiV3Document,
   filePathToGitPath,
-  JsonSchemaSourcemap,
   parseOpenAPIFromRepoWithSourcemap,
   ParseOpenAPIResult,
   parseOpenAPIWithSourcemap,
@@ -223,7 +222,7 @@ async function parseSpecAndDereference(
           config.root,
           input.branch,
           {
-            externalHeadersMap: new Map(), // TODO replace this with ref resolution headers
+            externalRefHeaders: config.external_refs?.resolve_headers ?? [],
           }
         )),
         from: 'git',
@@ -240,7 +239,7 @@ async function parseSpecAndDereference(
     }
     case 'url': {
       const parseResult = await parseOpenAPIWithSourcemap(input.url, {
-        externalHeadersMap: new Map(), // TODO replace this with ref resolution headers
+        externalRefHeaders: config.external_refs?.resolve_headers ?? [],
       });
       return {
         ...parseResult,
@@ -254,7 +253,7 @@ async function parseSpecAndDereference(
       const parseResult = await parseOpenAPIWithSourcemap(
         path.resolve(workingDir, input.filePath),
         {
-          externalHeadersMap: new Map(), // TODO replace this with ref resolution headers
+          externalRefHeaders: config.external_refs?.resolve_headers ?? [],
         }
       );
 

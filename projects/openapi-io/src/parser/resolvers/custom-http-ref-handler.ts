@@ -5,11 +5,17 @@ const url = require('@apidevtools/json-schema-ref-parser/lib/util/url');
 
 import { ExternalRefHandler } from '../types';
 
-export type HeadersByUrlPrefix = Map<
+export type UserDefinedHeadersByUrlPrefix = {
+  headers: { [key: string]: string };
+  url_prefix?: string;
+}[];
+
+type HeadersByUrlPrefix = Map<
   string | typeof ANY_PREFIX,
   { [key: string]: string }
 >;
-export const ANY_PREFIX = Symbol('Apply to all urls');
+
+const ANY_PREFIX = Symbol('Apply to all urls');
 const MAX_REDIRECTS = 5;
 const DEFAULT_HEADERS = {
   accept: '*/*',
@@ -25,7 +31,6 @@ function getMostRelevantHeader(
     relevance: number;
   } = { headers: {}, relevance: -1 };
   for (const [urlPrefix, headers] of headersByUrlPrefix) {
-    // TODO handle case where no protocol in urlPrefix
     let relevance = null;
     if (urlPrefix === ANY_PREFIX) {
       relevance = 1;
@@ -89,15 +94,20 @@ async function download(
 }
 
 export const customHttpResolver = (
-  headersByUrlPrefix: HeadersByUrlPrefix
-): ExternalRefHandler => ({
-  order: 100,
-  canRead: (file) => {
-    return url.isHttp(file.url);
-  },
-  read: (file) => {
-    return new Promise(async (resolve, reject) => {
-      resolve(await download(file.url, headersByUrlPrefix));
-    });
-  },
-});
+  headersByUrlPrefix: UserDefinedHeadersByUrlPrefix
+): ExternalRefHandler => {
+  const prefixMap: HeadersByUrlPrefix = new Map();
+  for (const conf of headersByUrlPrefix) {
+    const key = conf.url_prefix ?? ANY_PREFIX;
+    prefixMap.set(key, conf.headers);
+  }
+  return {
+    order: 100,
+    canRead: (file) => {
+      return url.isHttp(file.url);
+    },
+    read: (file) => {
+      return download(file.url, prefixMap);
+    },
+  };
+};

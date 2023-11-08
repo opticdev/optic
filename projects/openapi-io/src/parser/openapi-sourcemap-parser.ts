@@ -16,7 +16,7 @@ import Bottleneck from 'bottleneck';
 // @ts-ignore
 import * as customYaml from './insourced-yaml';
 import {
-  HeadersByUrlPrefix,
+  UserDefinedHeadersByUrlPrefix,
   customHttpResolver,
 } from './resolvers/custom-http-ref-handler';
 
@@ -34,7 +34,7 @@ export async function dereferenceOpenApi(
   path: string,
   options: {
     externalRefHandler?: ExternalRefHandler;
-    externalHeadersMap?: HeadersByUrlPrefix;
+    externalRefHeaders?: UserDefinedHeadersByUrlPrefix;
   } = {}
 ): Promise<ParseOpenAPIResult> {
   const resolver = new $RefParser();
@@ -43,9 +43,7 @@ export async function dereferenceOpenApi(
   const resolve = {
     file: options.externalRefHandler,
     customRefHandler: options.externalRefHandler,
-    customHttpRefHandler: customHttpResolver(
-      options.externalHeadersMap ?? new Map()
-    ),
+    customHttpRefHandler: customHttpResolver(options.externalRefHeaders ?? []),
     external: true,
   };
   // Resolve all references
@@ -107,11 +105,11 @@ export async function dereferenceOpenApi(
 export async function parseOpenAPIWithSourcemap(
   path: string,
   options: {
-    externalHeadersMap?: HeadersByUrlPrefix;
+    externalRefHeaders?: UserDefinedHeadersByUrlPrefix;
   } = {}
 ): Promise<ParseOpenAPIResult> {
   return dereferenceOpenApi(path, {
-    externalHeadersMap: options.externalHeadersMap,
+    externalRefHeaders: options.externalRefHeaders,
   });
 }
 
@@ -120,13 +118,13 @@ export async function parseOpenAPIFromRepoWithSourcemap(
   repoPath: string,
   branch: string,
   options: {
-    externalHeadersMap?: HeadersByUrlPrefix;
+    externalRefHeaders?: UserDefinedHeadersByUrlPrefix;
   } = {}
 ): Promise<ParseOpenAPIResult> {
   const inGitResolver = gitBranchResolver(repoPath, branch);
   const fileName = path.join(repoPath, name);
   return dereferenceOpenApi(fileName, {
     externalRefHandler: inGitResolver,
-    externalHeadersMap: options.externalHeadersMap,
+    externalRefHeaders: options.externalRefHeaders,
   });
 }
