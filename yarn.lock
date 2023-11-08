@@ -3492,11 +3492,11 @@ __metadata:
   linkType: hard
 
 "@types/postman-collection@npm:^3.5.7":
-  version: 3.5.9
-  resolution: "@types/postman-collection@npm:3.5.9"
+  version: 3.5.10
+  resolution: "@types/postman-collection@npm:3.5.10"
   dependencies:
     "@types/node": "npm:*"
-  checksum: 14cc84d92ff94617be5da7edbc5c5a9f99c5dd422b39e4eb9adf07f42589c3059cb0a71d81ce2ff402bf9af11abffeac74fb1b4b4eff18f3a75e3037d5865757
+  checksum: 9193f61ac84b35cbedf855b94944d04942ca384bb98b48a06fedda93a3ad1deacb6768823d3455d249a368a00e3156d90e752980bf73d9ab268466c6bffcfb26
   languageName: node
   linkType: hard
 
