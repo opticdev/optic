@@ -3569,12 +3569,12 @@ __metadata:
   linkType: hard
 
 "@types/tar@npm:^6":
-  version: 6.1.7
-  resolution: "@types/tar@npm:6.1.7"
+  version: 6.1.8
+  resolution: "@types/tar@npm:6.1.8"
   dependencies:
     "@types/node": "npm:*"
     minipass: "npm:^4.0.0"
-  checksum: 1be90bd9af0b80f4bfa59639f5f44f4846c1c66f46f65c42873182dd4dbadce0019dba3d9bdc8eb8d39bf9e4fb5c27089220b8fec71f7268745e79e8cb90a9f9
+  checksum: 46813040d4a05f8d7ebb44cf04b1dc17198a5e26c34b932c588d7b11b5913350c53a85dd92cc2aecd87d0e31e0f33686b64474ca9e157b515492def563c08234
   languageName: node
   linkType: hard
 
