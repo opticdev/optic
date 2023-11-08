@@ -3870,6 +3870,7 @@ __metadata:
     update-notifier: "npm:^5"
     url-join: "npm:^4.0.1"
     whatwg-mimetype: "npm:^3.0.0"
+    yaml: "npm:^2.3.4"
   bin:
     optic: build/index.js
   languageName: unknown
@@ -11836,7 +11837,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yaml@npm:^2.3.2":
+"yaml@npm:^2.3.2, yaml@npm:^2.3.4":
   version: 2.3.4
   resolution: "yaml@npm:2.3.4"
   checksum: cf03b68f8fef5e8516b0f0b54edaf2459f1648317fc6210391cf606d247e678b449382f4bd01f77392538429e306c7cba8ff46ff6b37cac4de9a76aff33bd9e1

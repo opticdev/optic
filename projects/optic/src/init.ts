@@ -11,6 +11,7 @@ import { registerRulesetInit } from './commands/ruleset/init';
 import { registerApiAdd } from './commands/api/add';
 import { registerApiCreate } from './commands/api/create';
 import { registerCaptureCommand } from './commands/capture/capture';
+import { registerConfigCommand } from './commands/config';
 import { captureCommand as captureV1Command } from './commands/oas/capture';
 import { newCommand } from './commands/oas/new';
 import { setupTlsCommand } from './commands/oas/setup-tls';
@@ -127,6 +128,7 @@ export const initCli = async (
 
   const betaSubcommands = cli.command('beta', { hidden: true });
   registerCaptureCommand(cli, cliConfig);
+  registerConfigCommand(cli, cliConfig);
 
   //@todo by 2023/5/10
   const oas = new Command('oas').description(
