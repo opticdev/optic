@@ -172,7 +172,7 @@ export async function detectCliConfig(
 }
 
 export async function RenderTemplate(configPath: string): Promise<unknown> {
-  // is present, expect the .optic.env is in the same dir as the config file
+  // if present, expect the .optic.env is in the same dir as the config file
   const dir = path.dirname(configPath);
   dotenv.config({ path: path.join(dir, '.optic.env') });
 
