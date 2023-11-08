@@ -172,7 +172,10 @@ export async function detectCliConfig(
 }
 
 export async function RenderTemplate(configPath: string): Promise<unknown> {
-  dotenv.config({ path: '.optic.env' });
+  // is present, expect the .optic.env is in the same dir as the config file
+  const dir = path.dirname(configPath);
+  dotenv.config({ path: path.join(dir, '.optic.env') });
+
   const template = Handlebars.compile(await fs.readFile(configPath, 'utf-8'));
   const result = template(process.env);
   return yaml.load(result);
