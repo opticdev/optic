@@ -1,3 +1,15 @@
 files:
   - id: spec
     path: openapi-spec.yml
+
+capture:
+  openapi.yml:
+    server:
+      url: https://echo.o3c.org
+    requests:
+      send:
+        - path: /users
+          headers:
+            x-response-json: '[{"id":0, "name":"aidan"}]'
+            authorization: "token {{TOKEN}}"
+
