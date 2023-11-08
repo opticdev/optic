@@ -5,31 +5,32 @@ const url = require('@apidevtools/json-schema-ref-parser/lib/util/url');
 
 import { ExternalRefHandler } from '../types';
 
-export type HeadersByDomain = Map<
-  string | typeof ANY_DOMAIN,
+export type HeadersByUrlPrefix = Map<
+  string | typeof ANY_PREFIX,
   { [key: string]: string }
 >;
-export const ANY_DOMAIN = Symbol('Apply to all domains');
+export const ANY_PREFIX = Symbol('Apply to all urls');
 const MAX_REDIRECTS = 5;
 const DEFAULT_HEADERS = {
   accept: '*/*',
 };
 
-// Selects the most specific domain to get the header by
+// Selects the most specific urlPrefix to get the header by
 function getMostRelevantHeader(
   url: string,
-  headersByDomain: HeadersByDomain
+  headersByUrlPrefix: HeadersByUrlPrefix
 ): { [key: string]: string } {
   let mostRelevantHeaders: {
     headers: { [key: string]: string };
     relevance: number;
   } = { headers: {}, relevance: -1 };
-  for (const [domain, headers] of headersByDomain) {
+  for (const [urlPrefix, headers] of headersByUrlPrefix) {
+    // TODO handle case where no protocol in urlPrefix
     let relevance = null;
-    if (domain === ANY_DOMAIN) {
+    if (urlPrefix === ANY_PREFIX) {
       relevance = 1;
-    } else if (url.startsWith(domain)) {
-      relevance = domain.length;
+    } else if (url.startsWith(urlPrefix)) {
+      relevance = urlPrefix.length;
     }
     if (relevance !== null && relevance > mostRelevantHeaders.relevance) {
       mostRelevantHeaders = {
@@ -44,12 +45,12 @@ function getMostRelevantHeader(
 
 async function download(
   url: string,
-  headersByDomain: HeadersByDomain,
+  headersByUrlPrefix: HeadersByUrlPrefix,
   redirects: string[] = []
 ): Promise<string> {
   const headers = {
     ...DEFAULT_HEADERS,
-    ...getMostRelevantHeader(url, headersByDomain),
+    ...getMostRelevantHeader(url, headersByUrlPrefix),
   };
 
   const response = await fetch(url, {
@@ -80,7 +81,7 @@ async function download(
         `HTTP ${response.status} redirect with no location header`
       );
     } else {
-      return download(response.headers.location, headersByDomain, redirects);
+      return download(response.headers.location, headersByUrlPrefix, redirects);
     }
   } else {
     return response.text();
@@ -88,7 +89,7 @@ async function download(
 }
 
 export const customHttpResolver = (
-  headersByDomain: HeadersByDomain
+  headersByUrlPrefix: HeadersByUrlPrefix
 ): ExternalRefHandler => ({
   order: 100,
   canRead: (file) => {
@@ -96,7 +97,7 @@ export const customHttpResolver = (
   },
   read: (file) => {
     return new Promise(async (resolve, reject) => {
-      resolve(await download(file.url, headersByDomain));
+      resolve(await download(file.url, headersByUrlPrefix));
     });
   },
 });

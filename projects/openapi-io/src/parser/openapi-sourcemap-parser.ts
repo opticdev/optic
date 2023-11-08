@@ -16,7 +16,7 @@ import Bottleneck from 'bottleneck';
 // @ts-ignore
 import * as customYaml from './insourced-yaml';
 import {
-  HeadersByDomain,
+  HeadersByUrlPrefix,
   customHttpResolver,
 } from './resolvers/custom-http-ref-handler';
 
@@ -34,7 +34,7 @@ export async function dereferenceOpenApi(
   path: string,
   options: {
     externalRefHandler?: ExternalRefHandler;
-    externalHeadersMap?: HeadersByDomain;
+    externalHeadersMap?: HeadersByUrlPrefix;
   } = {}
 ): Promise<ParseOpenAPIResult> {
   const resolver = new $RefParser();
@@ -107,7 +107,7 @@ export async function dereferenceOpenApi(
 export async function parseOpenAPIWithSourcemap(
   path: string,
   options: {
-    externalHeadersMap?: HeadersByDomain;
+    externalHeadersMap?: HeadersByUrlPrefix;
   } = {}
 ): Promise<ParseOpenAPIResult> {
   return dereferenceOpenApi(path, {
@@ -120,7 +120,7 @@ export async function parseOpenAPIFromRepoWithSourcemap(
   repoPath: string,
   branch: string,
   options: {
-    externalHeadersMap?: HeadersByDomain;
+    externalHeadersMap?: HeadersByUrlPrefix;
   } = {}
 ): Promise<ParseOpenAPIResult> {
   const inGitResolver = gitBranchResolver(repoPath, branch);
