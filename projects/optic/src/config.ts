@@ -171,10 +171,9 @@ export async function detectCliConfig(
   return undefined;
 }
 
-export async function renderTemplate(configPath: string): Promise<unknown> {
+export async function RenderTemplate(configPath: string): Promise<unknown> {
   dotenv.config({ path: '.optic.env' });
   const template = Handlebars.compile(await fs.readFile(configPath, 'utf-8'));
-  // TODO: handle unset values
   const result = template(process.env);
   return yaml.load(result);
 }
@@ -183,10 +182,7 @@ export async function loadCliConfig(
   configPath: string,
   client: OpticBackendClient
 ): Promise<OpticCliConfig> {
-  const config = await renderTemplate(configPath);
-
-  // TODO: remove me
-  console.log(JSON.stringify(config, null, 2));
+  const config = await RenderTemplate(configPath);
 
   validateConfig(config, configPath);
   await initializeRules(config as ProjectYmlConfig, client);
