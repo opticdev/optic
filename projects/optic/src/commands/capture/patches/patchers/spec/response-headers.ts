@@ -12,6 +12,9 @@ export async function* generateResponseHeaderPatches(
   if (!interaction.response) return;
 
   const responseObject = operation.responses[interaction.response.statusCode];
+  // Responses may not be documented (i.e. statusCode 500) in the document request / response bodies step
+  // Need to check for responseObject truthyness here
+  if (!responseObject) return;
   const responsePath = jsonPointerHelpers.compile([
     'paths',
     operation.pathPattern,
