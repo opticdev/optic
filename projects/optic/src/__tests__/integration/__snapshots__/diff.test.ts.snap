@@ -649,14 +649,21 @@ specification details:
 `;
 
 exports[`diff with mock server with web url and header 1`] = `
-"[32m✔ [39m[1ma spec[22m [90mnull:[39m
-[1mOperations: [22m1 operation added
+"[31mx [39m[1mEmpty[22m [90mhttp://127.0.0.1:60937/my-spec.yml[39m
+[1mOperations: [22m1 operation removed
+[31mx [39m [1mChecks:[22m 0/2 passed 
 
 specification details:
-- /openapi, /info [32madded[39m
+- /openapi, /info [31mremoved[39m
 
-[32m✔ [1mGET[22m /api/users[39m: [32madded[39m
+[31mx [1mGET[22m /api/users[39m: [31mremoved[39m
   
+  [31m[1mx [prevent operation removal][22m cannot remove an operation. This is a breaking change.[39m
+  at [4mhttp://127.0.0.1:60937/my-spec.yml[24m line 8
+  
+    [31m[1mx [prevent response status code removal][22m must not remove response status code 200. This is a breaking change.[39m
+    at [4mhttp://127.0.0.1:60937/my-spec.yml[24m line 10
+    
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;

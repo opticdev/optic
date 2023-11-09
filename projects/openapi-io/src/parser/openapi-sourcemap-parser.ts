@@ -18,6 +18,9 @@ import * as customYaml from './insourced-yaml';
 import {
   UserDefinedHeadersByUrlPrefix,
   customHttpResolver,
+  parseHeadersConfig,
+  DEFAULT_HEADERS,
+  getMostRelevantHeader,
 } from './resolvers/custom-http-ref-handler';
 
 export {
@@ -38,12 +41,13 @@ export async function dereferenceOpenApi(
   } = {}
 ): Promise<ParseOpenAPIResult> {
   const resolver = new $RefParser();
+  const headersMap = parseHeadersConfig(options.externalRefHeaders ?? []);
 
   const sourcemap = new JsonSchemaSourcemap(path);
   const resolve = {
     file: options.externalRefHandler,
     customRefHandler: options.externalRefHandler,
-    customHttpRefHandler: customHttpResolver(options.externalRefHeaders ?? []),
+    customHttpRefHandler: customHttpResolver(headersMap),
     external: true,
   };
   // Resolve all references
@@ -67,7 +71,13 @@ export async function dereferenceOpenApi(
         if (isUrl(filePath)) {
           const inCache = cachedUrls.has(filePath);
           if (!inCache) {
-            const response = await fetch(filePath);
+            const headers = {
+              ...DEFAULT_HEADERS,
+              ...getMostRelevantHeader(filePath, headersMap),
+            };
+            const response = await fetch(filePath, {
+              headers,
+            });
             const contents = await response.text();
             cachedUrls.add(filePath);
             sourcemap.addFileIfMissingFromContents(filePath, contents, index);

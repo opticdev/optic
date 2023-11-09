@@ -321,10 +321,10 @@ paths:
       });
       const { combined, code } = await runOptic(
         workspace,
-        `diff null: ${process.env.BWTS_HOST_OVERRIDE}/my-spec.yml --check`
+        `diff ${process.env.BWTS_HOST_OVERRIDE}/my-spec.yml null: --check`
       );
 
-      expect(code).toBe(0);
+      expect(code).toBe(1);
       expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
     });
 

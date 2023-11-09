@@ -17,12 +17,12 @@ type HeadersByUrlPrefix = Map<
 
 const ANY_PREFIX = Symbol('Apply to all urls');
 const MAX_REDIRECTS = 5;
-const DEFAULT_HEADERS = {
+export const DEFAULT_HEADERS = {
   accept: '*/*',
 };
 
 // Selects the most specific urlPrefix to get the header by
-function getMostRelevantHeader(
+export function getMostRelevantHeader(
   url: string,
   headersByUrlPrefix: HeadersByUrlPrefix
 ): { [key: string]: string } {
@@ -93,21 +93,28 @@ async function download(
   }
 }
 
-export const customHttpResolver = (
+export function parseHeadersConfig(
   headersByUrlPrefix: UserDefinedHeadersByUrlPrefix
-): ExternalRefHandler => {
+): HeadersByUrlPrefix {
   const prefixMap: HeadersByUrlPrefix = new Map();
   for (const conf of headersByUrlPrefix) {
     const key = conf.url_prefix ?? ANY_PREFIX;
     prefixMap.set(key, conf.headers);
   }
+
+  return prefixMap;
+}
+
+export const customHttpResolver = (
+  headersByUrlPrefix: HeadersByUrlPrefix
+): ExternalRefHandler => {
   return {
     order: 100,
     canRead: (file) => {
       return url.isHttp(file.url);
     },
     read: (file) => {
-      return download(file.url, prefixMap);
+      return download(file.url, headersByUrlPrefix);
     },
   };
 };
