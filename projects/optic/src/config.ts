@@ -8,6 +8,8 @@ import { createOpticClient, OpticBackendClient } from './client';
 import * as Git from './utils/git-utils';
 import { logger } from './logger';
 import { Static, Type } from '@sinclair/typebox';
+import Handlebars from 'handlebars';
+import * as dotenv from 'dotenv';
 
 export enum VCS {
   Git = 'git',
@@ -181,11 +183,22 @@ export async function detectCliConfig(
   return undefined;
 }
 
+export async function RenderTemplate(configPath: string): Promise<unknown> {
+  // if present, expect the .optic.env is in the same dir as the config file
+  const dir = path.dirname(configPath);
+  dotenv.config({ path: path.join(dir, '.optic.env') });
+
+  const template = Handlebars.compile(await fs.readFile(configPath, 'utf-8'));
+  const result = template(process.env);
+  return yaml.load(result);
+}
+
 export async function loadCliConfig(
   configPath: string,
   client: OpticBackendClient
 ): Promise<OpticCliConfig> {
-  const config = yaml.load(await fs.readFile(configPath, 'utf-8'));
+  const config = await RenderTemplate(configPath);
+
   validateConfig(config, configPath);
   await initializeRules(config as ProjectYmlConfig, client);
 

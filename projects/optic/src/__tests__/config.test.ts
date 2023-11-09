@@ -5,6 +5,7 @@ import { createOpticClient } from '../client';
 import {
   detectCliConfig,
   initializeRules,
+  RenderTemplate,
   validateConfig,
   ProjectYmlConfig,
 } from '../config';
@@ -33,6 +34,14 @@ describe('detectConfig', () => {
     process.cwd = () => path.resolve('src');
     const configPath = await detectCliConfig('src');
     expect(configPath).toBeUndefined();
+  });
+});
+
+describe('templatedConfig', () => {
+  test('renders template', async () => {
+    process.env['TOKEN'] = 'my-token';
+    const renderedTemplate = await RenderTemplate('src/__tests__/optic.yml');
+    expect(String(renderedTemplate).includes('token my-token'));
   });
 });
 
