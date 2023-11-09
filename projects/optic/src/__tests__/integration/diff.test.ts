@@ -325,7 +325,12 @@ paths:
       );
 
       expect(code).toBe(1);
-      expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+      expect(
+        normalizeWorkspace(workspace, combined).replaceAll(
+          process.env.BWTS_HOST_OVERRIDE!,
+          'http://localhost'
+        )
+      ).toMatchSnapshot();
     });
 
     test('with cloud tag ref', async () => {
