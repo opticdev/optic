@@ -184,10 +184,6 @@ export async function detectCliConfig(
 }
 
 export async function RenderTemplate(configPath: string): Promise<unknown> {
-  // if present, expect the .optic.env is in the same dir as the config file
-  const dir = path.dirname(configPath);
-  dotenv.config({ path: path.join(dir, '.optic.env') });
-
   const template = Handlebars.compile(await fs.readFile(configPath, 'utf-8'));
   const result = template(process.env);
   return yaml.load(result);
@@ -337,12 +333,18 @@ export async function initializeConfig(): Promise<OpticCliConfig> {
 
     if (opticYmlPath) {
       logger.debug(`Using config found at ${opticYmlPath}`);
+      // if present, expect the .optic.env is in the same dir as the config file
+      dotenv.config({
+        path: path.join(path.dirname(opticYmlPath), '.optic.env'),
+      });
       cliConfig = {
         ...cliConfig,
         ...(await loadCliConfig(opticYmlPath, cliConfig.client)),
         isDefaultConfig: false,
       };
     } else {
+      // if present, expect the .optic.env in the current working dir
+      dotenv.config({ path: path.join(process.cwd(), '.optic.env') });
       cliConfig.root = gitRoot;
     }
 
@@ -356,7 +358,10 @@ export async function initializeConfig(): Promise<OpticCliConfig> {
       // Git command can fail in a repo with no commits, we should treat this as having no commits
     }
   } else {
-    const opticYmlPath = await detectCliConfig(process.cwd());
+    // if present, expect the .optic.env in the current working dir
+    const currentDir = process.cwd();
+    dotenv.config({ path: path.join(currentDir, '.optic.env') });
+    const opticYmlPath = await detectCliConfig(currentDir);
 
     if (opticYmlPath) {
       logger.debug(`Using config found at ${opticYmlPath}`);

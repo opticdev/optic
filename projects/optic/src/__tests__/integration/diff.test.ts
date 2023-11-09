@@ -321,11 +321,16 @@ paths:
       });
       const { combined, code } = await runOptic(
         workspace,
-        `diff null: ${process.env.BWTS_HOST_OVERRIDE}/my-spec.yml --check`
+        `diff ${process.env.BWTS_HOST_OVERRIDE}/my-spec.yml null: --check`
       );
 
-      expect(code).toBe(0);
-      expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+      expect(code).toBe(1);
+      expect(
+        normalizeWorkspace(workspace, combined).replaceAll(
+          process.env.BWTS_HOST_OVERRIDE!,
+          'http://localhost'
+        )
+      ).toMatchSnapshot();
     });
 
     test('with cloud tag ref', async () => {
