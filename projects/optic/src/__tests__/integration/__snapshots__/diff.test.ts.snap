@@ -648,13 +648,15 @@ specification details:
 "
 `;
 
-exports[`diff with mock server with web url 1`] = `
+exports[`diff with mock server with web url and header 1`] = `
 "[32m✔ [39m[1ma spec[22m [90mnull:[39m
-[1mOperations: [22mNo operations changed
+[1mOperations: [22m1 operation added
 
 specification details:
 - /openapi, /info [32madded[39m
 
+[32m✔ [1mGET[22m /api/users[39m: [32madded[39m
+  
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
 "
 `;

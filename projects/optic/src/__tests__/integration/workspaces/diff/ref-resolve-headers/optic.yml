@@ -1,0 +1,4 @@
+external_refs:
+  resolve_headers:
+    - headers:
+        custom_header: hello
