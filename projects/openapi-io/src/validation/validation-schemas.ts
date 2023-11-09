@@ -35,52 +35,52 @@ const openapi3_0_schema_object = {
       type: 'boolean',
     },
     title: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/title',
+      $ref: 'http://json-schema.org/draft-04/schema#/properties/title',
     },
     multipleOf: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/multipleOf',
+      $ref: 'http://json-schema.org/draft-04/schema#/properties/multipleOf',
     },
     maximum: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/maximum',
+      $ref: 'http://json-schema.org/draft-04/schema#/properties/maximum',
     },
     exclusiveMaximum: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/exclusiveMaximum',
+      $ref: 'http://json-schema.org/draft-04/schema#/properties/exclusiveMaximum',
     },
     minimum: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/minimum',
+      $ref: 'http://json-schema.org/draft-04/schema#/properties/minimum',
     },
     exclusiveMinimum: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/exclusiveMinimum',
+      $ref: 'http://json-schema.org/draft-04/schema#/properties/exclusiveMinimum',
     },
     maxLength: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/maxLength',
+      $ref: 'http://json-schema.org/draft-04/schema#/properties/maxLength',
     },
     minLength: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/minLength',
+      $ref: 'http://json-schema.org/draft-04/schema#/properties/minLength',
     },
     pattern: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/pattern',
+      $ref: 'http://json-schema.org/draft-04/schema#/properties/pattern',
     },
     maxItems: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/maxItems',
+      $ref: 'http://json-schema.org/draft-04/schema#/properties/maxItems',
     },
     minItems: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/minItems',
+      $ref: 'http://json-schema.org/draft-04/schema#/properties/minItems',
     },
     uniqueItems: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/uniqueItems',
+      $ref: 'http://json-schema.org/draft-04/schema#/properties/uniqueItems',
     },
     maxProperties: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/maxProperties',
+      $ref: 'http://json-schema.org/draft-04/schema#/properties/maxProperties',
     },
     minProperties: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/minProperties',
+      $ref: 'http://json-schema.org/draft-04/schema#/properties/minProperties',
     },
     required: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/required',
+      $ref: 'http://json-schema.org/draft-04/schema#/properties/required',
     },
     enum: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/enum',
+      $ref: 'http://json-schema.org/draft-04/schema#/properties/enum',
     },
     type: {
       type: 'string',
