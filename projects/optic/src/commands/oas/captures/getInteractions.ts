@@ -9,6 +9,7 @@ import { CapturedInteractions } from '../../capture/sources/captured-interaction
 import { PostmanCollectionEntries } from '../../capture/sources/postman';
 import { HarEntries } from '../../capture/sources/har';
 import {
+  createHostBaseMap,
   filterIgnoredInteractions,
   handleServerPathPrefix,
 } from '../../capture/interactions/grouped-interactions';
@@ -90,6 +91,6 @@ export async function getInteractions(
 
   return handleServerPathPrefix(
     filterIgnoredInteractions(AT.merge(...sources), spec),
-    spec
+    createHostBaseMap(spec)
   );
 }

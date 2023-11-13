@@ -14,52 +14,76 @@ import { logger } from '../../../logger';
 import { getIgnorePaths } from '../../../utils/specs';
 import { minimatch } from 'minimatch';
 
-export async function* handleServerPathPrefix(
-  interactions: CapturedInteractions,
-  spec: OpenAPIV3.Document
-): CapturedInteractions {
+export function createHostBaseMap(
+  spec: OpenAPIV3.Document,
+  options: {
+    baseServerUrl?: string;
+  } = {}
+) {
   const hostBaseMap: { [key: string]: string } = {};
+  const servers = spec.servers ?? [];
+  if (options.baseServerUrl) servers.push({ url: options.baseServerUrl });
 
-  spec.servers?.forEach((server) => {
+  servers.forEach((server) => {
     try {
       // add absolute in case url is relative (valid in OpenAPI, ignored when absolute)
       const parsed = new URL(server.url);
 
       const pathName = parsed.pathname;
-      // remove trailing slash
-      if (pathName.endsWith('/') && pathName.length > 1) {
-        hostBaseMap[parsed.host] = pathName.substring(0, pathName.length - 1);
-      } else {
-        hostBaseMap[parsed.host] = pathName;
+      const pathWithoutTrailingSlash =
+        pathName.endsWith('/') && pathName.length > 1
+          ? pathName.substring(0, pathName.length - 1)
+          : pathName;
+      // Only overwrite if this host is more specific
+      // This assumes only one path per hostname - if there's a case we need to handle more than one prefix per hostname we need to update this code
+      if (
+        !hostBaseMap[parsed.host] ||
+        hostBaseMap[parsed.host].length < pathWithoutTrailingSlash.length
+      ) {
+        hostBaseMap[parsed.host] = pathWithoutTrailingSlash;
       }
     } catch (e) {}
   });
+  return hostBaseMap;
+}
 
-  for await (const interaction of interactions) {
-    const host = interaction.request.host;
-    if (hostBaseMap[host] && hostBaseMap[host] !== '/') {
-      const base = hostBaseMap[host];
-      if (interaction.request.path.startsWith(base)) {
-        const adjustedPath =
-          interaction.request.path === base
-            ? '/'
-            : interaction.request.path.replace(base, '');
-        yield {
-          ...interaction,
-          request: {
-            ...interaction.request,
-            path: adjustedPath,
-          },
-        };
-      } else {
-        // Otherwise this is a request we should ignore since it doesn't match the base path for the hostBaseMap
-        logger.debug(
-          `Skipping interaction ${interaction.request.path} ${interaction.request.method} because path does not start with the hostname base: ${base}`
-        );
-        continue;
-      }
+function adjustPath(
+  { path, method, host }: { path: string; host: string; method: string },
+  hostBaseMap: { [key: string]: string },
+  options: { silent?: boolean } = {}
+): string | null {
+  if (hostBaseMap[host] && hostBaseMap[host] !== '/') {
+    const base = hostBaseMap[host];
+    if (path.startsWith(base)) {
+      const adjustedPath = path === base ? '/' : path.replace(base, '');
+      return adjustedPath;
     } else {
-      yield interaction;
+      // Otherwise this is a request we should ignore since it doesn't match the base path for the hostBaseMap
+      !options.silent &&
+        logger.debug(
+          `Skipping interaction ${path} ${method} because path does not start with the hostname base: ${base}`
+        );
+      return null;
+    }
+  }
+  return path;
+}
+
+export async function* handleServerPathPrefix(
+  interactions: CapturedInteractions,
+  hostBaseMap: { [key: string]: string }
+): CapturedInteractions {
+  for await (const interaction of interactions) {
+    const adjustedPath = adjustPath(interaction.request, hostBaseMap);
+    if (adjustedPath) {
+      const adjustedInteraction = {
+        ...interaction,
+        request: {
+          ...interaction.request,
+          path: adjustedPath,
+        },
+      };
+      yield adjustedInteraction;
     }
   }
 }
@@ -104,6 +128,9 @@ export class GroupedCaptures {
   // TODO - store interactions over hars - to do this:
   // - update capture interactions to be serializable (i.e. stop storing CapturedBody as a stream)
   // - build a read / write storage format for interactions
+
+  // TODO - if we want to store + use cached hars, we'll need to store the `hostBaseMap` (tbd) - this is sometimes specified in `serverOverride` or `server.url`
+  // which tells the hars how we store it.
   private paths: Map<
     string,
     {
@@ -119,10 +146,15 @@ export class GroupedCaptures {
     interactions: CapturedInteraction[];
   };
   private queries: OperationQueries;
+  private hostBaseMap: ReturnType<typeof createHostBaseMap>;
   constructor(
     trafficDir: string,
-    private spec: OpenAPIV3.Document
+    private spec: OpenAPIV3.Document,
+    options: {
+      baseServerUrl?: string;
+    } = {}
   ) {
+    this.hostBaseMap = createHostBaseMap(spec, options);
     const endpoints: { path: string; method: string }[] = specToOperations(
       spec
     ).map((p) => ({
@@ -160,7 +192,9 @@ export class GroupedCaptures {
   }
 
   addInteraction(interaction: CapturedInteraction) {
-    const pathname = interaction.request.path;
+    const pathname =
+      adjustPath(interaction.request, this.hostBaseMap, { silent: true }) ??
+      interaction.request.path;
     const opRes = this.queries.findOperation(
       pathname,
       interaction.request.method
@@ -184,7 +218,17 @@ export class GroupedCaptures {
   addHar(har: HttpArchive.Entry) {
     let pathname: string;
     try {
-      pathname = new URL(har.request.url).pathname;
+      const url = new URL(har.request.url);
+      pathname =
+        adjustPath(
+          {
+            method: har.request.method,
+            path: url.pathname,
+            host: url.host,
+          },
+          this.hostBaseMap,
+          { silent: true }
+        ) ?? url.pathname;
     } catch (e) {
       logger.debug(`Skipping har entry - invalid URL`);
       logger.debug(har);
@@ -267,7 +311,7 @@ export class GroupedCaptures {
               this.getInteractionsIterator(node),
               this.spec
             ),
-            this.spec
+            this.hostBaseMap
           ),
         };
       }
@@ -280,7 +324,7 @@ export class GroupedCaptures {
         this.getInteractionsIterator(this.unmatched),
         this.spec
       ),
-      this.spec
+      this.hostBaseMap
     );
   }
 

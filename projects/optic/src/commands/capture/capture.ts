@@ -157,12 +157,13 @@ const getCaptureAction =
       strict: false,
       denormalize: false,
     });
-    const captures = new GroupedCaptures(trafficDirectory, spec.jsonLike);
+    let serverUrl: string | null = null;
+    let captures: GroupedCaptures;
     const pathFromRoot = resolveRelativePath(config.root, filePath);
     const captureConfig = config.capture?.[pathFromRoot];
-    let serverUrl: string | null = null;
 
     if (options.har) {
+      captures = new GroupedCaptures(trafficDirectory, spec.jsonLike);
       try {
         const harEntries = getHarEntriesFromFs(options.har);
         for await (const harOrErr of harEntries) {
@@ -179,6 +180,7 @@ const getCaptureAction =
         return;
       }
     } else if (options.postman) {
+      captures = new GroupedCaptures(trafficDirectory, spec.jsonLike);
       const postmanEntryResults = PostmanCollectionEntries.fromReadable(
         fsNonPromise.createReadStream(options.postman)
       );
@@ -224,6 +226,9 @@ const getCaptureAction =
         return;
       }
       serverUrl = options.serverOverride || captureConfig.server.url;
+      captures = new GroupedCaptures(trafficDirectory, spec.jsonLike, {
+        baseServerUrl: serverUrl,
+      });
       const harEntries = await captureRequestsFromProxy(config, captureConfig, {
         ...options,
         serverUrl,
