@@ -1,11 +1,6 @@
 import {
   ChangeType,
-  IChange,
-  IFact,
   ObjectDiff,
-  OpenApiKind,
-  OperationLocation,
-  Result,
   RuleResult,
   Severity,
   SeverityText,
@@ -14,7 +9,6 @@ import {
 import Ajv from 'ajv';
 import { appliesWhen } from './constants';
 import { PreparedRule } from './prepare-rule';
-import { NaiveLocalCache } from './rule-cache';
 import { ExternalRuleBase } from '@useoptic/rulesets-base/build/rules/external-rule-base';
 import { OpenAPIFactNodes } from '@useoptic/rulesets-base/build/rule-runner/rule-runner-types';
 import { OpenAPIV3 } from 'openapi-types';
@@ -73,12 +67,10 @@ export class LintGpt extends ExternalRuleBase {
 
     const requirementRules: PreparedRule[] = [];
     const addedRules: PreparedRule[] = [];
-    const cache = new NaiveLocalCache();
-    await cache.loadCache();
 
-    for await (const [key, config] of Object.entries(validatedConfig)) {
-      for await (const rule of config.rules) {
-        const result = await cache.getOrPrepareRule(rule);
+    for (const [, config] of Object.entries(validatedConfig)) {
+      for (const rule of config.rules) {
+        const result = await prepareRule(rule);
         if (result) {
           if (
             config.required_on === 'added' ||
@@ -96,18 +88,15 @@ export class LintGpt extends ExternalRuleBase {
       }
     }
 
-    await cache.flushCache();
     return new LintGpt(validatedConfig, requirementRules, addedRules);
   }
 
-  private evaluation: NaiveLocalCache;
   constructor(
     private config: LintGptConfig,
     private requirementRules: PreparedRule[],
     private addedRules: PreparedRule[]
   ) {
     super();
-    this.evaluation = new NaiveLocalCache();
   }
 
   async runRulesV2(inputs: {
@@ -120,7 +109,6 @@ export class LintGpt extends ExternalRuleBase {
     const operationsToRun: AIRuleRunInputs[] = [];
     const responsesToRun: AIRuleRunInputs[] = [];
     const propertiesToRun: AIRuleRunInputs[] = [];
-    await await this.evaluation.loadCache();
 
     inputs.groupedFacts.endpoints.forEach((endpoint) => {
       const { path, method } = endpoint;
@@ -210,7 +198,7 @@ export class LintGpt extends ExternalRuleBase {
               if (rule.changed && !operation.before) {
                 return null;
               }
-              const result = await this.evaluation.getOrEvaluateRule(
+              const result = await evaluateRule(
                 rule,
                 operation.locationContext,
                 operation.value,
@@ -250,7 +238,7 @@ export class LintGpt extends ExternalRuleBase {
               if (rule.changed && !response.before) {
                 return null;
               }
-              const result = await this.evaluation.getOrEvaluateRule(
+              const result = await evaluateRule(
                 rule,
                 response.locationContext,
                 response.value,
@@ -290,7 +278,7 @@ export class LintGpt extends ExternalRuleBase {
               if (rule.changed && !property.before) {
                 return null;
               }
-              const result = await this.evaluation.getOrEvaluateRule(
+              const result = await evaluateRule(
                 rule,
                 property.locationContext,
                 property.value,
@@ -322,7 +310,6 @@ export class LintGpt extends ExternalRuleBase {
       .flat(2)
       .filter((i) => Boolean(i)) as RuleResult[];
 
-    await this.evaluation.flushCache();
     return [
       ...operationRuleResults,
       ...responsesRuleResults,
