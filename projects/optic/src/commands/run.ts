@@ -492,7 +492,9 @@ const runCapture = async ({
 
   if (captureConfig) {
     const trafficDirectory = await getCaptureStorage(path.resolve(specPath));
-    const captures = new GroupedCaptures(trafficDirectory, localSpec.jsonLike);
+    const captures = new GroupedCaptures(trafficDirectory, localSpec.jsonLike, {
+      baseServerUrl: captureConfig.server.url,
+    });
 
     let harEntries: any;
     try {

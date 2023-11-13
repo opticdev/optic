@@ -65,6 +65,27 @@ capture:
             author_id: 6nTxAFM5ck4Hob77hGQoL
         - path: /authors
           method: GET
+  openapi-prefix-and-server-urls.yml:
+    server:
+      command: node server.js
+      url: http://localhost:%PORT/api
+      ready_endpoint: /healthcheck
+    requests:
+      send:
+        - path: /books
+          method: GET
+        - path: /books/asd
+          method: GET
+        - path: /books/def
+          method: GET
+        - path: /books/asd
+          method: POST
+          data:
+            name: asd
+            price: 1
+            author_id: 6nTxAFM5ck4Hob77hGQoL
+        - path: /authors
+          method: GET
   openapi-with-external-ref.yml:
     server:
       command: node server.js

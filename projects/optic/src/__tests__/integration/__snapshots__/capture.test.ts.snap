@@ -1156,14 +1156,20 @@ exports[`capture with inputs --postman verifying OpenAPI spec 1`] = `
 
 exports[`capture with requests update behavior handle server path prefixes in spec 1`] = `
 "Generating traffic to send to server
-[90m1 endpoint did not receive traffic[39m
+GET /books
+  [32m✓ [39m200 response
+  [32m[200 response body] 'name' has been added (/properties/books/items/properties/name)[39m
+  [32m[200 response body] 'author_id' has been added (/properties/books/items/properties/author_id)[39m
+  [32m[200 response body] 'status' has been added (/properties/books/items/properties/status)[39m
+  [32m[200 response body] 'price' has been added (/properties/books/items/properties/price)[39m
+  [32m[200 response body] 'created_at' has been added (/properties/books/items/properties/created_at)[39m
+  [32m[200 response body] 'updated_at' has been added (/properties/books/items/properties/updated_at)[39m
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
 GET /authors
 GET /books/{book}
 POST /books/{book}
-GET /books
 "
 `;
 
@@ -1231,7 +1237,199 @@ components:
         books:
           type: array
           items:
-            $ref: "#/components/schemas/GetBooksBook200ResponseBody"
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              author_id:
+                type: string
+              status:
+                type: string
+              price:
+                type: number
+              created_at:
+                type: string
+              updated_at:
+                type: string
+            required:
+              - name
+              - author_id
+              - status
+              - price
+              - created_at
+              - updated_at
+    GetAuthors200ResponseBody:
+      type: object
+      properties:
+        authors:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              created_at:
+                type: string
+              updated_at:
+                type: string
+            required:
+              - id
+              - name
+              - created_at
+              - updated_at
+      required:
+        - authors
+    GetBooksBook200ResponseBody:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        author_id:
+          type: string
+        status:
+          type: string
+        price:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+        - id
+        - name
+        - author_id
+        - status
+        - price
+        - created_at
+        - updated_at
+    PostBooksBookRequestBody:
+      type: object
+      properties:
+        name:
+          type: string
+        price:
+          type: number
+        author_id:
+          type: string
+      required:
+        - name
+        - price
+        - author_id
+"
+`;
+
+exports[`capture with requests update behavior handle server path prefixes in spec and in optic.yml 1`] = `
+"Generating traffic to send to server
+GET /books
+  [32m✓ [39m200 response
+  [32m[200 response body] 'name' has been added (/properties/books/items/properties/name)[39m
+  [32m[200 response body] 'author_id' has been added (/properties/books/items/properties/author_id)[39m
+  [32m[200 response body] 'status' has been added (/properties/books/items/properties/status)[39m
+  [32m[200 response body] 'price' has been added (/properties/books/items/properties/price)[39m
+  [32m[200 response body] 'created_at' has been added (/properties/books/items/properties/created_at)[39m
+  [32m[200 response body] 'updated_at' has been added (/properties/books/items/properties/updated_at)[39m
+
+[1m[90mLearning path patterns for unmatched requests...[39m[22m
+[1m[90mDocumenting new operations:[39m[22m
+GET /authors
+GET /books/{book}
+POST /books/{book}
+"
+`;
+
+exports[`capture with requests update behavior handle server path prefixes in spec and in optic.yml 2`] = `
+"openapi: 3.0.3
+info:
+  title: a spec
+  description: The API
+  version: 0.1.0
+servers:
+  - name: server
+    url: http://localhost:PORT/api
+paths:
+  /books:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetBooks200ResponseBody"
+  /authors:
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAuthors200ResponseBody"
+  /books/{book}:
+    parameters:
+      - in: path
+        name: book
+        required: true
+        schema:
+          type: string
+    get:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetBooksBook200ResponseBody"
+    post:
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetBooksBook200ResponseBody"
+      requestBody:
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: "#/components/schemas/PostBooksBookRequestBody"
+components:
+  schemas:
+    GetBooks200ResponseBody:
+      type: object
+      properties:
+        books:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              author_id:
+                type: string
+              status:
+                type: string
+              price:
+                type: number
+              created_at:
+                type: string
+              updated_at:
+                type: string
+            required:
+              - name
+              - author_id
+              - status
+              - price
+              - created_at
+              - updated_at
     GetAuthors200ResponseBody:
       type: object
       properties:

@@ -72,7 +72,6 @@ export class ProxyServer {
         stopPort: 8999,
       });
     }
-
     await capturingProxy
       .forAnyRequest()
       .always()
@@ -92,10 +91,11 @@ export class ProxyServer {
           const urlObj = new URL(rest.url);
           urlObj.pathname = urljoin(serverPathnamePrefix, urlObj.pathname);
           const prefixedUrl = urlObj.toString();
+
           logger.debug(
             `Forwarding request ${
               rest.path
-            } ${prefixedUrl} with headers: ${JSON.stringify(
+            } to ${prefixedUrl} with headers: ${JSON.stringify(
               rest.headers
             )}. id: ${capturedRequest.id}`
           );
@@ -104,6 +104,8 @@ export class ProxyServer {
             ...rest,
             body: { buffer: body.buffer },
             timingEvents: timingEvents as TimingEvents,
+            url: prefixedUrl,
+            path: urlObj.pathname,
           };
           requestsById.set(request.id, request);
           return {
