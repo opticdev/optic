@@ -302,7 +302,12 @@ export class SpectralRule extends ExternalRuleBase {
       } else {
         // find if there is an appropriate change
         let maybeChange: ObjectDiff | undefined =
-          changesByJsonPath[fact.location.jsonPath];
+          changesByJsonPath[fact.location.jsonPath] ||
+          changesByJsonPath[
+            jsonPointerHelpers.compile(
+              spectralResult.path.map((i) => i.toString())
+            )
+          ];
 
         if (
           !maybeChange &&

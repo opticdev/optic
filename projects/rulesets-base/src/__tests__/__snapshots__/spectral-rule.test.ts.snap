@@ -121,3 +121,22 @@ exports[`spectral rule test runs spectral rules on added 1`] = `
   },
 ]
 `;
+
+exports[`spectral rule test runs spectral rules on addedOrChanged 1`] = `
+[
+  {
+    "docsLink": undefined,
+    "error": "Error code: this-rule: readOnly is not supported by API Gateway",
+    "exempted": false,
+    "location": {
+      "jsonPath": "/paths/~1api/get/responses/200/content/application~1json/schema/properties/example",
+      "spec": "after",
+    },
+    "name": "Spectral addedOrChanged rule",
+    "passed": false,
+    "severity": 2,
+    "type": "addedOrChanged",
+    "where": "addedOrChanged ",
+  },
+]
+`;
