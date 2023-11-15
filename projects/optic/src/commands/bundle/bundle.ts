@@ -1,11 +1,7 @@
 import { Command, Option } from 'commander';
 import { ParseResult, loadSpec } from '../../utils/spec-loaders';
 import { OpticCliConfig } from '../../config';
-import {
-  OpenAPIV3,
-  sourcemapReader,
-  UserError,
-} from '@useoptic/openapi-utilities';
+import { OpenAPIV3, UserError } from '@useoptic/openapi-utilities';
 import { isYaml, JsonSchemaSourcemap } from '@useoptic/openapi-io';
 import fs from 'node:fs/promises';
 import path from 'path';
@@ -19,6 +15,10 @@ import sortby from 'lodash.sortby';
 import { logger } from '../../logger';
 import { jsonIterator } from './json-iterator';
 import $RefParser from '@apidevtools/json-schema-ref-parser';
+import {
+  customHttpResolver,
+  parseHeadersConfig,
+} from '@useoptic/openapi-io/build/parser/resolvers/custom-http-ref-handler';
 const description = `bundle external references for an OpenAPI specification`;
 
 const usage = () => `
@@ -90,11 +90,31 @@ const bundleAction =
       .split(/[ ,]+/)
       .filter((extension) => extension.startsWith('x-'));
 
+    const resolveRefs: (path: string) => Promise<$RefParser.$Refs> = async (
+      path: string
+    ) => {
+      const resolver = new $RefParser();
+      const headersMap = parseHeadersConfig(
+        config.external_refs?.resolve_headers ?? []
+      );
+      const resolve = {
+        customHttpRefHandler: customHttpResolver(headersMap),
+        external: true,
+      };
+      return await resolver.resolve(path, {
+        resolve,
+      });
+    };
+
     let parsedFile: ParseResult;
     if (filePath) {
       parsedFile = await getSpec(filePath, config);
 
-      let updatedSpec = await bundle(parsedFile.jsonLike, parsedFile.sourcemap);
+      let updatedSpec = await bundle(
+        parsedFile.jsonLike,
+        parsedFile.sourcemap,
+        resolveRefs
+      );
 
       if (includeExtensions.length) {
         Object.entries(updatedSpec.paths).forEach(([path, operations]) => {
@@ -262,7 +282,8 @@ const matches = {
 };
 async function bundle(
   spec: OpenAPIV3.Document,
-  sourcemap: JsonSchemaSourcemap
+  sourcemap: JsonSchemaSourcemap,
+  refResolver: (path: string) => Promise<$RefParser.$Refs>
 ) {
   // create empty component objects if they do not exist
   if (!spec.components) spec.components = {};
@@ -301,7 +322,8 @@ async function bundle(
         return toComponentName(last || 'Schema');
       }
     },
-    { rewriteMapping: true }
+    { rewriteMapping: true },
+    refResolver
   );
 
   // handle parameters
@@ -317,7 +339,9 @@ async function bundle(
           `${capitalize(parameter.name)}${capitalize(parameter.in)}`
         ) || 'Parameter'
       );
-    }
+    },
+    { rewriteMapping: false },
+    refResolver
   );
 
   // handle requestBodies
@@ -336,7 +360,9 @@ async function bundle(
         const last = components[components.length - 1];
         return toComponentName(last || 'RequestBody');
       }
-    }
+    },
+    { rewriteMapping: false },
+    refResolver
   );
 
   updatedSpec = await bundleMatchingRefsAsComponents(
@@ -354,7 +380,9 @@ async function bundle(
         const last = components[components.length - 1];
         return toComponentName(last || 'ResponseBody');
       }
-    }
+    },
+    { rewriteMapping: false },
+    refResolver
   );
 
   // handle examples
@@ -378,7 +406,9 @@ async function bundle(
         const last = components[components.length - 1];
         return toComponentName(last || 'Example');
       }
-    }
+    },
+    { rewriteMapping: false },
+    refResolver
   );
 
   return updatedSpec;
@@ -521,7 +551,8 @@ async function bundleMatchingRefsAsComponents<T>(
   match: 'parent' | 'children',
   targetPath: string,
   naming: (T, lookup: string, pathInFile: string) => string,
-  options: { rewriteMapping: boolean } = { rewriteMapping: false }
+  options: { rewriteMapping: boolean },
+  refResolver: (path: string) => Promise<$RefParser.$Refs>
 ) {
   const rootFileIndex = sourcemap.files.find(
     (i) => i.path === sourcemap.rootFilePath
@@ -758,7 +789,7 @@ async function bundleMatchingRefsAsComponents<T>(
   }, specCopy);
 
   if (options.rewriteMapping) {
-    let $refs = await $RefParser.resolve(sourcemap.rootFilePath);
+    let $refs = await refResolver(sourcemap.rootFilePath);
 
     const refKeys = $refs.paths();
 
