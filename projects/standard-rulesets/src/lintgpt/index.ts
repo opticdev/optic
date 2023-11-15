@@ -8,11 +8,19 @@ import {
 } from '@useoptic/openapi-utilities';
 import Ajv from 'ajv';
 import { appliesWhen } from './constants';
-import { PreparedRule } from './prepare-rule';
+import {
+  LintGptClient,
+  LintgptEval,
+  LintgptRulesHelper,
+  PreparedRule,
+  computeNodeChecksum,
+  computeRuleChecksum,
+} from './rules-helper';
 import { ExternalRuleBase } from '@useoptic/rulesets-base/build/rules/external-rule-base';
 import { OpenAPIFactNodes } from '@useoptic/rulesets-base/build/rule-runner/rule-runner-types';
 import { OpenAPIV3 } from 'openapi-types';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import stableStringify from 'json-stable-stringify';
 
 export type LintGptConfig = {
   [key: string]: {
@@ -53,7 +61,10 @@ const configSchema = {
 const validateConfigSchema = ajv.compile(configSchema);
 
 export class LintGpt extends ExternalRuleBase {
-  static async fromOpticConfig(config: unknown): Promise<LintGpt | string> {
+  static async fromOpticConfig(
+    config: unknown,
+    client: LintGptClient
+  ): Promise<LintGpt | string> {
     const result = validateConfigSchema(config);
 
     if (!result) {
@@ -64,37 +75,45 @@ export class LintGpt extends ExternalRuleBase {
     }
 
     const validatedConfig = config as LintGptConfig;
-
     const requirementRules: PreparedRule[] = [];
     const addedRules: PreparedRule[] = [];
+    const lintgptRulesHelper = new LintgptRulesHelper(client);
+
+    const rules: string[] = [];
 
     for (const [, config] of Object.entries(validatedConfig)) {
       for (const rule of config.rules) {
-        const result = await prepareRule(rule);
-        if (result) {
+        rules.push(rule);
+      }
+    }
+
+    const results = await lintgptRulesHelper.getRulePreps(rules);
+
+    for (const [, config] of Object.entries(validatedConfig)) {
+      for (const rule of config.rules) {
+        const rule_checksum = computeRuleChecksum(rule);
+        const result = results.get(rule_checksum);
+        if (result?.prep?.prep_result) {
           if (
             config.required_on === 'added' ||
             config.required_on === 'addedOrChanged'
           ) {
-            addedRules.push({
-              ...result,
-            });
+            addedRules.push(result.prep.prep_result);
           } else {
-            requirementRules.push({
-              ...result,
-            });
+            requirementRules.push(result.prep.prep_result);
           }
         }
       }
     }
 
-    return new LintGpt(validatedConfig, requirementRules, addedRules);
+    return new LintGpt(validatedConfig, requirementRules, addedRules, client);
   }
 
   constructor(
     private config: LintGptConfig,
     private requirementRules: PreparedRule[],
-    private addedRules: PreparedRule[]
+    private addedRules: PreparedRule[],
+    private lintgptClient: LintGptClient
   ) {
     super();
   }
@@ -106,9 +125,12 @@ export class LintGpt extends ExternalRuleBase {
     toSpec: OpenAPIV3.Document;
     groupedFacts: OpenAPIFactNodes;
   }): Promise<RuleResult[]> {
+    console.log('runRulesV2');
     const operationsToRun: AIRuleRunInputs[] = [];
     const responsesToRun: AIRuleRunInputs[] = [];
     const propertiesToRun: AIRuleRunInputs[] = [];
+
+    const lintgptRulesHelper = new LintgptRulesHelper(this.lintgptClient);
 
     inputs.groupedFacts.endpoints.forEach((endpoint) => {
       const { path, method } = endpoint;
@@ -190,131 +212,91 @@ export class LintGpt extends ExternalRuleBase {
       (i) => i.entity === 'PROPERTY'
     );
 
-    const operationRuleResults = (
-      await Promise.all(
-        operationsRules.map(async (rule) => {
-          return Promise.all(
-            operationsToRun.map(async (operation) => {
-              if (rule.changed && !operation.before) {
-                return null;
-              }
-              const result = await evaluateRule(
-                rule,
-                operation.locationContext,
-                operation.value,
-                operation.before
-              );
+    const evals = new Map<
+      string,
+      { eval_data: any; jsonPath: string; rule: PreparedRule }
+    >();
 
-              if ('skipped' in result) {
-                return null;
-              } else if ('passed' in result) {
-                const opticResult: RuleResult = {
-                  passed: result.passed,
-                  where: operation.locationContext,
-                  name: rule.slug,
-                  severity:
-                    rule.severity === 'ERROR' ? Severity.Error : Severity.Warn,
-                  location: {
-                    jsonPath: operation.jsonPath,
-                    spec: 'after',
-                  },
-                  error: 'error' in result ? result.error : undefined,
-                };
-                return opticResult;
-              }
-            })
-          );
-        })
-      )
-    )
-      .flat(2)
-      .filter((i) => Boolean(i)) as RuleResult[];
+    for (const rule of operationsRules) {
+      for (const operation of operationsToRun) {
+        if (rule.changed && !operation.before) continue;
+        const rule_checksum = computeRuleChecksum(rule.rule);
+        const eval_data = {
+          rule_checksum,
+          location_context: operation.locationContext,
+          node: stableStringify(operation.value),
+          node_before: stableStringify(operation.before ?? ''),
+        };
+        const node_checksum = computeNodeChecksum(eval_data);
+        const key = `${rule_checksum}${node_checksum}`;
+        evals.set(key, { eval_data, jsonPath: operation.jsonPath, rule });
+      }
+    }
 
-    const responsesRuleResults = (
-      await Promise.all(
-        responsesRules.map(async (rule) => {
-          return Promise.all(
-            responsesToRun.map(async (response) => {
-              if (rule.changed && !response.before) {
-                return null;
-              }
-              const result = await evaluateRule(
-                rule,
-                response.locationContext,
-                response.value,
-                response.before
-              );
+    for (const rule of responsesRules) {
+      for (const response of responsesToRun) {
+        if (rule.changed && !response.before) continue;
+        const rule_checksum = computeRuleChecksum(rule.rule);
+        const eval_data = {
+          rule_checksum,
+          location_context: response.locationContext,
+          node: stableStringify(response.value),
+          node_before: stableStringify(response.before ?? ''),
+        };
+        const node_checksum = computeNodeChecksum(eval_data);
+        const key = `${rule_checksum}${node_checksum}`;
+        evals.set(key, { eval_data, jsonPath: response.jsonPath, rule });
+      }
+    }
 
-              if ('skipped' in result) {
-                return null;
-              } else if ('passed' in result) {
-                const opticResult: RuleResult = {
-                  passed: result.passed,
-                  where: response.locationContext,
-                  name: rule.slug,
-                  severity:
-                    rule.severity === 'ERROR' ? Severity.Error : Severity.Warn,
-                  location: {
-                    jsonPath: response.jsonPath,
-                    spec: 'after',
-                  },
-                  error: 'error' in result ? result.error : undefined,
-                };
-                return opticResult;
-              }
-            })
-          );
-        })
-      )
-    )
-      .flat(2)
-      .filter((i) => Boolean(i)) as RuleResult[];
+    for (const rule of propertyRules) {
+      for (const property of propertiesToRun) {
+        if (rule.changed && !property.before) continue;
+        const rule_checksum = computeRuleChecksum(rule.rule);
+        const eval_data = {
+          rule_checksum,
+          location_context: property.locationContext,
+          node: stableStringify(property.value),
+          node_before: stableStringify(property.before ?? ''),
+        };
+        const node_checksum = computeNodeChecksum(eval_data);
+        const key = `${rule_checksum}${node_checksum}`;
+        evals.set(key, { eval_data, jsonPath: property.jsonPath, rule });
+      }
+    }
 
-    const propertyRuleResults = (
-      await Promise.all(
-        propertyRules.map(async (rule) => {
-          return Promise.all(
-            propertiesToRun.map(async (property) => {
-              if (rule.changed && !property.before) {
-                return null;
-              }
-              const result = await evaluateRule(
-                rule,
-                property.locationContext,
-                property.value,
-                property.before
-              );
+    const eval_results = await lintgptRulesHelper.getRuleEvals(
+      [...evals.values()].map((v) => v.eval_data)
+    );
 
-              if ('skipped' in result) {
-                return null;
-              } else if ('passed' in result) {
-                const opticResult: RuleResult = {
-                  passed: result.passed,
-                  where: property.locationContext,
-                  name: rule.slug,
-                  severity:
-                    rule.severity === 'ERROR' ? Severity.Error : Severity.Warn,
-                  location: {
-                    jsonPath: property.jsonPath,
-                    spec: 'after',
-                  },
-                  error: 'error' in result ? result.error : undefined,
-                };
-                return opticResult;
-              }
-            })
-          );
-        })
-      )
-    )
-      .flat(2)
-      .filter((i) => Boolean(i)) as RuleResult[];
+    const results: RuleResult[] = [];
 
-    return [
-      ...operationRuleResults,
-      ...responsesRuleResults,
-      ...propertyRuleResults,
-    ];
+    const successfulEvals = [...eval_results.values()]
+      .map((v) => v.rule_eval)
+      .filter((v): v is LintgptEval => v?.status === 'success');
+
+    // TODO: handle errors
+    for (const result of successfulEvals) {
+      if (result.skipped) continue;
+      const key = `${result.rule_checksum}${result.node_checksum}`;
+      const data = evals.get(key);
+      if (!data) continue;
+      const opticResult: RuleResult = {
+        passed: !!result.passed,
+        where: data.eval_data.location_context,
+        name: data.rule.slug,
+        severity:
+          data.rule.severity === 'ERROR' ? Severity.Error : Severity.Warn,
+        location: {
+          jsonPath: data.jsonPath,
+          spec: 'after',
+        },
+        error: result.eval_error ?? undefined,
+      };
+      results.push(opticResult);
+    }
+
+    return results;
   }
 }
 

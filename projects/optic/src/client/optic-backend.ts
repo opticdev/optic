@@ -1,6 +1,7 @@
 import fetch from 'node-fetch';
 import { JsonHttpClient } from './JsonHttpClient';
 import * as Types from './optic-backend-types';
+import { URLSearchParams } from 'url';
 
 export class OpticBackendClient extends JsonHttpClient {
   constructor(
@@ -254,6 +255,40 @@ export class OpticBackendClient extends JsonHttpClient {
     organization?: { organizationId: string };
   }> {
     return this.getJson(`/api/token/verify`);
+  }
+
+  public async getLintgptPreps(rule_checksums: string[]) {
+    const searchParams = new URLSearchParams();
+    for (const rule_checksum of rule_checksums) {
+      searchParams.append('rule_checksums', rule_checksum);
+    }
+    return this.getJson(`/api/lintgpt-preps?${searchParams}`);
+  }
+
+  public async requestLintgptPreps(rules: string[]) {
+    return this.postJson(`/api/lintgpt-preps`, { rules });
+  }
+
+  public async getLintgptEvals(
+    evals: { rule_checksum: string; node_checksum: string }[]
+  ) {
+    const searchParams = new URLSearchParams();
+    for (const e of evals) {
+      searchParams.append(`rule_checksums`, e.rule_checksum);
+      searchParams.append(`node_checksums`, e.node_checksum);
+    }
+    return this.getJson(`/api/lintgpt-evals?${searchParams}`);
+  }
+
+  public async requestLintgptEvals(
+    eval_requests: {
+      node: string;
+      node_before?: string;
+      location_context: string;
+      rule_checksum: string;
+    }[]
+  ) {
+    return this.postJson(`/api/lintgpt-evals`, { eval_requests });
   }
 }
 

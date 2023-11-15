@@ -21,7 +21,8 @@ export type RulesetPayload = {
     string,
     {
       fromOpticConfig: (
-        config: unknown
+        config: unknown,
+        client?: any
       ) => Promise<Ruleset | ExternalRule | string>;
     }
   >;
@@ -33,7 +34,8 @@ export type PrepareRulesetsResult = {
 };
 
 export async function prepareRulesets(
-  payload: RulesetPayload
+  payload: RulesetPayload,
+  client: any
 ): Promise<PrepareRulesetsResult> {
   const StandardRulesets = payload.standardRulesets;
   const rulesets: (Ruleset | ExternalRule)[] = [];
@@ -45,7 +47,10 @@ export async function prepareRulesets(
       const RulesetClass =
         StandardRulesets[ruleset.name as keyof typeof StandardRulesets];
       try {
-        instanceOrErrorMsg = await RulesetClass.fromOpticConfig(ruleset.config);
+        instanceOrErrorMsg = await RulesetClass.fromOpticConfig(
+          ruleset.config,
+          client
+        );
       } catch (e) {
         console.error(e);
         warnings.push(`Constructing ruleset ${ruleset.name} failed`);
