@@ -1,6 +1,7 @@
 import { test, expect, describe } from '@jest/globals';
 import { RuleRunner } from '../rule-runner';
 import { SpectralRule } from '../extended-rules/spectral-rule';
+import { undefined as SpectralUndefinedFunc } from '@stoplight/spectral-functions';
 import {
   Spectral,
   RulesetDefinition as SpectralRulesetDefinition,
@@ -55,6 +56,95 @@ describe('spectral rule test', () => {
       context: {},
     });
     expect(resultsAgainstSelf.length === 0).toBe(true);
+  });
+
+  test('runs spectral rules on addedOrChanged', async () => {
+    const spectral = new Spectral();
+    spectral.setRuleset({
+      extends: [],
+      rules: {
+        'this-rule': {
+          description: 'readOnly is not supported by API Gateway',
+          severity: 'error',
+          given: '$..readOnly',
+          then: [
+            {
+              function: SpectralUndefinedFunc,
+            },
+          ],
+        },
+      },
+    });
+
+    const ruleRunner = new RuleRunner([
+      new SpectralRule({
+        name: 'spectral-rules',
+        spectral,
+        applies: 'addedOrChanged',
+      }),
+    ]);
+    const before: OpenAPIV3.Document = {
+      ...defaultEmptySpec,
+      paths: {
+        '/api': {
+          get: {
+            responses: {
+              '200': {
+                description: '200',
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'object',
+                      properties: {
+                        example: {
+                          type: 'string',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+    const after: OpenAPIV3.Document = {
+      ...defaultEmptySpec,
+      paths: {
+        '/api': {
+          get: {
+            responses: {
+              '200': {
+                description: '200',
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'object',
+                      properties: {
+                        example: {
+                          type: 'string',
+                          readOnly: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+    const diffs = diff(before, after);
+    const resultsWithChanges = await ruleRunner.runRules({
+      diffs,
+      fromSpec: before,
+      toSpec: after,
+      context: {},
+    });
+
+    expect(resultsWithChanges).toMatchSnapshot();
   });
 
   test('can use matches', async () => {
