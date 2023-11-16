@@ -125,7 +125,6 @@ export class LintGpt extends ExternalRuleBase {
     toSpec: OpenAPIV3.Document;
     groupedFacts: OpenAPIFactNodes;
   }): Promise<RuleResult[]> {
-    console.log('runRulesV2');
     const operationsToRun: AIRuleRunInputs[] = [];
     const responsesToRun: AIRuleRunInputs[] = [];
     const propertiesToRun: AIRuleRunInputs[] = [];
