@@ -35,7 +35,7 @@ export type PrepareRulesetsResult = {
 
 export async function prepareRulesets(
   payload: RulesetPayload,
-  client: any
+  client?: any
 ): Promise<PrepareRulesetsResult> {
   const StandardRulesets = payload.standardRulesets;
   const rulesets: (Ruleset | ExternalRule)[] = [];
