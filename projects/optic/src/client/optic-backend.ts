@@ -160,7 +160,8 @@ export class OpticBackendClient extends JsonHttpClient {
     specUrl: string | null;
     sourcemapUrl: string | null;
   }> {
-    return this.getJson(`/api/apis/${apiId}/specs/tag:${tag}`);
+    const encodedTag = encodeURIComponent(`tag:${tag}`);
+    return this.getJson(`/api/apis/${apiId}/specs/${encodedTag}`);
   }
 
   public async createSpec(spec: {
