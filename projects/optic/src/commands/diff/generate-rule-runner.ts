@@ -125,12 +125,15 @@ export const generateRuleRunner = async (
       localRulesets,
       hostedRulesets,
     });
-    const results = await prepareRulesets({
-      ruleset: standard,
-      localRulesets,
-      standardRulesets: StandardRulesets,
-      hostedRulesets,
-    });
+    const results = await prepareRulesets(
+      {
+        ruleset: standard,
+        localRulesets,
+        standardRulesets: StandardRulesets,
+        hostedRulesets,
+      },
+      options.config.client
+    );
 
     rulesets.push(...results.rulesets);
 

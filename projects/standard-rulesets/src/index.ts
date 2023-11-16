@@ -1,3 +1,5 @@
+import { LintGpt } from './lintgpt';
+
 export * from './breaking-changes';
 export * from './naming-changes';
 export * from './examples';
@@ -16,4 +18,5 @@ export const StandardRulesets = {
   spectral: SpectralRulesets,
   examples: ExamplesRuleset,
   documentation: DocumentationRuleset,
+  lintgpt: LintGpt,
 };
