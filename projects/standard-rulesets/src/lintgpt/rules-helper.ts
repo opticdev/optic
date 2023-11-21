@@ -65,16 +65,35 @@ export type EvalRequest = {
 export class LintgptRulesHelper {
   constructor(private client: LintGptClient) {}
 
+  private getPrepSpinnerText = ({
+    total,
+    evaluated,
+  }: {
+    total: number;
+    evaluated: number;
+  }) => `LintGPT: ${evaluated}/${total} rules ready`;
+
   public async getRulePreps(rules: string[]) {
     const preparedRulesMap = new Map<
       string,
       { rule: string; rule_checksum: string; prep?: CachedRulePrep }
     >();
 
+    const ora = (await import('ora')).default;
+
     for (const rule of rules) {
       const rule_checksum = computeRuleChecksum(rule);
       preparedRulesMap.set(rule_checksum, { rule, rule_checksum });
     }
+
+    let spinner = ora({
+      text: this.getPrepSpinnerText({
+        total: rules.length,
+        evaluated: 0,
+      }),
+    });
+
+    spinner.start();
 
     const getRulesWithoutPrep = () =>
       [...preparedRulesMap.values()].filter(
@@ -109,11 +128,37 @@ export class LintgptRulesHelper {
         await this.client.requestLintgptPreps(rulesToPrep);
       }
 
+      spinner.text = this.getPrepSpinnerText({
+        total: rules.length,
+        evaluated: rules.length - rulesWithoutPreps.length,
+      });
+
       firstRun = false;
+    }
+
+    if (rulesWithoutPreps.length) {
+      spinner.warn(
+        `LintGPT: ${rulesWithoutPreps.length}/${rules.length} rules timed out`
+      );
+    } else {
+      spinner.succeed(
+        this.getPrepSpinnerText({
+          total: rules.length,
+          evaluated: rules.length - rulesWithoutPreps.length,
+        })
+      );
     }
 
     return preparedRulesMap;
   }
+
+  private getEvalSpinnerText = ({
+    total,
+    evaluated,
+  }: {
+    total: number;
+    evaluated: number;
+  }) => `LintGPT: ${evaluated}/${total} checks run`;
 
   public async getRuleEvals(eval_requests: EvalRequest[]) {
     const evalsMap = new Map<
@@ -126,6 +171,8 @@ export class LintgptRulesHelper {
       }
     >();
 
+    const ora = (await import('ora')).default;
+
     for (const eval_request of eval_requests) {
       const rule_checksum = eval_request.rule_checksum;
       const node_checksum = computeNodeChecksum(eval_request);
@@ -136,6 +183,15 @@ export class LintgptRulesHelper {
         node_checksum,
       });
     }
+
+    let spinner = ora({
+      text: this.getEvalSpinnerText({
+        total: eval_requests.length,
+        evaluated: 0,
+      }),
+    });
+
+    spinner.start();
 
     const getRequestsWithoutEvals = () =>
       [...evalsMap.values()].filter(
@@ -175,12 +231,30 @@ export class LintgptRulesHelper {
 
       requestsWithoutEvals = getRequestsWithoutEvals();
 
+      spinner.text = this.getEvalSpinnerText({
+        total: eval_requests.length,
+        evaluated: eval_requests.length - requestsWithoutEvals.length,
+      });
+
       if (firstRun && requestsWithoutEvals.length) {
         const evalsToRequest = requestsWithoutEvals.map((r) => r.eval_request);
         await this.client.requestLintgptEvals(evalsToRequest);
       }
 
       firstRun = false;
+    }
+
+    if (requestsWithoutEvals.length) {
+      spinner.warn(
+        `LintGPT: ${requestsWithoutEvals.length}/${eval_requests.length} checks timed out`
+      );
+    } else {
+      spinner.succeed(
+        this.getEvalSpinnerText({
+          total: eval_requests.length,
+          evaluated: eval_requests.length - requestsWithoutEvals.length,
+        })
+      );
     }
 
     return evalsMap;
