@@ -81,7 +81,7 @@ export class LintgptRulesHelper {
         ({ prep }) => !prep || prep.status === 'requested'
       );
 
-    const maxTime = Date.now() + 5 * 60 * 1000;
+    const maxTime = Date.now() + 3 * 60 * 1000;
 
     let rulesWithoutPreps = getRulesWithoutPrep();
     let firstRun = true;
@@ -142,15 +142,19 @@ export class LintgptRulesHelper {
         ({ rule_eval }) => !rule_eval || rule_eval.status === 'requested'
       );
 
-    const maxTime = Date.now() + 10 * 60 * 1000;
+    const maxTime = Date.now() + 5 * 60 * 1000;
 
     let requestsWithoutEvals = getRequestsWithoutEvals();
     let firstRun = true;
-    const pollInterval = 2000;
+    let pollInterval0 = 0;
+    let pollInterval1 = 1500;
 
     while (requestsWithoutEvals.length && maxTime > Date.now()) {
-      if (!firstRun)
-        await new Promise((resolve) => setTimeout(resolve, pollInterval));
+      if (!firstRun) {
+        pollInterval1 = pollInterval0 + pollInterval1;
+        pollInterval0 = pollInterval1 - pollInterval0;
+        await new Promise((resolve) => setTimeout(resolve, pollInterval1));
+      }
 
       const queryData = requestsWithoutEvals.map((r) => ({
         rule_checksum: r.rule_checksum,
