@@ -258,26 +258,17 @@ export class OpticBackendClient extends JsonHttpClient {
   }
 
   public async getLintgptPreps(rule_checksums: string[]) {
-    const searchParams = new URLSearchParams();
-    for (const rule_checksum of rule_checksums) {
-      searchParams.append('rule_checksums', rule_checksum);
-    }
-    return this.getJson(`/api/lintgpt-preps?${searchParams}`);
+    return this.postJson(`/api/lintgpt-preps/list`, { rule_checksums });
   }
 
   public async requestLintgptPreps(rules: string[]) {
-    return this.postJson(`/api/lintgpt-preps`, { rules });
+    return this.postJson(`/api/lintgpt-preps/create`, { rules });
   }
 
   public async getLintgptEvals(
     evals: { rule_checksum: string; node_checksum: string }[]
   ) {
-    const searchParams = new URLSearchParams();
-    for (const e of evals) {
-      searchParams.append(`rule_checksums`, e.rule_checksum);
-      searchParams.append(`node_checksums`, e.node_checksum);
-    }
-    return this.getJson(`/api/lintgpt-evals?${searchParams}`);
+    return this.postJson(`/api/lintgpt-evals/list`, { evals });
   }
 
   public async requestLintgptEvals(
@@ -288,7 +279,7 @@ export class OpticBackendClient extends JsonHttpClient {
       rule_checksum: string;
     }[]
   ) {
-    return this.postJson(`/api/lintgpt-evals`, { eval_requests });
+    return this.postJson(`/api/lintgpt-evals/create`, { eval_requests });
   }
 }
 
