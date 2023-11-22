@@ -136,6 +136,7 @@ export class LintGpt extends ExternalRuleBase {
 
       const location = `${method} ${path}`;
       const didChange = endpoint.change?.changeType === ChangeType.Changed;
+      const wasRemoved = endpoint.change?.changeType === ChangeType.Removed;
       const jsonPath = (endpoint.after?.location.jsonPath ||
         endpoint.before?.location.jsonPath)!;
 
@@ -144,7 +145,9 @@ export class LintGpt extends ExternalRuleBase {
         operationsToRun.push({
           locationContext: location,
           jsonPath,
-          value: jsonPointerHelpers.get(inputs.toSpec, jsonPath),
+          value: wasRemoved
+            ? undefined
+            : jsonPointerHelpers.get(inputs.toSpec, jsonPath),
           before: didChange
             ? jsonPointerHelpers.get(
                 inputs.fromSpec,
@@ -154,24 +157,29 @@ export class LintGpt extends ExternalRuleBase {
         });
       }
 
-      endpoint.responses.forEach((responses) => {
-        const location = `${method} ${path} ${responses.statusCode} response`;
-        const didChange = responses.change?.changeType === ChangeType.Changed;
+      endpoint.responses.forEach((response) => {
+        const location = `${method} ${path} ${response.statusCode} response`;
+        const didChange = response.change?.changeType === ChangeType.Changed;
+        const wasRemoved = response.change?.changeType === ChangeType.Removed;
 
-        responses.bodies.forEach((body) => {
+        response.bodies.forEach((body) => {
           body.fields.forEach((property) => {
             if (property.after) {
-              const propertyLocation = `${method} ${path} ${responses.statusCode} response property. Name: \`${property.after.value.key}\`. Required? \`${property.after.value.required}\``;
+              const propertyLocation = `${method} ${path} ${response.statusCode} response property. Name: \`${property.after.value.key}\`. Required? \`${property.after.value.required}\``;
               const didChange =
                 property.change?.changeType === ChangeType.Changed;
+              const wasRemoved =
+                property.change?.changeType === ChangeType.Removed;
 
               propertiesToRun.push({
                 locationContext: propertyLocation,
                 jsonPath: property.after.location.jsonPath,
-                value: jsonPointerHelpers.get(
-                  inputs.toSpec,
-                  property.after.location.jsonPath
-                ),
+                value: wasRemoved
+                  ? undefined
+                  : jsonPointerHelpers.get(
+                      inputs.toSpec,
+                      property.after.location.jsonPath
+                    ),
                 before: didChange
                   ? jsonPointerHelpers.get(
                       inputs.fromSpec,
@@ -186,11 +194,13 @@ export class LintGpt extends ExternalRuleBase {
         responsesToRun.push({
           locationContext: location,
           jsonPath,
-          value: jsonPointerHelpers.get(inputs.toSpec, jsonPath),
+          value: wasRemoved
+            ? undefined
+            : jsonPointerHelpers.get(inputs.toSpec, jsonPath),
           before: didChange
             ? jsonPointerHelpers.get(
                 inputs.fromSpec,
-                responses.before?.location.jsonPath!
+                response.before?.location.jsonPath!
               )
             : undefined,
         });
