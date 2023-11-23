@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import chunk from 'lodash.chunk';
 
 type OpenAPIRuleType =
   | 'OPERATION'
@@ -203,7 +204,7 @@ export class LintgptRulesHelper {
     let requestsWithoutEvals = getRequestsWithoutEvals();
     let firstRun = true;
     let pollInterval0 = 0;
-    let pollInterval1 = 1500;
+    let pollInterval1 = 1000;
 
     while (requestsWithoutEvals.length && maxTime > Date.now()) {
       if (!firstRun) {
@@ -212,11 +213,24 @@ export class LintgptRulesHelper {
         await new Promise((resolve) => setTimeout(resolve, pollInterval1));
       }
 
-      const queryData = requestsWithoutEvals.map((r) => ({
-        rule_checksum: r.rule_checksum,
-        node_checksum: r.node_checksum,
-      }));
-      const results = await this.client.getLintgptEvals(queryData);
+      const queryChunks = chunk(
+        requestsWithoutEvals.map((r) => ({
+          rule_checksum: r.rule_checksum,
+          node_checksum: r.node_checksum,
+        })),
+        20
+      );
+
+      const resultChunks = await Promise.all(
+        queryChunks.map((c) => this.client.getLintgptEvals(c))
+      );
+
+      const results = resultChunks.reduce(
+        (acc, val) => ({
+          lintgpt_evals: [...acc.lintgpt_evals, ...val.lintgpt_evals],
+        }),
+        { lintgpt_evals: [] }
+      );
 
       for (const result of results.lintgpt_evals) {
         const key = getEvalKey(result.rule_checksum, result.node_checksum);

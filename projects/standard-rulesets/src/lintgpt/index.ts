@@ -284,7 +284,15 @@ export class LintGpt extends ExternalRuleBase {
       .map((v) => v.rule_eval)
       .filter((v): v is LintgptEval => v?.status === 'success');
 
-    // TODO: handle errors
+    if (successfulEvals.length < evals.size) {
+      console.warn(
+        `${
+          evals.size - successfulEvals.length
+        } LintGPT rule evaluations failed to run.`
+      );
+      console.warn('');
+    }
+
     for (const result of successfulEvals) {
       if (result.skipped) continue;
       const key = `${result.rule_checksum}${result.node_checksum}`;
