@@ -260,9 +260,12 @@ export class LintgptRulesHelper {
           const evalsToRequest = requestsWithoutEvals.map(
             (r) => r.eval_request
           );
-          await this.client.requestLintgptEvals(evalsToRequest);
+          const evalsToRequestChunks = chunk(evalsToRequest, 20);
+          for (const chunk of evalsToRequestChunks) {
+            await this.client.requestLintgptEvals(chunk);
+            await new Promise((resolve) => setTimeout(resolve, 20));
+          }
         }
-
         firstRun = false;
       }
 
@@ -288,7 +291,11 @@ export class LintgptRulesHelper {
 }
 
 export const computeRuleChecksum = (rule: string): string =>
-  crypto.createHash('sha256').update(rule).digest('base64').toString();
+  crypto
+    .createHash('sha256')
+    .update(rule ?? '')
+    .digest('base64')
+    .toString();
 
 export const computeNodeChecksum = ({
   node,
@@ -302,7 +309,7 @@ export const computeNodeChecksum = ({
   crypto
     .createHash('sha256')
     .update(location_context)
-    .update(node)
+    .update(node ?? '')
     .update(node_before ?? '')
     .digest('base64')
     .toString();
