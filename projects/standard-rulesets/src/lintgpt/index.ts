@@ -233,7 +233,7 @@ export class LintGpt extends ExternalRuleBase {
         const eval_data = {
           rule_checksum,
           location_context: operation.locationContext,
-          node: stableStringify(operation.value),
+          node: stableStringify(operation.value ?? ''),
           node_before: stableStringify(operation.before ?? ''),
         };
         const node_checksum = computeNodeChecksum(eval_data);
@@ -249,7 +249,7 @@ export class LintGpt extends ExternalRuleBase {
         const eval_data = {
           rule_checksum,
           location_context: response.locationContext,
-          node: stableStringify(response.value),
+          node: stableStringify(response.value ?? ''),
           node_before: stableStringify(response.before ?? ''),
         };
         const node_checksum = computeNodeChecksum(eval_data);
@@ -265,7 +265,7 @@ export class LintGpt extends ExternalRuleBase {
         const eval_data = {
           rule_checksum,
           location_context: property.locationContext,
-          node: stableStringify(property.value),
+          node: stableStringify(property.value ?? ''),
           node_before: stableStringify(property.before ?? ''),
         };
         const node_checksum = computeNodeChecksum(eval_data);
