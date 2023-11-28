@@ -1,4 +1,4 @@
-import Analytics from 'analytics-node';
+import Analytics from '@segment/analytics-node';
 const packageJson = require('../package.json');
 import { machineIdSync } from 'node-machine-id';
 
@@ -16,10 +16,7 @@ export const initSegment = (key: string | undefined) => {
     process.env.OPTIC_ENV === 'staging' ||
     process.env.OPTIC_ENV === 'local';
   if (key && !isSegmentDisabled) {
-    analytics = new Analytics(key, {
-      // Handle errors thrown here
-      errorHandler: (err) => {},
-    });
+    analytics = new Analytics({ writeKey: key });
   }
 };
 export const trackEvent = (
@@ -42,12 +39,7 @@ export const trackEvent = (
 
 export const flushEvents = (): Promise<void> => {
   if (analytics) {
-    return new Promise((resolve, reject) => {
-      analytics!.flush((err, _batch) => {
-        // Don't reject when error, we will silently ignore since it's non-critical code
-        resolve();
-      });
-    });
+    return analytics!.closeAndFlush({ timeout: 3000 });
   } else {
     return Promise.resolve();
   }
