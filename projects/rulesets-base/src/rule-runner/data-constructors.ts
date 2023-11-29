@@ -46,6 +46,35 @@ const createFactsWithRaw = <T extends OpenApiKind>(
 
   return factsWithRaw;
 };
+const createPropertyFactsWithRaw = <T extends OpenApiKind>(
+  nodeDetailMap: Map<string, NodeDetail<T>>,
+  key: SpecFactsFrom,
+  openApiSpec: OpenAPIV3.Document
+): Map<
+  string,
+  FactVariant<T> & { raw: any; parent: OpenAPIV3.NonArraySchemaObject }
+> => {
+  const factsWithRaw: Map<
+    string,
+    FactVariant<T> & { raw: any; parent: OpenAPIV3.NonArraySchemaObject }
+  > = new Map();
+
+  for (const [name, nodeDetail] of nodeDetailMap.entries()) {
+    const nodeFact = nodeDetail[key];
+    if (nodeFact) {
+      const parentPath = jsonPointerHelpers.pop(
+        jsonPointerHelpers.pop(nodeFact.location.jsonPath)
+      );
+      factsWithRaw.set(name, {
+        ...nodeFact,
+        raw: jsonPointerHelpers.get(openApiSpec, nodeFact.location.jsonPath),
+        parent: jsonPointerHelpers.get(openApiSpec, parentPath),
+      });
+    }
+  }
+
+  return factsWithRaw;
+};
 
 export const createRequest = (
   request: RequestNode,
@@ -64,7 +93,11 @@ export const createRequest = (
     ...requestBodyFact,
     raw: jsonPointerHelpers.get(openApiSpec, requestBodyFact.location.jsonPath),
     contentType,
-    properties: createFactsWithRaw(requestBody.fields, key, openApiSpec),
+    properties: createPropertyFactsWithRaw(
+      requestBody.fields,
+      key,
+      openApiSpec
+    ),
   };
 };
 
@@ -122,7 +155,7 @@ export const createResponseBody = (
     ),
     contentType,
     statusCode: statusCode,
-    properties: createFactsWithRaw(bodyNode.fields, key, openApiSpec),
+    properties: createPropertyFactsWithRaw(bodyNode.fields, key, openApiSpec),
   };
 };
 
