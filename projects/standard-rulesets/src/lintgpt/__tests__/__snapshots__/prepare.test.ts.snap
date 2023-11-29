@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can reduce size of operations by deleting descriptions + examples  1`] = `
+{
+  "description": "delete all the orders for this user",
+  "requestBody": {
+    "content": {
+      "application/json": {
+        "schema": {
+          "properties": {
+            "description": {
+              "type": "string",
+            },
+            "orders": {
+              "items": {
+                "description": "itemIds",
+                "type": "string",
+              },
+              "type": "array",
+            },
+          },
+          "type": "object",
+        },
+      },
+    },
+    "description": "what to send",
+    "required": true,
+  },
+  "responses": {
+    "200": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "properties": {
+              "description": {
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+        },
+      },
+      "description": "The response",
+    },
+  },
+}
+`;
