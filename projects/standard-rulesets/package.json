@@ -23,7 +23,7 @@
     "json-stable-stringify": "^1.1.0",
     "object-hash": "^3.0.0",
     "openai": "^4.7.1",
-    "whatwg-mimetype": "^3.0.0"
+    "whatwg-mimetype": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.0",
