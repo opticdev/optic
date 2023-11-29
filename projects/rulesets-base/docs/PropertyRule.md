@@ -1,15 +1,17 @@
 # PropertyRule
 
-Creates an PropertyRule. An PropertyRule allows you to write assertions around the root open api metadata in your API Specification.
+Creates an PropertyRule. An PropertyRule allows you to write assertions about the properties in request and response bodies. 
 
 ```javascript
 new PropertyRule({
-  name: 'require x-stability',
+  name: 'require example',
   rule: (propertyAssertions) => {
-    propertyAssertions.removed('not remove request', () => {
-      throw new RuleError({
-        message: 'cannot remove an request',
-      });
+    propertyAssertions.requirement('require examples for all properties ', (property) => {
+        if (!property.example) {
+            throw new RuleError({
+                message: `${property.key} needs an example`,
+            });
+        }
     });
   },
 });
