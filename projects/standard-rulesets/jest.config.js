@@ -4,7 +4,7 @@ module.exports = {
   modulePathIgnorePatterns: ['mocks'],
   resetMocks: true,
   testMatch: ['<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}'],
-  testPathIgnorePatterns: ['build', 'src/lintgpt'],
+  testPathIgnorePatterns: ['build'],
   moduleNameMapper: {
     '^nimma/fallbacks$': [
       '<rootDir>../../node_modules/nimma/dist/cjs/fallbacks/index.js',

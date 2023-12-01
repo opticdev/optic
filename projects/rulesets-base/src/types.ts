@@ -58,6 +58,7 @@ export type RequestBody = FactVariant<OpenApiKind.Body> & {
 
 export type Property = FactVariant<OpenApiKind.Field> & {
   raw: OpenAPIV3.SchemaObject;
+  parent: OpenAPIV3.NonArraySchemaObject;
 };
 
 export type Field = Property;
