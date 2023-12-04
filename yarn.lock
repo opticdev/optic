@@ -3808,7 +3808,7 @@ __metadata:
     loglevel: "npm:^1.8.0"
     micromatch: "npm:^4.0.5"
     minimatch: "npm:9.0.3"
-    mockttp: "npm:3.9.1"
+    mockttp: "npm:3.9.4"
     node-fetch: "npm:^2.6.7"
     node-forge: "npm:^1.2.1"
     node-machine-id: "npm:^1.1.12"
@@ -3926,7 +3926,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"accepts@npm:^1.3.7, accepts@npm:~1.3.8":
+"accepts@npm:~1.3.8":
   version: 1.3.8
   resolution: "accepts@npm:1.3.8"
   dependencies:
@@ -5176,7 +5176,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"content-type@npm:^1.0.4, content-type@npm:~1.0.4":
+"content-type@npm:~1.0.4":
   version: 1.0.4
   resolution: "content-type@npm:1.0.4"
   checksum: 19e08f406f9ae3f80fb4607c75fbde1f22546647877e8047c9fa0b1c61e38f3ede853f51e915c95fd499c2e1c7478cb23c35cfb804d0e8e0495e8db88cfaed75
@@ -5521,7 +5521,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"depd@npm:^1.1.2, depd@npm:~1.1.2":
+"depd@npm:^1.1.2":
   version: 1.1.2
   resolution: "depd@npm:1.1.2"
   checksum: acb24aaf936ef9a227b6be6d495f0d2eb20108a9a6ad40585c5bda1a897031512fef6484e4fdbb80bd249fdaa82841fa1039f416ece03188e677ba11bcfda249
@@ -6072,20 +6072,6 @@ __metadata:
     jest-message-util: "npm:^29.7.0"
     jest-util: "npm:^29.7.0"
   checksum: 2eddeace66e68b8d8ee5f7be57f3014b19770caaf6815c7a08d131821da527fb8c8cb7b3dcd7c883d2d3d8d184206a4268984618032d1e4b16dc8d6596475d41
-  languageName: node
-  linkType: hard
-
-"express-graphql@npm:^0.11.0":
-  version: 0.11.0
-  resolution: "express-graphql@npm:0.11.0"
-  dependencies:
-    accepts: "npm:^1.3.7"
-    content-type: "npm:^1.0.4"
-    http-errors: "npm:1.8.0"
-    raw-body: "npm:^2.4.1"
-  peerDependencies:
-    graphql: ^14.7.0 || ^15.3.0
-  checksum: 675cf70368c4a930600f168d3b06c487d565e2416d7d303d88c8513b928724a9349a2c6f5316a2f2b2f231e915942949fce6def3391faa6f5d08458f3419d2ec
   languageName: node
   linkType: hard
 
@@ -6758,6 +6744,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"graphql-http@npm:^1.22.0":
+  version: 1.22.0
+  resolution: "graphql-http@npm:1.22.0"
+  peerDependencies:
+    graphql: ">=0.11 <=16"
+  checksum: f450c89ba5f4e7e5596cd8fc7ac00bc0ec7546d3df9b4156da1ed272fe448b88e88f9377a449cb551836001782da4dd57fe67c845842a230667efdf6d29663f4
+  languageName: node
+  linkType: hard
+
 "graphql-subscriptions@npm:^1.1.0":
   version: 1.2.1
   resolution: "graphql-subscriptions@npm:1.2.1"
@@ -6926,19 +6921,6 @@ __metadata:
     pify: "npm:^5.0.0"
     zstd-codec: "npm:^0.1.4"
   checksum: 78f1d21e566e1353fe5236212a39f2ecf12f8b79d78606cce63573d755f2cda5eb8343d4487e2f1f67449e3edfca0824b4e6abb8d5d83e4b851a91c1f209c15d
-  languageName: node
-  linkType: hard
-
-"http-errors@npm:1.8.0":
-  version: 1.8.0
-  resolution: "http-errors@npm:1.8.0"
-  dependencies:
-    depd: "npm:~1.1.2"
-    inherits: "npm:2.0.4"
-    setprototypeof: "npm:1.2.0"
-    statuses: "npm:>= 1.5.0 < 2"
-    toidentifier: "npm:1.0.0"
-  checksum: 2deb37be07a858370a5c9f150de0e8a14e10410a46aeed2614e9e96ecc5f88e6d79b2b278b6a968635ff0d01142e84131db2afb07504adb73a3e9340acdbd70c
   languageName: node
   linkType: hard
 
@@ -8984,9 +8966,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mockttp@npm:3.9.1":
-  version: 3.9.1
-  resolution: "mockttp@npm:3.9.1"
+"mockttp@npm:3.9.4":
+  version: 3.9.4
+  resolution: "mockttp@npm:3.9.4"
   dependencies:
     "@graphql-tools/schema": "npm:^8.5.0"
     "@graphql-tools/utils": "npm:^8.8.0"
@@ -9005,8 +8987,8 @@ __metadata:
     cross-fetch: "npm:^3.1.5"
     destroyable-server: "npm:^1.0.0"
     express: "npm:^4.14.0"
-    express-graphql: "npm:^0.11.0"
     graphql: "npm:^14.0.2 || ^15.5"
+    graphql-http: "npm:^1.22.0"
     graphql-subscriptions: "npm:^1.1.0"
     graphql-tag: "npm:^2.12.6"
     http-encoding: "npm:^1.5.1"
@@ -9029,7 +9011,7 @@ __metadata:
     ws: "npm:^8.8.0"
   bin:
     mockttp: dist/admin/admin-bin.js
-  checksum: f9f0ed113a38a3d58612203012193fbca5a8faffe5b8e7b8e73b64eca8e109f673c10b783f9bcebb807c0bb7f26143d492bbb0e1cc17ed0cb3514b923992a645
+  checksum: e1828eef58560d9d49e637e6ef89296dff9d66e9cb73fb6243dc0992a772be586e400382aecdcf40313fe445c02ab5c7f960c0da1f9f1a10921821a7fc481d06
   languageName: node
   linkType: hard
 
@@ -9997,7 +9979,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"raw-body@npm:2.5.1, raw-body@npm:^2.4.1":
+"raw-body@npm:2.5.1":
   version: 2.5.1
   resolution: "raw-body@npm:2.5.1"
   dependencies:
@@ -10783,7 +10765,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"statuses@npm:>= 1.5.0 < 2, statuses@npm:~1.5.0":
+"statuses@npm:~1.5.0":
   version: 1.5.0
   resolution: "statuses@npm:1.5.0"
   checksum: e433900956357b3efd79b1c547da4d291799ac836960c016d10a98f6a810b1b5c0dcc13b5a7aa609a58239b5190e1ea176ad9221c2157d2fd1c747393e6b2940
@@ -11098,13 +11080,6 @@ __metadata:
   version: 3.3.0
   resolution: "toad-cache@npm:3.3.0"
   checksum: df2e7fef3991e238197796d3ddd548e1a6b8cb569de8ee053949dcebb689a5ffdbaf2c2642c035768c00d114eb5d4db96925247cc9ccec9d88a6e6d58c95c76a
-  languageName: node
-  linkType: hard
-
-"toidentifier@npm:1.0.0":
-  version: 1.0.0
-  resolution: "toidentifier@npm:1.0.0"
-  checksum: 27a37b8b21126e7216d40c02f410065b1de35b0f844368d0ccaabba7987595703006d45e5c094b086220cbbc5864d4b99766b460110e4bc15b9db574c5c58be2
   languageName: node
   linkType: hard
 
