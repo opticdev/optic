@@ -3535,12 +3535,12 @@ __metadata:
   linkType: hard
 
 "@types/stream-json@npm:^1":
-  version: 1.7.6
-  resolution: "@types/stream-json@npm:1.7.6"
+  version: 1.7.7
+  resolution: "@types/stream-json@npm:1.7.7"
   dependencies:
     "@types/node": "npm:*"
     "@types/stream-chain": "npm:*"
-  checksum: 79df01785300a1a8d5a65ceb73e96c2ffe3668c475e7f5fec7e9ee9fc6d2c713fe09c016dfd7a0d662f691615039ec608331f318cfe434b2c0042cfcaa83f151
+  checksum: 7ac6f31e63a028f14e23acf225d1b2e1ba48c680dd926af2d6b0166fa68446ebe00b6e682866975b723852453a020b2ad70dfdb1a71575b23e6a58e721256dfb
   languageName: node
   linkType: hard
 
