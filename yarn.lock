@@ -8181,16 +8181,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-stable-stringify@npm:^1.0.1":
-  version: 1.0.2
-  resolution: "json-stable-stringify@npm:1.0.2"
-  dependencies:
-    jsonify: "npm:^0.0.1"
-  checksum: 502d021c3c59c09587faa40d7693d77c00460fd6c68bae95d6e35804909ec8c4aec71b136d3a09df61a7ebf803eb6e820f23ede76b77e74b8b02c76afb2ada8c
-  languageName: node
-  linkType: hard
-
-"json-stable-stringify@npm:^1.1.0":
+"json-stable-stringify@npm:^1.0.1, json-stable-stringify@npm:^1.1.0":
   version: 1.1.0
   resolution: "json-stable-stringify@npm:1.1.0"
   dependencies:
