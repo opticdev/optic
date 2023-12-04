@@ -11859,17 +11859,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yaml@npm:2.3.4, yaml@npm:^2.3.4":
+"yaml@npm:2.3.4, yaml@npm:^2.3.2, yaml@npm:^2.3.4":
   version: 2.3.4
   resolution: "yaml@npm:2.3.4"
   checksum: cf03b68f8fef5e8516b0f0b54edaf2459f1648317fc6210391cf606d247e678b449382f4bd01f77392538429e306c7cba8ff46ff6b37cac4de9a76aff33bd9e1
-  languageName: node
-  linkType: hard
-
-"yaml@npm:^2.3.2":
-  version: 2.3.2
-  resolution: "yaml@npm:2.3.2"
-  checksum: c2aac464015f037911c5b819475e81e52119e5495e3d43fe7cb82b5a84d59d66a86049dc85d8e90658636c1c04dde177ae196818deaf76c1bda4d34209d5c087
   languageName: node
   linkType: hard
 
