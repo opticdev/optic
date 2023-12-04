@@ -3391,11 +3391,11 @@ __metadata:
   linkType: hard
 
 "@types/micromatch@npm:^4":
-  version: 4.0.5
-  resolution: "@types/micromatch@npm:4.0.5"
+  version: 4.0.6
+  resolution: "@types/micromatch@npm:4.0.6"
   dependencies:
     "@types/braces": "npm:*"
-  checksum: 866dddc5c193d44a65d6a94f060de27b29b565ce6e2b3b8bd2f183c4026553d6b78336a45aa92f62d5202d3963faba07020ea0390ab6835ce6cb9475a4ac5e67
+  checksum: deba87b2bb740cb3f206c006baddc2d3f411fdba48e47452fb189a2a1a73cc3d6f6f2e6f52b970d1383e988afd9f12046e50f902ad740f1f8afa3faa273ab2a0
   languageName: node
   linkType: hard
 
