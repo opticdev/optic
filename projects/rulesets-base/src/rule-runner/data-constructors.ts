@@ -88,9 +88,18 @@ export const createRequest = (
   if (!requestFact || !requestBody || !requestBodyFact) {
     return null;
   }
+  const requestPointer = jsonPointerHelpers.compile([
+    ...jsonPointerHelpers.decode(requestBodyFact.location.jsonPath).slice(0, 3),
+    'requestBody',
+  ]);
+  const required: boolean | undefined = jsonPointerHelpers.get(
+    openApiSpec,
+    requestPointer
+  ).required;
 
   return {
     ...requestBodyFact,
+    required: required,
     raw: jsonPointerHelpers.get(openApiSpec, requestBodyFact.location.jsonPath),
     contentType,
     properties: createPropertyFactsWithRaw(
