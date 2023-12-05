@@ -7,6 +7,14 @@ import {
 test('can reduce size of operations by deleting descriptions + examples ', () => {
   const output = removeDocumentationFromOperation({
     description: 'delete all the orders for this user',
+    parameters: [
+      {
+        name: 'a',
+        in: 'query',
+        description: '123',
+        example: '123',
+      },
+    ],
     requestBody: {
       description: 'what to send',
       required: true,

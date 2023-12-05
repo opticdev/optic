@@ -1,6 +1,25 @@
 import { OpenAPIV3 } from 'openapi-types';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
+function removeExamplesAndDescriptionsFromParameters(
+  parameter: OpenAPIV3.ParameterObject | OpenAPIV3.ReferenceObject
+) {
+  if (!parameter) return;
+  if ('$ref' in parameter) return;
+
+  if (parameter.description) {
+    delete parameter.description;
+  }
+
+  if (parameter.example) {
+    delete parameter.example;
+  }
+
+  if (parameter.examples) {
+    delete parameter.examples;
+  }
+}
+
 function removeExamplesAndDescriptionsFromProperties(
   value: any,
   path: string[]
@@ -56,6 +75,12 @@ export function removeDocumentationFromOperation(
   const copied: OpenAPIV3.OperationObject = JSON.parse(
     JSON.stringify(operation)
   );
+
+  if (copied.parameters) {
+    for (const param of copied.parameters) {
+      removeExamplesAndDescriptionsFromParameters(param);
+    }
+  }
 
   removeExamplesAndDescriptionsFromProperties(copied.responses, ['responses']);
   removeExamplesAndDescriptionsFromProperties(copied.requestBody, [

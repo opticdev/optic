@@ -3,6 +3,12 @@
 exports[`can reduce size of operations by deleting descriptions + examples  1`] = `
 {
   "description": "delete all the orders for this user",
+  "parameters": [
+    {
+      "in": "query",
+      "name": "a",
+    },
+  ],
   "requestBody": {
     "content": {
       "application/json": {
