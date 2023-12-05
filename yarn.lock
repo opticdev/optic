@@ -3187,9 +3187,9 @@ __metadata:
   linkType: hard
 
 "@types/cookie@npm:^0":
-  version: 0.5.4
-  resolution: "@types/cookie@npm:0.5.4"
-  checksum: c5111f8c71fedabf0ccdfdf183676fc3aa89e146653e9ed87e5ea3780f33a46dde1ace06bf04374dcc363a0ef8db91e41060e9861199226c9a4deaa27fde03ba
+  version: 0.6.0
+  resolution: "@types/cookie@npm:0.6.0"
+  checksum: 5b326bd0188120fb32c0be086b141b1481fec9941b76ad537f9110e10d61ee2636beac145463319c71e4be67a17e85b81ca9e13ceb6e3bb63b93d16824d6c149
   languageName: node
   linkType: hard
 
