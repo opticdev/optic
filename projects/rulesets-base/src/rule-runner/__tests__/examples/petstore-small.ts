@@ -257,7 +257,6 @@ export const beforeOpenApiJson: OpenAPIV3.Document = {
               },
             },
           },
-          required: true,
         },
         responses: {
           '400': {
