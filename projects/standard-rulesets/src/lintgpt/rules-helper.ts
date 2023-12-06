@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import chunk from 'lodash.chunk';
+import ora from 'ora';
 
 type OpenAPIRuleType =
   | 'OPERATION'
@@ -79,8 +80,6 @@ export class LintgptRulesHelper {
       string,
       { rule: string; rule_checksum: string; prep?: CachedRulePrep }
     >();
-
-    const ora = (await import('ora')).default;
 
     let spinner = ora({
       text: this.getPrepSpinnerText({
@@ -176,8 +175,6 @@ export class LintgptRulesHelper {
         rule_eval?: LintgptEval;
       }
     >();
-
-    const ora = (await import('ora')).default;
 
     let spinner = ora({
       text: this.getEvalSpinnerText({
