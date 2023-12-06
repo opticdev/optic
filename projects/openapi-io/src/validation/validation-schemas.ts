@@ -5,9 +5,7 @@ const openapi3_0_schema_object = {
     'The Schema Object allows the definition of input and output data types. These types can be objects, but also primitives and arrays. This object is an extended subset of the JSON Schema Specification Wright Draft 00.  For more information about the properties, see JSON Schema Core and JSON Schema Validation. Unless stated otherwise, the property definitions follow the JSON Schema.',
   additionalProperties: true,
   patternProperties: {
-    '^x-': {
-      $ref: '#/definitions/specificationExtension',
-    },
+    '^x-': {},
   },
   properties: {
     nullable: {
@@ -22,65 +20,78 @@ const openapi3_0_schema_object = {
     writeOnly: {
       type: 'boolean',
     },
-    xml: {
-      $ref: '#/definitions/xml',
-    },
-    externalDocs: {
-      $ref: '#/definitions/externalDocs',
-    },
-    example: {
-      $ref: '#/definitions/any',
-    },
+    xml: {},
+    externalDocs: {},
+    example: {},
     deprecated: {
       type: 'boolean',
     },
     title: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/title',
+      type: 'string',
     },
     multipleOf: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/multipleOf',
+      type: 'number',
+      exclusiveMinimum: 0,
     },
     maximum: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/maximum',
+      type: 'number',
     },
     exclusiveMaximum: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/exclusiveMaximum',
+      type: 'boolean',
+      default: false,
     },
     minimum: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/minimum',
+      type: 'number',
     },
     exclusiveMinimum: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/exclusiveMinimum',
+      type: 'boolean',
+      default: false,
     },
     maxLength: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/maxLength',
+      type: 'integer',
+      minimum: 0,
     },
     minLength: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/minLength',
+      type: 'integer',
+      minimum: 0,
+      default: 0,
     },
     pattern: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/pattern',
+      type: 'string',
+      format: 'regex',
     },
     maxItems: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/maxItems',
+      type: 'integer',
+      minimum: 0,
     },
     minItems: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/minItems',
+      type: 'integer',
+      minimum: 0,
+      default: 0,
     },
     uniqueItems: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/uniqueItems',
+      type: 'boolean',
+      default: false,
     },
     maxProperties: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/maxProperties',
+      type: 'integer',
+      minimum: 0,
     },
     minProperties: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/minProperties',
+      type: 'integer',
+      minimum: 0,
+      default: 0,
     },
     required: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/required',
+      type: 'array',
+      items: { type: 'string' },
+      minItems: 1,
+      uniqueItems: true,
     },
     enum: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/enum',
+      type: 'array',
+      minItems: 1,
+      uniqueItems: true,
     },
     type: {
       type: 'string',
@@ -196,62 +207,70 @@ const openapi3_1_schema_object = {
       type: 'boolean',
     },
     title: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/title',
+      type: 'string',
     },
     multipleOf: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/multipleOf',
+      type: 'number',
+      exclusiveMinimum: 0,
     },
     maximum: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/maximum',
+      type: 'number',
     },
     exclusiveMaximum: {
-      oneOf: [
-        {
-          $ref: 'http://json-schema.org/draft-07/schema#/properties/exclusiveMaximum',
-        },
-        { type: 'number' },
-      ],
+      type: 'number',
     },
     minimum: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/minimum',
+      type: 'number',
     },
     exclusiveMinimum: {
-      oneOf: [
-        {
-          $ref: 'http://json-schema.org/draft-07/schema#/properties/exclusiveMinimum',
-        },
-        { type: 'number' },
-      ],
+      type: 'number',
     },
     maxLength: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/maxLength',
+      type: 'integer',
+      minimum: 0,
     },
     minLength: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/minLength',
+      type: 'integer',
+      minimum: 0,
+      default: 0,
     },
     pattern: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/pattern',
+      type: 'string',
+      format: 'regex',
     },
     maxItems: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/maxItems',
+      type: 'integer',
+      minimum: 0,
     },
     minItems: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/minItems',
+      type: 'integer',
+      minimum: 0,
+      default: 0,
     },
     uniqueItems: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/uniqueItems',
+      type: 'boolean',
+      default: false,
     },
     maxProperties: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/maxProperties',
+      type: 'integer',
+      minimum: 0,
     },
     minProperties: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/minProperties',
+      type: 'integer',
+      minimum: 0,
+      default: 0,
     },
     required: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/required',
+      type: 'array',
+      items: { type: 'string' },
+      uniqueItems: true,
+      default: [],
     },
     enum: {
-      $ref: 'http://json-schema.org/draft-07/schema#/properties/enum',
+      type: 'array',
+      items: true,
+      minItems: 1,
+      uniqueItems: true,
     },
     const: {},
     propertyNames: {
