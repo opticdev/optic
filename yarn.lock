@@ -3905,6 +3905,7 @@ __metadata:
     json-stable-stringify: "npm:^1.1.0"
     object-hash: "npm:^3.0.0"
     openai: "npm:^4.7.1"
+    ora: "npm:5.4.1"
     prettier: "npm:^3.0.0"
     ts-jest: "npm:^29.0.3"
     ts-node: "npm:^10.9.1"
