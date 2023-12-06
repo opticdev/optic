@@ -2,7 +2,7 @@
   "name": "@useoptic/standard-rulesets",
   "license": "MIT",
   "packageManager": "yarn@4.0.2",
-  "version": "0.53.8",
+  "version": "0.53.9",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -24,7 +24,7 @@
     "object-hash": "^3.0.0",
     "openai": "^4.7.1",
     "ora": "5.4.1",
-    "whatwg-mimetype": "^4.0.0"
+    "whatwg-mimetype": "^3.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.0",
