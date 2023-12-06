@@ -92,8 +92,8 @@ export function* requiredPatches(
       !shapeContext.location
         ? PatchImpact.BackwardsCompatibilityUnknown
         : 'inRequest' in shapeContext.location
-        ? PatchImpact.BackwardsCompatible
-        : PatchImpact.BackwardsIncompatible,
+          ? PatchImpact.BackwardsCompatible
+          : PatchImpact.BackwardsIncompatible,
     ],
     diff,
     description: `make property ${diff.key} optional`,
@@ -115,8 +115,8 @@ export function* requiredPatches(
       !shapeContext.location
         ? PatchImpact.BackwardsCompatibilityUnknown
         : 'inRequest' in shapeContext.location
-        ? PatchImpact.BackwardsCompatible
-        : PatchImpact.BackwardsIncompatible,
+          ? PatchImpact.BackwardsCompatible
+          : PatchImpact.BackwardsIncompatible,
     ],
     groupedOperations: [
       ...makeOptionalOperations(requiredArray.indexOf(diff.key)),

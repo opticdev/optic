@@ -57,8 +57,8 @@ export function typeofDiff(
   return diff.after !== undefined && diff.before !== undefined
     ? 'changed'
     : diff.after !== undefined
-    ? 'added'
-    : 'removed';
+      ? 'added'
+      : 'removed';
 }
 
 // Diffs two objects, generating the leaf nodes that have changes
@@ -105,8 +105,8 @@ export function diff(
         isPathParameterArray(afterPathIdentity)
           ? getParameterIdentity
           : allValues.every((v) => typeof v !== 'object')
-          ? (v: any) => String(v)
-          : (_, i: number) => String(i);
+            ? (v: any) => String(v)
+            : (_, i: number) => String(i);
 
       const beforeValuesById: Map<string, [JSONValue, number]> = new Map(
         before.value.map((v, i) => [arrayIdFn(v, i), [v, i]])

@@ -31,8 +31,8 @@ export function applyOperationsToYamlString(
             !isNaN(Number(lastIndex))
               ? lastIndex
               : lastPathItem === '-'
-              ? arrayCollection.items.length
-              : 0,
+                ? arrayCollection.items.length
+                : 0,
             node
           );
 

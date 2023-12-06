@@ -162,8 +162,8 @@ function formatSetCookiesHeader(
   return typeof setCookiesHeader === 'string'
     ? setCookiesHeader
     : Array.isArray(setCookiesHeader)
-    ? setCookiesHeader
-    : String(setCookiesHeader ?? '');
+      ? setCookiesHeader
+      : String(setCookiesHeader ?? '');
 }
 
 function buildResponseCookies(setCookies: string | string[]) {

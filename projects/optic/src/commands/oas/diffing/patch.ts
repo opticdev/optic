@@ -101,10 +101,10 @@ export async function renderDiffs(
         diff.kind === 'UnmatchedResponseStatusCode'
           ? `${diff.statusCode} Response ${diff.contentType}`
           : diff.kind === 'UnmatchedRequestBody'
-          ? `${diff.contentType} Request body`
-          : diff.kind === 'UnmatchdResponseBody'
-          ? `${diff.statusCode} Response ${diff.contentType}`
-          : '';
+            ? `${diff.contentType} Request body`
+            : diff.kind === 'UnmatchdResponseBody'
+              ? `${diff.statusCode} Response ${diff.contentType}`
+              : '';
 
       renderBodyDiff(specPath, description, method, pathPattern);
     } else if (diff.kind === 'AdditionalProperty') {

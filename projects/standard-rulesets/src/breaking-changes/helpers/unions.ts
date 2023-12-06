@@ -292,8 +292,8 @@ function diffKeyMaps(
       key === ''
         ? parentKey
         : parentKey === '/'
-        ? `${parentKey}${key}`
-        : `${parentKey}${SEPARATOR}${key}`;
+          ? `${parentKey}${key}`
+          : `${parentKey}${SEPARATOR}${key}`;
     const prefix = keyName ? `${keyName}: ` : '';
     if (bValue) {
       if (aValue.keyword === 'type' && bValue.keyword === 'type') {
@@ -413,8 +413,8 @@ function diffKeyMaps(
       key === ''
         ? parentKey
         : parentKey === '/'
-        ? `${parentKey}${key}`
-        : `${parentKey}${SEPARATOR}${key}`;
+          ? `${parentKey}${key}`
+          : `${parentKey}${SEPARATOR}${key}`;
     const prefix = keyName ? `${keyName}: ` : '';
     if (!aMap.has(key) && bValue.required) {
       results.requestReasons.push({
@@ -450,18 +450,18 @@ export function computeUnionTransition(
   const beforeMaps = b.oneOf
     ? b.oneOf.map((s) => createKeyMapFromSchema(s))
     : b.anyOf
-    ? b.anyOf.map((s) => createKeyMapFromSchema(s))
-    : Array.isArray(b.type)
-    ? traverseTypeArraySchemas(b)
-    : [createKeyMapFromSchema(b)];
+      ? b.anyOf.map((s) => createKeyMapFromSchema(s))
+      : Array.isArray(b.type)
+        ? traverseTypeArraySchemas(b)
+        : [createKeyMapFromSchema(b)];
   const beforeKeyword = b.oneOf ? 'oneOf' : b.anyOf ? 'anyOf' : null;
   const afterMaps = a.oneOf
     ? a.oneOf.map((s) => createKeyMapFromSchema(s))
     : a.anyOf
-    ? a.anyOf.map((s) => createKeyMapFromSchema(s))
-    : Array.isArray(a.type)
-    ? traverseTypeArraySchemas(a)
-    : [createKeyMapFromSchema(a)];
+      ? a.anyOf.map((s) => createKeyMapFromSchema(s))
+      : Array.isArray(a.type)
+        ? traverseTypeArraySchemas(a)
+        : [createKeyMapFromSchema(a)];
   const afterKeyword = a.oneOf ? 'oneOf' : a.anyOf ? 'anyOf' : null;
 
   const { isResponse, reasons: responseReasons } = areKeymapsResponseBreaking(

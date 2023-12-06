@@ -87,12 +87,12 @@ function renderCodeFrame(
       !shouldHighlight
         ? line
         : optionsOrDefault.highlightColor === 'red'
-        ? chalk.bold.red(lineWithObservation)
-        : optionsOrDefault.highlightColor === 'green'
-        ? chalk.bold.green(lineWithObservation)
-        : optionsOrDefault.highlightColor === 'yellow'
-        ? chalk.bold.yellow(lineWithObservation)
-        : line
+          ? chalk.bold.red(lineWithObservation)
+          : optionsOrDefault.highlightColor === 'green'
+            ? chalk.bold.green(lineWithObservation)
+            : optionsOrDefault.highlightColor === 'yellow'
+              ? chalk.bold.yellow(lineWithObservation)
+              : line
     }`;
   });
 

@@ -32,8 +32,8 @@ export const createResponseBodyHelpers = (
                 message: errorMessage
                   ? errorMessage
                   : strict
-                  ? 'Expected to not find an exact match'
-                  : 'Expected to not find a partial match',
+                    ? 'Expected to not find an exact match'
+                    : 'Expected to not find a partial match',
                 received: value.raw,
                 expected: reference,
               });
@@ -44,8 +44,8 @@ export const createResponseBodyHelpers = (
                 message: errorMessage
                   ? errorMessage
                   : strict
-                  ? 'Expected an exact match'
-                  : 'Expected a partial match',
+                    ? 'Expected an exact match'
+                    : 'Expected a partial match',
                 received: value.raw,
                 expected: reference,
               });
@@ -72,8 +72,8 @@ export const createResponseBodyHelpers = (
                 message: errorMessage
                   ? errorMessage
                   : strict
-                  ? 'Expected to not find any exact matches'
-                  : 'Expected to not find any partial matches',
+                    ? 'Expected to not find any exact matches'
+                    : 'Expected to not find any partial matches',
                 received: value.raw,
                 expected: references,
               });
@@ -87,8 +87,8 @@ export const createResponseBodyHelpers = (
                 message: errorMessage
                   ? errorMessage
                   : strict
-                  ? 'Expected at least one exact match'
-                  : 'Expected at least one partial match',
+                    ? 'Expected at least one exact match'
+                    : 'Expected at least one partial match',
                 received: value.raw,
                 expected: references,
               });

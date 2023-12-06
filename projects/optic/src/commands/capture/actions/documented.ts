@@ -45,8 +45,8 @@ function locationFromPath(path: string) {
     parts[3] === 'requestBody'
       ? '[request body]'
       : parts[3] === 'responses' && parts[4]
-      ? `[${parts[4]} response body]`
-      : '';
+        ? `[${parts[4]} response body]`
+        : '';
   return location;
 }
 
@@ -118,8 +118,8 @@ function summarizePatch(
         options.mode === 'update'
           ? `(${diff.propertyPath})`
           : diff.parentObjectPath
-          ? `(${diff.parentObjectPath})`
-          : '';
+            ? `(${diff.parentObjectPath})`
+            : '';
       return [color(`${location} '${diff.key}' ${action} ${propertyLocation}`)];
     } else if (diff.kind === 'UnmatchedType') {
       // filter out dependent diffs

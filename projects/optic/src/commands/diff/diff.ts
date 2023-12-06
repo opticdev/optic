@@ -529,8 +529,8 @@ const getDiffAction =
       options.severity === 'error'
         ? failures.error
         : options.severity === 'warn'
-        ? failures.warn + failures.error
-        : failures.warn + failures.error + failures.info;
+          ? failures.warn + failures.error
+          : failures.warn + failures.error + failures.info;
 
     if (failuresForSeverity > 0 && options.check) process.exitCode = 1;
   };

@@ -30,8 +30,8 @@ export class OpticBackendClient extends JsonHttpClient {
     return process.env.OPTIC_ENV === 'staging'
       ? 'https://app.o3c.info'
       : process.env.OPTIC_ENV === 'local'
-      ? 'http://localhost:3001'
-      : 'https://app.useoptic.com';
+        ? 'http://localhost:3001'
+        : 'https://app.useoptic.com';
   }
 
   public getTokenOrgs(): Promise<{
@@ -288,10 +288,10 @@ export const createOpticClient = (opticToken: string) => {
   const backendWebBase = hostOverride
     ? hostOverride
     : process.env.OPTIC_ENV === 'staging'
-    ? 'https://api.o3c.info'
-    : process.env.OPTIC_ENV === 'local'
-    ? 'http://127.0.0.1:3030'
-    : 'https://api.useoptic.com';
+      ? 'https://api.o3c.info'
+      : process.env.OPTIC_ENV === 'local'
+        ? 'http://127.0.0.1:3030'
+        : 'https://api.useoptic.com';
 
   const opticClient = new OpticBackendClient(backendWebBase, () =>
     Promise.resolve(opticToken)
