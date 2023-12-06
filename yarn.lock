@@ -3845,7 +3845,7 @@ __metadata:
     typescript: "npm:^5.0.0"
     update-notifier: "npm:^5"
     url-join: "npm:^4.0.1"
-    whatwg-mimetype: "npm:^3.0.0"
+    whatwg-mimetype: "npm:^4.0.0"
     yaml: "npm:^2.3.4"
   bin:
     optic: build/index.js
@@ -3910,7 +3910,7 @@ __metadata:
     ts-jest: "npm:^29.0.3"
     ts-node: "npm:^10.9.1"
     typescript: "npm:^5.0.0"
-    whatwg-mimetype: "npm:^3.0.0"
+    whatwg-mimetype: "npm:^4.0.0"
   bin:
     standard-rulesets: build/index.js
   languageName: unknown
@@ -11676,10 +11676,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"whatwg-mimetype@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "whatwg-mimetype@npm:3.0.0"
-  checksum: 323895a1cda29a5fb0b9ca82831d2c316309fede0365047c4c323073e3239067a304a09a1f4b123b9532641ab604203f33a1403b5ca6a62ef405bcd7a204080f
+"whatwg-mimetype@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "whatwg-mimetype@npm:4.0.0"
+  checksum: a773cdc8126b514d790bdae7052e8bf242970cebd84af62fb2f35a33411e78e981f6c0ab9ed1fe6ec5071b09d5340ac9178e05b52d35a9c4bcf558ba1b1551df
   languageName: node
   linkType: hard
 
