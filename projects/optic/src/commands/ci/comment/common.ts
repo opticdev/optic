@@ -27,8 +27,8 @@ const getChecksLabel = (
   return failingChecks > 0
     ? `⚠️ **${failingChecks}**/**${totalChecks}** failed${exemptedChunk}`
     : totalChecks > 0
-    ? `✅ **${totalChecks}** passed${exemptedChunk}`
-    : `ℹ️ No automated checks have run`;
+      ? `✅ **${totalChecks}** passed${exemptedChunk}`
+      : `ℹ️ No automated checks have run`;
 };
 
 export const COMPARE_SUMMARY_IDENTIFIER = `optic-comment-3UsoJCz_Z0SpGLo5Vjw6o`;

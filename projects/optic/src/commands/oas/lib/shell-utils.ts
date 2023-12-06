@@ -6,8 +6,8 @@ export const platform: 'mac' | 'windows' | 'linux' =
   process.platform === 'win32'
     ? 'windows'
     : process.platform === 'darwin'
-    ? 'mac'
-    : 'linux';
+      ? 'mac'
+      : 'linux';
 
 export async function exitIfNotElevated(withError: string) {
   const result = await isElevated();

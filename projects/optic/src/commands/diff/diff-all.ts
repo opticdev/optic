@@ -214,6 +214,7 @@ async function computeAll(
       from?: string;
       to?: string;
       opticUrl?: string;
+      name?: string;
     }
   > = new Map();
 
@@ -248,6 +249,7 @@ async function computeAll(
     }
 
     const opticUrl = rawSpec[OPTIC_URL_KEY];
+    const name = rawSpec?.info?.title;
 
     try {
       checkOpenAPIVersion(rawSpec);
@@ -264,6 +266,7 @@ async function computeAll(
       from: candidate.from,
       to: candidate.to,
       opticUrl,
+      name,
     });
   }
 
@@ -273,10 +276,12 @@ async function computeAll(
       generatedDetails;
 
     const pathToUrl: Record<string, string | null> = {};
+    const pathToName: Record<string, string | null> = {};
     for (const [p, comparison] of comparisons.entries()) {
       if (!comparison.opticUrl) {
         pathToUrl[p] = null;
       }
+      pathToName[p] = comparison.name ?? null;
     }
     let apis: (Types.Api | null)[] = [];
     const chunks = chunk(Object.keys(pathToUrl), 20);
@@ -298,7 +303,7 @@ async function computeAll(
     for (let [path, url] of Object.entries(pathToUrl)) {
       if (!url) {
         const api = await config.client.createApi(organization_id, {
-          name: path,
+          name: pathToName[path] ?? path,
           path,
           web_url: web_url,
           default_branch,
@@ -843,8 +848,8 @@ ${(spec.error as Error).message}`,
           options.severity === 'error'
             ? failures.error
             : options.severity === 'warn'
-            ? failures.warn + failures.error
-            : failures.warn + failures.error + failures.info;
+              ? failures.warn + failures.error
+              : failures.warn + failures.error + failures.info;
 
         return failuresForSeverity > 0;
       }) &&

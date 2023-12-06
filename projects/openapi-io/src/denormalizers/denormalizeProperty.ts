@@ -81,10 +81,10 @@ export function denormalizeProperty(
   const polymorphicKey = schema.allOf
     ? 'allOf'
     : schema.anyOf
-    ? 'anyOf'
-    : schema.oneOf
-    ? 'oneOf'
-    : null;
+      ? 'anyOf'
+      : schema.oneOf
+        ? 'oneOf'
+        : null;
   const polymorphicValue = schema.allOf || schema.anyOf || schema.oneOf;
   if (polymorphicKey && polymorphicValue) {
     if (

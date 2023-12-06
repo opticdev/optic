@@ -20,8 +20,8 @@ export function newSchemaPatch(
       !shapeContext.location
         ? PatchImpact.BackwardsCompatibilityUnknown
         : 'inResponse' in shapeContext.location
-        ? PatchImpact.BackwardsCompatible
-        : PatchImpact.BackwardsIncompatible, // @acunnife, adding a new body to an existing request is backwards-incompatible, right?
+          ? PatchImpact.BackwardsCompatible
+          : PatchImpact.BackwardsIncompatible, // @acunnife, adding a new body to an existing request is backwards-incompatible, right?
     ],
     groupedOperations,
     shouldRegeneratePatches: false,

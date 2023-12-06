@@ -21,7 +21,10 @@ import { OpenAPIFactNodes } from '@useoptic/rulesets-base/build/rule-runner/rule
 import { OpenAPIV3 } from 'openapi-types';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import stableStringify from 'json-stable-stringify';
-import { removeDocumentationFromOperation } from './prepare-openapi';
+import {
+  removeDocumentationFromOperation,
+  removeDocumentationFromResponses,
+} from './prepare-openapi';
 
 export type LintGptConfig = {
   [key: string]: {
@@ -201,11 +204,15 @@ export class LintGpt extends ExternalRuleBase {
           jsonPath,
           value: wasRemoved
             ? undefined
-            : jsonPointerHelpers.get(inputs.toSpec, jsonPath),
+            : removeDocumentationFromResponses(
+                jsonPointerHelpers.get(inputs.toSpec, jsonPath)
+              ),
           before: didChange
-            ? jsonPointerHelpers.get(
-                inputs.fromSpec,
-                response.before?.location.jsonPath!
+            ? removeDocumentationFromResponses(
+                jsonPointerHelpers.get(
+                  inputs.fromSpec,
+                  response.before?.location.jsonPath!
+                )
               )
             : undefined,
         });

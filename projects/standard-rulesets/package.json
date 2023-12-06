@@ -1,8 +1,8 @@
 {
   "name": "@useoptic/standard-rulesets",
   "license": "MIT",
-  "packageManager": "yarn@4.0.1",
-  "version": "0.53.7",
+  "packageManager": "yarn@4.0.2",
+  "version": "0.53.9",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -23,6 +23,7 @@
     "json-stable-stringify": "^1.1.0",
     "object-hash": "^3.0.0",
     "openai": "^4.7.1",
+    "ora": "5.4.1",
     "whatwg-mimetype": "^3.0.0"
   },
   "devDependencies": {

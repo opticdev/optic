@@ -13,8 +13,8 @@ const getChangeType = (diff: ObjectDiff) => {
   return diff.after && diff.before
     ? 'changed'
     : diff.after
-    ? 'added'
-    : 'removed';
+      ? 'added'
+      : 'removed';
 };
 
 const isPathChange = (segments: string[]) => segments[0] === 'paths';
@@ -223,12 +223,12 @@ export function getEndpointsChanges(
     return isRequestChange(segments)
       ? getRequestBodyChange(segments, changeType, spec)
       : isResponseChange(segments)
-      ? getResponseChange(segments, changeType, spec)
-      : isMethodParameterChange(segments)
-      ? getParameterChange(segments, changeType, spec)
-      : isMethodExactChange(segments)
-      ? `${changeType}`
-      : ``;
+        ? getResponseChange(segments, changeType, spec)
+        : isMethodParameterChange(segments)
+          ? getParameterChange(segments, changeType, spec)
+          : isMethodExactChange(segments)
+            ? `${changeType}`
+            : ``;
   };
 
   for (const diff of diffs) {

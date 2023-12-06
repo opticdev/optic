@@ -4539,6 +4539,7 @@ exports[`createRequest request with after key 1`] = `
       },
     },
   },
+  "required": true,
   "value": {
     "contentType": "application/json",
     "flatSchema": {
@@ -5600,6 +5601,7 @@ exports[`createRequest request with before key 1`] = `
       },
     },
   },
+  "required": undefined,
   "value": {
     "contentType": "application/json",
     "flatSchema": {
@@ -9293,7 +9295,6 @@ exports[`createSpecification specification with before key 1`] = `
               },
             },
             "description": "Pet object that needs to be added to the store",
-            "required": true,
           },
           "responses": {
             "400": {

@@ -16,7 +16,8 @@ export async function identifyOrCreateApis(
   generatedDetails: Exclude<
     Awaited<ReturnType<typeof getDetailsForGeneration>>,
     null
-  >
+  >,
+  pathsToName: Record<string, string | null>
 ) {
   const { web_url, organization_id, default_branch, default_tag } =
     generatedDetails;
@@ -64,7 +65,7 @@ export async function identifyOrCreateApis(
   for (let [path, url] of pathUrls.entries()) {
     if (!url) {
       const api = await config.client.createApi(organization_id, {
-        name: path,
+        name: pathsToName[path] ?? path,
         path,
         web_url: web_url,
         default_branch,

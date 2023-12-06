@@ -54,8 +54,8 @@ export async function compute(
       parsed.from === 'git'
         ? parsed.name
         : parsed.from === 'file'
-        ? parsed.filePath
-        : null;
+          ? parsed.filePath
+          : null;
     if (filePath) {
       try {
         context = generateContext(filePath);

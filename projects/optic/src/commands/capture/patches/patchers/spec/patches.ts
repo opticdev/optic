@@ -51,8 +51,8 @@ export class SpecPatch {
         inComponentSchema
           ? 'component schema'
           : inResponse
-          ? 'response body'
-          : 'request body'
+            ? 'response body'
+            : 'request body'
       }: ${shapePatch.description}`,
       impact: shapePatch.impact,
       diff: shapePatch.diff,

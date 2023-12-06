@@ -1,9 +1,20 @@
-import { test, expect, describe } from '@jest/globals';
-import { removeDocumentationFromOperation } from '../prepare-openapi';
+import { test, expect } from '@jest/globals';
+import {
+  removeDocumentationFromOperation,
+  removeDocumentationFromResponses,
+} from '../prepare-openapi';
 
 test('can reduce size of operations by deleting descriptions + examples ', () => {
   const output = removeDocumentationFromOperation({
     description: 'delete all the orders for this user',
+    parameters: [
+      {
+        name: 'a',
+        in: 'query',
+        description: '123',
+        example: '123',
+      },
+    ],
     requestBody: {
       description: 'what to send',
       required: true,
@@ -42,6 +53,30 @@ test('can reduce size of operations by deleting descriptions + examples ', () =>
                   description: 'Delete me',
                 },
               },
+            },
+          },
+        },
+      },
+    },
+  });
+  expect(output).toMatchSnapshot();
+});
+
+test('can reduce size of responses by deleting descriptions + examples ', () => {
+  const output = removeDocumentationFromResponses({
+    description: 'The response',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            description: {
+              type: 'string',
+              description: 'Delete me',
+            },
+            example: {
+              type: 'string',
+              example: '123',
             },
           },
         },

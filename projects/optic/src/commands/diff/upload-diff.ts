@@ -128,8 +128,8 @@ export async function uploadDiff(
     const reason = !specDetails
       ? 'no x-optic-url was set on the spec file'
       : config.vcs?.type === VCS.Git
-      ? 'there are uncommitted changes in your working directory'
-      : 'the current working directory is not a git repo';
+        ? 'there are uncommitted changes in your working directory'
+        : 'the current working directory is not a git repo';
     spinner?.warn(`Not uploading diff results because ${reason}`);
   }
   return null;

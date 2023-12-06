@@ -662,10 +662,14 @@ export const getRunAction =
       } catch (e) {}
 
     const localSpecPaths: string[] = [];
+    const pathsToName: Record<string, string | null> = {};
     for (const path of localSpecPathsUnchecked) {
       try {
         const spec = await loadRaw(path, config);
-        if (checkOpenAPIVersion(spec)) localSpecPaths.push(path);
+        if (checkOpenAPIVersion(spec)) {
+          localSpecPaths.push(path);
+          pathsToName[path] = spec.info?.title ?? null;
+        }
       } catch (e) {
         continue;
       }
@@ -722,7 +726,8 @@ export const getRunAction =
       pathUrls = await identifyOrCreateApis(
         config,
         localSpecPaths,
-        generatedDetails
+        generatedDetails,
+        pathsToName
       );
     } catch (e) {
       logger.error(`${e}`);

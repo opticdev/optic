@@ -124,8 +124,8 @@ export function* typePatches(
           !shapeContext.location
             ? PatchImpact.BackwardsCompatibilityUnknown
             : 'inRequest' in shapeContext.location
-            ? PatchImpact.BackwardsCompatible
-            : PatchImpact.BackwardsIncompatible,
+              ? PatchImpact.BackwardsCompatible
+              : PatchImpact.BackwardsIncompatible,
         ],
         groupedOperations: [
           {
@@ -148,8 +148,8 @@ export function* typePatches(
           !shapeContext.location
             ? PatchImpact.BackwardsCompatibilityUnknown
             : 'inRequest' in shapeContext.location
-            ? PatchImpact.BackwardsCompatible
-            : PatchImpact.BackwardsIncompatible,
+              ? PatchImpact.BackwardsCompatible
+              : PatchImpact.BackwardsIncompatible,
         ],
         groupedOperations: makeOneOfOperations(),
         shouldRegeneratePatches: true,
@@ -172,8 +172,8 @@ export function* typePatches(
       const schemaType = Array.isArray(subschema.type)
         ? [...subschema.type, 'null']
         : subschema.type
-        ? [subschema.type, 'null']
-        : ['null'];
+          ? [subschema.type, 'null']
+          : ['null'];
 
       yield {
         description: `make ${diff.key} null`,
@@ -183,8 +183,8 @@ export function* typePatches(
           !shapeContext.location
             ? PatchImpact.BackwardsCompatibilityUnknown
             : 'inRequest' in shapeContext.location
-            ? PatchImpact.BackwardsCompatible
-            : PatchImpact.BackwardsIncompatible,
+              ? PatchImpact.BackwardsCompatible
+              : PatchImpact.BackwardsIncompatible,
         ],
         groupedOperations: [
           {
@@ -206,8 +206,8 @@ export function* typePatches(
           !shapeContext.location
             ? PatchImpact.BackwardsCompatibilityUnknown
             : 'inRequest' in shapeContext.location
-            ? PatchImpact.BackwardsCompatible
-            : PatchImpact.BackwardsIncompatible,
+              ? PatchImpact.BackwardsCompatible
+              : PatchImpact.BackwardsIncompatible,
         ],
         groupedOperations: makeOneOfOperations(),
         shouldRegeneratePatches: true,
