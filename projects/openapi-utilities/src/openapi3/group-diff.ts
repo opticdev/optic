@@ -246,8 +246,8 @@ function normalizeRequiredDiff(
     fact.type === 'body' && trailParts[1] === 'required'
       ? jsonPointerHelpers.append(fact.location.jsonPath, 'schema')
       : fact.type === 'field' && trailParts[0] === 'required'
-      ? fact.location.jsonPath
-      : null;
+        ? fact.location.jsonPath
+        : null;
   const location = getLocation(fact);
 
   if (!maybeBaseRequiredPath) {
@@ -432,10 +432,10 @@ export function groupDiffsByEndpoint(
         fact.type === 'request-header'
           ? 'headerParameters'
           : fact.type === 'request-query'
-          ? 'queryParameters'
-          : fact.type === 'request-cookie'
-          ? 'cookieParameters'
-          : 'pathParameters';
+            ? 'queryParameters'
+            : fact.type === 'request-cookie'
+              ? 'cookieParameters'
+              : 'pathParameters';
       const { pathPattern, method } = getLocation(fact);
       const endpointId = getEndpointId({ path: pathPattern, method });
       const endpoint = grouped.getOrSetEndpoint(endpointId);

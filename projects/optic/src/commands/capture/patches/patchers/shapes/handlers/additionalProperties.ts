@@ -130,8 +130,8 @@ export function* additionalPropertiesPatches(
       !shapeContext.location
         ? PatchImpact.BackwardsCompatibilityUnknown
         : 'inResponse' in shapeContext.location
-        ? PatchImpact.BackwardsCompatible
-        : PatchImpact.BackwardsIncompatible,
+          ? PatchImpact.BackwardsCompatible
+          : PatchImpact.BackwardsIncompatible,
     ],
     groupedOperations,
     shouldRegeneratePatches: false,

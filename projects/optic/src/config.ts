@@ -24,8 +24,8 @@ export const USER_CONFIG_PATH =
   process.env.OPTIC_ENV === 'staging'
     ? path.join(USER_CONFIG_DIR, 'config.staging.json')
     : process.env.OPTIC_ENV === 'local'
-    ? path.join(USER_CONFIG_DIR, 'config.local.json')
-    : path.join(USER_CONFIG_DIR, 'config.json');
+      ? path.join(USER_CONFIG_DIR, 'config.local.json')
+      : path.join(USER_CONFIG_DIR, 'config.json');
 
 const checkIsInCi = (): boolean => {
   const lowerCase = process.env.CI?.toLowerCase();
@@ -318,8 +318,8 @@ export async function initializeConfig(): Promise<OpticCliConfig> {
     cliConfig.authenticationType = maybeEnvToken
       ? 'env'
       : maybeUserToken
-      ? 'user'
-      : undefined;
+        ? 'user'
+        : undefined;
     cliConfig.isAuthenticated = true;
     cliConfig.userId = token.startsWith('opat')
       ? token.slice(4).split('.')[0]

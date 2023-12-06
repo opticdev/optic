@@ -37,16 +37,16 @@ export class JsonHttpClient {
         response.status === 400
           ? new BadRequestError(message, this.source)
           : response.status === 401
-          ? new UnauthorizedError(message, this.source)
-          : response.status === 403
-          ? new ForbiddenError(message, this.source)
-          : response.status === 404
-          ? new NotFoundError(message, this.source)
-          : response.status === 500
-          ? new InternalError(message, this.source)
-          : response.status === 503
-          ? new ServiceUnavailableError(message, this.source)
-          : new Error(message);
+            ? new UnauthorizedError(message, this.source)
+            : response.status === 403
+              ? new ForbiddenError(message, this.source)
+              : response.status === 404
+                ? new NotFoundError(message, this.source)
+                : response.status === 500
+                  ? new InternalError(message, this.source)
+                  : response.status === 503
+                    ? new ServiceUnavailableError(message, this.source)
+                    : new Error(message);
 
       throw error;
     }

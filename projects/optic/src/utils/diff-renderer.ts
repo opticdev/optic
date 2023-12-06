@@ -142,27 +142,27 @@ export function* generateComparisonLogsV2(
         result.severity === Severity.Info
           ? blue
           : result.severity === Severity.Warn
-          ? yellow
-          : red;
+            ? yellow
+            : red;
       const icon = result.passed
         ? mdOutput
           ? ':heavy_check_mark:'
           : green('✔')
         : result.exempted
-        ? mdOutput
-          ? ':heavy_minus_sign:'
-          : white('✔')
-        : result.severity === Severity.Info
-        ? mdOutput
-          ? ':information_source:'
-          : failedAccent('ⓘ')
-        : result.severity === Severity.Warn
-        ? mdOutput
-          ? ':warning:'
-          : failedAccent('⚠')
-        : mdOutput
-        ? ':x:'
-        : failedAccent('x');
+          ? mdOutput
+            ? ':heavy_minus_sign:'
+            : white('✔')
+          : result.severity === Severity.Info
+            ? mdOutput
+              ? ':information_source:'
+              : failedAccent('ⓘ')
+            : result.severity === Severity.Warn
+              ? mdOutput
+                ? ':warning:'
+                : failedAccent('⚠')
+              : mdOutput
+                ? ':x:'
+                : failedAccent('x');
 
       const severity = failedAccent(` [${sevToText(result.severity)}]`);
       const rulePrefix =

@@ -528,8 +528,8 @@ function groupParameterDiffs(
         beforeValue.match && afterValue.match
           ? 'changed'
           : beforeValue.match
-          ? 'removed'
-          : 'added',
+            ? 'removed'
+            : 'added',
       before: beforeValue.match ? before : undefined,
       after: afterValue.match ? after : undefined,
     } as any);

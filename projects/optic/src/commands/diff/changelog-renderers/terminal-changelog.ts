@@ -131,10 +131,10 @@ function getIcon(status: 'passed' | SeverityText): string {
   return status === 'passed'
     ? '✔'
     : status === 'info'
-    ? 'ⓘ'
-    : status === 'warn'
-    ? '⚠'
-    : 'x';
+      ? 'ⓘ'
+      : status === 'warn'
+        ? '⚠'
+        : 'x';
 }
 
 function isRuleVisible(
@@ -161,12 +161,12 @@ function* getRuleLogs(
     const accent = result.passed
       ? chalk.green
       : result.exempted
-      ? chalk.gray
-      : result.severity === Severity.Info
-      ? chalk.blue
-      : result.severity === Severity.Warn
-      ? chalk.yellow
-      : chalk.red;
+        ? chalk.gray
+        : result.severity === Severity.Info
+          ? chalk.blue
+          : result.severity === Severity.Warn
+            ? chalk.yellow
+            : chalk.red;
     const icon = getIcon(result.passed ? 'passed' : sevToText(result.severity));
     yield accent(
       `${chalk.bold(`${icon} ${`[${result.name}]` ?? ''}`)}${
@@ -271,10 +271,10 @@ export function* terminalChangelog(
     ? specStatus === 'passed'
       ? chalk.green
       : specStatus === 'info'
-      ? chalk.blue
-      : specStatus === 'warn'
-      ? chalk.yellow
-      : chalk.red
+        ? chalk.blue
+        : specStatus === 'warn'
+          ? chalk.yellow
+          : chalk.red
     : (i: string) => i;
   const icon = options.check ? accent(`${getIcon(specStatus)} `) : '';
   yield `${icon}${chalk.bold(specName)} ${chalk.gray(options.path)}`;
@@ -361,10 +361,10 @@ function* getEndpointLogs(
     ? endpointStatus === 'passed'
       ? chalk.green
       : endpointStatus === 'info'
-      ? chalk.blue
-      : endpointStatus === 'warn'
-      ? chalk.yellow
-      : chalk.red
+        ? chalk.blue
+        : endpointStatus === 'warn'
+          ? chalk.yellow
+          : chalk.red
     : (i: string) => i;
 
   yield `${accent(`${icon}${chalk.bold(method.toUpperCase())} ${path}`)}: ${
@@ -543,10 +543,10 @@ function* getBodyDetailLogs(
       change === 'added'
         ? added
         : change === 'removed'
-        ? removed
-        : change === 'changed'
-        ? changed
-        : ''
+          ? removed
+          : change === 'changed'
+            ? changed
+            : ''
     }`;
     if (hasRulesToRender) yield '';
     yield* indent(getRuleLogs(rules, sourcemapReaders, options));

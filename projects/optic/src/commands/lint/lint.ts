@@ -97,8 +97,8 @@ const getLintAction =
         options.severity === 'error'
           ? failures.error
           : options.severity === 'warn'
-          ? failures.warn + failures.error
-          : failures.warn + failures.error + failures.info;
+            ? failures.warn + failures.error
+            : failures.warn + failures.error + failures.info;
 
       if (options.web) {
         const analyticsData: Record<string, any> = {

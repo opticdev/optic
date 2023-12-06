@@ -61,13 +61,13 @@ export function computeTypeTransition(
   const beforeEnum = Array.isArray(before.schema.enum)
     ? before.schema.enum
     : 'const' in before.schema
-    ? [before.schema.const]
-    : null;
+      ? [before.schema.const]
+      : null;
   const afterEnum = Array.isArray(after.schema.enum)
     ? after.schema.enum
     : 'const' in after.schema
-    ? [after.schema.const]
-    : null;
+      ? [after.schema.const]
+      : null;
   if (beforeEnum && afterEnum) {
     const enumResults = diffSets(new Set(beforeEnum), new Set(afterEnum));
     if (enumResults.beforeSetDiff.length)

@@ -848,8 +848,8 @@ ${(spec.error as Error).message}`,
           options.severity === 'error'
             ? failures.error
             : options.severity === 'warn'
-            ? failures.warn + failures.error
-            : failures.warn + failures.error + failures.info;
+              ? failures.warn + failures.error
+              : failures.warn + failures.error + failures.info;
 
         return failuresForSeverity > 0;
       }) &&

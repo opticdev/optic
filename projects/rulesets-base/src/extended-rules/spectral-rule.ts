@@ -82,8 +82,8 @@ function severityToOpticSeverity(spectralSev: DiagnosticSeverity): Severity {
   return spectralSev === DiagnosticSeverity.Error
     ? Severity.Error
     : spectralSev === DiagnosticSeverity.Warning
-    ? Severity.Warn
-    : Severity.Info;
+      ? Severity.Warn
+      : Severity.Info;
 }
 
 function toOpticRuleResult(

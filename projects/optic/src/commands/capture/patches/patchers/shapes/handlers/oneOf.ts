@@ -83,8 +83,8 @@ export function* oneOfPatches(
       !shapeContext.location
         ? PatchImpact.BackwardsCompatibilityUnknown
         : 'inRequest' in shapeContext.location
-        ? PatchImpact.BackwardsCompatible
-        : PatchImpact.BackwardsIncompatible,
+          ? PatchImpact.BackwardsCompatible
+          : PatchImpact.BackwardsIncompatible,
     ],
     groupedOperations,
     shouldRegeneratePatches: false,

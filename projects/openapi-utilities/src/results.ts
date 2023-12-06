@@ -4,16 +4,16 @@ export function textToSev(sev: SeverityText): Severity {
   return sev === 'info'
     ? Severity.Info
     : sev === 'warn'
-    ? Severity.Warn
-    : Severity.Error;
+      ? Severity.Warn
+      : Severity.Error;
 }
 
 export function sevToText(sev: Severity): SeverityText {
   return sev === Severity.Info
     ? 'info'
     : sev === Severity.Warn
-    ? 'warn'
-    : 'error';
+      ? 'warn'
+      : 'error';
 }
 
 export enum Severity {

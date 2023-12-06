@@ -8,8 +8,8 @@ const getSpecificationChange = (
   return specificationNode.after?.value['x-optic-ci-empty-spec'] === true
     ? 'removed'
     : specificationNode.before?.value['x-optic-ci-empty-spec'] === true
-    ? 'added'
-    : specificationNode.change?.changeType || null;
+      ? 'added'
+      : specificationNode.change?.changeType || null;
 };
 
 export const createRuleContextWithoutOperation = (

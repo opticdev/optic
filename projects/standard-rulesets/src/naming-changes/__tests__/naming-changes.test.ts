@@ -104,8 +104,8 @@ describe('naming changes', () => {
             applies === 'always'
               ? after
               : applies === 'added'
-              ? TestHelpers.createEmptySpec()
-              : before;
+                ? TestHelpers.createEmptySpec()
+                : before;
           const afterJson = after;
           const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
@@ -158,8 +158,8 @@ describe('naming changes', () => {
             applies === 'always'
               ? after
               : applies === 'added'
-              ? TestHelpers.createEmptySpec()
-              : before;
+                ? TestHelpers.createEmptySpec()
+                : before;
           const afterJson = after;
           const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
@@ -230,8 +230,8 @@ describe('naming changes', () => {
             applies === 'always'
               ? after
               : applies === 'added'
-              ? TestHelpers.createEmptySpec()
-              : before;
+                ? TestHelpers.createEmptySpec()
+                : before;
           const afterJson = after;
           const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
@@ -300,8 +300,8 @@ describe('naming changes', () => {
             applies === 'always'
               ? after
               : applies === 'added'
-              ? TestHelpers.createEmptySpec()
-              : before;
+                ? TestHelpers.createEmptySpec()
+                : before;
           const afterJson = after;
           const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
@@ -376,8 +376,8 @@ describe('naming changes', () => {
             applies === 'always'
               ? after
               : applies === 'added'
-              ? TestHelpers.createEmptySpec()
-              : before;
+                ? TestHelpers.createEmptySpec()
+                : before;
           const afterJson = after;
           const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
@@ -450,8 +450,8 @@ describe('naming changes', () => {
             applies === 'always'
               ? after
               : applies === 'added'
-              ? TestHelpers.createEmptySpec()
-              : before;
+                ? TestHelpers.createEmptySpec()
+                : before;
           const afterJson = after;
           const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
@@ -506,8 +506,8 @@ describe('naming changes', () => {
             applies === 'always'
               ? after
               : applies === 'added'
-              ? TestHelpers.createEmptySpec()
-              : before;
+                ? TestHelpers.createEmptySpec()
+                : before;
           const afterJson = after;
           const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
@@ -560,8 +560,8 @@ describe('naming changes', () => {
             applies === 'always'
               ? after
               : applies === 'added'
-              ? TestHelpers.createEmptySpec()
-              : before;
+                ? TestHelpers.createEmptySpec()
+                : before;
           const afterJson = after;
           const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
@@ -630,8 +630,8 @@ describe('naming changes', () => {
             applies === 'always'
               ? after
               : applies === 'added'
-              ? TestHelpers.createEmptySpec()
-              : before;
+                ? TestHelpers.createEmptySpec()
+                : before;
           const afterJson = after;
           const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
@@ -700,8 +700,8 @@ describe('naming changes', () => {
             applies === 'always'
               ? after
               : applies === 'added'
-              ? TestHelpers.createEmptySpec()
-              : before;
+                ? TestHelpers.createEmptySpec()
+                : before;
           const afterJson = after;
           const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
@@ -745,8 +745,8 @@ describe('naming changes', () => {
             applies === 'always'
               ? after
               : applies === 'added'
-              ? TestHelpers.createEmptySpec()
-              : before;
+                ? TestHelpers.createEmptySpec()
+                : before;
           const afterJson = after;
           const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
@@ -778,8 +778,8 @@ describe('naming changes', () => {
             applies === 'always'
               ? after
               : applies === 'added'
-              ? TestHelpers.createEmptySpec()
-              : before;
+                ? TestHelpers.createEmptySpec()
+                : before;
           const afterJson = after;
           const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
@@ -823,8 +823,8 @@ describe('naming changes', () => {
             applies === 'always'
               ? after
               : applies === 'added'
-              ? TestHelpers.createEmptySpec()
-              : before;
+                ? TestHelpers.createEmptySpec()
+                : before;
           const afterJson = after;
           const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
@@ -856,8 +856,8 @@ describe('naming changes', () => {
             applies === 'always'
               ? after
               : applies === 'added'
-              ? TestHelpers.createEmptySpec()
-              : before;
+                ? TestHelpers.createEmptySpec()
+                : before;
           const afterJson = after;
           const results = await TestHelpers.runRulesWithInputs(
             [namingChangeRuleset],
