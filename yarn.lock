@@ -1966,11 +1966,11 @@ __metadata:
   linkType: hard
 
 "@httptoolkit/httpolyglot@npm:^2.0.1, @httptoolkit/httpolyglot@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "@httptoolkit/httpolyglot@npm:2.1.1"
+  version: 2.2.1
+  resolution: "@httptoolkit/httpolyglot@npm:2.2.1"
   dependencies:
-    "@types/node": "npm:^16.7.10"
-  checksum: f19bcaf231b83f3aa80bf1b5507c1585c6c34ca61482abae0a91410a1ca3b1f7ddad8152a2e47cf2ea2da26c6350e7cf59687d5300047d1b5ffe38e85c1935bc
+    "@types/node": "npm:*"
+  checksum: 0a7f6ede77471c8bb914b4b667f446a5777a5ae6d054c219f97bdcda7356df9b54fd5db55663c38680fcf38d2c29c0b56c9a88f2d09dd548d73e0e5e97d0e3bd
   languageName: node
   linkType: hard
 
@@ -3442,13 +3442,6 @@ __metadata:
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 7c8a0327a29d68a0bb152ae30e8c4738638515dd599064821c9d0c1884a1efa103021cd8f8c91e690cd56b0602bb6fe0e6651a5df2337bdc85e0c0f66054b2ce
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:^16.7.10":
-  version: 16.18.67
-  resolution: "@types/node@npm:16.18.67"
-  checksum: 1464a31b9f30c0019f782f90994d81b92cc9cd0e244731c4ed0d2c0795db62fa0f44b2257b113e86df989612c73a975a45792921d38dc5cc6b417b2402682b66
   languageName: node
   linkType: hard
 
