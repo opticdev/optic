@@ -1,6 +1,37 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`can reduce size of operations by removing nested schemas  1`] = `undefined`;
+exports[`can reduce size of operations by removing nested schemas  1`] = `
+{
+  "description": "delete all the orders for this user",
+  "parameters": [
+    {
+      "description": "123",
+      "example": "123",
+      "in": "query",
+      "name": "a",
+    },
+  ],
+  "requestBody": {
+    "content": {
+      "application/json": {
+        "schema": undefined,
+      },
+    },
+    "description": "what to send",
+    "required": true,
+  },
+  "responses": {
+    "200": {
+      "content": {
+        "application/json": {
+          "schema": undefined,
+        },
+      },
+      "description": "The response",
+    },
+  },
+}
+`;
 
 exports[`can reduce size of responses by deleting descriptions + examples  1`] = `
 {
