@@ -1,101 +1,34 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
-function removeExamplesAndDescriptionsFromParameters(
-  parameter: OpenAPIV3.ParameterObject | OpenAPIV3.ReferenceObject
-) {
-  if (!parameter) return;
-  if ('$ref' in parameter) return;
-
-  if (parameter.description) {
-    delete parameter.description;
-  }
-
-  if (parameter.example) {
-    delete parameter.example;
-  }
-
-  if (parameter.examples) {
-    delete parameter.examples;
-  }
-}
-
-function removeExamplesAndDescriptionsFromProperties(
-  value: any,
-  path: string[]
-) {
-  if (Array.isArray(value)) {
-    value.forEach((item, index) =>
-      removeExamplesAndDescriptionsFromProperties(item, [
-        ...path,
-        index.toString(),
-      ])
-    );
-  } else if (typeof value === 'object' && value !== null) {
-    if (
-      value.hasOwnProperty('description') &&
-      jsonPointerHelpers.endsWith(
-        jsonPointerHelpers.compile([...path, 'description']),
-        ['properties', '**', 'description']
-      )
-    ) {
-      delete value['description'];
-    }
-
-    if (
-      value.hasOwnProperty('example') &&
-      jsonPointerHelpers.endsWith(
-        jsonPointerHelpers.compile([...path, 'example']),
-        ['properties', '**', 'example']
-      )
-    ) {
-      delete value['example'];
-    }
-
-    if (
-      value.hasOwnProperty('examples') &&
-      jsonPointerHelpers.endsWith(
-        jsonPointerHelpers.compile([...path, 'examples']),
-        ['properties', '**', 'examples']
-      )
-    ) {
-      delete value['examples'];
-    }
-
-    Object.keys(value).forEach((key) =>
-      removeExamplesAndDescriptionsFromProperties(value[key], [...path, key])
-    );
-  } else {
-  }
-}
-
-export function removeDocumentationFromOperation(
-  operation: OpenAPIV3.OperationObject
-) {
+export function prepareOperation(operation: OpenAPIV3.OperationObject) {
   const copied: OpenAPIV3.OperationObject = JSON.parse(
     JSON.stringify(operation)
   );
 
-  if (copied.parameters) {
-    for (const param of copied.parameters) {
-      removeExamplesAndDescriptionsFromParameters(param);
+  removeSchemasFromOperation(copied);
+}
+
+function removeSchemasFromOperation(operation: OpenAPIV3.OperationObject) {
+  if (operation.requestBody && !('$ref' in operation.requestBody)) {
+    for (const value of Object.values(operation.requestBody.content)) {
+      value.schema = undefined;
     }
   }
 
-  removeExamplesAndDescriptionsFromProperties(copied.responses, ['responses']);
-  removeExamplesAndDescriptionsFromProperties(copied.requestBody, [
-    'requestBody',
-  ]);
-
-  return copied;
+  for (const response of Object.values(operation.responses)) {
+    if (!('$ref' in response)) {
+      for (const value of Object.values(response.content ?? {})) {
+        value.schema = undefined;
+      }
+    }
+  }
 }
 
-export function removeDocumentationFromResponses(
-  response: OpenAPIV3.ResponseObject
-) {
+export function prepareResponse(response: OpenAPIV3.ResponseObject) {
   const copied: OpenAPIV3.ResponseObject = JSON.parse(JSON.stringify(response));
 
-  removeExamplesAndDescriptionsFromProperties(copied, []);
-
+  for (const value of Object.values(copied.content ?? {})) {
+    value.schema = undefined;
+  }
   return copied;
 }
