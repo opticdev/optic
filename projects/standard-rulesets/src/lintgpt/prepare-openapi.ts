@@ -7,6 +7,7 @@ export function prepareOperation(operation: OpenAPIV3.OperationObject) {
   );
 
   removeSchemasFromOperation(copied);
+  return copied;
 }
 
 function removeSchemasFromOperation(operation: OpenAPIV3.OperationObject) {
