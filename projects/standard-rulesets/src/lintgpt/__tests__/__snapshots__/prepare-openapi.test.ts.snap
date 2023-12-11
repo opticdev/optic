@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can reduce size of operations by removing nested schemas  1`] = `undefined`;
+
+exports[`can reduce size of responses by deleting descriptions + examples  1`] = `
+{
+  "content": {
+    "application/json": {
+      "schema": {
+        "properties": {
+          "description": {
+            "type": "string",
+          },
+          "example": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+    },
+  },
+  "description": "The response",
+}
+`;
