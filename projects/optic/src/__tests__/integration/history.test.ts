@@ -1,10 +1,11 @@
-import { describe, test, expect } from '@jest/globals';
+import { jest, describe, test, expect } from '@jest/globals';
 import {
   runOptic,
   setupWorkspace,
   normalizeWorkspace,
   run,
 } from './integration';
+jest.setTimeout(30000);
 
 const date = new Date('2023-01-01');
 
@@ -39,7 +40,22 @@ GIT_COMMITTER_DATE="${formatDateForGitCommit(
 
     expect(code).toBe(0);
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
-  }, 20000);
+  });
+
+  test('no changes', async () => {
+    const workspace = await setupWorkspace('history/petstore', {
+      repo: true,
+      commit: true,
+    });
+
+    const { combined, code } = await runOptic(
+      workspace,
+      'history petstore-updated.json'
+    );
+
+    expect(code).toBe(0);
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+  });
 });
 
 function formatDateForGitCommit(date: Date) {

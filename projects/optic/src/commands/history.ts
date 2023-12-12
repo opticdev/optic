@@ -80,18 +80,18 @@ const logDiffs = async (
   baseSpec: ParseResult,
   headSpec: ParseResult,
   headDate?: Date
-) => {
+): Promise<boolean> => {
   const rulesRunner = new RuleRunner([new BreakingChangesRuleset()]);
   const comparison = await compareSpecs(baseSpec, headSpec, rulesRunner, {});
-  let hasLoggedDate = false;
+  let hasChanges = false;
   for (const { method, path, changes } of getEndpointsChanges(
     baseSpec.jsonLike,
     headSpec.jsonLike,
     comparison.diffs
   )) {
-    if (!hasLoggedDate) {
+    if (!hasChanges) {
       console.log(`### ${headDate?.toDateString()}`);
-      hasLoggedDate = true;
+      hasChanges = true;
     }
     if (changes.size > 1) {
       console.log(`- \`${method.toUpperCase()}\` \`${path}\`:`);
@@ -108,6 +108,7 @@ const logDiffs = async (
       );
     }
   }
+  return hasChanges;
 };
 
 export const getHistoryAction =
@@ -174,6 +175,7 @@ export const getHistoryAction =
     let headChecksum: string | undefined = undefined;
     let headSpec: ParseResult | undefined = undefined;
     let headDate: Date | undefined = undefined;
+    let hasAnyChange = false;
 
     for (const [ix, baseSha] of candidates.shas.entries()) {
       let baseSpec: ParseResult;
@@ -205,7 +207,8 @@ export const getHistoryAction =
       const lastCandidate = ix === candidates.shas.length - 1;
 
       if (lastCandidate && !sameChecksum && headSpec) {
-        await logDiffs(baseSpec, headSpec, headDate);
+        const hasChange = await logDiffs(baseSpec, headSpec, headDate);
+        if (hasChange) hasAnyChange = true;
         continue;
       }
 
@@ -221,10 +224,13 @@ export const getHistoryAction =
 
       if (sameDay) continue;
 
-      await logDiffs(baseSpec, headSpec, headDate);
+      const hasChange = await logDiffs(baseSpec, headSpec, headDate);
+      if (hasChange) hasAnyChange = true;
 
       headChecksum = baseChecksum;
       headDate = baseDate;
       headSpec = baseSpec;
     }
+
+    if (!hasAnyChange) console.log('No changes found');
   };
