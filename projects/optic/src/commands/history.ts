@@ -83,12 +83,16 @@ const logDiffs = async (
 ) => {
   const rulesRunner = new RuleRunner([new BreakingChangesRuleset()]);
   const comparison = await compareSpecs(baseSpec, headSpec, rulesRunner, {});
-  console.log(`### ${headDate?.toDateString()}`);
+  let hasLoggedDate = false;
   for (const { method, path, changes } of getEndpointsChanges(
     baseSpec.jsonLike,
     headSpec.jsonLike,
     comparison.diffs
   )) {
+    if (!hasLoggedDate) {
+      console.log(`### ${headDate?.toDateString()}`);
+      hasLoggedDate = true;
+    }
     if (changes.size > 1) {
       console.log(`- \`${method.toUpperCase()}\` \`${path}\`:`);
       for (const change of changes) {
