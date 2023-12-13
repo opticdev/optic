@@ -6271,8 +6271,8 @@ __metadata:
   linkType: hard
 
 "fastify@npm:^4.17.0":
-  version: 4.24.3
-  resolution: "fastify@npm:4.24.3"
+  version: 4.25.0
+  resolution: "fastify@npm:4.25.0"
   dependencies:
     "@fastify/ajv-compiler": "npm:^3.5.0"
     "@fastify/error": "npm:^3.4.0"
@@ -6283,14 +6283,14 @@ __metadata:
     fast-json-stringify: "npm:^5.8.0"
     find-my-way: "npm:^7.7.0"
     light-my-request: "npm:^5.11.0"
-    pino: "npm:^8.16.0"
-    process-warning: "npm:^2.2.0"
+    pino: "npm:^8.17.0"
+    process-warning: "npm:^3.0.0"
     proxy-addr: "npm:^2.0.7"
     rfdc: "npm:^1.3.0"
     secure-json-parse: "npm:^2.7.0"
     semver: "npm:^7.5.4"
     toad-cache: "npm:^3.3.0"
-  checksum: 36018767b25cde307942f52172eedfc7c1ce186162222334e19caa607e3d29fe3de04cff2c08f21096d45fa4b071cd58a319392a6dbb5b5dbdf8230b38405c3e
+  checksum: 7a6d2ce565d0c959c55ab13c84343963139bf5805842ffd38e65909b680faa20002c66d0ee1526de6ee050ecd739b0f5a0120d9a695e4a077f18f2ff72014a37
   languageName: node
   linkType: hard
 
@@ -9756,9 +9756,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino@npm:^8.16.0":
-  version: 8.16.0
-  resolution: "pino@npm:8.16.0"
+"pino@npm:^8.17.0":
+  version: 8.17.0
+  resolution: "pino@npm:8.17.0"
   dependencies:
     atomic-sleep: "npm:^1.0.0"
     fast-redact: "npm:^3.1.1"
@@ -9773,7 +9773,7 @@ __metadata:
     thread-stream: "npm:^2.0.0"
   bin:
     pino: bin.js
-  checksum: 79eee5c7744845e35c922f120b2df954c312198ace09163343629084dda112822f62b8f272cbfa68bc7ee5bbc49d1cc131e5182dce77a64f5fe8efdfc1270569
+  checksum: 88460847d1a0319896acbe083de8b81a0af44219a6f7336e3263b6987f97073d6c9c03923fefff01cb9bfc72f9fb6b1bf99356bfdd04223b6a6b60d36dab9fda
   languageName: node
   linkType: hard
 
@@ -9900,10 +9900,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"process-warning@npm:^2.0.0, process-warning@npm:^2.2.0":
+"process-warning@npm:^2.0.0":
   version: 2.2.0
   resolution: "process-warning@npm:2.2.0"
   checksum: 22b252ca6c1edf7fe3c6ab30c39f9a2fa240dc5af46fd0f94c4dcbc577e7570dcccfc1cbfb4510db4759906b9170cb8b18c519d581cdf2ea649e5ac6bb9a0e60
+  languageName: node
+  linkType: hard
+
+"process-warning@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "process-warning@npm:3.0.0"
+  checksum: 60f3c8ddee586f0706c1e6cb5aa9c86df05774b9330d792d7c8851cf0031afd759d665404d07037e0b4901b55c44a423f07bdc465c63de07d8d23196bb403622
   languageName: node
   linkType: hard
 
