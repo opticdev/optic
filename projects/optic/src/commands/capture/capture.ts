@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'node:fs/promises';
 import fsNonPromise from 'node:fs';
 
-import { isJson, isYaml, writeYaml } from '@useoptic/openapi-io';
+import { denormalize, isJson, isYaml, writeYaml } from '@useoptic/openapi-io';
 import { CoverageNode, OperationCoverage } from '@useoptic/openapi-utilities';
 import { errorHandler } from '../../error-handler';
 
@@ -303,10 +303,7 @@ const getCaptureAction =
         return;
       }
       // We need to load the spec as is with denormalize=true so that the endpoint shas match
-      spec = await loadSpec(filePath, config, {
-        strict: false,
-        denormalize: true,
-      });
+      spec = denormalize(spec);
 
       const opticUrlDetails = await getOpticUrlDetails(config, {
         filePath: path.relative(config.root, path.resolve(filePath)),
@@ -477,7 +474,7 @@ export async function processCaptures(
   }
 
   // update existing endpoints
-  const coverage = new ApiCoverageCounter(spec.jsonLike);
+  const coverage = new ApiCoverageCounter(denormalize(spec).jsonLike);
   let hasAnyDiffs = false;
   let diffCount = 0;
   let endpointsAdded = 0;
