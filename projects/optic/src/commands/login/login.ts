@@ -28,7 +28,8 @@ export async function identifyLoginFromToken(token: string) {
     trackEvent('cli.login');
     await flushEvents();
   } else {
-    alias(token);
+    const id = token.split('.')[1];
+    if (id) alias(id);
   }
 }
 
