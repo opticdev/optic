@@ -1,5 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`optic history no changes 1`] = `
+"# Swagger Petstore Updated
+No changes found
+"
+`;
+
 exports[`optic history writes changelog 1`] = `
 "# Swagger Petstore Updated
 ### Sun Jan 01 2023

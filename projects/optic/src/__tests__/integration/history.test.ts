@@ -1,10 +1,11 @@
-import { describe, test, expect } from '@jest/globals';
+import { jest, describe, test, expect } from '@jest/globals';
 import {
   runOptic,
   setupWorkspace,
   normalizeWorkspace,
   run,
 } from './integration';
+jest.setTimeout(30000);
 
 const date = new Date('2023-01-01');
 
@@ -23,7 +24,11 @@ git add . &&\
 GIT_COMMITTER_DATE="${commitDateChanged}" git commit -m 'update petstore' &&\
 mv petstore-base.json petstore-base-renamed.json &&\
 git add . &&\
-GIT_COMMITTER_DATE="${commitDateChanged}" git commit -m 'rename petstore'
+GIT_COMMITTER_DATE="${commitDateChanged}" git commit -m 'rename petstore' &&\
+touch abc.def && git add . &&\
+GIT_COMMITTER_DATE="${formatDateForGitCommit(
+      new Date('2023-01-02')
+    )}" git commit -m 'empty-commit'
 `;
 
     await run(command, false, workspace);
@@ -35,7 +40,22 @@ GIT_COMMITTER_DATE="${commitDateChanged}" git commit -m 'rename petstore'
 
     expect(code).toBe(0);
     expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
-  }, 20000);
+  });
+
+  test('no changes', async () => {
+    const workspace = await setupWorkspace('history/petstore', {
+      repo: true,
+      commit: true,
+    });
+
+    const { combined, code } = await runOptic(
+      workspace,
+      'history petstore-updated.json'
+    );
+
+    expect(code).toBe(0);
+    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+  });
 });
 
 function formatDateForGitCommit(date: Date) {
