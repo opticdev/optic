@@ -302,6 +302,11 @@ const getCaptureAction =
         process.exitCode = 1;
         return;
       }
+      // We need to load the spec as is with denormalize=true so that the endpoint shas match
+      spec = await loadSpec(filePath, config, {
+        strict: false,
+        denormalize: true,
+      });
 
       const opticUrlDetails = await getOpticUrlDetails(config, {
         filePath: path.relative(config.root, path.resolve(filePath)),
