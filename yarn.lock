@@ -3906,6 +3906,7 @@ __metadata:
     "@useoptic/openapi-utilities": "workspace:*"
     "@useoptic/rulesets-base": "workspace:*"
     ajv: "npm:^8.6.0"
+    ajv-draft-04: "npm:^1.0.0"
     ajv-formats: "npm:~2.1.0"
     babel-jest: "npm:^29.3.1"
     jest: "npm:^29.3.1"
@@ -4020,7 +4021,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv-draft-04@npm:~1.0.0":
+"ajv-draft-04@npm:^1.0.0, ajv-draft-04@npm:~1.0.0":
   version: 1.0.0
   resolution: "ajv-draft-04@npm:1.0.0"
   peerDependencies:

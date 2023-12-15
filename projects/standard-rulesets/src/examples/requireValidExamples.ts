@@ -6,14 +6,21 @@ import {
   RuleError,
 } from '@useoptic/rulesets-base';
 import { OpenAPIV3 } from 'openapi-types';
-import Ajv from 'ajv/dist/2019';
+import AjvDraft4 from 'ajv-draft-04';
+import Ajv2019 from 'ajv/dist/2019';
 import addFormats from 'ajv-formats';
 import { OAS3 } from '@useoptic/openapi-utilities';
 
 type SchemaObject = OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject;
 
-export function defaultAjv() {
-  const validator = new Ajv({ strict: false, unevaluated: true });
+type Ajv = AjvDraft4 | Ajv2019;
+
+export function defaultAjv(specVersion: '3.1.x' | '3.0.x') {
+  const validator =
+    specVersion === '3.1.x'
+      ? new Ajv2019({ strict: false, unevaluated: true })
+      : new AjvDraft4({ strict: false, unevaluated: true });
+  console.log(validator);
   addFormats(validator);
   // override pattern keyword when invalid regex
   validator.removeKeyword('pattern');

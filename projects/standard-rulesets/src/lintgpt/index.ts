@@ -67,7 +67,7 @@ const validateConfigSchema = ajv.compile(configSchema);
 export class LintGpt extends ExternalRuleBase {
   static async fromOpticConfig(
     config: unknown,
-    client: LintGptClient
+    { client }: { client: LintGptClient }
   ): Promise<LintGpt | string> {
     const result = validateConfigSchema(config);
 
