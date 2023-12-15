@@ -632,6 +632,171 @@ describe('generateEndpointSpecPatches', () => {
       expect(specHolder.spec).toMatchSnapshot();
     });
 
+    describe('allOf', () => {
+      test('with extra keys in interaction', async () => {
+        specHolder.spec.paths['/api/animals'].post.responses = {
+          '200': {
+            content: {
+              'application/json': {
+                schema: {
+                  allOf: [
+                    {
+                      type: 'object',
+                      properties: {
+                        status: {
+                          type: 'string',
+                        },
+                      },
+                      required: ['status'],
+                    },
+                    {
+                      type: 'object',
+                      properties: {
+                        name: {
+                          type: 'string',
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        };
+
+        const interaction = makeInteraction(
+          { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+          {
+            responseBody: { status: 'ok', name: 'me', age: 50 },
+          }
+        );
+
+        const patches = await AT.collect(
+          generateEndpointSpecPatches(
+            GenerateInteractions([interaction]),
+            specHolder,
+            {
+              method: 'post',
+              path: '/api/animals',
+            }
+          )
+        );
+
+        expect(patches).toMatchSnapshot();
+        expect(specHolder.spec).toMatchSnapshot();
+      });
+
+      test('with missing keys in interaction', async () => {
+        specHolder.spec.paths['/api/animals'].post.responses = {
+          '200': {
+            content: {
+              'application/json': {
+                schema: {
+                  allOf: [
+                    {
+                      type: 'object',
+                      properties: {
+                        status: {
+                          type: 'string',
+                        },
+                      },
+                      required: ['status'],
+                    },
+                    {
+                      type: 'object',
+                      properties: {
+                        name: {
+                          type: 'string',
+                        },
+                      },
+                      required: ['name'],
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        };
+
+        const interaction = makeInteraction(
+          { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+          {
+            responseBody: { status: 'ok' },
+          }
+        );
+
+        const patches = await AT.collect(
+          generateEndpointSpecPatches(
+            GenerateInteractions([interaction]),
+            specHolder,
+            {
+              method: 'post',
+              path: '/api/animals',
+            }
+          )
+        );
+
+        expect(patches).toMatchSnapshot();
+        expect(specHolder.spec).toMatchSnapshot();
+      });
+
+      test('with nested oneOf', async () => {
+        specHolder.spec.paths['/api/animals'].post.responses = {
+          '200': {
+            content: {
+              'application/json': {
+                schema: {
+                  allOf: [
+                    {
+                      oneOf: [
+                        {
+                          type: 'object',
+                          properties: {
+                            hello: {
+                              type: 'string',
+                            },
+                            goodbye: {
+                              type: 'string',
+                            },
+                          },
+                          required: ['hello', 'goodbye'],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        };
+
+        const interaction = makeInteraction(
+          { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+          {
+            responseBody: {
+              hello: 'ok',
+              goodbye: 'me',
+              results: ['123', '355', 34],
+            },
+          }
+        );
+
+        const patches = await AT.collect(
+          generateEndpointSpecPatches(
+            GenerateInteractions([interaction]),
+            specHolder,
+            {
+              method: 'post',
+              path: '/api/animals',
+            }
+          )
+        );
+
+        expect(patches).toMatchSnapshot();
+        expect(specHolder.spec).toMatchSnapshot();
+      });
+    });
+
     describe.each([['query'], ['header']])('%s parameter', (location) => {
       test('not documented', async () => {
         const interaction = makeInteraction(
