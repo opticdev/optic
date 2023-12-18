@@ -76,7 +76,7 @@ const validateConfigSchema = ajv.compile(configSchema);
 export class ExamplesRuleset extends Ruleset {
   static async fromOpticConfig(
     config: unknown,
-    { specVersion }: { specVersion: SpecVersion }
+    { specVersion }: { specVersion?: SpecVersion } = {}
   ): Promise<ExamplesRuleset | string> {
     const result = validateConfigSchema(config);
 
@@ -90,6 +90,7 @@ export class ExamplesRuleset extends Ruleset {
     const validatedConfig = config as YamlConfig;
     const constructorConfig: ExampleConstructor = {
       ...validatedConfig,
+      spec_version: specVersion,
       severity: validatedConfig.severity,
     };
 
