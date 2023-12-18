@@ -299,7 +299,8 @@ describe.each(['3.0.x', '3.1.x'] as const)(
       expect(results.some((result) => !result.passed)).toBe(true);
     });
 
-    test('exclusive maximum', async () => {
+    test('exclusive maximum boolean', async () => {
+      // exclusive maximum boolean is not valid in 3.1.x
       if (version === '3.1.x') return;
       const input: OpenAPIV3.Document = {
         ...TestHelpers.createEmptySpec(),
@@ -354,6 +355,8 @@ describe.each(['3.0.x', '3.1.x'] as const)(
       });
 
       test('ajv config will work on additional properties with all of', () => {
+        // 3.0.x does not support unevaluated properties (required for allOf support) - we merge down `allOf` in rule running so this is likely not an issue
+        if (version === '3.0.x') return;
         const result = validateSchema(
           {
             allOf: [

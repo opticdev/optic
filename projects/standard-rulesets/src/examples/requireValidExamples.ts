@@ -20,7 +20,6 @@ export function defaultAjv(specVersion: '3.1.x' | '3.0.x') {
     specVersion === '3.1.x'
       ? new Ajv2019({ strict: false, unevaluated: true })
       : new AjvDraft4({ strict: false, unevaluated: true });
-  console.log(validator);
   addFormats(validator);
   // override pattern keyword when invalid regex
   validator.removeKeyword('pattern');

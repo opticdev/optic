@@ -20,7 +20,7 @@ exports[`3.0.x examples ruleset examples should default to additional properties
 }
 `;
 
-exports[`3.0.x examples ruleset exclusive maximum 1`] = `
+exports[`3.0.x examples ruleset exclusive maximum boolean 1`] = `
 [
   {
     "change": {
