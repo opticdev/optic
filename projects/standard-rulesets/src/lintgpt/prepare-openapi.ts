@@ -1,22 +1,28 @@
-import { OpenAPIV3 } from 'openapi-types';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { OpenAPIV3 } from 'openapi-types';
 
-function removeExamplesAndDescriptionsFromParameters(
-  parameter: OpenAPIV3.ParameterObject | OpenAPIV3.ReferenceObject
-) {
-  if (!parameter) return;
-  if ('$ref' in parameter) return;
+export function prepareOperation(operation: OpenAPIV3.OperationObject) {
+  const copied: OpenAPIV3.OperationObject = JSON.parse(
+    JSON.stringify(operation)
+  );
 
-  if (parameter.description) {
-    delete parameter.description;
+  removeSchemasFromOperation(copied);
+  return copied;
+}
+
+function removeSchemasFromOperation(operation: OpenAPIV3.OperationObject) {
+  if (operation.requestBody && !('$ref' in operation.requestBody)) {
+    for (const value of Object.values(operation.requestBody.content)) {
+      value.schema = undefined;
+    }
   }
 
-  if (parameter.example) {
-    delete parameter.example;
-  }
-
-  if (parameter.examples) {
-    delete parameter.examples;
+  for (const response of Object.values(operation.responses)) {
+    if (!('$ref' in response)) {
+      for (const value of Object.values(response.content ?? {})) {
+        value.schema = undefined;
+      }
+    }
   }
 }
 
@@ -69,33 +75,9 @@ function removeExamplesAndDescriptionsFromProperties(
   }
 }
 
-export function removeDocumentationFromOperation(
-  operation: OpenAPIV3.OperationObject
-) {
-  const copied: OpenAPIV3.OperationObject = JSON.parse(
-    JSON.stringify(operation)
-  );
-
-  if (copied.parameters) {
-    for (const param of copied.parameters) {
-      removeExamplesAndDescriptionsFromParameters(param);
-    }
-  }
-
-  removeExamplesAndDescriptionsFromProperties(copied.responses, ['responses']);
-  removeExamplesAndDescriptionsFromProperties(copied.requestBody, [
-    'requestBody',
-  ]);
-
-  return copied;
-}
-
-export function removeDocumentationFromResponses(
-  response: OpenAPIV3.ResponseObject
-) {
+export function prepareResponse(response: OpenAPIV3.ResponseObject) {
   const copied: OpenAPIV3.ResponseObject = JSON.parse(JSON.stringify(response));
 
   removeExamplesAndDescriptionsFromProperties(copied, []);
-
   return copied;
 }
