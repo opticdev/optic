@@ -18,8 +18,8 @@ export function denormalize<
   },
 >(parse: T): T {
   parse = {
+    ...parse,
     jsonLike: JSON.parse(JSON.stringify(parse.jsonLike)),
-    sourcemap: parse.sourcemap,
   } as T;
   for (const [pathKey, path] of Object.entries(parse.jsonLike.paths)) {
     if (path) {
