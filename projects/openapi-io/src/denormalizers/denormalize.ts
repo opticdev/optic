@@ -17,6 +17,10 @@ export function denormalize<
     sourcemap?: ParseOpenAPIResult['sourcemap'];
   },
 >(parse: T): T {
+  parse = {
+    jsonLike: JSON.parse(JSON.stringify(parse.jsonLike)),
+    sourcemap: parse.sourcemap,
+  } as T;
   for (const [pathKey, path] of Object.entries(parse.jsonLike.paths)) {
     if (path) {
       denormalizePaths(
