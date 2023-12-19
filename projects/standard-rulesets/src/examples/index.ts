@@ -15,6 +15,8 @@ import {
   requireValidResponseExamples,
 } from './requireValidExamples';
 
+type SpecVersion = '3.1.x' | '3.0.x';
+
 type YamlConfig = {
   exclude_operations_with_extension?: string;
   docs_link?: string;
@@ -66,13 +68,15 @@ type ExampleConstructor = {
   docsLink?: string;
   configureAjv?: (ajv: Ajv) => void;
   severity?: SeverityText;
+  spec_version?: SpecVersion;
 };
 
 const validateConfigSchema = ajv.compile(configSchema);
 
 export class ExamplesRuleset extends Ruleset {
   static async fromOpticConfig(
-    config: unknown
+    config: unknown,
+    { specVersion }: { specVersion?: SpecVersion } = {}
   ): Promise<ExamplesRuleset | string> {
     const result = validateConfigSchema(config);
 
@@ -86,6 +90,7 @@ export class ExamplesRuleset extends Ruleset {
     const validatedConfig = config as YamlConfig;
     const constructorConfig: ExampleConstructor = {
       ...validatedConfig,
+      spec_version: specVersion,
       severity: validatedConfig.severity,
     };
 
@@ -103,7 +108,8 @@ export class ExamplesRuleset extends Ruleset {
   }
 
   constructor(config: ExampleConstructor) {
-    const customAjv = defaultAjv();
+    const specVersion = config.spec_version ?? '3.1.x';
+    const customAjv = defaultAjv(specVersion);
     if (config.configureAjv) {
       config.configureAjv(customAjv);
     }

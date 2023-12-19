@@ -1,6 +1,70 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`examples ruleset invalid parameter example errors 1`] = `
+exports[`3.0.x examples ruleset examples should default to additional properties false ajv config will be strict on additional properties 1`] = `
+{
+  "error": "  - example  must NOT have additional property 'c'",
+  "pass": false,
+}
+`;
+
+exports[`3.0.x examples ruleset examples should default to additional properties false ajv config will not override a user defined value 1`] = `
+{
+  "pass": true,
+}
+`;
+
+exports[`3.0.x examples ruleset examples should default to additional properties false ajv config will work on additional properties with all of at different levels of nesting 1`] = `
+{
+  "error": "  - example /b must NOT have additional property 'l'",
+  "pass": false,
+}
+`;
+
+exports[`3.0.x examples ruleset exclusive maximum boolean 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200",
+        "kind": "response",
+      },
+      "value": {
+        "description": "ok",
+        "statusCode": "200",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "response body examples must match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users response 200",
+  },
+]
+`;
+
+exports[`3.0.x examples ruleset invalid parameter example errors 1`] = `
 [
   {
     "change": {
@@ -137,7 +201,7 @@ exports[`examples ruleset invalid parameter example errors 1`] = `
 ]
 `;
 
-exports[`examples ruleset invalid property example errors 1`] = `
+exports[`3.0.x examples ruleset invalid property example errors 1`] = `
 [
   {
     "change": {
@@ -334,7 +398,7 @@ exports[`examples ruleset invalid property example errors 1`] = `
 ]
 `;
 
-exports[`examples ruleset invalid request named example errors 1`] = `
+exports[`3.0.x examples ruleset invalid request named example errors 1`] = `
 [
   {
     "change": {
@@ -474,7 +538,7 @@ exports[`examples ruleset invalid request named example errors 1`] = `
 ]
 `;
 
-exports[`examples ruleset invalid request top level example errors 1`] = `
+exports[`3.0.x examples ruleset invalid request top level example errors 1`] = `
 [
   {
     "change": {
@@ -614,7 +678,7 @@ exports[`examples ruleset invalid request top level example errors 1`] = `
 ]
 `;
 
-exports[`examples ruleset invalid response named example errors 1`] = `
+exports[`3.0.x examples ruleset invalid response named example errors 1`] = `
 [
   {
     "change": {
@@ -759,7 +823,7 @@ exports[`examples ruleset invalid response named example errors 1`] = `
 ]
 `;
 
-exports[`examples ruleset invalid response top level example errors 1`] = `
+exports[`3.0.x examples ruleset invalid response top level example errors 1`] = `
 [
   {
     "change": {
@@ -904,7 +968,7 @@ exports[`examples ruleset invalid response top level example errors 1`] = `
 ]
 `;
 
-exports[`examples ruleset passing property example 1`] = `
+exports[`3.0.x examples ruleset passing property example 1`] = `
 [
   {
     "change": {
@@ -1104,29 +1168,1133 @@ exports[`examples ruleset passing property example 1`] = `
 ]
 `;
 
-exports[`examples should default to additional properties false ajv config will be strict on additional properties 1`] = `
+exports[`3.1.x examples ruleset examples should default to additional properties false ajv config will be strict on additional properties 1`] = `
 {
   "error": "  - example  must NOT have additional property 'c'",
   "pass": false,
 }
 `;
 
-exports[`examples should default to additional properties false ajv config will not override a user defined value 1`] = `
+exports[`3.1.x examples ruleset examples should default to additional properties false ajv config will not override a user defined value 1`] = `
 {
   "pass": true,
 }
 `;
 
-exports[`examples should default to additional properties false ajv config will work on additional properties with all of 1`] = `
+exports[`3.1.x examples ruleset examples should default to additional properties false ajv config will work on additional properties with all of 1`] = `
 {
   "error": "  - example  must NOT have additional property 'c'",
   "pass": false,
 }
 `;
 
-exports[`examples should default to additional properties false ajv config will work on additional properties with all of at different levels of nesting 1`] = `
+exports[`3.1.x examples ruleset examples should default to additional properties false ajv config will work on additional properties with all of at different levels of nesting 1`] = `
 {
   "error": "  - example /b must NOT have additional property 'l'",
   "pass": false,
 }
+`;
+
+exports[`3.1.x examples ruleset invalid parameter example errors 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "query": "invalidExample",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "invalidExample",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "query-parameter",
+      },
+      "value": {
+        "example": 123,
+        "in": "query",
+        "name": "invalidExample",
+        "schema": {
+          "type": "string",
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "query parameter 'invalidExample' example does not match the schema. 
+  - example  must be string ",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter examples must match schemas",
+    "passed": false,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users query parameter: invalidExample",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "query": "validExample",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "validExample",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/1",
+        "kind": "query-parameter",
+      },
+      "value": {
+        "example": "123",
+        "in": "query",
+        "name": "validExample",
+        "schema": {
+          "type": "string",
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter examples must match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users query parameter: validExample",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "query": "notSet",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "notSet",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/2",
+        "kind": "query-parameter",
+      },
+      "value": {
+        "in": "query",
+        "name": "notSet",
+        "schema": {
+          "type": "string",
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter examples must match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users query parameter: notSet",
+  },
+]
+`;
+
+exports[`3.1.x examples ruleset invalid property example errors 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": [
+            "wrong",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "wrong",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/wrong",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "example": 12345,
+          "type": "string",
+        },
+        "key": "wrong",
+        "required": false,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "'wrong' example does not match the schema. 
+  - example  must be string ",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property examples match schemas",
+    "passed": false,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users response 200 response body: application/json property wrong",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": [
+            "notSet",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "notSet",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/notSet",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "string",
+        },
+        "key": "notSet",
+        "required": false,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property examples match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users response 200 response body: application/json property notSet",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": [
+            "setAndCorrect",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "setAndCorrect",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/setAndCorrect",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "example": "abcdefg",
+          "type": "string",
+        },
+        "key": "setAndCorrect",
+        "required": false,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property examples match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users response 200 response body: application/json property setAndCorrect",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200",
+        "kind": "response",
+      },
+      "value": {
+        "description": "ok",
+        "statusCode": "200",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "response body examples must match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users response 200",
+  },
+]
+`;
+
+exports[`3.1.x examples ruleset invalid request named example errors 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "method": "post",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "post",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/post/requestBody/content/application~1json",
+        "kind": "body",
+      },
+      "value": {
+        "contentType": "application/json",
+        "flatSchema": {
+          "type": "object",
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "the example named 'main' does not match the schema. 
+  - example  must have required property 'world' ",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request body examples must match schema",
+    "passed": false,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "POST /api/users request body: application/json",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [
+            "hello",
+          ],
+          "method": "post",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "post",
+          "application/json",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/post/requestBody/content/application~1json/schema/properties/hello",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "string",
+        },
+        "key": "hello",
+        "required": true,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property examples match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "POST /api/users request body: application/json property: hello",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [
+            "world",
+          ],
+          "method": "post",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "post",
+          "application/json",
+          "world",
+        ],
+        "jsonPath": "/paths/~1api~1users/post/requestBody/content/application~1json/schema/properties/world",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "number",
+        },
+        "key": "world",
+        "required": true,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property examples match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "POST /api/users request body: application/json property: world",
+  },
+]
+`;
+
+exports[`3.1.x examples ruleset invalid request top level example errors 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "method": "post",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "post",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/post/requestBody/content/application~1json",
+        "kind": "body",
+      },
+      "value": {
+        "contentType": "application/json",
+        "flatSchema": {
+          "type": "object",
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "the example does not match the schema. 
+  - example  must have required property 'world' ",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request body examples must match schema",
+    "passed": false,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "POST /api/users request body: application/json",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [
+            "hello",
+          ],
+          "method": "post",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "post",
+          "application/json",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/post/requestBody/content/application~1json/schema/properties/hello",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "string",
+        },
+        "key": "hello",
+        "required": true,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property examples match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "POST /api/users request body: application/json property: hello",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [
+            "world",
+          ],
+          "method": "post",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "post",
+          "application/json",
+          "world",
+        ],
+        "jsonPath": "/paths/~1api~1users/post/requestBody/content/application~1json/schema/properties/world",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "number",
+        },
+        "key": "world",
+        "required": true,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property examples match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "POST /api/users request body: application/json property: world",
+  },
+]
+`;
+
+exports[`3.1.x examples ruleset invalid response named example errors 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": [
+            "hello",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/hello",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "string",
+        },
+        "key": "hello",
+        "required": true,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property examples match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users response 200 response body: application/json property hello",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": [
+            "world",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "world",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/world",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "number",
+        },
+        "key": "world",
+        "required": true,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property examples match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users response 200 response body: application/json property world",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200",
+        "kind": "response",
+      },
+      "value": {
+        "description": "ok",
+        "statusCode": "200",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "the example named 'main' does not match the schema. 
+  - example  must have required property 'world' ",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "response body examples must match schemas",
+    "passed": false,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users response 200",
+  },
+]
+`;
+
+exports[`3.1.x examples ruleset invalid response top level example errors 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": [
+            "hello",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/hello",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "string",
+        },
+        "key": "hello",
+        "required": true,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property examples match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users response 200 response body: application/json property hello",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": [
+            "world",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "world",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/world",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "number",
+        },
+        "key": "world",
+        "required": true,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property examples match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users response 200 response body: application/json property world",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200",
+        "kind": "response",
+      },
+      "value": {
+        "description": "ok",
+        "statusCode": "200",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "the example does not match the schema. 
+  - example  must have required property 'world' ",
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "response body examples must match schemas",
+    "passed": false,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users response 200",
+  },
+]
+`;
+
+exports[`3.1.x examples ruleset passing property example 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": [
+            "correctObj",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "correctObj",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/correctObj",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "example": {
+            "name": "hello",
+          },
+          "type": "object",
+        },
+        "key": "correctObj",
+        "required": false,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property examples match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users response 200 response body: application/json property correctObj",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": [
+            "correctObj",
+            "name",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "correctObj",
+          "name",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/correctObj/properties/name",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "string",
+        },
+        "key": "name",
+        "required": true,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property examples match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users response 200 response body: application/json property correctObj/name",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "body": {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": [
+            "correctStr",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "correctStr",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/correctStr",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "example": "abcdefg",
+          "type": "string",
+        },
+        "key": "correctStr",
+        "required": false,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property examples match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users response 200 response body: application/json property correctStr",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inResponse": {
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200",
+        "kind": "response",
+      },
+      "value": {
+        "description": "ok",
+        "statusCode": "200",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "response body examples must match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users response 200",
+  },
+]
 `;
