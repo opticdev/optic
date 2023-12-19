@@ -168,7 +168,7 @@ export class LintGpt extends ExternalRuleBase {
         response.bodies.forEach((body) => {
           body.fields.forEach((property) => {
             if (property.after) {
-              const propertyLocation = `${method} ${path} ${response.statusCode} response property. Name: \`${property.after.value.key}\`. Required? \`${property.after.value.required}\``;
+              const propertyLocation = `Name: \`${property.after.value.key}\`. Required? \`${property.after.value.required}\``;
               const didChange =
                 property.change?.changeType === ChangeType.Changed;
               const wasRemoved =

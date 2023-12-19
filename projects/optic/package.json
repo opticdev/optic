@@ -2,7 +2,7 @@
   "name": "@useoptic/optic",
   "license": "MIT",
   "packageManager": "yarn@4.0.2",
-  "version": "0.53.10-4",
+  "version": "0.53.11",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
