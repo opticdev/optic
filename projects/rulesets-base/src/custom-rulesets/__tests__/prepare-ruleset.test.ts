@@ -20,32 +20,38 @@ describe('prepareRulesets', () => {
       'local-fake-custom-ruleset.ts'
     );
 
-    const result = await prepareRulesets({
-      ruleset: [
-        { name: 'breaking-changes', config: {} },
-        { name: '@team/custom-ruleset', config: { required_on: 'always' } },
-        { name: localRulesetPath, config: { required_on: 'always' } },
-        { name: 'missing-ruleset', config: {} },
-      ],
-      hostedRulesets: {
-        '@team/custom-ruleset': {
-          url: 'https://some-url.com',
-          uploaded_at: '123',
+    const result = await prepareRulesets(
+      {
+        ruleset: [
+          { name: 'breaking-changes', config: {} },
+          { name: '@team/custom-ruleset', config: { required_on: 'always' } },
+          { name: localRulesetPath, config: { required_on: 'always' } },
+          { name: 'missing-ruleset', config: {} },
+        ],
+        hostedRulesets: {
+          '@team/custom-ruleset': {
+            url: 'https://some-url.com',
+            uploaded_at: '123',
+          },
+        },
+        standardRulesets: {
+          'breaking-changes': {
+            fromOpticConfig: (() =>
+              new Ruleset({
+                name: 'asd',
+                rules: [],
+              })) as any,
+          },
+        },
+        localRulesets: {
+          [localRulesetPath]: localRulesetPath,
         },
       },
-      standardRulesets: {
-        'breaking-changes': {
-          fromOpticConfig: (() =>
-            new Ruleset({
-              name: 'asd',
-              rules: [],
-            })) as any,
-        },
-      },
-      localRulesets: {
-        [localRulesetPath]: localRulesetPath,
-      },
-    });
+      {
+        client: '',
+        specVersion: '3.1.x',
+      }
+    );
 
     expect(result.rulesets.length).toBe(3);
     expect(result.warnings.length).toBe(1);
@@ -84,7 +90,10 @@ describe('prepareRulesets', () => {
       localRulesets: {},
     };
 
-    const result = await prepareRulesets(payload);
+    const result = await prepareRulesets(payload, {
+      client: '',
+      specVersion: '3.1.x',
+    });
 
     expect(result.rulesets.length).toBe(1);
     expect(result.warnings.length).toBe(2);

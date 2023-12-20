@@ -2,7 +2,7 @@
   "name": "@useoptic/standard-rulesets",
   "license": "MIT",
   "packageManager": "yarn@4.0.2",
-  "version": "0.53.11",
+  "version": "0.53.12",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -19,6 +19,7 @@
     "@useoptic/openapi-utilities": "workspace:*",
     "@useoptic/rulesets-base": "workspace:*",
     "ajv": "^8.6.0",
+    "ajv-draft-04": "^1.0.0",
     "ajv-formats": "~2.1.0",
     "json-stable-stringify": "^1.1.0",
     "object-hash": "^3.0.0",

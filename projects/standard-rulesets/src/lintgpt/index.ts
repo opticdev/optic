@@ -21,10 +21,7 @@ import { OpenAPIFactNodes } from '@useoptic/rulesets-base/build/rule-runner/rule
 import { OpenAPIV3 } from 'openapi-types';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import stableStringify from 'json-stable-stringify';
-import {
-  removeDocumentationFromOperation,
-  removeDocumentationFromResponses,
-} from './prepare-openapi';
+import { prepareOperation, prepareResponse } from './prepare-openapi';
 
 export type LintGptConfig = {
   [key: string]: {
@@ -67,7 +64,7 @@ const validateConfigSchema = ajv.compile(configSchema);
 export class LintGpt extends ExternalRuleBase {
   static async fromOpticConfig(
     config: unknown,
-    client: LintGptClient
+    { client }: { client: LintGptClient }
   ): Promise<LintGpt | string> {
     const result = validateConfigSchema(config);
 
@@ -151,11 +148,9 @@ export class LintGpt extends ExternalRuleBase {
           jsonPath,
           value: wasRemoved
             ? undefined
-            : removeDocumentationFromOperation(
-                jsonPointerHelpers.get(inputs.toSpec, jsonPath)
-              ),
+            : prepareOperation(jsonPointerHelpers.get(inputs.toSpec, jsonPath)),
           before: didChange
-            ? removeDocumentationFromOperation(
+            ? prepareOperation(
                 jsonPointerHelpers.get(
                   inputs.fromSpec,
                   endpoint.before?.location.jsonPath!
@@ -204,11 +199,9 @@ export class LintGpt extends ExternalRuleBase {
           jsonPath,
           value: wasRemoved
             ? undefined
-            : removeDocumentationFromResponses(
-                jsonPointerHelpers.get(inputs.toSpec, jsonPath)
-              ),
+            : prepareResponse(jsonPointerHelpers.get(inputs.toSpec, jsonPath)),
           before: didChange
-            ? removeDocumentationFromResponses(
+            ? prepareResponse(
                 jsonPointerHelpers.get(
                   inputs.fromSpec,
                   response.before?.location.jsonPath!

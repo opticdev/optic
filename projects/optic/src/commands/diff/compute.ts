@@ -9,6 +9,7 @@ import { ParseResult, parseOpticRef } from '../../utils/spec-loaders';
 import { OpticCliConfig } from '../../config';
 import { trackEvent } from '../../segment';
 import { logger } from '../../logger';
+import { checkOpenAPIVersion } from '@useoptic/openapi-io';
 
 let generateContext: (file: string) => any = () => ({});
 
@@ -32,6 +33,9 @@ export async function compute(
         ? baseFile.jsonLike[OPTIC_STANDARD_KEY]
         : headFile.jsonLike[OPTIC_STANDARD_KEY],
       config,
+      specVersion: headFile.isEmptySpec
+        ? checkOpenAPIVersion(baseFile.jsonLike)
+        : checkOpenAPIVersion(headFile.jsonLike),
     },
     options.check
   );

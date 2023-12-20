@@ -2687,53 +2687,53 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry-internal/tracing@npm:7.87.0":
-  version: 7.87.0
-  resolution: "@sentry-internal/tracing@npm:7.87.0"
+"@sentry-internal/tracing@npm:7.88.0":
+  version: 7.88.0
+  resolution: "@sentry-internal/tracing@npm:7.88.0"
   dependencies:
-    "@sentry/core": "npm:7.87.0"
-    "@sentry/types": "npm:7.87.0"
-    "@sentry/utils": "npm:7.87.0"
-  checksum: 32b1b14f271c87a159993a568e9a39b9fe5b76c16931efc546b35accbb6dbcfae05d79ac529d69fe46fc94e467a62db660bff5cac1a917b5690cd5df322b1c0f
+    "@sentry/core": "npm:7.88.0"
+    "@sentry/types": "npm:7.88.0"
+    "@sentry/utils": "npm:7.88.0"
+  checksum: 85b99ccca130b9f9ca5b040f7b8f35bd5fd3f191f7fa25680910016c9d886bb0388aab1265c282d53153887aa2185b243dc2931710d96357e57ca4bd6f7cc798
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:7.87.0":
-  version: 7.87.0
-  resolution: "@sentry/core@npm:7.87.0"
+"@sentry/core@npm:7.88.0":
+  version: 7.88.0
+  resolution: "@sentry/core@npm:7.88.0"
   dependencies:
-    "@sentry/types": "npm:7.87.0"
-    "@sentry/utils": "npm:7.87.0"
-  checksum: a5db1e3a74cdf0f248c19b89cd037033b854e727183c5691516a2fd1970d53ce32db0db8e7a024503262e1d177ca1aec5de32293d8f82765eb22d5addd25aa83
+    "@sentry/types": "npm:7.88.0"
+    "@sentry/utils": "npm:7.88.0"
+  checksum: 7f5de07aaf550e163aa785051db47c92147fd36b41b4691893859ef645b756c722aeb25f5b5f40c9e968283dd46f44f205b7705c4c031f39cff6047fcc34161c
   languageName: node
   linkType: hard
 
 "@sentry/node@npm:^7.74.0":
-  version: 7.87.0
-  resolution: "@sentry/node@npm:7.87.0"
+  version: 7.88.0
+  resolution: "@sentry/node@npm:7.88.0"
   dependencies:
-    "@sentry-internal/tracing": "npm:7.87.0"
-    "@sentry/core": "npm:7.87.0"
-    "@sentry/types": "npm:7.87.0"
-    "@sentry/utils": "npm:7.87.0"
+    "@sentry-internal/tracing": "npm:7.88.0"
+    "@sentry/core": "npm:7.88.0"
+    "@sentry/types": "npm:7.88.0"
+    "@sentry/utils": "npm:7.88.0"
     https-proxy-agent: "npm:^5.0.0"
-  checksum: ab1176a986ffaf583edc224589d61414b2955528efc30cd8f37e6a5b1ad9441a745e7c9e765769447e0d76021fdedc144d5ab81bdea07644b1298ff78a8c3b1b
+  checksum: 356ce0638f36f95d0e75709cd66921b4324aae46e38c8d4cc4cb69d9457f4108c3a788f1bf21b36c9d12aedf78ffd5cdf037d5da689e5ae6971123be1a17b6a8
   languageName: node
   linkType: hard
 
-"@sentry/types@npm:7.87.0":
-  version: 7.87.0
-  resolution: "@sentry/types@npm:7.87.0"
-  checksum: 63224eb59d9c42b532e308b5dd100a7f58f21a9972897acb1522524ca1f9aa9ea7c9d36df7c24df07f67c330505f270da3e40c825e45852ddca44d62bf8a7f09
+"@sentry/types@npm:7.88.0":
+  version: 7.88.0
+  resolution: "@sentry/types@npm:7.88.0"
+  checksum: 921354cfc12db142f1024e5a8a33ccf70f19065a4fdea680b2a0c0af1acf61bb5ba3eb7042e388927e2e2df70b649d51cb103efb9b416e4005dc5ba823b2344d
   languageName: node
   linkType: hard
 
-"@sentry/utils@npm:7.87.0":
-  version: 7.87.0
-  resolution: "@sentry/utils@npm:7.87.0"
+"@sentry/utils@npm:7.88.0":
+  version: 7.88.0
+  resolution: "@sentry/utils@npm:7.88.0"
   dependencies:
-    "@sentry/types": "npm:7.87.0"
-  checksum: 4ff76375d9b7e1a04a0029cbaba6a83667735fcf6703f58c11b18008bdf81b3b82501c704388ab45a1006f72b3f0b133184645b285f2e3582e288d2d81dd56c9
+    "@sentry/types": "npm:7.88.0"
+  checksum: 7a0b631d6d1427d711626b8cee21b9c9c23d19ba7f4139c5a5475e795ae10b43e4983df8482284b99ff7a75ff34620f55916fba49714548aa6ebfa1b0bbbd605
   languageName: node
   linkType: hard
 
@@ -3451,11 +3451,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:^20.2.5":
-  version: 20.10.4
-  resolution: "@types/node@npm:20.10.4"
+  version: 20.10.5
+  resolution: "@types/node@npm:20.10.5"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 2c8b70cba731eb2ae3ae046daa74903bfcbb0e7b9196da767e5895054f6d252296ae7a04fb1dbbcb53bb004c4c658c05eaea2731bc9e2dd9e08f7e88d672f563
+  checksum: be30609aae0bfe492097815f166ccc07f465220cb604647fa4e5ec05a1d16c012a41b82b5f11ecfe2485cbb479d4d20384b95b809ca0bcff6d94d5bbafa645bb
   languageName: node
   linkType: hard
 
@@ -3906,6 +3906,7 @@ __metadata:
     "@useoptic/openapi-utilities": "workspace:*"
     "@useoptic/rulesets-base": "workspace:*"
     ajv: "npm:^8.6.0"
+    ajv-draft-04: "npm:^1.0.0"
     ajv-formats: "npm:~2.1.0"
     babel-jest: "npm:^29.3.1"
     jest: "npm:^29.3.1"
@@ -4020,7 +4021,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv-draft-04@npm:~1.0.0":
+"ajv-draft-04@npm:^1.0.0, ajv-draft-04@npm:~1.0.0":
   version: 1.0.0
   resolution: "ajv-draft-04@npm:1.0.0"
   peerDependencies:
@@ -6271,8 +6272,8 @@ __metadata:
   linkType: hard
 
 "fastify@npm:^4.17.0":
-  version: 4.25.0
-  resolution: "fastify@npm:4.25.0"
+  version: 4.25.1
+  resolution: "fastify@npm:4.25.1"
   dependencies:
     "@fastify/ajv-compiler": "npm:^3.5.0"
     "@fastify/error": "npm:^3.4.0"
@@ -6290,7 +6291,7 @@ __metadata:
     secure-json-parse: "npm:^2.7.0"
     semver: "npm:^7.5.4"
     toad-cache: "npm:^3.3.0"
-  checksum: 7a6d2ce565d0c959c55ab13c84343963139bf5805842ffd38e65909b680faa20002c66d0ee1526de6ee050ecd739b0f5a0120d9a695e4a077f18f2ff72014a37
+  checksum: a5afe8abf33ce8cee35c1993a21a3fb56f097ed30c12d8d2cb8bdd54b31c9f41e1e241a77343fea6159f5f528f65745456f901a685dc11b07b3fecb0393dd973
   languageName: node
   linkType: hard
 
@@ -9438,8 +9439,8 @@ __metadata:
   linkType: hard
 
 "openai@npm:^4.7.1":
-  version: 4.21.0
-  resolution: "openai@npm:4.21.0"
+  version: 4.23.0
+  resolution: "openai@npm:4.23.0"
   dependencies:
     "@types/node": "npm:^18.11.18"
     "@types/node-fetch": "npm:^2.6.4"
@@ -9452,7 +9453,7 @@ __metadata:
     web-streams-polyfill: "npm:^3.2.1"
   bin:
     openai: bin/cli
-  checksum: b744461c3458f8297dc606851c12ceadcc7939ba0d4f0da45b3a07fe0d9a6fbca6bdfa332bacb8d883c66239a1213c5d2dde02b14579d7d7971c9a3f9fc36d17
+  checksum: 571f4d86619fb5820c42c43093e112cb8162ff917e56179aff4364a7e45eb29e7aa436b4a019f781cb46bf7027d453ca6fe3f0f5656f63306ac59b671eba5c99
   languageName: node
   linkType: hard
 

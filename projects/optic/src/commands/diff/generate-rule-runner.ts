@@ -10,6 +10,7 @@ import {
 import { loadCliConfig } from '../../config';
 import { logger } from '../../logger';
 import chalk from 'chalk';
+import { SupportedOpenAPIVersions } from '@useoptic/openapi-io';
 
 const injectedRulesets: (Ruleset | ExternalRule)[] = [];
 
@@ -58,6 +59,7 @@ export const generateRuleRunner = async (
     specRuleset?: string;
     rulesetArg?: string;
     config: OpticCliConfig;
+    specVersion: SupportedOpenAPIVersions;
   },
   checksEnabled: boolean
 ): Promise<{
@@ -132,7 +134,10 @@ export const generateRuleRunner = async (
         standardRulesets: StandardRulesets,
         hostedRulesets,
       },
-      options.config.client
+      {
+        client: options.config.client,
+        specVersion: options.specVersion,
+      }
     );
 
     rulesets.push(...results.rulesets);

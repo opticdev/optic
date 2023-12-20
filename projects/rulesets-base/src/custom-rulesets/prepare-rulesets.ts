@@ -22,7 +22,10 @@ export type RulesetPayload = {
     {
       fromOpticConfig: (
         config: unknown,
-        client?: any
+        options: {
+          client: any;
+          specVersion: '3.1.x' | '3.0.x';
+        }
       ) => Promise<Ruleset | ExternalRule | string>;
     }
   >;
@@ -35,7 +38,10 @@ export type PrepareRulesetsResult = {
 
 export async function prepareRulesets(
   payload: RulesetPayload,
-  client?: any
+  options: {
+    client: any;
+    specVersion: '3.1.x' | '3.0.x';
+  }
 ): Promise<PrepareRulesetsResult> {
   const StandardRulesets = payload.standardRulesets;
   const rulesets: (Ruleset | ExternalRule)[] = [];
@@ -49,7 +55,7 @@ export async function prepareRulesets(
       try {
         instanceOrErrorMsg = await RulesetClass.fromOpticConfig(
           ruleset.config,
-          client
+          { client: options.client, specVersion: options.specVersion }
         );
       } catch (e) {
         console.error(e);

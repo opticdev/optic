@@ -1,11 +1,8 @@
 import { test, expect } from '@jest/globals';
-import {
-  removeDocumentationFromOperation,
-  removeDocumentationFromResponses,
-} from '../prepare-openapi';
+import { prepareOperation, prepareResponse } from '../prepare-openapi';
 
-test('can reduce size of operations by deleting descriptions + examples ', () => {
-  const output = removeDocumentationFromOperation({
+test('can reduce size of operations by removing nested schemas ', () => {
+  const output = prepareOperation({
     description: 'delete all the orders for this user',
     parameters: [
       {
@@ -63,7 +60,7 @@ test('can reduce size of operations by deleting descriptions + examples ', () =>
 });
 
 test('can reduce size of responses by deleting descriptions + examples ', () => {
-  const output = removeDocumentationFromResponses({
+  const output = prepareResponse({
     description: 'The response',
     content: {
       'application/json': {
