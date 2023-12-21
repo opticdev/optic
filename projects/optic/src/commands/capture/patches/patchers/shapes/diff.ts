@@ -197,6 +197,7 @@ export class ShapeDiffTraverser {
     let oneOfBranchOther: [string, ErrorObject][] = [];
 
     for (let validationError of validationErrors) {
+      console.log(validationError);
       if (validationError.keyword === JsonSchemaKnownKeyword.oneOf) {
         let schemaPath = validationError.schemaPath.substring(1); // valid json pointer
         oneOfs.set(schemaPath, validationError);

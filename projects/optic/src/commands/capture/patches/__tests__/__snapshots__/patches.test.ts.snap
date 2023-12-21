@@ -1,5 +1,230 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`generateEndpointSpecPatches OAS version 3.0.1 allOf matching interaction 1`] = `
+[
+  {
+    "description": "update response body: add property name",
+    "diff": {
+      "description": "'name' is not documented",
+      "example": "me",
+      "instancePath": "/name",
+      "key": "name",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/allOf/0/properties",
+      "propertyExamplePath": "/name",
+      "propertyPath": "/allOf/0/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "op": "add",
+        "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/allOf/0/required/-",
+        "value": "name",
+      },
+      {
+        "op": "add",
+        "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/allOf/0/properties/name",
+        "value": {
+          "type": "string",
+        },
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"status":"ok","name":"me","age":50}",
+          "contentType": "application/json",
+          "size": 36,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property status",
+    "diff": {
+      "description": "'status' is not documented",
+      "example": "ok",
+      "instancePath": "/status",
+      "key": "status",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/allOf/1/properties",
+      "propertyExamplePath": "/status",
+      "propertyPath": "/allOf/1/properties/status",
+    },
+    "groupedOperations": [
+      {
+        "extra": "same",
+        "op": "add",
+        "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/allOf/1/required",
+        "value": [
+          "status",
+        ],
+      },
+      {
+        "op": "add",
+        "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/allOf/1/properties/status",
+        "value": {
+          "type": "string",
+        },
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"status":"ok","name":"me","age":50}",
+          "contentType": "application/json",
+          "size": 36,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property age",
+    "diff": {
+      "description": "'age' is not documented",
+      "example": 50,
+      "instancePath": "/age",
+      "key": "age",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/allOf/1/properties",
+      "propertyExamplePath": "/age",
+      "propertyPath": "/allOf/1/properties/age",
+    },
+    "groupedOperations": [
+      {
+        "op": "add",
+        "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/allOf/1/required/-",
+        "value": "age",
+      },
+      {
+        "op": "add",
+        "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/allOf/1/properties/age",
+        "value": {
+          "type": "number",
+        },
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"status":"ok","name":"me","age":50}",
+          "contentType": "application/json",
+          "size": 36,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.0.1 allOf matching interaction 2`] = `
+{
+  "info": {},
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "properties": {
+                        "age": {
+                          "type": "number",
+                        },
+                        "name": {
+                          "type": "string",
+                        },
+                        "status": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "status",
+                        "name",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "properties": {
+                        "age": {
+                          "type": "number",
+                        },
+                        "name": {
+                          "type": "string",
+                        },
+                        "status": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "status",
+                        "age",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
 exports[`generateEndpointSpecPatches OAS version 3.0.1 allOf with extra keys in interaction 1`] = `
 [
   {
@@ -6594,6 +6819,231 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 undocumented response bod
               },
             },
             "description": "200 response",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 allOf matching interaction 1`] = `
+[
+  {
+    "description": "update response body: add property name",
+    "diff": {
+      "description": "'name' is not documented",
+      "example": "me",
+      "instancePath": "/name",
+      "key": "name",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/allOf/0/properties",
+      "propertyExamplePath": "/name",
+      "propertyPath": "/allOf/0/properties/name",
+    },
+    "groupedOperations": [
+      {
+        "op": "add",
+        "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/allOf/0/required/-",
+        "value": "name",
+      },
+      {
+        "op": "add",
+        "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/allOf/0/properties/name",
+        "value": {
+          "type": "string",
+        },
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"status":"ok","name":"me","age":50}",
+          "contentType": "application/json",
+          "size": 36,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property status",
+    "diff": {
+      "description": "'status' is not documented",
+      "example": "ok",
+      "instancePath": "/status",
+      "key": "status",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/allOf/1/properties",
+      "propertyExamplePath": "/status",
+      "propertyPath": "/allOf/1/properties/status",
+    },
+    "groupedOperations": [
+      {
+        "extra": "same",
+        "op": "add",
+        "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/allOf/1/required",
+        "value": [
+          "status",
+        ],
+      },
+      {
+        "op": "add",
+        "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/allOf/1/properties/status",
+        "value": {
+          "type": "string",
+        },
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"status":"ok","name":"me","age":50}",
+          "contentType": "application/json",
+          "size": 36,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+  {
+    "description": "update response body: add property age",
+    "diff": {
+      "description": "'age' is not documented",
+      "example": 50,
+      "instancePath": "/age",
+      "key": "age",
+      "keyword": "additionalProperties",
+      "kind": "AdditionalProperty",
+      "parentObjectPath": "/allOf/1/properties",
+      "propertyExamplePath": "/age",
+      "propertyPath": "/allOf/1/properties/age",
+    },
+    "groupedOperations": [
+      {
+        "op": "add",
+        "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/allOf/1/required/-",
+        "value": "age",
+      },
+      {
+        "op": "add",
+        "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema/allOf/1/properties/age",
+        "value": {
+          "type": "number",
+        },
+      },
+    ],
+    "impact": [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+    "interaction": {
+      "request": {
+        "body": null,
+        "headers": [],
+        "host": "localhost:3030",
+        "method": "post",
+        "path": "/api/animals",
+        "query": [],
+      },
+      "response": {
+        "body": {
+          "body": "{"status":"ok","name":"me","age":50}",
+          "contentType": "application/json",
+          "size": 36,
+        },
+        "headers": [],
+        "statusCode": "200",
+      },
+    },
+    "path": "/paths/~1api~1animals/post/responses/200/content/application~1json/schema",
+  },
+]
+`;
+
+exports[`generateEndpointSpecPatches OAS version 3.1.0 allOf matching interaction 2`] = `
+{
+  "info": {},
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/animals": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "properties": {
+                        "age": {
+                          "type": "number",
+                        },
+                        "name": {
+                          "type": "string",
+                        },
+                        "status": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "status",
+                        "name",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "properties": {
+                        "age": {
+                          "type": "number",
+                        },
+                        "name": {
+                          "type": "string",
+                        },
+                        "status": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "status",
+                        "age",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              },
+            },
           },
         },
       },

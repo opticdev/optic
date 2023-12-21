@@ -633,6 +633,62 @@ describe('generateEndpointSpecPatches', () => {
     });
 
     describe('allOf', () => {
+      test.only('matching interaction', async () => {
+        specHolder.spec.paths['/api/animals'].post.responses = {
+          '200': {
+            content: {
+              'application/json': {
+                schema: {
+                  allOf: [
+                    {
+                      type: 'object',
+                      properties: {
+                        status: {
+                          type: 'string',
+                        },
+                        age: {
+                          type: 'number',
+                        },
+                      },
+                      required: ['status'],
+                    },
+                    {
+                      type: 'object',
+                      properties: {
+                        name: {
+                          type: 'string',
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        };
+
+        const interaction = makeInteraction(
+          { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+          {
+            responseBody: { status: 'ok', name: 'me', age: 50 },
+          }
+        );
+
+        const patches = await AT.collect(
+          generateEndpointSpecPatches(
+            GenerateInteractions([interaction]),
+            specHolder,
+            {
+              method: 'post',
+              path: '/api/animals',
+            }
+          )
+        );
+
+        expect(patches).toMatchSnapshot();
+        expect(specHolder.spec).toMatchSnapshot();
+      });
+
       test('with extra keys in interaction', async () => {
         specHolder.spec.paths['/api/animals'].post.responses = {
           '200': {
