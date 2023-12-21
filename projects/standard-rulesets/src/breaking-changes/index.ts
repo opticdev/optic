@@ -35,7 +35,7 @@ import { preventRequestExpandingInUnionTypes } from './preventRequestExpandingWi
 import { preventResponseNarrowingInUnionTypes } from './preventResponseNarrowingWithUnionType';
 
 type YamlConfig = {
-  exclude_operations_with_extension?: string;
+  exclude_operations_with_extension?: string | string[];
   skip_when_major_version_changes?: boolean;
   docs_link?: string;
   severity?: SeverityText;
@@ -107,8 +107,11 @@ export class BreakingChangesRuleset extends Ruleset<Rule[]> {
             }
           );
         } else {
-          const extension = validatedConfig.exclude_operations_with_extension;
-          return (context.operation.raw as any)[extension] !== true;
+          return (
+            (context.operation.raw as any)[
+              validatedConfig.exclude_operations_with_extension!
+            ] !== true
+          );
         }
       }
 

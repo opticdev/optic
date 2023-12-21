@@ -18,7 +18,7 @@ import {
 type SpecVersion = '3.1.x' | '3.0.x';
 
 type YamlConfig = {
-  exclude_operations_with_extension?: string;
+  exclude_operations_with_extension?: string | string[];
   docs_link?: string;
   require_request_examples?: boolean;
   require_response_examples?: boolean;
@@ -32,7 +32,7 @@ const configSchema = {
   type: 'object',
   properties: {
     exclude_operations_with_extension: {
-      type: 'string',
+      oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }],
     },
     severity: {
       type: 'string',
@@ -58,7 +58,6 @@ const configSchema = {
 };
 
 type ExampleConstructor = {
-  exclude_operations_with_extension?: string;
   docs_link?: string;
   require_request_examples?: boolean;
   require_response_examples?: boolean;
@@ -95,9 +94,16 @@ export class ExamplesRuleset extends Ruleset {
     };
 
     if (validatedConfig.exclude_operations_with_extension !== undefined) {
-      const extension = validatedConfig.exclude_operations_with_extension;
       constructorConfig.matches = (context) =>
-        (context.operation.raw as any)[extension] !== true;
+        Array.isArray(validatedConfig.exclude_operations_with_extension)
+          ? validatedConfig.exclude_operations_with_extension.some(
+              (extension) => {
+                return (context.operation.raw as any)[extension] !== true;
+              }
+            )
+          : (context.operation.raw as any)[
+              validatedConfig.exclude_operations_with_extension!
+            ] !== true;
     }
 
     if (validatedConfig.docs_link !== undefined) {
