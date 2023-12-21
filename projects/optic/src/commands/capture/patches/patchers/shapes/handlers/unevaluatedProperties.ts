@@ -59,6 +59,7 @@ export function* unevaluatedPropertiesDiffs(
 
   if (!pathToAllofVariant) {
     // This could happen if the allOf variant has a primitive type - in this case we surface that this is unpatchable and let the user resolve this
+    // Or if a user sets unevalutedProperties to their schema, we don't know how to handle if unless there's an allOf
     const schemaPath = validationError.schemaPath.substring(1);
     yield {
       validationError,
