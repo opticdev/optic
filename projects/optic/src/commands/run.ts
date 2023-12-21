@@ -125,13 +125,10 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
       '-i, --ignore <glob_pattern,...>',
       'Glob patterns matching specifications to ignore'
     )
-    .addOption(
-      new Option(
-        '-I, --include-git-ignored <bool>',
-        'Include specifications matched in .gitignore'
-      )
-        .choices(['true', 'false'])
-        .default('false')
+    .option(
+      '-I, --include-git-ignored',
+      'Include specifications matched in .gitignore',
+      false
     )
     .addOption(
       new Option(
