@@ -767,6 +767,10 @@ describe('generateEndpointSpecPatches', () => {
                         name: {
                           type: 'string',
                         },
+                        asda: {
+                          type: 'object',
+                          properties: {},
+                        },
                       },
                     },
                   ],
@@ -779,7 +783,76 @@ describe('generateEndpointSpecPatches', () => {
         const interaction = makeInteraction(
           { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
           {
-            responseBody: { status: 'ok', name: 'me', age: 50 },
+            responseBody: {
+              status: 'ok',
+              name: 'me',
+              age: 50,
+              asda: { as: 12 },
+            },
+          }
+        );
+
+        const patches = await AT.collect(
+          generateEndpointSpecPatches(
+            GenerateInteractions([interaction]),
+            specHolder,
+            {
+              method: 'post',
+              path: '/api/animals',
+            }
+          )
+        );
+
+        expect(patches).toMatchSnapshot();
+        expect(specHolder.spec).toMatchSnapshot();
+      });
+
+      test('allOf in a property', async () => {
+        specHolder.spec.paths['/api/animals'].post.responses = {
+          '200': {
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    data: {
+                      allOf: [
+                        {
+                          type: 'object',
+                          properties: {
+                            status: {
+                              type: 'string',
+                            },
+                          },
+                          required: ['status'],
+                        },
+                        {
+                          type: 'object',
+                          properties: {
+                            name: {
+                              type: 'string',
+                            },
+                            asda: {
+                              type: 'object',
+                              properties: {},
+                            },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        };
+
+        const interaction = makeInteraction(
+          { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+          {
+            responseBody: {
+              data: { status: 'ok', name: 'me', age: 50, asda: { as: 12 } },
+            },
           }
         );
 

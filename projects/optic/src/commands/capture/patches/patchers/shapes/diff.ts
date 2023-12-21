@@ -14,6 +14,7 @@ import { requiredKeywordDiffs } from './handlers/required';
 import { typeKeywordDiffs } from './handlers/type';
 import { enumKeywordDiffs } from './handlers/enum';
 import { CapturedInteraction } from '../../../sources/captured-interactions';
+import { unevaluatedPropertiesDiffs } from './handlers/unevaluatedProperties';
 
 export function diffBodyBySchema(
   body: Body,
@@ -42,12 +43,22 @@ function* diffVisitors(
   {
     specJsonPath,
     interaction,
+    schema,
   }: {
     specJsonPath: string;
     interaction: CapturedInteraction;
+    schema: SchemaObject;
   }
 ): IterableIterator<ShapeDiffResult | UnpatchableDiff> {
   switch (validationError.keyword) {
+    case JsonSchemaKnownKeyword.unevaluatedProperties:
+      yield* unevaluatedPropertiesDiffs(validationError, example, {
+        specJsonPath,
+        interaction,
+        schema,
+      });
+      break;
+
     case JsonSchemaKnownKeyword.additionalProperties:
       yield* additionalPropertiesDiffs(validationError, example);
       break;
@@ -148,6 +159,7 @@ export class ShapeDiffTraverser {
   private bodyValue?: any;
   private specJsonPath: string;
   private interaction: CapturedInteraction;
+  private schema?: SchemaObject;
 
   constructor({
     specJsonPath,
@@ -172,6 +184,7 @@ export class ShapeDiffTraverser {
     schema: SchemaObject
   ): Result<void, SchemaCompilationError> {
     this.bodyValue = bodyValue;
+    this.schema = schema;
     try {
       this.validate = this.validator.compile(prepareSchemaForDiff(schema));
     } catch (err) {
@@ -196,7 +209,6 @@ export class ShapeDiffTraverser {
     let oneOfs: Map<string, ErrorObject> = new Map();
     let oneOfBranchType: [string, ErrorObject][] = [];
     let oneOfBranchOther: [string, ErrorObject][] = [];
-
     for (let validationError of validationErrors) {
       if (validationError.keyword === JsonSchemaKnownKeyword.oneOf) {
         let schemaPath = validationError.schemaPath.substring(1); // valid json pointer
@@ -237,6 +249,7 @@ export class ShapeDiffTraverser {
         yield* diffVisitors(validationError, this.bodyValue, {
           specJsonPath: this.specJsonPath,
           interaction: this.interaction,
+          schema: this.schema!,
         });
       }
     }
@@ -246,6 +259,7 @@ export class ShapeDiffTraverser {
       yield* diffVisitors(otherBranchError, this.bodyValue, {
         specJsonPath: this.specJsonPath,
         interaction: this.interaction,
+        schema: this.schema!,
       });
 
       // once a nested error has been visited, we consider this a branch type match
@@ -260,6 +274,7 @@ export class ShapeDiffTraverser {
       yield* diffVisitors(oneOfError, this.bodyValue, {
         specJsonPath: this.specJsonPath,
         interaction: this.interaction,
+        schema: this.schema!,
       });
     }
   }
@@ -268,6 +283,7 @@ export class ShapeDiffTraverser {
 export enum JsonSchemaKnownKeyword {
   required = 'required',
   additionalProperties = 'additionalProperties',
+  unevaluatedProperties = 'unevaluatedProperties',
   type = 'type',
   oneOf = 'oneOf',
   enum = 'enum',
@@ -291,10 +307,11 @@ function prepareSchemaForDiff(input: SchemaObject): SchemaObject {
         effectively underspecifing their schemas. Optic tries to apply sensible defaults,
         which are easy to override by writing your schemas properly
        */
+      const parts = jsonPointerHelpers.decode(jsonPtr);
       if (
         OAS3.isObjectType(schema.type) &&
         !schema.hasOwnProperty('additionalProperties') &&
-        !jsonPtr.includes('/allOf')
+        parts[parts.length - 2] !== 'allOf' // excludes direct children of allOF
       ) {
         schema['additionalProperties'] = false;
       }
