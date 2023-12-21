@@ -1,5 +1,6 @@
 import jsonSchemaTraverse from 'json-schema-traverse';
-import Ajv, { ErrorObject, ValidateFunction } from 'ajv';
+import { ErrorObject, ValidateFunction } from 'ajv';
+import Ajv from 'ajv/dist/2019';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { Ono } from '@jsdevtools/ono';
 import { Result, Ok, Err } from 'ts-results';
@@ -197,7 +198,6 @@ export class ShapeDiffTraverser {
     let oneOfBranchOther: [string, ErrorObject][] = [];
 
     for (let validationError of validationErrors) {
-      console.log(validationError);
       if (validationError.keyword === JsonSchemaKnownKeyword.oneOf) {
         let schemaPath = validationError.schemaPath.substring(1); // valid json pointer
         oneOfs.set(schemaPath, validationError);
@@ -285,7 +285,7 @@ function prepareSchemaForDiff(input: SchemaObject): SchemaObject {
   const schema: SchemaObject = JSON.parse(JSON.stringify(input));
   jsonSchemaTraverse(schema as OpenAPIV3.SchemaObject, {
     allKeys: true,
-    cb: (schema) => {
+    cb: (schema, jsonPtr) => {
       /*
         Some developers don't set all the JSON Schema properties because it's quite verbose,
         effectively underspecifing their schemas. Optic tries to apply sensible defaults,
@@ -293,9 +293,13 @@ function prepareSchemaForDiff(input: SchemaObject): SchemaObject {
        */
       if (
         OAS3.isObjectType(schema.type) &&
-        !schema.hasOwnProperty('additionalProperties')
+        !schema.hasOwnProperty('additionalProperties') &&
+        !jsonPtr.includes('/allOf')
       ) {
         schema['additionalProperties'] = false;
+      }
+      if (schema.allOf) {
+        schema['unevaluatedProperties'] = false;
       }
 
       // Fix case where nullable is set and there is no type key
@@ -307,6 +311,21 @@ function prepareSchemaForDiff(input: SchemaObject): SchemaObject {
           // We set this to string since we're not sure what the actual type is; this should be fine for us since we'll use this schema for diffing purposes and update
           schema.type = 'string';
         }
+      }
+
+      // Handle case where exclusiveMaximum or exclusiveMinimum is boolean (valid in 3.0)
+      // Note that this will generate diffs that may produce patches that need to consider the case that there may be exclusive maximums
+      if (typeof schema.exclusiveMaximum === 'boolean') {
+        if (typeof schema.maximum === 'number') {
+          schema.maximum = schema.maximum - 1;
+        }
+        delete schema.exclusiveMaximum;
+      }
+      if (typeof schema.exclusiveMinimum === 'boolean') {
+        if (typeof schema.minumum === 'number') {
+          schema.minumum = schema.minumum + 1;
+        }
+        delete schema.exclusiveMinimum;
       }
     },
   });
