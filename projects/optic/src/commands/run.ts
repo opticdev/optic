@@ -142,7 +142,7 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
         .default('error')
     )
     .argument(
-      'file_paths',
+      '[file_paths]',
       'Comma-seperated glob patterns matching specifications to process. When omitted, matches all non-ignored specifications.'
     )
     .action(errorHandler(getRunAction(config), { command: 'run' }));
