@@ -1,4 +1,4 @@
-import { RuleContext, SpectralRule } from '@useoptic/rulesets-base';
+import { RuleContext, Ruleset, SpectralRule } from '@useoptic/rulesets-base';
 import Ajv from 'ajv';
 import {
   IChange,
@@ -14,10 +14,22 @@ import os from 'os';
 import fs from 'node:fs/promises';
 import { OpenAPIFactNodes } from '@useoptic/rulesets-base/build/rule-runner/rule-runner-types';
 
+type RulesetConfig = {
+  exclude_operations_with_extension?: string | string[];
+  added?: string[];
+  always?: string[];
+  changed?: string[];
+  addedOrChanged?: string[];
+  docs_link?: string;
+};
+
 const ajv = new Ajv();
 const configSchema = {
   type: 'object',
   properties: {
+    exclude_operations_with_extension: {
+      oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }],
+    },
     added: {
       type: 'array',
       items: {
@@ -254,18 +266,28 @@ export class SpectralRulesets extends ExternalRuleBase {
         })
         .join('\n- ');
     }
-    const configValidated = config as {
-      added?: string[];
-      always?: string[];
-      changed?: string[];
-      addedOrChanged?: string[];
-    };
+    const validatedConfig = config as RulesetConfig;
+    let matches: Ruleset['matches'] | undefined = undefined;
+
+    if (validatedConfig.exclude_operations_with_extension !== undefined) {
+      matches = (context) =>
+        Array.isArray(validatedConfig.exclude_operations_with_extension)
+          ? validatedConfig.exclude_operations_with_extension.some(
+              (extension) => {
+                return (context.operation.raw as any)[extension] !== true;
+              }
+            )
+          : (context.operation.raw as any)[
+              validatedConfig.exclude_operations_with_extension!
+            ] !== true;
+    }
 
     return new SpectralRulesets({
-      added: configValidated.added ?? [],
-      always: configValidated.always ?? [],
-      changed: configValidated.changed ?? [],
-      addedOrChanged: configValidated.addedOrChanged ?? [],
+      added: validatedConfig.added ?? [],
+      always: validatedConfig.always ?? [],
+      changed: validatedConfig.changed ?? [],
+      addedOrChanged: validatedConfig.addedOrChanged ?? [],
+      matches,
     });
   }
 }
