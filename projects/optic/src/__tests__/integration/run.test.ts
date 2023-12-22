@@ -17,6 +17,30 @@ import portfinder from 'portfinder';
 
 jest.setTimeout(30000);
 
+let oldEnv: any;
+beforeEach(async () => {
+  oldEnv = { ...process.env };
+  process.env.LOG_LEVEL = 'info';
+  process.env.OPTIC_ENV = 'local';
+  process.env.OPTIC_TOKEN = '123';
+  process.env.GITHUB_BASE_REF = 'main';
+  process.env.CI = 'true';
+  process.env.GITHUB_TOKEN = undefined;
+});
+
+afterEach(() => {
+  process.env = { ...oldEnv };
+});
+
+async function setPortInFile(workspace: string, file: string, port: string) {
+  // Set the port in the optic yml for an available port
+  await run(`sed -i.bak 's/%PORT/${port}/' ${file} ${file}`, false, workspace);
+}
+
+function sanitizeOutput(out: string) {
+  return out.replace(/\[[1|2]\]: `.+` tag\n/g, 'replaced line\n');
+}
+
 setupTestServer(({ url, method }) => {
   if (method === 'POST' && /\/api\/specs\/prepare$/.test(url)) {
     return JSON.stringify({
@@ -66,39 +90,15 @@ setupTestServer(({ url, method }) => {
   return JSON.stringify({});
 });
 
-let oldEnv: any;
-let port: string;
-beforeEach(async () => {
-  oldEnv = { ...process.env };
-  process.env.LOG_LEVEL = 'info';
-  process.env.OPTIC_ENV = 'local';
-  process.env.OPTIC_TOKEN = '123';
-  process.env.CI = 'true';
-  process.env.GITHUB_TOKEN = undefined;
-  port = String(await portfinder.getPortPromise());
-  process.env.PORT = port;
-});
-
-afterEach(() => {
-  process.env = { ...oldEnv };
-});
-
-async function setPortInFile(workspace: string, file: string) {
-  // Set the port in the optic yml for an available port
-  await run(`sed -i.bak 's/%PORT/${port}/' ${file} ${file}`, false, workspace);
-}
-
-function sanitizeOutput(out: string) {
-  return out.replace(/\[[1|2]\]: `.+` tag\n/g, 'replaced line\n');
-}
-
 describe('run', () => {
   test('runs and diffs against APIs and runs capture', async () => {
     const workspace = await setupWorkspace('run/multi-spec', {
       repo: true,
       commit: true,
     });
-    await setPortInFile(workspace, 'optic.yml');
+    const port = String(await portfinder.getPortPromise());
+    process.env.PORT = port;
+    await setPortInFile(workspace, 'optic.yml', port);
 
     const { combined, code } = await runOptic(workspace, 'run');
     expect(

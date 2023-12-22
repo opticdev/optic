@@ -18,6 +18,8 @@ openapi-local.yml
  replaced line
 
 --------------------------------------------------------------------------------------------------
+Pass a GITHUB_TOKEN or OPTIC_GITLAB_TOKEN environment variable with write permission to let Optic post comment with API change summaries to your pull requests.
+
 
 Uploading diff...
 | [1ma spec[22m [openapi-local.yml]
@@ -49,6 +51,8 @@ openapi.yml
  replaced line
 
 --------------------------------------------------------------------------------------------------
+Pass a GITHUB_TOKEN or OPTIC_GITLAB_TOKEN environment variable with write permission to let Optic post comment with API change summaries to your pull requests.
+
 
 Uploading diff...
 | [1ma spec[22m [openapi.yml]
@@ -88,8 +92,15 @@ Uploading diff...
 | Rules:   ⚠️  1/3 failed
 | Tests:   🆕 5 undocumented paths ⚠️  1 mismatch
 
-
-Errors were found: exiting with code 1. Disable this behaviour with the \`--severity none\` option.
-
+TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string or an instance of Buffer or URL. Received undefined
+    at Object.openSync (node:fs:592:10)
+    at Object.readFileSync (node:fs:468:35)
+    at getGithubCommenter ($root$/projects/optic/src/commands/run.ts:72:24)
+    at $root$/projects/optic/src/commands/run.ts:840:35
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Command.<anonymous> ($root$/projects/optic/src/error-handler.ts:18:14) {
+  code: 'ERR_INVALID_ARG_TYPE'
+}
+[31mThe "path" argument must be of type string or an instance of Buffer or URL. Received undefined[39m
 "
 `;
