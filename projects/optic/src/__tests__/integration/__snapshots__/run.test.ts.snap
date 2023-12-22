@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`run can include files in gitignore with -I and file paths 1`] = `
-"Optic matched 1 OpenAPI specification file:
+"github false
+gitlab false
+Optic matched 1 OpenAPI specification file:
 openapi-local.yml
 
 --------------------------------------------------------------------------------------------------
@@ -34,7 +36,9 @@ Uploading diff...
 `;
 
 exports[`run ignores files in gitignore 1`] = `
-"Optic matched 1 OpenAPI specification file:
+"github false
+gitlab false
+Optic matched 1 OpenAPI specification file:
 openapi.yml
 
 --------------------------------------------------------------------------------------------------
@@ -67,7 +71,9 @@ Uploading diff...
 `;
 
 exports[`run runs and diffs against APIs and runs capture 1`] = `
-"Optic matched 1 OpenAPI specification file:
+"github true
+gitlab false
+Optic matched 1 OpenAPI specification file:
 openapi.yml
 
 --------------------------------------------------------------------------------------------------
@@ -96,7 +102,7 @@ TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string or 
     at Object.openSync (node:fs:592:10)
     at Object.readFileSync (node:fs:468:35)
     at getGithubCommenter ($root$/projects/optic/src/commands/run.ts:72:24)
-    at $root$/projects/optic/src/commands/run.ts:840:35
+    at $root$/projects/optic/src/commands/run.ts:842:35
     at processTicksAndRejections (node:internal/process/task_queues:95:5)
     at async Command.<anonymous> ($root$/projects/optic/src/error-handler.ts:18:14) {
   code: 'ERR_INVALID_ARG_TYPE'

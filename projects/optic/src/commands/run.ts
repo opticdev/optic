@@ -586,6 +586,8 @@ export const getRunAction =
   async (matchArg: string | undefined, options: RunActionOptions) => {
     const commentToken =
       process.env.GITHUB_TOKEN ?? process.env.OPTIC_GITLAB_TOKEN;
+    console.log(`github`, !!process.env.GITHUB_TOKEN);
+    console.log(`gitlab`, !!process.env.OPTIC_GITLAB_TOKEN);
 
     const baseBranch =
       process.env.GITHUB_BASE_REF ??

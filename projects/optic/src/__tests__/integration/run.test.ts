@@ -99,7 +99,10 @@ describe('run', () => {
     const port = String(await portfinder.getPortPromise());
     process.env.PORT = port;
     await setPortInFile(workspace, 'optic.yml', port);
-
+    console.log({
+      bwts: process.env.BWTS_HOST_OVERRIDE,
+      capture: port,
+    });
     const { combined, code } = await runOptic(workspace, 'run');
     expect(
       sanitizeOutput(normalizeWorkspace(workspace, combined))
