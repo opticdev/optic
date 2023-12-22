@@ -103,6 +103,10 @@ describe('run', () => {
     );
     process.env.PORT = port;
     await setPortInFile(workspace, 'optic.yml', port);
+    console.log({
+      port: port,
+      bwts: process.env.BWTS_HOST_OVERRIDE,
+    });
     const { combined, code } = await runOptic(workspace, 'run');
     expect(
       sanitizeOutput(normalizeWorkspace(workspace, combined))
