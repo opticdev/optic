@@ -98,7 +98,8 @@ describe('run', () => {
     });
     const port = String(
       await portfinder.getPortPromise({
-        startPort: 9900,
+        port: 9000,
+        stopPort: 10000,
       })
     );
     process.env.PORT = port;
