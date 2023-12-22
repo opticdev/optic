@@ -14,8 +14,8 @@ openapi-local.yml
  │           Local specs           │
  └─────────────────────────────────┘
 
- [1]: \`gitbranch:master\` tag
- [2]: \`gitbranch:master\` tag
+ replaced line
+ replaced line
 
 --------------------------------------------------------------------------------------------------
 
@@ -27,7 +27,7 @@ Uploading diff...
 | Tests:   Set up API contract testing for this spec: https://www.useoptic.com/docs/verify-openapi
 
 
-🤖 Add Optic to your CI flow: https://www.useoptic.com/docs/setup-ci
+💬 Configure commenting on PR/MR: https://www.useoptic.com/docs/setup-ci#configure-commenting-on-pull-requests-optional
 "
 `;
 
@@ -45,8 +45,8 @@ openapi.yml
  │           Local specs           │
  └─────────────────────────────────┘
 
- [1]: \`gitbranch:master\` tag
- [2]: \`gitbranch:master\` tag
+ replaced line
+ replaced line
 
 --------------------------------------------------------------------------------------------------
 
@@ -58,7 +58,7 @@ Uploading diff...
 | Tests:   Set up API contract testing for this spec: https://www.useoptic.com/docs/verify-openapi
 
 
-🤖 Add Optic to your CI flow: https://www.useoptic.com/docs/setup-ci
+💬 Configure commenting on PR/MR: https://www.useoptic.com/docs/setup-ci#configure-commenting-on-pull-requests-optional
 "
 `;
 
@@ -76,8 +76,8 @@ openapi.yml
  │           Local specs           │
  └─────────────────────────────────┘
 
- [1]: \`gitbranch:master\` tag
- [2]: \`gitbranch:master\` tag
+ replaced line
+ replaced line
 
 --------------------------------------------------------------------------------------------------
 
@@ -91,6 +91,5 @@ Uploading diff...
 
 Errors were found: exiting with code 1. Disable this behaviour with the \`--severity none\` option.
 
-🤖 Add Optic to your CI flow: https://www.useoptic.com/docs/setup-ci
 "
 `;

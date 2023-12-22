@@ -73,6 +73,8 @@ beforeEach(async () => {
   process.env.LOG_LEVEL = 'info';
   process.env.OPTIC_ENV = 'local';
   process.env.OPTIC_TOKEN = '123';
+  process.env.CI = 'true';
+  process.env.GITHUB_TOKEN = undefined;
   port = String(await portfinder.getPortPromise());
   process.env.PORT = port;
 });
@@ -86,6 +88,10 @@ async function setPortInFile(workspace: string, file: string) {
   await run(`sed -i.bak 's/%PORT/${port}/' ${file} ${file}`, false, workspace);
 }
 
+function sanitizeOutput(out: string) {
+  return out.replace(/\[[1|2]\]: `.+` tag\n/g, 'replaced line\n');
+}
+
 describe('run', () => {
   test('runs and diffs against APIs and runs capture', async () => {
     const workspace = await setupWorkspace('run/multi-spec', {
@@ -95,7 +101,9 @@ describe('run', () => {
     await setPortInFile(workspace, 'optic.yml');
 
     const { combined, code } = await runOptic(workspace, 'run');
-    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(
+      sanitizeOutput(normalizeWorkspace(workspace, combined))
+    ).toMatchSnapshot();
     expect(code).toBe(1);
   });
 
@@ -112,7 +120,9 @@ describe('run', () => {
     );
 
     const { combined, code } = await runOptic(workspace, 'run');
-    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(
+      sanitizeOutput(normalizeWorkspace(workspace, combined))
+    ).toMatchSnapshot();
     expect(code).toBe(0);
   });
 
@@ -130,7 +140,9 @@ describe('run', () => {
       workspace,
       'run openapi-local.yml -I'
     );
-    expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+    expect(
+      sanitizeOutput(normalizeWorkspace(workspace, combined))
+    ).toMatchSnapshot();
     expect(code).toBe(0);
   });
 });
