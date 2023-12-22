@@ -586,8 +586,6 @@ export const getRunAction =
   async (matchArg: string | undefined, options: RunActionOptions) => {
     const commentToken =
       process.env.GITHUB_TOKEN ?? process.env.OPTIC_GITLAB_TOKEN;
-    console.log(`github`, !!process.env.GITHUB_TOKEN);
-    console.log(`gitlab`, !!process.env.OPTIC_GITLAB_TOKEN);
 
     const baseBranch =
       process.env.GITHUB_BASE_REF ??
@@ -713,7 +711,6 @@ export const getRunAction =
  [2]: \`${currentBranchCloudTag}\` tag
 
 --------------------------------------------------------------------------------------------------`);
-
     if (!commentToken && isPR) {
       logger.info(
         `Pass a GITHUB_TOKEN or OPTIC_GITLAB_TOKEN environment variable with write permission to let Optic post comment with API change summaries to your pull requests.\n`

@@ -25,7 +25,7 @@ beforeEach(async () => {
   process.env.OPTIC_TOKEN = '123';
   process.env.GITHUB_BASE_REF = 'main';
   process.env.CI = 'true';
-  process.env.GITHUB_TOKEN = undefined;
+  delete process.env.GITHUB_TOKEN;
 });
 
 afterEach(() => {
@@ -96,13 +96,13 @@ describe('run', () => {
       repo: true,
       commit: true,
     });
-    const port = String(await portfinder.getPortPromise());
+    const port = String(
+      await portfinder.getPortPromise({
+        startPort: 9900,
+      })
+    );
     process.env.PORT = port;
     await setPortInFile(workspace, 'optic.yml', port);
-    console.log({
-      bwts: process.env.BWTS_HOST_OVERRIDE,
-      capture: port,
-    });
     const { combined, code } = await runOptic(workspace, 'run');
     expect(
       sanitizeOutput(normalizeWorkspace(workspace, combined))

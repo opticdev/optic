@@ -1,9 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`run can include files in gitignore with -I and file paths 1`] = `
-"github false
-gitlab false
-Optic matched 1 OpenAPI specification file:
+"Optic matched 1 OpenAPI specification file:
 openapi-local.yml
 
 --------------------------------------------------------------------------------------------------
@@ -36,9 +34,7 @@ Uploading diff...
 `;
 
 exports[`run ignores files in gitignore 1`] = `
-"github false
-gitlab false
-Optic matched 1 OpenAPI specification file:
+"Optic matched 1 OpenAPI specification file:
 openapi.yml
 
 --------------------------------------------------------------------------------------------------
@@ -71,9 +67,7 @@ Uploading diff...
 `;
 
 exports[`run runs and diffs against APIs and runs capture 1`] = `
-"github true
-gitlab false
-Optic matched 1 OpenAPI specification file:
+"Optic matched 1 OpenAPI specification file:
 openapi.yml
 
 --------------------------------------------------------------------------------------------------
@@ -90,6 +84,8 @@ openapi.yml
  replaced line
 
 --------------------------------------------------------------------------------------------------
+Pass a GITHUB_TOKEN or OPTIC_GITLAB_TOKEN environment variable with write permission to let Optic post comment with API change summaries to your pull requests.
+
 
 Uploading diff...
 | [1ma spec[22m [openapi.yml]
@@ -98,15 +94,9 @@ Uploading diff...
 | Rules:   ⚠️  1/3 failed
 | Tests:   🆕 5 undocumented paths ⚠️  1 mismatch
 
-TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string or an instance of Buffer or URL. Received undefined
-    at Object.openSync (node:fs:592:10)
-    at Object.readFileSync (node:fs:468:35)
-    at getGithubCommenter ($root$/projects/optic/src/commands/run.ts:72:24)
-    at $root$/projects/optic/src/commands/run.ts:842:35
-    at processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at async Command.<anonymous> ($root$/projects/optic/src/error-handler.ts:18:14) {
-  code: 'ERR_INVALID_ARG_TYPE'
-}
-[31mThe "path" argument must be of type string or an instance of Buffer or URL. Received undefined[39m
+
+Errors were found: exiting with code 1. Disable this behaviour with the \`--severity none\` option.
+
+💬 Configure commenting on PR/MR: https://www.useoptic.com/docs/setup-ci#configure-commenting-on-pull-requests-optional
 "
 `;
