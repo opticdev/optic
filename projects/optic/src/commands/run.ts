@@ -297,6 +297,7 @@ function reportCapture(report: SpecReport) {
 
   if (!capture.success) {
     logger.info(`| Tests:   ❌ Failed to run`);
+    logger.debug(capture.bufferedOutput);
     return;
   }
 
@@ -533,7 +534,6 @@ const runCapture = async ({
         verbose: false,
       }
     );
-
     if (runId && organizationId) {
       try {
         const captureData = captureResults.success
@@ -555,7 +555,9 @@ const runCapture = async ({
             } as const)
           : ({ success: false } as const);
         await config.client.createCapture(captureData);
-      } catch (e) {}
+      } catch (e) {
+        logger.debug(e);
+      }
     }
 
     if (captureResults.success) {
@@ -760,7 +762,7 @@ export const getRunAction =
       }
       if (!specDetails) {
         const specReport = {
-          error: `Could not load specification form Optic ${opticUrl}`,
+          error: `Could not load specification from Optic ${opticUrl}`,
           path: specPath,
         };
         reportSpec(specReport);

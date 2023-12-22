@@ -1,0 +1,96 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`run can include files in gitignore with -I and file paths 1`] = `
+"Optic matched 1 OpenAPI specification file:
+openapi-local.yml
+
+--------------------------------------------------------------------------------------------------
+
+ ┌─────────────────────────────────┐
+ │  [1]      Optic Cloud      [2]  │
+ └───┬─────────────────────────▲───┘
+     │Compare            Update│
+ ┌───▼─────────────────────────┴───┐
+ │           Local specs           │
+ └─────────────────────────────────┘
+
+ [1]: \`gitbranch:master\` tag
+ [2]: \`gitbranch:master\` tag
+
+--------------------------------------------------------------------------------------------------
+
+Uploading diff...
+| [1ma spec[22m [openapi-local.yml]
+| Report:  👁️  http://localhost:3001/organizations/org-id/apis/generated-api/runs/run-id
+| Changes: 2 operations added, 1 removed
+| Rules:   ✅ 5/5 passed
+| Tests:   Set up API contract testing for this spec: https://www.useoptic.com/docs/verify-openapi
+
+
+🤖 Add Optic to your CI flow: https://www.useoptic.com/docs/setup-ci
+"
+`;
+
+exports[`run ignores files in gitignore 1`] = `
+"Optic matched 1 OpenAPI specification file:
+openapi.yml
+
+--------------------------------------------------------------------------------------------------
+
+ ┌─────────────────────────────────┐
+ │  [1]      Optic Cloud      [2]  │
+ └───┬─────────────────────────▲───┘
+     │Compare            Update│
+ ┌───▼─────────────────────────┴───┐
+ │           Local specs           │
+ └─────────────────────────────────┘
+
+ [1]: \`gitbranch:master\` tag
+ [2]: \`gitbranch:master\` tag
+
+--------------------------------------------------------------------------------------------------
+
+Uploading diff...
+| [1ma spec[22m [openapi.yml]
+| Report:  👁️  http://localhost:3001/organizations/org-id/apis/generated-api/runs/run-id
+| Changes: 2 operations added, 1 removed
+| Rules:   ✅ 5/5 passed
+| Tests:   Set up API contract testing for this spec: https://www.useoptic.com/docs/verify-openapi
+
+
+🤖 Add Optic to your CI flow: https://www.useoptic.com/docs/setup-ci
+"
+`;
+
+exports[`run runs and diffs against APIs and runs capture 1`] = `
+"Optic matched 1 OpenAPI specification file:
+openapi.yml
+
+--------------------------------------------------------------------------------------------------
+
+ ┌─────────────────────────────────┐
+ │  [1]      Optic Cloud      [2]  │
+ └───┬─────────────────────────▲───┘
+     │Compare            Update│
+ ┌───▼─────────────────────────┴───┐
+ │           Local specs           │
+ └─────────────────────────────────┘
+
+ [1]: \`gitbranch:master\` tag
+ [2]: \`gitbranch:master\` tag
+
+--------------------------------------------------------------------------------------------------
+
+Uploading diff...
+| [1ma spec[22m [openapi.yml]
+| Report:  👁️  http://localhost:3001/organizations/org-id/apis/generated-api/runs/run-id
+| Changes: 2 operations added, 1 removed
+| Rules:   ⚠️  1/3 failed
+| Tests:   🆕 5 undocumented paths ⚠️  1 mismatch
+
+
+Errors were found: exiting with code 1. Disable this behaviour with the \`--severity none\` option.
+
+🤖 Add Optic to your CI flow: https://www.useoptic.com/docs/setup-ci
+"
+`;
