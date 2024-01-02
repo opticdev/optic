@@ -2,7 +2,7 @@
   "name": "openapi-workspaces",
   "license": "MIT",
   "private": true,
-  "version": "0.53.16",
+  "version": "0.53.17",
   "workspaces": [
     "projects/json-pointer-helpers",
     "projects/openapi-io",
