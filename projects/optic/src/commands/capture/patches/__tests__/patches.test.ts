@@ -980,8 +980,11 @@ describe('generateEndpointSpecPatches', () => {
         expect(patches).toMatchSnapshot();
         expect(specHolder.spec).toMatchSnapshot();
       });
+    });
 
-      test('with nullable', async () => {
+    test.each([['oneOf'], ['anyOf'], ['allOf']])(
+      '%s with nullable',
+      async (polymorphic) => {
         // nullable keyword only valid in 3.0.1
         if (version !== '3.0.1') return;
         specHolder.spec.paths['/api/animals'].post.responses = {
@@ -994,7 +997,7 @@ describe('generateEndpointSpecPatches', () => {
                   properties: {
                     key: {
                       nullable: true,
-                      allOf: [
+                      [polymorphic]: [
                         {
                           type: 'object',
                           properties: {
@@ -1038,8 +1041,8 @@ describe('generateEndpointSpecPatches', () => {
 
         expect(patches).toMatchSnapshot();
         expect(specHolder.spec).toMatchSnapshot();
-      });
-    });
+      }
+    );
 
     describe.each([['query'], ['header']])('%s parameter', (location) => {
       test('not documented', async () => {
