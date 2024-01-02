@@ -1,5 +1,9 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { OpenAPIV3, getEndpointId } from '@useoptic/openapi-utilities';
+import {
+  OpenAPIV3,
+  getEndpointId,
+  getPathAndMethodFromEndpointId,
+} from '@useoptic/openapi-utilities';
 import crypto from 'crypto';
 import fs from 'node:fs/promises';
 import path from 'path';
@@ -269,17 +273,29 @@ export class GroupedCaptures {
   counts() {
     let total = 0;
     let unmatched = 0;
+    const unmatchedPaths: { method: string; path: string }[] = [];
+    const matchedPaths: { method: string; path: string }[] = [];
     let matched = 0;
     for (const [, node] of this.paths) {
       total++;
-      if (node.hars.length === 0 && node.interactions.length === 0) unmatched++;
-      if (node.hars.length !== 0 || node.interactions.length !== 0) matched++;
+      if (node.hars.length === 0 && node.interactions.length === 0) {
+        unmatched++;
+        unmatchedPaths.push(node.endpoint);
+      }
+      if (node.hars.length !== 0 || node.interactions.length !== 0) {
+        matched++;
+        matchedPaths.push(node.endpoint);
+      }
     }
 
     return {
       total,
       unmatched,
       matched,
+      paths: {
+        unmatched: unmatchedPaths,
+        matched: matchedPaths,
+      },
     };
   }
 

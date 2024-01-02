@@ -2201,6 +2201,8 @@ GET /books
 [90m$workspace$/openapi.yml[39m
 
 [90m...and 1 endpoint that did not receive traffic[39m
+[90mUnmatched endpoints:[39m
+  [90mPOST /books[39m
 
 66.7% coverage of your documented operations. 5 requests did not match a documented path (6 total requests).
 9 diffs detected in documented operations
