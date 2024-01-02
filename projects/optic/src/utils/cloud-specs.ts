@@ -94,7 +94,6 @@ export async function uploadSpec(
     computeChecksumForAws(stableSourcemapString);
   let result: Awaited<ReturnType<typeof opts.client.prepareSpecUpload>>;
   const tags = opts.tags.filter((tag, ndx) => opts.tags.indexOf(tag) === ndx);
-
   try {
     result = await opts.client.prepareSpecUpload({
       api_id: apiId,

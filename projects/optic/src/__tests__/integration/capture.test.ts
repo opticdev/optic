@@ -23,7 +23,12 @@ beforeEach(async () => {
   oldEnv = { ...process.env };
   process.env.LOG_LEVEL = 'info';
   process.env.OPTIC_ENV = 'local';
-  port = String(await portfinder.getPortPromise());
+  port = String(
+    await portfinder.getPortPromise({
+      port: 8000,
+      stopPort: 9000,
+    })
+  );
   process.env.PORT = port;
 });
 
