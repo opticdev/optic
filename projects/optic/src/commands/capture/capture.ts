@@ -554,6 +554,16 @@ export async function processCaptures(
       );
       options.bufferLogs ? bufferedOutput.push(txt) : logger.info(txt);
     }
+    if (options.verbose) {
+      const text = [chalk.gray(`Unmatched endpoints:`)];
+      for (const endpoint of endpointCounts.paths.unmatched) {
+        text.push(
+          `  ${chalk.gray(`${endpoint.method.toUpperCase()} ${endpoint.path}`)}`
+        );
+      }
+      for (const line of text)
+        options.bufferLogs ? bufferedOutput.push(line) : logger.info(line);
+    }
   }
 
   // document new endpoints
