@@ -1,0 +1,27 @@
+ruleset:
+  - breaking-changes
+  - naming:
+      pathComponents: camelCase
+capture:
+  openapi.yml:
+    server:
+      command: node server.js
+      url: http://localhost:%PORT
+      ready_endpoint: /healthcheck
+    requests:
+      send:
+        - path: /
+        - path: /books
+          method: GET
+        - path: /books/asd
+          method: GET
+        - path: /books/def
+          method: GET
+        - path: /books/asd
+          method: POST
+          data:
+            name: asd
+            price: 1
+            author_id: 6nTxAFM5ck4Hob77hGQoL
+        - path: /authors
+          method: GET
