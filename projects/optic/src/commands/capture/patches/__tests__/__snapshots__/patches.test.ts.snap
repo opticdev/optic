@@ -751,57 +751,6 @@ exports[`generateEndpointSpecPatches OAS version 3.0.1 allOf with nested oneOf 2
 }
 `;
 
-exports[`generateEndpointSpecPatches OAS version 3.0.1 allOf with nullable 1`] = `[]`;
-
-exports[`generateEndpointSpecPatches OAS version 3.0.1 allOf with nullable 2`] = `
-{
-  "info": {},
-  "openapi": "3.0.1",
-  "paths": {
-    "/api/animals": {
-      "post": {
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "key": {
-                      "allOf": [
-                        {
-                          "properties": {
-                            "goodbye": {
-                              "type": "string",
-                            },
-                            "hello": {
-                              "type": "string",
-                            },
-                          },
-                          "required": [
-                            "hello",
-                            "goodbye",
-                          ],
-                          "type": "object",
-                        },
-                      ],
-                      "nullable": true,
-                    },
-                  },
-                  "required": [
-                    "key",
-                  ],
-                  "type": "object",
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  },
-}
-`;
-
 exports[`generateEndpointSpecPatches OAS version 3.0.1 array with multiple items 1`] = `
 [
   {
