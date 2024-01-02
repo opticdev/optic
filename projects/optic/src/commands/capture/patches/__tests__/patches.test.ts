@@ -980,6 +980,65 @@ describe('generateEndpointSpecPatches', () => {
         expect(patches).toMatchSnapshot();
         expect(specHolder.spec).toMatchSnapshot();
       });
+
+      test('with nullable', async () => {
+        // nullable keyword only valid in 3.0.1
+        if (version !== '3.0.1') return;
+        specHolder.spec.paths['/api/animals'].post.responses = {
+          '200': {
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['key'],
+                  properties: {
+                    key: {
+                      nullable: true,
+                      allOf: [
+                        {
+                          type: 'object',
+                          properties: {
+                            hello: {
+                              type: 'string',
+                            },
+                            goodbye: {
+                              type: 'string',
+                            },
+                          },
+                          required: ['hello', 'goodbye'],
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        };
+
+        const interaction = makeInteraction(
+          { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+          {
+            responseBody: {
+              key: null,
+            },
+          }
+        );
+
+        const patches = await AT.collect(
+          generateEndpointSpecPatches(
+            GenerateInteractions([interaction]),
+            specHolder,
+            {
+              method: 'post',
+              path: '/api/animals',
+            }
+          )
+        );
+
+        expect(patches).toMatchSnapshot();
+        expect(specHolder.spec).toMatchSnapshot();
+      });
     });
 
     describe.each([['query'], ['header']])('%s parameter', (location) => {
