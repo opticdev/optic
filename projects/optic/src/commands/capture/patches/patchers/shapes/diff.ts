@@ -1,5 +1,6 @@
 import jsonSchemaTraverse from 'json-schema-traverse';
-import Ajv, { ErrorObject, ValidateFunction } from 'ajv';
+import { ErrorObject, ValidateFunction } from 'ajv';
+import Ajv from 'ajv/dist/2019';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { Ono } from '@jsdevtools/ono';
 import { Result, Ok, Err } from 'ts-results';
@@ -13,6 +14,7 @@ import { requiredKeywordDiffs } from './handlers/required';
 import { typeKeywordDiffs } from './handlers/type';
 import { enumKeywordDiffs } from './handlers/enum';
 import { CapturedInteraction } from '../../../sources/captured-interactions';
+import { unevaluatedPropertiesDiffs } from './handlers/unevaluatedProperties';
 
 export function diffBodyBySchema(
   body: Body,
@@ -41,12 +43,22 @@ function* diffVisitors(
   {
     specJsonPath,
     interaction,
+    schema,
   }: {
     specJsonPath: string;
     interaction: CapturedInteraction;
+    schema: SchemaObject;
   }
 ): IterableIterator<ShapeDiffResult | UnpatchableDiff> {
   switch (validationError.keyword) {
+    case JsonSchemaKnownKeyword.unevaluatedProperties:
+      yield* unevaluatedPropertiesDiffs(validationError, example, {
+        specJsonPath,
+        interaction,
+        schema,
+      });
+      break;
+
     case JsonSchemaKnownKeyword.additionalProperties:
       yield* additionalPropertiesDiffs(validationError, example);
       break;
@@ -147,6 +159,7 @@ export class ShapeDiffTraverser {
   private bodyValue?: any;
   private specJsonPath: string;
   private interaction: CapturedInteraction;
+  private schema?: SchemaObject;
 
   constructor({
     specJsonPath,
@@ -171,6 +184,7 @@ export class ShapeDiffTraverser {
     schema: SchemaObject
   ): Result<void, SchemaCompilationError> {
     this.bodyValue = bodyValue;
+    this.schema = schema;
     try {
       this.validate = this.validator.compile(prepareSchemaForDiff(schema));
     } catch (err) {
@@ -195,7 +209,6 @@ export class ShapeDiffTraverser {
     let oneOfs: Map<string, ErrorObject> = new Map();
     let oneOfBranchType: [string, ErrorObject][] = [];
     let oneOfBranchOther: [string, ErrorObject][] = [];
-
     for (let validationError of validationErrors) {
       if (validationError.keyword === JsonSchemaKnownKeyword.oneOf) {
         let schemaPath = validationError.schemaPath.substring(1); // valid json pointer
@@ -236,6 +249,7 @@ export class ShapeDiffTraverser {
         yield* diffVisitors(validationError, this.bodyValue, {
           specJsonPath: this.specJsonPath,
           interaction: this.interaction,
+          schema: this.schema!,
         });
       }
     }
@@ -245,6 +259,7 @@ export class ShapeDiffTraverser {
       yield* diffVisitors(otherBranchError, this.bodyValue, {
         specJsonPath: this.specJsonPath,
         interaction: this.interaction,
+        schema: this.schema!,
       });
 
       // once a nested error has been visited, we consider this a branch type match
@@ -259,6 +274,7 @@ export class ShapeDiffTraverser {
       yield* diffVisitors(oneOfError, this.bodyValue, {
         specJsonPath: this.specJsonPath,
         interaction: this.interaction,
+        schema: this.schema!,
       });
     }
   }
@@ -267,6 +283,7 @@ export class ShapeDiffTraverser {
 export enum JsonSchemaKnownKeyword {
   required = 'required',
   additionalProperties = 'additionalProperties',
+  unevaluatedProperties = 'unevaluatedProperties',
   type = 'type',
   oneOf = 'oneOf',
   enum = 'enum',
@@ -284,17 +301,22 @@ function prepareSchemaForDiff(input: SchemaObject): SchemaObject {
   const schema: SchemaObject = JSON.parse(JSON.stringify(input));
   jsonSchemaTraverse(schema as OpenAPIV3.SchemaObject, {
     allKeys: true,
-    cb: (schema) => {
+    cb: (schema, jsonPtr) => {
       /*
         Some developers don't set all the JSON Schema properties because it's quite verbose,
         effectively underspecifing their schemas. Optic tries to apply sensible defaults,
         which are easy to override by writing your schemas properly
        */
+      const parts = jsonPointerHelpers.decode(jsonPtr);
       if (
         OAS3.isObjectType(schema.type) &&
-        !schema.hasOwnProperty('additionalProperties')
+        !schema.hasOwnProperty('additionalProperties') &&
+        parts[parts.length - 2] !== 'allOf' // excludes direct children of allOF
       ) {
         schema['additionalProperties'] = false;
+      }
+      if (schema.allOf) {
+        schema['unevaluatedProperties'] = false;
       }
 
       // Fix case where nullable is set and there is no type key
@@ -306,6 +328,21 @@ function prepareSchemaForDiff(input: SchemaObject): SchemaObject {
           // We set this to string since we're not sure what the actual type is; this should be fine for us since we'll use this schema for diffing purposes and update
           schema.type = 'string';
         }
+      }
+
+      // Handle case where exclusiveMaximum or exclusiveMinimum is boolean (valid in 3.0)
+      // Note that this will generate diffs that may produce patches that need to consider the case that there may be exclusive maximums
+      if (typeof schema.exclusiveMaximum === 'boolean') {
+        if (typeof schema.maximum === 'number') {
+          schema.maximum = schema.maximum - 1;
+        }
+        delete schema.exclusiveMaximum;
+      }
+      if (typeof schema.exclusiveMinimum === 'boolean') {
+        if (typeof schema.minumum === 'number') {
+          schema.minumum = schema.minumum + 1;
+        }
+        delete schema.exclusiveMinimum;
       }
     },
   });

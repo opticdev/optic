@@ -632,8 +632,64 @@ describe('generateEndpointSpecPatches', () => {
       expect(specHolder.spec).toMatchSnapshot();
     });
 
+    test('3.0.x exclusiveMaximum and exclusiveMinimum booleans', async () => {
+      if (version !== '3.0.1') return;
+      specHolder.spec.paths['/api/animals'].post.responses = {
+        '200': {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  data: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        no: {
+                          type: 'number',
+                          maximum: 20,
+                          exclusiveMaximum: true,
+                          minumum: 10,
+                          exclusiveMinumum: true,
+                        },
+                      },
+                      required: ['no'],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      const interaction = makeInteraction(
+        { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+        {
+          responseBody: {
+            data: [{ no: 10 }, { no: 20 }],
+          },
+        }
+      );
+
+      const patches = await AT.collect(
+        generateEndpointSpecPatches(
+          GenerateInteractions([interaction]),
+          specHolder,
+          {
+            method: 'post',
+            path: '/api/animals',
+          }
+        )
+      );
+
+      expect(patches).toMatchSnapshot();
+      expect(specHolder.spec).toMatchSnapshot();
+    });
+
     describe('allOf', () => {
-      test('with extra keys in interaction', async () => {
+      test('matching interaction', async () => {
         specHolder.spec.paths['/api/animals'].post.responses = {
           '200': {
             content: {
@@ -645,6 +701,9 @@ describe('generateEndpointSpecPatches', () => {
                       properties: {
                         status: {
                           type: 'string',
+                        },
+                        age: {
+                          type: 'number',
                         },
                       },
                       required: ['status'],
@@ -668,6 +727,132 @@ describe('generateEndpointSpecPatches', () => {
           { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
           {
             responseBody: { status: 'ok', name: 'me', age: 50 },
+          }
+        );
+
+        const patches = await AT.collect(
+          generateEndpointSpecPatches(
+            GenerateInteractions([interaction]),
+            specHolder,
+            {
+              method: 'post',
+              path: '/api/animals',
+            }
+          )
+        );
+
+        expect(patches).toMatchSnapshot();
+        expect(specHolder.spec).toMatchSnapshot();
+      });
+
+      test('with extra keys in interaction', async () => {
+        specHolder.spec.paths['/api/animals'].post.responses = {
+          '200': {
+            content: {
+              'application/json': {
+                schema: {
+                  allOf: [
+                    {
+                      type: 'object',
+                      properties: {
+                        status: {
+                          type: 'string',
+                        },
+                      },
+                      required: ['status'],
+                    },
+                    {
+                      type: 'object',
+                      properties: {
+                        name: {
+                          type: 'string',
+                        },
+                        asda: {
+                          type: 'object',
+                          properties: {},
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        };
+
+        const interaction = makeInteraction(
+          { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+          {
+            responseBody: {
+              status: 'ok',
+              name: 'me',
+              age: 50,
+              asda: { as: 12 },
+            },
+          }
+        );
+
+        const patches = await AT.collect(
+          generateEndpointSpecPatches(
+            GenerateInteractions([interaction]),
+            specHolder,
+            {
+              method: 'post',
+              path: '/api/animals',
+            }
+          )
+        );
+
+        expect(patches).toMatchSnapshot();
+        expect(specHolder.spec).toMatchSnapshot();
+      });
+
+      test('allOf in a property', async () => {
+        specHolder.spec.paths['/api/animals'].post.responses = {
+          '200': {
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    data: {
+                      allOf: [
+                        {
+                          type: 'object',
+                          properties: {
+                            status: {
+                              type: 'string',
+                            },
+                          },
+                          required: ['status'],
+                        },
+                        {
+                          type: 'object',
+                          properties: {
+                            name: {
+                              type: 'string',
+                            },
+                            asda: {
+                              type: 'object',
+                              properties: {},
+                            },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        };
+
+        const interaction = makeInteraction(
+          { method: OpenAPIV3.HttpMethods.POST, path: '/api/animals' },
+          {
+            responseBody: {
+              data: { status: 'ok', name: 'me', age: 50, asda: { as: 12 } },
+            },
           }
         );
 
