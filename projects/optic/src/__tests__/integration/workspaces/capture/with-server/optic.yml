@@ -14,7 +14,7 @@ capture:
           method: GET
         - path: /books/def
           method: GET
-        - path: /books/asd
+        - path: /books
           method: POST
           data:
             name: asd
@@ -36,7 +36,7 @@ capture:
           method: GET
         - path: /books/def
           method: GET
-        - path: /books/asd
+        - path: /books
           method: POST
           data:
             name: asd
@@ -57,7 +57,7 @@ capture:
           method: GET
         - path: /books/def
           method: GET
-        - path: /books/asd
+        - path: /books
           method: POST
           data:
             name: asd
@@ -78,7 +78,7 @@ capture:
           method: GET
         - path: /books/def
           method: GET
-        - path: /books/asd
+        - path: /books
           method: POST
           data:
             name: asd
@@ -109,7 +109,7 @@ capture:
           method: GET
         - path: /api/books/def
           method: GET
-        - path: /api/books/asd
+        - path: /api/books
           method: POST
           data:
             name: asd
@@ -133,13 +133,13 @@ capture:
           method: GET
         - path: /books/def
           method: GET
-        - path: /books/lqs
+        - path: /books
           method: POST
           data:
             name: asd
             price: 1
             author_id: 6nTxAFM5ck4Hob77hGQoL
-        - path: /books/asd
+        - path: /books
           method: POST
           data:
             name: asd
