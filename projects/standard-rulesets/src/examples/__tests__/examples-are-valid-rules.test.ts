@@ -337,6 +337,43 @@ describe.each(['3.0.x', '3.1.x'] as const)(
       expect(results.every((result) => result.passed)).toBe(true);
     });
 
+    test('with duplicate in ids in examples', async () => {
+      const schemaWithIdExample = {
+        type: 'object',
+        properties: { id: { type: 'string' } },
+        example: { id: '1' },
+      };
+      const input: any = {
+        ...TestHelpers.createEmptySpec(),
+        paths: {
+          '/api/users': {
+            post: {
+              responses: {},
+              requestBody: {
+                description: '',
+                content: {
+                  'application/json': {
+                    schema: {
+                      oneOf: [schemaWithIdExample, schemaWithIdExample],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+      const results = await TestHelpers.runRulesWithInputs(
+        [new ExamplesRuleset({ spec_version: version })],
+        input,
+        input
+      );
+      expect(results.length > 0).toBe(true);
+
+      expect(results).toMatchSnapshot();
+      expect(results.some((result) => result.passed)).toBe(true);
+    });
+
     describe('examples should default to additional properties false', () => {
       test('ajv config will be strict on additional properties', () => {
         const result = validateSchema(
