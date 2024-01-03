@@ -64,7 +64,11 @@ function summarizePatch(
   const { diff, path, groupedOperations } = patch;
   const color = options.mode === 'update' ? chalk.green : chalk.red;
   if (!diff || groupedOperations.length === 0) return [];
-  if (
+  if (diff.kind === 'MissingRequestBody') {
+    const action =
+      options.mode === 'update' ? 'is now optional' : 'is required and missing';
+    return [color(`[request body] body ${action}`)];
+  } else if (
     diff.kind === 'UnmatchdResponseBody' ||
     diff.kind === 'UnmatchedRequestBody' ||
     diff.kind === 'UnmatchedResponseStatusCode'

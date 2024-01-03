@@ -1869,11 +1869,12 @@ GET /books
   [33m[200 response body] 'author_id' is now type number (/properties/books/items/properties/author_id)[39m
   [33m[200 response body] 'status' now has enum value 'hold' (/properties/books/items/properties/status/enum)[39m
   [31m[200 response body] schema (/properties/books/items/properties/price/maximum) with keyword 'maximum' and parameters {"comparison":"<=","limit":6} received invalid values 10, 15[39m
-  [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:55:1281[24m[39m
+  [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:56:1304[24m[39m
 POST /books
   [32m✓ [39mRequest Body, [32m✓ [39m200 response
   [32m[200 response body] body has been added[39m
   [33m[request body] 'price' is now type string (/properties/price)[39m
+  [32m[request body] body is now optional[39m
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
@@ -1893,6 +1894,7 @@ paths:
   /books:
     post:
       requestBody:
+        required: false
         content:
           application/json:
             schema:
@@ -2083,11 +2085,12 @@ GET /books
   [33m[200 response body] 'author_id' is now type number (/properties/books/items/properties/author_id)[39m
   [33m[200 response body] 'status' now has enum value 'hold' (/properties/books/items/properties/status/enum)[39m
   [31m[200 response body] schema (/properties/books/items/properties/price/maximum) with keyword 'maximum' and parameters {"comparison":"<=","limit":6} received invalid values 10, 15[39m
-  [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:55:1281[24m[39m
+  [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:56:1304[24m[39m
 POST /books
   [32m✓ [39mRequest Body, [32m✓ [39m200 response
   [32m[200 response body] body has been added[39m
   [33m[request body] 'price' is now type string (/properties/price)[39m
+  [32m[request body] body is now optional[39m
 
 4 unmatched requests
 
@@ -2105,6 +2108,7 @@ paths:
   /books:
     post:
       requestBody:
+        required: false
         content:
           application/json:
             schema:
@@ -2233,35 +2237,35 @@ GET /books
   [31m[200 response body] 'updated_at' is not documented (/properties/books/items/properties)[39m
   [31m[200 response body] 'author_id' does not match type number. Received 6nTxAFM5ck4Hob77hGQoL (/properties/books/items/properties/author_id)[39m
   [41m  Diff  [49m 'author_id' did not match schema
-[90m43 |[39m properties:
-[90m44 |[39m   id:
-[90m45 |[39m     type: string
-[90m46 |[39m [1m[33m  author_id:  [41m[Actual] "6nTxAFM5ck4Hob77hGQoL"[49m[39m[22m
-[90m47 |[39m     type: number
-[90m48 |[39m   status:
-[90m49 |[39m     type: string
+[90m44 |[39m properties:
+[90m45 |[39m   id:
+[90m46 |[39m     type: string
+[90m47 |[39m [1m[33m  author_id:  [41m[Actual] "6nTxAFM5ck4Hob77hGQoL"[49m[39m[22m
+[90m48 |[39m     type: number
+[90m49 |[39m   status:
+[90m50 |[39m     type: string
 [90m$workspace$/openapi.yml[39m
 
   [31m[200 response body] 'status' missing enum value 'hold' (/properties/books/items/properties/status/enum)[39m
   [41m  Diff  [49m 'status' does not have enum value hold
-[90m47 |[39m   type: number
-[90m48 |[39m status:
-[90m49 |[39m   type: string
-[90m50 |[39m [1m[33m  enum:  [41mmissing enum value 'hold'[49m[39m[22m
-[90m51 |[39m     - ready
-[90m52 |[39m     - not_ready
-[90m53 |[39m price:
+[90m48 |[39m   type: number
+[90m49 |[39m status:
+[90m50 |[39m   type: string
+[90m51 |[39m [1m[33m  enum:  [41mmissing enum value 'hold'[49m[39m[22m
+[90m52 |[39m     - ready
+[90m53 |[39m     - not_ready
+[90m54 |[39m price:
 [90m$workspace$/openapi.yml[39m
 
   [31m[200 response body] schema (/properties/books/items/properties/price/maximum) with keyword 'maximum' and parameters {"comparison":"<=","limit":6} received invalid values 10, 15[39m
   [41m  Diff  [49m interaction did not match schema
-[90m52 |[39m       - not_ready
-[90m53 |[39m   price:
-[90m54 |[39m     type: number
-[90m55 |[39m [1m[33m    maximum: 6  [41m[Actual] 10, 15[49m[39m[22m
-[90m56 |[39m     minimum: 2
-[90m57 |[39m required:
-[90m58 |[39m   - id
+[90m53 |[39m       - not_ready
+[90m54 |[39m   price:
+[90m55 |[39m     type: number
+[90m56 |[39m [1m[33m    maximum: 6  [41m[Actual] 10, 15[49m[39m[22m
+[90m57 |[39m     minimum: 2
+[90m58 |[39m required:
+[90m59 |[39m   - id
 [90m$workspace$/openapi.yml[39m
 
 POST /books
@@ -2269,18 +2273,19 @@ POST /books
   [31m[200 response body] body is not documented[39m
   [31m[request body] 'price' does not match type string. Received 1 (/properties/price)[39m
   [41m  Diff  [49m 'price' did not match schema
-[90m15 |[39m properties:
-[90m16 |[39m   name:
-[90m17 |[39m     type: string
-[90m18 |[39m [1m[33m  price:  [41m[Actual] 1[49m[39m[22m
-[90m19 |[39m     type: string
-[90m20 |[39m   author_id:
-[90m21 |[39m     type: string
+[90m16 |[39m properties:
+[90m17 |[39m   name:
+[90m18 |[39m     type: string
+[90m19 |[39m [1m[33m  price:  [41m[Actual] 1[49m[39m[22m
+[90m20 |[39m     type: string
+[90m21 |[39m   author_id:
+[90m22 |[39m     type: string
 [90m$workspace$/openapi.yml[39m
 
+  [31m[request body] body is required and missing[39m
 
-100.0% coverage of your documented operations. 4 requests did not match a documented path (6 total requests).
-12 diffs detected in documented operations
+100.0% coverage of your documented operations. 4 requests did not match a documented path (7 total requests).
+13 diffs detected in documented operations
 
 [33mNew endpoints are only added in interactive mode. Run 'optic capture openapi.yml --update interactive' to add new endpoints[39m
 "
@@ -2300,9 +2305,10 @@ POST /books
   [31m× [39mRequest Body
   [31m[200 response body] body is not documented[39m
   [31m[request body] 'price' does not match type string. Received 1 (/properties/price)[39m
+  [31m[request body] body is required and missing[39m
 
-100.0% coverage of your documented operations. 4 requests did not match a documented path (6 total requests).
-8 diffs detected in documented operations
+100.0% coverage of your documented operations. 4 requests did not match a documented path (7 total requests).
+9 diffs detected in documented operations
 
 [33mNew endpoints are only added in interactive mode. Run 'optic capture openapi.yml --update interactive' to add new endpoints[39m
 "
