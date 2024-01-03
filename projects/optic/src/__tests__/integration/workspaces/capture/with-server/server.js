@@ -59,7 +59,7 @@ const requestListener = function (req, res) {
   } else if (/^\/books\//i.test(normalizedUrl) && req.method === 'GET') {
     res.writeHead(200);
     res.end(JSON.stringify(books[0]));
-  } else if (/^\/books\//i.test(normalizedUrl) && req.method === 'POST') {
+  } else if (/^\/books/i.test(normalizedUrl) && req.method === 'POST') {
     res.writeHead(200);
     res.end(JSON.stringify(books[0]));
   }else if (normalizedUrl === '/authors' && req.method === 'GET') {
