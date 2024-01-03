@@ -1168,6 +1168,172 @@ exports[`3.0.x examples ruleset passing property example 1`] = `
 ]
 `;
 
+exports[`3.0.x examples ruleset with duplicate in ids in examples 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "method": "post",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "post",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/post/requestBody/content/application~1json",
+        "kind": "body",
+      },
+      "value": {
+        "contentType": "application/json",
+        "flatSchema": {
+          "oneOf": [
+            {
+              "example": {
+                "id": "1",
+              },
+              "properties": {
+                "id": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            {
+              "example": {
+                "id": "1",
+              },
+              "properties": {
+                "id": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+          ],
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request body examples must match schema",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "POST /api/users request body: application/json",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [
+            "id",
+          ],
+          "method": "post",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "post",
+          "application/json",
+          "oneOf",
+          "0",
+          "id",
+        ],
+        "jsonPath": "/paths/~1api~1users/post/requestBody/content/application~1json/schema/oneOf/0/properties/id",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "string",
+        },
+        "key": "id",
+        "required": false,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property examples match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "POST /api/users request body: application/json property: id",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [
+            "id",
+          ],
+          "method": "post",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "post",
+          "application/json",
+          "oneOf",
+          "1",
+          "id",
+        ],
+        "jsonPath": "/paths/~1api~1users/post/requestBody/content/application~1json/schema/oneOf/1/properties/id",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "string",
+        },
+        "key": "id",
+        "required": false,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property examples match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "POST /api/users request body: application/json property: id",
+  },
+]
+`;
+
 exports[`3.1.x examples ruleset examples should default to additional properties false ajv config will be strict on additional properties 1`] = `
 {
   "error": "  - example  must NOT have additional property 'c'",
@@ -2295,6 +2461,172 @@ exports[`3.1.x examples ruleset passing property example 1`] = `
     "severity": 2,
     "type": "requirement",
     "where": "GET /api/users response 200",
+  },
+]
+`;
+
+exports[`3.1.x examples ruleset with duplicate in ids in examples 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "method": "post",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "post",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/post/requestBody/content/application~1json",
+        "kind": "body",
+      },
+      "value": {
+        "contentType": "application/json",
+        "flatSchema": {
+          "oneOf": [
+            {
+              "example": {
+                "id": "1",
+              },
+              "properties": {
+                "id": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            {
+              "example": {
+                "id": "1",
+              },
+              "properties": {
+                "id": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+          ],
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "exempted": false,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request body examples must match schema",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "POST /api/users request body: application/json",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [
+            "id",
+          ],
+          "method": "post",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "post",
+          "application/json",
+          "oneOf",
+          "0",
+          "id",
+        ],
+        "jsonPath": "/paths/~1api~1users/post/requestBody/content/application~1json/schema/oneOf/0/properties/id",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "string",
+        },
+        "key": "id",
+        "required": false,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property examples match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "POST /api/users request body: application/json property: id",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [
+            "id",
+          ],
+          "method": "post",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "post",
+          "application/json",
+          "oneOf",
+          "1",
+          "id",
+        ],
+        "jsonPath": "/paths/~1api~1users/post/requestBody/content/application~1json/schema/oneOf/1/properties/id",
+        "kind": "field",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "string",
+        },
+        "key": "id",
+        "required": false,
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "require property examples match schemas",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "POST /api/users request body: application/json property: id",
   },
 ]
 `;

@@ -101,6 +101,11 @@ function prepareSchemaForValidation(
     return;
   }
 
+  // Delete example and examples from schema, not necessary for using the schema and can cause false positives with AJV
+  // See https://github.com/opticdev/optic/issues/2631 for details
+  if ('example' in schema) delete schema.example;
+  if ('examples' in schema) delete schema.examples;
+
   if (!inAllOf) {
     if (OAS3.isObjectType(schema.type) && !schema.additionalProperties) {
       schema.additionalProperties = false;
