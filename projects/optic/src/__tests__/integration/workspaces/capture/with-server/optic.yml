@@ -42,6 +42,8 @@ capture:
             name: asd
             price: 1
             author_id: 6nTxAFM5ck4Hob77hGQoL
+        - path: /books
+          method: POST
         - path: /authors
           method: GET
   openapi-prefixed-url.yml:
