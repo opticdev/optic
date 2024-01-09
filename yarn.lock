@@ -3827,7 +3827,7 @@ __metadata:
     loglevel: "npm:^1.8.0"
     micromatch: "npm:^4.0.5"
     minimatch: "npm:9.0.3"
-    mockttp: "npm:3.10.0"
+    mockttp: "npm:3.10.1"
     node-fetch: "npm:^2.6.7"
     node-forge: "npm:^1.2.1"
     node-machine-id: "npm:^1.1.12"
@@ -8987,9 +8987,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mockttp@npm:3.10.0":
-  version: 3.10.0
-  resolution: "mockttp@npm:3.10.0"
+"mockttp@npm:3.10.1":
+  version: 3.10.1
+  resolution: "mockttp@npm:3.10.1"
   dependencies:
     "@graphql-tools/schema": "npm:^8.5.0"
     "@graphql-tools/utils": "npm:^8.8.0"
@@ -9032,7 +9032,7 @@ __metadata:
     ws: "npm:^8.8.0"
   bin:
     mockttp: dist/admin/admin-bin.js
-  checksum: 8a58e27dadf3ca68175c419b738be59502a682a6e51a5cbd8f8610303ead6ddd7b5a341af96fe6386ba502c0539f56bc7889b3e03245e225a88a37836b22ad9e
+  checksum: 513c1c7e12352c7a9a120bf20fca8ff95e660eb68b9fd0ae2821eb39fb9cdd240b6ce01d7b75e42576be415226a792c763308313428b4c55d4834fd402d1c359
   languageName: node
   linkType: hard
 
