@@ -98,6 +98,16 @@ capture:
       send:
         - path: /books
           method: GET
+  openapi-with-external-ref-spaces.yml:
+    server:
+      command: node server.js
+      url: http://localhost:%PORT
+      ready_endpoint: /healthcheck
+      ready_timeout: 5000
+    requests:
+      send:
+        - path: /books
+          method: GET
   openapi-with-server-prefix.yml:
     server:
       command: node server.js
