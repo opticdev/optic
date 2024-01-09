@@ -115,8 +115,6 @@ export function sourcemapReader(sourcemap: SerializedSourcemap) {
       } else {
         cursor.pathInCurrentFile.push(component);
       }
-
-      // console.log(cursor);
     });
 
     const file = sourcemap.files.find((i) => i.index === cursor.currentFile)!;

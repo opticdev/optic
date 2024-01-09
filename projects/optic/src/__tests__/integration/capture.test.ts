@@ -216,6 +216,30 @@ describe('capture with requests', () => {
         )
       ).toMatchSnapshot();
     });
+
+    test('handles update in other file with spaces', async () => {
+      const workspace = await setupWorkspace('capture/with-server');
+      await setPortInFile(workspace, 'optic.yml');
+
+      const { combined, code } = await runOptic(
+        workspace,
+        'capture openapi-with-external-ref-spaces.yml --update'
+      );
+      expect(normalizeWorkspace(workspace, combined)).toMatchSnapshot();
+      expect(code).toBe(0);
+      expect(
+        await fs.readFile(
+          path.join(workspace, 'openapi-with-external-ref-spaces.yml'),
+          'utf-8'
+        )
+      ).toMatchSnapshot();
+      expect(
+        await fs.readFile(
+          path.join(workspace, './with space/books.yml'),
+          'utf-8'
+        )
+      ).toMatchSnapshot();
+    });
   });
 });
 

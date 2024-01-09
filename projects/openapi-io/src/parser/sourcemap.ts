@@ -79,17 +79,19 @@ export class JsonSchemaSourcemap {
   }
 
   logPointer(pathRelativeToFile: string, pathRelativeToRoot: string) {
+    const relativePathDecoded =
+      jsonPointerHelpers.unescapeUriSafePointer(pathRelativeToFile);
+    const rootKey = jsonPointerHelpers.unescapeUriSafePointer(
+      pathRelativeToRoot.substring(1)
+    );
+
     const thisFile = this.files.find((i) =>
-      pathRelativeToFile.startsWith(i.path)
+      relativePathDecoded.startsWith(i.path)
     );
 
     if (thisFile) {
-      const rootKey = jsonPointerHelpers.unescapeUriSafePointer(
-        pathRelativeToRoot.substring(1)
-      );
-
       const jsonPointer = jsonPointerHelpers.unescapeUriSafePointer(
-        pathRelativeToFile.split(thisFile.path)[1].substring(1) || '/'
+        relativePathDecoded.split(thisFile.path)[1].substring(1) || '/'
       );
 
       if (rootKey === jsonPointer) return;
