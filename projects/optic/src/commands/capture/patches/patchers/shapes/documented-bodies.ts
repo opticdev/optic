@@ -230,7 +230,6 @@ async function decodeCapturedBody(
   let parsedType = contentType && MIMEType.parse(contentType);
 
   if (!contentType || !parsedType) return Ok(None); // for now, we'll only attempt decoding when we know a content type
-
   if (
     parsedType.essence === 'application/json' || // IETF RFC 4627
     parsedType.essence === 'text/json' || // valid JSON type according to WHATWG-mimesniff  https://mimesniff.spec.whatwg.org/#mime-type-groups
@@ -252,6 +251,26 @@ async function decodeCapturedBody(
         value,
       })
     );
+  } else if (parsedType.essence === 'multipart/form-data') {
+    return Ok(
+      Some({
+        contentType,
+        value: capturedBody.body
+          ? parseMultipartFormBody(capturedBody.contentType!, capturedBody.body)
+          : {},
+      })
+    );
+  } else if (parsedType.essence === 'application/x-www-form-urlencoded') {
+    const searchParams = new URLSearchParams(capturedBody.body ?? '');
+    const parsed = {};
+    for (const [key, v] of searchParams) parsed[key] = v;
+
+    return Ok(
+      Some({
+        contentType,
+        value: parsed,
+      })
+    );
   } else {
     return Ok(
       Some({
@@ -260,4 +279,42 @@ async function decodeCapturedBody(
       })
     );
   }
+}
+
+function parseMultipartFormBody(
+  contentType: string,
+  body: string
+): Record<string, string> {
+  // Expected contentType to be format of
+  // multipart/form-data; boundary=---------------------------123456789
+  const boundary = contentType.split(';')[1].split('=')[1].trim();
+
+  // Here we just care about the field names
+  // the boundary could be padded with `-`
+  const chunks = body
+    .split(new RegExp(`-*${boundary}-*[\\r\\n]+`))
+    .slice(1, -1);
+  const parsed = {};
+
+  for (let chunk of chunks) {
+    const disposition = chunk
+      .split(/[\r\n]+/)
+      .find((l) => /^Content-Disposition/i.test(l));
+    // Example line:
+    // Content-Disposition: form-data; name="file"; filename="upload.txt"
+    const nameMatch = disposition
+      ?.split(';')
+      .filter((l) => /name=".+"/.test(l))[0]
+      ?.match(/name="(.+)"/);
+    if (!nameMatch || !nameMatch[1]) continue;
+    const name = nameMatch[1];
+    // Remove header rows to get the raw content and the trailing line breaks
+    chunk = chunk
+      .replace(/^Content-Disposition.+[\r\n]+/i, '')
+      .replace(/^Content-Type.+[\r\n]+/i, '') // Content-type is only set for files (i.e. has `filename="..."`)
+      .replace(/[\r\n]+$/, '');
+
+    parsed[name] = chunk;
+  }
+  return parsed;
 }

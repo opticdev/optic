@@ -143,7 +143,7 @@ export class HarEntries {
                 mimeType: requestContentType,
                 text: requestBodyEncoded,
                 encoding: 'base64',
-                params: [], // not supporting posted formdata
+                params: [],
               }
             : undefined,
       };
