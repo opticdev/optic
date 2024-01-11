@@ -28,6 +28,8 @@ capture:
       url: http://localhost:%PORT
       ready_endpoint: /healthcheck
     requests:
+      run:
+        command: "curl -X POST $OPTIC_PROXY/multipart-form -F key1=value1 -F file=@file.txt -H 'Content-Type: multipart/form-data' && curl -X POST $OPTIC_PROXY/form -H 'Content-Type: application/x-www-form-urlencoded' -d 'param1=value1&param2=value2'"
       send:
         - path: /
         - path: /books

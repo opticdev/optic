@@ -289,7 +289,6 @@ function parseMultipartFormBody(
   // multipart/form-data; boundary=---------------------------123456789
   const boundary = contentType.split(';')[1].split('=')[1].trim();
 
-  // Here we just care about the field names
   // the boundary could be padded with `-`
   const chunks = body
     .split(new RegExp(`-*${boundary}-*[\\r\\n]+`))

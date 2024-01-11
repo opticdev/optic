@@ -6,6 +6,11 @@ exports[`capture with inputs --har updating an OpenAPI spec 1`] = `
   [32m[200 response body] 'data' has been added (/properties/data)[39m
   [32m[200 response body] 'next' has been added (/properties/next)[39m
   [32m[200 response body] 'has_more_data' has been added (/properties/has_more_data)[39m
+POST /form
+  [32m✓ [39mRequest Body, [32m✓ [39m200 response
+  [32m[200 response body] body has been added[39m
+  [32m[request body] 'name' has been added (/properties/name)[39m
+  [32m[request body] 'surname' has been added (/properties/surname)[39m
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
@@ -24,6 +29,36 @@ info:
   description: The API
   version: 0.1.0
 paths:
+  /form:
+    post:
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                name:
+                  type: string
+                surname:
+                  type: string
+              required:
+                - name
+                - surname
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
   /books:
     get:
       responses:
@@ -236,9 +271,14 @@ exports[`capture with inputs --har verifying OpenAPI spec 1`] = `
   [31m[200 response body] 'data' is not documented (/properties)[39m
   [31m[200 response body] 'next' is not documented (/properties)[39m
   [31m[200 response body] 'has_more_data' is not documented (/properties)[39m
+POST /form
+  [31m× [39mRequest Body
+  [31m[200 response body] body is not documented[39m
+  [31m[request body] 'name' is not documented (/properties)[39m
+  [31m[request body] 'surname' is not documented (/properties)[39m
 
-100.0% coverage of your documented operations. 7 requests did not match a documented path (8 total requests).
-3 diffs detected in documented operations
+100.0% coverage of your documented operations. 7 requests did not match a documented path (9 total requests).
+6 diffs detected in documented operations
 
 [33mNew endpoints are only added in interactive mode. Run 'optic capture openapi.yml --update interactive' to add new endpoints[39m
 "
@@ -451,7 +491,7 @@ paths:
               type: string
           application/x-www-form-urlencoded:
             schema:
-              type: string
+              $ref: "#/components/schemas/PostPostRequestBody"
   /put:
     put:
       responses:
@@ -751,6 +791,16 @@ components:
         - normalized_param_string
         - base_string
         - signing_key
+    PostPostRequestBody:
+      type: object
+      properties:
+        foo1:
+          type: string
+        foo2:
+          type: string
+      required:
+        - foo1
+        - foo2
     PutPutRequestBody:
       oneOf:
         - type: object
@@ -1926,6 +1976,23 @@ components:
 
 exports[`capture with requests update behavior updates all endpoints with --update automatic 1`] = `
 "Generating traffic to send to server
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+
+100   324    0     2  100   322    197  31846 --:--:-- --:--:-- --:--:-- 32400
+
+{}
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--
+     0
+
+100    29    0     2  100    27    832  11240 --:--:-- --:--:-- --:--:-- 14500
+
+{}
 GET /books
   [32m✓ [39m200 response
   [32m[200 response body] 'name' has been added (/properties/books/items/properties/name)[39m
@@ -1934,12 +2001,20 @@ GET /books
   [33m[200 response body] 'author_id' is now type number (/properties/books/items/properties/author_id)[39m
   [33m[200 response body] 'status' now has enum value 'hold' (/properties/books/items/properties/status/enum)[39m
   [31m[200 response body] schema (/properties/books/items/properties/price/maximum) with keyword 'maximum' and parameters {"comparison":"<=","limit":6} received invalid values 10, 15[39m
-  [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:56:1304[24m[39m
+  [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:80:1840[24m[39m
 POST /books
   [32m✓ [39mRequest Body, [32m✓ [39m200 response
   [32m[200 response body] body has been added[39m
   [33m[request body] 'price' is now type string (/properties/price)[39m
   [32m[request body] body is now optional[39m
+POST /form
+  [32m✓ [39mRequest Body, [32m✓ [39m200 response
+  [32m[200 response body] body has been added[39m
+  [32m[request body] 'param2' has been added (/properties/param2)[39m
+POST /multipart-form
+  [32m✓ [39mRequest Body, [32m✓ [39m200 response
+  [32m[200 response body] body has been added[39m
+  [32m[request body] 'key1' has been added (/properties/key1)[39m
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
@@ -1956,6 +2031,50 @@ info:
   description: The API
   version: 0.1.0
 paths:
+  /form:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                param1:
+                  type: string
+                param2:
+                  type: string
+              required:
+                - param2
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                type: object
+  /multipart-form:
+    post:
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                key1:
+                  type: string
+              required:
+                - key1
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                type: object
   /books:
     post:
       requestBody:
@@ -2142,6 +2261,22 @@ components:
 
 exports[`capture with requests update behavior updates only existing endpoints by default 1`] = `
 "Generating traffic to send to server
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+
+100   324    0     2  100   322    207  33475 --:--:-- --:--:-- --:--:-- 36000
+
+{}
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+
+100    29    0     2  100    27    965  13030 --:--:-- --:--:-- --:--:-- 14500
+
+{}
 GET /books
   [32m✓ [39m200 response
   [32m[200 response body] 'name' has been added (/properties/books/items/properties/name)[39m
@@ -2150,12 +2285,20 @@ GET /books
   [33m[200 response body] 'author_id' is now type number (/properties/books/items/properties/author_id)[39m
   [33m[200 response body] 'status' now has enum value 'hold' (/properties/books/items/properties/status/enum)[39m
   [31m[200 response body] schema (/properties/books/items/properties/price/maximum) with keyword 'maximum' and parameters {"comparison":"<=","limit":6} received invalid values 10, 15[39m
-  [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:56:1304[24m[39m
+  [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:80:1840[24m[39m
 POST /books
   [32m✓ [39mRequest Body, [32m✓ [39m200 response
   [32m[200 response body] body has been added[39m
   [33m[request body] 'price' is now type string (/properties/price)[39m
   [32m[request body] body is now optional[39m
+POST /form
+  [32m✓ [39mRequest Body, [32m✓ [39m200 response
+  [32m[200 response body] body has been added[39m
+  [32m[request body] 'param2' has been added (/properties/param2)[39m
+POST /multipart-form
+  [32m✓ [39mRequest Body, [32m✓ [39m200 response
+  [32m[200 response body] body has been added[39m
+  [32m[request body] 'key1' has been added (/properties/key1)[39m
 
 4 unmatched requests
 
@@ -2170,6 +2313,50 @@ info:
   description: The API
   version: 0.1.0
 paths:
+  /form:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                param1:
+                  type: string
+                param2:
+                  type: string
+              required:
+                - param2
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                type: object
+  /multipart-form:
+    post:
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                key1:
+                  type: string
+              required:
+                - key1
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                type: object
   /books:
     post:
       requestBody:
@@ -2295,6 +2482,22 @@ GET /books
 
 exports[`capture with requests verify behavior verifies the specification in verbose mode 1`] = `
 "Generating traffic to send to server
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+
+100   324    0     2  100   322    214  34586 --:--:-- --:--:-- --:--:-- 36000
+
+{}
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+
+100    29    0     2  100    27    573   7745 --:--:-- --:--:-- --:--:--  9666
+
+{}
 GET /books
   [31m× [39m200 response
   [31m[200 response body] 'name' is not documented (/properties/books/items/properties)[39m
@@ -2302,35 +2505,35 @@ GET /books
   [31m[200 response body] 'updated_at' is not documented (/properties/books/items/properties)[39m
   [31m[200 response body] 'author_id' does not match type number. Received 6nTxAFM5ck4Hob77hGQoL (/properties/books/items/properties/author_id)[39m
   [41m  Diff  [49m 'author_id' did not match schema
-[90m44 |[39m properties:
-[90m45 |[39m   id:
-[90m46 |[39m     type: string
-[90m47 |[39m [1m[33m  author_id:  [41m[Actual] "6nTxAFM5ck4Hob77hGQoL"[49m[39m[22m
-[90m48 |[39m     type: number
-[90m49 |[39m   status:
-[90m50 |[39m     type: string
+[90m68 |[39m properties:
+[90m69 |[39m   id:
+[90m70 |[39m     type: string
+[90m71 |[39m [1m[33m  author_id:  [41m[Actual] "6nTxAFM5ck4Hob77hGQoL"[49m[39m[22m
+[90m72 |[39m     type: number
+[90m73 |[39m   status:
+[90m74 |[39m     type: string
 [90m$workspace$/openapi.yml[39m
 
   [31m[200 response body] 'status' missing enum value 'hold' (/properties/books/items/properties/status/enum)[39m
   [41m  Diff  [49m 'status' does not have enum value hold
-[90m48 |[39m   type: number
-[90m49 |[39m status:
-[90m50 |[39m   type: string
-[90m51 |[39m [1m[33m  enum:  [41mmissing enum value 'hold'[49m[39m[22m
-[90m52 |[39m     - ready
-[90m53 |[39m     - not_ready
-[90m54 |[39m price:
+[90m72 |[39m   type: number
+[90m73 |[39m status:
+[90m74 |[39m   type: string
+[90m75 |[39m [1m[33m  enum:  [41mmissing enum value 'hold'[49m[39m[22m
+[90m76 |[39m     - ready
+[90m77 |[39m     - not_ready
+[90m78 |[39m price:
 [90m$workspace$/openapi.yml[39m
 
   [31m[200 response body] schema (/properties/books/items/properties/price/maximum) with keyword 'maximum' and parameters {"comparison":"<=","limit":6} received invalid values 10, 15[39m
   [41m  Diff  [49m interaction did not match schema
-[90m53 |[39m       - not_ready
-[90m54 |[39m   price:
-[90m55 |[39m     type: number
-[90m56 |[39m [1m[33m    maximum: 6  [41m[Actual] 10, 15[49m[39m[22m
-[90m57 |[39m     minimum: 2
-[90m58 |[39m required:
-[90m59 |[39m   - id
+[90m77 |[39m       - not_ready
+[90m78 |[39m   price:
+[90m79 |[39m     type: number
+[90m80 |[39m [1m[33m    maximum: 6  [41m[Actual] 10, 15[49m[39m[22m
+[90m81 |[39m     minimum: 2
+[90m82 |[39m required:
+[90m83 |[39m   - id
 [90m$workspace$/openapi.yml[39m
 
 POST /books
@@ -2338,19 +2541,27 @@ POST /books
   [31m[200 response body] body is not documented[39m
   [31m[request body] 'price' does not match type string. Received 1 (/properties/price)[39m
   [41m  Diff  [49m 'price' did not match schema
-[90m16 |[39m properties:
-[90m17 |[39m   name:
-[90m18 |[39m     type: string
-[90m19 |[39m [1m[33m  price:  [41m[Actual] 1[49m[39m[22m
-[90m20 |[39m     type: string
-[90m21 |[39m   author_id:
-[90m22 |[39m     type: string
+[90m40 |[39m properties:
+[90m41 |[39m   name:
+[90m42 |[39m     type: string
+[90m43 |[39m [1m[33m  price:  [41m[Actual] 1[49m[39m[22m
+[90m44 |[39m     type: string
+[90m45 |[39m   author_id:
+[90m46 |[39m     type: string
 [90m$workspace$/openapi.yml[39m
 
   [31m[request body] body is required and missing[39m
+POST /form
+  [31m× [39mRequest Body
+  [31m[200 response body] body is not documented[39m
+  [31m[request body] 'param2' is not documented (/properties)[39m
+POST /multipart-form
+  [31m× [39mRequest Body
+  [31m[200 response body] body is not documented[39m
+  [31m[request body] 'key1' is not documented (/properties)[39m
 
-100.0% coverage of your documented operations. 4 requests did not match a documented path (7 total requests).
-13 diffs detected in documented operations
+100.0% coverage of your documented operations. 4 requests did not match a documented path (9 total requests).
+17 diffs detected in documented operations
 
 [33mNew endpoints are only added in interactive mode. Run 'optic capture openapi.yml --update interactive' to add new endpoints[39m
 "
@@ -2358,6 +2569,22 @@ POST /books
 
 exports[`capture with requests verify behavior verifies the specification with coverage 1`] = `
 "Generating traffic to send to server
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+
+100   324    0     2  100   322    224  36200 --:--:-- --:--:-- --:--:-- 40500
+
+{}
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+
+100    29    0     2  100    27    914  12340 --:--:-- --:--:-- --:--:-- 14500
+
+{}
 GET /books
   [31m× [39m200 response
   [31m[200 response body] 'name' is not documented (/properties/books/items/properties)[39m
@@ -2371,9 +2598,17 @@ POST /books
   [31m[200 response body] body is not documented[39m
   [31m[request body] 'price' does not match type string. Received 1 (/properties/price)[39m
   [31m[request body] body is required and missing[39m
+POST /form
+  [31m× [39mRequest Body
+  [31m[200 response body] body is not documented[39m
+  [31m[request body] 'param2' is not documented (/properties)[39m
+POST /multipart-form
+  [31m× [39mRequest Body
+  [31m[200 response body] body is not documented[39m
+  [31m[request body] 'key1' is not documented (/properties)[39m
 
-100.0% coverage of your documented operations. 4 requests did not match a documented path (7 total requests).
-9 diffs detected in documented operations
+100.0% coverage of your documented operations. 4 requests did not match a documented path (9 total requests).
+13 diffs detected in documented operations
 
 [33mNew endpoints are only added in interactive mode. Run 'optic capture openapi.yml --update interactive' to add new endpoints[39m
 "
