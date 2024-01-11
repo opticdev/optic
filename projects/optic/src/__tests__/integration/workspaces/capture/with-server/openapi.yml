@@ -27,6 +27,8 @@ paths:
               properties:
                 file:
                   type: string
+              required:
+                - file
       responses: {}
   /books:
     post:

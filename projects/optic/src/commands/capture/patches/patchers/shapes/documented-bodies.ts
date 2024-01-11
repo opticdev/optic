@@ -290,9 +290,7 @@ function parseMultipartFormBody(
   const boundary = contentType.split(';')[1].split('=')[1].trim();
 
   // the boundary could be padded with `-`
-  const chunks = body
-    .split(new RegExp(`-*${boundary}-*[\\r\\n]+`))
-    .slice(1, -1);
+  const chunks = body.split(new RegExp(`-*${boundary}-*[\\r\\n]+`)).slice(1); // remove the header part of the body
   const parsed = {};
 
   for (let chunk of chunks) {

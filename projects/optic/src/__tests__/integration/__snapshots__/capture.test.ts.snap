@@ -45,6 +45,7 @@ paths:
                 surname:
                   type: string
               required:
+                - file
                 - name
                 - surname
       responses:
@@ -1976,22 +1977,7 @@ components:
 
 exports[`capture with requests update behavior updates all endpoints with --update automatic 1`] = `
 "Generating traffic to send to server
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-
-100   324    0     2  100   322    197  31846 --:--:-- --:--:-- --:--:-- 32400
-
 {}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--
-     0
-
-100    29    0     2  100    27    832  11240 --:--:-- --:--:-- --:--:-- 14500
-
 {}
 GET /books
   [32m✓ [39m200 response
@@ -2001,7 +1987,7 @@ GET /books
   [33m[200 response body] 'author_id' is now type number (/properties/books/items/properties/author_id)[39m
   [33m[200 response body] 'status' now has enum value 'hold' (/properties/books/items/properties/status/enum)[39m
   [31m[200 response body] schema (/properties/books/items/properties/price/maximum) with keyword 'maximum' and parameters {"comparison":"<=","limit":6} received invalid values 10, 15[39m
-  [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:80:1840[24m[39m
+  [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:82:1887[24m[39m
 POST /books
   [32m✓ [39mRequest Body, [32m✓ [39m200 response
   [32m[200 response body] body has been added[39m
@@ -2067,6 +2053,7 @@ paths:
                 key1:
                   type: string
               required:
+                - file
                 - key1
       responses:
         "200":
@@ -2261,21 +2248,7 @@ components:
 
 exports[`capture with requests update behavior updates only existing endpoints by default 1`] = `
 "Generating traffic to send to server
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-
-100   324    0     2  100   322    207  33475 --:--:-- --:--:-- --:--:-- 36000
-
 {}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-
-100    29    0     2  100    27    965  13030 --:--:-- --:--:-- --:--:-- 14500
-
 {}
 GET /books
   [32m✓ [39m200 response
@@ -2285,7 +2258,7 @@ GET /books
   [33m[200 response body] 'author_id' is now type number (/properties/books/items/properties/author_id)[39m
   [33m[200 response body] 'status' now has enum value 'hold' (/properties/books/items/properties/status/enum)[39m
   [31m[200 response body] schema (/properties/books/items/properties/price/maximum) with keyword 'maximum' and parameters {"comparison":"<=","limit":6} received invalid values 10, 15[39m
-  [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:80:1840[24m[39m
+  [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:82:1887[24m[39m
 POST /books
   [32m✓ [39mRequest Body, [32m✓ [39m200 response
   [32m[200 response body] body has been added[39m
@@ -2349,6 +2322,7 @@ paths:
                 key1:
                   type: string
               required:
+                - file
                 - key1
       responses:
         "200":
@@ -2482,21 +2456,7 @@ GET /books
 
 exports[`capture with requests verify behavior verifies the specification in verbose mode 1`] = `
 "Generating traffic to send to server
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-
-100   324    0     2  100   322    214  34586 --:--:-- --:--:-- --:--:-- 36000
-
 {}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-
-100    29    0     2  100    27    573   7745 --:--:-- --:--:-- --:--:--  9666
-
 {}
 GET /books
   [31m× [39m200 response
@@ -2505,35 +2465,35 @@ GET /books
   [31m[200 response body] 'updated_at' is not documented (/properties/books/items/properties)[39m
   [31m[200 response body] 'author_id' does not match type number. Received 6nTxAFM5ck4Hob77hGQoL (/properties/books/items/properties/author_id)[39m
   [41m  Diff  [49m 'author_id' did not match schema
-[90m68 |[39m properties:
-[90m69 |[39m   id:
-[90m70 |[39m     type: string
-[90m71 |[39m [1m[33m  author_id:  [41m[Actual] "6nTxAFM5ck4Hob77hGQoL"[49m[39m[22m
-[90m72 |[39m     type: number
-[90m73 |[39m   status:
-[90m74 |[39m     type: string
+[90m70 |[39m properties:
+[90m71 |[39m   id:
+[90m72 |[39m     type: string
+[90m73 |[39m [1m[33m  author_id:  [41m[Actual] "6nTxAFM5ck4Hob77hGQoL"[49m[39m[22m
+[90m74 |[39m     type: number
+[90m75 |[39m   status:
+[90m76 |[39m     type: string
 [90m$workspace$/openapi.yml[39m
 
   [31m[200 response body] 'status' missing enum value 'hold' (/properties/books/items/properties/status/enum)[39m
   [41m  Diff  [49m 'status' does not have enum value hold
-[90m72 |[39m   type: number
-[90m73 |[39m status:
-[90m74 |[39m   type: string
-[90m75 |[39m [1m[33m  enum:  [41mmissing enum value 'hold'[49m[39m[22m
-[90m76 |[39m     - ready
-[90m77 |[39m     - not_ready
-[90m78 |[39m price:
+[90m74 |[39m   type: number
+[90m75 |[39m status:
+[90m76 |[39m   type: string
+[90m77 |[39m [1m[33m  enum:  [41mmissing enum value 'hold'[49m[39m[22m
+[90m78 |[39m     - ready
+[90m79 |[39m     - not_ready
+[90m80 |[39m price:
 [90m$workspace$/openapi.yml[39m
 
   [31m[200 response body] schema (/properties/books/items/properties/price/maximum) with keyword 'maximum' and parameters {"comparison":"<=","limit":6} received invalid values 10, 15[39m
   [41m  Diff  [49m interaction did not match schema
-[90m77 |[39m       - not_ready
-[90m78 |[39m   price:
-[90m79 |[39m     type: number
-[90m80 |[39m [1m[33m    maximum: 6  [41m[Actual] 10, 15[49m[39m[22m
-[90m81 |[39m     minimum: 2
-[90m82 |[39m required:
-[90m83 |[39m   - id
+[90m79 |[39m       - not_ready
+[90m80 |[39m   price:
+[90m81 |[39m     type: number
+[90m82 |[39m [1m[33m    maximum: 6  [41m[Actual] 10, 15[49m[39m[22m
+[90m83 |[39m     minimum: 2
+[90m84 |[39m required:
+[90m85 |[39m   - id
 [90m$workspace$/openapi.yml[39m
 
 POST /books
@@ -2541,13 +2501,13 @@ POST /books
   [31m[200 response body] body is not documented[39m
   [31m[request body] 'price' does not match type string. Received 1 (/properties/price)[39m
   [41m  Diff  [49m 'price' did not match schema
-[90m40 |[39m properties:
-[90m41 |[39m   name:
-[90m42 |[39m     type: string
-[90m43 |[39m [1m[33m  price:  [41m[Actual] 1[49m[39m[22m
+[90m42 |[39m properties:
+[90m43 |[39m   name:
 [90m44 |[39m     type: string
-[90m45 |[39m   author_id:
+[90m45 |[39m [1m[33m  price:  [41m[Actual] 1[49m[39m[22m
 [90m46 |[39m     type: string
+[90m47 |[39m   author_id:
+[90m48 |[39m     type: string
 [90m$workspace$/openapi.yml[39m
 
   [31m[request body] body is required and missing[39m
@@ -2569,21 +2529,7 @@ POST /multipart-form
 
 exports[`capture with requests verify behavior verifies the specification with coverage 1`] = `
 "Generating traffic to send to server
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-
-100   324    0     2  100   322    224  36200 --:--:-- --:--:-- --:--:-- 40500
-
 {}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-
-100    29    0     2  100    27    914  12340 --:--:-- --:--:-- --:--:-- 14500
-
 {}
 GET /books
   [31m× [39m200 response
