@@ -52,12 +52,17 @@ export function* enumPatches(
     path: jsonPointerHelpers.append(diff.propertyPath, '-'), // "-" indicates append to array
     value: diff.value,
   });
+  // If the enum is inside of an array, we could have multiple instances of enum - this updates the enum and reruns diffs
+  const shouldRegeneratePatches = jsonPointerHelpers
+    .decode(diff.propertyPath)
+    .includes('items');
+
   yield {
     description: `add enum ${diff.value} to ${diff.key} `,
     diff,
     impact: [PatchImpact.Addition],
     groupedOperations,
-    shouldRegeneratePatches: false,
+    shouldRegeneratePatches,
     interaction,
   };
 }
