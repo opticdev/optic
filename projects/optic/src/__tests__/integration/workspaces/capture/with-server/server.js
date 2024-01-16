@@ -68,7 +68,11 @@ const requestListener = function (req, res) {
   } else if (normalizedUrl === '/healthcheck' && req.method === 'GET') {
     res.writeHead(200);
     res.end(JSON.stringify({authors}));
-  } else {
+  }else if ((normalizedUrl === '/form' || normalizedUrl === '/multipart-form') && req.method === 'POST') {
+    res.writeHead(200);
+    res.end(JSON.stringify({}));
+  }
+   else {
     res.writeHead(404);
     res.end(JSON.stringify({ error: "Resource not found" }));
   }

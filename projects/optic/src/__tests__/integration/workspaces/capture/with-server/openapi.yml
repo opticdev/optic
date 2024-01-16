@@ -4,6 +4,32 @@ info:
   description: The API
   version: 0.1.0
 paths:
+  /form:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                param1:
+                  type: string
+      responses: {}
+  /multipart-form:
+    post:
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+              required:
+                - file
+      responses: {}
   /books:
     post:
       requestBody:
