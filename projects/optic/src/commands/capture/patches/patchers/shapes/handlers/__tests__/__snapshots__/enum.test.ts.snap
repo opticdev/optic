@@ -57,7 +57,7 @@ exports[`enum shape patch generator when enum is nested in array 1`] = `
         "query": [],
       },
     },
-    "shouldRegeneratePatches": false,
+    "shouldRegeneratePatches": true,
   },
 ]
 `;
