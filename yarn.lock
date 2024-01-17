@@ -3431,13 +3431,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node-fetch@npm:2.6.10":
-  version: 2.6.10
-  resolution: "@types/node-fetch@npm:2.6.10"
+"@types/node-fetch@npm:2.6.11":
+  version: 2.6.11
+  resolution: "@types/node-fetch@npm:2.6.11"
   dependencies:
     "@types/node": "npm:*"
     form-data: "npm:^4.0.0"
-  checksum: beeadfb31eb097c49a63cb2be21dcb83aa2e988f36b411edfa879a32f0497b509d65eec19d76f869895b3ef87199b21d4e13e9139d3ee38a70b437dc65ba1075
+  checksum: 5283d4e0bcc37a5b6d8e629aee880a4ffcfb33e089f4b903b2981b19c623972d1e64af7c3f9540ab990f0f5c89b9b5dda19c5bcb37a8e177079e93683bfd2f49
   languageName: node
   linkType: hard
 
@@ -3677,7 +3677,7 @@ __metadata:
     "@types/lodash.clonedeep": "npm:^4"
     "@types/lodash.sortby": "npm:^4.7.7"
     "@types/node": "npm:^18.0.0"
-    "@types/node-fetch": "npm:2.6.10"
+    "@types/node-fetch": "npm:2.6.11"
     "@types/semver": "npm:^7.3.10"
     "@useoptic/json-pointer-helpers": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"
