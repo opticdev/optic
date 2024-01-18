@@ -10,11 +10,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest-16-core
+    strategy:
+      matrix:
+        node_version: [16, 18] # todo: get 20 passing
+    env:
+      YARN_IGNORE_NODE: 1 # silence node 16 complaints
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: ${{ matrix.node_version }}
           cache: yarn
 
       - name: Install Task
