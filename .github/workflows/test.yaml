@@ -10,11 +10,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest-16-core
+    strategy:
+      matrix:
+        node_version: [16, 18, 20]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: ${{ matrix.node_version }}
           cache: yarn
 
       - name: Install Task
