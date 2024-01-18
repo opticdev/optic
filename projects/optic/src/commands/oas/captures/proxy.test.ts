@@ -1,13 +1,13 @@
 import { it, describe, expect, beforeAll, afterAll } from '@jest/globals';
 
 import * as mockttp from 'mockttp';
-import bent from 'bent';
 import { collect } from '../lib/async-tools';
 import fetch from 'node-fetch';
 import https from 'https';
 import UrlJoin from 'url-join';
 import { httpsOverHttp } from 'tunnel';
 import { ProxyInteractions, ProxyCertAuthority } from './proxy';
+import portfinder from 'portfinder';
 
 describe('ProxyInteractions', () => {
   let target: mockttp.Mockttp;
@@ -27,11 +27,16 @@ describe('ProxyInteractions', () => {
     const [interactions, proxyUrl] = await ProxyInteractions.create(
       target.url,
       abortController.signal,
-      { mode: 'reverse-proxy' }
+      {
+        mode: 'reverse-proxy',
+        proxyPort: await portfinder.getPortPromise({
+          port: 8000,
+          stopPort: 8999,
+        }),
+      }
     );
 
-    const get = bent(proxyUrl);
-    const response = (await get('/some-path', 'string')) as bent.BentResponse;
+    const response = await fetch(`${proxyUrl}/some-path`);
 
     expect(await response.text()).toBe('Test response');
 
@@ -49,11 +54,16 @@ describe('ProxyInteractions', () => {
     const [interactions, proxyUrl] = await ProxyInteractions.create(
       target.url,
       abortController.signal,
-      { mode: 'reverse-proxy' }
+      {
+        mode: 'reverse-proxy',
+        proxyPort: await portfinder.getPortPromise({
+          port: 9000,
+          stopPort: 9999,
+        }),
+      }
     );
 
-    const requestDelete = bent(proxyUrl, 'DELETE', 204);
-    await requestDelete('/some-path');
+    await fetch(`${proxyUrl}/some-path`, { method: 'DELETE' });
 
     abortController.abort();
 

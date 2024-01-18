@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest-16-core
     strategy:
       matrix:
-        node_version: [16, 18] # todo: get 20 passing
+        node_version: [16, 18, 20]
     env:
       YARN_IGNORE_NODE: 1 # silence node 16 complaints
     steps:
