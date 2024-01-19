@@ -106,6 +106,12 @@ paths:
             application/json; charset=utf-8:
               schema:
                 $ref: "#/components/schemas/PostAuthors201ResponseBody"
+        "400":
+          description: 400 response
+          content:
+            text/plain:
+              schema:
+                type: string
       requestBody:
         content:
           application/json:
@@ -278,7 +284,7 @@ POST /form
   [31m[request body] 'name' is not documented (/properties)[39m
   [31m[request body] 'surname' is not documented (/properties)[39m
 
-100.0% coverage of your documented operations. 7 requests did not match a documented path (9 total requests).
+100.0% coverage of your documented operations. 8 requests did not match a documented path (10 total requests).
 6 diffs detected in documented operations
 
 [33mNew endpoints are only added in interactive mode. Run 'optic capture openapi.yml --update interactive' to add new endpoints[39m
@@ -394,11 +400,6 @@ paths:
     delete:
       responses:
         {}
-      requestBody:
-        content:
-          text/plain:
-            schema:
-              type: string
   /digest-auth:
     get:
       responses:
@@ -476,35 +477,14 @@ paths:
     patch:
       responses:
         {}
-      requestBody:
-        content:
-          text/plain:
-            schema:
-              type: string
   /post:
     post:
       responses:
         {}
-      requestBody:
-        content:
-          text/plain:
-            schema:
-              type: string
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: "#/components/schemas/PostPostRequestBody"
   /put:
     put:
       responses:
         {}
-      requestBody:
-        content:
-          text/plain:
-            schema:
-              type: string
-          application/json:
-            schema:
-              $ref: "#/components/schemas/PutPutRequestBody"
   /response-headers:
     get:
       responses:
@@ -623,11 +603,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PostTransformCollection200ResponseBody"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/PostTransformCollectionRequestBody"
       parameters:
         - schema:
             type: string
@@ -639,6 +614,11 @@ paths:
           in: query
           name: to
           required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostTransformCollectionRequestBody"
 components:
   schemas:
     GetBooks200ResponseBody:
@@ -792,113 +772,6 @@ components:
         - normalized_param_string
         - base_string
         - signing_key
-    PostPostRequestBody:
-      type: object
-      properties:
-        foo1:
-          type: string
-        foo2:
-          type: string
-      required:
-        - foo1
-        - foo2
-    PutPutRequestBody:
-      oneOf:
-        - type: object
-          properties:
-            hello:
-              type: string
-            my:
-              type: number
-            name:
-              type: boolean
-            is:
-              type: object
-              properties:
-                legally:
-                  type: string
-                num:
-                  type: number
-                mixed:
-                  type: array
-                  items:
-                    oneOf:
-                      - type: object
-                        properties:
-                          name:
-                            type: string
-                        required:
-                          - name
-                      - type: boolean
-                      - type: string
-                      - type: number
-              required:
-                - legally
-                - num
-                - mixed
-          required:
-            - hello
-            - my
-            - name
-            - is
-        - type: array
-          items:
-            type: object
-            properties:
-              hello:
-                type: string
-              my:
-                type: number
-              name:
-                type: boolean
-              is:
-                type: object
-                properties:
-                  legally:
-                    type: string
-                  num:
-                    type: number
-                  mixed:
-                    type: array
-                    items:
-                      oneOf:
-                        - type: object
-                          properties:
-                            name:
-                              type: string
-                          required:
-                            - name
-                        - type: boolean
-                        - type: string
-                        - type: number
-                required:
-                  - legally
-                  - num
-                  - mixed
-              authenticated:
-                type: boolean
-            required:
-              []
-        - type: array
-          items:
-            type: object
-            properties:
-              hello:
-                type: string
-              my:
-                type: number
-              name:
-                type: boolean
-              is:
-                type: object
-              authenticated:
-                type: boolean
-            required:
-              - hello
-              - my
-              - name
-              - is
-              - authenticated
     GetStatusStatus200ResponseBody:
       type: object
       properties:

@@ -27,6 +27,13 @@ function* generateRequestPatches(
   documentedInteraction: DocumentedInteraction
 ): OperationPatches {
   const { operation, interaction } = documentedInteraction;
+  // Skip interactions for request body when the status code is not 2xx - i.e. the captured interaction didn't result in a valid response
+  const statusCode = interaction.response?.statusCode
+    ? Number(interaction.response.statusCode)
+    : null;
+  if (!statusCode || !(statusCode >= 200 && statusCode < 400)) {
+    return;
+  }
 
   // Handle requests
   if (!interaction.request.body && operation.requestBody?.required) {

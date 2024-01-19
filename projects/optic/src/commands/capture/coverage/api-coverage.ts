@@ -71,24 +71,27 @@ export class ApiCoverageCounter {
     pathPattern: string,
     method: string,
     hasRequestBody: boolean,
-    responseStatusCodeMatcher?: string
+    statusCode?: string
   ) => {
     const operation = this.coverage.paths[pathPattern]?.[method];
     if (operation) {
       operation.interactions++;
       operation.seen = true;
-      if (hasRequestBody && operation.requestBody)
+      const hasValidStatusCode = statusCode
+        ? Number(statusCode) >= 200 && Number(statusCode) < 400
+        : false;
+      if (hasRequestBody && operation.requestBody && hasValidStatusCode)
         operation.requestBody.seen = true;
 
       let partialMatch;
       // exact match
-      if (responseStatusCodeMatcher) {
-        if (operation.responses[responseStatusCodeMatcher]) {
-          operation.responses[responseStatusCodeMatcher].seen = true;
+      if (statusCode) {
+        if (operation.responses[statusCode]) {
+          operation.responses[statusCode].seen = true;
         } else if (
           (partialMatch = partialMatches(
             Object.keys(operation.responses),
-            responseStatusCodeMatcher
+            statusCode
           ))
         ) {
           operation.responses[partialMatch].seen = true;
