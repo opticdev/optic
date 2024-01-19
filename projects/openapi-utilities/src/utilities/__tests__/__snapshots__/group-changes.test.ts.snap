@@ -323,6 +323,44 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
                     "flatSchema": {
                       "type": "object",
                     },
+                    "key": "anyOf/1",
+                    "required": false,
+                  },
+                  "changeType": "added",
+                  "location": {
+                    "conceptualLocation": {
+                      "inResponse": {
+                        "body": {
+                          "contentType": "application/json",
+                        },
+                        "statusCode": "200",
+                      },
+                      "jsonSchemaTrail": [
+                        "expandableObject",
+                      ],
+                      "method": "get",
+                      "path": "/example",
+                    },
+                    "conceptualPath": [
+                      "operations",
+                      "/example",
+                      "get",
+                      "responses",
+                      "200",
+                      "application/json",
+                      "expandableObject",
+                      "anyOf",
+                      "1",
+                    ],
+                    "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/1",
+                    "kind": "field",
+                  },
+                },
+                {
+                  "added": {
+                    "flatSchema": {
+                      "type": "object",
+                    },
                     "key": "order",
                     "required": false,
                   },
@@ -465,6 +503,46 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
                     ],
                     "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject",
                     "kind": "field",
+                  },
+                },
+                {
+                  "changeType": "removed",
+                  "location": {
+                    "conceptualLocation": {
+                      "inResponse": {
+                        "body": {
+                          "contentType": "application/json",
+                        },
+                        "statusCode": "200",
+                      },
+                      "jsonSchemaTrail": [
+                        "stringOrNumberOrObject",
+                      ],
+                      "method": "get",
+                      "path": "/example",
+                    },
+                    "conceptualPath": [
+                      "operations",
+                      "/example",
+                      "get",
+                      "responses",
+                      "200",
+                      "application/json",
+                      "stringOrNumberOrObject",
+                      "oneOf",
+                      "2",
+                    ],
+                    "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject/oneOf/2",
+                    "kind": "field",
+                  },
+                  "removed": {
+                    "before": {
+                      "flatSchema": {
+                        "type": "object",
+                      },
+                      "key": "oneOf/2",
+                      "required": false,
+                    },
                   },
                 },
                 {
@@ -1230,6 +1308,43 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
                       },
                     },
                     "jsonSchemaTrail": [
+                      "photoUrls",
+                      "items",
+                    ],
+                    "method": "put",
+                    "path": "/pet",
+                  },
+                  "conceptualPath": [
+                    "operations",
+                    "/pet",
+                    "put",
+                    "application/xml",
+                    "photoUrls",
+                    "items",
+                  ],
+                  "jsonPath": "/paths/~1pet/put/requestBody/content/application~1xml/schema/properties/photoUrls/items",
+                  "kind": "field",
+                },
+                "removed": {
+                  "before": {
+                    "flatSchema": {
+                      "type": "string",
+                    },
+                    "key": "items",
+                    "required": false,
+                  },
+                },
+              },
+              {
+                "changeType": "removed",
+                "location": {
+                  "conceptualLocation": {
+                    "inRequest": {
+                      "body": {
+                        "contentType": "application/xml",
+                      },
+                    },
+                    "jsonSchemaTrail": [
                       "status",
                     ],
                     "method": "put",
@@ -1296,6 +1411,46 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
                       },
                     },
                     "key": "tags",
+                    "required": false,
+                  },
+                },
+              },
+              {
+                "changeType": "removed",
+                "location": {
+                  "conceptualLocation": {
+                    "inRequest": {
+                      "body": {
+                        "contentType": "application/xml",
+                      },
+                    },
+                    "jsonSchemaTrail": [
+                      "tags",
+                      "items",
+                    ],
+                    "method": "put",
+                    "path": "/pet",
+                  },
+                  "conceptualPath": [
+                    "operations",
+                    "/pet",
+                    "put",
+                    "application/xml",
+                    "tags",
+                    "items",
+                  ],
+                  "jsonPath": "/paths/~1pet/put/requestBody/content/application~1xml/schema/properties/tags/items",
+                  "kind": "field",
+                },
+                "removed": {
+                  "before": {
+                    "flatSchema": {
+                      "type": "object",
+                      "xml": {
+                        "name": "Tag",
+                      },
+                    },
+                    "key": "items",
                     "required": false,
                   },
                 },
@@ -1649,6 +1804,45 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
                     "flatSchema": {
                       "type": "object",
                       "xml": {
+                        "name": "Pet",
+                      },
+                    },
+                    "key": "items",
+                    "required": false,
+                  },
+                  "changeType": "added",
+                  "location": {
+                    "conceptualLocation": {
+                      "inResponse": {
+                        "body": {
+                          "contentType": "application/json",
+                        },
+                        "statusCode": "200",
+                      },
+                      "jsonSchemaTrail": [
+                        "items",
+                      ],
+                      "method": "get",
+                      "path": "/pet/findByStatus",
+                    },
+                    "conceptualPath": [
+                      "operations",
+                      "/pet/findByStatus",
+                      "get",
+                      "responses",
+                      "200",
+                      "application/json",
+                      "items",
+                    ],
+                    "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items",
+                    "kind": "field",
+                  },
+                },
+                {
+                  "added": {
+                    "flatSchema": {
+                      "type": "object",
+                      "xml": {
                         "name": "Category",
                       },
                     },
@@ -1889,6 +2083,46 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
                 {
                   "added": {
                     "flatSchema": {
+                      "type": "string",
+                    },
+                    "key": "items",
+                    "required": false,
+                  },
+                  "changeType": "added",
+                  "location": {
+                    "conceptualLocation": {
+                      "inResponse": {
+                        "body": {
+                          "contentType": "application/json",
+                        },
+                        "statusCode": "200",
+                      },
+                      "jsonSchemaTrail": [
+                        "items",
+                        "photoUrls",
+                        "items",
+                      ],
+                      "method": "get",
+                      "path": "/pet/findByStatus",
+                    },
+                    "conceptualPath": [
+                      "operations",
+                      "/pet/findByStatus",
+                      "get",
+                      "responses",
+                      "200",
+                      "application/json",
+                      "items",
+                      "photoUrls",
+                      "items",
+                    ],
+                    "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/photoUrls/items",
+                    "kind": "field",
+                  },
+                },
+                {
+                  "added": {
+                    "flatSchema": {
                       "description": "pet status in the store",
                       "enum": [
                         "available",
@@ -1969,6 +2203,49 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
                       "tags",
                     ],
                     "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/tags",
+                    "kind": "field",
+                  },
+                },
+                {
+                  "added": {
+                    "flatSchema": {
+                      "type": "object",
+                      "xml": {
+                        "name": "Tag",
+                      },
+                    },
+                    "key": "items",
+                    "required": false,
+                  },
+                  "changeType": "added",
+                  "location": {
+                    "conceptualLocation": {
+                      "inResponse": {
+                        "body": {
+                          "contentType": "application/json",
+                        },
+                        "statusCode": "200",
+                      },
+                      "jsonSchemaTrail": [
+                        "items",
+                        "tags",
+                        "items",
+                      ],
+                      "method": "get",
+                      "path": "/pet/findByStatus",
+                    },
+                    "conceptualPath": [
+                      "operations",
+                      "/pet/findByStatus",
+                      "get",
+                      "responses",
+                      "200",
+                      "application/json",
+                      "items",
+                      "tags",
+                      "items",
+                    ],
+                    "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/tags/items",
                     "kind": "field",
                   },
                 },
@@ -2116,6 +2393,45 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
               },
               "exampleChanges": [],
               "fieldChanges": [
+                {
+                  "added": {
+                    "flatSchema": {
+                      "type": "object",
+                      "xml": {
+                        "name": "Pet",
+                      },
+                    },
+                    "key": "items",
+                    "required": false,
+                  },
+                  "changeType": "added",
+                  "location": {
+                    "conceptualLocation": {
+                      "inResponse": {
+                        "body": {
+                          "contentType": "application/xml",
+                        },
+                        "statusCode": "200",
+                      },
+                      "jsonSchemaTrail": [
+                        "items",
+                      ],
+                      "method": "get",
+                      "path": "/pet/findByStatus",
+                    },
+                    "conceptualPath": [
+                      "operations",
+                      "/pet/findByStatus",
+                      "get",
+                      "responses",
+                      "200",
+                      "application/xml",
+                      "items",
+                    ],
+                    "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items",
+                    "kind": "field",
+                  },
+                },
                 {
                   "added": {
                     "flatSchema": {
@@ -2361,6 +2677,46 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
                 {
                   "added": {
                     "flatSchema": {
+                      "type": "string",
+                    },
+                    "key": "items",
+                    "required": false,
+                  },
+                  "changeType": "added",
+                  "location": {
+                    "conceptualLocation": {
+                      "inResponse": {
+                        "body": {
+                          "contentType": "application/xml",
+                        },
+                        "statusCode": "200",
+                      },
+                      "jsonSchemaTrail": [
+                        "items",
+                        "photoUrls",
+                        "items",
+                      ],
+                      "method": "get",
+                      "path": "/pet/findByStatus",
+                    },
+                    "conceptualPath": [
+                      "operations",
+                      "/pet/findByStatus",
+                      "get",
+                      "responses",
+                      "200",
+                      "application/xml",
+                      "items",
+                      "photoUrls",
+                      "items",
+                    ],
+                    "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/photoUrls/items",
+                    "kind": "field",
+                  },
+                },
+                {
+                  "added": {
+                    "flatSchema": {
                       "description": "pet status in the store",
                       "enum": [
                         "available",
@@ -2441,6 +2797,49 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
                       "tags",
                     ],
                     "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/tags",
+                    "kind": "field",
+                  },
+                },
+                {
+                  "added": {
+                    "flatSchema": {
+                      "type": "object",
+                      "xml": {
+                        "name": "Tag",
+                      },
+                    },
+                    "key": "items",
+                    "required": false,
+                  },
+                  "changeType": "added",
+                  "location": {
+                    "conceptualLocation": {
+                      "inResponse": {
+                        "body": {
+                          "contentType": "application/xml",
+                        },
+                        "statusCode": "200",
+                      },
+                      "jsonSchemaTrail": [
+                        "items",
+                        "tags",
+                        "items",
+                      ],
+                      "method": "get",
+                      "path": "/pet/findByStatus",
+                    },
+                    "conceptualPath": [
+                      "operations",
+                      "/pet/findByStatus",
+                      "get",
+                      "responses",
+                      "200",
+                      "application/xml",
+                      "items",
+                      "tags",
+                      "items",
+                    ],
+                    "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/tags/items",
                     "kind": "field",
                   },
                 },
@@ -2762,6 +3161,45 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
                     "flatSchema": {
                       "type": "object",
                       "xml": {
+                        "name": "Pet",
+                      },
+                    },
+                    "key": "items",
+                    "required": false,
+                  },
+                  "changeType": "added",
+                  "location": {
+                    "conceptualLocation": {
+                      "inResponse": {
+                        "body": {
+                          "contentType": "application/json",
+                        },
+                        "statusCode": "200",
+                      },
+                      "jsonSchemaTrail": [
+                        "items",
+                      ],
+                      "method": "get",
+                      "path": "/pet/findByTags",
+                    },
+                    "conceptualPath": [
+                      "operations",
+                      "/pet/findByTags",
+                      "get",
+                      "responses",
+                      "200",
+                      "application/json",
+                      "items",
+                    ],
+                    "jsonPath": "/paths/~1pet~1findByTags/get/responses/200/content/application~1json/schema/items",
+                    "kind": "field",
+                  },
+                },
+                {
+                  "added": {
+                    "flatSchema": {
+                      "type": "object",
+                      "xml": {
                         "name": "Category",
                       },
                     },
@@ -3002,6 +3440,46 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
                 {
                   "added": {
                     "flatSchema": {
+                      "type": "string",
+                    },
+                    "key": "items",
+                    "required": false,
+                  },
+                  "changeType": "added",
+                  "location": {
+                    "conceptualLocation": {
+                      "inResponse": {
+                        "body": {
+                          "contentType": "application/json",
+                        },
+                        "statusCode": "200",
+                      },
+                      "jsonSchemaTrail": [
+                        "items",
+                        "photoUrls",
+                        "items",
+                      ],
+                      "method": "get",
+                      "path": "/pet/findByTags",
+                    },
+                    "conceptualPath": [
+                      "operations",
+                      "/pet/findByTags",
+                      "get",
+                      "responses",
+                      "200",
+                      "application/json",
+                      "items",
+                      "photoUrls",
+                      "items",
+                    ],
+                    "jsonPath": "/paths/~1pet~1findByTags/get/responses/200/content/application~1json/schema/items/properties/photoUrls/items",
+                    "kind": "field",
+                  },
+                },
+                {
+                  "added": {
+                    "flatSchema": {
                       "description": "pet status in the store",
                       "enum": [
                         "available",
@@ -3082,6 +3560,49 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
                       "tags",
                     ],
                     "jsonPath": "/paths/~1pet~1findByTags/get/responses/200/content/application~1json/schema/items/properties/tags",
+                    "kind": "field",
+                  },
+                },
+                {
+                  "added": {
+                    "flatSchema": {
+                      "type": "object",
+                      "xml": {
+                        "name": "Tag",
+                      },
+                    },
+                    "key": "items",
+                    "required": false,
+                  },
+                  "changeType": "added",
+                  "location": {
+                    "conceptualLocation": {
+                      "inResponse": {
+                        "body": {
+                          "contentType": "application/json",
+                        },
+                        "statusCode": "200",
+                      },
+                      "jsonSchemaTrail": [
+                        "items",
+                        "tags",
+                        "items",
+                      ],
+                      "method": "get",
+                      "path": "/pet/findByTags",
+                    },
+                    "conceptualPath": [
+                      "operations",
+                      "/pet/findByTags",
+                      "get",
+                      "responses",
+                      "200",
+                      "application/json",
+                      "items",
+                      "tags",
+                      "items",
+                    ],
+                    "jsonPath": "/paths/~1pet~1findByTags/get/responses/200/content/application~1json/schema/items/properties/tags/items",
                     "kind": "field",
                   },
                 },
@@ -3229,6 +3750,45 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
               },
               "exampleChanges": [],
               "fieldChanges": [
+                {
+                  "added": {
+                    "flatSchema": {
+                      "type": "object",
+                      "xml": {
+                        "name": "Pet",
+                      },
+                    },
+                    "key": "items",
+                    "required": false,
+                  },
+                  "changeType": "added",
+                  "location": {
+                    "conceptualLocation": {
+                      "inResponse": {
+                        "body": {
+                          "contentType": "application/xml",
+                        },
+                        "statusCode": "200",
+                      },
+                      "jsonSchemaTrail": [
+                        "items",
+                      ],
+                      "method": "get",
+                      "path": "/pet/findByTags",
+                    },
+                    "conceptualPath": [
+                      "operations",
+                      "/pet/findByTags",
+                      "get",
+                      "responses",
+                      "200",
+                      "application/xml",
+                      "items",
+                    ],
+                    "jsonPath": "/paths/~1pet~1findByTags/get/responses/200/content/application~1xml/schema/items",
+                    "kind": "field",
+                  },
+                },
                 {
                   "added": {
                     "flatSchema": {
@@ -3474,6 +4034,46 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
                 {
                   "added": {
                     "flatSchema": {
+                      "type": "string",
+                    },
+                    "key": "items",
+                    "required": false,
+                  },
+                  "changeType": "added",
+                  "location": {
+                    "conceptualLocation": {
+                      "inResponse": {
+                        "body": {
+                          "contentType": "application/xml",
+                        },
+                        "statusCode": "200",
+                      },
+                      "jsonSchemaTrail": [
+                        "items",
+                        "photoUrls",
+                        "items",
+                      ],
+                      "method": "get",
+                      "path": "/pet/findByTags",
+                    },
+                    "conceptualPath": [
+                      "operations",
+                      "/pet/findByTags",
+                      "get",
+                      "responses",
+                      "200",
+                      "application/xml",
+                      "items",
+                      "photoUrls",
+                      "items",
+                    ],
+                    "jsonPath": "/paths/~1pet~1findByTags/get/responses/200/content/application~1xml/schema/items/properties/photoUrls/items",
+                    "kind": "field",
+                  },
+                },
+                {
+                  "added": {
+                    "flatSchema": {
                       "description": "pet status in the store",
                       "enum": [
                         "available",
@@ -3554,6 +4154,49 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
                       "tags",
                     ],
                     "jsonPath": "/paths/~1pet~1findByTags/get/responses/200/content/application~1xml/schema/items/properties/tags",
+                    "kind": "field",
+                  },
+                },
+                {
+                  "added": {
+                    "flatSchema": {
+                      "type": "object",
+                      "xml": {
+                        "name": "Tag",
+                      },
+                    },
+                    "key": "items",
+                    "required": false,
+                  },
+                  "changeType": "added",
+                  "location": {
+                    "conceptualLocation": {
+                      "inResponse": {
+                        "body": {
+                          "contentType": "application/xml",
+                        },
+                        "statusCode": "200",
+                      },
+                      "jsonSchemaTrail": [
+                        "items",
+                        "tags",
+                        "items",
+                      ],
+                      "method": "get",
+                      "path": "/pet/findByTags",
+                    },
+                    "conceptualPath": [
+                      "operations",
+                      "/pet/findByTags",
+                      "get",
+                      "responses",
+                      "200",
+                      "application/xml",
+                      "items",
+                      "tags",
+                      "items",
+                    ],
+                    "jsonPath": "/paths/~1pet~1findByTags/get/responses/200/content/application~1xml/schema/items/properties/tags/items",
                     "kind": "field",
                   },
                 },
@@ -4290,6 +4933,44 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
                 {
                   "added": {
                     "flatSchema": {
+                      "type": "string",
+                    },
+                    "key": "items",
+                    "required": false,
+                  },
+                  "changeType": "added",
+                  "location": {
+                    "conceptualLocation": {
+                      "inResponse": {
+                        "body": {
+                          "contentType": "application/json",
+                        },
+                        "statusCode": "200",
+                      },
+                      "jsonSchemaTrail": [
+                        "photoUrls",
+                        "items",
+                      ],
+                      "method": "get",
+                      "path": "/pet/{petId}",
+                    },
+                    "conceptualPath": [
+                      "operations",
+                      "/pet/{}",
+                      "get",
+                      "responses",
+                      "200",
+                      "application/json",
+                      "photoUrls",
+                      "items",
+                    ],
+                    "jsonPath": "/paths/~1pet~1{petId}/get/responses/200/content/application~1json/schema/properties/photoUrls/items",
+                    "kind": "field",
+                  },
+                },
+                {
+                  "added": {
+                    "flatSchema": {
                       "description": "pet status in the store",
                       "enum": [
                         "available",
@@ -4366,6 +5047,47 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
                       "tags",
                     ],
                     "jsonPath": "/paths/~1pet~1{petId}/get/responses/200/content/application~1json/schema/properties/tags",
+                    "kind": "field",
+                  },
+                },
+                {
+                  "added": {
+                    "flatSchema": {
+                      "type": "object",
+                      "xml": {
+                        "name": "Tag",
+                      },
+                    },
+                    "key": "items",
+                    "required": false,
+                  },
+                  "changeType": "added",
+                  "location": {
+                    "conceptualLocation": {
+                      "inResponse": {
+                        "body": {
+                          "contentType": "application/json",
+                        },
+                        "statusCode": "200",
+                      },
+                      "jsonSchemaTrail": [
+                        "tags",
+                        "items",
+                      ],
+                      "method": "get",
+                      "path": "/pet/{petId}",
+                    },
+                    "conceptualPath": [
+                      "operations",
+                      "/pet/{}",
+                      "get",
+                      "responses",
+                      "200",
+                      "application/json",
+                      "tags",
+                      "items",
+                    ],
+                    "jsonPath": "/paths/~1pet~1{petId}/get/responses/200/content/application~1json/schema/properties/tags/items",
                     "kind": "field",
                   },
                 },
@@ -4745,6 +5467,44 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
                 {
                   "added": {
                     "flatSchema": {
+                      "type": "string",
+                    },
+                    "key": "items",
+                    "required": false,
+                  },
+                  "changeType": "added",
+                  "location": {
+                    "conceptualLocation": {
+                      "inResponse": {
+                        "body": {
+                          "contentType": "application/xml",
+                        },
+                        "statusCode": "200",
+                      },
+                      "jsonSchemaTrail": [
+                        "photoUrls",
+                        "items",
+                      ],
+                      "method": "get",
+                      "path": "/pet/{petId}",
+                    },
+                    "conceptualPath": [
+                      "operations",
+                      "/pet/{}",
+                      "get",
+                      "responses",
+                      "200",
+                      "application/xml",
+                      "photoUrls",
+                      "items",
+                    ],
+                    "jsonPath": "/paths/~1pet~1{petId}/get/responses/200/content/application~1xml/schema/properties/photoUrls/items",
+                    "kind": "field",
+                  },
+                },
+                {
+                  "added": {
+                    "flatSchema": {
                       "description": "pet status in the store",
                       "enum": [
                         "available",
@@ -4821,6 +5581,47 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
                       "tags",
                     ],
                     "jsonPath": "/paths/~1pet~1{petId}/get/responses/200/content/application~1xml/schema/properties/tags",
+                    "kind": "field",
+                  },
+                },
+                {
+                  "added": {
+                    "flatSchema": {
+                      "type": "object",
+                      "xml": {
+                        "name": "Tag",
+                      },
+                    },
+                    "key": "items",
+                    "required": false,
+                  },
+                  "changeType": "added",
+                  "location": {
+                    "conceptualLocation": {
+                      "inResponse": {
+                        "body": {
+                          "contentType": "application/xml",
+                        },
+                        "statusCode": "200",
+                      },
+                      "jsonSchemaTrail": [
+                        "tags",
+                        "items",
+                      ],
+                      "method": "get",
+                      "path": "/pet/{petId}",
+                    },
+                    "conceptualPath": [
+                      "operations",
+                      "/pet/{}",
+                      "get",
+                      "responses",
+                      "200",
+                      "application/xml",
+                      "tags",
+                      "items",
+                    ],
+                    "jsonPath": "/paths/~1pet~1{petId}/get/responses/200/content/application~1xml/schema/properties/tags/items",
                     "kind": "field",
                   },
                 },

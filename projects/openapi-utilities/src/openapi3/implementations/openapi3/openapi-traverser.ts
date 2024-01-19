@@ -53,7 +53,7 @@ const isObject = (value: any) => {
 };
 
 // TODO deprecate this usage of facts
-// This is currently used by the rule runner, openapi-cli and changelogv1
+// This is currently used by the rule runner
 export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
   format = 'openapi3';
 
@@ -592,8 +592,10 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
             )}, found ${branchSchema}`
           );
         } else if (isNotReferenceObject(branchSchema)) {
-          yield* this.traverseSchema(
+          yield* this.traverseField(
+            `${branchType}/${branchIndex}`,
             branchSchema,
+            false,
             newJsonPath,
             newConceptualPath,
             location
@@ -647,8 +649,10 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
           )}, found ${arrayItems}`
         );
       } else if (isNotReferenceObject(arrayItems)) {
-        yield* this.traverseSchema(
+        yield* this.traverseField(
+          'items',
           arrayItems,
+          false,
           nextJsonPath,
           [...conceptualPath, 'items'],
           {

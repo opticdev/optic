@@ -3058,6 +3058,41 @@ exports[`can extract facts from specs 1`] = `
         },
         "jsonSchemaTrail": [
           "items",
+        ],
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "*/*",
+        "items",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/items",
+      "kind": "field",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+        "xml": {
+          "name": "User",
+        },
+      },
+      "key": "items",
+      "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "items",
           "id",
         ],
         "method": "post",
@@ -3418,6 +3453,41 @@ exports[`can extract facts from specs 1`] = `
       "flatSchema": {
         "type": "array",
       },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "items",
+        ],
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "*/*",
+        "items",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/items",
+      "kind": "field",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+        "xml": {
+          "name": "User",
+        },
+      },
+      "key": "items",
+      "required": false,
     },
   },
   {
@@ -5580,6 +5650,117 @@ exports[`will extract facts for oneOf, allOf or anyOf schemas 1`] = `
         },
         "jsonSchemaTrail": [
           "stringOrNumberOrObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "stringOrNumberOrObject",
+        "oneOf",
+        "0",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject/oneOf/0",
+      "kind": "field",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+      "key": "oneOf/0",
+      "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "stringOrNumberOrObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "stringOrNumberOrObject",
+        "oneOf",
+        "1",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject/oneOf/1",
+      "kind": "field",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "number",
+      },
+      "key": "oneOf/1",
+      "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "stringOrNumberOrObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "stringOrNumberOrObject",
+        "oneOf",
+        "2",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject/oneOf/2",
+      "kind": "field",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+      "key": "oneOf/2",
+      "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "stringOrNumberOrObject",
           "orderId",
         ],
         "method": "get",
@@ -5672,6 +5853,43 @@ exports[`will extract facts for oneOf, allOf or anyOf schemas 1`] = `
         },
         "jsonSchemaTrail": [
           "composedObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "composedObject",
+        "allOf",
+        "0",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject/allOf/0",
+      "kind": "field",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+      "key": "allOf/0",
+      "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "composedObject",
           "orderId",
         ],
         "method": "get",
@@ -5697,6 +5915,43 @@ exports[`will extract facts for oneOf, allOf or anyOf schemas 1`] = `
         "type": "string",
       },
       "key": "orderId",
+      "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "composedObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "composedObject",
+        "allOf",
+        "1",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject/allOf/1",
+      "kind": "field",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+      "key": "allOf/1",
       "required": false,
     },
   },
@@ -5810,6 +6065,43 @@ exports[`will extract facts for oneOf, allOf or anyOf schemas 1`] = `
         },
         "jsonSchemaTrail": [
           "expandableObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+        "anyOf",
+        "0",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/0",
+      "kind": "field",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+      "key": "anyOf/0",
+      "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "expandableObject",
           "orderId",
         ],
         "method": "get",
@@ -5835,6 +6127,43 @@ exports[`will extract facts for oneOf, allOf or anyOf schemas 1`] = `
         "type": "string",
       },
       "key": "orderId",
+      "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "expandableObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+        "anyOf",
+        "1",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/1",
+      "kind": "field",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+      "key": "anyOf/1",
       "required": false,
     },
   },
@@ -6115,6 +6444,43 @@ exports[`will work with 3.1 schemas 1`] = `
         "jsonSchemaTrail": [
           "typearray",
           "items",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "typearray",
+        "items",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/typearray/items",
+      "kind": "field",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+      "key": "items",
+      "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "typearray",
+          "items",
           "id",
         ],
         "method": "get",
@@ -6189,6 +6555,117 @@ exports[`will work with 3.1 schemas 1`] = `
         ],
       },
       "key": "stringOrNumberOrObject",
+      "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "stringOrNumberOrObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "stringOrNumberOrObject",
+        "oneOf",
+        "0",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject/oneOf/0",
+      "kind": "field",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+      "key": "oneOf/0",
+      "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "stringOrNumberOrObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "stringOrNumberOrObject",
+        "oneOf",
+        "1",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject/oneOf/1",
+      "kind": "field",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "number",
+      },
+      "key": "oneOf/1",
+      "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "stringOrNumberOrObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "stringOrNumberOrObject",
+        "oneOf",
+        "2",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject/oneOf/2",
+      "kind": "field",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+      "key": "oneOf/2",
       "required": false,
     },
   },
@@ -6297,6 +6774,43 @@ exports[`will work with 3.1 schemas 1`] = `
         },
         "jsonSchemaTrail": [
           "composedObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "composedObject",
+        "allOf",
+        "0",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject/allOf/0",
+      "kind": "field",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+      "key": "allOf/0",
+      "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "composedObject",
           "orderId",
         ],
         "method": "get",
@@ -6322,6 +6836,43 @@ exports[`will work with 3.1 schemas 1`] = `
         "type": "string",
       },
       "key": "orderId",
+      "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "composedObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "composedObject",
+        "allOf",
+        "1",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject/allOf/1",
+      "kind": "field",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+      "key": "allOf/1",
       "required": false,
     },
   },
@@ -6435,6 +6986,43 @@ exports[`will work with 3.1 schemas 1`] = `
         },
         "jsonSchemaTrail": [
           "expandableObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+        "anyOf",
+        "0",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/0",
+      "kind": "field",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+      "key": "anyOf/0",
+      "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "expandableObject",
           "orderId",
         ],
         "method": "get",
@@ -6460,6 +7048,43 @@ exports[`will work with 3.1 schemas 1`] = `
         "type": "string",
       },
       "key": "orderId",
+      "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "expandableObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+        "anyOf",
+        "1",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/1",
+      "kind": "field",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+      "key": "anyOf/1",
       "required": false,
     },
   },
