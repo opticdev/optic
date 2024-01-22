@@ -8,9 +8,9 @@ exports[`capture with inputs --har updating an OpenAPI spec 1`] = `
   [32m[200 response body] 'has_more_data' has been added (/properties/has_more_data)[39m
 POST /form
   [32m✓ [39mRequest Body, [32m✓ [39m200 response
-  [32m[200 response body] body has been added[39m
   [32m[request body] 'name' has been added (/properties/name)[39m
   [32m[request body] 'surname' has been added (/properties/surname)[39m
+  [32m[200 response body] body has been added[39m
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
@@ -280,9 +280,9 @@ exports[`capture with inputs --har verifying OpenAPI spec 1`] = `
   [31m[200 response body] 'has_more_data' is not documented (/properties)[39m
 POST /form
   [31m× [39mRequest Body
-  [31m[200 response body] body is not documented[39m
   [31m[request body] 'name' is not documented (/properties)[39m
   [31m[request body] 'surname' is not documented (/properties)[39m
+  [31m[200 response body] body is not documented[39m
 
 100.0% coverage of your documented operations. 8 requests did not match a documented path (10 total requests).
 6 diffs detected in documented operations
@@ -1863,17 +1863,17 @@ GET /books
   [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:82:1887[24m[39m
 POST /books
   [32m✓ [39mRequest Body, [32m✓ [39m200 response
-  [32m[200 response body] body has been added[39m
   [33m[request body] 'price' is now type string (/properties/price)[39m
   [32m[request body] body is now optional[39m
+  [32m[200 response body] body has been added[39m
 POST /form
   [32m✓ [39mRequest Body, [32m✓ [39m200 response
-  [32m[200 response body] body has been added[39m
   [32m[request body] 'param2' has been added (/properties/param2)[39m
+  [32m[200 response body] body has been added[39m
 POST /multipart-form
   [32m✓ [39mRequest Body, [32m✓ [39m200 response
-  [32m[200 response body] body has been added[39m
   [32m[request body] 'key1' has been added (/properties/key1)[39m
+  [32m[200 response body] body has been added[39m
 
 [1m[90mLearning path patterns for unmatched requests...[39m[22m
 [1m[90mDocumenting new operations:[39m[22m
@@ -2134,17 +2134,17 @@ GET /books
   [31m ⛔️ schema could not be automatically updated. Update the schema manually at [4mopenapi.yml:82:1887[24m[39m
 POST /books
   [32m✓ [39mRequest Body, [32m✓ [39m200 response
-  [32m[200 response body] body has been added[39m
   [33m[request body] 'price' is now type string (/properties/price)[39m
   [32m[request body] body is now optional[39m
+  [32m[200 response body] body has been added[39m
 POST /form
   [32m✓ [39mRequest Body, [32m✓ [39m200 response
-  [32m[200 response body] body has been added[39m
   [32m[request body] 'param2' has been added (/properties/param2)[39m
+  [32m[200 response body] body has been added[39m
 POST /multipart-form
   [32m✓ [39mRequest Body, [32m✓ [39m200 response
-  [32m[200 response body] body has been added[39m
   [32m[request body] 'key1' has been added (/properties/key1)[39m
+  [32m[200 response body] body has been added[39m
 
 4 unmatched requests
 
@@ -2317,8 +2317,8 @@ GET /books/{bookId}
   [31m[200 response body] 'price' is not documented (/properties)[39m
 GET /books
   200 response
-  [31m[404 response body] body is not documented[39m
   [31m[query parameter] list is not documented[39m
+  [31m[404 response body] body is not documented[39m
 
 83.3% coverage of your documented operations. 2 requests did not match a documented path (6 total requests).
 4 diffs detected in documented operations
@@ -2371,7 +2371,6 @@ GET /books
 
 POST /books
   [31m× [39mRequest Body
-  [31m[200 response body] body is not documented[39m
   [31m[request body] 'price' does not match type string. Received 1 (/properties/price)[39m
   [41m  Diff  [49m 'price' did not match schema
 [90m42 |[39m properties:
@@ -2384,14 +2383,15 @@ POST /books
 [90m$workspace$/openapi.yml[39m
 
   [31m[request body] body is required and missing[39m
+  [31m[200 response body] body is not documented[39m
 POST /form
   [31m× [39mRequest Body
-  [31m[200 response body] body is not documented[39m
   [31m[request body] 'param2' is not documented (/properties)[39m
+  [31m[200 response body] body is not documented[39m
 POST /multipart-form
   [31m× [39mRequest Body
-  [31m[200 response body] body is not documented[39m
   [31m[request body] 'key1' is not documented (/properties)[39m
+  [31m[200 response body] body is not documented[39m
 
 100.0% coverage of your documented operations. 4 requests did not match a documented path (9 total requests).
 17 diffs detected in documented operations
@@ -2414,17 +2414,17 @@ GET /books
   [31m[200 response body] schema (/properties/books/items/properties/price/maximum) with keyword 'maximum' and parameters {"comparison":"<=","limit":6} received invalid values 10, 15[39m
 POST /books
   [31m× [39mRequest Body
-  [31m[200 response body] body is not documented[39m
   [31m[request body] 'price' does not match type string. Received 1 (/properties/price)[39m
   [31m[request body] body is required and missing[39m
+  [31m[200 response body] body is not documented[39m
 POST /form
   [31m× [39mRequest Body
-  [31m[200 response body] body is not documented[39m
   [31m[request body] 'param2' is not documented (/properties)[39m
+  [31m[200 response body] body is not documented[39m
 POST /multipart-form
   [31m× [39mRequest Body
-  [31m[200 response body] body is not documented[39m
   [31m[request body] 'key1' is not documented (/properties)[39m
+  [31m[200 response body] body is not documented[39m
 
 100.0% coverage of your documented operations. 4 requests did not match a documented path (9 total requests).
 13 diffs detected in documented operations
