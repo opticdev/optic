@@ -984,13 +984,13 @@ describe('RequestRule', () => {
     });
   });
 
-  describe('property assertions', () => {
+  describe.each([['property'], ['schema']])('%s assertions', (type) => {
     describe('requirement', () => {
       const ruleRunner = new RuleRunner([
         new RequestRule({
           name: 'request type',
           rule: (requestAssertions) => {
-            requestAssertions.property.requirement(
+            requestAssertions[type].requirement(
               'must contain a type',
               (property) => {
                 if (!property.value.flatSchema.type) {
@@ -1048,9 +1048,7 @@ describe('RequestRule', () => {
         );
         expect(results).toMatchSnapshot();
         expect(results.length > 0).toBe(true);
-        for (const result of results) {
-          expect(result.passed).toBe(true);
-        }
+        expect(results.every((r) => r.passed)).toBe(true);
       });
 
       test('failing assertion', async () => {
@@ -1081,9 +1079,7 @@ describe('RequestRule', () => {
         );
         expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
-        for (const result of results) {
-          expect(result.passed).toBe(false);
-        }
+        expect(results.every((r) => r.passed)).toBe(false);
       });
     });
 
@@ -1092,7 +1088,7 @@ describe('RequestRule', () => {
         new RequestRule({
           name: 'request type',
           rule: (requestAssertions) => {
-            requestAssertions.property.requirement(
+            requestAssertions[type].requirement(
               'must contain a type',
               (property) => {
                 if (!property.value.flatSchema.type) {
@@ -1171,9 +1167,7 @@ describe('RequestRule', () => {
         expect(results.length > 0).toBe(true);
 
         expect(results).toMatchSnapshot();
-        for (const result of results) {
-          expect(result.passed).toBe(false);
-        }
+        expect(results.every((r) => r.passed)).toBe(false);
       });
     });
 
@@ -1182,7 +1176,7 @@ describe('RequestRule', () => {
         new RequestRule({
           name: 'request type',
           rule: (requestAssertions) => {
-            requestAssertions.property.requirement(
+            requestAssertions[type].requirement(
               'must contain a type',
               (property) => {
                 if (!property.value.flatSchema.type) {
@@ -1286,9 +1280,7 @@ describe('RequestRule', () => {
         expect(results.length > 0).toBe(true);
 
         expect(results).toMatchSnapshot();
-        for (const result of results) {
-          expect(result.passed).toBe(false);
-        }
+        expect(results.every((r) => r.passed)).toBe(false);
       });
     });
 
@@ -1297,7 +1289,7 @@ describe('RequestRule', () => {
         new RequestRule({
           name: 'property type',
           rule: (requestAssertions) => {
-            requestAssertions.property.changed(
+            requestAssertions[type].changed(
               'must not change property type',
               (before, after) => {
                 if (
@@ -1445,9 +1437,7 @@ describe('RequestRule', () => {
         );
         expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
-        for (const result of results) {
-          expect(result.passed).toBe(false);
-        }
+        expect(results.every((r) => r.passed)).toBe(false);
       });
     });
 
@@ -1456,13 +1446,21 @@ describe('RequestRule', () => {
         new RequestRule({
           name: 'request removal',
           rule: (requestAssertions) => {
-            requestAssertions.property.removed(
+            requestAssertions[type].removed(
               'cannot remove bodies required property',
               (property) => {
-                if (property.value.required) {
-                  throw new RuleError({
-                    message: 'cannot remove bodies with array schema',
-                  });
+                if (type === 'schema') {
+                  if (property.location.conceptualLocation.context.required) {
+                    throw new RuleError({
+                      message: 'cannot remove bodies with array schema',
+                    });
+                  }
+                } else {
+                  if (property.value.required) {
+                    throw new RuleError({
+                      message: 'cannot remove bodies with array schema',
+                    });
+                  }
                 }
               }
             );
@@ -1590,9 +1588,7 @@ describe('RequestRule', () => {
         );
         expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
-        for (const result of results) {
-          expect(result.passed).toBe(false);
-        }
+        expect(results.every((r) => r.passed)).toBe(false);
       });
     });
   });

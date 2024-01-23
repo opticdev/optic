@@ -1328,3 +1328,946 @@ exports[`RequestRule property assertions requirement passing assertion 1`] = `
   },
 ]
 `;
+
+exports[`RequestRule schema assertions added failing assertion 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "context": {
+            "type": "body",
+          },
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "schema",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "object",
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json property: ",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "context": {
+            "key": "hello",
+            "required": false,
+            "type": "field",
+          },
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [
+            "hello",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/hello",
+        "kind": "schema",
+      },
+      "value": {
+        "flatSchema": {},
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "field does not have \`type\`",
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": false,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json property: hello",
+  },
+]
+`;
+
+exports[`RequestRule schema assertions added passing assertion 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "context": {
+            "type": "body",
+          },
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "schema",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "object",
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json property: ",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "context": {
+            "key": "hello",
+            "required": false,
+            "type": "field",
+          },
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [
+            "hello",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/hello",
+        "kind": "schema",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "string",
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json property: hello",
+  },
+]
+`;
+
+exports[`RequestRule schema assertions addedOrChanged failing assertion 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "context": {
+            "type": "body",
+          },
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "schema",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "object",
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json property: ",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "context": {
+            "key": "hello",
+            "required": false,
+            "type": "field",
+          },
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [
+            "hello",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/hello",
+        "kind": "schema",
+      },
+      "value": {
+        "flatSchema": {
+          "description": "asd",
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "field does not have \`type\`",
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": false,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json property: hello",
+  },
+]
+`;
+
+exports[`RequestRule schema assertions addedOrChanged passing assertion 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "context": {
+            "type": "body",
+          },
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "schema",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "object",
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json property: ",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "context": {
+            "key": "hello",
+            "required": false,
+            "type": "field",
+          },
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [
+            "hello",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/hello",
+        "kind": "schema",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "string",
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json property: hello",
+  },
+]
+`;
+
+exports[`RequestRule schema assertions changed failing assertion 1`] = `
+[
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "description": "123",
+            "type": "array",
+          },
+        },
+        "before": {
+          "flatSchema": {
+            "description": "123",
+            "type": "array",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "context": {
+            "type": "body",
+          },
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "schema",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "property type",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "changed",
+    "where": "GET /api/users request body: application/json property: ",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "flatSchema": {
+            "type": "number",
+          },
+          "key": "hello",
+          "required": false,
+        },
+        "before": {
+          "flatSchema": {
+            "format": "uuid",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "context": {
+            "key": "hello",
+            "required": false,
+            "type": "field",
+          },
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [
+            "items",
+            "hello",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+          "items",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/items/properties/hello",
+        "kind": "schema",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "must not change type",
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "property type",
+    "passed": false,
+    "received": undefined,
+    "severity": 2,
+    "type": "changed",
+    "where": "GET /api/users request body: application/json property: items/hello",
+  },
+]
+`;
+
+exports[`RequestRule schema assertions changed passing assertion 1`] = `
+[
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "contentType": "application/json",
+          "flatSchema": {
+            "description": "123",
+            "type": "array",
+          },
+        },
+        "before": {
+          "flatSchema": {
+            "description": "123",
+            "type": "array",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "context": {
+            "type": "body",
+          },
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "schema",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "property type",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "changed",
+    "where": "GET /api/users request body: application/json property: ",
+  },
+  {
+    "change": {
+      "changeType": "changed",
+      "changed": {
+        "after": {
+          "flatSchema": {
+            "format": "date",
+            "type": "string",
+          },
+          "key": "hello",
+          "required": false,
+        },
+        "before": {
+          "flatSchema": {
+            "format": "uuid",
+            "type": "string",
+          },
+        },
+      },
+      "location": {
+        "conceptualLocation": {
+          "context": {
+            "key": "hello",
+            "required": false,
+            "type": "field",
+          },
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [
+            "items",
+            "hello",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+          "items",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/items/properties/hello",
+        "kind": "schema",
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "property type",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "changed",
+    "where": "GET /api/users request body: application/json property: items/hello",
+  },
+]
+`;
+
+exports[`RequestRule schema assertions removed failing assertion 1`] = `
+[
+  {
+    "change": {
+      "changeType": "removed",
+      "location": {
+        "conceptualLocation": {
+          "context": {
+            "key": "goodbye",
+            "required": true,
+            "type": "field",
+          },
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [
+            "goodbye",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+          "goodbye",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/goodbye",
+        "kind": "schema",
+      },
+      "removed": {
+        "before": {
+          "flatSchema": {
+            "type": "string",
+          },
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "cannot remove bodies with array schema",
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request removal",
+    "passed": false,
+    "received": undefined,
+    "severity": 2,
+    "type": "removed",
+    "where": "GET /api/users request body: application/json property: goodbye",
+  },
+]
+`;
+
+exports[`RequestRule schema assertions removed passing assertion 1`] = `
+[
+  {
+    "change": {
+      "changeType": "removed",
+      "location": {
+        "conceptualLocation": {
+          "context": {
+            "key": "goodbye",
+            "required": false,
+            "type": "field",
+          },
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [
+            "goodbye",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+          "goodbye",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/goodbye",
+        "kind": "schema",
+      },
+      "removed": {
+        "before": {
+          "flatSchema": {
+            "type": "string",
+          },
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request removal",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "removed",
+    "where": "GET /api/users request body: application/json property: goodbye",
+  },
+]
+`;
+
+exports[`RequestRule schema assertions requirement failing assertion 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "context": {
+            "type": "body",
+          },
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "schema",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "object",
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json property: ",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "context": {
+            "key": "hello",
+            "required": false,
+            "type": "field",
+          },
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [
+            "hello",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/hello",
+        "kind": "schema",
+      },
+      "value": {
+        "flatSchema": {},
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": "field does not have \`type\`",
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": false,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json property: hello",
+  },
+]
+`;
+
+exports[`RequestRule schema assertions requirement passing assertion 1`] = `
+[
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "context": {
+            "type": "body",
+          },
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "schema",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "object",
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json property: ",
+  },
+  {
+    "change": {
+      "location": {
+        "conceptualLocation": {
+          "context": {
+            "key": "hello",
+            "required": false,
+            "type": "field",
+          },
+          "inRequest": {
+            "body": {
+              "contentType": "application/json",
+            },
+          },
+          "jsonSchemaTrail": [
+            "hello",
+          ],
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/hello",
+        "kind": "schema",
+      },
+      "value": {
+        "flatSchema": {
+          "type": "string",
+        },
+      },
+    },
+    "condition": undefined,
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": true,
+    "received": undefined,
+    "severity": 2,
+    "type": "requirement",
+    "where": "GET /api/users request body: application/json property: hello",
+  },
+]
+`;

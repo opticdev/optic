@@ -304,6 +304,9 @@ export const runResponseBodyRules = ({
             }
 
             for (const [key, schema] of afterBody.schemas.entries()) {
+              const maybeBeforeSchema =
+                maybeBeforeBody?.schemas.get(key) || null;
+
               const propertyChange =
                 responseNode.bodies.get(afterBody.contentType)?.schemas.get(key)
                   ?.change || null;
@@ -311,7 +314,7 @@ export const runResponseBodyRules = ({
               // Run the user's rules that have been stored in responseAssertions for property
               results.push(
                 ...responseAssertions.schema
-                  .runBefore(schema, propertyChange, exempted)
+                  .runAfter(maybeBeforeSchema, schema, propertyChange, exempted)
                   .map((assertionResult) =>
                     createResponsePropertyResult(
                       assertionResult,

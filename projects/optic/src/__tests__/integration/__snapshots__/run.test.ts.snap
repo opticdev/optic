@@ -25,7 +25,7 @@ Uploading diff...
 | [1ma spec[22m [openapi-local.yml]
 | Report:  👁️  http://localhost:3001/organizations/org-id/apis/generated-api/runs/run-id
 | Changes: 2 operations added, 1 removed
-| Rules:   ✅ 6/6 passed
+| Rules:   ✅ 5/5 passed
 | Tests:   Set up API contract testing for this spec: https://www.useoptic.com/docs/verify-openapi
 
 
@@ -58,7 +58,7 @@ Uploading diff...
 | [1ma spec[22m [openapi.yml]
 | Report:  👁️  http://localhost:3001/organizations/org-id/apis/generated-api/runs/run-id
 | Changes: 2 operations added, 1 removed
-| Rules:   ✅ 6/6 passed
+| Rules:   ✅ 5/5 passed
 | Tests:   Set up API contract testing for this spec: https://www.useoptic.com/docs/verify-openapi
 
 

@@ -889,6 +889,7 @@ exports[`createOperation with after key 1`] = `
               },
             },
           },
+          "schemas": Map {},
           "statusCode": "200",
           "value": {
             "contentType": "application/xml",
@@ -1546,6 +1547,7 @@ exports[`createOperation with after key 1`] = `
               },
             },
           },
+          "schemas": Map {},
           "statusCode": "200",
           "value": {
             "contentType": "application/json",
@@ -1914,6 +1916,7 @@ exports[`createOperation with after key 1`] = `
               "type": "object",
             },
           },
+          "schemas": Map {},
           "statusCode": "404",
           "value": {
             "contentType": "application/json",
@@ -2750,6 +2753,7 @@ exports[`createOperation with before key 1`] = `
               },
             },
           },
+          "schemas": Map {},
           "statusCode": "200",
           "value": {
             "contentType": "application/xml",
@@ -3298,6 +3302,7 @@ exports[`createOperation with before key 1`] = `
               },
             },
           },
+          "schemas": Map {},
           "statusCode": "200",
           "value": {
             "contentType": "application/json",
@@ -4540,6 +4545,7 @@ exports[`createRequest request with after key 1`] = `
     },
   },
   "required": true,
+  "schemas": Map {},
   "value": {
     "contentType": "application/json",
     "flatSchema": {
@@ -5602,6 +5608,7 @@ exports[`createRequest request with before key 1`] = `
     },
   },
   "required": undefined,
+  "schemas": Map {},
   "value": {
     "contentType": "application/json",
     "flatSchema": {
@@ -6721,6 +6728,7 @@ exports[`createResponse response with after key 1`] = `
           "type": "array",
         },
       },
+      "schemas": Map {},
       "statusCode": "200",
       "value": {
         "contentType": "application/xml",
@@ -7833,6 +7841,7 @@ exports[`createResponse response with after key 1`] = `
           "type": "array",
         },
       },
+      "schemas": Map {},
       "statusCode": "200",
       "value": {
         "contentType": "application/json",

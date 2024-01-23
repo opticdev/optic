@@ -9,7 +9,7 @@ exports[`diff file doesn't exist 1`] = `
 exports[`diff petstore diff 1`] = `
 "[31mx [39m[1mSwagger Petstore Updated[22m [90mpetstore-base.json[39m
 [1mOperations: [22m5 operations added, 16 changed, 1 removed
-[31mx [39m [1mChecks:[22m 210/267 passed 
+[31mx [39m [1mChecks:[22m 191/247 passed 
 
 specification details:
 - /servers/2 [32madded[39m
@@ -384,10 +384,6 @@ specification details:
         at [4mpetstore-updated.json:119:4164[24m
         
       - property [1m/schema/properties/expandableObject[22m: [33mchanged[39m
-      
-        [31m[1mx [response property naming check][22m anyOf/1 is not snake_case[39m
-        at [4mpetstore-updated.json:103:3507[24m
-        
       - property [1m/schema/properties/composedObject/properties/orderId[22m: [33mchanged[39m
       
         [31m[1mx [prevent response property type changes][22m expected response body property 'orderId' not to be expanded. This is a breaking change.[39m

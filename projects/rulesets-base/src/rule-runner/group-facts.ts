@@ -232,15 +232,6 @@ const useFactToUpdate = (
       responseBody.schemas.set(jsonPath, schema);
       responseChange.bodies.set(contentType, responseBody);
       endpoint.responses.set(statusCode, responseChange);
-      const parts = jsonPointerHelpers.decode(jsonPath);
-      const polymorphicIndex = parts.findIndex(
-        (p) => p === 'oneOf' || p === 'anyOf'
-      );
-      if (polymorphicIndex !== -1) {
-        endpoint.polymorphicSchemas[key].add(
-          jsonPointerHelpers.compile(parts.slice(0, polymorphicIndex))
-        );
-      }
     } else {
       const {
         body: { contentType },
@@ -255,15 +246,6 @@ const useFactToUpdate = (
       requestBody.schemas.set(jsonPath, schema);
 
       endpoint.request.bodies.set(contentType, requestBody);
-      const parts = jsonPointerHelpers.decode(jsonPath);
-      const polymorphicIndex = parts.findIndex(
-        (p) => p === 'oneOf' || p === 'anyOf'
-      );
-      if (polymorphicIndex !== -1) {
-        endpoint.polymorphicSchemas[key].add(
-          jsonPointerHelpers.compile(parts.slice(0, polymorphicIndex))
-        );
-      }
     }
   }
   groupedFacts.endpoints.set(endpointId, endpoint);
@@ -416,15 +398,6 @@ const useChangeToUpdate = (change: IChange, groupedFacts: OpenAPIFactNodes) => {
       responseBody.schemas.set(jsonPath, schema);
       responseChange.bodies.set(contentType, responseBody);
       endpoint.responses.set(statusCode, responseChange);
-      const parts = jsonPointerHelpers.decode(jsonPath);
-      const polymorphicIndex = parts.findIndex(
-        (p) => p === 'oneOf' || p === 'anyOf'
-      );
-      if (polymorphicIndex !== -1) {
-        endpoint.polymorphicSchemas[key].add(
-          jsonPointerHelpers.compile(parts.slice(0, polymorphicIndex))
-        );
-      }
     } else {
       const {
         body: { contentType },
@@ -439,15 +412,6 @@ const useChangeToUpdate = (change: IChange, groupedFacts: OpenAPIFactNodes) => {
       requestBody.schemas.set(jsonPath, schema);
 
       endpoint.request.bodies.set(contentType, requestBody);
-      const parts = jsonPointerHelpers.decode(jsonPath);
-      const polymorphicIndex = parts.findIndex(
-        (p) => p === 'oneOf' || p === 'anyOf'
-      );
-      if (polymorphicIndex !== -1) {
-        endpoint.polymorphicSchemas[key].add(
-          jsonPointerHelpers.compile(parts.slice(0, polymorphicIndex))
-        );
-      }
     }
   }
   groupedFacts.endpoints.set(endpointId, endpoint);

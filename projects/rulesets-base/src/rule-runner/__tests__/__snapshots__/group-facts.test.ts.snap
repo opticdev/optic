@@ -1249,6 +1249,7 @@ exports[`groupFacts for petstore example 1`] = `
                   },
                 },
               },
+              "schemas": Map {},
             },
           },
           "change": null,
@@ -2408,6 +2409,7 @@ exports[`groupFacts for petstore example 1`] = `
                 "change": null,
               },
             },
+            "schemas": Map {},
           },
           "application/xml" => {
             "after": {
@@ -3209,6 +3211,7 @@ exports[`groupFacts for petstore example 1`] = `
                 "change": null,
               },
             },
+            "schemas": Map {},
           },
         },
         "change": null,
@@ -4235,6 +4238,7 @@ exports[`groupFacts for petstore example 1`] = `
                 },
               },
             },
+            "schemas": Map {},
           },
           "application/xml" => {
             "after": null,
@@ -5069,6 +5073,7 @@ exports[`groupFacts for petstore example 1`] = `
                 },
               },
             },
+            "schemas": Map {},
           },
         },
         "change": null,
@@ -5474,6 +5479,7 @@ exports[`groupFacts for petstore example 1`] = `
             },
             "change": null,
             "fields": Map {},
+            "schemas": Map {},
           },
         },
         "change": null,
@@ -5803,6 +5809,7 @@ exports[`groupFacts for petstore example 1`] = `
                   },
                 },
               },
+              "schemas": Map {},
             },
           },
           "change": {
@@ -6214,6 +6221,7 @@ exports[`groupFacts for petstore example 1`] = `
                   "change": null,
                 },
               },
+              "schemas": Map {},
             },
           },
           "change": null,
@@ -6536,6 +6544,7 @@ exports[`groupFacts for petstore example 1`] = `
                   },
                 },
               },
+              "schemas": Map {},
             },
           },
           "change": {
@@ -6882,6 +6891,7 @@ exports[`groupFacts for petstore example 1`] = `
                   },
                 },
               },
+              "schemas": Map {},
             },
           },
           "change": {
@@ -7114,6 +7124,7 @@ exports[`groupFacts for petstore example 1`] = `
               },
               "change": null,
               "fields": Map {},
+              "schemas": Map {},
             },
           },
           "change": null,
@@ -7839,6 +7850,7 @@ exports[`groupFacts for petstore example 1`] = `
                 },
               },
             },
+            "schemas": Map {},
           },
         },
         "change": null,
@@ -8556,6 +8568,7 @@ exports[`groupFacts for petstore example 1`] = `
                   },
                 },
               },
+              "schemas": Map {},
             },
             "application/json" => {
               "after": {
@@ -9219,6 +9232,7 @@ exports[`groupFacts for petstore example 1`] = `
                   },
                 },
               },
+              "schemas": Map {},
             },
           },
           "change": null,
@@ -10178,6 +10192,7 @@ exports[`groupFacts for petstore example 1`] = `
                   },
                 },
               },
+              "schemas": Map {},
             },
             "application/json" => {
               "after": {
@@ -10841,6 +10856,7 @@ exports[`groupFacts for petstore example 1`] = `
                   },
                 },
               },
+              "schemas": Map {},
             },
           },
           "change": null,
@@ -11240,6 +11256,7 @@ exports[`groupFacts for petstore example 1`] = `
                   },
                 },
               },
+              "schemas": Map {},
             },
           },
           "change": null,
@@ -11778,6 +11795,7 @@ exports[`groupFacts for petstore example 1`] = `
                   },
                 },
               },
+              "schemas": Map {},
             },
           },
           "change": null,
@@ -12706,6 +12724,7 @@ exports[`groupFacts for petstore example 1`] = `
                 },
               },
             },
+            "schemas": Map {},
           },
         },
         "change": null,
@@ -13721,6 +13740,7 @@ exports[`groupFacts for petstore example 1`] = `
                 },
               },
             },
+            "schemas": Map {},
           },
         },
         "change": null,
@@ -14736,6 +14756,7 @@ exports[`groupFacts for petstore example 1`] = `
                 },
               },
             },
+            "schemas": Map {},
           },
         },
         "change": null,
@@ -15104,6 +15125,7 @@ exports[`groupFacts for petstore example 1`] = `
               },
               "change": null,
               "fields": Map {},
+              "schemas": Map {},
             },
             "application/json" => {
               "after": {
@@ -15168,6 +15190,7 @@ exports[`groupFacts for petstore example 1`] = `
               },
               "change": null,
               "fields": Map {},
+              "schemas": Map {},
             },
           },
           "change": null,
@@ -16652,6 +16675,7 @@ exports[`groupFacts for petstore example 1`] = `
                   },
                 },
               },
+              "schemas": Map {},
             },
             "application/json" => {
               "after": {
@@ -17534,6 +17558,7 @@ exports[`groupFacts for petstore example 1`] = `
                   },
                 },
               },
+              "schemas": Map {},
             },
           },
           "change": null,
@@ -17933,6 +17958,7 @@ exports[`groupFacts for petstore example 1`] = `
                   },
                 },
               },
+              "schemas": Map {},
             },
           },
           "change": null,
@@ -18925,6 +18951,7 @@ exports[`groupFacts for petstore example 1`] = `
                 },
               },
             },
+            "schemas": Map {},
           },
         },
         "change": null,
@@ -20394,6 +20421,7 @@ exports[`groupFacts for petstore example 1`] = `
                   },
                 },
               },
+              "schemas": Map {},
             },
             "application/json" => {
               "after": {
@@ -21306,6 +21334,7 @@ exports[`groupFacts for petstore example 1`] = `
                   },
                 },
               },
+              "schemas": Map {},
             },
           },
           "change": {
@@ -22494,6 +22523,7 @@ exports[`groupFacts for petstore example 1`] = `
                   },
                 },
               },
+              "schemas": Map {},
             },
             "application/json" => {
               "after": {
@@ -23406,6 +23436,7 @@ exports[`groupFacts for petstore example 1`] = `
                   },
                 },
               },
+              "schemas": Map {},
             },
           },
           "change": {
@@ -24544,6 +24575,7 @@ exports[`groupFacts for petstore example 1`] = `
                   },
                 },
               },
+              "schemas": Map {},
             },
             "application/json" => {
               "after": {
@@ -25422,6 +25454,7 @@ exports[`groupFacts for petstore example 1`] = `
                   },
                 },
               },
+              "schemas": Map {},
             },
           },
           "change": {
@@ -25783,6 +25816,7 @@ exports[`groupFacts for petstore example 1`] = `
               },
             },
             "fields": Map {},
+            "schemas": Map {},
           },
         },
         "change": {

@@ -296,6 +296,9 @@ export const runRequestRules = ({
             }
 
             for (const [key, schema] of afterRequest.schemas.entries()) {
+              const maybeBeforeSchema =
+                maybeBeforeRequest?.schemas.get(key) || null;
+
               const propertyChange =
                 requestNode.bodies
                   .get(afterRequest.contentType)
@@ -304,7 +307,7 @@ export const runRequestRules = ({
               // Run the user's rules that have been stored in responseAssertions for property
               results.push(
                 ...requestAssertions.schema
-                  .runBefore(schema, propertyChange, exempted)
+                  .runAfter(maybeBeforeSchema, schema, propertyChange, exempted)
                   .map((assertionResult) =>
                     createRequestPropertyResult(
                       assertionResult,
