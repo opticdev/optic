@@ -30,6 +30,7 @@ export type ResponseNode = NodeDetail<OpenApiKind.Response> & {
 
 export type BodyNode = NodeDetail<OpenApiKind.Body> & {
   fields: Map<string, NodeDetail<OpenApiKind.Field>>;
+  schemas: Map<string, NodeDetail<OpenApiKind.Schema>>;
 };
 
 export type EndpointNode = NodeDetail<OpenApiKind.Operation> & {

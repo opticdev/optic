@@ -55,6 +55,7 @@ export type RequestBody = FactVariant<OpenApiKind.Body> & {
   required?: boolean;
   contentType: string;
   properties: Map<string, Property>;
+  schemas: Map<string, Schema>;
 };
 
 export type Property = FactVariant<OpenApiKind.Field> & {
@@ -63,6 +64,10 @@ export type Property = FactVariant<OpenApiKind.Field> & {
 };
 
 export type Field = Property;
+
+export type Schema = FactVariant<OpenApiKind.Schema> & {
+  raw: OpenAPIV3.SchemaObject;
+};
 
 export type ResponseHeader = FactVariant<OpenApiKind.ResponseHeader> & {
   raw: OpenAPIV3.HeaderObject;
@@ -80,6 +85,7 @@ export type ResponseBody = FactVariant<OpenApiKind.Body> & {
   contentType: string;
   statusCode: string;
   properties: Map<string, Field>;
+  schemas: Map<string, Schema>;
 };
 
 // Assertions
@@ -94,7 +100,8 @@ export type AssertionType =
   | 'response-header'
   | 'request-body'
   | 'response-body'
-  | 'property';
+  | 'property'
+  | 'schema';
 
 export type AssertionTypeToValue = {
   specification: Specification;
@@ -108,6 +115,7 @@ export type AssertionTypeToValue = {
   'request-body': RequestBody;
   'response-body': ResponseBody;
   property: Field;
+  schema: Schema;
 };
 
 type MatchesFn = (
@@ -187,6 +195,7 @@ export type AssertionTypeToHelpers = {
   'response-header': {};
   'request-body': RequestBodyAssertionHelpers;
   'response-body': ResponseBodyAssertionHelpers;
+  schema: {};
   property: {};
 };
 
@@ -229,6 +238,7 @@ export type OperationAssertions = Assertions<'operation'> & {
 export type RequestAssertions = {
   body: Assertions<'request-body'>;
   property: Assertions<'property'>;
+  schema: Assertions<'schema'>;
 };
 
 export type ResponseAssertions = Assertions<'response'> & {
@@ -238,6 +248,7 @@ export type ResponseAssertions = Assertions<'response'> & {
 export type ResponseBodyAssertions = {
   body: Assertions<'response-body'>;
   property: Assertions<'property'>;
+  schema: Assertions<'schema'>;
 };
 
 export type PropertyAssertions = Assertions<'property'>;

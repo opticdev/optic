@@ -14,7 +14,7 @@ import {
   createPropertyAssertions,
   createResponseBodyAssertions,
 } from './assertions';
-import { Field, Operation, ResponseBody } from '../types';
+import { Field, Operation, ResponseBody, Schema } from '../types';
 import { getPropertyRules, getResponseBodyRules } from './rule-filters';
 
 const createResponseBodyResult = (
@@ -43,7 +43,7 @@ const createResponseBodyResult = (
 
 const createResponsePropertyResult = (
   assertionResult: AssertionResult,
-  property: Field,
+  propertyOrSchema: Field | Schema,
   response: ResponseBody,
   operation: Operation,
   rule: ResponseBodyRule | PropertyRule
@@ -54,7 +54,7 @@ const createResponsePropertyResult = (
     response.statusCode
   } response body: ${
     response.contentType
-  } property ${property.location.conceptualLocation.jsonSchemaTrail.join('/')}`,
+  } property ${propertyOrSchema.location.conceptualLocation.jsonSchemaTrail.join('/')}`,
   isMust: true,
   change: assertionResult.changeOrFact,
   name: rule.name,
@@ -186,6 +186,28 @@ export const runResponseBodyRules = ({
                   )
               );
             }
+
+            for (const [key, schema] of beforeBody.schemas.entries()) {
+              const propertyChange =
+                responseNode.bodies
+                  .get(beforeBody.contentType)
+                  ?.schemas.get(key)?.change || null;
+
+              // Run the user's rules that have been stored in responseAssertions for property
+              results.push(
+                ...responseAssertions.schema
+                  .runBefore(schema, propertyChange, exempted)
+                  .map((assertionResult) =>
+                    createResponsePropertyResult(
+                      assertionResult,
+                      schema,
+                      beforeBody,
+                      beforeOperation,
+                      responseRule
+                    )
+                  )
+              );
+            }
           }
         }
       }
@@ -273,6 +295,27 @@ export const runResponseBodyRules = ({
                     createResponsePropertyResult(
                       assertionResult,
                       property,
+                      afterBody,
+                      afterOperation,
+                      responseRule
+                    )
+                  )
+              );
+            }
+
+            for (const [key, schema] of afterBody.schemas.entries()) {
+              const propertyChange =
+                responseNode.bodies.get(afterBody.contentType)?.schemas.get(key)
+                  ?.change || null;
+
+              // Run the user's rules that have been stored in responseAssertions for property
+              results.push(
+                ...responseAssertions.schema
+                  .runBefore(schema, propertyChange, exempted)
+                  .map((assertionResult) =>
+                    createResponsePropertyResult(
+                      assertionResult,
+                      schema,
                       afterBody,
                       afterOperation,
                       responseRule

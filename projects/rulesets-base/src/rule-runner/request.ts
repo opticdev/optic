@@ -14,7 +14,7 @@ import {
   createPropertyAssertions,
   createRequestAssertions,
 } from './assertions';
-import { Field, Operation, RequestBody } from '../types';
+import { Field, Operation, RequestBody, Schema } from '../types';
 import { getPropertyRules, getRequestRules } from './rule-filters';
 
 const createRequestBodyResult = (
@@ -43,7 +43,7 @@ const createRequestBodyResult = (
 
 const createRequestPropertyResult = (
   assertionResult: AssertionResult,
-  property: Field,
+  property: Field | Schema,
   request: RequestBody,
   operation: Operation,
   rule: RequestRule | PropertyRule
@@ -183,6 +183,28 @@ export const runRequestRules = ({
                   )
               );
             }
+
+            for (const [key, schema] of beforeRequest.schemas.entries()) {
+              const propertyChange =
+                requestNode.bodies
+                  .get(beforeRequest.contentType)
+                  ?.schemas.get(key)?.change || null;
+
+              // Run the user's rules that have been stored in responseAssertions for property
+              results.push(
+                ...requestAssertions.schema
+                  .runBefore(schema, propertyChange, exempted)
+                  .map((assertionResult) =>
+                    createRequestPropertyResult(
+                      assertionResult,
+                      schema,
+                      beforeRequest,
+                      beforeOperation,
+                      requestRule
+                    )
+                  )
+              );
+            }
           }
         }
       }
@@ -265,6 +287,28 @@ export const runRequestRules = ({
                     createRequestPropertyResult(
                       assertionResult,
                       property,
+                      afterRequest,
+                      afterOperation,
+                      requestRule
+                    )
+                  )
+              );
+            }
+
+            for (const [key, schema] of afterRequest.schemas.entries()) {
+              const propertyChange =
+                requestNode.bodies
+                  .get(afterRequest.contentType)
+                  ?.schemas.get(key)?.change || null;
+
+              // Run the user's rules that have been stored in responseAssertions for property
+              results.push(
+                ...requestAssertions.schema
+                  .runBefore(schema, propertyChange, exempted)
+                  .map((assertionResult) =>
+                    createRequestPropertyResult(
+                      assertionResult,
+                      schema,
                       afterRequest,
                       afterOperation,
                       requestRule

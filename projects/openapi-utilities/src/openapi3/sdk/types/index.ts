@@ -197,4 +197,5 @@ export type IChange =
   | ChangeVariant<OpenApiKind.Body>
   | ChangeVariant<OpenApiKind.BodyExample>
   | ChangeVariant<OpenApiKind.Field>
-  | ChangeVariant<OpenApiKind.ComponentSchemaExample>;
+  | ChangeVariant<OpenApiKind.ComponentSchemaExample>
+  | ChangeVariant<OpenApiKind.Schema>;

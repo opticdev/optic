@@ -102,6 +102,7 @@ export const createRequest = (
     required: required,
     raw: jsonPointerHelpers.get(openApiSpec, requestBodyFact.location.jsonPath),
     contentType,
+    schemas: createPropertyFactsWithRaw(requestBody.schemas, key, openApiSpec),
     properties: createPropertyFactsWithRaw(
       requestBody.fields,
       key,
@@ -165,6 +166,7 @@ export const createResponseBody = (
     contentType,
     statusCode: statusCode,
     properties: createPropertyFactsWithRaw(bodyNode.fields, key, openApiSpec),
+    schemas: createPropertyFactsWithRaw(bodyNode.schemas, key, openApiSpec),
   };
 };
 
