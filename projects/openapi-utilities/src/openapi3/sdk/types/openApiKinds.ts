@@ -11,6 +11,7 @@ export enum OpenApiKind {
   Body = 'body',
   BodyExample = 'body-example',
   Field = 'field',
+  Schema = 'schema',
   ComponentSchemaExample = 'component-schema-example',
 }
 

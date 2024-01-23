@@ -26,6 +26,7 @@ import invariant from 'ts-invariant';
 import { jsonPointerHelpers as jsonPointer } from '@useoptic/json-pointer-helpers';
 import { OpenAPIV3, OpenAPIV3_1 } from 'openapi-types';
 import { OAS3 } from '../../traverser';
+import { SchemaLocation } from '../../sdk/types/location';
 
 export function normalizeOpenApiPath(path: string): string {
   return path
@@ -472,6 +473,13 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
           )}, found ${schema}`
         );
       } else if (isNotReferenceObject(schema)) {
+        yield this.onSchema(schema, jsonPath, conceptualPath, {
+          ...location,
+          jsonSchemaTrail: [],
+          context: {
+            type: 'body',
+          },
+        });
         yield this.onContentForBody(
           schema,
           contentType,
@@ -540,6 +548,14 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     location: FieldLocation
   ): IterableIterator<IFact> {
     this.checkJsonTrail(jsonPath, schema);
+    yield this.onSchema(schema, jsonPath, conceptualPath, {
+      ...location,
+      context: {
+        type: 'field',
+        key,
+        required,
+      },
+    });
     yield this.onField(
       key,
       schema,
@@ -551,7 +567,6 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     yield* this.traverseSchema(schema, jsonPath, conceptualPath, location);
   }
 
-  // TODO discriminate between ArraySchemaObject | NonArraySchemaObject
   *traverseSchema(
     schema: OpenAPIV3.SchemaObject | OpenAPIV3_1.SchemaObject,
     jsonPath: string,
@@ -592,10 +607,12 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
             )}, found ${branchSchema}`
           );
         } else if (isNotReferenceObject(branchSchema)) {
-          yield* this.traverseField(
-            `${branchType}/${branchIndex}`,
+          yield this.onSchema(branchSchema, newJsonPath, newConceptualPath, {
+            ...location,
+            context: { type: branchType as any },
+          });
+          yield* this.traverseSchema(
             branchSchema,
-            false,
             newJsonPath,
             newConceptualPath,
             location
@@ -649,16 +666,20 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
           )}, found ${arrayItems}`
         );
       } else if (isNotReferenceObject(arrayItems)) {
-        yield* this.traverseField(
-          'items',
+        const nextConceptualPath = [...conceptualPath, 'items'];
+        const nextLocation = {
+          ...location,
+          jsonSchemaTrail: [...(location.jsonSchemaTrail || []), 'items'],
+        };
+        yield this.onSchema(arrayItems, nextJsonPath, nextConceptualPath, {
+          ...nextLocation,
+          context: { type: 'array' },
+        });
+        yield* this.traverseSchema(
           arrayItems,
-          false,
           nextJsonPath,
-          [...conceptualPath, 'items'],
-          {
-            ...location,
-            jsonSchemaTrail: [...(location.jsonSchemaTrail || []), 'items'],
-          }
+          nextConceptualPath,
+          nextLocation
         );
       } else {
         this.warnings.push(
@@ -798,6 +819,27 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
         conceptualLocation: location,
       },
       value,
+    };
+  }
+
+  onSchema(
+    schema: OpenAPIV3.SchemaObject | OpenAPIV3_1.SchemaObject,
+    jsonPath: string,
+    conceptualPath: IPathComponent[],
+    location: SchemaLocation
+  ): FactVariant<OpenApiKind.Schema> {
+    const flatSchema = this.getSchemaFact(schema);
+
+    return {
+      value: {
+        flatSchema,
+      },
+      location: {
+        jsonPath,
+        conceptualPath,
+        conceptualLocation: location,
+        kind: OpenApiKind.Schema,
+      },
     };
   }
 
