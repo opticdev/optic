@@ -939,13 +939,13 @@ describe('ResponseBodyRule', () => {
     });
   });
 
-  describe('property assertions', () => {
+  describe.each([['property', 'schema']])('%s assertions', (type) => {
     describe('requirement', () => {
       const ruleRunner = new RuleRunner([
         new ResponseBodyRule({
           name: 'response type',
           rule: (responseBodyAssertions) => {
-            responseBodyAssertions.property.requirement(
+            responseBodyAssertions[type].requirement(
               'must contain a type',
               (property) => {
                 if (!property.value.flatSchema.type) {
@@ -1049,7 +1049,7 @@ describe('ResponseBodyRule', () => {
         new ResponseBodyRule({
           name: 'request type',
           rule: (responseBodyAssertions) => {
-            responseBodyAssertions.property.requirement(
+            responseBodyAssertions[type].requirement(
               'must contain a type',
               (property) => {
                 if (!property.value.flatSchema.type) {
@@ -1143,7 +1143,7 @@ describe('ResponseBodyRule', () => {
         new ResponseBodyRule({
           name: 'property type',
           rule: (responseBodyAssertions) => {
-            responseBodyAssertions.property.changed(
+            responseBodyAssertions[type].changed(
               'must not change property type',
               (before, after) => {
                 if (
@@ -1310,13 +1310,21 @@ describe('ResponseBodyRule', () => {
         new ResponseBodyRule({
           name: 'request removal',
           rule: (responseBodyAssertions) => {
-            responseBodyAssertions.property.removed(
+            responseBodyAssertions[type].removed(
               'cannot remove bodies required property',
               (property) => {
-                if (property.value.required) {
-                  throw new RuleError({
-                    message: 'cannot remove bodies with array schema',
-                  });
+                if (type === 'schema') {
+                  if (property.location.conceptualLocation.context.required) {
+                    throw new RuleError({
+                      message: 'cannot remove bodies with array schema',
+                    });
+                  }
+                } else {
+                  if (property.value.required) {
+                    throw new RuleError({
+                      message: 'cannot remove bodies with array schema',
+                    });
+                  }
                 }
               }
             );

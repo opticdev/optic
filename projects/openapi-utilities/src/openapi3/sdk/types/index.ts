@@ -48,7 +48,8 @@ export type OpenApiFact =
   | OpenApiBodyExampleFact
   | OpenApiFieldFact
   | OpenApiSpecificationFact
-  | OpenApiComponentSchemaExampleFact;
+  | OpenApiComponentSchemaExampleFact
+  | OpenApiSchemaFact;
 
 export interface OpenApiSpecificationFact
   extends Omit<OpenAPIV3.Document, 'paths' | 'components'> {}
@@ -69,6 +70,10 @@ export type OpenApi3SchemaFact = Omit<
 
 export interface OpenApiBodyFact {
   contentType: string;
+  flatSchema: OpenApi3SchemaFact;
+}
+
+export interface OpenApiSchemaFact {
   flatSchema: OpenApi3SchemaFact;
 }
 
@@ -120,6 +125,7 @@ export type OpenApiKindToFact = {
   [OpenApiKind.BodyExample]: OpenApiBodyExampleFact;
   [OpenApiKind.Field]: OpenApiFieldFact;
   [OpenApiKind.ComponentSchemaExample]: OpenApiComponentSchemaExampleFact;
+  [OpenApiKind.Schema]: OpenApiSchemaFact;
 };
 
 export interface FactVariant<FactKind extends OpenApiKind> {
@@ -175,7 +181,8 @@ export type IFact =
   | FactVariant<OpenApiKind.Body>
   | FactVariant<OpenApiKind.BodyExample>
   | FactVariant<OpenApiKind.Field>
-  | FactVariant<OpenApiKind.ComponentSchemaExample>;
+  | FactVariant<OpenApiKind.ComponentSchemaExample>
+  | FactVariant<OpenApiKind.Schema>;
 
 export type IChange =
   | ChangeVariant<OpenApiKind.Specification>
@@ -190,4 +197,5 @@ export type IChange =
   | ChangeVariant<OpenApiKind.Body>
   | ChangeVariant<OpenApiKind.BodyExample>
   | ChangeVariant<OpenApiKind.Field>
-  | ChangeVariant<OpenApiKind.ComponentSchemaExample>;
+  | ChangeVariant<OpenApiKind.ComponentSchemaExample>
+  | ChangeVariant<OpenApiKind.Schema>;

@@ -96,6 +96,46 @@ export type FieldLocation = OperationLocation &
       }
   );
 
+type SchemaContext =
+  | {
+      type: 'polymorphic';
+      key: 'oneOf' | 'anyOf' | 'allOf';
+    }
+  | {
+      type: 'field';
+      key: string;
+      required: boolean;
+    }
+  | {
+      type: 'array';
+    }
+  | {
+      type: 'body';
+    };
+
+export type SchemaLocation = OperationLocation &
+  (
+    | {
+        inRequest: {
+          body: {
+            contentType: string;
+          };
+        };
+        jsonSchemaTrail: string[];
+        context: SchemaContext;
+      }
+    | {
+        inResponse: {
+          body: {
+            contentType: string;
+          };
+          statusCode: string;
+        };
+        jsonSchemaTrail: string[];
+        context: SchemaContext;
+      }
+  );
+
 export type ComponentSchemaLocation = {
   inComponentSchema: {
     schemaName: string;
@@ -141,6 +181,7 @@ export type ILocation = {
   | { conceptualLocation: BodyLocation; kind: OpenApiKind.Body }
   | { conceptualLocation: BodyExampleLocation; kind: OpenApiKind.BodyExample }
   | { conceptualLocation: FieldLocation; kind: OpenApiKind.Field }
+  | { conceptualLocation: SchemaLocation; kind: OpenApiKind.Schema }
   | {
       conceptualLocation: ComponentSchemaLocation;
       kind: OpenApiKind.ComponentSchemaExample;

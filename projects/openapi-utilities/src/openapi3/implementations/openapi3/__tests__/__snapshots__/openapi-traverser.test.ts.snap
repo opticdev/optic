@@ -770,6 +770,34 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "body",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "multipart/form-data",
+          },
+        },
+        "jsonSchemaTrail": [],
+        "method": "post",
+        "path": "/pet/{petId}/uploadImage",
+      },
+      "conceptualPath": [
+        "operations",
+        "/pet/{}/uploadImage",
+        "post",
+        "multipart/form-data",
+      ],
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/requestBody/content/multipart~1form-data",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {},
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "multipart/form-data",
@@ -813,6 +841,39 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "body",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [],
+        "method": "post",
+        "path": "/pet/{petId}/uploadImage",
+      },
+      "conceptualPath": [
+        "operations",
+        "/pet/{}/uploadImage",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/responses/200/content/application~1json",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -837,6 +898,45 @@ exports[`can extract facts from specs 1`] = `
       "contentType": "application/json",
       "flatSchema": {
         "type": "object",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "code",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "code",
+        ],
+        "method": "post",
+        "path": "/pet/{petId}/uploadImage",
+      },
+      "conceptualPath": [
+        "operations",
+        "/pet/{}/uploadImage",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+        "code",
+      ],
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/responses/200/content/application~1json/schema/properties/code",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int32",
+        "type": "integer",
       },
     },
   },
@@ -879,6 +979,44 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "type",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "type",
+        ],
+        "method": "post",
+        "path": "/pet/{petId}/uploadImage",
+      },
+      "conceptualPath": [
+        "operations",
+        "/pet/{}/uploadImage",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+        "type",
+      ],
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/responses/200/content/application~1json/schema/properties/type",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -909,6 +1047,44 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "type",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "message",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "message",
+        ],
+        "method": "post",
+        "path": "/pet/{petId}/uploadImage",
+      },
+      "conceptualPath": [
+        "operations",
+        "/pet/{}/uploadImage",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+        "message",
+      ],
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/responses/200/content/application~1json/schema/properties/message",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
     },
   },
   {
@@ -1003,6 +1179,43 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "body",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [],
+        "method": "get",
+        "path": "/store/inventory",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/inventory",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1store~1inventory/get/responses/200/content/application~1json",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "additionalProperties": {
+          "format": "int32",
+          "type": "integer",
+        },
+        "type": "object",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -1086,6 +1299,39 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "body",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order",
+        "post",
+        "*/*",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/requestBody/content/*~1*",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+        "xml": {
+          "name": "Order",
+        },
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -1110,6 +1356,42 @@ exports[`can extract facts from specs 1`] = `
         "xml": {
           "name": "Order",
         },
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "id",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "id",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order",
+        "post",
+        "*/*",
+        "id",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/id",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int64",
+        "type": "integer",
       },
     },
   },
@@ -1149,6 +1431,42 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "petId",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "petId",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order",
+        "post",
+        "*/*",
+        "petId",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/petId",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int64",
+        "type": "integer",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -1177,6 +1495,42 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "petId",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "quantity",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "quantity",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order",
+        "post",
+        "*/*",
+        "quantity",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/quantity",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int32",
+        "type": "integer",
+      },
     },
   },
   {
@@ -1215,6 +1569,42 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "shipDate",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "shipDate",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order",
+        "post",
+        "*/*",
+        "shipDate",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/shipDate",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "date-time",
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -1243,6 +1633,47 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "shipDate",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "status",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "status",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order",
+        "post",
+        "*/*",
+        "status",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "description": "Order Status",
+        "enum": [
+          "placed",
+          "approved",
+          "delivered",
+        ],
+        "type": "string",
+      },
     },
   },
   {
@@ -1281,6 +1712,42 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "status",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "complete",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "complete",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order",
+        "post",
+        "*/*",
+        "complete",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/complete",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "default": false,
+        "type": "boolean",
+      },
     },
   },
   {
@@ -1340,6 +1807,42 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "body",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/xml",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1xml",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+        "xml": {
+          "name": "Order",
+        },
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/xml",
@@ -1367,6 +1870,45 @@ exports[`can extract facts from specs 1`] = `
         "xml": {
           "name": "Order",
         },
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "id",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "id",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/xml",
+        "id",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1xml/schema/properties/id",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int64",
+        "type": "integer",
       },
     },
   },
@@ -1409,6 +1951,45 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "petId",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "petId",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/xml",
+        "petId",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1xml/schema/properties/petId",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int64",
+        "type": "integer",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/xml",
@@ -1440,6 +2021,45 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "petId",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "quantity",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "quantity",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/xml",
+        "quantity",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1xml/schema/properties/quantity",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int32",
+        "type": "integer",
+      },
     },
   },
   {
@@ -1481,6 +2101,45 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "shipDate",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "shipDate",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/xml",
+        "shipDate",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1xml/schema/properties/shipDate",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "date-time",
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/xml",
@@ -1512,6 +2171,50 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "shipDate",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "status",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "status",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/xml",
+        "status",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1xml/schema/properties/status",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "description": "Order Status",
+        "enum": [
+          "placed",
+          "approved",
+          "delivered",
+        ],
+        "type": "string",
+      },
     },
   },
   {
@@ -1558,6 +2261,45 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "complete",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "complete",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/xml",
+        "complete",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1xml/schema/properties/complete",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "default": false,
+        "type": "boolean",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/xml",
@@ -1594,6 +2336,42 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "body",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1json",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+        "xml": {
+          "name": "Order",
+        },
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -1621,6 +2399,45 @@ exports[`can extract facts from specs 1`] = `
         "xml": {
           "name": "Order",
         },
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "id",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "id",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+        "id",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1json/schema/properties/id",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int64",
+        "type": "integer",
       },
     },
   },
@@ -1663,6 +2480,45 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "petId",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "petId",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+        "petId",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1json/schema/properties/petId",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int64",
+        "type": "integer",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -1694,6 +2550,45 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "petId",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "quantity",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "quantity",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+        "quantity",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1json/schema/properties/quantity",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int32",
+        "type": "integer",
+      },
     },
   },
   {
@@ -1735,6 +2630,45 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "shipDate",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "shipDate",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+        "shipDate",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1json/schema/properties/shipDate",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "date-time",
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -1766,6 +2700,50 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "shipDate",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "status",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "status",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+        "status",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1json/schema/properties/status",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "description": "Order Status",
+        "enum": [
+          "placed",
+          "approved",
+          "delivered",
+        ],
+        "type": "string",
+      },
     },
   },
   {
@@ -1807,6 +2785,45 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "status",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "complete",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "complete",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+        "complete",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1json/schema/properties/complete",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "default": false,
+        "type": "boolean",
+      },
     },
   },
   {
@@ -1954,6 +2971,42 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "body",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+        "xml": {
+          "name": "Order",
+        },
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/xml",
@@ -1981,6 +3034,45 @@ exports[`can extract facts from specs 1`] = `
         "xml": {
           "name": "Order",
         },
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "id",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "id",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "id",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/id",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int64",
+        "type": "integer",
       },
     },
   },
@@ -2023,6 +3115,45 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "petId",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "petId",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "petId",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/petId",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int64",
+        "type": "integer",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/xml",
@@ -2054,6 +3185,45 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "petId",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "quantity",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "quantity",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "quantity",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/quantity",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int32",
+        "type": "integer",
+      },
     },
   },
   {
@@ -2095,6 +3265,45 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "shipDate",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "shipDate",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "shipDate",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/shipDate",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "date-time",
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/xml",
@@ -2126,6 +3335,50 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "shipDate",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "status",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "status",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "status",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/status",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "description": "Order Status",
+        "enum": [
+          "placed",
+          "approved",
+          "delivered",
+        ],
+        "type": "string",
+      },
     },
   },
   {
@@ -2172,6 +3425,45 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "complete",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "complete",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "complete",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/complete",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "default": false,
+        "type": "boolean",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/xml",
@@ -2208,6 +3500,42 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "body",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+        "xml": {
+          "name": "Order",
+        },
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -2235,6 +3563,45 @@ exports[`can extract facts from specs 1`] = `
         "xml": {
           "name": "Order",
         },
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "id",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "id",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "id",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/id",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int64",
+        "type": "integer",
       },
     },
   },
@@ -2277,6 +3644,45 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "petId",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "petId",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "petId",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/petId",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int64",
+        "type": "integer",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -2308,6 +3714,45 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "petId",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "quantity",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "quantity",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "quantity",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/quantity",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int32",
+        "type": "integer",
+      },
     },
   },
   {
@@ -2349,6 +3794,45 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "shipDate",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "shipDate",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "shipDate",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/shipDate",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "date-time",
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -2380,6 +3864,50 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "shipDate",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "status",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "status",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "status",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/status",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "description": "Order Status",
+        "enum": [
+          "placed",
+          "approved",
+          "delivered",
+        ],
+        "type": "string",
+      },
     },
   },
   {
@@ -2421,6 +3949,45 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "status",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "complete",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "complete",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "complete",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/complete",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "default": false,
+        "type": "boolean",
+      },
     },
   },
   {
@@ -2665,6 +4232,39 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "body",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [],
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user",
+        "post",
+        "*/*",
+      ],
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+        "xml": {
+          "name": "User",
+        },
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -2689,6 +4289,42 @@ exports[`can extract facts from specs 1`] = `
         "xml": {
           "name": "User",
         },
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "id",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "id",
+        ],
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user",
+        "post",
+        "*/*",
+        "id",
+      ],
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/id",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int64",
+        "type": "integer",
       },
     },
   },
@@ -2728,6 +4364,41 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "username",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "username",
+        ],
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user",
+        "post",
+        "*/*",
+        "username",
+      ],
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/username",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -2755,6 +4426,41 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "username",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "firstName",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "firstName",
+        ],
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user",
+        "post",
+        "*/*",
+        "firstName",
+      ],
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/firstName",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
     },
   },
   {
@@ -2792,6 +4498,41 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "lastName",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "lastName",
+        ],
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user",
+        "post",
+        "*/*",
+        "lastName",
+      ],
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/lastName",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -2819,6 +4560,41 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "lastName",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "email",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "email",
+        ],
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user",
+        "post",
+        "*/*",
+        "email",
+      ],
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/email",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
     },
   },
   {
@@ -2856,6 +4632,41 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "password",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "password",
+        ],
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user",
+        "post",
+        "*/*",
+        "password",
+      ],
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/password",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -2888,6 +4699,41 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "phone",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "phone",
+        ],
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user",
+        "post",
+        "*/*",
+        "phone",
+      ],
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/phone",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -2915,6 +4761,43 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "phone",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "userStatus",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "userStatus",
+        ],
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user",
+        "post",
+        "*/*",
+        "userStatus",
+      ],
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/userStatus",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "description": "User Status",
+        "format": "int32",
+        "type": "integer",
+      },
     },
   },
   {
@@ -3024,6 +4907,36 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "body",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [],
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "*/*",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "array",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -3045,6 +4958,80 @@ exports[`can extract facts from specs 1`] = `
       "contentType": "*/*",
       "flatSchema": {
         "type": "array",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "type": "array",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "items",
+        ],
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "*/*",
+        "items",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/items",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+        "xml": {
+          "name": "User",
+        },
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "id",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "items",
+          "id",
+        ],
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "*/*",
+        "items",
+        "id",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/items/properties/id",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int64",
+        "type": "integer",
       },
     },
   },
@@ -3086,6 +5073,43 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "username",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "items",
+          "username",
+        ],
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "*/*",
+        "items",
+        "username",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/items/properties/username",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -3115,6 +5139,43 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "username",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "firstName",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "items",
+          "firstName",
+        ],
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "*/*",
+        "items",
+        "firstName",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/items/properties/firstName",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
     },
   },
   {
@@ -3154,6 +5215,43 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "lastName",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "items",
+          "lastName",
+        ],
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "*/*",
+        "items",
+        "lastName",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/items/properties/lastName",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -3183,6 +5281,43 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "lastName",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "email",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "items",
+          "email",
+        ],
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "*/*",
+        "items",
+        "email",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/items/properties/email",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
     },
   },
   {
@@ -3222,6 +5357,43 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "password",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "items",
+          "password",
+        ],
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "*/*",
+        "items",
+        "password",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/items/properties/password",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -3256,6 +5428,43 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "phone",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "items",
+          "phone",
+        ],
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "*/*",
+        "items",
+        "phone",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/items/properties/phone",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -3285,6 +5494,45 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "phone",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "userStatus",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "items",
+          "userStatus",
+        ],
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "*/*",
+        "items",
+        "userStatus",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/items/properties/userStatus",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "description": "User Status",
+        "format": "int32",
+        "type": "integer",
+      },
     },
   },
   {
@@ -3396,6 +5644,36 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "body",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [],
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "*/*",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "array",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -3417,6 +5695,80 @@ exports[`can extract facts from specs 1`] = `
       "contentType": "*/*",
       "flatSchema": {
         "type": "array",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "type": "array",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "items",
+        ],
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "*/*",
+        "items",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/items",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+        "xml": {
+          "name": "User",
+        },
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "id",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "items",
+          "id",
+        ],
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "*/*",
+        "items",
+        "id",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/items/properties/id",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int64",
+        "type": "integer",
       },
     },
   },
@@ -3458,6 +5810,43 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "username",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "items",
+          "username",
+        ],
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "*/*",
+        "items",
+        "username",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/items/properties/username",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -3487,6 +5876,43 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "username",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "firstName",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "items",
+          "firstName",
+        ],
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "*/*",
+        "items",
+        "firstName",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/items/properties/firstName",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
     },
   },
   {
@@ -3526,6 +5952,43 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "lastName",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "items",
+          "lastName",
+        ],
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "*/*",
+        "items",
+        "lastName",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/items/properties/lastName",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -3555,6 +6018,43 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "lastName",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "email",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "items",
+          "email",
+        ],
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "*/*",
+        "items",
+        "email",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/items/properties/email",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
     },
   },
   {
@@ -3594,6 +6094,43 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "password",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "items",
+          "password",
+        ],
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "*/*",
+        "items",
+        "password",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/items/properties/password",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -3628,6 +6165,43 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "phone",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "items",
+          "phone",
+        ],
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "*/*",
+        "items",
+        "phone",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/items/properties/phone",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -3657,6 +6231,45 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "phone",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "userStatus",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "items",
+          "userStatus",
+        ],
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "*/*",
+        "items",
+        "userStatus",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/items/properties/userStatus",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "description": "User Status",
+        "format": "int32",
+        "type": "integer",
+      },
     },
   },
   {
@@ -3889,6 +6502,39 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "body",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [],
+        "method": "get",
+        "path": "/user/login",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/login",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+      ],
+      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1xml",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/xml",
@@ -3911,6 +6557,39 @@ exports[`can extract facts from specs 1`] = `
     },
     "value": {
       "contentType": "application/xml",
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "type": "body",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [],
+        "method": "get",
+        "path": "/user/login",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/login",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1json",
+      "kind": "schema",
+    },
+    "value": {
       "flatSchema": {
         "type": "string",
       },
@@ -4099,6 +6778,42 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "body",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+        "xml": {
+          "name": "User",
+        },
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/xml",
@@ -4126,6 +6841,45 @@ exports[`can extract facts from specs 1`] = `
         "xml": {
           "name": "User",
         },
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "id",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "id",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "id",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/id",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int64",
+        "type": "integer",
       },
     },
   },
@@ -4168,6 +6922,44 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "username",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "username",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "username",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/username",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/xml",
@@ -4198,6 +6990,44 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "username",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "firstName",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "firstName",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "firstName",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/firstName",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
     },
   },
   {
@@ -4238,6 +7068,44 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "lastName",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "lastName",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "lastName",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/lastName",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/xml",
@@ -4268,6 +7136,44 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "lastName",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "email",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "email",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "email",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/email",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
     },
   },
   {
@@ -4308,6 +7214,44 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "password",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "password",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "password",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/password",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/xml",
@@ -4343,6 +7287,44 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "phone",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "phone",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "phone",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/phone",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/xml",
@@ -4373,6 +7355,46 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "phone",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "userStatus",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "userStatus",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "userStatus",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/userStatus",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "description": "User Status",
+        "format": "int32",
+        "type": "integer",
+      },
     },
   },
   {
@@ -4415,6 +7437,42 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "body",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+        "xml": {
+          "name": "User",
+        },
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -4442,6 +7500,45 @@ exports[`can extract facts from specs 1`] = `
         "xml": {
           "name": "User",
         },
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "id",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "id",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "id",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/id",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int64",
+        "type": "integer",
       },
     },
   },
@@ -4484,6 +7581,44 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "username",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "username",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "username",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/username",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -4514,6 +7649,44 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "username",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "firstName",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "firstName",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "firstName",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/firstName",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
     },
   },
   {
@@ -4554,6 +7727,44 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "lastName",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "lastName",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "lastName",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/lastName",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -4584,6 +7795,44 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "lastName",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "email",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "email",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "email",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/email",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
     },
   },
   {
@@ -4624,6 +7873,44 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "password",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "password",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "password",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/password",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -4659,6 +7946,44 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "phone",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "phone",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "phone",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/phone",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -4689,6 +8014,46 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "phone",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "userStatus",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "userStatus",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "userStatus",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/userStatus",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "description": "User Status",
+        "format": "int32",
+        "type": "integer",
+      },
     },
   },
   {
@@ -4859,6 +8224,39 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "body",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [],
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "put",
+        "*/*",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody/content/*~1*",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+        "xml": {
+          "name": "User",
+        },
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -4883,6 +8281,42 @@ exports[`can extract facts from specs 1`] = `
         "xml": {
           "name": "User",
         },
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "id",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "id",
+        ],
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "put",
+        "*/*",
+        "id",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody/content/*~1*/schema/properties/id",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "format": "int64",
+        "type": "integer",
       },
     },
   },
@@ -4922,6 +8356,41 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "username",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "username",
+        ],
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "put",
+        "*/*",
+        "username",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody/content/*~1*/schema/properties/username",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -4949,6 +8418,41 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "username",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "firstName",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "firstName",
+        ],
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "put",
+        "*/*",
+        "firstName",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody/content/*~1*/schema/properties/firstName",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
     },
   },
   {
@@ -4986,6 +8490,41 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "lastName",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "lastName",
+        ],
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "put",
+        "*/*",
+        "lastName",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody/content/*~1*/schema/properties/lastName",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -5013,6 +8552,41 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "lastName",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "email",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "email",
+        ],
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "put",
+        "*/*",
+        "email",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody/content/*~1*/schema/properties/email",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
     },
   },
   {
@@ -5050,6 +8624,41 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "password",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "password",
+        ],
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "put",
+        "*/*",
+        "password",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody/content/*~1*/schema/properties/password",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -5082,6 +8691,41 @@ exports[`can extract facts from specs 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "phone",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "phone",
+        ],
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "put",
+        "*/*",
+        "phone",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody/content/*~1*/schema/properties/phone",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inRequest": {
           "body": {
             "contentType": "*/*",
@@ -5109,6 +8753,43 @@ exports[`can extract facts from specs 1`] = `
       },
       "key": "phone",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "userStatus",
+          "required": false,
+          "type": "field",
+        },
+        "inRequest": {
+          "body": {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": [
+          "userStatus",
+        ],
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": [
+        "operations",
+        "/user/{}",
+        "put",
+        "*/*",
+        "userStatus",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody/content/*~1*/schema/properties/userStatus",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "description": "User Status",
+        "format": "int32",
+        "type": "integer",
+      },
     },
   },
   {
@@ -5359,6 +9040,39 @@ exports[`handles example schemas as strings 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "body",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [],
+        "method": "patch",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "patch",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1example/patch/responses/200/content/application~1json",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -5492,6 +9206,39 @@ exports[`will extract facts for oneOf, allOf or anyOf schemas 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "body",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -5516,6 +9263,59 @@ exports[`will extract facts for oneOf, allOf or anyOf schemas 1`] = `
       "contentType": "application/json",
       "flatSchema": {
         "type": "object",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "stringOrNumberOrObject",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "stringOrNumberOrObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "stringOrNumberOrObject",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "oneOf": [
+          {
+            "type": "string",
+          },
+          {
+            "type": "number",
+          },
+          {
+            "properties": {
+              "orderId": {
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+        ],
       },
     },
   },
@@ -5572,6 +9372,162 @@ exports[`will extract facts for oneOf, allOf or anyOf schemas 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "oneOf",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "stringOrNumberOrObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "stringOrNumberOrObject",
+        "oneOf",
+        "0",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject/oneOf/0",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "type": "oneOf",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "stringOrNumberOrObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "stringOrNumberOrObject",
+        "oneOf",
+        "1",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject/oneOf/1",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "number",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "type": "oneOf",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "stringOrNumberOrObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "stringOrNumberOrObject",
+        "oneOf",
+        "2",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject/oneOf/2",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "orderId",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "stringOrNumberOrObject",
+          "orderId",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "stringOrNumberOrObject",
+        "oneOf",
+        "2",
+        "orderId",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject/oneOf/2/properties/orderId",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -5606,6 +9562,62 @@ exports[`will extract facts for oneOf, allOf or anyOf schemas 1`] = `
       },
       "key": "orderId",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "composedObject",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "composedObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "composedObject",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "allOf": [
+          {
+            "properties": {
+              "orderId": {
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+          {
+            "properties": {
+              "fulfillmentId": {
+                "nullable": true,
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+        ],
+      },
     },
   },
   {
@@ -5664,6 +9676,86 @@ exports[`will extract facts for oneOf, allOf or anyOf schemas 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "allOf",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "composedObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "composedObject",
+        "allOf",
+        "0",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject/allOf/0",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "orderId",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "composedObject",
+          "orderId",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "composedObject",
+        "allOf",
+        "0",
+        "orderId",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject/allOf/0/properties/orderId",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -5698,6 +9790,89 @@ exports[`will extract facts for oneOf, allOf or anyOf schemas 1`] = `
       },
       "key": "orderId",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "type": "allOf",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "composedObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "composedObject",
+        "allOf",
+        "1",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject/allOf/1",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "fulfillmentId",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "composedObject",
+          "fulfillmentId",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "composedObject",
+        "allOf",
+        "1",
+        "fulfillmentId",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject/allOf/1/properties/fulfillmentId",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": [
+          "string",
+          "null",
+        ],
+      },
     },
   },
   {
@@ -5740,6 +9915,66 @@ exports[`will extract facts for oneOf, allOf or anyOf schemas 1`] = `
       },
       "key": "fulfillmentId",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "expandableObject",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "expandableObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "anyOf": [
+          {
+            "properties": {
+              "orderId": {
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+          {
+            "properties": {
+              "order": {
+                "properties": {
+                  "id": {
+                    "type": "string",
+                  },
+                },
+                "type": "object",
+              },
+            },
+            "type": "object",
+          },
+        ],
+      },
     },
   },
   {
@@ -5802,6 +10037,86 @@ exports[`will extract facts for oneOf, allOf or anyOf schemas 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "anyOf",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "expandableObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+        "anyOf",
+        "0",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/0",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "orderId",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "expandableObject",
+          "orderId",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+        "anyOf",
+        "0",
+        "orderId",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/0/properties/orderId",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -5841,6 +10156,86 @@ exports[`will extract facts for oneOf, allOf or anyOf schemas 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "anyOf",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "expandableObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+        "anyOf",
+        "1",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/1",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "order",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "expandableObject",
+          "order",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+        "anyOf",
+        "1",
+        "order",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/1/properties/order",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -5875,6 +10270,50 @@ exports[`will extract facts for oneOf, allOf or anyOf schemas 1`] = `
       },
       "key": "order",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "id",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "expandableObject",
+          "order",
+          "id",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+        "anyOf",
+        "1",
+        "order",
+        "id",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/1/properties/order/properties/id",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
     },
   },
   {
@@ -5993,6 +10432,39 @@ exports[`will work with 3.1 schemas 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "body",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -6017,6 +10489,55 @@ exports[`will work with 3.1 schemas 1`] = `
       "contentType": "application/json",
       "flatSchema": {
         "type": "object",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "typearray",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "typearray",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "typearray",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/typearray",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "items": {
+          "properties": {
+            "id": {
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+        "type": [
+          "object",
+          "array",
+        ],
       },
     },
   },
@@ -6069,6 +10590,46 @@ exports[`will work with 3.1 schemas 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "key": "id",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "typearray",
+          "id",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "typearray",
+        "id",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/typearray/properties/id",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -6101,6 +10662,86 @@ exports[`will work with 3.1 schemas 1`] = `
       },
       "key": "id",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "type": "array",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "typearray",
+          "items",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "typearray",
+        "items",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/typearray/items",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "id",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "typearray",
+          "items",
+          "id",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "typearray",
+        "items",
+        "id",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/typearray/items/properties/id",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
     },
   },
   {
@@ -6140,6 +10781,59 @@ exports[`will work with 3.1 schemas 1`] = `
       },
       "key": "id",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "stringOrNumberOrObject",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "stringOrNumberOrObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "stringOrNumberOrObject",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "oneOf": [
+          {
+            "type": "string",
+          },
+          {
+            "type": "number",
+          },
+          {
+            "properties": {
+              "orderId": {
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+        ],
+      },
     },
   },
   {
@@ -6195,6 +10889,162 @@ exports[`will work with 3.1 schemas 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "oneOf",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "stringOrNumberOrObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "stringOrNumberOrObject",
+        "oneOf",
+        "0",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject/oneOf/0",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "type": "oneOf",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "stringOrNumberOrObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "stringOrNumberOrObject",
+        "oneOf",
+        "1",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject/oneOf/1",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "number",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "type": "oneOf",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "stringOrNumberOrObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "stringOrNumberOrObject",
+        "oneOf",
+        "2",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject/oneOf/2",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "orderId",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "stringOrNumberOrObject",
+          "orderId",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "stringOrNumberOrObject",
+        "oneOf",
+        "2",
+        "orderId",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject/oneOf/2/properties/orderId",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -6229,6 +11079,64 @@ exports[`will work with 3.1 schemas 1`] = `
       },
       "key": "orderId",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "composedObject",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "composedObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "composedObject",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "allOf": [
+          {
+            "properties": {
+              "orderId": {
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+          {
+            "properties": {
+              "fulfillmentId": {
+                "type": [
+                  "string",
+                  "null",
+                ],
+              },
+            },
+            "type": "object",
+          },
+        ],
+      },
     },
   },
   {
@@ -6289,6 +11197,86 @@ exports[`will work with 3.1 schemas 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "allOf",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "composedObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "composedObject",
+        "allOf",
+        "0",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject/allOf/0",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "orderId",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "composedObject",
+          "orderId",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "composedObject",
+        "allOf",
+        "0",
+        "orderId",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject/allOf/0/properties/orderId",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -6323,6 +11311,89 @@ exports[`will work with 3.1 schemas 1`] = `
       },
       "key": "orderId",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "type": "allOf",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "composedObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "composedObject",
+        "allOf",
+        "1",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject/allOf/1",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "fulfillmentId",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "composedObject",
+          "fulfillmentId",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "composedObject",
+        "allOf",
+        "1",
+        "fulfillmentId",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject/allOf/1/properties/fulfillmentId",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": [
+          "string",
+          "null",
+        ],
+      },
     },
   },
   {
@@ -6365,6 +11436,66 @@ exports[`will work with 3.1 schemas 1`] = `
       },
       "key": "fulfillmentId",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "expandableObject",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "expandableObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "anyOf": [
+          {
+            "properties": {
+              "orderId": {
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+          {
+            "properties": {
+              "order": {
+                "properties": {
+                  "id": {
+                    "type": "string",
+                  },
+                },
+                "type": "object",
+              },
+            },
+            "type": "object",
+          },
+        ],
+      },
     },
   },
   {
@@ -6427,6 +11558,86 @@ exports[`will work with 3.1 schemas 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "anyOf",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "expandableObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+        "anyOf",
+        "0",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/0",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "orderId",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "expandableObject",
+          "orderId",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+        "anyOf",
+        "0",
+        "orderId",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/0/properties/orderId",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -6466,6 +11677,86 @@ exports[`will work with 3.1 schemas 1`] = `
   {
     "location": {
       "conceptualLocation": {
+        "context": {
+          "type": "anyOf",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "expandableObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+        "anyOf",
+        "1",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/1",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "order",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "expandableObject",
+          "order",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+        "anyOf",
+        "1",
+        "order",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/1/properties/order",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "object",
+      },
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
         "inResponse": {
           "body": {
             "contentType": "application/json",
@@ -6500,6 +11791,50 @@ exports[`will work with 3.1 schemas 1`] = `
       },
       "key": "order",
       "required": false,
+    },
+  },
+  {
+    "location": {
+      "conceptualLocation": {
+        "context": {
+          "key": "id",
+          "required": false,
+          "type": "field",
+        },
+        "inResponse": {
+          "body": {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": [
+          "expandableObject",
+          "order",
+          "id",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+        "anyOf",
+        "1",
+        "order",
+        "id",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/1/properties/order/properties/id",
+      "kind": "schema",
+    },
+    "value": {
+      "flatSchema": {
+        "type": "string",
+      },
     },
   },
   {

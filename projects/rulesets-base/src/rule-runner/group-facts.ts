@@ -41,6 +41,7 @@ const createEmptyResponse = ({
 const createEmptyBody = (): BodyNode => ({
   ...createEmptyNodeDetail(),
   fields: new Map(),
+  schemas: new Map(),
 });
 
 const createEndpoint = ({
@@ -210,6 +211,42 @@ const useFactToUpdate = (
     }
   } else if (isFactVariant(fact, OpenApiKind.Request)) {
     endpoint.request[key] = fact;
+  } else if (isFactVariant(fact, OpenApiKind.Schema)) {
+    const jsonPath = fact.location.jsonPath;
+    if ('inResponse' in fact.location.conceptualLocation) {
+      const {
+        statusCode,
+        body: { contentType },
+      } = fact.location.conceptualLocation.inResponse;
+
+      const responseChange =
+        endpoint.responses.get(statusCode) ||
+        createEmptyResponse({ statusCode });
+
+      const responseBody =
+        responseChange.bodies.get(contentType) || createEmptyBody();
+
+      const schema =
+        responseBody.schemas.get(jsonPath) ?? createEmptyNodeDetail();
+      schema[key] = fact;
+      responseBody.schemas.set(jsonPath, schema);
+      responseChange.bodies.set(contentType, responseBody);
+      endpoint.responses.set(statusCode, responseChange);
+    } else {
+      const {
+        body: { contentType },
+      } = fact.location.conceptualLocation.inRequest;
+
+      const requestBody =
+        endpoint.request.bodies.get(contentType) || createEmptyBody();
+
+      const schema =
+        requestBody.schemas.get(jsonPath) || createEmptyNodeDetail();
+      schema[key] = fact;
+      requestBody.schemas.set(jsonPath, schema);
+
+      endpoint.request.bodies.set(contentType, requestBody);
+    }
   }
   groupedFacts.endpoints.set(endpointId, endpoint);
 };
@@ -340,6 +377,42 @@ const useChangeToUpdate = (change: IChange, groupedFacts: OpenAPIFactNodes) => {
     }
   } else if (isChangeVariant(change, OpenApiKind.Request)) {
     endpoint.request[key] = change;
+  } else if (isChangeVariant(change, OpenApiKind.Schema)) {
+    const jsonPath = change.location.jsonPath;
+    if ('inResponse' in change.location.conceptualLocation) {
+      const {
+        statusCode,
+        body: { contentType },
+      } = change.location.conceptualLocation.inResponse;
+
+      const responseChange =
+        endpoint.responses.get(statusCode) ||
+        createEmptyResponse({ statusCode });
+
+      const responseBody =
+        responseChange.bodies.get(contentType) || createEmptyBody();
+
+      const schema =
+        responseBody.schemas.get(jsonPath) ?? createEmptyNodeDetail();
+      schema[key] = change;
+      responseBody.schemas.set(jsonPath, schema);
+      responseChange.bodies.set(contentType, responseBody);
+      endpoint.responses.set(statusCode, responseChange);
+    } else {
+      const {
+        body: { contentType },
+      } = change.location.conceptualLocation.inRequest;
+
+      const requestBody =
+        endpoint.request.bodies.get(contentType) || createEmptyBody();
+
+      const schema =
+        requestBody.schemas.get(jsonPath) || createEmptyNodeDetail();
+      schema[key] = change;
+      requestBody.schemas.set(jsonPath, schema);
+
+      endpoint.request.bodies.set(contentType, requestBody);
+    }
   }
   groupedFacts.endpoints.set(endpointId, endpoint);
 };

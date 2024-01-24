@@ -6046,6 +6046,34 @@ exports[`groupChangesAndRules diffs and groups changes between two open api file
         },
       },
     },
+    "GET-~_~-/store/inventory" => {
+      "change": null,
+      "cookieParameters": {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "hasRules": false,
+      "headers": {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "method": "get",
+      "path": "/store/inventory",
+      "pathParameters": {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "queryParameters": {
+        "changes": Map {},
+        "hasRules": false,
+      },
+      "request": {
+        "bodyChanges": Map {},
+        "change": null,
+        "hasRules": false,
+      },
+      "responses": Map {},
+    },
     "POST-~_~-/store/order" => {
       "change": null,
       "cookieParameters": {

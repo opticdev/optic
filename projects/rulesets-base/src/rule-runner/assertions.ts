@@ -117,6 +117,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
       'request-body': createRequestBodyHelpers(registerAssertion as any),
       'response-body': createResponseBodyHelpers(registerAssertion as any),
       property: {},
+      schema: {},
     }[this.type];
   };
 
@@ -362,6 +363,7 @@ type OperationAssertionsRunner = AssertionRunner<'operation'> & {
 type RequestAssertionsRunner = {
   body: AssertionRunner<'request-body'>;
   property: AssertionRunner<'property'>;
+  schema: AssertionRunner<'schema'>;
 };
 
 type ResponseAssertionsRunner = AssertionRunner<'response'> & {
@@ -371,6 +373,7 @@ type ResponseAssertionsRunner = AssertionRunner<'response'> & {
 type ResponseBodyAssertionsRunner = {
   body: AssertionRunner<'response-body'>;
   property: AssertionRunner<'property'>;
+  schema: AssertionRunner<'schema'>;
 };
 
 export const createSpecificationAssertions = (
@@ -414,9 +417,11 @@ export const createRequestAssertions = (
   const requestAssertions: any = {};
   const bodyAssertions = new AssertionRunner('request-body', severity);
   const propertyAssertions = new AssertionRunner('property', severity);
+  const schemaAssertions = new AssertionRunner('schema', severity);
 
   requestAssertions.body = bodyAssertions;
   requestAssertions.property = propertyAssertions;
+  requestAssertions.schema = schemaAssertions;
 
   return requestAssertions as RequestAssertionsRunner;
 };
@@ -439,10 +444,12 @@ export const createResponseBodyAssertions = (
   const headerAssertions = new AssertionRunner('response-header', severity);
   const bodyAssertions = new AssertionRunner('response-body', severity);
   const propertyAssertions = new AssertionRunner('property', severity);
+  const schemaAssertions = new AssertionRunner('schema', severity);
 
   responseBodyAssertions.header = headerAssertions;
   responseBodyAssertions.body = bodyAssertions;
   responseBodyAssertions.property = propertyAssertions;
+  responseBodyAssertions.schema = schemaAssertions;
 
   return responseBodyAssertions as ResponseBodyAssertionsRunner;
 };
