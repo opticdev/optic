@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import yaml from 'js-yaml';
-import { UserError } from '@useoptic/openapi-utilities';
+import { UserError, isTruthyStringValue } from '@useoptic/openapi-utilities';
 import Ajv from 'ajv';
 import os from 'os';
 import path from 'node:path';
@@ -28,15 +28,7 @@ export const USER_CONFIG_PATH =
       : path.join(USER_CONFIG_DIR, 'config.json');
 
 const checkIsInCi = (): boolean => {
-  const lowerCase = process.env.CI?.toLowerCase();
-
-  return (
-    lowerCase === 'true' ||
-    lowerCase === '1' ||
-    lowerCase === 'yes' ||
-    lowerCase === 'y' ||
-    lowerCase === 'on'
-  );
+  return process.env.CI !== undefined && isTruthyStringValue(process.env.CI);
 };
 
 const DefaultOpticCliConfig: OpticCliConfig = {

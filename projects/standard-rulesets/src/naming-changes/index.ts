@@ -9,6 +9,7 @@ import { createPathComponentChecks } from './pathComponents';
 import Ajv from 'ajv';
 import { SeverityTextOptions, SeverityText } from '@useoptic/openapi-utilities';
 import { createOperationIdRule } from './operationIds';
+import { excludeOperationWithExtensionMatches } from '../utils';
 
 type RulesetConfig = {
   exclude_operations_with_extension?: string | string[];
@@ -115,16 +116,9 @@ export class NamingChangesRuleset extends Ruleset<Rule[]> {
     }
     let matches: Ruleset['matches'] | undefined = undefined;
     if (validatedConfig.exclude_operations_with_extension !== undefined) {
-      matches = (context) =>
-        Array.isArray(validatedConfig.exclude_operations_with_extension)
-          ? validatedConfig.exclude_operations_with_extension.some(
-              (extension) => {
-                return (context.operation.raw as any)[extension] !== true;
-              }
-            )
-          : (context.operation.raw as any)[
-              validatedConfig.exclude_operations_with_extension!
-            ] !== true;
+      matches = excludeOperationWithExtensionMatches(
+        validatedConfig.exclude_operations_with_extension
+      );
     }
 
     return new NamingChangesRuleset({

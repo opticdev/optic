@@ -14,6 +14,7 @@ import {
   requireValidRequestExamples,
   requireValidResponseExamples,
 } from './requireValidExamples';
+import { excludeOperationWithExtensionMatches } from '../utils';
 
 type SpecVersion = '3.1.x' | '3.0.x';
 
@@ -94,16 +95,9 @@ export class ExamplesRuleset extends Ruleset {
     };
 
     if (validatedConfig.exclude_operations_with_extension !== undefined) {
-      constructorConfig.matches = (context) =>
-        Array.isArray(validatedConfig.exclude_operations_with_extension)
-          ? validatedConfig.exclude_operations_with_extension.some(
-              (extension) => {
-                return (context.operation.raw as any)[extension] !== true;
-              }
-            )
-          : (context.operation.raw as any)[
-              validatedConfig.exclude_operations_with_extension!
-            ] !== true;
+      constructorConfig.matches = excludeOperationWithExtensionMatches(
+        validatedConfig.exclude_operations_with_extension
+      );
     }
 
     if (validatedConfig.docs_link !== undefined) {

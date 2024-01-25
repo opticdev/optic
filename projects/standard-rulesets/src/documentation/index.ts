@@ -6,6 +6,7 @@ import { requireOperationDescription } from './requireOperationDescription';
 import { requireOperationId } from './requireOperationId';
 import { requireOperationSummary } from './requireOperationSummary';
 import { requirePropertyDescription } from './requirePropertyDescriptions';
+import { excludeOperationWithExtensionMatches } from '../utils';
 
 type RulesetConfig = {
   exclude_operations_with_extension?: string | string[];
@@ -69,16 +70,9 @@ export class DocumentationRuleset extends Ruleset {
     const validatedConfig = config as RulesetConfig;
     let matches: Ruleset['matches'] | undefined = undefined;
     if (validatedConfig.exclude_operations_with_extension !== undefined) {
-      matches = (context) =>
-        Array.isArray(validatedConfig.exclude_operations_with_extension)
-          ? validatedConfig.exclude_operations_with_extension.some(
-              (extension) => {
-                return (context.operation.raw as any)[extension] !== true;
-              }
-            )
-          : (context.operation.raw as any)[
-              validatedConfig.exclude_operations_with_extension!
-            ] !== true;
+      matches = excludeOperationWithExtensionMatches(
+        validatedConfig.exclude_operations_with_extension
+      );
     }
     return new DocumentationRuleset({
       required_on: validatedConfig.required_on ?? 'always',
