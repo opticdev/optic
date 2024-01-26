@@ -8565,9 +8565,9 @@ __metadata:
   linkType: hard
 
 "loglevel@npm:^1.8.0":
-  version: 1.9.0
-  resolution: "loglevel@npm:1.9.0"
-  checksum: dede641b5aa9c7069017648aeb8ae86b4580839766e0395462387a3deb3a2947053de263e132ae21e69b9e35481118db57827ba7139b9aa2a893d3c83d28fd54
+  version: 1.9.1
+  resolution: "loglevel@npm:1.9.1"
+  checksum: 152f0501cea367cf998c844a38b19f0b5af555756ad7d8650214a1f8c6a5b045e31b8cf5dae27d28339a061624ce3f618aadb333aed386cac041d6ddc5101a39
   languageName: node
   linkType: hard
 
