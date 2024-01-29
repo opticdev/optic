@@ -1,0 +1,25 @@
+name: optic
+id: ari:cloud:compass:4e6b61f9-966e-45df-a7e4-a34732c9ac54:component/5cf8af03-9ce9-4892-8ff2-85cd73a86fa2/20f569ca-46c8-4c8d-8e4f-b9d7d43b6d95
+description: OpenAPI linting, diffing and testing. Optic helps prevent breaking changes, publish accurate documentation and improve the design of your APIs.
+configVersion: 1
+typeId: APPLICATION
+ownerId: ari:cloud:identity::team/2a95fb33-9faf-4f41-8b90-c9c79d8fb229
+fields:
+  tier: 4
+links:
+  - name: null
+    type: REPOSITORY
+    url: https://github.com/opticdev/optic
+relationships:
+  DEPENDS_ON: []
+labels:
+  - api-documentation
+  - api-linter
+  - apis
+  - documentation
+  - language:typescript
+  - openapi
+  - openapi3
+  - source:github
+  - swagger
+customFields: null
