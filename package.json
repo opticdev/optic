@@ -19,7 +19,7 @@
     "lint": "prettier --check 'projects/*/src/**/*.(js|jsx|ts|tsx|json|css)'"
   },
   "devDependencies": {
-    "husky": "^8.0.0",
+    "husky": "^9.0.0",
     "lint-staged": "^15.0.0",
     "prettier": "^3.0.0"
   },
