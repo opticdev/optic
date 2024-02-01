@@ -129,7 +129,7 @@ jobs:
           fi
 
       - name: Announce success
-        uses: slackapi/slack-github-action@v1.24.0
+        uses: slackapi/slack-github-action@v1.25.0
         if: >
           success()
           && env.SKIP_ANNOUNCE == 'false'
@@ -144,7 +144,7 @@ jobs:
             }
 
       - name: Announce failure
-        uses: slackapi/slack-github-action@v1.24.0
+        uses: slackapi/slack-github-action@v1.25.0
         if: >
           failure()
           && env.SKIP_ANNOUNCE == 'false'
