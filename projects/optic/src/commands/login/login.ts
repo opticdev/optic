@@ -11,6 +11,7 @@ import { getNewTokenUrl } from '../../utils/cloud-urls';
 import { errorHandler } from '../../error-handler';
 import { createOpticClient } from '../../client';
 import { flushEvents, identify, alias, trackEvent } from '../../segment';
+import { anonymizeOrgToken } from '../../client/optic-backend';
 export const registerLogin = (cli: Command, config: OpticCliConfig) => {
   cli
     .command('login')
@@ -28,7 +29,7 @@ export async function identifyLoginFromToken(token: string) {
     trackEvent('cli.login');
     await flushEvents();
   } else {
-    const id = token.split('.')[1];
+    const id = anonymizeOrgToken(token);
     if (id) alias(id);
   }
 }

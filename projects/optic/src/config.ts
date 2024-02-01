@@ -10,6 +10,7 @@ import { logger } from './logger';
 import { Static, Type } from '@sinclair/typebox';
 import Handlebars from 'handlebars';
 import * as dotenv from 'dotenv';
+import { anonymizeOrgToken, anonymizeUserToken } from './client/optic-backend';
 
 export enum VCS {
   Git = 'git',
@@ -314,8 +315,8 @@ export async function initializeConfig(): Promise<OpticCliConfig> {
         : undefined;
     cliConfig.isAuthenticated = true;
     cliConfig.userId = token.startsWith('opat')
-      ? token.slice(4).split('.')[0]
-      : token.split('.')[0];
+      ? anonymizeUserToken(token)
+      : anonymizeOrgToken(token);
     cliConfig.client = createOpticClient(token);
   }
 

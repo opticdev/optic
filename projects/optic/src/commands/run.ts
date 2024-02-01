@@ -25,7 +25,11 @@ import { compute } from './diff/compute';
 import { uploadDiff } from './diff/upload-diff';
 import chalk from 'chalk';
 import { flushEvents, trackEvent, identify } from '../segment';
-import { createOpticClient } from '../client/optic-backend';
+import {
+  anonymizeOrgToken,
+  anonymizeUserToken,
+  createOpticClient,
+} from '../client/optic-backend';
 import fs from 'fs';
 import {
   CommentApi,
@@ -210,8 +214,8 @@ async function authenticateInteractive(config: OpticCliConfig) {
   config.authenticationType = 'user';
   config.isAuthenticated = true;
   config.userId = token.startsWith('opat')
-    ? token.slice(4).split('.')[0]
-    : token.split('.')[0];
+    ? anonymizeUserToken(token)
+    : anonymizeOrgToken(token);
 
   trackEvent('cli.login');
   await flushEvents();
