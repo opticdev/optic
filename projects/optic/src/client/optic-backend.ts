@@ -298,3 +298,7 @@ export const createOpticClient = (opticToken: string) => {
   );
   return opticClient;
 };
+
+export const anonymizeUserToken = (token: string) =>
+  token.slice(4).split('.')[0];
+export const anonymizeOrgToken = (token: string) => token.split('.')[0];
