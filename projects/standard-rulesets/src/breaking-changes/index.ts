@@ -33,6 +33,7 @@ import Ajv from 'ajv';
 import { SeverityTextOptions, SeverityText } from '@useoptic/openapi-utilities';
 import { preventRequestExpandingInUnionTypes } from './preventRequestExpandingWithUnionTypes';
 import { preventResponseNarrowingInUnionTypes } from './preventResponseNarrowingWithUnionType';
+import { excludeOperationWithExtensionMatches } from '../utils';
 
 type YamlConfig = {
   exclude_operations_with_extension?: string | string[];
@@ -100,19 +101,9 @@ export class BreakingChangesRuleset extends Ruleset<Rule[]> {
         return false;
 
       if (validatedConfig.exclude_operations_with_extension) {
-        if (Array.isArray(validatedConfig.exclude_operations_with_extension)) {
-          return validatedConfig.exclude_operations_with_extension.some(
-            (extension) => {
-              return (context.operation.raw as any)[extension] !== true;
-            }
-          );
-        } else {
-          return (
-            (context.operation.raw as any)[
-              validatedConfig.exclude_operations_with_extension!
-            ] !== true
-          );
-        }
+        return excludeOperationWithExtensionMatches(
+          validatedConfig.exclude_operations_with_extension
+        )(context);
       }
 
       return true;

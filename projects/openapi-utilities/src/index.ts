@@ -97,7 +97,7 @@ export {
   SeverityText,
 } from './results';
 export { OpenApiV3Traverser, OAS3 } from './openapi3/traverser';
-
+export { isTruthyStringValue } from './utilities/truthy';
 export {
   sourcemapReader,
   GetSourcemapOptions,
