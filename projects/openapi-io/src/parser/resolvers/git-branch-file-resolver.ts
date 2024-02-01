@@ -17,10 +17,10 @@ export const gitBranchResolver = (
   },
   read(file) {
     return new Promise((resolve, reject) => {
-      const toGit = filePathToGitPath(gitBaseRepo, file.url);
       // We need to decode the git path, because we receive the file path / url as a URL encoded string
-      const decodedGitPath = decodeURIComponent(toGit);
-      const command = `git show "${branch}:${decodedGitPath}"`;
+      const decodedFilePath = decodeURIComponent(file.url);
+      const toGit = filePathToGitPath(gitBaseRepo, decodedFilePath);
+      const command = `git show "${branch}:${toGit}"`;
       try {
         exec(
           command,
@@ -29,8 +29,8 @@ export const gitBranchResolver = (
             if (err)
               reject(
                 new ResolverError(
-                  ono(err.message, `Error opening file "${decodedGitPath}"`),
-                  decodedGitPath
+                  ono(err.message, `Error opening file "${toGit}"`),
+                  toGit
                 )
               );
             if (stdout) resolve(stdout);
@@ -39,8 +39,8 @@ export const gitBranchResolver = (
       } catch (err) {
         reject(
           new ResolverError(
-            ono(err as any, `Error opening file "${decodedGitPath}"`),
-            decodedGitPath
+            ono(err as any, `Error opening file "${toGit}"`),
+            toGit
           )
         );
       }
