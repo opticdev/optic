@@ -12,6 +12,7 @@ import {
   parseOpenAPIWithSourcemap,
   denormalize,
   loadYaml,
+  checkOpenAPIVersion,
 } from '@useoptic/openapi-io';
 import { OpticCliConfig, VCS } from '../config';
 import * as Git from './git-utils';
@@ -43,6 +44,7 @@ export type ParseResultContext =
 export type ParseResult = ParseOpenAPIResult & {
   isEmptySpec: boolean;
   from: 'git' | 'file' | 'url' | 'empty' | 'cloud';
+  version: '3.0.x' | '3.1.x';
   context: ParseResultContext;
 };
 
@@ -186,6 +188,7 @@ async function parseSpecAndDereference(
         jsonLike: spec,
         sourcemap,
         from: 'empty',
+        version: checkOpenAPIVersion(spec),
         isEmptySpec: true,
         context: null,
       };
@@ -200,6 +203,7 @@ async function parseSpecAndDereference(
       return {
         jsonLike,
         sourcemap,
+        version: checkOpenAPIVersion(jsonLike),
         from: 'cloud',
         isEmptySpec: false,
         context: {
@@ -215,16 +219,18 @@ async function parseSpecAndDereference(
 
       const sha = await Git.resolveGitRef(input.branch);
       const commitMeta = await Git.commitMeta(sha);
+      const parseResult = await parseOpenAPIFromRepoWithSourcemap(
+        input.name,
+        config.root,
+        input.branch,
+        {
+          externalRefHeaders: config.external_refs?.resolve_headers ?? [],
+        }
+      );
 
       return {
-        ...(await parseOpenAPIFromRepoWithSourcemap(
-          input.name,
-          config.root,
-          input.branch,
-          {
-            externalRefHeaders: config.external_refs?.resolve_headers ?? [],
-          }
-        )),
+        ...parseResult,
+        version: checkOpenAPIVersion(parseResult.jsonLike),
         from: 'git',
         isEmptySpec: false,
         context: {
@@ -243,6 +249,8 @@ async function parseSpecAndDereference(
       });
       return {
         ...parseResult,
+        version: checkOpenAPIVersion(parseResult.jsonLike),
+
         from: 'url',
         isEmptySpec: false,
         context: null,
@@ -272,6 +280,7 @@ async function parseSpecAndDereference(
 
       return {
         ...parseResult,
+        version: checkOpenAPIVersion(parseResult.jsonLike),
         from: 'file',
         isEmptySpec: false,
         context,
