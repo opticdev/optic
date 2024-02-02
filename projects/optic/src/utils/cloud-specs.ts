@@ -141,6 +141,7 @@ export async function uploadSpec(
 
     const { id } = await opts.client.createSpec({
       upload_id: result.upload_id,
+      openapi_version: opts.spec.version,
       api_id: apiId,
       tags: tags,
       effective_at,

@@ -1,7 +1,6 @@
 import fetch from 'node-fetch';
 import { JsonHttpClient } from './JsonHttpClient';
 import * as Types from './optic-backend-types';
-import { URLSearchParams } from 'url';
 
 export class OpticBackendClient extends JsonHttpClient {
   constructor(
@@ -166,6 +165,7 @@ export class OpticBackendClient extends JsonHttpClient {
 
   public async createSpec(spec: {
     tags: string[];
+    openapi_version: '3.0.x' | '3.1.x';
     upload_id: string;
     api_id: string;
     effective_at?: Date;
