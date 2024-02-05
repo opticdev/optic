@@ -1,5 +1,7 @@
 capture:
   openapi-with-overlapping-paths.yml:
+    config:
+      request_concurrency: 1
     server:
       command: node server.js
       url: http://localhost:%PORT
@@ -23,6 +25,8 @@ capture:
         - path: /authors
           method: GET
   openapi.yml:
+    config:
+      request_concurrency: 1
     server:
       command: node server.js
       url: http://localhost:%PORT
@@ -49,6 +53,8 @@ capture:
         - path: /authors
           method: GET
   openapi-prefixed-url.yml:
+    config:
+      request_concurrency: 1
     server:
       command: node server.js
       url: http://localhost:%PORT/api
@@ -70,6 +76,8 @@ capture:
         - path: /authors
           method: GET
   openapi-prefix-and-server-urls.yml:
+    config:
+      request_concurrency: 1
     server:
       command: node server.js
       url: http://localhost:%PORT/api
@@ -91,6 +99,8 @@ capture:
         - path: /authors
           method: GET
   openapi-with-external-ref.yml:
+    config:
+      request_concurrency: 1
     server:
       command: node server.js
       url: http://localhost:%PORT
@@ -101,6 +111,8 @@ capture:
         - path: /books
           method: GET
   openapi-with-external-ref-spaces.yml:
+    config:
+      request_concurrency: 1
     server:
       command: node server.js
       url: http://localhost:%PORT
@@ -111,6 +123,8 @@ capture:
         - path: /books
           method: GET
   openapi-with-server-prefix.yml:
+    config:
+      request_concurrency: 1
     server:
       command: node server.js
       url: http://localhost:%PORT
@@ -135,6 +149,8 @@ capture:
         - path: /healthcheck
           method: GET
   openapi-with-ignore.yml:
+    config:
+      request_concurrency: 1
     server:
       command: node server.js
       url: http://localhost:%PORT
