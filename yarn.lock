@@ -3823,7 +3823,7 @@ __metadata:
     babel-plugin-transform-inline-environment-variables: "npm:^0.4.3"
     bottleneck: "npm:^2.19.5"
     chalk: "npm:^4.1.2"
-    commander: "npm:^11.0.0"
+    commander: "npm:^12.0.0"
     conf: "npm:^10.2.0"
     crosspath: "npm:^2.0.0"
     dotenv: "npm:^16.3.1"
@@ -5106,10 +5106,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:11.1.0, commander@npm:^11.0.0":
+"commander@npm:11.1.0":
   version: 11.1.0
   resolution: "commander@npm:11.1.0"
   checksum: 10c0/13cc6ac875e48780250f723fb81c1c1178d35c5decb1abb1b628b3177af08a8554e76b2c0f29de72d69eef7c864d12613272a71fabef8047922bc622ab75a179
+  languageName: node
+  linkType: hard
+
+"commander@npm:^12.0.0":
+  version: 12.0.0
+  resolution: "commander@npm:12.0.0"
+  checksum: 10c0/e51cac1d1d0aa1f76581981d2256a9249497e08f5a370bf63b0dfc7e76a647fc8cbc3ddd507928f2bdca6c514c83834e87e2687ace2fe2fc7cc7e631bf80f83d
   languageName: node
   linkType: hard
 
