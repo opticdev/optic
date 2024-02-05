@@ -2696,17 +2696,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@segment/analytics-node@npm:^1.1.3":
-  version: 1.3.0
-  resolution: "@segment/analytics-node@npm:1.3.0"
+"@segment/analytics-node@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@segment/analytics-node@npm:2.0.0"
   dependencies:
     "@lukeed/uuid": "npm:^2.0.0"
     "@segment/analytics-core": "npm:1.4.1"
     "@segment/analytics-generic-utils": "npm:1.1.1"
     buffer: "npm:^6.0.3"
+    jose: "npm:^5.1.0"
     node-fetch: "npm:^2.6.7"
     tslib: "npm:^2.4.1"
-  checksum: 10c0/df7ad553274f2868b42b80a0fdc30c515da9c5ed2305dcb0215519d69925b205e4a378cac4fb314850ab0a9179d87d610d2afa74961c76862d003da3f5852fdc
+  checksum: 10c0/567eb02268498283bc8653d045008505bca5a6a90b90ceef00f3342c2a1509d7bdf472977c6f57555a1c8cef5f00a23f0aade0376a98d8ddc8c05616c445d0dc
   languageName: node
   linkType: hard
 
@@ -3784,7 +3785,7 @@ __metadata:
     "@httptoolkit/httpolyglot": "npm:^2.0.1"
     "@jsdevtools/ono": "npm:^7.1.3"
     "@octokit/rest": "npm:^19.0.0"
-    "@segment/analytics-node": "npm:^1.1.3"
+    "@segment/analytics-node": "npm:^2.0.0"
     "@sentry/node": "npm:^7.74.0"
     "@sinclair/typebox": "npm:0.31.28"
     "@stoplight/spectral-core": "npm:^1.8.1"
@@ -8126,6 +8127,13 @@ __metadata:
   bin:
     jest: bin/jest.js
   checksum: 10c0/f40eb8171cf147c617cc6ada49d062fbb03b4da666cb8d39cdbfb739a7d75eea4c3ca150fb072d0d273dce0c753db4d0467d54906ad0293f59c54f9db4a09d8b
+  languageName: node
+  linkType: hard
+
+"jose@npm:^5.1.0":
+  version: 5.2.1
+  resolution: "jose@npm:5.2.1"
+  checksum: 10c0/76044e4cba28a4326c9fd8ba8bd1c1d99624d4dad4a20238b3fe44e2227d301ca7cb049d3ad3bb481b61a77c929c814ab59bafafbbe2b1d901d4007411a1d97a
   languageName: node
   linkType: hard
 
