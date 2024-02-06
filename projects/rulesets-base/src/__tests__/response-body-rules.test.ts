@@ -939,7 +939,7 @@ describe('ResponseBodyRule', () => {
     });
   });
 
-  describe.each([['property', 'schema']])('%s assertions', (type) => {
+  describe.each([['property'], ['schema']])('%s assertions', (type) => {
     describe('requirement', () => {
       const ruleRunner = new RuleRunner([
         new ResponseBodyRule({
@@ -1038,9 +1038,7 @@ describe('ResponseBodyRule', () => {
         );
         expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
-        for (const result of results) {
-          expect(result.passed).toBe(false);
-        }
+        expect(results.every((r) => r.passed)).toBe(false);
       });
     });
 
@@ -1132,9 +1130,7 @@ describe('ResponseBodyRule', () => {
         expect(results.length > 0).toBe(true);
 
         expect(results).toMatchSnapshot();
-        for (const result of results) {
-          expect(result.passed).toBe(false);
-        }
+        expect(results.every((r) => r.passed)).toBe(false);
       });
     });
 
@@ -1299,9 +1295,7 @@ describe('ResponseBodyRule', () => {
         );
         expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
-        for (const result of results) {
-          expect(result.passed).toBe(false);
-        }
+        expect(results.every((r) => r.passed)).toBe(false);
       });
     });
 
@@ -1460,9 +1454,7 @@ describe('ResponseBodyRule', () => {
         );
         expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
-        for (const result of results) {
-          expect(result.passed).toBe(false);
-        }
+        expect(results.every((r) => r.passed)).toBe(false);
       });
     });
   });

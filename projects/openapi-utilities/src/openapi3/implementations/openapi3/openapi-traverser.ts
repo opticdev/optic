@@ -473,7 +473,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
           )}, found ${schema}`
         );
       } else if (isNotReferenceObject(schema)) {
-        yield this.onSchema(schema, jsonPath, conceptualPath, {
+        yield this.onSchema(schema, nextJsonPath, conceptualPath, {
           ...location,
           jsonSchemaTrail: [],
           context: {
