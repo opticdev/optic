@@ -1353,7 +1353,7 @@ exports[`RequestRule schema assertions added failing assertion 1`] = `
           "get",
           "application/json",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema",
         "kind": "schema",
       },
       "value": {
@@ -1449,7 +1449,7 @@ exports[`RequestRule schema assertions added passing assertion 1`] = `
           "get",
           "application/json",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema",
         "kind": "schema",
       },
       "value": {
@@ -1547,7 +1547,7 @@ exports[`RequestRule schema assertions addedOrChanged failing assertion 1`] = `
           "get",
           "application/json",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema",
         "kind": "schema",
       },
       "value": {
@@ -1645,7 +1645,7 @@ exports[`RequestRule schema assertions addedOrChanged passing assertion 1`] = `
           "get",
           "application/json",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema",
         "kind": "schema",
       },
       "value": {
@@ -1759,7 +1759,7 @@ exports[`RequestRule schema assertions changed failing assertion 1`] = `
           "get",
           "application/json",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema",
         "kind": "schema",
       },
     },
@@ -1881,7 +1881,7 @@ exports[`RequestRule schema assertions changed passing assertion 1`] = `
           "get",
           "application/json",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema",
         "kind": "schema",
       },
     },
@@ -2102,7 +2102,7 @@ exports[`RequestRule schema assertions requirement failing assertion 1`] = `
           "get",
           "application/json",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema",
         "kind": "schema",
       },
       "value": {
@@ -2198,7 +2198,7 @@ exports[`RequestRule schema assertions requirement passing assertion 1`] = `
           "get",
           "application/json",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema",
         "kind": "schema",
       },
       "value": {

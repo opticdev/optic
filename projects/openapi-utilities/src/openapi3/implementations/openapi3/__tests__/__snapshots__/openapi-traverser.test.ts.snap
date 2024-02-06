@@ -788,7 +788,7 @@ exports[`can extract facts from specs 1`] = `
         "post",
         "multipart/form-data",
       ],
-      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/requestBody/content/multipart~1form-data",
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/requestBody/content/multipart~1form-data/schema",
       "kind": "schema",
     },
     "value": {
@@ -862,7 +862,7 @@ exports[`can extract facts from specs 1`] = `
         "200",
         "application/json",
       ],
-      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/responses/200/content/application~1json",
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/responses/200/content/application~1json/schema",
       "kind": "schema",
     },
     "value": {
@@ -1200,7 +1200,7 @@ exports[`can extract facts from specs 1`] = `
         "200",
         "application/json",
       ],
-      "jsonPath": "/paths/~1store~1inventory/get/responses/200/content/application~1json",
+      "jsonPath": "/paths/~1store~1inventory/get/responses/200/content/application~1json/schema",
       "kind": "schema",
     },
     "value": {
@@ -1317,7 +1317,7 @@ exports[`can extract facts from specs 1`] = `
         "post",
         "*/*",
       ],
-      "jsonPath": "/paths/~1store~1order/post/requestBody/content/*~1*",
+      "jsonPath": "/paths/~1store~1order/post/requestBody/content/*~1*/schema",
       "kind": "schema",
     },
     "value": {
@@ -1828,7 +1828,7 @@ exports[`can extract facts from specs 1`] = `
         "200",
         "application/xml",
       ],
-      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1xml",
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1xml/schema",
       "kind": "schema",
     },
     "value": {
@@ -2357,7 +2357,7 @@ exports[`can extract facts from specs 1`] = `
         "200",
         "application/json",
       ],
-      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1json",
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1json/schema",
       "kind": "schema",
     },
     "value": {
@@ -2992,7 +2992,7 @@ exports[`can extract facts from specs 1`] = `
         "200",
         "application/xml",
       ],
-      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml",
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema",
       "kind": "schema",
     },
     "value": {
@@ -3521,7 +3521,7 @@ exports[`can extract facts from specs 1`] = `
         "200",
         "application/json",
       ],
-      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json",
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema",
       "kind": "schema",
     },
     "value": {
@@ -4250,7 +4250,7 @@ exports[`can extract facts from specs 1`] = `
         "post",
         "*/*",
       ],
-      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*",
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema",
       "kind": "schema",
     },
     "value": {
@@ -4925,7 +4925,7 @@ exports[`can extract facts from specs 1`] = `
         "post",
         "*/*",
       ],
-      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*",
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema",
       "kind": "schema",
     },
     "value": {
@@ -5662,7 +5662,7 @@ exports[`can extract facts from specs 1`] = `
         "post",
         "*/*",
       ],
-      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*",
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema",
       "kind": "schema",
     },
     "value": {
@@ -6523,7 +6523,7 @@ exports[`can extract facts from specs 1`] = `
         "200",
         "application/xml",
       ],
-      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1xml",
+      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1xml/schema",
       "kind": "schema",
     },
     "value": {
@@ -6586,7 +6586,7 @@ exports[`can extract facts from specs 1`] = `
         "200",
         "application/json",
       ],
-      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1json",
+      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1json/schema",
       "kind": "schema",
     },
     "value": {
@@ -6799,7 +6799,7 @@ exports[`can extract facts from specs 1`] = `
         "200",
         "application/xml",
       ],
-      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml",
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema",
       "kind": "schema",
     },
     "value": {
@@ -7458,7 +7458,7 @@ exports[`can extract facts from specs 1`] = `
         "200",
         "application/json",
       ],
-      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json",
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema",
       "kind": "schema",
     },
     "value": {
@@ -8242,7 +8242,7 @@ exports[`can extract facts from specs 1`] = `
         "put",
         "*/*",
       ],
-      "jsonPath": "/paths/~1user~1{username}/put/requestBody/content/*~1*",
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody/content/*~1*/schema",
       "kind": "schema",
     },
     "value": {
@@ -9061,7 +9061,7 @@ exports[`handles example schemas as strings 1`] = `
         "200",
         "application/json",
       ],
-      "jsonPath": "/paths/~1example/patch/responses/200/content/application~1json",
+      "jsonPath": "/paths/~1example/patch/responses/200/content/application~1json/schema",
       "kind": "schema",
     },
     "value": {
@@ -9227,7 +9227,7 @@ exports[`will extract facts for oneOf, allOf or anyOf schemas 1`] = `
         "200",
         "application/json",
       ],
-      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json",
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema",
       "kind": "schema",
     },
     "value": {
@@ -10453,7 +10453,7 @@ exports[`will work with 3.1 schemas 1`] = `
         "200",
         "application/json",
       ],
-      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json",
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema",
       "kind": "schema",
     },
     "value": {
