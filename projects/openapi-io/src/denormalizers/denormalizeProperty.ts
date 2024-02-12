@@ -3,7 +3,6 @@ import { FlatOpenAPIV3, OAS3 } from '@useoptic/openapi-utilities';
 import { JsonSchemaSourcemap } from '../parser/sourcemap';
 import { logPointer } from './pointer';
 
-// TODO this does not handle allOf: [{type:'object'...}, {allOf: [type:'object']}]
 function mergeAllOf(
   allOf: FlatOpenAPIV3.SchemaObject[],
   sourcemap: JsonSchemaSourcemap | undefined,
@@ -15,7 +14,13 @@ function mergeAllOf(
     properties: {},
     required: [],
   };
-  for (const [index, polymorphicItem] of allOf.entries()) {
+  for (let [index, polymorphicItem] of allOf.entries()) {
+    if (polymorphicItem.allOf) {
+      polymorphicItem = mergeAllOf(polymorphicItem.allOf, sourcemap, {
+        old: jsonPointerHelpers.append(pointers.old, 'allOf', String(index)),
+        new: jsonPointerHelpers.append(pointers.new, 'allOf', String(index)),
+      });
+    }
     const effectiveProperties = effectiveObject.properties!;
     for (const [key, property] of Object.entries(
       polymorphicItem.properties ?? {}
@@ -89,7 +94,9 @@ export function denormalizeProperty(
   if (polymorphicKey && polymorphicValue) {
     if (
       polymorphicKey === 'allOf' &&
-      polymorphicValue.every((schema) => OAS3.isObjectType(schema.type))
+      polymorphicValue.every(
+        (schema) => OAS3.isObjectType(schema.type) || schema.allOf
+      )
     ) {
       const effectiveObject = mergeAllOf(polymorphicValue, sourcemap, pointers);
       schema.type = effectiveObject.type;
