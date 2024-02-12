@@ -27,19 +27,13 @@ exports[`denormalize allOf merging does not merge allOf when all items are not a
                       "type": "boolean",
                     },
                     "d": {
-                      "allOf": [
-                        {
-                          "properties": {
-                            "a": {
-                              "type": "string",
-                            },
-                          },
-                          "type": "object",
-                        },
-                        {
+                      "properties": {
+                        "a": {
                           "type": "string",
                         },
-                      ],
+                      },
+                      "required": undefined,
+                      "type": "object",
                     },
                   },
                   "type": "object",
@@ -106,7 +100,12 @@ paths:
         "sha256": "4921acb94767de410927bd6751ac8d9f712c11dc70dcb260236a6684df8dcdb2",
       },
     ],
-    "refMappings": {},
+    "refMappings": {
+      "/paths/~1example/get/requestBody/content/application~1json/schema/properties/d/properties/a": [
+        0,
+        "/paths/~1example/get/requestBody/content/application~1json/schema/properties/d/allOf/0/properties/a",
+      ],
+    },
     "rootFilePath": "/src/denormalizers/__tests__/specs/allOf/no-merge.yaml",
   },
 }

@@ -92,13 +92,11 @@ export function denormalizeProperty(
         : null;
   const polymorphicValue = schema.allOf || schema.anyOf || schema.oneOf;
   if (polymorphicKey && polymorphicValue) {
-    if (
-      polymorphicKey === 'allOf' &&
-      polymorphicValue.every(
+    if (polymorphicKey === 'allOf') {
+      const objectsAndAllOf = polymorphicValue.filter(
         (schema) => OAS3.isObjectType(schema.type) || schema.allOf
-      )
-    ) {
-      const effectiveObject = mergeAllOf(polymorphicValue, sourcemap, pointers);
+      );
+      const effectiveObject = mergeAllOf(objectsAndAllOf, sourcemap, pointers);
       schema.type = effectiveObject.type;
       schema.properties = effectiveObject.properties;
       schema.required = effectiveObject.required;
