@@ -23,6 +23,7 @@ import { getApiFromOpticUrl, getApiUrl } from './cloud-urls';
 import { OPTIC_URL_KEY } from '../constants';
 import chalk from 'chalk';
 import { getDetailsForGeneration } from './generated';
+import { logger } from '../logger';
 
 const exec = promisify(callbackExec);
 
@@ -298,8 +299,13 @@ function validateAndDenormalize(
   validateOpenApiV3Document(parseResult.jsonLike, parseResult.sourcemap, {
     strictOpenAPI: options.strict,
   });
+  const warnings = [];
+  const result = options.denormalize
+    ? denormalize(parseResult, warnings)
+    : parseResult;
+  if (warnings.length !== 0) logger.warn(...warnings);
 
-  return options.denormalize ? denormalize(parseResult) : parseResult;
+  return result;
 }
 
 // Optic ref supports

@@ -8,6 +8,7 @@ function mergeAllOf(
   sourcemap: JsonSchemaSourcemap | undefined,
   pointers: { old: string; new: string }
 ) {
+  const warnings: string[] = [];
   // Then we should merge this and replace it with an object
   const effectiveObject: FlatOpenAPIV3.NonArraySchemaObject = {
     type: 'object',
@@ -16,10 +17,16 @@ function mergeAllOf(
   };
   for (let [index, polymorphicItem] of allOf.entries()) {
     if (polymorphicItem.allOf) {
-      polymorphicItem = mergeAllOf(polymorphicItem.allOf, sourcemap, {
-        old: jsonPointerHelpers.append(pointers.old, 'allOf', String(index)),
-        new: jsonPointerHelpers.append(pointers.new, 'allOf', String(index)),
-      });
+      const { obj, warnings: w } = mergeAllOf(
+        polymorphicItem.allOf,
+        sourcemap,
+        {
+          old: jsonPointerHelpers.append(pointers.old, 'allOf', String(index)),
+          new: jsonPointerHelpers.append(pointers.new, 'allOf', String(index)),
+        }
+      );
+      warnings.push(...w);
+      polymorphicItem = obj;
     }
     const effectiveProperties = effectiveObject.properties!;
     for (const [key, property] of Object.entries(
@@ -58,10 +65,11 @@ function mergeAllOf(
           'properties',
           key
         );
-        denormalizeProperty(property, sourcemap, {
+        const w = denormalizeProperty(property, sourcemap, {
           old: oldProperty,
           new: newProperty,
         });
+        warnings.push(...w);
 
         sourcemap &&
           logPointer(sourcemap, { old: oldProperty, new: newProperty });
@@ -72,7 +80,7 @@ function mergeAllOf(
   if (effectiveObject.required?.length === 0) {
     delete effectiveObject.required;
   }
-  return effectiveObject;
+  return { obj: effectiveObject, warnings };
 }
 
 export function denormalizeProperty(
@@ -83,6 +91,7 @@ export function denormalizeProperty(
     new: string;
   }
 ) {
+  const warnings: string[] = [];
   const polymorphicKey = schema.allOf
     ? 'allOf'
     : schema.anyOf
@@ -93,17 +102,38 @@ export function denormalizeProperty(
   const polymorphicValue = schema.allOf || schema.anyOf || schema.oneOf;
   if (polymorphicKey && polymorphicValue) {
     if (polymorphicKey === 'allOf') {
-      const objectsAndAllOf = polymorphicValue.filter(
-        (schema) => OAS3.isObjectType(schema.type) || schema.allOf
-      );
-      const effectiveObject = mergeAllOf(objectsAndAllOf, sourcemap, pointers);
-      schema.type = effectiveObject.type;
-      schema.properties = effectiveObject.properties;
-      schema.required = effectiveObject.required;
+      let effectiveObject: FlatOpenAPIV3.SchemaObject;
+      if (polymorphicValue.length === 1) {
+        effectiveObject = polymorphicValue[0];
+      } else {
+        const objectsAndAllOf = polymorphicValue.filter(
+          (schema) => OAS3.isObjectType(schema.type) || schema.allOf
+        );
+        const invalidChildren = polymorphicValue
+          .map((v, i) => [v, i] as const)
+          .filter(
+            ([schema]) => !(OAS3.isObjectType(schema.type) || schema.allOf)
+          );
+        const { obj, warnings: w } = mergeAllOf(
+          objectsAndAllOf,
+          sourcemap,
+          pointers
+        );
+        warnings.push(
+          ...invalidChildren.map(
+            ([, i]) => `invalid allOf variant at ${pointers.old}/allOf/${i}`
+          ),
+          ...w
+        );
+        effectiveObject = obj;
+      }
+      for (const [key, value] of Object.entries(effectiveObject)) {
+        (schema as any)[key] = value;
+      }
       delete schema[polymorphicKey];
     } else {
       for (const [index, polymorphicItem] of polymorphicValue.entries()) {
-        denormalizeProperty(polymorphicItem, sourcemap, {
+        const w = denormalizeProperty(polymorphicItem, sourcemap, {
           old: jsonPointerHelpers.append(
             pointers.old,
             polymorphicKey,
@@ -115,24 +145,28 @@ export function denormalizeProperty(
             String(index)
           ),
         });
+        warnings.push(...w);
       }
     }
   } else {
     if (OAS3.isArrayType(schema.type) && (schema as any).items) {
-      denormalizeProperty((schema as any).items, sourcemap, {
+      const w = denormalizeProperty((schema as any).items, sourcemap, {
         old: jsonPointerHelpers.append(pointers.old, 'items'),
         new: jsonPointerHelpers.append(pointers.new, 'items'),
       });
+      warnings.push(...w);
     }
     if (OAS3.isObjectType(schema.type)) {
       const properties = schema.properties ?? {};
       for (const [key, property] of Object.entries(properties)) {
-        denormalizeProperty(property, sourcemap, {
+        const w = denormalizeProperty(property, sourcemap, {
           old: jsonPointerHelpers.append(pointers.old, 'properties', key),
           new: jsonPointerHelpers.append(pointers.new, 'properties', key),
         });
+        warnings.push(...w);
       }
     }
   }
   // else we stop here
+  return warnings;
 }
