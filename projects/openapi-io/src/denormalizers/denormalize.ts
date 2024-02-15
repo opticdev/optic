@@ -16,7 +16,7 @@ export function denormalize<
     jsonLike: ParseOpenAPIResult['jsonLike'];
     sourcemap?: ParseOpenAPIResult['sourcemap'];
   },
->(parse: T): T {
+>(parse: T, warnings?: string[]): T {
   parse = {
     ...parse,
     jsonLike: JSON.parse(JSON.stringify(parse.jsonLike)),
@@ -26,7 +26,8 @@ export function denormalize<
       denormalizePaths(
         path as FlatOpenAPIV3.PathItemObject,
         pathKey,
-        parse.sourcemap
+        parse.sourcemap,
+        warnings
       );
 
       for (const method of Object.values(OpenAPIV3.HttpMethods)) {
@@ -37,7 +38,8 @@ export function denormalize<
           denormalizeOperation(
             operation,
             { path: pathKey, method },
-            parse.sourcemap
+            parse.sourcemap,
+            warnings
           );
         }
       }
@@ -50,7 +52,8 @@ export function denormalize<
 export function denormalizePaths(
   path: FlatOpenAPIV3.PathItemObject,
   pathKey: string,
-  sourcemap?: JsonSchemaSourcemap
+  sourcemap?: JsonSchemaSourcemap,
+  warnings?: string[]
 ) {
   if (path.parameters) {
     for (const method of Object.values(OpenAPIV3.HttpMethods)) {
@@ -110,7 +113,8 @@ export function denormalizeOperation(
     path: string;
     method: string;
   },
-  sourcemap?: JsonSchemaSourcemap
+  sourcemap?: JsonSchemaSourcemap,
+  warnings?: string[]
 ) {
   // For all schemas, flatten allOfs
   if (operation.requestBody) {
@@ -127,10 +131,11 @@ export function denormalizeOperation(
         'schema',
       ]);
       if (body.schema) {
-        denormalizeProperty(body.schema, sourcemap, {
+        const w = denormalizeProperty(body.schema, sourcemap, {
           old: pointer,
           new: pointer,
         });
+        warnings?.push(...w);
       }
     }
   }
@@ -147,10 +152,11 @@ export function denormalizeOperation(
         'schema',
       ]);
       if (body.schema) {
-        denormalizeProperty(body.schema, sourcemap, {
+        const w = denormalizeProperty(body.schema, sourcemap, {
           old: pointer,
           new: pointer,
         });
+        warnings?.push(...w);
       }
     }
   }

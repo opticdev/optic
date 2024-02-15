@@ -52,6 +52,10 @@ describe('denormalize', () => {
         'merges allOfs in type array object / items',
         'src/denormalizers/__tests__/specs/allOf/in-type-array.yaml',
       ],
+      [
+        'merges allOf with only one item',
+        'src/denormalizers/__tests__/specs/allOf/single-child.yaml',
+      ],
     ])('%s', async (_, openapiFilePath) => {
       const spec = await parseOpenAPIWithSourcemap(
         path.resolve(openapiFilePath)

@@ -27,19 +27,12 @@ exports[`denormalize allOf merging does not merge allOf when all items are not a
                       "type": "boolean",
                     },
                     "d": {
-                      "allOf": [
-                        {
-                          "properties": {
-                            "a": {
-                              "type": "string",
-                            },
-                          },
-                          "type": "object",
-                        },
-                        {
+                      "properties": {
+                        "a": {
                           "type": "string",
                         },
-                      ],
+                      },
+                      "type": "object",
                     },
                   },
                   "type": "object",
@@ -106,7 +99,12 @@ paths:
         "sha256": "4921acb94767de410927bd6751ac8d9f712c11dc70dcb260236a6684df8dcdb2",
       },
     ],
-    "refMappings": {},
+    "refMappings": {
+      "/paths/~1example/get/requestBody/content/application~1json/schema/properties/d/properties/a": [
+        0,
+        "/paths/~1example/get/requestBody/content/application~1json/schema/properties/d/allOf/0/properties/a",
+      ],
+    },
     "rootFilePath": "/src/denormalizers/__tests__/specs/allOf/no-merge.yaml",
   },
 }
@@ -244,6 +242,69 @@ paths:
 }
 `;
 
+exports[`denormalize allOf merging merges allOf with only one item 1`] = `
+{
+  "jsonLike": {
+    "info": {
+      "title": "some thing",
+      "version": "v0",
+    },
+    "openapi": "3.0.1",
+    "paths": {
+      "/example": {
+        "get": {
+          "parameters": [],
+          "requestBody": null,
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "format": "uuid",
+                    "type": "string",
+                  },
+                },
+              },
+              "description": "some thing",
+              "headers": {},
+            },
+          },
+        },
+      },
+    },
+  },
+  "sourcemap": JsonSchemaSourcemap {
+    "files": [
+      {
+        "contents": "openapi: '3.0.1'
+info:
+  title: 'some thing'
+  version: 'v0'
+paths:
+  /example:
+    get:
+      requestBody:
+      responses:
+        200:
+          description: 'some thing'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: string
+                    format: uuid
+",
+        "index": null,
+        "path": "/src/denormalizers/__tests__/specs/allOf/single-child.yaml",
+        "sha256": "6536b93a83f2b2a5d776abac8830ba6750e4ba08056b78096b9c7ebf5653849c",
+      },
+    ],
+    "refMappings": {},
+    "rootFilePath": "/src/denormalizers/__tests__/specs/allOf/single-child.yaml",
+  },
+}
+`;
+
 exports[`denormalize allOf merging merges allOfs in type array object / items 1`] = `
 {
   "jsonLike": {
@@ -282,14 +343,12 @@ exports[`denormalize allOf merging merges allOfs in type array object / items 1`
                               "type": "string",
                             },
                           },
-                          "required": undefined,
                           "type": "object",
                         },
                         "e": {
                           "type": "string",
                         },
                       },
-                      "required": undefined,
                       "type": "object",
                     },
                     "properties": {
@@ -313,14 +372,12 @@ exports[`denormalize allOf merging merges allOfs in type array object / items 1`
                                 "type": "string",
                               },
                             },
-                            "required": undefined,
                             "type": "object",
                           },
                           "e": {
                             "type": "string",
                           },
                         },
-                        "required": undefined,
                         "type": "object",
                       },
                     },
@@ -516,14 +573,15 @@ exports[`denormalize allOf merging merges nested allOf 1`] = `
                             "type": "string",
                           },
                         },
-                        "required": undefined,
                         "type": "object",
                       },
                       "e": {
                         "type": "string",
                       },
+                      "x": {
+                        "type": "string",
+                      },
                     },
-                    "required": undefined,
                     "type": "object",
                   },
                 },
@@ -555,6 +613,11 @@ paths:
               schema:
                 type: object
                 allOf:
+                  - allOf:
+                      - type: object
+                        properties:
+                          x:
+                            type: string
                   - type: object
                     properties:
                       a:
@@ -582,37 +645,45 @@ paths:
 ",
         "index": null,
         "path": "/src/denormalizers/__tests__/specs/allOf/nested.yaml",
-        "sha256": "19bb796a8fe63c93a2d80c8769ccc08255dcb7d55e5ab9b4a110c308f759cff2",
+        "sha256": "f40a14b89b16b1dbccde926823ead4a870178e400878f5114b21936725d99527",
       },
     ],
     "refMappings": {
+      "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/0/properties/x": [
+        0,
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/0/allOf/0/properties/x",
+      ],
       "/paths/~1example/get/responses/200/content/application~1json/schema/properties/a": [
         0,
-        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/0/properties/a",
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/1/properties/a",
       ],
       "/paths/~1example/get/responses/200/content/application~1json/schema/properties/b": [
         0,
-        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/1/properties/b",
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/2/properties/b",
       ],
       "/paths/~1example/get/responses/200/content/application~1json/schema/properties/c": [
         0,
-        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/1/properties/c",
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/2/properties/c",
       ],
       "/paths/~1example/get/responses/200/content/application~1json/schema/properties/d": [
         0,
-        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/2/properties/d",
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/3/properties/d",
       ],
       "/paths/~1example/get/responses/200/content/application~1json/schema/properties/d/properties/a": [
         0,
-        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/2/properties/d/allOf/0/properties/a",
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/3/properties/d/allOf/0/properties/a",
       ],
       "/paths/~1example/get/responses/200/content/application~1json/schema/properties/d/properties/b": [
         0,
-        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/2/properties/d/allOf/1/properties/b",
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/3/properties/d/allOf/1/properties/b",
       ],
       "/paths/~1example/get/responses/200/content/application~1json/schema/properties/e": [
         0,
-        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/2/properties/e",
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/3/properties/e",
+      ],
+      "/paths/~1example/get/responses/200/content/application~1json/schema/properties/x": [
+        0,
+        "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/0/properties/x",
       ],
     },
     "rootFilePath": "/src/denormalizers/__tests__/specs/allOf/nested.yaml",
