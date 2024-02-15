@@ -4,6 +4,7 @@ export const casing = [
   'Capital-Param-Case',
   'param-case',
   'PascalCase',
+  'case-insensitive-param-case',
 ] as const;
 
 export const appliesWhen = ['added', 'addedOrChanged', 'always'] as const;

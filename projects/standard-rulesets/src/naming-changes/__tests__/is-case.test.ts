@@ -134,4 +134,29 @@ describe('isCase', () => {
       expect(isCase(failingCase, 'PascalCase')).toBe(false);
     }
   });
+
+  test('case-insensitive-param-case', () => {
+    const passingCases = [
+      'kebab-case-For-fun',
+      'snake',
+      'kebabwithoutfriends',
+      'param1-Wwit2h-num3bers',
+      '1param-2with-Leading-number',
+    ];
+    const failingCases = [
+      '',
+      'some-kebab-someCamel',
+      'some-AeAab-someCamel',
+      'camelCase',
+      'snake_case_for_fun',
+    ];
+    for (const passingCase of passingCases) {
+      console.log(passingCase);
+      expect(isCase(passingCase, 'case-insensitive-param-case')).toBe(true);
+    }
+
+    for (const failingCase of failingCases) {
+      expect(isCase(failingCase, 'case-insensitive-param-case')).toBe(false);
+    }
+  });
 });

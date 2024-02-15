@@ -12,6 +12,8 @@ function regexForRule(format: (typeof casing)[number]) {
       return /^[A-Z][a-z0-9]+(?:[A-Z0-9][a-z0-9]+)*$/;
     case 'snake_case':
       return /^[a-z0-9]+(?:_[a-z0-9]+)*$/;
+    case 'case-insensitive-param-case':
+      return /^[a-zA-Z0-9][a-z0-9]*(-[a-zA-Z0-9][a-z0-9]*)*$/;
     default:
       return /(.*?)/;
   }
