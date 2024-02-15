@@ -15,6 +15,7 @@ export async function getDetailsForGeneration(config: OpticCliConfig): Promise<{
   const maybeOrigin = await Git.guessRemoteOrigin();
 
   const message = `Select the organization that your APIs belong to. Use an organization token to disambiguate in non interactive environments.`;
+  if (!config.isAuthenticated) return null;
   const orgRes = await getOrganizationFromToken(config.client, message);
 
   const maybeDefaultBranch = await Git.getDefaultBranchName();
