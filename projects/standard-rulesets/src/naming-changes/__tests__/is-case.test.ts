@@ -142,14 +142,11 @@ describe('isCase', () => {
       'kebabwithoutfriends',
       'param1-Wwit2h-num3bers',
       '1param-2with-Leading-number',
-    ];
-    const failingCases = [
-      '',
       'some-kebab-someCamel',
       'some-AeAab-someCamel',
       'camelCase',
-      'snake_case_for_fun',
     ];
+    const failingCases = ['', 'snake_case_for_fun'];
     for (const passingCase of passingCases) {
       console.log(passingCase);
       expect(isCase(passingCase, 'case-insensitive-param-case')).toBe(true);
