@@ -3,7 +3,7 @@
 exports[`groupDiffsByEndpoint can group diffs by endpoint for small-pet-store  1`] = `
 GroupedDiffs {
   "endpoints": {
-    "DELETE-~_~-/user/{username}": {
+    "DELETE-~_~-/user/{}": {
       "cookieParameters": {},
       "diffs": [
         {
@@ -115,7 +115,7 @@ GroupedDiffs {
       "responses": {},
       "rules": [],
     },
-    "GET-~_~-/user/{username}": {
+    "GET-~_~-/user/{}": {
       "cookieParameters": {},
       "diffs": [
         {
@@ -137,7 +137,7 @@ GroupedDiffs {
       "responses": {},
       "rules": [],
     },
-    "PATCH-~_~-/user/{username}": {
+    "PATCH-~_~-/user/{}": {
       "cookieParameters": {},
       "diffs": [
         {

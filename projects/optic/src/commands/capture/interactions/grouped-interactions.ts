@@ -1,9 +1,5 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import {
-  OpenAPIV3,
-  getEndpointId,
-  getPathAndMethodFromEndpointId,
-} from '@useoptic/openapi-utilities';
+import { OpenAPIV3, getEndpointId } from '@useoptic/openapi-utilities';
 import crypto from 'crypto';
 import fs from 'node:fs/promises';
 import path from 'path';

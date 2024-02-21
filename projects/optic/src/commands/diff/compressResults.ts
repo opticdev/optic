@@ -6,6 +6,7 @@ import {
 } from '@useoptic/openapi-utilities';
 import { ParseResult } from '../../utils/spec-loaders';
 import { compute } from './compute';
+import { normalizeOpenApiPath } from '@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/openapi-traverser';
 
 type SpecResultsV2 = Awaited<ReturnType<typeof compareSpecs>>;
 
@@ -27,9 +28,10 @@ const removeUnusedEndpoints = (
   for (const [pathPattern, methodObj] of Object.entries(paths)) {
     newPaths[pathPattern] = {};
     for (const method of Object.values(OpenAPIV3.HttpMethods)) {
+      const normalized = normalizeOpenApiPath(pathPattern);
       const operation = methodObj?.[method];
       const hasChangelogDataForEndpoint =
-        getEndpointId({ method, path: pathPattern }) in changelogData.endpoints;
+        getEndpointId({ method, path: normalized }) in changelogData.endpoints;
       if (operation && hasChangelogDataForEndpoint) {
         newPaths[pathPattern][method] = operation;
       }
