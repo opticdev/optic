@@ -61,7 +61,9 @@ export async function getPathCandidatesForSha(
         ? `git rev-list HEAD --first-parent`
         : `git rev-list HEAD -n ${opts.depth} --first-parent`;
     try {
-      const commandResults = await exec(command).then(({ stdout }) =>
+      // Repos with a large set of commits may exceed the size of the default buffer
+      const opts = { maxBuffer: 1024 * 1024 * 2 }; // 2MB
+      const commandResults = await exec(command, opts).then(({ stdout }) =>
         stdout.trim()
       );
       hashes = commandResults.split('\n');
