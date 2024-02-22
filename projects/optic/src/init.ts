@@ -50,10 +50,9 @@ function getInstallMethod(): installMethod {
 
 const getInstallInstruction = (): string => {
   const installMethod = getInstallMethod();
-  if (installMethod === 'binary') {
-    const binDir = path.dirname(process.execPath);
-    return `sh -c "$(curl -s --location https://install.useoptic.com/install.sh)" -- latest ${binDir}`;
-  }
+
+  // TODO: distinguish between 'binary' and 'npm/yarn' installations
+  // vercel/pkg is deprecated. waiting on node's native packaging to explore this more
 
   if (installMethod === 'docker') {
     return 'docker pull docker.io/useoptic/optic:latest';
