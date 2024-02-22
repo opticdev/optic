@@ -35,17 +35,31 @@ import path from 'path';
 
 const packageJson = require('../package.json');
 
-function getInstallMethod(): 'binary' | 'npm/yarn' {
-  return process.env.INSTALLATION_METHOD === 'binary' ? 'binary' : 'npm/yarn';
+type installMethod = 'binary' | 'npm/yarn' | 'docker';
+const allowedMethods = ['binary', 'npm/yarn', 'docker'];
+function getInstallMethod(): installMethod {
+  if (
+    process.env.INSTALLATION_METHOD !== undefined &&
+    allowedMethods.includes(process.env.INSTALLATION_METHOD)
+  ) {
+    return process.env.INSTALLATION_METHOD as installMethod;
+  }
+
+  return 'npm/yarn';
 }
 
 const getInstallInstruction = (): string => {
-  if (getInstallMethod() === 'binary') {
+  const installMethod = getInstallMethod();
+  if (installMethod === 'binary') {
     const binDir = path.dirname(process.execPath);
     return `sh -c "$(curl -s --location https://install.useoptic.com/install.sh)" -- latest ${binDir}`;
-  } else {
-    return 'npm i -g @useoptic/optic';
   }
+
+  if (installMethod === 'docker') {
+    return 'docker pull docker.io/useoptic/optic:latest';
+  }
+
+  return 'npm i -g @useoptic/optic';
 };
 
 export const initCli = async (
