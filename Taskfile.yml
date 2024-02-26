@@ -58,23 +58,41 @@ tasks:
         docker buildx create
         --name optic-multiplatform-builder
         --platform linux/amd64,linux/arm64
+        --driver-opt network=host
     status:
       - docker buildx ls | grep -Eq optic-multiplatform-builder
+
+  docker:registry:start:
+    cmds:
+      - docker run --name=registry --rm --detach --publish=5000:5000 registry:2
+    status:
+      - docker ps --filter "name=registry" | grep -Eq registry
+
+  docker:registry:stop:
+    cmds: ["docker stop registry"]
 
   docker:build:local:
     desc: Build an Optic image for your platform
     summary: |
-      Build an Optic image for your platform
+      Build an Optic image and publish a locally-running registry.
 
-      Most useful for produce a single-platform build for local use. Builds intended
-      for publishing should use `docker:build:release`.
+      This is useful for building and inspecting the Optic image locally
+      without needing to publish to an external registry. A multi-arch image
+      is built and published to `localhost:5000/useoptic/optic:local`.
+      
+      Builds intended for publishing should use `docker:build:release`.
 
       example:
-       task docker:build:local OPTIC_CLI_VERSION=v0.43.5
+       task docker:build:local OPTIC_CLI_VERSION=latest
+    deps:
+      - docker:setup
+      - docker:registry:start
     cmds:
       - >
-        docker build {{.CLI_ARGS}}
-        --tag docker.io/useoptic/optic:local
+        docker buildx build --push {{.CLI_ARGS}}
+        --tag localhost:5000/useoptic/optic:local
+        --platform linux/amd64,linux/arm64
+        --builder optic-multiplatform-builder
         --build-arg OPTIC_CLI_VERSION={{.OPTIC_CLI_VERSION}}
         .
 
