@@ -157,7 +157,7 @@ export async function detectCliConfig(
 ): Promise<string | undefined> {
   let currentDir = process.cwd();
   // search up from pwd to specified dir
-  while (topLevelDir.length < currentDir.length) {
+  while (topLevelDir.length <= currentDir.length) {
     const expectedDevYmlPath = path.join(currentDir, OPTIC_DEV_YML_NAME);
     const expectedYmlPath = path.join(currentDir, OPTIC_YML_NAME);
     try {
@@ -170,7 +170,9 @@ export async function detectCliConfig(
       return expectedDevYmlPath;
     } catch (e) {}
 
-    currentDir = path.dirname(currentDir);
+    const next = path.dirname(currentDir);
+    if (currentDir === next) break;
+    currentDir = next;
   }
 
   return undefined;
