@@ -74,7 +74,7 @@ tasks:
   docker:build:local:
     desc: Build an Optic image for your platform
     summary: |
-      Build an Optic image and publish a locally-running registry.
+      Build an Optic image and publish to a locally-running registry for testing.
 
       This is useful for building and inspecting the Optic image locally
       without needing to publish to an external registry. A multi-arch image
