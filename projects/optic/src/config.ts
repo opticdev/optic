@@ -170,7 +170,9 @@ export async function detectCliConfig(
       return expectedDevYmlPath;
     } catch (e) {}
 
-    currentDir = path.dirname(currentDir);
+    const next = path.dirname(currentDir);
+    if (currentDir === next) break;
+    currentDir = next;
   }
 
   return undefined;
