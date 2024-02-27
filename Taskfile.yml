@@ -95,6 +95,8 @@ tasks:
         --builder optic-multiplatform-builder
         --build-arg OPTIC_CLI_VERSION={{.OPTIC_CLI_VERSION}}
         .
+      # ensure we have the latest image pulled from the registry, easy to forget to do this
+      - docker pull localhost:5000/useoptic/optic:local
 
   docker:build:release:
     desc: Build an Optic image for all supported platforms, suitable for publishing
