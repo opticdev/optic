@@ -1,3 +1,6 @@
+# Doing the intial installation of Optic and Spectral separately
+# saves a bit of space in the final image--Probably due to temp
+# file creation.
 FROM alpine:latest as dl
 ARG OPTIC_CLI_VERSION=latest
 RUN apk --no-cache add curl
