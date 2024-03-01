@@ -157,6 +157,11 @@ const getCaptureAction =
       strict: false,
       denormalize: false,
     });
+    if (spec.version === '2.x.x') {
+      logger.error(`capture does not support swagger 2 specifications`);
+      process.exitCode = 1;
+      return;
+    }
     let serverUrl: string | null = null;
     let captures: GroupedCaptures;
     const pathFromRoot = resolveRelativePath(config.root, filePath);
@@ -423,7 +428,7 @@ export async function processCaptures(
     filePath,
   }: {
     filePath: string;
-    spec: ParseResult;
+    spec: Exclude<ParseResult, { version: '2.x.x' }>;
     captures: GroupedCaptures;
     captureConfig?: CaptureConfigData;
     cliConfig: OpticCliConfig;
@@ -506,11 +511,11 @@ export async function processCaptures(
     let endpointCoverage = coverage.coverage.paths[path][method];
     if (options.update) {
       // Since we flush each endpoint updates to disk, we should reload the spec to get the latest spec and sourcemap which we both use to generate the next set of patches
-      spec = await loadSpec(filePath, cliConfig, {
+      spec = (await loadSpec(filePath, cliConfig, {
         strict: false,
         denormalize: false,
-      });
-      const operation = spec.jsonLike.paths[path]?.[method];
+      })) as Exclude<ParseResult, { version: '2.x.x' }>;
+      const operation = spec.jsonLike.paths?.[path]?.[method];
       if (operation) {
         coverage.addEndpoint(operation, path, method, {
           newlyDocumented: true,
@@ -604,10 +609,10 @@ export async function processCaptures(
         await documentNewEndpoint(filteredInteractions, spec, endpoint);
 
         // Since we flush each endpoint updates to disk, we should reload the spec to get the latest spec and sourcemap which we both use to generate the next set of patches
-        spec = await loadSpec(filePath, cliConfig, {
+        spec = (await loadSpec(filePath, cliConfig, {
           strict: false,
           denormalize: false,
-        });
+        })) as Exclude<ParseResult, { version: '2.x.x' }>;
         spinner?.succeed();
       }
 

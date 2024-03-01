@@ -1,5 +1,9 @@
 import pluralize from 'pluralize';
-import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
+  OpenAPIV3,
+} from '@useoptic/openapi-utilities';
 import { CapturedInteractions } from '../sources/captured-interactions';
 import { specToPaths } from './queries';
 
@@ -24,7 +28,7 @@ export class PathInference {
   }
 
   static async fromSpecAndInteractions(
-    spec: OpenAPIV3.Document,
+    spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document,
     interactions: CapturedInteractions
   ): Promise<PathInference> {
     const pathInference = new PathInference();

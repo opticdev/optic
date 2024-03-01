@@ -5,6 +5,8 @@ import {
   Severity,
   SeverityText,
   SeverityTextOptions,
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
 } from '@useoptic/openapi-utilities';
 import Ajv from 'ajv';
 import { appliesWhen } from './constants';
@@ -18,7 +20,6 @@ import {
 } from './rules-helper';
 import { ExternalRuleBase } from '@useoptic/rulesets-base/build/rules/external-rule-base';
 import { OpenAPIFactNodes } from '@useoptic/rulesets-base/build/rule-runner/rule-runner-types';
-import { OpenAPIV3 } from 'openapi-types';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import stableStringify from 'json-stable-stringify';
 import { prepareOperation, prepareResponse } from './prepare-openapi';
@@ -122,8 +123,8 @@ export class LintGpt extends ExternalRuleBase {
   async runRulesV2(inputs: {
     context: any;
     diffs: ObjectDiff[];
-    fromSpec: OpenAPIV3.Document;
-    toSpec: OpenAPIV3.Document;
+    fromSpec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document;
+    toSpec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document;
     groupedFacts: OpenAPIFactNodes;
   }): Promise<RuleResult[]> {
     const operationsToRun: AIRuleRunInputs[] = [];

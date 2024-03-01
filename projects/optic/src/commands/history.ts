@@ -81,6 +81,14 @@ const logDiffs = async (
   headSpec: ParseResult,
   headDate?: Date
 ): Promise<boolean> => {
+  if (baseSpec.version === '2.x.x' || headSpec.version === '2.x.x') {
+    if (headSpec.version === '2.x.x')
+      logger.warn(
+        `skipping: ${headDate?.toDateString()} - swagger 2.0 specs are not supported`
+      );
+
+    return false;
+  }
   const rulesRunner = new RuleRunner([new BreakingChangesRuleset()]);
   const comparison = await compareSpecs(baseSpec, headSpec, rulesRunner, {});
   let hasChanges = false;

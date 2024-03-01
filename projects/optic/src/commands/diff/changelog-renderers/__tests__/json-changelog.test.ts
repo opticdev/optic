@@ -10,12 +10,12 @@ test('json changelog collects changes properly', () => {
   const specs = {
     from: petStoreBase,
     to: petStoreUpdated,
-  };
+  } as any;
   const groupedDiffs = groupDiffsByEndpoint(specs, diffs, []);
   const output = jsonChangelog(
     {
-      from: petStoreBase,
-      to: petStoreUpdated,
+      from: petStoreBase as any,
+      to: petStoreUpdated as any,
     },
     groupedDiffs
   );
@@ -24,16 +24,16 @@ test('json changelog collects changes properly', () => {
 });
 
 test('json changelog with parameter changes', async () => {
-  const { jsonLike: before } = await loadSpec(
+  const { jsonLike: before } = (await loadSpec(
     './src/commands/diff/changelog-renderers/__tests__/fixtures/params-old.yaml',
     {} as any,
     { strict: false, denormalize: true }
-  );
-  const { jsonLike: after } = await loadSpec(
+  )) as any;
+  const { jsonLike: after } = (await loadSpec(
     './src/commands/diff/changelog-renderers/__tests__/fixtures/params-new.yaml',
     {} as any,
     { strict: false, denormalize: true }
-  );
+  )) as any;
 
   const diffs = diff(before, after);
   const specs = {
@@ -53,16 +53,16 @@ test('json changelog with parameter changes', async () => {
 });
 
 test('json changelog with response header changes', async () => {
-  const { jsonLike: before } = await loadSpec(
+  const { jsonLike: before } = (await loadSpec(
     './src/commands/diff/changelog-renderers/__tests__/fixtures/response-headers-old.yaml',
     {} as any,
     { strict: false, denormalize: true }
-  );
-  const { jsonLike: after } = await loadSpec(
+  )) as any;
+  const { jsonLike: after } = (await loadSpec(
     './src/commands/diff/changelog-renderers/__tests__/fixtures/response-headers-new.yaml',
     {} as any,
     { strict: false, denormalize: true }
-  );
+  )) as any;
 
   const diffs = diff(before, after);
   const specs = {

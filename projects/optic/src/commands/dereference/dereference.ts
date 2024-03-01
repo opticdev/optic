@@ -82,7 +82,7 @@ const deferenceAction =
       const specJson = parsedFile.jsonLike;
 
       if (includeExtensions.length) {
-        Object.entries(specJson.paths).forEach(([path, operations]) => {
+        Object.entries(specJson.paths ?? {}).forEach(([path, operations]) => {
           Object.entries(operations!).forEach(([key, operation]) => {
             if (key === 'parameters') return;
             if (
@@ -106,7 +106,7 @@ const deferenceAction =
       }
 
       if (filterExtensions.length) {
-        Object.entries(specJson.paths).forEach(([path, operations]) => {
+        Object.entries(specJson.paths ?? {}).forEach(([path, operations]) => {
           Object.entries(operations!).forEach(([key, operation]) => {
             if (key === 'parameters') return;
             // should filter

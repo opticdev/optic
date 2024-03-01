@@ -7,7 +7,7 @@ import {
   parseOpenAPIWithSourcemap,
 } from '../../parser/openapi-sourcemap-parser';
 
-function prepSnapshot(result: ParseOpenAPIResult) {
+function prepSnapshot(result: ParseOpenAPIResult<any>) {
   const cwd = process.cwd();
   result.sourcemap.files.forEach((i) => {
     i.path = i.path.split(cwd)[1];

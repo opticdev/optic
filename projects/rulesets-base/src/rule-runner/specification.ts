@@ -7,6 +7,7 @@ import { createRuleContextWithoutOperation, isExempted } from './utils';
 import { Rule, Ruleset, SpecificationRule } from '../rules';
 import { createSpecificationAssertions, AssertionResult } from './assertions';
 import { getSpecificationRules } from './rule-filters';
+import { OpenAPIDocument } from '..';
 
 const createSpecificationResult = (
   assertionResult: AssertionResult,
@@ -38,8 +39,8 @@ export const runSpecificationRules = ({
   specificationNode: NodeDetail<OpenApiKind.Specification>;
   rules: (Ruleset | Rule)[];
   customRuleContext: any;
-  beforeApiSpec: OpenAPIV3.Document;
-  afterApiSpec: OpenAPIV3.Document;
+  beforeApiSpec: OpenAPIDocument;
+  afterApiSpec: OpenAPIDocument;
 }) => {
   const results: Result[] = [];
   const specificationRules = getSpecificationRules(rules);

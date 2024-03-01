@@ -4,7 +4,6 @@ import path from 'path';
 
 import { createCommandFeedback, InputErrors } from './reporters/feedback';
 import { flushEvents, trackEvent } from '../../segment';
-import { OpenAPIV3 } from './specs';
 import { captureStorage } from './captures/capture-storage';
 import chalk from 'chalk';
 import {
@@ -18,9 +17,13 @@ import { OpticCliConfig, VCS } from '../../config';
 import { OPTIC_URL_KEY } from '../../constants';
 import { getApiFromOpticUrl, getSpecUrl } from '../../utils/cloud-urls';
 import { uploadSpec, uploadSpecVerification } from '../../utils/cloud-specs';
-import { loadSpec } from '../../utils/spec-loaders';
+import { loadSpec, ParseResult } from '../../utils/spec-loaders';
 import * as Git from '../../utils/git-utils';
-import { sanitizeGitTag } from '@useoptic/openapi-utilities';
+import {
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
+  sanitizeGitTag,
+} from '@useoptic/openapi-utilities';
 import { nextCommand } from './reporters/next-command';
 import { getInteractions } from './captures';
 import { logger } from '../../logger';
@@ -100,7 +103,10 @@ export async function runVerify(
     denormalize: true,
   });
 
-  const { jsonLike: spec, sourcemap } = parseResult;
+  const { jsonLike: spec, sourcemap } = parseResult as Exclude<
+    ParseResult,
+    { version: '2.x.x' }
+  >;
 
   const opticUrlDetails = getApiFromOpticUrl(spec[OPTIC_URL_KEY]);
 
@@ -243,7 +249,7 @@ export async function runVerify(
 }
 async function renderOperationStatus(
   observations: StatusObservations,
-  spec: OpenAPIV3.Document,
+  spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document,
   specPath: string,
   feedback: ReturnType<typeof createCommandFeedback>
 ) {

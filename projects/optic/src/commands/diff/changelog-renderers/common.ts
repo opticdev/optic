@@ -1,6 +1,11 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { OpenAPIV3 } from 'openapi-types';
+import { FlatOpenAPIV3, FlatOpenAPIV3_1 } from '@useoptic/openapi-utilities';
 import { Diff } from '@useoptic/openapi-utilities/build/openapi3/group-diff';
+
+export type SpecInput = {
+  from: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document;
+  to: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document;
+};
 
 export function getRootBodyPath(path: string): string {
   const parts = jsonPointerHelpers.decode(path);
@@ -11,7 +16,10 @@ export function getRootBodyPath(path: string): string {
   }
 }
 export function interpretFieldLevelDiffs(
-  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  specs: {
+    from: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document;
+    to: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document;
+  },
   diffs: Record<string, { diffs: Diff[] }>
 ): Diff[] {
   return Object.entries(diffs)

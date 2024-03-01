@@ -1,5 +1,10 @@
 import { ParseOpenAPIResult } from '../parser/openapi-sourcemap-parser';
-import { FlatOpenAPIV3, OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  FlatOpenAPIV2,
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
+  OpenAPIV3,
+} from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { logPointer } from './pointer';
 import { denormalizeProperty } from './denormalizeProperty';
@@ -12,16 +17,21 @@ import { JsonSchemaSourcemap } from '../parser/sourcemap';
 // - adds response headers {} if not set
 // - adds parameters [] if not set
 export function denormalize<
+  Version extends
+    | FlatOpenAPIV2.Document
+    | FlatOpenAPIV3.Document
+    | FlatOpenAPIV3_1.Document,
   T extends {
-    jsonLike: ParseOpenAPIResult['jsonLike'];
-    sourcemap?: ParseOpenAPIResult['sourcemap'];
+    jsonLike: ParseOpenAPIResult<Version>['jsonLike'];
+    sourcemap?: ParseOpenAPIResult<Version>['sourcemap'];
   },
 >(parse: T, warnings?: string[]): T {
   parse = {
     ...parse,
     jsonLike: JSON.parse(JSON.stringify(parse.jsonLike)),
   } as T;
-  for (const [pathKey, path] of Object.entries(parse.jsonLike.paths)) {
+  // TODO handle denormalize for swagger2
+  for (const [pathKey, path] of Object.entries(parse.jsonLike.paths ?? {})) {
     if (path) {
       denormalizePaths(
         path as FlatOpenAPIV3.PathItemObject,

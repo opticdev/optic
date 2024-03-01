@@ -3,6 +3,8 @@ import {
   CoverageNode,
   ApiCoverage,
   countOperationCoverage,
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
 } from '@useoptic/openapi-utilities';
 import chalk from 'chalk';
 import sortby from 'lodash.sortby';
@@ -15,7 +17,7 @@ import { OperationDiffResultKind } from '../patches/patchers/spec/types';
 
 export class ApiCoverageCounter {
   coverage: ApiCoverage;
-  constructor(spec: OpenAPIV3.Document) {
+  constructor(spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document) {
     this.coverage = {
       paths: {},
     };

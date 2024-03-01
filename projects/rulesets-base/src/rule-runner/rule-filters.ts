@@ -8,7 +8,6 @@ import {
   ResponseRule,
   PropertyRule,
 } from '../rules';
-import { ExternalRuleBase } from '../rules/external-rule-base';
 import { RuleContext } from '../types';
 
 type RulesetData = {

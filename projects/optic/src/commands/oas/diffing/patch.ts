@@ -13,7 +13,11 @@ import {
 } from '@useoptic/openapi-io';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import chalk from 'chalk';
-import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
+  OpenAPIV3,
+} from '@useoptic/openapi-utilities';
 import { Subject, tap } from '../lib/async-tools';
 import {
   DocumentedInteraction,
@@ -41,7 +45,7 @@ import { LegacySpecPatches } from '../specs/streams/patches';
 
 export async function patchOperationsAsNeeded(
   patchInteractions: CapturedInteractions,
-  spec: OpenAPIV3.Document,
+  spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document,
   sourcemap: JsonSchemaSourcemap,
   isAddAll: boolean = true,
   filterToOperations: ParsedOperation[] = []
@@ -68,7 +72,7 @@ export async function patchOperationsAsNeeded(
 export async function renderDiffs(
   specPath: string,
   sourcemap: JsonSchemaSourcemap,
-  spec: OpenAPIV3.Document,
+  spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document,
   patches: SpecPatches,
   coverage: ApiCoverageCounter
 ) {
@@ -213,13 +217,15 @@ ${nextCommand(
 }
 
 export function updateByInteractions(
-  spec: OpenAPIV3.Document,
+  spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document,
   interactions: CapturedInteractions,
   isAddAll: boolean = true,
   filterToOperations: ParsedOperation[] = []
 ): { results: SpecPatches; observations: UpdateObservations } {
   const openAPIVersion = checkOpenAPIVersion(spec);
-  const updatingSpec = new Subject<OpenAPIV3.Document>();
+  const updatingSpec = new Subject<
+    FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document
+  >();
   const specUpdates = updatingSpec.iterator;
 
   const observing = new Subject<UpdateObservation>();

@@ -6,9 +6,10 @@ import {
   diff,
   groupDiffsByEndpoint,
 } from '@useoptic/openapi-utilities';
+import { FlatOpenAPIV3 } from '@useoptic/openapi-utilities/src';
 
-const from = defaultEmptySpec;
-const to = {
+const from: FlatOpenAPIV3.Document = defaultEmptySpec as FlatOpenAPIV3.Document;
+const to: FlatOpenAPIV3.Document = {
   ...defaultEmptySpec,
   paths: {
     '/api': {
@@ -28,7 +29,7 @@ const to = {
       },
     },
   },
-};
+} as FlatOpenAPIV3.Document;
 
 const input: CiRunDetails = {
   completed: [

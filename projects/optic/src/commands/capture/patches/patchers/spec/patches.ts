@@ -1,6 +1,10 @@
 import { PatchImpact, PatchOperation } from '../../patch-operations';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
+  OpenAPIV3,
+} from '@useoptic/openapi-utilities';
 import JsonPatch from 'fast-json-patch';
 
 import { ShapeDiffResult, UnpatchableDiff } from '../../patchers/shapes/diff';
@@ -83,7 +87,10 @@ export class SpecPatch {
     };
   }
 
-  static applyPatch(patch: SpecPatch, spec: OpenAPIV3.Document) {
+  static applyPatch(
+    patch: SpecPatch,
+    spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document
+  ) {
     const operations = JsonPatch.deepClone([...SpecPatch.operations(patch)]);
     try {
       const result = JsonPatch.applyPatch(
