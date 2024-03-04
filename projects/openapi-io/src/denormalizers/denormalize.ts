@@ -1,3 +1,4 @@
+import semver from 'semver';
 import { ParseOpenAPIResult } from '../parser/openapi-sourcemap-parser';
 import {
   FlatOpenAPIV2,
@@ -30,7 +31,12 @@ export function denormalize<
     ...parse,
     jsonLike: JSON.parse(JSON.stringify(parse.jsonLike)),
   } as T;
-  // TODO handle denormalize for swagger2
+  if (
+    'swagger' in parse.jsonLike &&
+    semver.satisfies(parse.jsonLike.swagger, '2.x.x')
+  ) {
+    return parse;
+  }
   for (const [pathKey, path] of Object.entries(parse.jsonLike.paths ?? {})) {
     if (path) {
       denormalizePaths(
