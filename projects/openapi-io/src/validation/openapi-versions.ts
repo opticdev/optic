@@ -9,7 +9,11 @@ export function checkOpenAPIVersion(spec: {
 }): SupportedOpenAPIVersions {
   if (spec.openapi && semver.satisfies(spec.openapi, '3.1.x')) return '3.1.x';
   if (spec.openapi && semver.satisfies(spec.openapi, '3.0.x')) return '3.0.x';
-  if (spec.swagger && semver.satisfies(spec.swagger, '2.x.x')) return '2.x.x';
+  if (
+    spec.swagger &&
+    (spec.swagger === '2.0' || semver.satisfies(spec.swagger, '2.x.x'))
+  )
+    return '2.x.x';
   throw new OpenAPIVersionError(
     `Unsupported OpenAPI version ${
       spec.openapi ?? spec.swagger
