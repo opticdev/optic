@@ -308,7 +308,7 @@ const getCaptureAction =
         return;
       }
       // We need to load the spec as is with denormalize=true so that the endpoint shas match
-      spec = denormalize(spec);
+      spec = denormalize(spec, spec.version);
 
       const opticUrlDetails = await getOpticUrlDetails(config, {
         filePath: path.relative(config.root, path.resolve(filePath)),
@@ -479,7 +479,9 @@ export async function processCaptures(
   }
 
   // update existing endpoints
-  const coverage = new ApiCoverageCounter(denormalize(spec).jsonLike);
+  const coverage = new ApiCoverageCounter(
+    denormalize(spec, spec.version).jsonLike
+  );
   let hasAnyDiffs = false;
   let diffCount = 0;
   let endpointsAdded = 0;

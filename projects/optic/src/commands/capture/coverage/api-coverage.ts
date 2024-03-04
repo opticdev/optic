@@ -21,9 +21,12 @@ export class ApiCoverageCounter {
     this.coverage = {
       paths: {},
     };
-    const { jsonLike: denormalizedSpec } = denormalize({
-      jsonLike: JSON.parse(JSON.stringify(spec)),
-    });
+    const { jsonLike: denormalizedSpec } = denormalize(
+      {
+        jsonLike: JSON.parse(JSON.stringify(spec)),
+      },
+      '3.0.x'
+    );
 
     Object.entries(denormalizedSpec.paths ?? {}).forEach(([path, methods]) => {
       this.coverage.paths[path] = {};

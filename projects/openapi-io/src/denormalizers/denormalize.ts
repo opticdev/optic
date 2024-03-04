@@ -1,10 +1,10 @@
-import semver from 'semver';
 import { ParseOpenAPIResult } from '../parser/openapi-sourcemap-parser';
 import {
   FlatOpenAPIV2,
   FlatOpenAPIV3,
   FlatOpenAPIV3_1,
   OpenAPIV3,
+  SWAGGER2_HTTP_METHODS,
 } from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { logPointer } from './pointer';
@@ -26,37 +26,54 @@ export function denormalize<
     jsonLike: ParseOpenAPIResult<Version>['jsonLike'];
     sourcemap?: ParseOpenAPIResult<Version>['sourcemap'];
   },
->(parse: T, warnings?: string[]): T {
+>(parse: T, version: '2.x.x' | '3.0.x' | '3.1.x', warnings?: string[]): T {
   parse = {
     ...parse,
     jsonLike: JSON.parse(JSON.stringify(parse.jsonLike)),
   } as T;
-  if (
-    'swagger' in parse.jsonLike &&
-    semver.satisfies(parse.jsonLike.swagger, '2.x.x')
-  ) {
-    return parse;
-  }
-  for (const [pathKey, path] of Object.entries(parse.jsonLike.paths ?? {})) {
-    if (path) {
-      denormalizePaths(
-        path as FlatOpenAPIV3.PathItemObject,
-        pathKey,
-        parse.sourcemap,
-        warnings
-      );
 
-      for (const method of Object.values(OpenAPIV3.HttpMethods)) {
-        const operation = path?.[method] as
-          | FlatOpenAPIV3.OperationObject
-          | undefined;
-        if (operation) {
-          denormalizeOperation(
-            operation,
-            { path: pathKey, method },
-            parse.sourcemap,
-            warnings
-          );
+  if (version === '2.x.x') {
+    for (const [pathKey, path] of Object.entries(parse.jsonLike.paths ?? {})) {
+      if (path) {
+        denormalizePathsV2(path, pathKey, parse.sourcemap, warnings);
+
+        for (const method of Object.values(OpenAPIV3.HttpMethods)) {
+          const operation = path?.[method] as
+            | FlatOpenAPIV2.OperationObject
+            | undefined;
+          if (operation) {
+            denormalizeOperationV2(
+              operation,
+              { path: pathKey, method },
+              parse.sourcemap,
+              warnings
+            );
+          }
+        }
+      }
+    }
+  } else {
+    for (const [pathKey, path] of Object.entries(parse.jsonLike.paths ?? {})) {
+      if (path) {
+        denormalizePathsV3(
+          path as FlatOpenAPIV3.PathItemObject,
+          pathKey,
+          parse.sourcemap,
+          warnings
+        );
+
+        for (const method of Object.values(OpenAPIV3.HttpMethods)) {
+          const operation = path?.[method] as
+            | FlatOpenAPIV3.OperationObject
+            | undefined;
+          if (operation) {
+            denormalizeOperationV3(
+              operation,
+              { path: pathKey, method },
+              parse.sourcemap,
+              warnings
+            );
+          }
         }
       }
     }
@@ -65,7 +82,76 @@ export function denormalize<
   return parse;
 }
 
-export function denormalizePaths(
+export function denormalizePathsV2(
+  path: FlatOpenAPIV2.PathItemObject,
+  pathKey: string,
+  sourcemap?: JsonSchemaSourcemap,
+  warnings?: string[]
+) {
+  if (path.parameters) {
+    for (const method of SWAGGER2_HTTP_METHODS) {
+      const operation = path[method];
+      if (operation) {
+        // Merge in parameters
+        for (const [idx, parameter] of path.parameters.entries()) {
+          if ('$ref' in parameter) {
+            continue;
+          }
+          // Look for an existing parameter, if it exists, we should keep the more specific parameter
+          const hasParameter = operation.parameters?.find(
+            (p) =>
+              !('$ref' in p) &&
+              p.in === parameter.in &&
+              p.name === parameter.name
+          );
+          if (!hasParameter) {
+            if (!operation.parameters) {
+              operation.parameters = [];
+            }
+
+            const oldPointer = jsonPointerHelpers.compile([
+              'paths',
+              pathKey,
+              'parameters',
+              String(idx),
+            ]);
+            const newPointer = jsonPointerHelpers.compile([
+              'paths',
+              pathKey,
+              method,
+              'parameters',
+              String(operation.parameters.length),
+            ]);
+
+            sourcemap &&
+              logPointer(sourcemap, { old: oldPointer, new: newPointer });
+
+            operation.parameters.push(parameter);
+          }
+        }
+      }
+    }
+  }
+  // Finally, we remove the parameter on the path level
+  delete path.parameters;
+}
+
+export function denormalizeOperationV2(
+  operation: FlatOpenAPIV2.OperationObject,
+  {
+    path,
+    method,
+  }: {
+    path: string;
+    method: string;
+  },
+  sourcemap?: JsonSchemaSourcemap,
+  warnings?: string[]
+) {
+  // Nothing to denormalize for v2 yet
+}
+
+export function denormalizePathsV3(
   path: FlatOpenAPIV3.PathItemObject,
   pathKey: string,
   sourcemap?: JsonSchemaSourcemap,
@@ -120,7 +206,7 @@ export function denormalizePaths(
   }
 }
 
-export function denormalizeOperation(
+export function denormalizeOperationV3(
   operation: FlatOpenAPIV3.OperationObject,
   {
     path,

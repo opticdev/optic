@@ -329,7 +329,7 @@ function validateAndDenormalize(
   }
   const warnings = [];
   const result = options.denormalize
-    ? denormalize(parseResult, warnings)
+    ? denormalize(parseResult, parseResult.version, warnings)
     : parseResult;
   if (warnings.length !== 0) logger.warn(...warnings);
 
