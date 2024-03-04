@@ -4,7 +4,7 @@ import path from 'path';
 import { captureStorage } from './capture-storage';
 import { InputErrors } from '../reporters/feedback';
 import * as AT from '../lib/async-tools';
-import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { FlatOpenAPIV3, FlatOpenAPIV3_1 } from '@useoptic/openapi-utilities';
 import { CapturedInteractions } from '../../capture/sources/captured-interactions';
 import { PostmanCollectionEntries } from '../../capture/sources/postman';
 import { HarEntries } from '../../capture/sources/har';
@@ -16,7 +16,7 @@ import {
 
 export async function getInteractions(
   options: { har?: string; postman?: string },
-  spec: OpenAPIV3.Document,
+  spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document,
   specPath: string,
   feedback: any
 ): Promise<CapturedInteractions> {

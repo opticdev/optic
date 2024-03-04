@@ -8,6 +8,7 @@ import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { Option, Some, None } from 'ts-results';
 import { ParsedOperation } from '../../diffing/document';
 import { CapturedInteractions } from '../../../capture/sources/captured-interactions';
+import { FlatOpenAPIV3, FlatOpenAPIV3_1 } from '@useoptic/openapi-utilities';
 
 export interface DocumentedInteractions
   extends AsyncIterable<DocumentedInteraction> {}
@@ -15,8 +16,10 @@ export interface DocumentedInteractions
 export class DocumentedInteractions {
   static async *fromCapturedInteractions(
     interactions: CapturedInteractions,
-    spec: OpenAPIV3.Document,
-    specUpdates?: AsyncIterable<OpenAPIV3.Document>,
+    spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document,
+    specUpdates?: AsyncIterable<
+      FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document
+    >,
     isAddAll: boolean = true,
     filterToOperations: ParsedOperation[] = []
   ): AsyncIterable<Option<DocumentedInteraction>> {

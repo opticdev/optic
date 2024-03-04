@@ -59,7 +59,7 @@ async function groupUnpatchableDiffs(
 
 export async function diffExistingEndpoint(
   interactions: CapturedInteractions,
-  parseResult: ParseResult,
+  parseResult: Exclude<ParseResult, { version: '2.x.x' }>,
   coverage: ApiCoverageCounter,
   endpoint: {
     path: string;

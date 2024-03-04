@@ -1,6 +1,6 @@
-import { OpenAPIV3 } from 'openapi-types';
 import { ObjectDiff, diff } from '../diff/diff';
 import { RuleResult } from '../results';
+import { FlatOpenAPIV3, FlatOpenAPIV3_1 } from '../flat-openapi-types';
 const packageJson = require('../../package.json');
 
 type SerializedSourcemap = {
@@ -16,7 +16,7 @@ type SerializedSourcemap = {
 };
 
 type InputSpec = {
-  jsonLike: OpenAPIV3.Document;
+  jsonLike: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document;
   sourcemap: SerializedSourcemap;
   isEmptySpec: boolean;
 };
@@ -25,8 +25,8 @@ type RuleRunner = {
   runRules: (inputs: {
     context: any;
     diffs: ObjectDiff[];
-    fromSpec: OpenAPIV3.Document;
-    toSpec: OpenAPIV3.Document;
+    fromSpec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document;
+    toSpec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document;
   }) => Promise<RuleResult[]>;
 };
 

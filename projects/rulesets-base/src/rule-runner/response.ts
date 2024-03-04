@@ -10,7 +10,7 @@ import { createRuleContextWithOperation, isExempted } from './utils';
 
 import { Rule, Ruleset, ResponseRule } from '../rules';
 import { AssertionResult, createResponseAssertions } from './assertions';
-import { Operation, Response } from '../types';
+import { OpenAPIDocument, Operation, Response } from '../types';
 import { getResponseRules } from './rule-filters';
 
 const createResponseResult = (
@@ -77,8 +77,8 @@ export const runResponseRules = ({
   rules: (Ruleset | Rule)[];
 
   customRuleContext: any;
-  beforeApiSpec: OpenAPIV3.Document;
-  afterApiSpec: OpenAPIV3.Document;
+  beforeApiSpec: OpenAPIDocument;
+  afterApiSpec: OpenAPIDocument;
 }) => {
   const results: Result[] = [];
   const responseRules = getResponseRules(rules);

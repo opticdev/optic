@@ -1,8 +1,15 @@
 import {
   FactVariant,
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
   OpenApiKind,
   OpenAPIV3,
 } from '@useoptic/openapi-utilities';
+
+export type OpenAPIDocument =
+  | OpenAPIV3.Document
+  | FlatOpenAPIV3.Document
+  | FlatOpenAPIV3_1.Document;
 
 // Value constructs - these are types that represent the node you are working on
 export type RuleContext = {

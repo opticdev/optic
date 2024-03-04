@@ -8,7 +8,7 @@ import path from 'path';
 
 const cwd = process.cwd();
 
-function prepSnapshot(result: ParseOpenAPIResult) {
+function prepSnapshot(result: ParseOpenAPIResult<any>) {
   result.sourcemap.files.forEach((i) => {
     i.path = i.path.split(cwd)[1];
     // @ts-ignore

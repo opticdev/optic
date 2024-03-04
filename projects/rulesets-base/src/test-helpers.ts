@@ -8,10 +8,11 @@ import {
 import { RuleRunner } from './rule-runner';
 import { Rule, Ruleset } from './rules';
 import { ExternalRuleBase } from './rules/external-rule-base';
+import { OpenAPIDocument } from '.';
 
 export const createRuleInputs = (
-  beforeJson: OpenAPIV3.Document,
-  afterJson: OpenAPIV3.Document
+  beforeJson: OpenAPIDocument,
+  afterJson: OpenAPIDocument
 ): Parameters<RuleRunner['runRulesWithFacts']>[0] => {
   const currentTraverser = new OpenAPITraverser();
   const nextTraverser = new OpenAPITraverser();
@@ -34,8 +35,8 @@ export const createRuleInputs = (
 
 export const runRulesWithInputs = (
   rules: (Rule | Ruleset)[],
-  beforeJson: OpenAPIV3.Document,
-  afterJson: OpenAPIV3.Document
+  beforeJson: OpenAPIDocument,
+  afterJson: OpenAPIDocument
 ): Promise<Result[]> => {
   const ruleRunner = new RuleRunner(rules);
   return ruleRunner.runRulesWithFacts(createRuleInputs(beforeJson, afterJson));
@@ -43,17 +44,18 @@ export const runRulesWithInputs = (
 
 export const externalRulesWithInputs = (
   rules: ExternalRuleBase,
-  beforeJson: OpenAPIV3.Document,
-  afterJson: OpenAPIV3.Document
+  beforeJson: OpenAPIDocument,
+  afterJson: OpenAPIDocument
 ): Promise<Result[]> => {
   const ruleRunner = new RuleRunner([rules]);
   return ruleRunner.runRulesWithFacts(createRuleInputs(beforeJson, afterJson));
 };
 
-export const createEmptySpec = (): OpenAPIV3.Document => ({
-  ...defaultEmptySpec,
-  paths: {},
-  info: {
-    ...defaultEmptySpec.info,
-  },
-});
+export const createEmptySpec = (): OpenAPIV3.Document =>
+  ({
+    ...defaultEmptySpec,
+    paths: {},
+    info: {
+      ...defaultEmptySpec.info,
+    },
+  }) as OpenAPIV3.Document;

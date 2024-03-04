@@ -407,6 +407,18 @@ const runDiffs = async ({
       error: `Failed to load cloud specification: ${e}`,
     } as const;
   }
+  if (localSpec.version === '2.x.x') {
+    return {
+      success: false,
+      error: `Local spec for ${specPath} is swagger 2 - not supported`,
+    } as const;
+  }
+  if (cloudSpec.version === '2.x.x') {
+    return {
+      success: false,
+      error: `Cloud spec for ${specPath} is swagger 2 - not supported`,
+    } as const;
+  }
 
   if (cloudSpec.jsonLike['x-optic-ci-empty-spec']) {
     cloudSpec.jsonLike.info.title = localSpec.jsonLike.info.title;
@@ -489,6 +501,12 @@ const runCapture = async ({
   runId?: string;
   organizationId?: string;
 }) => {
+  if (localSpec.version === '2.x.x') {
+    logger.error(
+      `${specPath} is Swagger 2 - capture does not support swagger 2`
+    );
+    return;
+  }
   const pathFromRoot = resolveRelativePath(config.root, specPath);
   const captureConfig = config.capture?.[pathFromRoot];
 

@@ -25,7 +25,7 @@ import { spawn } from 'child_process';
 import path from 'node:path';
 import os from 'node:os';
 import fs from 'node:fs/promises';
-import { RuleContext } from '..';
+import { OpenAPIDocument, RuleContext } from '..';
 import { NodeDetail, OpenAPIFactNodes } from '../rule-runner/rule-runner-types';
 import {
   createOperation,
@@ -114,7 +114,7 @@ function toOpticRuleResult(
 }
 
 function createSpecNode(
-  spec: OpenAPIV3.Document
+  spec: OpenAPIDocument
 ): Parameters<typeof createRuleContextWithoutOperation>['0'] {
   const { paths, components, ...specificationFact } = spec;
 
@@ -142,8 +142,8 @@ function createSpecNode(
 function createOperationNode(
   facts: OpenAPIFactNodes,
   jsonPath: string,
-  before: OpenAPIV3.Document,
-  after: OpenAPIV3.Document
+  before: OpenAPIDocument,
+  after: OpenAPIDocument
 ): Parameters<typeof createRuleContextWithOperation>['1'] {
   const [, path, method] = jsonPointerHelpers.decode(jsonPath);
 
@@ -189,8 +189,8 @@ export class SpectralRule extends ExternalRuleBase {
   async runRulesV2(inputs: {
     context: any;
     diffs: ObjectDiff[];
-    fromSpec: OpenAPIV3.Document;
-    toSpec: OpenAPIV3.Document;
+    fromSpec: OpenAPIDocument;
+    toSpec: OpenAPIDocument;
     groupedFacts: OpenAPIFactNodes;
   }): Promise<RuleResult[]> {
     if ((inputs.toSpec as any)['x-optic-ci-empty-spec'] === true) {
@@ -374,8 +374,8 @@ export class SpectralRule extends ExternalRuleBase {
     nextFacts: IFact[];
     currentFacts: IFact[];
     changelog: IChange[];
-    nextJsonLike: OpenAPIV3.Document<{}>;
-    currentJsonLike: OpenAPIV3.Document<{}>;
+    nextJsonLike: OpenAPIDocument;
+    currentJsonLike: OpenAPIDocument;
     groupedFacts: OpenAPIFactNodes;
   }): Promise<Result[]> {
     if ((inputs.nextJsonLike as any)['x-optic-ci-empty-spec'] === true) {

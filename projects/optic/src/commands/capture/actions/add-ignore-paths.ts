@@ -5,7 +5,7 @@ import { jsonOpsFromSpecPatches } from '../patches/patches';
 import { writePatchesToFiles } from '../write/file';
 
 export async function addIgnorePaths(
-  parseResult: ParseResult,
+  parseResult: Exclude<ParseResult, { version: '2.x.x' }>,
   ignorePaths: { method: string; path: string }[]
 ) {
   const specPatches: SpecPatches = (async function* (): SpecPatches {

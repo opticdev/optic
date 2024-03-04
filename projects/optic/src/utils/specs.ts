@@ -1,10 +1,15 @@
-import { OpenAPIV3, defaultEmptySpec } from '@useoptic/openapi-utilities';
+import {
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
+  OpenAPIV3,
+  defaultEmptySpec,
+} from '@useoptic/openapi-utilities';
 import { OPTIC_EMPTY_SPEC_KEY, OPTIC_PATH_IGNORE_KEY } from '../constants';
 import { JsonSchemaSourcemap } from '@useoptic/openapi-io';
 import { logger } from '../logger';
 
 export function getIgnorePaths(
-  spec: OpenAPIV3.Document
+  spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document
 ): { path: string; method?: string }[] {
   const ignorePaths: (
     | string
@@ -45,15 +50,15 @@ export function createNewSpecFile(version: string): OpenAPIV3.Document {
   };
 }
 
-export function createNullSpec(): OpenAPIV3.Document {
+export function createNullSpec(): FlatOpenAPIV3.Document {
   return {
     ...defaultEmptySpec,
     [OPTIC_EMPTY_SPEC_KEY]: true,
-  } as OpenAPIV3.Document;
+  } as FlatOpenAPIV3.Document;
 }
 
 export function createNullSpecSourcemap(
-  nullSpec: OpenAPIV3.Document
+  nullSpec: FlatOpenAPIV3.Document
 ): JsonSchemaSourcemap {
   const emptySpecName = 'empty.json';
   const sourcemap = new JsonSchemaSourcemap(emptySpecName);

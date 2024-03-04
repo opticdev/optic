@@ -15,6 +15,7 @@ import {
   RequestBody,
   Response,
   ResponseBody,
+  OpenAPIDocument,
 } from '../types';
 import {
   OpenAPIFactNodes,
@@ -30,7 +31,7 @@ type SpecFactsFrom = 'before' | 'after';
 const createFactsWithRaw = <T extends OpenApiKind>(
   nodeDetailMap: Map<string, NodeDetail<T>>,
   key: SpecFactsFrom,
-  openApiSpec: OpenAPIV3.Document
+  openApiSpec: OpenAPIDocument
 ): Map<string, FactVariant<T> & { raw: any }> => {
   const factsWithRaw: Map<string, FactVariant<T> & { raw: any }> = new Map();
 
@@ -49,7 +50,7 @@ const createFactsWithRaw = <T extends OpenApiKind>(
 const createPropertyFactsWithRaw = <T extends OpenApiKind>(
   nodeDetailMap: Map<string, NodeDetail<T>>,
   key: SpecFactsFrom,
-  openApiSpec: OpenAPIV3.Document
+  openApiSpec: OpenAPIDocument
 ): Map<
   string,
   FactVariant<T> & { raw: any; parent: OpenAPIV3.NonArraySchemaObject }
@@ -80,7 +81,7 @@ export const createRequest = (
   request: RequestNode,
   contentType: string,
   key: SpecFactsFrom,
-  openApiSpec: OpenAPIV3.Document
+  openApiSpec: OpenAPIDocument
 ): RequestBody | null => {
   const requestFact = request[key];
   const requestBody = request.bodies.get(contentType);
@@ -114,7 +115,7 @@ export const createRequest = (
 export const createResponse = (
   response: ResponseNode,
   key: SpecFactsFrom,
-  openApiSpec: OpenAPIV3.Document
+  openApiSpec: OpenAPIDocument
 ): Response | null => {
   const responseFact = response[key];
   if (!responseFact) {
@@ -150,7 +151,7 @@ export const createResponseBody = (
   statusCode: string,
   contentType: string,
   key: SpecFactsFrom,
-  openApiSpec: OpenAPIV3.Document
+  openApiSpec: OpenAPIDocument
 ): ResponseBody | null => {
   const responseBodyFact = bodyNode?.[key];
   if (!responseBodyFact) {
@@ -173,7 +174,7 @@ export const createResponseBody = (
 export const createOperation = (
   endpoint: EndpointNode,
   key: SpecFactsFrom,
-  openApiSpec: OpenAPIV3.Document
+  openApiSpec: OpenAPIDocument
 ): Operation | null => {
   const operationFact = endpoint[key];
 
@@ -260,7 +261,7 @@ export const createOperation = (
 export const createSpecification = (
   specificationNode: OpenAPIFactNodes['specification'],
   key: SpecFactsFrom,
-  openApiSpec: OpenAPIV3.Document
+  openApiSpec: OpenAPIDocument
 ): Specification | null => {
   const specificationFact = specificationNode[key];
   if (!specificationFact) {
@@ -269,6 +270,6 @@ export const createSpecification = (
 
   return {
     ...specificationFact,
-    raw: openApiSpec,
+    raw: openApiSpec as any,
   };
 };

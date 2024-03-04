@@ -15,6 +15,7 @@ import {
   CapturedInteractions,
 } from '../../../capture/sources/captured-interactions';
 import { OperationDiffResultKind } from '../../../capture/patches/patchers/spec/types';
+import { FlatOpenAPIV3, FlatOpenAPIV3_1 } from '@useoptic/openapi-utilities';
 
 export interface UndocumentedOperations
   extends AsyncIterable<UndocumentedOperation> {}
@@ -27,8 +28,10 @@ interface OperationPair {
 export class UndocumentedOperations {
   static async *fromPairs(
     operations: AsyncIterable<OperationPair>,
-    spec: OpenAPIV3.Document,
-    specUpdates?: AsyncIterable<OpenAPIV3.Document>
+    spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document,
+    specUpdates?: AsyncIterable<
+      FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document
+    >
   ): UndocumentedOperations {
     const specUpdatesIterator =
       specUpdates && specUpdates[Symbol.asyncIterator]();
@@ -98,8 +101,10 @@ export class UndocumentedOperations {
 
   static async *fromCapturedInteractions(
     interactions: CapturedInteractions,
-    spec: OpenAPIV3.Document,
-    specUpdates?: AsyncIterable<OpenAPIV3.Document>
+    spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document,
+    specUpdates?: AsyncIterable<
+      FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document
+    >
   ): UndocumentedOperations {
     const operations = AT.map<CapturedInteraction, OperationPair>(
       (interaction) => {

@@ -2,14 +2,16 @@ import {
   groupDiffsByEndpoint,
   compareSpecs,
   Severity,
+  CompareSpecResults,
 } from '@useoptic/openapi-utilities';
 import { generateRuleRunner } from './generate-rule-runner';
 import { OPTIC_STANDARD_KEY } from '../../constants';
 import { ParseResult, parseOpticRef } from '../../utils/spec-loaders';
-import { OpticCliConfig } from '../../config';
+import { ConfigRuleset, OpticCliConfig } from '../../config';
 import { trackEvent } from '../../segment';
 import { logger } from '../../logger';
 import { checkOpenAPIVersion } from '@useoptic/openapi-io';
+import { GroupedDiffs } from '@useoptic/openapi-utilities/build/openapi3/group-diff';
 
 let generateContext: (file: string) => any = () => ({});
 
@@ -25,7 +27,50 @@ export async function compute(
     check: boolean;
     path: string | null;
   }
-) {
+): Promise<{
+  standard: ConfigRuleset[];
+  warnings: string[];
+  specResults: CompareSpecResults;
+  changelogData: GroupedDiffs;
+  checks: {
+    total: number;
+    passed: number;
+    exempted: number;
+    failed: {
+      info: number;
+      error: number;
+      warn: number;
+    };
+  };
+}> {
+  if (baseFile.version === '2.x.x' || headFile.version === '2.x.x') {
+    const warnings: string[] = [];
+    if (baseFile.version === '2.x.x')
+      warnings.push(
+        `before file spec version 2.x.x. diffing and rule running is not supported yet`
+      );
+    if (headFile.version === '2.x.x')
+      warnings.push(
+        `after file spec version 2.x.x. diffing and rule running is not supported yet`
+      );
+    return {
+      standard: [],
+      warnings,
+      specResults: { diffs: [], results: [], version: '' },
+      changelogData: new GroupedDiffs(),
+      checks: {
+        total: 0,
+        passed: 0,
+        exempted: 0,
+        failed: {
+          info: 0,
+          error: 0,
+          warn: 0,
+        },
+      },
+    };
+  }
+
   const { runner, ruleNames, warnings, standard } = await generateRuleRunner(
     {
       rulesetArg: options.standard,
@@ -33,9 +78,7 @@ export async function compute(
         ? baseFile.jsonLike[OPTIC_STANDARD_KEY]
         : headFile.jsonLike[OPTIC_STANDARD_KEY],
       config,
-      specVersion: headFile.isEmptySpec
-        ? checkOpenAPIVersion(baseFile.jsonLike)
-        : checkOpenAPIVersion(headFile.jsonLike),
+      specVersion: headFile.isEmptySpec ? headFile.version : baseFile.version,
     },
     options.check
   );

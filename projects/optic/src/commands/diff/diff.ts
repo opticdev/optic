@@ -374,6 +374,15 @@ const getDiffAction =
       return;
     }
 
+    if (
+      parsedFiles[0].version === '2.x.x' ||
+      parsedFiles[1].version === '2.x.x'
+    ) {
+      logger.error('Swagger 2 is not supported');
+      process.exitCode = 1;
+      return;
+    }
+
     const diffResult = await runDiff(parsedFiles, config, options, file1);
     let maybeChangelogUrl: string | null = null;
     let specUrl: string | null = null;

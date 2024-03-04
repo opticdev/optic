@@ -14,7 +14,13 @@ import {
   createPropertyAssertions,
   createResponseBodyAssertions,
 } from './assertions';
-import { Field, Operation, ResponseBody, Schema } from '../types';
+import {
+  Field,
+  OpenAPIDocument,
+  Operation,
+  ResponseBody,
+  Schema,
+} from '../types';
 import { getPropertyRules, getResponseBodyRules } from './rule-filters';
 
 const createResponseBodyResult = (
@@ -82,8 +88,8 @@ export const runResponseBodyRules = ({
   responseNode: ResponseNode;
   rules: (Ruleset | Rule)[];
   customRuleContext: any;
-  beforeApiSpec: OpenAPIV3.Document;
-  afterApiSpec: OpenAPIV3.Document;
+  beforeApiSpec: OpenAPIDocument;
+  afterApiSpec: OpenAPIDocument;
 }) => {
   const results: Result[] = [];
   const responseRules = getResponseBodyRules(rules);

@@ -165,7 +165,7 @@ export class OpticBackendClient extends JsonHttpClient {
 
   public async createSpec(spec: {
     tags: string[];
-    openapi_version: '3.0.x' | '3.1.x';
+    openapi_version: '2.x.x' | '3.0.x' | '3.1.x';
     upload_id: string;
     api_id: string;
     effective_at?: Date;

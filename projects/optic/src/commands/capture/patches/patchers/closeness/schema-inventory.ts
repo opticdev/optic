@@ -1,4 +1,9 @@
-import { FlatOpenAPIV3, OAS3, OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
+  OAS3,
+  OpenAPIV3,
+} from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { computeClosenessFromKeyValueTuples, walkSchema } from './closeness';
 import { PatchImpact } from '../../patch-operations';
@@ -51,7 +56,7 @@ export class SchemaInventory {
 
   async *refsForAdditions(
     addedPaths: Set<string>,
-    spec: OpenAPIV3.Document,
+    spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document,
     meta: {
       usedExistingRef?: boolean;
     } = {}

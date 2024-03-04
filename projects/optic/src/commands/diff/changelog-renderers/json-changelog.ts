@@ -1,4 +1,3 @@
-import { OpenAPIV3 } from 'openapi-types';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 import {
@@ -13,7 +12,7 @@ import type {
   Response,
 } from '@useoptic/openapi-utilities/build/openapi3/group-diff';
 
-import { interpretFieldLevelDiffs } from './common';
+import { SpecInput, interpretFieldLevelDiffs } from './common';
 import isEqual from 'lodash.isequal';
 
 type RawChange<T> = { key: string } & (
@@ -132,7 +131,7 @@ type JsonChangelog = {
 };
 
 function attachRequiredToField(
-  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  specs: SpecInput,
   diff: Diff,
   rawChange: RawChange<any>
 ) {
@@ -189,7 +188,7 @@ function attachRequiredToField(
 }
 
 export function jsonChangelog(
-  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  specs: SpecInput,
   groupedChanges: GroupedDiffs
 ): JsonChangelog {
   const results: JsonChangelog = { operations: [] };
@@ -203,7 +202,7 @@ export function jsonChangelog(
 }
 
 function getEndpointLogs(
-  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  specs: SpecInput,
   endpointChange: Endpoint
 ): OperationChangelog {
   const {
@@ -325,7 +324,7 @@ function getEndpointLogs(
 }
 
 function getResponseChangeLogs(
-  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  specs: SpecInput,
   response: Response,
   statusCode: string
 ): OperationChangelog['responses'][number] {
@@ -359,7 +358,7 @@ function getResponseChangeLogs(
 }
 
 function getResponseHeaderChangelogs(
-  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  specs: SpecInput,
   node: Response['headers']
 ): ChangedNode[] {
   return Object.entries(node).map(([name, node]) => {
@@ -378,7 +377,7 @@ function getResponseHeaderChangelogs(
 }
 
 function getRequestChangeLogs(
-  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  specs: SpecInput,
   request: Endpoint['request']
 ): NonNullable<OperationChangelog['requestBody']> {
   const contentTypes: ChangedNode[] = [];
@@ -409,7 +408,7 @@ function getRequestChangeLogs(
 }
 
 function getBodyChangeLogs(
-  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  specs: SpecInput,
   body: Body,
   contentType: string
 ): ChangedNode {
@@ -443,7 +442,7 @@ function getBodyChangeLogs(
 }
 
 function getParameterIndices(
-  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  specs: SpecInput,
   location: { operation: string; name: string; type: string }
 ) {
   const beforeParameters = jsonPointerHelpers.tryGet(
@@ -473,7 +472,7 @@ function getParameterIndices(
 }
 
 function groupParameterDiffs(
-  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  specs: SpecInput,
   {
     type,
     name,
@@ -538,7 +537,7 @@ function groupParameterDiffs(
 }
 
 function getParameterLogs(
-  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  specs: SpecInput,
   {
     type,
     name,
@@ -578,10 +577,7 @@ function getParameterLogs(
   };
 }
 
-function getRawChange(
-  diff: Diff,
-  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document }
-): RawChange<any> {
+function getRawChange(diff: Diff, specs: SpecInput): RawChange<any> {
   if (diff.before !== undefined && diff.after !== undefined) {
     return {
       key: diff.trail,

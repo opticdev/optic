@@ -1,5 +1,10 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { OpenAPIV3, getEndpointId } from '@useoptic/openapi-utilities';
+import {
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
+  OpenAPIV3,
+  getEndpointId,
+} from '@useoptic/openapi-utilities';
 import crypto from 'crypto';
 import fs from 'node:fs/promises';
 import path from 'path';
@@ -15,7 +20,7 @@ import { getIgnorePaths } from '../../../utils/specs';
 import { minimatch } from 'minimatch';
 
 export function createHostBaseMap(
-  spec: OpenAPIV3.Document,
+  spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document,
   options: {
     baseServerUrl?: string;
   } = {}
@@ -90,7 +95,7 @@ export async function* handleServerPathPrefix(
 
 export async function* filterIgnoredInteractions(
   interactions: CapturedInteractions,
-  spec: OpenAPIV3.Document
+  spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document
 ) {
   const ignorePaths = getIgnorePaths(spec);
   const methodMap: Map<string, Set<string>> = new Map(
@@ -149,7 +154,7 @@ export class GroupedCaptures {
   private hostBaseMap: ReturnType<typeof createHostBaseMap>;
   constructor(
     trafficDir: string,
-    private spec: OpenAPIV3.Document,
+    private spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document,
     options: {
       baseServerUrl?: string;
     } = {}

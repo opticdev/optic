@@ -145,7 +145,7 @@ export async function promptUserForPathPattern(
 
 export async function documentNewEndpoint(
   interactions: CapturedInteraction[],
-  parseResult: ParseResult,
+  parseResult: Exclude<ParseResult, { version: '2.x.x' }>,
   endpoint: { method: string; path: string }
 ) {
   const interactionsAsAsyncIterator = (async function* () {

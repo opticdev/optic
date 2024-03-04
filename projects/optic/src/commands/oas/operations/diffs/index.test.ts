@@ -6,7 +6,7 @@ import { OperationDiffResultKind } from '../../../capture/patches/patchers/spec/
 
 describe('diffOperationWithSpec', () => {
   it('yields diffs for unmatched paths', () => {
-    let testSpec: OpenAPIV3.Document = {
+    let testSpec: any = {
       openapi: '3.0.3',
       info: {
         title: 'test spec',
@@ -50,7 +50,7 @@ describe('diffOperationWithSpec', () => {
   });
 
   it('yields diffs for paths with no methods', () => {
-    let testSpec: OpenAPIV3.Document = {
+    let testSpec: any = {
       openapi: '3.0.3',
       info: {
         title: 'test spec',
@@ -79,7 +79,7 @@ describe('diffOperationWithSpec', () => {
   });
 
   it('matches paths irrespective of template names', () => {
-    let testSpec: OpenAPIV3.Document = {
+    let testSpec: any = {
       openapi: '3.0.3',
       info: {
         title: 'test spec',
@@ -107,7 +107,7 @@ describe('diffOperationWithSpec', () => {
   });
 
   it('yields diffs for unmatched methods', () => {
-    let testSpec: OpenAPIV3.Document = {
+    let testSpec: any = {
       openapi: '3.0.3',
       info: {
         title: 'test spec',

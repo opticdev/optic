@@ -25,7 +25,7 @@ import {
 } from '@useoptic/openapi-utilities/build/openapi3/group-diff';
 import { Instance as Chalk } from 'chalk';
 import { getLocation } from '@useoptic/openapi-utilities/build/openapi3/traverser';
-import { interpretFieldLevelDiffs } from './common';
+import { SpecInput, interpretFieldLevelDiffs } from './common';
 import { ParseResult } from '../../../utils/spec-loaders';
 
 const chalk = new Chalk();
@@ -202,29 +202,11 @@ function* indent(generator: Generator<string>) {
   }
 }
 
-function countUnusedEndpoints(
-  spec: OpenAPIV3.Document,
-  groupedDiffs: GroupedDiffs
-): number {
-  const endpoints = new Set<string>();
-
-  for (const [path, pathObj] of Object.entries(spec.paths)) {
-    for (const method of Object.keys(pathObj ?? {})) {
-      if (Object.values(OpenAPIV3.HttpMethods).includes(method as any)) {
-        endpoints.add(`${path}${method}`);
-      }
-    }
-  }
-
-  for (const { path, method } of Object.values(groupedDiffs.endpoints)) {
-    endpoints.delete(`${path}${method}`);
-  }
-
-  return endpoints.size;
-}
-
 export function* terminalChangelog(
-  specs: { from: ParseResult; to: ParseResult },
+  specs: {
+    from: Exclude<ParseResult, { version: '2.x.x' }>;
+    to: Exclude<ParseResult, { version: '2.x.x' }>;
+  },
   groupedDiffs: GroupedDiffs,
   comparison: {
     results: RuleResult[];
@@ -329,7 +311,7 @@ export function* terminalChangelog(
 }
 
 function* getEndpointLogs(
-  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  specs: SpecInput,
   endpointChange: Endpoint,
   sourcemapReaders: {
     before: SourcemapReaderLine;
@@ -408,7 +390,7 @@ function* getEndpointLogs(
 }
 
 function* getResponseChangeLogs(
-  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  specs: SpecInput,
   response: Response,
   statusCode: string,
   sourcemapReaders: {
@@ -456,7 +438,7 @@ function* getResponseChangeLogs(
 }
 
 function* getRequestChangeLogs(
-  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  specs: SpecInput,
   request: Endpoint['request'],
   sourcemapReaders: {
     before: SourcemapReaderLine;
@@ -490,7 +472,7 @@ function* getRequestChangeLogs(
 }
 
 function* getBodyChangeLogs(
-  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  specs: SpecInput,
   body: Body,
   key: string,
   sourcemapReaders: {

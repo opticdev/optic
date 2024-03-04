@@ -6,7 +6,6 @@ import { dereference } from './insourced-dereference';
 import path from 'path';
 
 import fetch from 'node-fetch';
-import { OpenAPIV3 } from 'openapi-types';
 import isUrl from 'is-url';
 
 import { JsonSchemaSourcemap } from './sourcemap';
@@ -22,24 +21,39 @@ import {
   DEFAULT_HEADERS,
   getMostRelevantHeader,
 } from './resolvers/custom-http-ref-handler';
+import {
+  FlatOpenAPIV2,
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
+} from '@useoptic/openapi-utilities';
 
 export {
   JSONParserError,
   ResolverError,
 } from '@apidevtools/json-schema-ref-parser';
 
-export type ParseOpenAPIResult = {
-  jsonLike: OpenAPIV3.Document;
+export type ParseOpenAPIResult<
+  T extends
+    | FlatOpenAPIV2.Document
+    | FlatOpenAPIV3.Document
+    | FlatOpenAPIV3_1.Document,
+> = {
+  jsonLike: T;
   sourcemap: JsonSchemaSourcemap;
 };
 
-export async function dereferenceOpenApi(
+export async function dereferenceOpenApi<
+  T extends
+    | FlatOpenAPIV2.Document
+    | FlatOpenAPIV3.Document
+    | FlatOpenAPIV3_1.Document,
+>(
   path: string,
   options: {
     externalRefHandler?: ExternalRefHandler;
     externalRefHeaders?: UserDefinedHeadersByUrlPrefix;
   } = {}
-): Promise<ParseOpenAPIResult> {
+): Promise<ParseOpenAPIResult<T>> {
   const resolver = new $RefParser();
   const headersMap = parseHeadersConfig(options.externalRefHeaders ?? []);
 
@@ -112,25 +126,35 @@ export async function dereferenceOpenApi(
   return { jsonLike: resolver.schema as any, sourcemap: sourcemap };
 }
 
-export async function parseOpenAPIWithSourcemap(
+export async function parseOpenAPIWithSourcemap<
+  T extends
+    | FlatOpenAPIV2.Document
+    | FlatOpenAPIV3.Document
+    | FlatOpenAPIV3_1.Document,
+>(
   path: string,
   options: {
     externalRefHeaders?: UserDefinedHeadersByUrlPrefix;
   } = {}
-): Promise<ParseOpenAPIResult> {
+): Promise<ParseOpenAPIResult<T>> {
   return dereferenceOpenApi(path, {
     externalRefHeaders: options.externalRefHeaders,
   });
 }
 
-export async function parseOpenAPIFromRepoWithSourcemap(
+export async function parseOpenAPIFromRepoWithSourcemap<
+  T extends
+    | FlatOpenAPIV2.Document
+    | FlatOpenAPIV3.Document
+    | FlatOpenAPIV3_1.Document,
+>(
   name: string,
   repoPath: string,
   branch: string,
   options: {
     externalRefHeaders?: UserDefinedHeadersByUrlPrefix;
   } = {}
-): Promise<ParseOpenAPIResult> {
+): Promise<ParseOpenAPIResult<T>> {
   const inGitResolver = gitBranchResolver(repoPath, branch);
   const fileName = path.join(repoPath, name);
   return dereferenceOpenApi(fileName, {
