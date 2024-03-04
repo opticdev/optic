@@ -60,10 +60,11 @@ describe('denormalize', () => {
       const spec = await parseOpenAPIWithSourcemap(
         path.resolve(openapiFilePath)
       );
-
-      const denormalized = denormalize(spec);
+      const warnings: string[] = [];
+      const denormalized = denormalize(spec, warnings);
 
       expect(prepSnapshot(denormalized)).toMatchSnapshot();
+      expect(warnings).toMatchSnapshot('warnings');
     });
   });
 });
