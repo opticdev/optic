@@ -10,7 +10,11 @@ import {
   UndocumentedOperationType,
 } from '../operations';
 import { InferPathStructureLegacy } from './infer-path-structure-legacy';
-import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
+  OpenAPIV3,
+} from '@useoptic/openapi-utilities';
 import * as AT from '../lib/async-tools';
 import {
   SpecFile,
@@ -80,7 +84,7 @@ export async function addIfUndocumented(
   isAddAll: boolean,
   statusObservations: StatusObservations,
   interactions: CapturedInteractions,
-  spec: OpenAPIV3.Document,
+  spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document,
   sourcemap: SpecFilesSourcemap
 ): Promise<Result<RecentlyDocumented, string>> {
   const operationsToUpdate = isAddAll
@@ -158,7 +162,7 @@ export async function observationToUndocumented(
 }
 
 export function matchInteractions(
-  spec: OpenAPIV3.Document,
+  spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document,
   interactions: CapturedInteractions,
   coverage: ApiCoverageCounter = new ApiCoverageCounter(spec)
 ): { observations: StatusObservations; coverage: ApiCoverageCounter } {
@@ -282,7 +286,7 @@ export type StatusObservation = {
 export interface StatusObservations extends AsyncIterable<StatusObservation> {}
 
 export function addOperations(
-  spec: OpenAPIV3.Document,
+  spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document,
   requiredOperations: ParsedOperation[],
   interactions: CapturedInteractions
 ): { results: SpecPatches; observations: AsyncIterable<AddObservation> } {
@@ -366,7 +370,9 @@ export function addOperations(
       [];
 
     // phase one: documented all undocumented operations
-    let updatingSpec: AT.Subject<OpenAPIV3.Document> = new AT.Subject();
+    let updatingSpec: AT.Subject<
+      FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document
+    > = new AT.Subject();
     const undocumentedOperations = UndocumentedOperations.fromPairs(
       AT.from(requiredOperations),
       spec,

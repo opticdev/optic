@@ -1,4 +1,8 @@
-import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
+  OpenAPIV3,
+} from '@useoptic/openapi-utilities';
 import { None, Ok, Option, Result, Some } from 'ts-results';
 import { matchPathPattern } from '../../../utils/pathPatterns';
 
@@ -85,13 +89,17 @@ export class OperationQueries {
   }
 }
 
-export function specToOperations(spec: OpenAPIV3.Document) {
+export function specToOperations(
+  spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document
+) {
   return specToPaths(spec).flatMap((o) =>
     o.methods.map((m) => ({ method: m, pathPattern: o.pathPattern }))
   );
 }
 
-export function specToPaths(spec: OpenAPIV3.Document) {
+export function specToPaths(
+  spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document
+) {
   const operations: { pathPattern: string; methods: string[] }[] = [];
 
   const allowedKeys = [
@@ -103,7 +111,7 @@ export function specToPaths(spec: OpenAPIV3.Document) {
     'head',
     'options',
   ];
-  Object.entries(spec.paths).forEach(([pathPattern, methods]) => {
+  Object.entries(spec.paths ?? {}).forEach(([pathPattern, methods]) => {
     if (methods) {
       operations.push({
         pathPattern,

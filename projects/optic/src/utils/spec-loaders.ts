@@ -3,7 +3,13 @@ import fetch from 'node-fetch';
 import path from 'path';
 import { promisify } from 'util';
 import { exec as callbackExec } from 'child_process';
-import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  FlatOpenAPIV2,
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
+  OpenAPIV2,
+  OpenAPIV3,
+} from '@useoptic/openapi-utilities';
 import {
   validateOpenApiV3Document,
   filePathToGitPath,
@@ -42,12 +48,25 @@ export type ParseResultContext =
     }
   | null;
 
-export type ParseResult = ParseOpenAPIResult & {
-  isEmptySpec: boolean;
-  from: 'git' | 'file' | 'url' | 'empty' | 'cloud';
-  version: '3.0.x' | '3.1.x';
-  context: ParseResultContext;
-};
+export type ParseResult =
+  | (ParseOpenAPIResult<FlatOpenAPIV2.Document> & {
+      isEmptySpec: boolean;
+      from: 'git' | 'file' | 'url' | 'empty' | 'cloud';
+      version: '2.x.x';
+      context: ParseResultContext;
+    })
+  | (ParseOpenAPIResult<FlatOpenAPIV3.Document> & {
+      isEmptySpec: boolean;
+      from: 'git' | 'file' | 'url' | 'empty' | 'cloud';
+      version: '3.0.x';
+      context: ParseResultContext;
+    })
+  | (ParseOpenAPIResult<FlatOpenAPIV3_1.Document> & {
+      isEmptySpec: boolean;
+      from: 'git' | 'file' | 'url' | 'empty' | 'cloud';
+      version: '3.1.x';
+      context: ParseResultContext;
+    });
 
 type SpecFromInput =
   | {
@@ -123,7 +142,7 @@ export function parseOpticRef(raw?: string | null): SpecFromInput {
 export async function loadRaw(
   opticRef: string,
   config: { client: OpticBackendClient }
-): Promise<OpenAPIV3.Document> {
+): Promise<OpenAPIV2.Document | OpenAPIV3.Document> {
   const input = parseOpticRef(opticRef);
   let format: 'json' | 'yml' | 'unknown';
   let rawString: string;
@@ -141,7 +160,7 @@ export async function loadRaw(
       { apiId: input.apiId, tag: input.tag },
       config
     );
-    return spec.jsonLike;
+    return spec.jsonLike as any;
   } else {
     return createNullSpec();
   }
@@ -189,7 +208,7 @@ async function parseSpecAndDereference(
         jsonLike: spec,
         sourcemap,
         from: 'empty',
-        version: checkOpenAPIVersion(spec),
+        version: '3.0.x',
         isEmptySpec: true,
         context: null,
       };
@@ -211,7 +230,7 @@ async function parseSpecAndDereference(
           vcs: 'cloud',
           specId: spec.id,
         },
-      };
+      } as ParseResult;
     }
     case 'git': {
       if (config.vcs?.type !== VCS.Git) {
@@ -242,7 +261,7 @@ async function parseSpecAndDereference(
           email: commitMeta.email,
           message: commitMeta.message,
         },
-      };
+      } as ParseResult;
     }
     case 'url': {
       const parseResult = await parseOpenAPIWithSourcemap(input.url, {
@@ -255,7 +274,7 @@ async function parseSpecAndDereference(
         from: 'url',
         isEmptySpec: false,
         context: null,
-      };
+      } as ParseResult;
     }
     case 'file':
       let context: ParseResultContext = null;
@@ -285,7 +304,7 @@ async function parseSpecAndDereference(
         from: 'file',
         isEmptySpec: false,
         context,
-      };
+      } as ParseResult;
   }
 }
 
@@ -296,9 +315,18 @@ function validateAndDenormalize(
     denormalize: boolean;
   }
 ): ParseResult {
-  validateOpenApiV3Document(parseResult.jsonLike, parseResult.sourcemap, {
-    strictOpenAPI: options.strict,
-  });
+  if (parseResult.version === '2.x.x') {
+    // TODO
+  } else if (
+    parseResult.version === '3.0.x' ||
+    parseResult.version === '3.1.x'
+  ) {
+    validateOpenApiV3Document(parseResult.jsonLike, parseResult.sourcemap, {
+      strictOpenAPI: options.strict,
+    });
+  } else {
+    throw new Error('unrecognized version');
+  }
   const warnings = [];
   const result = options.denormalize
     ? denormalize(parseResult, warnings)

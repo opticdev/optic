@@ -4,7 +4,8 @@ import {
   IChange,
   IFact,
   ObjectDiff,
-  OpenAPIV3,
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
   Result,
   RuleResult,
 } from '@useoptic/openapi-utilities';
@@ -93,8 +94,8 @@ export class SpectralRulesets extends ExternalRuleBase {
     nextFacts: IFact[];
     currentFacts: IFact[];
     changelog: IChange[];
-    nextJsonLike: OpenAPIV3.Document<{}>;
-    currentJsonLike: OpenAPIV3.Document<{}>;
+    nextJsonLike: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document;
+    currentJsonLike: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document;
     groupedFacts: OpenAPIFactNodes;
   }): Promise<Result[]> {
     const absolutePathTmpSpec = path.join(
@@ -177,8 +178,8 @@ export class SpectralRulesets extends ExternalRuleBase {
   async runRulesV2(inputs: {
     context: any;
     diffs: ObjectDiff[];
-    fromSpec: OpenAPIV3.Document;
-    toSpec: OpenAPIV3.Document;
+    fromSpec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document;
+    toSpec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document;
     groupedFacts: OpenAPIFactNodes;
   }): Promise<RuleResult[]> {
     const absolutePathTmpSpec = path.join(

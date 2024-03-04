@@ -19,12 +19,12 @@ import { UnpatchableDiff } from './patchers/shapes/diff';
 
 export async function* generatePathAndMethodSpecPatches(
   specHolder: {
-    spec: ParseResult['jsonLike'];
+    spec: Exclude<ParseResult, { version: '2.x.x' }>['jsonLike'];
   },
   endpoint: { method: string; path: string }
 ) {
-  const hasPath = !!specHolder.spec.paths[endpoint.path];
-  const hasMethod = !!specHolder.spec.paths[endpoint.path]?.[endpoint.method];
+  const hasPath = !!specHolder.spec.paths?.[endpoint.path];
+  const hasMethod = !!specHolder.spec.paths?.[endpoint.path]?.[endpoint.method];
   if (!hasPath) {
     const pathParameters = endpoint.path
       .split('/')
@@ -59,7 +59,7 @@ export async function* generatePathAndMethodSpecPatches(
 export async function* generateEndpointSpecPatches(
   interactions: CapturedInteractions,
   specHolder: {
-    spec: ParseResult['jsonLike'];
+    spec: Exclude<ParseResult, { version: '2.x.x' }>['jsonLike'];
   },
   endpoint: { method: string; path: string },
   opts: {
@@ -154,7 +154,7 @@ export async function* generateEndpointSpecPatches(
 // Creates a new ref or uses an existing ref for added paths
 export async function* generateRefRefactorPatches(
   specHolder: {
-    spec: ParseResult['jsonLike'];
+    spec: Exclude<ParseResult, { version: '2.x.x' }>['jsonLike'];
   },
   meta: {
     schemaAdditionsSet: Set<string>;

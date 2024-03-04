@@ -25,7 +25,7 @@ export async function identifyOrCreateApis(
   const pathUrls = new Map<string, string>();
 
   for await (const specPath of localSpecPaths) {
-    let rawSpec: OpenAPIV3.Document<{}>;
+    let rawSpec: any;
 
     try {
       rawSpec = await loadRaw(specPath, config);

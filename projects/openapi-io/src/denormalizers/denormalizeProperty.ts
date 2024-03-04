@@ -1,5 +1,10 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { FlatOpenAPIV3, OAS3 } from '@useoptic/openapi-utilities';
+import {
+  FlatOpenAPIV3,
+  OAS3,
+  getSourcemapLink,
+  sourcemapReader,
+} from '@useoptic/openapi-utilities';
 import { JsonSchemaSourcemap } from '../parser/sourcemap';
 import { logPointer } from './pointer';
 
@@ -119,10 +124,27 @@ export function denormalizeProperty(
           sourcemap,
           pointers
         );
+        let maybeReader:
+          | ReturnType<typeof sourcemapReader>['findFileAndLines']
+          | undefined = undefined;
+        if (sourcemap) {
+          maybeReader = sourcemapReader(sourcemap).findFileAndLines;
+        }
         warnings.push(
-          ...invalidChildren.map(
-            ([, i]) => `invalid allOf variant at ${pointers.old}/allOf/${i}`
-          ),
+          ...invalidChildren.map(([, i]) => {
+            const jsonPath = jsonPointerHelpers.append(
+              pointers.old,
+              'allOf',
+              String(i)
+            );
+            const maybeSourcemap = maybeReader
+              ? maybeReader(jsonPath)
+              : maybeReader;
+            const location = maybeSourcemap
+              ? `${getSourcemapLink(maybeSourcemap)} (${jsonPath})`
+              : jsonPath;
+            return `invalid allOf variant at ${location}`;
+          }),
           ...w
         );
         effectiveObject = obj;

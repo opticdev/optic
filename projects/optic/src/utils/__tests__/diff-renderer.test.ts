@@ -21,7 +21,7 @@ describe('generateComparisonLogsV2', () => {
 
     const diffs = diff(from, to);
     const groupedDiffs = groupDiffsByEndpoint(
-      { from: from.jsonLike, to: to.jsonLike },
+      { from: from.jsonLike as any, to: to.jsonLike as any },
       diffs,
       []
     );

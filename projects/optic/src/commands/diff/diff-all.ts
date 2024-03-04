@@ -362,6 +362,23 @@ async function computeAll(
       });
       continue;
     }
+    if (
+      fromParseResults.version === '2.x.x' ||
+      toParseResults.version === '2.x.x'
+    ) {
+      logger.error('Swagger 2 is not supported');
+      fromParseResults.version === '2.x.x' &&
+        allWarnings.unparseableFromSpec.push({
+          path: from!,
+          error: new Error('Swagger 2 is not supported'),
+        });
+      toParseResults.version === '2.x.x' &&
+        allWarnings.unparseableToSpec.push({
+          path: to!,
+          error: new Error('Swagger 2 is not supported'),
+        });
+      continue;
+    }
 
     logger.info(
       chalk.blue(`Diffing ${from ?? 'empty spec'} to ${to ?? 'empty spec'}`)
@@ -452,8 +469,8 @@ async function computeAll(
 }
 
 type Result = Awaited<ReturnType<typeof compute>> & {
-  fromParseResults: ParseResult;
-  toParseResults: ParseResult;
+  fromParseResults: Exclude<ParseResult, { version: '2.x.x' }>;
+  toParseResults: Exclude<ParseResult, { version: '2.x.x' }>;
   from?: string;
   to?: string;
   specUrl: string | null;

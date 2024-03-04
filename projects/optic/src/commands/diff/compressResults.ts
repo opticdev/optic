@@ -3,6 +3,9 @@ import {
   OpenAPIV3,
   compareSpecs,
   getEndpointId,
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
+  FlatOpenAPIV2,
 } from '@useoptic/openapi-utilities';
 import { ParseResult } from '../../utils/spec-loaders';
 import { compute } from './compute';
@@ -13,19 +16,31 @@ type SpecResultsV2 = Awaited<ReturnType<typeof compareSpecs>>;
 // We can remove the components from spec since the changelog is flattened, and any valid refs will
 // already be added into endpoints they're used in
 const removeComponentsFromSpec = (
-  spec: OpenAPIV3.Document
-): OpenAPIV3.Document => {
-  const { components, ...componentlessSpec } = spec;
+  spec:
+    | FlatOpenAPIV2.Document
+    | FlatOpenAPIV3.Document
+    | FlatOpenAPIV3_1.Document
+):
+  | FlatOpenAPIV2.Document
+  | FlatOpenAPIV3.Document
+  | FlatOpenAPIV3_1.Document => {
+  const { components, definitions, ...componentlessSpec } = spec as any;
   return componentlessSpec;
 };
 
 const removeUnusedEndpoints = (
-  spec: OpenAPIV3.Document,
+  spec:
+    | FlatOpenAPIV2.Document
+    | FlatOpenAPIV3.Document
+    | FlatOpenAPIV3_1.Document,
   changelogData: Awaited<ReturnType<typeof compute>>['changelogData']
-): OpenAPIV3.Document => {
+):
+  | FlatOpenAPIV2.Document
+  | FlatOpenAPIV3.Document
+  | FlatOpenAPIV3_1.Document => {
   const { paths, ...specWithoutPaths } = spec;
   const newPaths = {};
-  for (const [pathPattern, methodObj] of Object.entries(paths)) {
+  for (const [pathPattern, methodObj] of Object.entries(paths ?? {})) {
     newPaths[pathPattern] = {};
     for (const method of Object.values(OpenAPIV3.HttpMethods)) {
       const normalized = normalizeOpenApiPath(pathPattern);

@@ -7,7 +7,7 @@ import {
   parseOpenAPIWithSourcemap,
 } from '../../parser/openapi-sourcemap-parser';
 
-function prepSnapshot(result: ParseOpenAPIResult) {
+function prepSnapshot(result: ParseOpenAPIResult<any>) {
   const cwd = process.cwd();
   result.sourcemap.files.forEach((i) => {
     i.path = i.path.split(cwd)[1];
@@ -60,10 +60,11 @@ describe('denormalize', () => {
       const spec = await parseOpenAPIWithSourcemap(
         path.resolve(openapiFilePath)
       );
-
-      const denormalized = denormalize(spec);
+      const warnings: string[] = [];
+      const denormalized = denormalize(spec, warnings);
 
       expect(prepSnapshot(denormalized)).toMatchSnapshot();
+      expect(warnings).toMatchSnapshot('warnings');
     });
   });
 });

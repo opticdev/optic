@@ -1,7 +1,12 @@
 import { Command, Option } from 'commander';
 import { ParseResult, loadSpec } from '../../utils/spec-loaders';
 import { OpticCliConfig } from '../../config';
-import { OpenAPIV3, UserError } from '@useoptic/openapi-utilities';
+import {
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
+  OpenAPIV3,
+  UserError,
+} from '@useoptic/openapi-utilities';
 import { isYaml, JsonSchemaSourcemap } from '@useoptic/openapi-io';
 import fs from 'node:fs/promises';
 import path from 'path';
@@ -109,6 +114,11 @@ const bundleAction =
     let parsedFile: ParseResult;
     if (filePath) {
       parsedFile = await getSpec(filePath, config);
+      if (parsedFile.version === '2.x.x') {
+        logger.error('Swagger 2 is not supported');
+        process.exitCode = 1;
+        return;
+      }
 
       let updatedSpec = await bundle(
         parsedFile.jsonLike,
@@ -117,54 +127,58 @@ const bundleAction =
       );
 
       if (includeExtensions.length) {
-        Object.entries(updatedSpec.paths).forEach(([path, operations]) => {
-          Object.entries(operations!).forEach(([key, operation]) => {
-            if (!Object.values(OpenAPIV3.HttpMethods).includes(key as any))
-              return;
-            if (
-              operation &&
-              !includeExtensions.some((extension) =>
-                Boolean(operation[extension])
-              )
-            ) {
-              // @ts-ignore
-              delete updatedSpec.paths![path]![key]!;
-              const otherKeys = Object.keys(updatedSpec.paths![path] || {});
+        Object.entries(updatedSpec.paths ?? {}).forEach(
+          ([path, operations]) => {
+            Object.entries(operations!).forEach(([key, operation]) => {
+              if (!Object.values(OpenAPIV3.HttpMethods).includes(key as any))
+                return;
               if (
-                otherKeys.length === 0 ||
-                (otherKeys.length === 1 && otherKeys[0] === 'parameters')
+                operation &&
+                !includeExtensions.some((extension) =>
+                  Boolean(operation[extension])
+                )
               ) {
-                delete updatedSpec.paths![path];
+                // @ts-ignore
+                delete updatedSpec.paths![path]![key]!;
+                const otherKeys = Object.keys(updatedSpec.paths![path] || {});
+                if (
+                  otherKeys.length === 0 ||
+                  (otherKeys.length === 1 && otherKeys[0] === 'parameters')
+                ) {
+                  delete updatedSpec.paths![path];
+                }
               }
-            }
-          });
-        });
+            });
+          }
+        );
       }
 
       if (filterExtensions.length) {
-        Object.entries(updatedSpec.paths).forEach(([path, operations]) => {
-          Object.entries(operations!).forEach(([key, operation]) => {
-            if (!Object.values(OpenAPIV3.HttpMethods).includes(key as any))
-              return;
-            // should filter
-            if (
-              operation &&
-              filterExtensions.some((extension) =>
-                Boolean(operation[extension])
-              )
-            ) {
-              // @ts-ignore
-              delete updatedSpec.paths![path]![key]!;
-              const otherKeys = Object.keys(updatedSpec.paths![path] || {});
+        Object.entries(updatedSpec.paths ?? {}).forEach(
+          ([path, operations]) => {
+            Object.entries(operations!).forEach(([key, operation]) => {
+              if (!Object.values(OpenAPIV3.HttpMethods).includes(key as any))
+                return;
+              // should filter
               if (
-                otherKeys.length === 0 ||
-                (otherKeys.length === 1 && otherKeys[0] === 'parameters')
+                operation &&
+                filterExtensions.some((extension) =>
+                  Boolean(operation[extension])
+                )
               ) {
-                delete updatedSpec.paths![path];
+                // @ts-ignore
+                delete updatedSpec.paths![path]![key]!;
+                const otherKeys = Object.keys(updatedSpec.paths![path] || {});
+                if (
+                  otherKeys.length === 0 ||
+                  (otherKeys.length === 1 && otherKeys[0] === 'parameters')
+                ) {
+                  delete updatedSpec.paths![path];
+                }
               }
-            }
-          });
-        });
+            });
+          }
+        );
       }
 
       updatedSpec = removeUnusedComponents(updatedSpec);
@@ -281,7 +295,7 @@ const matches = {
   ],
 };
 async function bundle(
-  spec: OpenAPIV3.Document,
+  spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document,
   sourcemap: JsonSchemaSourcemap,
   refResolver: (path: string) => Promise<$RefParser.$Refs>
 ) {
@@ -296,7 +310,9 @@ async function bundle(
   let updatedSpec = spec;
 
   // handle schemas
-  updatedSpec = await bundleMatchingRefsAsComponents<OpenAPIV3.SchemaObject>(
+  updatedSpec = await bundleMatchingRefsAsComponents<
+    FlatOpenAPIV3.SchemaObject | FlatOpenAPIV3_1.SchemaObject
+  >(
     updatedSpec,
     sourcemap,
     [
@@ -415,7 +431,9 @@ async function bundle(
 }
 
 // assumes single file OpenAPI spec
-function removeUnusedComponents(spec: OpenAPIV3.Document): OpenAPIV3.Document {
+function removeUnusedComponents(
+  spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document
+): FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document {
   let updatedSpec = spec;
   let removedCount: number | undefined = undefined;
 
@@ -545,7 +563,7 @@ function removeUnusedComponents(spec: OpenAPIV3.Document): OpenAPIV3.Document {
 }
 
 async function bundleMatchingRefsAsComponents<T>(
-  spec: OpenAPIV3.Document,
+  spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document,
   sourcemap: JsonSchemaSourcemap,
   matchers: string[][],
   match: 'parent' | 'children',

@@ -10,7 +10,7 @@ import * as FsCandidates from './get-file-candidates';
 
 import { flushEvents } from '../../segment';
 import { errorHandler } from '../../error-handler';
-import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { OpenAPIV2, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { validateOpenApiV3Document } from '@useoptic/openapi-io';
 
 const usage = () => `
@@ -77,7 +77,7 @@ export const getApiListAction =
 
     for await (const [file_path] of candidates) {
       const relativePath = path.relative(process.cwd(), file_path);
-      let spec: OpenAPIV3.Document;
+      let spec: OpenAPIV2.Document | OpenAPIV3.Document;
       try {
         spec = await loadRaw(file_path, config);
         // Checks that the document looks like an openapi document (i.e. has paths, etc )

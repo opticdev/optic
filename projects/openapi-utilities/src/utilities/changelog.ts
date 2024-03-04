@@ -1,6 +1,9 @@
-import { OpenAPIV3 } from 'openapi-types';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { HttpMethods } from '../flat-openapi-types';
+import {
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
+  HttpMethods,
+} from '../flat-openapi-types';
 import type { ObjectDiff } from '../diff/diff';
 
 export type EndpointChange = {
@@ -42,7 +45,10 @@ const isResponseContentChange = (segments: string[]) =>
 const isMethodParameterChange = (segments: string[]) =>
   isMethodChange(segments) && segments[3] === 'parameters';
 
-const getParameterValue = (segements: string[], spec: OpenAPIV3.Document) => {
+const getParameterValue = (
+  segements: string[],
+  spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document
+) => {
   return jsonPointerHelpers.get(spec, segements);
 };
 
@@ -79,8 +85,8 @@ const removePolymorphicPaths = (segments: string[], offset = 0): string[] => {
 };
 
 export function getEndpointsChanges(
-  baseSpec: OpenAPIV3.Document,
-  headSpec: OpenAPIV3.Document,
+  baseSpec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document,
+  headSpec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document,
   diffs: ObjectDiff[]
 ) {
   const paths = new Map<string, Map<string, Set<string>>>();

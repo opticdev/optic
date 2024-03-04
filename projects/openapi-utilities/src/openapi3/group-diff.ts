@@ -10,8 +10,11 @@ import { OpenApiV3TraverserFact, V3FactType } from './types';
 import { RuleResult } from '../results';
 import { getEndpointId } from '../utilities/id';
 import { normalizeOpenApiPath } from './implementations/openapi3/openapi-traverser';
+import { FlatOpenAPIV3, FlatOpenAPIV3_1 } from '../flat-openapi-types';
 
-function constructTree(spec: OpenAPIV3.Document) {
+type OpenAPISpec = FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document;
+
+function constructTree(spec: OpenAPISpec) {
   const traverser = new OpenApiV3Traverser();
   traverser.traverse(spec);
 
@@ -231,7 +234,7 @@ export class GroupedDiffs {
   }
 }
 
-function getParameterName(spec: OpenAPIV3.Document, pointer: string) {
+function getParameterName(spec: OpenAPISpec, pointer: string) {
   // /paths/path/method/parameters/n
   const parts = jsonPointerHelpers.decode(pointer);
   const basePointer =
@@ -245,7 +248,7 @@ function getParameterName(spec: OpenAPIV3.Document, pointer: string) {
 }
 
 function normalizeRequiredDiff(
-  spec: OpenAPIV3.Document,
+  spec: OpenAPISpec,
   fact: OpenApiV3TraverserFact<'body'> | OpenApiV3TraverserFact<'field'>,
   pointers: {
     absolute: string;
@@ -300,7 +303,7 @@ function normalizeRequiredDiff(
 }
 
 export function groupDiffsByEndpoint(
-  specs: { from: OpenAPIV3.Document; to: OpenAPIV3.Document },
+  specs: { from: OpenAPISpec; to: OpenAPISpec },
   diffs: ObjectDiff[],
   rules: RuleResult[]
 ) {
@@ -313,13 +316,13 @@ export function groupDiffsByEndpoint(
         type: 'diffs';
         fact: OpenApiV3TraverserFact<V3FactType>;
         item: Diff;
-        spec: OpenAPIV3.Document;
+        spec: OpenAPISpec;
       }
     | {
         type: 'rules';
         item: RuleResult & { trail: string };
         fact: OpenApiV3TraverserFact<V3FactType>;
-        spec: OpenAPIV3.Document;
+        spec: OpenAPISpec;
       }
   )[] = [];
 

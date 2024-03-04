@@ -5,7 +5,7 @@ import { createRuleContextWithOperation, isExempted } from './utils';
 
 import { Rule, Ruleset, OperationRule } from '../rules';
 import { createOperationAssertions, AssertionResult } from './assertions';
-import { Operation } from '../types';
+import { OpenAPIDocument, Operation } from '../types';
 import { getOperationRules } from './rule-filters';
 
 const createOperationResult = (
@@ -73,8 +73,8 @@ export const runOperationRules = ({
   operationNode: EndpointNode;
   rules: (Ruleset | Rule)[];
   customRuleContext: any;
-  beforeApiSpec: OpenAPIV3.Document;
-  afterApiSpec: OpenAPIV3.Document;
+  beforeApiSpec: OpenAPIDocument;
+  afterApiSpec: OpenAPIDocument;
 }): Result[] => {
   const operationRules = getOperationRules(rules);
   const beforeSpecification = createSpecification(

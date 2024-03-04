@@ -59,7 +59,7 @@ export const generateRuleRunner = async (
     specRuleset?: string;
     rulesetArg?: string;
     config: OpticCliConfig;
-    specVersion: SupportedOpenAPIVersions;
+    specVersion: Exclude<SupportedOpenAPIVersions, '2.x.x'>;
   },
   checksEnabled: boolean
 ): Promise<{

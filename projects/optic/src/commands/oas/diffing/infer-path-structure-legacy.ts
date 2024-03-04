@@ -1,5 +1,9 @@
 import pluralize from 'pluralize';
-import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  OpenAPIV3,
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
+} from '@useoptic/openapi-utilities';
 import { CapturedInteractions } from '../../capture/sources/captured-interactions';
 import { specToPaths } from '../../capture/operations/queries';
 import {
@@ -74,7 +78,7 @@ export class InferPathStructureLegacy {
   }
 
   static async fromSpecAndInteractions(
-    spec: OpenAPIV3.Document,
+    spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document,
     interactions: CapturedInteractions
   ): Promise<InferPathStructureLegacy> {
     const inferredPathStructure = new InferPathStructureLegacy(

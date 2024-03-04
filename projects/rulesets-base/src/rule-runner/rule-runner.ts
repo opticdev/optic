@@ -1,7 +1,6 @@
 import {
   IFact,
   IChange,
-  OpenAPIV3,
   Result,
   OperationLocation,
   ILocation,
@@ -30,6 +29,7 @@ import { runResponseBodyRules } from './response-body';
 import { runResponseRules } from './response';
 import { ExternalRule, Rule, Ruleset } from '../rules';
 import { ExternalRuleBase } from '../rules/external-rule-base';
+import { OpenAPIDocument } from '..';
 
 type SpectralRules = Extract<
   SpectralRulesetDefinition,
@@ -69,7 +69,7 @@ export class RuleRunner {
   }: {
     ruleset: SpectralRules;
     nextFacts: IFact[];
-    nextJsonLike: OpenAPIV3.Document;
+    nextJsonLike: OpenAPIDocument;
   }): Promise<Result[]> {
     if ((nextJsonLike as any)['x-optic-ci-empty-spec'] === true) {
       return [];
@@ -125,8 +125,8 @@ export class RuleRunner {
     nextFacts: IFact[];
     currentFacts: IFact[];
     changelog: IChange[];
-    nextJsonLike: OpenAPIV3.Document;
-    currentJsonLike: OpenAPIV3.Document;
+    nextJsonLike: OpenAPIDocument;
+    currentJsonLike: OpenAPIDocument;
   }): Promise<Result[]> {
     const {
       context,
@@ -224,8 +224,8 @@ export class RuleRunner {
   async runRules(inputs: {
     context: any;
     diffs: ObjectDiff[];
-    fromSpec: OpenAPIV3.Document;
-    toSpec: OpenAPIV3.Document;
+    fromSpec: OpenAPIDocument;
+    toSpec: OpenAPIDocument;
   }): Promise<RuleResult[]> {
     const { context, fromSpec: beforeApiSpec, toSpec: afterApiSpec } = inputs;
     const externalRules = this.rules.filter((rule) =>
@@ -239,11 +239,11 @@ export class RuleRunner {
     const beforeFacts =
       inputs.fromSpec['x-optic-ci-empty-spec'] === true
         ? []
-        : traverseSpec(inputs.fromSpec);
+        : traverseSpec(inputs.fromSpec as any);
     const afterFacts =
       inputs.toSpec['x-optic-ci-empty-spec'] === true
         ? []
-        : traverseSpec(inputs.toSpec);
+        : traverseSpec(inputs.toSpec as any);
     const changelog = factsToChangelog(beforeFacts, afterFacts);
 
     const openApiFactNodes = groupFacts({

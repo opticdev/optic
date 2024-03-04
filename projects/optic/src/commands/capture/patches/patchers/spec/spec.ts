@@ -1,4 +1,8 @@
-import { OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  FlatOpenAPIV3,
+  FlatOpenAPIV3_1,
+  OpenAPIV3,
+} from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { OPTIC_PATH_IGNORE_KEY } from '../../../../../constants';
 import { Operation } from 'fast-json-patch';
@@ -12,7 +16,7 @@ import {
 import { OperationDiffResultKind } from './types';
 
 export function getIgnorePathPatch(
-  spec: OpenAPIV3.Document,
+  spec: FlatOpenAPIV3.Document | FlatOpenAPIV3_1.Document,
   ignorePaths: (string | { method: string; path: string })[]
 ): SpecPatch {
   const hasExistingIgnorePaths = Array.isArray(spec[OPTIC_PATH_IGNORE_KEY]);
