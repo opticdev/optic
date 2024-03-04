@@ -45,6 +45,10 @@ exports[`denormalize v2 denormalizes shared path parameters 1`] = `
               },
             },
           ],
+          "produces": [
+            "application/json",
+            "application/json+something",
+          ],
           "responses": {
             "200": {
               "description": "some thing",
@@ -87,6 +91,9 @@ exports[`denormalize v2 denormalizes shared path parameters 1`] = `
               },
             },
           ],
+          "produces": [
+            "application/json+something",
+          ],
           "responses": {
             "200": {
               "description": "some thing",
@@ -101,6 +108,7 @@ exports[`denormalize v2 denormalizes shared path parameters 1`] = `
     "files": [
       {
         "contents": "swagger: '2.0.1'
+produces: ['application/json+something']
 info:
   title: 'some thing'
   version: 'v0'
@@ -125,6 +133,7 @@ paths:
           example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2
       - $ref: parameters.yml#/something
     get:
+      produces: ['application/json']
       responses:
         200:
           description: 'some thing'
@@ -144,7 +153,7 @@ paths:
 ",
         "index": null,
         "path": "/src/denormalizers/__tests__/specs/v2/openapi.yaml",
-        "sha256": "42778528330e8611b2fe132c99dc7c5f8d92663b6a06d8f7b1d0ec226cc929b6",
+        "sha256": "8d13ebe93e4152fe53308e1d7365040aeb4828fb99b79c022e4afb950a9477d5",
       },
       {
         "contents": "something:
