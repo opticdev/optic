@@ -1,6 +1,199 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`denormalize allOf merging does not merge allOf when all items are not all objects 1`] = `
+exports[`denormalize v2 denormalizes shared path parameters 1`] = `
+{
+  "jsonLike": {
+    "info": {
+      "title": "some thing",
+      "version": "v0",
+    },
+    "paths": {
+      "/example": {
+        "get": {
+          "parameters": [
+            {
+              "description": "something here",
+              "in": "query",
+              "name": "something-else",
+              "required": true,
+              "schema": {
+                "example": "d5b640e5-d88c-4c17-9bf0-93597b7a1ce2",
+                "format": "uuid",
+                "type": "string",
+              },
+            },
+            {
+              "description": "should-not-override",
+              "in": "query",
+              "name": "should-not-override",
+              "required": true,
+              "schema": {
+                "example": "d5b640e5-d88c-4c17-9bf0-93597b7a1ce2",
+                "format": "uuid",
+                "type": "string",
+              },
+            },
+            {
+              "description": "something here",
+              "in": "query",
+              "name": "something",
+              "required": true,
+              "schema": {
+                "example": "d5b640e5-d88c-4c17-9bf0-93597b7a1ce2",
+                "format": "uuid",
+                "type": "string",
+              },
+            },
+          ],
+          "responses": {
+            "200": {
+              "description": "some thing",
+            },
+          },
+        },
+        "post": {
+          "parameters": [
+            {
+              "description": "should not be overriden",
+              "in": "query",
+              "name": "should-not-override",
+              "required": true,
+              "schema": {
+                "example": "d5b640e5-d88c-4c17-9bf0-93597b7a1ce2",
+                "format": "uuid",
+                "type": "string",
+              },
+            },
+            {
+              "description": "something here",
+              "in": "query",
+              "name": "something-else",
+              "required": true,
+              "schema": {
+                "example": "d5b640e5-d88c-4c17-9bf0-93597b7a1ce2",
+                "format": "uuid",
+                "type": "string",
+              },
+            },
+            {
+              "description": "something here",
+              "in": "query",
+              "name": "something",
+              "required": true,
+              "schema": {
+                "example": "d5b640e5-d88c-4c17-9bf0-93597b7a1ce2",
+                "format": "uuid",
+                "type": "string",
+              },
+            },
+          ],
+          "responses": {
+            "200": {
+              "description": "some thing",
+            },
+          },
+        },
+      },
+    },
+    "swagger": "2.0.1",
+  },
+  "sourcemap": JsonSchemaSourcemap {
+    "files": [
+      {
+        "contents": "swagger: '2.0.1'
+info:
+  title: 'some thing'
+  version: 'v0'
+paths:
+  /example:
+    parameters:
+      - name: something-else
+        in: query
+        required: true
+        description: something here
+        schema:
+          type: string
+          format: uuid
+          example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2
+      - name: should-not-override
+        in: query
+        required: true
+        description: should-not-override
+        schema:
+          type: string
+          format: uuid
+          example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2
+      - $ref: parameters.yml#/something
+    get:
+      responses:
+        200:
+          description: 'some thing'
+    post:
+      parameters:
+        - name: should-not-override
+          in: query
+          required: true
+          description: should not be overriden
+          schema:
+            type: string
+            format: uuid
+            example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2
+      responses:
+        200:
+          description: 'some thing'
+",
+        "index": null,
+        "path": "/src/denormalizers/__tests__/specs/v2/openapi.yaml",
+        "sha256": "42778528330e8611b2fe132c99dc7c5f8d92663b6a06d8f7b1d0ec226cc929b6",
+      },
+      {
+        "contents": "something:
+  name: something
+  in: query
+  required: true
+  description: something here
+  schema:
+    type: string
+    format: uuid
+    example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2
+",
+        "index": null,
+        "path": "/src/denormalizers/__tests__/specs/v2/parameters.yml",
+        "sha256": "85d23de44c126a054df04ca9720a69b0842935868c6d0a771baa37f0bee832ba",
+      },
+    ],
+    "refMappings": {
+      "/paths/~1example/get/parameters/0": [
+        0,
+        "/paths/~1example/parameters/0",
+      ],
+      "/paths/~1example/get/parameters/1": [
+        0,
+        "/paths/~1example/parameters/1",
+      ],
+      "/paths/~1example/get/parameters/2": [
+        1,
+        "/paths/~1example/parameters/2",
+      ],
+      "/paths/~1example/parameters/2": [
+        1,
+        "/something",
+      ],
+      "/paths/~1example/post/parameters/1": [
+        0,
+        "/paths/~1example/parameters/0",
+      ],
+      "/paths/~1example/post/parameters/2": [
+        1,
+        "/paths/~1example/parameters/2",
+      ],
+    },
+    "rootFilePath": "/src/denormalizers/__tests__/specs/v2/openapi.yaml",
+  },
+}
+`;
+
+exports[`denormalize v3 allOf merging does not merge allOf when all items are not all objects 1`] = `
 {
   "jsonLike": {
     "info": {
@@ -95,7 +288,7 @@ paths:
                 type: 'string'
 ",
         "index": null,
-        "path": "/src/denormalizers/__tests__/specs/allOf/no-merge.yaml",
+        "path": "/src/denormalizers/__tests__/specs/v3/allOf/no-merge.yaml",
         "sha256": "4921acb94767de410927bd6751ac8d9f712c11dc70dcb260236a6684df8dcdb2",
       },
     ],
@@ -105,18 +298,18 @@ paths:
         "/paths/~1example/get/requestBody/content/application~1json/schema/properties/d/allOf/0/properties/a",
       ],
     },
-    "rootFilePath": "/src/denormalizers/__tests__/specs/allOf/no-merge.yaml",
+    "rootFilePath": "/src/denormalizers/__tests__/specs/v3/allOf/no-merge.yaml",
   },
 }
 `;
 
-exports[`denormalize allOf merging does not merge allOf when all items are not all objects: warnings 1`] = `
+exports[`denormalize v3 allOf merging does not merge allOf when all items are not all objects: warnings 1`] = `
 [
-  "invalid allOf variant at [4msrc/denormalizers/__tests__/specs/allOf/no-merge.yaml:26:578[24m (/paths/~1example/get/requestBody/content/application~1json/schema/properties/d/allOf/1)",
+  "invalid allOf variant at [4msrc/denormalizers/__tests__/specs/v3/allOf/no-merge.yaml:26:578[24m (/paths/~1example/get/requestBody/content/application~1json/schema/properties/d/allOf/1)",
 ]
 `;
 
-exports[`denormalize allOf merging merges allOf when all items are objects 1`] = `
+exports[`denormalize v3 allOf merging merges allOf when all items are objects 1`] = `
 {
   "jsonLike": {
     "info": {
@@ -213,7 +406,7 @@ paths:
                         type: string
 ",
         "index": null,
-        "path": "/src/denormalizers/__tests__/specs/allOf/single-allof.yaml",
+        "path": "/src/denormalizers/__tests__/specs/v3/allOf/single-allof.yaml",
         "sha256": "16eba8b2fa4bae164c1443f0bdccaa8cdf1482e2a0a805bb215c0e219348455a",
       },
     ],
@@ -243,14 +436,14 @@ paths:
         "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/1/required/0",
       ],
     },
-    "rootFilePath": "/src/denormalizers/__tests__/specs/allOf/single-allof.yaml",
+    "rootFilePath": "/src/denormalizers/__tests__/specs/v3/allOf/single-allof.yaml",
   },
 }
 `;
 
-exports[`denormalize allOf merging merges allOf when all items are objects: warnings 1`] = `[]`;
+exports[`denormalize v3 allOf merging merges allOf when all items are objects: warnings 1`] = `[]`;
 
-exports[`denormalize allOf merging merges allOf with only one item 1`] = `
+exports[`denormalize v3 allOf merging merges allOf with only one item 1`] = `
 {
   "jsonLike": {
     "info": {
@@ -303,19 +496,19 @@ paths:
                     format: uuid
 ",
         "index": null,
-        "path": "/src/denormalizers/__tests__/specs/allOf/single-child.yaml",
+        "path": "/src/denormalizers/__tests__/specs/v3/allOf/single-child.yaml",
         "sha256": "6536b93a83f2b2a5d776abac8830ba6750e4ba08056b78096b9c7ebf5653849c",
       },
     ],
     "refMappings": {},
-    "rootFilePath": "/src/denormalizers/__tests__/specs/allOf/single-child.yaml",
+    "rootFilePath": "/src/denormalizers/__tests__/specs/v3/allOf/single-child.yaml",
   },
 }
 `;
 
-exports[`denormalize allOf merging merges allOf with only one item: warnings 1`] = `[]`;
+exports[`denormalize v3 allOf merging merges allOf with only one item: warnings 1`] = `[]`;
 
-exports[`denormalize allOf merging merges allOfs in type array object / items 1`] = `
+exports[`denormalize v3 allOf merging merges allOfs in type array object / items 1`] = `
 {
   "jsonLike": {
     "info": {
@@ -479,7 +672,7 @@ paths:
                             type: string
 ",
         "index": null,
-        "path": "/src/denormalizers/__tests__/specs/allOf/in-type-array.yaml",
+        "path": "/src/denormalizers/__tests__/specs/v3/allOf/in-type-array.yaml",
         "sha256": "06b1b6e709c37580805955ed027bd8c659bf85e9a8b2333c7d6e21475f10687e",
       },
     ],
@@ -541,14 +734,14 @@ paths:
         "/paths/~1example/get/responses/200/content/application~1json/schema/properties/inside_object/allOf/2/properties/e",
       ],
     },
-    "rootFilePath": "/src/denormalizers/__tests__/specs/allOf/in-type-array.yaml",
+    "rootFilePath": "/src/denormalizers/__tests__/specs/v3/allOf/in-type-array.yaml",
   },
 }
 `;
 
-exports[`denormalize allOf merging merges allOfs in type array object / items: warnings 1`] = `[]`;
+exports[`denormalize v3 allOf merging merges allOfs in type array object / items: warnings 1`] = `[]`;
 
-exports[`denormalize allOf merging merges nested allOf 1`] = `
+exports[`denormalize v3 allOf merging merges nested allOf 1`] = `
 {
   "jsonLike": {
     "info": {
@@ -656,7 +849,7 @@ paths:
                         type: string
 ",
         "index": null,
-        "path": "/src/denormalizers/__tests__/specs/allOf/nested.yaml",
+        "path": "/src/denormalizers/__tests__/specs/v3/allOf/nested.yaml",
         "sha256": "f40a14b89b16b1dbccde926823ead4a870178e400878f5114b21936725d99527",
       },
     ],
@@ -698,14 +891,14 @@ paths:
         "/paths/~1example/get/responses/200/content/application~1json/schema/allOf/0/properties/x",
       ],
     },
-    "rootFilePath": "/src/denormalizers/__tests__/specs/allOf/nested.yaml",
+    "rootFilePath": "/src/denormalizers/__tests__/specs/v3/allOf/nested.yaml",
   },
 }
 `;
 
-exports[`denormalize allOf merging merges nested allOf: warnings 1`] = `[]`;
+exports[`denormalize v3 allOf merging merges nested allOf: warnings 1`] = `[]`;
 
-exports[`denormalize denormalizes shared path parameters 1`] = `
+exports[`denormalize v3 denormalizes shared path parameters 1`] = `
 {
   "jsonLike": {
     "info": {
@@ -872,7 +1065,7 @@ paths:
                 type: 'string'
 ",
         "index": null,
-        "path": "/src/denormalizers/__tests__/specs/openapi.yaml",
+        "path": "/src/denormalizers/__tests__/specs/v3/openapi.yaml",
         "sha256": "44bb048800379bdd9651daa9c6a380dbd68232443881cbbaa0c155240e45c001",
       },
       {
@@ -887,7 +1080,7 @@ paths:
     example: d5b640e5-d88c-4c17-9bf0-93597b7a1ce2
 ",
         "index": null,
-        "path": "/src/denormalizers/__tests__/specs/parameters.yml",
+        "path": "/src/denormalizers/__tests__/specs/v3/parameters.yml",
         "sha256": "85d23de44c126a054df04ca9720a69b0842935868c6d0a771baa37f0bee832ba",
       },
     ],
@@ -917,7 +1110,7 @@ paths:
         "/paths/~1example/parameters/2",
       ],
     },
-    "rootFilePath": "/src/denormalizers/__tests__/specs/openapi.yaml",
+    "rootFilePath": "/src/denormalizers/__tests__/specs/v3/openapi.yaml",
   },
 }
 `;

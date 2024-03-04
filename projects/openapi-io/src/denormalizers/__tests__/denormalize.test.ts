@@ -22,14 +22,28 @@ function prepSnapshot(result: ParseOpenAPIResult<any>) {
   );
   return result;
 }
-describe('denormalize', () => {
+
+describe('denormalize v2', () => {
   test('denormalizes shared path parameters', async () => {
     const specPath = path.resolve(
-      'src/denormalizers/__tests__/specs/openapi.yaml'
+      'src/denormalizers/__tests__/specs/v2/openapi.yaml'
     );
     const spec = await parseOpenAPIWithSourcemap(specPath);
 
-    const denormalized = denormalize(spec);
+    const denormalized = denormalize(spec, '2.x.x');
+
+    expect(prepSnapshot(denormalized)).toMatchSnapshot();
+  });
+});
+
+describe('denormalize v3', () => {
+  test('denormalizes shared path parameters', async () => {
+    const specPath = path.resolve(
+      'src/denormalizers/__tests__/specs/v3/openapi.yaml'
+    );
+    const spec = await parseOpenAPIWithSourcemap(specPath);
+
+    const denormalized = denormalize(spec, '3.0.x');
 
     expect(prepSnapshot(denormalized)).toMatchSnapshot();
   });
@@ -38,30 +52,30 @@ describe('denormalize', () => {
     test.each([
       [
         'merges allOf when all items are objects',
-        'src/denormalizers/__tests__/specs/allOf/single-allof.yaml',
+        'src/denormalizers/__tests__/specs/v3/allOf/single-allof.yaml',
       ],
       [
         'does not merge allOf when all items are not all objects',
-        'src/denormalizers/__tests__/specs/allOf/no-merge.yaml',
+        'src/denormalizers/__tests__/specs/v3/allOf/no-merge.yaml',
       ],
       [
         'merges nested allOf',
-        'src/denormalizers/__tests__/specs/allOf/nested.yaml',
+        'src/denormalizers/__tests__/specs/v3/allOf/nested.yaml',
       ],
       [
         'merges allOfs in type array object / items',
-        'src/denormalizers/__tests__/specs/allOf/in-type-array.yaml',
+        'src/denormalizers/__tests__/specs/v3/allOf/in-type-array.yaml',
       ],
       [
         'merges allOf with only one item',
-        'src/denormalizers/__tests__/specs/allOf/single-child.yaml',
+        'src/denormalizers/__tests__/specs/v3/allOf/single-child.yaml',
       ],
     ])('%s', async (_, openapiFilePath) => {
       const spec = await parseOpenAPIWithSourcemap(
         path.resolve(openapiFilePath)
       );
       const warnings: string[] = [];
-      const denormalized = denormalize(spec, warnings);
+      const denormalized = denormalize(spec, '3.0.x', warnings);
 
       expect(prepSnapshot(denormalized)).toMatchSnapshot();
       expect(warnings).toMatchSnapshot('warnings');

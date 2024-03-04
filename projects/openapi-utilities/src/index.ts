@@ -81,7 +81,7 @@ export {
   getOperationsChanged,
   getOperationsChangedLabel,
 } from './utilities/count-changed-operations';
-
+export * from './swagger2';
 export {
   compareSpecs,
   CompareSpecResults,

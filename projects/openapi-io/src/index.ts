@@ -24,8 +24,10 @@ import { applyOperationsToYamlString } from './write/yaml-roundtrip';
 
 export {
   denormalize,
-  denormalizePaths,
-  denormalizeOperation,
+  denormalizePathsV2,
+  denormalizePathsV3,
+  denormalizeOperationV2,
+  denormalizeOperationV3,
 } from './denormalizers/denormalize';
 export {
   applyOperationsToYamlString,
