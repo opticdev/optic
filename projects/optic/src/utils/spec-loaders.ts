@@ -11,6 +11,7 @@ import {
   OpenAPIV3,
 } from '@useoptic/openapi-utilities';
 import {
+  validateSwaggerV2Document,
   validateOpenApiV3Document,
   filePathToGitPath,
   parseOpenAPIFromRepoWithSourcemap,
@@ -316,7 +317,9 @@ function validateAndDenormalize(
   }
 ): ParseResult {
   if (parseResult.version === '2.x.x') {
-    // TODO
+    validateSwaggerV2Document(parseResult.jsonLike, parseResult.sourcemap, {
+      strictOpenAPI: options.strict,
+    });
   } else if (
     parseResult.version === '3.0.x' ||
     parseResult.version === '3.1.x'

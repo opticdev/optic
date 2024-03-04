@@ -1,0 +1,24 @@
+swagger: '2.0'
+info:
+  version: '1.2.3'
+  title: my spec
+paths:
+  /api/users:
+    get:
+      produces: ['application/json']
+      parameters:
+        - name: search
+          in: query
+          description: search for users
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 'response'
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+
+

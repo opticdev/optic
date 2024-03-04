@@ -9,7 +9,10 @@ import {
 import { ExternalRefHandler } from './parser/types';
 import { JsonPath, JsonSchemaSourcemap } from './parser/sourcemap';
 import { loadYaml, isYaml, isJson, writeYaml } from './write';
-import { validateOpenApiV3Document } from './validation/validator';
+import {
+  validateSwaggerV2Document,
+  validateOpenApiV3Document,
+} from './validation/validator';
 import { ValidationError, OpenAPIVersionError } from './validation/errors';
 import {
   checkOpenAPIVersion,
@@ -38,6 +41,7 @@ export {
   writeYaml,
   dereferenceOpenApi,
   ResolverError,
+  validateSwaggerV2Document,
   validateOpenApiV3Document,
   ValidationError,
   OpenAPIVersionError,

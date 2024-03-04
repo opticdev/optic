@@ -1,9 +1,11 @@
-import { OpenAPIV3, OpenAPI } from 'openapi-types';
+import { OpenAPI } from 'openapi-types';
 import ajv, { ErrorObject, ValidateFunction } from 'ajv';
 
 import addFormats from 'ajv-formats';
 
 import {
+  swagger2_schema_object,
+  basic_swagger2_object,
   openapi3_1_json_schema,
   openapi3_0_json_schema,
   basic3openapi_schema,
@@ -16,6 +18,7 @@ import { JsonSchemaSourcemap } from '../parser/sourcemap';
 import { attachAdvancedValidators } from './advanced-validation';
 import { ValidationError } from './errors';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { FlatOpenAPIV2, FlatOpenAPIV3 } from '@useoptic/openapi-utilities';
 
 type Options = {
   strictOpenAPI: boolean;
@@ -23,6 +26,29 @@ type Options = {
 
 export default class OpenAPISchemaValidator {
   constructor(private options: Options) {}
+
+  public validate2(openapiDoc: OpenAPI.Document): {
+    errors: ErrorObject[];
+  } {
+    const ajvInstance = new ajv({ allErrors: true, strict: false });
+    ajvErrors(ajvInstance);
+    addFormats(ajvInstance);
+    let validator: ValidateFunction;
+    if (this.options.strictOpenAPI) {
+      attachAdvancedValidators(ajvInstance);
+      ajvInstance.addSchema(swagger2_schema_object);
+      validator = ajvInstance.compile(swagger2_schema_object);
+    } else {
+      ajvInstance.addSchema(basic_swagger2_object);
+      validator = ajvInstance.compile(basic_swagger2_object);
+    }
+
+    if (!validator(openapiDoc) && validator.errors) {
+      return { errors: validator.errors };
+    } else {
+      return { errors: [] };
+    }
+  }
 
   public validate3_0(openapiDoc: OpenAPI.Document): {
     errors: ErrorObject[];
@@ -126,11 +152,34 @@ export const processValidatorErrors = (
     .filter((value, index, array) => array.indexOf(value) === index);
 };
 
+export const validateSwaggerV2Document = (
+  spec: any,
+  sourcemap?: JsonSchemaSourcemap,
+  validatorOptions: Options = { strictOpenAPI: true }
+): FlatOpenAPIV2.Document => {
+  const validator = new OpenAPISchemaValidator(validatorOptions);
+
+  let results = validator.validate2(spec);
+  // will throw for unsupported spec version before running
+
+  if (results && results.errors.length > 0) {
+    const processedErrors = processValidatorErrors(
+      spec,
+      results.errors,
+      sourcemap
+    );
+
+    throw new ValidationError(processedErrors.join('\n'));
+  }
+
+  return spec as FlatOpenAPIV2.Document;
+};
+
 export const validateOpenApiV3Document = (
   spec: any,
   sourcemap?: JsonSchemaSourcemap,
   validatorOptions: Options = { strictOpenAPI: true }
-): OpenAPIV3.Document => {
+): FlatOpenAPIV3.Document => {
   const validator = new OpenAPISchemaValidator(validatorOptions);
 
   let results:
@@ -154,5 +203,5 @@ export const validateOpenApiV3Document = (
     throw new ValidationError(processedErrors.join('\n'));
   }
 
-  return spec as OpenAPIV3.Document;
+  return spec as FlatOpenAPIV3.Document;
 };
