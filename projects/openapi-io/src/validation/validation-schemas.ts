@@ -1,4 +1,5 @@
 export const basic_swagger2_object = {
+  $id: 'root_basic_swagger_object_schema',
   type: 'object',
   required: ['swagger', 'info', 'paths'],
   properties: {
