@@ -33,6 +33,10 @@ export function denormalize<
   } as T;
 
   if (version === '2.x.x') {
+    const consumes: string[] | undefined = (parse.jsonLike as any).consumes;
+    const produces: string[] | undefined = (parse.jsonLike as any).produces;
+    delete (parse.jsonLike as any).consumes;
+    delete (parse.jsonLike as any).produces;
     for (const [pathKey, path] of Object.entries(parse.jsonLike.paths ?? {})) {
       if (path) {
         denormalizePathsV2(path, pathKey, parse.sourcemap, warnings);
@@ -44,7 +48,7 @@ export function denormalize<
           if (operation) {
             denormalizeOperationV2(
               operation,
-              { path: pathKey, method },
+              { path: pathKey, method, consumes, produces },
               parse.sourcemap,
               warnings
             );
@@ -141,14 +145,32 @@ export function denormalizeOperationV2(
   {
     path,
     method,
+    produces,
+    consumes,
   }: {
     path: string;
     method: string;
+    produces?: string[];
+    consumes?: string[];
   },
   sourcemap?: JsonSchemaSourcemap,
   warnings?: string[]
 ) {
-  // Nothing to denormalize for v2 yet
+  if (consumes) {
+    if (operation.consumes) {
+      operation.consumes = [...new Set([...operation.consumes, ...consumes])];
+    } else {
+      operation.consumes = [...consumes];
+    }
+  }
+
+  if (produces) {
+    if (operation.produces) {
+      operation.produces = [...new Set([...operation.produces, ...produces])];
+    } else {
+      operation.produces = [...produces];
+    }
+  }
 }
 
 export function denormalizePathsV3(
