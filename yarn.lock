@@ -2756,10 +2756,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.31.28":
-  version: 0.31.28
-  resolution: "@sinclair/typebox@npm:0.31.28"
-  checksum: 10c0/b3125e370e040738cc42c1ca5210bab44cdfc220b156ccd876f5fa1697ff6fe3ea110190c135e268e41d203d6481750b350add33e79b9874da68dc3a4d601f5a
+"@sinclair/typebox@npm:0.32.18":
+  version: 0.32.18
+  resolution: "@sinclair/typebox@npm:0.32.18"
+  checksum: 10c0/46a32221e45251b894b3fe6ed9bbcb60170260ba3c08497d0ed8cc102db800add940f236afe94ff1e6c1032c8418302af8944a8447ba0ec08c28922dd7f0cacc
   languageName: node
   linkType: hard
 
@@ -3783,7 +3783,7 @@ __metadata:
     "@octokit/rest": "npm:^19.0.0"
     "@segment/analytics-node": "npm:^1.1.3"
     "@sentry/node": "npm:^7.74.0"
-    "@sinclair/typebox": "npm:0.31.28"
+    "@sinclair/typebox": "npm:0.32.18"
     "@stoplight/spectral-core": "npm:^1.8.1"
     "@types/babel__core": "npm:^7"
     "@types/babel__preset-env": "npm:^7"
