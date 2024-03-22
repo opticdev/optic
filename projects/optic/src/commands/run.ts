@@ -885,6 +885,7 @@ export const getRunAction =
     }
 
     const hasFailures =
+      specReports.some((r) => r.error) ||
       specReports.some(
         (r) => !r.diff?.success || (r.diff.checks?.failed.error ?? 0) > 0
       ) ||
