@@ -1,4 +1,7 @@
-import { OpenAPITraverser } from './openapi3/implementations/openapi3/openapi-traverser';
+import {
+  OpenAPITraverser,
+  normalizeOpenApiPath,
+} from './openapi3/implementations/openapi3/openapi-traverser';
 import { OpenAPIV2, OpenAPIV3, OpenAPIV3_1 } from 'openapi-types';
 import { factsToChangelog } from './openapi3/sdk/facts-to-changelog';
 export {
@@ -144,6 +147,7 @@ export {
   isFactOrChangeVariant,
   OpenApiRequestFact,
 };
+export { normalizeOpenApiPath };
 export * from './coverage/coverage';
 
 export * from './types';
