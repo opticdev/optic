@@ -766,6 +766,7 @@ export const getRunAction =
           error: `Invalid specification: ${e}`,
           path: specPath,
         };
+        specReports.push(specReport);
         reportSpec(specReport);
         continue;
       }
@@ -778,6 +779,7 @@ export const getRunAction =
           error: `Failed to load specification from Optic: ${e}`,
           path: specPath,
         };
+        specReports.push(specReport);
         reportSpec(specReport);
         continue;
       }
@@ -786,6 +788,7 @@ export const getRunAction =
           error: `Could not load specification from Optic ${opticUrl}`,
           path: specPath,
         };
+        specReports.push(specReport);
         reportSpec(specReport);
         continue;
       }
