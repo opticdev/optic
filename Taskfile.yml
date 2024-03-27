@@ -87,10 +87,15 @@ tasks:
     deps:
       - docker:setup
       - docker:registry:start
+    vars:
+      OPTIC_CLI_VERSION: '{{.OPTIC_CLI_VERSION | default "latest"}}'
+    env:
+      OPTIC_CLI_VERSION: '{{.OPTIC_CLI_VERSION | default "latest"}}'
     cmds:
       - >
         docker buildx build --push {{.CLI_ARGS}}
         --tag localhost:5000/useoptic/optic:local
+        --tag localhost:5000/useoptic/optic:${OPTIC_CLI_VERSION%.*}
         --platform linux/amd64,linux/arm64
         --builder optic-multiplatform-builder
         --build-arg OPTIC_CLI_VERSION={{.OPTIC_CLI_VERSION}}
@@ -116,12 +121,17 @@ tasks:
       - docker:setup
     vars:
       OPTIC_CLI_VERSION: '{{.OPTIC_CLI_VERSION | default "latest"}}'
+    env:
+      OPTIC_CLI_VERSION: '{{.OPTIC_CLI_VERSION | default "latest"}}'
     cmds:
       - >
+        set -x;
         docker buildx build {{.CLI_ARGS}}
         --tag docker.io/useoptic/optic:{{.OPTIC_CLI_VERSION}}
+        --tag docker.io/useoptic/optic:${OPTIC_CLI_VERSION%.*}
         --tag docker.io/useoptic/optic:latest
         --tag public.ecr.aws/optic/optic:{{.OPTIC_CLI_VERSION}}
+        --tag public.ecr.aws/optic/optic:${OPTIC_CLI_VERSION%.*}
         --tag public.ecr.aws/optic/optic:latest
         --platform linux/amd64,linux/arm64
         --builder optic-multiplatform-builder
