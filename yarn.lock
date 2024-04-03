@@ -3876,7 +3876,7 @@ __metadata:
     loglevel: "npm:^1.8.0"
     micromatch: "npm:^4.0.5"
     minimatch: "npm:9.0.3"
-    mockttp: "npm:3.10.0"
+    mockttp: "npm:3.10.2"
     node-fetch: "npm:^2.6.7"
     node-forge: "npm:^1.2.1"
     node-machine-id: "npm:^1.1.12"
@@ -4308,7 +4308,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"async@npm:^2.6.2, async@npm:^2.6.4":
+"async-mutex@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "async-mutex@npm:0.5.0"
+  dependencies:
+    tslib: "npm:^2.4.0"
+  checksum: 10c0/9096e6ad6b674c894d8ddd5aa4c512b09bb05931b8746ebd634952b05685608b2b0820ed5c406e6569919ff5fe237ab3c491e6f2887d6da6b6ba906db3ee9c32
+  languageName: node
+  linkType: hard
+
+"async@npm:^2.6.4":
   version: 2.6.4
   resolution: "async@npm:2.6.4"
   dependencies:
@@ -5480,7 +5489,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:^3.1.1, debug@npm:^3.2.7":
+"debug@npm:^3.2.7":
   version: 3.2.7
   resolution: "debug@npm:3.2.7"
   dependencies:
@@ -9041,7 +9050,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mkdirp@npm:^0.5.5, mkdirp@npm:^0.5.6":
+"mkdirp@npm:^0.5.6":
   version: 0.5.6
   resolution: "mkdirp@npm:0.5.6"
   dependencies:
@@ -9061,9 +9070,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mockttp@npm:3.10.0":
-  version: 3.10.0
-  resolution: "mockttp@npm:3.10.0"
+"mockttp@npm:3.10.2":
+  version: 3.10.2
+  resolution: "mockttp@npm:3.10.2"
   dependencies:
     "@graphql-tools/schema": "npm:^8.5.0"
     "@graphql-tools/utils": "npm:^8.8.0"
@@ -9072,6 +9081,7 @@ __metadata:
     "@httptoolkit/websocket-stream": "npm:^6.0.1"
     "@types/cors": "npm:^2.8.6"
     "@types/node": "npm:*"
+    async-mutex: "npm:^0.5.0"
     base64-arraybuffer: "npm:^0.1.5"
     body-parser: "npm:^1.15.2"
     cacheable-lookup: "npm:^6.0.0"
@@ -9097,7 +9107,7 @@ __metadata:
     pac-proxy-agent: "npm:^7.0.0"
     parse-multipart-data: "npm:^1.4.0"
     performance-now: "npm:^2.1.0"
-    portfinder: "npm:1.0.28"
+    portfinder: "npm:^1.0.32"
     read-tls-client-hello: "npm:^1.0.0"
     semver: "npm:^7.5.3"
     socks-proxy-agent: "npm:^7.0.0"
@@ -9106,7 +9116,7 @@ __metadata:
     ws: "npm:^8.8.0"
   bin:
     mockttp: dist/admin/admin-bin.js
-  checksum: 10c0/8a58e27dadf3ca68175c419b738be59502a682a6e51a5cbd8f8610303ead6ddd7b5a341af96fe6386ba502c0539f56bc7889b3e03245e225a88a37836b22ad9e
+  checksum: 10c0/41ea51eaed876cf33b1916d9973a760d589b305ecc5b567883c552533cb1e7864f93bc9cee7446bb2c43e1e029c85e089e89b9789bb538a93f002590d98d25d7
   languageName: node
   linkType: hard
 
@@ -9856,18 +9866,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"portfinder@npm:1.0.28":
-  version: 1.0.28
-  resolution: "portfinder@npm:1.0.28"
-  dependencies:
-    async: "npm:^2.6.2"
-    debug: "npm:^3.1.1"
-    mkdirp: "npm:^0.5.5"
-  checksum: 10c0/fefd3d65a6464b498e0e9b4a4b82f29489441bb1892a3350403cfdf6e591e583d9e75bac1c6ae8ca2cdf1a942ae18890831a0a855bb1bb977678acdf9e5a560f
-  languageName: node
-  linkType: hard
-
-"portfinder@npm:^1.0.28":
+"portfinder@npm:^1.0.28, portfinder@npm:^1.0.32":
   version: 1.0.32
   resolution: "portfinder@npm:1.0.32"
   dependencies:
