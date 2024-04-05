@@ -9,6 +9,10 @@
     "/build",
     "/src"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/opticdev/optic/edit/main/projects/rulesets-base"
+  },
   "bin": "build/index.js",
   "scripts": {
     "build": "yarn tsc --build --verbose",
