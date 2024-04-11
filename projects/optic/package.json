@@ -67,7 +67,7 @@
     "@useoptic/rulesets-base": "workspace:*",
     "@useoptic/standard-rulesets": "workspace:*",
     "ajv": "^8.6.0",
-    "ajv-formats": "~2.1.0",
+    "ajv-formats": "~3.0.0",
     "async-exit-hook": "^2.0.1",
     "axax": "^0.2.2",
     "bottleneck": "^2.19.5",

@@ -20,7 +20,7 @@
     "@useoptic/rulesets-base": "workspace:*",
     "ajv": "^8.6.0",
     "ajv-draft-04": "^1.0.0",
-    "ajv-formats": "~2.1.0",
+    "ajv-formats": "~3.0.0",
     "json-stable-stringify": "^1.1.0",
     "object-hash": "^3.0.0",
     "openai": "^4.7.1",
