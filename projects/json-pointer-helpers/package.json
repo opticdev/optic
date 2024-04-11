@@ -31,6 +31,6 @@
   },
   "dependencies": {
     "jsonpointer": "^5.0.1",
-    "minimatch": "9.0.3"
+    "minimatch": "9.0.4"
   }
 }

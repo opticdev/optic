@@ -3754,7 +3754,7 @@ __metadata:
     babel-jest: "npm:^29.3.1"
     jest: "npm:^29.3.1"
     jsonpointer: "npm:^5.0.1"
-    minimatch: "npm:9.0.3"
+    minimatch: "npm:9.0.4"
     prettier: "npm:^3.0.0"
     ts-jest: "npm:^29.0.3"
     ts-node: "npm:^10.9.1"
@@ -3928,7 +3928,7 @@ __metadata:
     log-node: "npm:^8.0.3"
     loglevel: "npm:^1.8.0"
     micromatch: "npm:^4.0.5"
-    minimatch: "npm:9.0.3"
+    minimatch: "npm:9.0.4"
     mockttp: "npm:3.10.0"
     node-fetch: "npm:^2.6.7"
     node-forge: "npm:^1.2.1"
@@ -8929,12 +8929,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:9.0.3":
-  version: 9.0.3
-  resolution: "minimatch@npm:9.0.3"
+"minimatch@npm:9.0.4":
+  version: 9.0.4
+  resolution: "minimatch@npm:9.0.4"
   dependencies:
     brace-expansion: "npm:^2.0.1"
-  checksum: 10c0/85f407dcd38ac3e180f425e86553911d101455ca3ad5544d6a7cec16286657e4f8a9aa6695803025c55e31e35a91a2252b5dc8e7d527211278b8b65b4dbd5eac
+  checksum: 10c0/2c16f21f50e64922864e560ff97c587d15fd491f65d92a677a344e970fe62aafdbeafe648965fa96d33c061b4d0eabfe0213466203dd793367e7f28658cf6414
   languageName: node
   linkType: hard
 
