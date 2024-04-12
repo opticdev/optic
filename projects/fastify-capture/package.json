@@ -9,6 +9,10 @@
     "/build",
     "/src"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/opticdev/optic/edit/main/projects/fastify-capture"
+  },
   "scripts": {
     "build": "yarn tsc --build --verbose && yarn babel ./src --out-dir ./build --extensions \".ts\",\".tsx\"",
     "clean": "rm -rf build",
