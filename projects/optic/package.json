@@ -11,6 +11,10 @@
     "/ci"
   ],
   "bin": "build/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/opticdev/optic/edit/main/projects/optic"
+  },
   "scripts": {
     "build": "yarn tsc --build --verbose && yarn babel ./src --out-dir ./build --extensions \".ts\",\".tsx\"",
     "clean": "rm -rf build",
