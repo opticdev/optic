@@ -12,6 +12,10 @@
     "projects/standard-rulesets",
     "projects/fastify-capture"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/opticdev/optic"
+  },
   "scripts": {
     "release": "gh release create --target=$(git branch --show-current) v$(node -e \"process.stdout.write(require('./package.json').version)\")",
     "version": "yarn workspaces foreach -Av version",
