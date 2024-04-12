@@ -92,6 +92,11 @@ type SpecFromInput =
       url: string;
     };
 
+function isWindowsDrivePath(raw: string) {
+  // matches windows drive paths (C:\... or d:\...)
+  return /^[a-zA-Z]:\\/.test(raw);
+}
+
 export function parseOpticRef(raw?: string | null): SpecFromInput {
   raw = raw ?? 'null:';
   let isUrl = false;
@@ -120,7 +125,7 @@ export function parseOpticRef(raw?: string | null): SpecFromInput {
     };
   } else if (
     raw.includes(':') &&
-    !(raw.startsWith('C:') || raw.startsWith('D:'))
+    !isWindowsDrivePath(raw)
   ) {
     const index = raw.indexOf(':');
     const rev = raw.substring(0, index);
