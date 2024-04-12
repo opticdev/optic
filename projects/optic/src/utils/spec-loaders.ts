@@ -123,10 +123,7 @@ export function parseOpticRef(raw?: string | null): SpecFromInput {
       apiId: maybeCloudMatch.groups.apiId,
       tag: maybeCloudMatch.groups.tag,
     };
-  } else if (
-    raw.includes(':') &&
-    !isWindowsDrivePath(raw)
-  ) {
+  } else if (raw.includes(':') && !isWindowsDrivePath(raw)) {
     const index = raw.indexOf(':');
     const rev = raw.substring(0, index);
     const name = raw.substring(index + 1);
