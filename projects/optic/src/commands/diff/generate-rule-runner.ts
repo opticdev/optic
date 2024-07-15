@@ -45,19 +45,27 @@ const getStandardToUse = async (options: {
     );
     return config.ruleset;
   } else if (options.specRuleset) {
-    try {
-      const ruleset = await options.config.client.getStandard(
-        options.specRuleset
-      );
-      return ruleset.config.ruleset;
-    } catch (e) {
-      logger.warn(
-        `${chalk.red('Warning:')} Could not download standard ${
+    if (options.specRuleset.startsWith('@')) {
+      try {
+        const ruleset = await options.config.client.getStandard(
           options.specRuleset
-        }. Please check the ruleset name and whether you are authenticated (run: optic login).`
+        );
+        return ruleset.config.ruleset;
+      } catch (e) {
+        logger.warn(
+          `${chalk.red('Warning:')} Could not download standard ${
+            options.specRuleset
+          }. Please check the ruleset name and whether you are authenticated (run: optic login).`
+        );
+        process.exitCode = 1;
+        return [];
+      }
+    } else {
+      const config = await loadCliConfig(
+        options.specRuleset,
+        options.config.client
       );
-      process.exitCode = 1;
-      return [];
+      return config.ruleset;
     }
   } else {
     return options.config.ruleset;
