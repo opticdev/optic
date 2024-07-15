@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import fetch from 'node-fetch';
 import yaml from 'js-yaml';
 import { UserError, isTruthyStringValue } from '@useoptic/openapi-utilities';
 import Ajv from 'ajv';
@@ -217,14 +218,28 @@ export const initializeRules = async (
   client: OpticBackendClient
 ) => {
   let rulesetMap: Map<string, ConfigRuleset> = new Map();
+  let rawRulesets = config.ruleset ? config.ruleset : [];
   if (config.extends) {
     console.log(`Extending ruleset from ${config.extends}`);
 
     try {
-      const response = await client.getStandard(config.extends);
-      rulesetMap = new Map(
-        response.config.ruleset.map((conf) => [conf.name, conf])
-      );
+      if (config.extends.startsWith('@')) {
+        const response = await client.getStandard(config.extends);
+        rulesetMap = new Map(
+          response.config.ruleset.map((conf) => [conf.name, conf])
+        );
+      } else {
+        // Assumption is that we're fetching a yaml file
+        const response = await fetch(config.extends).then((response) => {
+          if (response.status !== 200) {
+            throw new Error(`received status code ${response.status}`);
+          } else {
+            return response.text();
+          }
+        });
+        const parsed = yaml.load(response);
+        rawRulesets.push((parsed as any).ruleset);
+      }
     } catch (e) {
       console.error(e);
       console.log(
@@ -233,8 +248,8 @@ export const initializeRules = async (
     }
   }
 
-  if (config.ruleset) {
-    for (const ruleset of config.ruleset) {
+  if (rawRulesets.length) {
+    for (const ruleset of rawRulesets) {
       if (typeof ruleset === 'string') {
         rulesetMap.set(ruleset, { name: ruleset, config: {} });
       } else if (typeof ruleset === 'object' && ruleset !== null) {
