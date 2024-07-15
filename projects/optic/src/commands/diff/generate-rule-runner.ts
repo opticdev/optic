@@ -19,6 +19,16 @@ export function setRulesets(rulesets: (Ruleset | ExternalRule)[]) {
 }
 
 const isLocalJsFile = (name: string) => name.endsWith('.js');
+const isUrl = (name: string) => {
+  try {
+    const parsed = new URL(name);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:')
+      return true;
+    return false;
+  } catch (e) {
+    return false;
+  }
+};
 
 type InputPayload = Parameters<typeof prepareRulesets>[0];
 
@@ -105,6 +115,11 @@ export const generateRuleRunner = async (
           ? path.dirname(options.config.configPath)
           : process.cwd();
         localRulesets[rule.name] = path.resolve(rootPath, rule.name); // the path is the name
+      } else if (isUrl(rule.name)) {
+        hostedRulesets[rule.name] = {
+          uploaded_at: String(Math.random()),
+          url: rule.name,
+        };
       } else {
         rulesToFetch.push(rule.name);
       }
