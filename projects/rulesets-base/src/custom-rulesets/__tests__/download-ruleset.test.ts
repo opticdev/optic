@@ -20,7 +20,8 @@ describe('downloadRuleset', () => {
       downloadRuleset(
         'test-ruleset',
         'https://some-url.com',
-        '2022-11-01T19:32:22.148Z'
+        '2022-11-01T19:32:22.148Z',
+        true
       )
     ).rejects.toThrow(new Error('Downloading ruleset failed (404): Missing'));
   });
@@ -35,7 +36,8 @@ describe('downloadRuleset', () => {
     await downloadRuleset(
       'test-ruleset',
       'https://some-url.com',
-      '2022-11-01T19:32:22.148Z'
+      '2022-11-01T19:32:22.148Z',
+      true
     );
     expect(fs.mkdir).toBeCalled();
     expect(fs.writeFile).toHaveBeenCalledWith(
@@ -49,7 +51,8 @@ describe('downloadRuleset', () => {
     await downloadRuleset(
       'test-ruleset',
       'https://some-url.com',
-      '2022-11-01T19:32:22.148Z'
+      '2022-11-01T19:32:22.148Z',
+      true
     );
 
     expect(fetch).not.toBeCalled();
