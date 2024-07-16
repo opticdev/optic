@@ -533,7 +533,6 @@ exports[`diff with mock server custom rules 1`] = `
 `;
 
 exports[`diff with mock server extends 1`] = `
-"Extending ruleset from @test-org/ruleset-id
 [31mx [39m[1mEmpty[22m [90mexample-api-v0.json[39m
 [1mOperations: [22m1 operation added, 3 changed, 1 removed
 [31mx [39m [1mChecks:[22m 3/5 passed 
