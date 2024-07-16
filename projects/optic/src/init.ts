@@ -32,6 +32,7 @@ import { registerApiList } from './commands/api/list';
 import { registerHistory } from './commands/history';
 import { registerRunCommand } from './commands/run';
 import path from 'path';
+import { CustomUploadFn } from './types';
 
 const packageJson = require('../package.json');
 
@@ -65,6 +66,7 @@ export const initCli = async (
   cli: Command = cliInstance,
   options: {
     hideNotifier?: boolean;
+    customUpload?: CustomUploadFn;
   } = {}
 ): Promise<Command> => {
   cli.name('optic');
@@ -136,8 +138,8 @@ export const initCli = async (
   cli.version(packageJson.version, '-V, --version', 'Display version');
   cli.addHelpCommand(false);
 
-  registerRunCommand(cli, cliConfig);
-  registerDiff(cli, cliConfig);
+  registerRunCommand(cli, cliConfig, options);
+  registerDiff(cli, cliConfig, options);
 
   const betaSubcommands = cli.command('beta', { hidden: true });
   registerCaptureCommand(cli, cliConfig);
@@ -162,7 +164,7 @@ export const initCli = async (
   cli.addCommand(updateCommand(), { hidden: true });
 
   registerLint(cli, cliConfig);
-  registerDiffAll(cli, cliConfig);
+  registerDiffAll(cli, cliConfig, options);
   registerLogin(cli, cliConfig);
   registerDereference(cli, cliConfig);
   registerBundle(cli, cliConfig);

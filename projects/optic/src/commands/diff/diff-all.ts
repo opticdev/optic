@@ -25,6 +25,7 @@ import { jsonChangelog } from './changelog-renderers/json-changelog';
 import * as Types from '../../client/optic-backend-types';
 import { openUrl } from '../../utils/open-url';
 import { renderCloudSetup } from '../../utils/render-cloud';
+import { CustomUploadFn } from '../../types';
 
 const usage = () => `
   optic diff-all
@@ -42,7 +43,11 @@ Example usage:
   $ optic diff-all --standard @org/example-standard --web --check
   `;
 
-export const registerDiffAll = (cli: Command, config: OpticCliConfig) => {
+export const registerDiffAll = (
+  cli: Command,
+  config: OpticCliConfig,
+  options: { customUpload?: CustomUploadFn }
+) => {
   cli
     .command('diff-all', { hidden: true })
     .configureHelp({
@@ -106,7 +111,9 @@ comma separated values (e.g. "**/*.yml,**/*.json")'
       '[deprecated] all matching APIs are now added by default',
       false
     )
-    .action(errorHandler(getDiffAllAction(config), { command: 'diff-all' }));
+    .action(
+      errorHandler(getDiffAllAction(config, options), { command: 'diff-all' })
+    );
 };
 
 type DiffAllActionOptions = {
@@ -196,7 +203,8 @@ function matchCandidates(
 async function computeAll(
   candidateMap: CandidateMap,
   config: OpticCliConfig,
-  options: DiffAllActionOptions
+  options: DiffAllActionOptions,
+  customOptions: { customUpload?: CustomUploadFn }
 ): Promise<{
   warnings: Warnings;
   results: Result[];
@@ -398,21 +406,25 @@ async function computeAll(
     let changelogUrl: string | null = null;
     let specUrl: string | null = null;
     if (options.upload) {
-      const uploadResults = await uploadDiff(
-        {
-          from: fromParseResults,
-          to: toParseResults,
-        },
-        specResults,
-        config,
-        specDetails,
-        {
-          headTag: options.headTag,
-          standard,
-        }
-      );
-      specUrl = uploadResults?.headSpecUrl ?? null;
-      changelogUrl = uploadResults?.changelogUrl ?? null;
+      if (customOptions.customUpload) {
+        await customOptions.customUpload(toParseResults);
+      } else {
+        const uploadResults = await uploadDiff(
+          {
+            from: fromParseResults,
+            to: toParseResults,
+          },
+          specResults,
+          config,
+          specDetails,
+          {
+            headTag: options.headTag,
+            standard,
+          }
+        );
+        specUrl = uploadResults?.headSpecUrl ?? null;
+        changelogUrl = uploadResults?.changelogUrl ?? null;
+      }
     }
 
     let sourcemapOptions: GetSourcemapOptions = {
@@ -619,7 +631,8 @@ function applyGlobFilter(
 }
 
 const getDiffAllAction =
-  (config: OpticCliConfig) => async (options: DiffAllActionOptions) => {
+  (config: OpticCliConfig, customOptions: { customUpload?: CustomUploadFn }) =>
+  async (options: DiffAllActionOptions) => {
     if (options.generated) {
       logger.warn(
         chalk.yellow.bold(
@@ -729,7 +742,8 @@ const getDiffAllAction =
     const { warnings, results } = await computeAll(
       candidateMap,
       config,
-      options
+      options,
+      customOptions
     );
 
     for (const result of results) {

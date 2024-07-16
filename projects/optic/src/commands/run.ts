@@ -51,6 +51,7 @@ import { getCaptureStorage } from './capture/storage';
 import { captureRequestsFromProxy } from './capture/actions/captureRequests';
 import { processCaptures } from './capture/capture';
 import { uploadCoverage } from './capture/actions/upload-coverage';
+import { CustomUploadFn } from '../types';
 
 const usage = () => `
   To see how Optic handles changes, run Optic in your repository a first time; then make
@@ -118,7 +119,11 @@ async function comment(data: CiRunDetails, commenter: CommentApi, sha: string) {
   }
 }
 
-export function registerRunCommand(cli: Command, config: OpticCliConfig) {
+export function registerRunCommand(
+  cli: Command,
+  config: OpticCliConfig,
+  options: { customUpload?: CustomUploadFn }
+) {
   cli
     .command('run')
     .description(
@@ -146,7 +151,7 @@ export function registerRunCommand(cli: Command, config: OpticCliConfig) {
       '[file_paths]',
       'Comma-seperated glob patterns matching specifications to process. When omitted, matches all non-ignored specifications.'
     )
-    .action(errorHandler(getRunAction(config), { command: 'run' }));
+    .action(errorHandler(getRunAction(config, options), { command: 'run' }));
 }
 
 type RunActionOptions = {
@@ -375,6 +380,7 @@ const runDiffs = async ({
   localSpec,
   currentBranch,
   specDetails,
+  customUpload,
 }: {
   specPath: string;
   cloudTag: string;
@@ -382,6 +388,7 @@ const runDiffs = async ({
   localSpec: ParseResult;
   currentBranch: string;
   specDetails: Exclude<ReturnType<typeof getApiFromOpticUrl>, null>;
+  customUpload?: CustomUploadFn;
 }) => {
   let specResults: CompareSpecResults,
     warnings: string[],
@@ -444,22 +451,27 @@ const runDiffs = async ({
 
   let upload: Awaited<ReturnType<typeof uploadDiff>>;
   try {
-    upload = await uploadDiff(
-      {
-        from: cloudSpec,
-        to: localSpec,
-      },
-      specResults,
-      config,
-      specDetails,
-      {
-        standard,
-        silent: true,
-        currentBranch,
-      }
-    );
-    specUrl = upload?.headSpecUrl ?? undefined;
-    changelogUrl = upload?.changelogUrl ?? undefined;
+    if (customUpload) {
+      await customUpload(cloudSpec);
+      return;
+    } else {
+      upload = await uploadDiff(
+        {
+          from: cloudSpec,
+          to: localSpec,
+        },
+        specResults,
+        config,
+        specDetails,
+        {
+          standard,
+          silent: true,
+          currentBranch,
+        }
+      );
+      specUrl = upload?.headSpecUrl ?? undefined;
+      changelogUrl = upload?.changelogUrl ?? undefined;
+    }
   } catch (e) {
     return {
       success: false,
@@ -604,7 +616,7 @@ const runCapture = async ({
 };
 
 export const getRunAction =
-  (config: OpticCliConfig) =>
+  (config: OpticCliConfig, customOptions: { customUpload?: CustomUploadFn }) =>
   async (matchArg: string | undefined, options: RunActionOptions) => {
     const commentToken =
       process.env.GITHUB_TOKEN ?? process.env.OPTIC_GITLAB_TOKEN;
@@ -800,6 +812,7 @@ export const getRunAction =
         localSpec,
         specDetails,
         specPath,
+        customUpload: customOptions.customUpload,
       });
 
       const captureReport = await runCapture({
@@ -807,7 +820,7 @@ export const getRunAction =
         localSpec,
         specPath,
         specDetails,
-        runId: diffsReport.success ? diffsReport.runId : undefined,
+        runId: diffsReport?.success ? diffsReport.runId : undefined,
         organizationId: generatedDetails.organization_id,
       });
 

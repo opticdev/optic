@@ -32,6 +32,7 @@ import { computeChecksumForAws } from '../../utils/checksum';
 import { openUrl } from '../../utils/open-url';
 import { renderCloudSetup } from '../../utils/render-cloud';
 import { getSpinner } from '../../utils/spinner';
+import { CustomUploadFn } from '../../types';
 
 type DiffActionOptions = {
   base: string;
@@ -70,7 +71,11 @@ Examples:
   $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml --check --standard ./other_config.yml
   `;
 
-export const registerDiff = (cli: Command, config: OpticCliConfig) => {
+export const registerDiff = (
+  cli: Command,
+  config: OpticCliConfig,
+  options: { customUpload?: CustomUploadFn }
+) => {
   cli
     .command('diff')
     .configureHelp({
@@ -120,7 +125,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
       '--generated',
       '[deprecated] Optic no longer differentiates generated and non-generated specifications'
     )
-    .action(errorHandler(getDiffAction(config), { command: 'diff' }));
+    .action(errorHandler(getDiffAction(config, options), { command: 'diff' }));
 };
 
 type SpecDetails = { apiId: string; orgId: string } | null;
@@ -287,7 +292,7 @@ const runDiff = async (
 };
 
 const getDiffAction =
-  (config: OpticCliConfig) =>
+  (config: OpticCliConfig, customOptions: { customUpload?: CustomUploadFn }) =>
   async (
     file1: string | undefined,
     file2: string | undefined,
@@ -389,21 +394,25 @@ const getDiffAction =
 
     let [baseParseResult, headParseResult, specDetails] = parsedFiles;
     if (options.upload) {
-      const uploadResults = await uploadDiff(
-        {
-          from: baseParseResult,
-          to: headParseResult,
-        },
-        diffResult.specResults,
-        config,
-        specDetails,
-        {
-          headTag: options.headTag,
-          standard: diffResult.standard,
-        }
-      );
-      specUrl = uploadResults?.headSpecUrl ?? null;
-      maybeChangelogUrl = uploadResults?.changelogUrl ?? null;
+      if (customOptions.customUpload) {
+        await customOptions.customUpload(headParseResult);
+      } else {
+        const uploadResults = await uploadDiff(
+          {
+            from: baseParseResult,
+            to: headParseResult,
+          },
+          diffResult.specResults,
+          config,
+          specDetails,
+          {
+            headTag: options.headTag,
+            standard: diffResult.standard,
+          }
+        );
+        specUrl = uploadResults?.headSpecUrl ?? null;
+        maybeChangelogUrl = uploadResults?.changelogUrl ?? null;
+      }
     }
     if (options.json) {
       console.log(
