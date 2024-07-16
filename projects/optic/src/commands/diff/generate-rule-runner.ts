@@ -1,5 +1,5 @@
 import path from 'path';
-import { ConfigRuleset, OpticCliConfig } from '../../config';
+import { ConfigRuleset, OpticCliConfig, initializeRules } from '../../config';
 import { StandardRulesets } from '@useoptic/standard-rulesets';
 import {
   RuleRunner,
@@ -61,11 +61,12 @@ const getStandardToUse = async (options: {
         return [];
       }
     } else {
-      const config = await loadCliConfig(
-        options.specRuleset,
-        options.config.client
-      );
-      return config.ruleset;
+      const rules: any = {
+        extends: options.specRuleset,
+      };
+      await initializeRules(rules, options.config.client);
+
+      return rules.ruleset;
     }
   } else {
     return options.config.ruleset;
@@ -127,6 +128,7 @@ export const generateRuleRunner = async (
         hostedRulesets[rule.name] = {
           uploaded_at: String(Math.random()),
           url: rule.name,
+          should_decompress: false,
         };
       } else {
         rulesToFetch.push(rule.name);
@@ -141,6 +143,7 @@ export const generateRuleRunner = async (
         hostedRulesets[hostedRuleset.name] = {
           uploaded_at: hostedRuleset.uploaded_at,
           url: hostedRuleset.url,
+          should_decompress: true,
         };
       }
     }

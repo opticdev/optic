@@ -15,6 +15,7 @@ export type RulesetPayload = {
     {
       uploaded_at: string;
       url: string;
+      should_decompress: boolean;
     }
   >;
   standardRulesets: Record<
@@ -81,7 +82,8 @@ export async function prepareRulesets(
         rulesetPath = await downloadRuleset(
           ruleset.name,
           hostedRuleset.url,
-          hostedRuleset.uploaded_at
+          hostedRuleset.uploaded_at,
+          hostedRuleset.should_decompress
         );
       } catch (e) {
         warnings.push(`Loading ruleset ${ruleset.name} failed`);

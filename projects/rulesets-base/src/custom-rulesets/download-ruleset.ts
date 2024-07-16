@@ -7,7 +7,8 @@ import path from 'node:path';
 export async function downloadRuleset(
   name: string,
   url: string,
-  uploaded_at: string
+  uploaded_at: string,
+  should_decompress: boolean
 ): Promise<string> {
   const filepath = path.join(os.tmpdir(), name, `${uploaded_at}.js`);
   try {
@@ -22,14 +23,18 @@ export async function downloadRuleset(
       `Downloading ruleset failed (${resp.status}): ${await resp.text()}`
     );
   }
-
-  const compressed = await resp.buffer();
-  const decompressed = zlib.brotliDecompressSync(compressed);
+  let raw: Buffer;
+  if (should_decompress) {
+    const compressed = await resp.buffer();
+    raw = zlib.brotliDecompressSync(compressed);
+  } else {
+    raw = await resp.buffer();
+  }
 
   const filefolder = path.dirname(filepath);
   // Does not error if folder exists when recursive = true
   await fs.mkdir(filefolder, { recursive: true });
-  await fs.writeFile(filepath, decompressed);
+  await fs.writeFile(filepath, raw);
 
   return filepath;
 }

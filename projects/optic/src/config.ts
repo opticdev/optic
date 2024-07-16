@@ -220,7 +220,7 @@ export const initializeRules = async (
   let rulesetMap: Map<string, ConfigRuleset> = new Map();
   let rawRulesets = config.ruleset ? config.ruleset : [];
   if (config.extends) {
-    console.log(`Extending ruleset from ${config.extends}`);
+    logger.debug(`Extending ruleset from ${config.extends}`);
 
     try {
       if (config.extends.startsWith('@')) {
@@ -238,7 +238,7 @@ export const initializeRules = async (
           }
         });
         const parsed = yaml.load(response);
-        rawRulesets.push((parsed as any).ruleset);
+        rawRulesets.push(...(parsed as any).ruleset);
       }
     } catch (e) {
       console.error(e);
