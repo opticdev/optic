@@ -32,6 +32,7 @@ describe('prepareRulesets', () => {
           '@team/custom-ruleset': {
             url: 'https://some-url.com',
             uploaded_at: '123',
+            should_decompress: true,
           },
         },
         standardRulesets: {
@@ -76,6 +77,7 @@ describe('prepareRulesets', () => {
         '@team/custom-ruleset': {
           url: 'https://some-url.com',
           uploaded_at: '123',
+          should_decompress: true,
         },
       },
       standardRulesets: {

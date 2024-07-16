@@ -1,5 +1,5 @@
 import path from 'path';
-import { ConfigRuleset, OpticCliConfig } from '../../config';
+import { ConfigRuleset, OpticCliConfig, initializeRules } from '../../config';
 import { StandardRulesets } from '@useoptic/standard-rulesets';
 import {
   RuleRunner,
@@ -19,6 +19,16 @@ export function setRulesets(rulesets: (Ruleset | ExternalRule)[]) {
 }
 
 const isLocalJsFile = (name: string) => name.endsWith('.js');
+const isUrl = (name: string) => {
+  try {
+    const parsed = new URL(name);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:')
+      return true;
+    return false;
+  } catch (e) {
+    return false;
+  }
+};
 
 type InputPayload = Parameters<typeof prepareRulesets>[0];
 
@@ -35,19 +45,28 @@ const getStandardToUse = async (options: {
     );
     return config.ruleset;
   } else if (options.specRuleset) {
-    try {
-      const ruleset = await options.config.client.getStandard(
-        options.specRuleset
-      );
-      return ruleset.config.ruleset;
-    } catch (e) {
-      logger.warn(
-        `${chalk.red('Warning:')} Could not download standard ${
+    if (options.specRuleset.startsWith('@')) {
+      try {
+        const ruleset = await options.config.client.getStandard(
           options.specRuleset
-        }. Please check the ruleset name and whether you are authenticated (run: optic login).`
-      );
-      process.exitCode = 1;
-      return [];
+        );
+        return ruleset.config.ruleset;
+      } catch (e) {
+        logger.warn(
+          `${chalk.red('Warning:')} Could not download standard ${
+            options.specRuleset
+          }. Please check the ruleset name and whether you are authenticated (run: optic login).`
+        );
+        process.exitCode = 1;
+        return [];
+      }
+    } else {
+      const rules: any = {
+        extends: options.specRuleset,
+      };
+      await initializeRules(rules, options.config.client);
+
+      return rules.ruleset;
     }
   } else {
     return options.config.ruleset;
@@ -105,6 +124,12 @@ export const generateRuleRunner = async (
           ? path.dirname(options.config.configPath)
           : process.cwd();
         localRulesets[rule.name] = path.resolve(rootPath, rule.name); // the path is the name
+      } else if (isUrl(rule.name)) {
+        hostedRulesets[rule.name] = {
+          uploaded_at: String(Math.random()),
+          url: rule.name,
+          should_decompress: false,
+        };
       } else {
         rulesToFetch.push(rule.name);
       }
@@ -118,6 +143,7 @@ export const generateRuleRunner = async (
         hostedRulesets[hostedRuleset.name] = {
           uploaded_at: hostedRuleset.uploaded_at,
           url: hostedRuleset.url,
+          should_decompress: true,
         };
       }
     }
