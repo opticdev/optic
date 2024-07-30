@@ -206,34 +206,3 @@ export async function uploadRun(
 
   return run;
 }
-
-export async function uploadSpecVerification(
-  specId: string,
-  opts: {
-    client: OpticBackendClient;
-    verificationData: ApiCoverage;
-    message?: string;
-    runId?: string;
-  }
-) {
-  const stableResultsString = stableStringify(opts.verificationData);
-  const checksum = computeChecksumForAws(stableResultsString);
-
-  const { upload_id, url } = await opts.client.prepareVerification(
-    specId,
-    checksum
-  );
-
-  await uploadFileToS3(url, Buffer.from(stableResultsString), {
-    'x-amz-checksum-sha256': checksum,
-  });
-
-  const { id } = await opts.client.createVerification({
-    spec_id: specId,
-    upload_id,
-    message: opts.message,
-    run_id: opts.runId,
-  });
-
-  return id;
-}

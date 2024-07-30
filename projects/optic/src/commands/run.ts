@@ -50,7 +50,6 @@ import { GroupedCaptures } from './capture/interactions/grouped-interactions';
 import { getCaptureStorage } from './capture/storage';
 import { captureRequestsFromProxy } from './capture/actions/captureRequests';
 import { processCaptures } from './capture/capture';
-import { uploadCoverage } from './capture/actions/upload-coverage';
 import { CustomUploadFn } from '../types';
 
 const usage = () => `
@@ -512,7 +511,7 @@ const runCapture = async ({
   specDetails: Exclude<ReturnType<typeof getApiFromOpticUrl>, null>;
   runId?: string;
   organizationId?: string;
-}) => {
+}): Promise<any> => {
   if (localSpec.version === '2.x.x') {
     logger.error(
       `${specPath} is Swagger 2 - capture does not support swagger 2`
@@ -595,20 +594,10 @@ const runCapture = async ({
     }
 
     if (captureResults.success) {
-      try {
-        await uploadCoverage(
-          localSpec,
-          captureResults.coverage,
-          specDetails,
-          config,
-          { runId }
-        );
-      } catch (e) {
-        return {
-          success: false,
-          bufferedOutput: [`Run failed to upload coverage: ${e}`],
-        } as const;
-      }
+      return {
+        success: false,
+        bufferedOutput: [`Coverage upload is no longer supported`],
+      } as const;
     }
 
     return captureResults;
