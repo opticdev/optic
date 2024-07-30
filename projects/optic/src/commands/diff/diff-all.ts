@@ -17,11 +17,8 @@ import { writeDataForCi } from '../../utils/ci-data';
 import { errorHandler } from '../../error-handler';
 import { checkOpenAPIVersion } from '@useoptic/openapi-io';
 import path from 'path';
-import { getApiUrl } from '../../utils/cloud-urls';
-import { getDetailsForGeneration } from '../../utils/generated';
 import { terminalChangelog } from './changelog-renderers/terminal-changelog';
 import { jsonChangelog } from './changelog-renderers/json-changelog';
-import * as Types from '../../client/optic-backend-types';
 import { openUrl } from '../../utils/open-url';
 import { renderCloudSetup } from '../../utils/render-cloud';
 import { CustomUploadFn } from '../../types';
@@ -275,52 +272,6 @@ async function computeAll(
       opticUrl,
       name,
     });
-  }
-
-  const generatedDetails = await getDetailsForGeneration(config);
-  if (generatedDetails) {
-    const { web_url, organization_id, default_branch, default_tag } =
-      generatedDetails;
-
-    const pathToUrl: Record<string, string | null> = {};
-    const pathToName: Record<string, string | null> = {};
-    for (const [p, comparison] of comparisons.entries()) {
-      if (!comparison.opticUrl) {
-        pathToUrl[p] = null;
-      }
-      pathToName[p] = comparison.name ?? null;
-    }
-    let apis: (Types.Api | null)[] = [];
-    const chunks = chunk(Object.keys(pathToUrl), 20);
-    for (const chunk of chunks) {
-      const { apis: apiChunk } = await config.client.getApis(chunk, web_url);
-      apis.push(...apiChunk);
-    }
-
-    for (const api of apis) {
-      if (api) {
-        pathToUrl[api.path] = getApiUrl(
-          config.client.getWebBase(),
-          api.organization_id,
-          api.api_id
-        );
-      }
-    }
-
-    for (let [path, url] of Object.entries(pathToUrl)) {
-      if (!url) {
-        const api = await config.client.createApi(organization_id, {
-          name: pathToName[path] ?? path,
-          path,
-          web_url: web_url,
-          default_branch,
-          default_tag,
-        });
-        url = getApiUrl(config.client.getWebBase(), organization_id, api.id);
-      }
-      const comparison = comparisons.get(path);
-      if (comparison) comparison.opticUrl = url;
-    }
   }
 
   for (let { from, to, opticUrl } of comparisons.values()) {

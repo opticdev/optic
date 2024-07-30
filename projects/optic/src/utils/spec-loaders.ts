@@ -24,12 +24,7 @@ import {
 import { OpticCliConfig, VCS } from '../config';
 import * as Git from './git-utils';
 import { createNullSpec, createNullSpecSourcemap } from './specs';
-import { downloadSpec } from './cloud-specs';
 import { OpticBackendClient } from '../client';
-import { getApiFromOpticUrl, getApiUrl } from './cloud-urls';
-import { OPTIC_URL_KEY } from '../constants';
-import chalk from 'chalk';
-import { getDetailsForGeneration } from './generated';
 import { logger } from '../logger';
 
 const exec = promisify(callbackExec);
@@ -159,11 +154,7 @@ export async function loadRaw(
     rawString = await fetch(input.url).then((res) => res.text());
     format = 'unknown';
   } else if (input.from === 'cloud') {
-    const spec = await downloadSpec(
-      { apiId: input.apiId, tag: input.tag },
-      config
-    );
-    return spec.jsonLike as any;
+    throw new Error('cloud refs are not supported');
   } else {
     return createNullSpec();
   }
@@ -217,23 +208,7 @@ async function parseSpecAndDereference(
       };
     }
     case 'cloud': {
-      // try fetch from cloud, if 404 return an error
-      // todo handle empty spec case
-      const { jsonLike, sourcemap, spec } = await downloadSpec(
-        { apiId: input.apiId, tag: input.tag },
-        config
-      );
-      return {
-        jsonLike,
-        sourcemap,
-        version: checkOpenAPIVersion(jsonLike),
-        from: 'cloud',
-        isEmptySpec: false,
-        context: {
-          vcs: 'cloud',
-          specId: spec.id,
-        },
-      } as ParseResult;
+      throw new Error('cloud refs are not supported');
     }
     case 'git': {
       if (config.vcs?.type !== VCS.Git) {
@@ -397,75 +372,5 @@ export const parseFilesFromRef = async (
       });
     }),
     pathFromGitRoot: gitFileName,
-  };
-};
-
-export const parseFilesFromCloud = async (
-  filePath: string,
-  cloudTag: string,
-  config: OpticCliConfig,
-  options: {
-    denormalize: boolean;
-    headStrict: boolean;
-  }
-) => {
-  const headFile = await loadSpec(filePath, config, {
-    denormalize: options.denormalize,
-    strict: options.headStrict,
-  });
-
-  let specDetails = getApiFromOpticUrl(headFile.jsonLike[OPTIC_URL_KEY]);
-
-  const relativePath = path.relative(config.root, path.resolve(filePath));
-  const generatedDetails = await getDetailsForGeneration(config);
-  if (generatedDetails) {
-    const { web_url, organization_id, default_branch, default_tag } =
-      generatedDetails;
-
-    const { apis } = await config.client.getApis([relativePath], web_url);
-    let url: string;
-    if (!apis[0]) {
-      const api = await config.client.createApi(organization_id, {
-        name: relativePath,
-        path: relativePath,
-        web_url: web_url,
-        default_branch,
-        default_tag,
-      });
-      url = getApiUrl(config.client.getWebBase(), organization_id, api.id);
-    } else {
-      url = getApiUrl(
-        config.client.getWebBase(),
-        organization_id,
-        apis[0].api_id
-      );
-    }
-    specDetails = getApiFromOpticUrl(url);
-  }
-
-  if (!specDetails) {
-    throw new Error(
-      `${chalk.bold.red(
-        "Must have an 'x-optic-url' in your OpenAPI spec file to be able to compare against a cloud base."
-      )}.
-
-${chalk.gray(`Get started by running 'optic api add ${filePath}'`)}`
-    );
-  }
-  const baseFile = validateAndDenormalize(
-    await parseSpecAndDereference(
-      `cloud:${specDetails.apiId}@${cloudTag}`,
-      config
-    ),
-    {
-      denormalize: options.denormalize,
-      strict: false,
-    }
-  );
-
-  return {
-    baseFile,
-    headFile,
-    specDetails,
   };
 };
