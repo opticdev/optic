@@ -12,10 +12,6 @@ import { registerApiAdd } from './commands/api/add';
 import { registerApiCreate } from './commands/api/create';
 import { registerCaptureCommand } from './commands/capture/capture';
 import { registerConfigCommand } from './commands/config';
-import { captureCommand as captureV1Command } from './commands/oas/capture';
-import { newCommand } from './commands/oas/new';
-import { setupTlsCommand } from './commands/oas/setup-tls';
-import { verifyCommand } from './commands/oas/verify';
 import { registerDiffAll } from './commands/diff/diff-all';
 import { registerSpecPush } from './commands/spec/push';
 import { registerSpecAddApiUrl } from './commands/spec/add-api-url';
@@ -27,11 +23,9 @@ import { registerDereference } from './commands/dereference/dereference';
 import { registerCiSetup } from './commands/ci/setup';
 import { registerLint } from './commands/lint/lint';
 import { registerBundle } from './commands/bundle/bundle';
-import { updateCommand } from './commands/oas/update';
 import { registerApiList } from './commands/api/list';
 import { registerHistory } from './commands/history';
 import { registerRunCommand } from './commands/run';
-import path from 'path';
 import { CustomUploadFn } from './types';
 
 const packageJson = require('../package.json');
@@ -144,24 +138,6 @@ export const initCli = async (
   const betaSubcommands = cli.command('beta', { hidden: true });
   registerCaptureCommand(cli, cliConfig);
   registerConfigCommand(cli, cliConfig);
-
-  //@todo by 2023/5/10
-  const oas = new Command('oas').description(
-    '[Deprecated] capture/verify/update are now top-level commands'
-  );
-  oas.addCommand(await captureV1Command(cliConfig));
-  oas.addCommand(await newCommand());
-  oas.addCommand(await setupTlsCommand());
-  oas.addCommand(verifyCommand(cliConfig));
-  oas.addCommand(updateCommand());
-
-  cli.addCommand(oas, { hidden: true });
-
-  // commands for tracking changes with openapi
-  cli.addCommand(await newCommand(), { hidden: true });
-  cli.addCommand(await setupTlsCommand(), { hidden: true });
-  cli.addCommand(verifyCommand(cliConfig), { hidden: true });
-  cli.addCommand(updateCommand(), { hidden: true });
 
   registerLint(cli, cliConfig);
   registerDiffAll(cli, cliConfig, options);
