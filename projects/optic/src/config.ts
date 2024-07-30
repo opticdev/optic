@@ -224,10 +224,7 @@ export const initializeRules = async (
 
     try {
       if (config.extends.startsWith('@')) {
-        const response = await client.getStandard(config.extends);
-        rulesetMap = new Map(
-          response.config.ruleset.map((conf) => [conf.name, conf])
-        );
+        logger.error('Cloud rulesets are not supported');
       } else {
         // Assumption is that we're fetching a yaml file
         const response = await fetch(config.extends).then((response) => {

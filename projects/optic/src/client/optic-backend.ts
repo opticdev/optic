@@ -38,48 +38,6 @@ export class OpticBackendClient extends JsonHttpClient {
   }> {
     return this.getJson(`/api/token/orgs`);
   }
-
-  public async getManyRulesetsByName(rulesets: string[]): Promise<{
-    rulesets: ({
-      name: string;
-      url: string;
-      uploaded_at: string;
-    } | null)[];
-  }> {
-    const encodedRulesets = rulesets
-      .map((r) => encodeURIComponent(r))
-      .join(',');
-    return this.getJson(`/api/rulesets?rulesets=${encodedRulesets}`);
-  }
-
-  public async getStandard(
-    rulesetConfigIdentifier: string
-  ): Promise<Types.Standard> {
-    const encodedIdentifier = encodeURIComponent(rulesetConfigIdentifier);
-    return this.getJson(`/api/ruleset-configs/${encodedIdentifier}`);
-  }
-
-  public async createOrgStandard(
-    organizationId: string,
-    standard: Types.StandardConfig
-  ): Promise<{ id: string; slug: string }> {
-    return this.postJson<{ id: string; slug: string }>(
-      `/api/organizations/${organizationId}/standards`,
-      {
-        config: { ruleset: standard },
-      }
-    );
-  }
-
-  public async getOrgStandards(
-    organizationId: string
-  ): Promise<Types.Standard[]> {
-    const response = await this.getJson<{
-      data: Types.Standard[];
-    }>(`/api/organizations/${organizationId}/standards`);
-
-    return response.data;
-  }
 }
 
 export const createOpticClient = (opticToken: string) => {
