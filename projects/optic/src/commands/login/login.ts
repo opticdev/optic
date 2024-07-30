@@ -1,17 +1,6 @@
 import { Command } from 'commander';
-import prompts from 'prompts';
-import path from 'path';
-import fs from 'node:fs/promises';
-import open from 'open';
-
-import { OpticCliConfig, USER_CONFIG_PATH, readUserConfig } from '../../config';
-import { logger } from '../../logger';
-import chalk from 'chalk';
-import { getNewTokenUrl } from '../../utils/cloud-urls';
+import { OpticCliConfig } from '../../config';
 import { errorHandler } from '../../error-handler';
-import { createOpticClient } from '../../client';
-import { flushEvents, identify, alias, trackEvent } from '../../segment';
-import { anonymizeOrgToken } from '../../client/optic-backend';
 export const registerLogin = (cli: Command, config: OpticCliConfig) => {
   cli
     .command('login')
@@ -19,98 +8,7 @@ export const registerLogin = (cli: Command, config: OpticCliConfig) => {
     .action(errorHandler(getLoginAction(config), { command: 'login' }));
 };
 
-export async function identifyLoginFromToken(token: string) {
-  const newClient = createOpticClient(token);
-  const result = await newClient.verifyToken();
-
-  if (result.user) {
-    alias(result.user.userId);
-    identify(result.user.email);
-    trackEvent('cli.login');
-    await flushEvents();
-  } else {
-    const id = anonymizeOrgToken(token);
-    if (id) alias(id);
-  }
-}
-
-export const handleTokenInput = async (token: string, silent?: boolean) => {
-  const userConfig = await readUserConfig();
-  try {
-    await identifyLoginFromToken(token);
-  } catch (e) {
-    if (!silent) {
-      console.log(e);
-      logger.error(chalk.red(`An error occurred while verifying your token.`));
-    }
-    process.exitCode = 1;
-    return false;
-  }
-
-  const base64Token = Buffer.from(token).toString('base64');
-
-  const newConfig = userConfig
-    ? {
-        ...userConfig,
-        token: base64Token,
-      }
-    : {
-        token: base64Token,
-      };
-  await fs.mkdir(path.dirname(USER_CONFIG_PATH), { recursive: true });
-  await fs.writeFile(USER_CONFIG_PATH, JSON.stringify(newConfig), 'utf-8');
-
-  logger.info(
-    chalk.green(
-      `Successfully saved your personal access token to ${USER_CONFIG_PATH}`
-    )
-  );
-  return true;
-};
-
 const getLoginAction = (config: OpticCliConfig) => async () => {
-  const userConfig = await readUserConfig();
-  if (userConfig?.token) {
-    const { overwrite } = await prompts(
-      {
-        type: 'confirm',
-        name: 'overwrite',
-        message:
-          'It appears you are already logged in, would you like to continue? Continuing will overwrite the old login credentials',
-      },
-      { onCancel: () => process.exit(1) }
-    );
-    if (!overwrite) {
-      return;
-    }
-  }
-
-  const tokenUrl = getNewTokenUrl(config.client.getWebBase());
-
-  logger.info(`${chalk.blue('Generate a token below')}
-
-Create an account and generate a personal access token at ${chalk.underline.blue(
-    tokenUrl
-  )}
-  
-`);
-
-  // prompt breaks if we steal focus as its starting.
-  setTimeout(() => open(tokenUrl), 100);
-
-  const response = await prompts(
-    {
-      type: 'password',
-      name: 'token',
-      message: 'Enter your token here:',
-    },
-    { onCancel: () => process.exit(1) }
-  );
-
-  if (!response.token) {
-    throw new Error('Expected token');
-  }
-
-  logger.info(chalk.green(`\nVerifying your token`));
-  await handleTokenInput(response.token);
+  console.error('login is not supported');
+  return;
 };
