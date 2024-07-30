@@ -256,31 +256,6 @@ export class OpticBackendClient extends JsonHttpClient {
   }> {
     return this.getJson(`/api/token/verify`);
   }
-
-  public async getLintgptPreps(rule_checksums: string[]) {
-    return this.postJson(`/api/lintgpt-preps/list`, { rule_checksums });
-  }
-
-  public async requestLintgptPreps(rules: string[]) {
-    return this.postJson(`/api/lintgpt-preps/create`, { rules });
-  }
-
-  public async getLintgptEvals(
-    evals: { rule_checksum: string; node_checksum: string }[]
-  ) {
-    return this.postJson(`/api/lintgpt-evals/list`, { evals });
-  }
-
-  public async requestLintgptEvals(
-    eval_requests: {
-      node: string;
-      node_before?: string;
-      location_context: string;
-      rule_checksum: string;
-    }[]
-  ) {
-    return this.postJson(`/api/lintgpt-evals/create`, { eval_requests });
-  }
 }
 
 export const createOpticClient = (opticToken: string) => {
