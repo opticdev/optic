@@ -12,7 +12,6 @@ import chalk from 'chalk';
 import { flushEvents, trackEvent } from '../../segment';
 import { compressDataV2 } from './compressResults';
 import { GetSourcemapOptions, textToSev } from '@useoptic/openapi-utilities';
-import { uploadDiff } from './upload-diff';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { writeDataForCi } from '../../utils/ci-data';
 import { errorHandler } from '../../error-handler';
@@ -409,21 +408,9 @@ async function computeAll(
       if (customOptions.customUpload) {
         await customOptions.customUpload(toParseResults);
       } else {
-        const uploadResults = await uploadDiff(
-          {
-            from: fromParseResults,
-            to: toParseResults,
-          },
-          specResults,
-          config,
-          specDetails,
-          {
-            headTag: options.headTag,
-            standard,
-          }
-        );
-        specUrl = uploadResults?.headSpecUrl ?? null;
-        changelogUrl = uploadResults?.changelogUrl ?? null;
+        console.log('upload diff is no longer supported');
+        specUrl = null;
+        changelogUrl = null;
       }
     }
 

@@ -22,7 +22,6 @@ import {
   Severity,
 } from '@useoptic/openapi-utilities';
 import { compute } from './diff/compute';
-import { uploadDiff } from './diff/upload-diff';
 import chalk from 'chalk';
 import { flushEvents, trackEvent, identify } from '../segment';
 import {
@@ -448,28 +447,14 @@ const runDiffs = async ({
 
   ({ specResults, standard, checks, changelogData, warnings } = computeResults);
 
-  let upload: Awaited<ReturnType<typeof uploadDiff>>;
   try {
     if (customUpload) {
       await customUpload(cloudSpec);
       return;
     } else {
-      upload = await uploadDiff(
-        {
-          from: cloudSpec,
-          to: localSpec,
-        },
-        specResults,
-        config,
-        specDetails,
-        {
-          standard,
-          silent: true,
-          currentBranch,
-        }
-      );
-      specUrl = upload?.headSpecUrl ?? undefined;
-      changelogUrl = upload?.changelogUrl ?? undefined;
+      console.log('upload diff is no longer supported');
+      specUrl = undefined;
+      changelogUrl = undefined;
     }
   } catch (e) {
     return {
@@ -480,8 +465,8 @@ const runDiffs = async ({
   const diffReport: SpecReport['diff'] = {
     success: true,
     diffs: specResults.diffs.length,
-    changelogLink: upload?.changelogUrl,
-    runId: upload?.runId,
+    changelogLink: undefined,
+    runId: undefined,
     checks,
   };
 

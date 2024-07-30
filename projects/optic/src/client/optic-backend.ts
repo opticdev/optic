@@ -153,24 +153,6 @@ export class OpticBackendClient extends JsonHttpClient {
     });
   }
 
-  public async prepareRunUpload(body: {
-    checksum: string;
-    api_id: string;
-  }): Promise<{ upload_id: string; check_results_url: string }> {
-    return this.postJson(`/api/runs/prepare`, body);
-  }
-
-  public async createRun(run: {
-    upload_id: string;
-    api_id: string;
-    from_spec_id: string;
-    to_spec_id: string;
-    ruleset: Types.StandardConfig;
-    ci?: boolean;
-  }): Promise<{ id: string }> {
-    return this.postJson(`/api/runs2`, run);
-  }
-
   public async getApis(
     paths: string[],
     web_url: string

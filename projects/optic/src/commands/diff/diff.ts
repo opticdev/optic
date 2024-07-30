@@ -18,7 +18,6 @@ import { terminalChangelog } from './changelog-renderers/terminal-changelog';
 import { jsonChangelog } from './changelog-renderers/json-changelog';
 import { compute } from './compute';
 import { compressDataV2 } from './compressResults';
-import { uploadDiff } from './upload-diff';
 import { writeDataForCi } from '../../utils/ci-data';
 import { logger } from '../../logger';
 import { errorHandler } from '../../error-handler';
@@ -397,21 +396,9 @@ const getDiffAction =
       if (customOptions.customUpload) {
         await customOptions.customUpload(headParseResult);
       } else {
-        const uploadResults = await uploadDiff(
-          {
-            from: baseParseResult,
-            to: headParseResult,
-          },
-          diffResult.specResults,
-          config,
-          specDetails,
-          {
-            headTag: options.headTag,
-            standard: diffResult.standard,
-          }
-        );
-        specUrl = uploadResults?.headSpecUrl ?? null;
-        maybeChangelogUrl = uploadResults?.changelogUrl ?? null;
+        console.log('upload diff is no longer supported');
+        specUrl = null;
+        maybeChangelogUrl = null;
       }
     }
     if (options.json) {
