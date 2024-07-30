@@ -1,6 +1,5 @@
 import fetch from 'node-fetch';
 import { JsonHttpClient } from './JsonHttpClient';
-import * as Types from './optic-backend-types';
 
 export class OpticBackendClient extends JsonHttpClient {
   constructor(
@@ -31,12 +30,6 @@ export class OpticBackendClient extends JsonHttpClient {
       : process.env.OPTIC_ENV === 'local'
         ? 'http://localhost:3001'
         : 'https://app.useoptic.com';
-  }
-
-  public getTokenOrgs(): Promise<{
-    organizations: { id: string; name: string }[];
-  }> {
-    return this.getJson(`/api/token/orgs`);
   }
 }
 

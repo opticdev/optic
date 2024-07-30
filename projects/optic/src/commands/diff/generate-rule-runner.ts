@@ -133,6 +133,10 @@ export const generateRuleRunner = async (
       }
     }
 
+    if (rulesToFetch.length) {
+      logger.error('Hosted rules are not supported');
+    }
+
     logger.debug({
       rulesToFetch,
       localRulesets,
