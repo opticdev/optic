@@ -53,18 +53,21 @@ export type ParseResult =
   | (ParseOpenAPIResult<FlatOpenAPIV2.Document> & {
       isEmptySpec: boolean;
       from: 'git' | 'file' | 'url' | 'empty' | 'cloud';
+      fileContext: SpecFromInput;
       version: '2.x.x';
       context: ParseResultContext;
     })
   | (ParseOpenAPIResult<FlatOpenAPIV3.Document> & {
       isEmptySpec: boolean;
       from: 'git' | 'file' | 'url' | 'empty' | 'cloud';
+      fileContext: SpecFromInput;
       version: '3.0.x';
       context: ParseResultContext;
     })
   | (ParseOpenAPIResult<FlatOpenAPIV3_1.Document> & {
       isEmptySpec: boolean;
       from: 'git' | 'file' | 'url' | 'empty' | 'cloud';
+      fileContext: SpecFromInput;
       version: '3.1.x';
       context: ParseResultContext;
     });
@@ -209,6 +212,7 @@ async function parseSpecAndDereference(
       const sourcemap = createNullSpecSourcemap(spec);
       return {
         jsonLike: spec,
+        fileContext: input,
         sourcemap,
         from: 'empty',
         version: '3.0.x',
@@ -225,6 +229,7 @@ async function parseSpecAndDereference(
       );
       return {
         jsonLike,
+        fileContext: input,
         sourcemap,
         version: checkOpenAPIVersion(jsonLike),
         from: 'cloud',
@@ -255,6 +260,7 @@ async function parseSpecAndDereference(
         ...parseResult,
         version: checkOpenAPIVersion(parseResult.jsonLike),
         from: 'git',
+        fileContext: input,
         isEmptySpec: false,
         context: {
           vcs: 'git',
@@ -273,7 +279,7 @@ async function parseSpecAndDereference(
       return {
         ...parseResult,
         version: checkOpenAPIVersion(parseResult.jsonLike),
-
+        fileContext: input,
         from: 'url',
         isEmptySpec: false,
         context: null,
@@ -303,6 +309,7 @@ async function parseSpecAndDereference(
 
       return {
         ...parseResult,
+        fileContext: input,
         version: checkOpenAPIVersion(parseResult.jsonLike),
         from: 'file',
         isEmptySpec: false,
