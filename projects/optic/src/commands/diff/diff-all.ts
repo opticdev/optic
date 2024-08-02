@@ -581,7 +581,8 @@ async function openWebpage(
       changelogData
     );
     analyticsData.compressedDataLength = compressedData.length;
-    url = `${config.client.getWebBase()}/cli/diff#${compressedData}`;
+    const baseHtml = path.resolve(__dirname, '../../../web/build/index.html');
+    url = `${baseHtml}#${compressedData}`;
   }
   trackEvent('optic.diff_all.view_web', analyticsData);
 

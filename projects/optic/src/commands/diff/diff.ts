@@ -496,7 +496,11 @@ const getDiffAction =
           );
           analyticsData.compressedDataLength = compressedData.length;
           logger.info('Opening up diff in web view');
-          maybeChangelogUrl = `${config.client.getWebBase()}/cli/diff#${compressedData}`;
+          const baseHtml = path.resolve(
+            __dirname,
+            '../../../web/build/index.html'
+          );
+          maybeChangelogUrl = `${baseHtml}#${compressedData}`;
           await flushEvents();
         }
         trackEvent('optic.diff.view_web', analyticsData);
