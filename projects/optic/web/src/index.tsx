@@ -32,11 +32,18 @@ const App = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <ChangelogPage
-        base={transformed.base}
-        head={transformed.head}
-        results={transformed.results.results}
-      />
+      <div
+        style={{
+          width: 1000,
+          margin: 'auto',
+        }}
+      >
+        <ChangelogPage
+          base={transformed.base}
+          head={transformed.head}
+          results={transformed.results.results}
+        />
+      </div>
     </ThemeProvider>
   );
 };
