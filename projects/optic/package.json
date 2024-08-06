@@ -2,13 +2,14 @@
   "name": "@useoptic/optic",
   "license": "MIT",
   "packageManager": "yarn@4.1.1",
-  "version": "0.55.2-2",
+  "version": "0.55.2-3",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
     "/build",
     "/src",
-    "/ci"
+    "/ci",
+    "/web/build"
   ],
   "bin": "build/index.js",
   "repository": {
