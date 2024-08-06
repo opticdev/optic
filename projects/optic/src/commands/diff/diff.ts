@@ -281,7 +281,11 @@ const getDiffAction =
       // For json output we only want to render json
       logger.setLevel('silent');
     }
-    if (options.upload && !config.isAuthenticated) {
+    if (
+      options.upload &&
+      !config.isAuthenticated &&
+      !customOptions.customUpload
+    ) {
       logger.error(
         chalk.bold.red(
           'Error: Must be logged in to upload results. Run optic login to authenticate.'

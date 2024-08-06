@@ -591,7 +591,11 @@ const getDiffAllAction =
       );
       process.exitCode = 1;
       return;
-    } else if (options.upload && !config.isAuthenticated) {
+    } else if (
+      options.upload &&
+      !config.isAuthenticated &&
+      !customOptions.customUpload
+    ) {
       logger.error(
         chalk.bold.red(
           'Error: Must be logged in to upload results. Run optic login to authenticate.'
