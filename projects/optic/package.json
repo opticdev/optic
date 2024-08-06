@@ -2,14 +2,14 @@
   "name": "@useoptic/optic",
   "license": "MIT",
   "packageManager": "yarn@4.1.1",
-  "version": "0.55.2-3",
+  "version": "0.55.2-4",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
     "/build",
     "/src",
     "/ci",
-    "/web/build"
+    "/web"
   ],
   "bin": "build/index.js",
   "repository": {
@@ -132,7 +132,8 @@
       "build/commands/ruleset/upload.js"
     ],
     "assets": [
-      "ci/configs/*"
+      "ci/configs/*",
+      "web/build/*"
     ],
     "targets": [
       "node18-macos-arm64",
