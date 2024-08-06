@@ -15,12 +15,6 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
-type OperationYml = {
-  parameters?: any[];
-  requestBody?: any;
-  responses: Record<string, any>;
-};
-
 export function OperationYml({
   value,
   changelog,
