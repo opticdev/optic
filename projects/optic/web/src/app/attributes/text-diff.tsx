@@ -29,7 +29,7 @@ export function TextDiff({
         color: 'inherit',
       }}
     >
-      {diffResults.map((segment, index) => {
+      {diffResults.map((segment: any, index: number) => {
         if (!segment.added && !segment.removed) {
           return <span key={index}>{segment.value}</span>;
         } else if (segment.added) {
