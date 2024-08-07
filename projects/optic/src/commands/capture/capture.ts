@@ -30,13 +30,10 @@ import { PostmanCollectionEntries } from './sources/postman';
 import { CapturedInteractions } from './sources/captured-interactions';
 import * as AT from '../oas/lib/async-tools';
 import { GroupedCaptures } from './interactions/grouped-interactions';
-import { OPTIC_URL_KEY } from '../../constants';
-import { uploadCoverage } from './actions/upload-coverage';
 import { resolveRelativePath } from '../../utils/capture';
 import { PathInference } from './operations/path-inference';
 import { getSpinner } from '../../utils/spinner';
 import { flushEvents, trackEvent } from '../../segment';
-import { getOpticUrlDetails } from '../../utils/cloud-urls';
 import sortBy from 'lodash.sortby';
 import * as Git from '../../utils/git-utils';
 
@@ -307,42 +304,7 @@ const getCaptureAction =
         process.exitCode = 1;
         return;
       }
-      // We need to load the spec as is with denormalize=true so that the endpoint shas match
-      spec = denormalize(spec, spec.version);
-
-      const opticUrlDetails = await getOpticUrlDetails(config, {
-        filePath: path.relative(config.root, path.resolve(filePath)),
-        opticUrl: spec.jsonLike[OPTIC_URL_KEY],
-      });
-
-      if (config.vcs?.type !== VCS.Git) {
-        logger.error(
-          'optic capture --upload can only be run in a git repository.'
-        );
-        process.exitCode = 1;
-        return;
-      }
-
-      if (!opticUrlDetails) {
-        logger.error(
-          `File ${filePath} could not be associated with an Optic API. Files must be added to Optic before verification data can be uploaded.`
-        );
-        logger.error(`${chalk.yellow('Hint: ')} Run optic api add ${filePath}`);
-        process.exitCode = 1;
-        return;
-      }
-
-      const { specUrl, branchTag } = await uploadCoverage(
-        spec,
-        coverage,
-        opticUrlDetails,
-        config
-      );
-      logger.info(
-        `Successfully uploaded verification data ${
-          branchTag ? `for tag '${branchTag}'` : ''
-        }. View your spec at ${specUrl}`
-      );
+      logger.error(`Coverage upload is no longer supported`);
     }
     if (hasAnyDiffs) {
       process.exitCode = 1;

@@ -109,31 +109,4 @@ describe('initializeRules', () => {
       initializeRules(config, createOpticClient(''))
     ).rejects.toThrow(UserError);
   });
-
-  test('extends ruleset from cloud', async () => {
-    const mockClient = {
-      getStandard: jest.fn<any>(),
-    };
-    mockClient.getStandard.mockResolvedValue({
-      config: {
-        ruleset: [
-          { name: 'from-cloud-ruleset', config: {} },
-          { name: 'should-be-overwritten', config: { hello: true } },
-        ],
-      },
-    });
-    (createOpticClient as jest.MockedFunction<any>).mockImplementation(
-      () => mockClient
-    );
-
-    const config: ProjectYmlConfig = {
-      ruleset: [{ 'should-be-overwritten': { goodbye: false } }],
-      extends: '@orgslug/rulesetconfigid',
-    };
-    await initializeRules(config, createOpticClient(''));
-    expect(config.ruleset).toEqual([
-      { name: 'from-cloud-ruleset', config: {} },
-      { name: 'should-be-overwritten', config: { goodbye: false } },
-    ]);
-  });
 });

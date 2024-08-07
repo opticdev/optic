@@ -11,7 +11,6 @@ import {
 import Ajv from 'ajv';
 import { appliesWhen } from './constants';
 import {
-  LintGptClient,
   LintgptEval,
   LintgptRulesHelper,
   PreparedRule,
@@ -63,59 +62,15 @@ const configSchema = {
 const validateConfigSchema = ajv.compile(configSchema);
 
 export class LintGpt extends ExternalRuleBase {
-  static async fromOpticConfig(
-    config: unknown,
-    { client }: { client: LintGptClient }
-  ): Promise<LintGpt | string> {
-    const result = validateConfigSchema(config);
-
-    if (!result) {
-      return `- ${ajv.errorsText(validateConfigSchema.errors, {
-        separator: '\n- ',
-        dataVar: 'ruleset/lintgpt',
-      })}`;
-    }
-
-    const validatedConfig = config as LintGptConfig;
-    const requirementRules: PreparedRule[] = [];
-    const addedRules: PreparedRule[] = [];
-    const lintgptRulesHelper = new LintgptRulesHelper(client);
-
-    const rules: string[] = [];
-
-    for (const [, config] of Object.entries(validatedConfig)) {
-      for (const rule of config.rules) {
-        rules.push(rule);
-      }
-    }
-
-    const results = await lintgptRulesHelper.getRulePreps(rules);
-
-    for (const [, config] of Object.entries(validatedConfig)) {
-      for (const rule of config.rules) {
-        const rule_checksum = computeRuleChecksum(rule);
-        const result = results.get(rule_checksum);
-        if (result?.prep?.prep_result) {
-          if (
-            config.required_on === 'added' ||
-            config.required_on === 'addedOrChanged'
-          ) {
-            addedRules.push(result.prep.prep_result);
-          } else {
-            requirementRules.push(result.prep.prep_result);
-          }
-        }
-      }
-    }
-
-    return new LintGpt(validatedConfig, requirementRules, addedRules, client);
+  static async fromOpticConfig(config: unknown): Promise<LintGpt | string> {
+    return 'Error: LintGPT is no longer supported';
   }
 
   constructor(
     private config: LintGptConfig,
     private requirementRules: PreparedRule[],
     private addedRules: PreparedRule[],
-    private lintgptClient: LintGptClient
+    private lintgptClient: any
   ) {
     super();
   }
@@ -131,7 +86,7 @@ export class LintGpt extends ExternalRuleBase {
     const responsesToRun: AIRuleRunInputs[] = [];
     const propertiesToRun: AIRuleRunInputs[] = [];
 
-    const lintgptRulesHelper = new LintgptRulesHelper(this.lintgptClient);
+    const lintgptRulesHelper = new LintgptRulesHelper();
 
     inputs.groupedFacts.endpoints.forEach((endpoint) => {
       const { path, method } = endpoint;

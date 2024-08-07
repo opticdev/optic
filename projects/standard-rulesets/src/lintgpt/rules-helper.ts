@@ -39,24 +39,6 @@ export type LintgptEval = {
   eval_error?: string | null; // Rule did not pass
 };
 
-export type LintGptClient = {
-  getLintgptPreps: (
-    rule_checksums: string[]
-  ) => Promise<{ lintgpt_preps: CachedRulePrep[] }>;
-  requestLintgptPreps: (rules: string[]) => Promise<void>;
-  getLintgptEvals: (
-    evals: { rule_checksum: string; node_checksum: string }[]
-  ) => Promise<{ lintgpt_evals: LintgptEval[] }>;
-  requestLintgptEvals: (
-    evals: {
-      node: string;
-      node_before?: string;
-      location_context: string;
-      rule_checksum: string;
-    }[]
-  ) => Promise<void>;
-};
-
 export type EvalRequest = {
   rule_checksum: string;
   location_context: string;
@@ -65,7 +47,7 @@ export type EvalRequest = {
 };
 
 export class LintgptRulesHelper {
-  constructor(private client: LintGptClient) {}
+  constructor() {}
 
   private getPrepSpinnerText = ({
     total,
@@ -89,84 +71,11 @@ export class LintgptRulesHelper {
     });
 
     spinner.start();
-
-    try {
-      for (const rule of rules) {
-        const rule_checksum = computeRuleChecksum(rule);
-        preparedRulesMap.set(rule_checksum, { rule, rule_checksum });
-      }
-
-      const getRulesWithoutPrep = () =>
-        [...preparedRulesMap.values()].filter(
-          ({ prep }) => !prep || prep.status === 'requested'
-        );
-
-      const maxTime = Date.now() + 3 * 60 * 1000;
-
-      let rulesWithoutPreps = getRulesWithoutPrep();
-      let firstRun = true;
-      const pollInterval = 2000;
-
-      while (rulesWithoutPreps.length && maxTime > Date.now()) {
-        if (!firstRun)
-          await new Promise((resolve) => setTimeout(resolve, pollInterval));
-
-        const results = await this.client.getLintgptPreps(
-          rulesWithoutPreps.map((r) => r.rule_checksum)
-        );
-
-        for (const result of results.lintgpt_preps) {
-          preparedRulesMap.set(result.rule_checksum, {
-            ...preparedRulesMap.get(result.rule_checksum)!,
-            prep: result,
-          });
-        }
-
-        rulesWithoutPreps = getRulesWithoutPrep();
-
-        if (firstRun && rulesWithoutPreps.length) {
-          const rulesToPrep = rulesWithoutPreps.map((r) => r.rule);
-          await this.client.requestLintgptPreps(rulesToPrep);
-        }
-
-        spinner.text = this.getPrepSpinnerText({
-          total: rules.length,
-          evaluated: rules.length - rulesWithoutPreps.length,
-        });
-
-        firstRun = false;
-      }
-
-      if (rulesWithoutPreps.length) {
-        spinner.warn(
-          `LintGPT: ${rulesWithoutPreps.length}/${rules.length} rules timed out`
-        );
-      } else {
-        spinner.succeed(
-          this.getPrepSpinnerText({
-            total: rules.length,
-            evaluated: rules.length - rulesWithoutPreps.length,
-          })
-        );
-      }
-
-      return preparedRulesMap;
-    } catch (e) {
-      spinner.fail(`LintGPT: an error occured while preparing rules`);
-      throw e;
-    }
+    spinner.fail(`LintGPT: no longer supported`);
   }
 
-  private getEvalSpinnerText = ({
-    total,
-    evaluated,
-  }: {
-    total: number;
-    evaluated: number;
-  }) => `LintGPT: ${evaluated}/${total} checks run`;
-
   public async getRuleEvals(eval_requests: EvalRequest[]) {
-    const evalsMap = new Map<
+    return new Map<
       string,
       {
         rule_checksum: string;
@@ -175,115 +84,6 @@ export class LintgptRulesHelper {
         rule_eval?: LintgptEval;
       }
     >();
-
-    let spinner = ora({
-      text: this.getEvalSpinnerText({
-        total: eval_requests.length,
-        evaluated: 0,
-      }),
-    });
-
-    spinner.start();
-
-    try {
-      for (const eval_request of eval_requests) {
-        const rule_checksum = eval_request.rule_checksum;
-        const node_checksum = computeNodeChecksum(eval_request);
-        const key = getEvalKey(rule_checksum, node_checksum);
-        evalsMap.set(key, {
-          eval_request,
-          rule_checksum,
-          node_checksum,
-        });
-      }
-
-      const getRequestsWithoutEvals = () =>
-        [...evalsMap.values()].filter(
-          ({ rule_eval }) => !rule_eval || rule_eval.status === 'requested'
-        );
-
-      const maxTime = Date.now() + 5 * 60 * 1000;
-
-      let requestsWithoutEvals = getRequestsWithoutEvals();
-      let firstRun = true;
-      let pollInterval0 = 0;
-      let pollInterval1 = 1000;
-
-      while (requestsWithoutEvals.length && maxTime > Date.now()) {
-        if (!firstRun) {
-          pollInterval1 = pollInterval0 + pollInterval1;
-          pollInterval0 = pollInterval1 - pollInterval0;
-          await new Promise((resolve) => setTimeout(resolve, pollInterval1));
-        }
-
-        const queryChunks = chunk(
-          requestsWithoutEvals.map((r) => ({
-            rule_checksum: r.rule_checksum,
-            node_checksum: r.node_checksum,
-          })),
-          20
-        );
-
-        const resultChunks = await Promise.all(
-          queryChunks.map((c) => this.client.getLintgptEvals(c))
-        );
-
-        const results = resultChunks.reduce(
-          (acc, val) => ({
-            lintgpt_evals: [...acc.lintgpt_evals, ...val.lintgpt_evals],
-          }),
-          { lintgpt_evals: [] }
-        );
-
-        for (const result of results.lintgpt_evals) {
-          const key = getEvalKey(result.rule_checksum, result.node_checksum);
-          if (!evalsMap.has(key)) {
-            continue;
-          }
-          evalsMap.set(key, {
-            ...evalsMap.get(key)!,
-            rule_eval: result,
-          });
-        }
-
-        requestsWithoutEvals = getRequestsWithoutEvals();
-
-        spinner.text = this.getEvalSpinnerText({
-          total: eval_requests.length,
-          evaluated: eval_requests.length - requestsWithoutEvals.length,
-        });
-
-        if (firstRun && requestsWithoutEvals.length) {
-          const evalsToRequest = requestsWithoutEvals.map(
-            (r) => r.eval_request
-          );
-          const evalsToRequestChunks = chunk(evalsToRequest, 20);
-          for (const chunk of evalsToRequestChunks) {
-            await this.client.requestLintgptEvals(chunk);
-            await new Promise((resolve) => setTimeout(resolve, 20));
-          }
-        }
-        firstRun = false;
-      }
-
-      if (requestsWithoutEvals.length) {
-        spinner.warn(
-          `LintGPT: ${requestsWithoutEvals.length}/${eval_requests.length} checks timed out`
-        );
-      } else {
-        spinner.succeed(
-          this.getEvalSpinnerText({
-            total: eval_requests.length,
-            evaluated: eval_requests.length - requestsWithoutEvals.length,
-          })
-        );
-      }
-
-      return evalsMap;
-    } catch (e) {
-      spinner.fail('LintGPT: an error occured while running evals');
-      throw e;
-    }
   }
 }
 

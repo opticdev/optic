@@ -16,7 +16,6 @@ import { specToPaths } from '../capture/operations/queries';
 import { OpticCliConfig, VCS } from '../../config';
 import { OPTIC_URL_KEY } from '../../constants';
 import { getApiFromOpticUrl, getSpecUrl } from '../../utils/cloud-urls';
-import { uploadSpec, uploadSpecVerification } from '../../utils/cloud-specs';
 import { loadSpec, ParseResult } from '../../utils/spec-loaders';
 import * as Git from '../../utils/git-utils';
 import {
@@ -192,41 +191,7 @@ export async function runVerify(
       process.exitCode = 1;
       return;
     }
-
-    const { orgId, apiId } = opticUrlDetails;
-    const tags: string[] = [];
-    let branchTag: string | undefined = undefined;
-    if (config.vcs?.type === VCS.Git) {
-      tags.push(`git:${config.vcs.sha}`);
-      const currentBranch = await Git.getCurrentBranchName();
-      branchTag = sanitizeGitTag(`gitbranch:${currentBranch}`);
-      tags.push(branchTag);
-    }
-    const specId = await uploadSpec(apiId, {
-      spec: parseResult,
-      client: config.client,
-      tags,
-      orgId,
-    });
-
-    await uploadSpecVerification(specId, {
-      client: config.client,
-      verificationData: coverage.coverage,
-      message: options.message,
-    });
-
-    const specUrl = getSpecUrl(
-      config.client.getWebBase(),
-      orgId,
-      apiId,
-      specId
-    );
-
-    console.log(
-      `Successfully uploaded verification data ${
-        branchTag ? `for tag '${branchTag}'` : ''
-      }. View your spec at ${specUrl}`
-    );
+    console.error('Coverage upload is not supported');
   }
 
   analytics.forEach((event) => trackEvent(event.event, event.properties));

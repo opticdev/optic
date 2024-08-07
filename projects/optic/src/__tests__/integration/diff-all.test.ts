@@ -10,53 +10,11 @@ import {
   runOptic,
   setupWorkspace,
   normalizeWorkspace,
-  setupTestServer,
   run,
 } from './integration';
 import path from 'node:path';
-import fs from 'node:fs/promises';
 
 jest.setTimeout(30000);
-
-setupTestServer(({ url, method }) => {
-  if (method === 'POST' && /\/api\/specs\/prepare$/.test(url)) {
-    return JSON.stringify({
-      spec_id: 'already-uploaded',
-    });
-  } else if (method === 'POST' && /\/api\/runs\/prepare$/.test(url)) {
-    return JSON.stringify({
-      check_results_url: `${process.env.BWTS_HOST_OVERRIDE}/special-s3-route`,
-      upload_id: '123',
-    });
-  } else if (method === 'POST' && /\/api\/runs2$/.test(url)) {
-    return JSON.stringify({
-      id: 'run-id',
-    });
-  } else if (method === 'GET' && /spec$/.test(url)) {
-    return `{"openapi":"3.1.0","paths":{ "/api/users": { "get": { "responses":{} }}},"info":{"version":"0.0.0","title":"Empty"}}`;
-  } else if (method === 'GET' && /sourcemap$/.test(url)) {
-    return `{"rootFilePath":"empty.json","files":[{"path":"empty.json","sha256":"815b8e5491a1f491765084f236c741d5073e10fcece23436f2db84a8c788db09","contents":"{'openapi':'3.1.0','paths':{ '/api/users': { 'get': { 'responses':{} }}},'info':{'version':'0.0.0','title':'Empty'}}","index":0}],"refMappings":{}}`;
-  } else if (method === 'GET' && /api\/apis\/.*\/specs\/.*$/.test(url)) {
-    return JSON.stringify({
-      id: 'run-id',
-      specUrl: `${process.env.BWTS_HOST_OVERRIDE}/spec`,
-      sourcemapUrl: `${process.env.BWTS_HOST_OVERRIDE}/sourcemap`,
-    });
-  } else if (method === 'GET' && /\/api\/apis/.test(url)) {
-    return JSON.stringify({
-      apis: [null],
-    });
-  } else if (method === 'POST' && /\/api\/api$/.test(url)) {
-    return JSON.stringify({
-      id: 'generated-api',
-    });
-  } else if (method === 'GET' && /\/api\/token\/orgs/.test(url)) {
-    return JSON.stringify({
-      organizations: [{ id: 'org-id', name: 'org-blah' }],
-    });
-  }
-  return JSON.stringify({});
-});
 
 function sanitizeOutput(out: string) {
   return out.replace(/tree\/[a-zA-Z0-9]{40}/g, 'tree/COMMIT-HASH');
@@ -109,35 +67,6 @@ describe('diff-all', () => {
 
     expect(
       normalizeWorkspace(workspace, sanitizeOutput(combined))
-    ).toMatchSnapshot();
-    expect(code).toBe(1);
-  });
-
-  test('diffs all files in a workspace with x-optic-url keys with --upload', async () => {
-    const workspace = await setupWorkspace('diff-all/repo', {
-      repo: true,
-      commit: true,
-    });
-
-    await run(
-      `mv ./mvspec.yml ./movedspec.yml && git add . && git commit -m 'move spec'`,
-      false,
-      workspace
-    );
-    process.env.OPTIC_TOKEN = '123';
-
-    const { combined, code } = await runOptic(
-      workspace,
-      'diff-all --check --upload'
-    );
-
-    expect(
-      normalizeWorkspace(workspace, sanitizeOutput(combined))
-    ).toMatchSnapshot();
-    expect(
-      JSON.parse(
-        await fs.readFile(path.join(workspace, 'ci-run-details.json'), 'utf-8')
-      )
     ).toMatchSnapshot();
     expect(code).toBe(1);
   });
@@ -212,23 +141,5 @@ describe('diff-all', () => {
       normalizeWorkspace(workspace, sanitizeOutput(combined))
     ).toMatchSnapshot();
     expect(code).toBe(1);
-  });
-
-  test('diff all against a cloud tag', async () => {
-    const workspace = await setupWorkspace('diff-all/cloud-diff', {
-      repo: true,
-      commit: true,
-    });
-    process.env.OPTIC_TOKEN = '123';
-
-    const { combined, code } = await runOptic(
-      workspace,
-      'diff-all --compare-from cloud:main --check'
-    );
-
-    expect(code).toBe(1);
-    expect(
-      normalizeWorkspace(workspace, sanitizeOutput(combined))
-    ).toMatchSnapshot();
   });
 });

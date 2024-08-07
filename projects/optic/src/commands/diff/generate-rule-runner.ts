@@ -47,10 +47,8 @@ const getStandardToUse = async (options: {
   } else if (options.specRuleset) {
     if (options.specRuleset.startsWith('@')) {
       try {
-        const ruleset = await options.config.client.getStandard(
-          options.specRuleset
-        );
-        return ruleset.config.ruleset;
+        logger.error('Cloud rulesets are not supported');
+        return [];
       } catch (e) {
         logger.warn(
           `${chalk.red('Warning:')} Could not download standard ${
@@ -134,18 +132,9 @@ export const generateRuleRunner = async (
         rulesToFetch.push(rule.name);
       }
     }
-    const response =
-      rulesToFetch.length > 0
-        ? await options.config.client.getManyRulesetsByName(rulesToFetch)
-        : { rulesets: [] };
-    for (const hostedRuleset of response.rulesets) {
-      if (hostedRuleset) {
-        hostedRulesets[hostedRuleset.name] = {
-          uploaded_at: hostedRuleset.uploaded_at,
-          url: hostedRuleset.url,
-          should_decompress: true,
-        };
-      }
+
+    if (rulesToFetch.length) {
+      logger.error('Hosted rules are not supported');
     }
 
     logger.debug({

@@ -12,17 +12,13 @@ import chalk from 'chalk';
 import { flushEvents, trackEvent } from '../../segment';
 import { compressDataV2 } from './compressResults';
 import { GetSourcemapOptions, textToSev } from '@useoptic/openapi-utilities';
-import { uploadDiff } from './upload-diff';
 import { getApiFromOpticUrl } from '../../utils/cloud-urls';
 import { writeDataForCi } from '../../utils/ci-data';
 import { errorHandler } from '../../error-handler';
 import { checkOpenAPIVersion } from '@useoptic/openapi-io';
 import path from 'path';
-import { getApiUrl } from '../../utils/cloud-urls';
-import { getDetailsForGeneration } from '../../utils/generated';
 import { terminalChangelog } from './changelog-renderers/terminal-changelog';
 import { jsonChangelog } from './changelog-renderers/json-changelog';
-import * as Types from '../../client/optic-backend-types';
 import { openUrl } from '../../utils/open-url';
 import { renderCloudSetup } from '../../utils/render-cloud';
 import { CustomUploadFn } from '../../types';
@@ -49,7 +45,7 @@ export const registerDiffAll = (
   options: { customUpload?: CustomUploadFn }
 ) => {
   cli
-    .command('diff-all', { hidden: true })
+    .command('diff-all')
     .configureHelp({
       commandUsage: usage,
     })
@@ -278,52 +274,6 @@ async function computeAll(
     });
   }
 
-  const generatedDetails = await getDetailsForGeneration(config);
-  if (generatedDetails) {
-    const { web_url, organization_id, default_branch, default_tag } =
-      generatedDetails;
-
-    const pathToUrl: Record<string, string | null> = {};
-    const pathToName: Record<string, string | null> = {};
-    for (const [p, comparison] of comparisons.entries()) {
-      if (!comparison.opticUrl) {
-        pathToUrl[p] = null;
-      }
-      pathToName[p] = comparison.name ?? null;
-    }
-    let apis: (Types.Api | null)[] = [];
-    const chunks = chunk(Object.keys(pathToUrl), 20);
-    for (const chunk of chunks) {
-      const { apis: apiChunk } = await config.client.getApis(chunk, web_url);
-      apis.push(...apiChunk);
-    }
-
-    for (const api of apis) {
-      if (api) {
-        pathToUrl[api.path] = getApiUrl(
-          config.client.getWebBase(),
-          api.organization_id,
-          api.api_id
-        );
-      }
-    }
-
-    for (let [path, url] of Object.entries(pathToUrl)) {
-      if (!url) {
-        const api = await config.client.createApi(organization_id, {
-          name: pathToName[path] ?? path,
-          path,
-          web_url: web_url,
-          default_branch,
-          default_tag,
-        });
-        url = getApiUrl(config.client.getWebBase(), organization_id, api.id);
-      }
-      const comparison = comparisons.get(path);
-      if (comparison) comparison.opticUrl = url;
-    }
-  }
-
   for (let { from, to, opticUrl } of comparisons.values()) {
     const cloudTag: string | null =
       !!from && /^cloud:/.test(from) ? from.replace(/^cloud:/, '') : null;
@@ -409,21 +359,9 @@ async function computeAll(
       if (customOptions.customUpload) {
         await customOptions.customUpload(toParseResults);
       } else {
-        const uploadResults = await uploadDiff(
-          {
-            from: fromParseResults,
-            to: toParseResults,
-          },
-          specResults,
-          config,
-          specDetails,
-          {
-            headTag: options.headTag,
-            standard,
-          }
-        );
-        specUrl = uploadResults?.headSpecUrl ?? null;
-        changelogUrl = uploadResults?.changelogUrl ?? null;
+        console.log('upload diff is no longer supported');
+        specUrl = null;
+        changelogUrl = null;
       }
     }
 

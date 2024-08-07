@@ -9,7 +9,6 @@ import {
   parseFilesFromRef,
   ParseResult,
   loadSpec,
-  parseFilesFromCloud,
 } from '../../utils/spec-loaders';
 import { ConfigRuleset, OpticCliConfig, VCS } from '../../config';
 import chalk from 'chalk';
@@ -18,13 +17,11 @@ import { terminalChangelog } from './changelog-renderers/terminal-changelog';
 import { jsonChangelog } from './changelog-renderers/json-changelog';
 import { compute } from './compute';
 import { compressDataV2 } from './compressResults';
-import { uploadDiff } from './upload-diff';
 import { writeDataForCi } from '../../utils/ci-data';
 import { logger } from '../../logger';
 import { errorHandler } from '../../error-handler';
 import path from 'path';
 import { OPTIC_URL_KEY } from '../../constants';
-import { getApiFromOpticUrl, getOpticUrlDetails } from '../../utils/cloud-urls';
 import * as Git from '../../utils/git-utils';
 import * as GitCandidates from '../api/git-get-file-candidates';
 import stableStringify from 'json-stable-stringify';
@@ -172,15 +169,7 @@ const getHeadAndLastChanged = async (
       }
     }
 
-    const opticUrl =
-      headFile.jsonLike[OPTIC_URL_KEY] ??
-      baseFile.jsonLike[OPTIC_URL_KEY] ??
-      undefined;
-
-    const specDetails = await getOpticUrlDetails(config, {
-      filePath: path.relative(config.root, path.resolve(file)),
-      opticUrl,
-    });
+    const specDetails = null;
 
     return {
       specs: [baseFile, headFile, specDetails],
@@ -210,11 +199,7 @@ const getBaseAndHeadFromFiles = async (
         denormalize: true,
       }),
     ]);
-    const opticUrl: string | null =
-      headFile.jsonLike[OPTIC_URL_KEY] ??
-      baseFile.jsonLike[OPTIC_URL_KEY] ??
-      null;
-    const specDetails = opticUrl ? getApiFromOpticUrl(opticUrl) : null;
+    const specDetails = null;
     return [baseFile, headFile, specDetails];
   } catch (e) {
     throw new UserError({
@@ -232,16 +217,7 @@ const getBaseAndHeadFromFileAndBase = async (
 ): Promise<[ParseResult, ParseResult, SpecDetails]> => {
   try {
     if (/^cloud:/.test(base)) {
-      const { baseFile, headFile, specDetails } = await parseFilesFromCloud(
-        file1,
-        base.replace(/^cloud:/, ''),
-        config,
-        {
-          denormalize: true,
-          headStrict: options.validation === 'strict',
-        }
-      );
-      return [baseFile, headFile, specDetails];
+      throw new Error('cloud refs are not supported');
     } else {
       const { baseFile, headFile } = await parseFilesFromRef(
         file1,
@@ -253,11 +229,7 @@ const getBaseAndHeadFromFileAndBase = async (
           headStrict: options.validation === 'strict',
         }
       );
-      const opticUrl: string | null =
-        headFile.jsonLike[OPTIC_URL_KEY] ??
-        baseFile.jsonLike[OPTIC_URL_KEY] ??
-        null;
-      const specDetails = opticUrl ? getApiFromOpticUrl(opticUrl) : null;
+      const specDetails = null;
       return [baseFile, headFile, specDetails];
     }
   } catch (e) {
@@ -401,21 +373,9 @@ const getDiffAction =
       if (customOptions.customUpload) {
         await customOptions.customUpload(headParseResult);
       } else {
-        const uploadResults = await uploadDiff(
-          {
-            from: baseParseResult,
-            to: headParseResult,
-          },
-          diffResult.specResults,
-          config,
-          specDetails,
-          {
-            headTag: options.headTag,
-            standard: diffResult.standard,
-          }
-        );
-        specUrl = uploadResults?.headSpecUrl ?? null;
-        maybeChangelogUrl = uploadResults?.changelogUrl ?? null;
+        console.log('upload diff is no longer supported');
+        specUrl = null;
+        maybeChangelogUrl = null;
       }
     }
     if (options.json) {
@@ -464,8 +424,6 @@ const getDiffAction =
         logger.info(log);
       }
     }
-
-    if (config.isInCi && !options.upload) renderCloudSetup();
 
     if (options.web) {
       if (
