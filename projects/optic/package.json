@@ -8,7 +8,8 @@
   "files": [
     "/build",
     "/src",
-    "/ci"
+    "/ci",
+    "/web"
   ],
   "bin": "build/index.js",
   "repository": {
@@ -16,7 +17,8 @@
     "url": "https://github.com/opticdev/optic/edit/main/projects/optic"
   },
   "scripts": {
-    "build": "yarn tsc --build --verbose && yarn babel ./src --out-dir ./build --extensions \".ts\",\".tsx\"",
+    "build": "yarn tsc --build --verbose && yarn babel ./src --out-dir ./build --extensions \".ts\",\".tsx\" && yarn run build:web",
+    "build:web": "cd web && npm install && npm run build",
     "clean": "rm -rf build",
     "test": "ENVIRONMENT=test jest --colors",
     "local:run": "yarn ts-node src/index.ts"
@@ -130,7 +132,8 @@
       "build/commands/ruleset/upload.js"
     ],
     "assets": [
-      "ci/configs/*"
+      "ci/configs/*",
+      "web/build/*"
     ],
     "targets": [
       "node18-macos-arm64",

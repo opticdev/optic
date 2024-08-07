@@ -1,4 +1,5 @@
 import { Command, Option } from 'commander';
+import p from 'path';
 
 import { compute } from '../diff/compute';
 import { loadSpec, ParseResult } from '../../utils/spec-loaders';
@@ -123,9 +124,8 @@ const getLintAction =
 
         trackEvent('optic.lint.view_web', analyticsData);
         await flushEvents();
-        await openUrl(
-          `${config.client.getWebBase()}/cli/diff#${compressedData}`
-        );
+        const baseHtml = p.resolve(__dirname, '../../../web/build/index.html');
+        await openUrl(`${baseHtml}#${compressedData}`);
       }
 
       if (failuresForSeverity > 0) {
