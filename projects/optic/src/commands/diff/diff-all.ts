@@ -45,7 +45,7 @@ export const registerDiffAll = (
   options: { customUpload?: CustomUploadFn }
 ) => {
   cli
-    .command('diff-all', { hidden: true })
+    .command('diff-all')
     .configureHelp({
       commandUsage: usage,
     })

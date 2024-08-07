@@ -87,7 +87,7 @@ export function registerRunCommand(
   options: { customUpload?: CustomUploadFn }
 ) {
   cli
-    .command('run')
+    .command('run', { hidden: true })
     .description(
       'CI workflow command that tests each OpenAPI specification in your repo and summarizes the results as a pull (or merge) request comment'
     )
