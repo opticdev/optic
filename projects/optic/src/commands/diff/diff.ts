@@ -455,7 +455,7 @@ const getDiffAction =
           analyticsData.compressedDataLength = compressedData.length;
           logger.info('Opening up diff in web view');
           const baseHtml = path.resolve(
-            __dirname,
+            process.cwd(),
             '../../../web/build/index.html'
           );
           maybeChangelogUrl = `${baseHtml}#${compressedData}`;
