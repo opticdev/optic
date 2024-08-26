@@ -41,6 +41,7 @@ https://raw.githubusercontent.com/opticdev/bookstore-example/ac5f3c55a6f7f27c482
 
 <img src="https://github.com/opticdev/optic/assets/5900338/fd6cdd7f-c147-467b-9517-84232baa898f" width="500" />
 
+[Read Documentation](https://www.useoptic.com/docs/diff-openapi)
 
 ## Test the accuracy of your documentation using `optic capture`
 It can be difficult to keep an OpenAPI in-sync with your implementation. Optic tests if your OpenAPI is accurate by capturing traffic from your tests and comparing it to the spec.
@@ -104,9 +105,10 @@ optic capture openapi.yml --update=interactive
 <img width="604" alt="Screenshot 2023-09-08 at 2 12 15 PM" src="https://github.com/opticdev/optic/assets/18374483/c7c540c8-2501-4824-aac6-049587e29c0a">
 
 
+[Read Documentation](https://www.useoptic.com/docs/verify-openapi)
 
 ## Improve your API design with `optic diff`
-Optic is the first API linter built with the API lifecycle in-mind. When testing your API design, it always considers two versions of your API, for example: the version on the `develop` vs the `latest` release tag. This lets Optic check for all kinds of things Spectral (and other liners) misses like breaking changes and proper use of your API versioning scheme.
+Optic is the first API linter built with the API lifecycle in-mind. When testing your API design, it always considers two versions of your API, for example: the version on the `develop` vs the `latest` release tag. This lets Optic check for all kinds of things [Spectral (and other liners) misses](https://www.useoptic.com/comparisons/spectral) like breaking changes and proper use of your API versioning scheme.
 
 
 <img src="https://github.com/opticdev/optic/assets/5900338/50a43d09-f531-405b-8b53-1c91ff5b8201" width="500" />
@@ -170,6 +172,73 @@ ruleset:
       require_operation_description: true
       require_operation_id: true
 ```
+
+[Read documentation](https://www.useoptic.com/docs/style-guides)
+
+
+## Start running in CI
+To start using Optic in CI, [follow this guide](https://www.useoptic.com/docs/setup-ci). We provide template workflows for GitHub and GitLab to help you run Optic as a CI check:
+
+### Github
+
+```yaml 
+# .github/workflows/optic.yml
+name: optic
+on:
+  pull_request:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Optic
+        run: npm install --location global @useoptic/optic
+
+      - name: Run Optic
+        env:
+          OPTIC_TOKEN: ${{ secrets.OPTIC_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: optic run
+```
+
+### Gitlab
+
+Don't forget to add the `OPTIC_TOKEN` and `OPTIC_GITLAB_TOKEN` variables to your workflow.
+
+```yaml
+# .gitlab-ci.yml
+optic-default-branch-push:
+  image: node:latest
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && OPTIC_TOKEN && $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+  script:
+    - npm install -g @useoptic/optic
+    - optic run
+
+optic-merge-request:
+  image: node:latest
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $OPTIC_TOKEN
+  script:
+    - npm install -g @useoptic/optic
+    - export OPTIC_RESULT=0; optic run || export OPTIC_RESULT=$?
+    - if [ $OPTIC_RESULT -ne 0 ]; then exit 1; fi;
+```
+
+
+<img src="https://github.com/opticdev/optic/assets/5900338/18eb381a-59aa-42af-975a-36d1f24a5978" width="500" />
+
+
+## Resources
+- [Read our full documentation here](https://www.useoptic.com/docs)
+- [Need help? Book office hours](https://calendly.com/optic-onboarding/optic-office-hours)
+- [Join us on Discord](https://discord.com/invite/t9hADkuYjP)
 
 
 ### License
