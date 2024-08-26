@@ -2,7 +2,7 @@
   "name": "@useoptic/optic",
   "license": "MIT",
   "packageManager": "yarn@4.1.1",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -72,7 +72,7 @@
     "@useoptic/openapi-utilities": "workspace:*",
     "@useoptic/rulesets-base": "workspace:*",
     "@useoptic/standard-rulesets": "workspace:*",
-    "ajv": "^8.6.0",
+    "ajv": "8.17.1",
     "ajv-formats": "~2.1.0",
     "async-exit-hook": "^2.0.1",
     "axax": "^0.2.2",
