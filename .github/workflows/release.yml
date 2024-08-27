@@ -165,13 +165,3 @@ jobs:
       release_tag_name: ${{ github.event.release.tag_name }}
     secrets: inherit
 
-  publish-container-image:
-    needs:
-      - release
-      - publish-binaries
-    if: github.event.release.prerelease == false
-    uses: ./.github/workflows/release-container-image.yml
-    with:
-      optic_version: ${{ needs.release.outputs.optic_version }}
-    secrets: inherit
-
