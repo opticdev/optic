@@ -30,6 +30,8 @@ import { openUrl } from '../../utils/open-url';
 import { renderCloudSetup } from '../../utils/render-cloud';
 import { getSpinner } from '../../utils/spinner';
 import { CustomUploadFn } from '../../types';
+import fs from 'fs-extra';
+import os from 'os';
 
 type DiffActionOptions = {
   base: string;
@@ -454,9 +456,18 @@ const getDiffAction =
           );
           analyticsData.compressedDataLength = compressedData.length;
           logger.info('Opening up diff in web view');
-          const baseHtml = path.resolve(
-            path.join(__dirname, '../../../web/build/index.html')
+
+          const copyPath = path.join(os.tmpdir(), 'optic-changelog');
+
+          // This steps is for supporting versions of Optic that use pkg to compile all assets into a binary. Copies it from the virtual file system into userland
+          await fs.copy(
+            path.resolve(path.join(__dirname, '../../../web/build')),
+            copyPath,
+            { errorOnExist: false, overwrite: false }
           );
+
+          const baseHtml = path.resolve(path.join(copyPath, 'index.html'));
+
           maybeChangelogUrl = `${baseHtml}#${compressedData}`;
           await flushEvents();
         }
