@@ -234,13 +234,6 @@ optic-merge-request:
 
 <img src="https://github.com/opticdev/optic/assets/5900338/18eb381a-59aa-42af-975a-36d1f24a5978" width="500" />
 
-
-## Resources
-- [Read our full documentation here](https://www.useoptic.com/docs)
-- [Need help? Book office hours](https://calendly.com/optic-onboarding/optic-office-hours)
-- [Join us on Discord](https://discord.com/invite/t9hADkuYjP)
-
-
 ### License
 Optic is MIT Licensed 
 
