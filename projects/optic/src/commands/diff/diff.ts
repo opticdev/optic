@@ -119,7 +119,10 @@ export const registerDiff = (
     .option('-c, --check', 'Enable checks', false)
     .option('-u, --upload', 'Upload run to cloud', false)
     .option('-w, --web', 'View the diff in the Optic changelog web view', false)
-    .option('-o, --out <file>', 'write a self-contained HTML diff')
+    .option(
+      '-o, --out <file>',
+      'write a self-contained HTML diff. use with --web'
+    )
     .option('--json', 'Output as json', false)
     .option('--last-change', 'Find the last change for this spec', false)
     .option(
