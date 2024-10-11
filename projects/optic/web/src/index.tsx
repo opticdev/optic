@@ -16,7 +16,8 @@ const decodeHash = (data: string): any => {
 
 const App = () => {
   const transformed = useMemo(() => {
-    const decoded = decodeHash(window.location.hash);
+    // @ts-ignore
+    const decoded = decodeHash(window.diffData || window.location.hash);
     return {
       ...decoded,
       base: {

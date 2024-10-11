@@ -46,6 +46,7 @@ type DiffActionOptions = {
   severity: 'info' | 'warn' | 'error';
   lastChange: boolean;
   generated?: boolean;
+  out?: string;
 };
 
 const description = 'Run a diff between two API specs';
@@ -118,6 +119,7 @@ export const registerDiff = (
     .option('-c, --check', 'Enable checks', false)
     .option('-u, --upload', 'Upload run to cloud', false)
     .option('-w, --web', 'View the diff in the Optic changelog web view', false)
+    .option('-o, --out <file>', 'write a self-contained HTML diff')
     .option('--json', 'Output as json', false)
     .option('--last-change', 'Find the last change for this spec', false)
     .option(
@@ -368,6 +370,8 @@ const getDiffAction =
 
     const diffResult = await runDiff(parsedFiles, config, options, file1);
     let maybeChangelogUrl: string | null = null;
+    let indexPath: string | null = null;
+    let compressedData: string | null = null;
     let specUrl: string | null = null;
 
     let [baseParseResult, headParseResult, specDetails] = parsedFiles;
@@ -447,7 +451,7 @@ const getDiffAction =
             base: options.base,
           };
 
-          const compressedData = compressDataV2(
+          compressedData = compressDataV2(
             baseParseResult,
             headParseResult,
             diffResult.specResults,
@@ -455,7 +459,6 @@ const getDiffAction =
             diffResult.changelogData
           );
           analyticsData.compressedDataLength = compressedData.length;
-          logger.info('Opening up diff in web view');
 
           const copyPath = path.join(os.tmpdir(), 'optic-changelog');
 
@@ -466,13 +469,31 @@ const getDiffAction =
             { errorOnExist: false, overwrite: false }
           );
 
-          const baseHtml = path.resolve(path.join(copyPath, 'index.html'));
+          indexPath = path.join(
+            path.resolve(path.join(__dirname, '../../../web/build')),
+            'index.html'
+          );
+          const baseHtml = path.resolve(indexPath);
 
           maybeChangelogUrl = `${baseHtml}#${compressedData}`;
           await flushEvents();
         }
         trackEvent('optic.diff.view_web', analyticsData);
-        await openUrl(maybeChangelogUrl);
+        if (options.out && indexPath) {
+          const indexContents = (await fs.readFile(indexPath)).toString();
+          const newContents = indexContents.replace(
+            `<div id="root"></div>`,
+            `<div id="root"></div><script>window.diffData ='${compressedData}'</script>`
+          );
+
+          const out = path.resolve(process.cwd(), options.out);
+          logger.info('Diff HTML written to ' + out);
+
+          await fs.writeFile(out, newContents);
+        } else {
+          logger.info('Opening up diff in web view');
+          await openUrl(maybeChangelogUrl);
+        }
       }
     }
 
