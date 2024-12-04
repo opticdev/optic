@@ -11,11 +11,6 @@ Optic helps you ship a better API by making it easy for teams to use OpenAPI. Pr
 ```bash
 npm install -g @useoptic/optic
 ```
-or
-```bash
-sh -c "$(curl -Ls https://install.useoptic.com/install.sh)"
-```
-
 ---
 
 ## Run locally
