@@ -51,6 +51,7 @@ export const registerCiComment = (cli: Command, config: OpticCliConfig) => {
       '--enterprise-base-url <enterprise-base-url>',
       '(only for enterprise versions of github or gitlab) - the base url to your enterprise github / gitlab instance'
     )
+    .option('--comment-url <comment-url>', 'override the url of the comment')
     .option('--verbose', 'show all operations changed in each API', false)
     .description('comment on a pull request / merge request')
     .action(
@@ -60,6 +61,7 @@ export const registerCiComment = (cli: Command, config: OpticCliConfig) => {
 
 type CommonOptions = {
   verbose: boolean;
+  commentUrl: string;
 };
 
 type UnvalidatedOptions = CommonOptions & {
@@ -153,6 +155,7 @@ const getCiCommentAction =
       await commenter.getComment(COMPARE_SUMMARY_IDENTIFIER);
     const body = generateCompareSummaryMarkdown({ sha: options.sha }, data, {
       verbose: options.verbose,
+      overrideUrl: options.commentUrl,
     });
 
     if (maybeComment) {
