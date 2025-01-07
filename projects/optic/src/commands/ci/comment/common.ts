@@ -82,7 +82,7 @@ const getCaptureIssuesLabel = ({
 export const generateCompareSummaryMarkdown = (
   commit: { sha: string },
   results: CiRunDetails,
-  options: { verbose: boolean }
+  options: { verbose: boolean; overrideUrl?: string }
 ) => {
   const anyCompletedHasWarning = results.completed.some(
     (s) => s.warnings.length > 0
@@ -122,7 +122,7 @@ ${s.apiName}
 <td>
 
 ${getOperationsText(s.comparison.groupedDiffs, {
-  webUrl: s.opticWebUrl,
+  webUrl: options.overrideUrl || s.opticWebUrl,
   verbose: options.verbose,
   labelJoiner: ',\n',
 })}
@@ -163,7 +163,7 @@ ${
 
 <td>
 
-${s.opticWebUrl ? `[View report](${s.opticWebUrl})` : ''}
+${options.overrideUrl || s.opticWebUrl ? `[View report](${options.overrideUrl || s.opticWebUrl})` : ''}
 
 </td>
 </tr>`
