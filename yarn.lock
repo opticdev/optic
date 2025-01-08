@@ -3553,7 +3553,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^20.2.5":
+"@types/node@npm:*":
   version: 20.12.7
   resolution: "@types/node@npm:20.12.7"
   dependencies:
@@ -3569,12 +3569,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.0.0, @types/node@npm:^18.11.18":
+"@types/node@npm:^18.11.18":
   version: 18.19.31
   resolution: "@types/node@npm:18.19.31"
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 10c0/bfebae8389220c0188492c82eaf328f4ba15e6e9b4abee33d6bf36d3b13f188c2f53eb695d427feb882fff09834f467405e2ed9be6aeb6ad4705509822d2ea08
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^22.0.0":
+  version: 22.10.5
+  resolution: "@types/node@npm:22.10.5"
+  dependencies:
+    undici-types: "npm:~6.20.0"
+  checksum: 10c0/6a0e7d1fe6a86ef6ee19c3c6af4c15542e61aea2f4cee655b6252efb356795f1f228bc8299921e82924e80ff8eca29b74d9dd0dd5cc1a90983f892f740b480df
   languageName: node
   linkType: hard
 
@@ -3728,7 +3737,7 @@ __metadata:
     "@types/babel__preset-env": "npm:^7"
     "@types/cookie": "npm:^0"
     "@types/har-format": "npm:^1.2.10"
-    "@types/node": "npm:^20.2.5"
+    "@types/node": "npm:^22.0.0"
     "@types/set-cookie-parser": "npm:^2"
     babel-jest: "npm:^29.5.0"
     cookie: "npm:^0.6.0"
@@ -3750,7 +3759,7 @@ __metadata:
     "@babel/preset-typescript": "npm:^7.17.0"
     "@types/babel__core": "npm:^7"
     "@types/babel__preset-env": "npm:^7"
-    "@types/node": "npm:^18.0.0"
+    "@types/node": "npm:^22.0.0"
     babel-jest: "npm:^29.3.1"
     jest: "npm:^29.3.1"
     jsonpointer: "npm:^5.0.1"
@@ -3778,7 +3787,7 @@ __metadata:
     "@types/is-url": "npm:^1.2.30"
     "@types/lodash.clonedeep": "npm:^4"
     "@types/lodash.sortby": "npm:^4.7.7"
-    "@types/node": "npm:^18.0.0"
+    "@types/node": "npm:^22.0.0"
     "@types/node-fetch": "npm:2.6.12"
     "@types/semver": "npm:^7.3.10"
     "@useoptic/json-pointer-helpers": "workspace:*"
@@ -3825,7 +3834,7 @@ __metadata:
     "@types/lodash.groupby": "npm:^4.6.6"
     "@types/lodash.isequal": "npm:^4.5.6"
     "@types/lodash.omit": "npm:^4.5.7"
-    "@types/node": "npm:^18.0.0"
+    "@types/node": "npm:^22.0.0"
     "@useoptic/json-pointer-helpers": "workspace:*"
     ajv: "npm:^8.6.0"
     ajv-errors: "npm:~3.0.0"
@@ -3881,7 +3890,7 @@ __metadata:
     "@types/lodash.sortby": "npm:^4.7.7"
     "@types/log": "npm:^6.3.0"
     "@types/micromatch": "npm:^4"
-    "@types/node": "npm:^18.0.0"
+    "@types/node": "npm:^22.0.0"
     "@types/postman-collection": "npm:^3.5.7"
     "@types/prompts": "npm:^2"
     "@types/semver": "npm:^7.3.10"
@@ -3975,7 +3984,7 @@ __metadata:
     "@types/babel__preset-env": "npm:^7"
     "@types/json-stable-stringify": "npm:^1.0.33"
     "@types/lodash.pick": "npm:^4"
-    "@types/node": "npm:^18.0.0"
+    "@types/node": "npm:^22.0.0"
     "@useoptic/json-pointer-helpers": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"
     ajv: "npm:^8.6.0"
@@ -4004,7 +4013,7 @@ __metadata:
     "@types/babel__preset-env": "npm:^7"
     "@types/json-stable-stringify": "npm:^1.0.33"
     "@types/lodash.pick": "npm:^4"
-    "@types/node": "npm:^18.0.0"
+    "@types/node": "npm:^22.0.0"
     "@useoptic/openapi-utilities": "workspace:*"
     "@useoptic/rulesets-base": "workspace:*"
     ajv: "npm:^8.6.0"
@@ -11487,6 +11496,13 @@ __metadata:
   version: 5.26.5
   resolution: "undici-types@npm:5.26.5"
   checksum: 10c0/bb673d7876c2d411b6eb6c560e0c571eef4a01c1c19925175d16e3a30c4c428181fb8d7ae802a261f283e4166a0ac435e2f505743aa9e45d893f9a3df017b501
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~6.20.0":
+  version: 6.20.0
+  resolution: "undici-types@npm:6.20.0"
+  checksum: 10c0/68e659a98898d6a836a9a59e6adf14a5d799707f5ea629433e025ac90d239f75e408e2e5ff086afc3cace26f8b26ee52155293564593fbb4a2f666af57fc59bf
   languageName: node
   linkType: hard
 
