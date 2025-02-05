@@ -116,7 +116,7 @@ export const registerDiff = (
         .choices(['strict', 'loose'])
         .default('strict')
     )
-    .option('-c, --check', 'Enable checks', false)
+    .option('-c, --check', 'Enable checks', true)
     .option('-u, --upload', 'Upload run to cloud', false)
     .option('-w, --web', 'View the diff in the Optic changelog web view', false)
     .option(
