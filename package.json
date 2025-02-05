@@ -9,8 +9,7 @@
     "projects/openapi-utilities",
     "projects/rulesets-base",
     "projects/optic",
-    "projects/standard-rulesets",
-    "projects/fastify-capture"
+    "projects/standard-rulesets"
   ],
   "repository": {
     "type": "git",

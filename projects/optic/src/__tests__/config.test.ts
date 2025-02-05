@@ -1,5 +1,5 @@
 import { test, expect, describe, beforeEach, jest } from '@jest/globals';
-import path from 'path';
+import * as path from 'path';
 import { UserError } from '@useoptic/openapi-utilities';
 import { createOpticClient } from '../client';
 import {
