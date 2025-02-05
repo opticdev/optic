@@ -433,20 +433,20 @@ exports[`diff reads optic.dev.yml for rulesets 1`] = `
 `;
 
 exports[`diff two files, no repo or config 1`] = `
-"[1mEmpty[22m [90mexample-api-v0.json[39m
+"[32m✔ [39m[1mEmpty[22m [90mexample-api-v0.json[39m
 [1mOperations: [22m4 operations changed
 
-[1mPATCH[22m /example: 
+[32m✔ [1mPATCH[22m /example[39m: 
   - /operationId [33mchanged[39m
   
   - response [1m200[22m: [32madded[39m
-[1mPUT[22m /example: 
+[32m✔ [1mPUT[22m /example[39m: 
   - /operationId [33mchanged[39m
   
-[1mPOST[22m /example: 
+[32m✔ [1mPOST[22m /example[39m: 
   - /operationId [33mchanged[39m
   
-[1mGET[22m /example: 
+[32m✔ [1mGET[22m /example[39m: 
   - /operationId [33mchanged[39m
   
 [34mRerun this command with the --web flag to view the detailed changes in your browser[39m
