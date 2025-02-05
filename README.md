@@ -3,11 +3,15 @@
 
 # Optic - OpenAPI made easy
 
-🧠 **Generate and update OpenAPI** from test traffic
+🧠 **Generate OpenAPI** from test traffic
 
-🤩 **Catch Breaking Changes and apply Lint rules** with the same tool
+⚡️ **Keep OpenAPI spec accurate** with automatic schema testing and patches
 
-⚡️ **Generate API Changelog** between any two git commits
+🤩 **Catch Breaking Changes and apply Lint Rules** with the same tool
+
+
+> Optic supports $ref and OpenAPI specs split across multiple files. It always 
+
 
 ## [Read Documentation](https://github.com/opticdev/optic/wiki) 
 
