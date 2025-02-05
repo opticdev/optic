@@ -9,15 +9,23 @@
 
 ⚡️ **Generate API Changelog** between any two git commits
 
+## [Read Documentation](https://github.com/opticdev/optic/wiki) 
+
+
 ### Demos
 
+https://github.com/user-attachments/assets/b386bb42-39a5-4db0-aea5-c2399588ebb0
+
+https://github.com/user-attachments/assets/bb6af098-6e91-4636-b88c-1c9bc586cce0
+
+https://github.com/user-attachments/assets/1b07bfd9-364c-4bbe-baeb-493bed392cdf
 
 ### Install
 ```bash
 npm install -g @useoptic/optic
 ```
 
-[Read Documentation](https://github.com/opticdev/optic/wiki) 
+## ⏭️ [Get Started!](https://github.com/opticdev/optic/wiki) 
 
 
 ### License
