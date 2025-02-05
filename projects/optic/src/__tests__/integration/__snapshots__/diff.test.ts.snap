@@ -459,7 +459,8 @@ exports[`diff with --json arg 1`] = `
 `;
 
 exports[`diff with --last-change arg 1`] = `
-"Finding last change...
+"- Finding last change...
+[32m✔[39m Found last change at COMMIT-HASH
 [32m✔ [39m[1mEmpty[22m [90mexample-api.json[39m
 [1mOperations: [22m1 operation changed
 
