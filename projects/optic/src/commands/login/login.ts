@@ -3,7 +3,7 @@ import { OpticCliConfig } from '../../config';
 import { errorHandler } from '../../error-handler';
 export const registerLogin = (cli: Command, config: OpticCliConfig) => {
   cli
-    .command('login')
+    .command('login', { hidden: true })
     .description('Login to Optic')
     .action(errorHandler(getLoginAction(config), { command: 'login' }));
 };
