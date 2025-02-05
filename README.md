@@ -1,13 +1,16 @@
  
 ![GitHub Repo stars](https://img.shields.io/github/stars/opticdev/optic?style=social) ![GitHub contributors](https://img.shields.io/github/contributors-anon/opticdev/optic?style=social) ![npm](https://img.shields.io/npm/dm/@useoptic/openapi-io?style=social) ![license](https://img.shields.io/github/license/opticdev/optic?style=social)
 
-# Optic 
+# Optic - OpenAPI made easy
 
 🧠 **Generate and update OpenAPI** from test traffic
 
 🤩 **Catch Breaking Changes and apply Lint rules** with the same tool
 
 ⚡️ **Generate API Changelog** between any two git commits
+
+### Demos
+
 
 ### Install
 ```bash
