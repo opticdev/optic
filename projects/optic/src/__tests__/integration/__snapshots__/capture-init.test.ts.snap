@@ -4,7 +4,7 @@ exports[`capture init init with --stdout 1`] = `
 "capture:
   abc.yml:
     # Complete reference documentation for this configuration file is available:
-    #   https://www.useoptic.com/docs/capturing-traffic#configuration-reference
+    #   https://github.com/opticdev/optic/wiki/Using-Optic-Capture-with-Integration-Tests
 
     # Run with "optic capture abc.yml --update interactive"
     server:
@@ -64,7 +64,7 @@ capture:
           method: GET
   abc.yml:
     # Complete reference documentation for this configuration file is available:
-    #   https://www.useoptic.com/docs/capturing-traffic#configuration-reference
+    #   https://github.com/opticdev/optic/wiki/Using-Optic-Capture-with-Integration-Tests
 
     # Run with "optic capture abc.yml --update interactive"
     server:
@@ -94,7 +94,7 @@ exports[`capture init init with no optic.yml 2`] = `
 "capture:
   abc.yml:
     # Complete reference documentation for this configuration file is available:
-    #   https://www.useoptic.com/docs/capturing-traffic#configuration-reference
+    #   https://github.com/opticdev/optic/wiki/Using-Optic-Capture-with-Integration-Tests
 
     # Run with "optic capture abc.yml --update interactive"
     server:

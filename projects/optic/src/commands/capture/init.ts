@@ -28,7 +28,7 @@ export function captureConfigExample(
   return `
 ${skipConfigUpdate ? `capture:\n  ${oasFile}:` : ''}    
     # Complete reference documentation for this configuration file is available:
-    #   https://www.useoptic.com/docs/capturing-traffic#configuration-reference
+    #   https://github.com/opticdev/optic/wiki/Using-Optic-Capture-with-Integration-Tests
 
     # Run with "optic capture ${oasFile} --update interactive"
     server:
