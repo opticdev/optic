@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest-16-core
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         node_version: [16, 18, 20]
