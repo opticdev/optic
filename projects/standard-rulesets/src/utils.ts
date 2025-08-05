@@ -1,6 +1,5 @@
 import { isTruthyStringValue } from '@useoptic/openapi-utilities';
 import { RuleContext } from '@useoptic/rulesets-base';
-import { logger } from '../src/logger'
 
 function extensionIsTruthy(extension: any) {
   if (typeof extension === 'string') {
@@ -38,14 +37,13 @@ export const excludeOperationWithExtensionMatches = (
               extensionValue &&
               values.includes(String(extensionValue))
             ) {
-              logger.info(`Excluding operation: ${operation['operationId']} due to extension match`);
               return false; // Exclude if the extension value matches
             }
           }
         }
       }
     }
-    return true; // Include by default if no exclusion matches
+    return true; // Include by default
   };
 };
 
