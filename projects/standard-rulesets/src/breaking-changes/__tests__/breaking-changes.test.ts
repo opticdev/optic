@@ -11,6 +11,7 @@ describe('fromOpticConfig', () => {
     expect(out)
       .toEqual(`- ruleset/breaking-changes/exclude_operations_with_extension must be string
 - ruleset/breaking-changes/exclude_operations_with_extension must be array
+- ruleset/breaking-changes/exclude_operations_with_extension must be array
 - ruleset/breaking-changes/exclude_operations_with_extension must match exactly one schema in oneOf`);
   });
 
@@ -29,6 +30,18 @@ describe('fromOpticConfig', () => {
       exclude_operations_with_extension: ['x-legacy', 'x-meta'],
       docs_link: 'asdasd.com',
       severity: 'warn',
+    });
+
+    expect(out).toBeInstanceOf(BreakingChangesRuleset);
+  });
+
+  test('valid config with exclude_operations_with_extension as object', async () => {
+    const out = await BreakingChangesRuleset.fromOpticConfig({
+      exclude_operations_with_extension: [
+        {
+          'x-stability': ['beta', 'alpha', 'draft'],
+        },
+      ],
     });
 
     expect(out).toBeInstanceOf(BreakingChangesRuleset);
@@ -1234,7 +1247,7 @@ describe('breaking changes ruleset', () => {
 });
 
 describe('breaking change ruleset configuration', () => {
-  test('breaking changes applies a matches function', async () => {
+  test('breaking changes applies a matches function for string extension', async () => {
     const beforeJson: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -1261,13 +1274,129 @@ describe('breaking change ruleset configuration', () => {
     };
     const results = await TestHelpers.runRulesWithInputs(
       [
-        BreakingChangesRuleset.fromOpticConfig({
+        await BreakingChangesRuleset.fromOpticConfig({
           exclude_operations_with_extension: 'x-legacy',
         }) as any,
       ],
       beforeJson,
       afterJson
     );
-    expect(results.length === 0).toBe(true);
+    expect(results.length).toBe(0);
+  });
+
+  test('breaking changes applies a matches function for object extension value match', async () => {
+    const beforeJson: OpenAPIV3.Document = {
+      ...TestHelpers.createEmptySpec(),
+      paths: {
+        '/api/users': {
+          get: {
+            responses: {},
+          },
+          post: {
+            'x-stability-level': 'draft',
+            responses: {},
+          } as any,
+        },
+      },
+    };
+    const afterJson: OpenAPIV3.Document = {
+      ...TestHelpers.createEmptySpec(),
+      paths: {
+        '/api/users': {
+          get: {
+            responses: {},
+          },
+        },
+      },
+    };
+    const results = await TestHelpers.runRulesWithInputs(
+      [
+        await BreakingChangesRuleset.fromOpticConfig({
+          exclude_operations_with_extension: [
+            { 'x-stability-level': ['draft'] },
+          ],
+        }) as any,
+      ],
+      beforeJson,
+      afterJson
+    );
+    expect(results.length).toBe(0)
+  });
+
+  test('breaking changes applies a matches function for object extension value mismatch', async () => {
+    const beforeJson: OpenAPIV3.Document = {
+      ...TestHelpers.createEmptySpec(),
+      paths: {
+        '/api/users': {
+          get: {
+            responses: {},
+          },
+          post: {
+            'x-stability-level': 'stable',
+            responses: {},
+          } as any,
+        },
+      },
+    };
+    const afterJson: OpenAPIV3.Document = {
+      ...TestHelpers.createEmptySpec(),
+      paths: {
+        '/api/users': {
+          get: {
+            responses: {},
+          },
+        },
+      },
+    };
+    const results = await TestHelpers.runRulesWithInputs(
+      [
+        await BreakingChangesRuleset.fromOpticConfig({
+          exclude_operations_with_extension: [
+            { 'x-stability-level': ['draft'] },
+          ],
+        }) as any,
+      ],
+      beforeJson,
+      afterJson
+    );
+    expect(results.length).toEqual(1);
+  });
+
+    test('breaking changes applies a matches function for object extension value missing', async () => {
+    const beforeJson: OpenAPIV3.Document = {
+      ...TestHelpers.createEmptySpec(),
+      paths: {
+        '/api/users': {
+          get: {
+            responses: {},
+          },
+          post: {
+            responses: {},
+          } as any,
+        },
+      },
+    };
+    const afterJson: OpenAPIV3.Document = {
+      ...TestHelpers.createEmptySpec(),
+      paths: {
+        '/api/users': {
+          get: {
+            responses: {},
+          },
+        },
+      },
+    };
+    const results = await TestHelpers.runRulesWithInputs(
+      [
+        await BreakingChangesRuleset.fromOpticConfig({
+          exclude_operations_with_extension: [
+            { 'x-stability-level': ['draft'] },
+          ],
+        }) as any,
+      ],
+      beforeJson,
+      afterJson
+    );
+    expect(results.length).toEqual(1);
   });
 });

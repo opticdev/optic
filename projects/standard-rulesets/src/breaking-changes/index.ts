@@ -6,6 +6,7 @@ import { preventResponsePropertyOptional } from './preventResponsePropertyOption
 import { preventResponsePropertyRemoval } from './preventResponsePropertyRemoval';
 import { preventResponsePropertyTypeChange } from './preventResponsePropertyTypeChange';
 import { preventResponseStatusCodeRemoval } from './preventResponseStatusCodeRemoval';
+
 import {
   preventQueryParameterEnumBreak,
   preventCookieParameterEnumBreak,
@@ -36,7 +37,7 @@ import { preventResponseNarrowingInUnionTypes } from './preventResponseNarrowing
 import { excludeOperationWithExtensionMatches } from '../utils';
 
 type YamlConfig = {
-  exclude_operations_with_extension?: string | string[];
+  exclude_operations_with_extension?: string | string[] | { [key: string]: string[] }[];
   skip_when_major_version_changes?: boolean;
   docs_link?: string;
   severity?: SeverityText;
@@ -47,7 +48,21 @@ const configSchema = {
   type: 'object',
   properties: {
     exclude_operations_with_extension: {
-      oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }],
+      oneOf: [
+        { type: 'string' }, 
+        { type: 'array', items: { type: 'string' }},         
+        {
+          type: 'array',
+          items: {
+            type: 'object',
+            minProperties: 1,
+            additionalProperties: {
+              type: 'array',
+              items: { type: 'string' },
+            },
+          },
+        },
+      ],
     },
     skip_when_major_version_changes: {
       type: 'boolean',
