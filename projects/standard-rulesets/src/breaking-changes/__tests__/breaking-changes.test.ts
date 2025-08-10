@@ -1274,9 +1274,9 @@ describe('breaking change ruleset configuration', () => {
     };
     const results = await TestHelpers.runRulesWithInputs(
       [
-        await BreakingChangesRuleset.fromOpticConfig({
+        (await BreakingChangesRuleset.fromOpticConfig({
           exclude_operations_with_extension: 'x-legacy',
-        }) as any,
+        })) as any,
       ],
       beforeJson,
       afterJson
@@ -1311,16 +1311,16 @@ describe('breaking change ruleset configuration', () => {
     };
     const results = await TestHelpers.runRulesWithInputs(
       [
-        await BreakingChangesRuleset.fromOpticConfig({
+        (await BreakingChangesRuleset.fromOpticConfig({
           exclude_operations_with_extension: [
             { 'x-stability-level': ['draft'] },
           ],
-        }) as any,
+        })) as any,
       ],
       beforeJson,
       afterJson
     );
-    expect(results.length).toBe(0)
+    expect(results.length).toBe(0);
   });
 
   test('breaking changes applies a matches function for object extension value mismatch', async () => {
@@ -1350,11 +1350,11 @@ describe('breaking change ruleset configuration', () => {
     };
     const results = await TestHelpers.runRulesWithInputs(
       [
-        await BreakingChangesRuleset.fromOpticConfig({
+        (await BreakingChangesRuleset.fromOpticConfig({
           exclude_operations_with_extension: [
             { 'x-stability-level': ['draft'] },
           ],
-        }) as any,
+        })) as any,
       ],
       beforeJson,
       afterJson
@@ -1362,7 +1362,7 @@ describe('breaking change ruleset configuration', () => {
     expect(results.length).toEqual(1);
   });
 
-    test('breaking changes applies a matches function for object extension value missing', async () => {
+  test('breaking changes applies a matches function for object extension value missing', async () => {
     const beforeJson: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
       paths: {
@@ -1388,11 +1388,11 @@ describe('breaking change ruleset configuration', () => {
     };
     const results = await TestHelpers.runRulesWithInputs(
       [
-        await BreakingChangesRuleset.fromOpticConfig({
+        (await BreakingChangesRuleset.fromOpticConfig({
           exclude_operations_with_extension: [
             { 'x-stability-level': ['draft'] },
           ],
-        }) as any,
+        })) as any,
       ],
       beforeJson,
       afterJson
