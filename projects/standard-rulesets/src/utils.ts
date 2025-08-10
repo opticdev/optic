@@ -10,7 +10,10 @@ function extensionIsTruthy(extension: any) {
 }
 
 export const excludeOperationWithExtensionMatches = (
-  excludeOperationWithExtensions: string | string[] | { [key: string]: string[] }[]
+  excludeOperationWithExtensions:
+    | string
+    | string[]
+    | { [key: string]: string[] }[]
 ) => {
   return (context: RuleContext): boolean => {
     const operation = context.operation.raw as any;
@@ -33,10 +36,7 @@ export const excludeOperationWithExtensionMatches = (
         else if (typeof exclusion === 'object' && exclusion !== null) {
           for (const [key, values] of Object.entries(exclusion)) {
             const extensionValue = operation[key];
-            if (
-              extensionValue &&
-              values.includes(String(extensionValue))
-            ) {
+            if (extensionValue && values.includes(String(extensionValue))) {
               return false; // Exclude if the extension value matches
             }
           }
@@ -46,4 +46,3 @@ export const excludeOperationWithExtensionMatches = (
     return true; // Include by default
   };
 };
-
