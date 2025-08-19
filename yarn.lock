@@ -3273,11 +3273,11 @@ __metadata:
   linkType: hard
 
 "@types/fast-json-patch@npm:^1.1.5":
-  version: 1.1.5
-  resolution: "@types/fast-json-patch@npm:1.1.5"
+  version: 1.1.7
+  resolution: "@types/fast-json-patch@npm:1.1.7"
   dependencies:
     fast-json-patch: "npm:*"
-  checksum: 10c0/100f25d9989aee611d4bb87fae718e941968fdbd9997e4e7b8f82fd5e3e5fe169d8fb628123df3f45dfd459a57e0d545ea4f5c2e1f330eb051e4c1ccccf477c7
+  checksum: 10c0/28dc1ba180268cdb03e5276b21cc7bc682d86ae9d20640f8145000760ca8913f840f328b4be5b76cdacc31aae1dfbe9b12b2af0873fb2c3c6293440f1d355c8b
   languageName: node
   linkType: hard
 
