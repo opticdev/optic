@@ -29,7 +29,7 @@
     "@types/is-url": "^1.2.30",
     "@types/lodash.clonedeep": "^4",
     "@types/lodash.sortby": "^4.7.7",
-    "@types/node": "^18.0.0",
+    "@types/node": "^22.0.0",
     "@types/node-fetch": "2.6.12",
     "@types/semver": "^7.3.10",
     "babel-jest": "^29.3.1",
