@@ -3877,14 +3877,12 @@ __metadata:
     "@types/babel__core": "npm:^7"
     "@types/babel__preset-env": "npm:^7"
     "@types/json-stable-stringify": "npm:^1.0.33"
-    "@types/lodash.pick": "npm:^4"
     "@types/node": "npm:^18.0.0"
     "@useoptic/json-pointer-helpers": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"
     ajv: "npm:^8.6.0"
     babel-jest: "npm:^29.3.1"
     jest: "npm:^29.3.1"
-    lodash.pick: "npm:^4.4.0"
     node-fetch: "npm:^2.6.7"
     semver: "npm:^7.5.4"
     ts-jest: "npm:^29.0.3"
@@ -8332,13 +8330,6 @@ __metadata:
   version: 4.5.0
   resolution: "lodash.omit@npm:4.5.0"
   checksum: 10c0/3808b9b6faae35177174b6ab327f1177e29c91f1e98dcbccf13a72a6767bba337306449d537a4e0d8a33d2673f10d39bc732e30c4b803274ea0c1168ea60e549
-  languageName: node
-  linkType: hard
-
-"lodash.pick@npm:^4.4.0":
-  version: 4.4.0
-  resolution: "lodash.pick@npm:4.4.0"
-  checksum: 10c0/a04c460b95d1aaa44e9513d1dacf72ea74d838da843e45831de9de64c303f13cdde1859702a6f4dcef417816898ffd47c6ae0614c957ac70245bed2809b8d2e2
   languageName: node
   linkType: hard
 

@@ -5,7 +5,6 @@ import {
   Severity,
   UserError,
 } from '@useoptic/openapi-utilities';
-import pick from 'lodash.pick';
 import { RuleError } from '../errors';
 import {
   RegisterAssertion,
@@ -50,16 +49,19 @@ export type AssertionResult =
     };
 
 const sanitizeFact = (fact: IFact): IFact =>
-  pick(fact, 'value', 'location') as IFact;
+  ({
+    value: fact.value,
+    location: fact.location,
+  }) as IFact;
+
 const sanitizeChange = (change: IChange): IChange =>
-  pick(
-    change,
-    'changeType',
-    'added',
-    'removed',
-    'changed',
-    'location'
-  ) as IChange;
+  ({
+    changeType: change.changeType,
+    added: change.added,
+    removed: change.removed,
+    changed: change.changed,
+    location: change.location,
+  }) as IChange;
 
 class AssertionRunner<T extends AssertionType> implements Assertions<T> {
   private requirementAssertions: Assertion<T>[];
