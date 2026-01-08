@@ -1,0 +1,27 @@
+projects/rulesets-base/package.json
+  c3eef9a015c33b22 28,40
+projects/rulesets-base/src/rule-runner/assertions.ts
+  c3eef9a015c33b22 8
+package.json
+  c3eef9a015c33b22 33-52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.0.30",
+  "base_commit_sha": "992810aec5f9acbd6256b06b6d53482831e2cab9",
+  "prompts": {
+    "c3eef9a015c33b22": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "b65f5c99-1665-42bb-9a44-6034634bca60",
+        "model": "claude-4.5-opus-high-thinking"
+      },
+      "human_author": "Aidan Cunniffe <acunniffe@gmail.com>",
+      "messages": [],
+      "total_additions": 29,
+      "total_deletions": 9,
+      "accepted_lines": 23,
+      "overriden_lines": 0
+    }
+  }
+}
